@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "24c3946acc997e3f3eca7fc5c99585b2",
+    "hash": "35acdf51b4a329e863c5791e67e30442",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -221,6 +221,64 @@
                 "string"
             ],
             "time": "2014-12-20 21:24:13"
+        },
+        {
+            "name": "franzose/closure-table",
+            "version": "v4.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/franzose/ClosureTable.git",
+                "reference": "d5b642b9787bded2053b75f8f5711e9b2c966831"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/franzose/ClosureTable/zipball/d5b642b9787bded2053b75f8f5711e9b2c966831",
+                "reference": "d5b642b9787bded2053b75f8f5711e9b2c966831",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "doctrine/dbal": "dev-master",
+                "mockery/mockery": "dev-master",
+                "orchestra/testbench": "dev-master",
+                "phpunit/phpunit": "dev-master",
+                "way/laravel-test-helpers": "dev-master",
+                "way/phpunit-wrappers": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "tests"
+                ],
+                "psr-0": {
+                    "Franzose\\ClosureTable": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Iwanow",
+                    "email": "iwanow.jan@gmail.com",
+                    "homepage": "http://janiwanow.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Adjacency List’ed Closure Table database design pattern implementation for Laravel",
+            "keywords": [
+                "adjacency list",
+                "categories",
+                "closure table",
+                "database",
+                "hierarchy",
+                "laravel",
+                "pages"
+            ],
+            "time": "2015-03-09 06:18:48"
         },
         {
             "name": "ircmaxell/password-compat",
