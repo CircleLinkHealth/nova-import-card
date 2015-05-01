@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Register</div>
+                    <div class="panel-heading">Add location</div>
                     <div class="panel-body">
                         @if (count($errors) > 0)
                             <div class="alert alert-danger">
@@ -18,7 +18,7 @@
                             </div>
                         @endif
 
-                        <form parsley-validate id="location-form" class="form-horizontal" role="form" method="POST" action="{{ url('/location') }}">
+                        <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ url('/location') }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                             <div class="form-group">

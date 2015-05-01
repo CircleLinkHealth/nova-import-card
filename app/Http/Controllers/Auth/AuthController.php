@@ -35,4 +35,48 @@ class AuthController extends Controller {
 		$this->middleware('guest', ['except' => 'getLogout']);
 	}
 
+
+	/**
+	 * Show the application registration form.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function getRegister()
+	{
+		if ( \Auth::check() ) {
+			return view('auth.register');
+		} else {
+			return redirect()->back();
+		}
+
+	}
+
+
+	/**
+	 * Handle a registration request for the application.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return \Illuminate\Http\Response
+	 */
+	public function postRegister(Request $request)
+	{
+		if ( \Auth::check() ) {
+			$validator = $this->registrar->validator($request->all());
+
+			if ($validator->fails())
+			{
+				$this->throwValidationException(
+					$request, $validator
+				);
+			}
+
+			$this->auth->login($this->registrar->create($request->all()));
+
+			return redirect($this->redirectPath());
+		} else {
+			return redirect()->back();
+		}
+	}
+
+
 }

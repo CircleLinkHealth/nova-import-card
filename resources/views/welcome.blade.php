@@ -3,6 +3,8 @@
 		<title>Laravel</title>
 		
 		<link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
+		<link href="{{ asset('/css/app.css') }}" rel="stylesheet">
+
 
 		<style>
 			body {
@@ -16,7 +18,7 @@
 				font-family: 'Lato';
 			}
 
-			.container {
+			.container-fluid {
 				text-align: center;
 				display: table-cell;
 				vertical-align: middle;
@@ -32,16 +34,16 @@
 				margin-bottom: 40px;
 			}
 
-			.quote {
-				font-size: 24px;
+			.subtitle {
+				font-size: 24px !important;
 			}
 		</style>
 	</head>
 	<body>
-		<div class="container">
+		<div class="container-fluid">
 			<div class="content">
-				<div class="title">CircleLink</div>
-				<div class="quote">{{ Inspiring::quote() }}</div>
+				<div class="title">CircleLink Health<br>Care Plan Manager</div>
+				<a class="btn btn-primary subtitle" href="{{ url('/auth/login') }}">Login</a>
 			</div>
 		</div>
 	</body>
