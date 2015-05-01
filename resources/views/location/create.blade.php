@@ -87,7 +87,12 @@
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Parent</label>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" name="parent_id" value="{{ old('parent_id') }}">
+                                    <select name="parent_id">
+                                        <option value="">None</option>
+                                        @foreach( $locations as $loc )
+                                            <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 

@@ -25,7 +25,7 @@ class LocationController extends Controller {
 	 */
 	public function create()
 	{
-		return view('location.create');
+		return view('location.create', [ 'locations' => Location::getLocationHierarchy() ]);
 	}
 
 	/**
