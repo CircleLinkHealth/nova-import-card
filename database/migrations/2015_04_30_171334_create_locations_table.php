@@ -15,6 +15,20 @@ class CreateLocationsTable extends Migration
             $table->integer('real_depth', false, true);
             $table->softDeletes();
 
+            $table->string('name');
+
+            $table->string('phone');
+
+            $table->string('address_line_1');
+            $table->string('address_line_2');
+            $table->string('city');
+            $table->string('state');
+            $table->string('postal_code');
+
+            $table->string('billing_code');
+            $table->string('location_code');
+
+            $table->timestamps();
             $table->foreign('parent_id')->references('id')->on('locations')->onDelete('set null');
         });
     }
