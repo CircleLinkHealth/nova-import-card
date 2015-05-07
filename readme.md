@@ -22,5 +22,4 @@ Run these on the command line:
 	- php artisan key:generate
 
 	Create DB tables
-	- php artisan:migrate
-
+	- php artisan migrate
