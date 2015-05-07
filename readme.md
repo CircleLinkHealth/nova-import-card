@@ -18,6 +18,7 @@ Create a MySQL database to use with the project.
 Create a .env file in the project's root directory, using the .env.example file as a template.
 
 Run these on the command line:
+
 	Generate an app key for encryption
 	- php artisan key:generate
 
