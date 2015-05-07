@@ -11,7 +11,8 @@ First clone the repository:
 	- git clone https://michalisantoniou@bitbucket.org/michalisantoniou/locations-laravel.git
 
 Then get the project's dependencies by running this on the command line, in the project's root directory:
-	- composer update
+	
+        - composer update
 
 Create a MySQL database to use with the project.
 
