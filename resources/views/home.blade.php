@@ -8,7 +8,7 @@
 				<div class="panel-heading">Dashboard</div>
 
 				<div class="panel-body">
-					<a href="{{ url('location/create') }}">Add location</a>
+					<a href="{{ action('LocationController@create') }}">Add location</a>
 				</div>
 
 			</div>
