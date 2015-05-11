@@ -18,7 +18,7 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
-Route::group(['middleware' => 'auth'], function()
+Route::group(['middleware' => 'authApiCall'], function()
 {
 	Route::get('home', 'HomeController@index');
 

@@ -148,7 +148,9 @@ return [
 		/*
 		 * CPM Providers
 		 */
+		'Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider',
 		'Franzose\ClosureTable\ClosureTableServiceProvider',
+
 
 	],
 

@@ -13,9 +13,10 @@ class LocationController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index(Request $request)
 	{
-		return view('location.index', [ 'locations' => Location::getLocationHierarchy() ]);
+		return Location::getLocationHierarchy()->toJson();
+//		return view('location.index', [ 'locations' => Location::getLocationHierarchy() ]);
 	}
 
 	/**
