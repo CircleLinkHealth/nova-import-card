@@ -30,19 +30,9 @@ class Location extends Entity implements LocationInterface
      * COME BACK HERE LATER
      * This function should return an array of arrays with the location hierarchies
      */
-    public static function getLocationHierarchy()
+    public static function getNonRootLocations()
     {
-        $roots = Location::getRoots()->sortBy('name');
-
-//        foreach( $roots as $root ) {
-//            var_dump( $root->name );
-//            //	$tree = Location::getTree()->find( $root->id );
-//            if ( $root->hasChildren() ) {
-//                var_dump( $root->getChildren() );
-//            }
-//        }
-
-        return $roots;
+        return Location::where('parent_id', '!=', 'NULL')->lists('name', 'id');
     }
 
 }

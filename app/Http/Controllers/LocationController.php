@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 
 use App\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class LocationController extends Controller {
 
@@ -15,8 +16,7 @@ class LocationController extends Controller {
 	 */
 	public function index(Request $request)
 	{
-		return Location::getLocationHierarchy()->toJson();
-//		return view('location.index', [ 'locations' => Location::getLocationHierarchy() ]);
+		return response()->json(Crypt::encrypt( json_encode(Location::getNonRootLocations()) ));
 	}
 
 	/**
@@ -26,7 +26,7 @@ class LocationController extends Controller {
 	 */
 	public function create()
 	{
-		return view('location.create', [ 'locations' => Location::getLocationHierarchy() ]);
+		return view('location.create', [ 'locations' => Location::getNonRootLocations() ]);
 	}
 
 	/**

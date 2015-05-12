@@ -18,9 +18,12 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
-Route::group(['middleware' => 'authApiCall'], function()
+Route::group(['middleware' => 'auth'], function ()
 {
 	Route::get('home', 'HomeController@index');
+});
 
-	Route::resource('location', 'LocationController');
+Route::group(['middleware' => 'authApiCall'], function()
+{
+	Route::resource('locations', 'LocationController');
 });

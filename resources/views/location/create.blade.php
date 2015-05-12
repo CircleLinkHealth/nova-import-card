@@ -18,7 +18,7 @@
                             </div>
                         @endif
 
-                        <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ url('/location') }}">
+                        <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ action('LocationController@store') }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                             <div class="form-group">
