@@ -89,8 +89,8 @@
                                 <div class="col-md-6">
                                     <select name="parent_id">
                                         <option value="">None</option>
-                                        @foreach( $locations as $loc )
-                                            <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                                        @foreach( $locations as $id => $loc )
+                                            <option value="{{ $id }}">{{ $loc }}</option>
                                         @endforeach
                                     </select>
                                 </div>
