@@ -1,0 +1,41 @@
+<?php
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateMaActivityMetaTable extends Migration {
+
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::create('ma_activity_meta', function(Blueprint $table)
+		{
+			$table->increments('meta_id');
+			$table->bigInteger('act_id', false, true);
+			$table->integer('comment_id', false, true);
+			$table->string('message_id', 30);
+			$table->string('meta_key', 255)->nullable();
+			$table->longText('meta_value');
+			$table->timestamps();
+
+			$table->unique(['act_id', 'meta_key'], 'act_id_2');
+			$table->index('meta_key', 'meta_key');
+			$table->index('act_id', 'act_id');
+		});
+	}
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::dropIfExists('ma_activity_meta');
+	}
+
+}

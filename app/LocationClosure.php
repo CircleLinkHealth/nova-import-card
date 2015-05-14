@@ -3,7 +3,7 @@ namespace App;
 
 use Franzose\ClosureTable\Models\ClosureTable;
 
-class LocationClosure extends ClosureTable implements locationClosureInterface
+class LocationClosure extends ClosureTable implements LocationClosureInterface
 {
     /**
      * The table associated with the model.
