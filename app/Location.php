@@ -26,13 +26,14 @@ class Location extends Entity implements LocationInterface
      */
     protected $fillable = [ 'name', 'phone', 'address_line_1', 'address_line_2', 'city', 'postal_code', 'billing_code', 'location_code' ];
 
-    /*
-     * COME BACK HERE LATER
-     * This function should return an array of arrays with the location hierarchies
-     */
     public static function getNonRootLocations()
     {
         return Location::where('parent_id', '!=', 'NULL')->lists('name', 'id');
+    }
+
+    public static function getAllNodes()
+    {
+        return Location::all()->lists('name', 'id');
     }
 
 }
