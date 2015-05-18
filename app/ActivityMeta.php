@@ -1,8 +1,11 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ActivityMeta extends Model {
+
+    use SoftDeletes;
 
     /**
      * The database table used by the model.
@@ -24,5 +27,14 @@ class ActivityMeta extends Model {
      * @var array
      */
     protected $fillable = ['act_id', 'meta_key', 'meta_value'];
+
+    protected $dates = ['deleted_at'];
+
+    public function activity()
+    {
+        return $this->belongsTo('App\Activity', 'act_id');
+    }
+
+
 
 }

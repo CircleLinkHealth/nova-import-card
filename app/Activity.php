@@ -25,4 +25,11 @@ class Activity extends Model {
      */
     protected $fillable = ['act_date', 'user_id', 'performed_by', 'act_method', 'act_key', 'act_value', 'act_unit'];
 
+    protected $dates = ['deleted_at'];
+
+    public function meta()
+    {
+        return $this->hasMany('App\ActivityMeta', 'act_id', 'act_id');
+    }
+
 }
