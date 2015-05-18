@@ -15,15 +15,15 @@ class CreateMaActivityMetaTable extends Migration {
 		Schema::create('ma_activity_meta', function(Blueprint $table)
 		{
 			$table->increments('meta_id');
-			$table->integer('act_id', false, true);
-			$table->integer('comment_id', false, true);
+			$table->unsignedInteger('act_id');
+			$table->unsignedInteger('comment_id');
 			$table->string('message_id', 30);
 			$table->string('meta_key', 255)->nullable();
 			$table->longText('meta_value');
 			$table->timestamps();
 			$table->softDeletes();
 
-			$table->unique(['act_id', 'meta_key'], 'act_id_2');
+//			$table->unique(['act_id', 'meta_key'], 'act_id_2'); Removed for when adding many comments at once
 			$table->index('meta_key', 'meta_key');
 			$table->index('act_id', 'act_id');
 

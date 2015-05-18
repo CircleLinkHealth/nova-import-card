@@ -29,7 +29,20 @@ class Activity extends Model {
 
     public function meta()
     {
-        return $this->hasMany('App\ActivityMeta', 'act_id', 'act_id');
+        return $this->hasMany('App\ActivityMeta', 'act_id');
+    }
+
+    /**
+     * Create a new activity and return its id
+     *
+     * @param $attr
+     * @return mixed
+     */
+    public static function createNewActivity($attr)
+    {
+        $newActivity = Activity::create($attr);
+
+        return $newActivity->act_id;
     }
 
 }

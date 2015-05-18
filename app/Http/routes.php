@@ -26,4 +26,7 @@ Route::group(['middleware' => 'auth'], function ()
 Route::group(['middleware' => 'authApiCall'], function()
 {
 	Route::resource('locations', 'LocationController');
+
+	Route::resource('activities', 'ActivityController');
+
 });

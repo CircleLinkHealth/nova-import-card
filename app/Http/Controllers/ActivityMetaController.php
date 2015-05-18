@@ -1,13 +1,12 @@
 <?php namespace App\Http\Controllers;
 
-use App\Activity;
 use App\ActivityMeta;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
-class ActivityController extends Controller {
+class ActivityMetaController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
@@ -34,34 +33,9 @@ class ActivityController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store(Request $request)
+	public function store()
 	{
-		if ($request->isJson())
-		{
-			$input = $request->input();
-		}
-
-		if (array_key_exists('meta',$input))
-		{
-			$meta = $input['meta'];
-			unset($input['meta']);
-		}
-
-		$actId = Activity::createNewActivity($input);
-
-		$activity = Activity::find($actId);
-
-		$metaArray = [];
-		$i = 0;
-		foreach ($meta as $actMeta)
-		{
-			$metaArray[$i] = new ActivityMeta($actMeta);
-			$i++;
-		}
-
-		$activity->meta()->saveMany($metaArray);
-
-		return response("Activity Saved", 200);
+		//
 	}
 
 	/**
