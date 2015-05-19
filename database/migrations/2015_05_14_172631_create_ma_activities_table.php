@@ -15,9 +15,8 @@ class CreateMaActivitiesTable extends Migration {
 		Schema::create('ma_activities', function(Blueprint $table)
 		{
 			$table->increments('act_id');
+			$table->timestamp('act_date');
 			$table->timestamp('act_date_gmt');
-			$table->timestamps();
-			$table->softDeletes();
 			$table->bigInteger('comment_id', false, true);
 			$table->integer('sequence_id', false, true)->nullable();
 			$table->string('obs_message_id', 30);
@@ -27,6 +26,8 @@ class CreateMaActivitiesTable extends Migration {
 			$table->string('act_key', 255)->nullable();
 			$table->longText('act_value');
 			$table->string('act_unit', 255)->nullable();
+			$table->timestamps();
+			$table->softDeletes();
 
 			$table->index('comment_id', 'comment_id');
 			$table->index('act_key', 'meta_key');

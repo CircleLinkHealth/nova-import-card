@@ -36,15 +36,27 @@ class ActivityController extends Controller {
 	 */
 	public function store(Request $request)
 	{
-		if ($request->isJson())
+		if ( $request->isJson() )
 		{
 			$input = $request->input();
+		}
+		else if ( $request->isMethod('POST') ) //WP Site
+		{
+			$input = $request->input('data');
+		}
+		else
+		{
+			return response("Unauthorized", 401);
 		}
 
 		if (array_key_exists('meta',$input))
 		{
 			$meta = $input['meta'];
 			unset($input['meta']);
+		}
+		else
+		{
+			return response("Bad request", 400);
 		}
 
 		$actId = Activity::createNewActivity($input);
@@ -61,7 +73,7 @@ class ActivityController extends Controller {
 
 		$activity->meta()->saveMany($metaArray);
 
-		return response("Activity Saved", 200);
+		return response("Activity Created", 201);
 	}
 
 	/**
