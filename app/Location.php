@@ -17,7 +17,7 @@ class Location extends Entity implements LocationInterface
      *
      * @var locationClosure
      */
-    protected $closure = 'App\locationClosure';
+    protected $closure = 'App\LocationClosure';
 
     /**
      * Mass assignable attributes
