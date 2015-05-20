@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class ActivityController extends Controller {
 
@@ -14,9 +15,17 @@ class ActivityController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index(Request $request)
 	{
-		//
+		if ( $request->header('Client') == 'ui' )
+		{
+			$user_id = Crypt::decrypt($request->header('UserId'));
+
+			$activities = (new Activity())->getActivitiesWithMeta($user_id);
+
+			return response()->json( Crypt::encrypt( json_encode( $activities ) ) );
+		}
+
 	}
 
 	/**

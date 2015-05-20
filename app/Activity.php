@@ -45,4 +45,17 @@ class Activity extends Model {
         return $newActivity->act_id;
     }
 
+
+    public function getActivitiesWithMeta($user_id)
+    {
+        $activities = Activity::where('user_id', '=', $user_id)->get();
+
+        foreach ( $activities as $act )
+        {
+            $act['meta'] = $act->meta;
+        }
+
+        return $activities;
+    }
+
 }
