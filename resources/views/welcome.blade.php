@@ -44,7 +44,7 @@
 			<div class="content">
 				<div class="title">CircleLink Health<br>Care Plan Manager</div>
 				<a class="btn btn-primary subtitle" href="{{ url('/auth/login') }}">Login</a>
-				<div style="color:#000;"><?php var_dump(Config::get('database')); ?></div>
+				<div style="color:#000;"><?php //var_dump(Config::get('database')); ?></div>
 			</div>
 		</div>
 	</body>
