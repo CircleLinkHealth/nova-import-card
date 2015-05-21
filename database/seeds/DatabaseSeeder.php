@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 use App\User;
+use App\Activity;
 
 class DatabaseSeeder extends Seeder {
 
@@ -17,7 +18,9 @@ class DatabaseSeeder extends Seeder {
 		Model::unguard();
 
 		$this->call('UserTableSeeder');
+		$this->command->info('User table seeded!');
 
+		$this->call('ActivityTableSeeder');
 		$this->command->info('User table seeded!');
 	}
 
@@ -34,6 +37,23 @@ class UserTableSeeder extends Seeder {
 			'name' => 'Michalis Antoniou',
 			'email' => 'mantoniou@circlelikhealth.com',
 			'password' => Hash::make('iamadmin')
+		]);
+	}
+
+}
+
+
+class ActivityTableSeeder extends Seeder {
+
+	public function run()
+	{
+		DB::table('activities')->delete();
+
+		Activity::create([
+			'name' => 'Care Plan Setup',
+			'duration' => 12,
+			'duration_unit' => 'minutes',
+			'logged_from' => 'ui'
 		]);
 	}
 

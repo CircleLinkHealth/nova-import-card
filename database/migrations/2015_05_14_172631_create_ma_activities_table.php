@@ -12,25 +12,32 @@ class CreateMaActivitiesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('ma_activities', function(Blueprint $table)
+		Schema::create('activities', function(Blueprint $table)
 		{
-			$table->increments('act_id');
-			$table->timestamp('act_date');
-			$table->timestamp('act_date_gmt');
-			$table->bigInteger('comment_id', false, true);
-			$table->integer('sequence_id', false, true)->nullable();
+			$table->increments('id');
+
+			$table->string('type', 255)->nullable();
+			$table->unsignedInteger('duration');
+			$table->string('duration_unit', 30)->nullable();
+
+			$table->unsignedInteger('patient_id');
+			$table->unsignedInteger('provider_id');
+			$table->unsignedInteger('logger_id');
+
+			$table->unsignedInteger('comment_id');
+			$table->unsignedInteger('sequence_id')->nullable();
 			$table->string('obs_message_id', 30);
-			$table->bigInteger('user_id', false, true);
-			$table->bigInteger('performed_by', false, true);
-			$table->string('act_method', 30);
-			$table->string('act_key', 255)->nullable();
-			$table->longText('act_value');
-			$table->string('act_unit', 255)->nullable();
+
+			$table->string('logged_from', 30);
+
+			$table->timestamp('performed_at');
+			$table->timestamp('performed_at_gmt');
 			$table->timestamps();
 			$table->softDeletes();
 
+
 			$table->index('comment_id', 'comment_id');
-			$table->index('act_key', 'meta_key');
+			$table->index('name', 'name');
 			$table->index('obs_message_id', 'obs_message_id');
 		});
 	}
