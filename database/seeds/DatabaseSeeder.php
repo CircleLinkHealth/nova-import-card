@@ -50,7 +50,7 @@ class ActivityTableSeeder extends Seeder {
 		DB::table('activities')->delete();
 
 		Activity::create([
-			'name' => 'Care Plan Setup',
+			'type' => 'Care Plan Setup',
 			'duration' => 12,
 			'duration_unit' => 'minutes',
 			'logged_from' => 'ui'

@@ -37,7 +37,7 @@ class CreateMaActivitiesTable extends Migration {
 
 
 			$table->index('comment_id', 'comment_id');
-			$table->index('name', 'name');
+			$table->index('type', 'type');
 			$table->index('obs_message_id', 'obs_message_id');
 		});
 	}
