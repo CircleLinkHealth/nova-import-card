@@ -31,5 +31,9 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	Route::resource('activities.meta', 'ActivityMetaController');
 
+	Route::resource('wpusers', 'WpUserController');
+
+	Route::resource('wpusers.meta', 'WpUserMetaController');
+
 
 });
