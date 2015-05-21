@@ -30,6 +30,4 @@ Route::group(['middleware' => 'authApiCall'], function()
 	Route::resource('activities', 'ActivityController');
 
 	Route::resource('activities.meta', 'ActivityMetaController');
-
-
 });

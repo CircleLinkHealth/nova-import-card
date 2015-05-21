@@ -12,22 +12,24 @@ class CreateMaActivityMetaTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('ma_activity_meta', function(Blueprint $table)
+		Schema::create('activitymeta', function(Blueprint $table)
 		{
-			$table->increments('meta_id');
-			$table->unsignedInteger('act_id');
+			$table->increments('id');
+
+			$table->unsignedInteger('activity_id');
 			$table->unsignedInteger('comment_id');
 			$table->string('message_id', 30);
+
 			$table->string('meta_key', 255)->nullable();
 			$table->longText('meta_value');
+
 			$table->timestamps();
 			$table->softDeletes();
 
-//			$table->unique(['act_id', 'meta_key'], 'act_id_2'); Removed for when adding many comments at once
 			$table->index('meta_key', 'meta_key');
-			$table->index('act_id', 'act_id');
+			$table->index('activity_id', 'activity_id');
 
-			$table->foreign('act_id')->references('act_id')->on('ma_activities');
+			$table->foreign('activity_id')->references('id')->on('activities');
 		});
 	}
 

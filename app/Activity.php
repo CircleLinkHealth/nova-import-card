@@ -5,31 +5,18 @@ use Illuminate\Database\Eloquent\Model;
 class Activity extends Model {
 
     /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'ma_activities';
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'act_id';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['act_date', 'user_id', 'performed_by', 'act_method', 'act_key', 'act_value', 'act_unit'];
+    protected $fillable = ['type', 'duration', 'duration_unit', 'patient_id', 'provider_id', 'logger_id',
+        'logged_from', 'performed_at', 'performed_at_gmt'];
 
     protected $dates = ['deleted_at'];
 
     public function meta()
     {
-        return $this->hasMany('App\ActivityMeta', 'act_id');
+        return $this->hasMany('App\ActivityMeta');
     }
 
     /**
@@ -42,13 +29,19 @@ class Activity extends Model {
     {
         $newActivity = Activity::create($attr);
 
-        return $newActivity->act_id;
+        return $newActivity->id;
     }
 
 
-    public function getActivitiesWithMeta($user_id)
+    /**
+     * Get all activities with all their meta for a given patient
+     *
+     * @param $patient_id
+     * @return mixed
+     */
+    public function getActivitiesWithMeta($patient_id)
     {
-        $activities = Activity::where('user_id', '=', $user_id)->get();
+        $activities = Activity::where('patient_id', '=', $patient_id)->get();
 
         foreach ( $activities as $act )
         {
@@ -57,5 +50,16 @@ class Activity extends Model {
 
         return $activities;
     }
+
+//    Still working here
+//    public function getTimeReport(array $months, array $users = [], $time = null, $range = false)
+//    {
+//        if ( !empty($users) )
+//        {
+//            Activity::select( DB::raw('user_id, sum(act_value)') )->get()
+//            Activity::whereIn('user_id', $users)->get();
+//        }
+//
+//    }
 
 }
