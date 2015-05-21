@@ -35,5 +35,13 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	Route::resource('wpusers.meta', 'WpUserMetaController');
 
+	Route::resource('rulesucp', 'RulesUCPController');
+
+	Route::resource('rulespcp', 'RulesPCPController');
+
+	Route::resource('rulesitem', 'RulesItemController');
+
+	Route::resource('rulesitem.meta', 'RulesItemMetaController');
+
 
 });
