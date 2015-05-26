@@ -43,5 +43,9 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	Route::resource('rulesitem.meta', 'RulesItemMetaController');
 
+	Route::resource('observation', 'ObservationController');
+
+	Route::resource('observation.meta', 'ObservationMetaController');
+
 
 });

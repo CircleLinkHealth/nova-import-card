@@ -32,6 +32,8 @@ class WpUserMeta extends Model {
      */
     protected $fillable = ['umeta_id', 'user_id', 'meta_key', 'meta_value'];
 
+    public $timestamps = false;
+
     public function wpUser()
     {
         return $this->belongsTo('App\WpUser', 'user_id', 'ID');
