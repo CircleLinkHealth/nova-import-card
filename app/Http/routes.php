@@ -48,6 +48,4 @@ Route::group(['middleware' => 'authApiCall'], function()
 	Route::resource('observation', 'ObservationController');
 
 	Route::resource('observation.meta', 'ObservationMetaController');
-
-
 });

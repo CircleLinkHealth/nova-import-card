@@ -21,25 +21,32 @@ class ReportsController extends Controller {
 		{
 			$months = Crypt::decrypt($request->header('months'));
 
-			$patients = array();
-			if($request->header('patients')) {
-				$patients = $request->header('patients');
+			$patients = [];
+			if( !empty( $request->header('patients') ) ) {
+				$patients = Crypt::decrypt($request->header('patients'));
 			};
 
-			$range = array();
+			$range = true;
 			if($request->header('range')) {
-				$range = $request->header('range');
+				$range = Crypt::decrypt($request->header('range'));
 			};
 
-			$timeLessThan = false;
-			if($request->header('timeLessThan')) {
-				$timeLessThan = $request->header('timeLessThan');
+			$timeLessThan = 20;
+			if( !empty( $request->header('timeLessThan') ) ) {
+				$timeLessThan = Crypt::decrypt($request->header('timeLessThan'));
 			};
+
 
 			$reportData = Activity::getReportData($months,$timeLessThan,$patients,$range);
 
-			return response()->json( Crypt::encrypt( json_encode( $reportData ) ) );
+			if(!empty($reportData)) {
+				return response()->json(Crypt::encrypt(json_encode($reportData)));
+			} else {
+				return response('Not Found', 204);
+			}
 		}
+
+		return response('Unauthorized', 401);
 	}
 
 	/**

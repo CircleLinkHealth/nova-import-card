@@ -19,8 +19,11 @@ class Activity extends Model {
 
     protected $appends = ['performed_at_year_month'];
 
-    public function getPerformedAtYearMonthAttribute(){
-        return Carbon::parse($this->attributes['performed_at'])->format('Y-m');
+    public function getPerformedAtYearMonthAttribute()
+    {
+        if ( !empty( $this->attributes['performed_at'] ) ) {
+            return Carbon::parse($this->attributes['performed_at'])->format('Y-m');
+        }
     }
 
     public function meta()
@@ -66,12 +69,12 @@ class Activity extends Model {
      * Returns activity data used to build reports
      *
      * @param array $months
-     * @param null $timeLessThan
+     * @param int $timeLessThan
      * @param array $patientIds
      * @param bool $range
-     * @return string
+     * @return bool
      */
-    public static function getReportData(array $months, $timeLessThan = null, array $patientIds = [], $range = true)
+    public static function getReportData(array $months, $timeLessThan = 20, array $patientIds = [], $range = true)
     {
         $query = Activity::whereBetween('performed_at', [
             Carbon::createFromFormat('Y-n', $months[0])->startOfMonth(),
@@ -81,6 +84,13 @@ class Activity extends Model {
         !empty($patientIds) ? $query->whereIn('patient_id', $patientIds) : '';
 
         $data = $query
+            ->whereIn('patient_id', function($subQuery) use ($timeLessThan){
+                $subQuery->select('patient_id')
+                    ->from( with(new Activity)->getTable() )
+                    ->groupBy('patient_id')
+                    ->having(DB::raw('SUM(duration)'), '<', $timeLessThan)
+                    ->get();
+            })
             ->orderBy('performed_at', 'asc')
             ->get()
             ->groupBy('patient_id');
@@ -94,7 +104,11 @@ class Activity extends Model {
             $reportData[$patientAct[0]['patient_id']] = collect($patientAct)->groupBy('performed_at_year_month');
         }
 
-        return $reportData;
+        if(!empty($reportData)) {
+            return $reportData;
+        } else {
+            return false;
+        }
     }
 
 
