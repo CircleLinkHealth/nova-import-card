@@ -94,7 +94,7 @@ class Activity extends Model {
             $reportData[$patientAct[0]['patient_id']] = collect($patientAct)->groupBy('performed_at_year_month');
         }
 
-        return json_encode($reportData);
+        return $reportData;
     }
 
 
