@@ -20,8 +20,13 @@ class ReportsController extends Controller {
 		if ( $request->header('Client') == 'ui' )
 		{
 			$months = Crypt::decrypt($request->header('months'));
+
 			$timeLessThan = Crypt::decrypt($request->header('timeLessThan'));
-			$patients = Crypt::decrypt($request->header('patients'));
+
+			$patients = empty( $request->header('patients') )
+				? Crypt::decrypt($request->header('patients'))
+				: [];
+
 			$range = Crypt::decrypt($request->header('range'));
 
 			$reportData = Activity::getReportData($months,$timeLessThan,$patients,$range);
