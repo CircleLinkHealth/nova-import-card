@@ -21,13 +21,20 @@ class ReportsController extends Controller {
 		{
 			$months = Crypt::decrypt($request->header('months'));
 
-			$timeLessThan = Crypt::decrypt($request->header('timeLessThan'));
+			$patients = array();
+			if($request->header('patients')) {
+				$patients = $request->header('patients');
+			};
 
-			$patients = empty( $request->header('patients') )
-				? Crypt::decrypt($request->header('patients'))
-				: [];
+			$range = array();
+			if($request->header('range')) {
+				$range = $request->header('range');
+			};
 
-			$range = Crypt::decrypt($request->header('range'));
+			$timeLessThan = false;
+			if($request->header('timeLessThan')) {
+				$timeLessThan = $request->header('timeLessThan');
+			};
 
 			$reportData = Activity::getReportData($months,$timeLessThan,$patients,$range);
 
