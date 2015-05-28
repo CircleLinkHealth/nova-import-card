@@ -25,6 +25,8 @@ Route::group(['middleware' => 'auth'], function ()
 
 Route::group(['middleware' => 'authApiCall'], function()
 {
+	Route::resource('reports', 'ReportsController');
+
 	Route::resource('locations', 'LocationController');
 
 	Route::resource('activities', 'ActivityController');
@@ -43,5 +45,7 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	Route::resource('rulesitem.meta', 'RulesItemMetaController');
 
+	Route::resource('observation', 'ObservationController');
 
+	Route::resource('observation.meta', 'ObservationMetaController');
 });

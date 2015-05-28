@@ -2,6 +2,8 @@
 
 use App\Activity;
 use App\ActivityMeta;
+use App\WpUser;
+use App\WpUserMeta;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -70,17 +72,38 @@ class ActivityController extends Controller {
 
 		$actId = Activity::createNewActivity($input);
 
-		$activity = Activity::find($actId);
 
+		// add meta
+		$activity = Activity::find($actId);
 		$metaArray = [];
 		$i = 0;
-		foreach ($meta as $actMeta)
-		{
+		foreach ($meta as $actMeta) {
 			$metaArray[$i] = new ActivityMeta($actMeta);
 			$i++;
 		}
-
 		$activity->meta()->saveMany($metaArray);
+
+		// update usermeta: cur_month_activity_time
+		$userMeta = WpUserMeta::where('user_id', '=', $input['patient_id'])
+			->where('meta_key', '=', 'cur_month_activity_time')->first();
+
+		if(!$userMeta) {
+			// add in initial user meta: cur_month_activity_time
+			$newUserMetaAttr = array(
+				'user_id' => $input['patient_id'],
+				'meta_key' => 'cur_month_activity_time',
+				'meta_value' => $input['duration'],
+			);
+			$newUserMeta = WpUserMeta::create($newUserMetaAttr);
+			//echo "<pre>CREATED";var_dump($newUserMeta);echo "</pre>";die();
+		} else {
+				// update existing user meta: cur_month_activity_time
+				$activityTotal = ($input['duration'] + $userMeta->meta_value);
+				$userMeta = WpUserMeta::where('user_id', '=', $input['patient_id'])
+					->where('meta_key', '=', 'cur_month_activity_time')
+					->update(array('meta_value' => $activityTotal));
+				//echo "<pre>UPDATED";var_dump($activityTotal);echo "</pre>";die();
+		}
 
 		return response("Activity Created", 201);
 	}
