@@ -35,6 +35,7 @@
 				@if ( ! Auth::guest())
 					<ul class="nav navbar-nav">
 						<li><a href="{{ url('/') }}">Home</a></li>
+						<li><a href="{{ action('ApiKeyController@index') }}">API Keys</a></li>
 					</ul>
 				@endif
 
