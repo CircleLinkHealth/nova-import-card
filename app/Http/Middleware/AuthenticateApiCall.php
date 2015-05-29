@@ -43,7 +43,7 @@ class AuthenticateApiCall {
 			if (ApiKey::checkKeyExists($apiKey))
 			{
 				(new ApiLog())->logThisRequest($request, $apiKey);
-//file_put_contents( 'text.txt', $request );
+
 				redirect()->intended();
 			}
 			else
