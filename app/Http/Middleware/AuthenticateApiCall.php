@@ -1,5 +1,7 @@
 <?php namespace App\Http\Middleware;
 
+use App\ApiLog;
+use App\Http\Controllers\ApiController;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 
@@ -36,10 +38,12 @@ class AuthenticateApiCall {
 	{
 		if ( $this->auth->guest() )
 		{
-			$appKey = $request->header('X-Authorization');
+			$apiKey = $request->header('X-Authorization');
 
-			if (ApiKey::checkKeyExists($appKey))
+			if (ApiKey::checkKeyExists($apiKey))
 			{
+				(new ApiLog())->logThisRequest($request, $apiKey);
+//file_put_contents( 'text.txt', $request );
 				redirect()->intended();
 			}
 			else
