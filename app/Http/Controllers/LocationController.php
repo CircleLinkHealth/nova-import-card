@@ -16,7 +16,14 @@ class LocationController extends Controller {
 	 */
 	public function index(Request $request)
 	{
-		return response()->json(Crypt::encrypt( json_encode(Location::getNonRootLocations()) ));
+		if ($request->header('X-Authorization'))
+		{
+			return response()->json(Crypt::encrypt( json_encode(Location::getNonRootLocations()) ));
+		}
+		else
+		{
+			return Location::getNonRootLocations();
+		}
 	}
 
 	/**
@@ -46,7 +53,9 @@ class LocationController extends Controller {
 			$parent->addChild($newLocation);
 		}
 
-		return $saved ? response('Location saved', 200) : response('Error', 500);
+		return $saved ?
+			response('Location created', 201) :
+			response('Error', 500);
 	}
 
 	/**

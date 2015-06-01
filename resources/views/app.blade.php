@@ -28,14 +28,26 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="{{ url('/') }}">CPM</a>
+				<a class="navbar-brand" href="{{ url('/') }}">
+					<img src="{{ asset('/img/cpm-logo.png') }}" height="40" width="70">
+				</a>
 			</div>
 
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				@if ( ! Auth::guest())
 					<ul class="nav navbar-nav">
-						<li><a href="{{ url('/') }}">Home</a></li>
 						<li><a href="{{ action('ApiKeyController@index') }}">API Keys</a></li>
+
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+								Locations <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ action('LocationController@index') }}">All locations</a></li>
+								<li><a href="{{ action('LocationController@create') }}">Add new</a></li>
+							</ul>
+						</li>
+
 					</ul>
 				@endif
 
