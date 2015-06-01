@@ -21,6 +21,10 @@ Route::controllers([
 Route::group(['middleware' => 'auth'], function ()
 {
 	Route::get('home', 'HomeController@index');
+
+	Route::resource('apikeys', 'ApiKeyController', [
+		'only' => [ 'index', 'destroy', 'store' ],
+	]);
 });
 
 Route::group(['middleware' => 'authApiCall'], function()

@@ -26,7 +26,7 @@ class LocationController extends Controller {
 	 */
 	public function create()
 	{
-		return view('location.create', [ 'locations' => Location::getAllNodes() ]);
+		return view('locations.create', [ 'locations' => Location::getAllNodes() ]);
 	}
 
 	/**
