@@ -51,9 +51,12 @@ class ActivityController extends Controller {
 		{
 			$input = $request->input();
 		}
-		else if ( $request->isMethod('POST') ) //WP Site
+		else if ( $request->isMethod('POST') )
 		{
-			$input = $request->input('data');
+			if ( $request->header('Client') == 'ui' ) // WP Site
+			{
+				$input = json_decode(Crypt::decrypt($request->input('data')), true);
+			}
 		}
 		else
 		{
