@@ -2,7 +2,7 @@
 
 ## Documentation
 
-This project is an API to handle Locations for CircleLink's CPM.
+This project is an API for CircleLink's CPM.
 
 
 ## How to set everything up 
@@ -40,7 +40,3 @@ So, here are the variables that need to be set in global-config.php:
 	'locations_app_key' => '',     // App specific api key. At the moment use `php artisan api-key:generate` to generate a new key for a new app
 	'locations_api_path' => '',    // Api endpoint url
 	'api_encryption_key' => '',    // Paste the APP_KEY from Laravel's .env file here
-
-
-
-
