@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
-use App\User;
-use App\Activity;
 
 class DatabaseSeeder extends Seeder {
 
@@ -17,49 +15,14 @@ class DatabaseSeeder extends Seeder {
 	{
 		Model::unguard();
 
-		$this->call('UserTableSeeder');
+		$this->call('database\seeds\UserTableSeeder');
 		$this->command->info('User table seeded!');
 
-		$this->call('ActivityTableSeeder');
-		$this->command->info('User table seeded!');
-	}
+		$this->call('database\seeds\ActivityTableSeeder');
+		$this->command->info('Activity table seeded!');
 
-}
-
-
-class UserTableSeeder extends Seeder {
-
-	public function run()
-	{
-		// DB::table('users')->delete();
-
-		User::create([
-			'name' => 'Michalis Antoniou',
-			'email' => 'mantoniou@circlelinkhealth.com',
-			'password' => Hash::make('iamadmin')
-		]);
-		User::create([
-			'name' => 'Phil Lawlor',
-			'email' => 'PLawlor@circlelinkhealth.com',
-			'password' => Hash::make('iamadmin')
-		]);
-	}
-
-}
-
-
-class ActivityTableSeeder extends Seeder {
-
-	public function run()
-	{
-		DB::table('activities')->delete();
-
-		Activity::create([
-			'type' => 'Care Plan Setup',
-			'duration' => 12,
-			'duration_unit' => 'minutes',
-			'logged_from' => 'ui'
-		]);
+		$this->call('database\seeds\LocationTableSeeder');
+		$this->command->info('Location table seeded!');
 	}
 
 }
