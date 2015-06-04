@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateMaActivitiesTable extends Migration {
@@ -49,7 +50,9 @@ class CreateMaActivitiesTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('ma_activities');
+		DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+		Schema::dropIfExists('activities');
+		DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 	}
 
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateMaActivityMetaTable extends Migration {
@@ -29,7 +30,7 @@ class CreateMaActivityMetaTable extends Migration {
 			$table->index('meta_key', 'meta_key');
 			$table->index('activity_id', 'activity_id');
 
-			$table->foreign('activity_id')->references('id')->on('activities');
+			$table->foreign('activity_id')->references('id')->on('activities')->onDelete('cascade');
 		});
 	}
 
@@ -40,7 +41,9 @@ class CreateMaActivityMetaTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('ma_activity_meta');
+		DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+		Schema::dropIfExists('activitymeta');
+		DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 	}
 
 }
