@@ -99,6 +99,9 @@ class Activity extends Model {
          * Using multiple groupBy clauses didn't work.
          * Come back here later.
          */
+        foreach($patientIds as $patientId) {
+            $reportData[$patientId] = array();
+        }
         foreach ($data as $patientAct)
         {
             $reportData[$patientAct[0]['patient_id']] = collect($patientAct)->groupBy('performed_at_year_month');
