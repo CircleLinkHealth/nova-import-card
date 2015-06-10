@@ -41,6 +41,10 @@ class WpUser extends Model {
         return $this->hasMany('App\WpUserMeta', 'user_id', 'ID');
     }
 
+    public function activities()
+    {
+        return $this->hasMany('App\Activity');
+    }
 
     public function getWpUsersWithMeta($user_id)
     {

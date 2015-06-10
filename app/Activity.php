@@ -32,6 +32,11 @@ class Activity extends Model {
     }
 
 
+    public function patient()
+    {
+        return $this->belongsTo('App\WpUser', 'patient_id', 'ID');
+    }
+
     /**
      * Create a new activity and return its id
      *
@@ -88,9 +93,10 @@ class Activity extends Model {
                 $subQuery->select('patient_id')
                     ->from( with(new Activity)->getTable() )
                     ->groupBy('patient_id')
-                    ->having(DB::raw('SUM(duration)'), '<', $timeLessThan)
+                    //->having(DB::raw('SUM(duration)'), '<', $timeLessThan)
                     ->get();
             })
+            ->with('patient')
             ->orderBy('performed_at', 'asc')
             ->get()
             ->groupBy('patient_id');
