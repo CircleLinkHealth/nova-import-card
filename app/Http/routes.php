@@ -68,6 +68,8 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	Route::resource('locations', 'LocationController');
 
+	Route::resource('locations/show', 'LocationController');
+
 	Route::resource('activities', 'ActivityController');
 
 	Route::resource('activities.meta', 'ActivityMetaController');

@@ -16,14 +16,18 @@ class LocationController extends Controller {
 	 */
 	public function index(Request $request)
 	{
-		if ($request->header('X-Authorization'))
-		{
-			return response()->json(Crypt::encrypt( json_encode(Location::getNonRootLocations()) ));
-		}
-		else
-		{
-			return Location::getNonRootLocations();
-		}
+		// if ($request->header('X-Authorization'))
+		// {
+		// 	return response()->json(Crypt::encrypt( json_encode(Location::getNonRootLocations()) ));
+		// }
+		// else
+		// {
+		return view('locations.show', [ 
+			'locationParents' => Location::getAllParents(),
+			'locationSubs' => Location::getNonRootLocations(),
+			'locationParentsSubs' => Location::getParentsSubs($request)	 
+			]);
+		// }
 	}
 
 	/**
@@ -66,7 +70,12 @@ class LocationController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+		// return $id;
+		return view('locations.show', [ 
+			'locationParents' => Location::getAllParents(),
+			'locationSubs' => Location::getNonRootLocations(),
+			'locationParentsSubs' => Location::getParentsSubs($id)	 
+			]);
 	}
 
 	/**

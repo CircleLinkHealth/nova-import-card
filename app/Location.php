@@ -9,6 +9,7 @@ class Location extends Entity implements LocationInterface
      * The table associated with the model.
      *
      * @var string
+
      */
     protected $table = 'locations';
 
@@ -34,6 +35,16 @@ class Location extends Entity implements LocationInterface
     public static function getAllNodes()
     {
         return Location::all()->lists('name', 'id');
+    }
+
+    public static function getAllParents()
+    {
+        return Location::whereRaw('position = 0 AND real_depth = 0')->lists('name', 'id');
+    }
+
+    public static function getParentsSubs($id)
+    {
+        return Location::where('parent_id', '=', $id)->lists('name', 'id');
     }
 
 }
