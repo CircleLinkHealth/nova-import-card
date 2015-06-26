@@ -5,6 +5,11 @@
 
     RewriteEngine On
 
+    #  these 2 lines are for the authorization request header
+    # # http://stackoverflow.com/questions/20853604/laravel-get-request-headers
+    RewriteCond %{HTTP:Authorization} ^(.*)
+    RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
     # Redirect Trailing Slashes...
     RewriteRule ^(.*)/$ /$1 [L,R=301]
 

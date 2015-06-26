@@ -44,9 +44,8 @@ class CustomUserProvider implements UserProvider {
             if($key == 'email') {
                 $key = 'user_email';
             }
-            if ( ! str_contains($key, 'password'))
+            if ( ! str_contains($key, 'password') && ! str_contains($key, 'user_pass'))
             {
-                echo $key;
                 $query->where($key, $value);
             }
         }
@@ -59,8 +58,13 @@ class CustomUserProvider implements UserProvider {
         $wp_hasher = new PasswordHash(8, TRUE);
 
         $password_hashed = $user->getAuthPassword();
-        $plain_password = $credentials['password'];
+        if( isset($credentials['password']) ) {
+            $plain_password = $credentials['password'];
+        } else if( isset($credentials['user_pass']) ) {
+            $plain_password = $credentials['user_pass'];
+        }
 
+        //dd( $wp_hasher->CheckPassword($plain_password, $password_hashed) );
         if($wp_hasher->CheckPassword($plain_password, $password_hashed)) {
             return true;
         } else {

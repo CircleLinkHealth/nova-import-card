@@ -46,6 +46,13 @@ class WpUser extends Model {
         return $this->hasMany('App\Activity');
     }
 
+    public function getWpUserWithMeta($user_id)
+    {
+        $wpUser = WpUser::where('ID', '=', $user_id)->first();
+
+        return $wpUser;
+    }
+
     public function getWpUsersWithMeta($user_id)
     {
         $wpUsers = WpUser::where('ID', '=', $user_id)->get();

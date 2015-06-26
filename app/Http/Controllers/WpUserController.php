@@ -19,11 +19,34 @@ class WpUserController extends Controller {
 	{
 		if ( $request->header('Client') == 'ui' )
 		{
-			$user_id = Crypt::decrypt($request->header('UserId'));
+			$userId = Crypt::decrypt($request->header('UserId'));
 
-			$wpUsers = (new WpUser())->getWpUsersWithMeta($user_id);
+			$wpUsers = (new WpUser())->getWpUsersWithMeta($userId);
 
 			return response()->json( Crypt::encrypt( json_encode( $wpUsers ) ) );
+
+		} else if ( $request->header('Client') == 'mobi' )
+		{
+			$response = [
+				'user' => []
+			];
+			$statusCode = 200;
+
+			\JWTAuth::setIdentifier('ID');
+			$user = \JWTAuth::parseToken()->authenticate();
+			if(!$user) {
+				return response()->json(['error' => 'invalid_credentials'], 401);
+			} else {
+				$userId = $user->ID;
+				$wpUser = (new WpUser())->getWpUserWithMeta($userId);
+				$response = [
+					'id' => $wpUser->ID,
+					'user_email' => $wpUser->user_email,
+					'user_registered' => $wpUser->user_registered,
+					'meta' => $wpUser->meta
+				];
+				return response()->json( $response, $statusCode );
+			}
 		}
 
 	}
