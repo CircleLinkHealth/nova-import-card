@@ -1,6 +1,6 @@
 <?php
 
-@require '/var/vhosts/cpm/global-config.php';
+//@require '/var/vhosts/cpm/global-config.php';
 
 /*
 define('ENVIRONMENT', 'development');
@@ -14,8 +14,8 @@ $_SERVER[ 'HTTP_HOST' ] = $global_config['domain_current_site'];
 */
 
 /* END */
-include '/var/vhosts/cpm/wordpressmu/wp-includes/class-phpass.php';
-include '/var/vhosts/cpm/wordpressmu/wp-includes/pluggable.php';
+include __DIR__ . '/wp/wp-includes/class-phpass.php';
+include __DIR__ . '/wp/wp-includes/pluggable.php';
 
 
 /**
