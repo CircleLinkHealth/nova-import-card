@@ -3,3 +3,4 @@
 .idea/
 .elasticbeanstalk/
 .env
+/config/jwt.php
