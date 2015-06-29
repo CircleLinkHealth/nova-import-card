@@ -41,6 +41,11 @@ class WpUser extends Model {
         return $this->hasMany('App\WpUserMeta', 'user_id', 'ID');
     }
 
+    public function comment()
+    {
+        return $this->hasMany('App\Comment', 'user_id', 'ID');
+    }
+
     public function activities()
     {
         return $this->hasMany('App\Activity');
@@ -64,5 +69,11 @@ class WpUser extends Model {
 
         return $wpUsers;
     }
+
+//    public static function getBlogId($user_id){
+//
+//        $blogID = WpUserMeta::select('meta_value')->where('user_id', $user_id)->where('meta_key','primary_blog')->get();
+//        return $blogID;
+//    }
 
 }

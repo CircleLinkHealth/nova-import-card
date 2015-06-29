@@ -3,7 +3,7 @@
     <list>
       <Biscuit>
         <option name="date" value="1435346616000" />
-        <option name="domain" value="local-api.cpm" />
+        <option name="domain" value="cpm.api" />
         <option name="name" value="laravel_session" />
         <option name="path" value="/" />
         <option name="value" value="eyJpdiI6Ik52dWxrN2ltZ2h6YUdNalZuZnp3S0E9PSIsInZhbHVlIjoiVElyc29KT3VXUTFwQ3hwUzlDaGkrRnpXbkd5STZMWXc2cGd2aXZUQ29HQjlweWltdVhDXC9kTEVRa01tVWl3XC9FdXozMU1JN1ZEUHBXc2ZMa0V1TnJsUT09IiwibWFjIjoiODdhMTYyZWQ3MmQyZTI3MWE1YzcyYzRmZjU0YzMwNzAxMDc3MjM5YzI5YmI2NDg4NTkyMWE4NGJiOWI5NjNlYSJ9" />
@@ -29,7 +29,7 @@
     <list>
       <KeyValuePair>
         <option name="key" value="user_email" />
-        <option name="value" value="kgallo@circlelinkhealth.com" />
+        <option name="value" value="rohanm@circlelinkhealth.com" />
       </KeyValuePair>
       <KeyValuePair>
         <option name="key" value="user_pass" />

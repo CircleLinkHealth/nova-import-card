@@ -1,0 +1,62 @@
+<RestClientRequest>
+  <option name="biscuits">
+    <list>
+      <Biscuit>
+        <option name="date" value="1435609104000" />
+        <option name="domain" value="cpm.api" />
+        <option name="name" value="laravel_session" />
+        <option name="path" value="/" />
+        <option name="value" value="eyJpdiI6Ikc2VCtSdUg4S2F5WVRFTGFTd0Njbnc9PSIsInZhbHVlIjoiNmFRVlkzYmZkbm4zQkFRNm1TcUpJa0xkOGZkdUVhSkZuTDBHV1hDc2VcL3dHM1BsY3ozbElFVnlYaitrXC9Zc2lLSFBpeGZkc3pIU0o2ODlWY3NNMXNEdz09IiwibWFjIjoiNTc2ZmJjYjIzZjc1OGQyNjdjNTFkMjU3NWNlMWNjZDNmOTg3MWFiNGJlMmNkZmRlMWMyYzhhZTgwMWQzZTg0ZiJ9" />
+      </Biscuit>
+    </list>
+  </option>
+  <option name="httpMethod" value="POST" />
+  <option name="urlBase" value="http://cpm.api" />
+  <option name="urlPath" value="/api/v2.1/comment/store" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Authorization" />
+        <option name="value" value="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJzdWIiOjMzMCwiaXNzIjoiaHR0cDpcL1wvY3BtLmFwaVwvYXBpXC92Mi4xXC9sb2dpbiIsImlhdCI6IjE0MzU2MDE1MDEiLCJleHAiOiIxNDM1NjA1MTAxIiwibmJmIjoiMTQzNTYwMTUwMSIsImp0aSI6IjE2YzE5MmQzMzMxZjdiMzNiNWVjZjJkYjY2OGNhNzRiIn0.ZjI2MTFlNzRiYTk2ZDM1ZmVjZTNhMzk2YzI2YTVjOWNhOWJmMWIyN2VhMzQ1ZjU0ODY2ZTRmNzNmODhiNjM4Zg" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Cache-Control" />
+        <option name="value" value="no-cache" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="X-Authorization" />
+        <option name="value" value="01e27eee75bedcd798dd2db12e5a32e292476573" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="client" />
+        <option name="value" value="mobi" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="comment_content" />
+        <option name="value" value="test" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="comment_type" />
+        <option name="value" value="sol" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="comment_author" />
+        <option name="value" value="testting" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="comment_parent" />
+        <option name="value" value="1" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="false" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="" />
+  <option name="filesToSend" value="" />
+</RestClientRequest>
