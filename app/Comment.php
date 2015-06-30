@@ -38,5 +38,10 @@ class Comment extends Model {
         return $this->belongsTo('App\WpUser', 'ID');
     }
 
+    public function observation()
+    {
+        return $this->belongsTo('App\Observation', 'comment_id');
+    }
+
 
 }

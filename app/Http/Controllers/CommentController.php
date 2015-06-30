@@ -40,9 +40,6 @@ class CommentController extends Controller {
     public function store(Request $request)
 
 	    {
-            $response = [
-                'user' => []
-            ];
             $statusCode = 200;
 
             \JWTAuth::setIdentifier('ID');
@@ -77,6 +74,9 @@ class CommentController extends Controller {
                 //$comm = new Comment();
                 $newComment->setTable($blogTable);
                 $saved = $newComment->save();
+
+
+
 
                 if($saved) {
                     $response = [

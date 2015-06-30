@@ -1,10 +1,12 @@
 <?php namespace App\Http\Controllers;
 
+use App\Comment;
 use App\Observation;
 use App\ObservationMeta;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
@@ -45,7 +47,74 @@ class ObservationController extends Controller {
 	 */
 	public function store(Request $request)
 	{
-		//
+        $statusCode = 200;
+
+        \JWTAuth::setIdentifier('ID');
+        $user = \JWTAuth::parseToken()->authenticate();
+        if(!$user) {
+            return response()->json(['error' => 'invalid_credentials'], 401);
+        } else {
+
+//************* COMMENT STORE BLOCK *************
+
+            $input = $request->input();
+            $newComment = new Comment();
+            $newComment->user_id = $user->ID;
+            $newComment->comment_author = $input['comment_author'];
+            $newComment->comment_author_email = 'admin@circlelinkhealth.com';
+            $newComment->comment_author_url = 'http://www.circlelinkhealth.com/';
+            $newComment->comment_author_IP = '127.0.0.1';
+
+            //**Needs to be looked at - Possibly take Time Zone from the app
+            $newComment->comment_date = Carbon::now();
+            $newComment->comment_date_gmt = Carbon::now()->setTimezone('GMT');
+            //**
+
+            $newComment->comment_content = $input['comment_content'];
+            $newComment->comment_karma = '0';
+            $newComment->comment_approved = 1;
+            $newComment->comment_agent = 'N/A';
+            $newComment->comment_parent = $input['comment_parent'];
+            $newComment->comment_type = $input['comment_type'];
+
+            //Get Blog id for current user
+            $blogTable = 'wp_'.$user->getBlogId($user->ID).'_comments';
+            $newComment->setTable($blogTable);
+            $newComment->save();
+
+//************* OBSERVATION STORE BLOCK *************
+
+            $newObservation = new Observation();
+            $newObservation->comment_id = $newComment->comment_id;
+            $newObservation->user_id = $user->ID;
+            //Needs discussion
+            $newObservation->obs_date = Carbon::now();
+            $newObservation->obs_date_gmt = Carbon::now()->setTimezone('GMT');
+            $newObservation->sequence_id = 0;
+            $newObservation->obs_message_id = $newComment->comment_author;
+            $newObservation->obs_method = $newComment->comment_type;
+            $newObservation->obs_key = $input['obs_key'];
+            $newObservation->obs_value = $input['obs_value'];
+            $newObservation->obs_unit = '';
+            //$savedObs = $newObservation->save();
+
+            //Get Blog id for current user
+            $commentBlogTable = 'wp_'.$user->getBlogId($user->ID).'_comments';
+            $obsBlogTable = 'ma_'.$user->getBlogId($user->ID).'_observations';
+            //Set tables names
+            $newComment->setTable($commentBlogTable);
+            $newObservation->setTable($obsBlogTable);
+            $savedObs = $newObservation->save();
+            //Check if both queries were successful
+            if($savedObs) {
+                $response = [
+                    'message' => 'Comment And Observation Stored!'
+                ];
+                return response()->json($response, $statusCode);
+            } else {
+                return response('Error', 500);
+            }
+        }
 	}
 
 	/**

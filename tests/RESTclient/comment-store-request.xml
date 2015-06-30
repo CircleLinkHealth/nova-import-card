@@ -2,22 +2,22 @@
   <option name="biscuits">
     <list>
       <Biscuit>
-        <option name="date" value="1435609104000" />
+        <option name="date" value="1435689586000" />
         <option name="domain" value="cpm.api" />
         <option name="name" value="laravel_session" />
         <option name="path" value="/" />
-        <option name="value" value="eyJpdiI6Ikc2VCtSdUg4S2F5WVRFTGFTd0Njbnc9PSIsInZhbHVlIjoiNmFRVlkzYmZkbm4zQkFRNm1TcUpJa0xkOGZkdUVhSkZuTDBHV1hDc2VcL3dHM1BsY3ozbElFVnlYaitrXC9Zc2lLSFBpeGZkc3pIU0o2ODlWY3NNMXNEdz09IiwibWFjIjoiNTc2ZmJjYjIzZjc1OGQyNjdjNTFkMjU3NWNlMWNjZDNmOTg3MWFiNGJlMmNkZmRlMWMyYzhhZTgwMWQzZTg0ZiJ9" />
+        <option name="value" value="eyJpdiI6ImNGcUp1Y3hwdVl5cTJvXC83aHp0dlZ3PT0iLCJ2YWx1ZSI6IjF2ZlR4bllScjRQSThyZFRnUU5vTDBHVEJIT2ptelwvSUs4RXJKbnJiMmJHWVRXV1BRSXoxMlRXTWg1UUsrQThEUzJ6T1prUjVpZm8rbGsxRUtHa1cwUT09IiwibWFjIjoiY2YwMTJmYmZiYWIyODU1NzNjNGI5MjZlOTcwMDFlYzJkN2NhMTNkMDQ1YWFjMDZhZDUwZjhhMGZmNTRlMGZkYyJ9" />
       </Biscuit>
     </list>
   </option>
   <option name="httpMethod" value="POST" />
   <option name="urlBase" value="http://cpm.api" />
-  <option name="urlPath" value="/api/v2.1/comment/store" />
+  <option name="urlPath" value="/api/v2.1/observation" />
   <option name="headers">
     <list>
       <KeyValuePair>
         <option name="key" value="Authorization" />
-        <option name="value" value="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJzdWIiOjMzMCwiaXNzIjoiaHR0cDpcL1wvY3BtLmFwaVwvYXBpXC92Mi4xXC9sb2dpbiIsImlhdCI6IjE0MzU2MDE1MDEiLCJleHAiOiIxNDM1NjA1MTAxIiwibmJmIjoiMTQzNTYwMTUwMSIsImp0aSI6IjE2YzE5MmQzMzMxZjdiMzNiNWVjZjJkYjY2OGNhNzRiIn0.ZjI2MTFlNzRiYTk2ZDM1ZmVjZTNhMzk2YzI2YTVjOWNhOWJmMWIyN2VhMzQ1ZjU0ODY2ZTRmNzNmODhiNjM4Zg" />
+        <option name="value" value="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJzdWIiOjMzMCwiaXNzIjoiaHR0cDpcL1wvY3BtLmFwaVwvYXBpXC92Mi4xXC9sb2dpbiIsImlhdCI6IjE0MzU2ODIxNzAiLCJleHAiOiIxNDM1Njg1NzcwIiwibmJmIjoiMTQzNTY4MjE3MCIsImp0aSI6IjAzNmVhMWRhOTcxYzI2OTUyZWE4NTQxZTgxNDc2YmYwIn0.OGY4NDgwM2Y5M2ZmNzVlMzJmMmU1MGVmYzhlNGUxNzNjODlmMGY5NGY2NjBmY2Q0ZjRiY2QwMWE3M2E5OTg4MA" />
       </KeyValuePair>
       <KeyValuePair>
         <option name="key" value="Cache-Control" />
@@ -45,11 +45,19 @@
       </KeyValuePair>
       <KeyValuePair>
         <option name="key" value="comment_author" />
-        <option name="value" value="testting" />
+        <option name="value" value="Test 12:39" />
       </KeyValuePair>
       <KeyValuePair>
         <option name="key" value="comment_parent" />
         <option name="value" value="1" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="obs_key" />
+        <option name="value" value="Observation Key Test" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="obs_value" />
+        <option name="value" value="Obs value test" />
       </KeyValuePair>
     </list>
   </option>

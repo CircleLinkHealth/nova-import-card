@@ -32,6 +32,15 @@ class Observation extends Model {
      */
     protected $fillable = ['obs_id', 'obs_date', 'obs_date_gmt', 'comment_id', 'sequence_id', 'obs_message_id', 'user_id', 'obs_method', 'obs_key', 'obs_value', 'obs_unit'];
 
+    protected $dates = ['obs_date', 'obs_date_gmt'];
+
+    public $timestamps = false;
+
+    public function comment()
+    {
+        return $this->belongsTo('App\Comment');
+    }
+
     public function meta()
     {
         return $this->hasMany('App\ObservationMeta', 'user_id', 'ID');
@@ -56,5 +65,7 @@ class Observation extends Model {
 
         return $observations;
     }
+
+
 
 }

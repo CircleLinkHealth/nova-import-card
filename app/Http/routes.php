@@ -60,7 +60,8 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 
 	Route::post('user', 'WpUserController@index');
 	Route::get('user', 'WpUserController@index');
-    Route::post('comment/store', 'CommentController@store');
+    Route::post('comment', 'CommentController@store');
+    Route::post('observation', 'ObservationController@store');
 
 });
 
