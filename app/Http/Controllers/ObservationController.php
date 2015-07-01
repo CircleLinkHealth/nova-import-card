@@ -60,22 +60,22 @@ class ObservationController extends Controller {
             $input = $request->input();
             $newComment = new Comment();
             $newComment->user_id = $user->ID;
-            $newComment->comment_author = $input['comment_author'];
+            $newComment->comment_author = $input['obs_message_id'];
             $newComment->comment_author_email = 'admin@circlelinkhealth.com';
             $newComment->comment_author_url = 'http://www.circlelinkhealth.com/';
             $newComment->comment_author_IP = '127.0.0.1';
 
             //**Needs to be looked at - Possibly take Time Zone from the app
-            $newComment->comment_date = Carbon::now();
-            $newComment->comment_date_gmt = Carbon::now()->setTimezone('GMT');
+            $newComment->comment_date = $input['obs_date'];
+            $newComment->comment_date_gmt = Carbon::createFromFormat('Y-m-d H:i:s', $newComment->comment_date)->setTimezone('GMT');
             //**
-
-            $newComment->comment_content = $input['comment_content'];
+            $commentContent = serialize(array($input['obs_message_id'] => $input['obs_value']));
+            $newComment->comment_content = $commentContent;
             $newComment->comment_karma = '0';
             $newComment->comment_approved = 1;
             $newComment->comment_agent = 'N/A';
-            $newComment->comment_parent = $input['comment_parent'];
-            $newComment->comment_type = $input['comment_type'];
+            $newComment->comment_parent = 1;
+            $newComment->comment_type = 'manual_input';
 
             //Get Blog id for current user
             $blogTable = 'wp_'.$user->getBlogId($user->ID).'_comments';
@@ -88,10 +88,10 @@ class ObservationController extends Controller {
             $newObservation->comment_id = $newComment->comment_id;
             $newObservation->user_id = $user->ID;
             //Needs discussion
-            $newObservation->obs_date = Carbon::now();
-            $newObservation->obs_date_gmt = Carbon::now()->setTimezone('GMT');
+            $newObservation->obs_date = $input['obs_date'];
+            $newObservation->obs_date_gmt = Carbon::createFromFormat('Y-m-d H:i:s', $newObservation->obs_date)->setTimezone('GMT');
             $newObservation->sequence_id = 0;
-            $newObservation->obs_message_id = $newComment->comment_author;
+            $newObservation->obs_message_id = $input['obs_message_id'];
             $newObservation->obs_method = $newComment->comment_type;
             $newObservation->obs_key = $input['obs_key'];
             $newObservation->obs_value = $input['obs_value'];
