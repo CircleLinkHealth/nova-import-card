@@ -51,7 +51,7 @@ class CareplanController extends Controller {
             return response()->json(['error' => 'invalid_credentials'], 401);
         } else {
             //Dummy JSON Data for careplan
-            $str_data = json_decode(file_get_contents('/home/vagrant/cpm-api/storage/CarePlanFeed.json'));
+            $str_data = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')));
             return response()->json($str_data);
         }
 	}
