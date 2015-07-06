@@ -48,8 +48,6 @@ class ObservationController extends Controller {
      */
 	public function store(Request $request)
 	{
-        $statusCode = 200;
-
         \JWTAuth::setIdentifier('ID');
         $user = \JWTAuth::parseToken()->authenticate();
         if(!$user) {
@@ -106,14 +104,11 @@ class ObservationController extends Controller {
             $newComment->setTable($commentBlogTable);
             $newObservation->setTable($obsBlogTable);
             $savedObs = $newObservation->save();
-            //Check if both queries were successful
             if($savedObs) {
-                $response = [
-                    'message' => 'Comment And Observation Stored!'
-                ];
-                return response()->json($response, $statusCode);
+                return response()->json('Observation Created', 201);
+                ;
             } else {
-                return response('Error', 500);
+                return response()->json('Error', 500);
             }
         }
 	}
