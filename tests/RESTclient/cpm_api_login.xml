@@ -11,7 +11,7 @@
     </list>
   </option>
   <option name="httpMethod" value="POST" />
-  <option name="urlBase" value="http://local-api.cpm" />
+  <option name="urlBase" value="http://cpm.api" />
   <option name="urlPath" value="/api/v2.1/login" />
   <option name="headers">
     <list>
@@ -29,7 +29,7 @@
     <list>
       <KeyValuePair>
         <option name="key" value="user_email" />
-        <option name="value" value="rohanm@circlelinkhealth.com" />
+        <option name="value" value="kgallo@circlelinkhealth.com" />
       </KeyValuePair>
       <KeyValuePair>
         <option name="key" value="user_pass" />
