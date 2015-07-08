@@ -4,8 +4,100 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "033cefb09ac25a3b7a5a55b0eb4927b6",
+    "hash": "c9fb54571e948db3e9300a514f4ac423",
     "packages": [
+        {
+            "name": "asm89/stack-cors",
+            "version": "0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/asm89/stack-cors.git",
+                "reference": "2d77e77251a434e4527315313a672f5801b29fa2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/asm89/stack-cors/zipball/2d77e77251a434e4527315313a672f5801b29fa2",
+                "reference": "2d77e77251a434e4527315313a672f5801b29fa2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2",
+                "symfony/http-foundation": "~2.1",
+                "symfony/http-kernel": "~2.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Asm89\\Stack": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander",
+                    "email": "iam.asm89@gmail.com"
+                }
+            ],
+            "description": "Cross-origin resource sharing library and stack middleware",
+            "homepage": "https://github.com/asm89/stack-cors",
+            "keywords": [
+                "cors",
+                "stack"
+            ],
+            "time": "2014-07-28 07:22:35"
+        },
+        {
+            "name": "barryvdh/laravel-cors",
+            "version": "v0.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/barryvdh/laravel-cors.git",
+                "reference": "8cad7e154a14cf4a6c35ab9defcb289288c0dba8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/barryvdh/laravel-cors/zipball/8cad7e154a14cf4a6c35ab9defcb289288c0dba8",
+                "reference": "8cad7e154a14cf4a6c35ab9defcb289288c0dba8",
+                "shasum": ""
+            },
+            "require": {
+                "asm89/stack-cors": "0.2.x",
+                "illuminate/support": "~5.0.14|5.1.x",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Barryvdh\\Cors\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Barry vd. Heuvel",
+                    "email": "barryvdh@gmail.com"
+                }
+            ],
+            "description": "Adds CORS (Cross-Origin Resource Sharing) headers support in your Laravel application",
+            "keywords": [
+                "api",
+                "cors",
+                "crossdomain",
+                "laravel"
+            ],
+            "time": "2015-06-24 18:53:41"
+        },
         {
             "name": "chrisbjr/api-guard",
             "version": "v2.2.3",
@@ -967,16 +1059,16 @@
         },
         {
             "name": "namshi/jose",
-            "version": "2.2.2",
+            "version": "5.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/namshi/jose.git",
-                "reference": "403927c45e786dd4c851bc475b50a8a03068afa4"
+                "reference": "8c7eba486f74c014ea1d8faedafe5109a31ea95b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/namshi/jose/zipball/403927c45e786dd4c851bc475b50a8a03068afa4",
-                "reference": "403927c45e786dd4c851bc475b50a8a03068afa4",
+                "url": "https://api.github.com/repos/namshi/jose/zipball/8c7eba486f74c014ea1d8faedafe5109a31ea95b",
+                "reference": "8c7eba486f74c014ea1d8faedafe5109a31ea95b",
                 "shasum": ""
             },
             "require": {
@@ -1013,7 +1105,7 @@
                 "jwt",
                 "token"
             ],
-            "time": "2015-06-16 11:41:59"
+            "time": "2015-06-29 05:41:44"
         },
         {
             "name": "nesbot/carbon",
@@ -2079,22 +2171,22 @@
         },
         {
             "name": "tymon/jwt-auth",
-            "version": "0.5.3",
+            "version": "0.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tymondesigns/jwt-auth.git",
-                "reference": "3e2624fbc59e979c69a25f407432b86c531faced"
+                "reference": "fccf3f42742c21f8d0a132025e8d999308792ad9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tymondesigns/jwt-auth/zipball/3e2624fbc59e979c69a25f407432b86c531faced",
-                "reference": "3e2624fbc59e979c69a25f407432b86c531faced",
+                "url": "https://api.github.com/repos/tymondesigns/jwt-auth/zipball/fccf3f42742c21f8d0a132025e8d999308792ad9",
+                "reference": "fccf3f42742c21f8d0a132025e8d999308792ad9",
                 "shasum": ""
             },
             "require": {
                 "illuminate/http": "~5.0",
                 "illuminate/support": "~5.0",
-                "namshi/jose": "2.2.*",
+                "namshi/jose": "5.0.*",
                 "nesbot/carbon": "~1.0",
                 "php": ">=5.4.0"
             },
@@ -2138,7 +2230,7 @@
                 "laravel",
                 "tymon"
             ],
-            "time": "2015-04-23 19:01:43"
+            "time": "2015-06-23 22:34:08"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -3179,16 +3271,16 @@
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "2.3.4",
+            "version": "2.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "92408bb1968a81b3217a6fdf6c1a198da83caa35"
+                "reference": "1c330b1b6e1ea8fd15f2fbea46770576e366855c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/92408bb1968a81b3217a6fdf6c1a198da83caa35",
-                "reference": "92408bb1968a81b3217a6fdf6c1a198da83caa35",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/1c330b1b6e1ea8fd15f2fbea46770576e366855c",
+                "reference": "1c330b1b6e1ea8fd15f2fbea46770576e366855c",
                 "shasum": ""
             },
             "require": {
@@ -3230,7 +3322,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-06-11 15:55:48"
+            "time": "2015-07-04 05:41:32"
         },
         {
             "name": "sebastian/comparator",

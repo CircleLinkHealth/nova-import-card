@@ -151,7 +151,8 @@ return [
 		 */
 		'Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider',
 		'Franzose\ClosureTable\ClosureTableServiceProvider',
-		'Tymon\JWTAuth\Providers\JWTAuthServiceProvider'
+		'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
+		'Barryvdh\Cors\ServiceProvider'
 
 
 	],

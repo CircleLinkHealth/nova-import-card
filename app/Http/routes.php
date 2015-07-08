@@ -1,5 +1,6 @@
 <?php
 use App\User;
+use Illuminate\Http\Response;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -10,6 +11,28 @@ use App\User;
 | and give it the controller to call when that URI is requested.
 |
 */
+
+// pagetimer
+/*
+Route::filter('access-control', function($route, $request, $response)
+{
+	$response->headers->set('Access-Control-Allow-Origin', '*');
+});
+*/
+
+/*
+Route::group(['middleware' => 'cors'], function(){
+	Route::get('pagetimer', 'PageTimerController@store');
+	Route::post('pagetimer', 'PageTimerController@store');
+});
+*/
+
+Route::group(['middleware' => 'cors'], function(){
+	//Route::get('pagetimer', 'PageTimerController@store');
+	Route::post('api/v2.1/pagetimer', 'PageTimerController@store');
+});
+
+//Route::when('pagetimer', 'access-control');
 
 Route::get('/', 'WelcomeController@index');
 
@@ -38,12 +61,14 @@ Route::group(['middleware' => 'auth'], function ()
 		// https://github.com/tymondesigns/jwt-auth/issues/79
 		// http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#rfc.section.3.1
 		// https://stormpath.com/blog/where-to-store-your-jwts-cookies-vs-html5-web-storage/
+		// http://pythonhackers.com/p/tymondesigns/jwt-auth
 
 		// fix for authorization: bearer header .htaccess:
 		// http://stackoverflow.com/questions/20853604/laravel-get-request-headers
 
 		// formatting
 		// http://www.sitepoint.com/build-rest-resources-laravel/
+		// http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#restful
 
 		// debug comment tag: kgallodebug
  */
@@ -57,9 +82,10 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 	Route::post('tokentest', 'AuthorizationController@tokentest');
 
 	// return data on logged in user
-
 	Route::post('user', 'WpUserController@index');
 	Route::get('user', 'WpUserController@index');
+
+	// observations
     Route::post('comment', 'CommentController@store');
     Route::post('observation', 'ObservationController@store');
     Route::get('careplan', 'CareplanController@show');
@@ -69,6 +95,7 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 // legacy api routes @todo migrate and remove these
 Route::group(['middleware' => 'authApiCall'], function()
 {
+
 	Route::resource('reports', 'ReportsController');
 
 	Route::resource('locations', 'LocationController');
