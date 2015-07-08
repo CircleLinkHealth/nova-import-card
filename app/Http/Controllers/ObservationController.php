@@ -74,7 +74,7 @@ class ObservationController extends Controller {
             $newComment->comment_approved = 1;
             $newComment->comment_agent = 'N/A';
             $newComment->comment_parent = 1;
-            $newComment->comment_type = 'manual_input';
+            $newComment->comment_type = 'app_input';
 
             //Get Blog id for current user
             $blogTable = 'wp_'.$user->getBlogId($user->ID).'_comments';
