@@ -19,15 +19,16 @@ class ActivityController extends Controller {
 	 */
 	public function index(Request $request)
 	{
-		if ( $request->header('Client') == 'ui' )
-		{
+		if ( $request->header('Client') == 'ui' ) {
+			// 'ui' api request
 			$user_id = Crypt::decrypt($request->header('UserId'));
-
 			$activities = (new Activity())->getActivitiesWithMeta($user_id);
-
 			return response()->json( Crypt::encrypt( json_encode( $activities ) ) );
+		} else {
+			// display view
+			$activities = Activity::orderBy('id', 'desc')->get();
+			return view('activities.index', [ 'activities' => $activities ]);
 		}
-
 	}
 
 	/**
