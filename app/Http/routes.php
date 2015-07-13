@@ -108,6 +108,8 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	Route::resource('activities', 'ActivityController');
 
+    Route::post('activities/update', 'ActivityController@update');
+
 	Route::resource('activities.meta', 'ActivityMetaController');
 
 	Route::resource('wpusers', 'WpUserController');

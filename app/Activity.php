@@ -12,6 +12,7 @@ class Activity extends Model {
      *
      * @var array
      */
+
     protected $fillable = ['type', 'duration', 'duration_unit', 'patient_id', 'provider_id', 'logger_id',
         'logged_from', 'performed_at', 'performed_at_gmt'];
 
@@ -50,7 +51,6 @@ class Activity extends Model {
         return $newActivity->id;
     }
 
-
     /**
      * Get all activities with all their meta for a given patient
      *
@@ -67,6 +67,13 @@ class Activity extends Model {
         }
 
         return $activities;
+    }
+
+    public function getActivityCommentFromMeta($id)
+    {
+        $comment = DB::table('activitymeta')->where('activity_id',$id)->where('meta_key','comment')->pluck('meta_value');
+
+        return $comment;
     }
 
 

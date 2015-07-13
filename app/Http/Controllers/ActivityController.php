@@ -12,11 +12,12 @@ use Illuminate\Support\Facades\Crypt;
 
 class ActivityController extends Controller {
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @return Response
+     */
 	public function index(Request $request)
 	{
 		if ( $request->header('Client') == 'ui' ) {
@@ -41,11 +42,12 @@ class ActivityController extends Controller {
 		//
 	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param Request $request
+     * @return Response
+     */
 	public function store(Request $request)
 	{
 		if ( $request->isJson() )
@@ -76,7 +78,6 @@ class ActivityController extends Controller {
 
 		$actId = Activity::createNewActivity($input);
 
-
 		// add meta
 		$activity = Activity::find($actId);
 		$metaArray = [];
@@ -87,7 +88,7 @@ class ActivityController extends Controller {
 		}
 		$activity->meta()->saveMany($metaArray);
 
-		// update usermeta: cur_month_activity_time
+		// update usermeta: cur_onth_activity_time
 		$userMeta = WpUserMeta::where('user_id', '=', $input['patient_id'])
 			->where('meta_key', '=', 'cur_month_activity_time')->first();
 
@@ -118,10 +119,32 @@ class ActivityController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id)
+	public function show($id, Request $request)
 	{
-		//
-	}
+        if ( $request->isMethod('GET') )
+        {
+            if ( $request->header('Client') == 'ui' ) // WP Site
+            {
+                $activity = Activity::findOrFail($id);
+
+                //extract and attach the 'comment' value from the ActivityMeta table
+                $metaComment = $activity->getActivityCommentFromMeta($id);
+                $activity['comment'] = $metaComment;
+                $activity['message'] = 'OK';
+                $json = Array();
+                $json['body'] = $activity;
+                $json['message'] = 'OK';
+                return response(Crypt::encrypt(json_encode($json)));
+            }
+        }
+        else
+        {
+            return response("Unauthorized", 401);
+        }
+
+
+    }
+
 
 	/**
 	 * Show the form for editing the specified resource.
@@ -134,15 +157,41 @@ class ActivityController extends Controller {
 		//
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param Request $request
+     * @return Response
+     */
+	public function update(Request $request)
 	{
-		//
+        if ( $request->isJson() )
+        {
+            $input = $request->input();
+        }
+        else if ( $request->isMethod('POST') )
+        {
+            if ( $request->header('Client') == 'ui' ) // WP Site
+            {
+                $input = json_decode(Crypt::decrypt($request->input('data')), true);
+            }
+        }
+        else
+        {
+            return response("Unauthorized", 401);
+        }
+
+       //  Check if there are any meta nested parts in the incoming request
+        $meta = $input['meta'];
+        unset($input['meta']);
+
+        $activity = Activity::find($input['activity_id']);
+        $activity->fill($input)->save();
+
+        $actMeta = ActivityMeta::where('activity_id', $input['activity_id'])->where('meta_key',$meta['0']['meta_key'])->first();
+        $actMeta->fill($meta['0'])->save();
+
+        return response("Activity Updated", 201);
 	}
 
 	/**
