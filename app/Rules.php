@@ -18,11 +18,50 @@ class Rules extends Model {
      */
     protected $primaryKey = 'id';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    //protected $fillable = ['duration', 'duration_unit', 'patient_id', 'provider_id', 'start_time', 'start_time_gmt', 'end_time', 'end_time_gmt', 'url_full', 'url_short', 'program_id'];
+
+    public function getActions($params, $type = 'ATT')
+    {
+        // build query string
+        $sql = "select r.id,r.rule_name, r.active, r.type_id, r.sort
+            from lv_rules r
+
+            where r.type_id = 'ATT' AND r.approve = 'Y' AND r.archive = 'N'";
+
+        // add params to quesy string
+        if(!empty($params)) {
+            foreach( $params as $key => $value ) {
+                $sql .= "AND r.id in (
+        select rule_id from lv_rules_intr_conditions where
+                value = '".$value."'
+                and condition_id = (select id from lv_rules_conditions where
+                condition_name = '".$key."'))";
+            }
+        }
+
+        // query sql for rules
+        $rules = \DB::select( \DB::raw($sql) );
+        if(empty($rules)) {
+            return false;
+        }
+
+        // use rule_id from above to get actions
+        if(isset($rules[0]->id)) {
+            $rule_id = $rules[0]->id;
+            $actions = \DB::select( \DB::raw("select r.rule_name, r.active, r.type_id, r.sort,
+                a.action_name, oa.operator_description, ira.value
+                from lv_rules r
+                left join lv_rules_intr_actions ira on ira.rule_id = r.id
+                left join lv_rules_actions a on a.id = ira.action_id
+                left join lv_rules_operators oa on oa.id = ira.operator_id
+
+                where r.type_id = '".$type."' AND r.approve = 'Y' AND r.archive = 'N'
+                    AND r.id = ".$rule_id) );
+            if(!empty($actions)) {
+                return $actions;
+            } else {
+                return false;
+            }
+        }
+    }
 
 }

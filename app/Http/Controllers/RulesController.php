@@ -3,6 +3,11 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Rules;
+use App\Location;
+
+use App\RulesOperators;
+use App\RulesConditions;
+use App\RulesActions;
 
 use Illuminate\Http\Request;
 
@@ -27,7 +32,13 @@ class RulesController extends Controller {
 	 */
 	public function create()
 	{
-		//
+		//$rules = new Rules;
+		//dd($rules->getActions(array('Activity' => 'Patient Overview', 'Role' => 'Provider')) );
+		return view('rules.create', [
+			'operators' => RulesOperators::all(),
+			'conditions' => RulesConditions::all(),
+			'actions' => RulesActions::all()
+		]);
 	}
 
 	/**
