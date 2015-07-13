@@ -2,14 +2,14 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class rules_intr_condition extends Model {
+class rulesIntrAction extends Model {
 
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'rules_intr_condition';
+    protected $table = 'rules_intr_action';
 
     /**
      * The primary key for the model.

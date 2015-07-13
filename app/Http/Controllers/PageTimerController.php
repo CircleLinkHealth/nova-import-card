@@ -15,7 +15,9 @@ class PageTimerController extends Controller {
 	 */
 	public function index()
 	{
-		//
+		// display view
+		$pageTimes = PageTimer::orderBy('id', 'desc')->get();
+		return view('pageTimer.index', [ 'pageTimes' => $pageTimes ]);
 	}
 
 	/**

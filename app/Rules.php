@@ -2,14 +2,14 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class rules_operators extends Model {
+class Rules extends Model {
 
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'rules_operators';
+    protected $table = 'rules';
 
     /**
      * The primary key for the model.

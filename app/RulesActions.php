@@ -2,14 +2,14 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class rules_conditions extends Model {
+class RulesActions extends Model {
 
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'rules_conditions';
+    protected $table = 'rules_actions';
 
     /**
      * The primary key for the model.

@@ -55,9 +55,17 @@
 								Activities <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ action('ActivityController@index') }}">Activities</a></li>
-								<li><a href="{{ action('ActivityController@index') }}">Page Timer</a></li>
-								<li><a href="{{ action('ActivityController@index') }}">Rules</a></li>
+								<li><a href="{{ action('ActivityController@index') }}">Activities Log</a></li>
+								<li><a href="{{ action('PageTimerController@index') }}">Page Timer Log</a></li>
+							</ul>
+						</li>
+
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+								Rules <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ action('RulesController@index') }}">Rules</a></li>
 							</ul>
 						</li>
 

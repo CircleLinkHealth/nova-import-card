@@ -96,6 +96,10 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 Route::group(['middleware' => 'authApiCall'], function()
 {
 
+	Route::resource('rules', 'RulesController');
+
+	Route::resource('pagetimer', 'PageTimerController');
+
 	Route::resource('reports', 'ReportsController');
 
 	Route::resource('locations', 'LocationController');
