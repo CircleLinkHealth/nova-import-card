@@ -41,9 +41,8 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach( $rules as $rule )
                             <tr>
-                                <td><a href="{{ url('rules/'.$rule->id.'') }}">{{ $rule->id }}</a></td>
+                                <td><a href="{{ url('rules/'.$rule->id.'/edit') }}">{{ $rule->id }}</a></td>
                                 <td>{{ $rule->rule_name }}</td>
                                 <td>{{ $rule->rule_description }}</td>
                                 <td>{{ $rule->active }}</td>
@@ -51,9 +50,10 @@
                                 <td>{{ $rule->effective_date }}</td>
                                 <td>{{ $rule->expiration_date }}</td>
                             </tr>
-                        @endforeach
                         </tbody>
                     </table>
+                    <strong>Summary:</strong>
+                    <p>{{ $rule->summary }}</p>
                 </div>
             </div>
         </div>

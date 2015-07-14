@@ -60,7 +60,8 @@ class RulesController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+		$rule = Rules::find($id);
+		return view('rules.show', [ 'rule' => $rule ]);
 	}
 
 	/**

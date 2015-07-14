@@ -48,6 +48,11 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::resource('apikeys', 'ApiKeyController', [
 		'only' => [ 'index', 'destroy', 'store' ],
 	]);
+
+	Route::get('rules', 'RulesController@index');
+	Route::get('rules/new', ['uses' =>'RulesController@create', 'as'=>'rulesNew']);
+	Route::get('rules/{id}', ['uses' =>'RulesController@show', 'as'=>'rulesDetail']);
+	Route::get('rules/{id}/edit', ['uses' =>'RulesController@edit', 'as'=>'rulesEdit']);
 });
 
 
