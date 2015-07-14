@@ -59,7 +59,7 @@
                     @foreach( $rule->intrConditions as $intrCondition )
                         <ul>
                             <li>{{ $intrCondition->id }}</li>
-                            <li>{{ $intrCondition->condition_id }}</li>
+                            <li>{{ $intrCondition->condition->condition_name }} [{{ $intrCondition->condition->condition }}]</li>
                             <li>{{ $intrCondition->value }}</li>
                         </ul>
                     @endforeach
@@ -68,7 +68,7 @@
                     @foreach( $rule->intrActions as $intrAction )
                         <ul>
                             <li>{{ $intrAction->id }}</li>
-                            <li>{{ $intrAction->action_id }}</li>
+                            <li>{{ $intrAction->action->action_name }} [{{ $intrAction->action->action }}]</li>
                             <li>{{ $intrAction->value }}</li>
                         </ul>
                     @endforeach

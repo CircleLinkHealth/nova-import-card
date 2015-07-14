@@ -18,9 +18,14 @@ class RulesIntrActions extends Model {
      */
     protected $primaryKey = 'id';
 
-    public function rules()
+    public function rule()
     {
         return $this->belongsTo('App\Rules');
+    }
+
+    public function action()
+    {
+        return $this->belongsTo('App\RulesActions');
     }
 
 }

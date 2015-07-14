@@ -18,4 +18,9 @@ class RulesConditions extends Model {
      */
     protected $primaryKey = 'id';
 
+    public function intrConditions()
+    {
+        return $this->hasMany('App\RulesIntrConditions', 'condition_id');
+    }
+
 }

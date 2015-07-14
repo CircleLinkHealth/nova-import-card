@@ -20,9 +20,14 @@ class RulesIntrConditions extends Model {
 
 
 
-    public function rules()
+    public function rule()
     {
         return $this->belongsTo('App\Rules');
+    }
+
+    public function condition()
+    {
+        return $this->belongsTo('App\RulesConditions');
     }
 
 }
