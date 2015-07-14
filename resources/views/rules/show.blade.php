@@ -56,11 +56,20 @@
                     <p>{{ $rule->summary }}</p>
 
                     <strong>Conditions:</strong>
-                    @foreach( $rule->intrConditions as $conditionIntr )
+                    @foreach( $rule->intrConditions as $intrCondition )
                         <ul>
-                            <li>{{ $conditionIntr->id }}</li>
-                            <li>{{ $conditionIntr->condition_id }}</li>
-                            <li>{{ $conditionIntr->value }}</li>
+                            <li>{{ $intrCondition->id }}</li>
+                            <li>{{ $intrCondition->condition_id }}</li>
+                            <li>{{ $intrCondition->value }}</li>
+                        </ul>
+                    @endforeach
+
+                    <strong>Actions:</strong>
+                    @foreach( $rule->intrActions as $intrAction )
+                        <ul>
+                            <li>{{ $intrAction->id }}</li>
+                            <li>{{ $intrAction->action_id }}</li>
+                            <li>{{ $intrAction->value }}</li>
                         </ul>
                     @endforeach
                 </div>

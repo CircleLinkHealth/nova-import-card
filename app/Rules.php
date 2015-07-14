@@ -21,7 +21,12 @@ class Rules extends Model {
 
     public function intrConditions()
     {
-        return $this->hasMany('App\RulesIntrCondition', 'rule_id');
+        return $this->hasMany('App\RulesIntrConditions', 'rule_id');
+    }
+
+    public function intrActions()
+    {
+        return $this->hasMany('App\RulesIntrActions', 'rule_id');
     }
 
     public function getActions($params, $type = 'ATT')

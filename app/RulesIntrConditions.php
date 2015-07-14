@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class RulesIntrCondition extends Model {
+class RulesIntrConditions extends Model {
 
     /**
      * The database table used by the model.
@@ -22,7 +22,7 @@ class RulesIntrCondition extends Model {
 
     public function rules()
     {
-        return $this->belongsTo('App\RulesIntrCondition');
+        return $this->belongsTo('App\Rules');
     }
 
 }
