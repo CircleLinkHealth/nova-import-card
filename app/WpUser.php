@@ -51,6 +51,27 @@ class WpUser extends Model {
         return $this->hasMany('App\Activity');
     }
 
+    public function role()
+    {
+        $blogId = $this->blogId();
+        $role = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','wp_'.$blogId.'_capabilities')->first();
+        if(!$role) {
+            return false;
+        } else {
+            $data = unserialize($role['meta_value']);
+            return key($data);
+        }
+    }
+
+    public function blogId(){
+        $blogID = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','primary_blog')->first();
+        if(!$blogID) {
+            return false;
+        } else {
+            return $blogID['meta_value'];
+        }
+    }
+
     public function getWpUserWithMeta($user_id)
     {
         $wpUser = WpUser::where('ID', '=', $user_id)->first();

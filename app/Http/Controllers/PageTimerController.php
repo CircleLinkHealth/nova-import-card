@@ -1,8 +1,11 @@
 <?php namespace App\Http\Controllers;
 
+use App\Activity;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\PageTimer;
+use App\Rules;
+use App\WpUser;
 
 use Illuminate\Http\Request;
 
@@ -15,6 +18,7 @@ class PageTimerController extends Controller {
 	 */
 	public function index()
 	{
+		//$this->addPageTimerActivities(array(354));
 		// display view
 		$pageTimes = PageTimer::orderBy('id', 'desc')->get();
 		return view('pageTimer.index', [ 'pageTimes' => $pageTimes ]);
@@ -38,7 +42,17 @@ class PageTimerController extends Controller {
 	public function store(Request $request)
 	{
 
-		$data = $request->only('totalTime', 'patientId', 'providerId', 'programId', 'startTime', 'urlFull', 'urlShort', 'ipAddr');;
+		$data = $request->only('totalTime',
+			'patientId',
+			'providerId',
+			'programId',
+			'startTime',
+			'urlFull',
+			'urlShort',
+			'ipAddr',
+			'activity',
+			'title',
+			'qs');;
 
 		//echo $data['totalTime']; die();
 		if(!isset($data['totalTime'])
@@ -49,6 +63,9 @@ class PageTimerController extends Controller {
 			|| !isset($data['urlFull'])
 			|| !isset($data['urlShort'])
 			|| !isset($data['ipAddr'])
+			|| !isset($data['activity'])
+			|| !isset($data['title'])
+			|| !isset($data['qs'])
 		) {
 			return response("missing required params", 201);
 		}
@@ -65,11 +82,47 @@ class PageTimerController extends Controller {
 		$pagetimer->url_short = $data['urlShort'];
 		$pagetimer->program_id = $data['programId'];
 		$pagetimer->ip_addr = $data['ipAddr'];
+		$pagetimer->activity_type = $data['activity'];
+		$pagetimer->title = $data['title'];
+		$pagetimer->query_string = $data['qs'];
 		$pagetimer->save();
 
 		return response("PageTimer Logged, duration:". $data['totalTime'], 201);
 	}
 
+
+	public function addPageTimerActivities($page_timer_ids = array()) {
+		if(!empty($page_timer_ids)) {
+			foreach($page_timer_ids as $page_timer_id) {
+				// first get page timer params
+				$pageTime = PageTimer::where('id', '=', $page_timer_id)->first();
+				if(!$pageTime) {
+					continue 1;
+				}
+
+				$rules = new Rules;
+				dd( $rules->getActions(array(), 'ATT') );
+
+				// check params to see if rule exists
+				$params = array();
+				$provider = WpUser::find( $pageTime->provider_id );
+				$params['role'] = $provider->role();
+
+				$providerMeta = $provider->meta;
+				$params['activity'] = $pageTime->program_id;
+				$params['role'] = $provider->role();
+				$params['program_id'] = $pageTime->program_id;
+
+				$rules = new Rules;
+				dd($rules->getActions($params, 'ATT'));
+
+				dd($params);
+
+				// if rule exists, create activity
+				$result = Activity::store($params);
+			}
+		}
+	}
 	/**
 	 * Display the specified resource.
 	 *

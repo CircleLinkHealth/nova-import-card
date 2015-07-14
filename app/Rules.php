@@ -21,6 +21,10 @@ class Rules extends Model {
 
     public function getActions($params, $type = 'ATT')
     {
+        if(empty($params)) {
+            return false;
+        }
+
         // build query string
         $sql = "select r.id,r.rule_name, r.active, r.type_id, r.sort
             from lv_rules r

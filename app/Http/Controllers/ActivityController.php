@@ -10,6 +10,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
+/**
+ * Class ActivityController
+ * @package App\Http\Controllers
+ */
 class ActivityController extends Controller {
 
     /**
@@ -42,37 +46,30 @@ class ActivityController extends Controller {
 		//
 	}
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return Response
-     */
-	public function store(Request $request)
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  array  $params
+	 * @return Response
+	 */
+	public function store($params = false, Request $request)
 	{
-		if ( $request->isJson() )
-		{
+		if($params) {
+			$input = $params;
+		} else if ( $request->isJson() ) {
 			$input = $request->input();
-		}
-		else if ( $request->isMethod('POST') )
-		{
-			if ( $request->header('Client') == 'ui' ) // WP Site
-			{
+		} else if ( $request->isMethod('POST') ) {
+			if ( $request->header('Client') == 'ui' ) { // WP Site
 				$input = json_decode(Crypt::decrypt($request->input('data')), true);
 			}
-		}
-		else
-		{
+		} else {
 			return response("Unauthorized", 401);
 		}
 
-		if (array_key_exists('meta',$input))
-		{
+		if (array_key_exists('meta',$input)) {
 			$meta = $input['meta'];
 			unset($input['meta']);
-		}
-		else
-		{
+		} else {
 			return response("Bad request", 400);
 		}
 
@@ -88,7 +85,7 @@ class ActivityController extends Controller {
 		}
 		$activity->meta()->saveMany($metaArray);
 
-		// update usermeta: cur_onth_activity_time
+		// update usermeta: cur_month_activity_time
 		$userMeta = WpUserMeta::where('user_id', '=', $input['patient_id'])
 			->where('meta_key', '=', 'cur_month_activity_time')->first();
 
