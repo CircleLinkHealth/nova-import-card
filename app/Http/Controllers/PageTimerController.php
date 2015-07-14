@@ -18,9 +18,9 @@ class PageTimerController extends Controller {
 	 */
 	public function index()
 	{
-		//$this->addPageTimerActivities(array(354));
+		//$this->addPageTimerActivities(array(378));
 		// display view
-		$pageTimes = PageTimer::orderBy('id', 'desc')->get();
+		$pageTimes = PageTimer::orderBy('id', 'desc')->take(50)->get();
 		return view('pageTimer.index', [ 'pageTimes' => $pageTimes ]);
 	}
 
@@ -87,6 +87,8 @@ class PageTimerController extends Controller {
 		$pagetimer->query_string = $data['qs'];
 		$pagetimer->save();
 
+		$this->addPageTimerActivities(array($pagetimer->id));
+
 		return response("PageTimer Logged, duration:". $data['totalTime'], 201);
 	}
 
@@ -100,26 +102,39 @@ class PageTimerController extends Controller {
 					continue 1;
 				}
 
-				$rules = new Rules;
-				dd( $rules->getActions(array(), 'ATT') );
-
 				// check params to see if rule exists
 				$params = array();
 				$provider = WpUser::find( $pageTime->provider_id );
 				$params['role'] = $provider->role();
-
 				$providerMeta = $provider->meta;
-				$params['activity'] = $pageTime->program_id;
+				$params['activity'] = $pageTime->activity_type;
 				$params['role'] = $provider->role();
 				$params['program_id'] = $pageTime->program_id;
+				//$params = array('role' => 'Provider', 'activity' => 'Patient Overview');
 
+				// check against rules and add activity if passes
 				$rules = new Rules;
-				dd($rules->getActions($params, 'ATT'));
+				//dd( $rules->getActions(array(), 'ATT') );
+				$ruleActions = $rules->getActions($params, 'ATT');
+				//dd($ruleActions);
 
-				dd($params);
+				if($ruleActions) {
+					$activiyParams = array();
+					$activiyParams['type'] = $params['activity'];
+					$activiyParams['provider_id'] = $pageTime->provider_id;
+					$activiyParams['performed_at'] = $pageTime->start_time;
+					$activiyParams['duration'] = ceil($pageTime->duration / 60);
+					$activiyParams['duration_unit'] = 'minutes';
+					$activiyParams['patient_id'] = $pageTime->patient_id;
+					$activiyParams['logged_from'] = 'pagetimer';
+					$activiyParams['logger_id'] = $pageTime->provider_id;
+					$activiyParams['page_timer_id'] = $pageTime->id;
+					$activiyParams['meta'] = array('meta_key' => 'comment', 'meta_value' => 'logged from pagetimer');
 
-				// if rule exists, create activity
-				$result = Activity::store($params);
+					// if rule exists, create activity
+					$result = Activity::createNewActivity($activiyParams);
+				}
+				return true;
 			}
 		}
 	}

@@ -74,4 +74,26 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $blogID = WpUserMeta::select('meta_value')->where('user_id', $user_id)->where('meta_key','primary_blog')->first();
         return $blogID['meta_value'];
     }
+
+
+	public function role()
+	{
+		$blogId = $this->blogId();
+		$role = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','wp_'.$blogId.'_capabilities')->first();
+		if(!$role) {
+			return false;
+		} else {
+			$data = unserialize($role['meta_value']);
+			return key($data);
+		}
+	}
+
+	public function blogId(){
+		$blogID = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','primary_blog')->first();
+		if(!$blogID) {
+			return false;
+		} else {
+			return $blogID['meta_value'];
+		}
+	}
 }

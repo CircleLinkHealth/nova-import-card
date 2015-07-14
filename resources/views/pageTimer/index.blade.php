@@ -28,13 +28,6 @@
                         <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ action('PageTimerController@store') }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                            <div class="form-group">
-                                <div class="col-md-6 col-md-offset-4">
-                                    <button type="submit" class="btn btn-primary" disabled="disabled">
-                                        Add/Update
-                                    </button>
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </div>

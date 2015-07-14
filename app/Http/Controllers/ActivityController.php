@@ -31,7 +31,7 @@ class ActivityController extends Controller {
 			return response()->json( Crypt::encrypt( json_encode( $activities ) ) );
 		} else {
 			// display view
-			$activities = Activity::orderBy('id', 'desc')->get();
+			$activities = Activity::orderBy('id', 'desc')->take(50)->get();
 			return view('activities.index', [ 'activities' => $activities ]);
 		}
 	}
