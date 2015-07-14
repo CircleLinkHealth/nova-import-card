@@ -66,7 +66,7 @@
 							</a>
 							<ul class="dropdown-menu" role="menu">
 								<li><a href="{{ action('RulesController@index') }}">Rules</a></li>
-								<li><a href="{{ action('RulesController@create') }}">Add new</a></li>
+								<li><a href="{{ url('rules/new/') }}">Add new</a></li>
 							</ul>
 						</li>
 
