@@ -42,18 +42,27 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><a href="{{ url('rules/'.$rule->id.'/') }}">{{ $rule->id }}</a></td>
-                                <td>{{ $rule->rule_name }}</td>
-                                <td>{{ $rule->rule_description }}</td>
-                                <td>{{ $rule->active }}</td>
-                                <td>{{ $rule->type_id }}</td>
-                                <td>{{ $rule->effective_date }}</td>
-                                <td>{{ $rule->expiration_date }}</td>
+                            <td><a href="{{ url('rules/'.$rule->id.'/') }}">{{ $rule->id }}</a></td>
+                            <td>{{ $rule->rule_name }}</td>
+                            <td>{{ $rule->rule_description }}</td>
+                            <td>{{ $rule->active }}</td>
+                            <td>{{ $rule->type_id }}</td>
+                            <td>{{ $rule->effective_date }}</td>
+                            <td>{{ $rule->expiration_date }}</td>
                             </tr>
                         </tbody>
                     </table>
                     <strong>Summary:</strong>
                     <p>{{ $rule->summary }}</p>
+
+                    <strong>Conditions:</strong>
+                    @foreach( $rule->intrConditions as $conditionIntr )
+                        <ul>
+                            <li>{{ $conditionIntr->id }}</li>
+                            <li>{{ $conditionIntr->condition_id }}</li>
+                            <li>{{ $conditionIntr->value }}</li>
+                        </ul>
+                    @endforeach
                 </div>
             </div>
         </div>

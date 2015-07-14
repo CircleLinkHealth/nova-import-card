@@ -19,6 +19,11 @@ class Rules extends Model {
     protected $primaryKey = 'id';
 
 
+    public function intrConditions()
+    {
+        return $this->hasMany('App\RulesIntrCondition', 'rule_id');
+    }
+
     public function getActions($params, $type = 'ATT')
     {
         if(empty($params)) {
