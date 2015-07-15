@@ -67,17 +67,19 @@
                         <p>processed: {{ $pageTime->processed }}</p>
                         <p>rule_params: {{ $pageTime->rule_params }}</p>
                         <p>rule_id: {{ $pageTime->rule_id }}</p>
-                        <p>found rule:
-                            @if (($pageTime->rule))
-                                <a href="{{ url('rules/'.$pageTime->rule->id.'') }}">{{ $pageTime->rule->rule_name }} [{{ $pageTime->rule->id }}]</a>
-                            @endif
-                        </p>
-                        @if ($pageTime->activities)
-                            <h2>ACTIVITIES:</h2>
-                            <p>Any activities generated that are tied to this page time</p>
+                        @if (($pageTime->rule))
+                            <p>found rule:<a href="{{ url('rules/'.$pageTime->rule->id.'') }}">{{ $pageTime->rule->rule_name }} [{{ $pageTime->rule->id }}]</a></p>
+                        @else
+                            <p><em>No rule for this page time</em></p>
+                        @endif
+                        <h2>ACTIVITIES:</h2>
+                        @if (!empty($pageTime->activities))
+                            <p>Activities generated that are tied to this page time</p>
                             @foreach( $pageTime->activities as $activity )
                                 <li><a href="{{ url('activities/'.$activity->id.'') }}">{{ $activity->type }} [{{ $activity->id }}]</a></li>
                             @endforeach
+                        @else
+                            <p><em>No activities for this page time</em></p>
                         @endif
                     </div>
                 </div>

@@ -38,7 +38,7 @@
                             <td><strong>type_id</strong></td>
                             <td><strong>effective_date</strong></td>
                             <td><strong>expiration_date</strong></td>
-                            <td><strong>processed</strong></td>
+                            <td><strong>active</strong></td>
                         </tr>
                         </thead>
                         <tbody>

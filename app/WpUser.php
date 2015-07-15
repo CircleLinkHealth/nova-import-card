@@ -51,9 +51,11 @@ class WpUser extends Model {
         return $this->hasMany('App\Activity');
     }
 
-    public function role()
+    public function role($blogId = false)
     {
-        $blogId = $this->blogId();
+        if(!$blogId) {
+            $blogId = $this->blogId();
+        }
         $role = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','wp_'.$blogId.'_capabilities')->first();
         if(!$role) {
             return false;

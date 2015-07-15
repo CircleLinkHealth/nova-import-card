@@ -61,7 +61,7 @@
                                 <td>{{ $pageTime->id }} <a href="{{ url('pagetimer/'.$pageTime->id.'') }}">DETAILS</a></td>
                                 <td>{{ $pageTime->title }}</td>
                                 <td>{{ $pageTime->activity_type }}</td>
-                                <td>{{ $pageTime->duration }}</td>
+                                <td>{{ $pageTime->duration }} ({{ $pageTime->duration_unit }})</td>
                                 <td>{{ $pageTime->patient_id }}</td>
                                 <td>{{ $pageTime->provider_id }}</td>
                                 <td>{{ $pageTime->processed }}</td>
