@@ -48,7 +48,7 @@ class Rules extends Model {
         select rule_id from lv_rules_intr_conditions where
                 value = '".$value."'
                 and condition_id = (select id from lv_rules_conditions where
-                'condition' = '".$key."'))";
+                condition_name = '".$key."'))";
             }
         }
 
