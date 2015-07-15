@@ -93,11 +93,17 @@ class PageTimerController extends Controller {
 	}
 
 
-	public function addPageTimerActivities($page_timer_ids = array()) {
-		if(!empty($page_timer_ids)) {
-			foreach($page_timer_ids as $page_timer_id) {
+	/**
+	 * Add an activity for a page time
+	 *
+	 * @param array $page_timer_ids
+	 * @return bool
+     */
+	public function addPageTimerActivities($pageTimerIds = array()) {
+		if(!empty($pageTimerIds)) {
+			foreach($pageTimerIds as $pageTimerId) {
 				// first get page timer params
-				$pageTime = PageTimer::where('id', '=', $page_timer_id)->first();
+				$pageTime = PageTimer::find($pageTimerId);
 				if(!$pageTime) {
 					continue 1;
 				}
@@ -134,6 +140,12 @@ class PageTimerController extends Controller {
 					// if rule exists, create activity
 					$result = Activity::createNewActivity($activiyParams);
 				}
+
+				// update pagetimer
+				$pageTime->processed = 'Y';
+				$pageTime->rule_params = serialize($params);
+				$pageTime->rule_found = !empty($ruleActions) ? 'Y' : 'N';;
+				$pageTime->save();
 				return true;
 			}
 		}
@@ -146,7 +158,8 @@ class PageTimerController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+		$pageTime = PageTimer::find($id);
+		return view('pageTimer.show', [ 'pageTime' => $pageTime ]);
 	}
 
 	/**

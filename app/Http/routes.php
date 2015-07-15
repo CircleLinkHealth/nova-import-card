@@ -50,9 +50,14 @@ Route::group(['middleware' => 'auth'], function ()
 	]);
 
 	Route::get('rules', 'RulesController@index');
-	Route::get('rules/new', ['uses' =>'RulesController@create', 'as'=>'rulesNew']);
-	Route::get('rules/{id}', ['uses' =>'RulesController@show', 'as'=>'rulesDetail']);
+	Route::get('rules/create', ['uses' =>'RulesController@create', 'as'=>'rulesCreate']);
+	Route::get('rules/{id}', ['uses' =>'RulesController@show', 'as'=>'rulesShow']);
 	Route::get('rules/{id}/edit', ['uses' =>'RulesController@edit', 'as'=>'rulesEdit']);
+
+	Route::get('pagetimer', 'PageTimerController@index');
+	Route::get('pagetimer/create', ['uses' =>'PageTimerController@create', 'as'=>'pageTimerCreate']);
+	Route::get('pagetimer/{id}', ['uses' =>'PageTimerController@show', 'as'=>'pageTimerShow']);
+	Route::get('pagetimer/{id}/edit', ['uses' =>'PageTimerController@edit', 'as'=>'pageTimerEdit']);
 });
 
 

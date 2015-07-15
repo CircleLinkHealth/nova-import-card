@@ -43,7 +43,7 @@
                         <tbody>
                         @foreach( $rules as $rule )
                             <tr>
-                                <td><a href="{{ url('rules/'.$rule->id.'') }}">{{ $rule->id }}</a></td>
+                                <td>{{ $rule->id }} <a href="{{ url('rules/'.$rule->id.'') }}">DETAILS</a></td>
                                 <td>{{ $rule->rule_name }}</td>
                                 <td>{{ $rule->rule_description }}</td>
                                 <td>{{ $rule->active }}</td>
