@@ -52,7 +52,6 @@ class Rules extends Model {
             }
         }
 
-        dd($sql);
         // query sql for rules
         $rules = \DB::select( \DB::raw($sql) );
         if(empty($rules)) {
