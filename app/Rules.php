@@ -44,11 +44,17 @@ class Rules extends Model {
         // add params to quesy string
         if(!empty($params)) {
             foreach( $params as $key => $value ) {
-                $sql .= "AND r.id in (
+                $sql .= "AND (r.id in (
         select rule_id from lv_rules_intr_conditions where
                 value = '".$value."'
                 and condition_id = (select id from lv_rules_conditions where
-                condition = '".$key."'))";
+                'condition' = '".$key."'))
+                OR r.id in (
+        select rule_id from lv_rules_intr_conditions where
+                value IN ('".$value."')
+                and condition_id = (select id from lv_rules_conditions where
+                'condition' = '".$key."'))
+                )";
             }
         }
 
