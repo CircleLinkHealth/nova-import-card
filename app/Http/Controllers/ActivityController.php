@@ -52,7 +52,7 @@ class ActivityController extends Controller {
 	 * @param  array  $params
 	 * @return Response
 	 */
-	public function store($params = false, Request $request)
+	public function store(Request $request, $params = false)
 	{
 		if($params) {
 			$input = $params;
@@ -116,26 +116,28 @@ class ActivityController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id, Request $request)
+	public function show(Request $request, $id)
 	{
-		// UI api view
-		if ( $request->header('Client') == 'ui' ) // WP Site
-		{
-			$activity = Activity::findOrFail($id);
+        if ( $request->isMethod('GET') )
+        {
+            if ( $request->header('Client') == 'ui' ) // WP Site
+            {
+                $activity = Activity::findOrFail($id);
 
-			//extract and attach the 'comment' value from the ActivityMeta table
-			$metaComment = $activity->getActivityCommentFromMeta($id);
-			$activity['comment'] = $metaComment;
-			$activity['message'] = 'OK';
-			$json = Array();
-			$json['body'] = $activity;
-			$json['message'] = 'OK';
-			return response(Crypt::encrypt(json_encode($json)));
-        } else {
-			// regular view
-			$activity = Activity::findOrFail($id);
-			return view('activities.show', ['activity' => $activity]);
-		}
+                //extract and attach the 'comment' value from the ActivityMeta table
+                $metaComment = $activity->getActivityCommentFromMeta($id);
+                $activity['comment'] = $metaComment;
+                $activity['message'] = 'OK';
+                $json = Array();
+                $json['body'] = $activity;
+                $json['message'] = 'OK';
+                return response(Crypt::encrypt(json_encode($json)));
+            }
+        }
+        else
+        {
+            return response("Unauthorized", 401);
+        }
 
 
     }
