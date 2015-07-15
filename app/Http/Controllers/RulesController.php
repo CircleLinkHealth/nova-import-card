@@ -97,4 +97,18 @@ class RulesController extends Controller {
 		//
 	}
 
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function showMatches(Request $request)
+	{
+		$params = $request->input();
+		$rules = new Rules;
+		$ruleActions = $rules->getActions($params, 'ATT');
+		return view('rules.showMatches', [ 'params' => $params, 'ruleActions' => $ruleActions ]);
+	}
+
 }

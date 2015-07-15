@@ -53,6 +53,7 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('rules/create', ['uses' =>'RulesController@create', 'as'=>'rulesCreate']);
 	Route::get('rules/{id}', ['uses' =>'RulesController@show', 'as'=>'rulesShow']);
 	Route::get('rules/{id}/edit', ['uses' =>'RulesController@edit', 'as'=>'rulesEdit']);
+	Route::get('rulesmatches', ['uses' =>'RulesController@showMatches', 'as'=>'rulesMatches']);
 
 	Route::get('pagetimer', 'PageTimerController@index');
 	Route::get('pagetimer/create', ['uses' =>'PageTimerController@create', 'as'=>'pageTimerCreate']);
@@ -111,7 +112,7 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 Route::group(['middleware' => 'authApiCall'], function()
 {
 
-	Route::resource('rules', 'RulesController');
+	//Route::resource('rules', 'RulesController');
 
 	Route::resource('pagetimer', 'PageTimerController');
 
