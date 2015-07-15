@@ -46,7 +46,7 @@ class Rules extends Model {
             foreach( $params as $key => $value ) {
                 $sql .= "AND r.id in (
         select rule_id from lv_rules_intr_conditions where
-                value = '".$value."'
+                value IN ('".$value."')
                 and condition_id = (select id from lv_rules_conditions where
                 condition_name = '".$key."'))";
             }
