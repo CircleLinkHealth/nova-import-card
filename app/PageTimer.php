@@ -27,4 +27,13 @@ class PageTimer extends Model {
 
     protected $dates = ['deleted_at'];
 
+    public function rule()
+    {
+        return $this->belongsTo('App\Rules');
+    }
+
+    public function activities()
+    {
+        return $this->hasMany('App\Activity', 'page_timer_id');
+    }
 }

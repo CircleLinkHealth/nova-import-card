@@ -58,6 +58,11 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('pagetimer/create', ['uses' =>'PageTimerController@create', 'as'=>'pageTimerCreate']);
 	Route::get('pagetimer/{id}', ['uses' =>'PageTimerController@show', 'as'=>'pageTimerShow']);
 	Route::get('pagetimer/{id}/edit', ['uses' =>'PageTimerController@edit', 'as'=>'pageTimerEdit']);
+
+	Route::get('activities', 'ActivityController@index');
+	Route::get('activities/create', ['uses' =>'ActivityController@create', 'as'=>'activitiesCreate']);
+	Route::get('activities/{id}', ['uses' =>'ActivityController@show', 'as'=>'activitiesShow']);
+	Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'activitiesEdit']);
 });
 
 

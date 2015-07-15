@@ -51,6 +51,8 @@
                             <td><strong>processed</strong></td>
                             <td><strong>start_time</strong></td>
                             <td><strong>end_time</strong></td>
+                            <td><strong>rule_id</strong></td>
+                            <td><strong>activities</strong></td>
                         </tr>
                         </thead>
                         <tbody>
@@ -65,6 +67,18 @@
                                 <td>{{ $pageTime->processed }}</td>
                                 <td>{{ $pageTime->start_time }}</td>
                                 <td>{{ $pageTime->end_time }}</td>
+                                <td>
+                                    @if (($pageTime->rule_id))
+                                        {{ $pageTime->rule_id }} <a href="{{ url('rules/'.$pageTime->rule_id.'') }}">Rule Detail</a>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if (($pageTime->activities))
+                                        @foreach( $pageTime->activities as $activity )
+                                            <li>{{ $activity->id }} <a href="{{ url('activities/'.$activity->id.'') }}">Activity Detail</a></li>
+                                        @endforeach
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>

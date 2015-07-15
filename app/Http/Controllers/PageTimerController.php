@@ -134,17 +134,17 @@ class PageTimerController extends Controller {
 					$activiyParams['patient_id'] = $pageTime->patient_id;
 					$activiyParams['logged_from'] = 'pagetimer';
 					$activiyParams['logger_id'] = $pageTime->provider_id;
-					$activiyParams['page_timer_id'] = $pageTime->id;
+					$activiyParams['page_timer_id'] = $pageTimerId;
 					$activiyParams['meta'] = array('meta_key' => 'comment', 'meta_value' => 'logged from pagetimer');
 
 					// if rule exists, create activity
-					$result = Activity::createNewActivity($activiyParams);
+					$activityId = Activity::createNewActivity($activiyParams);
 				}
 
 				// update pagetimer
 				$pageTime->processed = 'Y';
 				$pageTime->rule_params = serialize($params);
-				$pageTime->rule_found = !empty($ruleActions) ? 'Y' : 'N';;
+				$pageTime->rule_id = ($ruleActions) ? $ruleActions[0]->id : '';
 				$pageTime->save();
 				return true;
 			}

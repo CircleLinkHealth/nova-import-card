@@ -47,19 +47,20 @@
                             <td><strong>patient_id</strong></td>
                             <td><strong>provider_id</strong></td>
                             <td><strong>logger_id</strong></td>
-                            <td><strong>performed_at</strong></td>
+                            <td><strong>page_timer_id</strong></td>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach( $activities as $act )
                             <tr>
-                                <td>{{ $act->id }}</td>
+                                <td>{{ $act->id }} <a href="{{ url('activities/'.$act->id.'') }}">DETAILS</a></td>
                                 <td>{{ $act->type }}</td>
                                 <td>{{ $act->duration }}</td>
                                 <td>{{ $act->patient_id }}</td>
                                 <td>{{ $act->provider_id }}</td>
                                 <td>{{ $act->logger_id }}</td>
                                 <td>{{ $act->performed_at }}</td>
+                                <td><a href="{{ url('pagetimer/'.$act->page_timer_id.'') }}">{{ $act->page_timer_id }}</a></td>
                             </tr>
                         @endforeach
                         </tbody>

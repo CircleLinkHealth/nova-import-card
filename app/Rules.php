@@ -61,7 +61,7 @@ class Rules extends Model {
         // use rule_id from above to get actions
         if(isset($rules[0]->id)) {
             $rule_id = $rules[0]->id;
-            $actions = \DB::select( \DB::raw("select r.rule_name, r.active, r.type_id, r.sort,
+            $actions = \DB::select( \DB::raw("select r.id, r.rule_name, r.active, r.type_id, r.sort,
                 a.action_name, oa.operator_description, ira.value
                 from lv_rules r
                 left join lv_rules_intr_actions ira on ira.rule_id = r.id

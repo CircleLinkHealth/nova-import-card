@@ -14,7 +14,7 @@ class Activity extends Model {
      */
 
     protected $fillable = ['type', 'duration', 'duration_unit', 'patient_id', 'provider_id', 'logger_id',
-        'logged_from', 'performed_at', 'performed_at_gmt'];
+        'logged_from', 'performed_at', 'performed_at_gmt', 'page_timer_id'];
 
     protected $dates = ['deleted_at'];
 
@@ -36,6 +36,11 @@ class Activity extends Model {
     public function patient()
     {
         return $this->belongsTo('App\WpUser', 'patient_id', 'ID');
+    }
+
+    public function pageTime()
+    {
+        return $this->belongsTo('App\PageTimer', 'page_timer_id', 'id');
     }
 
     /**
