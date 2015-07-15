@@ -32,6 +32,9 @@
                                 <td><strong>id</strong></td>
                                 <td><strong>type</strong></td>
                                 <td><strong>duration</strong></td>
+                                <td><strong>patient_id</strong></td>
+                                <td><strong>provider_id</strong></td>
+                                <td><strong>logger_id</strong></td>
                             </tr>
                             </thead>
                             <tbody>
@@ -39,9 +42,13 @@
                                 <td>{{ $activity->id }} <a href="{{ url('activities/'.$activity->id.'') }}">DETAILS</a></td>
                                 <td>{{ $activity->type }}</td>
                                 <td>{{ $activity->duration }} ({{ $activity->duration_unit }})</td>
+                                <td>{{ $activity->patient_id }}</td>
+                                <td>{{ $activity->provider_id }}</td>
+                                <td>{{ $activity->logger_id }}</td>
                             </tr>
                             </tbody>
                         </table>
+                        <p>More detailed info to go here.....</p>
                     </div>
                 </div>
             </div>

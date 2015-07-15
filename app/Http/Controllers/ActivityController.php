@@ -118,28 +118,26 @@ class ActivityController extends Controller {
 	 */
 	public function show(Request $request, $id)
 	{
-        if ( $request->isMethod('GET') )
-        {
-            if ( $request->header('Client') == 'ui' ) // WP Site
-            {
-                $activity = Activity::findOrFail($id);
+		if ( $request->header('Client') == 'ui' ) // WP Site
+		{
+			$activity = Activity::findOrFail($id);
 
-                //extract and attach the 'comment' value from the ActivityMeta table
-                $metaComment = $activity->getActivityCommentFromMeta($id);
-                $activity['comment'] = $metaComment;
-                $activity['message'] = 'OK';
-                $json = Array();
-                $json['body'] = $activity;
-                $json['message'] = 'OK';
-                return response(Crypt::encrypt(json_encode($json)));
-            }
+			//extract and attach the 'comment' value from the ActivityMeta table
+			$metaComment = $activity->getActivityCommentFromMeta($id);
+			$activity['comment'] = $metaComment;
+			$activity['message'] = 'OK';
+			$json = Array();
+			$json['body'] = $activity;
+			$json['message'] = 'OK';
+			return response(Crypt::encrypt(json_encode($json)));
+		} else {
+			$activity = Activity::find($id);
+			if($activity) {
+				return view('activities.show', ['activity' => $activity]);
+			} else {
+				return response("Activity not found", 401);
+			}
         }
-        else
-        {
-            return response("Unauthorized", 401);
-        }
-
-
     }
 
 
