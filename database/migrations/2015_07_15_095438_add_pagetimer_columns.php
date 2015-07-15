@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddPagetimerColumns extends Migration {
+class AddPagetimerColumns2 extends Migration {
 
 	/**
 	 * Run the migrations.
