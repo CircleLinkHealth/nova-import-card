@@ -12,34 +12,18 @@ use Illuminate\Http\Response;
 |
 */
 
-// pagetimer
-/*
-Route::filter('access-control', function($route, $request, $response)
-{
-	$response->headers->set('Access-Control-Allow-Origin', '*');
-});
-*/
-
-/*
-Route::group(['middleware' => 'cors'], function(){
-	Route::get('pagetimer', 'PageTimerController@store');
-	Route::post('pagetimer', 'PageTimerController@store');
-});
-*/
-
-Route::group(['middleware' => 'cors'], function(){
-	//Route::get('pagetimer', 'PageTimerController@store');
-	Route::post('api/v2.1/pagetimer', 'PageTimerController@store');
-});
-
-//Route::when('pagetimer', 'access-control');
-
+// unprotected
 Route::get('/', 'WelcomeController@index');
 
 Route::controllers([
 	'auth' => 'Auth\AuthController',
 	'password' => 'Auth\PasswordController',
 ]);
+
+
+/****************************/
+//     LARAVEL SITE ROUTES
+/****************************/
 
 Route::group(['middleware' => 'auth'], function ()
 {
@@ -70,6 +54,12 @@ Route::group(['middleware' => 'auth'], function ()
 /***********************/
 //     API ROUTES
 /***********************/
+
+// pagetimer
+Route::group(['middleware' => 'cors'], function(){
+	//Route::get('pagetimer', 'PageTimerController@store');
+	Route::post('api/v2.1/pagetimer', 'PageTimerController@store');
+});
 
 /*
  * // NOTES:
@@ -105,6 +95,9 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
     Route::post('comment', 'CommentController@store');
     Route::post('observation', 'ObservationController@store');
     Route::get('careplan', 'CareplanController@show');
+
+	// locations
+	Route::get('locations', 'LocationController@index');
 
 });
 

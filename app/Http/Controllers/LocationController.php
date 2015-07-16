@@ -16,18 +16,22 @@ class LocationController extends Controller {
 	 */
 	public function index(Request $request)
 	{
-		// if ($request->header('X-Authorization'))
-		// {
-		// 	return response()->json(Crypt::encrypt( json_encode(Location::getNonRootLocations()) ));
-		// }
-		// else
-		// {
-		return view('locations.show', [ 
-			'locationParents' => Location::getAllParents(),
-			'locationSubs' => Location::getNonRootLocations(),
-			'locationParentsSubs' => Location::getParentsSubs($request)	 
+		if ( $request->header('Client') == 'ui' ) // WP Site
+		{
+			$parent_location_code = Crypt::decrypt($request->header('parent-location-code'));
+			$locations = Location::getNonRootLocations($parent_location_code);
+			if($locations) {
+				return response()->json( Crypt::encrypt(json_encode($locations)) );
+			} else {
+				return response("Locations not found", 401);
+			}
+		} else {
+			return view('locations.show', [
+				'locationParents' => Location::getAllParents(),
+				'locationSubs' => Location::getNonRootLocations(),
+				'locationParentsSubs' => Location::getParentsSubs($request)
 			]);
-		// }
+		}
 	}
 
 	/**
