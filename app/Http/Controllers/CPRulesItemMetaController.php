@@ -1,30 +1,21 @@
 <?php namespace App\Http\Controllers;
 
-use App\RulesUCP;
+use App\CPRulesItemMeta;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 
-class RulesUCPController extends Controller {
+class CPRulesItemMetaController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	public function index(Request $request)
+	public function index()
 	{
-		if ( $request->header('Client') == 'ui' )
-		{
-			$userId = Crypt::decrypt($request->header('UserId'));
-
-			$rulesUCP = (new WpUser())->getRulesUCP($userId);
-
-			return response()->json( Crypt::encrypt( json_encode( $rulesUCP ) ) );
-		}
-
+		//
 	}
 
 	/**
@@ -42,7 +33,7 @@ class RulesUCPController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store(Request $request)
+	public function store()
 	{
 		//
 	}

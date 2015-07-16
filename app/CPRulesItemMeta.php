@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class RulesItem extends Model {
+class CPRulesItemMeta extends Model {
 
     /**
      * The connection name for the model.
@@ -16,33 +16,27 @@ class RulesItem extends Model {
      *
      * @var string
      */
-    protected $table = 'rules_items';
+    protected $table = 'wp_rules_itemmeta';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'items_id';
+    protected $primaryKey = 'itemmeta_id';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['items_id', 'pcp_id', 'items_parent', 'qid', 'items_text'];
+    protected $fillable = ['itemmeta_id', 'items_id', 'meta_key', 'meta_value'];
 
-
-    public function meta()
+    public function CPRulesItem()
     {
-        return $this->hasMany('App\RulesItemMeta', 'items_id');
+        return $this->belongsTo('App\CPRulesItem', 'items_id');
     }
 
-    public function getRulesItem($itemId)
-    {
-        $rulesUCP = RulesUCP::where('items_id', '=', $itemId)->get();
 
-        return $rulesUCP;
-    }
 
 }

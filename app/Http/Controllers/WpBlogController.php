@@ -1,30 +1,20 @@
 <?php namespace App\Http\Controllers;
 
-use App\RulesItem;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 
-class RulesItemController extends Controller {
+class WpBlogController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	public function index(Request $request)
+	public function index()
 	{
-		if ( $request->header('Client') == 'ui' )
-		{
-			$itemId = Crypt::decrypt($request->header('itemId'));
-
-			$rulesItem = (new RulesItem())->getRulesItem($itemId);
-
-			return response()->json( Crypt::encrypt( json_encode( $rulesItem ) ) );
-		}
-
+		//
 	}
 
 	/**
@@ -42,7 +32,7 @@ class RulesItemController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store(Request $request)
+	public function store()
 	{
 		//
 	}

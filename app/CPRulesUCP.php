@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class RulesUCP extends Model {
+class CPRulesUCP extends Model {
 
     /**
      * The connection name for the model.
@@ -38,16 +38,16 @@ class RulesUCP extends Model {
         return $this->hasOne('App\RulesItem', 'items_id');
     }
 
-    public function getRulesUCP($userId)
+    public function getCPRulesUCP($userId)
     {
-        $rulesUCP = RulesUCP::where('user_id', '=', $userId)->get();
+        $rulesUCP = CPRulesUCP::where('user_id', '=', $userId)->get();
 
         return $rulesUCP;
     }
 
-    public function getRulesUCPDetails($userId)
+    public function getCPRulesUCPDetails($userId)
     {
-        $rulesUCP = RulesUCP::where('user_id', '=', $userId)->get();
+        $rulesUCP = CPRulesUCP::where('user_id', '=', $userId)->get();
 
         foreach ( $rulesUCP as $rules )
         {

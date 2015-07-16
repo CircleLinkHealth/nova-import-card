@@ -1,13 +1,13 @@
 <?php namespace App\Http\Controllers;
 
-use App\RulesPCP;
+use App\CPRulesUCP;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
-class RulesPCPController extends Controller {
+class CPRulesUCPController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
@@ -18,11 +18,11 @@ class RulesPCPController extends Controller {
 	{
 		if ( $request->header('Client') == 'ui' )
 		{
-			$provId = Crypt::decrypt($request->header('provId'));
+			$userId = Crypt::decrypt($request->header('UserId'));
 
-			$rulesPCP = (new RulesPCP())->getRulesPCPForProv($provId);
+			$rulesUCP = (new WpUser())->getRulesUCP($userId);
 
-			return response()->json( Crypt::encrypt( json_encode( $rulesPCP ) ) );
+			return response()->json( Crypt::encrypt( json_encode( $rulesUCP ) ) );
 		}
 
 	}

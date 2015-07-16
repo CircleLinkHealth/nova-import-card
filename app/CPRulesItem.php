@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class RulesPCP extends Model {
+class CPRulesItem extends Model {
 
     /**
      * The connection name for the model.
@@ -16,28 +16,33 @@ class RulesPCP extends Model {
      *
      * @var string
      */
-    protected $table = 'rules_pcp';
+    protected $table = 'rules_items';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'pcp_id';
+    protected $primaryKey = 'items_id';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['pcp_id', 'prov_id', 'section_text', 'status', 'cpset_id', 'pcp_type'];
+    protected $fillable = ['items_id', 'pcp_id', 'items_parent', 'qid', 'items_text'];
 
 
-    public function getRulesPCPForProv($provId)
+    public function meta()
     {
-        $rulesPCP = RulesPCP::where('prov_id', '=', $provId)->get();
+        return $this->hasMany('App\CPRulesItemMeta', 'items_id');
+    }
 
-        return $rulesPCP;
+    public function getRulesItem($itemId)
+    {
+        $rulesUCP = CPRulesUCP::where('items_id', '=', $itemId)->get();
+
+        return $rulesUCP;
     }
 
 }

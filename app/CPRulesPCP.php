@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class RulesItemMeta extends Model {
+class CPRulesPCP extends Model {
 
     /**
      * The connection name for the model.
@@ -16,27 +16,28 @@ class RulesItemMeta extends Model {
      *
      * @var string
      */
-    protected $table = 'wp_rules_itemmeta';
+    protected $table = 'rules_pcp';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'itemmeta_id';
+    protected $primaryKey = 'pcp_id';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['itemmeta_id', 'items_id', 'meta_key', 'meta_value'];
+    protected $fillable = ['pcp_id', 'prov_id', 'section_text', 'status', 'cpset_id', 'pcp_type'];
 
-    public function rulesItem()
+
+    public function getCPRulesPCPForProv($provId)
     {
-        return $this->belongsTo('App\RulesItem', 'items_id');
+        $CPrulesPCP = CPRulesPCP::where('prov_id', '=', $provId)->get();
+
+        return $CPrulesPCP;
     }
-
-
 
 }

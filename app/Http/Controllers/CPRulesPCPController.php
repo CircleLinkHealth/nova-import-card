@@ -1,21 +1,30 @@
 <?php namespace App\Http\Controllers;
 
-use App\RulesItemMeta;
+use App\CPRulesPCP;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
-class RulesItemMetaController extends Controller {
+class CPRulesPCPController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index(Request $request)
 	{
-		//
+		if ( $request->header('Client') == 'ui' )
+		{
+			$provId = Crypt::decrypt($request->header('provId'));
+
+			$CPrulesPCP = (new CPRulesPCP())->getCPRulesPCPForProv($provId);
+
+			return response()->json( Crypt::encrypt( json_encode( $CPrulesPCP ) ) );
+		}
+
 	}
 
 	/**
@@ -33,7 +42,7 @@ class RulesItemMetaController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Request $request)
 	{
 		//
 	}
