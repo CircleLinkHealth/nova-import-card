@@ -3,6 +3,7 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\WpBlog;
 use Illuminate\Http\Request;
 
 class WpBlogController extends Controller {
@@ -14,7 +15,9 @@ class WpBlogController extends Controller {
 	 */
 	public function index()
 	{
-		//
+		// display view
+		$wpBlogs = WpBlog::orderBy('blog_id', 'desc')->get();
+		return view('wpBlogs.index', [ 'wpBlogs' => $wpBlogs ]);
 	}
 
 	/**

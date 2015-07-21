@@ -47,6 +47,10 @@ class WpUserController extends Controller {
 				];
 				return response()->json( $response, $statusCode );
 			}
+		} else {
+			// display view
+			$wpUsers = wpUser::orderBy('ID', 'desc')->get();
+			return view('wpUsers.index', [ 'wpUsers' => $wpUsers ]);
 		}
 
 	}

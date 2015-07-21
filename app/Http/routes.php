@@ -48,6 +48,10 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('activities/create', ['uses' =>'ActivityController@create', 'as'=>'activitiesCreate']);
 	Route::get('activities/{id}', ['uses' =>'ActivityController@show', 'as'=>'activitiesShow']);
 	Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'activitiesEdit']);
+
+	// return data on logged in user
+	Route::get('users', 'WpUserController@index');
+	Route::get('users/{id}', ['uses' =>'WpUserController@show', 'as'=>'usersShow']);
 });
 
 
@@ -99,6 +103,8 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 	// locations
 	Route::get('locations', 'LocationController@index');
 
+	// blogs (programs)
+	Route::get('programs', 'WpBlogController@index');
 });
 
 // legacy api routes @todo migrate and remove these

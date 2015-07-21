@@ -70,6 +70,24 @@
 							</ul>
 						</li>
 
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+								Programs <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ action('WpBlogController@index') }}">Blogs</a></li>
+							</ul>
+						</li>
+
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+								Users <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ action('WpUserController@index') }}">All Users</a></li>
+							</ul>
+						</li>
+
 					</ul>
 				@endif
 
