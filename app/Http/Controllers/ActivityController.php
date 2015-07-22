@@ -86,26 +86,7 @@ class ActivityController extends Controller {
 		$activity->meta()->saveMany($metaArray);
 
 		// update usermeta: cur_month_activity_time
-		$userMeta = WpUserMeta::where('user_id', '=', $input['patient_id'])
-			->where('meta_key', '=', 'cur_month_activity_time')->first();
-
-		if(!$userMeta) {
-			// add in initial user meta: cur_month_activity_time
-			$newUserMetaAttr = array(
-				'user_id' => $input['patient_id'],
-				'meta_key' => 'cur_month_activity_time',
-				'meta_value' => $input['duration'],
-			);
-			$newUserMeta = WpUserMeta::create($newUserMetaAttr);
-			//echo "<pre>CREATED";var_dump($newUserMeta);echo "</pre>";die();
-		} else {
-				// update existing user meta: cur_month_activity_time
-				$activityTotal = ($input['duration'] + $userMeta->meta_value);
-				$userMeta = WpUserMeta::where('user_id', '=', $input['patient_id'])
-					->where('meta_key', '=', 'cur_month_activity_time')
-					->update(array('meta_value' => $activityTotal));
-				//echo "<pre>UPDATED";var_dump($activityTotal);echo "</pre>";die();
-		}
+		$result = (new Activity())->reprocessMonthlyActivityTime($activity->patient_id);
 
 		return response("Activity Created", 201);
 	}

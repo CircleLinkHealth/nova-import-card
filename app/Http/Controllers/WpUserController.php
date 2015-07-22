@@ -18,7 +18,6 @@ class WpUserController extends Controller {
 	 */
 	public function index(Request $request)
 	{
-		(new Activity())->reprocessMonthlyActivityTime(array(316, 368));
 		if ( $request->header('Client') == 'ui' )
 		{
 			$userId = Crypt::decrypt($request->header('UserId'));

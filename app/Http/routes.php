@@ -107,6 +107,31 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 	Route::get('programs', 'WpBlogController@index');
 });
 
+
+
+/**********************************/
+//  WP SPECIFIC API SITE ROUTES
+/**********************************/
+
+Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], function()
+{
+	// activities
+	Route::resource('activities', 'ActivityController');
+
+	Route::post('activities/update', 'ActivityController@update');
+
+	Route::resource('activities.meta', 'ActivityMetaController');
+
+	// reports
+	Route::resource('reports', 'ReportsController');
+});
+
+
+
+
+
+
+
 // legacy api routes @todo migrate and remove these
 Route::group(['middleware' => 'authApiCall'], function()
 {
@@ -115,17 +140,17 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	Route::resource('pagetimer', 'PageTimerController');
 
-	Route::resource('reports', 'ReportsController');
+	//Route::resource('reports', 'ReportsController');
 
 	Route::resource('locations', 'LocationController');
 
 	Route::resource('locations/show', 'LocationController');
 
-	Route::resource('activities', 'ActivityController');
+	//Route::resource('activities', 'ActivityController');
 
-    Route::post('activities/update', 'ActivityController@update');
+    //Route::post('activities/update', 'ActivityController@update');
 
-	Route::resource('activities.meta', 'ActivityMetaController');
+	//Route::resource('activities.meta', 'ActivityMetaController');
 
 	Route::resource('wpusers', 'WpUserController');
 
