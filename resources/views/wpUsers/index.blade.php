@@ -22,7 +22,7 @@
                         <tbody>
                         @foreach( $wpUsers as $wpUser )
                             <tr>
-                                <td>{{ $wpUser->ID }}</td>
+                                <td>{{ $wpUser->ID }} <a href="{{ url('wpusers/'.$wpUser->ID.'') }}">DETAILS</a></td>
                                 <td>{{ $wpUser->user_login }}</td>
                                 <td>{{ $wpUser->user_nicename }}</td>
                                 <td>{{ $wpUser->user_email }}</td>

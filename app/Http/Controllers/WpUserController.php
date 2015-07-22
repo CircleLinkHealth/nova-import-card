@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Activity;
 use App\WpUser;
 use App\WpUserMeta;
 use App\Http\Requests;
@@ -17,6 +18,7 @@ class WpUserController extends Controller {
 	 */
 	public function index(Request $request)
 	{
+		(new Activity())->reprocessMonthlyActivityTime(array(316, 368));
 		if ( $request->header('Client') == 'ui' )
 		{
 			$userId = Crypt::decrypt($request->header('UserId'));
@@ -25,8 +27,7 @@ class WpUserController extends Controller {
 
 			return response()->json( Crypt::encrypt( json_encode( $wpUsers ) ) );
 
-		} else if ( $request->header('Client') == 'mobi' )
-		{
+		} else if ( $request->header('Client') == 'mobi' ) {
 			$response = [
 				'user' => []
 			];
@@ -81,9 +82,30 @@ class WpUserController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id)
+	public function show(Request $request, $id)
 	{
-		//
+		$messageKey = 'key';
+		$messageValue = 'value';
+		$params = $request->input();
+		if(!empty($params)) {
+			if(isset($params['action'])) {
+				if($params['action'] == 'recalcActivities') {
+					$result = (new Activity())->reprocessMonthlyActivityTime($id);
+					if ($result) {
+						$messageKey = 'success';
+						$messageValue = 'User activities have been recalculated';
+					}
+				}
+			}
+		}
+		$wpUser = WpUser::find($id);
+		$activiyTotal = (new Activity())->getTotalActivityTimeForMonth($id);
+		if($wpUser) {
+			return view('wpUsers.show', ['wpUser' => $wpUser, 'activityTotal' => $activiyTotal,
+				$messageKey => $messageValue]);
+		} else {
+			return response("User not found", 401);
+		}
 	}
 
 	/**
