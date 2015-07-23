@@ -54,7 +54,7 @@ class ActivityController extends Controller {
 	 */
 	public function store(Request $request, $params = false)
 	{
-		if($params) {
+        if($params) {
 			$input = $params;
 		} else if ( $request->isJson() ) {
 			$input = $request->input();
@@ -72,7 +72,8 @@ class ActivityController extends Controller {
 		} else {
 			return response("Bad request", 400);
 		}
-
+        //convert minutes to seconds.
+        $input['duration'] = $input['duration']*60;
 		$actId = Activity::createNewActivity($input);
 
 		// add meta
