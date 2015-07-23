@@ -123,17 +123,12 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 	Route::resource('activities.meta', 'ActivityMetaController');
 
 	// reports
+    Route::get('reports/pagetimer', 'ReportsController@pageTimerReports');
 	Route::resource('reports', 'ReportsController');
 
 	// locations
 	Route::get('locations', 'LocationController@index');
 });
-
-
-
-
-
-
 
 // legacy api routes @todo migrate and remove these
 Route::group(['middleware' => 'authApiCall'], function()

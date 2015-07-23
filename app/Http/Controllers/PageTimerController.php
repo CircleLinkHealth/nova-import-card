@@ -128,8 +128,8 @@ class PageTimerController extends Controller {
 					$activiyParams['type'] = $params['activity'];
 					$activiyParams['provider_id'] = $pageTime->provider_id;
 					$activiyParams['performed_at'] = $pageTime->start_time;
-					$activiyParams['duration'] = ceil($pageTime->duration / 60);
-					$activiyParams['duration_unit'] = 'minutes';
+					$activiyParams['duration'] = $pageTime->duration;
+					$activiyParams['duration_unit'] = 'seconds';
 					$activiyParams['patient_id'] = $pageTime->patient_id;
 					$activiyParams['logged_from'] = 'pagetimer';
 					$activiyParams['logger_id'] = $pageTime->provider_id;
