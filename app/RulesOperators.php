@@ -18,11 +18,13 @@ class RulesOperators extends Model {
      */
     protected $primaryKey = 'id';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    //protected $fillable = ['duration', 'duration_unit', 'patient_id', 'provider_id', 'start_time', 'start_time_gmt', 'end_time', 'end_time_gmt', 'url_full', 'url_short', 'program_id'];
+    public function intrConditions()
+    {
+        return $this->hasMany('App\RulesIntrConditions', 'operator_id');
+    }
 
+    public function intrActions()
+    {
+        return $this->hasMany('App\RulesIntrActions', 'operator_id');
+    }
 }

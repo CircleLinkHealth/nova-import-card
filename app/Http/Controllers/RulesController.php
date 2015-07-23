@@ -35,9 +35,9 @@ class RulesController extends Controller {
 		//$rules = new Rules;
 		//dd($rules->getActions(array('Activity' => 'Patient Overview', 'Role' => 'Provider')) );
 		return view('rules.create', [
-			'operators' => RulesOperators::all(),
-			'conditions' => RulesConditions::all(),
-			'actions' => RulesActions::all()
+			'operators' => RulesOperators::lists('operator', 'id'),
+			'conditions' => RulesConditions::lists('condition', 'id'),
+			'actions' => RulesActions::lists('action', 'id'),
 		]);
 	}
 
@@ -72,7 +72,26 @@ class RulesController extends Controller {
 	 */
 	public function edit($id)
 	{
-		//
+		$rule = Rules::find($id);
+		if($rule->intrConditions->count()) {
+			foreach($rule->intrConditions as $intrCondition) {
+				//dd($intrCondition);
+			}
+		}
+		//dd('nope');
+		$operators = RulesOperators::lists('operator', 'id');
+		//$conditions = RulesConditions::lists('conditions', 'id');
+
+		if($rule) {
+			return view('rules.edit', [
+				'rule' => $rule,
+				'operators' => RulesOperators::lists('operator', 'id'),
+				'conditions' => RulesConditions::lists('condition', 'id'),
+				'actions' => RulesActions::lists('action', 'id'),
+			]);
+		} else {
+			return response('Rule Not Found', 204);
+		}
 	}
 
 	/**

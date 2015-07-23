@@ -136,7 +136,7 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 Route::group(['middleware' => 'authApiCall'], function()
 {
 
-	//Route::resource('rules', 'RulesController');
+	Route::resource('rules', 'RulesController');
 
 	Route::resource('pagetimer', 'PageTimerController');
 

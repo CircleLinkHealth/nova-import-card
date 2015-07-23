@@ -28,4 +28,9 @@ class RulesIntrActions extends Model {
         return $this->belongsTo('App\RulesActions');
     }
 
+    public function operator()
+    {
+        return $this->belongsTo('App\RulesOperators');
+    }
+
 }

@@ -39,11 +39,12 @@
                             <td><strong>effective_date</strong></td>
                             <td><strong>expiration_date</strong></td>
                             <td><strong>active</strong></td>
+                            <td><strong>actions</strong></td>
                         </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>{{ $rule->id }} <a href="{{ url('rules/'.$rule->id.'') }}">DETAILS</a></td>
+                                <td>{{ $rule->id }}</td>
                                 <td>{{ $rule->rule_name }}</td>
                                 <td>{{ $rule->rule_description }}</td>
                                 <td>{{ $rule->active }}</td>
@@ -51,6 +52,7 @@
                                 <td>{{ $rule->effective_date }}</td>
                                 <td>{{ $rule->expiration_date }}</td>
                                 <td>{{ $rule->active }}</td>
+                                <td><a href="{{ url('rules/'.$rule->id.'/edit') }}" class="btn btn-success">Edit</a></td>
                             </tr>
                         </tbody>
                     </table>

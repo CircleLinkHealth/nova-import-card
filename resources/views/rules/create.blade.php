@@ -18,58 +18,34 @@
                             </div>
                         @endif
 
-                        <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ action('RulesController@store') }}">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        {!! Form::open(array('url' => '/rules', 'class' => 'form-horizontal')) !!}
+                        <strong>Conditions:</strong>
+                        <div class="form-group">
+                            <div class=" col-sm-2">{!! Form::label('Condition', 'Condition:', array('class' => '')) !!}</div>
+                            <div class=" col-sm-10">{!! Form::select('condition', $conditions, '', ['class' => 'form-control select-picker']) !!}</div>
+                            <div class=" col-sm-2">{!! Form::label('Operator', 'Operator:', array('class' => '')) !!}</div>
+                            <div class=" col-sm-10">{!! Form::select('operator', $operators, '11', ['class' => 'form-control select-picker']) !!}</div>
+                            <div class=" col-sm-2">{!! Form::label('Value', 'Value:', array('class' => '')) !!}</div>
+                            <div class=" col-sm-10">{!! Form::text('value', '') !!}</div>
+                        </div>
 
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Name</label>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" name="name" value="{{ old('name') }}" required>
+                        <strong>Actions:</strong>
+                        <div class="form-group">
+                            <div class=" col-sm-2">{!! Form::label('action', 'Action:') !!}</div>
+                            <div class=" col-sm-10">{!! Form::select('action', $actions, '', ['class' => 'form-control select-picker']) !!}</div>
+                            <div class=" col-sm-2">{!! Form::label('Operator', 'Operator:', array('class' => '')) !!}</div>
+                            <div class=" col-sm-10">{!! Form::select('operator', $operators, '11', ['class' => 'form-control select-picker']) !!}</div>
+                            <div class=" col-sm-2">{!! Form::label('value', 'Value:') !!}</div>
+                            <div class=" col-sm-10">{!! Form::text('value', '') !!}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="pull-right">
+                                    {!! Form::button('Add Rule', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
-
-
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Condition</label>
-                                <div class="col-md-6">
-                                    <select name="parent_id">
-                                        @foreach( $conditions as $condition )
-                                            <option value="{{ $condition->id }}">{{ $condition->condition_description }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Actions</label>
-                                <div class="col-md-6">
-                                    <select name="parent_id">
-                                        @foreach( $actions as $action )
-                                            <option value="{{ $action->id }}">{{ $action->action_description }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Operator</label>
-                                <div class="col-md-6">
-                                    <select name="parent_id">
-                                        @foreach( $operators as $oper )
-                                            <option value="{{ $oper->id }}">{{ $oper->operator_description }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="col-md-6 col-md-offset-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        Add Location
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
+                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>

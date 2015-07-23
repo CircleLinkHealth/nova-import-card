@@ -30,4 +30,9 @@ class RulesIntrConditions extends Model {
         return $this->belongsTo('App\RulesConditions');
     }
 
+    public function operator()
+    {
+        return $this->belongsTo('App\RulesOperators');
+    }
+
 }

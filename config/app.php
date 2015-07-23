@@ -152,7 +152,8 @@ return [
 		'Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider',
 		'Franzose\ClosureTable\ClosureTableServiceProvider',
 		'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
-		'Barryvdh\Cors\ServiceProvider'
+		'Barryvdh\Cors\ServiceProvider',
+		'Collective\Html\HtmlServiceProvider',
 
 
 	],
@@ -203,7 +204,9 @@ return [
 		'Validator' => 'Illuminate\Support\Facades\Validator',
 		'View'      => 'Illuminate\Support\Facades\View',
 		'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
-		'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory'
+		'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
+		'Form' => 'Collective\Html\FormFacade',
+		'Html' => 'Collective\Html\HtmlFacade',
 
 	],
 
