@@ -27,17 +27,17 @@ class Location extends Entity implements LocationInterface
      */
     protected $fillable = [ 'name', 'phone', 'address_line_1', 'address_line_2', 'city', 'postal_code', 'billing_code', 'location_code' ];
 
-    public static function getNonRootLocations($parent_location_code = false)
+    public static function getNonRootLocations($parent_location_id = false)
     {
-        if($parent_location_code) {
+        if($parent_location_id) {
             // get parent_id from $parent_location_code
-            $parent_location = Location::where('location_code', '=', $parent_location_code)->first();
+            $parent_location = Location::where('id', '=', $parent_location_id)->first();
             if(!$parent_location) {
                 return false;
             }
-            return Location::where('parent_id', '=', $parent_location->id)->lists('name', 'location_code');
+            return Location::where('parent_id', '=', $parent_location->id)->lists('name', 'id');
         } else {
-            return Location::where('parent_id', '!=', 'NULL')->lists('name', 'location_code');
+            return Location::where('parent_id', '!=', 'NULL')->lists('name', 'id');
         }
     }
 

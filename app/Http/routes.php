@@ -124,6 +124,9 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 
 	// reports
 	Route::resource('reports', 'ReportsController');
+
+	// locations
+	Route::get('locations', 'LocationController@index');
 });
 
 

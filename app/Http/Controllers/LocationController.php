@@ -18,8 +18,8 @@ class LocationController extends Controller {
 	{
 		if ( $request->header('Client') == 'ui' ) // WP Site
 		{
-			$parent_location_code = Crypt::decrypt($request->header('parent-location-code'));
-			$locations = Location::getNonRootLocations($parent_location_code);
+			$parent_location_id = Crypt::decrypt($request->header('parent-location-id'));
+			$locations = Location::getNonRootLocations($parent_location_id);
 			if($locations) {
 				return response()->json( Crypt::encrypt(json_encode($locations)) );
 			} else {
