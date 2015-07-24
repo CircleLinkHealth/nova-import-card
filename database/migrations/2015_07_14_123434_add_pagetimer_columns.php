@@ -16,7 +16,7 @@ class AddPagetimerColumns extends Migration {
 		{
 			// $table->string('activity_type')->after('url_short');
 			// $table->string('title')->after('activity_type');
-			$table->string('query_string')->after('title');
+			// $table->string('query_string')->after('title');
 		});
 		Schema::table('activities', function($table)
 		{
