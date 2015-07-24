@@ -29,7 +29,7 @@ class AddPagetimerColumns2 extends Migration {
 	{
 		Schema::table('page_timer', function($table)
 		{
-			$table->dropColumn('processed', 'rule_params', 'rule_found');
+			// $table->dropColumn('processed', 'rule_params', 'rule_found');
 		});
 	}
 
