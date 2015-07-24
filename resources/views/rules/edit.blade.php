@@ -1,6 +1,7 @@
 @extends('app')
 
 @section('content')
+    <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
