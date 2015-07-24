@@ -163,7 +163,7 @@ class Activity extends Model {
             // loop through each user
             foreach($wpUsers as $wpUser) {
                 // get all activities for user for month
-                $totalDuration = $this->getTotalActivityTimeForMonth($month, $wpUser->ID);
+                $totalDuration = $this->getTotalActivityTimeForMonth($wpUser->ID, $month);
 
                 // update user_meta with total
                 $userMeta = WpUserMeta::where('user_id', '=', $wpUser->ID)
