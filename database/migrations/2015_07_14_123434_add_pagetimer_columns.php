@@ -20,7 +20,7 @@ class AddPagetimerColumns extends Migration {
 		});
 		Schema::table('activities', function($table)
 		{
-			$table->unsignedInteger('page_timer_id');
+			// $table->unsignedInteger('page_timer_id');
 		});
 	}
 
