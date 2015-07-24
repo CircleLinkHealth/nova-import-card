@@ -14,8 +14,8 @@ class ChangePagetimerColumn extends Migration {
 	{
 		Schema::table('page_timer', function($table)
 		{
-			$table->dropColumn('rule_found');
-			$table->unsignedInteger('rule_id')->nullable();
+			// $table->dropColumn('rule_found');
+			// $table->unsignedInteger('rule_id')->nullable();
 		});
 		Schema::table('activities', function($table)
 		{
