@@ -66,15 +66,17 @@ class Rules extends Model {
                         $quotedValue = "'".$value."'";
                     }
                 } else {
-                    $quotedValue = "'".$value."'";
+                    $quotedValue = "'%".$value."%'";
                 }
                 $sql .= "AND r.id in (
         select rule_id from lv_rules_intr_conditions where
-                value IN (".$quotedValue.")
+                value LIKE (".$quotedValue.")
                 and condition_id = (select id from lv_rules_conditions where
                 condition_name = '".$key."'))";
             }
         }
+
+        $sql = str_replace(["\n","\r"],"",$sql);
 
         // query sql for rules
         $rules = \DB::select( \DB::raw($sql) );
