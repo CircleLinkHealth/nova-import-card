@@ -45,28 +45,32 @@ class Rules extends Model {
         if(!empty($params)) {
             foreach( $params as $key => $value ) {
                 $quotedValue = "";
-                // if contains a bracket, assuming its an array
-                if (strpos($value,'[') !== false) {
-                    // remove brackets now that we know
-                    $value = str_replace(array('[', ']'), "", $value);
-                    // if comma, assume comma delimited
-                    if (strpos($value,',') !== false) {
-                        $valueArgs = explode(',', $value);
-                        if(!empty($valueArgs)) {
-                            foreach($valueArgs as $valueArg) {
-                                $valueArg = trim($valueArg);
-                                $valueArg = str_replace(array("'", '"'), "", $valueArg);
-                                $quotedValue .= "'".$valueArg."', ";
+                if($value == '') {
+                    $quotedValue = "'%0000000000000%'"; // hack to force blank params to break finding a rule
+                } else {
+                    // if contains a bracket, assuming its an array
+                    if (strpos($value, '[') !== false) {
+                        // remove brackets now that we know
+                        $value = str_replace(array('[', ']'), "", $value);
+                        // if comma, assume comma delimited
+                        if (strpos($value, ',') !== false) {
+                            $valueArgs = explode(',', $value);
+                            if (!empty($valueArgs)) {
+                                foreach ($valueArgs as $valueArg) {
+                                    $valueArg = trim($valueArg);
+                                    $valueArg = str_replace(array("'", '"'), "", $valueArg);
+                                    $quotedValue .= "'" . $valueArg . "', ";
+                                }
+                                // remove trailing comma
+                                $quotedValue = trim($quotedValue);
+                                $quotedValue = rtrim($quotedValue, ",");
                             }
-                            // remove trailing comma
-                            $quotedValue = trim($quotedValue);
-                            $quotedValue = rtrim($quotedValue, ",");
+                        } else {
+                            $quotedValue = "'" . $value . "'";
                         }
                     } else {
-                        $quotedValue = "'".$value."'";
+                        $quotedValue = "'%" . $value . "%'";
                     }
-                } else {
-                    $quotedValue = "'%".$value."%'";
                 }
                 $sql .= "AND r.id in (
         select rule_id from lv_rules_intr_conditions where
