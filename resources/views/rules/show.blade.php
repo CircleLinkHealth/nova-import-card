@@ -52,7 +52,7 @@
                                 <td>{{ $rule->effective_date }}</td>
                                 <td>{{ $rule->expiration_date }}</td>
                                 <td>{{ $rule->active }}</td>
-                                <td><a href="{{ url('rules/'.$rule->id.'/edit') }}" class="btn btn-success">Edit</a></td>
+                                <td><a href="{{ url('rules/'.$rule->id.'/edit') }}" class="btn btn-primary">Edit</a></td>
                             </tr>
                         </tbody>
                     </table>

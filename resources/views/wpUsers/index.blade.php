@@ -14,21 +14,21 @@
                             <td><strong>user_login</strong></td>
                             <td><strong>user_nicename</strong></td>
                             <td><strong>user_email</strong></td>
-                            <td><strong>user_registered</strong></td>
-                            <td><strong>user_status</strong></td>
+                            <td><strong>status</strong></td>
                             <td><strong>display_name</strong></td>
+                            <td><strong>blog</strong></td>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach( $wpUsers as $wpUser )
                             <tr>
-                                <td>{{ $wpUser->ID }} <a href="{{ url('wpusers/'.$wpUser->ID.'') }}">DETAILS</a></td>
+                                <td><a href="{{ url('wpusers/'.$wpUser->ID.'') }}" class="btn btn-primary">{{ $wpUser->ID }} Edit</a></td>
                                 <td>{{ $wpUser->user_login }}</td>
                                 <td>{{ $wpUser->user_nicename }}</td>
                                 <td>{{ $wpUser->user_email }}</td>
-                                <td>{{ $wpUser->user_registered }}</td>
                                 <td>{{ $wpUser->user_status }}</td>
                                 <td>{{ $wpUser->display_name }}</td>
+                                <td>{{ $wpUser->blogId() }}</td>
                             </tr>
                         @endforeach
                         </tbody>

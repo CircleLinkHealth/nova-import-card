@@ -52,6 +52,7 @@ Route::group(['middleware' => 'auth'], function ()
 	// return data on logged in user
 	Route::get('users', 'WpUserController@index');
 	Route::get('users/{id}', ['uses' =>'WpUserController@show', 'as'=>'usersShow']);
+	Route::get('users/create', ['uses' =>'WpUserController@create', 'as'=>'usersCreate']);
 });
 
 

@@ -33,7 +33,7 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td><a href="{{ url('rules/'.$rule->id.'') }}" class="btn btn-success">{{ $rule->id }} Detail</a></td>
+                                <td><a href="{{ url('rules/'.$rule->id.'') }}" class="btn btn-primary">{{ $rule->id }} Detail</a></td>
                                 <td>{{ $rule->rule_name }}</td>
                                 <td>{{ $rule->rule_description }}</td>
                                 <td>{{ $rule->active }}</td>
@@ -50,14 +50,14 @@
                         {!! Form::open(array('url' => '/rules/'.$rule->id, 'class' => 'form-horizontal')) !!}
                         <strong>Conditions:</strong>
                         <div id="conditions">
-                        @foreach( $rule->intrConditions as $intrCondition )
-                            <div class="form-group">
+                        @foreach( $rule->intrConditions as $i => $intrCondition )
+                            <div class="form-group condition">
                                 <div class=" col-sm-1">{!! Form::label('Condition', 'Condition:', array('class' => '')) !!}</div>
-                                <div class=" col-sm-3">{!! Form::select('condition', $conditions, $intrCondition->condition->id, ['class' => 'form-control select-picker', 'style' => 'width:120px;']) !!}</div>
+                                <div class=" col-sm-3">{!! Form::select('c'.$i.'condition', $conditions, $intrCondition->condition->id, ['class' => 'form-control select-picker c-condition', 'style' => 'width:120px;']) !!}</div>
                                 <div class=" col-sm-1">{!! Form::label('Operator', 'Operator:', array('class' => '')) !!}</div>
-                                <div class=" col-sm-2">{!! Form::select('operator', $operators, $intrCondition->operator->id, ['class' => 'form-control select-picker', 'style' => 'width:100px;']) !!}</div>
+                                <div class=" col-sm-2">{!! Form::select('c'.$i.'operator', $operators, $intrCondition->operator->id, ['class' => 'form-control select-picker c-operator', 'style' => 'width:100px;']) !!}</div>
                                 <div class=" col-sm-1">{!! Form::label('Value', 'Value:', array('class' => '')) !!}</div>
-                                <div class=" col-sm-3">{!! Form::text('value', $intrCondition->value, ['class' => 'form-control', 'style' => 'width:120px;']) !!}</div>
+                                <div class=" col-sm-3">{!! Form::text('c'.$i.'value', $intrCondition->value, ['class' => 'form-control c-value', 'style' => 'width:120px;']) !!}</div>
                                 <div class=" col-sm-1">{!! Form::button('<span class="glyphicon glyphicon-minus-sign"></span>', array('class' => 'btn btn-primary remove-condition')) !!}</div>
                             </div>
                         @endforeach
@@ -72,14 +72,14 @@
 
                         <strong>Actions:</strong>
                         <div id="actions">
-                        @foreach( $rule->intrActions as $intrAction )
-                            <div class="form-group">
+                        @foreach( $rule->intrActions as $i => $intrAction )
+                            <div class="form-group action">
                                 <div class=" col-sm-1">{!! Form::label('action', 'Action:') !!}</div>
-                                <div class=" col-sm-3">{!! Form::select('action', $actions, $intrAction->action->id, ['class' => 'form-control select-picker', 'style' => 'width:120px;']) !!}</div>
+                                <div class=" col-sm-3">{!! Form::select('c'.$i.'action', $actions, $intrAction->action->id, ['class' => 'form-control select-picker', 'style' => 'width:120px;']) !!}</div>
                                 <div class=" col-sm-1">{!! Form::label('Operator', 'Operator:', array('class' => '')) !!}</div>
-                                <div class=" col-sm-2">{!! Form::select('operator', $operators, $intrCondition->operator->id, ['class' => 'form-control select-picker', 'style' => 'width:100px;']) !!}</div>
+                                <div class=" col-sm-2">{!! Form::select('c'.$i.'operator', $operators, $intrCondition->operator->id, ['class' => 'form-control select-picker', 'style' => 'width:100px;']) !!}</div>
                                 <div class=" col-sm-1">{!! Form::label('value', 'Value:') !!}</div>
-                                <div class=" col-sm-3">{!! Form::text('value', $intrAction->value, ['class' => 'form-control', 'style' => 'width:120px;']) !!}</div>
+                                <div class=" col-sm-3">{!! Form::text('c'.$i.'value', $intrAction->value, ['class' => 'form-control', 'style' => 'width:120px;']) !!}</div>
                                 <div class=" col-sm-1">{!! Form::button('<span class="glyphicon glyphicon-minus-sign"></span>', array('class' => 'btn btn-primary remove-action')) !!}</div>
                             </div>
                         @endforeach
@@ -110,18 +110,18 @@
 
         <div style="display:none;">
             <div id="jsconditions">
-                <div class="form-group">
+                <div class="form-group condition">
                     <div class=" col-sm-1">{!! Form::label('Condition', 'Condition:', array('class' => '')) !!}</div>
-                    <div class=" col-sm-3">{!! Form::select('condition', $conditions, '', ['class' => 'form-control select-picker', 'style' => 'width:120px;']) !!}</div>
+                    <div class=" col-sm-3">{!! Form::select('condition', $conditions, '', ['class' => 'form-control select-picker c-condition', 'style' => 'width:120px;']) !!}</div>
                     <div class=" col-sm-1">{!! Form::label('Operator', 'Operator:', array('class' => '')) !!}</div>
-                    <div class=" col-sm-2">{!! Form::select('operator', $operators, '', ['class' => 'form-control select-picker']) !!}</div>
+                    <div class=" col-sm-2">{!! Form::select('operator', $operators, '', ['class' => 'form-control select-picker c-operator']) !!}</div>
                     <div class=" col-sm-1">{!! Form::label('Value', 'Value:', array('class' => '')) !!}</div>
-                    <div class=" col-sm-3">{!! Form::text('value', '', ['class' => 'form-control', 'style' => 'width:100px;']) !!}</div>
+                    <div class=" col-sm-3">{!! Form::text('value', '', ['class' => 'form-control c-value', 'style' => 'width:120px;']) !!}</div>
                     <div class=" col-sm-1">{!! Form::button('<span class="glyphicon glyphicon-minus-sign"></span>', array('class' => 'btn btn-primary remove-condition')) !!}</div>
                 </div>
             </div>
             <div id="jsactions">
-                <div class="form-group">
+                <div class="form-group action">
                     <div class=" col-sm-1">{!! Form::label('action', 'Action:') !!}</div>
                     <div class=" col-sm-3">{!! Form::select('action', $actions, '', ['class' => 'form-control select-picker', 'style' => 'width:120px;']) !!}</div>
                     <div class=" col-sm-1">{!! Form::label('Operator', 'Operator:', array('class' => '')) !!}</div>

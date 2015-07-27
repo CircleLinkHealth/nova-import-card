@@ -17,6 +17,14 @@ function addAction() {
 }
 
 $(document).ready(function(){
+    //alert('bump');
+    $( "#active_date" ).datetimepicker();
+    $( "#preferred_contact_time" ).timepicker();
+    $( "#daily_reminder_time" ).timepicker();
+    $( "#hospital_reminder_time" ).timepicker();
+    $( "#birth_date" ).datepicker();
+    $( "#consent_date" ).datepicker();
+
     $('body').on('click', '.add-condition', function(event) {
         event.preventDefault();
         addCondition();

@@ -1,10 +1,12 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\WpBlog;
 use App\WpUser;
 use App\WpUserMeta;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use DateTimeZone;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -62,7 +64,19 @@ class WpUserController extends Controller {
 	 */
 	public function create()
 	{
-		//
+		// States (for dropdown)
+		$states_arr = array('AL'=>"Alabama",'AK'=>"Alaska",'AZ'=>"Arizona",'AR'=>"Arkansas",'CA'=>"California",'CO'=>"Colorado",'CT'=>"Connecticut",'DE'=>"Delaware",'DC'=>"District Of Columbia",'FL'=>"Florida",'GA'=>"Georgia",'HI'=>"Hawaii",'ID'=>"Idaho",'IL'=>"Illinois", 'IN'=>"Indiana", 'IA'=>"Iowa",  'KS'=>"Kansas",'KY'=>"Kentucky",'LA'=>"Louisiana",'ME'=>"Maine",'MD'=>"Maryland", 'MA'=>"Massachusetts",'MI'=>"Michigan",'MN'=>"Minnesota",'MS'=>"Mississippi",'MO'=>"Missouri",'MT'=>"Montana",'NE'=>"Nebraska",'NV'=>"Nevada",'NH'=>"New Hampshire",'NJ'=>"New Jersey",'NM'=>"New Mexico",'NY'=>"New York",'NC'=>"North Carolina",'ND'=>"North Dakota",'OH'=>"Ohio",'OK'=>"Oklahoma", 'OR'=>"Oregon",'PA'=>"Pennsylvania",'RI'=>"Rhode Island",'SC'=>"South Carolina",'SD'=>"South Dakota",'TN'=>"Tennessee",'TX'=>"Texas",'UT'=>"Utah",'VT'=>"Vermont",'VA'=>"Virginia",'WA'=>"Washington",'WV'=>"West Virginia",'WI'=>"Wisconsin",'WY'=>"Wyoming");
+
+		// programs for dd
+		$wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('domain', 'blog_id');
+
+		// timezones for dd
+		$timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+		foreach($timezones_raw as $timezone) {
+			$timezones_arr[$timezone] = $timezone;
+		}
+		// display view
+		return view('wpUsers.create', ['states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs]);
 	}
 
 	/**
