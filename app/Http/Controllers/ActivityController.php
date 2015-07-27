@@ -66,28 +66,28 @@ class ActivityController extends Controller {
 			return response("Unauthorized", 401);
 		}
 
+        // convert minutes to seconds.
+        $input['duration'] = $input['duration']*60;
+
+		// store activity
+		$actId = Activity::createNewActivity($input);
+
+		// update usermeta: cur_month_activity_time
+		$result = (new Activity())->reprocessMonthlyActivityTime($input['patient_id']);
+
+		// add meta
 		if (array_key_exists('meta',$input)) {
 			$meta = $input['meta'];
 			unset($input['meta']);
-		} else {
-			return response("Bad request", 400);
+			$activity = Activity::find($actId);
+			$metaArray = [];
+			$i = 0;
+			foreach ($meta as $actMeta) {
+				$metaArray[$i] = new ActivityMeta($actMeta);
+				$i++;
+			}
+			$activity->meta()->saveMany($metaArray);
 		}
-        //convert minutes to seconds.
-        $input['duration'] = $input['duration']*60;
-		$actId = Activity::createNewActivity($input);
-
-		// add meta
-		$activity = Activity::find($actId);
-		$metaArray = [];
-		$i = 0;
-		foreach ($meta as $actMeta) {
-			$metaArray[$i] = new ActivityMeta($actMeta);
-			$i++;
-		}
-		$activity->meta()->saveMany($metaArray);
-
-		// update usermeta: cur_month_activity_time
-		$result = (new Activity())->reprocessMonthlyActivityTime($activity->patient_id);
 
 		return response("Activity Created", 201);
 	}
@@ -167,6 +167,8 @@ class ActivityController extends Controller {
 
         $actMeta = ActivityMeta::where('activity_id', $input['activity_id'])->where('meta_key',$meta['0']['meta_key'])->first();
         $actMeta->fill($meta['0'])->save();
+
+		$result = (new Activity())->reprocessMonthlyActivityTime($input['patient_id']);
 
         return response("Activity Updated", 201);
 	}
