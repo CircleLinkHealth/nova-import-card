@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\WpUser;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -64,8 +65,14 @@ class ReportsController extends Controller {
                 $patients = Crypt::decrypt($request->header('patients'));
             };
 
+			$months = Crypt::decrypt($request->header('months'));
+
             $data = DB::table('activities')
                 ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration)'))
+				->whereBetween('performed_at', [
+					Carbon::createFromFormat('Y-n', $months[0])->startOfMonth(),
+					Carbon::createFromFormat('Y-n', $months[1])->endOfMonth()
+				])
                 ->where('patient_id', $patients[0])
                 ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
                 ->orderBy('performed_at', 'desc')
@@ -89,7 +96,8 @@ class ReportsController extends Controller {
             }
 
             if(!empty($reportData)) {
-                return response()->json(Crypt::encrypt(json_encode($reportData)));
+               return response()->json(Crypt::encrypt(json_encode($reportData)));
+				//return response($months, 201);
             } else {
                 return response('Not Found', 204);
             }
