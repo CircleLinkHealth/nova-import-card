@@ -53,6 +53,7 @@ class Activity extends Model {
     public static function createNewActivity($attr)
     {
         $newActivity = Activity::create($attr);
+        $result = (new Activity())->reprocessMonthlyActivityTime($attr['patient_id']);
 
         return $newActivity->id;
     }
