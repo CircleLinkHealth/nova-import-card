@@ -141,7 +141,29 @@ class WpUserController extends Controller {
 		$messages = \Session::get('messages');
 
 		$wpUser = WpUser::find($id);
+		if(!$wpUser) {
+			return response("User not found", 401);
+		}
 
+		// primary_blog
+		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
+		if(!isset($userMeta['primary_blog'])) {
+			return response("Required meta primary_blog not found", 401);
+		}
+		$primaryBlog = $userMeta['primary_blog'];
+
+		// user config
+		$userConfig = $wpUser->userConfigTemplate();
+		if(isset($userMeta['wp_' . $primaryBlog . '_user_config'])) {
+			$userConfig = unserialize($userMeta['wp_' . $primaryBlog . '_user_config']);
+			$userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
+		}
+
+		// set role
+		$capabilities = unserialize($userMeta['wp_' . $primaryBlog . '_capabilities']);
+		$role = key($capabilities);
+
+		//dd($capabilities);
 		// States (for dropdown)
 		$states_arr = array('AL'=>"Alabama",'AK'=>"Alaska",'AZ'=>"Arizona",'AR'=>"Arkansas",'CA'=>"California",'CO'=>"Colorado",'CT'=>"Connecticut",'DE'=>"Delaware",'DC'=>"District Of Columbia",'FL'=>"Florida",'GA'=>"Georgia",'HI'=>"Hawaii",'ID'=>"Idaho",'IL'=>"Illinois", 'IN'=>"Indiana", 'IA'=>"Iowa",  'KS'=>"Kansas",'KY'=>"Kentucky",'LA'=>"Louisiana",'ME'=>"Maine",'MD'=>"Maryland", 'MA'=>"Massachusetts",'MI'=>"Michigan",'MN'=>"Minnesota",'MS'=>"Mississippi",'MO'=>"Missouri",'MT'=>"Montana",'NE'=>"Nebraska",'NV'=>"Nevada",'NH'=>"New Hampshire",'NJ'=>"New Jersey",'NM'=>"New Mexico",'NY'=>"New York",'NC'=>"North Carolina",'ND'=>"North Dakota",'OH'=>"Ohio",'OK'=>"Oklahoma", 'OR'=>"Oregon",'PA'=>"Pennsylvania",'RI'=>"Rhode Island",'SC'=>"South Carolina",'SD'=>"South Dakota",'TN'=>"Tennessee",'TX'=>"Texas",'UT'=>"Utah",'VT'=>"Vermont",'VA'=>"Virginia",'WA'=>"Washington",'WV'=>"West Virginia",'WI'=>"Wisconsin",'WY'=>"Wyoming");
 
@@ -156,18 +178,6 @@ class WpUserController extends Controller {
 
 		// providers
 		$providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
-
-
-		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
-		$primaryBlog = $userMeta['primary_blog'];
-		$userConfig = unserialize($userMeta['wp_' . $primaryBlog . '_user_config']);
-
-		// set role
-		$capabilities = unserialize($userMeta['wp_' . $primaryBlog . '_capabilities']);
-		$role = key($capabilities);
-
-		//dd($capabilities);
-
 
 		// display view
 		return view('wpUsers.edit', ['wpUser' => $wpUser, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $primaryBlog, 'role' => $role, 'providers_arr' => $providers_arr, 'messages' => $messages]);
@@ -189,15 +199,21 @@ class WpUserController extends Controller {
 		$primaryBlog = $userMeta['primary_blog'];
 
 		// update role
-		$capabilities = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_capabilities')->first();
 		$input = $request->input('role');
 		if(!empty($input)) {
-			$capabilities->meta_value = serialize(array($input => '1'));
+			$capabilities = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_capabilities')->first();
+			if($capabilities) {
+				$capabilities->meta_value = serialize(array($input => '1'));
+			} else {
+				$capabilities = new WpUserMeta;
+				$capabilities->meta_key = 'wp_' . $primaryBlog . '_capabilities';
+				$capabilities->meta_value = serialize(array($input => '1'));
+				$capabilities->user_id = $id;
+			}
 			$capabilities->save();
 		}
 
 		// update user config
-		$userConfig = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_user_config')->first();
 		$userConfigTemplate = $wpUser->userConfigTemplate();
 		foreach($userConfigTemplate as $key => $value) {
 			$input = $request->input($key);
@@ -205,7 +221,15 @@ class WpUserController extends Controller {
 				$userConfigTemplate[$key] = $request->input($key);
 			}
 		}
-		$userConfig->meta_value = serialize($userConfigTemplate);
+		$userConfig = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_user_config')->first();
+		if($userConfig) {
+			$userConfig->meta_value = serialize($userConfigTemplate);
+		} else {
+			$userConfig = new WpUserMeta;
+			$userConfig->meta_key = 'wp_' . $primaryBlog . '_user_config';
+			$userConfig->meta_value = serialize($userConfigTemplate);
+			$userConfig->user_id = $id;
+		}
 		$userConfig->save();
 
 		return redirect()->back()->with('messages', ['successfully updated user']);

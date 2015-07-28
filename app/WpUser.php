@@ -124,9 +124,9 @@ class WpUser extends Model {
 
     public function userConfigTemplate() {
         $userConfig = array("status" => "Active",
-          "email" => "bturpin@circlelinkhealth.com",
-          "mrn_number" => "3781bt",
-          "study_phone_number" => "203-561-2703",
+          "email" => "test@test.com",
+          "mrn_number" => "12345678",
+          "study_phone_number" => "203-252-2556",
           "active_date" => null,
           "preferred_contact_time" => "09:00 AM",
           "preferred_contact_timezone" => "America/New_York",
@@ -135,24 +135,24 @@ class WpUser extends Model {
           "preferred_contact_location" => null,
           "prefix" => null,
           "gender" => "M",
-          "address" => "67 Junction Hollow Rd",
+          "address" => "123 Test St",
           "city" => "Anywhere",
           "state" => "IA",
           "zip" => "11233",
-          "birth_date" => "1900-07-14",
-          "consent_date" => "2012-01-01",
+          "birth_date" => "1900-01-31",
+          "consent_date" => "2012-01-31",
           "daily_reminder_optin" => "Y",
-          "daily_reminder_time" => "08:00",
+          "daily_reminder_time" => "09:00",
           "daily_reminder_areas" => "TBD",
           "hospital_reminder_optin" => "Y",
-          "hospital_reminder_time" => "19:00",
+          "hospital_reminder_time" => "09:00",
           "hospital_reminder_areas" => "TBD",
           "location" => "5",
-          "registration_date" => "2015-07-21 15:55:36",
-          "care_team" => array(),
-          "send_alert_to" => array(),
-          "billing_provider" => "321",
-          "lead_contact" => "292");
+          "registration_date" => "2015-07-21 01:00:00",
+          "care_team" => array('000', '001'),
+          "send_alert_to" => array('000', '001'),
+          "billing_provider" => "000",
+          "lead_contact" => "000");
 
         return $userConfig;
     }

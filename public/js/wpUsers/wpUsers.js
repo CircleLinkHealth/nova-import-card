@@ -18,12 +18,29 @@ function addAction() {
 
 $(document).ready(function(){
     //alert('bump');
-    $( "#active_date" ).datetimepicker();
-    $( "#preferred_contact_time" ).timepicker();
-    $( "#daily_reminder_time" ).timepicker();
-    $( "#hospital_reminder_time" ).timepicker();
-    $( "#birth_date" ).datepicker();
-    $( "#consent_date" ).datepicker();
+    $( "#active_date" ).datetimepicker({
+        dateFormat: "yy-mm-dd",
+        timeFormat: "hh:mm:ss"
+    });
+    $( "#preferred_contact_time" ).timepicker({
+        timeFormat: "hh:mm TT"
+    });
+    $( "#daily_reminder_time" ).timepicker({
+        timeFormat: "hh:mm"
+    });
+    $( "#hospital_reminder_time" ).timepicker({
+        timeFormat: "hh:mm"
+    });
+    $( "#birth_date" ).datepicker({
+        dateFormat: "yy-mm-dd"
+    });
+    $( "#consent_date" ).datepicker({
+        dateFormat: "yy-mm-dd"
+    });
+    $( "#registration_date" ).datetimepicker({
+        dateFormat: "yy-mm-dd",
+        timeFormat: "hh:mm:ss"
+    });
 
     $('body').on('click', '.add-condition', function(event) {
         event.preventDefault();
