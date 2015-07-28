@@ -133,7 +133,7 @@ class WpUser extends Model {
           "preferred_contact_method" => "SMS",
           "preferred_contact_language" => "EN",
           "preferred_contact_location" => null,
-          "prefix" => null,
+          "prefix" => '',
           "gender" => "M",
           "address" => "123 Test St",
           "city" => "Anywhere",
@@ -147,12 +147,15 @@ class WpUser extends Model {
           "hospital_reminder_optin" => "Y",
           "hospital_reminder_time" => "09:00",
           "hospital_reminder_areas" => "TBD",
-          "location" => "5",
           "registration_date" => "2015-07-21 01:00:00",
-          "care_team" => array('000', '001'),
-          "send_alert_to" => array('000', '001'),
-          "billing_provider" => "000",
-          "lead_contact" => "000");
+          "care_team" => array(),
+          "send_alert_to" => array(),
+          "billing_provider" => "",
+          "lead_contact" => "",
+          "qualification" => "",
+          "npi_number" => "",
+          "specialty" => "",
+            );
 
         return $userConfig;
     }

@@ -27,4 +27,13 @@ class WpBlog extends Model {
 
 	//
 
+    public function locationId() {
+        $location = \DB::select("select * from wp_".$this->blog_id."_options where option_name = 'location_id'", []);
+        if($location[0]) {
+            return $location[0]->option_value;
+        } else {
+            return false;
+        }
+    }
+
 }

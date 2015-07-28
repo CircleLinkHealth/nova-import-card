@@ -94,6 +94,24 @@
                         </div>
                         <div class="form-group">
                             <div class="row">
+                                <div class="col-xs-2">{!! Form::label('npi_number', 'NPI Number:') !!}</div>
+                                <div class="col-xs-10">{!! Form::text('npi_number', $userConfig['npi_number'], ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-2">{!! Form::label('qualification', 'Qualification:') !!}</div>
+                                <div class="col-xs-10">{!! Form::text('qualification', $userConfig['qualification'], ['class' => 'form-control', 'style' => 'width:20%;']) !!}</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-2">{!! Form::label('specialty', 'Specialty:') !!}</div>
+                                <div class="col-xs-10">{!! Form::text('specialty', $userConfig['specialty'], ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
                                 <div class="col-xs-2">{!! Form::label('study_phone_number', 'Study Phone Number:') !!}</div>
                                 <div class="col-xs-10">{!! Form::text('study_phone_number', $userConfig['study_phone_number'], ['class' => 'form-control', 'style' => 'width:40%;']) !!}</div>
                             </div>
@@ -130,8 +148,8 @@
                         </div>
                         <div class="form-group">
                             <div class="row">
-                                <div class="col-xs-2">{!! Form::label('preferred_contact_location', 'Contact Location(DEPR?):') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('preferred_contact_location', $userConfig['preferred_contact_location'], ['class' => 'form-control']) !!}</div>
+                                <div class="col-xs-2">{!! Form::label('preferred_contact_location', 'Contact Location:') !!}</div>
+                                <div class="col-xs-10">{!! Form::select('preferred_contact_location', $locations_arr, $userConfig['preferred_contact_location'], ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -216,12 +234,6 @@
                             <div class="row">
                                 <div class="col-xs-2">{!! Form::label('hospital_reminder_areas', 'Hospital Reminder Areas:') !!}</div>
                                 <div class="col-xs-10">{!! Form::text('hospital_reminder_areas', $userConfig['hospital_reminder_areas'], ['class' => 'form-control']) !!}</div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-xs-2">{!! Form::label('location', 'location:') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('location', $userConfig['location'], ['class' => 'form-control']) !!}</div>
                             </div>
                         </div>
                         <div class="form-group">
