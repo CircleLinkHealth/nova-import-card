@@ -34,7 +34,13 @@
                                 <td>{{ $wpUser->user_email }}</td>
                                 <td>{{ $wpUser->user_status }}</td>
                                 <td>{{ $wpUser->display_name }}</td>
-                                <td>{{ $wpUser->blogId() }}</td>
+                                <td>
+                                    @if($wpUser->blogId())
+                                        <strong>{{ $wpUser->blogId() }}</strong>
+                                    @else
+                                        <strong>MISSING</strong>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>
