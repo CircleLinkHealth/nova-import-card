@@ -34,7 +34,7 @@ class ReportsController extends Controller {
 				$range = Crypt::decrypt($request->header('range'));
 			};
 
-			$timeLessThan = 20;
+			$timeLessThan = 1200;
 			if( !empty( $request->header('timeLessThan') ) ) {
 				$timeLessThan = Crypt::decrypt($request->header('timeLessThan'));
 			};
