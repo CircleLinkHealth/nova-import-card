@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use SoftDeletingTrait;
 use App\WpUser;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;

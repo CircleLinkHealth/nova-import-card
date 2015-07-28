@@ -50,9 +50,12 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'activitiesEdit']);
 
 	// return data on logged in user
-	Route::get('users', 'WpUserController@index');
-	Route::get('users/{id}', ['uses' =>'WpUserController@show', 'as'=>'usersShow']);
-	Route::get('users/create', ['uses' =>'WpUserController@create', 'as'=>'usersCreate']);
+	Route::get('wpusers', 'WpUserController@index');
+	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'usersCreate']);
+	Route::get('wpusers/{id}', ['uses' =>'WpUserController@show', 'as'=>'usersShow']);
+	Route::get('wpusers/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'usersEdit']);
+	Route::post('wpusers/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'usersUpdate']);
+
 });
 
 
@@ -151,7 +154,7 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	//Route::resource('activities.meta', 'ActivityMetaController');
 
-	Route::resource('wpusers', 'WpUserController');
+	//Route::resource('wpusers', 'WpUserController');
 
 	Route::resource('wpusers.meta', 'WpUserMetaController');
 

@@ -36,6 +36,12 @@ class WpUser extends Model {
 
     protected $dates = ['deleted'];
 
+    public $timestamps = false;
+
+
+
+
+
     public function meta()
     {
         return $this->hasMany('App\WpUserMeta', 'user_id', 'ID');
@@ -99,4 +105,55 @@ class WpUser extends Model {
 //        return $blogID;
 //    }
 
+    public function createNewUser($user_email, $user_pass) {
+
+        // use wordpress md5 hasher class
+        $wp_hasher = new \PasswordHash(12, TRUE);
+        $user_pass = $wp_hasher->HashPassword($user_pass);
+
+        $user = new WpUser();
+        $user->user_login = $user_email;
+        $user->user_email = $user_email;
+        $user->user_pass = $wp_hasher->HashPassword($user_pass);
+        $user_id = $user->save();
+
+        return $user_id;
+
+    }
+
+
+    public function userConfigTemplate() {
+        $userConfig = array("status" => "Active",
+          "email" => "bturpin@circlelinkhealth.com",
+          "mrn_number" => "3781bt",
+          "study_phone_number" => "203-561-2703",
+          "active_date" => null,
+          "preferred_contact_time" => "09:00 AM",
+          "preferred_contact_timezone" => "America/New_York",
+          "preferred_contact_method" => "SMS",
+          "preferred_contact_language" => "EN",
+          "preferred_contact_location" => null,
+          "prefix" => null,
+          "gender" => "M",
+          "address" => "67 Junction Hollow Rd",
+          "city" => "Anywhere",
+          "state" => "IA",
+          "zip" => "11233",
+          "birth_date" => "1900-07-14",
+          "consent_date" => "2012-01-01",
+          "daily_reminder_optin" => "Y",
+          "daily_reminder_time" => "08:00",
+          "daily_reminder_areas" => "TBD",
+          "hospital_reminder_optin" => "Y",
+          "hospital_reminder_time" => "19:00",
+          "hospital_reminder_areas" => "TBD",
+          "location" => "5",
+          "registration_date" => "2015-07-21 15:55:36",
+          "care_team" => array(),
+          "send_alert_to" => array(),
+          "billing_provider" => "321",
+          "lead_contact" => "292");
+
+        return $userConfig;
+    }
 }

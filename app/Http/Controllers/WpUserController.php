@@ -7,6 +7,7 @@ use App\WpUserMeta;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
+use PasswordHash;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -64,6 +65,9 @@ class WpUserController extends Controller {
 	 */
 	public function create()
 	{
+		//$result = (new WpUser())->createNewUser('test@test.com', 'testpassword');
+		//dd($result);
+
 		// States (for dropdown)
 		$states_arr = array('AL'=>"Alabama",'AK'=>"Alaska",'AZ'=>"Arizona",'AR'=>"Arkansas",'CA'=>"California",'CO'=>"Colorado",'CT'=>"Connecticut",'DE'=>"Delaware",'DC'=>"District Of Columbia",'FL'=>"Florida",'GA'=>"Georgia",'HI'=>"Hawaii",'ID'=>"Idaho",'IL'=>"Illinois", 'IN'=>"Indiana", 'IA'=>"Iowa",  'KS'=>"Kansas",'KY'=>"Kentucky",'LA'=>"Louisiana",'ME'=>"Maine",'MD'=>"Maryland", 'MA'=>"Massachusetts",'MI'=>"Michigan",'MN'=>"Minnesota",'MS'=>"Mississippi",'MO'=>"Missouri",'MT'=>"Montana",'NE'=>"Nebraska",'NV'=>"Nevada",'NH'=>"New Hampshire",'NJ'=>"New Jersey",'NM'=>"New Mexico",'NY'=>"New York",'NC'=>"North Carolina",'ND'=>"North Dakota",'OH'=>"Ohio",'OK'=>"Oklahoma", 'OR'=>"Oregon",'PA'=>"Pennsylvania",'RI'=>"Rhode Island",'SC'=>"South Carolina",'SD'=>"South Dakota",'TN'=>"Tennessee",'TX'=>"Texas",'UT'=>"Utah",'VT'=>"Vermont",'VA'=>"Virginia",'WA'=>"Washington",'WV'=>"West Virginia",'WI'=>"Wisconsin",'WY'=>"Wyoming");
 
@@ -86,7 +90,12 @@ class WpUserController extends Controller {
 	 */
 	public function store(Request $request)
 	{
-		//
+		$rules = array(
+			'name'             => 'required',                        // just a normal required validation
+			'email'            => 'required|email|unique:ducks',     // required and must be unique in the ducks table
+			'password'         => 'required',
+			'password_confirm' => 'required|same:password'           // required and has to match the password field
+		);
 	}
 
 	/**
@@ -129,7 +138,39 @@ class WpUserController extends Controller {
 	 */
 	public function edit($id)
 	{
-		//
+		$messages = \Session::get('messages');
+
+		$wpUser = WpUser::find($id);
+
+		// States (for dropdown)
+		$states_arr = array('AL'=>"Alabama",'AK'=>"Alaska",'AZ'=>"Arizona",'AR'=>"Arkansas",'CA'=>"California",'CO'=>"Colorado",'CT'=>"Connecticut",'DE'=>"Delaware",'DC'=>"District Of Columbia",'FL'=>"Florida",'GA'=>"Georgia",'HI'=>"Hawaii",'ID'=>"Idaho",'IL'=>"Illinois", 'IN'=>"Indiana", 'IA'=>"Iowa",  'KS'=>"Kansas",'KY'=>"Kentucky",'LA'=>"Louisiana",'ME'=>"Maine",'MD'=>"Maryland", 'MA'=>"Massachusetts",'MI'=>"Michigan",'MN'=>"Minnesota",'MS'=>"Mississippi",'MO'=>"Missouri",'MT'=>"Montana",'NE'=>"Nebraska",'NV'=>"Nevada",'NH'=>"New Hampshire",'NJ'=>"New Jersey",'NM'=>"New Mexico",'NY'=>"New York",'NC'=>"North Carolina",'ND'=>"North Dakota",'OH'=>"Ohio",'OK'=>"Oklahoma", 'OR'=>"Oregon",'PA'=>"Pennsylvania",'RI'=>"Rhode Island",'SC'=>"South Carolina",'SD'=>"South Dakota",'TN'=>"Tennessee",'TX'=>"Texas",'UT'=>"Utah",'VT'=>"Vermont",'VA'=>"Virginia",'WA'=>"Washington",'WV'=>"West Virginia",'WI'=>"Wisconsin",'WY'=>"Wyoming");
+
+		// programs for dd
+		$wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('domain', 'blog_id');
+
+		// timezones for dd
+		$timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+		foreach($timezones_raw as $timezone) {
+			$timezones_arr[$timezone] = $timezone;
+		}
+
+		// providers
+		$providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
+
+
+		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
+		$primaryBlog = $userMeta['primary_blog'];
+		$userConfig = unserialize($userMeta['wp_' . $primaryBlog . '_user_config']);
+
+		// set role
+		$capabilities = unserialize($userMeta['wp_' . $primaryBlog . '_capabilities']);
+		$role = key($capabilities);
+
+		//dd($capabilities);
+
+
+		// display view
+		return view('wpUsers.edit', ['wpUser' => $wpUser, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $primaryBlog, 'role' => $role, 'providers_arr' => $providers_arr, 'messages' => $messages]);
 	}
 
 	/**
@@ -138,9 +179,36 @@ class WpUserController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Request $request, $id)
 	{
-		//
+		// get user
+		$wpUser = WpUser::find($id);
+
+		// get user meta
+		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
+		$primaryBlog = $userMeta['primary_blog'];
+
+		// update role
+		$capabilities = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_capabilities')->first();
+		$input = $request->input('role');
+		if(!empty($input)) {
+			$capabilities->meta_value = serialize(array($input => '1'));
+			$capabilities->save();
+		}
+
+		// update user config
+		$userConfig = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_user_config')->first();
+		$userConfigTemplate = $wpUser->userConfigTemplate();
+		foreach($userConfigTemplate as $key => $value) {
+			$input = $request->input($key);
+			if(!empty($input)) {
+				$userConfigTemplate[$key] = $request->input($key);
+			}
+		}
+		$userConfig->meta_value = serialize($userConfigTemplate);
+		$userConfig->save();
+
+		return redirect()->back()->with('messages', ['successfully updated user']);
 	}
 
 	/**
