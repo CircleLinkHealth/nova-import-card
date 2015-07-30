@@ -118,6 +118,15 @@ class WpUserController extends Controller {
 						$messageKey = 'success';
 						$messageValue = 'User activities have been recalculated';
 					}
+				} else if($params['action'] == 'setPatientToBlog') {
+					$userMeta = new WpUserMeta;
+					$userMeta->meta_key = 'primary_blog';
+					$userMeta->meta_value = $params['blogId'];
+					$userMeta->user_id = $id;
+					$userMeta->save ();
+					//$messageKey = 'success';
+					//$messageValue = 'Usermeta primary_blog set for user '.$id;
+					return redirect()->back()->with('messages', ['successfully updated Usermeta primary_blog']);
 				}
 			}
 		}
