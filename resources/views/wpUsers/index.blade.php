@@ -55,7 +55,7 @@
                                     @if($wpUser->blogId())
                                         <strong>{{ $wpUser->blogId() }}</strong>
                                     @elseif(is_numeric(substr($wpUser->user_email, 0, 1)))
-                                        {{ $wpUser->nickname  }}<a href="/wpusers/{{ $wpUser->ID }}?action=setPatientToBlog&blogId=9" class="setPatientToBlog">Add primary_blog={{ substr($wpUser->user_email, 0, 1) }}</a>
+                                        {{ $wpUser->nickname  }}<a href="/wpusers/{{ $wpUser->ID }}?action=setPatientToBlog&blogId={{ substr($wpUser->user_email, 0, 1) }}" class="setPatientToBlog">Add primary_blog={{ substr($wpUser->user_email, 0, 1) }}</a>
                                     @else
                                         -
                                     @endif
