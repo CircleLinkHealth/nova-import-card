@@ -1,0 +1,62 @@
+<RestClientRequest>
+  <option name="biscuits">
+    <list>
+      <Biscuit>
+        <option name="date" value="1435777844000" />
+        <option name="domain" value="cpm.api" />
+        <option name="name" value="laravel_session" />
+        <option name="path" value="/" />
+        <option name="value" value="eyJpdiI6ImhPTUlTM2pkNmw3Q0ptQXdcL01sbGtRPT0iLCJ2YWx1ZSI6IjBjM0F6OVdpWlhFTmFTdHRiQjBsVzVOeDBKRDBkckF0V2hseFBRdjNPNXQ2VEFVWENhb1FzY05TSVAycytqWWp5WHU4T29wTXp2Q3lGWjBkRHhhRWRnPT0iLCJtYWMiOiIzMjFiODgxZjA0ZGE5MTMxOGJlMzIyYzRkNjkwZTU2MTZmNDA4YTk0YmZlYmNjNzA5ZTZiOTRkOGM1YTFlOGRiIn0%3D" />
+      </Biscuit>
+    </list>
+  </option>
+  <option name="httpMethod" value="POST" />
+  <option name="urlBase" value="http://cpm.api" />
+  <option name="urlPath" value="/api/v2.1/observation" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Authorization" />
+        <option name="value" value="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJzdWIiOjMzMCwiaXNzIjoiaHR0cDpcL1wvY3BtLmFwaVwvYXBpXC92Mi4xXC9sb2dpbiIsImlhdCI6IjE0MzU3NzA0NzEiLCJleHAiOiIxNDM1Nzc0MDcxIiwibmJmIjoiMTQzNTc3MDQ3MSIsImp0aSI6Ijk0MWNhZGJkOWVmNTZmNzczYThlNTYxODk4YWIxNzhkIn0.NTcxODJmMjE2MjU0OWE4YjNkNjE5ODIyN2I3NGY3ZTYzNmIwMzgyMWI0MDk2Mzk0ZTNhMWVlY2NlY2ExZjRhZA" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Cache-Control" />
+        <option name="value" value="no-cache" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="X-Authorization" />
+        <option name="value" value="01e27eee75bedcd798dd2db12e5a32e292476573" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="client" />
+        <option name="value" value="mobi" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="obs_message_id" />
+        <option name="value" value="Test 12:39" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="obs_key" />
+        <option name="value" value="Observation Key Test" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="obs_value" />
+        <option name="value" value="Obs value test" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="obs_date" />
+        <option name="value" value="2001-01-01 11:59:99" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="false" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="" />
+  <option name="filesToSend" value="" />
+</RestClientRequest>

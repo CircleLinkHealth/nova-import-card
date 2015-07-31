@@ -14,6 +14,7 @@ use App\User;
 /**
  * Redox Routes
  */
+
 Route::get('redox', [
     'uses' => 'Redox\AppVerificationController@getVerificationRequest'
 ]);
