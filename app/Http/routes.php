@@ -11,13 +11,23 @@ use App\User;
 |
 */
 
+/**
+ * Redox Routes
+ */
 Route::get('redox', [
-    'uses' => 'Redox\RedoxController@getVerificationRequest'
+    'uses' => 'Redox\AppVerificationController@getVerificationRequest'
 ]);
 
 Route::post('redox', [
-    'uses' => 'Redox\RedoxController@postRedox'
+    'uses' => 'Redox\AppVerificationController@postRedox'
 ]);
+
+Route::resource('redox-settings', 'Redox\ConfigController', [
+    'except' => [ 'index', 'destroy', 'show' ],
+]);
+
+
+
 
 Route::get('/', 'WelcomeController@index');
 
