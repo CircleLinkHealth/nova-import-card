@@ -62,8 +62,7 @@
 								<li><a href="{{ action('LocationController@create') }}">Add new</a></li>
 							</ul>
 						</li>
-
-<<<<<<< HEAD
+                        
 						<li role="presentation" class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
 								Activities <span class="caret"></span>

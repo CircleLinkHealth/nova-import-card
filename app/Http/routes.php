@@ -21,6 +21,8 @@ Route::post('redox', [
     'uses' => 'Redox\RedoxController@postRedox'
 ]);
 
+Route::resource('redox-settings', 'Redox\ConfigController');
+
 Route::get('/', 'WelcomeController@index');
 
 Route::controllers([
