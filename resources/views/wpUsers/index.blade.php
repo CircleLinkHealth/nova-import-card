@@ -4,6 +4,25 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
+                @if (isset($error))
+                    <div class="alert alert-danger">
+                        <ul>
+                            <li>{{ $error }}</li>
+                        </ul>
+                    </div>
+                @endif
+
+                @if (isset($success))
+                    <div class="alert alert-success">
+                        <ul>
+                            <li>{{ $success }}</li>
+                        </ul>
+                    </div>
+                @endif
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
                     <div class="panel-heading">Users</div>
                     <p>These users are coming from the wp_users.. this laravel project has been modified to use wp_users as the primary users table.</p>
@@ -11,7 +30,6 @@
                         <thead>
                         <tr>
                             <td><strong>ID</strong></td>
-                            <td><strong>user_login</strong></td>
                             <td><strong>user_nicename</strong></td>
                             <td><strong>user_email</strong></td>
                             <td><strong>status</strong></td>
@@ -29,7 +47,6 @@
                                         {{ $wpUser->ID }}
                                     @endif
                                 </td>
-                                <td>{{ $wpUser->user_login }}</td>
                                 <td>{{ $wpUser->user_nicename }}</td>
                                 <td>{{ $wpUser->user_email }}</td>
                                 <td>{{ $wpUser->user_status }}</td>
@@ -37,8 +54,10 @@
                                 <td>
                                     @if($wpUser->blogId())
                                         <strong>{{ $wpUser->blogId() }}</strong>
+                                    @elseif(is_numeric(substr($wpUser->user_email, 0, 1)))
+                                        {{ $wpUser->nickname  }}<a href="/wpusers/{{ $wpUser->ID }}?action=setPatientToBlog&blogId={{ substr($wpUser->user_email, 0, 1) }}" class="setPatientToBlog">Add primary_blog={{ substr($wpUser->user_email, 0, 1) }}</a>
                                     @else
-                                        <strong>MISSING</strong>
+                                        -
                                     @endif
                                 </td>
                             </tr>
