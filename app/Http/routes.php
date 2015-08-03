@@ -170,13 +170,13 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	Route::resource('wpusers.meta', 'WpUserMetaController');
 
-	Route::resource('rulesucp', 'RulesUCPController');
+	Route::resource('rulesucp', 'CPRulesUCPController');
 
-	Route::resource('rulespcp', 'RulesPCPController');
+	Route::resource('rulespcp', 'CPRulesPCPController');
 
-	Route::resource('rulesitem', 'RulesItemController');
+	Route::resource('rulesitem', 'CPRulesItemController');
 
-	Route::resource('rulesitem.meta', 'RulesItemMetaController');
+	Route::resource('rulesitem.meta', 'CPRulesItemMetaController');
 
 	Route::resource('observation', 'ObservationController');
 
