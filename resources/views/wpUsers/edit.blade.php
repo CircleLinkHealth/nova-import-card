@@ -35,6 +35,15 @@
                                 </ul>
                             </div>
                         @endif
+
+                        <div class="row" style="">
+                            <div class="col-sm-12">
+                                <div class="pull-left">
+                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan (json)</a>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row">
                             {!! Form::open(array('url' => '/wpusers/'.$wpUser->ID.'/edit', 'class' => 'form-horizontal')) !!}
                         </div>
