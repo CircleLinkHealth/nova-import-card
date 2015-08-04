@@ -25,7 +25,9 @@ class AppVerificationController extends Controller {
         $challenge = $request->input('challenge');
         $verificationToken = $request->input('verification-token');
 
-        $getAppVerifToken = ThirdPartyApiConfig::select('meta_value')->whereMetaKey('redox_app_verification_token')->first()->toArray();
+        $getAppVerifToken = ThirdPartyApiConfig::select('meta_value')
+            ->whereMetaKey('redox_app_verification_token')
+            ->first();
 
         if ( !empty( $getAppVerifToken ) ) {
             $appVerifToken = $getAppVerifToken['meta_value'];

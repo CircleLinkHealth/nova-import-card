@@ -37,6 +37,9 @@ class ConfigController extends Controller {
             $newConfig->meta_key = $key;
             $newConfig->meta_value = $value;
             $newConfig->save();
+
+            return redirect()->back();
+
         }
 	}
 
@@ -57,6 +60,10 @@ class ConfigController extends Controller {
         $getAppVerifToken = ThirdPartyApiConfig::select('meta_value')->whereMetaKey('redox_app_verification_token')->first();
         if ( !empty( $getAppVerifToken ) ) $appVerifToken = $getAppVerifToken['meta_value'];
 
+
+        if ( empty($apiKey) && empty($apiSecret) && empty($appVerifToken) ) {
+            return redirect()->action('Redox\ConfigController@create');
+        }
 
         return view('thirdPartyApisConfig.edit', [
             'apiKey' => $apiKey,
