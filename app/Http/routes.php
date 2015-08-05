@@ -1,29 +1,5 @@
 <?php
-use App\User;
-use Illuminate\Http\Response;
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
-*/
-
 // unprotected
-Route::get('redox', [
-    'uses' => 'Redox\RedoxController@getVerificationRequest'
-]);
-
-Route::post('redox', [
-    'uses' => 'Redox\RedoxController@postRedox'
-]);
-
-Route::resource('redox-settings', 'Redox\ConfigController', [
-    'except' => [ 'index', 'destroy', 'store' ]
-]);
 
 Route::get('/', 'WelcomeController@index');
 
@@ -68,6 +44,25 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'usersEdit']);
 	Route::post('wpusers/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'usersUpdate']);
 
+    Route::group(['namespace' => 'Redox'], function ()
+    {
+        Route::get('redox', [
+            'uses' => 'AppVerificationController@getVerificationRequest'
+        ]);
+
+        Route::post('redox', [
+            'uses' => 'AppVerification@postRedox'
+        ]);
+
+        Route::resource('redox-settings', 'ConfigController', [
+            'except' => [ 'index', 'destroy', 'show' ]
+        ]);
+
+        Route::group(['middleware' => 'getRedoxAccessToken'], function()
+        {
+            Route::get('testRedoxx', 'PostToRedoxController@index');
+        });
+    });
 });
 
 
@@ -170,13 +165,13 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	Route::resource('wpusers.meta', 'WpUserMetaController');
 
-	Route::resource('rulesucp', 'RulesUCPController');
+	Route::resource('rulesucp', 'CPRulesUCPController');
 
-	Route::resource('rulespcp', 'RulesPCPController');
+	Route::resource('rulespcp', 'CPRulesPCPController');
 
-	Route::resource('rulesitem', 'RulesItemController');
+	Route::resource('rulesitem', 'CPRulesItemController');
 
-	Route::resource('rulesitem.meta', 'RulesItemMetaController');
+	Route::resource('rulesitem.meta', 'CPRulesItemMetaController');
 
 	Route::resource('observation', 'ObservationController');
 

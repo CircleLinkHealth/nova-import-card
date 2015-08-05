@@ -10,8 +10,6 @@ use App\ThirdPartyApiConfig;
 
 class AppVerificationController extends Controller {
 
-//curl -X POST https://www.redoxengine.com/api/auth/authenticate -d '{"apiKey": "863a03c8-d47c-4187-9073-88986091714f", "secret": "michalisantoniou"}' -H "Content-Type: application/json"
-//curl -X POST https://www.redoxengine.com/api/auth/refreshToken -d '{"apiKey": "863a03c8-d47c-4187-9073-88986091714f", "refreshToken": "16a0ecdf-fe7d-4707-8515-9f09830b7c67"}' -H "Content-Type: application/json"
     /**
      * This is the endpoint Redox will use to verify the app that we created.
      * Redox will send a verification-token and challenge as query string.
@@ -25,7 +23,9 @@ class AppVerificationController extends Controller {
         $challenge = $request->input('challenge');
         $verificationToken = $request->input('verification-token');
 
-        $getAppVerifToken = ThirdPartyApiConfig::select('meta_value')->whereMetaKey('redox_app_verification_token')->first()->toArray();
+        $getAppVerifToken = ThirdPartyApiConfig::select('meta_value')
+            ->whereMetaKey('redox_app_verification_token')
+            ->first();
 
         if ( !empty( $getAppVerifToken ) ) {
             $appVerifToken = $getAppVerifToken['meta_value'];
