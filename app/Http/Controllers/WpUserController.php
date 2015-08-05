@@ -5,6 +5,8 @@ use App\WpBlog;
 use App\Location;
 use App\WpUser;
 use App\WpUserMeta;
+use App\Services\ActivityService;
+use App\Services\CareplanService;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
@@ -113,7 +115,8 @@ class WpUserController extends Controller {
 		if(!empty($params)) {
 			if(isset($params['action'])) {
 				if($params['action'] == 'recalcActivities') {
-					$result = (new Activity())->reprocessMonthlyActivityTime($id);
+					$activityService = new ActivityService;
+					$result = $activityService->reprocessMonthlyActivityTime($id);
 					if ($result) {
 						$messageKey = 'success';
 						$messageValue = 'User activities have been recalculated';
@@ -131,7 +134,8 @@ class WpUserController extends Controller {
 			}
 		}
 		$wpUser = WpUser::find($id);
-		$activiyTotal = (new Activity())->getTotalActivityTimeForMonth($id);
+		$activityService = new ActivityService;
+		$activiyTotal = $activityService->getTotalActivityTimeForMonth($id);
 		if($wpUser) {
 			return view('wpUsers.show', ['wpUser' => $wpUser, 'activityTotal' => $activiyTotal,
 				$messageKey => $messageValue]);

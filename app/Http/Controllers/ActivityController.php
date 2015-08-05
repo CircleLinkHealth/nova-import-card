@@ -4,6 +4,7 @@ use App\Activity;
 use App\ActivityMeta;
 use App\WpUser;
 use App\WpUserMeta;
+use App\Services\ActivityService;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -27,7 +28,8 @@ class ActivityController extends Controller {
 		if ( $request->header('Client') == 'ui' ) {
 			// 'ui' api request
 			$user_id = Crypt::decrypt($request->header('UserId'));
-			$activities = (new Activity())->getActivitiesWithMeta($user_id);
+			$activityService = new ActivityService;
+			$activities = $activityService->getActivitiesWithMeta($user_id);
 			return response()->json( Crypt::encrypt( json_encode( $activities ) ) );
 		} else {
 			// display view
@@ -73,7 +75,8 @@ class ActivityController extends Controller {
 		$actId = Activity::createNewActivity($input);
 
 		// update usermeta: cur_month_activity_time
-		$result = (new Activity())->reprocessMonthlyActivityTime($input['patient_id']);
+		$activityService = new ActivityService;
+		$result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
 
 		// add meta
 		if (array_key_exists('meta',$input)) {
@@ -168,7 +171,8 @@ class ActivityController extends Controller {
         $actMeta = ActivityMeta::where('activity_id', $input['activity_id'])->where('meta_key',$meta['0']['meta_key'])->first();
         $actMeta->fill($meta['0'])->save();
 
-		$result = (new Activity())->reprocessMonthlyActivityTime($input['patient_id']);
+		$activityService = new ActivityService;
+		$result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
 
         return response("Activity Updated", 201);
 	}

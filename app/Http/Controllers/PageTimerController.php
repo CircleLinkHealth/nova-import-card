@@ -138,6 +138,9 @@ class PageTimerController extends Controller {
 
 					// if rule exists, create activity
 					$activityId = Activity::createNewActivity($activiyParams);
+
+					$activityService = new ActivityService;
+					$result = $activityService->reprocessMonthlyActivityTime($pageTime->patient_id);
 				}
 
 				// update pagetimer
