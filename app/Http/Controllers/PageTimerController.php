@@ -140,7 +140,7 @@ class PageTimerController extends Controller {
 					$activityId = Activity::createNewActivity($activiyParams);
 
 					$activityService = new ActivityService;
-					$result = $activityService->reprocessMonthlyActivityTime($attr['patient_id']);
+					$result = $activityService->reprocessMonthlyActivityTime($pageTime->patient_id);
 				}
 
 				// update pagetimer
