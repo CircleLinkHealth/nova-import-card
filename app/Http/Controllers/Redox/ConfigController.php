@@ -39,7 +39,6 @@ class ConfigController extends Controller {
             $newConfig->save();
 
             return redirect()->back();
-
         }
 	}
 
