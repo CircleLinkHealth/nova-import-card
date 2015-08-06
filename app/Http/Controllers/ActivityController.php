@@ -74,11 +74,7 @@ class ActivityController extends Controller {
 		// store activity
 		$actId = Activity::createNewActivity($input);
 
-		// update usermeta: cur_month_activity_time
-		$activityService = new ActivityService;
-		$result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
-
-		// add meta
+		// store meta
 		if (array_key_exists('meta',$input)) {
 			$meta = $input['meta'];
 			unset($input['meta']);
@@ -91,6 +87,10 @@ class ActivityController extends Controller {
 			}
 			$activity->meta()->saveMany($metaArray);
 		}
+
+		// update usermeta: cur_month_activity_time
+		$activityService = new ActivityService;
+		$result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
 
 		return response("Activity Created", 201);
 	}
