@@ -340,6 +340,86 @@ class MsgUser {
 
 
 
+	public function get_user_care_plan($intUserId, $intBlogId) {
+		$query = "SELECT
+            rucp.ucp_id,
+            rucp.items_id,
+            rucp.user_id,
+            rucp.meta_key,
+            rucp.meta_value,
+            im.meta_value as alert_key,
+            parucp.meta_value as status,
+            parucp.ucp_id as parent_id
+        FROM rules_ucp rucp
+        INNER JOIN rules_itemmeta im on rucp.items_id = im.items_id
+        INNER JOIN rules_items i on rucp.items_id = i.items_id
+        INNER JOIN rules_pcp pcp on pcp.pcp_id = i.pcp_id
+        INNER JOIN rules_ucp parucp on (i.items_parent = parucp.items_id AND rucp.user_id = parucp.user_id)
+        WHERE rucp.user_id = ".$intUserId."
+        AND pcp.prov_id = ".$intBlogId."
+        AND im.meta_key = 'alert_key'";
+		$rulesData = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+		// set alert_values
+		$arrReturnResult = array();
+		if(!empty($rulesData)) {
+			foreach ($rulesData as $row) {
+				$arrReturnResult[$row->alert_key] = array('value' => $row->meta_value, 'id' => $row->ucp_id, 'parent_status' => $row->status);
+			}
+			// hardcode severity limit of 7
+			$arrReturnResult['Severity'] = array('value' => 7);
+		}
+		return $arrReturnResult;
+
+	}
+
+	public function get_user_care_plan_items($userId, $int_blog_id) {
+
+		// set blog id
+		$this->int_blog_id = $int_blog_id;
+
+		// query
+		$query = DB::connection('mysql_no_prefix')->table('rules_ucp AS rucp');
+		$query->select('rucp.*', 'pcp.pcp_id', 'pcp.section_text', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id');
+		$query->where('user_id', '=', $userId);
+		$query->join('rules_items AS i', 'i.items_id', '=', 'rucp.items_id');
+		$query->leftJoin('rules_items AS rip', 'i.items_parent', '=', 'rip.items_id'); // parent item info
+		$query->join('rules_pcp AS pcp', function ($join) {
+			$join->on('i.pcp_id', '=', 'pcp.pcp_id')->where('pcp.prov_id', '=', $this->int_blog_id);
+		});
+		$query->leftJoin('rules_questions AS rq', 'rq.qid', '=', 'i.qid');
+		$query->leftJoin('rules_questions AS rqp', 'rqp.qid', '=', 'rip.qid'); // parent question info
+		$query->leftJoin('rules_itemmeta AS ims', function ($join) {
+			$join->on('ims.items_id', '=', 'i.items_id')->where('ims.meta_key', '=', 'ui_sort');
+		});
+		$query->whereRaw("(rucp.meta_key = 'status' OR rucp.meta_key = 'value') AND user_id = " . $userId);
+		$query->orderBy("ui_sort", 'ASC');
+		$query->orderBy("i.items_id", 'DESC');
+		$result = $query->get();
+
+
+		// set alert_values
+		if(!empty($result)) {
+			foreach ($result as $row) {
+				$arrReturnResult[$row->items_id] = array(
+					'msg_id' => $row->msg_id,
+					'ui_sort' => $row->ui_sort,
+					'meta_key' => $row->meta_key,
+					'meta_value' => $row->meta_value,
+					'pcp_id' => $row->pcp_id,
+					'section_text' => $row->section_text,
+					'items_id' => $row->items_id,
+					'items_text' => $row->items_text,
+					'items_parent' => $row->items_parent,
+					'items_parent_qid' => $row->items_parent_qid,
+					'items_parent_msg_id' => $row->items_parent_msg_id,
+				);
+			}
+		}
+		return $arrReturnResult;
+
+	}
+
+
 
 
 
@@ -654,81 +734,6 @@ class MsgUser {
 
 		$this->db->insert($strCommentsTable, $arrUnsolicitedData);
 		return $this->db->insert_id();
-	}
-
-	public function get_user_care_plan($intUserId, $intBlogId) {
-		//$query = $this->db->query("SELECT ucp_id,items_id,user_id,meta_key,meta_value FROM wp_usermeta WHERE meta_key LIKE 'wp_". $intBlogId . "_cp_%' and user_id = ". $intUserId );
-		$query = $this->db->query("SELECT
-            rucp.ucp_id,
-            rucp.items_id,
-            rucp.user_id,
-            rucp.meta_key,
-            rucp.meta_value,
-            im.meta_value as alert_key,
-            parucp.meta_value as status,
-            parucp.ucp_id as parent_id
-        FROM rules_ucp rucp
-        INNER JOIN rules_itemmeta im on rucp.items_id = im.items_id
-        INNER JOIN rules_items i on rucp.items_id = i.items_id
-        INNER JOIN rules_pcp pcp on pcp.pcp_id = i.pcp_id
-        INNER JOIN rules_ucp parucp on (i.items_parent = parucp.items_id AND rucp.user_id = parucp.user_id)
-        WHERE rucp.user_id = ?
-        AND pcp.prov_id = ?
-        AND im.meta_key = 'alert_key'", array($intUserId, $intBlogId));
-
-		// set alert_values
-		if($query->num_rows() > 0) {
-			foreach ($query->result() as $row) {
-				$arrReturnResult[$row->alert_key] = array('value' => $row->meta_value, 'id' => $row->ucp_id, 'parent_status' => $row->status);
-			}
-			// hardcode severity limit of 7
-			$arrReturnResult['Severity'] = array('value' => 7);
-		}
-		return $arrReturnResult;
-
-	}
-
-	public function get_user_care_plan_items($intUserId, $int_blog_id) {
-
-		// set blog id
-		$this->int_blog_id = $int_blog_id;
-
-		// query
-		$this->db->select('rucp.*, pcp.pcp_id, pcp.section_text, i.items_parent, i.items_id, i.items_text, rq.msg_id, ims.meta_value AS ui_sort, rip.qid AS items_parent_qid, rqp.msg_id AS items_parent_msg_id');
-		$this->db->from('rules_ucp AS rucp');
-		$this->db->join('rules_items AS i', 'i.items_id = rucp.items_id');
-		$this->db->join('rules_items AS rip', 'i.items_parent = rip.items_id', 'left'); // parent item info
-		$this->db->join('rules_pcp AS pcp', 'i.pcp_id = pcp.pcp_id AND pcp.prov_id = ' . $this->int_blog_id);
-		$this->db->join('rules_questions rq', "rq.qid = i.qid", 'left');
-		$this->db->join('rules_questions rqp', "rqp.qid = rip.qid", 'left'); // parent question info
-		$this->db->join('rules_itemmeta ims', "ims.items_id = i.items_id and ims.meta_key = 'ui_sort'", 'left');
-		$this->db->where("(rucp.meta_key = 'status' OR rucp.meta_key = 'value') AND user_id = " . $intUserId);
-		$this->db->order_by("ui_sort", 'ASC');
-		$this->db->order_by("i.items_id", 'DESC');
-		$query = $this->db->get();
-		$query->result_array();
-
-
-		// set alert_values
-		if($query->num_rows() > 0) {
-			foreach ($query->result() as $row) {
-				$arrReturnResult[$row->items_id] = array(
-					'msg_id' => $row->msg_id,
-					'ui_sort' => $row->ui_sort,
-					'meta_key' => $row->meta_key,
-					'meta_value' => $row->meta_value,
-					'pcp_id' => $row->pcp_id,
-					'section_text' => $row->section_text,
-					'items_id' => $row->items_id,
-					'items_text' => $row->items_text,
-					'items_parent' => $row->items_parent,
-					'items_parent_qid' => $row->items_parent_qid,
-					'items_parent_msg_id' => $row->items_parent_msg_id,
-				);
-			}
-		}
-		return $arrReturnResult;
-
 	}
 
 	public function get_provider_care_plan($intUserId, $intBlogId) {

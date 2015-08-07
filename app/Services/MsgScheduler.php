@@ -3,6 +3,7 @@
 use App\WpUser;
 use App\WpUserMeta;
 use App\Services\MsgUser;
+use App\Services\MsgChooser;
 /*
  *
  * $this->load->model('cpm_1_7_users_model','meta');
@@ -53,9 +54,9 @@ class MsgScheduler {
 
             // loop through each ready user
             foreach ($arrUsers as $key => $value) {
-                $arrPart[$value['user_id']] = $this->meta->get_users_data($value['user_id'], 'id', $intProgramID);
+                $arrPart[$value['user_id']] = $msgUser->get_users_data($value['user_id'], 'id', $intProgramID);
                 //Added to check for Transitional Care Active and contact day
-                $ucp = $this->meta->get_user_care_plan_items($value['user_id'], $intProgramID);
+                $ucp = $msgUser->get_user_care_plan_items($value['user_id'], $intProgramID);
                 foreach ($ucp as $ucpkey => $ucpvalue) {
                     if ($ucpvalue['section_text'] == 'Transitional Care Management'
                         && $ucpvalue['items_text'] == 'Contact Days')
@@ -83,7 +84,8 @@ class MsgScheduler {
 
 
                 $arrPart[$value['user_id']][$value['user_id']]['usermeta']['msgtype'] = $msgTypeAbrev;
-                $nextMessageInfo = $this->cpm_1_7_msgchooser_library->nextMessage($arrPart[$value['user_id']]);
+                $msgChooser = new MsgChooser;
+                $nextMessageInfo = $msgChooser->nextMessage($arrPart[$value['user_id']]);
 
                 if($msgType == 'welcome') {
                     $content_author = 'welcome';
