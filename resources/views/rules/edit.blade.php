@@ -2,6 +2,7 @@
 
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
+    {!! Form::open(array('url' => '/rules/'.$rule->id.'/edit', 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
@@ -20,34 +21,40 @@
                         @endif
                         <table class="table table-striped">
                             <thead>
-                            <tr>
-                                <td><strong>id</strong></td>
-                                <td><strong>rule_name</strong></td>
-                                <td><strong>rule_description</strong></td>
-                                <td><strong>active</strong></td>
-                                <td><strong>type_id</strong></td>
-                                <td><strong>effective_date</strong></td>
-                                <td><strong>expiration_date</strong></td>
-                                <td><strong>active</strong></td>
-                            </tr>
+                                <tr>
+                                    <td><strong>id</strong></td>
+                                    <td><strong>rule_name</strong></td>
+                                    <td><strong>rule_description</strong></td>
+                                    <td><strong>active</strong></td>
+                                    <td><strong>type_id</strong></td>
+                                    <td><strong>effective_date</strong></td>
+                                    <td><strong>expiration_date</strong></td>
+                                    <td><strong>active</strong></td>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td><a href="{{ url('rules/'.$rule->id.'') }}" class="btn btn-primary">{{ $rule->id }} Detail</a></td>
-                                <td>{{ $rule->rule_name }}</td>
-                                <td>{{ $rule->rule_description }}</td>
-                                <td>{{ $rule->active }}</td>
-                                <td>{{ $rule->type_id }}</td>
-                                <td>{{ $rule->effective_date }}</td>
-                                <td>{{ $rule->expiration_date }}</td>
-                                <td>{{ $rule->active }}</td>
-                            </tr>
+                                <tr>
+                                    <td><a href="{{ url('rules/'.$rule->id.'') }}" class="btn btn-primary">{{ $rule->id }} Detail</a></td>
+                                    <td>{{ $rule->rule_name }}</td>
+                                    <td>{{ $rule->rule_description }}</td>
+                                    <td>{{ $rule->active }}</td>
+                                    <td>{{ $rule->type_id }}</td>
+                                    <td>{{ $rule->effective_date }}</td>
+                                    <td>{{ $rule->expiration_date }}</td>
+                                    <td>{{ $rule->active }}</td>
+                                </tr>
                             </tbody>
                         </table>
-                        <strong>Summary:</strong>
-                        <p>{{ $rule->summary }}</p>
 
-                        {!! Form::open(array('url' => '/rules/'.$rule->id.'/edit', 'class' => 'form-horizontal')) !!}
+
+
+                        <div id="summary" style="margin:20px 0px;">
+                            <strong>Summary:</strong>
+                            <div class="form-group" id="summary">
+                                <div class="col-sm-12">{!! Form::textarea('summary',$rule->summary,['class'=>'form-control', 'rows' => 3, 'cols' => 10]) !!}</div>
+                            </div>
+                        </div>
+
                         <strong>Conditions:</strong>
                         <div id="conditions">
                         @foreach( $rule->intrConditions as $i => $intrCondition )
