@@ -33,8 +33,9 @@ $(document).ready(function(){
 function addCondition() {
     // get html
     var conditionshtml = $('#jsconditions').html();
-    // count checkboxes to get the number already out (dont forget the extra one in jsconditions!)
-    var conditionCount = ($('.c-condition').length - 1); // (length starts at 1, php arr 0)
+
+    conditionCount = rulesGetRulesCountForType('conditions');
+
     // increment ids
     conditionshtml = conditionshtml.replace("c*action", "c" + conditionCount + "action");
     conditionshtml = conditionshtml.replace("c*operator", "c" + conditionCount + "operator");
@@ -53,6 +54,28 @@ function addAction() {
     var actionshtml = $('#jsactions').html();
     // count checkboxes to get the number already out (dont forget the extra one in jsactions!)
     var actionCount = ($('.a-condition').length - 1); // (length starts at 1, php arr 0)
+
+    // fix duplicates
+    if(conditionCount > 0) {
+        var matches = [];
+        $("input[name='conditions[]']:checked").each(function () {
+            count = this.value;
+            if (count.length == 1) {
+                matches.push(this.value);
+                console.log(count.length);
+            }
+        });
+        // sort descending, so matches[0] is highest
+        matches.sort(function (a, b) {
+            return b - a
+        });
+        console.log(matches);
+        // use this, will never cause conflict
+        conditionCount = parseInt(matches[0])+1;
+    }
+
+    actionCount = rulesGetRulesCountForType('actions');
+
     // increment ids
     actionshtml = actionshtml.replace("a*action", "c" + actionCount + "action");
     actionshtml = actionshtml.replace("a*operator", "c" + actionCount + "operator");
@@ -64,4 +87,31 @@ function addAction() {
     // append
     $('#actions').append(actionshtml);
     return false;
+}
+
+function rulesGetRulesCountForType(type) {
+    // count checkboxes to get the number already out (dont forget the extra one in jsactions!)
+    var typeCount = ($("input[name='" + type + "[]']").length - 1); // (length starts at 1, php arr 0)
+
+    // fix duplicates
+    if(typeCount > 0) {
+        var matches = [];
+        $("input[name='" + type + "[]']:checked").each(function () {
+            count = this.value;
+            if (count.length == 1) {
+                matches.push(this.value);
+                console.log(count.length);
+            }
+        });
+        // sort descending, so matches[0] is highest
+        matches.sort(function (a, b) {
+            return b - a
+        });
+        console.log(matches);
+        // use this, will never cause conflict
+        typeCount = parseInt(matches[0])+1;
+        return typeCount;
+    } else {
+        return 0;
+    }
 }
