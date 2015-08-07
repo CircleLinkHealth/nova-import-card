@@ -1,0 +1,846 @@
+<?php namespace App\Services;
+
+use App\Activity;
+use App\WpUser;
+use App\WpUserMeta;
+use DB;
+
+class MsgUser {
+
+
+	public function get_all_users($blog_id) {
+		// set blog id
+		$this->int_blog_id = $blog_id;
+
+		$query = WpUser::select('wp_users.*', 'um.meta_value AS user_config');
+		$query->join('wp_usermeta AS um', function ($join) use ($blog_id) {
+			$join->on('wp_users.id', '=', 'um.user_id')->where('um.meta_key', '=', 'wp_'.$blog_id.'_user_config');
+		});
+		$query->orderBy("id", "desc");
+		$allUsers = $query->get();
+		return $allUsers;
+	}
+
+	public function get_all_active_users($blog_id) {
+		// get all users
+		$allUsers = $this->get_all_users($blog_id);
+		if (!$allUsers->isEmpty()) {
+			$activeUsers = array();
+			foreach ($allUsers as $user) {
+				// check if active based on user_config
+				$user_config = unserialize($user['user_config']);
+				if(strtolower($user_config['status']) == 'active') {
+					$activeUsers[] = $user['ID'];
+				}
+			}
+			if(empty($activeUsers)) {
+				$activeUsers = false;
+			}
+			return $activeUsers;
+		} else {
+			return false;
+		}
+
+	}
+
+
+	public function check_for_scheduled_records($userId, $blogId)
+	{
+		$query = DB::connection('mysql_no_prefix')->table('wp_'. $blogId .'_comments');
+		$query->select('*');
+		$query->where('user_id', '=', $userId);
+		$query->where('comment_author', '=', 'schedulercontroller');
+		$query->where('comment_type', '=', 'scheduled');
+		$query->whereRaw('DATE(comment_date) = DATE(now())');
+		$recordExists = $query->first();
+		if ($recordExists) {
+			echo "[$userId] exists<BR>";
+			return false;
+		} else {
+			echo "[$userId] DNE<BR>";
+			return true;
+		}
+	}
+
+
+	public function get_users_data($strUserKey, $strKeyType='id', $intBlogId=null, $includeUCP = false)
+	{
+		$arrReturnResult = array();
+
+		switch($strKeyType)
+		{
+			default :
+			case 'id' :
+				$intUserId = $strUserKey;
+				$arrReturnResult = $this->standard_user_lookup(array($intUserId), $intBlogId, $includeUCP);
+				break;
+
+			/*
+			case 'phone' :
+				$strUserKey = preg_replace('/[^0-9]/', '', $strUserKey);
+
+				if($intBlogId === null)
+				{
+					$intBlogId = $this->getBlogRelatedToPhone($strUserKey);
+				}
+				if($intBlogId != -1)
+				{
+					$strConfigKey = 'wp_' . $intBlogId . '_user_config';
+
+					$this->db->select('user_id,meta_value');
+					$query = $this->db->get_where('wp_usermeta',array('meta_key'=>$strConfigKey));
+
+					// echo "<br>GUD: <pre>";var_export($intBlogId);echo "</pre><br>";
+					// exit();
+					if($query->num_rows() > 0)
+					{
+						foreach($query->result() as $row)
+						{
+							$serialConfig = $row->meta_value;
+							$arrConfig = unserialize($serialConfig);
+							if($arrConfig['status'] == 'Active' && array_key_exists('study_phone_number', $arrConfig))
+							{
+								$strStudyPhone = str_replace('-', '', $arrConfig['study_phone_number']);
+								if($strUserKey === $strStudyPhone)
+								{
+									$intUserId = $row->user_id;
+									break;
+								}
+							}
+						}
+						$intUserId = (int)$intUserId;
+						if ($intUserId == null) return null;
+						// echo "<br>Found user<pre>";var_export($intUserId);echo "</pre><br>";
+						// exit();
+						$arrReturnResult = $this->standard_user_lookup(array($intUserId), $intBlogId);
+					}
+				}
+				break;
+			*/
+		}
+
+		return $arrReturnResult;
+	}
+
+
+
+
+	private function standard_user_lookup($arrUserId, $intBlogId = null, $includeUCP = false)
+	{
+		// initialize return result
+		$arrReturnResult = array();
+
+		// user id is always array, implode
+		$intUserId = implode(',', $arrUserId);
+
+		// get user(s)
+		$wpUsers = WpUser::whereRaw('ID IN ('.$intUserId.')')->get();
+
+		if (!$wpUsers->isEmpty()) {
+			foreach ($wpUsers as $wpUser) {
+				$wpUserMeta = WpUserMeta::where('user_id', '=', $wpUser->ID)->get();
+				if (!$wpUsers->isEmpty()) {
+					$arrUserMeta = array();
+					foreach($wpUserMeta as $meta)
+					{
+						$arrUserMeta[$meta->meta_key] = $meta->meta_value;
+						// unserialize when needed
+						$mixSerializable = @unserialize($meta->meta_value);
+						if($mixSerializable !== false || $meta->meta_value === 'b:0;')
+						{
+							$arrUserMeta[$meta->meta_key] = $mixSerializable;
+						}
+					}
+				}
+				$arrUserData = (array)$wpUser->toArray();
+				$arrReturnResult[$wpUser->ID]['userdata'] = $arrUserData;
+				$arrReturnResult[$wpUser->ID]['usermeta_clean'] = $arrUserMeta;
+				$arrReturnResult[$wpUser->ID]['usermeta'] = $arrUserMeta;
+				$arrReturnResult[$wpUser->ID]['usermeta']['intProgramId'] = $intBlogId;
+				$arrReturnResult[$wpUser->ID]['usermeta']['msgtype'] = '';
+				$arrReturnResult[$wpUser->ID]['usermeta']['resend'] = false;
+				$arrReturnResult[$wpUser->ID]['usermeta']['comment_ID'] = '';
+				$arrReturnResult[$wpUser->ID]['usermeta']['curresp'] = '';
+				$arrReturnResult[$wpUser->ID]['usermeta']['state'] = array();
+				$arrReturnResult[$wpUser->ID]['usermeta']['user_care_plan'] = $this->get_user_care_plan($wpUser->ID, $intBlogId);
+				if($includeUCP) {
+					$arrReturnResult[$wpUser->ID]['usermeta']['user_care_plan_items'] = $this->get_user_care_plan_items($wpUser->ID, $intBlogId);
+				}
+			}
+		}
+		return $arrReturnResult;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public function get_users_for_active_item($items_id, $int_blog_id) {
+		$this->db->select("ucp.user_id, ucp.items_id, ucp.meta_value",false);
+		$this->db->from('wp_users AS u');
+		$this->db->join('rules_ucp AS ucp', 'u.ID = ucp.user_id');
+		$this->db->join('rules_items ri', 'ri.items_id = ucp.items_id');
+		$this->db->join('rules_pcp pcp', 'ri.pcp_id = pcp.pcp_id');
+		$where = array('ucp.items_id' => $items_id, 'ucp.meta_value' => 'Active', 'pcp.prov_id' => $int_blog_id);
+		$this->db->where($where);
+		$this->db->order_by("ucp.user_id", 'DESC');
+		$query = $this->db->get();
+		return $query->result_array();
+	}
+
+	/**
+	 *   @todo Get this working for response to the open state record [PML] - 2/10
+	 *
+	 **/
+
+	public function userSmsState($arrUserData)
+	{
+		//New Unsolicited Msg Flow request
+		$strReturnResult = '';
+		$intUserId = key($arrUserData);
+		$arrUserData[$intUserId]['usermeta']['msgtype'] = $arrUserData[$intUserId]['usermeta']['curresp'];
+		$strCommentsTable = 'wp_' . $arrUserData[$intUserId]['usermeta']['intProgramId'] . '_comments';
+		if (in_array(strtoupper($arrUserData[$intUserId]['usermeta']['curresp']),array("RPT","SYM","R","S","CALL","H","HSP")) > 0) {
+			switch (strtoupper($arrUserData[$intUserId]['usermeta']['curresp'])) {
+				case 'R':
+					$arrUserData[$intUserId]['usermeta']['curresp'] = 'RPT';
+					break;
+
+				case 'S':
+					$arrUserData[$intUserId]['usermeta']['curresp'] = 'SYM';
+					break;
+				case 'H':
+					$arrUserData[$intUserId]['usermeta']['curresp'] = 'HSP';
+					break;
+				default:
+					break;
+			}
+			$arrMsgType = $arrUserData[$intUserId]['usermeta']['curresp'];
+			$sql = "SELECT comment_ID, comment_type,comment_content FROM $strCommentsTable WHERE (comment_type LIKE 'state_$arrMsgType') and user_id=? and DATE(comment_date)=DATE(NOW()) AND comment_approved = 0 ORDER BY comment_date DESC LIMIT 1";
+			$query = $this->db->query($sql,array($intUserId));
+
+			if($query->num_rows() > 0)
+			{
+				$row = $query->row();
+				$state = unserialize($row->comment_content);
+				$arrUserData[$intUserId]['usermeta']['msgtype'] = strtoupper($arrMsgType);
+				$arrUserData[$intUserId]['usermeta']['comment_ID'] = (int)$row->comment_ID;
+				$arrUserData[$intUserId]['usermeta']['state'] = $state;
+			} else {
+				$arrUserData[$intUserId]['usermeta']['msgtype'] = strtoupper($arrUserData[$intUserId]['usermeta']['curresp']);
+				$rec = $this->create_new_unsolicited_comment_row($arrUserData);
+				$arrUserData[$intUserId]['usermeta']['comment_ID'] = $rec;
+			}
+
+			$arrUserData[$intUserId]['usermeta']['curresp'] = null;
+		} else {
+			// Existing Msg Flow session Response
+			$sql = "SELECT comment_ID, comment_type,comment_content FROM $strCommentsTable WHERE (comment_type LIKE 'state_%') and user_id=? and DATE(comment_date)=DATE(NOW()) AND comment_approved = 0 ORDER BY comment_date DESC LIMIT 1";
+			$query = $this->db->query($sql,array($intUserId));
+
+			if($query->num_rows() > 0)
+			{
+				$row = $query->row();
+				$state = unserialize($row->comment_content);
+				$arrMsgType = explode("_", $row->comment_type);
+				$arrUserData[$intUserId]['usermeta']['msgtype'] = strtoupper($arrMsgType[1]);
+				$arrUserData[$intUserId]['usermeta']['comment_ID'] = (int)$row->comment_ID;
+				$arrUserData[$intUserId]['usermeta']['state'] = $state;
+			}
+		}
+
+// echo "userSmsState:<BR>$sql<BR>$strReturnResult<pre>"; var_export($arrUserData);
+// exit();
+		return $arrUserData;
+	}
+
+
+
+	public function get_all_active_participants($intBlogId=null)
+	{
+// This is a BAD way if doing this.....only used by the original cpm_1_5_datamonitor.php not for v1.7
+		$arrReturnResult = array();
+
+		$strCapabilityKey = 'wp' . $intBlogId . '_capabilities';
+		$strProgramKey = 'wp' . $intBlogId . '_ca';
+		$strConfigKey = 'wp' . $intBlogId . '_user_config';
+
+// Temp
+		$strProgramKey = 'first_name';
+		$strConfigKey = $strCapabilityKey;
+
+		$sql = "SELECT
+                    u1.user_id AS user_id,u1.meta_key, u1.meta_value AS capability ,u2.meta_value AS program, u3.meta_value AS config
+                FROM
+                    wp_usermeta AS u1
+                INNER JOIN
+                    wp_usermeta AS u2
+                ON
+                    u1.user_id=u2.user_id
+                INNER JOIN
+                    wp_usermeta AS u3
+                ON
+                    u1.user_id=u3.user_id
+               WHERE
+                   u1.meta_key=?
+               AND
+                   u2.meta_key=?
+                AND
+                    u3.meta_key=?
+                ORDER BY
+                    u1.user_id";
+
+		$query = $this->db->query($sql, array($strCapabilityKey, $strProgramKey, $strConfigKey));
+
+		if($query->num_rows() > 0)
+		{
+			foreach($query->result() as $row)
+			{
+
+
+// DELETE THIS LINE
+				$arrReturnResult[] = $row->user_id;
+// DELETE THAT LINE
+
+
+				$arrCapabilities = @unserialize($row->capability);
+				if(isset($arrCapabilities['participant']))
+				{
+					if($arrCapabilities['participant'] == true)
+					{
+						$arrProgram = @unserialize($row->program);
+
+// BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD
+
+						if(isset($arrProgram['ca']))
+						{
+							if(strtolower($arrProgram['ca']) == 'active')
+							{
+
+// BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD BAD
+
+								$arrConfig = @unserialize($row->config);
+
+								if(isset($arrConfig['status']))
+								{
+									// added active date check 11/18 [PML]
+									if(strtolower($arrConfig['status']) == 'active' && date("Y-m-d") >= date("Y-m-d", strtotime($arrConfig['active_date'])))
+									{
+										$arrReturnResult[] = $row->user_id;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return $arrReturnResult;
+	}
+
+	public function checkIfUserIsPassedActivationDate($intUserId, $intBlogId, $strCheckDate=null)
+	{
+		date_default_timezone_set('America/New_York');
+
+		if($strCheckDate === null)
+		{
+			$dateToday = new DateTime(date('Y-m-d'));
+		}
+		else
+		{
+			$dateToday = new DateTime(date('Y-m-d', strtotime($strCheckDate)));
+		}
+
+		$boolIsActive = false;
+		$strMetaKey = 'wp_' . $intBlogId . '_user_config';
+		$sql = "SELECT meta_value FROM wp_usermeta WHERE user_id=? AND meta_key=? LIMIT 1";
+
+		$query = $this->db->query($sql, array($intUserId, $strMetaKey));
+
+		if($query->num_rows() > 0)
+		{
+			$row = $query->row();
+
+			$serialUserConfig = $row->meta_value;
+			$arrUserConfig = unserialize($serialUserConfig);
+
+			if(isset($arrUserConfig['active_date']))
+			{
+				$dateActiveDate = new DateTime($arrUserConfig['active_date']);
+				echo $dateToday->format('Y-m-d').'<br />'.$dateActiveDate->format('Y-m-d').'<br />'.$dateActiveDate->diff($dateToday)->format('%R%a').'<br />';
+				if($dateActiveDate->diff($dateToday)->format('%R%a') >= 0)
+				{
+					$boolIsActive = true;
+				}
+			}
+		}
+
+		return $boolIsActive;
+	}
+
+	public function getMD5UserIds()
+	{
+		$arrReturnResult = array();
+		$arrId2MD5 = array();
+		$arrMD52Id = array();
+
+		$sql = "SELECT ID FROM wp_users";
+		$query = $this->db->query($sql);
+
+		if($query->num_rows() > 0)
+		{
+			foreach($query->result() as $row)
+			{
+				$arrId2MD5[$row->ID] = md5($row->ID);
+				$arrMD52Id[md5($row->ID)] = $row->ID;
+			}
+		}
+		$arrReturnResult['Id2MD5'] = $arrId2MD5;
+		$arrReturnResult['MD52Id'] = $arrMD52Id;
+
+		return $arrReturnResult;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+	public function create_new_unsolicited_comment_row($arrUserData)
+	{
+		date_default_timezone_set('America/New_York');
+
+		$strCommentsTable = 'wp_' . $arrUserData[key($arrUserData)]['usermeta']['intProgramId'] . '_comments';
+		$arrUnsolicitedData = array(
+			'comment_author' => 'cpm_1_7_users_model_model',
+			'comment_author_email' => 'admin@medadherence.com',
+			'comment_author_url' => 'http://medadherence.com/',
+			'comment_content' => serialize(array()),
+			'comment_type' => 'state_'.strtolower($arrUserData[key($arrUserData)]['usermeta']['msgtype']),
+			'comment_parent' => 0,
+			'user_id' => key($arrUserData),
+			'comment_author_IP' => '127.0.0.1',
+			'comment_agent' => '',
+			'comment_date' => date('Y-m-d H:i:s'),
+			'comment_approved' => 0
+		);
+
+		$this->db->insert($strCommentsTable, $arrUnsolicitedData);
+		return $this->db->insert_id();
+	}
+
+	public function get_user_care_plan($intUserId, $intBlogId) {
+		//$query = $this->db->query("SELECT ucp_id,items_id,user_id,meta_key,meta_value FROM wp_usermeta WHERE meta_key LIKE 'wp_". $intBlogId . "_cp_%' and user_id = ". $intUserId );
+		$query = $this->db->query("SELECT
+            rucp.ucp_id,
+            rucp.items_id,
+            rucp.user_id,
+            rucp.meta_key,
+            rucp.meta_value,
+            im.meta_value as alert_key,
+            parucp.meta_value as status,
+            parucp.ucp_id as parent_id
+        FROM rules_ucp rucp
+        INNER JOIN rules_itemmeta im on rucp.items_id = im.items_id
+        INNER JOIN rules_items i on rucp.items_id = i.items_id
+        INNER JOIN rules_pcp pcp on pcp.pcp_id = i.pcp_id
+        INNER JOIN rules_ucp parucp on (i.items_parent = parucp.items_id AND rucp.user_id = parucp.user_id)
+        WHERE rucp.user_id = ?
+        AND pcp.prov_id = ?
+        AND im.meta_key = 'alert_key'", array($intUserId, $intBlogId));
+
+		// set alert_values
+		if($query->num_rows() > 0) {
+			foreach ($query->result() as $row) {
+				$arrReturnResult[$row->alert_key] = array('value' => $row->meta_value, 'id' => $row->ucp_id, 'parent_status' => $row->status);
+			}
+			// hardcode severity limit of 7
+			$arrReturnResult['Severity'] = array('value' => 7);
+		}
+		return $arrReturnResult;
+
+	}
+
+	public function get_user_care_plan_items($intUserId, $int_blog_id) {
+
+		// set blog id
+		$this->int_blog_id = $int_blog_id;
+
+		// query
+		$this->db->select('rucp.*, pcp.pcp_id, pcp.section_text, i.items_parent, i.items_id, i.items_text, rq.msg_id, ims.meta_value AS ui_sort, rip.qid AS items_parent_qid, rqp.msg_id AS items_parent_msg_id');
+		$this->db->from('rules_ucp AS rucp');
+		$this->db->join('rules_items AS i', 'i.items_id = rucp.items_id');
+		$this->db->join('rules_items AS rip', 'i.items_parent = rip.items_id', 'left'); // parent item info
+		$this->db->join('rules_pcp AS pcp', 'i.pcp_id = pcp.pcp_id AND pcp.prov_id = ' . $this->int_blog_id);
+		$this->db->join('rules_questions rq', "rq.qid = i.qid", 'left');
+		$this->db->join('rules_questions rqp', "rqp.qid = rip.qid", 'left'); // parent question info
+		$this->db->join('rules_itemmeta ims', "ims.items_id = i.items_id and ims.meta_key = 'ui_sort'", 'left');
+		$this->db->where("(rucp.meta_key = 'status' OR rucp.meta_key = 'value') AND user_id = " . $intUserId);
+		$this->db->order_by("ui_sort", 'ASC');
+		$this->db->order_by("i.items_id", 'DESC');
+		$query = $this->db->get();
+		$query->result_array();
+
+
+		// set alert_values
+		if($query->num_rows() > 0) {
+			foreach ($query->result() as $row) {
+				$arrReturnResult[$row->items_id] = array(
+					'msg_id' => $row->msg_id,
+					'ui_sort' => $row->ui_sort,
+					'meta_key' => $row->meta_key,
+					'meta_value' => $row->meta_value,
+					'pcp_id' => $row->pcp_id,
+					'section_text' => $row->section_text,
+					'items_id' => $row->items_id,
+					'items_text' => $row->items_text,
+					'items_parent' => $row->items_parent,
+					'items_parent_qid' => $row->items_parent_qid,
+					'items_parent_msg_id' => $row->items_parent_msg_id,
+				);
+			}
+		}
+		return $arrReturnResult;
+
+	}
+
+	public function get_provider_care_plan($intUserId, $intBlogId) {
+		$query = $this->db->query("select * from rules_question_sets qs
+ left join rules_questions q on q.qid = qs.QID
+ left join rules_answers a on a.aid = qs.aid
+ where qs_type = 'sol'
+-- where qs_type = 'CALL'
+-- where qs_type = 'RPT'
+-- where qs_type = 'REM'
+and qs.Provider_ID = {$intBlogId}
+order by qs.qs_type, qs.sort, qs.aid
+;;" );
+
+		if($query->num_rows() > 0)
+		{
+			foreach($query->result() as $row)
+			{
+				// var_export($row);
+				foreach ($row as $key => $value) {
+					$arrValue = unserialize($value);
+					if ($arrValue !== false) $value = $arrValue;
+					$arrReturnResult[$row->meta_key] = $value;
+				}
+			}
+		}
+		return $arrReturnResult;
+
+	}
+
+	public function get_provider_care_plan_preferences($intUserId, $intBlogId) {
+		$query = $this->db->query("SELECT * FROM wp_". $intBlogId . "_postmeta where post_id = (SELECT id FROM wp_". $intBlogId . "_posts where post_type = 'care_plan');" );
+
+		if($query->num_rows() > 0)
+		{
+			foreach($query->result() as $row)
+			{
+				// var_export($row);
+				foreach ($row as $key => $value) {
+					$arrValue = unserialize($value);
+					if ($arrValue !== false) $value = $arrValue;
+					$arrReturnResult[$row->meta_key] = $value;
+				}
+			}
+		}
+		return $arrReturnResult;
+
+	}
+
+	private function getBlogRelatedToPhone($strUserKey)
+	{
+		$intBlogId = -1;
+		$query = $this->db->query("SELECT user_id,meta_key,meta_value FROM wp_usermeta WHERE meta_key LIKE 'wp_%_user_config'");
+
+		if($query->num_rows() > 0)
+		{
+			foreach($query->result() as $row)
+			{
+				$serialConfig = $row->meta_value;
+				$arrConfig = unserialize($serialConfig);
+				if($arrConfig !== false)
+				{
+					if(array_key_exists('study_phone_number', $arrConfig))
+					{
+						$strStudyPhone = preg_replace('/[^0-9]/', '', $arrConfig['study_phone_number']);
+						if($strUserKey == $strStudyPhone)
+						{
+							$intUserId = $row->user_id;
+							$intBlogId = $this->extract_blogid($row->meta_key);
+						}
+					}
+				}
+			}
+		}
+
+		return $intBlogId;
+	}
+
+
+
+	private function extract_blogid($strMetaKey)
+	{
+		$intBlogId = $strMetaKey[3];
+
+		if($strMetaKey[4] !== '_' )
+		{
+			$intBlogId .= $strMetaKey[4];
+		}
+
+		return (int)$intBlogId;
+	}
+
+
+	public function get_blog_domain($intBlogId)
+	{
+		$this->db->select('b.domain');
+		$this->db->from('wp_blogs AS b');
+		$this->db->where(array('b.blog_id' => $intBlogId));
+		$query = $this->db->get();
+		$result = $query->row();
+		if(!empty($result)) {
+			return $result->domain;
+		}
+		return false;
+	}
+
+
+	/**
+	 * @param $user_info
+	 * @param $user_meta
+	 * @param $int_blog_id
+	 * @return bool
+	 */
+	public function create_new_user($user_info, $user_meta, $int_blog_id) {
+		// first make sure user doesnt already exist
+		$this->db->select('u.*');
+		$this->db->from('wp_users AS u');
+		$this->db->where("u.user_login = '".$user_info['user_login']."'");
+		$query = $this->db->get();
+		$user_exists = $query->row();
+		// return false is user exists and no overwrite
+		if($user_exists) {
+			return false;
+		}
+
+		// ID, user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
+		$this->db->insert('wp_users', $user_info);
+		$new_user_id = $this->db->insert_id();
+
+		// nickname, first_name, last_name, description, rich_editing, comment_shortcuts, admin_color, user_ssl, show_admin_bar_front
+		// wp_8_capabilities, wp_8_user_level, wp_8_user_config, dismissed_wp_pointers
+		if(!empty($user_meta)) {
+			$this->db->delete("wp_usermeta", array('user_id' => $new_user_id));
+			foreach ($user_meta as $key => $value) {
+				$meta_value = $value;
+				if (is_array($meta_value)) {
+					$meta_value = serialize($meta_value);
+				}
+				$this->db->insert('wp_usermeta', array('user_id' => $new_user_id, 'meta_key' => $key, 'meta_value' => $meta_value));
+			}
+		}
+		return $new_user_id;
+	}
+
+
+	/**
+	 * @param $user_info
+	 * @param $user_meta
+	 * @param $ucp_items
+	 * @param $overwrite
+	 * @param $int_blog_id
+	 * @return bool
+	 */
+	public function import_user($user_info, $user_meta, $ucp_items, $overwrite, $int_blog_id) {
+		// first make sure user doesnt already exist
+		$this->db->select('u.*');
+		$this->db->from('wp_users AS u');
+		$this->db->where("u.user_login = '".$user_info['user_login']."'");
+		$query = $this->db->get();
+		$user_exists = $query->row();
+		//echo "<pre>";var_dump($this->db->last_query());echo "</pre>";
+		//echo "<pre>";var_dump($user_exists);echo "</pre>";
+
+		// return false is user exists and no overwrite
+		if(!$overwrite && !empty($user_exists)) {
+			return false;
+		}
+		if(empty($user_exists)) {
+			// ID, user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
+			unset($user_info['ID']);
+			$this->db->insert('wp_users', $user_info);
+			$new_user_id = $this->db->insert_id();
+		} else {
+			$new_user_id = $user_exists->ID;
+		}
+		// nickname, first_name, last_name, description, rich_editing, comment_shortcuts, admin_color, user_ssl, show_admin_bar_front
+		// wp_8_capabilities, wp_8_user_level, wp_8_user_config, dismissed_wp_pointers
+		if(!empty($user_meta)) {
+			$this->db->delete("wp_usermeta", array('user_id' => $new_user_id));
+			$user_meta['first_name'] = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 8);
+			$user_meta['last_name'] = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
+			foreach ($user_meta as $key => $value) {
+				$meta_value = $value;
+				if (is_array($meta_value)) {
+					$meta_value['study_phone_number'] = '203-252-2556';
+					$meta_value = serialize($meta_value);
+				}
+				$this->db->insert('wp_usermeta', array('user_id' => $new_user_id, 'meta_key' => $key, 'meta_value' => $meta_value));
+			}
+		}
+
+		// ucp
+		$this->db->delete("rules_ucp", array('user_id' => $new_user_id));
+		if(!empty($ucp_items)) {
+			foreach ($ucp_items as $ucp_item) {
+				$this->db->insert('rules_ucp', array('items_id' => $ucp_item['items_id'], 'user_id' => $new_user_id, 'meta_key' => $ucp_item['meta_key'], 'meta_value' => $ucp_item['meta_value']));
+			}
+		}
+
+		return $new_user_id;
+	}
+
+
+	/**
+	 * @param $user_id
+	 * @param $comment_data
+	 * @param $int_blog_id
+	 */
+	public function import_user_observation_data($user_id, $comment_data, $int_blog_id)
+	{
+		// build tables to use
+		$str_observation_table = 'ma_' . $int_blog_id . '_observations';
+		$str_observationmeta_table = 'ma_' . $int_blog_id . '_observationmeta';
+		$str_comments_table = 'wp_' . $int_blog_id . '_comments';
+
+		// remove all users comment data
+		$this->db->delete("{$str_comments_table}", array('user_id' => $user_id));
+		$this->db->query("
+DELETE  {$str_observationmeta_table}.* FROM {$str_observationmeta_table}
+INNER JOIN {$str_observation_table} ON ({$str_observation_table}.obs_id = {$str_observationmeta_table}.obs_id)
+WHERE {$str_observation_table}.user_id = ?;", array($user_id));
+		$this->db->delete("{$str_observation_table}", array('user_id' => $user_id));
+
+		// insert comments on target server
+		foreach ($comment_data as $comment) {
+			$comment['user_id'] = $user_id;
+			// insert comment
+			unset($comment['comment']['comment_ID']);
+			$this->db->insert("{$str_comments_table}", $comment['comment']);
+			$comment_id = $this->db->insert_id();
+			// with comment id, insert observations
+			if (!empty($comment['observations'])) {
+				foreach ($comment['observations'] as $observation) {
+					$observation_params = $observation;
+					$observation_params['comment_id'] = $comment_id;
+					$observation_params['user_id'] = $user_id;
+					unset($observation_params['obs_id']);
+					if (isset($observation_params['observationmeta'])) {
+						unset($observation_params['observationmeta']);
+					}
+					// insert observation
+					$this->db->insert("{$str_observation_table}", $observation_params);
+					$obs_id = $this->db->insert_id();
+					if (!empty($observation['observationmeta'])) {
+						foreach ($observation['observationmeta'] as $observationmeta) {
+							$observationmeta_params = $observationmeta;
+							unset($observationmeta_params['meta_id']);
+							$observationmeta_params['obs_id'] = $obs_id;
+							$observationmeta_params['comment_id'] = $comment_id;
+							// insert observationmeta
+							$this->db->insert("{$str_observationmeta_table}", $observationmeta_params);
+							$obsmeta_id = $this->db->insert_id();
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public function get_user_state_record_by_id($intProgramId,$id)
+	{
+		$this->db->select('*');
+		$this->db->from('wp_'. $intProgramId .'_comments');
+		$this->db->where_in('comment_id',$id);
+		$query = $this->db->get();
+		$record_exists = $query->row();
+
+		// echo "<BR>Users State: [$id]<BR>";
+		// var_export($record_exists);
+		if($record_exists) {
+			// var_dump($record_exists);
+			return $record_exists;
+		} else {
+			return false;
+		}
+	}
+
+}
