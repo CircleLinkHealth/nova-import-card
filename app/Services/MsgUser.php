@@ -4,6 +4,8 @@ use App\Activity;
 use App\WpUser;
 use App\WpUserMeta;
 use DB;
+use DateTime;
+use DateTimeZone;
 
 class MsgUser {
 
@@ -174,6 +176,167 @@ class MsgUser {
 
 
 
+
+	/**
+	 * get_readyusers_for_daily_reminder - method to construct an array with all users that are ready to receive a message cycle.
+	 * this method is an ovverride to the original get_readyusers, to clean it up and migrate everything over too
+	 *    			[1] Get all users that are active participants.
+	 *              [2] Get all users that are active in the 'ca' program and check if today's DOW is in the preferred contact day list.
+	 *              [3] See if user is active in 'ca' user configuration meta (why a second time?) and get the preferred contact TOD.
+	 *              [4] Check if there already is a 'state' record created for this user, if not, needs to be added to return array.
+	 *
+	 * @param       integer depicting the program id.
+	 * @param       string
+	 * @param       bool
+	 * @param       bool
+	 * @return      array of user ids and related contact time information.
+	 *
+	 */
+	public function get_readyusers_for_daily_reminder($intProgramID, $arrMsgType, $max, $logOutput = false)
+	{
+		date_default_timezone_set('America/New_York');
+		$serverDateTime = new DateTime(null, new DateTimeZone('America/New_York'));
+
+		// we need both the full msg type and the abreviation ie. hospital / hsp
+		if(isset($arrMsgType['msgTypeAbrev'])) {
+			$msgType = $arrMsgType['msgType'];
+			$msgTypeAbrev = $arrMsgType['msgTypeAbrev'];
+		} else {
+			return false;
+		}
+
+		// normally check for messages sent today.
+		$tmpTodaySearch =  "and date(comment_date) = '". date('Y-m-d')."'";
+		if(strtolower($msgType) == 'welcome') {
+			//  If welcome message, check it message has ever been sent.
+			$tmpTodaySearch = '';
+		}
+
+		$strCapabilitiesIdent = 'wp_' . $intProgramID . '_capabilities';
+		$strCommentFile = 'wp_' . $intProgramID . '_comments';
+		$strContactTimesContainer = 'wp_' . $intProgramID . '_user_config';
+
+		$arrUserData = array();
+		$arrAllParticipantUserIDs = array();
+		$limit = '';
+		if ($max > 0 ) $limit = " LIMIT {$max}";
+
+		// original query segment before $tmpTodaySearch was created.
+		// where comment_type like 'state_".$msgTypeAbrev."' and date(comment_date) = '". date('Y-m-d') ."' group by cmts.user_id) cm on cm.user_id = u.ID
+
+		$sql = "SELECT ID, user_registered, user_status, c.meta_value `".$strCapabilitiesIdent."`, s.meta_value `".$strContactTimesContainer."`
+                 FROM wp_users u
+                left join wp_usermeta c on c.user_id = u.ID
+                left join wp_usermeta s on s.user_id = u.ID
+                LEFT JOIN (select cmts.user_id, max(comment_date) `last_comment` FROM ".$strCommentFile." cmts
+                            where comment_type like 'state_".$msgTypeAbrev."' ".$tmpTodaySearch." group by cmts.user_id) cm on cm.user_id = u.ID
+                WHERE
+                    c.meta_key= '".$strCapabilitiesIdent."'
+                and c.meta_value = 'a:1:{s:11:\"participant\";b:1;}'
+                and s.meta_key = '".$strContactTimesContainer."'
+                and s.meta_value like binary '%Active%'
+                and cm.user_id is null ".$limit."";
+
+		$userData = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+		//dd($userData);
+
+		$logString = '';
+		if (!empty($userData)) {
+			$d = 0;
+			foreach ($userData as $row) {
+				$arrCapabilities = unserialize($row->$strCapabilitiesIdent);
+				$arrConfig = unserialize($row->$strContactTimesContainer);
+// var_dump($arrConfig);
+
+				// check if reminder time is set otherwise use contact time.
+				if(empty($arrConfig[$msgType.'_reminder_time'])) {
+					$strPreferredContactTime = $arrConfig['preferred_contact_time'];
+				} else {
+					$strPreferredContactTime = $arrConfig[$msgType.'_reminder_time'];
+				}
+
+				// $strPreferredContactTime = '11:00';
+				$strContactTime = $this->conformTime($strPreferredContactTime);
+				if (!$strPreferredContactTime == null) {
+					$strContactTime = new DateTime($serverDateTime->format('Y-m-d').$strPreferredContactTime.'', new DateTimeZone($arrConfig['preferred_contact_timezone']));
+				} else {
+					continue;
+					$strContactTime = new DateTime($serverDateTime->format('Y-m-d'), new DateTimeZone($arrConfig['preferred_contact_timezone']));
+				}
+// error_log($row->ID." ".$serverDateTime->format('Y-m-d')." $strPreferredContactTime");
+// echo $row->ID." $strPreferredContactTime";
+				$userRegisteredDateTime = new DateTime($row->user_registered, new DateTimeZone('America/New_York'));
+				// $strContactTime = $date->format('Y-m-d H:i:s T');
+
+				if (!empty($userData)) {
+					if(
+						strtolower($arrConfig['status']) === 'active' // Stops...duh!
+						&& $serverDateTime->format('Y-m-d H:i:s T') >= date("Y-m-d", strtotime($arrConfig['active_date'])) // Stops messages going out before active date.
+						&& $serverDateTime->format('U') > $strContactTime->format('U') // Stops messages going out before contact time
+						&& $userRegisteredDateTime->format('U') < $strContactTime->format('U') // Stops messages going out on registration day
+						&& $arrConfig[$msgType.'_reminder_optin'] != 'N'
+					){
+// if ($serverDateTime->format('U') > $strContactTime->format('U') ) {echo "[".$row->ID."]Contact before server time<BR>";} else
+//  {echo "[".$row->ID."]Contact after server time<BR>";}
+// echo "Corrected Contact Time: [".$strContactTime->format('Y-m-d H:i:s T')."]<BR>".date("Y-m-d H:i:s T")."<BR><BR>";
+						$logString .= "[".$row->ID."]READY TO CHECK UCP";
+						$arrAllParticipantUserIDs[] = array('user_id'=>$row->ID, 'status'=>$arrConfig['status'], $msgType.'_reminder_optin'=>$arrConfig[$msgType.'_reminder_optin'], $msgType.'_reminder_time'=>$arrConfig[$msgType.'_reminder_time']);
+					} else {
+						$logString .= "[".$row->ID."]SKIP :: ";
+					}
+					// give a breakdown
+					if(strtolower($arrConfig['status']) !== 'active') {
+						$logString .= "[Bad Status ". ucfirst(strtolower($arrConfig['status'])) . "] ";
+					}
+					if(date("Y-m-d", strtotime($arrConfig['active_date'])) > date("Y-m-d")) {
+						$logString .= "[Not at active date ". date("Y-m-d", strtotime($arrConfig['active_date'])) . " > ". date("Y-m-d") . "] ";
+					}
+					if($serverDateTime->format('U') < $strContactTime->format('U')) {
+						$logString .= "[Not at Contact time ". $serverDateTime->format('Y-m-d H:i:s T') . " Earlier Than ". $strContactTime->format('Y-m-d H:i:s T') . "] ";
+					}
+					if($userRegisteredDateTime->format('U') >= $strContactTime->format('U')) {
+						$logString .= "[Don't send on Reg date if Reg time: {". $userRegisteredDateTime->format('Y-m-d H:i:s T') . "} is after Contact Time {". $strContactTime->format('Y-m-d H:i:s T') . "}] ";
+					}
+					if($arrConfig[$msgType.'_reminder_optin'] == 'N') {
+						$logString .= "[".$msgType."_reminder_optin == N] ";
+					}
+					$logString .= "<br>";
+				}
+
+			}
+		}
+		//echo "<pre>";var_dump($logString);echo "</pre>";
+		if($logOutput) {
+			echo $logString;
+		}
+
+		//echo "WOW";
+		//dd($arrAllParticipantUserIDs);
+		return $arrAllParticipantUserIDs;
+	}
+
+
+	/**
+	 * Helper method to nomilize the timezone inside the preferred time.
+	 * It's a long story why, but I believe I had something to do with it.
+	 */
+	private function conformTime($strTime)
+	{
+		$strSearchTZ = array('ET','MT','CT','PT');
+
+		if (date('I', time()))
+		{
+			$strReplaceTZ = array('EDT','MDT','CDT','PDT');
+		} else {
+			$strReplaceTZ = array('EST','MST','CST','PST');
+		}
+
+		$strReplace = array('');
+		$strTimeTZ = str_replace($strSearchTZ, $strReplaceTZ, $strTime);
+		$strConformTime = date("Y-m-d H:i:s", strtotime($strTimeTZ));
+
+		return $strConformTime;
+	}
 
 
 

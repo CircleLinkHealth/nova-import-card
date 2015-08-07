@@ -4,10 +4,11 @@ use App\WpUser;
 use App\WpUserMeta;
 use App\Services\MsgUser;
 /*
+ *
  * $this->load->model('cpm_1_7_users_model','meta');
-        $this->load->model('cpm_1_7_smsdelivery_model','mailman');
-        $this->load->model('cpm_1_7_scheduler_model','collector');
-        $this->load->library('cpm_1_7_msgchooser_library');
+$this->load->model('cpm_1_7_smsdelivery_model','mailman');
+$this->load->model('cpm_1_7_scheduler_model','collector');
+$this->load->library('cpm_1_7_msgchooser_library');
  */
 
 class MsgScheduler {
@@ -17,7 +18,6 @@ class MsgScheduler {
     }
 
     public function test($blogId){
-        //$active_users = $this->meta->get_all_active_users($intProgramID);
         $msgUser = new MsgUser;
         $activeUsers = $msgUser->get_all_active_users($blogId);
         //dd($activeUsers);
@@ -35,7 +35,7 @@ class MsgScheduler {
      */
     public function sendDailyReminder($intProgramID, $debug=false){
         date_default_timezone_set('America/New_York');
-        switch_to_blog( $intProgramID );
+        //switch_to_blog( $intProgramID );
         $today = date('N');
         echo "<pre>sendDailyReminder Date: ".$today;
 
@@ -48,7 +48,8 @@ class MsgScheduler {
         foreach ($reminders as $msgType => $msgTypeAbrev) {
             echo '<br>---------------<br>DAILY REMINDER TYPE: '.$msgType.'<br>---------------<br>';
             $arrMsgType = array('msgType' => $msgType, 'msgTypeAbrev' => $msgTypeAbrev);
-            $arrUsers = $this->collector->get_readyusers_for_daily_reminder($intProgramID, $arrMsgType, null, 1); //, $strDevice, $strDate);
+            $msgUser = new MsgUser;
+            $arrUsers = $msgUser->get_readyusers_for_daily_reminder($intProgramID, $arrMsgType, null, 1); //, $strDevice, $strDate);
 
             // loop through each ready user
             foreach ($arrUsers as $key => $value) {
@@ -142,7 +143,7 @@ class MsgScheduler {
         echo "<span class='alert2'>@: " . date("Y-m-d H:i:s T") . "<BR></span>";
 
         date_default_timezone_set('America/New_York');
-        switch_to_blog( $intProgramID );
+        //switch_to_blog( $intProgramID );
 
         // VALIDATION
         // ip blocker
