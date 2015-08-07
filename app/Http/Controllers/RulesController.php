@@ -100,9 +100,10 @@ class RulesController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Request $request, $id)
 	{
-		//
+		$params = $request->input();
+		dd($params);
 	}
 
 	/**
