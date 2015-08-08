@@ -3,7 +3,9 @@
 use App\WpUser;
 use App\WpUserMeta;
 use App\Services\MsgCPRules;
+use App\Services\MsgDelivery;
 use App\Services\MsgUsers;
+use DB;
 /*
 $this->_ci =& get_instance();
 $this->_ci->load->model('cpm_1_7_rules_model','rules');
@@ -99,8 +101,8 @@ class MsgSubstitutions {
                         }
                     }
                 }
-
-                $lastkey = $this->_ci->mailman->writeOutboundSmsMessage($user_id,$tmpArr,'substitutionlibrary', 'scheduled',$provid);
+                $msgDelivery = new MsgDelivery;
+                $lastkey = $msgDelivery->writeOutboundSmsMessage($user_id,$tmpArr,'substitutionlibrary', 'scheduled',$provid);
 
                 // echo '<br>Substitution Scheduled: <pre>';
                 // print_r($tmpArr);
@@ -122,7 +124,10 @@ class MsgSubstitutions {
                         );
 
                         // insert new observation record
-                        $obs_id = $this->_ci->obs->insert_observation($data, false, $provid);
+                        $obs_id = DB::connection('mysql_no_prefix')->table('ma_'.$provid.'_observations')->insertGetId( $data );
+                        echo "<br>MsgSubstitutions->getReadingsText() User_Id#=" . $user_id;
+                        echo "<br>MsgSubstitutions->getReadingsText() Created New Observation#=" . $obs_id;
+                        //$obs_id = $this->_ci->obs->insert_observation($data, false, $provid);
 
                     }// foreach2
                 }// foreach

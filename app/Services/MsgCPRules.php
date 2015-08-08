@@ -1,5 +1,8 @@
-<?php
-if(!defined('BASEPATH')) exit ('No direct access allowed.');
+<?php namespace App\Services;
+
+use App\WpUser;
+use App\WpUserMeta;
+use DB;
 
 class MsgCPRules {
 
@@ -10,8 +13,6 @@ class MsgCPRules {
      * @copyright 	CircleLink Health, LLC - 01/30/2015
      *
      */
-
-    private $_ci;
 
 
     public function __construct() {
@@ -87,10 +88,13 @@ LIMIT 1
 query;
 
 // echo '<br>'.$query;
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
 
-        $results = $this->db->query($query);
-
-        return $results->row();
+        if(isset($results[0])) {
+            return $results[0];
+        } else {
+            return false;
+        }
 
     }//getValidAnswer
 
@@ -129,29 +133,30 @@ query;
         // remove leading and trailing spaces for msgId
         $strMsgId = trim($strMsgId);
 
-        $query = <<<query
-select q.qid, q.msg_id, q.qtype, im.meta_key as msgtype, im.meta_value as message, q.obs_key,
+        $query = "select q.qid, q.msg_id, q.qtype, im.meta_key as msgtype, im.meta_value as message, q.obs_key,
 if(isnull(p.meta_value), ',,', p.meta_value) as cdays,
 ifnull(u2.meta_value, 'Inactive') as ucp_status,
 ifnull(im2.meta_value, 'Inactive') as pcp_status, qs.action
 FROM rules_questions q
-left join rules_question_sets qs on qs.qid = q.qid and qs_type = '{$qstype}' and qs.provider_id = {$pid}
+left join rules_question_sets qs on qs.qid = q.qid and qs_type = '".$qstype."' and qs.provider_id = ".$pid."
 join rules_items i on i.qid = q.qid
-join rules_pcp pc on pc.pcp_id = i.pcp_id and pc.prov_id = {$pid}
-left join rules_itemmeta im on im.items_id = i.items_id and im.meta_key = '{$strMsgText}'
+join rules_pcp pc on pc.pcp_id = i.pcp_id and pc.prov_id = ".$pid."
+left join rules_itemmeta im on im.items_id = i.items_id and im.meta_key = '".$strMsgText."'
 left join rules_itemmeta im2 on im2.items_id = i.items_id and im2.meta_key = 'AllPatients'
 left join rules_items i2 on i2.items_parent = i.items_id and i2.items_text = 'Contact Days'
-left join rules_ucp p on p.items_id = i2.items_id and p.user_id = {$intUserId}
-left join rules_ucp u2 on u2.items_id = i.items_id and u2.meta_key = 'status' and u2.user_id = {$intUserId}
-WHERE msg_id = '{$strMsgId}'
-limit 1
-query;
+left join rules_ucp p on p.items_id = i2.items_id and p.user_id = ".$intUserId."
+left join rules_ucp u2 on u2.items_id = i.items_id and u2.meta_key = 'status' and u2.user_id = ".$intUserId."
+WHERE msg_id = '".$strMsgId."'
+limit 1";
 
 // echo $query;
 
-        $results = $this->db->query($query);
-
-        return $results->row();
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        if(isset($results[0])) {
+            return $results[0];
+        } else {
+            return false;
+        }
 
     }//getQuestion
 
@@ -186,11 +191,15 @@ WHERE q.qid = {$intID}
 LIMIT 1
 query;
 
-// echo $query;
+//echo $query;
 
-        $results = $this->db->query($query);
-
-        return $results->row();
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        //dd($results[0]);
+        if(isset($results[0])) {
+            return $results[0];
+        } else {
+            return false;
+        }
 
     }//getQuestionById
 
@@ -228,9 +237,9 @@ query;
 
 // echo $query;
 
-        $results = $this->db->query($query);
-
-        return $results->result_array();
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        //dd($results[0]);
+        return $results;
 
     }//getNextList
 
@@ -379,7 +388,7 @@ query;
          *
          */
 
-        $query = <<<query
+        $sql = <<<query
 select o.obs_key, o.obs_value
 from ma_{$provid}_observations o
 where o.user_id = {$user_id}
@@ -389,10 +398,9 @@ and o.obs_key in ('Blood_Sugar', 'Blood_Pressure', 'Weight', 'Cigarettes')
 query;
 
 // echo $query;
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
 
-        $results = $this->db->query($query);
-
-        return $results->result_array();
+        return $results;
 
     }//getReadings
 
@@ -406,7 +414,7 @@ query;
          *
          */
 
-        $query = <<<query
+        $sql = <<<query
 select q.obs_key, u.meta_value as cdays, weekday(now())+1 as today,
 ifnull(u2.meta_value, 'Inactive') as UActive, ifnull(im2.meta_value, 'Inactive') as APActive, q.msg_id
 from rules_questions q
@@ -422,9 +430,9 @@ query;
 
 // echo $query;
 
-        $results = $this->db->query($query);
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
 
-        return $results->result_array();
+        return $results;
 
     }//getReadingDefaults
 
@@ -605,10 +613,11 @@ query;
     // returns config for user
     public function getUserConfig($provid, $user_id) {
         $sql = "select meta_key, meta_value from wp_usermeta where user_id = {$user_id} and meta_key = 'wp_{$provid}_user_config'";
-
-        $results = $this->db->query($sql);
-        $ret = $results->row();
-        return $ret->meta_value;
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+        if(isset($results[0])) {
+            return $results[0]->meta_value;
+        }
+        return '';
 
     } //getUserConfig
 

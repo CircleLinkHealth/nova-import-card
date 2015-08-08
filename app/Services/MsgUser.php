@@ -268,6 +268,10 @@ class MsgUser {
 				$userRegisteredDateTime = new DateTime($row->user_registered, new DateTimeZone('America/New_York'));
 				// $strContactTime = $date->format('Y-m-d H:i:s T');
 
+				if(!isset($arrConfig[$msgType.'_reminder_optin'])) {
+					$arrConfig[$msgType.'_reminder_optin'] = 'defaulting optin value';
+					$arrConfig[$msgType.'_reminder_time'] = 'defaulting time value';
+				}
 				if (!empty($userData)) {
 					if(
 						strtolower($arrConfig['status']) === 'active' // Stops...duh!
@@ -297,7 +301,7 @@ class MsgUser {
 					if($userRegisteredDateTime->format('U') >= $strContactTime->format('U')) {
 						$logString .= "[Don't send on Reg date if Reg time: {". $userRegisteredDateTime->format('Y-m-d H:i:s T') . "} is after Contact Time {". $strContactTime->format('Y-m-d H:i:s T') . "}] ";
 					}
-					if($arrConfig[$msgType.'_reminder_optin'] == 'N') {
+					if(isset($arrConfig[$msgType.'_reminder_optin']) && $arrConfig[$msgType.'_reminder_optin'] == 'N') {
 						$logString .= "[".$msgType."_reminder_optin == N] ";
 					}
 					$logString .= "<br>";
@@ -338,6 +342,68 @@ class MsgUser {
 		return $strConformTime;
 	}
 
+
+	public function get_readyusers($intProgramID=0, $max)
+	{
+		date_default_timezone_set('America/New_York');
+		$serverDateTime = new DateTime(null, new DateTimeZone('America/New_York'));
+
+		$strCapabilitiesIdent = 'wp_' . $intProgramID . '_capabilities';
+		$strCommentFile = 'wp_' . $intProgramID . '_comments';
+		$strContactTimesContainer = 'wp_' . $intProgramID . '_user_config';
+
+		$arrUserData = array();
+		$arrAllParticipantUserIDs = array();
+		$limit = "";
+		if ($max > 0 ) $limit = " LIMIT $max";
+		$sql = "SELECT ID, user_registered, user_status, c.meta_value `$strCapabilitiesIdent`, s.meta_value `$strContactTimesContainer`
+                 FROM wp_users u
+                left join wp_usermeta c on c.user_id = u.ID
+                left join wp_usermeta s on s.user_id = u.ID
+                LEFT JOIN (select cmts.user_id, max(comment_date) `last_comment` FROM $strCommentFile cmts
+                            where comment_type like 'state_sol' and date(comment_date) = '". $serverDateTime->format('Y-m-d') ."' group by cmts.user_id) cm on cm.user_id = u.ID
+                WHERE
+                    c.meta_key='".$strCapabilitiesIdent."'
+                and c.meta_value = 'a:1:{s:11:\"participant\";b:1;}'
+                and s.meta_key = '".$strContactTimesContainer."'
+                and s.meta_value like '%Active%'
+                and cm.user_id is null $limit;";
+
+		$userData = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+		if (!empty($userData)) {
+			foreach($userData as $row)
+			{
+				$arrCapabilities = unserialize($row->$strCapabilitiesIdent);
+				$arrConfig = unserialize($row->$strContactTimesContainer);
+// var_dump($arrConfig);
+				$strPreferredContactTime = $arrConfig['preferred_contact_time'];
+				// $strContactTime = $this->conformTime($strPreferredContactTime);
+				$strContactTime = new DateTime($serverDateTime->format('Y-m-d ').$strPreferredContactTime, new DateTimeZone($arrConfig['preferred_contact_timezone']));
+				$userRegisteredDateTime = new DateTime($row->user_registered, new DateTimeZone('America/New_York'));
+
+				if (!empty($userData))
+				{
+					if(
+						strtolower($arrConfig['status']) === 'active' // Stops...duh!
+						&& $serverDateTime->format('Y-m-d H:i:s T') >= date("Y-m-d", strtotime($arrConfig['active_date'])) // Stops messages going out before active date.
+						&&  $serverDateTime->format('U') > $strContactTime->format('U') // Stops messages going out before contact time
+						&& $userRegisteredDateTime->format('U') < $strContactTime->format('U') // Stops messages going out on registration day
+					){
+
+						$arrAllParticipantUserIDs[] = array('user_id'=>$row->ID, 'preferred_contact_time'=>$arrConfig['preferred_contact_time']);
+					} else {
+						echo "IS: ". $row->ID. " " .$userRegisteredDateTime->format('Y-m-d H:i:s T')  ." < " . $strContactTime->format('Y-m-d H:i:s T')  ." but not until: " . date("Y-m-d", strtotime($arrConfig['active_date'])) . ". Status: ".
+							strtolower($arrConfig['status']). ". " ."<BR>";
+					}
+				}
+
+			}
+		}
+
+// var_export($arrAllParticipantUserIDs);
+// exit('Done');
+		return $arrAllParticipantUserIDs;
+	}
 
 
 	public function get_user_care_plan($intUserId, $intBlogId) {
@@ -396,7 +462,7 @@ class MsgUser {
 		$query->orderBy("i.items_id", 'DESC');
 		$result = $query->get();
 
-
+		$arrReturnResult = array();
 		// set alert_values
 		if(!empty($result)) {
 			foreach ($result as $row) {
@@ -414,6 +480,8 @@ class MsgUser {
 					'items_parent_msg_id' => $row->items_parent_msg_id,
 				);
 			}
+		} else {
+			echo "MsgUser->get_user_care_plan_items() ERROR, could not find!";
 		}
 		return $arrReturnResult;
 
@@ -995,11 +1063,11 @@ WHERE {$str_observation_table}.user_id = ?;", array($user_id));
 
 	public function get_user_state_record_by_id($intProgramId,$id)
 	{
-		$this->db->select('*');
-		$this->db->from('wp_'. $intProgramId .'_comments');
-		$this->db->where_in('comment_id',$id);
-		$query = $this->db->get();
-		$record_exists = $query->row();
+		echo "<br>MsgUser->get_user_state_record_by_id() id=".$id;
+		$query = DB::connection('mysql_no_prefix')->table('wp_'. $intProgramId .'_comments');
+		$query->select('*');
+		$query->where('comment_ID', '=', $id);
+		$record_exists = $query->get();
 
 		// echo "<BR>Users State: [$id]<BR>";
 		// var_export($record_exists);

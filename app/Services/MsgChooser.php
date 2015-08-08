@@ -2,6 +2,10 @@
 
 use App\WpUser;
 use App\WpUserMeta;
+use App\Services\MsgCPRules;
+use App\Services\MsgSubstitutions;
+use App\Services\MsgTod;
+use DB;
 /*
 $this->_ci->load->model('cpm_1_7_rules_model','rules');
 $this->_ci->load->library('cpm_1_7_substitution_library');
@@ -76,7 +80,8 @@ class MsgChooser {
 
         // validate the response and get info for next question
         // echo '<br>Prov: '.$this->provid.' and qstype: '.$qstype.' msg_id: '.$lastMsgid.' Response: '.$strResponse.'<br>';
-        $ret =  $this->_ci->rules->getValidAnswer($this->provid, $qstype, $lastMsgid, $strResponse);
+        $msgCPRules = new MsgCPRules;
+        $ret =  $msgCPRules->getValidAnswer($this->provid, $qstype, $lastMsgid, $strResponse);
 
         // if not valid, re-ask last question
         if(empty($ret) || (empty($strResponse) && $strResponse !== '0' && !empty($arrState))) {
@@ -107,14 +112,15 @@ class MsgChooser {
         // if there was a response to the last question, then save it to the comment record
         echo '<br>strResponse: '.$strResponse.'<br>';
         if(!empty($strResponse) || $strResponse == '0') {
-            $tmp  = $this->_ci->rules->getQuestion($lastMsgid, $this->key, $strRespMeth, $this->provid, $qstype);
+            $tmp  = $msgCPRules->getQuestion($lastMsgid, $this->key, $strRespMeth, $this->provid, $qstype);
             $testArray = $this->arrReturn[$this->key];
-            $this->_ci->rules->saveResponse($testArray, $lastMsgid, $this->provid, $tmp->obs_key);
+            $msgCPRules->saveResponse($testArray, $lastMsgid, $this->provid, $tmp->obs_key);
         }
 
         // get 1st question information
         if(empty($arrState)) {
-            $tmp  = $this->_ci->rules->getQuestionById($ret->qid, $this->key, $strRespMeth, $this->provid, $qstype);
+            $tmp  = $msgCPRules->getQuestionById($ret->qid, $this->key, $strRespMeth, $this->provid, $qstype);
+            echo $ret->qid;
             $this->storeMsg($tmp);
         }
 
@@ -122,36 +128,43 @@ class MsgChooser {
         // do action
         $i = 0; // prevent infinite looping
         do {
-
-            $tmpResponse = $ret->answer_response;
+            $tmpResponse = '';
+            if(!empty($ret->answer_response)) {
+                $tmpResponse = $ret->answer_response;
+            }
 
             if(!empty($ret->action) && (!empty($arrState) or $tmp->qtype == 'None')) {
                 if(strpos($ret->action, '(') === FALSE){
+                    echo "<br>MsgChooser->nextMessage() [[ 1 ]]";
                     $tmpfunc = $ret->action;
+                    echo "<br>MsgChooser->nextMessage() [[ 2 ]] tmpfunc = ".$tmpfunc;
                     $tmpMsgId = $this->$tmpfunc();
+                    echo "<br>MsgChooser->nextMessage() [[ 3 ]] tmpMsgId = ".$tmpfunc;
+                    echo "<br>MsgChooser->nextMessage() [[ 4 ]]";
                 } else {
                     $exe = explode( "(", $ret->action, 2);
                     $params = array($exe[1]);
                     $tmpMsgId = call_user_func_array(array($this, $exe[0]), $params);
                 }
 
-                echo '<br>Provider: '.$this->provid.' QSType: '.$qstype.' MsgID: '.$tmpMsgId;
-                $ret =  $this->_ci->rules->getValidAnswer($this->provid, $qstype, $tmpMsgId);
+                echo '<br>Provider: '.$this->provid.' QSType: '.$qstype.' MsgID: '.$tmpMsgId;//die();
+                $ret =  $msgCPRules->getValidAnswer($this->provid, $qstype, $tmpMsgId);
                 // echo '<br>return from valid answer: ';print_r($ret);
 
                 //  get new information in case of loop
-                $tmp  = $this->_ci->rules->getQuestion($tmpMsgId, $this->key, $strRespMeth, $this->provid, $qstype);
+                $tmp  = $msgCPRules->getQuestion($tmpMsgId, $this->key, $strRespMeth, $this->provid, $qstype);
 
             }
 
-// echo '<br>Test for answer_response<br>';
-// print_r($ret);
-// print_r($tmp);
-// echo '<br>'.$tmpResponse;
+            echo '<br>MsgChooser->nextMessage() tmpResponse = '. $tmpResponse;
+            //print_r($ret);
+            //print_r($tmp);
+            echo '<br>'.$tmpResponse;
+            //die();
 
             if(!empty($tmpResponse)) {
                 // check for an answer response message to send
-                $this->storeMsg($this->_ci->rules->getQuestionById($tmpResponse, $this->key, $strRespMeth, $this->provid, $qstype));
+                $this->storeMsg($msgCPRules->getQuestionById($tmpResponse, $this->key, $strRespMeth, $this->provid, $qstype));
             }
 
             // echo '<br>After Action:';
@@ -171,7 +184,7 @@ class MsgChooser {
 // echo '<br>Getting message after '.$tmp->msg_id.'<br>';
                     $tmpMsgId = $this->NextQ($tmp->msg_id);
                     //  get new information after look up next message
-                    $tmp  = $this->_ci->rules->getQuestion($tmpMsgId, $this->key, $strRespMeth, $this->provid, $qstype);
+                    $tmp  = $msgCPRules->getQuestion($tmpMsgId, $this->key, $strRespMeth, $this->provid, $qstype);
                 }
             }
 // echo "<br> After Day Check: ";
@@ -179,9 +192,10 @@ class MsgChooser {
 
 
             if((($tmp->ucp_status == 'Active') || ($tmp->pcp_status == 'Active' )) && $tmp->qtype == 'TOD' ) {
-                $tmpMsgId = $this->_ci->cpm_1_7_tod_library->getNextTod($this->provid, $this->key);
+                $msgTod = new MsgTod;
+                $tmpMsgId = $msgTod->getNextTod($this->provid, $this->key);
                 if(!empty($tmpMsgId)) {
-                    $tmp  = $this->_ci->rules->getQuestion($tmpMsgId, $this->key, $strRespMeth, $this->provid, $qstype);
+                    $tmp  = $msgCPRules->getQuestion($tmpMsgId, $this->key, $strRespMeth, $this->provid, $qstype);
                     $this->storeMsg($tmp);
                 }
             }
@@ -238,9 +252,9 @@ class MsgChooser {
         $qtype 		= $this->arrReturn[$this->key]['usermeta']['wp_'.$this->provid.'_user_config']['preferred_contact_method']."_".$this->arrReturn[$this->key]['usermeta']['wp_'.$this->provid.'_user_config']['preferred_contact_language'];
         $qstype		= $this->arrReturn[$this->key]['usermeta']['msgtype'];  // Question Group Type
         $arrState	= $this->arrReturn[$this->key]['usermeta']['state'];
-
         // locate msgid for last question asked
         // if(empty($arrState)){
+        //var_dump($this->arrReturn);die('L256');
         if(!empty($strLastMsg)) {
             $lastMsgid = $strLastMsg;
         } elseif (!empty($this->arrReturn['msg_list'])){
@@ -249,29 +263,31 @@ class MsgChooser {
             $lastMsgkey =  key($arrSearch);
             $lastMsgid = key($this->arrReturn['msg_list'][$lastMsgkey]);
         } else {
+            die('L265');
             end($arrState);
             $lastkey =  key($arrState);
             $lastMsgid = key($arrState[$lastkey]);
         }
 
         // get question list
-        $arrQS = $this->_ci->rules->getNextList($Provider, $this->key, $qstype, $qtype);
+        $msgCPRules = new MsgCPRules;
+        $arrQS = $msgCPRules->getNextList($Provider, $this->key, $qstype, $qtype);
         $found1 = $found2 = FALSE;
         $tmpMsgId = '';
         foreach ($arrQS as $key ) {
             // check if messages is allowed to be sent today
-            if($found1 && ($key['pcp_status'] == 'Active' || ($key['ucp_status'] == 'Active' && strpos($key['cdays'], date('N')) !== FALSE))){
+            if($found1 && ($key->pcp_status == 'Active' || ($key->ucp_status == 'Active' && strpos($key->cdays, date('N')) !== FALSE))){
                 $found2 = TRUE;
             }
 
             // Send message;
             if($found2) {
-                $tmpMsgId = $key['msg_id'];
+                $tmpMsgId = $key->msg_id;
                 break;
             }
 
             // find last question first
-            if(($key['msg_id'] == $lastMsgid)) {
+            if(($key->msg_id == $lastMsgid)) {
                 // echo '<br>FOUND!!!!!';
                 $found1 = TRUE;
             }
@@ -283,9 +299,18 @@ class MsgChooser {
 
     // store message information in array to be returned to calling program/function.
     private function storeMsg($arrQuestion, $extratext='') 	{
-        if(is_object($arrQuestion) && (!$this->findkey($this->arrReturn['msg_list'], $arrQuestion->msg_id))) {
-            $arrQuestion->message = $this->_ci->cpm_1_7_substitution_library->doSubstitutions($arrQuestion->message, $this->provid, $this->key);
-            $this->arrReturn['msg_list'][] = array($arrQuestion->msg_id => array('qtype' => $arrQuestion->qtype, 'msg_text' => $extratext.$arrQuestion->message));
+        if(isset($this->arrReturn['msg_list'])) {
+            if (is_object($arrQuestion) && (!$this->findkey($this->arrReturn['msg_list'], $arrQuestion->msg_id))) {
+                $msgSubstitutions = new MsgSubstitutions;
+                $arrQuestion->message = $msgSubstitutions->doSubstitutions($arrQuestion->message, $this->provid, $this->key);
+                $this->arrReturn['msg_list'][] = array($arrQuestion->msg_id => array('qtype' => $arrQuestion->qtype, 'msg_text' => $extratext . $arrQuestion->message));
+            }
+        } else {
+            if (is_object($arrQuestion)) {
+                $msgSubstitutions = new MsgSubstitutions;
+                $arrQuestion->message = $msgSubstitutions->doSubstitutions($arrQuestion->message, $this->provid, $this->key);
+                $this->arrReturn['msg_list'][] = array($arrQuestion->msg_id => array('qtype' => $arrQuestion->qtype, 'msg_text' => $extratext . $arrQuestion->message));
+            }
         }
         return;
     }//storeMsg
@@ -309,17 +334,18 @@ class MsgChooser {
         // echo '<hr>';
 
         // get list of Reading for individual
-        $arrList = $this->_ci->rules->getReadingDefaults($this->key, $this->provid);
+        $msgCPRules = new MsgCPRules;
+        $arrList = $msgCPRules->getReadingDefaults($this->key, $this->provid);
         // echo '<br>arrList: ';
         // print_r($arrList);
         if(!empty($arrList)) {
-            $arrReadings = serialize($this->_ci->rules->getReadings($this->provid, $this->key));
+            $arrReadings = serialize($msgCPRules->getReadings($this->provid, $this->key));
             // echo '<br>Readings found: '.$arrReadings;
 
             foreach ($arrList as $row) {
                 // chech if biometric is active and can be sent today
-                if((!empty($row['APActive']) && $row['APActive'] == 'Active') or ($row['UActive'] == 'Active' and strpos($row['cdays'], $row['today']) !== FALSE)) {
-                    if(empty($arrReadings) || strpos($arrReadings, $row['obs_key']) === FALSE) {
+                if((!empty($row->APActive) && $row->APActive == 'Active') or ($row->UActive == 'Active' and strpos($row->cdays, $row->today) !== FALSE)) {
+                    if(empty($arrReadings) || strpos($arrReadings, $row->obs_key) === FALSE) {
                         $intSelect = 1;
                     }
                 }

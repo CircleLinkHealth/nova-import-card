@@ -4,6 +4,7 @@ use App\WpUser;
 use App\WpUserMeta;
 use App\Services\MsgUser;
 use App\Services\MsgChooser;
+use DB;
 /*
  *
  * $this->load->model('cpm_1_7_users_model','meta');
@@ -85,6 +86,7 @@ class MsgScheduler {
 
                 $arrPart[$value['user_id']][$value['user_id']]['usermeta']['msgtype'] = $msgTypeAbrev;
                 $msgChooser = new MsgChooser;
+                //dd($arrPart);
                 $nextMessageInfo = $msgChooser->nextMessage($arrPart[$value['user_id']]);
 
                 if($msgType == 'welcome') {
@@ -103,8 +105,12 @@ class MsgScheduler {
                     if($debug) var_export($msgResponse);
                     foreach ($msgResponse as $msgId => $msgMeta) {
                         if(!empty($msgId)) {
-                            if(!$debug)                 $sendresult = $this->mailman->sendMessageBody($nextMessageInfo,$msgId,$msgMeta['msg_text'],'smsoutbound',true);
-                            if(!$debug)                 error_log("Sent Msg: $msg to user ".$value['user_id']." with no delay.");
+                            $msgDelivery = new MsgDelivery;
+                            if(!$debug) {
+                                echo "<br>MsgScheduler->sendDailyReminder() -> msgDelivery->sendMessageBody()";
+                                $sendresult = $msgDelivery->sendMessageBody($nextMessageInfo, $msgId, $msgMeta['msg_text'], 'smsoutbound', true);
+                                error_log("Sent Msg: $msg to user " . $value['user_id'] . " with no delay.");
+                            }
                         }
                     }
                 }
@@ -116,11 +122,11 @@ class MsgScheduler {
 
 
 
-    private function addStateComment($intProgramID, $comment_type, $user_id, $comment_author,$arrCommentContent = array()) {
+    private function addStateComment($programId, $comment_type, $user_id, $comment_author,$arrCommentContent = array()) {
         date_default_timezone_set('America/New_York');
-        switch_to_blog( $intProgramID );
+        //switch_to_blog( $intProgramID );
 
-        $comment_id = wp_insert_comment(array(
+        $data = array(
             'comment_author' => $comment_author,
             'comment_author_email' => 'admin@circlelinkhealth.com',
             'comment_author_url' => 'http://circlelinkhealth.com/',
@@ -132,8 +138,9 @@ class MsgScheduler {
             'comment_agent' => '',
             'comment_date' => date('Y-m-d H:i:s'),
             'comment_approved' => 0
-        ));
-
+        );
+        $comment_id = DB::connection('mysql_no_prefix')->table('wp_'.$programId.'_comments')->insertGetId( $data );
+        echo "<br>Created New Comment#=" . $comment_id;
         return $comment_id;
     }
 
@@ -164,15 +171,19 @@ class MsgScheduler {
         $ret = $this->sendDailyReminder($intProgramID);
 
         // create Scheduled messages if they don't already exist
-        $active_users = $this->meta->get_all_active_users($intProgramID);
+        $msgUser = new MsgUser;
+        $active_users = $msgUser->get_all_active_users($intProgramID);
         foreach ($active_users as $key => $intUserID) {
-            if ($this->meta->check_for_scheduled_records($arrPart, $intUserID, $intProgramID)){
-                $arrPart[$intUserID] = $this->meta->get_users_data($intUserID, 'id', $intProgramID, true);
+            if ($msgUser->check_for_scheduled_records($intUserID, $intProgramID)){
+                $arrPart[$intUserID] = $msgUser->get_users_data($intUserID, 'id', $intProgramID, true);
                 $arrPart[$intUserID][$intUserID]['usermeta']['msgtype'] = 'SOL';
                 $ret = $this->scheduledSMS($arrPart[$intUserID]);
-                $arrCommentContent = $this->meta->get_user_state_record_by_id($intProgramID,$ret);
-                $comment_content = unserialize($arrCommentContent->comment_content);
-                $retState = $this->addStateComment($intProgramID, 'state_app', $intUserID, 'schedulercontroller',$comment_content);
+                $arrCommentContent = $msgUser->get_user_state_record_by_id($intProgramID,$ret);
+                //dd($arrCommentContent);
+                if(isset($arrCommentContent->comment_content)) {
+                    $comment_content = unserialize($arrCommentContent->comment_content);
+                    $retState = $this->addStateComment($intProgramID, 'state_app', $intUserID, 'schedulercontroller', $comment_content);
+                }
             }
         }
 
@@ -181,7 +192,7 @@ class MsgScheduler {
         $arrPart = array();
 
         // get ready users
-        $arrUsers = $this->collector->get_readyusers($intProgramID,null); //, $strDevice, $strDate);
+        $arrUsers = $msgUser->get_readyusers($intProgramID,null); //, $strDevice, $strDate);
         // echo "<br>Ready Users:<pre>";var_export($arrUsers);echo "</pre><br>";
         if (!empty($arrUsers))
         {
@@ -190,18 +201,19 @@ class MsgScheduler {
                 //echo "<BR><pre>". $key."|";
                 echo "<BR>Processing [".$value['user_id']."]<BR>";
 
-                $arrPart[$value['user_id']] = $this->meta->get_users_data($value['user_id'], 'id', $intProgramID);
+                $arrPart[$value['user_id']] = $msgUser->get_users_data($value['user_id'], 'id', $intProgramID);
                 $arrPart[$value['user_id']][$value['user_id']]['usermeta']['msgtype'] = 'SOL'; // hardcoded SOL
 
                 // get next msg data
-                $return = $this->cpm_1_7_msgchooser_library->nextMessage($arrPart[$value['user_id']]);
+                $msgChooser = new MsgChooser;
+                $return = $msgChooser->nextMessage($arrPart[$value['user_id']]);
 
                 //  Create new state comment
                 $comment_id = $this->addStateComment($intProgramID, 'state_sol', $value['user_id'], 'smsdelivery_model');
                 $return[$value['user_id']]['usermeta']['comment_ID'] = $comment_id;
 
                 // record what messages should be sent today.
-                if ($this->meta->check_for_scheduled_records($arrPart, $value['user_id'], $intProgramID)){
+                if ($msgUser->check_for_scheduled_records($value['user_id'], $intProgramID)){
                     // $this->scheduledSMS($arrPart[$value['user_id']]);
                 }
 
@@ -214,7 +226,8 @@ class MsgScheduler {
                     foreach ($resp as $msg => $meta) {
                         echo "<BR>$msg == ".$meta['msg_text']."<BR>";
                         // $sendresult = $this->mailman->sendMessage($value['user_id'],$msg,'smsoutbound',true, $intProgramID);
-                        $sendresult = $this->mailman->sendMessageBody($return,$msg,$meta['msg_text'],'smsoutbound',true);
+                        $msgDelivery = new MsgDelivery;
+                        $sendresult = $msgDelivery->sendMessageBody($return,$msg,$meta['msg_text'],'smsoutbound',true);
                         $delay = abs($delay-2);
 
                         sleep($delay);
@@ -247,20 +260,22 @@ class MsgScheduler {
 
         // get question list
         echo "$provider_id, $user_id, $qstype, $qtype";
-        $arrQS = $this->rules->getNextList($provider_id, $user_id, $qstype, $qtype);
+        $msgCPRules = new MsgCPRules;
+        $arrQS = $msgCPRules->getNextList($provider_id, $user_id, $qstype, $qtype);
         $tmpArr = array();
         $i = 0;
         foreach ($arrQS as $key ) {
             // check if messages is allowed to be sent today
-            if(($key['pcp_status'] == 'Active' || ($key['ucp_status'] == 'Active' && strpos($key['cdays'], date('N')) !== FALSE))){
+            if(($key->pcp_status == 'Active' || ($key->ucp_status == 'Active' && strpos($key->cdays, date('N')) !== FALSE))){
                 // $tmpArr[$i++][$key['msg_id']] = '';
-                $tmpArr[$i++][$key['msg_id']] = $key['obs_key'];
+                $tmpArr[$i++][$key->msg_id] = $key->obs_key;
             }
         }
         // $serialOutboundMessage = serialize($tmpArr);
 
         // write out commecomment_IDnt record
-        $lastkey = $this->mailman->writeOutboundSmsMessage($user_id,$tmpArr,$strMessageId, 'scheduled',$provider_id);
+        $msgDelivery = new MsgDelivery;
+        $lastkey = $msgDelivery->writeOutboundSmsMessage($user_id,$tmpArr,$strMessageId, 'scheduled',$provider_id);
 
         // write out observation records
         foreach ($tmpArr as $key => $value) {
@@ -278,7 +293,8 @@ class MsgScheduler {
                 );
 
                 // insert new observation record
-                $obs_id = $this->obs->insert_observation($data, false, $provider_id);
+                $obs_id = DB::connection('mysql_no_prefix')->table('ma_'.$provider_id.'_observations')->insertGetId( $data );
+                echo "<br>MsgScheduler->scheduledSMS() obs_id#=" . $obs_id;
 
             }
         }
