@@ -56,10 +56,10 @@ class MsgUser {
 		$query->whereRaw('DATE(comment_date) = DATE(now())');
 		$recordExists = $query->first();
 		if ($recordExists) {
-			echo "[$userId] exists<BR>";
+			echo "<br>MsgUser->check_for_scheduled_records() [$userId] scheduled records found, return false";
 			return false;
 		} else {
-			echo "[$userId] DNE<BR>";
+			echo "<br>MsgUser->check_for_scheduled_records() [$userId] no scheduled records, return true";
 			return true;
 		}
 	}
@@ -392,8 +392,8 @@ class MsgUser {
 
 						$arrAllParticipantUserIDs[] = array('user_id'=>$row->ID, 'preferred_contact_time'=>$arrConfig['preferred_contact_time']);
 					} else {
-						echo "IS: ". $row->ID. " " .$userRegisteredDateTime->format('Y-m-d H:i:s T')  ." < " . $strContactTime->format('Y-m-d H:i:s T')  ." but not until: " . date("Y-m-d", strtotime($arrConfig['active_date'])) . ". Status: ".
-							strtolower($arrConfig['status']). ". " ."<BR>";
+						echo "<br>MsgUser->get_readyusers() IS: ". $row->ID. " " .$userRegisteredDateTime->format('Y-m-d H:i:s T')  ." < " . $strContactTime->format('Y-m-d H:i:s T')  ." but not until: " . date("Y-m-d", strtotime($arrConfig['active_date'])) . ". Status: ".
+							strtolower($arrConfig['status']). ". " ."";
 					}
 				}
 

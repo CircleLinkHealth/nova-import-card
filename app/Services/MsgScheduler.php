@@ -48,13 +48,14 @@ class MsgScheduler {
         }
 
         foreach ($reminders as $msgType => $msgTypeAbrev) {
-            echo '<br>---------------<br>DAILY REMINDER TYPE: '.$msgType.'<br>---------------<br>';
+            echo '<br>---------------<br>---------------<br>DAILY REMINDER TYPE: '.$msgType.'<br>---------------<br>---------------<br>';
             $arrMsgType = array('msgType' => $msgType, 'msgTypeAbrev' => $msgTypeAbrev);
             $msgUser = new MsgUser;
             $arrUsers = $msgUser->get_readyusers_for_daily_reminder($intProgramID, $arrMsgType, null, 1); //, $strDevice, $strDate);
 
             // loop through each ready user
             foreach ($arrUsers as $key => $value) {
+                echo '<br>---------------<br>USER: '.$value['user_id'].'<br>---------------<br>';
                 $arrPart[$value['user_id']] = $msgUser->get_users_data($value['user_id'], 'id', $intProgramID);
                 //Added to check for Transitional Care Active and contact day
                 $ucp = $msgUser->get_user_care_plan_items($value['user_id'], $intProgramID);

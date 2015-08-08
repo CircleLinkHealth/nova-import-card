@@ -41,7 +41,7 @@ class MsgChooser {
 
     // main question flow
     public function nextMessage($arrPart) {
-
+        echo "<br>-------------START nextMessage()-------------";
         // locate primary key to this array
         reset($arrPart);
         $this->key 			= key($arrPart);
@@ -147,7 +147,8 @@ class MsgChooser {
                     $tmpMsgId = call_user_func_array(array($this, $exe[0]), $params);
                 }
 
-                echo '<br>Provider: '.$this->provid.' QSType: '.$qstype.' MsgID: '.$tmpMsgId;//die();
+                echo "<br>MsgChooser->nextMessage() [[ 4 ]] Provider: ".$this->provid.' QSType: '.$qstype;
+                //echo '<br>Provider: '.$this->provid.' QSType: '.$qstype.' MsgID: '.$tmpMsgId;//die();
                 $ret =  $msgCPRules->getValidAnswer($this->provid, $qstype, $tmpMsgId);
                 // echo '<br>return from valid answer: ';print_r($ret);
 
@@ -227,6 +228,8 @@ class MsgChooser {
 // echo "<pre>";		print_r($this->arrReturn);
         return $this->arrReturn;
         // }
+
+        echo "<br>-------------END nextMessage()-------------";
 
     }//nextMessage
 

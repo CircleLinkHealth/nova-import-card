@@ -328,7 +328,7 @@ class MsgDelivery {
 
         if(!empty($results))
         {
-            echo "<br><br>UPDATE DB STATE ROW";
+            //echo "<br><br>UPDATE DB STATE ROW";
             echo "<br>MsgDelivery->saveState() strMessageCode=".$strMessageCode;
             //store new question
             $row = $results[0];
@@ -342,7 +342,7 @@ class MsgDelivery {
             }
 // echo "<br> state: <pRe>";var_export($state);
 
-            echo "<br> new msg: ".$strMessageCode."<BR>";
+            echo "<br>MsgDelivery->saveState() new msg: ".$strMessageCode."<BR>";
 // exit();
 
             //save state
@@ -368,7 +368,7 @@ class MsgDelivery {
                 'sequence_id' => $sequence_id,
             );
             $obs_id = DB::connection('mysql_no_prefix')->table('ma_'.$this->intProgramID.'_observations')->insertGetId( $observation_params );
-            echo "<br>Created New Comment#=" . $obs_id;
+            echo "Created New Comment#=" . $obs_id;
             $log_string = "added new observation, obs_id = {$obs_id}" . PHP_EOL;
 
         }
