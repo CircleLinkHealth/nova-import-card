@@ -56,10 +56,10 @@ class MsgUser {
 		$query->whereRaw('DATE(comment_date) = DATE(now())');
 		$recordExists = $query->first();
 		if ($recordExists) {
-			echo "<br>MsgUser->check_for_scheduled_records() [$userId] scheduled records found, return false";
+			//echo "<br>MsgUser->check_for_scheduled_records() [$userId] scheduled records found, return false";
 			return false;
 		} else {
-			echo "<br>MsgUser->check_for_scheduled_records() [$userId] no scheduled records, return true";
+			//echo "<br>MsgUser->check_for_scheduled_records() [$userId] no scheduled records, return true";
 			return true;
 		}
 	}
@@ -196,6 +196,7 @@ class MsgUser {
 	{
 		date_default_timezone_set('America/New_York');
 		$serverDateTime = new DateTime(null, new DateTimeZone('America/New_York'));
+		//echo "<pre>";var_dump($serverDateTime->format('Y-m-d H:i:s T'));echo "</pre>";
 
 		// we need both the full msg type and the abreviation ie. hospital / hsp
 		if(isset($arrMsgType['msgTypeAbrev'])) {
@@ -283,10 +284,10 @@ class MsgUser {
 // if ($serverDateTime->format('U') > $strContactTime->format('U') ) {echo "[".$row->ID."]Contact before server time<BR>";} else
 //  {echo "[".$row->ID."]Contact after server time<BR>";}
 // echo "Corrected Contact Time: [".$strContactTime->format('Y-m-d H:i:s T')."]<BR>".date("Y-m-d H:i:s T")."<BR><BR>";
-						$logString .= "[".$row->ID."]READY TO CHECK UCP";
+						$logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [".$row->ID."]READY TO CHECK UCP";
 						$arrAllParticipantUserIDs[] = array('user_id'=>$row->ID, 'status'=>$arrConfig['status'], $msgType.'_reminder_optin'=>$arrConfig[$msgType.'_reminder_optin'], $msgType.'_reminder_time'=>$arrConfig[$msgType.'_reminder_time']);
 					} else {
-						$logString .= "[".$row->ID."]SKIP :: ";
+						$logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [".$row->ID."]SKIP :: ";
 					}
 					// give a breakdown
 					if(strtolower($arrConfig['status']) !== 'active') {
@@ -304,14 +305,14 @@ class MsgUser {
 					if(isset($arrConfig[$msgType.'_reminder_optin']) && $arrConfig[$msgType.'_reminder_optin'] == 'N') {
 						$logString .= "[".$msgType."_reminder_optin == N] ";
 					}
-					$logString .= "<br>";
+					//$logString .= "<br>";
 				}
 
 			}
 		}
 		//echo "<pre>";var_dump($logString);echo "</pre>";
 		if($logOutput) {
-			echo $logString;
+			echo '<br>MsgUser->get_readyusers_for_daily_reminder logstring' . $logString;
 		}
 
 		//echo "WOW";
@@ -481,7 +482,7 @@ class MsgUser {
 				);
 			}
 		} else {
-			echo "MsgUser->get_user_care_plan_items() ERROR, could not find!";
+			echo "<br>MsgUser->get_user_care_plan_items() ERROR, could not find!";
 		}
 		return $arrReturnResult;
 
@@ -736,7 +737,7 @@ class MsgUser {
 			if(isset($arrUserConfig['active_date']))
 			{
 				$dateActiveDate = new DateTime($arrUserConfig['active_date']);
-				echo $dateToday->format('Y-m-d').'<br />'.$dateActiveDate->format('Y-m-d').'<br />'.$dateActiveDate->diff($dateToday)->format('%R%a').'<br />';
+				echo '<br>MsgUser->checkIfUserIsPassedActivationDate() ' . $dateToday->format('Y-m-d').'<br />'.$dateActiveDate->format('Y-m-d').'<br />'.$dateActiveDate->diff($dateToday)->format('%R%a').'<br />';
 				if($dateActiveDate->diff($dateToday)->format('%R%a') >= 0)
 				{
 					$boolIsActive = true;

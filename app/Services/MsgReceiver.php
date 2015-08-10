@@ -35,7 +35,7 @@ class MsgReceiver {
         $boolSkip = false;
 
 
-        echo "<br><pre>Response Data:$intBlogId ". $_SERVER['SERVER_NAME'];var_export($strResponseMessage);error_log("Response Data: ".$strResponseMessage);
+        echo "<br>MsgReceiver->getInboundStream() <br><pre>Response Data:$intBlogId ". $_SERVER['SERVER_NAME'];var_export($strResponseMessage);error_log("Response Data: ".$strResponseMessage);
 // echo "</pre><br>";
         echo "<br>";
         $sql = "SELECT * FROM ma_". $intBlogId ."_outbound_log WHERE phone_no=1$strPhoneNumber AND date(call_logged) = date(now()) AND info rLIKE 'Inbound SMS' AND info LIKE '%$hexMoMsgId%' ;";
@@ -112,7 +112,7 @@ class MsgReceiver {
             // need to stop messaging after 23:55 and until the users contact time.
 
             // echo "<pre>State: ". date("h:i A T"); var_dump($arrPart);echo "</pre><br>";
-            echo "Messaging Finfished for the day...<BR><BR>";
+            echo "<br>MsgReceiver->getInboundStream() Messaging Finfished for the day...";
             error_log("Messaging Finfished for the day @ ".$studyCutOffTime."... User: " . $intUserId);
 
             exit("Need Exit Routine");
@@ -133,7 +133,7 @@ class MsgReceiver {
         foreach ($return['msg_list'] as $msg => $resp)
         {
             foreach ($resp as $msg => $meta) {
-                echo "$msg == ".$meta['msg_text']."<BR>";
+                echo "<br>MsgReceiver->getInboundStream() $msg == ".$meta['msg_text']."<BR>";
                 if (!$msg == '')    $sendresult = $this->mailman->sendMessageBody($return,$msg,$meta['msg_text'],'smsoutbound',true);
                 error_log("Sent Msg: $msg with a $delay second delay.");
                 $delay = abs($delay-2);
@@ -149,7 +149,7 @@ class MsgReceiver {
 
     private function resendLastMsg($arrPart)
     {
-        echo "resendLastMsg:<pre>";
+        echo "<br>MsgReceiver->resendLastMsg() resendLastMsg:<pre>";
         // var_export($arrPart);
     }
 

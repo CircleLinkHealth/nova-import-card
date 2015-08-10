@@ -80,8 +80,8 @@ class MsgDelivery {
         $sms['source']       = 'Clickatell';
         $sms['blog_id']       = $intProgramID;
 
-        echo "[$intUserId]|[".$sms['phone_number']."]";
-        echo '<strong>' . $strMessageCode . ' - ' . $sms['msg_text'] . "</strong><BR>";
+        echo "MsgDelivery->sendMessage() [$intUserId]|[".$sms['phone_number']."]";
+        echo 'MsgDelivery->sendMessage() strMessageCode= ' . $strMessageCode . ' && msg_text = ' . $sms['msg_text'] . "";
         // echo "<BR><strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/Y'>Yes</a></strong><BR>";
         // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/N'>No</a></strong><BR>";
         // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/1'>1</a></strong><BR>";
@@ -342,15 +342,15 @@ class MsgDelivery {
             }
 // echo "<br> state: <pRe>";var_export($state);
 
-            echo "<br>MsgDelivery->saveState() new msg: ".$strMessageCode."<BR>";
+            echo "<br>MsgDelivery->saveState() new msg: ".$strMessageCode."";
 // exit();
 
             //save state
             $updateData = array('comment_ID'      => $row->comment_ID,
                 'comment_content' => serialize($state),
                 'comment_approved'=> $comment_approved);
-            $obs_id = DB::connection('mysql_no_prefix')->table($strCommentsTable)->where('comment_ID', $row->comment_ID)->update( $updateData );
-            echo "<br>MsgDelivery->saveState() Update Comment#=" . $obs_id;
+            $result = DB::connection('mysql_no_prefix')->table($strCommentsTable)->where('comment_ID', $row->comment_ID)->update( $updateData );
+            echo "<br>MsgDelivery->saveState() Update Comment#=" . $row->comment_ID;
 
             // get sequence_id
             end($state);
@@ -366,9 +366,11 @@ class MsgDelivery {
                 'obs_value' => '',
                 'obs_unit' => '',
                 'sequence_id' => $sequence_id,
+                'obs_date' => date("Y-m-d H:i:s"),
+                'obs_date_gmt' => gmdate("Y-m-d H:i:s"),
             );
             $obs_id = DB::connection('mysql_no_prefix')->table('ma_'.$this->intProgramID.'_observations')->insertGetId( $observation_params );
-            echo "Created New Comment#=" . $obs_id;
+            echo "<br>MsgDelivery->saveState() Created New Observation#=" . $obs_id;
             $log_string = "added new observation, obs_id = {$obs_id}" . PHP_EOL;
 
         }

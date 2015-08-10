@@ -41,7 +41,7 @@ class MsgChooser {
 
     // main question flow
     public function nextMessage($arrPart) {
-        echo "<br>-------------START nextMessage()-------------";
+        echo "<br>MsgChooser->nextMessage() start!";
         // locate primary key to this array
         reset($arrPart);
         $this->key 			= key($arrPart);
@@ -85,15 +85,15 @@ class MsgChooser {
 
         // if not valid, re-ask last question
         if(empty($ret) || (empty($strResponse) && $strResponse !== '0' && !empty($arrState))) {
-            $tmp  = $this->_ci->rules->getQuestion($lastMsgid, $this->key, $strRespMeth, $this->provid, $qstype);
+            $tmp  = $msgCPRules->getQuestion($lastMsgid, $this->key, $strRespMeth, $this->provid, $qstype);
             if(empty($tmp)) {
                 $this->End('Question not found.');
             } else {
                 $testArray = $this->arrReturn[$this->key];
 
                 // save and load invalid response message
-                $tmp2  = $this->_ci->rules->getQuestion('CF_INV_10', $this->key, $strRespMeth, $this->provid, $qstype);
-                $this->_ci->rules->saveResponse($testArray, $lastMsgid, $this->provid, $tmp->obs_key, 'invalid');
+                $tmp2  = $msgCPRules->getQuestion('CF_INV_10', $this->key, $strRespMeth, $this->provid, $qstype);
+                $msgCPRules->saveResponse($testArray, $lastMsgid, $this->provid, $tmp->obs_key, 'invalid');
                 $this->storeMsg($tmp2);
 
                 // save original question again
@@ -110,7 +110,7 @@ class MsgChooser {
 
 
         // if there was a response to the last question, then save it to the comment record
-        echo '<br>strResponse: '.$strResponse.'<br>';
+        echo '<br>MsgChooser->nextMessage() last question response: '.$strResponse.'';
         if(!empty($strResponse) || $strResponse == '0') {
             $tmp  = $msgCPRules->getQuestion($lastMsgid, $this->key, $strRespMeth, $this->provid, $qstype);
             $testArray = $this->arrReturn[$this->key];
@@ -120,7 +120,7 @@ class MsgChooser {
         // get 1st question information
         if(empty($arrState)) {
             $tmp  = $msgCPRules->getQuestionById($ret->qid, $this->key, $strRespMeth, $this->provid, $qstype);
-            echo $ret->qid;
+            echo "<br>MsgChooser->nextMessage() ".$ret->qid;
             $this->storeMsg($tmp);
         }
 
@@ -135,19 +135,18 @@ class MsgChooser {
 
             if(!empty($ret->action) && (!empty($arrState) or $tmp->qtype == 'None')) {
                 if(strpos($ret->action, '(') === FALSE){
-                    echo "<br>MsgChooser->nextMessage() [[ 1 ]]";
                     $tmpfunc = $ret->action;
-                    echo "<br>MsgChooser->nextMessage() [[ 2 ]] tmpfunc = ".$tmpfunc;
+                    echo "<br>MsgChooser->nextMessage() [[ 1 ]] tmpfunc = ".$tmpfunc;
                     $tmpMsgId = $this->$tmpfunc();
-                    echo "<br>MsgChooser->nextMessage() [[ 3 ]] tmpMsgId = ".$tmpfunc;
-                    echo "<br>MsgChooser->nextMessage() [[ 4 ]]";
+                    echo "<br>MsgChooser->nextMessage() [[ 2 ]] tmpMsgId = ".$tmpfunc;
                 } else {
+                    echo "<br>MsgChooser->nextMessage() [[ 1 ]] no tmpfunc";
                     $exe = explode( "(", $ret->action, 2);
                     $params = array($exe[1]);
                     $tmpMsgId = call_user_func_array(array($this, $exe[0]), $params);
                 }
 
-                echo "<br>MsgChooser->nextMessage() [[ 4 ]] Provider: ".$this->provid.' QSType: '.$qstype;
+                echo "<br>MsgChooser->nextMessage() [[ 3 ]] Provider: ".$this->provid.' QSType: '.$qstype;
                 //echo '<br>Provider: '.$this->provid.' QSType: '.$qstype.' MsgID: '.$tmpMsgId;//die();
                 $ret =  $msgCPRules->getValidAnswer($this->provid, $qstype, $tmpMsgId);
                 // echo '<br>return from valid answer: ';print_r($ret);
@@ -160,7 +159,6 @@ class MsgChooser {
             echo '<br>MsgChooser->nextMessage() tmpResponse = '. $tmpResponse;
             //print_r($ret);
             //print_r($tmp);
-            echo '<br>'.$tmpResponse;
             //die();
 
             if(!empty($tmpResponse)) {
@@ -226,10 +224,11 @@ class MsgChooser {
         }
 
 // echo "<pre>";		print_r($this->arrReturn);
+        echo "MsgChooser->nextMessage() end, return arrReturn";
         return $this->arrReturn;
         // }
 
-        echo "<br>-------------END nextMessage()-------------";
+        //echo "<br>-------------END nextMessage()-------------";
 
     }//nextMessage
 
@@ -485,6 +484,7 @@ class MsgChooser {
             }
         }
 
+        echo '<br>MsgChooser->fxAlgorithmic() ';
         echo '<br>Al "Gor" Ithmic';
         echo '<br>Sched: '.$sched;
         echo '<br>Y: '.$y;
@@ -517,7 +517,7 @@ class MsgChooser {
 
         // send next message
         $rtnMsgId = $this->NextQ($lastMsgid);
-        echo '<br>Next Message: '.$rtnMsgId;
+        echo '<br>MsgChooser->fxAlgorithmic() Next Message: '.$rtnMsgId;
         return $rtnMsgId;
     }
 

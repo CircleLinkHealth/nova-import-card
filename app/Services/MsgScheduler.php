@@ -38,24 +38,30 @@ class MsgScheduler {
     public function sendDailyReminder($intProgramID, $debug=false){
         date_default_timezone_set('America/New_York');
         //switch_to_blog( $intProgramID );
+        echo "<br><br>#################### start sendDailyReminder() ######################";
         $today = date('N');
-        echo "<pre>sendDailyReminder Date: ".$today;
+        echo "<br><br>sendDailyReminder Date: ".$today."<br><br>";
 
         if (in_array($today, array("1","3","5") ) ) {
             $reminders = array('daily' => 'day', 'welcome' => 'new' ,'hospital' => 'hsp_dm');
         } else {
             $reminders = array('daily' => 'day', 'welcome' => 'new' );
         }
-
         foreach ($reminders as $msgType => $msgTypeAbrev) {
-            echo '<br>---------------<br>---------------<br>DAILY REMINDER TYPE: '.$msgType.'<br>---------------<br>---------------<br>';
+            echo "<br><br>^^^^^^^^ START msgType = $msgType ^^^^^^^^<br>";
             $arrMsgType = array('msgType' => $msgType, 'msgTypeAbrev' => $msgTypeAbrev);
             $msgUser = new MsgUser;
             $arrUsers = $msgUser->get_readyusers_for_daily_reminder($intProgramID, $arrMsgType, null, 1); //, $strDevice, $strDate);
 
             // loop through each ready user
+            echo "<br><br>MsgScheduler->sendDailyReminder() # of users to process = " . count($arrUsers);
             foreach ($arrUsers as $key => $value) {
-                echo '<br>---------------<br>USER: '.$value['user_id'].'<br>---------------<br>';
+                // default
+                $tc[$value['user_id']] = array(
+                    'contactDays' => '',
+                    'status' => ''
+                );
+                echo '<br><br>[---Process User #'.$value['user_id'].'---]<br>';
                 $arrPart[$value['user_id']] = $msgUser->get_users_data($value['user_id'], 'id', $intProgramID);
                 //Added to check for Transitional Care Active and contact day
                 $ucp = $msgUser->get_user_care_plan_items($value['user_id'], $intProgramID);
@@ -75,12 +81,13 @@ class MsgScheduler {
                 if($debug) var_export($tc);
                 if( $msgType == "hospital"
                     && in_array($today, explode(',', $tc[$value['user_id']]['contactDays']))
-                    && $tc[$value['user_id']]['status'] == 'Active' )
-                { echo "[".$value['user_id']."]UCP ALLOWED SEND $msgType<BR>";}
-                elseif ($msgType == 'hospital')
-                {
+                    && $tc[$value['user_id']]['status'] == 'Active' ) {
+                    echo "[".$value['user_id']."]UCP ALLOWED SEND $msgType<BR>";
+                } elseif ($msgType == 'hospital') {
                     echo "[".$value['user_id']."]UCP STOPPED SEND $msgType<BR>";
                     continue ;
+                } else {
+                    echo "MsgScheduler->sendDailyReminder() l90 checkpoint.. " . count($arrUsers);
                 }
                 // End Transitional Care Check
 
@@ -116,9 +123,9 @@ class MsgScheduler {
                     }
                 }
             }
+            echo "<br>MsgScheduler->sendDailyReminder() done processing users for = " . $msgType . "<br><br>";
         }
-        echo "</pre><br>";
-        // die();
+        echo "#################### end sendDailyReminder() ######################<br><br>";
     }
 
 
@@ -141,7 +148,7 @@ class MsgScheduler {
             'comment_approved' => 0
         );
         $comment_id = DB::connection('mysql_no_prefix')->table('wp_'.$programId.'_comments')->insertGetId( $data );
-        echo "<br>Created New Comment#=" . $comment_id;
+        echo "<br>MsgScheduler->addStateComment() Created New Comment#=" . $comment_id;
         return $comment_id;
     }
 
@@ -172,6 +179,14 @@ class MsgScheduler {
         $ret = $this->sendDailyReminder($intProgramID);
 
         // create Scheduled messages if they don't already exist
+        $ret = $this->createScheduledMessages($intProgramID);
+    }
+
+
+    function createScheduledMessages($intProgramID) {
+
+        echo "<br><br>#################### start createScheduledMessages() ######################<br>";
+
         $msgUser = new MsgUser;
         $active_users = $msgUser->get_all_active_users($intProgramID);
         foreach ($active_users as $key => $intUserID) {
@@ -195,12 +210,13 @@ class MsgScheduler {
         // get ready users
         $arrUsers = $msgUser->get_readyusers($intProgramID,null); //, $strDevice, $strDate);
         // echo "<br>Ready Users:<pre>";var_export($arrUsers);echo "</pre><br>";
+        echo "<br><br>MsgScheduler->createScheduledMessages() # of users to process = " . count($arrUsers);
         if (!empty($arrUsers))
         {
             foreach ($arrUsers as $key => $value)
             {
                 //echo "<BR><pre>". $key."|";
-                echo "<BR>Processing [".$value['user_id']."]<BR>";
+                echo '<br><br>[---Process User #'.$value['user_id'].'---]<br>';
 
                 $arrPart[$value['user_id']] = $msgUser->get_users_data($value['user_id'], 'id', $intProgramID);
                 $arrPart[$value['user_id']][$value['user_id']]['usermeta']['msgtype'] = 'SOL'; // hardcoded SOL
@@ -225,7 +241,7 @@ class MsgScheduler {
                 foreach ($return['msg_list'] as $msg => $resp)
                 {
                     foreach ($resp as $msg => $meta) {
-                        echo "<BR>$msg == ".$meta['msg_text']."<BR>";
+                        echo "<br>MsgScheduler->createScheduledMessages() $msg == ".$meta['msg_text']."";
                         // $sendresult = $this->mailman->sendMessage($value['user_id'],$msg,'smsoutbound',true, $intProgramID);
                         $msgDelivery = new MsgDelivery;
                         $sendresult = $msgDelivery->sendMessageBody($return,$msg,$meta['msg_text'],'smsoutbound',true);
@@ -238,7 +254,9 @@ class MsgScheduler {
                 }
             }
         }
+        echo "<br><br>#################### end createScheduledMessages() ######################";
     }
+
 
     function triggerUrl($strUrl)
     {
@@ -251,7 +269,7 @@ class MsgScheduler {
 
 
     public function scheduledSMS($arrData){
-
+        echo "<br><br>MsgScheduler->scheduledSMS() Start";
         reset($arrData);
         $user_id        =  key($arrData);
         $provider_id    = $arrData[$user_id]['usermeta']['intProgramId']; // Provider ID
@@ -290,16 +308,19 @@ class MsgScheduler {
                     'obs_message_id' => $key2,
                     'obs_method' => $qstype,
                     'obs_key' => $value2,
-                    'obs_unit' => 'scheduled'
+                    'obs_unit' => 'scheduled',
+                    'obs_date' => date("Y-m-d H:i:s"),
+                    'obs_date_gmt' => gmdate("Y-m-d H:i:s"),
                 );
 
                 // insert new observation record
                 $obs_id = DB::connection('mysql_no_prefix')->table('ma_'.$provider_id.'_observations')->insertGetId( $data );
-                echo "<br>MsgScheduler->scheduledSMS() obs_id#=" . $obs_id;
+                echo "<br>MsgScheduler->scheduledSMS() Added Observation obs_id#=" . $obs_id;
 
             }
         }
         // echo "</pre>";
+        echo "<br>MsgScheduler->scheduledSMS() End";
         return $lastkey;
     }
 
