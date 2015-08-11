@@ -23,7 +23,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_REM_NAG_01",
@@ -35,7 +36,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SOL_MED_BP",
@@ -47,7 +49,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "Y,N",
-                        "PatientAnswer": "Y"
+                        "PatientAnswer": "Y",
+                        "ResponseDate": "2015-07-01 17:34:56"
                     },
                     {
                         "MessageID": "CF_SOL_MED_OD",
@@ -59,7 +62,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "Y,N",
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_TOD_AFB_01",
@@ -71,7 +75,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     }
                 ],
                 "Reminders": [
@@ -85,7 +90,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_DM_HSP_10",
@@ -98,6 +104,7 @@
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "1,2",
                         "PatientAnswer": "1",
+                        "ResponseDate": "2015-07-01 10:01:25",
                         "Response": {
                             "MessageID": "CF_HSP_20",
                             "Obs_Key": "HSP_ER",
@@ -109,6 +116,7 @@
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
                             "PatientAnswer": "C",
+                            "ResponseDate": "2015-07-01 10:01:49",
                             "Response": {
                                 "MessageID": "CF_HSP_EX_10",
                                 "Obs_Key": "Other",
@@ -119,7 +127,8 @@
                                 "ReturnDataRangeLow": null,
                                 "ReturnDataRangeHigh": null,
                                 "ReturnValidAnswers": null,
-                                "PatientAnswer": null
+                                "PatientAnswer": null,
+                                "ResponseDate": null
                             }
                         }
                     }
@@ -136,6 +145,7 @@
                         "ReturnDataRangeHigh": "250/130",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": "125/86",
+                        "ResponseDate": "2015-07-01 09:48:42",
                         "Response": {
                             "MessageID": "CF_RPT_BP_10",
                             "Obs_Key": "Other",
@@ -146,7 +156,8 @@
                             "ReturnDataRangeLow": null,
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
-                            "PatientAnswer": null
+                            "PatientAnswer": null,
+                            "ResponseDate": null
                         }
                     },
                     {
@@ -160,6 +171,7 @@
                         "ReturnDataRangeHigh": "550",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": "328",
+                        "ResponseDate": "2015-07-01 09:35:24",
                         "Response": {
                             "MessageID": "CF_RPT_BS_60",
                             "Obs_Key": "Other",
@@ -170,7 +182,8 @@
                             "ReturnDataRangeLow": null,
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
-                            "PatientAnswer": null
+                            "PatientAnswer": null,
+                            "ResponseDate": null
                         }
                     },
                     {
@@ -183,7 +196,8 @@
                         "ReturnDataRangeLow": "50",
                         "ReturnDataRangeHigh": "900",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_RPT_50",
@@ -195,7 +209,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9999",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_70",
@@ -208,6 +223,7 @@
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "Y",
                         "PatientAnswer": "Y",
+                        "ResponseDate": "2015-07-01 01:12:54",
                         "Response": {
                             "MessageID": "CF_SYM_40",
                             "Obs_Key": "Other",
@@ -218,7 +234,8 @@
                             "ReturnDataRangeLow": null,
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
-                            "PatientAnswer": null
+                            "PatientAnswer": null,
+                            "ResponseDate": null
                         }
                     }
                 ],
@@ -234,6 +251,7 @@
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": 5,
+                        "ResponseDate": "2015-07-01 11:42:14",
                         "Response": {
                             "MessageID": "CF_SYM_40",
                             "Obs_Key": "Other",
@@ -244,7 +262,8 @@
                             "ReturnDataRangeLow": null,
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
-                            "PatientAnswer": null
+                            "PatientAnswer": null,
+                            "ResponseDate": null
                         }
                     },
                     {
@@ -258,6 +277,7 @@
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": 8,
+                        "ResponseDate": "2015-07-01 13:14:42",
                         "Response": {
                             "MessageID": "CF_SYM_70",
                             "Obs_Key": "Severity",
@@ -268,7 +288,8 @@
                             "ReturnDataRangeLow": null,
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
-                            "PatientAnswer": null
+                            "PatientAnswer": null,
+                            "ResponseDate": null
                         }
                     },
                     {
@@ -281,7 +302,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_14",
@@ -293,7 +315,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_15",
@@ -305,7 +328,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_16",
@@ -317,7 +341,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_17",
@@ -329,7 +354,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_70",
@@ -341,7 +367,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     }
                 ]
           }
@@ -363,7 +390,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_REM_NAG_01",
@@ -375,7 +403,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SOL_MED_OT",
@@ -387,7 +416,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "Y,N",
-                        "PatientAnswer": "Y"
+                        "PatientAnswer": "Y",
+                        "ResponseDate": "2015-06-30 12:46:85"
                     },
                     {
                         "MessageID": "CF_SOL_MED_CO",
@@ -399,7 +429,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "Y,N",
-                        "PatientAnswer": "Y"
+                        "PatientAnswer": "Y",
+                        "ResponseDate": "2015-06-30 18:42:26"
                     },
                     {
                         "MessageID": "CF_TOD_AFB_01",
@@ -411,7 +442,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     }
                 ],
                 "Reminders": [
@@ -425,7 +457,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_DM_HSP_10",
@@ -437,7 +470,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "1,2",
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     }
                 ],
                 "Biometric": [
@@ -452,6 +486,7 @@
                         "ReturnDataRangeHigh": "250/130",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": "115/81",
+                        "ResponseDate": "2015-06-30 11:18:45",
                         "Response": {
                             "MessageID": "CF_RPT_BP_10",
                             "Obs_Key": "Other",
@@ -462,7 +497,8 @@
                             "ReturnDataRangeLow": null,
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
-                            "PatientAnswer": null
+                            "PatientAnswer": null,
+                            "ResponseDate": null
                         }
                     },
                     {
@@ -476,6 +512,7 @@
                         "ReturnDataRangeHigh": "550",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": "326",
+                        "ResponseDate": "2015-06-30 18:27:25",
                         "Response": {
                             "MessageID": "CF_RPT_BS_60",
                             "Obs_Key": "Other",
@@ -486,7 +523,8 @@
                             "ReturnDataRangeLow": null,
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
-                            "PatientAnswer": null
+                            "PatientAnswer": null,
+                            "ResponseDate": null
                         }
                     },
                     {
@@ -500,6 +538,7 @@
                         "ReturnDataRangeHigh": "900",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": "288",
+                        "ResponseDate": "2015-06-30 16:45:28",
                         "Response": {
                             "MessageID": "CF_RPT_WT_70",
                             "Obs_Key": "Other",
@@ -510,7 +549,8 @@
                             "ReturnDataRangeLow": null,
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
-                            "PatientAnswer": null
+                            "PatientAnswer": null,
+                            "ResponseDate": null
                         }
                     },
                     {
@@ -523,7 +563,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9999",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_70",
@@ -535,7 +576,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "Y",
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     }
                 ],
                 "Symptoms": []
@@ -559,7 +601,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_REM_NAG_01",
@@ -571,7 +614,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SOL_MED_WP",
@@ -583,7 +627,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "Y,N",
-                        "PatientAnswer": "N"
+                        "PatientAnswer": "N",
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SOL_MED_OD",
@@ -595,7 +640,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "Y,N",
-                        "PatientAnswer": "N"
+                        "PatientAnswer": "N",
+                        "ResponseDate": "2015-06-29 18:53:12"
                     },
                     {
                         "MessageID": "CF_SOL_MED_ALG_01",
@@ -607,7 +653,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_TOD_AFB_01",
@@ -619,7 +666,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     }
                 ],
                 "Reminders": [
@@ -633,7 +681,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_DM_HSP_10",
@@ -645,7 +694,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "1,2",
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     }
                 ],
                 "Biometric": [
@@ -660,6 +710,7 @@
                         "ReturnDataRangeHigh": "250/130",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": "135/88",
+                        "ResponseDate": "2015-06-29 12:42:36",
                         "Response": {
                             "MessageID": "CF_RPT_BP_10",
                             "Obs_Key": "Other",
@@ -670,7 +721,8 @@
                             "ReturnDataRangeLow": null,
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
-                            "PatientAnswer": null
+                            "PatientAnswer": null,
+                            "ResponseDate": null
                         }
                     },
                     {
@@ -684,6 +736,7 @@
                         "ReturnDataRangeHigh": "550",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": "322",
+                        "ResponseDate": "2015-06-29 07:25:26",
                         "Response": {
                             "MessageID": "CF_RPT_BS_60",
                             "Obs_Key": "Other",
@@ -694,7 +747,8 @@
                             "ReturnDataRangeLow": null,
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
-                            "PatientAnswer": null
+                            "PatientAnswer": null,
+                            "ResponseDate": null
                         }
                     },
                     {
@@ -707,7 +761,8 @@
                         "ReturnDataRangeLow": "50",
                         "ReturnDataRangeHigh": "900",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_RPT_50",
@@ -719,7 +774,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9999",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_70",
@@ -731,7 +787,8 @@
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
                         "ReturnValidAnswers": "Y",
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     }
                 ],
                 "Symptoms": [
@@ -746,6 +803,7 @@
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": 2,
+                        "ResponseDate": "2015-06-29 23:41:15",
                         "Response": {
                             "MessageID": "CF_SYM_40",
                             "Obs_Key": "Other",
@@ -756,7 +814,8 @@
                             "ReturnDataRangeLow": null,
                             "ReturnDataRangeHigh": null,
                             "ReturnValidAnswers": null,
-                            "PatientAnswer": null
+                            "PatientAnswer": null,
+                            "ResponseDate": null
                         }
                     },
                     {
@@ -769,7 +828,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_13",
@@ -781,7 +841,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_14",
@@ -793,7 +854,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_15",
@@ -805,7 +867,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_16",
@@ -817,7 +880,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_17",
@@ -829,7 +893,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     },
                     {
                         "MessageID": "CF_SYM_70",
@@ -841,7 +906,8 @@
                         "ReturnDataRangeLow": "0",
                         "ReturnDataRangeHigh": "9",
                         "ReturnValidAnswers": null,
-                        "PatientAnswer": null
+                        "PatientAnswer": null,
+                        "ResponseDate": null
                     }
                 ]
             }
