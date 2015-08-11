@@ -77,7 +77,7 @@ class ObservationController extends Controller {
             $newComment->comment_type = 'app_input';
 
             //Get Blog id for current user
-            $blogTable = 'wp_'.$user->getBlogId($user->ID).'_comments';
+            $blogTable = 'wp_'.$user->blogId($user->ID).'_comments';
             $newComment->setTable($blogTable);
             $newComment->save();
 
@@ -98,8 +98,8 @@ class ObservationController extends Controller {
             //$savedObs = $newObservation->save();
 
             //Get Blog id for current user
-            $commentBlogTable = 'wp_'.$user->getBlogId($user->ID).'_comments';
-            $obsBlogTable = 'ma_'.$user->getBlogId($user->ID).'_observations';
+            $commentBlogTable = 'wp_'.$user->blogId($user->ID).'_comments';
+            $obsBlogTable = 'ma_'.$user->blogId($user->ID).'_observations';
             //Set tables names
             $newComment->setTable($commentBlogTable);
             $newObservation->setTable($obsBlogTable);
