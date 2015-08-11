@@ -351,6 +351,7 @@ class MsgDelivery {
                 'comment_approved'=> $comment_approved);
             $result = DB::connection('mysql_no_prefix')->table($strCommentsTable)->where('comment_ID', $row->comment_ID)->update( $updateData );
             echo "<br>MsgDelivery->saveState() Update Comment#=" . $row->comment_ID;
+            echo "<br>MsgDelivery->saveState() $row->comment_ID new state = " . serialize($state);
 
             // get sequence_id
             end($state);

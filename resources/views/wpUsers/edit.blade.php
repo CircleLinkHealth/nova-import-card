@@ -43,7 +43,7 @@
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 <div class="pull-left">
-                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Message Center</a>
+                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/msgcenter') }}" class="btn btn-primary">Message Center</a>
                                 </div>
                                 <div class="pull-left" style="margin-left:10px;">
                                     <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed</a>
@@ -56,7 +56,7 @@
                             </div>
                         </div>
 
-                        <h1>Program</h1>
+                        <h2>Program</h2>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-2">{!! Form::label('primary_blog', 'Primary Blog:') !!}</div>
@@ -64,7 +64,7 @@
                             </div>
                         </div>
 
-                        <h1>Role</h1>
+                        <h2>Role</h2>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-2">{!! Form::label('role', 'Role:') !!}</div>
@@ -72,7 +72,7 @@
                             </div>
                         </div>
 
-                        <h1>User Info</h1>
+                        <h2>User Info</h2>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-2">{!! Form::label('first_name', 'First Name:') !!}</div>
@@ -90,7 +90,7 @@
                             </div>
                         </div>
 
-                        <h1>User Config</h1>
+                        <h2>User Config</h2>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-2">{!! Form::label('status', 'Status:') !!}</div>

@@ -7,10 +7,12 @@ use App\WpUser;
 use App\WpUserMeta;
 use App\Services\ActivityService;
 use App\Services\CareplanService;
+use App\Services\MsgUser;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
 use PasswordHash;
+use Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -260,10 +262,59 @@ class WpUserController extends Controller {
 	 *
 	 * @param  int  $id
 	 * @return Response
+	 *
 	 */
 	public function destroy($id)
 	{
 		//
 	}
 
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function showMsgCenter(Request $request, $id)
+	{
+		$messageKey = 'key';
+		$messageValue = 'value';
+		$params = $request->input();
+		if(!empty($params)) {
+			if(isset($params['action'])) {
+				if($params['action'] == 'recalcActivities') {
+					$activityService = new ActivityService;
+					$result = $activityService->reprocessMonthlyActivityTime($id);
+					if ($result) {
+						$messageKey = 'success';
+						$messageValue = 'User activities have been recalculated';
+					}
+				} else if($params['action'] == 'setPatientToBlog') {
+					$userMeta = new WpUserMeta;
+					$userMeta->meta_key = 'primary_blog';
+					$userMeta->meta_value = $params['blogId'];
+					$userMeta->user_id = $id;
+					$userMeta->save ();
+					//$messageKey = 'success';
+					//$messageValue = 'Usermeta primary_blog set for user '.$id;
+					return redirect()->back()->with('messages', ['successfully updated Usermeta primary_blog']);
+				}
+			}
+		}
+		$wpUser = WpUser::find(Auth::user()->ID);
+		if(!$wpUser) {
+			return response("User not found", 401);
+		}
+		$userMeta = Auth::user()->meta->lists('meta_value', 'meta_key');
+
+		$arrPart = array($wpUser->ID => array());
+		$arrPart[$wpUser->ID]['usermeta'] = $userMeta;
+		$arrPart[$wpUser->ID]['usermeta']['curresp'] = 'SYM';
+		$arrPart[$wpUser->ID]['usermeta']['intProgramId'] = $wpUser->blogId();
+		$msgUser = new MsgUser;
+		$userSmsState = $msgUser->userSmsState($arrPart);
+		dd($userSmsState);
+		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta]);
+	}
 }

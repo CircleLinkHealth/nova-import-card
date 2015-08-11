@@ -29,6 +29,7 @@ class MsgChooser {
     private $comment_id;
     private $provid;
     private $smsMeth;
+    private $programId;
 
     public function __construct() {
         /*
@@ -224,7 +225,7 @@ class MsgChooser {
         }
 
 // echo "<pre>";		print_r($this->arrReturn);
-        echo "MsgChooser->nextMessage() end, return arrReturn";
+        echo "<br>MsgChooser->nextMessage() end, return arrReturn";
         return $this->arrReturn;
         // }
 
@@ -301,17 +302,20 @@ class MsgChooser {
 
     // store message information in array to be returned to calling program/function.
     private function storeMsg($arrQuestion, $extratext='') 	{
+        echo "<br>MsgChooser->storeMsg() start, msg_id = $arrQuestion->msg_id, prov_id $this->provid";
         if(isset($this->arrReturn['msg_list'])) {
             if (is_object($arrQuestion) && (!$this->findkey($this->arrReturn['msg_list'], $arrQuestion->msg_id))) {
                 $msgSubstitutions = new MsgSubstitutions;
                 $arrQuestion->message = $msgSubstitutions->doSubstitutions($arrQuestion->message, $this->provid, $this->key);
                 $this->arrReturn['msg_list'][] = array($arrQuestion->msg_id => array('qtype' => $arrQuestion->qtype, 'msg_text' => $extratext . $arrQuestion->message));
+                echo "<br>MsgChooser->storeMsg() action add to msg_list (qtype => $arrQuestion->qtype, msg_text => $extratext . $arrQuestion->message)";
             }
         } else {
             if (is_object($arrQuestion)) {
                 $msgSubstitutions = new MsgSubstitutions;
                 $arrQuestion->message = $msgSubstitutions->doSubstitutions($arrQuestion->message, $this->provid, $this->key);
                 $this->arrReturn['msg_list'][] = array($arrQuestion->msg_id => array('qtype' => $arrQuestion->qtype, 'msg_text' => $extratext . $arrQuestion->message));
+                echo "<br>MsgChooser->storeMsg() action add to msg_list (qtype => $arrQuestion->qtype, msg_text => $extratext . $arrQuestion->message)";
             }
         }
         return;

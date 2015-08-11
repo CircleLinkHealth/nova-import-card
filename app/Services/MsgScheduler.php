@@ -87,14 +87,13 @@ class MsgScheduler {
                     echo "[".$value['user_id']."]UCP STOPPED SEND $msgType<BR>";
                     continue ;
                 } else {
-                    echo "MsgScheduler->sendDailyReminder() l90 checkpoint.. " . count($arrUsers);
+                    echo "MsgScheduler->sendDailyReminder() l90 msgtype checkpoint";
                 }
                 // End Transitional Care Check
 
 
                 $arrPart[$value['user_id']][$value['user_id']]['usermeta']['msgtype'] = $msgTypeAbrev;
                 $msgChooser = new MsgChooser;
-                //dd($arrPart);
                 $nextMessageInfo = $msgChooser->nextMessage($arrPart[$value['user_id']]);
 
                 if($msgType == 'welcome') {

@@ -54,6 +54,24 @@ class MsgSubstitutions {
                 $i = 0; // counter for tense of the word reading or readings depending on how many we send.
 
                 foreach ($arrList as $row) {
+                    // ensure scheduled record doesnt already exist
+                    /*
+                    $sql = "select *
+                        from ma_{$provid}_observations o
+                        where o.obs_key in ('{$row->obs_key}')
+                        and o.obs_unit = {$provid}
+                        and DATE(obs_date) = ";
+
+                    $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+                    */
+
+
+
+                    // @todo hey kevin, your right here writing validation to prevent double scheduled records - need to finish the obs_date in the query above
+
+
+
+
                     // chech if biometric is active and can be sent today
                     if((!empty($row->APActive) && $row->APActive == 'Active') or ($row->UActive == 'Active' and strpos($row->cdays, $row->today) !== FALSE)) {
                         // build array of RPT scheduled for today.
@@ -108,6 +126,8 @@ class MsgSubstitutions {
                 // print_r($tmpArr);
 
                 // write out observation records
+                echo "<br>MsgSubstitution->var_dump";
+                var_dump($tmpArr);
                 foreach ($tmpArr as $key => $value) {
                     foreach ($value as $key2 => $value2) {
                         // echo '<br>'.$key.': '.$key2.' -> '.$value2;
@@ -120,6 +140,7 @@ class MsgSubstitutions {
                             'obs_key' =>  $value2,
                             'obs_method' => 'RPT',
                             'obs_date' => date('Y-m-d H:i:s', strtotime('00:00:01')),
+                            'obs_date_gmt' => date("Y-m-d H:i:s", strtotime('00:00:01')),
                             'obs_unit' => 'scheduled'
                         );
 
@@ -157,6 +178,7 @@ class MsgSubstitutions {
                 break;
         }
         // echo '<hr><hr>Substitution: i: '.$i.' and message: '.$strMessage.'<hr><hr>';
+        echo "<br>MsgSubstitutions->getReadingsText, returning '$strMessage''";
         return $strMessage;
 
     }//fxCheckForReadings

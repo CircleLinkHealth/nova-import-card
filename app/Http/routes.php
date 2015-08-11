@@ -38,13 +38,13 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('activities/{id}', ['uses' =>'ActivityController@show', 'as'=>'activitiesShow']);
 	Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'activitiesEdit']);
 
-	// return data on logged in user
 	Route::get('wpusers', 'WpUserController@index');
 	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'usersCreate']);
 	Route::get('wpusers/{id}', ['uses' =>'WpUserController@show', 'as'=>'usersShow']);
 	Route::get('wpusers/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'usersEdit']);
 	Route::post('wpusers/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'usersUpdate']);
 	Route::get('wpusers/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'usersCareplan']);
+	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenter']);
 
     Route::group(['namespace' => 'Redox'], function ()
     {
@@ -165,7 +165,7 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	//Route::resource('wpusers', 'WpUserController');
 
-	Route::resource('wpusers.meta', 'WpUserMetaController');
+	// Route::resource('wpusers.meta', 'WpUserMetaController');
 
 	Route::resource('rulesucp', 'CPRulesUCPController');
 

@@ -585,12 +585,12 @@ class MsgUser {
 					break;
 			}
 			$arrMsgType = $arrUserData[$intUserId]['usermeta']['curresp'];
-			$sql = "SELECT comment_ID, comment_type,comment_content FROM $strCommentsTable WHERE (comment_type LIKE 'state_$arrMsgType') and user_id=? and DATE(comment_date)=DATE(NOW()) AND comment_approved = 0 ORDER BY comment_date DESC LIMIT 1";
-			$query = $this->db->query($sql,array($intUserId));
+			$sql = "SELECT comment_ID, comment_type,comment_content FROM $strCommentsTable WHERE (comment_type LIKE 'state_$arrMsgType') and user_id=$intUserId and DATE(comment_date)=DATE(NOW()) AND comment_approved = 0 ORDER BY comment_date DESC LIMIT 1";
+			$query = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
 
-			if($query->num_rows() > 0)
+			if(!empty($query))
 			{
-				$row = $query->row();
+				$row = $query[0];
 				$state = unserialize($row->comment_content);
 				$arrUserData[$intUserId]['usermeta']['msgtype'] = strtoupper($arrMsgType);
 				$arrUserData[$intUserId]['usermeta']['comment_ID'] = (int)$row->comment_ID;
@@ -604,12 +604,12 @@ class MsgUser {
 			$arrUserData[$intUserId]['usermeta']['curresp'] = null;
 		} else {
 			// Existing Msg Flow session Response
-			$sql = "SELECT comment_ID, comment_type,comment_content FROM $strCommentsTable WHERE (comment_type LIKE 'state_%') and user_id=? and DATE(comment_date)=DATE(NOW()) AND comment_approved = 0 ORDER BY comment_date DESC LIMIT 1";
-			$query = $this->db->query($sql,array($intUserId));
+			$sql = "SELECT comment_ID, comment_type,comment_content FROM $strCommentsTable WHERE (comment_type LIKE 'state_%') and user_id=$intUserId and DATE(comment_date)=DATE(NOW()) AND comment_approved = 0 ORDER BY comment_date DESC LIMIT 1";
+			$query = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
 
-			if($query->num_rows() > 0)
+			if(!empty($query))
 			{
-				$row = $query->row();
+				$row = $query[0];
 				$state = unserialize($row->comment_content);
 				$arrMsgType = explode("_", $row->comment_type);
 				$arrUserData[$intUserId]['usermeta']['msgtype'] = strtoupper($arrMsgType[1]);
@@ -788,7 +788,7 @@ class MsgUser {
 
 		$strCommentsTable = 'wp_' . $arrUserData[key($arrUserData)]['usermeta']['intProgramId'] . '_comments';
 		$arrUnsolicitedData = array(
-			'comment_author' => 'cpm_1_7_users_model_model',
+			'comment_author' => 'MsgUser',
 			'comment_author_email' => 'admin@medadherence.com',
 			'comment_author_url' => 'http://medadherence.com/',
 			'comment_content' => serialize(array()),
@@ -801,8 +801,9 @@ class MsgUser {
 			'comment_approved' => 0
 		);
 
-		$this->db->insert($strCommentsTable, $arrUnsolicitedData);
-		return $this->db->insert_id();
+		$comment_id = DB::connection('mysql_no_prefix')->table($strCommentsTable)->insertGetId( $arrUnsolicitedData );
+		echo "<br>MsgDelivery->create_new_unsolicited_comment_row() Created New Comment = "  . $comment_id;
+		return $comment_id;
 	}
 
 	public function get_provider_care_plan($intUserId, $intBlogId) {
