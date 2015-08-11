@@ -36,16 +36,24 @@
                             </div>
                         @endif
 
+                        <div class="row">
+                            {!! Form::open(array('url' => '/wpusers/'.$wpUser->ID.'/edit', 'class' => 'form-horizontal')) !!}
+                        </div>
+
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 <div class="pull-left">
-                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan (json)</a>
+                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Message Center</a>
+                                </div>
+                                <div class="pull-left" style="margin-left:10px;">
+                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed</a>
+                                </div>
+                                <div class="pull-right">
+                                    {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
+                                    {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
+                                    </form>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row">
-                            {!! Form::open(array('url' => '/wpusers/'.$wpUser->ID.'/edit', 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <h1>Program</h1>
@@ -86,25 +94,17 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-2">{!! Form::label('status', 'Status:') !!}</div>
-                                <div class="col-xs-10">{!! Form::select('status', array('Active' => 'Active', 'Inactive' => 'Inactive'), $userConfig['status'], ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-xs-2">{!! Form::label('email', 'Email:') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('email', $userConfig['email'], ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                <div class="col-xs-4">{!! Form::select('status', array('Active' => 'Active', 'Inactive' => 'Inactive'), $userConfig['status'], ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                <div class="col-xs-1">{!! Form::label('email', 'Email:') !!}</div>
+                                <div class="col-xs-5">{!! Form::text('email', $userConfig['email'], ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-2">{!! Form::label('mrn_number', 'MRN Number:') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('mrn_number', $userConfig['mrn_number'], ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
+                                <div class="col-xs-4">{!! Form::text('mrn_number', $userConfig['mrn_number'], ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                 <div class="col-xs-2">{!! Form::label('npi_number', 'NPI Number:') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('npi_number', $userConfig['npi_number'], ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                                <div class="col-xs-4">{!! Form::text('npi_number', $userConfig['npi_number'], ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -188,13 +188,9 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-2">{!! Form::label('state', 'State:') !!}</div>
-                                <div class="col-xs-10">{!! Form::select('state', $states_arr, $userConfig['state'], ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-xs-2">{!! Form::label('zip', 'Zip:') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('zip', $userConfig['zip'], ['class' => 'form-control']) !!}</div>
+                                <div class="col-xs-4">{!! Form::select('state', $states_arr, $userConfig['state'], ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                <div class="col-xs-1">{!! Form::label('zip', 'Zip:') !!}</div>
+                                <div class="col-xs-5">{!! Form::text('zip', $userConfig['zip'], ['class' => 'form-control']) !!}</div>
                             </div>
                         </div>
                         <div class="form-group">

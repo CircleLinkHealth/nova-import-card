@@ -1,5 +1,9 @@
 <?php namespace App\Http\Controllers;
 
+use App\WpUser;
+use App\WpUserMeta;
+use Auth;
+
 class HomeController extends Controller {
 
 	/*
@@ -30,7 +34,9 @@ class HomeController extends Controller {
 	 */
 	public function index()
 	{
-		return view('home');
+		$user = $wpUser = WpUser::find(Auth::user()->ID);
+		$userMeta = Auth::user()->meta->lists('meta_value', 'meta_key');
+		return view('home', ['user' => $user, 'userMeta' => $userMeta]);
 	}
 
 }
