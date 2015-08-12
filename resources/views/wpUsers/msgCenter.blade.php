@@ -39,42 +39,51 @@
                         <div class="row">
                             {!! Form::open(array('url' => '/wpusers/'.$wpUser->ID.'/edit', 'class' => 'form-horizontal')) !!}
                         </div>
-
-                        <div class="row" style="">
-                            <div class="col-sm-12">
-                                <div class="pull-left">
-                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Message Center</a>
-                                </div>
-                                <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed</a>
-                                </div>
-                                <div class="pull-right">
-                                    {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
-                                    {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h2>Program</h2>
+                        <h2>Respond</h2>
                         <div class="form-group">
                             <div class="row">
-                                <div class="col-xs-2">Key</div>
-                                <div class="col-xs-10">Value</div>
+                                <div class="col-xs-2">New Message</div>
+                                <div class="col-xs-10">
+                                    {!! Form::textarea('msgText','Enter text here',['class'=>'form-control', 'rows' => 3, 'cols' => 10]) !!}
+                                </div>
                             </div>
                         </div>
-
-
 
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
-                                    {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Send Text', array('class' => 'btn btn-success', 'disabled' => 'disabled')) !!}
                                     </form>
                                 </div>
                             </div>
                         </div>
+
+                        <h2>Recent Action:</h2>
+                        @if (count($comments) > 0)
+                            @foreach( $comments as $comment_ID => $comment )
+                                <div id="comment{{ $comment_ID }}" style="margin-top:20px;background:#ccc;">
+                                    <div class="row">
+                                        <div class="col-xs-2">
+                                            {{ $comment_ID }}
+                                        </div>
+                                        <div class="col-xs-4">
+                                            {{ $comment['comment_date'] }}
+                                        </div>
+                                        <div class="col-xs-3">
+                                            {{ $comment['comment_author'] }}
+                                        </div>
+                                        <div class="col-xs-3">
+                                            {{ $comment['comment_type'] }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            {{ $comment['comment_content'] }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
 
                     </div>
                 </div>

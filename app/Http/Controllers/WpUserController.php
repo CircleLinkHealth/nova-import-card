@@ -278,35 +278,34 @@ class WpUserController extends Controller {
 	 */
 	public function showMsgCenter(Request $request, $id)
 	{
-		$messageKey = 'key';
-		$messageValue = 'value';
 		$params = $request->input();
-		if(!empty($params)) {
-			if(isset($params['action'])) {
-				if($params['action'] == 'recalcActivities') {
-					$activityService = new ActivityService;
-					$result = $activityService->reprocessMonthlyActivityTime($id);
-					if ($result) {
-						$messageKey = 'success';
-						$messageValue = 'User activities have been recalculated';
-					}
-				} else if($params['action'] == 'setPatientToBlog') {
-					$userMeta = new WpUserMeta;
-					$userMeta->meta_key = 'primary_blog';
-					$userMeta->meta_value = $params['blogId'];
-					$userMeta->user_id = $id;
-					$userMeta->save ();
-					//$messageKey = 'success';
-					//$messageValue = 'Usermeta primary_blog set for user '.$id;
-					return redirect()->back()->with('messages', ['successfully updated Usermeta primary_blog']);
-				}
-			}
-		}
 		$wpUser = WpUser::find($id);
 		if(!$wpUser) {
 			return response("User not found", 401);
 		}
 		$userMeta = $wpUser->userMeta();
+		if(!empty($params)) {
+			if(isset($params['action'])) {
+				if($params['action'] == 'sendTextSimulation') {
+					// send text
+					$api = $wpUser->blogId();
+					$msgid = 'xOx';
+					$phone = $userMeta['user_config']['study_phone_number'];
+					$msg = 'Some Text Responseee';
+					$msg = str_replace("'", "''", $msg);
+					// $msg = preg_replace('/[^0-9a-zA-Z \/]/', ' ', urldecode($msg));
+					$msg = preg_replace("/[_]/", "", urldecode($msg)); // remove underscores as they will be used to replace forward slashes
+					$msg = preg_replace("/[\/]/", '_', $msg); // change forward slashes to underscores
+					$msg = preg_replace("/[^0-9a-zA-Z _]/", '', $msg);  // remove all non-alphanumeric characters
+
+					// public function getInboundStream($intBlogId, $hexMoMsgId, $strPhoneNumber, $strResponseMessage)
+					$inboundsms = 'MsgReceiver->getInboundStream(/'.$msgid.'/'.$phone.'/'.str_replace(array(' ',','),array('%20',''),$msg) . ')';
+
+					dd($inboundsms);
+					return redirect()->back()->with('messages', ['successfully did something']);
+				}
+			}
+		}
 		/*
 		$arrPart = array($wpUser->ID => array());
 		$arrPart[$wpUser->ID]['usermeta'] = $userMeta;
@@ -316,22 +315,27 @@ class WpUserController extends Controller {
 		$userSmsState = $msgUser->userSmsState($arrPart);
 		dd($userSmsState);
 		*/
+		//dd('dies early');
 
-		$api = 7;
-		$msgid = 'xOx';
-		$phone = $userMeta['user_config']['study_phone_number'];
+		$msgUsers = new MsgUser;
+		$commentsForUser = $msgUsers->get_comments_for_user($wpUser->ID, $wpUser->blogId());
+		//dd($commentsForUser);
+		if(!empty($commentsForUser)) {
+			$comments = array();
+			foreach($commentsForUser as $comment) {
+				$comments[$comment->comment_ID] = array(
+					'comment_type' => $comment->comment_type,
+					'comment_author' => $comment->comment_author,
+					'comment_date' => $comment->comment_date,
+					'comment_approved' => $comment->comment_approved,
+					'comment_parent' => $comment->comment_parent,
+					'comment_content' => $comment->comment_content,
+					'comment_content_array' => unserialize($comment->comment_content),
+				);
+			}
+		}
+		//dd($comments);
 
-		$msg = 'Some Text Responseee';
-		$msg = str_replace("'", "''", $msg);
-		// $msg = preg_replace('/[^0-9a-zA-Z \/]/', ' ', urldecode($msg));
-		$msg = preg_replace("/[_]/", "", urldecode($msg)); // remove underscores as they will be used to replace forward slashes
-		$msg = preg_replace("/[\/]/", '_', $msg); // change forward slashes to underscores
-		$msg = preg_replace("/[^0-9a-zA-Z _]/", '', $msg);  // remove all non-alphanumeric characters
-
-		// public function getInboundStream($intBlogId, $hexMoMsgId, $strPhoneNumber, $strResponseMessage)
-		$inboundsms = 'MsgReceiver->getInboundStream(/'.$msgid.'/'.$phone.'/'.str_replace(array(' ',','),array('%20',''),$msg) . ')';
-
-		dd($inboundsms);
-		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta]);
+		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'comments' => $comments, 'messages' => array()]);
 	}
 }

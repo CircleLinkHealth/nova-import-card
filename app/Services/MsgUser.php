@@ -543,6 +543,18 @@ class MsgUser {
 
 
 
+	public function get_comments_for_user($userId, $blogId) {
+		$commentTable = 'wp_'.$blogId.'_comments';
+		$query = DB::connection('mysql_no_prefix')->table($commentTable . ' AS cm');
+		$query->select("cm.*");
+		$where = array('cm.user_id' => $userId);
+		$query->where($where);
+		$query->orderBy("cm.comment_ID", 'DESC');
+		$query->limit('20');
+		$comments = $query->get();
+		return $comments;
+	}
+
 
 	public function get_users_for_active_item($items_id, $int_blog_id) {
 		$this->db->select("ucp.user_id, ucp.items_id, ucp.meta_value",false);
