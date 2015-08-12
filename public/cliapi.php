@@ -57,23 +57,6 @@ $( document ).on( "pagecreate", function() {
 	</style>
 	</head>
 <body>
-<?php 
-
-	// if (!isset($_COOKIE['resu'])) {
-	// 	$user = "gaurav@oabstudios.com";
-	// 	$pass = "v&gHo1O!Q&ybXWX#miIhvWj1";
-
-	// 	setcookie("resu", $user, time()+36000);  /* expire in 1 hour */
-	// 	setcookie("ssap", $pass, time()+36000);  /* expire in 1 hour */
-	// 	print_r($_COOKIE);
-	// }
-
-// Print an individual cookie
-// echo "<pre>";
-// echo "</pre>";
-
-// Another way to debug/test is to view all cookies
-?>
 <div class="container">
 <h6>Attempting Login...
 
@@ -199,7 +182,7 @@ echo "</div>";
 	}
 
 ?>
-<div class="row col-lg-10 col-lg-offset-2" data-role="collapsible" data-theme="b">
+<div class="row col-lg-12 col-lg-offset-2" data-role="collapsible" data-theme="b">
 	<h2>Set User</h2>
 	<form action='' method='post'>
 		<input class='form-control' id="u" name="u" value="<?= $u ?>">
@@ -225,79 +208,23 @@ foreach ($arrCarePlan['CP_Feed'] as $key => $value) {
 
 	foreach ($arrSectionOrder as $section) {
 		if($section == 'Symptoms') {
-			echo '<div class="row col-lg-10 col-lg-offset-2" data-role="collapsible" data-theme="b">';
+			echo '<div class="row col-lg-12 col-lg-offset-2" data-role="collapsible" data-theme="b">';
 			echo "<h3>Would you like to report any Symptoms?</h3>";
 		}
 		foreach($arrCarePlan['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio){
 			// var_dump($arrBio['ReturnFieldType']);
-			echo "<form action='' method=post>\n";
-			echo "<div class='row'>\n";
-			switch ($arrBio['MessageIcon']) {
-				case 'bp';
-				case 'bs';
-					$msgIcon = 'clock-o';
-					break;
-				case 'wt':
-					$msgIcon = 'balance-scale';
-					break;
-				case 'cs':
-					$msgIcon = 'ban';
-					break;
-				case 'call':
-					$msgIcon = 'phone';
-					break;
-				case 'hsp':
-					$msgIcon = 'hospital-o';
-					break;
-				case 'reminder':
-					$msgIcon = 'sticky-note-o';
-					break;
-				case 'info':
-				case 'tip':
-					$msgIcon = 'info-circle';
-					break;
-				
-				default:
-					$msgIcon = $arrBio['MessageIcon'];
-					break;
-			}
-			echo "<div class='col-sm-1'><i style='color:Blue' class='fa fa-2x fa-". $msgIcon ."'></i></div>\n";
-			echo "<div class='col-sm-4'>" . $arrBio['MessageContent'] . "</div>\n";
-			// echo " [" . $arrBio['MessageID'] . " | `" . $arrBio['Obs_Key'] . "` | " . date('Y-m-d H:i:s O)') . "] <BR>";
-			if ($arrBio['ReturnFieldType'] == 'None' || $arrBio['PatientAnswer'] ) {
-				if ($arrBio['PatientAnswer'] )	echo "<div class='col-sm-6'>You Answered: " . $arrBio['PatientAnswer'] . " @ <small>". date('h:i:s A',$arrBio['ResponseDate']) . "</small></div>\n";
-			} else {
-				echo "\n<input class='form-control' type='hidden' name='SUBMIT' value='OBS'>";
-				echo "\n<input class='form-control' type='hidden' name='Obs_Key' value='". $arrBio['Obs_Key'] ."'>";
-				echo "\n<input class='form-control' type='hidden' name='MessageID' value='". $arrBio['MessageID'] ."'>";
-				echo "\n<input class='form-control' type='hidden' name='Obs_Date' value='". date("Y-m-d H:i:s") ."'>";
-				echo "\n<input class='form-control' type='hidden' name='ReturnFieldType' value='". $arrBio['ReturnFieldType'] ."'>";
-				echo "\n<input class='form-control' type='hidden' name='ReturnDataRangeLow' value='". $arrBio['ReturnDataRangeLow'] ."'>";
-				echo "\n<input class='form-control' type='hidden' name='ReturnDataRangeHigh' value='". $arrBio['ReturnDataRangeHigh'] ."'>";
-				echo "\n<input class='form-control' type='hidden' name='ReturnValidAnswers' value='". $arrBio['ReturnValidAnswers'] ."'>";
-				echo "";
-				echo "\n<div class='col-sm-4'>";
-				$type = null;
-				switch ($arrBio['ReturnFieldType']) {
-					case 'Range':
-						$type = "type='range' data-type='". $arrBio['ReturnFieldType']. "' min='" .$arrBio['ReturnDataRangeLow']. "' max='" .$arrBio['ReturnDataRangeHigh']. "' value='0' data-theme='b' data-track-theme='c'";
-							echo "\n<input $type id='obs_val' name='obs_val' value='".$arrBio['PatientAnswer']."' REQUIRED>";
-						break;
-					case 'List':
-						echo "\n".'<select name="obs_val" id="obs_val" data-role="slider">
-	<option value="N">No</option>
-	<option value="Y">Yes</option>
-</select>';
-						break;
-					default;
-							echo "<input $type class='form-control col-sm-1' id='obs_val' name='obs_val' value='".$arrBio['PatientAnswer']."' REQUIRED>";
 
+			echo(getForm($arrBio,null));
+			
+			if($arrBio['Response']) {
+				echo(getForm($arrBio['Response'],' col-lg-offset-1'));
+				if($arrBio['Response']['Response']) {
+					echo(getForm($arrBio['Response']['Response'],' col-lg-offset-3'));
 				}
-				echo "<div class='ui-block-a'><button data-theme='b' class='btn btn-primary col-sm-1' type='submit'>SEND</button></div><br>\n";
-				echo "</div>";
-				}
-			echo "</div>\n";
-			echo "</form><hr>\n";
+
+
+			}
+
 		}
 		if($section == 'Symptoms') { echo "</div><hr>\n";	}
 	}
@@ -306,13 +233,99 @@ foreach ($arrCarePlan['CP_Feed'] as $key => $value) {
 
 
 
-// var_export($arrCarePlan);
-// var_dump($arrCarePlan['CP_Feed'][key($arrCarePlan['CP_Feed'])][$_REQUEST['cat']]);
-// var_dump(array_keys($arrCarePlan['CP_Feed'][key($arrCarePlan['CP_Feed'])]));
-// var_dump(array_keys($arrCarePlan['CP_Feed'][key($arrCarePlan['CP_Feed'])]['Biometric']));
-// var_dump($arrCarePlan['CP_Feed'][key($arrCarePlan['CP_Feed'])]['Biometric']['2']); 
 ?>
 <?php
+function getForm($arrBio = array(), $offset = null)
+{
+		$formOutput ="";
+			$formOutput .= "<form action='' method=post>\n";
+			$formOutput .= "<div class='row'>\n";
+			$msgIcon = getMsgIcon($arrBio['MessageIcon']);
+			$formOutput .= "<hr><div class='col-sm-1$offset'><i style='color:". $msgIcon['color'] ."' class='fa fa-2x fa-". $msgIcon['icon'] ."'></i></div>\n";
+			$formOutput .= "<div class='col-sm-4'>" . $arrBio['MessageContent'] . "</div>\n";
+			// $formOutput .= " [" . $arrBio['MessageID'] . " | `" . $arrBio['Obs_Key'] . "` | " . date('Y-m-d H:i:s O)') . "] <BR>";
+			if ($arrBio['ReturnFieldType'] == 'None' || $arrBio['PatientAnswer'] ) {
+				if ($arrBio['PatientAnswer'] )	$formOutput .= "<div class='col-sm-6'>You Answered: " . $arrBio['PatientAnswer'] . " @ <small>". date('h:i:s A',$arrBio['ResponseDate']) . "</small></div>\n";
+			} else {
+				$formOutput .= "\n<input class='form-control' type='hidden' name='SUBMIT' value='OBS'>";
+				$formOutput .= "\n<input class='form-control' type='hidden' name='Obs_Key' value='". $arrBio['Obs_Key'] ."'>";
+				$formOutput .= "\n<input class='form-control' type='hidden' name='MessageID' value='". $arrBio['MessageID'] ."'>";
+				$formOutput .= "\n<input class='form-control' type='hidden' name='Obs_Date' value='". date("Y-m-d H:i:s") ."'>";
+				$formOutput .= "\n<input class='form-control' type='hidden' name='ReturnFieldType' value='". $arrBio['ReturnFieldType'] ."'>";
+				$formOutput .= "\n<input class='form-control' type='hidden' name='ReturnDataRangeLow' value='". $arrBio['ReturnDataRangeLow'] ."'>";
+				$formOutput .= "\n<input class='form-control' type='hidden' name='ReturnDataRangeHigh' value='". $arrBio['ReturnDataRangeHigh'] ."'>";
+				$formOutput .= "\n<input class='form-control' type='hidden' name='ReturnValidAnswers' value='". $arrBio['ReturnValidAnswers'] ."'>";
+				$formOutput .= "";
+				$formOutput .= "\n<div class='col-sm-4'>";
+				$type = null;
+				switch ($arrBio['ReturnFieldType']) {
+					case 'Range':
+						$type = "type='range' data-type='". $arrBio['ReturnFieldType']. "' min='" .$arrBio['ReturnDataRangeLow']. "' max='" .$arrBio['ReturnDataRangeHigh']. "' value='0' data-theme='b' data-track-theme='c'";
+							$formOutput .= "\n<input $type id='obs_val' name='obs_val' value='".$arrBio['PatientAnswer']."' REQUIRED>";
+						break;
+					case 'List':
+						$formOutput .= "\n".'<select name="obs_val" id="obs_val" data-role="slider">
+	<option value="N">No</option>
+	<option value="Y">Yes</option>
+</select>';
+						break;
+					default;
+							$formOutput .= "<input $type class='form-control col-sm-1' id='obs_val' name='obs_val' value='".$arrBio['PatientAnswer']."' REQUIRED>";
+
+				}
+				$formOutput .= "<div class='ui-block-a'><button data-theme='b' class='btn btn-primary col-sm-1' type='submit'>SEND</button></div><br>\n";
+				$formOutput .= "</div>";
+				}
+			$formOutput .= "</div>\n";
+			$formOutput .= "</form>\n";
+
+	return $formOutput;
+}
+
+function getMsgIcon($msgIcon)
+{
+		$color = 'Blue';
+		switch ($msgIcon) {
+		case 'bp';
+		case 'bs';
+			$icon = 'clock-o';
+			break;
+		case 'wt':
+			$icon = 'balance-scale';
+			break;
+		case 'cs':
+			$icon = 'ban';
+			break;
+		case 'call':
+			$icon = 'phone';
+			break;
+		case 'hsp':
+			$icon = 'hospital-o';
+			break;
+		case 'emergency':
+			$icon = 'exclamation-circle';
+			$color = 'Red';
+			break;
+		case 'question':
+			$icon = 'question-circle';
+			break;
+		case 'reminder':
+			$icon = 'sticky-note-o';
+			break;
+		case 'info':
+		case 'tip':
+			$icon = 'info-circle';
+			break;
+		
+		default:
+			$icon = $arrBio['MessageIcon'];
+			break;
+	}
+	$msgIcon = array('color' => $color,
+						'icon' => $icon);
+	return $msgIcon;
+
+}
 
 function getToken($u=null, $p=null, $curlOpt_url, $x_auth) {
 /*
