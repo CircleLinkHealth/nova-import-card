@@ -194,7 +194,7 @@
                         "MessageContent": "Enter your weight in pounds (lbs) (Example: 175)",
                         "ReturnFieldType": "Range",
                         "ReturnDataRangeLow": "50",
-                        "ReturnDataRangeHigh": "900",
+                        "ReturnDataRangeHigh": "500",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": null,
                         "ResponseDate": null
@@ -207,7 +207,7 @@
                         "MessageContent": "Enter the number of cigarettes smoked in the last 24 hours.",
                         "ReturnFieldType": "Range",
                         "ReturnDataRangeLow": "0",
-                        "ReturnDataRangeHigh": "9999",
+                        "ReturnDataRangeHigh": "120",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": null,
                         "ResponseDate": null
@@ -535,7 +535,7 @@
                         "MessageContent": "Enter your weight in pounds (lbs) (Example: 175)",
                         "ReturnFieldType": "Range",
                         "ReturnDataRangeLow": "50",
-                        "ReturnDataRangeHigh": "900",
+                        "ReturnDataRangeHigh": "500",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": "288",
                         "ResponseDate": "2015-06-30 16:45:28",
@@ -561,7 +561,7 @@
                         "MessageContent": "Enter the number of cigarettes smoked in the last 24 hours.",
                         "ReturnFieldType": "Range",
                         "ReturnDataRangeLow": "0",
-                        "ReturnDataRangeHigh": "9999",
+                        "ReturnDataRangeHigh": "120",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": null,
                         "ResponseDate": null
@@ -759,7 +759,7 @@
                         "MessageContent": "Enter your weight in pounds (lbs) (Example: 175)",
                         "ReturnFieldType": "Range",
                         "ReturnDataRangeLow": "50",
-                        "ReturnDataRangeHigh": "900",
+                        "ReturnDataRangeHigh": "500",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": null,
                         "ResponseDate": null
@@ -772,7 +772,7 @@
                         "MessageContent": "Enter the number of cigarettes smoked in the last 24 hours.",
                         "ReturnFieldType": "Range",
                         "ReturnDataRangeLow": "0",
-                        "ReturnDataRangeHigh": "9999",
+                        "ReturnDataRangeHigh": "120",
                         "ReturnValidAnswers": null,
                         "PatientAnswer": null,
                         "ResponseDate": null
