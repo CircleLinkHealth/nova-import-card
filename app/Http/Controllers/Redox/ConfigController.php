@@ -19,7 +19,7 @@ class ConfigController extends Controller {
 
         if ( !empty( $getApiKey ) ) return redirect()->action('Redox\ConfigController@edit', [ 'api-config' ]);
 
-        return view('thirdPartyApisConfig.create');
+        return view('thirdPartyApisConfig.redox.create');
 	}
 
 	/**
@@ -37,10 +37,11 @@ class ConfigController extends Controller {
             $newConfig->meta_key = $key;
             $newConfig->meta_value = $value;
             $newConfig->save();
-
-            return redirect()->back();
         }
-	}
+
+        return redirect()->back();
+
+    }
 
 	/**
 	 * Show the form for editing the specified resource.
@@ -64,7 +65,7 @@ class ConfigController extends Controller {
             return redirect()->action('Redox\ConfigController@create');
         }
 
-        return view('thirdPartyApisConfig.edit', [
+        return view('thirdPartyApisConfig.redox.edit', [
             'apiKey' => $apiKey,
             'apiSecret' => $apiSecret,
             'appVerifToken' => $appVerifToken

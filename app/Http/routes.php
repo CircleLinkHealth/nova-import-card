@@ -54,15 +54,29 @@ Route::group(['middleware' => 'auth'], function ()
             'uses' => 'AppVerification@postRedox'
         ]);
 
-        Route::resource('redox-settings', 'ConfigController', [
-            'except' => [ 'index', 'destroy', 'show' ]
-        ]);
-
         Route::group(['middleware' => 'getRedoxAccessToken'], function()
         {
             Route::get('testRedoxx', 'PostToRedoxController@index');
         });
     });
+
+    /*
+     * Third Party Apis Config
+     */
+    Route::group(['prefix' => 'third-party-api-settings'], function ()
+    {
+        Route::resource('redox-engine', 'Redox\ConfigController', [
+            'except' => [ 'index', 'destroy', 'show' ]
+        ]);
+
+        Route::resource('qliqsoft', 'qliqSOFT\ConfigController', [
+            'except' => [ 'index', 'destroy', 'show' ]
+        ]);
+
+
+    });
+    
+
 });
 
 

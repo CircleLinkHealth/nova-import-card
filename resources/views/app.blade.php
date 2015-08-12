@@ -107,7 +107,8 @@
                                 3rd Party APIs Settings<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ action('Redox\ConfigController@create') }}">Redox</a></li>
+                                <li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
+                                <li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
                             </ul>
                         </li>
 
