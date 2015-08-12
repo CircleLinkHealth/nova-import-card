@@ -302,12 +302,12 @@ class WpUserController extends Controller {
 				}
 			}
 		}
-		$wpUser = WpUser::find(Auth::user()->ID);
+		$wpUser = WpUser::find($id);
 		if(!$wpUser) {
 			return response("User not found", 401);
 		}
-		$userMeta = Auth::user()->meta->lists('meta_value', 'meta_key');
-
+		$userMeta = $wpUser->userMeta();
+		/*
 		$arrPart = array($wpUser->ID => array());
 		$arrPart[$wpUser->ID]['usermeta'] = $userMeta;
 		$arrPart[$wpUser->ID]['usermeta']['curresp'] = 'SYM';
@@ -315,6 +315,23 @@ class WpUserController extends Controller {
 		$msgUser = new MsgUser;
 		$userSmsState = $msgUser->userSmsState($arrPart);
 		dd($userSmsState);
+		*/
+
+		$api = 7;
+		$msgid = 'xOx';
+		$phone = $userMeta['user_config']['study_phone_number'];
+
+		$msg = 'Some Text Responseee';
+		$msg = str_replace("'", "''", $msg);
+		// $msg = preg_replace('/[^0-9a-zA-Z \/]/', ' ', urldecode($msg));
+		$msg = preg_replace("/[_]/", "", urldecode($msg)); // remove underscores as they will be used to replace forward slashes
+		$msg = preg_replace("/[\/]/", '_', $msg); // change forward slashes to underscores
+		$msg = preg_replace("/[^0-9a-zA-Z _]/", '', $msg);  // remove all non-alphanumeric characters
+
+		// public function getInboundStream($intBlogId, $hexMoMsgId, $strPhoneNumber, $strResponseMessage)
+		$inboundsms = 'MsgReceiver->getInboundStream(/'.$msgid.'/'.$phone.'/'.str_replace(array(' ',','),array('%20',''),$msg) . ')';
+
+		dd($inboundsms);
 		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta]);
 	}
 }

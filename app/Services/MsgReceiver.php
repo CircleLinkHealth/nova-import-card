@@ -22,6 +22,20 @@ class MsgReceiver {
         $this->getInboundStream(7,$msgID,$phone,$response);
     }
 
+    public function sendInvalid($intBlogId, $strPhoneNumber) {
+        $tmp  = $this->rules->getQuestion('CF_INV_30');
+        $msg = $this->mailman->doSubstitutions($tmp->message, 0);
+        $sms['phone_number'] = preg_replace('/[^0-9]/','', $strPhoneNumber);
+        $sms['msg_text']     = $msg;
+        $sms['msg_type']     = 'SMS';
+        $sms['source']       = 'Clickatell';
+        $sms['blog_id']      = $intBlogId;
+
+        if (!$msg == '')    $sendresult = $this->mailman->sendSMS($sms);
+
+        exit("No User Found...$strPhoneNumber...$intBlogId....$msg");
+    }
+
     public function getInboundStream($intBlogId, $hexMoMsgId, $strPhoneNumber, $strResponseMessage)
     {
         $strResponseMessage = str_replace('%20', ' ', $strResponseMessage);
@@ -63,20 +77,8 @@ class MsgReceiver {
         error_log("SMS In from: " . $strPhoneNumber. ' Msg: ' . $strResponseMessage . ' on Blog: ' . $intBlogId, 0);
 
         $arrPart = $this->users_model->get_users_data($strPhoneNumber,'phone',$intBlogId);
-        if(empty($arrPart))
-        {
-
-            $tmp  = $this->rules->getQuestion('CF_INV_30');
-            $msg = $this->mailman->doSubstitutions($tmp->message, 0);
-            $sms['phone_number'] = preg_replace('/[^0-9]/','', $strPhoneNumber);
-            $sms['msg_text']     = $msg;
-            $sms['msg_type']     = 'SMS';
-            $sms['source']       = 'Clickatell';
-            $sms['blog_id']      = $intBlogId;
-
-            if (!$msg == '')    $sendresult = $this->mailman->sendSMS($sms);
-
-            exit("No User Found...$strPhoneNumber...$intBlogId....$msg");
+        if(empty($arrPart)) {
+            $this->sendInvalid($intBlogId, $strPhoneNumber);
         }
         $intUserId = key($arrPart);
         $arrPart[$intUserId]['usermeta']['curresp'] = trim($strResponseMessage) ;
