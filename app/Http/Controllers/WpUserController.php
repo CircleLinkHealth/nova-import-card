@@ -320,8 +320,8 @@ class WpUserController extends Controller {
 		$msgUsers = new MsgUser;
 		$commentsForUser = $msgUsers->get_comments_for_user($wpUser->ID, $wpUser->blogId());
 		//dd($commentsForUser);
+		$comments = array();
 		if(!empty($commentsForUser)) {
-			$comments = array();
 			foreach($commentsForUser as $comment) {
 				$comments[$comment->comment_ID] = array(
 					'comment_type' => $comment->comment_type,

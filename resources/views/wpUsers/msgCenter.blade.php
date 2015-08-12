@@ -59,7 +59,9 @@
                         </div>
 
                         <h2>Recent Action:</h2>
-                        @if (count($comments) > 0)
+                        @if (count($comments) == 0)
+                            No recent action to show
+                        @else
                             @foreach( $comments as $comment_ID => $comment )
                                 <div id="comment{{ $comment_ID }}" style="margin-top:20px;background:#ccc;">
                                     <div class="row">
