@@ -16,13 +16,19 @@ class CareplanService {
 	 */
 	public function getCareplan($wpUser, $dates)
 	{
+
+		/*
+		$msgScheduler = new MsgScheduler;
+		$result = $msgScheduler->index('7');
+		dd('ITS A WRAPITO!');
+		*/
 		// start feed
 		$feed = array(
 			"User_ID" => $wpUser->ID,
 			"Comments" => "All data string are variable, DMS quantity and type of messages will change daily for each patient. Messages with Return Responses can nest. Message Content will have variable fields filled in by CPM and can vary between each patient. Message quantities will vary from day to day.",
 			"Data" => array(
 				"Version" => "2.1",
-				"EventDateTime" => "2015-04-21T15:22:00.472Z"),
+				"EventDateTime" => date('Y-m-d H:i:s')),
 			"CP_Feed" => array(),
 		);
 
@@ -33,14 +39,18 @@ class CareplanService {
 			$feed["CP_Feed"][$i] = array(
 				"Feed" => array(
 					"FeedDate" => $date,
-					"DSM" => array(),
+					"Messages" => array(),
+					"DMS" => array(),
 					"Reminders" => array(),
 					"Biometric" => array(),
 					"Symptoms" => array())
 			);
 
+			// Messages
+			$feed["CP_Feed"][$i]['Feed']["Messages"] = $this->getObsMessages($wpUser, $date);
+
 			// DSM
-			$feed["CP_Feed"][$i]['Feed']["DSM"] = $this->getObsDSM($wpUser, $date);
+			$feed["CP_Feed"][$i]['Feed']["DMS"] = $this->getObsDMS($wpUser, $date);
 
 			// Reminders
 			$feed["CP_Feed"][$i]['Feed']["Reminders"] = $this->getObsReminders($wpUser, $date);
@@ -55,7 +65,12 @@ class CareplanService {
 		return $feed;
 	}
 
-	public static function getObsDSM($wpUser, $date)
+	public static function getObsMessages($wpUser, $date)
+	{
+		return array();
+	}
+
+	public static function getObsDMS($wpUser, $date)
 	{
 		$query = Observation::select('ma_' . $wpUser->blogId() . '_observations.*', 'rules_questions.*', 'rules_items.*', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en', 'cm.comment_id', 'cm.comment_parent')
 			->join('rules_questions', 'rules_questions.msg_id', '=', 'ma_' . $wpUser->blogId() . '_observations.obs_message_id')
@@ -74,9 +89,9 @@ class CareplanService {
 			->whereRaw("obs_date BETWEEN '" . $date . " 00:00:00' AND '" . $date . " 23:59:59'", array())
 			->take(40);
 		$scheduledObs = $query->get();
+		$dsmObs = array();
 		if (!$scheduledObs->isEmpty()) {
 			$d = 0;
-			$dsmObs = array();
 			foreach ($scheduledObs as $obs) {
 				// add to feed
 				//$feed["CP_Feed"][$i]['Feed']["DSM"][$d] = array(
@@ -84,14 +99,14 @@ class CareplanService {
 					"MessageID" => $obs->obs_message_id,
 					"Obs_Key" => $obs->obs_key,
 					"ParentID" => $obs->comment_parent,
-					"MesageIcon" => "question",
+					"MessageIcon" => "question",
 					"MessageContent" => $obs->sms_en,
 					"ReturnFieldType" => "None",
 					"ReturnDataRangeLow" => null,
 					"ReturnDataRangeHigh" => null,
 					"ReturnValidAnswers" => null,
 					"PatientAnswer" => null,
-					"ResponseDTS" => null
+					"ResponseDate" => null
 				);
 
 				// check for PatientAnswer and ResponseDTS
@@ -119,17 +134,17 @@ class CareplanService {
 
 	public static function getObsReminders($wpUser, $date)
 	{
-		return '';
+		return array();
 	}
 
 	public static function getObsBiometric($wpUser, $date)
 	{
-		return '';
+		return array();
 	}
 
 	public static function getObsSymptoms($wpUser, $date)
 	{
-		return '';
+		return array();
 	}
 
 }
