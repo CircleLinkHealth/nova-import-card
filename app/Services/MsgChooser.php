@@ -40,45 +40,84 @@ class MsgChooser {
     }
 
 
-    public function getNextMessage($userId) {
-        echo "<br>MsgChooser->getNextMessage() start";
-        // instantiate user
+    public function getMessageResponse($userId, $commentId, $msgId) {
+        echo "<br>MsgChooser->getMessageResponse() start";
 
-        // get user info
+        // instantiate user
         $wpUser = WpUser::find($userId);
         if (!$wpUser) {
-            echo "<br>MsgChooser->getNextMessage() user not found";
+            echo "<br>MsgChooser->getMessageResponse() user not found";
             return false;
         }
         $msgUser = new MsgUser;
-        $userData = $msgUser->get_users_data($userId, 'id', $wpUser->blogId());
-        //$userMeta = $wpUser->userMeta();
-        //dd($userData);
+
+        // set user meta
+        $userMeta = $wpUser->userMeta();
+
+        // get comment
+        $query = DB::connection('mysql_no_prefix')->table('wp_'.$wpUser->blogId().'_comments AS cm');
+        $query->select('cm.*');
+        $query->where('comment_ID', '=', $commentId);
+        $query->where('user_id', '=', $userId);
+        $query->limit('1');
+        $comment = $query->first();
+
+        if(empty($comment)) {
+            echo "<br>MsgChooser->getMessageResponse() comment not found";
+            return false;
+        }
+
+        $commentContent = unserialize($comment->comment_content);
+        echo "<br>MsgChooser->getMessageResponse() message list";
+        foreach($commentContent as $row) {
+            $msgId = key($row);
+            echo "<br>".$msgId.' -- '.$row[$msgId];
+        }
+        dd('MsgChooser->getMessageResponse() DONE');
+
+
+        /*
+        $userData = $msgUser->get_users_data($userId, 'id', $wpUser->blogId());//$userMeta = $wpUser->userMeta();
 
         // set class vars
+        $this->key          = $userId;
         $this->comment_id	= $userData[$userId]['usermeta']['comment_ID'];
-        $this->provid 		= $userData[$userId]['usermeta']['intProgramId']; // Provider ID
+        $this->provid 		= $wpUser->blogId(); // Provider ID
         $qstype				= $userData[$userId]['usermeta']['msgtype'];  // Question Group Type
         $strResponse		= urldecode($userData[$userId]['usermeta']['curresp']);  // String sent to us by user.)
         $userData[$this->key]['usermeta']['curresp'] = $strResponse;	// put updated value back.
+        //dd($userData[$userId]['usermeta']['wp_'.$this->provid.'_user_config']);
+        $strRespMeth 	    = $userData[$userId]['usermeta']['wp_'.$this->provid.'_user_config']['preferred_contact_method']."_".$userData[$userId]['usermeta']['wp_'.$this->provid.'_user_config']['preferred_contact_language'];
+        $this->smsMeth	= $strRespMeth;
+        $this->arrReturn 	= $userData; // copy of array for outside functions that are not getting array passed to them.
 
+        $msgCPRules = new MsgCPRules;
         // locate msgid for last question asked
         $lastMsgid = '';
         if(!empty($arrPart[$this->key]['usermeta']['state'])) {
+            // there is a state record, get the last message
             end($arrPart[$this->key]['usermeta']['state']);
             $lastMsgKey =  key($arrPart[$this->key]['usermeta']['state']);
             $lastMsgid =  key($arrPart[$this->key]['usermeta']['state'][$lastMsgKey]);
         }
 
+        // if unknown message is recieved, send unknown message
+        if(empty($this->comment_id) && !empty($strResponse)) {
+            $lastMsgid = 'CF_UNSOL_UNKNOWN';
+            $tmp  = $msgCPRules->getQuestion($lastMsgid, $this->key, $strRespMeth, $this->provid, $qstype);
+            $this->storeMsg($tmp);
+            error_log('Unknown message ['.$this->key.'] Sent us: '.$strResponse);
+            return $this->arrReturn;
+        }
+
         // getValidAnswer
         $ret = array();
-        $msgCPRules = new MsgCPRules;
         $ret =  $msgCPRules->getValidAnswer($this->provid, $qstype, $lastMsgid, $strResponse);
-        echo '<br>MsgChooser->getNextMessage() getValidAnswer dump response: ';
-        dd($ret);
+        echo '<br>MsgChooser->getNextMessage() getValidAnswer result - qsid='.$ret->qsid.' | qid='.$ret->qid.' | aid='.$ret->aid.' | action='.$ret->action;
 
-        /*
-        $ret['action'] == '';
+        $tmp  = $msgCPRules->getQuestion($lastMsgid, $this->key, $strRespMeth, $this->provid, $qstype);
+        echo '<br>MsgChooser->getNextMessage() getQuestion result - qtype='.$tmp->qtype.'';;
+
         if(!empty($ret->action) && ($tmp->qtype == 'None')) {
             if(strpos($ret->action, '(') === FALSE) {
                 $tmpfunc = $ret->action;
@@ -102,11 +141,22 @@ class MsgChooser {
 
         }
 
-        echo '<br>MsgChooser->nextMessage() tmpResponse = '. $tmpResponse;
+        echo '<br>MsgChooser->nextMessage() DONE';
+        dd('finito');
+        //echo '<br>MsgChooser->nextMessage() tmpResponse = '. $tmpResponse;
+
         */
-
-
     }
+
+
+
+
+
+
+
+
+
+
 
 
     // main question flow
