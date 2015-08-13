@@ -199,7 +199,7 @@ query;
                 ->where('user_id', '=', $user_id)
                 ->where('meta_key', '=', 'TOD')
                 ->update(['meta_value' => $qssort]);
-            echo "<br>MsgTod->updateTod() updated rules_ucp.id#??";
+            echo "<br>MsgTod->updateTod() updated , items_id=$user_id, items_id=$strCat, meta_value=$qssort";
         }
         return;
 

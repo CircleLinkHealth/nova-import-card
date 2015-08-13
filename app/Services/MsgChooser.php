@@ -40,6 +40,75 @@ class MsgChooser {
     }
 
 
+    public function getNextMessage($userId) {
+        echo "<br>MsgChooser->getNextMessage() start";
+        // instantiate user
+
+        // get user info
+        $wpUser = WpUser::find($userId);
+        if (!$wpUser) {
+            echo "<br>MsgChooser->getNextMessage() user not found";
+            return false;
+        }
+        $msgUser = new MsgUser;
+        $userData = $msgUser->get_users_data($userId, 'id', $wpUser->blogId());
+        //$userMeta = $wpUser->userMeta();
+        //dd($userData);
+
+        // set class vars
+        $this->comment_id	= $userData[$userId]['usermeta']['comment_ID'];
+        $this->provid 		= $userData[$userId]['usermeta']['intProgramId']; // Provider ID
+        $qstype				= $userData[$userId]['usermeta']['msgtype'];  // Question Group Type
+        $strResponse		= urldecode($userData[$userId]['usermeta']['curresp']);  // String sent to us by user.)
+        $userData[$this->key]['usermeta']['curresp'] = $strResponse;	// put updated value back.
+
+        // locate msgid for last question asked
+        $lastMsgid = '';
+        if(!empty($arrPart[$this->key]['usermeta']['state'])) {
+            end($arrPart[$this->key]['usermeta']['state']);
+            $lastMsgKey =  key($arrPart[$this->key]['usermeta']['state']);
+            $lastMsgid =  key($arrPart[$this->key]['usermeta']['state'][$lastMsgKey]);
+        }
+
+        // getValidAnswer
+        $ret = array();
+        $msgCPRules = new MsgCPRules;
+        $ret =  $msgCPRules->getValidAnswer($this->provid, $qstype, $lastMsgid, $strResponse);
+        echo '<br>MsgChooser->getNextMessage() getValidAnswer dump response: ';
+        dd($ret);
+
+        /*
+        $ret['action'] == '';
+        if(!empty($ret->action) && ($tmp->qtype == 'None')) {
+            if(strpos($ret->action, '(') === FALSE) {
+                $tmpfunc = $ret->action;
+                echo "<br>MsgChooser->nextMessage() [[ 1 ]] tmpfunc = ".$tmpfunc;
+                $tmpMsgId = $this->$tmpfunc();
+                echo "<br>MsgChooser->nextMessage() [[ 2 ]] tmpMsgId = ".$tmpfunc;
+            } else {
+                echo "<br>MsgChooser->nextMessage() [[ 1 ]] no tmpfunc";
+                $exe = explode( "(", $ret->action, 2);
+                $params = array($exe[1]);
+                $tmpMsgId = call_user_func_array(array($this, $exe[0]), $params);
+            }
+
+            echo "<br>MsgChooser->nextMessage() [[ 3 ]] Provider: ".$this->provid.' QSType: '.$qstype;
+            //echo '<br>Provider: '.$this->provid.' QSType: '.$qstype.' MsgID: '.$tmpMsgId;//die();
+            $ret =  $msgCPRules->getValidAnswer($this->provid, $qstype, $tmpMsgId);
+            // echo '<br>return from valid answer: ';print_r($ret);
+
+            //  get new information in case of loop
+            $tmp  = $msgCPRules->getQuestion($tmpMsgId, $this->key, $strRespMeth, $this->provid, $qstype);
+
+        }
+
+        echo '<br>MsgChooser->nextMessage() tmpResponse = '. $tmpResponse;
+        */
+
+
+    }
+
+
     // main question flow
     public function nextMessage($arrPart) {
         echo "<br>MsgChooser->nextMessage() start!";
@@ -121,7 +190,7 @@ class MsgChooser {
         // get 1st question information
         if(empty($arrState)) {
             $tmp  = $msgCPRules->getQuestionById($ret->qid, $this->key, $strRespMeth, $this->provid, $qstype);
-            echo "<br>MsgChooser->nextMessage() ".$ret->qid;
+            echo "<br>MsgChooser->nextMessage() ret->qid=".$ret->qid;
             $this->storeMsg($tmp);
         }
 

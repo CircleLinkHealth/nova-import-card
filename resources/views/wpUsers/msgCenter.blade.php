@@ -101,7 +101,7 @@
                             No feed data to show?
                         @else
                             @foreach( $cpFeed['CP_Feed'] as $key => $value )
-                                <div class="row col-lg-12" data-role="collapsible" data-theme="b">
+                                <div class="row col-lg-12" data-role="collapsible" data-theme="a">
                                     <h2>{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}</h2>
                                     @foreach( $cpFeedSections as $section )
                                         @if ($section == 'Symptoms')
