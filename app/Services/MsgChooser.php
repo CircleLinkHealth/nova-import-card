@@ -61,18 +61,27 @@ class MsgChooser {
         $query->where('user_id', '=', $userId);
         $query->limit('1');
         $comment = $query->first();
-
         if(empty($comment)) {
             echo "<br>MsgChooser->getMessageResponse() comment not found";
             return false;
         }
 
+        // loop through comment_content and find matching msgId
         $commentContent = unserialize($comment->comment_content);
         echo "<br>MsgChooser->getMessageResponse() message list";
+        $msgIdMatch = false;
         foreach($commentContent as $row) {
-            $msgId = key($row);
-            echo "<br>".$msgId.' -- '.$row[$msgId];
+            echo "<br>".key($row).' -- '.$row[key($row)];
+            if(key($row) == $msgId) {
+                // found the message, get next response
+                $msgIdMatch = $msgId;
+                echo "<br>MsgChooser->getMessageResponse() found the message! Its $msgId";
+                // get the response to this message
+            }
         }
+
+
+        dd($this);
         dd('MsgChooser->getMessageResponse() DONE');
 
 
