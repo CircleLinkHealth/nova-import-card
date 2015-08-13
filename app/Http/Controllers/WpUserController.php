@@ -8,6 +8,7 @@ use App\WpUserMeta;
 use App\Services\ActivityService;
 use App\Services\CareplanService;
 use App\Services\MsgUser;
+use App\Services\MsgUI;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
@@ -317,6 +318,8 @@ class WpUserController extends Controller {
 		*/
 		//dd('dies early');
 
+		$msgUI = new MsgUI;
+
 		$msgUsers = new MsgUser;
 		$commentsForUser = $msgUsers->get_comments_for_user($wpUser->ID, $wpUser->blogId());
 		//dd($commentsForUser);
@@ -334,8 +337,50 @@ class WpUserController extends Controller {
 				);
 			}
 		}
-		//dd($comments);
 
-		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'comments' => $comments, 'messages' => array()]);
+		// get dates
+		$date1 = date('Y-m-d');
+		$date2 = date('Y-m-d', time() - 60 * 60 * 24);
+		$date3 = date('Y-m-d', time() - ((60 * 60 * 24) * 2));
+		$dates = array($date1, $date2, $date3);
+		if(empty($dates)) {
+			return response("Date array is required", 401);
+		}
+
+		// get feed
+		$careplanService = new CareplanService;
+		$cpFeed = $careplanService->getCareplan($wpUser, $dates);
+
+		//$cpFeed = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')), 1);
+
+		// set careplan feed vars for blade
+		foreach ($cpFeed['CP_Feed'] as $key => $value) {
+			$cpFeedSections = array('Biometric','DMS','Symptoms','Reminders');
+			foreach ($cpFeedSections as $section) {
+				if($section == 'Symptoms') {
+					//echo '<div class="row col-lg-12 col-lg-offset-2" data-role="collapsible" data-theme="b">';
+					//echo "<h3>Would you like to report any Symptoms?</h3>";
+				}
+				foreach($cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio){
+					$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] = $msgUI->getForm($arrBio,null);
+					//echo($msgUI->getForm($arrBio,null));
+
+					if(isset($arrBio['Response'])) {
+						//echo($msgUI->getForm($arrBio['Response'],' col-lg-offset-1'));
+						$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['formHtml'] = $msgUI->getForm($arrBio['Response'],' col-lg-offset-1');
+						if(isset($arrBio['Response']['Response'])) {
+							//echo($msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-3'));
+							$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['Response']['formHtml'] = $msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-1');
+						}
+					}
+				}
+				if($section == 'Symptoms') {
+					//echo "</div><hr>\n";
+				}
+			}
+		}
+
+		//dd($cpFeed['CP_Feed']);
+		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array()]);
 	}
 }

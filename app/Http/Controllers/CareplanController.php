@@ -64,9 +64,11 @@ class CareplanController extends Controller {
 			}
 		}
 
-		/*
 		// get dates
-		$dates = array('2015-05-15', '2015-05-14', '2015-05-13');
+		$date1 = date('Y-m-d');
+		$date2 = date('Y-m-d', time() - 60 * 60 * 24);
+		$date3 = date('Y-m-d', time() - ((60 * 60 * 24) * 2));
+		$dates = array($date1, $date2, $date3);
 		if(empty($dates)) {
 			return response("Date array is required", 401);
 		}
@@ -75,8 +77,8 @@ class CareplanController extends Controller {
 		$careplanService = new CareplanService;
 		$feed = $careplanService->getCareplan($wpUser, $dates);
 
-		return response()->json($feed);
-		*/
+		//return response()->json($feed);
+
 
 		// Dummy JSON Data for careplan
 		$str_data = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')));

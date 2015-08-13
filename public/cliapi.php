@@ -84,7 +84,7 @@ $p = "v&gHo1O!Q&ybXWX#miIhvWj1";
 $curlOpt_url = "https://api-test.careplanmanager.com/api/v2.1/";
 // $curlOpt_url = "http://clapi.cpm.com/api/v2.1/";
 $x_auth = "0252f5feac4a511da272a7f0db07b3e1a1a3dc2d";
-// $x_auth = "740be88cebe7b6e09267212ae5ee099ab8506170";
+$x_auth = "7aed3293dcb7e26ffd6fd33cf219cdc303706d7d";
 
 if($_POST) { 
 	// var_dump($_POST);
@@ -168,15 +168,16 @@ echo "</div>";
 	$err = curl_error($curl);
 
 	curl_close($curl);
+		$arrCarePlan = json_decode($jsonCarePlan, true);
 
-	if ($err || $jsonCarePlan == 'Unauthorized.') {
+	if ($err || $jsonCarePlan == 'Unauthorized.' || !$arrCarePlan['User_ID']) {
 		echo "<BR>cURL Error #:" . $err . $jsonCarePlan;
 	var_dump("authorization: Bearer " . $arrToken['token']);
 	var_dump("x-authorization: $x_auth");
 		die("<span class='btn-danger'>Error Connecting to CarePlan Feed API</span></h6>");
 	} else {
 	// echo $jsonCarePlan;
-		$arrCarePlan = json_decode($jsonCarePlan, true);
+		// echo "<pre>"; var_export($arrCarePlan['User_ID']); echo "</pre>";
 		echo "<span class='btn-success'>CarePlan Feed Retrieval Sucessful.</span></h6>";
 
 	}
