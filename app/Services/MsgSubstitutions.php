@@ -38,47 +38,30 @@ class MsgSubstitutions {
          * @todo	Need to replace hard coding to use db for replacements
          */
 
+        $msgCPRules = new MsgCPRules;
+        $msgDelivery = new MsgDelivery;
+
         $strReturn = '';
 
         if($provid > 0 and $user_id > 0) {
             // get list of Reading for individual
-            $msgCPRules = new MsgCPRules;
             $arrList = $msgCPRules->getReadingDefaults($user_id, $provid);
             // echo '<br>Readings to send today: ';
             // print_r($arrList);
             if(!empty($arrList)) {
-                $arrReadings = serialize($msgCPRules->getReadings($provid, $user_id));
-
+                $arrReadings = $msgCPRules->getReadings($provid, $user_id);
                 // variables for scheduled RPT
                 $tmpArr = array();
                 $i = 0; // counter for tense of the word reading or readings depending on how many we send.
 
                 foreach ($arrList as $row) {
-                    // ensure scheduled record doesnt already exist
-                    /*
-                    $sql = "select *
-                        from ma_{$provid}_observations o
-                        where o.obs_key in ('{$row->obs_key}')
-                        and o.obs_unit = {$provid}
-                        and DATE(obs_date) = ";
-
-                    $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
-                    */
-
-
-
-                    // @todo hey kevin, your right here writing validation to prevent double scheduled records - need to finish the obs_date in the query above
-
-
-
-
                     // chech if biometric is active and can be sent today
                     if((!empty($row->APActive) && $row->APActive == 'Active') or ($row->UActive == 'Active' and strpos($row->cdays, $row->today) !== FALSE)) {
                         // build array of RPT scheduled for today.
                         $tmpArr[$i++][$row->msg_id] = $row->obs_key;
 
                         // only use open ones for message substitutions
-                        if(empty($arrReadings) || strpos($arrReadings, $row->obs_key) === FALSE) {
+                        if(empty($arrReadings) || strpos(serialize($arrReadings), $row->obs_key) === FALSE) {
                             switch ($row->obs_key) {
                                 case 'Blood_Pressure':
                                     if($strLang == 'ES') {
@@ -119,25 +102,28 @@ class MsgSubstitutions {
                         }
                     }
                 }
-                $msgDelivery = new MsgDelivery;
-                $lastkey = $msgDelivery->writeOutboundSmsMessage($user_id,$tmpArr,'substitutionlibrary', 'scheduled',$provid);
+
+                /*
+                 * @todo SHOULD SCHEDULE RECORDS BE INSERTED HERE? no
+                 *
+                $commentId = $msgDelivery->writeOutboundSmsMessage($user_id,$tmpArr,'substitutionlibrary', 'scheduled',$provid);
 
                 // echo '<br>Substitution Scheduled: <pre>';
                 // print_r($tmpArr);
 
                 // write out observation records
-                echo "<br>MsgSubstitution->var_dump";
-                var_dump($tmpArr);
-                foreach ($tmpArr as $key => $value) {
-                    foreach ($value as $key2 => $value2) {
+                //echo "<br>MsgSubstitution->var_dump";
+                //var_dump($tmpArr);
+                foreach ($tmpArr as $sequence => $value) {
+                    foreach ($value as $msgId => $obsKey) {
                         // echo '<br>'.$key.': '.$key2.' -> '.$value2;
                         //flag obs_processor of response
                         $data = array(
-                            'comment_id' => $lastkey,
-                            'sequence_id' => $key,
+                            'comment_id' => $commentId,
+                            'sequence_id' => $sequence,
                             'user_id' => $user_id,
-                            'obs_message_id' => $key2,
-                            'obs_key' =>  $value2,
+                            'obs_message_id' => $msgId,
+                            'obs_key' =>  $obsKey,
                             'obs_method' => 'RPT',
                             'obs_date' => date('Y-m-d H:i:s', strtotime('00:00:01')),
                             'obs_date_gmt' => date("Y-m-d H:i:s", strtotime('00:00:01')),
@@ -152,6 +138,7 @@ class MsgSubstitutions {
                     }// foreach2
                 }// foreach
                 $strReturn = trim($strReturn, ', ');
+                */
             }
         }
 

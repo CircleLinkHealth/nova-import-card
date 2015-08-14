@@ -6,6 +6,8 @@ use App\Services\MsgCPRules;
 use App\Services\MsgSubstitutions;
 use App\Services\MsgTod;
 use DB;
+use Date;
+use DateTime;
 /*
 $this->_ci->load->model('cpm_1_7_rules_model','rules');
 $this->_ci->load->library('cpm_1_7_substitution_library');
@@ -30,12 +32,16 @@ class MsgChooser {
     private $provid;
     private $smsMeth;
     private $programId;
+    var $log = array();
 
     public function __construct() {
     }
 
+    public function setNextMessage($programId, $commentId, $msgId, $answer, $qsType, $debug = true) {
+        $msgUser = new MsgUser;
+        $msgCPRules = new MsgCPRules;
+        $msgSubstitutions = new MsgSubstitutions;
 
-    public function setNextMessage($programId, $commentId, $msgId, $answer, $qsType) {
         echo "<br>MsgChooser->setNextMessage($programId | $commentId | $msgId | $answer | $qsType) start";
 
         // get comment
@@ -56,8 +62,11 @@ class MsgChooser {
             echo "<br>MsgChooser->setNextMessage() user not found";
             return false;
         }
-        $msgUser = new MsgUser;
         $userMeta = $wpUser->userMeta();
+
+        // set class vars
+        $this->key = $comment->user_id;
+        $this->provid = $programId;
 
         // loop through comment_content and find matching msgId (this doesnt do anything yet)
         $commentContent = unserialize($comment->comment_content);
@@ -67,13 +76,12 @@ class MsgChooser {
         }
 
         // current message info
-        $msgCPRules = new MsgCPRules;
         $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', $programId, $qsType);
+        $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->provid, $this->key);
         echo '<br>MsgChooser->setNextMessage() currQuestionInfo->message['.$currQuestionInfo->msgtype.'] = '.$currQuestionInfo->message.'';
         echo '<br>MsgChooser->setNextMessage() currQuestion answer = '.$answer.'';
 
         // get answerResponse
-        $msgCPRules = new MsgCPRules;
         $answerResponse =  $msgCPRules->getValidAnswer($programId, $qsType, $msgId, $answer);
         if(!$answerResponse) {
             echo '<br>MsgChooser->setNextMessage() getValidAnswer result FAIL, die..';die();
@@ -102,29 +110,35 @@ class MsgChooser {
 
             //  get new information in case of loop
             $nextQuestionInfo  = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $programId, $qsType);
+            $nextQuestionInfo->message = $msgSubstitutions->doSubstitutions($nextQuestionInfo->message, $this->provid, $this->key);
             echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->message['.$nextQuestionInfo->msgtype.'] = '.$nextQuestionInfo->message.'';
             echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->qtype = '.$nextQuestionInfo->qtype.'';
-
         }
 
-        dd('MsgChooser->setNextMessage() DONE');
+        //dd('MsgChooser->setNextMessage() DONE');
 
         // sample array structure testing
         $serial = serialize(
             array(
                 0 => array(
                     "CF_DM_HSP_10" => "1",
-                    "CF_HSP_20" => "C",
-                    "CF_HSP_EX_10" => "",
+                    "CF_HSP_20" => "",// C
+                    //"CF_HSP_EX_10" => "",
                 ),
                 1 => array(
-                    "CF_RPT_50" => ""
+                    "CF_RPT_50" => "12"
                 ),
                 2 => array(
                     "CF_RPT_40" => ""
                 ),
                 3 => array(
                     "CF_RPT_20" => ""
+                ),
+                3 => array(
+                    "CF_SOL_MED_CHL" => ""
+                ),
+                3 => array(
+                    "CF_REM_NAG_01" => ""
                 )
             )
         );
@@ -516,13 +530,14 @@ class MsgChooser {
 
     // weight messages
     private function fxWeight($inVars) {
+        $msgCPRules = new MsgCPRules;
         $Params 		= explode(",", $this->cleanStr($inVars));
-        $arrSet			= $this->_ci->rules->getLastWeight($this->provid, $this->key);
-        $objTarget		= $this->_ci->rules->getTargetWeight($this->key);
+        $arrSet			= $msgCPRules->getLastWeight($this->provid, $this->key);
+        $objTarget		= $msgCPRules->getTargetWeight($this->key);
         $strMsgID		= '';
         $strResponse	= urldecode($this->arrReturn[$this->key]['usermeta']['curresp']);  // String sent to us by user.)
 
-        $boolCHF		= $this->_ci->rules->isCHF($this->key, $this->provid);
+        $boolCHF		= $msgCPRules->isCHF($this->key, $this->provid);
         $boolCHF		= (!empty($boolCHF) && $boolCHF == 'CHECKED' ) ? 1 : 0;
 
 

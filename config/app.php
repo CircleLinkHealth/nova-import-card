@@ -154,6 +154,7 @@ return [
 		'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
 		'Barryvdh\Cors\ServiceProvider',
 		'Collective\Html\HtmlServiceProvider',
+		'Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider'
 
 
 	],
