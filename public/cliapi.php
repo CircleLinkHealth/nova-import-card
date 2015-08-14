@@ -144,47 +144,47 @@ echo "</div>";
 		// var_dump($_POST);
 	}
 }
-
-	$arrToken = getToken($u, $p, $curlOpt_url, $x_auth);
-
-	$curl = curl_init();
-	$arrCurl = array(
-	  CURLOPT_URL => "$curlOpt_url"."careplan",
-	  CURLOPT_RETURNTRANSFER => true,
-	  CURLOPT_ENCODING => "",
-	  CURLOPT_MAXREDIRS => 10,
-	  CURLOPT_TIMEOUT => 30,
-	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	  CURLOPT_CUSTOMREQUEST => "GET",
-	  CURLOPT_HTTPHEADER => array(
-	    "authorization: Bearer " . $arrToken['token'],
-	    "client: mobi",
-	    "content-type: multipart/form-data; boundary=---011000010111000001101001",
-	    "x-authorization: $x_auth"
-	  ),
-	);
-	curl_setopt_array($curl, $arrCurl);
-	$jsonCarePlan = curl_exec($curl);
-	$err = curl_error($curl);
-
-	curl_close($curl);
-		$arrCarePlan = json_decode($jsonCarePlan, true);
-
-	if ($err || $jsonCarePlan == 'Unauthorized.' || !$arrCarePlan['User_ID']) {
-		echo "<BR>cURL Error #:" . $err . $jsonCarePlan;
-	var_dump("authorization: Bearer " . $arrToken['token']);
-	var_dump("x-authorization: $x_auth");
-	  var_dump($arrToken);
-		unset($_COOKIE['resu']);
-		unset($_COOKIE['ssap']);
-		echo("<span class='btn-danger'>Error Connecting to CarePlan Feed API</span></h6>");
-	} else {
-	// echo $jsonCarePlan;
-		// echo "<pre>"; var_export($arrCarePlan['User_ID']); echo "</pre>";
-		echo "<span class='btn-success'>CarePlan Feed Retrieval Sucessful.</span></h6>";
-
+	if (isset($u)) {
+		$arrToken = getToken($u, $p, $curlOpt_url, $x_auth);
+	
+		$curl = curl_init();
+		$arrCurl = array(
+		  CURLOPT_URL => "$curlOpt_url"."careplan",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "GET",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer " . $arrToken['token'],
+		    "client: mobi",
+		    "content-type: multipart/form-data; boundary=---011000010111000001101001",
+		    "x-authorization: $x_auth"
+		  ),
+		);
+		curl_setopt_array($curl, $arrCurl);
+		$jsonCarePlan = curl_exec($curl);
+		$err = curl_error($curl);
+	
+		curl_close($curl);
+			$arrCarePlan = json_decode($jsonCarePlan, true);
+	
+		if ($err || $jsonCarePlan == 'Unauthorized.' || !$arrCarePlan['User_ID']) {
+			echo "<BR>cURL Error #:" . $err . $jsonCarePlan;
+		var_dump("authorization: Bearer " . $arrToken['token']);
+		var_dump("x-authorization: $x_auth");
+		  var_dump($arrToken);
+			unset($_COOKIE['resu']);
+			unset($_COOKIE['ssap']);
+			echo("<span class='btn-danger'>Error Connecting to CarePlan Feed API</span></h6>");
+		} else {
+		// echo $jsonCarePlan;
+			// echo "<pre>"; var_export($arrCarePlan['User_ID']); echo "</pre>";
+			echo "<span class='btn-success'>CarePlan Feed Retrieval Sucessful.</span></h6>";
+	
+		}
 	}
-
 ?>
 <div class="row col-lg-12 col-lg-offset-2" data-role="collapsible" data-theme="b">
 	<h2>Set User</h2>
