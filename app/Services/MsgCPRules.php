@@ -36,10 +36,14 @@ class MsgCPRules {
         $tmpArray = preg_split("/[ _]/", $strResponse);
         $strResponse2 = $tmpArray[0];
 
+        echo "<br>MsgCPRules->getValidAnswer() start, answer = $strResponse";
+
         // echo '<br>Valid tmpArray: ';
         // print_r($tmpArray);
 
         $qdata = $this->getQuestion($strMsgID, 0, '', $pid);
+        echo "<br>MsgCPRules->getValidAnswer() obs_key = ".$qdata->obs_key;
+        //dd($qdata);
         // check for Blood Pressure format
         if($qdata->obs_key == 'Blood_Pressure'){
             // make sure both halves contain numbers else reject
@@ -73,21 +77,18 @@ class MsgCPRules {
             $strQS	= " AND qs.qs_type = '{$qstype}' ";
         }
 
-        $query = <<<query
-select qs.*, if(ISNULL(a.value), '{$strResponse}', a.value) as value
-FROM rules_question_sets qs
-LEFT JOIN rules_questions q using (qid)
-LEFT JOIN rules_answers a using (aid)
-WHERE qs.provider_id = {$pid}
-{$strQS}
-AND if('' = '{$strMsgID}', true, q.msg_id = '{$strMsgID}')
-and (CONCAT(',',a.value,',',a.alt_answers,',') rlike ',{$strResponse2},'
-or IF('{$strResponse2}' RLIKE '^-?[0-9]+$', '{$strResponse2}', -999) between qs.low and qs.high
-or q.qtype rlike 'FreeText|None|End|TOD')
-LIMIT 1
-query;
+        $query = "select qs.*, if(ISNULL(a.value), '{$strResponse}', a.value) as value
+                FROM rules_question_sets qs
+                LEFT JOIN rules_questions q using (qid)
+                LEFT JOIN rules_answers a using (aid)
+                WHERE qs.provider_id = {$pid}
+                {$strQS}
+                AND if('' = '{$strMsgID}', true, q.msg_id = '{$strMsgID}')
+                and (CONCAT(',',a.value,',',a.alt_answers,',') rlike ',{$strResponse2},'
+                or IF('{$strResponse2}' RLIKE '^-?[0-9]+$', '{$strResponse2}', -999) between qs.low and qs.high
+                or q.qtype rlike 'FreeText|None|End|TOD')
+                LIMIT 1";
 
-// echo '<br>'.$query;
         $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
 
         if(isset($results[0])) {
@@ -111,11 +112,14 @@ and CONCAT(',',a.value,',',a.alt_answers,',') rlike ',{$strResponse},'
 LIMIT 1
 query;
 
-        echo '<br>'.$query;
+        echo '<br>MsgCPRules->getMixedValid()';
 
-        $results = $this->db->query($query);
-
-        return $results->row();
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        if(isset($results[0])) {
+            return $results[0];
+        } else {
+            return false;
+        }
 
     } //getMixedValid
 
