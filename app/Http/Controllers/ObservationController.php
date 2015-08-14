@@ -6,9 +6,11 @@ use App\ObservationMeta;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\Services\MsgChooser;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
 class ObservationController extends Controller {
 
@@ -57,15 +59,18 @@ class ObservationController extends Controller {
 //************* COMMENT UPDATE BLOCK *************
 
             $input = $request->input();
+            $user_blog = $user->blogId($user->ID);
             $comment = Comment::find($input['parent_id']);
             //$comment = new Comment();
             $comment_array = unserialize($comment['comment_content']);
             $comment_array[][$input['obs_key']] = $input['obs_value'];
             $comment->comment_content = serialize($comment_array);
             $comment->comment_type = 'state_app';
-            $commentBlogTable = 'wp_'.$user->getBlogId($user->ID).'_comments';
+            $commentBlogTable = 'wp_'.$user_blog.'_comments';
             $comment->setTable($commentBlogTable);
             $savedComm = $comment->save();
+
+//************* CREATE OBSERVATION BLOCK *************
 
             $newObservation = new Observation();
             $newObservation->comment_id = $comment->comment_ID;
@@ -81,8 +86,21 @@ class ObservationController extends Controller {
             $newObservation->obs_unit = '';
             //$savedObs = $newObservation->save();
 
+            //obtain message type
+            $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')
+                ->join('rules_questions','rules_question_sets.qid','=','rules_questions.qid')
+                ->select('rules_question_sets.qs_type')
+                ->where('rules_questions.msg_id',$newObservation->obs_key)
+                ->where('rules_question_sets.provider_id',$user_blog)
+                ->first();
+
+           // return response()->json($qsType->qs_type);
+
+            //Next Message Block
+            $msgChooser = new MsgChooser();
+            $msgChooser->setNextMessage($user_blog, $comment->comment_ID, $newObservation->obs_message_id,  $newObservation->obs_value, $qsType->qs_type);
             //Get Blog id for current user
-            $obsBlogTable = 'ma_'.$user->getBlogId($user->ID).'_observations';
+            $obsBlogTable = 'ma_'.$user_blog.'_observations';
             //Set tables names
             $newObservation->setTable($obsBlogTable);
             $savedObs = $newObservation->save();
