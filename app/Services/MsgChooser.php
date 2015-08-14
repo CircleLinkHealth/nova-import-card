@@ -36,7 +36,7 @@ class MsgChooser {
 
 
     public function setNextMessage($programId, $commentId, $msgId, $answer, $qsType) {
-        echo "<br>MsgChooser->setNextMessage() start";
+        echo "<br>MsgChooser->setNextMessage($programId | $commentId | $msgId | $answer | $qsType) start";
 
         // get comment
         $query = DB::connection('mysql_no_prefix')->table('wp_'.$programId.'_comments AS cm');
@@ -69,7 +69,8 @@ class MsgChooser {
         // current message info
         $msgCPRules = new MsgCPRules;
         $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', $programId, $qsType);
-        echo '<br>MsgChooser->setNextMessage() currQuestion->qtype = '.$currQuestionInfo->qtype.'';
+        echo '<br>MsgChooser->setNextMessage() currQuestionInfo->message['.$currQuestionInfo->msgtype.'] = '.$currQuestionInfo->message.'';
+        echo '<br>MsgChooser->setNextMessage() currQuestion answer = '.$answer.'';
 
         // get answerResponse
         $msgCPRules = new MsgCPRules;
@@ -80,27 +81,28 @@ class MsgChooser {
         }
         echo '<br>MsgChooser->setNextMessage() getValidAnswer result - qsid='.$answerResponse->qsid.' | qid='.$answerResponse->qid.' | aid='.$answerResponse->aid.' | action='.$answerResponse->action;
 
-        // extra processing (havent had this hit yet, this block needs work)
-        if(!empty($answerResponse->action) && ($currQuestionInfo->qtype == 'None')) {
+        // process answerResponse
+        if(!empty($answerResponse->action) && ($currQuestionInfo->qtype != 'None')) { // took out  && ($currQuestionInfo->qtype == 'None')
+            echo "<br>MsgChooser->setNextMessage() [[ 1 ]] action = ".$answerResponse->action;
             if(strpos($answerResponse->action, '(') === FALSE) {
+                echo "<br>MsgChooser->setNextMessage() [[ 2 ]] no params, simple";
                 $tmpfunc = $answerResponse->action;
-                echo "<br>MsgChooser->setNextMessage() [[ 1 ]] tmpfunc = ".$tmpfunc;
-                $tmpMsgId = $this->$tmpfunc();
-                echo "<br>MsgChooser->setNextMessage() [[ 2 ]] tmpMsgId = ".$tmpfunc;
+                $nextMsgId = $this->$tmpfunc();
             } else {
-                echo "<br>MsgChooser->setNextMessage() [[ 1 ]] no tmpfunc";
+                echo "<br>MsgChooser->setNextMessage() [[ 2 ]] has params, complex ";
                 $exe = explode( "(", $answerResponse->action, 2);
                 $params = array($exe[1]);
-                $tmpMsgId = call_user_func_array(array($this, $exe[0]), $params);
+                $nextMsgId = call_user_func_array(array($this, $exe[0]), $params);
             }
+            echo "<br>MsgChooser->setNextMessage() [[ 3 ]] nextMsgId = ".$nextMsgId;
 
-            echo "<br>MsgChooser->setNextMessage() [[ 3 ]] Provider: ".$programId.' QSType: '.$qsType;
-            echo '<br>MsgChooser->setNextMessage() Provider: '.$programId.' QSType: '.$qsType.' MsgID: '.$tmpMsgId;//die();
-            $ret =  $msgCPRules->getValidAnswer($programId, $qsType, $tmpMsgId);
-            echo '<br>MsgChooser->setNextMessage() return from valid answer: ';print_r($ret);
+            //echo '<br>MsgChooser->setNextMessage() Provider: '.$programId.' QSType: '.$qsType.' MsgID: '.$tmpMsgId;//die();
+            //$ret =  $msgCPRules->getValidAnswer($programId, $qsType, $tmpMsgId);
+            //echo '<br>MsgChooser->setNextMessage() return from valid answer: ';print_r($ret);
 
             //  get new information in case of loop
-            $nextQuestionInfo  = $msgCPRules->getQuestion($tmpMsgId, $userId, 'SMS_EN', $programId, $qsType);
+            $nextQuestionInfo  = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $programId, $qsType);
+            echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->message['.$nextQuestionInfo->msgtype.'] = '.$nextQuestionInfo->message.'';
             echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->qtype = '.$nextQuestionInfo->qtype.'';
 
         }
