@@ -32,130 +32,150 @@ class MsgChooser {
     private $programId;
 
     public function __construct() {
-        /*
-        $this->_ci->load->model('cpm_1_7_rules_model','rules');
-        $this->_ci->load->library('cpm_1_7_substitution_library');
-        $this->_ci->load->library('cpm_1_7_tod_library');
-        */
     }
 
 
-    public function getMessageResponse($userId, $commentId, $msgId) {
-        echo "<br>MsgChooser->getMessageResponse() start";
-
-        // instantiate user
-        $wpUser = WpUser::find($userId);
-        if (!$wpUser) {
-            echo "<br>MsgChooser->getMessageResponse() user not found";
-            return false;
-        }
-        $msgUser = new MsgUser;
-
-        // set user meta
-        $userMeta = $wpUser->userMeta();
+    public function setNextMessage($programId, $commentId, $msgId, $answer, $qsType) {
+        echo "<br>MsgChooser->setNextMessage($programId | $commentId | $msgId | $answer | $qsType) start";
 
         // get comment
-        $query = DB::connection('mysql_no_prefix')->table('wp_'.$wpUser->blogId().'_comments AS cm');
+        $query = DB::connection('mysql_no_prefix')->table('wp_'.$programId.'_comments AS cm');
         $query->select('cm.*');
         $query->where('comment_ID', '=', $commentId);
-        $query->where('user_id', '=', $userId);
         $query->limit('1');
         $comment = $query->first();
         if(empty($comment)) {
-            echo "<br>MsgChooser->getMessageResponse() comment not found";
+            echo "<br>MsgChooser->setNextMessage() comment not found";
             return false;
         }
 
-        // loop through comment_content and find matching msgId
+        // instantiate user
+        $userId = $comment->user_id;
+        $wpUser = WpUser::find($userId);
+        if (!$wpUser) {
+            echo "<br>MsgChooser->setNextMessage() user not found";
+            return false;
+        }
+        $msgUser = new MsgUser;
+        $userMeta = $wpUser->userMeta();
+
+        // loop through comment_content and find matching msgId (this doesnt do anything yet)
         $commentContent = unserialize($comment->comment_content);
-        echo "<br>MsgChooser->getMessageResponse() message list";
+        echo "<br>MsgChooser->setNextMessage() message list";
         $msgIdMatch = false;
-        foreach($commentContent as $row) {
-            echo "<br>".key($row).' -- '.$row[key($row)];
-            if(key($row) == $msgId) {
-                // found the message, get next response
-                $msgIdMatch = $msgId;
-                echo "<br>MsgChooser->getMessageResponse() found the message! Its $msgId";
-                // get the response to this message
-            }
+        foreach($commentContent as $row => $msg) {
         }
 
-
-        dd($this);
-        dd('MsgChooser->getMessageResponse() DONE');
-
-
-        /*
-        $userData = $msgUser->get_users_data($userId, 'id', $wpUser->blogId());//$userMeta = $wpUser->userMeta();
-
-        // set class vars
-        $this->key          = $userId;
-        $this->comment_id	= $userData[$userId]['usermeta']['comment_ID'];
-        $this->provid 		= $wpUser->blogId(); // Provider ID
-        $qstype				= $userData[$userId]['usermeta']['msgtype'];  // Question Group Type
-        $strResponse		= urldecode($userData[$userId]['usermeta']['curresp']);  // String sent to us by user.)
-        $userData[$this->key]['usermeta']['curresp'] = $strResponse;	// put updated value back.
-        //dd($userData[$userId]['usermeta']['wp_'.$this->provid.'_user_config']);
-        $strRespMeth 	    = $userData[$userId]['usermeta']['wp_'.$this->provid.'_user_config']['preferred_contact_method']."_".$userData[$userId]['usermeta']['wp_'.$this->provid.'_user_config']['preferred_contact_language'];
-        $this->smsMeth	= $strRespMeth;
-        $this->arrReturn 	= $userData; // copy of array for outside functions that are not getting array passed to them.
-
+        // current message info
         $msgCPRules = new MsgCPRules;
-        // locate msgid for last question asked
-        $lastMsgid = '';
-        if(!empty($arrPart[$this->key]['usermeta']['state'])) {
-            // there is a state record, get the last message
-            end($arrPart[$this->key]['usermeta']['state']);
-            $lastMsgKey =  key($arrPart[$this->key]['usermeta']['state']);
-            $lastMsgid =  key($arrPart[$this->key]['usermeta']['state'][$lastMsgKey]);
+        $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', $programId, $qsType);
+        echo '<br>MsgChooser->setNextMessage() currQuestionInfo->message['.$currQuestionInfo->msgtype.'] = '.$currQuestionInfo->message.'';
+        echo '<br>MsgChooser->setNextMessage() currQuestion answer = '.$answer.'';
+
+        // get answerResponse
+        $msgCPRules = new MsgCPRules;
+        $answerResponse =  $msgCPRules->getValidAnswer($programId, $qsType, $msgId, $answer);
+        if(!$answerResponse) {
+            echo '<br>MsgChooser->setNextMessage() getValidAnswer result FAIL, die..';die();
+            return false;
         }
+        echo '<br>MsgChooser->setNextMessage() getValidAnswer result - qsid='.$answerResponse->qsid.' | qid='.$answerResponse->qid.' | aid='.$answerResponse->aid.' | action='.$answerResponse->action;
 
-        // if unknown message is recieved, send unknown message
-        if(empty($this->comment_id) && !empty($strResponse)) {
-            $lastMsgid = 'CF_UNSOL_UNKNOWN';
-            $tmp  = $msgCPRules->getQuestion($lastMsgid, $this->key, $strRespMeth, $this->provid, $qstype);
-            $this->storeMsg($tmp);
-            error_log('Unknown message ['.$this->key.'] Sent us: '.$strResponse);
-            return $this->arrReturn;
-        }
-
-        // getValidAnswer
-        $ret = array();
-        $ret =  $msgCPRules->getValidAnswer($this->provid, $qstype, $lastMsgid, $strResponse);
-        echo '<br>MsgChooser->getNextMessage() getValidAnswer result - qsid='.$ret->qsid.' | qid='.$ret->qid.' | aid='.$ret->aid.' | action='.$ret->action;
-
-        $tmp  = $msgCPRules->getQuestion($lastMsgid, $this->key, $strRespMeth, $this->provid, $qstype);
-        echo '<br>MsgChooser->getNextMessage() getQuestion result - qtype='.$tmp->qtype.'';;
-
-        if(!empty($ret->action) && ($tmp->qtype == 'None')) {
-            if(strpos($ret->action, '(') === FALSE) {
-                $tmpfunc = $ret->action;
-                echo "<br>MsgChooser->nextMessage() [[ 1 ]] tmpfunc = ".$tmpfunc;
-                $tmpMsgId = $this->$tmpfunc();
-                echo "<br>MsgChooser->nextMessage() [[ 2 ]] tmpMsgId = ".$tmpfunc;
+        // process answerResponse
+        if(!empty($answerResponse->action) && ($currQuestionInfo->qtype != 'None')) { // took out  && ($currQuestionInfo->qtype == 'None')
+            echo "<br>MsgChooser->setNextMessage() [[ 1 ]] action = ".$answerResponse->action;
+            if(strpos($answerResponse->action, '(') === FALSE) {
+                echo "<br>MsgChooser->setNextMessage() [[ 2 ]] no params, simple";
+                $tmpfunc = $answerResponse->action;
+                $nextMsgId = $this->$tmpfunc();
             } else {
-                echo "<br>MsgChooser->nextMessage() [[ 1 ]] no tmpfunc";
-                $exe = explode( "(", $ret->action, 2);
+                echo "<br>MsgChooser->setNextMessage() [[ 2 ]] has params, complex ";
+                $exe = explode( "(", $answerResponse->action, 2);
                 $params = array($exe[1]);
-                $tmpMsgId = call_user_func_array(array($this, $exe[0]), $params);
+                $nextMsgId = call_user_func_array(array($this, $exe[0]), $params);
             }
+            echo "<br>MsgChooser->setNextMessage() [[ 3 ]] nextMsgId = ".$nextMsgId;
 
-            echo "<br>MsgChooser->nextMessage() [[ 3 ]] Provider: ".$this->provid.' QSType: '.$qstype;
-            //echo '<br>Provider: '.$this->provid.' QSType: '.$qstype.' MsgID: '.$tmpMsgId;//die();
-            $ret =  $msgCPRules->getValidAnswer($this->provid, $qstype, $tmpMsgId);
-            // echo '<br>return from valid answer: ';print_r($ret);
+            //echo '<br>MsgChooser->setNextMessage() Provider: '.$programId.' QSType: '.$qsType.' MsgID: '.$tmpMsgId;//die();
+            //$ret =  $msgCPRules->getValidAnswer($programId, $qsType, $tmpMsgId);
+            //echo '<br>MsgChooser->setNextMessage() return from valid answer: ';print_r($ret);
 
             //  get new information in case of loop
-            $tmp  = $msgCPRules->getQuestion($tmpMsgId, $this->key, $strRespMeth, $this->provid, $qstype);
+            $nextQuestionInfo  = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $programId, $qsType);
+            echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->message['.$nextQuestionInfo->msgtype.'] = '.$nextQuestionInfo->message.'';
+            echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->qtype = '.$nextQuestionInfo->qtype.'';
 
         }
 
-        echo '<br>MsgChooser->nextMessage() DONE';
-        dd('finito');
-        //echo '<br>MsgChooser->nextMessage() tmpResponse = '. $tmpResponse;
+        dd('MsgChooser->setNextMessage() DONE');
 
-        */
+        // sample array structure testing
+        $serial = serialize(
+            array(
+                0 => array(
+                    "CF_DM_HSP_10" => "1",
+                    "CF_HSP_20" => "C",
+                    "CF_HSP_EX_10" => "",
+                ),
+                1 => array(
+                    "CF_RPT_50" => ""
+                ),
+                2 => array(
+                    "CF_RPT_40" => ""
+                ),
+                3 => array(
+                    "CF_RPT_20" => ""
+                )
+            )
+        );
+        dd($serial);
+
     }
+
+        /*
+        $serial = serialize(array(
+            "CF_DM_HSP_10" => array(
+                "Answer" => "1",
+                "Response" => array(
+                    "CF_HSP_20" => array(
+                        "Answer" => "C",
+                        "Response" => array(
+                            "CF_HSP_EX_10" => array(
+                                "Answer" => "",
+                                "Response" => ""
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            "CF_RPT_40" => array(
+                "Answer" => "Y",
+                "Response" => ''
+            )
+        ));
+        dd($serial);
+        */
+
+        /*
+        $serial = serialize(
+            array(
+                0 => array(
+                    "CF_DM_HSP_10" => array(
+                        "Answer" => "1"),
+                    "CF_HSP_20" => array(
+                        "Answer" => "C"),
+                    "CF_HSP_EX_10" => array(
+                        "Answer" => ""),
+                ),
+                1 => array(
+                    "CF_RPT_40" => array(
+                        "Answer" => "Y")
+                ),
+            )
+        );
+        dd($serial);
+        */
+
 
 
 
