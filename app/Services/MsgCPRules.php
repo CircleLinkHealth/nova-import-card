@@ -375,9 +375,12 @@ query;
 
 // echo $query;
 
-        $results = $this->db->query($query);
-        $ret = $results->row();
-        return $ret->meta_value;
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        if(isset($results[0])) {
+            return $results[0]->meta_value;
+        } else {
+            return false;
+        }
 
     }//isCHF
 
@@ -450,22 +453,23 @@ query;
          *
          */
 
-        $query = <<<query
-select date_format(obs_date, '%Y-%m-%d') as obs_date, obs_value
-from ma_{$provid}_observations 
-where user_id = {$intID}
-and obs_key = 'Weight' 
-and date_format(obs_date, '%Y-%m-%d') < date_format(now(), '%Y-%m-%d')
-and obs_unit = ''
-order by obs_date desc
-limit 1
-query;
+        $query = "select date_format(obs_date, '%Y-%m-%d') as obs_date, obs_value
+            from ma_".$provid."_observations
+            where user_id = ".$intID."
+            and obs_key = 'Weight'
+            and date_format(obs_date, '%Y-%m-%d') < date_format(now(), '%Y-%m-%d')
+            and obs_unit = ''
+            order by obs_date desc
+            limit 1";
 
 // echo $query;
 
-        $results = $this->db->query($query);
-
-        return $results->row();
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        if(isset($results[0])) {
+            return $results[0];
+        } else {
+            return false;
+        }
 
     }//getLastWeight
 
@@ -523,9 +527,12 @@ query;
 
 // echo $query;
 
-        $results = $this->db->query($query);
-
-        return $results->row();
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        if(isset($results[0])) {
+            return $results[0];
+        } else {
+            return false;
+        }
 
     }//getTargetWeight
 
