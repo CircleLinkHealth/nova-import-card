@@ -90,7 +90,7 @@ class ObservationController extends Controller {
             $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')
                 ->join('rules_questions','rules_question_sets.qid','=','rules_questions.qid')
                 ->select('rules_question_sets.qs_type')
-                ->where('rules_questions.msg_id',$newObservation->obs_key)
+                ->where('rules_questions.msg_id',$newObservation->obs_message_id)
                 ->where('rules_question_sets.provider_id',$user_blog)
                 ->first();
 
@@ -98,6 +98,8 @@ class ObservationController extends Controller {
 
             //Next Message Block
             $msgChooser = new MsgChooser();
+            //$msgChooser->setNextMessage($programId, $commentId, $msgId, $answer, $qsType);
+            //setNextMessage(7, 28715, 'CF_HSP_20', 'C', *'HSP'*);
             $msgChooser->setNextMessage($user_blog, $comment->comment_ID, $newObservation->obs_message_id,  $newObservation->obs_value, $qsType->qs_type);
             //Get Blog id for current user
             $obsBlogTable = 'ma_'.$user_blog.'_observations';
