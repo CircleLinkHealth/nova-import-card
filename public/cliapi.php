@@ -144,44 +144,47 @@ echo "</div>";
 		// var_dump($_POST);
 	}
 }
-
-	$arrToken = getToken($u, $p, $curlOpt_url, $x_auth);
+	if (isset($u)) {
+		$arrToken = getToken($u, $p, $curlOpt_url, $x_auth);
 	
-	$curl = curl_init();
-
-	curl_setopt_array($curl, array(
-	  CURLOPT_URL => "$curlOpt_url"."careplan",
-	  CURLOPT_RETURNTRANSFER => true,
-	  CURLOPT_ENCODING => "",
-	  CURLOPT_MAXREDIRS => 10,
-	  CURLOPT_TIMEOUT => 30,
-	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	  CURLOPT_CUSTOMREQUEST => "GET",
-	  CURLOPT_HTTPHEADER => array(
-	    "authorization: Bearer " . $arrToken['token'],
-	    "client: mobi",
-	    "content-type: multipart/form-data; boundary=---011000010111000001101001",
-	    "x-authorization: $x_auth"
-	  ),
-	));
-	$jsonCarePlan = curl_exec($curl);
-	$err = curl_error($curl);
-
-	curl_close($curl);
-		$arrCarePlan = json_decode($jsonCarePlan, true);
-
-	if ($err || $jsonCarePlan == 'Unauthorized.' || !$arrCarePlan['User_ID']) {
-		echo "<BR>cURL Error #:" . $err . $jsonCarePlan;
-	var_dump("authorization: Bearer " . $arrToken['token']);
-	var_dump("x-authorization: $x_auth");
-		die("<span class='btn-danger'>Error Connecting to CarePlan Feed API</span></h6>");
-	} else {
-	// echo $jsonCarePlan;
-		// echo "<pre>"; var_export($arrCarePlan['User_ID']); echo "</pre>";
-		echo "<span class='btn-success'>CarePlan Feed Retrieval Sucessful.</span></h6>";
-
+		$curl = curl_init();
+		$arrCurl = array(
+		  CURLOPT_URL => "$curlOpt_url"."careplan",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "GET",
+		  CURLOPT_HTTPHEADER => array(
+		    "authorization: Bearer " . $arrToken['token'],
+		    "client: mobi",
+		    "content-type: multipart/form-data; boundary=---011000010111000001101001",
+		    "x-authorization: $x_auth"
+		  ),
+		);
+		curl_setopt_array($curl, $arrCurl);
+		$jsonCarePlan = curl_exec($curl);
+		$err = curl_error($curl);
+	
+		curl_close($curl);
+			$arrCarePlan = json_decode($jsonCarePlan, true);
+	
+		if ($err || $jsonCarePlan == 'Unauthorized.' || !$arrCarePlan['User_ID']) {
+			echo "<BR>cURL Error #:" . $err . $jsonCarePlan;
+		var_dump("authorization: Bearer " . $arrToken['token']);
+		var_dump("x-authorization: $x_auth");
+		  var_dump($arrToken);
+			unset($_COOKIE['resu']);
+			unset($_COOKIE['ssap']);
+			echo("<span class='btn-danger'>Error Connecting to CarePlan Feed API</span></h6>");
+		} else {
+		// echo $jsonCarePlan;
+			// echo "<pre>"; var_export($arrCarePlan['User_ID']); echo "</pre>";
+			echo "<span class='btn-success'>CarePlan Feed Retrieval Sucessful.</span></h6>";
+	
+		}
 	}
-
 ?>
 <div class="row col-lg-12 col-lg-offset-2" data-role="collapsible" data-theme="b">
 	<h2>Set User</h2>
@@ -206,14 +209,13 @@ foreach ($arrCarePlan['CP_Feed'] as $key => $value) {
 
 	$arrSectionOrder = array();
 	$arrSectionOrder = array('Messages','Biometric','DMS','Symptoms','Reminders');
-
 	foreach ($arrSectionOrder as $section) {
-		if($section == 'Symptoms') {
+
+		if($section == 'Symptoms' && $arrCarePlan['CP_Feed'][$key]['Feed'][$section][0]['MessageID']) {
 			echo '<div class="row col-lg-12 col-lg-offset-2" data-role="collapsible" data-theme="b">';
-			echo "<h3>Would you like to report any Symptoms?</h3>";
+			echo "<h3>Any symptoms today?</h3>".$arrCarePlan['CP_Feed'][$key]['Feed'][$section]['MessageID'];
 		}
 		foreach($arrCarePlan['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio){
-			// var_dump($arrBio['ReturnFieldType']);
 
 			echo(getForm($arrBio,null));
 			
@@ -227,7 +229,7 @@ foreach ($arrCarePlan['CP_Feed'] as $key => $value) {
 			}
 
 		}
-		if($section == 'Symptoms') { echo "</div><hr>\n";	}
+		if($section == 'Symptoms' && $arrCarePlan['CP_Feed'][$key]['Feed'][$section][0]['MessageID']) { echo "</div><hr>\n";	}
 	}
 ?></div> <?php	
 }
@@ -342,8 +344,7 @@ function getToken($u=null, $p=null, $curlOpt_url, $x_auth) {
 
 
 		$curl = curl_init();
-
-	curl_setopt_array($curl, array(
+		$arrCurl = array(
 	  CURLOPT_URL => "$curlOpt_url"."login",
 	  CURLOPT_RETURNTRANSFER => true,
 	  CURLOPT_ENCODING => "",
@@ -355,14 +356,18 @@ function getToken($u=null, $p=null, $curlOpt_url, $x_auth) {
 	  CURLOPT_HTTPHEADER => array(
 	    "content-type: multipart/form-data; boundary=---011000010111000001101001"
 	  ),
-	));
+	);
+	curl_setopt_array($curl, $arrCurl);
 	$jsonToken = curl_exec($curl);
 	$err = curl_error($curl);
 
 	curl_close($curl);
-	if ($err && !$jsonToken) {
+	if ($err || !$jsonToken || $jsonToken['error'] == '') {
 	  echo "Token cURL Error #:" . $err;
-		die("<BR><BR>Error Connecting to Login API<BR>$x_auth<BR>");
+	  var_dump($jsonToken);
+ 			unset($_COOKIE['resu']);
+ 			unset($_COOKIE['ssap']);
+		echo("<BR><BR>Error Connecting to Login API<BR>$x_auth<BR>");
 	} else {
 		$arrToken = json_decode($jsonToken, true);
 // var_export($arrToken);
@@ -373,23 +378,23 @@ function getToken($u=null, $p=null, $curlOpt_url, $x_auth) {
 
 function postObservation($curlOpt_url, $x_auth, $obs_key, $obs_value, $message_id, $obs_date, $arrToken) {
 	$curl = curl_init();
-
-curl_setopt_array($curl, array(
-  CURLOPT_URL => "$curlOpt_url"."observation",
-  CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_ENCODING => "",
-  CURLOPT_MAXREDIRS => 10,
-  CURLOPT_TIMEOUT => 30,
-  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-  CURLOPT_CUSTOMREQUEST => "POST",
-  CURLOPT_POSTFIELDS => "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"obs_key\"\r\n\r\n$obs_key\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"obs_value\"\r\n\r\n$obs_value\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"obs_message_id\"\r\n\r\n$message_id\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"obs_date\"\r\n\r\n$obs_date\r\n-----011000010111000001101001--",
-  CURLOPT_HTTPHEADER => array(
-    "authorization: Bearer ". $arrToken['token'] ,
-    "client: mobi",
-    "content-type: multipart/form-data; boundary=---011000010111000001101001",
-    "x-authorization: $x_auth"
-  ),
-));
+	$arrCurl = array(
+	  CURLOPT_URL => "$curlOpt_url"."observation",
+	  CURLOPT_RETURNTRANSFER => true,
+	  CURLOPT_ENCODING => "",
+	  CURLOPT_MAXREDIRS => 10,
+	  CURLOPT_TIMEOUT => 30,
+	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	  CURLOPT_CUSTOMREQUEST => "POST",
+	  CURLOPT_POSTFIELDS => "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"obs_key\"\r\n\r\n$obs_key\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"obs_value\"\r\n\r\n$obs_value\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"obs_message_id\"\r\n\r\n$message_id\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"obs_date\"\r\n\r\n$obs_date\r\n-----011000010111000001101001--",
+	  CURLOPT_HTTPHEADER => array(
+	    "authorization: Bearer ". $arrToken['token'] ,
+	    "client: mobi",
+	    "content-type: multipart/form-data; boundary=---011000010111000001101001",
+	    "x-authorization: $x_auth"
+	  ),
+	);
+curl_setopt_array($curl, $arrCurl);
 echo "$obs_key: [$message_id] = $obs_value <BR>";
 // echo "$curlOpt_url, $x_auth<BR>";
 $response = curl_exec($curl);
@@ -399,6 +404,10 @@ curl_close($curl);
 
 if ($err) {
   echo "cURL Error #:" . $err;
+  var_dump($arrCurl);
+		unset($_COOKIE['resu']);
+		unset($_COOKIE['ssap']);
+		die("<BR><BR>Error Connecting to Observation API<BR>$x_auth<BR>");
 } else {
   echo $response;
 }
