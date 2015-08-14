@@ -395,14 +395,12 @@ query;
          *
          */
 
-        $sql = <<<query
-select o.obs_key, o.obs_value
-from ma_{$provid}_observations o
-where o.user_id = {$user_id}
-and date(o.obs_date) = date(now())
-and o.obs_unit = ''
-and o.obs_key in ('Blood_Sugar', 'Blood_Pressure', 'Weight', 'Cigarettes')
-query;
+        $sql = "select o.obs_key, o.obs_value
+            from ma_".$provid."_observations o
+            where o.user_id = ".$user_id."
+            and date(o.obs_date) = date(now())
+            and o.obs_unit = ''
+            and o.obs_key in ('Blood_Sugar', 'Blood_Pressure', 'Weight', 'Cigarettes')";
 
 // echo $query;
         $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );

@@ -38,6 +38,9 @@ class MsgChooser {
     }
 
     public function setNextMessage($programId, $commentId, $msgId, $answer, $qsType, $debug = true) {
+        $msgUser = new MsgUser;
+        $msgCPRules = new MsgCPRules;
+        $msgSubstitutions = new MsgSubstitutions;
 
         echo "<br>MsgChooser->setNextMessage($programId | $commentId | $msgId | $answer | $qsType) start";
 
@@ -59,7 +62,6 @@ class MsgChooser {
             echo "<br>MsgChooser->setNextMessage() user not found";
             return false;
         }
-        $msgUser = new MsgUser;
         $userMeta = $wpUser->userMeta();
 
         // set class vars
@@ -74,8 +76,8 @@ class MsgChooser {
         }
 
         // current message info
-        $msgCPRules = new MsgCPRules;
         $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', $programId, $qsType);
+        $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->provid, $this->key);
         echo '<br>MsgChooser->setNextMessage() currQuestionInfo->message['.$currQuestionInfo->msgtype.'] = '.$currQuestionInfo->message.'';
         echo '<br>MsgChooser->setNextMessage() currQuestion answer = '.$answer.'';
 
@@ -108,9 +110,9 @@ class MsgChooser {
 
             //  get new information in case of loop
             $nextQuestionInfo  = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $programId, $qsType);
+            $nextQuestionInfo->message = $msgSubstitutions->doSubstitutions($nextQuestionInfo->message, $this->provid, $this->key);
             echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->message['.$nextQuestionInfo->msgtype.'] = '.$nextQuestionInfo->message.'';
             echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->qtype = '.$nextQuestionInfo->qtype.'';
-
         }
 
         //dd('MsgChooser->setNextMessage() DONE');
