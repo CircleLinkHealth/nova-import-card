@@ -57,7 +57,7 @@
                         "Obs_Key": "TOD",
                         "ParentID": "601",
                         "MessageIcon": "tip",
-                        "MessageContent": "You can eat dessert! Try fruit, low-fat or nonfat versions of treats such as ice cream, or cakes and cookies made with unsaturated fats.",
+                        "MessageContent": "You can eat dessert! Try fruit, <a href='http://tinyurl.com/blah?a=123'>Click here for great recipes</a>.",
                         "ReturnFieldType": "None",
                         "ReturnDataRangeLow": null,
                         "ReturnDataRangeHigh": null,
@@ -528,7 +528,125 @@
                         "ResponseDate": null
                     }
                 ],
-                "Symptoms": []
+                "Symptoms": [
+                    {
+                        "MessageID": "CF_SYM_11",
+                        "Obs_Key": "Severity",
+                        "ParentID": "603",
+                        "MessageIcon": "question",
+                        "MessageContent": "Shortness of breath",
+                        "ReturnFieldType": "Range",
+                        "ReturnDataRangeLow": "0",
+                        "ReturnDataRangeHigh": "9",
+                        "ReturnValidAnswers": null,
+                        "PatientAnswer": 2,
+                        "ResponseDate": "2015-06-29 23:41:15",
+                        "Response": {
+                            "MessageID": "CF_SYM_40",
+                            "Obs_Key": "Other",
+                            "ParentID": "603",
+                            "MessageIcon": "info",
+                            "MessageContent": "We are sorry that you are having Problems. Call the clinic if it continues, or gets worse (over 6 on scale of 0-9)",
+                            "ReturnFieldType": "None",
+                            "ReturnDataRangeLow": null,
+                            "ReturnDataRangeHigh": null,
+                            "ReturnValidAnswers": null,
+                            "PatientAnswer": null,
+                            "ResponseDate": null
+                        }
+                    },
+                    {
+                        "MessageID": "CF_SYM_12",
+                        "Obs_Key": "Symptom",
+                        "ParentID": "603",
+                        "MessageIcon": "question",
+                        "MessageContent": "Coughing or wheezing",
+                        "ReturnFieldType": "Range",
+                        "ReturnDataRangeLow": "0",
+                        "ReturnDataRangeHigh": "9",
+                        "ReturnValidAnswers": null,
+                        "PatientAnswer": null,
+                        "ResponseDate": null
+                    },
+                    {
+                        "MessageID": "CF_SYM_13",
+                        "Obs_Key": "Symptom",
+                        "ParentID": "603",
+                        "MessageIcon": "question",
+                        "MessageContent": "Chest pain or Chest tightness",
+                        "ReturnFieldType": "Range",
+                        "ReturnDataRangeLow": "0",
+                        "ReturnDataRangeHigh": "9",
+                        "ReturnValidAnswers": null,
+                        "PatientAnswer": null,
+                        "ResponseDate": null
+                    },
+                    {
+                        "MessageID": "CF_SYM_14",
+                        "Obs_Key": "Symptom",
+                        "ParentID": "603",
+                        "MessageIcon": "question",
+                        "MessageContent": "Fatigue",
+                        "ReturnFieldType": "Range",
+                        "ReturnDataRangeLow": "0",
+                        "ReturnDataRangeHigh": "9",
+                        "ReturnValidAnswers": null,
+                        "PatientAnswer": null,
+                        "ResponseDate": null
+                    },
+                    {
+                        "MessageID": "CF_SYM_15",
+                        "Obs_Key": "Symptom",
+                        "ParentID": "603",
+                        "MessageIcon": "question",
+                        "MessageContent": "Weakness or dizziness",
+                        "ReturnFieldType": "Range",
+                        "ReturnDataRangeLow": "0",
+                        "ReturnDataRangeHigh": "9",
+                        "ReturnValidAnswers": null,
+                        "PatientAnswer": null,
+                        "ResponseDate": null
+                    },
+                    {
+                        "MessageID": "CF_SYM_16",
+                        "Obs_Key": "Symptom",
+                        "ParentID": "603",
+                        "MessageIcon": "question",
+                        "MessageContent": "Swelling in legs/feet",
+                        "ReturnFieldType": "Range",
+                        "ReturnDataRangeLow": "0",
+                        "ReturnDataRangeHigh": "9",
+                        "ReturnValidAnswers": null,
+                        "PatientAnswer": null,
+                        "ResponseDate": null
+                    },
+                    {
+                        "MessageID": "CF_SYM_17",
+                        "Obs_Key": "Symptom",
+                        "ParentID": "603",
+                        "MessageIcon": "question",
+                        "MessageContent": "Feeling down, a sense of helplessness or sleep changes/problems",
+                        "ReturnFieldType": "Range",
+                        "ReturnDataRangeLow": "0",
+                        "ReturnDataRangeHigh": "9",
+                        "ReturnValidAnswers": null,
+                        "PatientAnswer": null,
+                        "ResponseDate": null
+                    },
+                    {
+                        "MessageID": "CF_SYM_70",
+                        "Obs_Key": "Call",
+                        "ParentID": "603",
+                        "MessageIcon": "question",
+                        "MessageContent": "Please have clinic call me",
+                        "ReturnFieldType": "Range",
+                        "ReturnDataRangeLow": "0",
+                        "ReturnDataRangeHigh": "9",
+                        "ReturnValidAnswers": null,
+                        "PatientAnswer": null,
+                        "ResponseDate": null
+                    }
+]
             }
        },
         {
