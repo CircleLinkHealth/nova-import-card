@@ -73,7 +73,7 @@
                         {!! Form::close() !!}
 
                         <h1>Activities</h1>
-                        <p>Current monthly total (recalculated on the fly) : {{ ($activityTotal / 60) }}</p>
+                        <p>Current monthly total (recalculated on the fly) : {{ $activityTotal }} seconds</p>
                         <a href="/wpusers/{{ $wpUser->ID }}?action=recalcActivities" class="recalcActivities"><span class="glyphicon glyphicon-refresh"></span> Recalculate Monthly Total</a>
 
                     </div>

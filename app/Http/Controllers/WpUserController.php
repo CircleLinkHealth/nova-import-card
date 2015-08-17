@@ -5,10 +5,15 @@ use App\WpBlog;
 use App\Location;
 use App\WpUser;
 use App\WpUserMeta;
+use App\Services\ActivityService;
+use App\Services\CareplanService;
+use App\Services\MsgUser;
+use App\Services\MsgUI;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
 use PasswordHash;
+use Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -113,7 +118,8 @@ class WpUserController extends Controller {
 		if(!empty($params)) {
 			if(isset($params['action'])) {
 				if($params['action'] == 'recalcActivities') {
-					$result = (new Activity())->reprocessMonthlyActivityTime($id);
+					$activityService = new ActivityService;
+					$result = $activityService->reprocessMonthlyActivityTime($id);
 					if ($result) {
 						$messageKey = 'success';
 						$messageValue = 'User activities have been recalculated';
@@ -131,7 +137,8 @@ class WpUserController extends Controller {
 			}
 		}
 		$wpUser = WpUser::find($id);
-		$activiyTotal = (new Activity())->getTotalActivityTimeForMonth($id);
+		$activityService = new ActivityService;
+		$activiyTotal = $activityService->getTotalActivityTimeForMonth($id);
 		if($wpUser) {
 			return view('wpUsers.show', ['wpUser' => $wpUser, 'activityTotal' => $activiyTotal,
 				$messageKey => $messageValue]);
@@ -256,10 +263,124 @@ class WpUserController extends Controller {
 	 *
 	 * @param  int  $id
 	 * @return Response
+	 *
 	 */
 	public function destroy($id)
 	{
 		//
 	}
 
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function showMsgCenter(Request $request, $id)
+	{
+		$params = $request->input();
+		$wpUser = WpUser::find($id);
+		if(!$wpUser) {
+			return response("User not found", 401);
+		}
+		$userMeta = $wpUser->userMeta();
+		if(!empty($params)) {
+			if(isset($params['action'])) {
+				if($params['action'] == 'sendTextSimulation') {
+					// send text
+					$api = $wpUser->blogId();
+					$msgid = 'xOx';
+					$phone = $userMeta['user_config']['study_phone_number'];
+					$msg = 'Some Text Responseee';
+					$msg = str_replace("'", "''", $msg);
+					// $msg = preg_replace('/[^0-9a-zA-Z \/]/', ' ', urldecode($msg));
+					$msg = preg_replace("/[_]/", "", urldecode($msg)); // remove underscores as they will be used to replace forward slashes
+					$msg = preg_replace("/[\/]/", '_', $msg); // change forward slashes to underscores
+					$msg = preg_replace("/[^0-9a-zA-Z _]/", '', $msg);  // remove all non-alphanumeric characters
+
+					// public function getInboundStream($intBlogId, $hexMoMsgId, $strPhoneNumber, $strResponseMessage)
+					$inboundsms = 'MsgReceiver->getInboundStream(/'.$msgid.'/'.$phone.'/'.str_replace(array(' ',','),array('%20',''),$msg) . ')';
+
+					dd($inboundsms);
+					return redirect()->back()->with('messages', ['successfully did something']);
+				}
+			}
+		}
+		/*
+		$arrPart = array($wpUser->ID => array());
+		$arrPart[$wpUser->ID]['usermeta'] = $userMeta;
+		$arrPart[$wpUser->ID]['usermeta']['curresp'] = 'SYM';
+		$arrPart[$wpUser->ID]['usermeta']['intProgramId'] = $wpUser->blogId();
+		$msgUser = new MsgUser;
+		$userSmsState = $msgUser->userSmsState($arrPart);
+		dd($userSmsState);
+		*/
+		//dd('dies early');
+
+		$msgUI = new MsgUI;
+
+		$msgUsers = new MsgUser;
+		$commentsForUser = $msgUsers->get_comments_for_user($wpUser->ID, $wpUser->blogId());
+		//dd($commentsForUser);
+		$comments = array();
+		if(!empty($commentsForUser)) {
+			foreach($commentsForUser as $comment) {
+				$comments[$comment->comment_ID] = array(
+					'comment_type' => $comment->comment_type,
+					'comment_author' => $comment->comment_author,
+					'comment_date' => $comment->comment_date,
+					'comment_approved' => $comment->comment_approved,
+					'comment_parent' => $comment->comment_parent,
+					'comment_content' => $comment->comment_content,
+					'comment_content_array' => unserialize($comment->comment_content),
+				);
+			}
+		}
+
+		// get dates
+		$date1 = date('Y-m-d');
+		$date2 = date('Y-m-d', time() - 60 * 60 * 24);
+		$date3 = date('Y-m-d', time() - ((60 * 60 * 24) * 2));
+		$dates = array($date1, $date2, $date3);
+		if(empty($dates)) {
+			return response("Date array is required", 401);
+		}
+
+		// get feed
+		$careplanService = new CareplanService;
+		$cpFeed = $careplanService->getCareplan($wpUser, $dates);
+
+		//$cpFeed = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')), 1);
+
+		// set careplan feed vars for blade
+		foreach ($cpFeed['CP_Feed'] as $key => $value) {
+			$cpFeedSections = array('Biometric','DMS','Symptoms','Reminders');
+			foreach ($cpFeedSections as $section) {
+				if($section == 'Symptoms') {
+					//echo '<div class="row col-lg-12 col-lg-offset-2" data-role="collapsible" data-theme="b">';
+					//echo "<h3>Would you like to report any Symptoms?</h3>";
+				}
+				foreach($cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio){
+					$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] = $msgUI->getForm($arrBio,null);
+					//echo($msgUI->getForm($arrBio,null));
+
+					if(isset($arrBio['Response'])) {
+						//echo($msgUI->getForm($arrBio['Response'],' col-lg-offset-1'));
+						$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['formHtml'] = $msgUI->getForm($arrBio['Response'],' col-lg-offset-1');
+						if(isset($arrBio['Response']['Response'])) {
+							//echo($msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-3'));
+							$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['Response']['formHtml'] = $msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-1');
+						}
+					}
+				}
+				if($section == 'Symptoms') {
+					//echo "</div><hr>\n";
+				}
+			}
+		}
+
+		//dd($cpFeed['CP_Feed']);
+		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array()]);
+	}
 }

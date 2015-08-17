@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Services\ActivityService;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\PageTimer;
@@ -138,6 +139,9 @@ class PageTimerController extends Controller {
 
 					// if rule exists, create activity
 					$activityId = Activity::createNewActivity($activiyParams);
+
+					$activityService = new ActivityService;
+					$result = $activityService->reprocessMonthlyActivityTime($pageTime->patient_id);
 				}
 
 				// update pagetimer

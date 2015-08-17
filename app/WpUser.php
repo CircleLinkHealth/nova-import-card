@@ -80,6 +80,31 @@ class WpUser extends Model {
         }
     }
 
+    public function userConfig(){
+        $key = 'wp_'.$this->blogId().'_user_config';
+        $userConfig = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key',$key)->first();
+        if(!$userConfig) {
+            return false;
+        } else {
+            return unserialize($userConfig['meta_value']);
+        }
+    }
+
+    public function userMeta($key=null){
+        $userMeta = $this->meta->lists('meta_value', 'meta_key');
+        $userMeta['user_config'] = $this->userConfig();
+        if(!$userMeta) {
+            return false;
+        } else {
+            return $userMeta;
+        }
+    }
+
+
+
+
+
+
     public function getWpUserWithMeta($user_id)
     {
         $wpUser = WpUser::where('ID', '=', $user_id)->first();

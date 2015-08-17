@@ -1,6 +1,10 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\WpUser;
+use App\Observation;
+use App\WpUserMeta;
+use App\Services\CareplanService;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
@@ -43,17 +47,41 @@ class CareplanController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show()
+	public function show(Request $request, $id = false)
 	{
-        \JWTAuth::setIdentifier('ID');
-        $user = \JWTAuth::parseToken()->authenticate();
-        if(!$user) {
-            return response()->json(['error' => 'invalid_credentials'], 401);
-        } else {
-            //Dummy JSON Data for careplan
-            $str_data = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')));
-            return response()->json($str_data);
-        }
+		if ( $request->header('Client') == 'mobi' ) {
+			// get and validate current user
+			\JWTAuth::setIdentifier('ID');
+			$wpUser = \JWTAuth::parseToken()->authenticate();
+			if (!$wpUser) {
+				return response()->json(['error' => 'invalid_credentials'], 401);
+			}
+		} else {
+			// get user
+			$wpUser = WpUser::find($id);
+			if (!$wpUser) {
+				return response("User not found", 401);
+			}
+		}
+
+		// Dummy JSON Data for careplan
+		$str_data = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')));
+		return response()->json($str_data);
+
+		// get dates
+		$date1 = date('Y-m-d');
+		$date2 = date('Y-m-d', time() - 60 * 60 * 24);
+		$date3 = date('Y-m-d', time() - ((60 * 60 * 24) * 2));
+		$dates = array($date1, $date2, $date3);
+		if(empty($dates)) {
+			return response("Date array is required", 401);
+		}
+
+		// get feed
+		$careplanService = new CareplanService;
+		$feed = $careplanService->getCareplan($wpUser, $dates);
+
+		return response()->json($feed);
 	}
 
 	/**

@@ -70,11 +70,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->user_pass;
 	}
 
-    public static function getBlogId($user_id){
-        $blogID = WpUserMeta::select('meta_value')->where('user_id', $user_id)->where('meta_key','primary_blog')->first();
-        return $blogID['meta_value'];
-    }
+	public function meta()
+	{
+		return $this->hasMany('App\WpUserMeta', 'user_id', 'ID');
+	}
 
+	public function comment()
+	{
+		return $this->hasMany('App\Comment', 'user_id', 'ID');
+	}
+
+	public function activities()
+	{
+		return $this->hasMany('App\Activity');
+	}
 
 	public function role($blogId = false)
 	{
