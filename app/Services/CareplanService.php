@@ -101,7 +101,7 @@ class CareplanService {
 					"ParentID" => $obs->comment_parent,
 					"MessageIcon" => "question",
 					"MessageContent" => $obs->sms_en,
-					"ReturnFieldType" => "None",
+					"ReturnFieldType" => $obs->qtype,
 					"ReturnDataRangeLow" => null,
 					"ReturnDataRangeHigh" => null,
 					"ReturnValidAnswers" => null,
