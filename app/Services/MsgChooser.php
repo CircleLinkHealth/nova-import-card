@@ -2,6 +2,7 @@
 
 use App\WpUser;
 use App\WpUserMeta;
+use App\Comment;
 use App\Services\MsgCPRules;
 use App\Services\MsgSubstitutions;
 use App\Services\MsgTod;
@@ -37,26 +38,9 @@ class MsgChooser {
     public function __construct() {
     }
 
-    public function setNextMessage($programId, $commentId, $msgId, $answer, $qsType, $debug = true) {
-        $msgUser = new MsgUser;
-        $msgCPRules = new MsgCPRules;
-        $msgSubstitutions = new MsgSubstitutions;
-
-        echo "<br>MsgChooser->setNextMessage($programId | $commentId | $msgId | $answer | $qsType) start";
-
-        // get comment
-        $query = DB::connection('mysql_no_prefix')->table('wp_'.$programId.'_comments AS cm');
-        $query->select('cm.*');
-        $query->where('comment_ID', '=', $commentId);
-        $query->limit('1');
-        $comment = $query->first();
-        if(empty($comment)) {
-            echo "<br>MsgChooser->setNextMessage() comment not found";
-            return false;
-        }
+    public function setNextMessage($userId, $commentId, $msgId, $answer, $debug = true) {
 
         // instantiate user
-        $userId = $comment->user_id;
         $wpUser = WpUser::find($userId);
         if (!$wpUser) {
             echo "<br>MsgChooser->setNextMessage() user not found";
@@ -64,9 +48,33 @@ class MsgChooser {
         }
         $userMeta = $wpUser->userMeta();
 
+        //obtain message type
+        $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')
+            ->join('rules_questions','rules_question_sets.qid','=','rules_questions.qid')
+            ->select('rules_question_sets.qs_type')
+            ->where('rules_questions.msg_id',$msgId)
+            ->where('rules_question_sets.provider_id',$wpUser->blogId())
+            ->first();
+        $qsType = $qsType->qs_type;
+
+        $msgUser = new MsgUser;
+        $msgCPRules = new MsgCPRules;
+        $msgSubstitutions = new MsgSubstitutions;
+
+        $this->log = "<br>MsgChooser->setNextMessage(".$wpUser->blogId()." | $commentId | $msgId | $answer | $qsType) start";
+
+        // get comment
+        $comment = new Comment;
+        $comment->setTable('wp_'.$wpUser->blogId().'_comments');
+        $comment = $comment->find($commentId);
+        if (!$comment) {
+            echo "<br>MsgChooser->setNextMessage() comment not found";
+            return false;
+        }
+
         // set class vars
         $this->key = $comment->user_id;
-        $this->provid = $programId;
+        $this->provid = $wpUser->blogId();
 
         // loop through comment_content and find matching msgId (this doesnt do anything yet)
         $commentContent = unserialize($comment->comment_content);
@@ -76,13 +84,13 @@ class MsgChooser {
         }
 
         // current message info
-        $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', $programId, $qsType);
+        $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', $wpUser->blogId(), $qsType);
         $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->provid, $this->key);
         echo '<br>MsgChooser->setNextMessage() currQuestionInfo->message['.$currQuestionInfo->msgtype.'] = '.$currQuestionInfo->message.'';
         echo '<br>MsgChooser->setNextMessage() currQuestion answer = '.$answer.'';
 
         // get answerResponse
-        $answerResponse =  $msgCPRules->getValidAnswer($programId, $qsType, $msgId, $answer);
+        $answerResponse =  $msgCPRules->getValidAnswer($wpUser->blogId(), $qsType, $msgId, $answer);
         if(!$answerResponse) {
             echo '<br>MsgChooser->setNextMessage() getValidAnswer result FAIL, die..';die();
             return false;
@@ -109,16 +117,20 @@ class MsgChooser {
             //echo '<br>MsgChooser->setNextMessage() return from valid answer: ';print_r($ret);
 
             //  get new information in case of loop
-            $nextQuestionInfo  = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $programId, $qsType);
+            $nextQuestionInfo  = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $wpUser->blogId(), $qsType);
             $nextQuestionInfo->message = $msgSubstitutions->doSubstitutions($nextQuestionInfo->message, $this->provid, $this->key);
             echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->message['.$nextQuestionInfo->msgtype.'] = '.$nextQuestionInfo->message.'';
             echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->qtype = '.$nextQuestionInfo->qtype.'';
         }
 
-        //dd('MsgChooser->setNextMessage() DONE');
+        echo '<br>MsgChooser->setNextMessage() finished';
+        dd('die here for testing');
 
-        // sample array structure testing
-        $serial = serialize(
+    }
+
+    // sample array structure testing
+    /*
+     * $serial = serialize(
             array(
                 0 => array(
                     "CF_DM_HSP_10" => "1",
@@ -142,9 +154,7 @@ class MsgChooser {
                 )
             )
         );
-        dd($serial);
-
-    }
+     */
 
         /*
         $serial = serialize(array(
