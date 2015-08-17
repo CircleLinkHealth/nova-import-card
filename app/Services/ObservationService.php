@@ -1,8 +1,11 @@
 <?php namespace App\Services;
 
 use App\Activity;
+use App\Comment;
+use App\Observation;
 use App\WpUser;
 use App\WpUserMeta;
+use Carbon\Carbon;
 
 class ObservationService {
 
