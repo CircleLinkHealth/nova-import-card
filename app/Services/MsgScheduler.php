@@ -281,12 +281,14 @@ class MsgScheduler {
         $msgCPRules = new MsgCPRules;
         $arrQS = $msgCPRules->getNextList($provider_id, $user_id, $qstype, $qtype);
         $tmpArr = array();
+        $appArr = array();
         $i = 0;
         foreach ($arrQS as $key ) {
             // check if messages is allowed to be sent today
             if(($key->pcp_status == 'Active' || ($key->ucp_status == 'Active' && strpos($key->cdays, date('N')) !== FALSE))){
                 // $tmpArr[$i++][$key['msg_id']] = '';
                 $tmpArr[$i++][$key->msg_id] = $key->obs_key;
+                $appArr[$i++] = array($key->msg_id => "");
             }
         }
         // $serialOutboundMessage = serialize($tmpArr);
@@ -294,6 +296,9 @@ class MsgScheduler {
         // write out commecomment_IDnt record
         $msgDelivery = new MsgDelivery;
         $lastkey = $msgDelivery->writeOutboundSmsMessage($user_id,$tmpArr,$strMessageId, 'scheduled',$provider_id);
+
+        // write for state_app
+        $lastkey = $msgDelivery->writeOutboundSmsMessage($user_id,$appArr,$strMessageId, 'state_app',$provider_id);
 
         // write out observation records
         foreach ($tmpArr as $key => $value) {

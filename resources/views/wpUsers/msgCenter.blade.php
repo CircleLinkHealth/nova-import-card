@@ -6,11 +6,6 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet"  href="//demos.jquerymobile.com/1.4.5/css/themes/default/jquery.mobile-1.4.5.min.css"/>
     <link rel="stylesheet" href="//demos.jquerymobile.com/1.4.5/_assets/css/jqm-demos.css"/>
-
-    <script type='text/javascript' src="//demos.jquerymobile.com/1.4.5/_assets/js/index.js"></script>
-    <script type='text/javascript' src='//code.jquery.com/jquery-2.1.4.js'></script>
-    <script type='text/javascript' src="//demos.jquerymobile.com/1.4.5/js/jquery.mobile-1.4.5.min.js"></script>
-    <script type='text/javascript' src="//demos.jquerymobile.com/1.4.5/js/jquery.js"></script>
     <style id="full-width-slider">
         /* Hide the number input */
         .full-width-slider input {
@@ -97,11 +92,11 @@
                             No feed data to show?
                         @else
                             @foreach( $cpFeed['CP_Feed'] as $key => $value )
-                                <div class="row col-lg-12" data-role="collapsible" data-theme="a">
-                                    <h2>{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}</h2>
+                                <div class="row col-lg-12">
+                                    <h2 >{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}</h2>
                                     @foreach( $cpFeedSections as $section )
                                         @if ($section == 'Symptoms')
-                                           <div class="row col-lg-12 col-lg-offset-2" data-role="collapsible" data-theme="b"><h3>Would you like to report any Symptoms?</h3>
+                                           <div class="row col-lg-12 col-lg-offset-2"><h3>Would you like to report any Symptoms?</h3>
                                         @endif
 
                                            @foreach( $cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio )

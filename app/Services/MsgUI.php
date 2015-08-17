@@ -42,7 +42,7 @@ class MsgUI {
 			$type = null;
 			switch ($arrBio['ReturnFieldType']) {
 				case 'Range':
-					$type = "type='range' data-type='". $arrBio['ReturnFieldType']. "' min='" .$arrBio['ReturnDataRangeLow']. "' max='" .$arrBio['ReturnDataRangeHigh']. "' value='0' data-theme='b' data-track-theme='c'";
+					$type = "type='range' data-type='". $arrBio['ReturnFieldType']. "' min='" .$arrBio['ReturnDataRangeLow']. "' max='" .$arrBio['ReturnDataRangeHigh']. "' value='0'";
 					$formOutput .= "\n<input $type id='obs_value' name='obs_value' value='".$arrBio['PatientAnswer']."' REQUIRED>";
 					break;
 				case 'List':
@@ -55,7 +55,7 @@ class MsgUI {
 					$formOutput .= "<input $type class='form-control col-sm-1' id='obs_value' name='obs_value' value='".$arrBio['PatientAnswer']."' REQUIRED>";
 
 			}
-			$formOutput .= "<div class='ui-block-a'><button data-theme='b' class='btn btn-primary col-sm-1' type='submit'>SEND</button></div><br>\n";
+			$formOutput .= "<div><button class='btn btn-primary col-sm-2' type='submit'>SEND</button></div><br>\n";
 			$formOutput .= "</div>";
 		}
 		$formOutput .= "</div>\n";
