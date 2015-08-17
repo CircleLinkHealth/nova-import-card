@@ -70,23 +70,18 @@
                         User ID: {{ $wpUser->ID }}
                     </div>
                     <div class="panel-body">
-                        @if (count($errors) > 0)
+                        @if (isset($error))
                             <div class="alert alert-danger">
-                                <strong>Whoops!</strong> There were some problems with your input.<br><br>
                                 <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
+                                    <li>{{ $error }}</li>
                                 </ul>
                             </div>
                         @endif
-                        @if (count($messages) > 0)
+
+                        @if (isset($success))
                             <div class="alert alert-success">
-                                <strong>Messages:</strong><br><br>
                                 <ul>
-                                    @foreach ($messages as $message)
-                                        <li>{{ $message }}</li>
-                                    @endforeach
+                                    <li>{{ $success }}</li>
                                 </ul>
                             </div>
                         @endif
@@ -121,6 +116,7 @@
                                         @if ($section == 'Symptoms')
                                             </div>
                                         @endif
+                                        <div style="clear:both;"></div>
                                     @endforeach
                                 </div>
                             @endforeach

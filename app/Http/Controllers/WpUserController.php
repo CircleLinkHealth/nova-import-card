@@ -7,8 +7,10 @@ use App\WpUser;
 use App\WpUserMeta;
 use App\Services\ActivityService;
 use App\Services\CareplanService;
+use App\Services\ObservationService;
 use App\Services\MsgUser;
 use App\Services\MsgUI;
+use App\Services\MsgChooser;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
@@ -279,12 +281,22 @@ class WpUserController extends Controller {
 	 */
 	public function showMsgCenter(Request $request, $id)
 	{
-		$params = $request->input();
+		$msgChooser = new MsgChooser;
+		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_HSP_20', 'C', 'HSP');
+		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_50', '7', 'RPT'); // bad
+		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_50', '0', 'RPT'); // great
+		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_40', '175', 'RPT');
+		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_REM_NAG_01', '', 'RPT');
+		//dd($result);
 		$wpUser = WpUser::find($id);
 		if(!$wpUser) {
 			return response("User not found", 401);
 		}
+		$params = $request->input();
 		$userMeta = $wpUser->userMeta();
+
+		$messageKey = '';
+		$messageValue = '';
 		if(!empty($params)) {
 			if(isset($params['action'])) {
 				if($params['action'] == 'sendTextSimulation') {
@@ -304,6 +316,16 @@ class WpUserController extends Controller {
 
 					dd($inboundsms);
 					return redirect()->back()->with('messages', ['successfully did something']);
+				} else if($params['action'] == 'save_app_obs') {
+					$observationService = new ObservationService;
+					$result = $observationService->storeObservationFromApp($id, $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['msg_id'], $params['obs_key']);
+					if($result) {
+						$messageKey = 'success';
+						$messageValue = 'Successfully saved new app observation.';
+					} else {
+						$messageKey = 'error';
+						$messageValue = 'Failed to save app observation.';
+					}
 				}
 			}
 		}
@@ -319,8 +341,8 @@ class WpUserController extends Controller {
 		//dd('dies early');
 
 		$msgUI = new MsgUI;
-
 		$msgUsers = new MsgUser;
+
 		$commentsForUser = $msgUsers->get_comments_for_user($wpUser->ID, $wpUser->blogId());
 		//dd($commentsForUser);
 		$comments = array();
@@ -352,6 +374,7 @@ class WpUserController extends Controller {
 		$cpFeed = $careplanService->getCareplan($wpUser, $dates);
 
 		//$cpFeed = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')), 1);
+		//dd($cpFeed);
 
 		// set careplan feed vars for blade
 		foreach ($cpFeed['CP_Feed'] as $key => $value) {
@@ -381,6 +404,6 @@ class WpUserController extends Controller {
 		}
 
 		//dd($cpFeed['CP_Feed']);
-		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array()]);
+		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array(), $messageKey => $messageValue]);
 	}
 }

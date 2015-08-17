@@ -27,10 +27,12 @@ class MsgUI {
 		if ($arrBio['ReturnFieldType'] == 'None' || $arrBio['PatientAnswer'] ) {
 			if ($arrBio['PatientAnswer'] )	$formOutput .= "<div class='col-sm-6'>You Answered: " . $arrBio['PatientAnswer'] . " @ <small>". date('h:i:s A',strtotime($arrBio['ResponseDate'])) . "</small></div>\n";
 		} else {
+			$formOutput .= "\n<input class='form-control' type='hidden' name='action' value='save_app_obs'>";
 			$formOutput .= "\n<input class='form-control' type='hidden' name='SUBMIT' value='OBS'>";
-			$formOutput .= "\n<input class='form-control' type='hidden' name='Obs_Key' value='". $arrBio['Obs_Key'] ."'>";
-			$formOutput .= "\n<input class='form-control' type='hidden' name='MessageID' value='". $arrBio['MessageID'] ."'>";
-			$formOutput .= "\n<input class='form-control' type='hidden' name='Obs_Date' value='". date("Y-m-d H:i:s") ."'>";
+			$formOutput .= "\n<input class='form-control' type='hidden' name='obs_key' value='". $arrBio['Obs_Key'] ."'>";
+			$formOutput .= "\n<input class='form-control' type='hidden' name='msg_id' value='". $arrBio['MessageID'] ."'>";
+			$formOutput .= "\n<input class='form-control' type='hidden' name='parent_id' value='". $arrBio['ParentID'] ."'>";
+			$formOutput .= "\n<input class='form-control' type='hidden' name='obs_date' value='". date("Y-m-d H:i:s") ."'>";
 			$formOutput .= "\n<input class='form-control' type='hidden' name='ReturnFieldType' value='". $arrBio['ReturnFieldType'] ."'>";
 			$formOutput .= "\n<input class='form-control' type='hidden' name='ReturnDataRangeLow' value='". $arrBio['ReturnDataRangeLow'] ."'>";
 			$formOutput .= "\n<input class='form-control' type='hidden' name='ReturnDataRangeHigh' value='". $arrBio['ReturnDataRangeHigh'] ."'>";
@@ -41,16 +43,16 @@ class MsgUI {
 			switch ($arrBio['ReturnFieldType']) {
 				case 'Range':
 					$type = "type='range' data-type='". $arrBio['ReturnFieldType']. "' min='" .$arrBio['ReturnDataRangeLow']. "' max='" .$arrBio['ReturnDataRangeHigh']. "' value='0' data-theme='b' data-track-theme='c'";
-					$formOutput .= "\n<input $type id='obs_val' name='obs_val' value='".$arrBio['PatientAnswer']."' REQUIRED>";
+					$formOutput .= "\n<input $type id='obs_value' name='obs_value' value='".$arrBio['PatientAnswer']."' REQUIRED>";
 					break;
 				case 'List':
-					$formOutput .= "\n".'<select name="obs_val" id="obs_val" data-role="slider">
+					$formOutput .= "\n".'<select name="obs_value" id="obs_value" data-role="slider">
 	<option value="N">No</option>
 	<option value="Y">Yes</option>
 </select>';
 					break;
 				default;
-					$formOutput .= "<input $type class='form-control col-sm-1' id='obs_val' name='obs_val' value='".$arrBio['PatientAnswer']."' REQUIRED>";
+					$formOutput .= "<input $type class='form-control col-sm-1' id='obs_value' name='obs_value' value='".$arrBio['PatientAnswer']."' REQUIRED>";
 
 			}
 			$formOutput .= "<div class='ui-block-a'><button data-theme='b' class='btn btn-primary col-sm-1' type='submit'>SEND</button></div><br>\n";
