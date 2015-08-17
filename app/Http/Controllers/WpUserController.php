@@ -11,6 +11,7 @@ use App\Services\ObservationService;
 use App\Services\MsgUser;
 use App\Services\MsgUI;
 use App\Services\MsgChooser;
+use App\Services\MsgScheduler;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
@@ -281,7 +282,11 @@ class WpUserController extends Controller {
 	 */
 	public function showMsgCenter(Request $request, $id)
 	{
-		$msgChooser = new MsgChooser;
+		$msgUI              = new MsgUI;
+		$msgUsers           = new MsgUser;
+		$msgChooser         = new MsgChooser;
+		$msgScheduler       = new MsgScheduler;
+		$observationService = new ObservationService;
 		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_HSP_20', 'C', 'HSP');
 		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_50', '7', 'RPT'); // bad
 		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_50', '0', 'RPT'); // great
@@ -300,6 +305,7 @@ class WpUserController extends Controller {
 		if(!empty($params)) {
 			if(isset($params['action'])) {
 				if($params['action'] == 'sendTextSimulation') {
+					/*
 					// send text
 					$api = $wpUser->blogId();
 					$msgid = 'xOx';
@@ -316,8 +322,11 @@ class WpUserController extends Controller {
 
 					dd($inboundsms);
 					return redirect()->back()->with('messages', ['successfully did something']);
+					*/
+				} else if($params['action'] == 'run_scheduler') {
+					$result = $msgScheduler->index('7');
+					return response()->json($result);
 				} else if($params['action'] == 'save_app_obs') {
-					$observationService = new ObservationService;
 					$result = $observationService->storeObservationFromApp($id, $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['msg_id'], $params['obs_key']);
 					if($result) {
 						$messageKey = 'success';
@@ -329,22 +338,8 @@ class WpUserController extends Controller {
 				}
 			}
 		}
-		/*
-		$arrPart = array($wpUser->ID => array());
-		$arrPart[$wpUser->ID]['usermeta'] = $userMeta;
-		$arrPart[$wpUser->ID]['usermeta']['curresp'] = 'SYM';
-		$arrPart[$wpUser->ID]['usermeta']['intProgramId'] = $wpUser->blogId();
-		$msgUser = new MsgUser;
-		$userSmsState = $msgUser->userSmsState($arrPart);
-		dd($userSmsState);
-		*/
-		//dd('dies early');
-
-		$msgUI = new MsgUI;
-		$msgUsers = new MsgUser;
 
 		$commentsForUser = $msgUsers->get_comments_for_user($wpUser->ID, $wpUser->blogId());
-		//dd($commentsForUser);
 		$comments = array();
 		if(!empty($commentsForUser)) {
 			foreach($commentsForUser as $comment) {
@@ -380,10 +375,6 @@ class WpUserController extends Controller {
 		foreach ($cpFeed['CP_Feed'] as $key => $value) {
 			$cpFeedSections = array('Biometric','DMS','Symptoms','Reminders');
 			foreach ($cpFeedSections as $section) {
-				if($section == 'Symptoms') {
-					//echo '<div class="row col-lg-12 col-lg-offset-2" data-role="collapsible" data-theme="b">';
-					//echo "<h3>Would you like to report any Symptoms?</h3>";
-				}
 				foreach($cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio){
 					$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] = $msgUI->getForm($arrBio,null);
 					//echo($msgUI->getForm($arrBio,null));
@@ -396,9 +387,6 @@ class WpUserController extends Controller {
 							$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['Response']['formHtml'] = $msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-1');
 						}
 					}
-				}
-				if($section == 'Symptoms') {
-					//echo "</div><hr>\n";
 				}
 			}
 		}

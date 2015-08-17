@@ -62,14 +62,6 @@ class MsgScheduler {
                     'status' => ''
                 );
                 echo '<br><br>[---Process User #'.$value['user_id'].'---]<br>';
-                $msgChooser = new MsgChooser;
-                $return = $msgChooser->getNextMessage($value['user_id']);
-                echo "MsgScheduler->nextMessage() dump getNextMessage()->";
-                dd($return);
-                $return = $msgChooser->nextMessage($value['user_id']);
-                echo "MsgScheduler->nextMessage() value['user_id']=".$value['user_id'];
-                echo "MsgScheduler->nextMessage() dump return";
-                dd($return);
                 $arrPart[$value['user_id']] = $msgUser->get_users_data($value['user_id'], 'id', $intProgramID);
                 //Added to check for Transitional Care Active and contact day
                 $ucp = $msgUser->get_user_care_plan_items($value['user_id'], $intProgramID);
