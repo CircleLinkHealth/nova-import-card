@@ -16,13 +16,21 @@ class ObservationService {
 		// update comment
 		$comment = Comment::find($parentId);
 		$comment_array = unserialize($comment['comment_content']);
-		$comment_array[][$obsKey] = $obsValue;
+		// find message in comment
+		foreach($comment_array as $key => $observations) {
+			foreach($observations as $msgId => $answer) {
+				if($msgId == $obsMessageId) {
+					$comment_array[$key][$msgId] = $obsValue;
+				}
+			}
+		}
+		//dd($comment_array);
 		$comment->comment_content = serialize($comment_array);
-		$comment->comment_type = 'state_app';
 		$commentBlogTable = 'wp_'.$wpUser->blogId().'_comments';
 		$comment->setTable($commentBlogTable);
 		$savedComm = $comment->save();
 
+		// insert new observation
 		$newObservation = new Observation();
 		$newObservation->comment_id = $comment->comment_ID;
 		$newObservation->user_id = $userId;

@@ -92,11 +92,18 @@
                             No feed data to show?
                         @else
                             @foreach( $cpFeed['CP_Feed'] as $key => $value )
-                                <div class="row col-lg-12">
-                                    <h2 >{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}</h2>
+                                <div class="row col-lg-12" style="border:3px solid #286090;margin:20px 0px;">
+                                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}" aria-expanded="false" aria-controls="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
+                                        {{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}
+                                    </button>
+                                    <div class="collapse" id="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
                                     @foreach( $cpFeedSections as $section )
                                         @if ($section == 'Symptoms')
-                                           <div class="row col-lg-12 col-lg-offset-2"><h3>Would you like to report any Symptoms?</h3>
+                                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse{{ $key.'-'.$section }}" aria-expanded="false" aria-controls="collapse{{ $key.'-'.$section }}">
+                                                {{ $section }}
+                                            </button>
+                                           <div class="row col-lg-12 col-lg-offset-2 collapse" id="collapse{{ $key.'-'.$section }}">
+                                               <h3>Symptoms</h3>
                                         @endif
 
                                            @foreach( $cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio )
@@ -114,6 +121,7 @@
                                         @endif
                                         <div style="clear:both;"></div>
                                     @endforeach
+                                    </div>
                                 </div>
                             @endforeach
                         @endif
