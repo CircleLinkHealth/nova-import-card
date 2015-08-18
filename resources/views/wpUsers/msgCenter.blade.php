@@ -1,11 +1,6 @@
 @extends('app')
 
 @section('content')
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
-    <link rel="stylesheet"  href="//getbootstrap.com/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link rel="stylesheet"  href="//demos.jquerymobile.com/1.4.5/css/themes/default/jquery.mobile-1.4.5.min.css"/>
-    <link rel="stylesheet" href="//demos.jquerymobile.com/1.4.5/_assets/css/jqm-demos.css"/>
     <style id="full-width-slider">
         /* Hide the number input */
         .full-width-slider input {
