@@ -54,8 +54,9 @@ class ObservationService {
 		//Next Message Block
 		$msgChooser = new MsgChooser();
 		$msgChooser->setNextMessage($wpUser->blogId(), $comment->comment_ID, $newObservation->obs_message_id,  $newObservation->obs_value);
-
+		if($savedComm&&$savedObs){
 		return true;
+		} else return false;
 	}
 
 }

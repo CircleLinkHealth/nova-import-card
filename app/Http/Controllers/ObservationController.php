@@ -59,7 +59,7 @@ class ObservationController extends Controller {
             $input = $request->input();
             $observationService = new ObservationService;
             $result = $observationService->storeObservationFromApp($user->ID, $input['parent_id'], $input['obs_value'], $input['obs_date'], $input['obs_message_id'], $input['obs_key']);
-            if($result) {
+            if($result == true) {
                 return response()->json('Saved observation', 201);
             } else {
                 return response()->json('Error', 500);
