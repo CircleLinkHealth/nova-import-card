@@ -9,7 +9,6 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
-
 /****************************/
 //     LARAVEL SITE ROUTES
 /****************************/
@@ -59,12 +58,13 @@ Route::group(['middleware' => 'auth'], function ()
 
         Route::group(['middleware' => 'getRedoxAccessToken'], function()
         {
+            //@todo: this is not an actual route, it was made for testing
             Route::get('testRedoxx', 'PostToRedoxController@index');
         });
     });
 
     /*
-     * Third Party Apis Config
+     * Third Party Apis Config Pages
      */
     Route::group(['prefix' => 'third-party-api-settings'], function ()
     {
@@ -75,11 +75,7 @@ Route::group(['middleware' => 'auth'], function ()
         Route::resource('qliqsoft', 'qliqSOFT\ConfigController', [
             'except' => [ 'index', 'destroy', 'show' ]
         ]);
-
-
     });
-    
-
 });
 
 

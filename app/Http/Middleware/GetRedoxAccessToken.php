@@ -2,7 +2,7 @@
 
 use Closure;
 use App\ThirdPartyApiConfig;
-use App\Http\Controllers\Redox\Authentication as RedoxAuthenticator;
+use App\Services\Redox\RedoxAuthentication as RedoxAuthenticator;
 
 class GetRedoxAccessToken {
 

@@ -1,10 +1,10 @@
-<?php namespace App\Http\Controllers\Redox;
+<?php namespace App\Services\Redox;
 
 use App\ThirdPartyApiConfig;
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Request;
 
-class Authentication {
+class RedoxAuthentication {
 
     protected $apiKey;
 
