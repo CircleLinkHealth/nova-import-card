@@ -4,6 +4,7 @@ use App\Http\Requests;
 use App\WpUser;
 use App\Observation;
 use App\WpUserMeta;
+use DB;
 use Validator;
 
 class CareplanService {
@@ -64,7 +65,7 @@ class CareplanService {
 
 	public static function getObsDMS($wpUser, $date)
 	{
-		$query = Observation::select('ma_' . $wpUser->blogId() . '_observations.*', 'rules_questions.*', 'rules_items.*', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en', 'cm.comment_id', 'cm.comment_parent')
+		$query = DB::connection('mysql_no_prefix')->table('ma_' . $wpUser->blogId() . '_observations')->select('ma_' . $wpUser->blogId() . '_observations.*', 'rules_questions.*', 'rules_items.*', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en', 'cm.comment_id', 'cm.comment_parent')
 			->join('rules_questions', 'rules_questions.msg_id', '=', 'ma_' . $wpUser->blogId() . '_observations.obs_message_id')
 			->join('rules_items', 'rules_items.qid', '=', 'rules_questions.qid')
 			->join('rules_itemmeta as imsms', function ($join) {
@@ -82,7 +83,7 @@ class CareplanService {
 			->take(40);
 		$scheduledObs = $query->get();
 		$dsmObs = array();
-		if (!$scheduledObs->isEmpty()) {
+		if (!empty($scheduledObs)) {
 			$d = 0;
 			foreach ($scheduledObs as $obs) {
 				// add to feed

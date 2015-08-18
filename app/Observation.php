@@ -16,7 +16,7 @@ class Observation extends Model {
      *
      * @var string
      */
-    protected $table = 'ma_7_observations';
+    protected $table = 'ma_X_observations';
 
     /**
      * The primary key for the model.
