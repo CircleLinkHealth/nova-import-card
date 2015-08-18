@@ -93,16 +93,17 @@
                         @else
                             @foreach( $cpFeed['CP_Feed'] as $key => $value )
                                 <div class="row col-lg-12" style="border:3px solid #286090;margin:20px 0px;">
-                                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}" aria-expanded="false" aria-controls="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
+                                    <button class="btn btn-info" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}" aria-expanded="false" aria-controls="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
                                         {{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}
                                     </button>
                                     <div class="collapse" id="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
                                     @foreach( $cpFeedSections as $section )
                                         @if ($section == 'Symptoms')
-                                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse{{ $key.'-'.$section }}" aria-expanded="false" aria-controls="collapse{{ $key.'-'.$section }}">
+                                            <button class="btn btn-info" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#collapse{{ $key.'-'.$section }}" aria-expanded="false" aria-controls="collapse{{ $key.'-'.$section }}">
                                                 {{ $section }}
                                             </button>
-                                           <div class="row col-lg-12 col-lg-offset-2 collapse" id="collapse{{ $key.'-'.$section }}">
+                                            <div class="row">
+                                            <div class="col-lg-12 collapse" id="collapse{{ $key.'-'.$section }}" style="background:#ddd;">
                                                <h3>Symptoms</h3>
                                         @endif
 
@@ -117,6 +118,7 @@
                                            @endforeach
 
                                         @if ($section == 'Symptoms')
+                                            </div>
                                             </div>
                                         @endif
                                         <div style="clear:both;"></div>

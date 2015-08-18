@@ -46,9 +46,6 @@ class CareplanService {
 					"Symptoms" => array())
 			);
 
-			// Messages
-			$feed["CP_Feed"][$i]['Feed']["Messages"] = $this->getObsMessages($wpUser, $date);
-
 			// DSM
 			$feed["CP_Feed"][$i]['Feed']["DMS"] = $this->getObsDMS($wpUser, $date);
 
@@ -63,11 +60,6 @@ class CareplanService {
 			$i++;
 		}
 		return $feed;
-	}
-
-	public static function getObsMessages($wpUser, $date)
-	{
-		return array();
 	}
 
 	public static function getObsDMS($wpUser, $date)
@@ -98,7 +90,7 @@ class CareplanService {
 				$dsmObs[$d] = array(
 					"MessageID" => $obs->obs_message_id,
 					"Obs_Key" => $obs->obs_key,
-					"ParentID" => $obs->comment_parent,
+					"ParentID" => $obs->comment_id,
 					"MessageIcon" => "question",
 					"MessageContent" => $obs->sms_en,
 					"ReturnFieldType" => $obs->qtype,
@@ -134,17 +126,48 @@ class CareplanService {
 
 	public static function getObsReminders($wpUser, $date)
 	{
+		// this only deals with HSP question
 		return array();
 	}
 
 	public static function getObsBiometric($wpUser, $date)
 	{
+		// get biometrics that patient has active on their care plan
 		return array();
 	}
 
 	public static function getObsSymptoms($wpUser, $date)
 	{
+		// phil is updating the question set to use SYM_51/52/53/54
 		return array();
+	}
+
+
+
+
+	public function addAppSimCodeToCP($cpFeed) {
+		$msgUI = new MsgUI;
+		if(!empty($cpFeed['CP_Feed'])) {
+			foreach ($cpFeed['CP_Feed'] as $key => $value) {
+				$cpFeedSections = array('Biometric', 'DMS', 'Symptoms', 'Reminders');
+				foreach ($cpFeedSections as $section) {
+					foreach ($cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio) {
+						$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] = $msgUI->getForm($arrBio, null);
+						//echo($msgUI->getForm($arrBio,null));
+
+						if (isset($arrBio['Response'])) {
+							//echo($msgUI->getForm($arrBio['Response'],' col-lg-offset-1'));
+							$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['formHtml'] = $msgUI->getForm($arrBio['Response'], ' col-lg-offset-1');
+							if (isset($arrBio['Response']['Response'])) {
+								//echo($msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-3'));
+								$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['Response']['formHtml'] = $msgUI->getForm($arrBio['Response']['Response'], ' col-lg-offset-1');
+							}
+						}
+					}
+				}
+			}
+		}
+		return $cpFeed;
 	}
 
 }

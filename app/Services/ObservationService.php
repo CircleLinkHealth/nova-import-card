@@ -13,8 +13,11 @@ class ObservationService {
 		// get user
 		$wpUser = WpUser::find($userId);
 
-		// update comment
+		// find comment
 		$comment = Comment::find($parentId);
+
+		/*
+		// update comment
 		$comment_array = unserialize($comment['comment_content']);
 		// find message in comment
 		foreach($comment_array as $key => $observations) {
@@ -29,6 +32,7 @@ class ObservationService {
 		$commentBlogTable = 'wp_'.$wpUser->blogId().'_comments';
 		$comment->setTable($commentBlogTable);
 		$savedComm = $comment->save();
+		*/
 
 		// insert new observation
 		$newObservation = new Observation();
@@ -53,7 +57,8 @@ class ObservationService {
 
 		//Next Message Block
 		$msgChooser = new MsgChooser();
-		$msgChooser->setNextMessage($wpUser->blogId(), $comment->comment_ID, $newObservation->obs_message_id,  $newObservation->obs_value);
+		//dd($newObservation->obs_value);
+		$msgChooser->setNextMessage($userId, $comment->comment_ID, $newObservation->obs_message_id,  $newObservation->obs_value, false);
 
 		return true;
 	}
