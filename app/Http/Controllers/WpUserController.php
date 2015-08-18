@@ -7,8 +7,11 @@ use App\WpUser;
 use App\WpUserMeta;
 use App\Services\ActivityService;
 use App\Services\CareplanService;
+use App\Services\ObservationService;
 use App\Services\MsgUser;
 use App\Services\MsgUI;
+use App\Services\MsgChooser;
+use App\Services\MsgScheduler;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
@@ -112,39 +115,7 @@ class WpUserController extends Controller {
 	 */
 	public function show(Request $request, $id)
 	{
-		$messageKey = 'key';
-		$messageValue = 'value';
-		$params = $request->input();
-		if(!empty($params)) {
-			if(isset($params['action'])) {
-				if($params['action'] == 'recalcActivities') {
-					$activityService = new ActivityService;
-					$result = $activityService->reprocessMonthlyActivityTime($id);
-					if ($result) {
-						$messageKey = 'success';
-						$messageValue = 'User activities have been recalculated';
-					}
-				} else if($params['action'] == 'setPatientToBlog') {
-					$userMeta = new WpUserMeta;
-					$userMeta->meta_key = 'primary_blog';
-					$userMeta->meta_value = $params['blogId'];
-					$userMeta->user_id = $id;
-					$userMeta->save ();
-					//$messageKey = 'success';
-					//$messageValue = 'Usermeta primary_blog set for user '.$id;
-					return redirect()->back()->with('messages', ['successfully updated Usermeta primary_blog']);
-				}
-			}
-		}
-		$wpUser = WpUser::find($id);
-		$activityService = new ActivityService;
-		$activiyTotal = $activityService->getTotalActivityTimeForMonth($id);
-		if($wpUser) {
-			return view('wpUsers.show', ['wpUser' => $wpUser, 'activityTotal' => $activiyTotal,
-				$messageKey => $messageValue]);
-		} else {
-			return response("User not found", 401);
-		}
+		dd('user /edit to view user info');
 	}
 
 	/**
@@ -279,15 +250,30 @@ class WpUserController extends Controller {
 	 */
 	public function showMsgCenter(Request $request, $id)
 	{
-		$params = $request->input();
+		$msgUI              = new MsgUI;
+		$msgUsers           = new MsgUser;
+		$msgChooser         = new MsgChooser;
+		$msgScheduler       = new MsgScheduler;
+		$observationService = new ObservationService;
+		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_HSP_20', 'C', 'HSP');
+		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_50', '7', 'RPT'); // bad
+		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_50', '0', 'RPT'); // great
+		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_40', '175', 'RPT');
+		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_REM_NAG_01', '', 'RPT');
+		//dd($result);
 		$wpUser = WpUser::find($id);
 		if(!$wpUser) {
 			return response("User not found", 401);
 		}
+		$params = $request->input();
 		$userMeta = $wpUser->userMeta();
+
+		$messageKey = '';
+		$messageValue = '';
 		if(!empty($params)) {
 			if(isset($params['action'])) {
 				if($params['action'] == 'sendTextSimulation') {
+					/*
 					// send text
 					$api = $wpUser->blogId();
 					$msgid = 'xOx';
@@ -304,25 +290,24 @@ class WpUserController extends Controller {
 
 					dd($inboundsms);
 					return redirect()->back()->with('messages', ['successfully did something']);
+					*/
+				} else if($params['action'] == 'run_scheduler') {
+					$result = $msgScheduler->index('7');
+					return response()->json($result);
+				} else if($params['action'] == 'save_app_obs') {
+					$result = $observationService->storeObservationFromApp($id, $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['msg_id'], $params['obs_key']);
+					if($result) {
+						$messageKey = 'success';
+						$messageValue = 'Successfully saved new app observation.';
+					} else {
+						$messageKey = 'error';
+						$messageValue = 'Failed to save app observation.';
+					}
 				}
 			}
 		}
-		/*
-		$arrPart = array($wpUser->ID => array());
-		$arrPart[$wpUser->ID]['usermeta'] = $userMeta;
-		$arrPart[$wpUser->ID]['usermeta']['curresp'] = 'SYM';
-		$arrPart[$wpUser->ID]['usermeta']['intProgramId'] = $wpUser->blogId();
-		$msgUser = new MsgUser;
-		$userSmsState = $msgUser->userSmsState($arrPart);
-		dd($userSmsState);
-		*/
-		//dd('dies early');
 
-		$msgUI = new MsgUI;
-
-		$msgUsers = new MsgUser;
 		$commentsForUser = $msgUsers->get_comments_for_user($wpUser->ID, $wpUser->blogId());
-		//dd($commentsForUser);
 		$comments = array();
 		if(!empty($commentsForUser)) {
 			foreach($commentsForUser as $comment) {
@@ -352,15 +337,12 @@ class WpUserController extends Controller {
 		$cpFeed = $careplanService->getCareplan($wpUser, $dates);
 
 		//$cpFeed = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')), 1);
+		//dd($cpFeed);
 
 		// set careplan feed vars for blade
 		foreach ($cpFeed['CP_Feed'] as $key => $value) {
 			$cpFeedSections = array('Biometric','DMS','Symptoms','Reminders');
 			foreach ($cpFeedSections as $section) {
-				if($section == 'Symptoms') {
-					//echo '<div class="row col-lg-12 col-lg-offset-2" data-role="collapsible" data-theme="b">';
-					//echo "<h3>Would you like to report any Symptoms?</h3>";
-				}
 				foreach($cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio){
 					$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] = $msgUI->getForm($arrBio,null);
 					//echo($msgUI->getForm($arrBio,null));
@@ -374,13 +356,10 @@ class WpUserController extends Controller {
 						}
 					}
 				}
-				if($section == 'Symptoms') {
-					//echo "</div><hr>\n";
-				}
 			}
 		}
 
 		//dd($cpFeed['CP_Feed']);
-		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array()]);
+		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array(), $messageKey => $messageValue]);
 	}
 }

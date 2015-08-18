@@ -45,6 +45,7 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::post('wpusers/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'usersUpdate']);
 	Route::get('wpusers/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'usersCareplan']);
 	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenter']);
+	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenterUpdate']);
 
     Route::group(['namespace' => 'Redox'], function ()
     {

@@ -101,7 +101,7 @@ class CareplanService {
 					"ParentID" => $obs->comment_parent,
 					"MessageIcon" => "question",
 					"MessageContent" => $obs->sms_en,
-					"ReturnFieldType" => "None",
+					"ReturnFieldType" => $obs->qtype,
 					"ReturnDataRangeLow" => null,
 					"ReturnDataRangeHigh" => null,
 					"ReturnValidAnswers" => null,
@@ -123,7 +123,7 @@ class CareplanService {
 				$answerObs = $query->first();
 				if ($answerObs) {
 					$dsmObs[$d]['PatientAnswer'] = '[' . $answerObs->obs_id . ']' . $answerObs->obs_value;
-					$dsmObs[$d]['ResponseDTS'] = $answerObs->obs_date->format('Y-m-d H:i:s');
+					$dsmObs[$d]['ResponseDate'] = $answerObs->obs_date->format('Y-m-d H:i:s');
 				}
 				$d++;
 			}

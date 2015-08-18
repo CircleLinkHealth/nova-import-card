@@ -6,11 +6,6 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet"  href="//demos.jquerymobile.com/1.4.5/css/themes/default/jquery.mobile-1.4.5.min.css"/>
     <link rel="stylesheet" href="//demos.jquerymobile.com/1.4.5/_assets/css/jqm-demos.css"/>
-
-    <script type='text/javascript' src="//demos.jquerymobile.com/1.4.5/_assets/js/index.js"></script>
-    <script type='text/javascript' src='//code.jquery.com/jquery-2.1.4.js'></script>
-    <script type='text/javascript' src="//demos.jquerymobile.com/1.4.5/js/jquery.mobile-1.4.5.min.js"></script>
-    <script type='text/javascript' src="//demos.jquerymobile.com/1.4.5/js/jquery.js"></script>
     <style id="full-width-slider">
         /* Hide the number input */
         .full-width-slider input {
@@ -70,42 +65,45 @@
                         User ID: {{ $wpUser->ID }}
                     </div>
                     <div class="panel-body">
-                        @if (count($errors) > 0)
+                        @if (isset($error))
                             <div class="alert alert-danger">
-                                <strong>Whoops!</strong> There were some problems with your input.<br><br>
                                 <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
+                                    <li>{{ $error }}</li>
                                 </ul>
                             </div>
                         @endif
-                        @if (count($messages) > 0)
+
+                        @if (isset($success))
                             <div class="alert alert-success">
-                                <strong>Messages:</strong><br><br>
                                 <ul>
-                                    @foreach ($messages as $message)
-                                        <li>{{ $message }}</li>
-                                    @endforeach
+                                    <li>{{ $success }}</li>
                                 </ul>
                             </div>
                         @endif
 
-
-
-
-
+                        <div class="row">
+                            <div class="pull-left" style="margin-left:10px;">
+                                <a href="{{ url('wpusers/'.$wpUser->ID.'/msgcenter?action=run_scheduler&date=today') }}" class="btn btn-primary">Run Scheduler</a>
+                            </div>
+                        </div>
 
                         <h2>App Simulator:</h2>
                         @if (count($cpFeed['CP_Feed']) == 0)
                             No feed data to show?
                         @else
                             @foreach( $cpFeed['CP_Feed'] as $key => $value )
-                                <div class="row col-lg-12" data-role="collapsible" data-theme="a">
-                                    <h2>{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}</h2>
+                                <div class="row col-lg-12" style="border:3px solid #286090;margin:20px 0px;">
+                                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}" aria-expanded="false" aria-controls="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
+                                        {{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}
+                                    </button>
+                                    <div class="collapse" id="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
                                     @foreach( $cpFeedSections as $section )
                                         @if ($section == 'Symptoms')
-                                           <div class="row col-lg-12 col-lg-offset-2" data-role="collapsible" data-theme="b"><h3>Would you like to report any Symptoms?</h3>
+                                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse{{ $key.'-'.$section }}" aria-expanded="false" aria-controls="collapse{{ $key.'-'.$section }}">
+                                                {{ $section }}
+                                            </button>
+                                           <div class="row col-lg-12 col-lg-offset-2 collapse" id="collapse{{ $key.'-'.$section }}">
+                                               <h3>Symptoms</h3>
                                         @endif
 
                                            @foreach( $cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio )
@@ -121,7 +119,9 @@
                                         @if ($section == 'Symptoms')
                                             </div>
                                         @endif
+                                        <div style="clear:both;"></div>
                                     @endforeach
+                                    </div>
                                 </div>
                             @endforeach
                         @endif
