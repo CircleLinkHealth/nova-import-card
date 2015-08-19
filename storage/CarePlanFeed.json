@@ -84,7 +84,7 @@
                         "ReturnValidAnswers": "Y,N",
                         "PatientAnswer": "Y",
                         "ResponseDate": "2015-07-01 10:01:25"
-                    }
+                    },
                     {
                         "MessageID": "CF_DM_HSP_11",
                         "Obs_Key": "HSP_DM",
@@ -98,7 +98,7 @@
                         "ReturnValidAnswers": null,
                         "PatientAnswer": null,
                         "ResponseDate": null
-                    }
+                    },
                     {
                         "MessageID": "CF_DM_HSP_12",
                         "Obs_Key": "HSP_DM",
