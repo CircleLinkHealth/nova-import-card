@@ -11,7 +11,7 @@ class Comment extends Model {
      *
      * @var string
      */
-    protected $table = 'wp_7_comments';
+    protected $table = 'wp_X_comments';
 
     // telling laravel not to create timestamps by default
     public $timestamps = false;
