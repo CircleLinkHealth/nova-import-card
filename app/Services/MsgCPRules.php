@@ -170,6 +170,20 @@ limit 1";
 
     }//getQuestion
 
+    public function getQsType($msgId, $userId) {
+        $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')
+            ->join('rules_questions','rules_question_sets.qid','=','rules_questions.qid')
+            ->select('rules_question_sets.qs_type')
+            ->where('rules_questions.msg_id',$msgId)
+            ->where('rules_question_sets.provider_id',$userId)
+            ->first();
+        if($qsType) {
+            return $qsType->qs_type;
+        } else {
+            return false;
+        }
+    }
+
 
     public function getQuestionById($intID, $intUserId=0, $strMsgText='SMS_EN', $pid = '0', $qstype = 'SOL') {
         /**

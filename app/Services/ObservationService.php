@@ -5,6 +5,7 @@ use App\Comment;
 use App\Observation;
 use App\WpUser;
 use App\WpUserMeta;
+use DB;
 use Carbon\Carbon;
 
 class ObservationService {
@@ -14,7 +15,10 @@ class ObservationService {
 		$wpUser = WpUser::find($userId);
 
 		// find comment
-		$comment = Comment::find($parentId);
+		$comment = DB::connection('mysql_no_prefix')
+			->table('wp_' . $wpUser->blogId() . '_comments')
+			->where('comment_ID', '=', $parentId)
+			->first();
 
 		/*
 		// update comment
