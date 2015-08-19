@@ -136,6 +136,10 @@ return [
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
 
+
+        'Jlapp\Swaggervel\SwaggervelServiceProvider',
+
+
 		/*
 		 * Application Service Providers...
 		 */
