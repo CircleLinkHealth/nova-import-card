@@ -114,6 +114,8 @@ echo "<div id='alert-msg'>";
 			break;
 		default:
 			# code...
+				echo "Valid Answer<BR>";
+				$valid = true;
 			break;
 	}
 // echo $_POST['Obs_Key'] . $_POST['obs_val'] . $_POST['MessageID'] . $_POST['Obs_Date'] . $arrToken;
@@ -245,6 +247,7 @@ function getForm($arrBio = array(), $offset = null)
 			$formOutput .= "<div class='row'>\n";
 			$msgIcon = getMsgIcon($arrBio['MessageIcon']);
 			$formOutput .= "<hr><div class='col-sm-1$offset'><i style='color:". $msgIcon['color'] ."' class='fa fa-2x fa-". $msgIcon['icon'] ."'></i></div>\n";
+			$formOutput .= "<div class='col-sm-1'><small><span style='color:gray'>" . $arrBio['MessageCategory'] . "</span></small></div>\n";
 			$formOutput .= "<div class='col-sm-4'>" . $arrBio['MessageContent'] . "</div>\n";
 			// $formOutput .= " [" . $arrBio['MessageID'] . " | `" . $arrBio['Obs_Key'] . "` | " . date('Y-m-d H:i:s O)') . "] <BR>";
 			if ($arrBio['ReturnFieldType'] == 'None' || $arrBio['PatientAnswer'] ) {
@@ -271,6 +274,9 @@ function getForm($arrBio = array(), $offset = null)
 	<option value="N">No</option>
 	<option value="Y">Yes</option>
 </select>';
+						break;
+					case 'Date':
+							$formOutput .= "<input type='date' min='".date('Y-m-d',strtotime('3 Days ago'))."' max='".date('Y-m-d',strtotime('Today'))."' class='form-control col-sm-1' id='obs_val' name='obs_val' value='".$arrBio['PatientAnswer']."' REQUIRED>";
 						break;
 					default;
 							$formOutput .= "<input $type class='form-control col-sm-1' id='obs_val' name='obs_val' value='".$arrBio['PatientAnswer']."' REQUIRED>";
