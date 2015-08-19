@@ -38,7 +38,7 @@ class MsgChooser {
     public function __construct() {
     }
 
-    public function getMessageSequence($commentContent, $msgId) {
+    public function getAppMessageSequence($commentContent, $msgId) {
         foreach($commentContent as $key => $msgSet) {
             foreach($msgSet as $i => $msgRow) {
                 if (key($msgRow) == $msgId) {
@@ -48,7 +48,7 @@ class MsgChooser {
         }
     }
 
-    public function setNextMessage($userId, $commentId, $msgId, $answer, $debug = true) {
+    public function setAppAnswerAndNextMessage($userId, $commentId, $msgId, $answer, $debug = true) {
 
         $log = array();
 
@@ -126,7 +126,7 @@ class MsgChooser {
         // loop through comment_content and find matching msgId (this doesnt do anything yet)
         $commentContent = unserialize($comment->comment_content);
         $log[] = "MsgChooser->setNextMessage() loop through state_app comment_content for $msgId";
-        $msgSequence = $this->getMessageSequence($commentContent, $msgId);
+        $msgSequence = $this->getAppMessageSequence($commentContent, $msgId);
         if($msgSequence) {
 
         }

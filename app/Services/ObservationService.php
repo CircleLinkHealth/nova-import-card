@@ -62,7 +62,7 @@ class ObservationService {
 		//Next Message Block
 		$msgChooser = new MsgChooser();
 		//dd($newObservation->obs_value);
-		$msgChooser->setNextMessage($userId, $comment->comment_ID, $newObservation->obs_message_id,  $newObservation->obs_value, false);
+		$msgChooser->setAppAnswerAndNextMessage($userId, $comment->comment_ID, $newObservation->obs_message_id,  $newObservation->obs_value, false);
 
 		return true;
 	}

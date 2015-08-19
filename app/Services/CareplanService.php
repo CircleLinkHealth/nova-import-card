@@ -137,7 +137,7 @@ class CareplanService {
 					$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
 					if ($answerObs) {
 						// if has answer, add answer and date of answer to feed
-						$dsmObs[$o]['PatientAnswer'] = '[' . $answerObs->obs_id . ']' . $answerObs->obs_value;
+						$dsmObs[$o]['PatientAnswer'] = $answerObs->obs_value;
 						$dsmObs[$o]['ResponseDate'] = $answerObs->obs_date;
 					}
 				}
@@ -157,21 +157,102 @@ class CareplanService {
 
 	private function setObsBiometric()
 	{
-		// get biometrics that patient has active on their care plan
+		$msgCPRules = new MsgCPRules;
+		$msgSubstitutions = new MsgSubstitutions;
+		$msgUser = new MsgUser;
+		$bioObsKeys = array();
+		$bioMsgIds = array();
+		$userInfo = $msgUser->get_users_data($this->wpUser->ID, 'id', $this->programId, true);
+		if (!empty($userInfo[$this->wpUser->ID]['usermeta']['user_care_plan'])) {
+			$userInfoUCP = $userInfo[$this->wpUser->ID]['usermeta']['user_care_plan'];
+			// loop through care plan
+			foreach($userInfoUCP as $obsKey => $ucpItem) {
+				if(isset($ucpItem['parent_status'])) {
+					// if active
+					if ($ucpItem['parent_status'] == 'Active') {
+						$query = DB::connection('mysql_no_prefix')->table('rules_questions')->select('msg_id')
+							->where('obs_key', "=", $obsKey);
+						$questionInfo = $query->first();
+						if ($questionInfo) {
+							$msgId = $questionInfo->msg_id;
+							$bioMsgIds[] = $msgId;
+							$bioObsKeys[] = $obsKey;
+						}
+					}
+				}
+			}
+		}
+
 		$bioObs = array();
-		$bioObs[] = array(
-			"MessageID" => "CF_RPT_50",
-			"Obs_Key" => "Cigarettes",
-			"ParentID" => $this->stateAppCommentId,
-			"MessageIcon" => "cs",
-			"MessageContent" => "Please enter the number of cigarettes smoked in the last 24 hours.",
-			"ReturnFieldType" => "Range",
-			"ReturnDataRangeLow" => "0",
-			"ReturnDataRangeHigh" => "120",
-			"ReturnValidAnswers" => null,
-			"PatientAnswer" => null,
-			"ResponseDate" => null
-		);
+		$o = 0;
+		foreach($bioMsgIds as $bioMsgId) {
+			$matchFound = false;
+			foreach($this->stateAppArray as $key => $msgSet) {
+				if (key($msgSet[0]) == $bioMsgId) {
+					// found a BIO match
+					$matchFound = true;
+					// loop through each row of message set
+					foreach ($msgSet as $i => $msgRow) {
+						//obtain message type
+						$qsType = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
+						$currQuestionInfo = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);
+						$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+						// add to feed
+						$bioObsTemp = array(
+							"MessageID" => $currQuestionInfo->msg_id,
+							"Obs_Key" => $currQuestionInfo->obs_key,
+							"ParentID" => $this->stateAppCommentId,
+							"MessageIcon" => "question",
+							"MessageContent" => $currQuestionInfo->message,
+							"ReturnFieldType" => $currQuestionInfo->qtype,
+							"ReturnDataRangeLow" => null,
+							"ReturnDataRangeHigh" => null,
+							"ReturnValidAnswers" => null,
+							"PatientAnswer" => null,
+							"ResponseDate" => null
+						);
+						$bioObsTemp['PatientAnswer'] = $msgRow[key($msgRow)];
+						// find answer observation (patient inbound always = observation)
+						$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
+						if ($answerObs) {
+							// if has answer, add answer and date of answer to feed
+							$bioObsTemp['PatientAnswer'] = $answerObs->obs_value;
+							$bioObsTemp['ResponseDate'] = $answerObs->obs_date;
+						}
+						if($i == 0) {
+							$bioObs[$o] = $bioObsTemp;
+						} else if($i == 1) {
+							$bioObs[$o]['Response'] = $bioObsTemp;
+						} else if($i == 2) {
+							$bioObs[$o]['Response']['Response'] = $bioObsTemp;
+						}
+					}
+					$o++; // +1 bioObs
+				}
+			}
+			if(!$matchFound) {
+				// not yet in state_app, so add just the base question
+				//obtain message type
+				$qsType = $msgCPRules->getQsType($bioMsgId, $this->wpUser->ID);
+				$currQuestionInfo = $msgCPRules->getQuestion($bioMsgId, $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);
+				$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+				// add to feed
+				$bioObs[$o] = array(
+					"MessageID" => $currQuestionInfo->msg_id,
+					"Obs_Key" => $currQuestionInfo->obs_key,
+					"ParentID" => $this->stateAppCommentId,
+					"MessageIcon" => "question",
+					"MessageContent" => $currQuestionInfo->message,
+					"ReturnFieldType" => $currQuestionInfo->qtype,
+					"ReturnDataRangeLow" => null,
+					"ReturnDataRangeHigh" => null,
+					"ReturnValidAnswers" => null,
+					"PatientAnswer" => null,
+					"ResponseDate" => null
+				);
+				$o++; // +1 bioObs
+			}
+		}
 		return $bioObs;
 	}
 
