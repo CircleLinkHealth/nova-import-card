@@ -250,16 +250,17 @@ class WpUserController extends Controller {
 	 */
 	public function showMsgCenter(Request $request, $id)
 	{
-		$msgUI              = new MsgUI;
-		$msgUsers           = new MsgUser;
-		$msgChooser         = new MsgChooser;
-		$msgScheduler       = new MsgScheduler;
+		$msgUI = new MsgUI;
+		$msgUsers = new MsgUser;
+		$msgChooser = new MsgChooser;
+		$msgScheduler = new MsgScheduler;
 		$observationService = new ObservationService;
 		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_HSP_20', 'C', 'HSP');
 		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_50', '7', 'RPT'); // bad
 		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_50', '0', 'RPT'); // great
 		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_40', '175', 'RPT');
 		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_REM_NAG_01', '', 'RPT');
+		//$result = $msgChooser->setNextMessage($id, 29311, 'CF_SOL_MED_BT', 'Y', 'RPT');
 		//dd($result);
 		$wpUser = WpUser::find($id);
 		if(!$wpUser) {
@@ -335,31 +336,10 @@ class WpUserController extends Controller {
 		// get feed
 		$careplanService = new CareplanService;
 		$cpFeed = $careplanService->getCareplan($wpUser, $dates);
-
 		//$cpFeed = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')), 1);
-		//dd($cpFeed);
+		$cpFeed = $careplanService->addAppSimCodeToCP($cpFeed);
+		$cpFeedSections = array('Biometric', 'DMS', 'Symptoms', 'Reminders');
 
-		// set careplan feed vars for blade
-		foreach ($cpFeed['CP_Feed'] as $key => $value) {
-			$cpFeedSections = array('Biometric','DMS','Symptoms','Reminders');
-			foreach ($cpFeedSections as $section) {
-				foreach($cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio){
-					$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] = $msgUI->getForm($arrBio,null);
-					//echo($msgUI->getForm($arrBio,null));
-
-					if(isset($arrBio['Response'])) {
-						//echo($msgUI->getForm($arrBio['Response'],' col-lg-offset-1'));
-						$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['formHtml'] = $msgUI->getForm($arrBio['Response'],' col-lg-offset-1');
-						if(isset($arrBio['Response']['Response'])) {
-							//echo($msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-3'));
-							$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['Response']['formHtml'] = $msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-1');
-						}
-					}
-				}
-			}
-		}
-
-		//dd($cpFeed['CP_Feed']);
 		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array(), $messageKey => $messageValue]);
 	}
 }

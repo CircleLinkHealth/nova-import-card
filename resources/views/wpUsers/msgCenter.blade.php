@@ -1,11 +1,6 @@
 @extends('app')
 
 @section('content')
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700">
-    <link rel="stylesheet"  href="//getbootstrap.com/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link rel="stylesheet"  href="//demos.jquerymobile.com/1.4.5/css/themes/default/jquery.mobile-1.4.5.min.css"/>
-    <link rel="stylesheet" href="//demos.jquerymobile.com/1.4.5/_assets/css/jqm-demos.css"/>
     <style id="full-width-slider">
         /* Hide the number input */
         .full-width-slider input {
@@ -93,16 +88,17 @@
                         @else
                             @foreach( $cpFeed['CP_Feed'] as $key => $value )
                                 <div class="row col-lg-12" style="border:3px solid #286090;margin:20px 0px;">
-                                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}" aria-expanded="false" aria-controls="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
+                                    <button class="btn btn-info" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}" aria-expanded="false" aria-controls="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
                                         {{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}
                                     </button>
                                     <div class="collapse" id="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
                                     @foreach( $cpFeedSections as $section )
                                         @if ($section == 'Symptoms')
-                                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse{{ $key.'-'.$section }}" aria-expanded="false" aria-controls="collapse{{ $key.'-'.$section }}">
+                                            <button class="btn btn-info" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#collapse{{ $key.'-'.$section }}" aria-expanded="false" aria-controls="collapse{{ $key.'-'.$section }}">
                                                 {{ $section }}
                                             </button>
-                                           <div class="row col-lg-12 col-lg-offset-2 collapse" id="collapse{{ $key.'-'.$section }}">
+                                            <div class="row">
+                                            <div class="col-lg-12 collapse" id="collapse{{ $key.'-'.$section }}" style="background:#ddd;">
                                                <h3>Symptoms</h3>
                                         @endif
 
@@ -117,6 +113,7 @@
                                            @endforeach
 
                                         @if ($section == 'Symptoms')
+                                            </div>
                                             </div>
                                         @endif
                                         <div style="clear:both;"></div>

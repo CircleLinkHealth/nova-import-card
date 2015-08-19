@@ -11,7 +11,7 @@ class Comment extends Model {
      *
      * @var string
      */
-    protected $table = 'wp_7_comments';
+    protected $table = 'wp_X_comments';
 
     // telling laravel not to create timestamps by default
     public $timestamps = false;
@@ -22,7 +22,7 @@ class Comment extends Model {
      *
      * @var string
      */
-    protected $primaryKey = 'comment_id';
+    protected $primaryKey = 'comment_ID';
 
     protected $dates = ['comment_date', 'comment_date_gmt'];
 
@@ -31,7 +31,7 @@ class Comment extends Model {
      *
      * @var array
      */
-    protected $fillable = ['comment_id','comment_content', 'user_id', 'comment_date', 'comment_date_gmt', 'comment_type'];
+    protected $fillable = ['comment_ID','comment_content', 'user_id', 'comment_date', 'comment_date_gmt', 'comment_type'];
 
     public function user()
     {
@@ -40,7 +40,7 @@ class Comment extends Model {
 
     public function observation()
     {
-        return $this->belongsTo('App\Observation', 'comment_id');
+        return $this->belongsTo('App\Observation', 'comment_ID');
     }
 
 

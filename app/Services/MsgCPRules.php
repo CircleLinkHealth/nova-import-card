@@ -19,7 +19,7 @@ class MsgCPRules {
 
     }
 
-    public function getValidAnswer($pid, $qstype, $strMsgID='', $strResponse='') {
+    public function getValidAnswer($pid, $qstype, $strMsgID='', $strResponse='', $debug = true) {
         /**
          *
          *	@internal 	Returns instructions for handling messages.
@@ -35,14 +35,20 @@ class MsgCPRules {
         // $tmpArray = explode(' ', $strResponse);
         $tmpArray = preg_split("/[ _]/", $strResponse);
         $strResponse2 = $tmpArray[0];
-
-        echo "<br>MsgCPRules->getValidAnswer() start, answer = $strResponse";
+        $log = array();
+        $log[] = "MsgCPRules->getValidAnswer() start, answer = $strResponse";
 
         // echo '<br>Valid tmpArray: ';
         // print_r($tmpArray);
 
         $qdata = $this->getQuestion($strMsgID, 0, '', $pid);
-        echo "<br>MsgCPRules->getValidAnswer() obs_key = ".$qdata->obs_key;
+        $log[] = "MsgCPRules->getValidAnswer() obs_key = ".$qdata->obs_key;
+
+        if($debug) {
+            foreach($log as $logMsg) {
+                echo "<br>$logMsg";
+            }
+        }
         //dd($qdata);
         // check for Blood Pressure format
         if($qdata->obs_key == 'Blood_Pressure'){
@@ -269,9 +275,9 @@ query;
 
 // echo $query;
 
-        $results = $this->db->query($query);
-
-        return $results->result_array();
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
+        //dd($results);
+        return $results;
 
     }//getAdherenceCounts
 

@@ -40,10 +40,12 @@ class MsgChooser {
 
     public function setNextMessage($userId, $commentId, $msgId, $answer, $debug = true) {
 
+        $log = array();
+
         // instantiate user
         $wpUser = WpUser::find($userId);
         if (!$wpUser) {
-            echo "<br>MsgChooser->setNextMessage() user not found";
+            $log[] = "MsgChooser->setNextMessage() user not found";
             return false;
         }
         $userMeta = $wpUser->userMeta();
@@ -61,14 +63,14 @@ class MsgChooser {
         $msgCPRules = new MsgCPRules;
         $msgSubstitutions = new MsgSubstitutions;
 
-        $this->log = "<br>MsgChooser->setNextMessage(".$wpUser->blogId()." | $commentId | $msgId | $answer | $qsType) start";
+        $log[] = "MsgChooser->setNextMessage(".$wpUser->blogId()." | $commentId | $msgId | $answer | $qsType) start";
 
         // get comment
         $comment = new Comment;
         $comment->setTable('wp_'.$wpUser->blogId().'_comments');
         $comment = $comment->find($commentId);
         if (!$comment) {
-            echo "<br>MsgChooser->setNextMessage() comment not found";
+            $log[] = "MsgChooser->setNextMessage() comment not found";
             return false;
         }
 
@@ -76,55 +78,75 @@ class MsgChooser {
         $this->key = $comment->user_id;
         $this->provid = $wpUser->blogId();
 
-        // loop through comment_content and find matching msgId (this doesnt do anything yet)
-        $commentContent = unserialize($comment->comment_content);
-        echo "<br>MsgChooser->setNextMessage() message list";
-        $msgIdMatch = false;
-        foreach($commentContent as $row => $msg) {
-        }
-
         // current message info
         $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', $wpUser->blogId(), $qsType);
         $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->provid, $this->key);
-        echo '<br>MsgChooser->setNextMessage() currQuestionInfo->message['.$currQuestionInfo->msgtype.'] = '.$currQuestionInfo->message.'';
-        echo '<br>MsgChooser->setNextMessage() currQuestion answer = '.$answer.'';
+        $log[] = 'MsgChooser->setNextMessage() currQuestionInfo->message['.$currQuestionInfo->msgtype.'] = '.$currQuestionInfo->message.'';
+        $log[] = 'MsgChooser->setNextMessage() currQuestion answer = '.$answer.'';
 
         // get answerResponse
-        $answerResponse =  $msgCPRules->getValidAnswer($wpUser->blogId(), $qsType, $msgId, $answer);
+        $answerResponse =  $msgCPRules->getValidAnswer($wpUser->blogId(), $qsType, $msgId, $answer, false);
         if(!$answerResponse) {
-            echo '<br>MsgChooser->setNextMessage() getValidAnswer result FAIL, die..';die();
+            $log[] = 'MsgChooser->setNextMessage() getValidAnswer result FAIL, die..';die();
             return false;
         }
-        echo '<br>MsgChooser->setNextMessage() getValidAnswer result - qsid='.$answerResponse->qsid.' | qid='.$answerResponse->qid.' | aid='.$answerResponse->aid.' | action='.$answerResponse->action;
+        $log[] = 'MsgChooser->setNextMessage() getValidAnswer result - qsid='.$answerResponse->qsid.' | qid='.$answerResponse->qid.' | aid='.$answerResponse->aid.' | action='.$answerResponse->action;
 
         // process answerResponse
         if(!empty($answerResponse->action) && ($currQuestionInfo->qtype != 'None')) { // took out  && ($currQuestionInfo->qtype == 'None')
-            echo "<br>MsgChooser->setNextMessage() [[ 1 ]] action = ".$answerResponse->action;
+            $log[] = "MsgChooser->setNextMessage() [[ 1 ]] action = ".$answerResponse->action;
             if(strpos($answerResponse->action, '(') === FALSE) {
-                echo "<br>MsgChooser->setNextMessage() [[ 2 ]] no params, simple";
+                $log[] = "MsgChooser->setNextMessage() [[ 2 ]] no params, simple";
                 $tmpfunc = $answerResponse->action;
-                $nextMsgId = $this->$tmpfunc();
+                //$nextMsgId = $this->$tmpfunc(); // for app assuming nextQ(noparams) means cut it
+                $nextMsgId = false;
             } else {
-                echo "<br>MsgChooser->setNextMessage() [[ 2 ]] has params, complex ";
+                $log[] = "MsgChooser->setNextMessage() [[ 2 ]] has params, complex ";
                 $exe = explode( "(", $answerResponse->action, 2);
                 $params = array($exe[1]);
                 $nextMsgId = call_user_func_array(array($this, $exe[0]), $params);
             }
-            echo "<br>MsgChooser->setNextMessage() [[ 3 ]] nextMsgId = ".$nextMsgId;
-
-            //echo '<br>MsgChooser->setNextMessage() Provider: '.$programId.' QSType: '.$qsType.' MsgID: '.$tmpMsgId;//die();
-            //$ret =  $msgCPRules->getValidAnswer($programId, $qsType, $tmpMsgId);
-            //echo '<br>MsgChooser->setNextMessage() return from valid answer: ';print_r($ret);
+            $log[] = "MsgChooser->setNextMessage() [[ 3 ]] nextMsgId = ".$nextMsgId;
 
             //  get new information in case of loop
-            $nextQuestionInfo  = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $wpUser->blogId(), $qsType);
-            $nextQuestionInfo->message = $msgSubstitutions->doSubstitutions($nextQuestionInfo->message, $this->provid, $this->key);
-            echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->message['.$nextQuestionInfo->msgtype.'] = '.$nextQuestionInfo->message.'';
-            echo '<br>MsgChooser->setNextMessage() nextQuestionInfo->qtype = '.$nextQuestionInfo->qtype.'';
+            if($nextMsgId) {
+                $nextQuestionInfo = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $wpUser->blogId(), $qsType);
+                $nextQuestionInfo->message = $msgSubstitutions->doSubstitutions($nextQuestionInfo->message, $this->provid, $this->key);
+                $log[] = 'MsgChooser->setNextMessage() nextQuestionInfo->message[' . $nextQuestionInfo->msgtype . '] = ' . $nextQuestionInfo->message . '';
+                $log[] = 'MsgChooser->setNextMessage() nextQuestionInfo->qtype = ' . $nextQuestionInfo->qtype . '';
+            } else {
+                $log[] = 'MsgChooser->setNextMessage() nextMsgId = false, no next question to set';
+            }
         }
 
-        echo '<br>MsgChooser->setNextMessage() finished';
-        dd('die here for testing');
+        // loop through comment_content and find matching msgId (this doesnt do anything yet)
+        $commentContent = unserialize($comment->comment_content);
+        $log[] = "MsgChooser->setNextMessage() loop through state_app comment_content for $msgId";
+        foreach($commentContent as $key => $row) {
+            foreach($row as $ccMsgID => $ccAnswer) {
+                if ($ccMsgID == $msgId) {
+                    // rebuild key array (will break > 1 level deep!!)
+                    $commentContent[$key] = array();
+                    // add original question
+                    $commentContent[$key][$ccMsgID] = $answer;
+                    // apply next question
+                    if(isset($nextQuestionInfo)) {
+                        $log[] = "MsgChooser->setNextMessage() next question found and being appended $nextMsgId";
+                        $commentContent[$key][$nextMsgId] = '';
+                    }
+                }
+            }
+        }
+        $comment->comment_content = serialize($commentContent);
+        $comment->save();
+
+        $log[] = 'MsgChooser->setNextMessage() finished';
+
+        if($debug) {
+            foreach($log as $logMsg) {
+                echo "<br>$logMsg";
+            }
+        }
 
     }
 
@@ -156,49 +178,7 @@ class MsgChooser {
         );
      */
 
-        /*
-        $serial = serialize(array(
-            "CF_DM_HSP_10" => array(
-                "Answer" => "1",
-                "Response" => array(
-                    "CF_HSP_20" => array(
-                        "Answer" => "C",
-                        "Response" => array(
-                            "CF_HSP_EX_10" => array(
-                                "Answer" => "",
-                                "Response" => ""
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            "CF_RPT_40" => array(
-                "Answer" => "Y",
-                "Response" => ''
-            )
-        ));
-        dd($serial);
-        */
 
-        /*
-        $serial = serialize(
-            array(
-                0 => array(
-                    "CF_DM_HSP_10" => array(
-                        "Answer" => "1"),
-                    "CF_HSP_20" => array(
-                        "Answer" => "C"),
-                    "CF_HSP_EX_10" => array(
-                        "Answer" => ""),
-                ),
-                1 => array(
-                    "CF_RPT_40" => array(
-                        "Answer" => "Y")
-                ),
-            )
-        );
-        dd($serial);
-        */
 
 
 
@@ -423,6 +403,8 @@ class MsgChooser {
 
     // Get Next Question
     private function NextQ($strLastMsg = '') {
+        echo "<br>MsgChooser->NextQ() start, strLastMsg = $strLastMsg";
+        //dd($this->arrReturn);
         $Provider = $this->arrReturn[$this->key]['usermeta']['intProgramId'];
         $qtype 		= $this->arrReturn[$this->key]['usermeta']['wp_'.$this->provid.'_user_config']['preferred_contact_method']."_".$this->arrReturn[$this->key]['usermeta']['wp_'.$this->provid.'_user_config']['preferred_contact_language'];
         $qstype		= $this->arrReturn[$this->key]['usermeta']['msgtype'];  // Question Group Type
@@ -650,22 +632,23 @@ class MsgChooser {
         $intSelect = $sched = $y = $n = 0;
 
         // get counts for responses
-        $arrCounts = $this->_ci->rules->getAdherenceCounts($this->provid, $this->key);
+        $msgCPRules = new MsgCPRules;
+        $arrCounts = $msgCPRules->getAdherenceCounts($this->provid, $this->key);
         foreach ($arrCounts as $row) {
-            if($row['obs_unit'] == 'scheduled') {
-                $sched = $row['count'];
-            } elseif($row['obs_value'] == 'Y') {
-                $y = $row['count'];
-            } elseif($row['obs_value'] == 'N') {
-                $n = $row['count'];
+            if($row->obs_unit == 'scheduled') {
+                $sched = $row->count;
+            } elseif($row->obs_value == 'Y') {
+                $y = $row->count;
+            } elseif($row->obs_value == 'N') {
+                $n = $row->count;
             }
         }
 
         echo '<br>MsgChooser->fxAlgorithmic() ';
-        echo '<br>Al "Gor" Ithmic';
-        echo '<br>Sched: '.$sched;
-        echo '<br>Y: '.$y;
-        echo '<br>N: '.$n.'<br>';
+        echo '<br>MsgChooser->fxAlgorithmic() Al "Gor" Ithmic';
+        echo '<br>MsgChooser->fxAlgorithmic() Sched: '.$sched;
+        echo '<br>MsgChooser->fxAlgorithmic() Y: '.$y;
+        echo '<br>MsgChooser->fxAlgorithmic() N: '.$n.'<br>';
 
         $lastMsgid = null;
         if($sched > 0 && ($sched == ($y + $n))) {
@@ -683,9 +666,9 @@ class MsgChooser {
             $lastkey =  key($arrState);
             $lastMsgid = key($arrState[$lastkey]);
 
-            echo '<br>Algorithmic Message: '.$Params[$intSelect];
+            echo '<br>MsgChooser->fxAlgorithmic() Algorithmic Message: '.$Params[$intSelect];
             // send message
-            $tmp  = $this->_ci->rules->getQuestion($Params[$intSelect], $this->key, $this->smsMeth, $this->provid);
+            $tmp  = $msgCPRules->getQuestion($Params[$intSelect], $this->key, $this->smsMeth, $this->provid);
             // echo '<br>AG Message Array:';
             // print_r($tmp);
             $this->storeMsg($tmp);
