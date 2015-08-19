@@ -1,0 +1,14 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "CLH Api",
+        "description": "This is CircleLink Health's Api",
+        "version": "1.0.0"
+    },
+    "host": "cpm-api.dev",
+    "schemes": [
+        "http"
+    ],
+    "paths": {},
+    "definitions": {}
+}
