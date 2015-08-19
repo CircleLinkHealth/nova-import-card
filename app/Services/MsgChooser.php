@@ -91,7 +91,8 @@ class MsgChooser {
         // get answerResponse
         $answerResponse =  $msgCPRules->getValidAnswer($wpUser->blogId(), $qsType, $msgId, $answer, false);
         if(!$answerResponse) {
-            $log[] = 'MsgChooser->setNextMessage() getValidAnswer result FAIL, die..';die();
+            $log[] = 'MsgChooser->setNextMessage() getValidAnswer result FAIL, die..';
+            dd($log);
             return false;
         }
         $log[] = 'MsgChooser->setNextMessage() getValidAnswer result - qsid='.$answerResponse->qsid.' | qid='.$answerResponse->qid.' | aid='.$answerResponse->aid.' | action='.$answerResponse->action;
