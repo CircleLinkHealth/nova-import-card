@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Services\MsgChooser;
 use App\Services\ObservationService;
+use App\WpUser;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -58,9 +59,10 @@ class ObservationController extends Controller {
 
             $input = $request->input();
             $observationService = new ObservationService;
-            $result = $observationService->storeObservationFromApp($user->ID, $input['parent_id'], $input['obs_value'], $input['obs_date'], $input['obs_message_id'], $input['obs_key']);
+            $result = $observationService->storeObservationFromApp($user->ID, $input['parent_id'], $input['obs_value'], $input['obs_date'], $input['obs_message_id'], $input['obs_key'], $input['timezone']);
+
             if($result) {
-                return response()->json('Saved observation', 201);
+                return response()->json('Success', 201);
             } else {
                 return response()->json('Error', 500);
             }
