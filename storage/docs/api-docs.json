@@ -5,10 +5,14 @@
         "description": "This is CircleLink Health's Api",
         "version": "1.0.0"
     },
-    "host": "cpm-api.dev",
+    "host": "clapi.cpm.com",
     "schemes": [
         "http"
     ],
-    "paths": {},
-    "definitions": {}
+    "paths": {
+
+    },
+    "definitions": {
+
+    }
 }
