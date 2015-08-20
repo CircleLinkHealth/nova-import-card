@@ -3,64 +3,55 @@
 use App\Activity;
 use App\Comment;
 use App\Observation;
+use App\ObservationMeta;
 use App\WpUser;
 use App\WpUserMeta;
 use Carbon\Carbon;
+use DateTime;
+use Illuminate\Support\Facades\DB;
 
 class ObservationService {
 
-	public function storeObservationFromApp($userId, $parentId, $obsValue, $obsDate, $obsMessageId, $obsKey) {
+	public function storeObservationFromApp($userId, $parentId, $obsValue, $obsDate, $obsMessageId, $obsKey, $timezone) {
 		// get user
 		$wpUser = WpUser::find($userId);
 
 		// find comment
-		$comment = Comment::find($parentId);
+		$comment = DB::connection('mysql_no_prefix')
+			->table('wp_' . $wpUser->blogId() . '_comments')
+			->where('comment_ID', '=', $parentId)
+			->first();
 
-		/*
-		// update comment
-		$comment_array = unserialize($comment['comment_content']);
-		// find message in comment
-		foreach($comment_array as $key => $observations) {
-			foreach($observations as $msgId => $answer) {
-				if($msgId == $obsMessageId) {
-					$comment_array[$key][$msgId] = $obsValue;
-				}
-			}
-		}
-		//dd($comment_array);
-		$comment->comment_content = serialize($comment_array);
-		$commentBlogTable = 'wp_'.$wpUser->blogId().'_comments';
-		$comment->setTable($commentBlogTable);
-		$savedComm = $comment->save();
-		*/
+		// @todo bring comment update back to this service
 
 		// insert new observation
-		$newObservation = new Observation();
-		$newObservation->comment_id = $comment->comment_ID;
-		$newObservation->user_id = $userId;
-		//Needs discussion
-		$newObservation->obs_date = $obsDate;
-		$newObservation->obs_date_gmt = Carbon::createFromFormat('Y-m-d H:i:s', $newObservation->obs_date)->setTimezone('GMT');
-		$newObservation->sequence_id = 0;
-		$newObservation->obs_message_id = $obsMessageId;
-		$newObservation->obs_method = $comment->comment_type;
-		$newObservation->obs_key = $obsKey;
-		$newObservation->obs_value = $obsValue;
-		$newObservation->obs_unit = '';
-		//$savedObs = $newObservation->save();
 
-		//Get Blog id for current user
-		$obsBlogTable = 'ma_'.$wpUser->blogId().'_observations';
-		//Set tables names
-		$newObservation->setTable($obsBlogTable);
-		$savedObs = $newObservation->save();
+		   $result =  DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->insertGetId([
+			'comment_id' => $comment->comment_ID,
+			'user_id' => $userId,
+			'obs_date' => $obsDate,
+			'obs_date_gmt' => DateTime::createFromFormat('Y-m-d H:i:s', $obsDate),
+			'sequence_id' => '0',
+			'obs_message_id' => $obsMessageId,
+			'obs_method' => $comment->comment_type,
+			'obs_key' => $obsKey,
+			'obs_value' => $obsValue,
+			'obs_unit' => '',
+		]);
+
+		$query = DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observationmeta')->insertGetId([
+			'obs_id' => $result,
+			'comment_id' => $comment->comment_ID,
+			'message_id' => $obsMessageId,
+			'meta_key' => 'timezone',
+			'meta_value' => $timezone
+		]);
 
 		//Next Message Block
 		$msgChooser = new MsgChooser();
-		//dd($newObservation->obs_value);
-		$msgChooser->setNextMessage($userId, $comment->comment_ID, $newObservation->obs_message_id,  $newObservation->obs_value, false);
+		$msgChooser->setNextMessage($userId, $comment->comment_ID, $obsMessageId,  $obsValue, false);
+		if($query){return $result;}
+		return false;
 
-		return true;
 	}
-
 }
