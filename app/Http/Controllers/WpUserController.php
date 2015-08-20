@@ -293,7 +293,7 @@ class WpUserController extends Controller {
 					return redirect()->back()->with('messages', ['successfully did something']);
 					*/
 				} else if($params['action'] == 'run_scheduler') {
-					$result = $msgScheduler->index('7');
+					$result = $msgScheduler->index($wpUser->blogId());
 					return response()->json($result);
 				} else if($params['action'] == 'save_app_obs') {
 					$result = $observationService->storeObservationFromApp($id, $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['msg_id'], $params['obs_key']);

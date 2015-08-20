@@ -165,7 +165,7 @@ class MsgSubstitutions {
                 break;
         }
         // echo '<hr><hr>Substitution: i: '.$i.' and message: '.$strMessage.'<hr><hr>';
-        echo "<br>MsgSubstitutions->getReadingsText, returning '$strMessage''";
+        //echo "<br>MsgSubstitutions->getReadingsText, returning '$strMessage''";
         return $strMessage;
 
     }//fxCheckForReadings

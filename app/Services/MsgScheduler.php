@@ -287,8 +287,9 @@ class MsgScheduler {
             // check if messages is allowed to be sent today
             if(($key->pcp_status == 'Active' || ($key->ucp_status == 'Active' && strpos($key->cdays, date('N')) !== FALSE))){
                 // $tmpArr[$i++][$key['msg_id']] = '';
-                $tmpArr[$i++][$key->msg_id] = $key->obs_key;
-                $appArr[$i++] = array($key->msg_id => "");
+                $tmpArr[($i+1)][$key->msg_id] = $key->obs_key;
+                $appArr[$i][0] = array($key->msg_id => "");
+                $i++;
             }
         }
         // $serialOutboundMessage = serialize($tmpArr);

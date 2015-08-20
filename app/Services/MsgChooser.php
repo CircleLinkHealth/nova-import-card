@@ -38,7 +38,17 @@ class MsgChooser {
     public function __construct() {
     }
 
-    public function setNextMessage($userId, $commentId, $msgId, $answer, $debug = true) {
+    public function getAppMessageSequence($commentContent, $msgId) {
+        foreach($commentContent as $key => $msgSet) {
+            foreach($msgSet as $i => $msgRow) {
+                if (key($msgRow) == $msgId) {
+                    return $msgSet;
+                }
+            }
+        }
+    }
+
+    public function setAppAnswerAndNextMessage($userId, $commentId, $msgId, $answer, $debug = true) {
 
         $log = array();
 
@@ -49,26 +59,20 @@ class MsgChooser {
             return false;
         }
         $userMeta = $wpUser->userMeta();
-
-        //obtain message type
-        $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')
-            ->join('rules_questions','rules_question_sets.qid','=','rules_questions.qid')
-            ->select('rules_question_sets.qs_type')
-            ->where('rules_questions.msg_id',$msgId)
-            ->where('rules_question_sets.provider_id',$wpUser->blogId())
-            ->first();
-        $qsType = $qsType->qs_type;
+        $log[] = "MsgChooser->setNextMessage(".$wpUser->blogId()." | $commentId | $msgId | $answer) start";
 
         $msgUser = new MsgUser;
         $msgCPRules = new MsgCPRules;
         $msgSubstitutions = new MsgSubstitutions;
 
-        $log[] = "MsgChooser->setNextMessage(".$wpUser->blogId()." | $commentId | $msgId | $answer | $qsType) start";
+        //obtain message type
+        $qsType  = $msgCPRules->getQsType($msgId, $userId);
 
-        // get comment
-        $comment = new Comment;
-        $comment->setTable('wp_'.$wpUser->blogId().'_comments');
-        $comment = $comment->find($commentId);
+        // find comment
+        $comment = DB::connection('mysql_no_prefix')
+            ->table('wp_' . $wpUser->blogId() . '_comments')
+            ->where('comment_ID', '=', $commentId)
+            ->first();
         if (!$comment) {
             $log[] = "MsgChooser->setNextMessage() comment not found";
             return false;
@@ -87,7 +91,8 @@ class MsgChooser {
         // get answerResponse
         $answerResponse =  $msgCPRules->getValidAnswer($wpUser->blogId(), $qsType, $msgId, $answer, false);
         if(!$answerResponse) {
-            $log[] = 'MsgChooser->setNextMessage() getValidAnswer result FAIL, die..';die();
+            $log[] = 'MsgChooser->setNextMessage() getValidAnswer result FAIL, die..';
+            dd($log);
             return false;
         }
         $log[] = 'MsgChooser->setNextMessage() getValidAnswer result - qsid='.$answerResponse->qsid.' | qid='.$answerResponse->qid.' | aid='.$answerResponse->aid.' | action='.$answerResponse->action;
@@ -122,23 +127,41 @@ class MsgChooser {
         // loop through comment_content and find matching msgId (this doesnt do anything yet)
         $commentContent = unserialize($comment->comment_content);
         $log[] = "MsgChooser->setNextMessage() loop through state_app comment_content for $msgId";
-        foreach($commentContent as $key => $row) {
-            foreach($row as $ccMsgID => $ccAnswer) {
-                if ($ccMsgID == $msgId) {
+        $msgSequence = $this->getAppMessageSequence($commentContent, $msgId);
+        if($msgSequence) {
+
+        }
+        $matchFound = false;
+        foreach($commentContent as $key => $msgSet) {
+            foreach($msgSet as $i => $msgRow) {
+                $log[] = "MsgChooser->setNextMessage() row $i , key = ".key($msgRow);
+                if (key($msgRow) == $msgId) {
+                    $matchFound = true;
+                    $log[] = "MsgChooser->setNextMessage() $i adding answer $msgId";
                     // rebuild key array (will break > 1 level deep!!)
                     $commentContent[$key] = array();
                     // add original question
-                    $commentContent[$key][$ccMsgID] = $answer;
+                    $commentContent[$key][$i] = array($msgId => $answer);
                     // apply next question
                     if(isset($nextQuestionInfo)) {
-                        $log[] = "MsgChooser->setNextMessage() next question found and being appended $nextMsgId";
-                        $commentContent[$key][$nextMsgId] = '';
+                        $log[] = "MsgChooser->setNextMessage() $i next question found and being appended $nextMsgId";
+                        $commentContent[$key][$i+1] = array($nextMsgId => '');
                     }
                 }
             }
         }
+        if(!$matchFound) {
+            $commentContent[$key+1][0] = array($msgId => $answer);
+            $log[] = "MsgChooser->setNextMessage() NEW question being added $msgId";
+            if(isset($nextQuestionInfo)) {
+                $log[] = "MsgChooser->setNextMessage() NEW question answer being added $nextMsgId";
+                $commentContent[$key+1][1] = array($nextMsgId => '');
+            }
+        }
         $comment->comment_content = serialize($commentContent);
-        $comment->save();
+        DB::connection('mysql_no_prefix')->table('wp_'.$wpUser->blogId().'_comments')
+            ->where('comment_ID', $comment->comment_ID)
+            ->update(['comment_content' => $comment->comment_content]);
 
         $log[] = 'MsgChooser->setNextMessage() finished';
 
@@ -149,37 +172,6 @@ class MsgChooser {
         }
 
     }
-
-    // sample array structure testing
-    /*
-     * $serial = serialize(
-            array(
-                0 => array(
-                    "CF_DM_HSP_10" => "1",
-                    "CF_HSP_20" => "",// C
-                    //"CF_HSP_EX_10" => "",
-                ),
-                1 => array(
-                    "CF_RPT_50" => "12"
-                ),
-                2 => array(
-                    "CF_RPT_40" => ""
-                ),
-                3 => array(
-                    "CF_RPT_20" => ""
-                ),
-                3 => array(
-                    "CF_SOL_MED_CHL" => ""
-                ),
-                3 => array(
-                    "CF_REM_NAG_01" => ""
-                )
-            )
-        );
-     */
-
-
-
 
 
 
