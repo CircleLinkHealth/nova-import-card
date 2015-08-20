@@ -3,11 +3,77 @@
 /**
  * @SWG\Swagger(
  *     schemes={"http"},
- *     host="cpm-api.dev",
+ *     host="clapi.cpm.com",
+ *     basePath="/api/v2.1",
+ *     produces={"application/json"},
+ *     consumes={"application/json"},
  *     @SWG\Info(
- *         version="1.0.0",
+ *         version="2.1.1",
  *         title="CLH Api",
  *         description="This is CircleLink Health's Api",
  *     ),
+ * )
+ *
+ *OBSERVATION POST
+ *
+ * @SWG\Post(
+ *     path="/observation",
+ *     tags={"observation"},
+ *     operationId="createObservation",
+ *     summary="Appends comment to daily state_app and creates a new observation",
+ *     description="",
+ *     consumes={"application/json", "application/xml"},
+ *     produces={"application/xml", "application/json"},
+ *     @SWG\Parameter(
+ *         name="parent_id",
+ *         in="body",
+ *         description="Id of the state_app record for the given day",
+ *         required=true,
+ *         @SWG\Schema(ref="#/definitions/Observation"),
+ *     ),
+ *     @SWG\Parameter(
+ *         name="obs_message_id",
+ *         in="body",
+ *         description="Observation Message ID",
+ *         required=true,
+ *         @SWG\Schema(ref="#/definitions/Observation"),
+ *     ),
+ *     @SWG\Parameter(
+ *         name="obs_key",
+ *         in="body",
+ *         description="Observation Key",
+ *         required=true,
+ *         @SWG\Schema(ref="#/definitions/Observation"),
+ *     ),
+ *      @SWG\Parameter(
+ *         name="obs_value",
+ *         in="body",
+ *         description="Observation Value",
+ *         required=true,
+ *         @SWG\Schema(ref="#/definitions/Observation"),
+ *     ),
+ *     @SWG\Parameter(
+ *         name="obs_date",
+ *         in="body",
+ *         description="Created timestamp",
+ *         required=true,
+ *         @SWG\Schema(ref="#/definitions/Observation"),
+ *     ),
+ *     @SWG\Parameter(
+ *         name="timezone",
+ *         in="body",
+ *         description="User's timezone",
+ *         required=true,
+ *         @SWG\Schema(ref="#/definitions/Observation"),
+ *     ),
+ *     @SWG\Response(
+ *         response=201,
+ *         description="Success",
+ *     ),
+ *     @SWG\Response(
+ *         response=500,
+ *         description="Error",
+ *     ),
+ *     security={{"petstore_auth":{"write:pets", "read:pets"}}}
  * )
  */

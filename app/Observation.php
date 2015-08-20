@@ -1,33 +1,36 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+/**
+ * @SWG\Definition(required={"primaryKey"})
+ */
 
 class Observation extends Model {
 
     /**
      * The connection name for the model.
-     *
+     * @SWG\Property()
      * @var string
      */
     protected $connection = 'mysql_no_prefix';
 
     /**
      * The database table used by the model.
-     *
+     * @SWG\Property()
      * @var string
      */
     protected $table = 'ma_X_observations';
 
     /**
      * The primary key for the model.
-     *
+     *@SWG\Property()
      * @var string
      */
     protected $primaryKey = 'obs_id';
 
     /**
      * The attributes that are mass assignable.
-     *
+     *@SWG\Property()
      * @var array
      */
     protected $fillable = ['obs_id', 'obs_date', 'obs_date_gmt', 'comment_id', 'sequence_id', 'obs_message_id', 'user_id', 'obs_method', 'obs_key', 'obs_value', 'obs_unit'];

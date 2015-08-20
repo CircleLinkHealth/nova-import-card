@@ -49,7 +49,7 @@ class ObservationService {
 
 		//Next Message Block
 		$msgChooser = new MsgChooser();
-		$msgChooser->setNextMessage($userId, $comment->comment_ID, $obsMessageId,  $obsValue, false);
+		$msgChooser->setAppAnswerAndNextMessage($userId, $comment->comment_ID, $obsMessageId,  $obsValue, false);
 		if($query){return $result;}
 		return false;
 

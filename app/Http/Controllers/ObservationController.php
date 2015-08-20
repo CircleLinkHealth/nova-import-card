@@ -16,9 +16,27 @@ use Illuminate\Support\Facades\DB;
 class ObservationController extends Controller {
 
 	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
+	 * @SWG\Get(
+	 *     path="/observation",
+	 *     summary="finds observations in the system",
+	 *     tags={"Observation"},
+	 *     @SWG\Response(
+	 *         response=200,
+	 *         description="this response",
+	 *         @SWG\Schema(
+	 *             type="array",
+	 *             @SWG\Items(ref="#/definitions/Pet")
+	 *         ),
+	 *         @SWG\Header(header="x-expires", type="string")
+	 *     ),
+	 *     @SWG\Response(
+	 *         response="default",
+	 *         description="unexpected error",
+	 *         @SWG\Schema(
+	 *             ref="#/definitions/Error"
+	 *         )
+	 *     )
+	 * )
 	 */
 	public function index(Request $request)
 	{
@@ -45,9 +63,42 @@ class ObservationController extends Controller {
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return Response
+     * @SWG\Post(
+	 * path="/observation",
+	 * description="Appends comment to daily state_app and creates a new observation',
+	 * produces={"application/json"},
+     * @SWG\Parameter(
+	 *         name="observation",
+	 *         in="body",
+	 *         description="Observation to the pet store",
+	 *         required=true,
+	 *         @SWG\Schema(ref="/observation"),
+	 *     ),
+     * @SWG\Response(
+	 *         response=201,
+	 *         description="pet response",
+	 *         @SWG\Schema(ref="#/definitions/pet")
+	 *     ),
+	 * @SWG\Response(
+	 *         response=500,
+	 *         description="Error",
+	 *         @SWG\Schema(ref="#/definitions/pet")
+	 *     )
+	 * )
+	 * @SWG\Definition(
+	 *     definition="observationStore",
+	 *     allOf={
+	 *         @SWG\Schema(ref="observation"),
+	 *         @SWG\Schema(
+	 *             required={"name"},
+	 *             @SWG\Property(
+	 *                 property="id",
+	 *                 type="integer",
+	 *                 format="int64"
+	 *             )
+	 *         )
+	 *     }
+	 * )
      */
     public function store(Request $request)
     {
