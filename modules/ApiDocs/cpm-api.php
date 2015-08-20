@@ -14,6 +14,10 @@
  *     ),
  * )
  *
+ * LOGIN
+ *
+ *
+ *
  *OBSERVATION POST
  *
  * @SWG\Post(
@@ -24,6 +28,30 @@
  *     description="",
  *     consumes={"application/json", "application/xml"},
  *     produces={"application/xml", "application/json"},
+ * @SWG\Parameter(
+ *         name="Authorization",
+ *         type="string",
+ *         in="header",
+ *         description="Token",
+ *         required=true,
+ *         @SWG\Schema(ref="#/definitions/Observation"),
+ *     ),
+ * @SWG\Parameter(
+ *         name="X-Authorization",
+ *         in="header",
+ *         type="string",
+ *         description="API Key",
+ *         required=true,
+ *         @SWG\Schema(ref="#/definitions/Observation"),
+ *     ),
+ * @SWG\Parameter(
+ *         name="client",
+ *         in="header",
+ *         type="string",
+ *         description="mobi/ui",
+ *         required=true,
+ *         @SWG\Schema(ref="#/definitions/Observation"),
+ *     ),
  *     @SWG\Parameter(
  *         name="parent_id",
  *         in="body",
