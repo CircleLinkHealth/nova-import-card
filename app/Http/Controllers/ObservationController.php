@@ -113,9 +113,9 @@ class ObservationController extends Controller {
             $result = $observationService->storeObservationFromApp($user->ID, $input['parent_id'], $input['obs_value'], $input['obs_date'], $input['obs_message_id'], $input['obs_key'], $input['timezone']);
 
             if($result) {
-				return response()->json(['Obs_create' => 'Observation Created'], 201);
+				return response()->json(['response' => 'Observation Created'], 201);
             } else {
-				return response()->json(['Obs_create' => 'Error'], 500);
+				return response()->json(['response' => 'Error'], 500);
             }
         }
     }
