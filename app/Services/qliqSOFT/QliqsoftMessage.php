@@ -1,5 +1,6 @@
 <?php namespace App\Services\qliqSOFT;
 
+use App\CLH\Contracts\Repositories\QliqsoftMessageRepositoryInterface;
 use App\CLH\Repositories\QliqsoftMessageRepository;
 use App\QliqsoftMessageLog;
 use App\Services\qliqSOFT\ApiCredentials;
@@ -22,7 +23,7 @@ class QliqsoftMessage implements SecureMessage{
      */
     protected $repo;
 
-    public function __construct(ApiCredentials $credentials, QliqsoftMessageRepository $repo)
+    public function __construct(ApiCredentials $credentials, QliqsoftMessageRepositoryInterface $repo)
     {
         $this->apiCredentials = $credentials;
         $this->repo = $repo;

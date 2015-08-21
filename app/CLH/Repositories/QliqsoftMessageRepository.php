@@ -1,8 +1,9 @@
 <?php namespace App\CLH\Repositories;
 
+use App\CLH\Contracts\Repositories\QliqsoftMessageRepositoryInterface;
 use App\QliqsoftMessageLog;
 
-class QliqsoftMessageRepository {
+class QliqsoftMessageRepository implements QliqsoftMessageRepositoryInterface {
 
     /**
      * Save the response from the qliq Api in the DB
