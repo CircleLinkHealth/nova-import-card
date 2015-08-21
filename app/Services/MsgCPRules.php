@@ -267,7 +267,6 @@ query;
 
     }//getNextList
 
-
     public function getAdherenceCounts($provid, $user_id) {
         /**
          *
@@ -277,21 +276,36 @@ query;
          */
 
         $query = <<<query
-select obs_unit, obs_value, count(*) as count
-from ma_{$provid}_observations
-where user_id = {$user_id}
-and obs_key = 'Adherence'
-and date(obs_date) = date(now())
-and obs_unit in ('','scheduled')
-group by obs_unit, obs_value
-order by obs_unit, obs_value;
+        select max(obs_id), obs_message_id, obs_value, obs_date, obs_unit, count(*) as count
+        from (
+          SELECT *
+          FROM ma_{$provid}_observations
+          ORDER BY obs_id DESC
+        ) as orderedobs
+        where user_id = {$user_id}
+        and obs_key = 'Adherence'
+        and obs_unit NOT IN ('invalid')
+        and date(obs_date) = date(now())
+        group by orderedobs.obs_message_id
+        order by obs_date DESC;
 query;
 
-// echo $query;
-
         $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
-        //dd($results);
-        return $results;
+        $y = 0;
+        $n = 0;
+        $scheduled = 0;
+        foreach($results as $row) {
+            $scheduled++;
+            if($row->obs_unit != 'scheduled') {
+                if (in_array($row->obs_value, array('Y', 'y', 'Yes', 'yes'))) {
+                    $y++;
+                } else if (in_array($row->obs_value, array('N', 'n', 'No', 'no'))) {
+                    $n++;
+                }
+            }
+        }
+        $counts = array('Y' => $y, 'N' => $n, 'scheduled' => $scheduled);
+        return $counts;
 
     }//getAdherenceCounts
 

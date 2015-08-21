@@ -119,7 +119,7 @@ class CareplanService {
 					$currQuestionInfo  = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);
 					$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
 					// add to feed
-					$dsmObs[$o] = array(
+					$obsInfo = array(
 						"MessageID" => $currQuestionInfo->msg_id,
 						"Obs_Key" => $currQuestionInfo->obs_key,
 						"ParentID" => $this->stateAppCommentId,
@@ -132,13 +132,20 @@ class CareplanService {
 						"PatientAnswer" => null,
 						"ResponseDate" => null
 					);
-					$dsmObs[$o]['PatientAnswer'] = $msgRow[key($msgRow)];
+					$obsInfo['PatientAnswer'] = $msgRow[key($msgRow)];
 					// find answer observation (patient inbound always = observation)
 					$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
 					if ($answerObs) {
 						// if has answer, add answer and date of answer to feed
-						$dsmObs[$o]['PatientAnswer'] = $answerObs->obs_value;
-						$dsmObs[$o]['ResponseDate'] = $answerObs->obs_date;
+						$obsInfo['PatientAnswer'] = $answerObs->obs_value;
+						$obsInfo['ResponseDate'] = $answerObs->obs_date;
+					}
+					if($i == 0) {
+						$dsmObs[$o] = $obsInfo;
+					} else if($i == 1) {
+						$dsmObs[$o]['Response'] = $obsInfo;
+					} else if($i == 2) {
+						$dsmObs[$o]['Response']['Response'] = $obsInfo;
 					}
 				}
 				$o++;

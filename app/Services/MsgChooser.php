@@ -19,10 +19,8 @@ class MsgChooser {
 
     /**
      * Msgchooser picks next action to take for questions.
-     * Used for SMARTWOMAN™
      *
-     * @author mrand@circlelinkhealth.com
-     * @copyright CircleLink Health, LLC - 01/30/2015
+     * @copyright CircleLink Health, LLC - 2015
      *
      */
 
@@ -31,21 +29,11 @@ class MsgChooser {
     private $key;
     private $comment_id;
     private $provid;
+    private $programId; // duplicate of provid
     private $smsMeth;
-    private $programId;
     var $log = array();
 
     public function __construct() {
-    }
-
-    public function getAppMessageSequence($commentContent, $msgId) {
-        foreach($commentContent as $key => $msgSet) {
-            foreach($msgSet as $i => $msgRow) {
-                if (key($msgRow) == $msgId) {
-                    return $msgSet;
-                }
-            }
-        }
     }
 
     public function setAppAnswerAndNextMessage($userId, $commentId, $msgId, $answer, $debug = true) {
@@ -58,19 +46,21 @@ class MsgChooser {
             $log[] = "MsgChooser->setNextMessage() user not found";
             return false;
         }
+        $this->programId = $wpUser->blogId();
         $userMeta = $wpUser->userMeta();
-        $log[] = "MsgChooser->setNextMessage(".$wpUser->blogId()." | $commentId | $msgId | $answer) start";
+
+        $log[] = "MsgChooser->setNextMessage(".$this->programId." | $commentId | $msgId | $answer) start";
 
         $msgUser = new MsgUser;
         $msgCPRules = new MsgCPRules;
         $msgSubstitutions = new MsgSubstitutions;
 
-        //obtain message type
+        // obtain message type
         $qsType  = $msgCPRules->getQsType($msgId, $userId);
 
         // find comment
         $comment = DB::connection('mysql_no_prefix')
-            ->table('wp_' . $wpUser->blogId() . '_comments')
+            ->table('wp_' . $this->programId . '_comments')
             ->where('comment_ID', '=', $commentId)
             ->first();
         if (!$comment) {
@@ -78,18 +68,18 @@ class MsgChooser {
             return false;
         }
 
-        // set class vars
+        // set class vars (needed for old methods brought in from CI)
         $this->key = $comment->user_id;
-        $this->provid = $wpUser->blogId();
+        $this->provid = $this->programId;
 
         // current message info
-        $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', $wpUser->blogId(), $qsType);
+        $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', $this->programId, $qsType);
         $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->provid, $this->key);
         $log[] = 'MsgChooser->setNextMessage() currQuestionInfo->message['.$currQuestionInfo->msgtype.'] = '.$currQuestionInfo->message.'';
         $log[] = 'MsgChooser->setNextMessage() currQuestion answer = '.$answer.'';
 
         // get answerResponse
-        $answerResponse =  $msgCPRules->getValidAnswer($wpUser->blogId(), $qsType, $msgId, $answer, false);
+        $answerResponse =  $msgCPRules->getValidAnswer($this->programId, $qsType, $msgId, $answer, false);
         if(!$answerResponse) {
             $log[] = 'MsgChooser->setNextMessage() getValidAnswer result FAIL, die..';
             dd($log);
@@ -115,7 +105,7 @@ class MsgChooser {
 
             //  get new information in case of loop
             if($nextMsgId) {
-                $nextQuestionInfo = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $wpUser->blogId(), $qsType);
+                $nextQuestionInfo = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $this->programId, $qsType);
                 $nextQuestionInfo->message = $msgSubstitutions->doSubstitutions($nextQuestionInfo->message, $this->provid, $this->key);
                 $log[] = 'MsgChooser->setNextMessage() nextQuestionInfo->message[' . $nextQuestionInfo->msgtype . '] = ' . $nextQuestionInfo->message . '';
                 $log[] = 'MsgChooser->setNextMessage() nextQuestionInfo->qtype = ' . $nextQuestionInfo->qtype . '';
@@ -124,32 +114,29 @@ class MsgChooser {
             }
         }
 
-        // loop through comment_content and find matching msgId (this doesnt do anything yet)
+        // loop through comment_content and find matching msgId
         $commentContent = unserialize($comment->comment_content);
         $log[] = "MsgChooser->setNextMessage() loop through state_app comment_content for $msgId";
-        $msgSequence = $this->getAppMessageSequence($commentContent, $msgId);
-        if($msgSequence) {
-
-        }
         $matchFound = false;
         foreach($commentContent as $key => $msgSet) {
             foreach($msgSet as $i => $msgRow) {
-                $log[] = "MsgChooser->setNextMessage() row $i , key = ".key($msgRow);
+                $log[] = "MsgChooser->setNextMessage() start msgSet, cc key = $key, row $i , msg = ".key($msgRow);
                 if (key($msgRow) == $msgId) {
                     $matchFound = true;
-                    $log[] = "MsgChooser->setNextMessage() $i adding answer $msgId";
-                    // rebuild key array (will break > 1 level deep!!)
-                    $commentContent[$key] = array();
+                    $log[] = "MsgChooser->setNextMessage() found i=$i adding answer $msgId";
+                    ////rebuild key array (will break > 1 level deep!!)
+                    ////$commentContent[$key] = array();
                     // add original question
                     $commentContent[$key][$i] = array($msgId => $answer);
                     // apply next question
                     if(isset($nextQuestionInfo)) {
-                        $log[] = "MsgChooser->setNextMessage() $i next question found and being appended $nextMsgId";
+                        $log[] = "MsgChooser->setNextMessage() found i=$i next question found and being appended $nextMsgId";
                         $commentContent[$key][$i+1] = array($nextMsgId => '');
                     }
                 }
             }
         }
+        // if no match was found, append a new question/answer
         if(!$matchFound) {
             $commentContent[$key+1][0] = array($msgId => $answer);
             $log[] = "MsgChooser->setNextMessage() NEW question being added $msgId";
@@ -159,7 +146,7 @@ class MsgChooser {
             }
         }
         $comment->comment_content = serialize($commentContent);
-        DB::connection('mysql_no_prefix')->table('wp_'.$wpUser->blogId().'_comments')
+        DB::connection('mysql_no_prefix')->table('wp_'.$this->programId.'_comments')
             ->where('comment_ID', $comment->comment_ID)
             ->update(['comment_content' => $comment->comment_content]);
 
@@ -172,16 +159,6 @@ class MsgChooser {
         }
 
     }
-
-
-
-
-
-
-
-
-
-
 
 
     // main question flow
@@ -377,6 +354,8 @@ class MsgChooser {
 
     }//nextMessage
 
+
+    // resend the last message
     public function resendLastMsg($arrPart) {
 
         $qstype			= $arrPart[$this->key]['usermeta']['msgtype'];  // Question Group Type
@@ -510,8 +489,6 @@ class MsgChooser {
     }//fxCheckForReadings
 
 
-
-
     // weight messages
     private function fxWeight($inVars) {
         $msgCPRules = new MsgCPRules;
@@ -594,11 +571,13 @@ class MsgChooser {
         return str_replace(array('\'', '"', '(', ')'), "", $instr);
     }//cleanStr
 
+
     private function End($strError='') {
         // closes down session because some went wrong
         error_log('Msgchooser closing session due to unknown problem. '.$strError);
         $this->arrReturn['msg_list'][] = array('End' => array('qtype' => 'End', 'msg_text' => 'Thank you.'));
     } //End
+
 
     public function findKey($arrSearch, $keySearch) {
         // check if it's even an array
@@ -616,6 +595,7 @@ class MsgChooser {
         return false;
     } //findkey
 
+
     public function fxAlgorithmic($inVars) {
         // checks to see if last meds question has been asked.
         $Params = explode(",", $this->cleanStr($inVars));
@@ -626,6 +606,10 @@ class MsgChooser {
         // get counts for responses
         $msgCPRules = new MsgCPRules;
         $arrCounts = $msgCPRules->getAdherenceCounts($this->provid, $this->key);
+        $y = $arrCounts["Y"];
+        $n = $arrCounts["N"];
+        $sched = $arrCounts["scheduled"];
+        /*
         foreach ($arrCounts as $row) {
             if($row->obs_unit == 'scheduled') {
                 $sched = $row->count;
@@ -635,6 +619,7 @@ class MsgChooser {
                 $n = $row->count;
             }
         }
+        */
 
         echo '<br>MsgChooser->fxAlgorithmic() ';
         echo '<br>MsgChooser->fxAlgorithmic() Al "Gor" Ithmic';
@@ -642,7 +627,7 @@ class MsgChooser {
         echo '<br>MsgChooser->fxAlgorithmic() Y: '.$y;
         echo '<br>MsgChooser->fxAlgorithmic() N: '.$n.'<br>';
 
-        $lastMsgid = null;
+        $rtnMsgId = null;
         if($sched > 0 && ($sched == ($y + $n))) {
             // last meds question has been asked
             if($sched == $y) {
@@ -652,11 +637,13 @@ class MsgChooser {
             } else {
                 $intSelect = 2; // mixed message
             }
+            /*
             // get lastMsgId for NextQ
             $arrState	= $this->arrReturn[$this->key]['usermeta']['state'];
             end($arrState);
             $lastkey =  key($arrState);
             $lastMsgid = key($arrState[$lastkey]);
+            */
 
             echo '<br>MsgChooser->fxAlgorithmic() Algorithmic Message: '.$Params[$intSelect];
             // send message
@@ -664,11 +651,12 @@ class MsgChooser {
             // echo '<br>AG Message Array:';
             // print_r($tmp);
             $this->storeMsg($tmp);
+            $rtnMsgId = $tmp->msg_id;
 
         }
 
         // send next message
-        $rtnMsgId = $this->NextQ($lastMsgid);
+        //$rtnMsgId = $this->NextQ($lastMsgid);
         echo '<br>MsgChooser->fxAlgorithmic() Next Message: '.$rtnMsgId;
         return $rtnMsgId;
     }
@@ -676,6 +664,3 @@ class MsgChooser {
 
 
 }//Cpm_1_7_msgchooser_library
-
-/* End of file cpm_1_7_msgchooser_library.php */
-/* Location: ./application/librareis/cpm_1_7_msgchooser_library.php */
