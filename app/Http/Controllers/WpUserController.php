@@ -296,7 +296,7 @@ class WpUserController extends Controller {
 					$result = $msgScheduler->index($wpUser->blogId());
 					return response()->json($result);
 				} else if($params['action'] == 'save_app_obs') {
-					$result = $observationService->storeObservationFromApp($id, $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['msg_id'], $params['obs_key']);
+					$result = $observationService->storeObservationFromApp($id, $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['msg_id'], $params['obs_key'], 'America/New_York');
 					if($result) {
 						$messageKey = 'success';
 						$messageValue = 'Successfully saved new app observation.';

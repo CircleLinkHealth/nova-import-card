@@ -23,7 +23,9 @@ class ObservationService {
 			->first();
 
 		// @todo bring comment update back to this service
-
+		if(!$comment) {
+			dd("ObservationService->storeObservationFromApp() There is no state_app comment for today, looking for comment_id=$parentId... run scheduler");
+		}
 		// insert new observation
 
 		   $result =  DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->insertGetId([
