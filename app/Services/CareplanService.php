@@ -94,7 +94,8 @@ class CareplanService {
 	private function setObsDMS()
 	{
 		// get scheduled observations for the day
-		$scheduledObservations = $this->getScheduledDMS($this->programId, $this->wpUser->ID, $this->date);
+		$scheduledObservations = $this->getScheduledDMS($this->programId, $this->wpUser->ID, $this->date, 'Other');
+		$scheduledObservationsAdherence = $this->getScheduledDMS($this->programId, $this->wpUser->ID, $this->date, 'Adherence');
 
 		// build array of ids for matching
 		$scheduledObsIds = array();
@@ -104,16 +105,26 @@ class CareplanService {
 			}
 		}
 
+		// build array of ids for matching
+		$scheduledObsAdherenceIds = array();
+		if (!empty($scheduledObservationsAdherence)) {
+			foreach ($scheduledObservationsAdherence as $scheduledObsAdherence) {
+				$scheduledObsAdherenceIds[] = $scheduledObsAdherence->obs_message_id;
+			}
+		}
+
 		$dsmObs = array();
+		$dsmAdherenceObs = array();
 		$o = 0;
+		$msgChooser = new MsgChooser;
+		$msgCPRules = new MsgCPRules;
+		$msgSubstitutions = new MsgSubstitutions;
 		foreach($this->stateAppArray as $key => $msgSet) {
 			if (in_array(key($msgSet[0]), $scheduledObsIds)) {
 				// found a DMS match
 				$scheduledObs = $scheduledObservations[key($msgSet[0])];
 				// loop through each row of message set
 				foreach($msgSet as $i => $msgRow) {
-					$msgCPRules = new MsgCPRules;
-					$msgSubstitutions = new MsgSubstitutions;
 					//obtain message type
 					$qsType  = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
 					$currQuestionInfo  = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);
@@ -140,19 +151,79 @@ class CareplanService {
 						$obsInfo['PatientAnswer'] = $answerObs->obs_value;
 						$obsInfo['ResponseDate'] = $answerObs->obs_date;
 					}
-					if($i == 0) {
+					if ($i == 0) {
 						$dsmObs[$o] = $obsInfo;
-					} else if($i == 1) {
-						$dsmObs[$o]['Response'] = $obsInfo;
-					} else if($i == 2) {
-						$dsmObs[$o]['Response']['Response'] = $obsInfo;
+					} else if ($i == 1) {
+						if (strpos($currQuestionInfo->msg_id,'MED') == false) {
+							$dsmObs[$o]['Response'] = $obsInfo;
+						}
+					} else if ($i == 2) {
+						if (strpos($currQuestionInfo->msg_id,'MED') == false) {
+							$dsmObs[$o]['Response']['Response'] = $obsInfo;
+						}
+					}
+				}
+				$o++;
+			} else if (in_array(key($msgSet[0]), $scheduledObsAdherenceIds)) {
+				// found a DMS match
+				$scheduledObs = $scheduledObservationsAdherence[key($msgSet[0])];
+				// loop through each row of message set
+				foreach($msgSet as $i => $msgRow) {
+					//obtain message type
+					$qsType  = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
+					$currQuestionInfo  = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);
+					$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+					// add to feed
+					$obsInfo = array(
+						"MessageID" => $currQuestionInfo->msg_id,
+						"Obs_Key" => $currQuestionInfo->obs_key,
+						"ParentID" => $this->stateAppCommentId,
+						"MessageIcon" => "question",
+						"MessageContent" => $currQuestionInfo->message,
+						"ReturnFieldType" => $currQuestionInfo->qtype,
+						"ReturnDataRangeLow" => null,
+						"ReturnDataRangeHigh" => null,
+						"ReturnValidAnswers" => null,
+						"PatientAnswer" => null,
+						"ResponseDate" => null
+					);
+					$obsInfo['PatientAnswer'] = $msgRow[key($msgRow)];
+					// find answer observation (patient inbound always = observation)
+					$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
+					if ($answerObs) {
+						// if has answer, add answer and date of answer to feed
+						$obsInfo['PatientAnswer'] = $answerObs->obs_value;
+						$obsInfo['ResponseDate'] = $answerObs->obs_date;
+					}
+					if ($i == 0) {
+						$dsmAdherenceObs[$o] = $obsInfo;
 					}
 				}
 				$o++;
 			}
 		}
 
-		return $dsmObs;
+		// add in the response to adherence questions (this is the reason for the split weird code above, so that this always comes after the last adherence question)
+		$adherenceResponseMsgId = $msgChooser->fxAlgorithmicForApp($this->programId, $this->wpUser->ID);
+		if(!empty($adherenceResponseMsgId)) {
+			$qsType  = $msgCPRules->getQsType($adherenceResponseMsgId, $this->wpUser->ID);
+			$currQuestionInfo  = $msgCPRules->getQuestion($adherenceResponseMsgId, $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);
+			$dsmAdherenceObs[$o] = array(
+				"MessageID" => $currQuestionInfo->msg_id,
+				"Obs_Key" => $currQuestionInfo->obs_key,
+				"ParentID" => $this->stateAppCommentId,
+				"MessageIcon" => "info",
+				"MessageContent" => 'Adherence Result Msg: '.$currQuestionInfo->message,
+				"ReturnFieldType" => $currQuestionInfo->qtype,
+				"ReturnDataRangeLow" => null,
+				"ReturnDataRangeHigh" => null,
+				"ReturnValidAnswers" => null,
+				"PatientAnswer" => null,
+				"ResponseDate" => null
+			);
+		}
+
+		return array_merge($dsmObs, $dsmAdherenceObs);
 	}
 
 
@@ -293,7 +364,7 @@ class CareplanService {
 
 
 
-	public function getScheduledDMS($programId, $userId, $date) {
+	public function getScheduledDMS($programId, $userId, $date, $obsKey) {
 		$query = DB::connection('mysql_no_prefix')->table('ma_' . $programId . '_observations AS o')->select('o.*', 'rules_questions.*', 'rules_items.*', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en', 'cm.comment_id', 'cm.comment_parent')
 			->join('rules_questions', 'rules_questions.msg_id', '=', 'o.obs_message_id')
 			->join('rules_items', 'rules_items.qid', '=', 'rules_questions.qid')
@@ -307,7 +378,8 @@ class CareplanService {
 			->join('wp_' . $programId . '_comments as cm', 'cm.comment_id', '=', 'o.comment_id')
 			->where('o.user_id', '=', $userId)
 			->where('obs_unit', '=', 'scheduled')
-			->whereRaw("o.obs_key IN ('Adherence','Other')")
+			->whereRaw("o.obs_key IN ('$obsKey')")
+			->whereRaw("o.obs_message_id NOT IN ('CF_TOD_Q','CF_SOL_EX_01', 'CF_REM_NAG_01', 'CF_SOL_HELO_01')")
 			->where('prov_id', '=', $programId)
 			->whereRaw("obs_date BETWEEN '" . $date . " 00:00:00' AND '" . $date . " 23:59:59'", array())
 			->take(40);

@@ -271,6 +271,7 @@ class WpUserController extends Controller {
 
 		$messageKey = '';
 		$messageValue = '';
+		$activeDate = ''; // keeps date section open
 		if(!empty($params)) {
 			if(isset($params['action'])) {
 				if($params['action'] == 'sendTextSimulation') {
@@ -297,6 +298,7 @@ class WpUserController extends Controller {
 					return response()->json($result);
 				} else if($params['action'] == 'save_app_obs') {
 					$result = $observationService->storeObservationFromApp($id, $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['msg_id'], $params['obs_key'], 'America/New_York');
+					// create message
 					if($result) {
 						$messageKey = 'success';
 						$messageValue = 'Successfully saved new app observation.';
@@ -304,6 +306,9 @@ class WpUserController extends Controller {
 						$messageKey = 'error';
 						$messageValue = 'Failed to save app observation.';
 					}
+					// add param to keep date section open
+					$date = strtotime($params['obs_date']);
+					$activeDate = date('Y-m-d', $date);
 				}
 			}
 		}
@@ -340,6 +345,6 @@ class WpUserController extends Controller {
 		$cpFeed = $careplanService->addAppSimCodeToCP($cpFeed);
 		$cpFeedSections = array('Biometric', 'DMS', 'Symptoms', 'Reminders');
 
-		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array(), $messageKey => $messageValue]);
+		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array(), $messageKey => $messageValue, 'activeDate' => $activeDate]);
 	}
 }

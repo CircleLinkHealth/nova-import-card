@@ -197,7 +197,7 @@ class MsgScheduler {
                 //dd($arrCommentContent);
                 if(isset($arrCommentContent->comment_content)) {
                     $comment_content = unserialize($arrCommentContent->comment_content);
-                    $retState = $this->addStateComment($intProgramID, 'state_app', $intUserID, 'schedulercontroller', $comment_content);
+                    //$retState = $this->addStateComment($intProgramID, 'state_app', $intUserID, 'schedulercontroller', $comment_content);
                 }
             }
         }

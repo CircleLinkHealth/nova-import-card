@@ -661,6 +661,58 @@ class MsgChooser {
         return $rtnMsgId;
     }
 
+    public function fxAlgorithmicForApp($programId, $userId) {
+        // returns response message based on adherence response
+        $intSelect = $sched = $y = $n = 0;
+
+        $params = array('CF_SOL_MEDS_YES', 'CF_SOL_MEDS_NO', 'CF_SOL_MEDS_MIX');
+
+        // get counts for responses
+        $msgCPRules = new MsgCPRules;
+        $arrCounts = $msgCPRules->getAdherenceCounts($programId, $userId);
+        $y = $arrCounts["Y"];
+        $n = $arrCounts["N"];
+        $sched = $arrCounts["scheduled"];
+
+        /*
+        echo '<br>MsgChooser->fxAlgorithmic() ';
+        echo '<br>MsgChooser->fxAlgorithmic() Al "Gor" Ithmic';
+        echo '<br>MsgChooser->fxAlgorithmic() Sched: '.$sched;
+        echo '<br>MsgChooser->fxAlgorithmic() Y: '.$y;
+        echo '<br>MsgChooser->fxAlgorithmic() N: '.$n.'<br>';
+        */
+
+        $rtnMsgId = null;
+        if($sched > 0 && ($sched == ($y + $n))) {
+            // last meds question has been asked
+            if($sched == $y) {
+                $intSelect = 0; // all Yes message
+            } elseif($sched == $n) {
+                $intSelect = 1; // all No message
+            } else {
+                $intSelect = 2; // mixed message
+            }
+            /*
+            // get lastMsgId for NextQ
+            $arrState	= $this->arrReturn[$this->key]['usermeta']['state'];
+            end($arrState);
+            $lastkey =  key($arrState);
+            $lastMsgid = key($arrState[$lastkey]);
+            */
+
+            //echo '<br>MsgChooser->fxAlgorithmic() Algorithmic Message: '.$params[$intSelect];
+            // send message
+            $tmp  = $msgCPRules->getQuestion($params[$intSelect], $userId, $this->smsMeth, $programId);
+            $rtnMsgId = $tmp->msg_id;
+
+        }
+
+        // send next message
+        //$rtnMsgId = $this->NextQ($lastMsgid);
+        //echo '<br>MsgChooser->fxAlgorithmic() Next Message: '.$rtnMsgId;
+        return $rtnMsgId;
+    }
+
 
 
 }//Cpm_1_7_msgchooser_library

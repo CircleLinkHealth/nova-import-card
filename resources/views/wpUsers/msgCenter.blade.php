@@ -88,10 +88,10 @@
                         @else
                             @foreach( $cpFeed['CP_Feed'] as $key => $value )
                                 <div class="row col-lg-12" style="border:3px solid #286090;margin:20px 0px;">
-                                    <button class="btn btn-info" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}" aria-expanded="false" aria-controls="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
+                                    <button class="btn btn-info" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}" @if ($activeDate != $cpFeed['CP_Feed'][$key]['Feed']['FeedDate']) aria-expanded="false" @endif aria-controls="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
                                         {{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}
                                     </button>
-                                    <div class="collapse" id="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
+                                    <div @if ($activeDate != $cpFeed['CP_Feed'][$key]['Feed']['FeedDate']) class="collapse" @endif id="collapse{{ $cpFeed['CP_Feed'][$key]['Feed']['FeedDate'] }}">
                                     @foreach( $cpFeedSections as $section )
                                         @if ($section == 'Symptoms')
                                             <button class="btn btn-info" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#collapse{{ $key.'-'.$section }}" aria-expanded="false" aria-controls="collapse{{ $key.'-'.$section }}">
