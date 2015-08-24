@@ -230,6 +230,7 @@ class CareplanService {
 	private function setObsReminders()
 	{
 		// this only deals with HSP question
+		// currently on hold
 		return array();
 	}
 

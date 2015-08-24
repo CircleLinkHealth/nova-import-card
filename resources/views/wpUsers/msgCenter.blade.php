@@ -1,6 +1,7 @@
 @extends('app')
 
 @section('content')
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <style id="full-width-slider">
         /* Hide the number input */
         .full-width-slider input {

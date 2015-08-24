@@ -674,14 +674,6 @@ class MsgChooser {
         $n = $arrCounts["N"];
         $sched = $arrCounts["scheduled"];
 
-        /*
-        echo '<br>MsgChooser->fxAlgorithmic() ';
-        echo '<br>MsgChooser->fxAlgorithmic() Al "Gor" Ithmic';
-        echo '<br>MsgChooser->fxAlgorithmic() Sched: '.$sched;
-        echo '<br>MsgChooser->fxAlgorithmic() Y: '.$y;
-        echo '<br>MsgChooser->fxAlgorithmic() N: '.$n.'<br>';
-        */
-
         $rtnMsgId = null;
         if($sched > 0 && ($sched == ($y + $n))) {
             // last meds question has been asked
@@ -692,14 +684,6 @@ class MsgChooser {
             } else {
                 $intSelect = 2; // mixed message
             }
-            /*
-            // get lastMsgId for NextQ
-            $arrState	= $this->arrReturn[$this->key]['usermeta']['state'];
-            end($arrState);
-            $lastkey =  key($arrState);
-            $lastMsgid = key($arrState[$lastkey]);
-            */
-
             //echo '<br>MsgChooser->fxAlgorithmic() Algorithmic Message: '.$params[$intSelect];
             // send message
             $tmp  = $msgCPRules->getQuestion($params[$intSelect], $userId, $this->smsMeth, $programId);
