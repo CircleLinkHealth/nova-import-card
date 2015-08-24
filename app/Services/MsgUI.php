@@ -10,7 +10,7 @@ use DateTimeZone;
 class MsgUI {
 
 
-	function getForm($arrBio = array(), $offset = null)
+	function getForm($arrBio = array(), $date, $offset = null)
 	{
 		$formOutput ="";
 		$formOutput .= "<form action='' method=post>\n";
@@ -34,7 +34,7 @@ class MsgUI {
 			$formOutput .= "\n<input class='form-control' type='hidden' name='obs_key' value='" . $arrBio['Obs_Key'] . "'>";
 			$formOutput .= "\n<input class='form-control' type='hidden' name='msg_id' value='" . $arrBio['MessageID'] . "'>";
 			$formOutput .= "\n<input class='form-control' type='hidden' name='parent_id' value='" . $arrBio['ParentID'] . "'>";
-			$formOutput .= "\n<input class='form-control' type='hidden' name='obs_date' value='" . date("Y-m-d H:i:s") . "'>";
+			$formOutput .= "\n<input class='form-control' type='hidden' name='obs_date' value='" . $date . date(" H:i:s") . "'>";
 			$formOutput .= "\n<input class='form-control' type='hidden' name='ReturnFieldType' value='" . $arrBio['ReturnFieldType'] . "'>";
 			$formOutput .= "\n<input class='form-control' type='hidden' name='ReturnDataRangeLow' value='" . $arrBio['ReturnDataRangeLow'] . "'>";
 			$formOutput .= "\n<input class='form-control' type='hidden' name='ReturnDataRangeHigh' value='" . $arrBio['ReturnDataRangeHigh'] . "'>";
@@ -114,6 +114,33 @@ class MsgUI {
 			'icon' => $icon);
 		return $msgIcon;
 
+	}
+
+
+
+	public function addAppSimCodeToCP($cpFeed) {
+		$msgUI = new MsgUI;
+		if(!empty($cpFeed['CP_Feed'])) {
+			foreach ($cpFeed['CP_Feed'] as $key => $value) {
+				$cpFeedSections = array('Biometric', 'DMS', 'Symptoms', 'Reminders');
+				foreach ($cpFeedSections as $section) {
+					foreach ($cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio) {
+						$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] = $msgUI->getForm($arrBio, $value['Feed']['FeedDate'], null);
+						//echo($msgUI->getForm($arrBio,null));
+
+						if (isset($arrBio['Response'])) {
+							//echo($msgUI->getForm($arrBio['Response'],' col-lg-offset-1'));
+							$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['formHtml'] = $msgUI->getForm($arrBio['Response'], $value['Feed']['FeedDate'], ' col-lg-offset-1');
+							if (isset($arrBio['Response']['Response'])) {
+								//echo($msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-3'));
+								$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['Response']['formHtml'] = $msgUI->getForm($arrBio['Response']['Response'], $value['Feed']['FeedDate'], ' col-lg-offset-1');
+							}
+						}
+					}
+				}
+			}
+		}
+		return $cpFeed;
 	}
 
 }

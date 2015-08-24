@@ -239,7 +239,6 @@ class CareplanService {
 		$msgCPRules = new MsgCPRules;
 		$msgSubstitutions = new MsgSubstitutions;
 		$msgUser = new MsgUser;
-		$bioObsKeys = array();
 		$bioMsgIds = array();
 		$userInfo = $msgUser->get_users_data($this->wpUser->ID, 'id', $this->programId, true);
 		if (!empty($userInfo[$this->wpUser->ID]['usermeta']['user_care_plan'])) {
@@ -255,7 +254,6 @@ class CareplanService {
 						if ($questionInfo) {
 							$msgId = $questionInfo->msg_id;
 							$bioMsgIds[] = $msgId;
-							$bioObsKeys[] = $obsKey;
 						}
 					}
 				}
@@ -337,8 +335,28 @@ class CareplanService {
 
 	private function setObsSymptoms()
 	{
-		// phil is updating the question set to use SYM_51/52/53/54
+		// not yet in state app
+		$scheduledSymptoms = $this->getScheduledSymptoms();
 		return array();
+
+		/*
+		dd($scheduledSymptoms);
+		$msgCPRules = new MsgCPRules;
+		$msgSubstitutions = new MsgSubstitutions;
+		$msgUser = new MsgUser;
+		$bioMsgIds = array();
+		$userInfo = $msgUser->get_users_data($this->wpUser->ID, 'id', $this->programId, true);
+		if (!empty($userInfo[$this->wpUser->ID]['usermeta']['user_care_plan_items'])) {
+			$userInfoUCP = $userInfo[$this->wpUser->ID]['usermeta']['user_care_plan_items'];
+			// loop through care plan
+			foreach($userInfoUCP as $itemId => $ucpItemInfo) {
+				if($ucpItemInfo['section_text'] == 'Symptoms to Monitor' && $ucpItemInfo['meta_value'] == 'Active') {
+					dd($ucpItemInfo);
+				}
+			}
+		}
+		return array();
+		*/
 	}
 
 
@@ -395,6 +413,52 @@ class CareplanService {
 	}
 
 
+	public function getScheduledSymptoms() {
+		// query
+		$query = DB::connection('mysql_no_prefix')->table('rules_ucp AS rucp');
+		$query->select('rucp.*', 'pcp.pcp_id', 'pcp.section_text', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id');
+		$query->where('user_id', '=', $this->wpUser->ID);
+		$query->join('rules_items AS i', 'i.items_id', '=', 'rucp.items_id');
+		$query->leftJoin('rules_items AS rip', 'i.items_parent', '=', 'rip.items_id'); // parent item info
+		$query->join('rules_pcp AS pcp', function ($join) {
+			$join->on('i.pcp_id', '=', 'pcp.pcp_id')->where('pcp.prov_id', '=', $this->programId);
+		});
+		$query->leftJoin('rules_questions AS rq', 'rq.qid', '=', 'i.qid');
+		$query->leftJoin('rules_questions AS rqp', 'rqp.qid', '=', 'rip.qid'); // parent question info
+		$query->leftJoin('rules_itemmeta AS ims', function ($join) {
+			$join->on('ims.items_id', '=', 'i.items_id')->where('ims.meta_key', '=', 'ui_sort');
+		});
+		$query->whereRaw("(rucp.meta_key = 'status' OR rucp.meta_key = 'value') AND user_id = " . $this->wpUser->ID);
+		//$query->where('rq.obs_key', '=', 'Severity');
+		$query->orderBy("ui_sort", 'ASC');
+		$query->orderBy("i.items_id", 'DESC');
+		$result = $query->get();
+
+		$arrReturnResult = array();
+		// set alert_values
+		if(!empty($result)) {
+			foreach ($result as $row) {
+				$arrReturnResult[$row->items_id] = array(
+					'msg_id' => $row->msg_id,
+					'ui_sort' => $row->ui_sort,
+					'meta_key' => $row->meta_key,
+					'meta_value' => $row->meta_value,
+					'pcp_id' => $row->pcp_id,
+					'section_text' => $row->section_text,
+					'items_id' => $row->items_id,
+					'items_text' => $row->items_text,
+					'items_parent' => $row->items_parent,
+					'items_parent_qid' => $row->items_parent_qid,
+					'items_parent_msg_id' => $row->items_parent_msg_id,
+				);
+			}
+		} else {
+			echo "<br>MsgUser->get_user_care_plan_items() ERROR, could not find!";
+		}
+		return $arrReturnResult;
+
+	}
+
 
 	public function getAnswerObservation($programId, $userId, $obsKey, $msgId, $date) {
 		// find answer observation (patient inbound always = observation)
@@ -410,33 +474,6 @@ class CareplanService {
 			->orderBy("o.obs_date", "desc");
 		$answerObs = $query->first();
 		return $answerObs;
-	}
-
-
-
-	public function addAppSimCodeToCP($cpFeed) {
-		$msgUI = new MsgUI;
-		if(!empty($cpFeed['CP_Feed'])) {
-			foreach ($cpFeed['CP_Feed'] as $key => $value) {
-				$cpFeedSections = array('Biometric', 'DMS', 'Symptoms', 'Reminders');
-				foreach ($cpFeedSections as $section) {
-					foreach ($cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio) {
-						$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] = $msgUI->getForm($arrBio, null);
-						//echo($msgUI->getForm($arrBio,null));
-
-						if (isset($arrBio['Response'])) {
-							//echo($msgUI->getForm($arrBio['Response'],' col-lg-offset-1'));
-							$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['formHtml'] = $msgUI->getForm($arrBio['Response'], ' col-lg-offset-1');
-							if (isset($arrBio['Response']['Response'])) {
-								//echo($msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-3'));
-								$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['Response']['formHtml'] = $msgUI->getForm($arrBio['Response']['Response'], ' col-lg-offset-1');
-							}
-						}
-					}
-				}
-			}
-		}
-		return $cpFeed;
 	}
 
 }

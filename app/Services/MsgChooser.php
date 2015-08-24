@@ -427,20 +427,20 @@ class MsgChooser {
 
     // store message information in array to be returned to calling program/function.
     private function storeMsg($arrQuestion, $extratext='') 	{
-        echo "<br>MsgChooser->storeMsg() start, msg_id = $arrQuestion->msg_id, prov_id $this->provid";
+        //echo "<br>MsgChooser->storeMsg() start, msg_id = $arrQuestion->msg_id, prov_id $this->provid";
         if(isset($this->arrReturn['msg_list'])) {
             if (is_object($arrQuestion) && (!$this->findkey($this->arrReturn['msg_list'], $arrQuestion->msg_id))) {
                 $msgSubstitutions = new MsgSubstitutions;
                 $arrQuestion->message = $msgSubstitutions->doSubstitutions($arrQuestion->message, $this->provid, $this->key);
                 $this->arrReturn['msg_list'][] = array($arrQuestion->msg_id => array('qtype' => $arrQuestion->qtype, 'msg_text' => $extratext . $arrQuestion->message));
-                echo "<br>MsgChooser->storeMsg() action add to msg_list (qtype => $arrQuestion->qtype, msg_text => $extratext . $arrQuestion->message)";
+                //echo "<br>MsgChooser->storeMsg() action add to msg_list (qtype => $arrQuestion->qtype, msg_text => $extratext . $arrQuestion->message)";
             }
         } else {
             if (is_object($arrQuestion)) {
                 $msgSubstitutions = new MsgSubstitutions;
                 $arrQuestion->message = $msgSubstitutions->doSubstitutions($arrQuestion->message, $this->provid, $this->key);
                 $this->arrReturn['msg_list'][] = array($arrQuestion->msg_id => array('qtype' => $arrQuestion->qtype, 'msg_text' => $extratext . $arrQuestion->message));
-                echo "<br>MsgChooser->storeMsg() action add to msg_list (qtype => $arrQuestion->qtype, msg_text => $extratext . $arrQuestion->message)";
+                //echo "<br>MsgChooser->storeMsg() action add to msg_list (qtype => $arrQuestion->qtype, msg_text => $extratext . $arrQuestion->message)";
             }
         }
         return;
@@ -620,12 +620,13 @@ class MsgChooser {
             }
         }
         */
-
+        /*
         echo '<br>MsgChooser->fxAlgorithmic() ';
         echo '<br>MsgChooser->fxAlgorithmic() Al "Gor" Ithmic';
         echo '<br>MsgChooser->fxAlgorithmic() Sched: '.$sched;
         echo '<br>MsgChooser->fxAlgorithmic() Y: '.$y;
         echo '<br>MsgChooser->fxAlgorithmic() N: '.$n.'<br>';
+        */
 
         $rtnMsgId = null;
         if($sched > 0 && ($sched == ($y + $n))) {
@@ -645,7 +646,7 @@ class MsgChooser {
             $lastMsgid = key($arrState[$lastkey]);
             */
 
-            echo '<br>MsgChooser->fxAlgorithmic() Algorithmic Message: '.$Params[$intSelect];
+            //echo '<br>MsgChooser->fxAlgorithmic() Algorithmic Message: '.$Params[$intSelect];
             // send message
             $tmp  = $msgCPRules->getQuestion($Params[$intSelect], $this->key, $this->smsMeth, $this->provid);
             // echo '<br>AG Message Array:';
@@ -657,7 +658,7 @@ class MsgChooser {
 
         // send next message
         //$rtnMsgId = $this->NextQ($lastMsgid);
-        echo '<br>MsgChooser->fxAlgorithmic() Next Message: '.$rtnMsgId;
+        //echo '<br>MsgChooser->fxAlgorithmic() Next Message: '.$rtnMsgId;
         return $rtnMsgId;
     }
 
@@ -685,14 +686,10 @@ class MsgChooser {
                 $intSelect = 2; // mixed message
             }
             //echo '<br>MsgChooser->fxAlgorithmic() Algorithmic Message: '.$params[$intSelect];
-            // send message
             $tmp  = $msgCPRules->getQuestion($params[$intSelect], $userId, $this->smsMeth, $programId);
             $rtnMsgId = $tmp->msg_id;
-
         }
 
-        // send next message
-        //$rtnMsgId = $this->NextQ($lastMsgid);
         //echo '<br>MsgChooser->fxAlgorithmic() Next Message: '.$rtnMsgId;
         return $rtnMsgId;
     }

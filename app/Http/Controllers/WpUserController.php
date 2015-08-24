@@ -342,7 +342,7 @@ class WpUserController extends Controller {
 		$careplanService = new CareplanService;
 		$cpFeed = $careplanService->getCareplan($wpUser, $dates);
 		//$cpFeed = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')), 1);
-		$cpFeed = $careplanService->addAppSimCodeToCP($cpFeed);
+		$cpFeed = $msgUI->addAppSimCodeToCP($cpFeed);
 		$cpFeedSections = array('Biometric', 'DMS', 'Symptoms', 'Reminders');
 
 		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array(), $messageKey => $messageValue, 'activeDate' => $activeDate]);
