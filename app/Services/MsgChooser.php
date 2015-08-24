@@ -661,7 +661,7 @@ class MsgChooser {
         return $rtnMsgId;
     }
 
-    public function fxAlgorithmicForApp($programId, $userId) {
+    public function fxAlgorithmicForApp($programId, $userId, $date) {
         // returns response message based on adherence response
         $intSelect = $sched = $y = $n = 0;
 
@@ -669,7 +669,7 @@ class MsgChooser {
 
         // get counts for responses
         $msgCPRules = new MsgCPRules;
-        $arrCounts = $msgCPRules->getAdherenceCounts($programId, $userId);
+        $arrCounts = $msgCPRules->getAdherenceCounts($programId, $userId, $date);
         $y = $arrCounts["Y"];
         $n = $arrCounts["N"];
         $sched = $arrCounts["scheduled"];

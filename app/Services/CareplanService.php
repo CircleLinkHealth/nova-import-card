@@ -204,7 +204,7 @@ class CareplanService {
 		}
 
 		// add in the response to adherence questions (this is the reason for the split weird code above, so that this always comes after the last adherence question)
-		$adherenceResponseMsgId = $msgChooser->fxAlgorithmicForApp($this->programId, $this->wpUser->ID);
+		$adherenceResponseMsgId = $msgChooser->fxAlgorithmicForApp($this->programId, $this->wpUser->ID, $this->date);
 		if(!empty($adherenceResponseMsgId)) {
 			$qsType  = $msgCPRules->getQsType($adherenceResponseMsgId, $this->wpUser->ID);
 			$currQuestionInfo  = $msgCPRules->getQuestion($adherenceResponseMsgId, $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);

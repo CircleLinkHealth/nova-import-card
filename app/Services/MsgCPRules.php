@@ -267,7 +267,7 @@ query;
 
     }//getNextList
 
-    public function getAdherenceCounts($provid, $user_id) {
+    public function getAdherenceCounts($provid, $user_id, $date = null) {
         /**
          *
          *	@internal 	Counts responses to adherence questions plus how many should have been asked
@@ -275,8 +275,10 @@ query;
          *
          */
 
-        $query = <<<query
-        select max(obs_id), obs_message_id, obs_value, obs_date, obs_unit, count(*) as count
+        if(!$date) {
+            $date = date('Y-m-d');
+        }
+        $query = "select max(obs_id), obs_message_id, obs_value, obs_date, obs_unit, count(*) as count
         from (
           SELECT *
           FROM ma_{$provid}_observations
@@ -285,10 +287,9 @@ query;
         where user_id = {$user_id}
         and obs_key = 'Adherence'
         and obs_unit NOT IN ('invalid')
-        and date(obs_date) = date(now())
+        and obs_date BETWEEN '" . $date . " 00:00:00' AND '" . $date . " 23:59:59'
         group by orderedobs.obs_message_id
-        order by obs_date DESC;
-query;
+        order by obs_date DESC";
 
         $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
         $y = 0;
