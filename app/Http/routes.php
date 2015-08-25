@@ -124,6 +124,8 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
     Route::post('comment', 'CommentController@store');
     Route::post('observation', 'ObservationController@store');
     Route::get('careplan', 'CareplanController@show');
+    Route::get('reports/progress', 'ReportsController@progress');
+    Route::get('reports/careplan', 'ReportsController@careplan');
 
 	// locations
 	Route::get('locations', 'LocationController@index');

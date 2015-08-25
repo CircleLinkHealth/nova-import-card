@@ -1,0 +1,168 @@
+{
+  "CarePlan_Report": [
+    {
+      "Date": "2015-08-25",
+      "Patient_Name": "Chico Marx",
+      "Patient_Phone": "203-385-2176",
+      "Provider_Name": "Kerry Palakanis",
+      "Provider_Phone": "404-555-1212",
+      "Clinic_Name": "Crisfield Clinic"
+    },
+    {
+      "We Are Treating:": [
+        "Hypertension",
+        "CHF",
+        "Asthma--COPD",
+        "High Cholesterol",
+        "Diabetes",
+        "Depression",
+        "CAD",
+        "Afib",
+        "Smoking",
+        "Other Conditions"
+      ]
+    },
+    {
+      "Your Health Goals:": [
+        {
+          "Goal": "Lower Blood Pressure",
+          "to": "120/80 mm Hg",
+          "from": "140/70 mm Hg"
+        },
+        {
+          "Goal": "Raise Blood Sugar",
+          "to": "200 mg/dl",
+          "from": "135 mg/dl"
+        },
+        {
+          "Goal": "Gain Weight",
+          "to": "340 lbs",
+          "from": "252 lbs"
+        }
+      ]
+    },
+    {
+      "Medications:": [
+        {
+          "Monitoring these Medications": [
+            "Blood Pressure Meds",
+            "Cholesterol Meds",
+            "Blood Thinners (Plavix, Aspirin)",
+            "Water Pills/Diuretics",
+            "Oral Diabetes Meds",
+            "Insulin or other Injectable",
+            "Mood/Depression Meds",
+            "Other Meds"
+          ]
+        },
+        {
+          "Taking these Medications": [
+            "Plavix",
+            "Medicinidis"
+          ]
+        }
+      ]
+    },
+    {
+      "Watch out for:": [
+        "Shortness of breath",
+        "Chest pain or Chest tightness",
+        "Swelling in the legs/feet",
+        "Feeling down, helplessness or problems sleeping"
+      ]
+    },
+    {
+      "We Are Informing You About:": [
+        "Healthy Diet",
+        "Low Salt Diet",
+        "Diabetic Diet",
+        "Exercise"
+      ]
+    },
+    {
+      "Check In Plan:": [
+        {
+          "Summary": "We will check in with you at 203-385-2176 every day at 09:15 am"
+        },
+        {
+          "Details": [
+            {
+              "Sun": "09:15 am"
+            },
+            {
+              "Mon": "09:15 am"
+            },
+            {
+              "Tue": "09:15 am"
+            },
+            {
+              "Wed": "09:15 am"
+            },
+            {
+              "Thu": "09:15 am"
+            },
+            {
+              "Fri": "09:15 am"
+            },
+            {
+              "Sat": "09:15 am"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Follow these Instructions:": [
+        {
+          "For Hypertension:": "Nothing"
+        },
+        {
+          "For High Cholesterol:": "Nothing"
+        },
+        {
+          "For CAD:": "Nothing"
+        },
+        {
+          "For CHF:": "report any sudden weight changes, moderate exersize per plan only"
+        },
+        {
+          "For Afib:": "Remember to take your meds"
+        },
+        {
+          "For Diabetes:": "Nothing"
+        },
+        {
+          "For Asthma--COPD:": "Nothing"
+        },
+        {
+          "For Depression:": "Stay active, get lots of sun during warm weather"
+        },
+        {
+          "For Other Conditions:": "OCD"
+        },
+        {
+          "For Smoking:": "Try one less per week"
+        }
+      ]
+    },
+    {
+      "Other Information": [
+        {
+          "Allergies:": "Nothing"
+        },
+        {
+          "Social Services:": "Nothing"
+        },
+        {
+          "Care Team:": "Dr T Learey,  Dr J Adler"
+        },
+        {
+          "Appointments:": "Every two weeks"
+        },
+        {
+          "Other Notes:": "Spend some time outdoors doing moderate exersize"
+        }
+      ]
+    }
+  ]
+}
