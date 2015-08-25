@@ -1,6 +1,9 @@
 {
   "Progress_Report": [
     {
+      "Date": "2015-08-25"
+    },
+    {
       "We Are Treating:": [
         "Hypertension",
         "CHF",
@@ -18,11 +21,11 @@
       "Tracking Changes:": [
         {
           "Biometric": "Blood_Pressure",
-          "Status":"Good",
-          "Progression":"up",
-          "Change: 9 Wks.":"12 sbp",
-          "Latest Weekly Avg.":"140 sbp",
-          "Goal":"120/80",
+          "Status": "Good",
+          "Progression": "up",
+          "Change: 9 Wks.": "12 sbp",
+          "Latest Weekly Avg.": "140 sbp",
+          "Goal": "120/80",
           "data": [
             {
               "id": 1,
@@ -78,11 +81,11 @@
         },
         {
           "Biometric": "Blood_Sugar",
-          "Status":"Good",
-          "Progression":"down",
-          "Change: 9 Wks.":"220 mg/dL",
-          "Latest Weekly Avg.":"135 mg/dL",
-          "Goal":"200",
+          "Status": "Good",
+          "Progression": "down",
+          "Change: 9 Wks.": "220 mg/dL",
+          "Latest Weekly Avg.": "135 mg/dL",
+          "Goal": "200",
           "data": [
             {
               "id": 1,
@@ -138,11 +141,11 @@
         },
         {
           "Biometric": "Weight",
-          "Status":"Good",
-          "Progression":"down",
-          "Change: 9 Wks.":"34 lbs",
-          "Latest Weekly Avg.":"252 lbs",
-          "Goal":"240",
+          "Status": "Good",
+          "Progression": "down",
+          "Change: 9 Wks.": "34 lbs",
+          "Latest Weekly Avg.": "252 lbs",
+          "Goal": "240",
           "data": [
             {
               "id": 1,
