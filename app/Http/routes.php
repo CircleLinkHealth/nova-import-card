@@ -142,9 +142,7 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 {
 	// activities
 	Route::resource('activities', 'ActivityController');
-
 	Route::post('activities/update', 'ActivityController@update');
-
 	Route::resource('activities.meta', 'ActivityMetaController');
 
 	// reports
@@ -153,6 +151,9 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 
 	// locations
 	Route::get('locations', 'LocationController@index');
+
+	// observations
+	Route::post('observation', 'ObservationController@store');
 });
 
 // legacy api routes @todo migrate and remove these

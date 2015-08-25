@@ -6,8 +6,11 @@ use App\ObservationMeta;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Services\MsgChooser;
+use App\Services\MsgCPRules;
 use App\Services\ObservationService;
 use App\WpUser;
+use Date;
+use DateTime;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -102,22 +105,42 @@ class ObservationController extends Controller {
      */
     public function store(Request $request)
     {
-        \JWTAuth::setIdentifier('ID');
-        $user = \JWTAuth::parseToken()->authenticate();
-        if(!$user) {
-            return response()->json(['error' => 'invalid_credentials'], 401);
-        } else {
+		$observationService = new ObservationService;
+		if ( $request->header('Client') == 'mobi' ) {
+			// get and validate current user
+			\JWTAuth::setIdentifier('ID');
+			$wpUser = \JWTAuth::parseToken()->authenticate();
+			if (!$wpUser) {
+				return response()->json(['error' => 'invalid_credentials'], 401);
+			}
+			$params = $request->input();
+			$params['user_id'] = $wpUser->ID;
+			$params['source'] = 'manual_input';
+		} else if ( $request->header('Client') == 'ui' ) { // WP Site
+			$input = json_decode(Crypt::decrypt($request->input('data')), true);
+			$wpUser = WpUser::find($input['userId']);
+			if (!$wpUser) {
+				return response()->json(['error' => 'invalid_credentials'], 401);
+			}
+			// extra work here to decode from quirky UI
+			$params['user_id'] = $wpUser->ID;
+			$params['parent_id'] = 0; // needs to become state_app or state_sol??
+			$params['obs_value'] = str_replace("/", "_", $input['observationValue']);
+			$params['obs_date'] = $input['observationDate'];
+			$params['obs_message_id'] = $input['observationType'];
+			$params['obs_key'] = ''; // need to get from obs_message_id
+			$params['timezone'] = 'America/New_York';
+			$params['qstype'] = '';
+			$params['source'] = $input['observationSource'];
+		}
 
-            $input = $request->input();
-            $observationService = new ObservationService;
-            $result = $observationService->storeObservationFromApp($user->ID, $input['parent_id'], $input['obs_value'], $input['obs_date'], $input['obs_message_id'], $input['obs_key'], $input['timezone']);
+		$result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['obs_message_id'], $params['obs_key'], $params['timezone'], $params['source']);
 
-            if($result) {
-				return response()->json(['response' => 'Observation Created'], 201);
-            } else {
-				return response()->json(['response' => 'Error'], 500);
-            }
-        }
+		if($result) {
+			return response()->json(['response' => 'Observation Created'], 201);
+		} else {
+			return response()->json(['response' => 'Error'], 500);
+		}
     }
 
 	/**
