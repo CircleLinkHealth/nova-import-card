@@ -21,9 +21,15 @@ class GetRedoxAccessToken {
 
         $authentication = new RedoxAuthenticator;
 
+        /*
+         * If there's no access token, or if it's expired => authenticate
+         * Otherwise => authenticate with refresh token
+         */
         if ( empty($retrieveAccessToken['meta_value']) ) {
             $authentication->authenticate();
         } elseif ( strtotime($retreveExpires['meta_value']) < strtotime('now') ) {
+            $authentication->authenticate();
+        } else {
             $authentication->authenticateWithRefreshToken($retrieveRefreshToken['meta_value']);
         }
 
