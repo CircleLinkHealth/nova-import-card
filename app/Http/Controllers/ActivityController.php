@@ -69,7 +69,9 @@ class ActivityController extends Controller {
 		}
 
         // convert minutes to seconds.
-        $input['duration'] = $input['duration']*60;
+		if($input['duration']) {
+			$input['duration'] = $input['duration'] * 60;
+		}
 
 		// store activity
 		$actId = Activity::createNewActivity($input);
