@@ -416,7 +416,7 @@ class CareplanService {
 	public function getScheduledSymptoms() {
 		// query
 		$query = DB::connection('mysql_no_prefix')->table('rules_ucp AS rucp');
-		$query->select('rucp.*', 'pcp.pcp_id', 'pcp.section_text', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id');
+		$query->select('rucp.*', 'rq.*', 'pcp.pcp_id', 'pcp.section_text', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rucp.meta_value as status', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id');
 		$query->where('user_id', '=', $this->wpUser->ID);
 		$query->join('rules_items AS i', 'i.items_id', '=', 'rucp.items_id');
 		$query->leftJoin('rules_items AS rip', 'i.items_parent', '=', 'rip.items_id'); // parent item info
@@ -430,6 +430,8 @@ class CareplanService {
 		});
 		$query->whereRaw("(rucp.meta_key = 'status' OR rucp.meta_key = 'value') AND user_id = " . $this->wpUser->ID);
 		//$query->where('rq.obs_key', '=', 'Severity');
+		$query->where('rucp.meta_value', '=', 'Active');
+		$query->where('i.pcp_id', '=', '5');
 		$query->orderBy("ui_sort", 'ASC');
 		$query->orderBy("i.items_id", 'DESC');
 		$result = $query->get();
@@ -441,8 +443,7 @@ class CareplanService {
 				$arrReturnResult[$row->items_id] = array(
 					'msg_id' => $row->msg_id,
 					'ui_sort' => $row->ui_sort,
-					'meta_key' => $row->meta_key,
-					'meta_value' => $row->meta_value,
+					'status' => $row->meta_value,
 					'pcp_id' => $row->pcp_id,
 					'section_text' => $row->section_text,
 					'items_id' => $row->items_id,
@@ -455,6 +456,7 @@ class CareplanService {
 		} else {
 			echo "<br>MsgUser->get_user_care_plan_items() ERROR, could not find!";
 		}
+		//dd($arrReturnResult);
 		return $arrReturnResult;
 
 	}

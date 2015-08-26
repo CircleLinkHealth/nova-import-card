@@ -1,9 +1,17 @@
 <?php namespace App\Services;
 
+use App\Observation;
+use App\ObservationMeta;
+use App\Comment;
 use App\WpUser;
 use App\WpUserMeta;
 use App\Services\MsgUser;
 use App\Services\MsgChooser;
+
+use Date;
+use DateTime;
+use DateTimeZone;
+
 use DB;
 /*
  *
@@ -130,25 +138,29 @@ class MsgScheduler {
 
 
     private function addStateComment($programId, $comment_type, $user_id, $comment_author,$arrCommentContent = array()) {
-        date_default_timezone_set('America/New_York');
-        //switch_to_blog( $intProgramID );
+        $dateTime = new DateTime('now', new DateTimeZone('America/New_York'));
+        $localTime = $dateTime->format('Y-m-d H:i:s');
 
-        $data = array(
-            'comment_author' => $comment_author,
-            'comment_author_email' => 'admin@circlelinkhealth.com',
-            'comment_author_url' => 'http://circlelinkhealth.com/',
-            'comment_content' => serialize($arrCommentContent),
-            'comment_type' => $comment_type,
-            'comment_parent' => 1,
-            'user_id' => $user_id,
-            'comment_author_IP' => '127.0.0.1',
-            'comment_agent' => '',
-            'comment_date' => date('Y-m-d H:i:s'),
-            'comment_approved' => 0
-        );
-        $comment_id = DB::connection('mysql_no_prefix')->table('wp_'.$programId.'_comments')->insertGetId( $data );
-        echo "<br>MsgScheduler->addStateComment() Created New Comment#=" . $comment_id;
-        return $comment_id;
+        $dateTime->setTimezone(new DateTimeZone('UTC'));
+        $gmtTime = $dateTime->format('Y-m-d H:i:s');
+
+        $comment = new Comment;
+        $comment->comment_post_ID = 0;
+        $comment->comment_author = $comment_author;
+        $comment->comment_author_email = 'admin@circlelinkhealth.com';
+        $comment->comment_author_url = 'http://www.circlelinkhealth.com/';
+        $comment->comment_content = serialize($arrCommentContent);
+        $comment->comment_type = $comment_type;
+        $comment->comment_parent = '1';
+        $comment->user_id = $user_id;
+        $comment->comment_author_IP = '127.0.0.1';
+        $comment->comment_agent = 'N/A';
+        $comment->comment_date = $localTime;
+        $comment->comment_date_gmt = $gmtTime;
+        $comment->comment_approved = 1;
+        $comment->save();
+        //echo "<br>MsgScheduler->addStateComment() Created New Comment#=" . $comment->id;
+        return $comment->id;
     }
 
 
@@ -306,6 +318,7 @@ class MsgScheduler {
             foreach ($value as $key2 => $value2) {
                 // echo '<br>'.$key.': '.$key2.' -> '.$value2;
                 //flag obs_processor of response
+                /*
                 $data = array(
                     'comment_id' => $lastkey,
                     'sequence_id' => $key,
@@ -320,7 +333,19 @@ class MsgScheduler {
 
                 // insert new observation record
                 $obs_id = DB::connection('mysql_no_prefix')->table('ma_'.$provider_id.'_observations')->insertGetId( $data );
-                echo "<br>MsgScheduler->scheduledSMS() Added Observation obs_id#=" . $obs_id;
+                */
+                $observation = new Observation;
+                $observation->comment_id = $lastkey;
+                $observation->sequence_id = $key;
+                $observation->user_id = $user_id;
+                $observation->obs_message_id = $key2;
+                $observation->obs_method = $qstype;
+                $observation->obs_key = $value2;
+                $observation->obs_unit = 'scheduled';
+                $observation->obs_date = date("Y-m-d H:i:s");
+                $observation->obs_date_gmt = gmdate("Y-m-d H:i:s");
+                $observation->save();
+                echo "<br>MsgScheduler->scheduledSMS() Added Observation obs_id#=" . $observation->id;
 
             }
         }
