@@ -1,5 +1,7 @@
 <?php
-// unprotected
+/*
+ * NO AUTHENTICATION NEEDED FOR THESE ROUTES
+ */
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::get('/', 'WelcomeController@index');
@@ -9,8 +11,21 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
+Route::group(['namespace' => 'Redox'], function ()
+{
+    Route::get('redox', [
+        'uses' => 'AppVerificationController@getVerificationRequest'
+    ]);
+
+    Route::group(['middleware' => 'getRedoxAccessToken'], function()
+    {
+        //@todo: this is not an actual route, it was made for testing
+        Route::get('testRedoxx', 'PostToRedoxController@index');
+    });
+});
+
 /****************************/
-//     LARAVEL SITE ROUTES
+//    AUTH ROUTES
 /****************************/
 
 Route::group(['middleware' => 'auth'], function ()
@@ -46,23 +61,6 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'usersCareplan']);
 	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenter']);
 	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenterUpdate']);
-
-    Route::group(['namespace' => 'Redox'], function ()
-    {
-        Route::get('redox', [
-            'uses' => 'AppVerificationController@getVerificationRequest'
-        ]);
-
-        Route::post('redox', [
-            'uses' => 'AppVerification@postRedox'
-        ]);
-
-        Route::group(['middleware' => 'getRedoxAccessToken'], function()
-        {
-            //@todo: this is not an actual route, it was made for testing
-            Route::get('testRedoxx', 'PostToRedoxController@index');
-        });
-    });
 
     /*
      * Third Party Apis Config Pages
