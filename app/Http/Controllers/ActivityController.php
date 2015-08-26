@@ -94,7 +94,7 @@ class ActivityController extends Controller {
 		$activityService = new ActivityService;
 		$result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
 
-		return response("Activity Created", 201);
+		return response("Successfully Created", 201);
 	}
 
 	/**
