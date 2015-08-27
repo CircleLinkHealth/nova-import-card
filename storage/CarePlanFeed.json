@@ -8,7 +8,7 @@
   "CP_Feed": [
     {
       "Feed": {
-        "FeedDate": "2015-07-01",
+        "FeedDate": "2015-08-27",
         "DMS": [
           {
             "MessageID": "CF_REM_NAG_01",
@@ -16,7 +16,7 @@
             "ParentID": "601",
             "MessageIcon": "info",
             "MessageCategory": "Tip",
-            "MessageContent": "We have not received your fasting blood sugar today. Please type RPT to send ASAP.",
+            "MessageContent": "We have not received your fasting blood sugar today.",
             "ReturnFieldType": "None",
             "ReturnDataRangeLow": null,
             "ReturnDataRangeHigh": null,
@@ -371,7 +371,7 @@
     },
     {
       "Feed": {
-        "FeedDate": "2015-06-30",
+        "FeedDate": "2015-08-26",
         "DMS": [
           {
             "MessageID": "CF_REM_NAG_01",
@@ -692,7 +692,7 @@
     },
     {
       "Feed": {
-        "FeedDate": "2015-06-29",
+        "FeedDate": "2015-08-25",
         "DMS": [
           {
             "MessageID": "CF_REM_NAG_01",
