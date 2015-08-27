@@ -61,8 +61,20 @@ class WpUserController extends Controller {
 			}
 		} else {
 			// display view
-			$wpUsers = wpUser::orderBy('ID', 'desc')->get();
-			return view('wpUsers.index', [ 'wpUsers' => $wpUsers ]);
+			$wpUsers = wpUser::orderBy('ID', 'desc')->limit(500)->get();
+			$invalidUsers = array();
+			$validUsers = array();
+			foreach($wpUsers as $wpUser) {
+				$userMeta = $wpUser->userMeta();
+
+				if(empty($userMeta['user_config'])) {
+					$invalidUsers[] = $wpUser;
+					continue 1;
+				}
+
+				$validUsers[] = $wpUser;
+			}
+			return view('wpUsers.index', [ 'wpUsers' => $validUsers, 'invalidWpUsers' => $invalidUsers ]);
 		}
 
 	}

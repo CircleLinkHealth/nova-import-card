@@ -25,7 +25,11 @@
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
                     <div class="panel-heading">Users</div>
+                    <br>
                     <p>These users are coming from the wp_users.. this laravel project has been modified to use wp_users as the primary users table.</p>
+
+                    <p><strong>See bottom of page for list of invalid users</strong></p>
+                    <br>
                     <table class="table table-striped">
                         <thead>
                         <tr>
@@ -64,6 +68,14 @@
                         @endforeach
                         </tbody>
                     </table>
+
+                    <h2>Invalid Users</h2>
+                    <h3>Missing Config</h3>
+                    @if (isset($invalidWpUsers))
+                        @foreach( $invalidWpUsers as $wpUser )
+                            User {{ $wpUser->ID }} - {{ $wpUser->display_name }}<br>
+                        @endforeach
+                    @endif
                 </div>
             </div>
         </div>
