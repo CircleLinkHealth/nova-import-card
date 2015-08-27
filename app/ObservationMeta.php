@@ -59,10 +59,15 @@ class ObservationMeta extends Model {
         $params['message_id'] = $this->message_id;
         $params['meta_key'] = $this->meta_key;
         $params['meta_value'] = $this->meta_value;
-        $resultMetaId =  DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observationmeta')->insertGetId($params);
-
         $this->program_id = $wpUser->blogId();
-        $this->legacy_meta_id = $resultMetaId;
+
+        // updating or inserting?
+        if($this->id) {
+            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observationmeta')->where('comment_ID', $this->legacy_meta_id)->update($params);
+        } else {
+            $resultId = DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observationmeta')->insertGetId($params);
+            $this->legacy_meta_id = $resultId;
+        }
 
         parent::save();
         // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save

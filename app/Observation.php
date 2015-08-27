@@ -98,10 +98,15 @@ class Observation extends Model {
         $params['obs_key'] = $this->obs_key;
         $params['obs_value'] = $this->obs_value;
         $params['obs_unit'] = $this->obs_unit;
-        $resultObsId =  DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->insertGetId($params);
-
         $this->program_id = $wpUser->blogId();
-        $this->legacy_obs_id = $resultObsId;
+
+        // updating or inserting?
+        if($this->id) {
+            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->where('comment_ID', $this->legacy_obs_id)->update($params);
+        } else {
+            $resultObsId = DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->insertGetId($params);
+            $this->legacy_obs_id = $resultObsId;
+        }
 
         parent::save();
         // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
