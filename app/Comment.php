@@ -43,12 +43,12 @@ class Comment extends Model {
     public function save(array $params = array())
     {
         if(empty($this->user_id)) {
-            return false;
+            dd('user_id is required for comment');
         }
         $wpUser = WpUser::find($this->user_id);
 
         if(!$wpUser->blogId()) {
-            return false;
+            dd($this->user_id . ' is missing a program id');
         }
 
         // take programId(blogId) and add to ma_X_comments table

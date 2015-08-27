@@ -64,7 +64,7 @@ class ObservationService {
 		// @todo bring comment update back to this service
 		$commentId = 0;
 		if($comment) {
-			$commentId = $comment->comment_ID;
+			$commentId = $comment->id;
 		}
 
 		// insert new observation

@@ -82,9 +82,13 @@ class Observation extends Model {
         if(!$wpUser->blogId()) {
             return false;
         }
+        $comment = Comment::find($this->comment_id);
+        if(!$comment) {
+            return false;
+        }
 
         // take programId(blogId) and add to wp_X_observations table
-        $params['comment_id'] = $this->comment_id;
+        $params['comment_id'] = $comment->legacy_comment_id;
         $params['user_id'] = $this->user_id;
         $params['obs_date'] = $this->obs_date;
         $params['obs_date_gmt'] = $this->obs_date_gmt;

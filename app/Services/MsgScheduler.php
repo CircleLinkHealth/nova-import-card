@@ -205,11 +205,13 @@ class MsgScheduler {
                 $arrPart[$intUserID] = $msgUser->get_users_data($intUserID, 'id', $intProgramID, true);
                 $arrPart[$intUserID][$intUserID]['usermeta']['msgtype'] = 'SOL';
                 $ret = $this->scheduledSMS($arrPart[$intUserID]);
-                $arrCommentContent = $msgUser->get_user_state_record_by_id($intProgramID,$ret);
-                //dd($arrCommentContent);
-                if(isset($arrCommentContent->comment_content)) {
-                    $comment_content = unserialize($arrCommentContent->comment_content);
-                    //$retState = $this->addStateComment($intProgramID, 'state_app', $intUserID, 'schedulercontroller', $comment_content);
+                if($ret) {
+                    $arrCommentContent = $msgUser->get_user_state_record_by_id($intProgramID, $ret);
+                    //dd($arrCommentContent);
+                    if (isset($arrCommentContent->comment_content)) {
+                        $comment_content = unserialize($arrCommentContent->comment_content);
+                        //$retState = $this->addStateComment($intProgramID, 'state_app', $intUserID, 'schedulercontroller', $comment_content);
+                    }
                 }
             }
         }
@@ -228,6 +230,17 @@ class MsgScheduler {
             {
                 //echo "<BR><pre>". $key."|";
                 echo '<br><br>[---Process User #'.$value['user_id'].'---]<br>';
+
+                $wpUser = WpUser::find($value['user_id']);
+                $userMeta = $wpUser->userMeta();
+                if(empty($userMeta['user_config'])) {
+                    echo "<br>MsgScheduler->createScheduledMessages() Skip, Missing User Config";
+                    continue 1;
+                }
+                if(!$wpUser->blogId()) {
+                    echo "<br>MsgScheduler->createScheduledMessages() Skip, Missing ProgramId";
+                    continue 1;
+                }
 
                 $arrPart[$value['user_id']] = $msgUser->get_users_data($value['user_id'], 'id', $intProgramID);
                 $arrPart[$value['user_id']][$value['user_id']]['usermeta']['msgtype'] = 'SOL'; // hardcoded SOL
@@ -280,9 +293,19 @@ class MsgScheduler {
 
 
     public function scheduledSMS($arrData){
-        echo "<br><br>MsgScheduler->scheduledSMS() Start";
         reset($arrData);
         $user_id        =  key($arrData);
+        echo "<br><br>MsgScheduler->scheduledSMS() Start $user_id";
+        $wpUser = WpUser::find($user_id);
+        $userMeta = $wpUser->userMeta();
+        if(empty($userMeta['user_config'])) {
+            echo "<br>MsgScheduler->scheduledSMS() Missing User Config";
+            return false;
+        }
+        if(!$wpUser->blogId()) {
+            echo "<br>MsgScheduler->scheduledSMS() Missing ProgramId";
+            return false;
+        }
         $provider_id    = $arrData[$user_id]['usermeta']['intProgramId']; // Provider ID
         $qstype         = $arrData[$user_id]['usermeta']['msgtype'];  // Question Group Type
         $qtype          = $arrData[$user_id]['usermeta']['wp_'.$provider_id.'_user_config']['preferred_contact_method']."_".$arrData[$user_id]['usermeta']['wp_'.$provider_id.'_user_config']['preferred_contact_language'];

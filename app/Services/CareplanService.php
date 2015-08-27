@@ -77,22 +77,26 @@ class CareplanService {
 
 
 	public function setStateAppForDate($date) {
+		$this->stateAppCommentId = false;
 		// find comment
 		$comment = DB::connection('mysql_no_prefix')
-			->table('wp_' . $this->programId . '_comments')
+			->table('lv_comments')
 			->where('user_id', '=', $this->wpUser->ID)
 			->where('comment_type', '=', 'state_app')
 			->whereRaw("comment_date BETWEEN '" . $date . " 00:00:00' AND '" . $date . " 23:59:59'", array())
 			->first();
 		$this->stateAppArray = array();
 		if(isset($comment->comment_content)) {
-			$this->stateAppCommentId = $comment->comment_ID;
+			$this->stateAppCommentId = $comment->id;
 			$this->stateAppArray = unserialize($comment->comment_content);
 		}
 	}
 
 	private function setObsDMS()
 	{
+		if(!$this->stateAppCommentId) {
+			return array();
+		}
 		// get scheduled observations for the day
 		$scheduledObservations = $this->getScheduledDMS($this->programId, $this->wpUser->ID, $this->date, 'Other');
 		$scheduledObservationsAdherence = $this->getScheduledDMS($this->programId, $this->wpUser->ID, $this->date, 'Adherence');
@@ -114,6 +118,7 @@ class CareplanService {
 		}
 
 		$dsmObs = array();
+		$dsmAdherenceObs = array();
 		$dsmAdherenceObs = array();
 		$o = 0;
 		$msgChooser = new MsgChooser;
@@ -229,6 +234,9 @@ class CareplanService {
 
 	private function setObsReminders()
 	{
+		if(!$this->stateAppCommentId) {
+			return array();
+		}
 		// this only deals with HSP question
 		// currently on hold
 		return array();
@@ -236,6 +244,9 @@ class CareplanService {
 
 	private function setObsBiometric()
 	{
+		if(!$this->stateAppCommentId) {
+			return array();
+		}
 		$msgCPRules = new MsgCPRules;
 		$msgSubstitutions = new MsgSubstitutions;
 		$msgUser = new MsgUser;
@@ -335,6 +346,9 @@ class CareplanService {
 
 	private function setObsSymptoms()
 	{
+		if(!$this->stateAppCommentId) {
+			return array();
+		}
 		// not yet in state app
 		$scheduledSymptoms = $this->getScheduledSymptoms();
 		return array();
@@ -384,7 +398,7 @@ class CareplanService {
 
 
 	public function getScheduledDMS($programId, $userId, $date, $obsKey) {
-		$query = DB::connection('mysql_no_prefix')->table('ma_' . $programId . '_observations AS o')->select('o.*', 'rules_questions.*', 'rules_items.*', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en', 'cm.comment_id', 'cm.comment_parent')
+		$query = DB::connection('mysql_no_prefix')->table('lv_observations AS o')->select('o.*', 'rules_questions.*', 'rules_items.*', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en')
 			->join('rules_questions', 'rules_questions.msg_id', '=', 'o.obs_message_id')
 			->join('rules_items', 'rules_items.qid', '=', 'rules_questions.qid')
 			->join('rules_itemmeta as imsms', function ($join) {
