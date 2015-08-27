@@ -67,7 +67,7 @@ class ReportsController extends Controller {
 
 			$months = Crypt::decrypt($request->header('months'));
 
-            $data = DB::table('activities')
+            $acts = DB::table('activities')
                 ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration)'))
 				->whereBetween('performed_at', [
 					Carbon::createFromFormat('Y-n', $months[0])->startOfMonth(),
@@ -78,21 +78,29 @@ class ReportsController extends Controller {
                 ->orderBy('performed_at', 'desc')
                 ->get();
 
-            $data = json_decode(json_encode($data), true);
+            $acts = json_decode(json_encode($acts), true);
 
-            foreach($data as $key => $value){
-                $data[$key]['patient'] = WpUser::find($patients[0]);
+            foreach($acts as $key => $value){
+                $acts[$key]['patient'] = WpUser::find($patients[0]);
             }
 
-            $data1 = array();
-            $data1[$patients[0]] = $data;
+			foreach($acts as $key => $value){
+				$act_id = $acts[$key]['id'];
+				$acts_ = Activity::find($act_id);
+				$comment = $acts_->getActivityCommentFromMeta($act_id);
+				$acts[$key]['comment'] = $comment;
+			}
+
+            $activities_data_with_users = array();
+            $activities_data_with_users[$patients[0]] = $acts;
 
             foreach($patients as $patientId) {
                 $reportData[$patientId] = array();
             }
-            foreach ($data1 as $patientAct)
+            foreach ($activities_data_with_users as $patientAct)
             {
                 $reportData[$patientAct[0]['patient_id']] = collect($patientAct)->groupBy('performed_at_year_month');
+				//$reportData[$patientAct[0]['patient_id']]getActivityCommentFromMeta($id)
             }
 
             if(!empty($reportData)) {

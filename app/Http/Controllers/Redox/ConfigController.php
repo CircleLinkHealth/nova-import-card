@@ -65,10 +65,18 @@ class ConfigController extends Controller {
             return redirect()->action('Redox\ConfigController@create');
         }
 
+        $accessTokens = ThirdPartyApiConfig::select('meta_key', 'meta_value')
+            ->whereMetaKey('redox_access_token')
+            ->orWhere('meta_key', 'redox_expires')
+            ->orWhere('meta_key', 'redox_refresh_token')
+            ->get()
+            ->toArray();
+
         return view('thirdPartyApisConfig.redox.edit', [
             'apiKey' => $apiKey,
             'apiSecret' => $apiSecret,
-            'appVerifToken' => $appVerifToken
+            'appVerifToken' => $appVerifToken,
+            'accessTokens' => $accessTokens,
         ]);
 	}
 

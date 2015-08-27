@@ -47,5 +47,35 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Access Tokens in DB
+                    </div>
+                    <div class="panel-body">
+                        @if(!empty($accessTokens))
+
+                            @foreach($accessTokens as $accessToken)
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">
+                                        {{ $accessToken['meta_key'] }}
+                                    </label>
+                                    <div class="">
+                                        {{ $accessToken['meta_value'] }}
+                                    </div>
+                                </div>
+                            @endforeach
+
+                            @else
+
+                            No access tokens found in db.
+
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
