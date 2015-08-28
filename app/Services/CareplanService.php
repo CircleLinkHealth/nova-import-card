@@ -12,6 +12,7 @@ class CareplanService {
 
 	var $wpUser; // user model
 	var $programId;
+	var $msgLanguageType = 'APP_EN';
 	var $date; // date yyyy-mm-dd
 	var $stateAppArray = array(); // array of state_app comment_content
 	var $stateAppCommentId;
@@ -132,7 +133,7 @@ class CareplanService {
 				foreach($msgSet as $i => $msgRow) {
 					//obtain message type
 					$qsType  = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
-					$currQuestionInfo  = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);
+					$currQuestionInfo  = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
 					$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
 					// add to feed
 					$obsInfo = array(
@@ -176,7 +177,7 @@ class CareplanService {
 				foreach($msgSet as $i => $msgRow) {
 					//obtain message type
 					$qsType  = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
-					$currQuestionInfo  = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);
+					$currQuestionInfo  = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
 					$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
 					// add to feed
 					$obsInfo = array(
@@ -212,7 +213,7 @@ class CareplanService {
 		$adherenceResponseMsgId = $msgChooser->fxAlgorithmicForApp($this->programId, $this->wpUser->ID, $this->date);
 		if(!empty($adherenceResponseMsgId)) {
 			$qsType  = $msgCPRules->getQsType($adherenceResponseMsgId, $this->wpUser->ID);
-			$currQuestionInfo  = $msgCPRules->getQuestion($adherenceResponseMsgId, $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);
+			$currQuestionInfo  = $msgCPRules->getQuestion($adherenceResponseMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
 			$dsmAdherenceObs[$o] = array(
 				"MessageID" => $currQuestionInfo->msg_id,
 				"Obs_Key" => $currQuestionInfo->obs_key,
@@ -283,7 +284,7 @@ class CareplanService {
 					foreach ($msgSet as $i => $msgRow) {
 						//obtain message type
 						$qsType = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
-						$currQuestionInfo = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);
+						$currQuestionInfo = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
 						$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
 						// add to feed
 						$bioObsTemp = array(
@@ -322,7 +323,7 @@ class CareplanService {
 				// not yet in state_app, so add just the base question
 				//obtain message type
 				$qsType = $msgCPRules->getQsType($bioMsgId, $this->wpUser->ID);
-				$currQuestionInfo = $msgCPRules->getQuestion($bioMsgId, $this->wpUser->ID, 'SMS_EN', $this->programId, $qsType);
+				$currQuestionInfo = $msgCPRules->getQuestion($bioMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
 				$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
 				// add to feed
 				$bioObs[$o] = array(
@@ -344,33 +345,100 @@ class CareplanService {
 		return $bioObs;
 	}
 
+
+
+
+
+
+
 	private function setObsSymptoms()
 	{
 		if(!$this->stateAppCommentId) {
 			return array();
 		}
-		// not yet in state app
-		$scheduledSymptoms = $this->getScheduledSymptoms();
-		return array();
-
-		/*
-		dd($scheduledSymptoms);
 		$msgCPRules = new MsgCPRules;
 		$msgSubstitutions = new MsgSubstitutions;
 		$msgUser = new MsgUser;
-		$bioMsgIds = array();
-		$userInfo = $msgUser->get_users_data($this->wpUser->ID, 'id', $this->programId, true);
-		if (!empty($userInfo[$this->wpUser->ID]['usermeta']['user_care_plan_items'])) {
-			$userInfoUCP = $userInfo[$this->wpUser->ID]['usermeta']['user_care_plan_items'];
-			// loop through care plan
-			foreach($userInfoUCP as $itemId => $ucpItemInfo) {
-				if($ucpItemInfo['section_text'] == 'Symptoms to Monitor' && $ucpItemInfo['meta_value'] == 'Active') {
-					dd($ucpItemInfo);
-				}
+		$symMsgIds = array();
+		// not yet in state app
+		$scheduledSymptoms = $this->getScheduledSymptoms();
+		$symMsgIds = array();
+		if(!empty($scheduledSymptoms)) {
+			foreach($scheduledSymptoms as $scheduledSym) {
+				$symMsgIds[] = $scheduledSym->msg_id;
 			}
 		}
-		return array();
-		*/
+		$symObs = array();
+		$o = 0;
+		foreach($symMsgIds as $symMsgId) {
+			$matchFound = false;
+			foreach($this->stateAppArray as $key => $msgSet) {
+				if (key($msgSet[0]) == $symMsgId) {
+					// found a SYM match
+					$matchFound = true;
+					// loop through each row of message set
+					foreach ($msgSet as $i => $msgRow) {
+						//obtain message type
+						$qsType = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
+						$currQuestionInfo = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
+						$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+						// add to feed
+						$symObsTemp = array(
+							"MessageID" => $currQuestionInfo->msg_id,
+							"Obs_Key" => $currQuestionInfo->obs_key,
+							"ParentID" => $this->stateAppCommentId,
+							"MessageIcon" => "question",
+							"MessageContent" => $currQuestionInfo->message,
+							"ReturnFieldType" => $currQuestionInfo->qtype,
+							"ReturnDataRangeLow" => null,
+							"ReturnDataRangeHigh" => null,
+							"ReturnValidAnswers" => null,
+							"PatientAnswer" => null,
+							"ResponseDate" => null
+						);
+						$symObsTemp['PatientAnswer'] = $msgRow[key($msgRow)];
+						// find answer observation (patient inbound always = observation)
+						$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
+						if ($answerObs) {
+							// if has answer, add answer and date of answer to feed
+							$symObsTemp['PatientAnswer'] = $answerObs->obs_value;
+							$symObsTemp['ResponseDate'] = $answerObs->obs_date;
+						}
+						if($i == 0) {
+							$symObs[$o] = $symObsTemp;
+						} else if($i == 1) {
+							$symObs[$o]['Response'] = $symObsTemp;
+						} else if($i == 2) {
+							$symObs[$o]['Response']['Response'] = $symObsTemp;
+						}
+					}
+					$o++; // +1 symObs
+				}
+			}
+			if(!$matchFound) {
+				// not yet in state_app, so add just the base question
+				//obtain message type
+				$qsType = $msgCPRules->getQsType($symMsgId, $this->wpUser->ID);
+				$currQuestionInfo = $msgCPRules->getQuestion($symMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
+				$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+				// add to feed
+				$symObs[$o] = array(
+					"MessageID" => $currQuestionInfo->msg_id,
+					"Obs_Key" => $currQuestionInfo->obs_key,
+					"ParentID" => $this->stateAppCommentId,
+					"MessageIcon" => "question",
+					"MessageContent" => $currQuestionInfo->message,
+					"ReturnFieldType" => $currQuestionInfo->qtype,
+					"ReturnDataRangeLow" => null,
+					"ReturnDataRangeHigh" => null,
+					"ReturnValidAnswers" => null,
+					"PatientAnswer" => null,
+					"ResponseDate" => null
+				);
+				$o++; // +1 symObs
+			}
+		}
+		return $symObs;
 	}
 
 
@@ -430,13 +498,22 @@ class CareplanService {
 	public function getScheduledSymptoms() {
 		// query
 		$query = DB::connection('mysql_no_prefix')->table('rules_ucp AS rucp');
-		$query->select('rucp.*', 'rq.*', 'pcp.pcp_id', 'pcp.section_text', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rucp.meta_value as status', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id');
+		$query->select('rucp.*', 'rq.*', 'pcp.pcp_id', 'pcp.section_text', 'i.qid', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rucp.meta_value as status', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en');
 		$query->where('user_id', '=', $this->wpUser->ID);
 		$query->join('rules_items AS i', 'i.items_id', '=', 'rucp.items_id');
 		$query->leftJoin('rules_items AS rip', 'i.items_parent', '=', 'rip.items_id'); // parent item info
 		$query->join('rules_pcp AS pcp', function ($join) {
 			$join->on('i.pcp_id', '=', 'pcp.pcp_id')->where('pcp.prov_id', '=', $this->programId);
 		});
+
+		$query->leftJoin('rules_itemmeta as imsms', function ($join) {
+			$join->on('imsms.items_id', '=', 'i.items_id')->where('imsms.meta_key', '=', 'SMS_EN');
+		});
+		$query->leftJoin('rules_itemmeta as imapp', function ($join) {
+				$join->on('imapp.items_id', '=', 'i.items_id')->where('imapp.meta_key', '=', 'APP_EN');
+			});
+
+
 		$query->leftJoin('rules_questions AS rq', 'rq.qid', '=', 'i.qid');
 		$query->leftJoin('rules_questions AS rqp', 'rqp.qid', '=', 'rip.qid'); // parent question info
 		$query->leftJoin('rules_itemmeta AS ims', function ($join) {
@@ -450,29 +527,16 @@ class CareplanService {
 		$query->orderBy("i.items_id", 'DESC');
 		$result = $query->get();
 
+		//dd($query->toSql());
+
 		$arrReturnResult = array();
 		// set alert_values
 		if(!empty($result)) {
 			foreach ($result as $row) {
-				$arrReturnResult[$row->items_id] = array(
-					'msg_id' => $row->msg_id,
-					'ui_sort' => $row->ui_sort,
-					'status' => $row->meta_value,
-					'pcp_id' => $row->pcp_id,
-					'section_text' => $row->section_text,
-					'items_id' => $row->items_id,
-					'items_text' => $row->items_text,
-					'items_parent' => $row->items_parent,
-					'items_parent_qid' => $row->items_parent_qid,
-					'items_parent_msg_id' => $row->items_parent_msg_id,
-				);
+				$arrReturnResult[$row->msg_id] = $row;
 			}
-		} else {
-			echo "<br>MsgUser->get_user_care_plan_items() ERROR, could not find!";
 		}
-		//dd($arrReturnResult);
 		return $arrReturnResult;
-
 	}
 
 

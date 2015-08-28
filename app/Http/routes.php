@@ -176,9 +176,9 @@ Route::group(['prefix' => 'cron'], function()
 Route::group(['middleware' => 'authApiCall'], function()
 {
 
-	Route::resource('rules', 'RulesController');
+	//Route::resource('rules', 'RulesController');
 
-	Route::resource('pagetimer', 'PageTimerController');
+	//Route::resource('pagetimer', 'PageTimerController');
 
 	//Route::resource('reports', 'ReportsController');
 
