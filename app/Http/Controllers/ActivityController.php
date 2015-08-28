@@ -10,6 +10,8 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Class ActivityController
@@ -45,7 +47,7 @@ class ActivityController extends Controller {
 	 */
 	public function create()
 	{
-		//
+
 	}
 
 	/**
@@ -90,6 +92,14 @@ class ActivityController extends Controller {
 			$activity->meta()->saveMany($metaArray);
 		}
 
+		//if alerts are to be sent
+		if (array_key_exists('careteam',$input)) {
+			$activityService = new ActivityService;
+			$linkToNote = $input['url']+$actId->ID;
+			//$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at']);
+			return response("Successfully Created And Note Sent", 201);
+		}
+
 		// update usermeta: cur_month_activity_time
 		$activityService = new ActivityService;
 		$result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
@@ -111,6 +121,13 @@ class ActivityController extends Controller {
 
 			//extract and attach the 'comment' value from the ActivityMeta table
 			$metaComment = $activity->getActivityCommentFromMeta($id);
+
+			//If it's a note, search for phone meta value
+			$phone = DB::table('activitymeta')->where('activity_id',$id)->where('meta_key','phone')->pluck('meta_value');
+			if($phone){
+				$activity['phone'] = $phone;
+			}
+
 			$activity['comment'] = $metaComment;
 			$activity['message'] = 'OK';
 			$json = Array();
