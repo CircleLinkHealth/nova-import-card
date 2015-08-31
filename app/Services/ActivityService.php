@@ -3,6 +3,7 @@
 use App\Activity;
 use App\WpUser;
 use App\WpUserMeta;
+use Illuminate\Support\Facades\Mail;
 
 class ActivityService {
 
@@ -60,6 +61,16 @@ class ActivityService {
 			}
 		}
 		return true;
+	}
+
+	public function sendNoteToCareTeam($careteam, $url, $performed_at){
+
+		Mail::send('emails.welcome', ['key' => 'value'], function($message)
+		{
+			$message->to('foo@example.com', 'John Smith')->subject('Welcome!');
+		});
+		return true;
+
 	}
 
 }
