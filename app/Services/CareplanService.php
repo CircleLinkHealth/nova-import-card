@@ -76,7 +76,9 @@ class CareplanService {
 		return $feed;
 	}
 
-
+	/**
+	 * @param $date
+     */
 	public function setStateAppForDate($date) {
 		$this->stateAppCommentId = false;
 		// find comment
@@ -93,6 +95,9 @@ class CareplanService {
 		}
 	}
 
+	/**
+	 * @return array
+     */
 	private function setObsDMS()
 	{
 		if(!$this->stateAppCommentId) {
@@ -233,6 +238,9 @@ class CareplanService {
 	}
 
 
+	/**
+	 * @return array
+     */
 	private function setObsReminders()
 	{
 		if(!$this->stateAppCommentId) {
@@ -243,6 +251,10 @@ class CareplanService {
 		return array();
 	}
 
+
+	/**
+	 * @return array
+     */
 	private function setObsBiometric()
 	{
 		if(!$this->stateAppCommentId) {
@@ -346,11 +358,9 @@ class CareplanService {
 	}
 
 
-
-
-
-
-
+	/**
+	 * @return array
+     */
 	private function setObsSymptoms()
 	{
 		if(!$this->stateAppCommentId) {
@@ -441,30 +451,13 @@ class CareplanService {
 		return $symObs;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-	public function getMessageSequence($msgId) {
-		foreach($this->stateAppArray as $key => $msgSet) {
-			foreach($msgSet as $i => $msgRow) {
-				if (key($msgRow) == $msgId) {
-					return $msgSet;
-				}
-			}
-		}
-	}
-
-
-
+	/**
+	 * @param $programId
+	 * @param $userId
+	 * @param $date
+	 * @param $obsKey
+	 * @return array
+     */
 	public function getScheduledDMS($programId, $userId, $date, $obsKey) {
 		$query = DB::connection('mysql_no_prefix')->table('lv_observations AS o')->select('o.*', 'rules_questions.*', 'rules_items.*', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en')
 			->join('rules_questions', 'rules_questions.msg_id', '=', 'o.obs_message_id')
@@ -495,6 +488,9 @@ class CareplanService {
 	}
 
 
+	/**
+	 * @return array
+     */
 	public function getScheduledSymptoms() {
 		// query
 		$query = DB::connection('mysql_no_prefix')->table('rules_ucp AS rucp');
@@ -512,8 +508,6 @@ class CareplanService {
 		$query->leftJoin('rules_itemmeta as imapp', function ($join) {
 				$join->on('imapp.items_id', '=', 'i.items_id')->where('imapp.meta_key', '=', 'APP_EN');
 			});
-
-
 		$query->leftJoin('rules_questions AS rq', 'rq.qid', '=', 'i.qid');
 		$query->leftJoin('rules_questions AS rqp', 'rqp.qid', '=', 'rip.qid'); // parent question info
 		$query->leftJoin('rules_itemmeta AS ims', function ($join) {
@@ -540,6 +534,14 @@ class CareplanService {
 	}
 
 
+	/**
+	 * @param $programId
+	 * @param $userId
+	 * @param $obsKey
+	 * @param $msgId
+	 * @param $date
+	 * @return mixed
+     */
 	public function getAnswerObservation($programId, $userId, $obsKey, $msgId, $date) {
 		// find answer observation (patient inbound always = observation)
 		$query = DB::connection('mysql_no_prefix')->table('ma_' . $programId . '_observations')->select('o.obs_id', 'o.obs_key', 'o.comment_id', 'o.obs_date', 'o.user_id', 'o.obs_value', 'o.obs_unit', 'o.obs_method', 'o.obs_message_id')
