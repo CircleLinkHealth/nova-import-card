@@ -122,19 +122,22 @@ class MsgUI {
 		$msgUI = new MsgUI;
 		if(!empty($cpFeed['CP_Feed'])) {
 			foreach ($cpFeed['CP_Feed'] as $key => $value) {
-				$cpFeedSections = array('Biometric', 'DMS', 'Symptoms', 'Reminders');
+				$cpFeedSections = array('Symptoms', 'Biometric', 'DMS', 'Reminders');
 				foreach ($cpFeedSections as $section) {
 					foreach ($cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio) {
 						$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] = $msgUI->getForm($arrBio, $value['Feed']['FeedDate'], null);
 						//echo($msgUI->getForm($arrBio,null));
-
-						if (isset($arrBio['Response'])) {
-							//echo($msgUI->getForm($arrBio['Response'],' col-lg-offset-1'));
-							$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['formHtml'] = $msgUI->getForm($arrBio['Response'], $value['Feed']['FeedDate'], ' col-lg-offset-1');
-							if (isset($arrBio['Response']['Response'])) {
-								//echo($msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-3'));
-								$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['Response']['formHtml'] = $msgUI->getForm($arrBio['Response']['Response'], $value['Feed']['FeedDate'], ' col-lg-offset-1');
+						$r = 0;
+						while($r <= 10) {
+							if (isset($arrBio['Response'][$r])) {
+								//echo($msgUI->getForm($arrBio['Response'],' col-lg-offset-1'));
+								$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response'][$r]['formHtml'] = $msgUI->getForm($arrBio['Response'][$r], $value['Feed']['FeedDate'], ' col-lg-offset-1');
+								if (isset($arrBio['Response'][$r]['Response'][0])) {
+									//echo($msgUI->getForm($arrBio['Response']['Response'],' col-lg-offset-3'));
+									$cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response'][$r]['Response'][0]['formHtml'] = $msgUI->getForm($arrBio['Response'][$r]['Response'][0], $value['Feed']['FeedDate'], ' col-lg-offset-2');
+								}
 							}
+							$r++;
 						}
 					}
 				}

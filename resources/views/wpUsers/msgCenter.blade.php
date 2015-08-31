@@ -103,15 +103,71 @@
                                                <h3>Symptoms</h3>
                                         @endif
 
-                                           @foreach( $cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio )
-                                               {!! $cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] !!}
-                                               @if (isset($arrBio['Response']))
-                                                       {!! $cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['formHtml'] !!}
-                                               @endif
-                                               @if (isset($arrBio['Response']['Response']))
-                                                   {!! $cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['Response']['Response']['formHtml'] !!}
-                                               @endif
-                                           @endforeach
+                                        @foreach( $cpFeed['CP_Feed'][$key]['Feed'][$section] as $keyBio => $arrBio )
+                                            {!! $cpFeed['CP_Feed'][$key]['Feed'][$section][$keyBio]['formHtml'] !!}
+                                            @if (isset($arrBio['Response'][0]))
+                                                {!! $arrBio['Response'][0]['formHtml'] !!}
+                                            @endif
+                                            @if (isset($arrBio['Response'][0]['Response'][0]))
+                                                {!! $arrBio['Response'][0]['Response'][0]['formHtml'] !!}
+                                            @endif
+
+                                            @if (isset($arrBio['Response'][1]))
+                                                {!! $arrBio['Response'][1]['formHtml'] !!}
+                                            @endif
+                                            @if (isset($arrBio['Response'][1]['Response'][0]))
+                                                {!! $arrBio['Response'][1]['Response'][0]['formHtml'] !!}
+                                            @endif
+
+                                            @if (isset($arrBio['Response'][2]))
+                                                {!! $arrBio['Response'][2]['formHtml'] !!}
+                                            @endif
+                                            @if (isset($arrBio['Response'][2]['Response'][0]))
+                                                {!! $arrBio['Response'][2]['Response'][0]['formHtml'] !!}
+                                            @endif
+
+                                            @if (isset($arrBio['Response'][3]))
+                                                {!! $arrBio['Response'][3]['formHtml'] !!}
+                                            @endif
+                                            @if (isset($arrBio['Response'][3]['Response'][0]))
+                                                {!! $arrBio['Response'][3]['Response'][0]['formHtml'] !!}
+                                            @endif
+
+                                            @if (isset($arrBio['Response'][4]))
+                                                {!! $arrBio['Response'][4]['formHtml'] !!}
+                                            @endif
+                                            @if (isset($arrBio['Response'][4]['Response'][0]))
+                                                {!! $arrBio['Response'][4]['Response'][0]['formHtml'] !!}
+                                            @endif
+
+                                            @if (isset($arrBio['Response'][5]))
+                                                {!! $arrBio['Response'][5]['formHtml'] !!}
+                                            @endif
+                                            @if (isset($arrBio['Response'][5]['Response'][0]))
+                                                {!! $arrBio['Response'][5]['Response'][0]['formHtml'] !!}
+                                            @endif
+
+                                            @if (isset($arrBio['Response'][6]))
+                                                {!! $arrBio['Response'][6]['formHtml'] !!}
+                                            @endif
+                                            @if (isset($arrBio['Response'][6]['Response'][0]))
+                                                {!! $arrBio['Response'][6]['Response'][0]['formHtml'] !!}
+                                            @endif
+
+                                            @if (isset($arrBio['Response'][7]))
+                                                {!! $arrBio['Response'][7]['formHtml'] !!}
+                                            @endif
+                                            @if (isset($arrBio['Response'][7]['Response'][0]))
+                                                {!! $arrBio['Response'][7]['Response'][0]['formHtml'] !!}
+                                            @endif
+
+                                            @if (isset($arrBio['Response'][8]))
+                                                {!! $arrBio['Response'][8]['formHtml'] !!}
+                                            @endif
+                                            @if (isset($arrBio['Response'][8]['Response'][0]))
+                                                {!! $arrBio['Response'][8]['Response'][0]['formHtml'] !!}
+                                            @endif
+                                        @endforeach
 
                                         @if ($section == 'Symptoms')
                                             </div>

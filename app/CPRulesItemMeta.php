@@ -16,7 +16,7 @@ class CPRulesItemMeta extends Model {
      *
      * @var string
      */
-    protected $table = 'wp_rules_itemmeta';
+    protected $table = 'rules_itemmeta';
 
     /**
      * The primary key for the model.

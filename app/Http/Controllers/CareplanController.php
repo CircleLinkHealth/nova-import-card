@@ -65,8 +65,8 @@ class CareplanController extends Controller {
 		}
 
 		// Dummy JSON Data for careplan
-		$str_data = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')));
-		return response()->json($str_data);
+		//$str_data = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')));
+		//return response()->json($str_data);
 
 		// get dates
 		$date1 = date('Y-m-d');

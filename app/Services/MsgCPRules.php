@@ -146,13 +146,14 @@ query;
         $query = "select q.qid, q.msg_id, q.qtype, im.meta_key as msgtype, im.meta_value as message, q.obs_key,
 if(isnull(p.meta_value), ',,', p.meta_value) as cdays,
 ifnull(u2.meta_value, 'Inactive') as ucp_status,
-ifnull(im2.meta_value, 'Inactive') as pcp_status, qs.action
+ifnull(im2.meta_value, 'Inactive') as pcp_status, qs.action, imico.meta_value AS app_icon
 FROM rules_questions q
 left join rules_question_sets qs on qs.qid = q.qid and qs_type = '".$qstype."' and qs.provider_id = ".$pid."
 join rules_items i on i.qid = q.qid
 join rules_pcp pc on pc.pcp_id = i.pcp_id and pc.prov_id = ".$pid."
 left join rules_itemmeta im on im.items_id = i.items_id and im.meta_key = '".$strMsgText."'
 left join rules_itemmeta im2 on im2.items_id = i.items_id and im2.meta_key = 'AllPatients'
+left join rules_itemmeta imico on imico.items_id = i.items_id and imico.meta_key = 'app_icon'
 left join rules_items i2 on i2.items_parent = i.items_id and i2.items_text = 'Contact Days'
 left join rules_ucp p on p.items_id = i2.items_id and p.user_id = ".$intUserId."
 left join rules_ucp u2 on u2.items_id = i.items_id and u2.meta_key = 'status' and u2.user_id = ".$intUserId."

@@ -62,6 +62,12 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenter']);
 	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenterUpdate']);
 
+	Route::get('programs', ['uses' =>'WpBlogController@index', 'as'=>'programsIndex']);
+	Route::get('programs/{id}', ['uses' =>'WpBlogController@show', 'as'=>'programsShow']);
+	Route::get('programs/{id}/edit', ['uses' =>'WpBlogController@edit', 'as'=>'programsEdit']);
+	Route::post('programs/{id}/edit', ['uses' =>'WpBlogController@update', 'as'=>'programsUpdate']);
+	Route::get('programs/{id}/questions', ['uses' =>'WpBlogController@showQuestions', 'as'=>'programsQuestionsShow']);
+
     /*
      * Third Party Apis Config Pages
      */

@@ -357,6 +357,7 @@ class WpUserController extends Controller {
 		$cpFeed = $msgUI->addAppSimCodeToCP($cpFeed);
 		$cpFeedSections = array('Biometric', 'DMS', 'Symptoms', 'Reminders');
 
+		//return response()->json($cpFeed);
 		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array(), $messageKey => $messageValue, 'activeDate' => $activeDate]);
 	}
 }
