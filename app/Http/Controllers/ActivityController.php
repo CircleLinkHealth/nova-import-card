@@ -96,7 +96,9 @@ class ActivityController extends Controller {
 		if (array_key_exists('careteam',$input)) {
 			$activityService = new ActivityService;
 			$linkToNote = $input['url']+$actId->ID;
-			//$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at']);
+//			//$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input->user_id);
+//			if($result){return response("Successfully Created And Note Sent", 201);}
+//			else return  response("Unable to send email", 401);
 			return response("Successfully Created And Note Sent", 201);
 		}
 
@@ -105,6 +107,7 @@ class ActivityController extends Controller {
 		$result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
 
 		return response("Successfully Created", 201);
+
 	}
 
 	/**
