@@ -42,12 +42,6 @@
 
                         <div class="row" style="">
                             <div class="col-sm-12">
-                                <div class="pull-left">
-                                    <a href="{{ url('programs/'.$wpBlog->blog_id.'/questions') }}" class="btn btn-primary">Questions</a>
-                                </div>
-                                <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ url('programs/'.$wpBlog->blog_id.'/users') }}" class="btn btn-primary">Users</a>
-                                </div>
                                 <div class="pull-right">
                                     {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
                                     {!! Form::submit('Update Program', array('class' => 'btn btn-success')) !!}
@@ -61,36 +55,41 @@
 
                         @if (isset($programItems))
                             @foreach( $programItems as $pcpId => $pcpSection )
-                                <button class="btn btn-info" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#pcp{{ $pcpId }}" aria-expanded="false" aria-controls="pcp{{ $pcpId }}">{{ $pcpSection['section_text'] . '('.count($pcpSection['items']).')' }}</button><br />
+                                <button class="btn btn-primary" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#pcp{{ $pcpId }}" aria-expanded="false" aria-controls="pcp{{ $pcpId }}">{{ $pcpSection['section_text'] . '('.count($pcpSection['items']).')' }}</button><br />
                                 <div id="pcp{{ $pcpId }}" class="collapse">
                                 @if (count($pcpSection['items']) > 0)
                                     @foreach ($pcpSection['items'] as $item)
                                         <div class="alert alert-success">
-                                            <h3>Parent Item: {{ $item->items_text }}</h3>
-                                            @if (count($item->question) > 0)
-                                                [ Msg Id = {{ $item->question->msg_id }} ]<br>
-                                                [ Obs Key = {{ $item->question->obs_key }} ]<br>
-                                            @endif
-                                            @if (count($item->meta) > 0)
-                                                @foreach ($item->meta as $itemmeta)
-                                                    [ Meta: {{ $itemmeta->meta_key }} = {{ $itemmeta->meta_value }} ]<br>
-                                                @endforeach
-                                            @endif
+                                            <button class="btn btn-success" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#paritem{{ $item->items_id }}" aria-expanded="false" aria-controls="paritem{{ $item->items_id }}">Details</button>
+                                            <h4>Parent Item: {{ $item->items_text }} <button type="button" class="btn btn-primary btn-xs">Edit</button></h4>
+                                            <div id="paritem{{ $item->items_id }}" class="collapse">
+                                                [ Items Id = {{ $item->items_id }} ]<br>
+                                                @if (count($item->question) > 0)
+                                                    [ Msg Id = {{ $item->question->msg_id }} ]<br>
+                                                    [ Obs Key = {{ $item->question->obs_key }} ]<br>
+                                                @endif
+                                                @if (count($item->meta) > 0)
+                                                    @foreach ($item->meta as $itemmeta)
+                                                        [ Meta: {{ $itemmeta->meta_key }} = {{ $itemmeta->meta_value }} ]<br>
+                                                    @endforeach
+                                                @endif
 
-                                            @if (count($item->child_items) > 0)
-                                                @foreach ($item->child_items as $childItem)
-                                                    <h4>Child of {{ $item->items_text }}: {{ $childItem->items_text }}</h4>
-                                                    @if (count($childItem->question) > 0)
-                                                        [ Msg Id = {{ $childItem->question->msg_id }} ]<br>
-                                                        [ Obs Key = {{ $childItem->question->obs_key }} ]<br>
-                                                    @endif
-                                                    @if (count($childItem->meta) > 0)
-                                                        @foreach ($childItem->meta as $childItemmeta)
-                                                            [ Meta: {{ $childItemmeta->meta_key }} = {{ $childItemmeta->meta_value }} ]<br>
-                                                        @endforeach
-                                                    @endif
-                                                @endforeach
-                                            @endif
+                                                @if (count($item->child_items) > 0)
+                                                    @foreach ($item->child_items as $childItem)
+                                                        <br><strong>Child of {{ $item->items_text }}: {{ $childItem->items_text }}</strong> <button type="button" class="btn btn-primary btn-xs">Edit</button><br>
+                                                        [ Items Id = {{ $childItem->items_id }} ]<br>
+                                                        @if (count($childItem->question) > 0)
+                                                            [ Msg Id = {{ $childItem->question->msg_id }} ]<br>
+                                                            [ Obs Key = {{ $childItem->question->obs_key }} ]<br>
+                                                        @endif
+                                                        @if (count($childItem->meta) > 0)
+                                                            @foreach ($childItem->meta as $childItemmeta)
+                                                                [ Meta: {{ $childItemmeta->meta_key }} = {{ $childItemmeta->meta_value }} ]<br>
+                                                            @endforeach
+                                                        @endif
+                                                    @endforeach
+                                                @endif
+                                            </div>
                                         </div>
                                     @endforeach
                                 @endif
