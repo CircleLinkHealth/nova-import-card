@@ -56,21 +56,30 @@
                             </div>
                         </div>
 
-                        <h2>Program</h2>
+                        <h2>Program - {{ $wpBlog->domain }}</h2>
                         <p>Program Info</p>
 
                         @if (isset($programItems))
                             @foreach( $programItems as $pcpId => $pcpSection )
-                                <div id="pcp{{ $pcpId }}" class="">
-                                <h3>{{ $pcpSection['section_text'] }}</h3>
+                                <button class="btn btn-info" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#pcp{{ $pcpId }}" aria-expanded="false" aria-controls="pcp{{ $pcpId }}">{{ $pcpSection['section_text'] . '('.count($pcpSection['items']).')' }}</button><br />
+                                <div id="pcp{{ $pcpId }}" class="collapse">
                                 @if (count($pcpSection['items']) > 0)
                                     @foreach ($pcpSection['items'] as $item)
                                         <div class="alert alert-success">
-                                            {{ $item->items_text }} | {{ $item->items_parent }} | {{ $item->qid }} | {{ $item->items_text }}<br>
+                                            <h3>Parent Item: {{ $item->items_text }}</h3>
                                             @if (count($item->meta) > 0)
                                                 @foreach ($item->meta as $itemmeta)
                                                     <div class="alert alert-warning">
                                                         {{ $itemmeta->itemmeta_id }} - {{ $itemmeta->meta_key }} - {{ $itemmeta->meta_value }}<br>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+
+                                            @if (count($item->child_items) > 0)
+                                                @foreach ($item->child_items as $childItem)
+                                                    <h3>Child of {{ $item->items_text }}: {{ $childItem->items_text }}</h3>
+                                                    <div class="alert alert-warning">
+                                                        {{ $childItem->items_text }} | {{ $childItem->items_parent }} | {{ $childItem->qid }} | {{ $childItem->items_text }}<br>
                                                     </div>
                                                 @endforeach
                                             @endif
