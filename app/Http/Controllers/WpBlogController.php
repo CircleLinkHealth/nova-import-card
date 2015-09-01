@@ -53,26 +53,24 @@ class WpBlogController extends Controller {
 	{
 		// display view
 		$wpBlog = WpBlog::find($id);
-		$cPRulesPCP = CPRulesPCP::where('prov_id', '=', $id)->where('status', '=', 'Active')->get();
+		$cPRulesPCP = CPRulesPCP::where('prov_id', '=', $id)->where('status', '=', 'Active')->with('items.meta')->get();
 		if(!empty($cPRulesPCP)) {
 			$programItems = array();
 			foreach ($cPRulesPCP as $pcp) {
 				$programItems[$pcp->pcp_id] = array('section_text' => $pcp->section_text, 'items' => array());
-				$cPRulesItems = CPRulesItem::where('pcp_id', '=', $pcp->pcp_id)->where('items_parent', '=', '0')->get();
+				$cPRulesItems = CPRulesItem::where('pcp_id', '=', $pcp->pcp_id)->where('items_parent', '=', '0')->with('meta', 'question')->get();
 				if(!empty($cPRulesItems)) {
 					$pcpItems = array();
 					foreach($cPRulesItems as $cPItem) {
 						// set item and item meta
 						$pcpItems[$cPItem->items_id] = $cPItem;
-						$pcpItems[$cPItem->items_id]['meta'] = CPRulesItemMeta::where('items_id', '=', $cPItem->items_id)->get();
 						// get children items, set them and their meta
 						$childItems = array();
-						$cPRulesChildItems = CPRulesItem::where('pcp_id', '=', $pcp->pcp_id)->where('items_parent', '=', $cPItem->items_id)->get();
+						$cPRulesChildItems = CPRulesItem::where('pcp_id', '=', $pcp->pcp_id)->where('items_parent', '=', $cPItem->items_id)->with('meta', 'question')->get();
 						if(!empty($cPRulesChildItems)) {
 							foreach($cPRulesChildItems as $cPChildItem) {
 								// set child item and item meta
 								$childItems[$cPChildItem->items_id] = $cPChildItem;
-								$childItems[$cPChildItem->items_id]['meta'] = CPRulesItemMeta::where('items_id', '=', $cPChildItem->items_id)->get();
 							}
 						}
 						$pcpItems[$cPItem->items_id]['child_items'] = $childItems;

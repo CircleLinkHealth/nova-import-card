@@ -67,20 +67,28 @@
                                     @foreach ($pcpSection['items'] as $item)
                                         <div class="alert alert-success">
                                             <h3>Parent Item: {{ $item->items_text }}</h3>
+                                            @if (count($item->question) > 0)
+                                                [ Msg Id = {{ $item->question->msg_id }} ]<br>
+                                                [ Obs Key = {{ $item->question->obs_key }} ]<br>
+                                            @endif
                                             @if (count($item->meta) > 0)
                                                 @foreach ($item->meta as $itemmeta)
-                                                    <div class="alert alert-warning">
-                                                        {{ $itemmeta->itemmeta_id }} - {{ $itemmeta->meta_key }} - {{ $itemmeta->meta_value }}<br>
-                                                    </div>
+                                                    [ Meta: {{ $itemmeta->meta_key }} = {{ $itemmeta->meta_value }} ]<br>
                                                 @endforeach
                                             @endif
 
                                             @if (count($item->child_items) > 0)
                                                 @foreach ($item->child_items as $childItem)
-                                                    <h3>Child of {{ $item->items_text }}: {{ $childItem->items_text }}</h3>
-                                                    <div class="alert alert-warning">
-                                                        {{ $childItem->items_text }} | {{ $childItem->items_parent }} | {{ $childItem->qid }} | {{ $childItem->items_text }}<br>
-                                                    </div>
+                                                    <h4>Child of {{ $item->items_text }}: {{ $childItem->items_text }}</h4>
+                                                    @if (count($childItem->question) > 0)
+                                                        [ Msg Id = {{ $childItem->question->msg_id }} ]<br>
+                                                        [ Obs Key = {{ $childItem->question->obs_key }} ]<br>
+                                                    @endif
+                                                    @if (count($childItem->meta) > 0)
+                                                        @foreach ($childItem->meta as $childItemmeta)
+                                                            [ Meta: {{ $childItemmeta->meta_key }} = {{ $childItemmeta->meta_value }} ]<br>
+                                                        @endforeach
+                                                    @endif
                                                 @endforeach
                                             @endif
                                         </div>

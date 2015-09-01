@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesPCP extends Model {
+class CPRulesQuestions extends Model {
 
     /**
      * The connection name for the model.
@@ -16,33 +16,26 @@ class CPRulesPCP extends Model {
      *
      * @var string
      */
-    protected $table = 'rules_pcp';
+    protected $table = 'rules_questions';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'pcp_id';
+    protected $primaryKey = 'qid';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['pcp_id', 'prov_id', 'section_text', 'status', 'cpset_id', 'pcp_type'];
+    protected $fillable = ['qid', 'msg_id', 'qtype', 'obs_key', 'description'];
 
 
     public function items()
     {
-        return $this->hasMany('App\CPRulesItem', 'pcp_id');
-    }
-
-    public function getCPRulesPCPForProv($provId)
-    {
-        $CPrulesPCP = CPRulesPCP::where('prov_id', '=', $provId)->get();
-
-        return $CPrulesPCP;
+        return $this->hasMany('App\CPRulesItem', 'qid');
     }
 
 }
