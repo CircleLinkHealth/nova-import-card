@@ -59,9 +59,9 @@
                                 <div id="pcp{{ $pcpId }}" class="collapse">
                                 @if (count($pcpSection['items']) > 0)
                                     @foreach ($pcpSection['items'] as $item)
-                                        <div class="alert alert-success">
-                                            <button class="btn btn-success" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#paritem{{ $item->items_id }}" aria-expanded="false" aria-controls="paritem{{ $item->items_id }}">Details</button>
-                                            <h4>Parent Item: {{ $item->items_text }} <button type="button" class="btn btn-primary btn-xs">Edit</button></h4>
+                                        <div class="alert alert-info">
+                                            <button class="btn btn-primary" style="margin:20px 0px;" type="button" data-toggle="collapse" data-target="#paritem{{ $item->items_id }}" aria-expanded="false" aria-controls="paritem{{ $item->items_id }}">Details</button>
+                                            <h4>Parent Item: {{ $item->items_text }} <button type="button" class="btn btn-primary btn-xs">Edit</button> <button type="button" class="btn btn-success btn-xs">Add Child Item</button> <button type="button" class="btn btn-danger btn-xs">Remove</button></h4>
                                             <div id="paritem{{ $item->items_id }}" class="collapse">
                                                 [ Items Id = {{ $item->items_id }} ]<br>
                                                 @if (count($item->question) > 0)
@@ -76,7 +76,7 @@
 
                                                 @if (count($item->child_items) > 0)
                                                     @foreach ($item->child_items as $childItem)
-                                                        <br><strong>Child of {{ $item->items_text }}: {{ $childItem->items_text }}</strong> <button type="button" class="btn btn-primary btn-xs">Edit</button><br>
+                                                        <br><strong>Child of {{ $item->items_text }}: {{ $childItem->items_text }}</strong> <button type="button" class="btn btn-primary btn-xs">Edit</button> <button type="button" class="btn btn-danger btn-xs">Remove</button><br>
                                                         [ Items Id = {{ $childItem->items_id }} ]<br>
                                                         @if (count($childItem->question) > 0)
                                                             [ Msg Id = {{ $childItem->question->msg_id }} ]<br>
