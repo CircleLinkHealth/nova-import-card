@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth'], function ()
 
 	Route::get('rules', 'RulesController@index');
 	Route::get('rules/create', ['uses' =>'RulesController@create', 'as'=>'rulesCreate']);
+	Route::post('rules/store', ['uses' =>'RulesController@store', 'as'=>'rulesStore']);
 	Route::get('rules/{id}', ['uses' =>'RulesController@show', 'as'=>'rulesShow']);
 	Route::get('rules/{id}/edit', ['uses' =>'RulesController@edit', 'as'=>'rulesEdit']);
 	Route::post('rules/{id}/edit', ['uses' =>'RulesController@update', 'as'=>'rulesUpdate']);

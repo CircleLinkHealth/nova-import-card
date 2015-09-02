@@ -5,6 +5,8 @@ use App\Http\Controllers\Controller;
 use App\Rules;
 use App\Location;
 
+use App\RulesIntrConditions;
+use App\RulesIntrActions;
 use App\RulesOperators;
 use App\RulesConditions;
 use App\RulesActions;
@@ -38,6 +40,7 @@ class RulesController extends Controller {
 			'operators' => RulesOperators::lists('operator', 'id'),
 			'conditions' => RulesConditions::lists('condition', 'id'),
 			'actions' => RulesActions::lists('action', 'id'),
+			'messages' => \Session::get('messages')
 		]);
 	}
 
@@ -48,8 +51,51 @@ class RulesController extends Controller {
 	 */
 	public function store(Request $request)
 	{
-
-		//
+		$params = $request->input();
+		$rule = new Rules;
+		$rule->rule_name = $params['rule_name'];
+		$rule->rule_description = $params['rule_description'];
+		$rule->active = $params['active'];
+		$rule->type_id = $params['type_id'];
+		$rule->sort = $params['sort'];
+		$rule->approve = $params['approve'];
+		$rule->archive = $params['archive'];
+		$rule->summary = $params['summary'];
+		$rule->save();
+		// build conditions from inputs
+		if(!empty($params['conditions'])) {
+			$newConditions = array();
+			$affectedRows = RulesIntrConditions::where('rule_id', '=', $rule->id)->delete();
+			foreach($params['conditions'] as $key => $formKey) {
+				if(strlen($formKey) < 3) {
+					$newCondition = new RulesIntrConditions();
+					$newCondition->operator_id = $params['c'.$formKey.'operator'];
+					$newCondition->rule_id = $rule->id;
+					$newCondition->condition_id = $params['c'.$formKey.'condition'];
+					$newCondition->value = $params['c'.$formKey.'value'];
+					$newConditions[] = $newCondition;
+				}
+			}
+			$rule->intrConditions()->saveMany($newConditions);
+		}
+		// build conditions from inputs
+		if(!empty($params['actions'])) {
+			$newActions = array();
+			$affectedRows = RulesIntrActions::where('rule_id', '=', $rule->id)->delete();
+			foreach($params['actions'] as $key => $formKey) {
+				if(strlen($formKey) < 3) {
+					$newAction = new RulesIntrActions();
+					$newAction->operator_id = $params['a'.$formKey.'operator'];
+					$newAction->rule_id = $rule->id;
+					$newAction->action_id = $params['a'.$formKey.'action'];
+					$newAction->value = $params['a'.$formKey.'value'];
+					$newActions[] = $newAction;
+				}
+			}
+			$rule->intrActions()->saveMany($newActions);
+		}
+		$rule->push();
+		return redirect()->route('rulesEdit', [$rule->id])->with('messages', ['successfully added new rule - '.$params['rule_name']]);
 	}
 
 	/**
@@ -61,6 +107,7 @@ class RulesController extends Controller {
 	public function show($id)
 	{
 		$rule = Rules::find($id);
+		return redirect()->route('rulesEdit', [$rule->id]);
 		return view('rules.show', [ 'rule' => $rule ]);
 	}
 
@@ -88,6 +135,7 @@ class RulesController extends Controller {
 				'operators' => RulesOperators::lists('operator', 'id'),
 				'conditions' => RulesConditions::lists('condition', 'id'),
 				'actions' => RulesActions::lists('action', 'id'),
+				'messages' => \Session::get('messages')
 			]);
 		} else {
 			return response('Rule Not Found', 204);
@@ -103,7 +151,50 @@ class RulesController extends Controller {
 	public function update(Request $request, $id)
 	{
 		$params = $request->input();
-		dd($params);
+		$rule = Rules::with('intrConditions', 'intrActions')->find($id);
+		// build conditions from inputs
+		if(!empty($params['conditions'])) {
+			$newConditions = array();
+			$affectedRows = RulesIntrConditions::where('rule_id', '=', $rule->id)->delete();
+			foreach($params['conditions'] as $key => $formKey) {
+				if(strlen($formKey) < 3) {
+					$newCondition = new RulesIntrConditions();
+					$newCondition->operator_id = $params['c'.$formKey.'operator'];
+					$newCondition->rule_id = $rule->id;
+					$newCondition->condition_id = $params['c'.$formKey.'condition'];
+					$newCondition->value = $params['c'.$formKey.'value'];
+					$newConditions[] = $newCondition;
+				}
+			}
+			$rule->intrConditions()->saveMany($newConditions);
+		}
+		// build conditions from inputs
+		if(!empty($params['actions'])) {
+			$newActions = array();
+			$affectedRows = RulesIntrActions::where('rule_id', '=', $rule->id)->delete();
+			foreach($params['actions'] as $key => $formKey) {
+				if(strlen($formKey) < 3) {
+					$newAction = new RulesIntrActions();
+					$newAction->operator_id = $params['a'.$formKey.'operator'];
+					$newAction->rule_id = $rule->id;
+					$newAction->action_id = $params['a'.$formKey.'action'];
+					$newAction->value = $params['a'.$formKey.'value'];
+					$newActions[] = $newAction;
+				}
+			}
+			$rule->intrActions()->saveMany($newActions);
+		}
+		$rule->rule_name = $params['rule_name'];
+		$rule->rule_description = $params['rule_description'];
+		$rule->active = $params['active'];
+		$rule->type_id = $params['type_id'];
+		$rule->sort = $params['sort'];
+		$rule->approve = $params['approve'];
+		$rule->archive = $params['archive'];
+		$rule->summary = $params['summary'];
+		$rule->push();
+		return redirect()->back()->with('messages', ['successfully updated rule']);
+
 	}
 
 	/**
