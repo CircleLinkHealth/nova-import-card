@@ -316,7 +316,7 @@ class CareplanService {
 							"ParentID" => $this->stateAppCommentId,
 							"MessageIcon" => $currQuestionInfo->app_icon,
 							"MessageContent" => $currQuestionInfo->message,
-							"ReturnFieldType" => 'date',
+							"ReturnFieldType" => $currQuestionInfo->qtype,
 							"ReturnDataRangeLow" => null,
 							"ReturnDataRangeHigh" => null,
 							"ReturnValidAnswers" => null,

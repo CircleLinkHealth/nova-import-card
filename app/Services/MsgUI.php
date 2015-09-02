@@ -52,8 +52,10 @@ class MsgUI {
 <option value="Y">Yes</option>
 </select>';
 					break;
-				default;
+				case 'Date':
 					$formOutput .= "<input $type class='form-control col-sm-1' id='obs_value' name='obs_value' value='" . $arrBio['PatientAnswer'] . "' REQUIRED>";
+				default:
+					$formOutput .= "";
 
 			}
 			$formOutput .= "<div><button class='btn btn-primary' type='submit'>SEND</button></div><br>\n";
