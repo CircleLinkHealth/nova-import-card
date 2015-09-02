@@ -65,22 +65,30 @@ class CareplanService {
 			$feed["CP_Feed"][$i]['Feed']["DMS"] = $this->setObsDMS();
 
 			// Reminders
-			$feed["CP_Feed"][$i]['Feed']["Reminders"] = array(
-				0 => array(
-					"MessageID" => "CF_DM_HSP_10",
-					"Obs_Key" => "HSP_DM",
-					"ParentID" => "604",
-					"MessageIcon" => "hsp",
-					"MessageCategory" => "Hospital",
-					"MessageContent" => "Are you Currently in the Hospital or ER?",
-					"ReturnFieldType" => "List",
-					"ReturnDataRangeLow" => null,
-					"ReturnDataRangeHigh" => null,
-					"ReturnValidAnswers" => null,
-					"PatientAnswer" => null,
-					"ResponseDate" => null,
-					"Response" => $this->setObsReminders())
-			);
+			// check if user has HSP scheduled for today
+			// based on existance of state_hsp_dm comment record
+			$stateHsp = Comment::where('comment_type', '=', 'state_hsp_dm')
+				->where("user_id", "=", $this->wpUser->ID)
+				->whereRaw("comment_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->first();
+			if($stateHsp) {
+				$feed["CP_Feed"][$i]['Feed']["Reminders"] = array(
+					0 => array(
+						"MessageID" => "CF_DM_HSP_10",
+						"Obs_Key" => "HSP_DM",
+						"ParentID" => "604",
+						"MessageIcon" => "hsp",
+						"MessageCategory" => "Hospital",
+						"MessageContent" => "Are you Currently in the Hospital or ER?",
+						"ReturnFieldType" => "List",
+						"ReturnDataRangeLow" => null,
+						"ReturnDataRangeHigh" => null,
+						"ReturnValidAnswers" => null,
+						"PatientAnswer" => null,
+						"ResponseDate" => null,
+						"Response" => $this->setObsReminders())
+				);
+			}
 
 			// Biometric
 			$feed["CP_Feed"][$i]['Feed']["Biometric"] = $this->setObsBiometric();
@@ -279,85 +287,79 @@ class CareplanService {
 			return array();
 		}
 		// this only deals with HSP question
-		// get hsp question set
-		$stateHsp = Comment::where('comment_type', '=', 'state_hsp_dm')
-			->whereRaw("comment_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
-			->first();
 		//$hspMsg = CPRulesQuestions::where('obs_key', '=', 'HSP')->first();
 		$hspMsgIds = array('CF_HSP_20', 'CF_HSP_30');
 		$hspObs = array();
-		if($stateHsp) {
-			$o = 0;
-			$msgChooser = new MsgChooser;
-			$msgCPRules = new MsgCPRules;
-			$msgSubstitutions = new MsgSubstitutions;
-			// look for $hspMsgId in current state_app array
-			foreach($hspMsgIds as $hspMsgId) {
-				$matchFound = false;
-				foreach ($this->stateAppArray as $key => $msgSet) {
-					if (in_array(key($msgSet[0]), array($hspMsgId))) {
-						$matchFound = true;
-						// loop through each row of message set
-						foreach ($msgSet as $i => $msgRow) {
-                            //obtain message type
-                            $qsType = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
-                            $currQuestionInfo = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-                            $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-                            // add to feed
-                            $obsInfo = array(
-                                "MessageID" => $currQuestionInfo->msg_id,
-                                "Obs_Key" => $currQuestionInfo->obs_key,
-                                "ParentID" => $this->stateAppCommentId,
-                                "MessageIcon" => $currQuestionInfo->app_icon,
-                                "MessageContent" => $currQuestionInfo->message,
-                                "ReturnFieldType" => 'end',
-                                "ReturnDataRangeLow" => null,
-                                "ReturnDataRangeHigh" => null,
-                                "ReturnValidAnswers" => null,
-                                "PatientAnswer" => null,
-                                "ResponseDate" => null
-                            );
-                            $obsInfo['PatientAnswer'] = $msgRow[key($msgRow)];
-                            // find answer observation (patient inbound always = observation)
-                            $answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
-                            if ($answerObs) {
-                                // if has answer, add answer and date of answer to feed
-                                $obsInfo['PatientAnswer'] = $answerObs->obs_value;
-                                $obsInfo['ResponseDate'] = $answerObs->obs_date;
-                            }
-                            if ($i == 0) {
-                                $hspObs[$o] = $obsInfo;
-                            } else if ($i == 1) {
-                                $hspObs[$o]['Response'][0] = $obsInfo;
-                            } else if ($i == 2) {
-                                $hspObs[$o]['Response']['Response'][0] = $obsInfo;
-                            }
+		$o = 0;
+		$msgChooser = new MsgChooser;
+		$msgCPRules = new MsgCPRules;
+		$msgSubstitutions = new MsgSubstitutions;
+		// look for $hspMsgId in current state_app array
+		foreach($hspMsgIds as $hspMsgId) {
+			$matchFound = false;
+			foreach ($this->stateAppArray as $key => $msgSet) {
+				if (in_array(key($msgSet[0]), array($hspMsgId))) {
+					$matchFound = true;
+					// loop through each row of message set
+					foreach ($msgSet as $i => $msgRow) {
+						//obtain message type
+						$qsType = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
+						$currQuestionInfo = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
+						$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+						// add to feed
+						$obsInfo = array(
+							"MessageID" => $currQuestionInfo->msg_id,
+							"Obs_Key" => $currQuestionInfo->obs_key,
+							"ParentID" => $this->stateAppCommentId,
+							"MessageIcon" => $currQuestionInfo->app_icon,
+							"MessageContent" => $currQuestionInfo->message,
+							"ReturnFieldType" => 'end',
+							"ReturnDataRangeLow" => null,
+							"ReturnDataRangeHigh" => null,
+							"ReturnValidAnswers" => null,
+							"PatientAnswer" => null,
+							"ResponseDate" => null
+						);
+						$obsInfo['PatientAnswer'] = $msgRow[key($msgRow)];
+						// find answer observation (patient inbound always = observation)
+						$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
+						if ($answerObs) {
+							// if has answer, add answer and date of answer to feed
+							$obsInfo['PatientAnswer'] = $answerObs->obs_value;
+							$obsInfo['ResponseDate'] = $answerObs->obs_date;
 						}
-						$o++;
+						if ($i == 0) {
+							$hspObs[$o] = $obsInfo;
+						} else if ($i == 1) {
+							$hspObs[$o]['Response'][0] = $obsInfo;
+						} else if ($i == 2) {
+							$hspObs[$o]['Response']['Response'][0] = $obsInfo;
+						}
 					}
+					$o++;
 				}
-				if (!$matchFound) {
-					// not yet in state_app, so add just the base question
-					//obtain message type
-					$qsType = $msgCPRules->getQsType($hspMsgId, $this->wpUser->ID);
-					$currQuestionInfo = $msgCPRules->getQuestion($hspMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-					$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-					// add to feed
-					$hspObs[$o] = array(
-						"MessageID" => $currQuestionInfo->msg_id,
-						"Obs_Key" => $currQuestionInfo->obs_key,
-						"ParentID" => $this->stateAppCommentId,
-						"MessageIcon" => $currQuestionInfo->app_icon,
-						"MessageContent" => $currQuestionInfo->message,
-						"ReturnFieldType" => 'end',
-						"ReturnDataRangeLow" => null,
-						"ReturnDataRangeHigh" => null,
-						"ReturnValidAnswers" => null,
-						"PatientAnswer" => null,
-						"ResponseDate" => null
-					);
-					$o++; // +1 symObs
-				}
+			}
+			if (!$matchFound) {
+				// not yet in state_app, so add just the base question
+				//obtain message type
+				$qsType = $msgCPRules->getQsType($hspMsgId, $this->wpUser->ID);
+				$currQuestionInfo = $msgCPRules->getQuestion($hspMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
+				$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+				// add to feed
+				$hspObs[$o] = array(
+					"MessageID" => $currQuestionInfo->msg_id,
+					"Obs_Key" => $currQuestionInfo->obs_key,
+					"ParentID" => $this->stateAppCommentId,
+					"MessageIcon" => $currQuestionInfo->app_icon,
+					"MessageContent" => $currQuestionInfo->message,
+					"ReturnFieldType" => 'end',
+					"ReturnDataRangeLow" => null,
+					"ReturnDataRangeHigh" => null,
+					"ReturnValidAnswers" => null,
+					"PatientAnswer" => null,
+					"ResponseDate" => null
+				);
+				$o++; // +1 symObs
 			}
 		}
 		return $hspObs;
