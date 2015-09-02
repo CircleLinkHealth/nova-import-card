@@ -251,7 +251,7 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
-                                    {!! Form::button('Add User', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Add User', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>

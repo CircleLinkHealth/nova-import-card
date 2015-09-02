@@ -133,13 +133,13 @@ class WpUser extends Model {
     public function createNewUser($user_email, $user_pass) {
 
         // use wordpress md5 hasher class
-        $wp_hasher = new \PasswordHash(12, TRUE);
+        $wp_hasher = new \PasswordHash(8, TRUE);
         $user_pass = $wp_hasher->HashPassword($user_pass);
 
         $user = new WpUser();
         $user->user_login = $user_email;
         $user->user_email = $user_email;
-        $user->user_pass = $wp_hasher->HashPassword($user_pass);
+        $user->user_pass = $user_pass;
         $user_id = $user->save();
 
         return $user_id;

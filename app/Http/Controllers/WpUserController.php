@@ -117,6 +117,11 @@ class WpUserController extends Controller {
 			'password'         => 'required',
 			'password_confirm' => 'required|same:password'           // required and has to match the password field
 		);
+
+		$wpUser = new WpUser;
+		//$input = $request->input();
+		$newUser = $wpUser->createNewUser('test3@test.com', 'test1234');
+		dd('created new user id '.$newUser);
 	}
 
 	/**
