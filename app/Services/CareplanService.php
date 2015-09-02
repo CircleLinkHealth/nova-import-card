@@ -94,22 +94,25 @@ class CareplanService {
 			$feed["CP_Feed"][$i]['Feed']["Biometric"] = $this->setObsBiometric();
 
 			// Symptoms
-			$feed["CP_Feed"][$i]['Feed']["Symptoms"] = array(
-				0 => array(
-					"MessageID" => "CF_SYM_MNU_10",
-					"Obs_Key" => "Severity",
-					"ParentID" => "603",
-					"MessageIcon" => "question",
-					"MessageCategory" => "Question",
-					"MessageContent" => "Any symptoms today",
-					"ReturnFieldType" => null,
-					"ReturnDataRangeLow" => null,
-					"ReturnDataRangeHigh" => null,
-					"ReturnValidAnswers" => null,
-					"PatientAnswer" => null,
-					"ResponseDate" => null,
-					"Response" => $this->setObsSymptoms())
-			);
+			$scheduledsyms = $this->setObsSymptoms();
+			if(!empty($scheduledsyms)) {
+				$feed["CP_Feed"][$i]['Feed']["Symptoms"] = array(
+					0 => array(
+						"MessageID" => "CF_SYM_MNU_10",
+						"Obs_Key" => "Severity",
+						"ParentID" => "603",
+						"MessageIcon" => "question",
+						"MessageCategory" => "Question",
+						"MessageContent" => "Any symptoms today",
+						"ReturnFieldType" => null,
+						"ReturnDataRangeLow" => null,
+						"ReturnDataRangeHigh" => null,
+						"ReturnValidAnswers" => null,
+						"PatientAnswer" => null,
+						"ResponseDate" => null,
+						"Response" => $this->setObsSymptoms())
+				);
+			}
 			//$feed["CP_Feed"][$i]['Feed']["Symptoms"] = $this->setObsSymptoms();
 			$i++;
 		}
