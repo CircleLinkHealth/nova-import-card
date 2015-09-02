@@ -285,6 +285,7 @@ class CareplanService {
 			->first();
 		//$hspMsg = CPRulesQuestions::where('obs_key', '=', 'HSP')->first();
 		$hspMsgIds = array('CF_HSP_20', 'CF_HSP_30');
+		$hspObs = array();
 		if($stateHsp) {
 			$o = 0;
 			$msgChooser = new MsgChooser;
