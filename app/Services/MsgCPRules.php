@@ -32,6 +32,8 @@ class MsgCPRules {
          *
          */
 
+        $strResponse = str_replace('/', '_', $strResponse); // not sure why this happens but its fixing hsp stuff so doing it (hacks everywhere for legacy code)
+
         // $tmpArray = explode(' ', $strResponse);
         $tmpArray = preg_split("/[ _]/", $strResponse);
         $strResponse2 = $tmpArray[0];
@@ -107,18 +109,16 @@ class MsgCPRules {
 
     public function getMixedValid($strMsgId, $pid, $strResponse) {
 
-        $query = <<<query
-select qs.*
-from rules_question_sets qs
-join rules_questions q on q.qid = qs.qid
-join rules_answers a on a.aid = qs.aid
-where provider_id = {$pid}
-and q.msg_id = '{$strMsgId}'
-and CONCAT(',',a.value,',',a.alt_answers,',') rlike ',{$strResponse},'
-LIMIT 1
-query;
+        $query = "select qs.*
+            from rules_question_sets qs
+            join rules_questions q on q.qid = qs.qid
+            join rules_answers a on a.aid = qs.aid
+            where provider_id = {$pid}
+            and q.msg_id = '{$strMsgId}'
+            and CONCAT(',',a.value,',',a.alt_answers,',') rlike ',{$strResponse},'
+            LIMIT 1";
 
-        echo '<br>MsgCPRules->getMixedValid()';
+        //echo '<br>MsgCPRules->getMixedValid()';
 
         $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
         if(isset($results[0])) {
@@ -171,12 +171,13 @@ limit 1";
 
     }//getQuestion
 
-    public function getQsType($msgId, $userId) {
+    public function getQsType($msgId, $programId) {
         $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')
             ->join('rules_questions','rules_question_sets.qid','=','rules_questions.qid')
             ->select('rules_question_sets.qs_type')
             ->where('rules_questions.msg_id',$msgId)
-            ->where('rules_question_sets.provider_id',$userId)
+            ->where('rules_question_sets.provider_id',$programId)
+            ->orderBy('qs_sort', 'desc')
             ->first();
         if($qsType) {
             return $qsType->qs_type;
