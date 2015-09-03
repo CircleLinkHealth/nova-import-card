@@ -61,22 +61,7 @@
                         User ID: {{ $wpUser->ID }}
                     </div>
                     <div class="panel-body">
-                        @if (isset($error))
-                            <div class="alert alert-danger">
-                                <ul>
-                                    <li>{{ $error }}</li>
-                                </ul>
-                            </div>
-                        @endif
-
-                        @if (isset($success))
-                            <div class="alert alert-success">
-                                <ul>
-                                    <li>{{ $success }}</li>
-                                </ul>
-                            </div>
-                        @endif
-
+                        @include('errors.errors')
                         <div class="row">
                             <div class="pull-left" style="margin-left:10px;">
                                 <a href="{{ url('wpusers/'.$wpUser->ID.'/msgcenter?action=run_scheduler&date=today') }}" class="btn btn-primary">Run Scheduler</a>

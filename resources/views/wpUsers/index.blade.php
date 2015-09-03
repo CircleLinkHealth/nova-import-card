@@ -4,21 +4,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                @if (isset($error))
-                    <div class="alert alert-danger">
-                        <ul>
-                            <li>{{ $error }}</li>
-                        </ul>
-                    </div>
-                @endif
-
-                @if (isset($success))
-                    <div class="alert alert-success">
-                        <ul>
-                            <li>{{ $success }}</li>
-                        </ul>
-                    </div>
-                @endif
+                @include('errors.errors')
             </div>
         </div>
         <div class="row">
@@ -27,7 +13,6 @@
                     <div class="panel-heading">Users</div>
                     <br>
                     <p>These users are coming from the wp_users.. this laravel project has been modified to use wp_users as the primary users table.</p>
-
                     <p><strong>See bottom of page for list of invalid users</strong></p>
                     <br>
                     <table class="table table-striped">

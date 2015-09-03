@@ -15,26 +15,7 @@
                         User ID: {{ $wpUser->ID }}
                     </div>
                     <div class="panel-body">
-                        @if (count($errors) > 0)
-                            <div class="alert alert-danger">
-                                <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-                        @if (count($messages) > 0)
-                            <div class="alert alert-success">
-                                <strong>Messages:</strong><br><br>
-                                <ul>
-                                    @foreach ($messages as $message)
-                                        <li>{{ $message }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+                        @include('errors.errors')
 
                         <div class="row">
                             {!! Form::open(array('url' => '/wpusers/'.$wpUser->ID.'/edit', 'class' => 'form-horizontal')) !!}
