@@ -2,6 +2,19 @@
 /*
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
+
+//EMAIL TEST ROUTE
+//Route::get('/email', function () {
+//	$data = [
+//		'title'=>'Email'
+//	];
+//	Mail::send('emails.newnote', $data, function($message) {
+//		$message->from('no-reply@careplanmanager.com', 'CircleLink Health');
+//		$message->to('philiplawlor@gmail.com')->subject('You have a new note!!');
+//	});
+//	return Redirect::to('/');
+//});
+
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::get('/', 'WelcomeController@index');
