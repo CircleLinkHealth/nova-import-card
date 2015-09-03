@@ -111,17 +111,142 @@ class WpUserController extends Controller {
 	 */
 	public function store(Request $request)
 	{
-		$rules = array(
-			'name'             => 'required',                        // just a normal required validation
-			'email'            => 'required|email|unique:ducks',     // required and must be unique in the ducks table
-			'password'         => 'required',
-			'password_confirm' => 'required|same:password'           // required and has to match the password field
-		);
+		$params = $request->input();
 
+		// instantiate new user
 		$wpUser = new WpUser;
-		//$input = $request->input();
-		$newUser = $wpUser->createNewUser('test3@test.com', 'test1234');
-		dd('created new user id '.$newUser);
+
+		// validate
+		$this->validate($request, $wpUser->rules);
+
+		// create user
+		$wpUser->createNewUser($params['user_email'], $params['user_pass']);
+
+		// instantiate user with meta
+		$wpUser = WpUser::with('meta')->find($wpUser->ID);
+
+		$userMeta = new WpUserMeta;
+		$userMeta->user_id = $wpUser->ID;
+		$userMeta->meta_key = 'first_name';
+		$userMeta->meta_value = $params['first_name'];
+		$wpUser->meta()->save($userMeta);
+
+		$userMeta = new WpUserMeta;
+		$userMeta->user_id = $wpUser->ID;
+		$userMeta->meta_key = 'last_name';
+		$userMeta->meta_value = $params['last_name'];
+		$wpUser->meta()->save($userMeta);
+
+		$userMeta = new WpUserMeta;
+		$userMeta->user_id = $wpUser->ID;
+		$userMeta->meta_key = 'nickname';
+		$userMeta->meta_value = $params['nickname'];
+		$wpUser->meta()->save($userMeta);
+
+		$userMeta = new WpUserMeta;
+		$userMeta->user_id = $wpUser->ID;
+		$userMeta->meta_key = 'description';
+		$userMeta->meta_value = 'lv generated user';
+		$wpUser->meta()->save($userMeta);
+
+		$userMeta = new WpUserMeta;
+		$userMeta->user_id = $wpUser->ID;
+		$userMeta->meta_key = 'primary_blog';
+		$userMeta->meta_value = $params['primary_blog'];
+		$wpUser->meta()->save($userMeta);
+
+		$userMeta = new WpUserMeta;
+		$userMeta->user_id = $wpUser->ID;
+		$userMeta->meta_key = 'wp_'.$params['primary_blog'].'_capabilities';
+		$userMeta->meta_value = serialize(array());
+		$wpUser->meta()->save($userMeta);
+
+		$wpUser->push();
+		return redirect()->route('usersEdit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
+
+		dd('created new user id '.$wpUser->ID);
+
+		// created base user, add user info
+
+		// add user meta
+
+
+
+
+
+
+
+
+		// get user
+		$wpUser = WpUser::with('meta')->find($id);
+
+		// usermeta first_name
+		$userMeta = $wpUser->meta->where('meta_key', 'first_name')->first();
+		if($userMeta) {
+			$userMeta->meta_value = $request->input('first_name');
+			$userMeta->save();
+		}
+
+		// usermeta last_name
+		$userMeta = $wpUser->meta->where('meta_key', 'last_name')->first();
+		if($userMeta) {
+			$userMeta->meta_value = $request->input('last_name');
+			$userMeta->save();
+		}
+
+		// usermeta nickname
+		$userMeta = $wpUser->meta->where('meta_key', 'nickname')->first();
+		if($userMeta) {
+			$userMeta->meta_value = $request->input('nickname');
+			$userMeta->save();
+		}
+
+		// usermeta description
+		$userMeta = $wpUser->meta->where('meta_key', 'description')->first();
+		if($userMeta) {
+			$userMeta->meta_value = $request->input('description');
+			$userMeta->save();
+		}
+
+		// get user meta primary_blog
+		$userMeta = $wpUser->meta->lists('meta_value', 'meta_key');
+		$primaryBlog = $userMeta['primary_blog'];
+
+		// update role
+		$input = $request->input('role');
+		if(!empty($input)) {
+			$capabilities = $wpUser->meta->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_capabilities')->first();
+			if($capabilities) {
+				$capabilities->meta_value = serialize(array($input => '1'));
+			} else {
+				$capabilities = new WpUserMeta;
+				$capabilities->meta_key = 'wp_' . $primaryBlog . '_capabilities';
+				$capabilities->meta_value = serialize(array($input => '1'));
+				$capabilities->user_id = $id;
+			}
+			$capabilities->save();
+		}
+
+		// update user config
+		$userConfigTemplate = $wpUser->userConfigTemplate();
+		foreach($userConfigTemplate as $key => $value) {
+			$input = $request->input($key);
+			if(!empty($input)) {
+				$userConfigTemplate[$key] = $request->input($key);
+			}
+		}
+		$userConfig = $wpUser->meta->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_user_config')->first();
+		if($userConfig) {
+			$userConfig->meta_value = serialize($userConfigTemplate);
+		} else {
+			$userConfig = new WpUserMeta;
+			$userConfig->meta_key = 'wp_' . $primaryBlog . '_user_config';
+			$userConfig->meta_value = serialize($userConfigTemplate);
+			$userConfig->user_id = $id;
+		}
+		$userConfig->save();
+		//dd($userConfigTemplate);
+
 	}
 
 	/**
@@ -202,44 +327,44 @@ class WpUserController extends Controller {
 	public function update(Request $request, $id)
 	{
 		// get user
-		$wpUser = WpUser::find($id);
+		$wpUser = WpUser::with('meta')->find($id);
 
 		// usermeta first_name
-		$userMeta = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'first_name')->first();
+		$userMeta = $wpUser->meta->where('meta_key', 'first_name')->first();
 		if($userMeta) {
 			$userMeta->meta_value = $request->input('first_name');
 			$userMeta->save();
 		}
 
 		// usermeta last_name
-		$userMeta = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'last_name')->first();
+		$userMeta = $wpUser->meta->where('meta_key', 'last_name')->first();
 		if($userMeta) {
 			$userMeta->meta_value = $request->input('last_name');
 			$userMeta->save();
 		}
 
 		// usermeta nickname
-		$userMeta = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'nickname')->first();
+		$userMeta = $wpUser->meta->where('meta_key', 'nickname')->first();
 		if($userMeta) {
 			$userMeta->meta_value = $request->input('nickname');
 			$userMeta->save();
 		}
 
 		// usermeta description
-		$userMeta = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'description')->first();
+		$userMeta = $wpUser->meta->where('meta_key', 'description')->first();
 		if($userMeta) {
 			$userMeta->meta_value = $request->input('description');
 			$userMeta->save();
 		}
 
 		// get user meta primary_blog
-		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
+		$userMeta = $wpUser->meta->lists('meta_value', 'meta_key');
 		$primaryBlog = $userMeta['primary_blog'];
 
 		// update role
 		$input = $request->input('role');
 		if(!empty($input)) {
-			$capabilities = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_capabilities')->first();
+			$capabilities = $wpUser->meta->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_capabilities')->first();
 			if($capabilities) {
 				$capabilities->meta_value = serialize(array($input => '1'));
 			} else {
@@ -259,7 +384,7 @@ class WpUserController extends Controller {
 				$userConfigTemplate[$key] = $request->input($key);
 			}
 		}
-		$userConfig = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_user_config')->first();
+		$userConfig = $wpUser->meta->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_user_config')->first();
 		if($userConfig) {
 			$userConfig->meta_value = serialize($userConfigTemplate);
 		} else {
