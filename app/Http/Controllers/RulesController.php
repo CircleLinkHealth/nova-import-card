@@ -11,6 +11,8 @@ use App\RulesOperators;
 use App\RulesConditions;
 use App\RulesActions;
 
+use App\Services\RulesService;
+
 use Illuminate\Http\Request;
 
 class RulesController extends Controller {
@@ -217,8 +219,8 @@ class RulesController extends Controller {
 	public function showMatches(Request $request)
 	{
 		$params = $request->input();
-		$rules = new Rules;
-		$ruleActions = $rules->getActions($params, 'ATT');
+		$rulesService = new RulesService;
+		$ruleActions = $rulesService->getActions($params, 'ATT');
 		return view('rules.showMatches', [ 'params' => $params, 'ruleActions' => $ruleActions ]);
 	}
 
