@@ -5,21 +5,7 @@
         {{-- Create a new key --}}
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                @if (isset($error))
-                    <div class="alert alert-danger">
-                        <ul>
-                            <li>{{ $error }}</li>
-                        </ul>
-                    </div>
-                @endif
-
-                @if (isset($success))
-                    <div class="alert alert-success">
-                        <ul>
-                            <li>{{ $success }}</li>
-                        </ul>
-                    </div>
-                @endif
+                @include('errors.errors')
                 <div class="panel panel-default">
                     <div class="panel-heading">Add/Edit Page Time</div>
                     <div class="panel-body">
