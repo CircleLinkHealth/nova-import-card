@@ -6,17 +6,10 @@ use App\WpUserMeta;
 use DB;
 
 /**
- * @SWG\Definition(required={"primaryKey"})
+ * @SWG\Definition(definition="observation",required={"primaryKey"},@SWG\Xml(name="Observation")))
  */
 
 class Observation extends Model {
-
-    /**
-     * The connection name for the model.
-     * @SWG\Property()
-     * @var string
-     */
-    //protected $connection = 'mysql_no_prefix';
 
     /**
      * The database table used by the model.
@@ -27,8 +20,8 @@ class Observation extends Model {
 
     /**
      * The primary key for the model.
-     *@SWG\Property()
-     * @var string
+     *@SWG\Property(format="int64")
+     * @var int
      */
     protected $primaryKey = 'id';
 
@@ -38,9 +31,17 @@ class Observation extends Model {
      * @var array
      */
     protected $fillable = ['obs_date', 'obs_date_gmt', 'comment_id', 'sequence_id', 'obs_message_id', 'user_id', 'obs_method', 'obs_key', 'obs_value', 'obs_unit', 'program_id', 'legacy_obs_id'];
-
+    /**
+     * The attributes that are mass assignable.
+     *@SWG\Property()
+     * @var array
+     */
     protected $dates = ['deleted_at'];
-
+    /**
+     * The attributes that are mass assignable.
+     *@SWG\Property()
+     * @var array
+     */
     public $timestamps = true;
 
     public function comment()

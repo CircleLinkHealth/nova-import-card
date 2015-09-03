@@ -26,7 +26,7 @@ return array(
       | Absolute path to directory containing the swagger annotations are stored.
       |--------------------------------------------------------------------------
     */
-    "app-dir" => "modules/ApiDocs",
+    "app-dir" => "app",
 
     /*
       |--------------------------------------------------------------------------
@@ -69,7 +69,7 @@ return array(
       | Edit to set the api's base path
       |--------------------------------------------------------------------------
     */
-    "default-base-path" => "",
+    "default-base-path" => "api/v2.1",
 
     /*
       |--------------------------------------------------------------------------

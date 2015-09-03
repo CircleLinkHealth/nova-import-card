@@ -2,6 +2,19 @@
 /*
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
+
+Route::post('/email', function () {
+	$data = [
+		'title'=>'Email'
+	];
+	Mail::send('emails.hello', $data, function($message) {
+		$message->from('example@gmail.com', 'Example Person');
+		$message->to('example@gmail.com')->subject('we made it');
+	});
+	return Redirect::to('/');
+});
+
+
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::get('/', 'WelcomeController@index');
@@ -144,6 +157,7 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 	Route::resource('activities', 'ActivityController');
 	Route::post('activities/update', 'ActivityController@update');
 	Route::resource('activities.meta', 'ActivityMetaController');
+	Route::resource('activities/sendNote', 'ActivityController@sendExistingNote');
 
 	// reports
     Route::get('reports/pagetimer', 'ReportsController@pageTimerReports');

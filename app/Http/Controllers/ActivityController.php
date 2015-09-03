@@ -110,6 +110,24 @@ class ActivityController extends Controller {
 
 	}
 
+	public function sendExistingNote(Request $request, $id)
+	{
+		if ($request->header('Client') == 'ui'){ // WP Site
+
+			$input = json_decode(Crypt::decrypt($request->input('data')), true);
+
+			$activityService = new ActivityService;
+			$linkToNote = $input['url']+$input->ID;
+			$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input->user_id);
+
+		return response("Successfully Sent", 201);
+
+		} else {
+			return response("Sorry, Couldn't sent notes", 401);
+		}
+	}
+
+
 	/**
 	 * Display the specified resource.
 	 *
