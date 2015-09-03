@@ -204,7 +204,35 @@ class WpUserController extends Controller {
 		// get user
 		$wpUser = WpUser::find($id);
 
-		// get user meta
+		// usermeta first_name
+		$userMeta = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'first_name')->first();
+		if($userMeta) {
+			$userMeta->meta_value = $request->input('first_name');
+			$userMeta->save();
+		}
+
+		// usermeta last_name
+		$userMeta = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'last_name')->first();
+		if($userMeta) {
+			$userMeta->meta_value = $request->input('last_name');
+			$userMeta->save();
+		}
+
+		// usermeta nickname
+		$userMeta = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'nickname')->first();
+		if($userMeta) {
+			$userMeta->meta_value = $request->input('nickname');
+			$userMeta->save();
+		}
+
+		// usermeta description
+		$userMeta = WpUserMeta::where('user_id', '=', $id)->where('meta_key', '=', 'description')->first();
+		if($userMeta) {
+			$userMeta->meta_value = $request->input('description');
+			$userMeta->save();
+		}
+
+		// get user meta primary_blog
 		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
 		$primaryBlog = $userMeta['primary_blog'];
 
