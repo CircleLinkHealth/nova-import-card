@@ -59,10 +59,7 @@ class MsgChooser {
         $qsType  = $msgCPRules->getQsType($msgId, $userId);
 
         // find comment
-        $comment = DB::connection('mysql_no_prefix')
-            ->table('wp_' . $this->programId . '_comments')
-            ->where('comment_ID', '=', $commentId)
-            ->first();
+        $comment = Comment::find($commentId);
         if (!$comment) {
             $log[] = "MsgChooser->setNextMessage() comment not found";
             return false;
@@ -146,9 +143,7 @@ class MsgChooser {
             }
         }
         $comment->comment_content = serialize($commentContent);
-        DB::connection('mysql_no_prefix')->table('wp_'.$this->programId.'_comments')
-            ->where('comment_ID', $comment->comment_ID)
-            ->update(['comment_content' => $comment->comment_content]);
+        $comment->save();
 
         $log[] = 'MsgChooser->setNextMessage() finished';
 

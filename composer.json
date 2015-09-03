@@ -18,6 +18,7 @@
 		"barryvdh/laravel-cors": "0.7.x",
 	  	"laravelcollective/html": "~5.0",
         "guzzlehttp/guzzle": "dev-master",
+        "guzzlehttp/guzzle": "~5.3|~6.0",
 		"rap2hpoutre/laravel-log-viewer": "^0.4.0",
         "jlapp/swaggervel": "master-dev"
 	},

@@ -156,13 +156,29 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 	Route::post('observation', 'ObservationController@store');
 });
 
+
+/**********************************/
+//  CRON ROUTES
+/**********************************/
+Route::group(['prefix' => 'cron'], function()
+{
+	Route::get('/scheduler/{id}', function ($id) {
+		$msgScheduler = new \App\Services\MsgScheduler();
+		$msgScheduler->index($id);
+	});
+});
+
+
+
+
+
 // legacy api routes @todo migrate and remove these
 Route::group(['middleware' => 'authApiCall'], function()
 {
 
-	Route::resource('rules', 'RulesController');
+	//Route::resource('rules', 'RulesController');
 
-	Route::resource('pagetimer', 'PageTimerController');
+	//Route::resource('pagetimer', 'PageTimerController');
 
 	//Route::resource('reports', 'ReportsController');
 

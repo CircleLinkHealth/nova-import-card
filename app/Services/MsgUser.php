@@ -284,6 +284,12 @@ class MsgUser {
 // if ($serverDateTime->format('U') > $strContactTime->format('U') ) {echo "[".$row->ID."]Contact before server time<BR>";} else
 //  {echo "[".$row->ID."]Contact after server time<BR>";}
 // echo "Corrected Contact Time: [".$strContactTime->format('Y-m-d H:i:s T')."]<BR>".date("Y-m-d H:i:s T")."<BR><BR>";
+						$wpUser = WpUser::find($row->ID);
+						$userMeta = $wpUser->userMeta();
+						if(empty($userMeta['user_config'])) {
+							$logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [".$row->ID."] Missing User Config";
+							continue 1;
+						}
 						$logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [".$row->ID."]READY TO CHECK UCP";
 						$arrAllParticipantUserIDs[] = array('user_id'=>$row->ID, 'status'=>$arrConfig['status'], $msgType.'_reminder_optin'=>$arrConfig[$msgType.'_reminder_optin'], $msgType.'_reminder_time'=>$arrConfig[$msgType.'_reminder_time']);
 					} else {

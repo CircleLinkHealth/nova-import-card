@@ -1,6 +1,10 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\WpUser;
+use App\WpUserMeta;
+use DB;
+
 /**
  * @SWG\Definition(required={"primaryKey"})
  */
@@ -12,32 +16,32 @@ class Observation extends Model {
      * @SWG\Property()
      * @var string
      */
-    protected $connection = 'mysql_no_prefix';
+    //protected $connection = 'mysql_no_prefix';
 
     /**
      * The database table used by the model.
      * @SWG\Property()
      * @var string
      */
-    protected $table = 'ma_X_observations';
+    protected $table = 'observations';
 
     /**
      * The primary key for the model.
      *@SWG\Property()
      * @var string
      */
-    protected $primaryKey = 'obs_id';
+    protected $primaryKey = 'id';
 
     /**
      * The attributes that are mass assignable.
      *@SWG\Property()
      * @var array
      */
-    protected $fillable = ['obs_id', 'obs_date', 'obs_date_gmt', 'comment_id', 'sequence_id', 'obs_message_id', 'user_id', 'obs_method', 'obs_key', 'obs_value', 'obs_unit'];
+    protected $fillable = ['obs_date', 'obs_date_gmt', 'comment_id', 'sequence_id', 'obs_message_id', 'user_id', 'obs_method', 'obs_key', 'obs_value', 'obs_unit', 'program_id', 'legacy_obs_id'];
 
-    protected $dates = ['obs_date', 'obs_date_gmt'];
+    protected $dates = ['deleted_at'];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     public function comment()
     {
@@ -69,6 +73,44 @@ class Observation extends Model {
         return $observations;
     }
 
+    public function save(array $params = array())
+    {
+        if(empty($this->user_id)) {
+            return false;
+        }
+        $wpUser = WpUser::find($this->user_id);
+        if(!$wpUser->blogId()) {
+            return false;
+        }
+        $comment = Comment::find($this->comment_id);
+        if(!$comment) {
+            return false;
+        }
+
+        // take programId(blogId) and add to wp_X_observations table
+        $params['comment_id'] = $comment->legacy_comment_id;
+        $params['user_id'] = $this->user_id;
+        $params['obs_date'] = $this->obs_date;
+        $params['obs_date_gmt'] = $this->obs_date_gmt;
+        $params['sequence_id'] = $this->sequence_id;
+        $params['obs_message_id'] = $this->obs_message_id;
+        $params['obs_method'] = $this->obs_method;
+        $params['obs_key'] = $this->obs_key;
+        $params['obs_value'] = $this->obs_value;
+        $params['obs_unit'] = $this->obs_unit;
+        $this->program_id = $wpUser->blogId();
+
+        // updating or inserting?
+        if($this->id) {
+            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->where('comment_ID', $this->legacy_obs_id)->update($params);
+        } else {
+            $resultObsId = DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->insertGetId($params);
+            $this->legacy_obs_id = $resultObsId;
+        }
+
+        parent::save();
+        // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
+    }
 
 
 }
