@@ -17,7 +17,6 @@ $(document).ready(function(){
 
     // action
     $('body').on('click', '.add-action', function(event) {
-        event.preventDefault();
         addAction();
         return false;
     });
@@ -54,10 +53,10 @@ function addAction() {
     // get html
     var actionshtml = $('#jsactions').html();
     // count checkboxes to get the number already out (dont forget the extra one in jsactions!)
-    var actionCount = ($('.a-action').length - 1); // (length starts at 1, php arr 0)
+    var actionCount = ($('.a-action').length - 1); // (length starts at121200vsv + cc55002000 1, php arr 0)
 
     // fix duplicates
-    if(conditionCount > 0) {
+    if(actionCount > 0) {
         var matches = [];
         $("input[name='actions[]']:checked").each(function () {
             count = this.value;
@@ -72,7 +71,7 @@ function addAction() {
         });
         console.log(matches);
         // use this, will never cause conflict
-        conditionCount = parseInt(matches[0])+1;
+        actionCount = parseInt(matches[0])+1;
     }
 
     actionCount = rulesGetRulesCountForType('actions');

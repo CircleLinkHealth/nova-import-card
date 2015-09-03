@@ -92,7 +92,8 @@
                             <div class="col-sm-3">{!! Form::text('archive', $rule->archive, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                         </div>
 
-                        <strong>Conditions:</strong>
+                        <h3>Conditions:</h3>
+                        <br />
                         <div id="conditions">
                         @foreach( $rule->intrConditions as $i => $intrCondition )
                             <div class="form-group condition" id="c{{ $i }}">
@@ -114,7 +115,8 @@
                             </div>
                         </div>
 
-                        <strong>Actions:</strong>
+                        <h3>Actions:</h3>
+                        <br />
                         <div id="actions">
                         @foreach( $rule->intrActions as $i => $intrAction )
                             <div class="form-group action" id="a{{ $i }}">
