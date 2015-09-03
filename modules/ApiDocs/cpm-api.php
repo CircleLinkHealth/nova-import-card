@@ -2,25 +2,17 @@
 
 /**
  * @SWG\Swagger(
+ *     basePath="/api/v2.1",
  *     schemes={"http"},
  *     host="clapi.cpm.com",
- *     basePath="/api/v2.1",
  *     produces={"application/json"},
  *     consumes={"application/json"},
  *     @SWG\Info(
  *         version="2.1.1",
  *         title="CLH Api",
  *         description="This is CircleLink Health's Api",
- *     ),
- * )
- *
- * LOGIN
- *
- *
- *
- *OBSERVATION POST
- *
- * @SWG\Post(
+ *     ))
+* @SWG\Post(
  *     path="/observation",
  *     tags={"observation"},
  *     operationId="createObservation",
