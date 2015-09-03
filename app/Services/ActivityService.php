@@ -63,14 +63,33 @@ class ActivityService {
 		return true;
 	}
 
-	public function sendNoteToCareTeam($careteam, $url, $performed_at){
+	/**
+	 * @param $careteam
+	 * @param $url
+	 * @param $performed_at
+	 * @param $user_id
+     */
+	public function sendNoteToCareTeam($careteam, $url, $performed_at,$user_id){
 
-		Mail::send('emails.welcome', ['key' => 'value'], function($message)
-		{
-			$message->to('foo@example.com', 'John Smith')->subject('Welcome!');
-		});
-		return true;
+		$user = WpUser::find($user_id);
 
+		$careteam_emails = array();
+
+		for($i = 0; $i < count($careteam); $i++){
+			$provider_user = WpUser::find($careteam[$i]);
+			$careteam_emails[] = $provider_user->user_email;
+		}
+
+		for($j = 0; $j < count($careteam_emails); $j++) {
+				$email = $careteam_emails[$j];
+
+			Mail::send('emails.welcome', ['key' => 'value'], function($message)
+			{
+				$message->to($message->user)->subject('New Note from '.$message->patient);
+			});
+
+		} return true;
 	}
+
 
 }

@@ -15,8 +15,8 @@ return [
 	*/
 
 	'mailgun' => [
-		'domain' => '',
-		'secret' => '',
+		'domain' => 'careplanmanager.com',
+		'secret' => 'key-699beba7ff1cdddb8d6568efdca0e6d9',
 	],
 
 	'mandrill' => [
