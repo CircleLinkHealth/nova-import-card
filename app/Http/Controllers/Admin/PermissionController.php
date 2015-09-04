@@ -50,7 +50,9 @@ class PermissionController extends Controller {
 		$permission->display_name = $params['display_name'];
 		$permission->description = $params['description'];
 		$permission->save();
-		$permission->roles()->sync($params['roles']);
+		if($params['roles']) {
+			$permission->roles()->sync($params['roles']);
+		}
 		$permission->save();
 		redirect()->route('permissionsEdit', [$permission->id])->with('messages', ['successfully added new permission - '.$params['name']]);
 	}
@@ -95,7 +97,9 @@ class PermissionController extends Controller {
 		$permission->name = $params['name'];
 		$permission->display_name = $params['display_name'];
 		$permission->description = $params['description'];
-		$permission->roles()->sync($params['roles']);
+		if($params['roles']) {
+			$permission->roles()->sync($params['roles']);
+		}
 		$permission->save();
 		return redirect()->back()->with('messages', ['successfully updated permission']);
 	}

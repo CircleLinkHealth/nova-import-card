@@ -50,7 +50,9 @@ class RoleController extends Controller {
 		$role->display_name = $params['display_name'];
 		$role->description = $params['description'];
 		$role->save();
-		$role->perms()->sync($params['permissions']);
+		if($params['permissions']) {
+			$role->perms()->sync($params['permissions']);
+		}
 		$role->save();
 		return redirect()->route('rolesEdit', [$role->id])->with('messages', ['successfully added new role - '.$params['name']]);
 	}
@@ -95,7 +97,9 @@ class RoleController extends Controller {
 		$role->name = $params['name'];
 		$role->display_name = $params['display_name'];
 		$role->description = $params['description'];
-		$role->perms()->sync($params['permissions']);
+		if($params['permissions']) {
+			$role->perms()->sync($params['permissions']);
+		}
 		$role->save();
 		return redirect()->back()->with('messages', ['successfully updated role']);
 	}
