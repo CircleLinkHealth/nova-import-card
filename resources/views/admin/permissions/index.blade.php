@@ -12,12 +12,12 @@
                 <div class="row" style="margin:20px auto;">
                     <div class="col-sm-12">
                         <div class="pull-right">
-                            <a href="{{ url('admin/roles/create') }}" class="btn btn-success">New Role</a>
+                            <a href="{{ url('admin/permissions/create') }}" class="btn btn-success">New Permission</a>
                         </div>
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">All Roles</div>
+                    <div class="panel-heading">All Permissions</div>
                     <table class="table table-striped">
                         <thead>
                         <tr>
@@ -30,14 +30,14 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach( $roles as $role )
+                        @foreach( $permissions as $permission )
                             <tr>
-                                <td><a href="{{ url('admin/roles/'.$role->id.'') }}" class="btn btn-primary">Detail</a></td>
-                                <td>{{ $role->name }}</td>
-                                <td>{{ $role->display_name }}</td>
-                                <td>{{ $role->description }}</td>
-                                <td>{{ $role->created_at }}</td>
-                                <td><a href="{{ url('admin/roles/'.$role->id.'/edit') }}" class="btn btn-primary">Edit</a></td>
+                                <td><a href="{{ url('admin/permissions/'.$permission->id.'') }}" class="btn btn-primary">Detail</a></td>
+                                <td>{{ $permission->name }}</td>
+                                <td>{{ $permission->display_name }}</td>
+                                <td>{{ $permission->description }}</td>
+                                <td>{{ $permission->created_at }}</td>
+                                <td><a href="{{ url('admin/permissions/'.$permission->id.'/edit') }}" class="btn btn-primary">Edit</a></td>
                             </tr>
                         @endforeach
                         </tbody>

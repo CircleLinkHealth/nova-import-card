@@ -32,7 +32,9 @@ class RoleController extends Controller {
 	 */
 	public function create()
 	{
-		//
+		// display view
+		$permissions = Permission::all();
+		return view('admin.roles.create', [ 'permissions' => $permissions, 'errors' => array(), 'messages' => array() ]);
 	}
 
 	/**
@@ -40,9 +42,17 @@ class RoleController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Request $request)
 	{
-		//
+		$params = $request->input();
+		$role = new Role;
+		$role->name = $params['name'];
+		$role->display_name = $params['display_name'];
+		$role->description = $params['description'];
+		$role->save();
+		$role->perms()->sync($params['permissions']);
+		$role->save();
+		return redirect()->route('rolesEdit', [$role->id])->with('messages', ['successfully added new role - '.$params['name']]);
 	}
 
 	/**
@@ -55,11 +65,7 @@ class RoleController extends Controller {
 	{
 		// display view
 		$role = Role::find($id);
-		dd($role->permissions());
-		/*
-		$cPRulesPCP = CPRulesPCP::where('prov_id', '=', $id)->where('status', '=', 'Active')->with('items.meta')->get();
-		*/
-		return view('admin.roles.edit', [ 'role' => $role, 'errors' => array(), 'messages' => array() ]);
+		return view('admin.roles.show', [ 'role' => $role, 'errors' => array(), 'messages' => array() ]);
 	}
 
 	/**

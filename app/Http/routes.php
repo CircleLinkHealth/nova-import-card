@@ -96,13 +96,13 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::post('roles/{id}/edit', ['uses' =>'Admin\RoleController@update', 'as'=>'rolesUpdate']);
 		Route::get('roles/{id}/careplan', ['uses' =>'Admin\RoleController@show', 'as'=>'rolesCareplan']);
 
-		Route::get('permissions', 'PermissionController@index');
-		Route::get('permissions/create', ['uses' =>'PermissionController@create', 'as'=>'permissionsCreate']);
-		Route::post('permissions/create', ['uses' =>'PermissionController@store', 'as'=>'permissionsStore']);
-		Route::get('permissions/{id}', ['uses' =>'PermissionController@show', 'as'=>'permissionsShow']);
-		Route::get('permissions/{id}/edit', ['uses' =>'PermissionController@edit', 'as'=>'permissionsEdit']);
-		Route::post('permissions/{id}/edit', ['uses' =>'PermissionController@update', 'as'=>'permissionsUpdate']);
-		Route::get('permissions/{id}/careplan', ['uses' =>'PermissionController@show', 'as'=>'permissionsCareplan']);
+		Route::get('permissions', 'Admin\PermissionController@index');
+		Route::get('permissions/create', ['uses' =>'Admin\PermissionController@create', 'as'=>'permissionsCreate']);
+		Route::post('permissions/create', ['uses' =>'Admin\PermissionController@store', 'as'=>'permissionsStore']);
+		Route::get('permissions/{id}', ['uses' =>'Admin\PermissionController@show', 'as'=>'permissionsShow']);
+		Route::get('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@edit', 'as'=>'permissionsEdit']);
+		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'permissionsUpdate']);
+		Route::get('permissions/{id}/careplan', ['uses' =>'Admin\PermissionController@show', 'as'=>'permissionsCareplan']);
 	});
 
     /*
