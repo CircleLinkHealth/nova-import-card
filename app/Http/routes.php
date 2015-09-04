@@ -83,6 +83,28 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::post('programs/{id}/edit', ['uses' =>'WpBlogController@update', 'as'=>'programsUpdate']);
 	Route::get('programs/{id}/questions', ['uses' =>'WpBlogController@showQuestions', 'as'=>'programsQuestionsShow']);
 
+	/*
+     * Admin
+     */
+	Route::group(['prefix' => 'admin'], function ()
+	{
+		Route::get('roles', 'Admin\RoleController@index');
+		Route::get('roles/create', ['uses' =>'Admin\RoleController@create', 'as'=>'rolesCreate']);
+		Route::post('roles/create', ['uses' =>'Admin\RoleController@store', 'as'=>'rolesStore']);
+		Route::get('roles/{id}', ['uses' =>'Admin\RoleController@show', 'as'=>'rolesShow']);
+		Route::get('roles/{id}/edit', ['uses' =>'Admin\RoleController@edit', 'as'=>'rolesEdit']);
+		Route::post('roles/{id}/edit', ['uses' =>'Admin\RoleController@update', 'as'=>'rolesUpdate']);
+		Route::get('roles/{id}/careplan', ['uses' =>'Admin\RoleController@show', 'as'=>'rolesCareplan']);
+
+		Route::get('permissions', 'PermissionController@index');
+		Route::get('permissions/create', ['uses' =>'PermissionController@create', 'as'=>'permissionsCreate']);
+		Route::post('permissions/create', ['uses' =>'PermissionController@store', 'as'=>'permissionsStore']);
+		Route::get('permissions/{id}', ['uses' =>'PermissionController@show', 'as'=>'permissionsShow']);
+		Route::get('permissions/{id}/edit', ['uses' =>'PermissionController@edit', 'as'=>'permissionsEdit']);
+		Route::post('permissions/{id}/edit', ['uses' =>'PermissionController@update', 'as'=>'permissionsUpdate']);
+		Route::get('permissions/{id}/careplan', ['uses' =>'PermissionController@show', 'as'=>'permissionsCareplan']);
+	});
+
     /*
      * Third Party Apis Config Pages
      */

@@ -1,8 +1,11 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 class WpUser extends Model {
+
+    use EntrustUserTrait; // add this trait to your user model
 
     /**
      * The connection name for the model.

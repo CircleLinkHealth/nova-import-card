@@ -158,7 +158,8 @@ return [
 		'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
 		'Barryvdh\Cors\ServiceProvider',
 		'Collective\Html\HtmlServiceProvider',
-		'Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider'
+		'Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider',
+		'Zizaco\Entrust\EntrustServiceProvider'
 
 
 	],
@@ -212,6 +213,7 @@ return [
 		'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
 		'Form' => 'Collective\Html\FormFacade',
 		'Html' => 'Collective\Html\HtmlFacade',
+		'Entrust' => 'Zizaco\Entrust\EntrustFacade'
 
 	],
 
