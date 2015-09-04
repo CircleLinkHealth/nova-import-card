@@ -50,7 +50,7 @@ class PermissionController extends Controller {
 		$permission->display_name = $params['display_name'];
 		$permission->description = $params['description'];
 		$permission->save();
-		if($params['roles']) {
+		if(isset($params['roles'])) {
 			$permission->roles()->sync($params['roles']);
 		}
 		$permission->save();
@@ -97,7 +97,7 @@ class PermissionController extends Controller {
 		$permission->name = $params['name'];
 		$permission->display_name = $params['display_name'];
 		$permission->description = $params['description'];
-		if($params['roles']) {
+		if(isset($params['roles'])) {
 			$permission->roles()->sync($params['roles']);
 		}
 		$permission->save();
