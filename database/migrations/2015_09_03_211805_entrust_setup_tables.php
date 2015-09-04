@@ -11,6 +11,12 @@ class EntrustSetupTables extends Migration
      */
     public function up()
     {
+        // ensure wp_users.ID matches up
+        Schema::connection('mysql_no_prefix')->table('wp_users', function($table)
+        {
+            $table->integer('ID', 10)->unsigned()->change();
+        });
+
         // Create table for storing roles
         Schema::connection('mysql_no_prefix')->create('lv_roles', function (Blueprint $table) {
             $table->increments('id');
