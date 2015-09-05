@@ -80,8 +80,7 @@ class RoleController extends Controller {
 	{
 		$role = Role::find($id);
 		$permissions = Permission::all();
-		$rolePermissions = $role->perms()->lists('id');
-		return view('admin.roles.edit', [ 'role' => $role, 'permissions' => $permissions, 'rolePermissions' => $rolePermissions, 'messages' => \Session::get('messages') ]);
+		return view('admin.roles.edit', [ 'role' => $role, 'permissions' => $permissions, 'messages' => \Session::get('messages') ]);
 	}
 
 	/**

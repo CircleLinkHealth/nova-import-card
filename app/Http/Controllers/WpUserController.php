@@ -16,6 +16,7 @@ use App\Services\MsgScheduler;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
+use EllipseSynergie\ApiResponse\Laravel\Response;
 use PasswordHash;
 use Auth;
 
@@ -62,7 +63,26 @@ class WpUserController extends Controller {
 			}
 		} else {
 			// display view
-			$wpUsers = wpUser::orderBy('ID', 'desc')->limit(500)->get();
+			$wpUsers = wpUser::orderBy('ID', 'desc')->limit(500);
+
+			// FILTERS
+			$params = $request->input();
+
+			// role
+			$roles = Role::all()->lists('display_name', 'id');
+			$roleFilter = 'all';
+			if(isset($params['action'])) {
+				if(!empty($params['roleFilter'])) {
+					$roleFilter = $params['roleFilter'];
+					if($params['roleFilter'] != 'all') {
+						$wpUsers = $wpUsers->whereHas('roles', function($q) use ($roleFilter){
+							$q->where('id', '=', $roleFilter);
+						});
+					}
+				}
+			}
+
+			$wpUsers = $wpUsers->get();
 			$invalidUsers = array();
 			$validUsers = array();
 			foreach($wpUsers as $wpUser) {
@@ -75,7 +95,7 @@ class WpUserController extends Controller {
 
 				$validUsers[] = $wpUser;
 			}
-			return view('wpUsers.index', [ 'wpUsers' => $validUsers, 'invalidWpUsers' => $invalidUsers ]);
+			return view('wpUsers.index', [ 'wpUsers' => $validUsers, 'roles' => $roles, 'roleFilter' => $roleFilter, 'invalidWpUsers' => $invalidUsers ]);
 		}
 
 	}
@@ -305,8 +325,6 @@ class WpUserController extends Controller {
 		// set role
 		$capabilities = unserialize($userMeta['wp_' . $primaryBlog . '_capabilities']);
 		$role = key($capabilities);
-
-		//dd($capabilities);
 
 		// locations @todo get location id for WpBlog
 		$wpBlog = WpBlog::find($primaryBlog);

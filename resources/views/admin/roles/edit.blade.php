@@ -48,17 +48,17 @@
 
                         <h3>Permissions:</h3>
                         <br />
-                        <div id="conditions">
+                        <div id="permissions">
                         @foreach( $permissions as $permission )
-                            <div class="form-group condition" id="perm_{{ $permission }}">
-                                <div class="col-sm-5">{!! Form::label('Value', 'Permission: '.$permission->display_name, array('class' => '')) !!}</div>
+                            <div class="form-group permissions" id="perm_{{ $permission }}">
                                 <div class="col-sm-1">
-                                @if( in_array($permission->id, $rolePermissions) )
+                                @if( in_array($permission->id, $role->perms()->lists('id')) )
                                     {!! Form::checkbox('permissions[]', $permission->id, ['checked' => "checked"], ['style' => '']) !!}
                                 @else
                                     {!! Form::checkbox('permissions[]', $permission->id, [], ['style' => '']) !!}
                                 @endif
                                 </div>
+                                <div class="col-sm-11">{!! Form::label('Value', ''.$permission->display_name, array('class' => '')) !!}</div>
                             </div>
                         @endforeach
                         </div>

@@ -45,19 +45,14 @@
                             {{ $permission->created_at }}
                         </div>
 
-
-
-                        <h3>Permissions:</h3>
-                        <br />
+                        <h3>Roles:</h3>
                         <div id="conditions">
-                            @foreach( $permission->roles() as $role )
+                            @foreach( $permission->roles as $role )
                                 <div class="form-group condition" id="perm_{{ $role }}">
-                                    <div class="col-sm-5">{!! Form::label('Value', 'Roles: '.$role->display_name, array('class' => '')) !!}</div>
                                     <div class="col-sm-1">
-                                        @if( in_array($role->id, $permissionRoles) )
                                             {!! Form::checkbox('roles[]', $role->id, ['checked' => "checked", 'disabled' => "disabled"], ['style' => '']) !!}
-                                        @endif
                                     </div>
+                                    <div class="col-sm-11">{!! Form::label('Value', ''.$role->display_name, array('class' => '')) !!}</div>
                                 </div>
                             @endforeach
                         </div>

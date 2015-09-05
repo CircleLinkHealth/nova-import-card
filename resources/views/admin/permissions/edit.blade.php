@@ -50,7 +50,6 @@
                         <div id="conditions">
                         @foreach( $roles as $role )
                             <div class="form-group condition" id="role_{{ $role }}">
-                                <div class="col-sm-5">{!! Form::label('Value', 'Role: '.$role->display_name, array('class' => '')) !!}</div>
                                 <div class="col-sm-1">
                                 @if( in_array($role->id, $permissionRoles) )
                                     {!! Form::checkbox('roles[]', $role->id, ['checked' => "checked"], ['style' => '']) !!}
@@ -58,6 +57,7 @@
                                     {!! Form::checkbox('roles[]', $role->id, [], ['style' => '']) !!}
                                 @endif
                                 </div>
+                                <div class="col-sm-11">{!! Form::label('Value', ''.$role->display_name, array('class' => '')) !!}</div>
                             </div>
                         @endforeach
                         </div>

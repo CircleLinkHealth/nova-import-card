@@ -47,15 +47,7 @@
                             </div>
                         </div>
 
-                        <h2>Role</h2>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-xs-2">{!! Form::label('role', 'Role:') !!}</div>
-                                <div class="col-xs-10">{!! Form::select('role', $providers_arr, $role, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
-                            </div>
-                        </div>
-
-                        <h3>Roles:</h3>
+                        <h2>Roles:</h2>
                         <div id="roles">
                             @foreach( $roles as $role )
                                 <div class="form-group role" id="role_{{ $role }}">
@@ -71,6 +63,16 @@
                             @endforeach
                         </div>
                         <br />
+                        <br />
+                        <br />
+
+                        <h3>WP Role (temporary)</h3>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-2">{!! Form::label('role', 'Role:') !!}</div>
+                                <div class="col-xs-10">{!! Form::select('role', $providers_arr, $role, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                            </div>
+                        </div>
                         <br />
 
                         <h2>User Info</h2>

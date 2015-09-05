@@ -68,6 +68,7 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'activitiesEdit']);
 
 	Route::get('wpusers', 'WpUserController@index');
+	Route::post('wpusers', 'WpUserController@index');
 	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'usersCreate']);
 	Route::post('wpusers/create', ['uses' =>'WpUserController@store', 'as'=>'usersStore']);
 	Route::get('wpusers/{id}', ['uses' =>'WpUserController@show', 'as'=>'usersShow']);

@@ -26,6 +26,18 @@
                             </tbody>
                         </table>
 
+                        <h3>Permissions:</h3>
+                        <div id="permissions">
+                            @foreach( $role->perms as $permission )
+                                <div class="form-group condition" id="perm_{{ $permission }}">
+                                    <div class="col-sm-1">
+                                        {!! Form::checkbox('permissions[]', $permission->id, ['checked' => "checked", 'disabled' => "disabled"], ['style' => '']) !!}
+                                    </div>
+                                    <div class="col-sm-11">{!! Form::label('Value', ''.$permission->display_name, array('class' => '')) !!}</div>
+                                </div>
+                            @endforeach
+                        </div>
+
                         <div class="row" style="margin:20px 0px;">
                             <strong>Role Name:</strong><br>
                             {{ $role->name }}
@@ -46,22 +58,6 @@
                             {{ $role->created_at }}
                         </div>
 
-
-
-                        <h3>Permissions:</h3>
-                        <br />
-                        <div id="conditions">
-                            @foreach( $role->perms() as $permission )
-                                <div class="form-group condition" id="perm_{{ $permission }}">
-                                    <div class="col-sm-5">{!! Form::label('Value', 'Permission: '.$permission->display_name, array('class' => '')) !!}</div>
-                                    <div class="col-sm-1">
-                                        @if( in_array($permission->id, $rolePermissions) )
-                                            {!! Form::checkbox('permissions[]', $permission->id, ['checked' => "checked", 'disabled' => "disabled"], ['style' => '']) !!}
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
                     </div>
                 </div>
             </div>
