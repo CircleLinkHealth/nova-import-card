@@ -9,9 +9,12 @@
         </div>
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                <div class="row" style="margin:20px auto;">
-                    <div class="col-sm-12">
-                        <div class="pull-right">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h1>Permissions</h1>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="pull-right" style="margin:20px;">
                             <a href="{{ url('admin/permissions/create') }}" class="btn btn-success">New Permission</a>
                         </div>
                     </div>

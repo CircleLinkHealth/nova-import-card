@@ -5,6 +5,7 @@ use App\WpBlog;
 use App\Location;
 use App\WpUser;
 use App\WpUserMeta;
+use App\Role;
 use App\Services\ActivityService;
 use App\Services\CareplanService;
 use App\Services\ObservationService;
@@ -266,7 +267,7 @@ class WpUserController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit(Request $request, $id)
 	{
 		$messages = \Session::get('messages');
 
@@ -275,12 +276,24 @@ class WpUserController extends Controller {
 			return response("User not found", 401);
 		}
 
+		$roles = Role::all();
+
 		// primary_blog
 		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
 		if(!isset($userMeta['primary_blog'])) {
 			return response("Required meta primary_blog not found", 401);
 		}
 		$primaryBlog = $userMeta['primary_blog'];
+
+		$params = $request->all();
+		if(!empty($params)) {
+			if (isset($params['action'])) {
+				if ($params['action'] == 'impersonate') {
+					Auth::login($id);
+					return redirect()->route('/', [])->with('messages', ['Logged in as user '.$id]);
+				}
+			}
+		}
 
 		// user config
 		$userConfig = $wpUser->userConfigTemplate();
@@ -315,7 +328,7 @@ class WpUserController extends Controller {
 		$providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
 
 		// display view
-		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $primaryBlog, 'role' => $role, 'providers_arr' => $providers_arr, 'messages' => $messages]);
+		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $primaryBlog, 'role' => $role, 'providers_arr' => $providers_arr, 'messages' => $messages, 'roles' => $roles]);
 	}
 
 	/**
@@ -328,6 +341,14 @@ class WpUserController extends Controller {
 	{
 		// get user
 		$wpUser = WpUser::with('meta')->find($id);
+
+		$params = $request->input();
+
+		if(isset($params['roles'])) {
+			$wpUser->roles()->sync($params['roles']);
+		} else {
+			$wpUser->roles()->sync(array());
+		}
 
 		// usermeta first_name
 		$userMeta = $wpUser->meta->where('meta_key', 'first_name')->first();

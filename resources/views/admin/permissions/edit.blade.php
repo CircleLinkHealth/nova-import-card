@@ -45,7 +45,7 @@
 
 
 
-                        <h3>Permissions:</h3>
+                        <h3>Roles:</h3>
                         <br />
                         <div id="conditions">
                         @foreach( $roles as $role )

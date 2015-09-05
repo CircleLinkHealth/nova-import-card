@@ -24,10 +24,13 @@
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 <div class="pull-left">
-                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/msgcenter') }}" class="btn btn-primary">Message Center</a>
+                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/msgcenter') }}" class="btn btn-primary">App Simulator</a>
                                 </div>
                                 <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed</a>
+                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed JSON</a>
+                                </div>
+                                <div class="pull-left" style="margin-left:10px;">
+                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/edit?action=impersonate') }}" class="btn btn-primary">Impersonate</a>
                                 </div>
                                 <div class="pull-right">
                                     {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
@@ -51,6 +54,24 @@
                                 <div class="col-xs-10">{!! Form::select('role', $providers_arr, $role, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                             </div>
                         </div>
+
+                        <h3>Roles:</h3>
+                        <div id="roles">
+                            @foreach( $roles as $role )
+                                <div class="form-group role" id="role_{{ $role }}">
+                                    <div class="col-sm-1">
+                                        @if( in_array($role->id, $wpUser->roles()->lists('id')) )
+                                            {!! Form::checkbox('roles[]', $role->id, ['checked' => "checked"], ['style' => '']) !!}
+                                        @else
+                                            {!! Form::checkbox('roles[]', $role->id, [], ['style' => '']) !!}
+                                        @endif
+                                    </div>
+                                    <div class="col-sm-11">{!! Form::label('Value', 'Role: '.$role->display_name, array('class' => '')) !!}</div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <br />
+                        <br />
 
                         <h2>User Info</h2>
                         <div class="form-group">

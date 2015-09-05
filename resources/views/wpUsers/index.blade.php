@@ -10,6 +10,16 @@
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <h1>Users</h1>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="pull-right" style="margin:20px;">
+                                <a href="{{ url('admin/users/create') }}" class="btn btn-success">New User</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="panel-heading">Users</div>
                     <br>
                     <p>These users are coming from the wp_users.. this laravel project has been modified to use wp_users as the primary users table.</p>
@@ -23,6 +33,7 @@
                             <td><strong>user_email</strong></td>
                             <td><strong>status</strong></td>
                             <td><strong>display_name</strong></td>
+                            <td><strong>roles</strong></td>
                             <td><strong>blog</strong></td>
                         </tr>
                         </thead>
@@ -41,14 +52,13 @@
                                 <td>{{ $wpUser->user_status }}</td>
                                 <td>{{ $wpUser->display_name }}</td>
                                 <td>
-                                    @if($wpUser->blogId())
-                                        <strong>{{ $wpUser->blogId() }}</strong>
-                                    @elseif(is_numeric(substr($wpUser->user_email, 0, 1)))
-                                        {{ $wpUser->nickname  }}<a href="/wpusers/{{ $wpUser->ID }}?action=setPatientToBlog&blogId={{ substr($wpUser->user_email, 0, 1) }}" class="setPatientToBlog">Add primary_blog={{ substr($wpUser->user_email, 0, 1) }}</a>
-                                    @else
-                                        -
+                                    @if (count($wpUser->roles()) > 0)
+                                        @foreach ($wpUser->roles() as $role)
+                                            <li>{{ $role->name }}</li>
+                                        @endforeach
                                     @endif
                                 </td>
+                                <td>{{ $wpUser->blogId() }}</td>
                             </tr>
                         @endforeach
                         </tbody>
