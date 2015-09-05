@@ -80,6 +80,17 @@ class WpUserController extends Controller {
 						});
 					}
 				}
+				/*
+				$params['programFilter'] = 7;
+				if(!empty($params['programFilter'])) {
+					$programFilter = $params['programFilter'];
+					if($params['programFilter'] != 'all') {
+						$wpUsers = $wpUsers->whereHas('roles', function($q) use ($programFilter){
+							$q->where('id', '=', $programFilter);
+						});
+					}
+				}
+				*/
 			}
 
 			$wpUsers = $wpUsers->get();
@@ -324,7 +335,7 @@ class WpUserController extends Controller {
 
 		// set role
 		$capabilities = unserialize($userMeta['wp_' . $primaryBlog . '_capabilities']);
-		$role = key($capabilities);
+		$wpRole = key($capabilities);
 
 		// locations @todo get location id for WpBlog
 		$wpBlog = WpBlog::find($primaryBlog);
@@ -346,7 +357,7 @@ class WpUserController extends Controller {
 		$providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
 
 		// display view
-		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $primaryBlog, 'role' => $role, 'providers_arr' => $providers_arr, 'messages' => $messages, 'roles' => $roles]);
+		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $primaryBlog, 'wpRole' => $wpRole, 'providers_arr' => $providers_arr, 'messages' => $messages, 'roles' => $roles]);
 	}
 
 	/**
@@ -369,41 +380,41 @@ class WpUserController extends Controller {
 		}
 
 		// usermeta first_name
-		$userMeta = $wpUser->meta->where('meta_key', 'first_name')->first();
+		$userMeta = $wpUser->meta()->where('meta_key', 'first_name')->first();
 		if($userMeta) {
 			$userMeta->meta_value = $request->input('first_name');
 			$userMeta->save();
 		}
 
 		// usermeta last_name
-		$userMeta = $wpUser->meta->where('meta_key', 'last_name')->first();
+		$userMeta = $wpUser->meta()->where('meta_key', 'last_name')->first();
 		if($userMeta) {
 			$userMeta->meta_value = $request->input('last_name');
 			$userMeta->save();
 		}
 
 		// usermeta nickname
-		$userMeta = $wpUser->meta->where('meta_key', 'nickname')->first();
+		$userMeta = $wpUser->meta()->where('meta_key', 'nickname')->first();
 		if($userMeta) {
 			$userMeta->meta_value = $request->input('nickname');
 			$userMeta->save();
 		}
 
 		// usermeta description
-		$userMeta = $wpUser->meta->where('meta_key', 'description')->first();
+		$userMeta = $wpUser->meta()->where('meta_key', 'description')->first();
 		if($userMeta) {
 			$userMeta->meta_value = $request->input('description');
 			$userMeta->save();
 		}
 
 		// get user meta primary_blog
-		$userMeta = $wpUser->meta->lists('meta_value', 'meta_key');
+		$userMeta = $wpUser->meta()->lists('meta_value', 'meta_key');
 		$primaryBlog = $userMeta['primary_blog'];
 
 		// update role
 		$input = $request->input('role');
 		if(!empty($input)) {
-			$capabilities = $wpUser->meta->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_capabilities')->first();
+			$capabilities = $wpUser->meta()->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_capabilities')->first();
 			if($capabilities) {
 				$capabilities->meta_value = serialize(array($input => '1'));
 			} else {
@@ -423,7 +434,7 @@ class WpUserController extends Controller {
 				$userConfigTemplate[$key] = $request->input($key);
 			}
 		}
-		$userConfig = $wpUser->meta->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_user_config')->first();
+		$userConfig = $wpUser->meta()->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_user_config')->first();
 		if($userConfig) {
 			$userConfig->meta_value = serialize($userConfigTemplate);
 		} else {
