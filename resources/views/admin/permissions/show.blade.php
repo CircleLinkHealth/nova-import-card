@@ -3,9 +3,18 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h2>View Permission</h2>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="pull-right" style="margin:20px;">
+                        </div>
+                    </div>
+                </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">PERMISSION {{ $permission->name }}</div>
+                    <div class="panel-heading">View Permission: {{ $permission->name }}</div>
                     <div class="panel-body">
                         @include('errors.errors')
                         <table class="table table-striped">
@@ -20,7 +29,7 @@
                             <tr>
                                 <td>{{ $permission->name }}</td>
                                 <td>{{ $permission->display_name }}</td>
-                                <td><a href="{{ url('admin/permissions/'.$permission->id.'/edit') }}" class="btn btn-primary">Edit</a></td>
+                                <td><a href="{{ URL::route('admin.permissionsEdit', array('id' => $permission->id)) }}" class="btn btn-primary">Edit</a></td>
                             </tr>
                             </tbody>
                         </table>

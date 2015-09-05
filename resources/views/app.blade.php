@@ -89,7 +89,7 @@
 								Programs <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ action('WpBlogController@index') }}">Blogs</a></li>
+								<li><a href="{{ action('Admin\WpBlogController@index') }}">Program List</a></li>
 							</ul>
 						</li>
 
@@ -98,7 +98,7 @@
 								Users <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ url('wpusers') }}">All Users</a></li>
+								<li><a href="{{ action('WpUserController@index') }}">All Users</a></li>
 								<li><a href="{{ url('wpusers/create') }}">Add new</a></li>
 							</ul>
 						</li>

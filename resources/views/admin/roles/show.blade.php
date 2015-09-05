@@ -4,9 +4,18 @@
     <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h2>View Role</h2>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="pull-right" style="margin:20px;">
+                        </div>
+                    </div>
+                </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">ROLE {{ $role->name }}</div>
+                    <div class="panel-heading">View Role: {{ $role->name }}</div>
                     <div class="panel-body">
                         @include('errors.errors')
                         <table class="table table-striped">
@@ -21,7 +30,7 @@
                             <tr>
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->display_name }}</td>
-                                <td><a href="{{ url('admin/roles/'.$role->id.'/edit') }}" class="btn btn-primary">Edit</a></td>
+                                <td><a href="{{ URL::route('admin.rolesEdit', array('id' => $role->id)) }}" class="btn btn-primary">Edit</a></td>
                             </tr>
                             </tbody>
                         </table>

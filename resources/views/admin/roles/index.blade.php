@@ -3,19 +3,19 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 @include('errors.errors')
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-8">
                         <h1>Roles</h1>
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ url('admin/roles/create') }}" class="btn btn-success">New Role</a>
+                            <a href="{{ URL::route('admin.rolesCreate', array()) }}" class="btn btn-success">New Role</a>
                         </div>
                     </div>
                 </div>
@@ -35,12 +35,12 @@
                         <tbody>
                         @foreach( $roles as $role )
                             <tr>
-                                <td><a href="{{ url('admin/roles/'.$role->id.'') }}" class="btn btn-primary">Detail</a></td>
+                                <td><a href="{{ URL::route('admin.rolesShow', array('id' => $role->id)) }}" class="btn btn-primary">Detail</a></td>
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->display_name }}</td>
                                 <td>{{ $role->description }}</td>
                                 <td>{{ $role->created_at }}</td>
-                                <td><a href="{{ url('admin/roles/'.$role->id.'/edit') }}" class="btn btn-primary">Edit</a></td>
+                                <td><a href="{{ URL::route('admin.rolesEdit', array('id' => $role->id)) }}" class="btn btn-primary">Edit</a></td>
                             </tr>
                         @endforeach
                         </tbody>

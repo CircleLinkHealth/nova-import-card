@@ -1,12 +1,21 @@
 @extends('app')
 
 @section('content')
-    {!! Form::open(array('url' => '/admin/permissions/'.$permission->id.'/edit', 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('admin.permissionsUpdate', array('id' => $permission->id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h2>Edit Permission</h2>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="pull-right" style="margin:20px;">
+                        </div>
+                    </div>
+                </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">EDIT PERMISSION {{ $permission->name }}</div>
+                    <div class="panel-heading">Edit Permission: {{ $permission->name }}</div>
                     <div class="panel-body">
                         @include('errors.errors')
                         <table class="table table-striped">
@@ -19,7 +28,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><a href="{{ url('admin/permissions/'.$permission->id.'') }}" class="btn btn-primary">{{ $permission->id }} Detail</a></td>
+                                    <td><a href="{{ URL::route('admin.permissionsShow', array('id' => $permission->id)) }}" class="btn btn-primary">{{ $permission->id }} Detail</a></td>
                                     <td>{{ $permission->name }}</td>
                                     <td>{{ $permission->display_name }}</td>
                                 </tr>

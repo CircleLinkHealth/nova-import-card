@@ -9,7 +9,16 @@
     </style>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h2>View Program</h2>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="pull-right" style="margin:20px;">
+                        </div>
+                    </div>
+                </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         Program ID: {{ $wpBlog->blog_id }}
@@ -37,7 +46,7 @@
                         @endif
 
                         <div class="row">
-                            {!! Form::open(array('url' => '/programs/'.$wpBlog->blog_id.'/edit', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.programsUpdate', array('id' => $wpBlog->blog_id)), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <div class="row" style="">

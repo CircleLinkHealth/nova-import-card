@@ -78,32 +78,32 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenter']);
 	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenterUpdate']);
 
-	Route::get('programs', ['uses' =>'WpBlogController@index', 'as'=>'programsIndex']);
-	Route::get('programs/{id}', ['uses' =>'WpBlogController@show', 'as'=>'programsShow']);
-	Route::get('programs/{id}/edit', ['uses' =>'WpBlogController@edit', 'as'=>'programsEdit']);
-	Route::post('programs/{id}/edit', ['uses' =>'WpBlogController@update', 'as'=>'programsUpdate']);
-	Route::get('programs/{id}/questions', ['uses' =>'WpBlogController@showQuestions', 'as'=>'programsQuestionsShow']);
-
 	/*
      * Admin
      */
 	Route::group(['prefix' => 'admin'], function ()
 	{
 		Route::get('roles', 'Admin\RoleController@index');
-		Route::get('roles/create', ['uses' =>'Admin\RoleController@create', 'as'=>'rolesCreate']);
-		Route::post('roles/create', ['uses' =>'Admin\RoleController@store', 'as'=>'rolesStore']);
-		Route::get('roles/{id}', ['uses' =>'Admin\RoleController@show', 'as'=>'rolesShow']);
-		Route::get('roles/{id}/edit', ['uses' =>'Admin\RoleController@edit', 'as'=>'rolesEdit']);
-		Route::post('roles/{id}/edit', ['uses' =>'Admin\RoleController@update', 'as'=>'rolesUpdate']);
-		Route::get('roles/{id}/careplan', ['uses' =>'Admin\RoleController@show', 'as'=>'rolesCareplan']);
+		Route::get('roles/create', ['uses' =>'Admin\RoleController@create', 'as'=>'admin.rolesCreate']);
+		Route::post('roles/create', ['uses' =>'Admin\RoleController@store', 'as'=>'admin.rolesStore']);
+		Route::get('roles/{id}', ['uses' =>'Admin\RoleController@show', 'as'=>'admin.rolesShow']);
+		Route::get('roles/{id}/edit', ['uses' =>'Admin\RoleController@edit', 'as'=>'admin.rolesEdit']);
+		Route::post('roles/{id}/edit', ['uses' =>'Admin\RoleController@update', 'as'=>'admin.rolesUpdate']);
+		Route::get('roles/{id}/careplan', ['uses' =>'Admin\RoleController@show', 'as'=>'admin.rolesCareplan']);
 
 		Route::get('permissions', 'Admin\PermissionController@index');
-		Route::get('permissions/create', ['uses' =>'Admin\PermissionController@create', 'as'=>'permissionsCreate']);
-		Route::post('permissions/create', ['uses' =>'Admin\PermissionController@store', 'as'=>'permissionsStore']);
-		Route::get('permissions/{id}', ['uses' =>'Admin\PermissionController@show', 'as'=>'permissionsShow']);
-		Route::get('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@edit', 'as'=>'permissionsEdit']);
-		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'permissionsUpdate']);
-		Route::get('permissions/{id}/careplan', ['uses' =>'Admin\PermissionController@show', 'as'=>'permissionsCareplan']);
+		Route::get('permissions/create', ['uses' =>'Admin\PermissionController@create', 'as'=>'admin.permissionsCreate']);
+		Route::post('permissions/create', ['uses' =>'Admin\PermissionController@store', 'as'=>'admin.permissionsStore']);
+		Route::get('permissions/{id}', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissionsShow']);
+		Route::get('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@edit', 'as'=>'admin.permissionsEdit']);
+		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'admin.permissionsUpdate']);
+		Route::get('permissions/{id}/careplan', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissionsCareplan']);
+
+		Route::get('programs', ['uses' =>'Admin\WpBlogController@index', 'as'=>'admin.programsIndex']);
+		Route::get('programs/{id}', ['uses' =>'Admin\WpBlogController@show', 'as'=>'admin.programsShow']);
+		Route::get('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@edit', 'as'=>'admin.programsEdit']);
+		Route::post('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@update', 'as'=>'admin.programsUpdate']);
+		Route::get('programs/{id}/questions', ['uses' =>'Admin\WpBlogController@showQuestions', 'as'=>'admin.programsQuestionsShow']);
 	});
 
     /*

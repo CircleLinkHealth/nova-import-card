@@ -1,4 +1,4 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests;
 use App\CPRulesPCP;
@@ -20,7 +20,7 @@ class WpBlogController extends Controller {
 	{
 		// display view
 		$wpBlogs = WpBlog::orderBy('blog_id', 'desc')->get();
-		return view('wpBlogs.index', [ 'wpBlogs' => $wpBlogs ]);
+		return view('admin.wpBlogs.index', [ 'wpBlogs' => $wpBlogs ]);
 	}
 
 	/**
@@ -80,7 +80,7 @@ class WpBlogController extends Controller {
 				}
 			}
 		}
-		return view('wpBlogs.show', [ 'wpBlog' => $wpBlog, 'programItems' => $programItems, 'errors' => array(), 'messages' => array() ]);
+		return view('admin.wpBlogs.show', [ 'wpBlog' => $wpBlog, 'programItems' => $programItems, 'errors' => array(), 'messages' => array() ]);
 	}
 
 	/**

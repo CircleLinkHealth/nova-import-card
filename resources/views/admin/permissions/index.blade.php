@@ -3,19 +3,19 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 @include('errors.errors')
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-8">
                         <h1>Permissions</h1>
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ url('admin/permissions/create') }}" class="btn btn-success">New Permission</a>
+                            <a href="{{ URL::route('admin.permissionsCreate', array()) }}" class="btn btn-success">New Permission</a>
                         </div>
                     </div>
                 </div>
@@ -35,12 +35,12 @@
                         <tbody>
                         @foreach( $permissions as $permission )
                             <tr>
-                                <td><a href="{{ url('admin/permissions/'.$permission->id.'') }}" class="btn btn-primary">Detail</a></td>
+                                <td><a href="{{ URL::route('admin.permissionsShow', array('id' => $permission->id)) }}" class="btn btn-primary">Detail</a></td>
                                 <td>{{ $permission->name }}</td>
                                 <td>{{ $permission->display_name }}</td>
                                 <td>{{ $permission->description }}</td>
                                 <td>{{ $permission->created_at }}</td>
-                                <td><a href="{{ url('admin/permissions/'.$permission->id.'/edit') }}" class="btn btn-primary">Edit</a></td>
+                                <td><a href="{{ URL::route('admin.permissionsEdit', array('id' => $permission->id)) }}" class="btn btn-primary">Edit</a></td>
                             </tr>
                         @endforeach
                         </tbody>

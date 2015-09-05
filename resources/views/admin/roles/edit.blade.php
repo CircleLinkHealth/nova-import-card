@@ -2,12 +2,21 @@
 
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
-    {!! Form::open(array('url' => '/admin/roles/'.$role->id.'/edit', 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('admin.rolesUpdate', array('id' => $role->id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h2>Edit Role</h2>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="pull-right" style="margin:20px;">
+                        </div>
+                    </div>
+                </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">EDIT ROLE {{ $role->name }}</div>
+                    <div class="panel-heading">Edit Role: {{ $role->name }}</div>
                     <div class="panel-body">
                         @include('errors.errors')
                         <table class="table table-striped">
@@ -20,7 +29,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><a href="{{ url('admin/roles/'.$role->id.'') }}" class="btn btn-primary">{{ $role->id }} Detail</a></td>
+                                    <td><a href="{{ URL::route('admin.rolesShow', array('id' => $role->id)) }}" class="btn btn-primary">{{ $role->id }} Detail</a></td>
                                     <td>{{ $role->name }}</td>
                                     <td>{{ $role->display_name }}</td>
                                 </tr>
