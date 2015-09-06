@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Observation;
 use App\WpBlog;
 use App\Location;
 use App\WpUser;
@@ -19,6 +20,7 @@ use DateTimeZone;
 use EllipseSynergie\ApiResponse\Laravel\Response;
 use PasswordHash;
 use Auth;
+use DB;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -92,6 +94,14 @@ class WpUserController extends Controller {
 				}
 				*/
 			}
+
+			// only let owners see owners
+			if(!Auth::user()->hasRole(['super-admin'])) {
+				$wpUsers = $wpUsers->whereHas('super-admin', function ($q) use ($roleFilter) {
+					$q->where('name', '!=', 'owner');
+				});
+			}
+
 
 			$wpUsers = $wpUsers->get();
 			$invalidUsers = array();
@@ -567,5 +577,262 @@ class WpUserController extends Controller {
 
 		//return response()->json($cpFeed);
 		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array(), $messageKey => $messageValue, 'activeDate' => $activeDate]);
+	}
+
+
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function showPatientSummary(Request $request, $id)
+	{
+		$msgUI = new MsgUI;
+		$msgUsers = new MsgUser;
+		$msgChooser = new MsgChooser;
+		$msgScheduler = new MsgScheduler;
+		$observationService = new ObservationService;
+		$wpUser = WpUser::find($id);
+		if(!$wpUser) {
+			return response("User not found", 401);
+		}
+
+
+
+		$sections = array(
+			array('section' => 'obs_biometrics', 'id' => 'obs_biometrics_dtable', 'title' => 'Biometrics', 'col_name_question' => 'Reading Type', 'col_name_severity' => 'Reading'),
+			array('section' => 'obs_medications', 'id' => 'obs_medications_dtable', 'title' => 'Medications', 'col_name_question' => 'Medication', 'col_name_severity' => 'Adherence'),
+			array('section' => 'obs_symptoms', 'id' => 'obs_symptoms_dtable', 'title' => 'Symptoms', 'col_name_question' => 'Symptom', 'col_name_severity' => 'Severity'),
+			array('section' => 'obs_lifestyle', 'id' => 'obs_lifestyle_dtable', 'title' => 'Lifestyle', 'col_name_question' => 'Question', 'col_name_severity' => 'Response'),
+		);
+
+
+		/*
+		 *
+		// set blog id
+		$programId = $wpUser->blogId();
+		$user_id = $wpUser->ID;
+
+		$date_sort = 'desc';
+		// observation_model->get_user_observations()
+
+		// build tables to use
+		$str_observation_table = 'ma_' . $programId . '_observations';
+		$str_observationmeta_table  = 'ma_' . $programId . '_observationmeta';
+		$str_comments_table  = 'wp_' . $programId . '_comments';
+
+		$query = DB::connection('mysql_no_prefix')->select("o.obs_key, rq.qtype, o.obs_id, o.sequence_id, o.obs_date, o.comment_id, o.user_id, o.obs_value, o.obs_unit, o.obs_method, o.obs_message_id, cm.comment_date, om.meta_key, ri.items_text, rq.description, im_lvl.meta_value AS dm_alert_level, im_log.meta_value AS dm_log",false);
+		$query->from($str_observation_table . ' AS o');
+		$query->join($str_comments_table . ' AS cm', 'o.comment_id','=','cm.comment_id');
+		$query->join('rules_questions AS rq', 'o.obs_message_id','=','rq.msg_id');
+		$query->join($str_observationmeta_table . ' AS im_log', "im_log.obs_id",'=',"o.obs_id AND im_log.meta_key = 'dm_log'", 'left');
+		$query->join($str_observationmeta_table . ' AS im_lvl', "im_lvl.obs_id",'=',"o.obs_id AND im_lvl.meta_key = 'dm_alert_level'", 'left');
+		$query->join('rules_items AS ri', 'ri.qid','=','rq.qid');
+		$query->join($str_observationmeta_table . ' AS om', 'o.obs_id','=','om.obs_id', 'left');
+		$where = array('rq.qtype !=' => 'AnswerResponse');
+		if($user_id) {
+			$where = array('o.user_id' => $user_id, 'rq.qtype !=' => 'AnswerResponse');
+		}
+		$query->where($where);
+		$query->where('o.obs_unit != "invalid"');
+		$query->where('o.obs_unit != "scheduled"');
+		$query->where('o.obs_key != ""');
+		$query->group_by("obs_id");
+		$query->order_by("comment_date", $date_sort);
+		$query->order_by("obs_id", 'DESC');
+		$result = $query->get();
+		*/
+
+		$observations = Observation::where('user_id' ,'=', $wpUser->ID);
+		$observations->where('obs_unit' ,'!=', "invalid");
+		$observations->where('obs_unit' ,'!=', "scheduled");
+		$observations = $observations->get();
+
+		// build array of pcp
+		$obs_by_pcp = array(
+			'obs_biometrics' => array(),
+			'obs_medications' => array(),
+			'obs_symptoms' => array(),
+			'obs_lifestyle' => array(),
+		);
+		foreach($observations as $observation) {
+			if($observation['obs_value'] == '') {
+				//$obs_date = date_create($observation['obs_date']);
+				//if( (($obs_date->format('Y-m-d')) < date("Y-m-d")) && $observation['obs_key'] == 'Call' ) {
+				if( $observation['obs_key'] != 'Call' ) { // skip NR's, which are any obs that has no value (other than call)
+					continue 1;
+				}
+			}
+			$observation['parent_item_text'] = '---';
+			switch ($observation["obs_key"]) {
+				case 'HSP':
+				case 'HSP_ER':
+				case 'HSP_HOSP':
+					break;
+				case 'Blood_Pressure':
+				case 'Blood_Sugar':
+				case 'Cigarettes':
+				case 'Weight':
+					$obs_by_pcp['obs_biometrics'][] = $observation;
+					break;
+				case 'Adherence':
+					$obs_by_pcp['obs_medications'][] = $observation;
+					break;
+				//case 'Symptom':
+				case 'Severity':
+					//$obs_info = $this->cpm_1_7_datamonitor_library->process_alert_obs_severity($user_data_ucp, $observation, $this->get('blog_id'));
+					if(!empty($obs_info['extra_vars']['symptom'])) {
+						$observation['items_text'] = $obs_info['extra_vars']['symptom'];
+						$observation['description'] = $obs_info['extra_vars']['symptom'];
+						$observation['obs_key'] = $obs_info['extra_vars']['symptom'];
+					}
+					$obs_by_pcp['obs_symptoms'][] = $observation;
+					break;
+				case 'Other':
+				case 'Call':
+					// only y/n responses, skip anything that is a number as its assumed it is response to a list
+					if( ($observation['obs_key'] == 'Call') || (!is_numeric($observation['obs_value'])) ) {
+						$obs_by_pcp['obs_lifestyle'][] = $observation;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+
+		// At this point, everything that didnt match went to lifestyle
+		// get array of lifestyle questions, and only include these in obs_lifestyle (also include Call observations!)
+
+		//$lifestyle_questions = $this->rules_model->getQuestionIdsByPCP(2, 7);
+		$lifestyle_questions = array();
+		$lifestyle_msg_ids = array();
+		$filtered_lifestyle_obs = array();
+		foreach($lifestyle_questions as $lifestyle_question) {
+			$lifestyle_msg_ids[] = $lifestyle_question['msg_id'];
+		}
+
+		foreach($obs_by_pcp['obs_lifestyle'] as $lifestyle_obs) {
+			if((($lifestyle_obs['obs_key'] == 'Call')) || (in_array($lifestyle_obs['obs_message_id'], $lifestyle_msg_ids) && $lifestyle_obs['obs_value'] != '')) {
+				$filtered_lifestyle_obs[] = $lifestyle_obs;
+			}
+		}
+		$obs_by_pcp['obs_lifestyle'] = $filtered_lifestyle_obs;
+
+
+
+
+		$observation_json = array();
+		foreach($obs_by_pcp as $section => $observations) {
+			$observation_json[$section] = "data:[";
+			foreach ($observations as $observation) {
+				// lastly format json
+				$observation_json[$section] .= "{ obs_key:'" . $observation->obs_key . "', " .
+					"description:'" . $observation->obs_value . "', " .
+					"obs_value:'" . $observation->obs_value . "', " .
+					"dm_alert_level:'default', " .
+					"obs_unit:'" . $observation->obs_unit . "', " .
+					"obs_message_id:'" . $observation->obs_message_id . "', " .
+					"comment_date:'09-04-15 06:43:56', " . "},";
+				/*
+				$observation_data[] = array(
+					'obs_key' => $observation->obs_key,
+					'description' => $observation->obs_value,
+					'obs_value' => $observation->obs_value,
+					'dm_alert_level' => $observation->obs_value,
+					'obs_unit' => $observation->obs_unit,
+					'obs_message_id' => $observation->obs_message_id,
+					'comment_date' => $observation->obs_date
+				);
+				*/
+			}
+			$observation_json[$section] .= "],";
+		}
+
+		//dd($observation_json['obs_biometrics']);
+
+		/*
+		// get observations for user
+		//$observation_data = $this->observation_model->get_user_observations($user_id, $blog_id);
+
+		// get user data
+		//$user_data = $this->users_model->get_users_data($user_id, 'id', $blog_id);
+		//$user_data_ucp = $user_data[$user_id]['usermeta']['user_care_plan'];
+
+		// build array of pcp
+		$obs_by_pcp = array(
+			'obs_biometrics' => array(),
+			'obs_medications' => array(),
+			'obs_symptoms' => array(),
+			'obs_lifestyle' => array(),
+		);
+		foreach($observation_data as $observation) {
+			if($observation['obs_value'] == '') {
+				//$obs_date = date_create($observation['obs_date']);
+				//if( (($obs_date->format('Y-m-d')) < date("Y-m-d")) && $observation['obs_key'] == 'Call' ) {
+				if( $observation['obs_key'] != 'Call' ) { // skip NR's, which are any obs that has no value (other than call)
+					continue 1;
+				}
+			}
+			$observation['parent_item_text'] = '---';
+			switch ($observation["obs_key"]) {
+				case 'HSP':
+				case 'HSP_ER':
+				case 'HSP_HOSP':
+					break;
+				case 'Blood_Pressure':
+				case 'Blood_Sugar':
+				case 'Cigarettes':
+				case 'Weight':
+					$obs_by_pcp['obs_biometrics'][] = $observation;
+					break;
+				case 'Adherence':
+					$obs_by_pcp['obs_medications'][] = $observation;
+					break;
+				//case 'Symptom':
+				case 'Severity':
+					//$obs_info = $this->cpm_1_7_datamonitor_library->process_alert_obs_severity($user_data_ucp, $observation, $this->get('blog_id'));
+					if(!empty($obs_info['extra_vars']['symptom'])) {
+						$observation['items_text'] = $obs_info['extra_vars']['symptom'];
+						$observation['description'] = $obs_info['extra_vars']['symptom'];
+						$observation['obs_key'] = $obs_info['extra_vars']['symptom'];
+					}
+					$obs_by_pcp['obs_symptoms'][] = $observation;
+					break;
+				case 'Other':
+				case 'Call':
+					// only y/n responses, skip anything that is a number as its assumed it is response to a list
+					if( ($observation['obs_key'] == 'Call') || (!is_numeric($observation['obs_value'])) ) {
+						$obs_by_pcp['obs_lifestyle'][] = $observation;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+
+		// At this point, everything that didnt match went to lifestyle
+		// get array of lifestyle questions, and only include these in obs_lifestyle (also include Call observations!)
+
+		//$lifestyle_questions = $this->rules_model->getQuestionIdsByPCP(2, 7);
+		$lifestyle_questions = array();
+		$lifestyle_msg_ids = array();
+		$filtered_lifestyle_obs = array();
+		foreach($lifestyle_questions as $lifestyle_question) {
+			$lifestyle_msg_ids[] = $lifestyle_question['msg_id'];
+		}
+
+		foreach($obs_by_pcp['obs_lifestyle'] as $lifestyle_obs) {
+			if((($lifestyle_obs['obs_key'] == 'Call')) || (in_array($lifestyle_obs['obs_message_id'], $lifestyle_msg_ids) && $lifestyle_obs['obs_value'] != '')) {
+				$filtered_lifestyle_obs[] = $lifestyle_obs;
+			}
+		}
+		$obs_by_pcp['obs_lifestyle'] = $filtered_lifestyle_obs;
+		$observation_data = $obs_by_pcp;
+		*/
+
+		//return response()->json($cpFeed);
+		return view('wpUsers.patient.summary', ['wpUser' => $wpUser, 'sections' => $sections, 'observation_data' => $observation_json]);
 	}
 }

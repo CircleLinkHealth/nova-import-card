@@ -40,7 +40,6 @@ Route::group(['namespace' => 'Redox'], function ()
 /****************************/
 //    AUTH ROUTES
 /****************************/
-
 Route::group(['middleware' => 'auth'], function ()
 {
 	Route::get('home', 'HomeController@index');
@@ -77,6 +76,7 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'usersCareplan']);
 	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenter']);
 	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenterUpdate']);
+	Route::get('wpusers/{id}/summary', ['uses' =>'WpUserController@showPatientSummary', 'as'=>'patientSummary']);
 
 	/*
      * Admin
