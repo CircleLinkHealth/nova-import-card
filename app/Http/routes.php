@@ -3,16 +3,15 @@
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
 
-Route::post('/email', function () {
-	$data = [
-		'title'=>'Email'
-	];
-	Mail::send('emails.hello', $data, function($message) {
-		$message->from('example@gmail.com', 'Example Person');
-		$message->to('example@gmail.com')->subject('we made it');
-	});
-	return Redirect::to('/');
-});
+//EMAIL TEST ROUTE
+use App\Services\ActivityService;
+
+//Route::get('/email', function () {
+//	$activityService = new ActivityService;
+//	$careteam = ['0' => '330','1' => '169'];
+//	$h = $activityService->sendNoteToCareTeam($careteam,'google.com','3pm',400);
+//	return $h;//Redirect::to('/');
+//});
 
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');

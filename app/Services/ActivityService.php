@@ -68,28 +68,37 @@ class ActivityService {
 	 * @param $url
 	 * @param $performed_at
 	 * @param $user_id
+	 * @param $newNoteFlag (checks whether it's a new note or an old one)
      */
-	public function sendNoteToCareTeam($careteam, $url, $performed_at,$user_id){
+	public function sendNoteToCareTeam(&$careteam, $url, $performed_at,$user_id, $newNoteFlag){
+
+		/*
+		 *  New note: "Please see new note for patient [patient name]: [link]"
+		 *  Old/Fw'd note: "Please see forwarded note for patient [patient  name], created on [creation date] by [note creator]: [link]
+		 */
 
 		$user = WpUser::find($user_id);
-
-		$careteam_emails = array();
-
 		for($i = 0; $i < count($careteam); $i++){
 			$provider_user = WpUser::find($careteam[$i]);
-			$careteam_emails[] = $provider_user->user_email;
-		}
+			$email = $provider_user->user_email;
+			$data = array(
+				'patient_name' => $user->display_name,
+				'url' => $url,
+				'time' => $performed_at
+			);
 
-		for($j = 0; $j < count($careteam_emails); $j++) {
-				$email = $careteam_emails[$j];
+			if($newNoteFlag) {
+				$email_view = 'emails.newnote';
+			}	else {
 
-			Mail::send('emails.welcome', ['key' => 'value'], function($message)
-			{
-				$message->to($message->user)->subject('New Note from '.$message->patient);
+			}
+			Mail::send('emails.newnote', $data, function($message) use ($email) {
+				$message->from('no-reply@careplanmanager.com', 'CircleLink Health');
+				$message->to($email)->subject('You have received a new note from CarePlan Manager');
 			});
-
-		} return true;
+		}
+		if( count(Mail::failures()) > 0 ){
+			return false;
+		} else return true;
 	}
-
-
 }

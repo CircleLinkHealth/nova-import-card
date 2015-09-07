@@ -92,40 +92,45 @@ class ActivityController extends Controller {
 			$activity->meta()->saveMany($metaArray);
 		}
 
-		//if alerts are to be sent
-		if (array_key_exists('careteam',$input)) {
-			$activityService = new ActivityService;
-			$linkToNote = $input['url']+$actId->ID;
-//			//$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input->user_id);
-//			if($result){return response("Successfully Created And Note Sent", 201);}
-//			else return  response("Unable to send email", 401);
-			return response("Successfully Created And Note Sent", 201);
-		}
-
 		// update usermeta: cur_month_activity_time
 		$activityService = new ActivityService;
 		$result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
 
-		return response("Successfully Created", 201);
-
-	}
-
-	public function sendExistingNote(Request $request, $id)
-	{
-		if ($request->header('Client') == 'ui'){ // WP Site
-
-			$input = json_decode(Crypt::decrypt($request->input('data')), true);
-
+		//if alerts are to be sent
+		if (array_key_exists('careteam',$input)) {
 			$activityService = new ActivityService;
-			$linkToNote = $input['url']+$input->ID;
-			$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input->user_id);
+			$activity = Activity::find($actId);
+			$linkToNote = $input['url'].$activity->id;
+			$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input['patient_id'],true);
 
-		return response("Successfully Sent", 201);
+			if($result)
+			{
+				return response("Successfully Created And Note Sent", 202);
+			}
+			else return  response("Unable to send emails", 401);
 
-		} else {
-			return response("Sorry, Couldn't sent notes", 401);
-		}
+		} else return response("Successfully Created", 201);
+
 	}
+
+//	public function sendExistingNote(Request $request, $id)
+//	{
+//		if ($request->header('Client') == 'ui') { // WP Site
+//
+//			$input = json_decode(Crypt::decrypt($request->input('data')), true);
+//
+//			$activityService = new ActivityService;
+//			$activity = Activity::find($actId);
+//			$linkToNote = $input['url'].$activity->id;
+//			$result = $activityService->sendNoteToCareTeam($input['careteam'], $linkToNote, $input['performed_at'], $input->user_id, false);
+//
+//			if ($result) {
+//				return response("Successfully Sent", 201);
+//			} else {
+//				return response("Sorry, Couldn't sent notes", 401);
+//			}
+//		}
+//	}
 
 
 	/**
