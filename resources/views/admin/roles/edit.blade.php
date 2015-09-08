@@ -2,7 +2,7 @@
 
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
-    {!! Form::open(array('url' => URL::route('admin.rolesUpdate', array('id' => $role->id)), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('admin.roles.update', array('id' => $role->id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -29,7 +29,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.rolesShow', array('id' => $role->id)) }}" class="btn btn-primary">{{ $role->id }} Detail</a></td>
+                                    <td><a href="{{ URL::route('admin.roles.show', array('id' => $role->id)) }}" class="btn btn-primary">{{ $role->id }} Detail</a></td>
                                     <td>{{ $role->name }}</td>
                                     <td>{{ $role->display_name }}</td>
                                 </tr>
@@ -75,7 +75,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ url('admin/roles/') }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ URL::route('admin.roles', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update Role', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

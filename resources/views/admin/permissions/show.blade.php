@@ -29,7 +29,7 @@
                             <tr>
                                 <td>{{ $permission->name }}</td>
                                 <td>{{ $permission->display_name }}</td>
-                                <td><a href="{{ URL::route('admin.permissionsEdit', array('id' => $permission->id)) }}" class="btn btn-primary">Edit</a></td>
+                                <td><a href="{{ URL::route('admin.permissions.edit', array('id' => $permission->id)) }}" class="btn btn-primary">Edit</a></td>
                             </tr>
                             </tbody>
                         </table>

@@ -54,7 +54,7 @@ class RoleController extends Controller {
 			$role->perms()->sync($params['permissions']);
 		}
 		$role->save();
-		return redirect()->route('rolesEdit', [$role->id])->with('messages', ['successfully added new role - '.$params['name']]);
+		return redirect()->route('admin.roles.edit', [$role->id])->with('messages', ['successfully added new role - '.$params['name']])->send();
 	}
 
 	/**
@@ -100,7 +100,7 @@ class RoleController extends Controller {
 			$role->perms()->sync($params['permissions']);
 		}
 		$role->save();
-		return redirect()->back()->with('messages', ['successfully updated role']);
+		return redirect()->back()->with('messages', ['successfully updated role'])->send();
 	}
 
 	/**

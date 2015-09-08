@@ -54,7 +54,7 @@ class PermissionController extends Controller {
 			$permission->roles()->sync($params['roles']);
 		}
 		$permission->save();
-		redirect()->route('permissionsEdit', [$permission->id])->with('messages', ['successfully added new permission - '.$params['name']]);
+		redirect()->route('admin.permissions.edit', [$permission->id])->with('messages', ['successfully added new permission - '.$params['name']])->send();
 	}
 
 	/**
@@ -101,7 +101,7 @@ class PermissionController extends Controller {
 			$permission->roles()->sync($params['roles']);
 		}
 		$permission->save();
-		return redirect()->back()->with('messages', ['successfully updated permission']);
+		return redirect()->back()->with('messages', ['successfully updated permission'])->send();
 	}
 
 	/**

@@ -83,27 +83,27 @@ Route::group(['middleware' => 'auth'], function ()
      */
 	Route::group(['prefix' => 'admin'], function ()
 	{
-		Route::get('roles', 'Admin\RoleController@index');
-		Route::get('roles/create', ['uses' =>'Admin\RoleController@create', 'as'=>'admin.rolesCreate']);
-		Route::post('roles/create', ['uses' =>'Admin\RoleController@store', 'as'=>'admin.rolesStore']);
-		Route::get('roles/{id}', ['uses' =>'Admin\RoleController@show', 'as'=>'admin.rolesShow']);
-		Route::get('roles/{id}/edit', ['uses' =>'Admin\RoleController@edit', 'as'=>'admin.rolesEdit']);
-		Route::post('roles/{id}/edit', ['uses' =>'Admin\RoleController@update', 'as'=>'admin.rolesUpdate']);
-		Route::get('roles/{id}/careplan', ['uses' =>'Admin\RoleController@show', 'as'=>'admin.rolesCareplan']);
+		Route::get('roles', ['uses' =>'Admin\RoleController@index', 'as'=>'admin.roles']);
+		Route::get('roles/create', ['uses' =>'Admin\RoleController@create', 'as'=>'admin.roles.create']);
+		Route::post('roles/create', ['uses' =>'Admin\RoleController@store', 'as'=>'admin.roles.store']);
+		Route::get('roles/{id}', ['uses' =>'Admin\RoleController@show', 'as'=>'admin.roles.show']);
+		Route::get('roles/{id}/edit', ['uses' =>'Admin\RoleController@edit', 'as'=>'admin.roles.edit']);
+		Route::post('roles/{id}/edit', ['uses' =>'Admin\RoleController@update', 'as'=>'admin.roles.update']);
+		Route::get('roles/{id}/careplan', ['uses' =>'Admin\RoleController@show', 'as'=>'admin.roles.careplan']);
 
-		Route::get('permissions', 'Admin\PermissionController@index');
-		Route::get('permissions/create', ['uses' =>'Admin\PermissionController@create', 'as'=>'admin.permissionsCreate']);
-		Route::post('permissions/create', ['uses' =>'Admin\PermissionController@store', 'as'=>'admin.permissionsStore']);
-		Route::get('permissions/{id}', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissionsShow']);
-		Route::get('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@edit', 'as'=>'admin.permissionsEdit']);
-		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'admin.permissionsUpdate']);
-		Route::get('permissions/{id}/careplan', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissionsCareplan']);
+		Route::get('permissions', ['uses' =>'Admin\PermissionController@index', 'as'=>'admin.permissions']);
+		Route::get('permissions/create', ['uses' =>'Admin\PermissionController@create', 'as'=>'admin.permissions.create']);
+		Route::post('permissions/create', ['uses' =>'Admin\PermissionController@store', 'as'=>'admin.permissions.store']);
+		Route::get('permissions/{id}', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissions.show']);
+		Route::get('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@edit', 'as'=>'admin.permissions.edit']);
+		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'admin.permissions.update']);
+		Route::get('permissions/{id}/careplan', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissions.careplan']);
 
-		Route::get('programs', ['uses' =>'Admin\WpBlogController@index', 'as'=>'admin.programsIndex']);
-		Route::get('programs/{id}', ['uses' =>'Admin\WpBlogController@show', 'as'=>'admin.programsShow']);
-		Route::get('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@edit', 'as'=>'admin.programsEdit']);
-		Route::post('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@update', 'as'=>'admin.programsUpdate']);
-		Route::get('programs/{id}/questions', ['uses' =>'Admin\WpBlogController@showQuestions', 'as'=>'admin.programsQuestionsShow']);
+		Route::get('programs', ['uses' =>'Admin\WpBlogController@index', 'as'=>'admin.programs']);
+		Route::get('programs/{id}', ['uses' =>'Admin\WpBlogController@show', 'as'=>'admin.programs.show']);
+		Route::get('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@edit', 'as'=>'admin.programs.edit']);
+		Route::post('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@update', 'as'=>'admin.programs.update']);
+		Route::get('programs/{id}/questions', ['uses' =>'Admin\WpBlogController@showQuestions', 'as'=>'admin.programs.questions']);
 	});
 
     /*

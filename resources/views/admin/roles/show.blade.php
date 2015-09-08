@@ -30,7 +30,7 @@
                             <tr>
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->display_name }}</td>
-                                <td><a href="{{ URL::route('admin.rolesEdit', array('id' => $role->id)) }}" class="btn btn-primary">Edit</a></td>
+                                <td><a href="{{ URL::route('admin.roles.edit', array('id' => $role->id)) }}" class="btn btn-primary">Edit</a></td>
                             </tr>
                             </tbody>
                         </table>

@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('content')
-    {!! Form::open(array('url' => URL::route('admin.permissionsUpdate', array('id' => $permission->id)), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('admin.permissions.update', array('id' => $permission->id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -28,7 +28,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.permissionsShow', array('id' => $permission->id)) }}" class="btn btn-primary">{{ $permission->id }} Detail</a></td>
+                                    <td><a href="{{ URL::route('admin.permissions.show', array('id' => $permission->id)) }}" class="btn btn-primary">{{ $permission->id }} Detail</a></td>
                                     <td>{{ $permission->name }}</td>
                                     <td>{{ $permission->display_name }}</td>
                                 </tr>
@@ -74,7 +74,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ url('admin/permissions/') }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ URL::route('admin.permissions', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update Permission', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

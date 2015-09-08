@@ -15,7 +15,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.permissionsCreate', array()) }}" class="btn btn-success">New Permission</a>
+                            <a href="{{ URL::route('admin.permissions.create', array()) }}" class="btn btn-success">New Permission</a>
                         </div>
                     </div>
                 </div>
@@ -35,12 +35,12 @@
                         <tbody>
                         @foreach( $permissions as $permission )
                             <tr>
-                                <td><a href="{{ URL::route('admin.permissionsShow', array('id' => $permission->id)) }}" class="btn btn-primary">Detail</a></td>
+                                <td><a href="{{ URL::route('admin.permissions.show', array('id' => $permission->id)) }}" class="btn btn-primary">Detail</a></td>
                                 <td>{{ $permission->name }}</td>
                                 <td>{{ $permission->display_name }}</td>
                                 <td>{{ $permission->description }}</td>
                                 <td>{{ $permission->created_at }}</td>
-                                <td><a href="{{ URL::route('admin.permissionsEdit', array('id' => $permission->id)) }}" class="btn btn-primary">Edit</a></td>
+                                <td><a href="{{ URL::route('admin.permissions.edit', array('id' => $permission->id)) }}" class="btn btn-primary">Edit</a></td>
                             </tr>
                         @endforeach
                         </tbody>

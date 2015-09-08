@@ -15,7 +15,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.rolesCreate', array()) }}" class="btn btn-success">New Role</a>
+                            <a href="{{ URL::route('admin.roles.create', array()) }}" class="btn btn-success">New Role</a>
                         </div>
                     </div>
                 </div>
@@ -35,12 +35,12 @@
                         <tbody>
                         @foreach( $roles as $role )
                             <tr>
-                                <td><a href="{{ URL::route('admin.rolesShow', array('id' => $role->id)) }}" class="btn btn-primary">Detail</a></td>
+                                <td><a href="{{ URL::route('admin.roles.show', array('id' => $role->id)) }}" class="btn btn-primary">Detail</a></td>
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->display_name }}</td>
                                 <td>{{ $role->description }}</td>
                                 <td>{{ $role->created_at }}</td>
-                                <td><a href="{{ URL::route('admin.rolesEdit', array('id' => $role->id)) }}" class="btn btn-primary">Edit</a></td>
+                                <td><a href="{{ URL::route('admin.roles.edit', array('id' => $role->id)) }}" class="btn btn-primary">Edit</a></td>
                             </tr>
                         @endforeach
                         </tbody>
