@@ -57,6 +57,28 @@
                                         <div class="col-xs-10">{!! Form::select('primary_blog', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'disabled' => 'disabled', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
+
+                                <h2>New User System Info</h2>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('user_login', 'Login:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('user_login', $wpUser->user_login, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('user_email', 'Email:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('user_email', $wpUser->user_email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('user_nicename', 'Nice Name:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('user_nicename', $wpUser->user_nicename, ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('display_name', 'Display Name:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('display_name', $wpUser->display_name, ['class' => 'form-control']) !!}</div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div role="tabpanel" class="tab-pane" id="roles">
