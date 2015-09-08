@@ -10,16 +10,36 @@
     },
     {
       "We Are Treating:": [
-        "Hypertension",
-        "CHF",
-        "Asthma--COPD",
-        "High Cholesterol",
-        "Diabetes",
-        "Depression",
-        "CAD",
-        "Afib",
-        "Smoking",
-        "Other Conditions"
+        {
+          "name": "Hypertension"
+        },
+        {
+          "name": "CHF"
+        },
+        {
+          "name": "Asthma--COPD"
+        },
+        {
+          "name": "High Cholesterol"
+        },
+        {
+          "name": "Diabetes"
+        },
+        {
+          "name": "Depression"
+        },
+        {
+          "name": "CAD"
+        },
+        {
+          "name": "Afib"
+        },
+        {
+          "name": "Smoking"
+        },
+        {
+          "name": "Other Conditions"
+        }
       ]
     },
     {
@@ -205,9 +225,15 @@
       "Taking Your Medications?": [
         {
           "Good": [
-            "Cholesterol Meds",
-            "Oral Diabetes Meds",
-            "Insulin or other Injectable"
+            {
+              "name": "Cholesterol Meds"
+            },
+            {
+              "name": "Oral Diabetes Meds"
+            },
+            {
+              "name": "Insulin or other Injectable"
+            }
           ]
         },
         {
@@ -215,11 +241,21 @@
         },
         {
           "Bad": [
-            "Blood Thinners (Plavix, Aspirin)",
-            "Other Meds",
-            "Mood/Depression Meds",
-            "Water Pills/Diuretics",
-            "Blood Pressure Meds"
+            {
+              "name": "Blood Thinners (Plavix, Aspirin)"
+            },
+            {
+              "name": "Other Meds"
+            },
+            {
+              "name": "Mood/Depression Meds"
+            },
+            {
+              "name": "Water Pills/Diuretics"
+            },
+            {
+              "name": "Blood Pressure Meds"
+            }
           ]
         }
       ]
