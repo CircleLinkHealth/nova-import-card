@@ -54,7 +54,7 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('primary_blog', 'Primary Blog:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::select('primary_blog', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'disabled' => 'disabled', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-10">{!! Form::select('primary_blog', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'disabled' => 'disabled', 'style' => 'width:80%;']) !!}{!! Form::hidden('primary_blog', $primaryBlog) !!}</div>
                                     </div>
                                 </div>
 
