@@ -96,10 +96,12 @@ class WpUserController extends Controller {
 			}
 
 			// only let owners see owners
-			if(!Auth::user()->hasRole(['super-admin'])) {
-				$wpUsers = $wpUsers->whereHas('super-admin', function ($q) use ($roleFilter) {
+			if(!Auth::user()->hasRole(['administrator'])) {
+				/*
+				$wpUsers = $wpUsers->whereHas('r-admin', function ($q) use ($roleFilter) {
 					$q->where('name', '!=', 'owner');
 				});
+				*/
 			}
 
 
@@ -724,7 +726,7 @@ class WpUserController extends Controller {
 			foreach ($observations as $observation) {
 				// lastly format json
 				$observation_json[$section] .= "{ obs_key:'" . $observation->obs_key . "', " .
-					"description:'" . $observation->obs_key . '|'.$observation->legacy_obs_id . "', " .
+					"description:'" . $observation->items_text . '|' . $observation->obs_key . '|'.$observation->legacy_obs_id . "', " .
 					"obs_value:'" . $observation->obs_value . "', " .
 					"dm_alert_level:'default', " .
 					"obs_unit:'" . $observation->obs_unit . "', " .

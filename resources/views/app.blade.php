@@ -50,8 +50,9 @@
 			</div>
 
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				@if ( ! Auth::guest() && Auth::user()->hasRole(['super-admin']))
-					<ul class="nav navbar-nav">
+
+				<ul class="nav navbar-nav">
+					@if ( ! Auth::guest() && Auth::user()->hasRole(['administrator']))
 						<li><a href="{{ action('ApiKeyController@index') }}">API Keys</a></li>
 
 						<li role="presentation" class="dropdown">
@@ -63,7 +64,7 @@
 								<li><a href="{{ action('LocationController@create') }}">Add new</a></li>
 							</ul>
 						</li>
-                        
+
 						<li role="presentation" class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
 								Activities <span class="caret"></span>
@@ -92,39 +93,39 @@
 								<li><a href="{{ action('Admin\WpBlogController@index') }}">Program List</a></li>
 							</ul>
 						</li>
+					@endif
 
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								Users <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ action('WpUserController@index') }}">All Users</a></li>
-								<li><a href="{{ url('wpusers/create') }}">Add new</a></li>
-							</ul>
-						</li>
+					<li role="presentation" class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+							Users <span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="{{ action('WpUserController@index') }}">All Users</a></li>
+							<li><a href="{{ url('wpusers/create') }}">Add new</a></li>
+						</ul>
+					</li>
 
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								Roles<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ url('admin/roles') }}">Roles</a></li>
-								<li><a href="{{ url('admin/permissions') }}">Permissions</a></li>
-							</ul>
-						</li>
+					<li role="presentation" class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+							Roles<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="{{ url('admin/roles') }}">Roles</a></li>
+							<li><a href="{{ url('admin/permissions') }}">Permissions</a></li>
+						</ul>
+					</li>
 
-                        <li role="presentation" class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-                                API Settings<span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
-                                <li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
-                            </ul>
-                        </li>
+					<li role="presentation" class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+							API Settings<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
+							<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
+						</ul>
+					</li>
 
-					</ul>
-				@endif
+				</ul>
 
 				<ul class="nav navbar-nav navbar-right">
 					@if (Auth::guest())
