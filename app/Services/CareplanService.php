@@ -1,5 +1,6 @@
 <?php namespace App\Services;
 
+use App\CPRulesQuestions;
 use App\Http\Requests;
 use App\WpUser;
 use App\Observation;
@@ -64,19 +65,63 @@ class CareplanService {
 			$feed["CP_Feed"][$i]['Feed']["DMS"] = $this->setObsDMS();
 
 			// Reminders
-			$feed["CP_Feed"][$i]['Feed']["Reminders"] = $this->setObsReminders();
+			// check if user has HSP scheduled for today
+			// based on existance of state_hsp_dm comment record
+			$stateHsp = Comment::where('comment_type', '=', 'state_hsp_dm')
+				->where("user_id", "=", $this->wpUser->ID)
+				->whereRaw("comment_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->first();
+			if($stateHsp) {
+				$feed["CP_Feed"][$i]['Feed']["Reminders"] = array(
+					0 => array(
+						"MessageID" => "CF_DM_HSP_10",
+						"Obs_Key" => "HSP_DM",
+						"ParentID" => "604",
+						"MessageIcon" => "hsp",
+						"MessageCategory" => "Hospital",
+						"MessageContent" => "Are you Currently in the Hospital or ER?",
+						"ReturnFieldType" => null,
+						"ReturnDataRangeLow" => null,
+						"ReturnDataRangeHigh" => null,
+						"ReturnValidAnswers" => null,
+						"PatientAnswer" => null,
+						"ResponseDate" => null,
+						"Response" => $this->setObsReminders())
+				);
+			}
 
 			// Biometric
 			$feed["CP_Feed"][$i]['Feed']["Biometric"] = $this->setObsBiometric();
 
 			// Symptoms
-			$feed["CP_Feed"][$i]['Feed']["Symptoms"] = $this->setObsSymptoms();
+			$scheduledsyms = $this->setObsSymptoms();
+			if(!empty($scheduledsyms)) {
+				$feed["CP_Feed"][$i]['Feed']["Symptoms"] = array(
+					0 => array(
+						"MessageID" => "CF_SYM_MNU_10",
+						"Obs_Key" => "Severity",
+						"ParentID" => "603",
+						"MessageIcon" => "question",
+						"MessageCategory" => "Question",
+						"MessageContent" => "Any symptoms today",
+						"ReturnFieldType" => null,
+						"ReturnDataRangeLow" => null,
+						"ReturnDataRangeHigh" => null,
+						"ReturnValidAnswers" => null,
+						"PatientAnswer" => null,
+						"ResponseDate" => null,
+						"Response" => $this->setObsSymptoms())
+				);
+			}
+			//$feed["CP_Feed"][$i]['Feed']["Symptoms"] = $this->setObsSymptoms();
 			$i++;
 		}
 		return $feed;
 	}
 
-
+	/**
+	 * @param $date
+     */
 	public function setStateAppForDate($date) {
 		$this->stateAppCommentId = false;
 		// find comment
@@ -93,6 +138,9 @@ class CareplanService {
 		}
 	}
 
+	/**
+	 * @return array
+     */
 	private function setObsDMS()
 	{
 		if(!$this->stateAppCommentId) {
@@ -140,7 +188,7 @@ class CareplanService {
 						"MessageID" => $currQuestionInfo->msg_id,
 						"Obs_Key" => $currQuestionInfo->obs_key,
 						"ParentID" => $this->stateAppCommentId,
-						"MessageIcon" => "question",
+						"MessageIcon" => $currQuestionInfo->app_icon,
 						"MessageContent" => $currQuestionInfo->message,
 						"ReturnFieldType" => $currQuestionInfo->qtype,
 						"ReturnDataRangeLow" => null,
@@ -161,11 +209,11 @@ class CareplanService {
 						$dsmObs[$o] = $obsInfo;
 					} else if ($i == 1) {
 						if (strpos($currQuestionInfo->msg_id,'MED') == false) {
-							$dsmObs[$o]['Response'] = $obsInfo;
+							$dsmObs[$o]['Response'][0] = $obsInfo;
 						}
 					} else if ($i == 2) {
 						if (strpos($currQuestionInfo->msg_id,'MED') == false) {
-							$dsmObs[$o]['Response']['Response'] = $obsInfo;
+							$dsmObs[$o]['Response']['Response'][0] = $obsInfo;
 						}
 					}
 				}
@@ -184,7 +232,7 @@ class CareplanService {
 						"MessageID" => $currQuestionInfo->msg_id,
 						"Obs_Key" => $currQuestionInfo->obs_key,
 						"ParentID" => $this->stateAppCommentId,
-						"MessageIcon" => "question",
+						"MessageIcon" => $currQuestionInfo->app_icon,
 						"MessageContent" => $currQuestionInfo->message,
 						"ReturnFieldType" => $currQuestionInfo->qtype,
 						"ReturnDataRangeLow" => null,
@@ -218,7 +266,7 @@ class CareplanService {
 				"MessageID" => $currQuestionInfo->msg_id,
 				"Obs_Key" => $currQuestionInfo->obs_key,
 				"ParentID" => $this->stateAppCommentId,
-				"MessageIcon" => "info",
+				"MessageIcon" => $currQuestionInfo->app_icon,
 				"MessageContent" => 'Adherence Result Msg: '.$currQuestionInfo->message,
 				"ReturnFieldType" => $currQuestionInfo->qtype,
 				"ReturnDataRangeLow" => null,
@@ -233,16 +281,97 @@ class CareplanService {
 	}
 
 
+	/**
+	 * @return array
+     */
 	private function setObsReminders()
 	{
 		if(!$this->stateAppCommentId) {
 			return array();
 		}
 		// this only deals with HSP question
-		// currently on hold
-		return array();
+		//$hspMsg = CPRulesQuestions::where('obs_key', '=', 'HSP')->first();
+		$hspMsgIds = array('CF_HSP_20', 'CF_HSP_30');
+		$hspObs = array();
+		$o = 0;
+		$msgChooser = new MsgChooser;
+		$msgCPRules = new MsgCPRules;
+		$msgSubstitutions = new MsgSubstitutions;
+		// look for $hspMsgId in current state_app array
+		foreach($hspMsgIds as $hspMsgId) {
+			$matchFound = false;
+			foreach ($this->stateAppArray as $key => $msgSet) {
+				if (in_array(key($msgSet[0]), array($hspMsgId))) {
+					$matchFound = true;
+					// loop through each row of message set
+					foreach ($msgSet as $i => $msgRow) {
+						//obtain message type
+						$qsType = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
+						$currQuestionInfo = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
+						$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+						// add to feed
+						$obsInfo = array(
+							"MessageID" => $currQuestionInfo->msg_id,
+							"Obs_Key" => $currQuestionInfo->obs_key,
+							"ParentID" => $this->stateAppCommentId,
+							"MessageIcon" => $currQuestionInfo->app_icon,
+							"MessageContent" => $currQuestionInfo->message,
+							"ReturnFieldType" => $currQuestionInfo->qtype,
+							"ReturnDataRangeLow" => null,
+							"ReturnDataRangeHigh" => null,
+							"ReturnValidAnswers" => null,
+							"PatientAnswer" => null,
+							"ResponseDate" => null
+						);
+						$obsInfo['PatientAnswer'] = $msgRow[key($msgRow)];
+						// find answer observation (patient inbound always = observation)
+						$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
+						if ($answerObs) {
+							// if has answer, add answer and date of answer to feed
+							$obsInfo['PatientAnswer'] = $answerObs->obs_value;
+							$obsInfo['ResponseDate'] = $answerObs->obs_date;
+						}
+						if ($i == 0) {
+							$hspObs[$o] = $obsInfo;
+						} else if ($i == 1) {
+							$hspObs[$o]['Response'][0] = $obsInfo;
+						} else if ($i == 2) {
+							$hspObs[$o]['Response']['Response'][0] = $obsInfo;
+						}
+					}
+					$o++;
+				}
+			}
+			if (!$matchFound) {
+				// not yet in state_app, so add just the base question
+				//obtain message type
+				$qsType = $msgCPRules->getQsType($hspMsgId, $this->wpUser->ID);
+				$currQuestionInfo = $msgCPRules->getQuestion($hspMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
+				$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+				// add to feed
+				$hspObs[$o] = array(
+					"MessageID" => $currQuestionInfo->msg_id,
+					"Obs_Key" => $currQuestionInfo->obs_key,
+					"ParentID" => $this->stateAppCommentId,
+					"MessageIcon" => $currQuestionInfo->app_icon,
+					"MessageContent" => $currQuestionInfo->message,
+					"ReturnFieldType" => 'end',
+					"ReturnDataRangeLow" => null,
+					"ReturnDataRangeHigh" => null,
+					"ReturnValidAnswers" => null,
+					"PatientAnswer" => null,
+					"ResponseDate" => null
+				);
+				$o++; // +1 symObs
+			}
+		}
+		return $hspObs;
 	}
 
+
+	/**
+	 * @return array
+     */
 	private function setObsBiometric()
 	{
 		if(!$this->stateAppCommentId) {
@@ -291,7 +420,7 @@ class CareplanService {
 							"MessageID" => $currQuestionInfo->msg_id,
 							"Obs_Key" => $currQuestionInfo->obs_key,
 							"ParentID" => $this->stateAppCommentId,
-							"MessageIcon" => "question",
+							"MessageIcon" => $currQuestionInfo->app_icon,
 							"MessageContent" => $currQuestionInfo->message,
 							"ReturnFieldType" => $currQuestionInfo->qtype,
 							"ReturnDataRangeLow" => null,
@@ -311,9 +440,9 @@ class CareplanService {
 						if($i == 0) {
 							$bioObs[$o] = $bioObsTemp;
 						} else if($i == 1) {
-							$bioObs[$o]['Response'] = $bioObsTemp;
+							$bioObs[$o]['Response'][0] = $bioObsTemp;
 						} else if($i == 2) {
-							$bioObs[$o]['Response']['Response'] = $bioObsTemp;
+							$bioObs[$o]['Response']['Response'][0] = $bioObsTemp;
 						}
 					}
 					$o++; // +1 bioObs
@@ -330,7 +459,7 @@ class CareplanService {
 					"MessageID" => $currQuestionInfo->msg_id,
 					"Obs_Key" => $currQuestionInfo->obs_key,
 					"ParentID" => $this->stateAppCommentId,
-					"MessageIcon" => "question",
+					"MessageIcon" => $currQuestionInfo->app_icon,
 					"MessageContent" => $currQuestionInfo->message,
 					"ReturnFieldType" => $currQuestionInfo->qtype,
 					"ReturnDataRangeLow" => null,
@@ -346,11 +475,9 @@ class CareplanService {
 	}
 
 
-
-
-
-
-
+	/**
+	 * @return array
+     */
 	private function setObsSymptoms()
 	{
 		if(!$this->stateAppCommentId) {
@@ -387,7 +514,7 @@ class CareplanService {
 							"MessageID" => $currQuestionInfo->msg_id,
 							"Obs_Key" => $currQuestionInfo->obs_key,
 							"ParentID" => $this->stateAppCommentId,
-							"MessageIcon" => "question",
+							"MessageIcon" => $currQuestionInfo->app_icon,
 							"MessageContent" => $currQuestionInfo->message,
 							"ReturnFieldType" => $currQuestionInfo->qtype,
 							"ReturnDataRangeLow" => null,
@@ -407,9 +534,9 @@ class CareplanService {
 						if($i == 0) {
 							$symObs[$o] = $symObsTemp;
 						} else if($i == 1) {
-							$symObs[$o]['Response'] = $symObsTemp;
+							$symObs[$o]['Response'][0] = $symObsTemp;
 						} else if($i == 2) {
-							$symObs[$o]['Response']['Response'] = $symObsTemp;
+							$symObs[$o]['Response']['Response'][0] = $symObsTemp;
 						}
 					}
 					$o++; // +1 symObs
@@ -426,7 +553,7 @@ class CareplanService {
 					"MessageID" => $currQuestionInfo->msg_id,
 					"Obs_Key" => $currQuestionInfo->obs_key,
 					"ParentID" => $this->stateAppCommentId,
-					"MessageIcon" => "question",
+					"MessageIcon" => $currQuestionInfo->app_icon,
 					"MessageContent" => $currQuestionInfo->message,
 					"ReturnFieldType" => $currQuestionInfo->qtype,
 					"ReturnDataRangeLow" => null,
@@ -441,32 +568,15 @@ class CareplanService {
 		return $symObs;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-	public function getMessageSequence($msgId) {
-		foreach($this->stateAppArray as $key => $msgSet) {
-			foreach($msgSet as $i => $msgRow) {
-				if (key($msgRow) == $msgId) {
-					return $msgSet;
-				}
-			}
-		}
-	}
-
-
-
+	/**
+	 * @param $programId
+	 * @param $userId
+	 * @param $date
+	 * @param $obsKey
+	 * @return array
+     */
 	public function getScheduledDMS($programId, $userId, $date, $obsKey) {
-		$query = DB::connection('mysql_no_prefix')->table('lv_observations AS o')->select('o.*', 'rules_questions.*', 'rules_items.*', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en')
+		$query = DB::connection('mysql_no_prefix')->table('lv_observations AS o')->select('o.*', 'rules_questions.*', 'rules_items.*', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en', 'imico.meta_value AS app_icon')
 			->join('rules_questions', 'rules_questions.msg_id', '=', 'o.obs_message_id')
 			->join('rules_items', 'rules_items.qid', '=', 'rules_questions.qid')
 			->join('rules_itemmeta as imsms', function ($join) {
@@ -474,6 +584,9 @@ class CareplanService {
 			})
 			->leftJoin('rules_itemmeta as imapp', function ($join) {
 				$join->on('imapp.items_id', '=', 'rules_items.items_id')->where('imapp.meta_key', '=', 'APP_EN');
+			})
+			->leftJoin('rules_itemmeta as imico', function ($join) {
+				$join->on('imico.items_id', '=', 'rules_items.items_id')->where('imico.meta_key', '=', 'app_icon');
 			})
 			->join('rules_pcp', 'rules_pcp.pcp_id', '=', 'rules_items.pcp_id')
 			->join('wp_' . $programId . '_comments as cm', 'cm.comment_id', '=', 'o.comment_id')
@@ -495,10 +608,13 @@ class CareplanService {
 	}
 
 
+	/**
+	 * @return array
+     */
 	public function getScheduledSymptoms() {
 		// query
 		$query = DB::connection('mysql_no_prefix')->table('rules_ucp AS rucp');
-		$query->select('rucp.*', 'rq.*', 'pcp.pcp_id', 'pcp.section_text', 'i.qid', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rucp.meta_value as status', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en');
+		$query->select('rucp.*', 'rq.*', 'pcp.pcp_id', 'pcp.section_text', 'i.qid', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rucp.meta_value as status', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en', 'imico.meta_value AS app_icon');
 		$query->where('user_id', '=', $this->wpUser->ID);
 		$query->join('rules_items AS i', 'i.items_id', '=', 'rucp.items_id');
 		$query->leftJoin('rules_items AS rip', 'i.items_parent', '=', 'rip.items_id'); // parent item info
@@ -510,10 +626,11 @@ class CareplanService {
 			$join->on('imsms.items_id', '=', 'i.items_id')->where('imsms.meta_key', '=', 'SMS_EN');
 		});
 		$query->leftJoin('rules_itemmeta as imapp', function ($join) {
-				$join->on('imapp.items_id', '=', 'i.items_id')->where('imapp.meta_key', '=', 'APP_EN');
-			});
-
-
+			$join->on('imapp.items_id', '=', 'i.items_id')->where('imapp.meta_key', '=', 'APP_EN');
+		});
+		$query->leftJoin('rules_itemmeta as imico', function ($join) {
+			$join->on('imico.items_id', '=', 'i.items_id')->where('imico.meta_key', '=', 'app_icon');
+		});
 		$query->leftJoin('rules_questions AS rq', 'rq.qid', '=', 'i.qid');
 		$query->leftJoin('rules_questions AS rqp', 'rqp.qid', '=', 'rip.qid'); // parent question info
 		$query->leftJoin('rules_itemmeta AS ims', function ($join) {
@@ -540,6 +657,14 @@ class CareplanService {
 	}
 
 
+	/**
+	 * @param $programId
+	 * @param $userId
+	 * @param $obsKey
+	 * @param $msgId
+	 * @param $date
+	 * @return mixed
+     */
 	public function getAnswerObservation($programId, $userId, $obsKey, $msgId, $date) {
 		// find answer observation (patient inbound always = observation)
 		$query = DB::connection('mysql_no_prefix')->table('ma_' . $programId . '_observations')->select('o.obs_id', 'o.obs_key', 'o.comment_id', 'o.obs_date', 'o.user_id', 'o.obs_value', 'o.obs_unit', 'o.obs_method', 'o.obs_message_id')

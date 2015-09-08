@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\Services\ActivityService;
+use App\Services\RulesService;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\PageTimer;
@@ -119,10 +120,8 @@ class PageTimerController extends Controller {
 				//$params = array('role' => 'Provider', 'activity' => 'Patient Overview');
 
 				// check against rules and add activity if passes
-				$rules = new Rules;
-				//dd( $rules->getActions(array(), 'ATT') );
-				$ruleActions = $rules->getActions($params, 'ATT');
-				//dd($ruleActions);
+				$rulesService = new RulesService;
+				$ruleActions = $rulesService->getActions($params, 'ATT');
 
 				if($ruleActions) {
 					$activiyParams = array();

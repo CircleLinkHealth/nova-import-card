@@ -38,6 +38,16 @@ class CPRulesItem extends Model {
         return $this->hasMany('App\CPRulesItemMeta', 'items_id');
     }
 
+    public function pcp()
+    {
+        return $this->belongsTo('App\CPRulesPCP', 'pcp_id');
+    }
+
+    public function question()
+    {
+        return $this->belongsTo('App\CPRulesQuestions', 'qid');
+    }
+
     public function getRulesItem($itemId)
     {
         $rulesUCP = CPRulesUCP::where('items_id', '=', $itemId)->get();

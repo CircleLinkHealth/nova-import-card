@@ -17,7 +17,6 @@ $(document).ready(function(){
 
     // action
     $('body').on('click', '.add-action', function(event) {
-        event.preventDefault();
         addAction();
         return false;
     });
@@ -37,6 +36,7 @@ function addCondition() {
     conditionCount = rulesGetRulesCountForType('conditions');
 
     // increment ids
+    conditionshtml = conditionshtml.replace("c*condition", "c" + conditionCount + "condition");
     conditionshtml = conditionshtml.replace("c*action", "c" + conditionCount + "action");
     conditionshtml = conditionshtml.replace("c*operator", "c" + conditionCount + "operator");
     conditionshtml = conditionshtml.replace("c*value", "c" + conditionCount + "value");
@@ -53,12 +53,12 @@ function addAction() {
     // get html
     var actionshtml = $('#jsactions').html();
     // count checkboxes to get the number already out (dont forget the extra one in jsactions!)
-    var actionCount = ($('.a-condition').length - 1); // (length starts at 1, php arr 0)
+    var actionCount = ($('.a-action').length - 1); // (length starts at121200vsv + cc55002000 1, php arr 0)
 
     // fix duplicates
-    if(conditionCount > 0) {
+    if(actionCount > 0) {
         var matches = [];
-        $("input[name='conditions[]']:checked").each(function () {
+        $("input[name='actions[]']:checked").each(function () {
             count = this.value;
             if (count.length == 1) {
                 matches.push(this.value);
@@ -71,15 +71,15 @@ function addAction() {
         });
         console.log(matches);
         // use this, will never cause conflict
-        conditionCount = parseInt(matches[0])+1;
+        actionCount = parseInt(matches[0])+1;
     }
 
     actionCount = rulesGetRulesCountForType('actions');
 
     // increment ids
-    actionshtml = actionshtml.replace("a*action", "c" + actionCount + "action");
-    actionshtml = actionshtml.replace("a*operator", "c" + actionCount + "operator");
-    actionshtml = actionshtml.replace("a*value", "c" + actionCount + "value");
+    actionshtml = actionshtml.replace("a*action", "a" + actionCount + "action");
+    actionshtml = actionshtml.replace("a*operator", "a" + actionCount + "operator");
+    actionshtml = actionshtml.replace("a*value", "a" + actionCount + "value");
     actionshtml = actionshtml.replace("a*count", "" + actionCount + "");
     actionshtml = actionshtml.replace("a*count", "" + actionCount + ""); // 2nd
     actionshtml = actionshtml.replace("a*count", "" + actionCount + ""); // 3rd

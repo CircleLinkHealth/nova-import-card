@@ -19,6 +19,17 @@
                                 </ul>
                             </div>
                         @endif
+
+                        @if (count($messages) > 0)
+                            <div class="alert alert-success">
+                                <strong>Messages:</strong><br><br>
+                                <ul>
+                                    @foreach ($messages as $message)
+                                        <li>{{ $message }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -46,16 +57,43 @@
                             </tbody>
                         </table>
 
-
+                        <div class="form-group">
+                            <div class="col-sm-2">{!! Form::label('rule_name', 'Rule Name:') !!}</div>
+                            <div class="col-sm-10">{!! Form::text('rule_name', $rule->rule_name, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                        </div>
 
                         <div id="summary" style="margin:20px 0px;">
                             <strong>Summary:</strong>
                             <div class="form-group" id="summary">
-                                <div class="col-sm-12">{!! Form::textarea('summary',$rule->summary,['class'=>'form-control', 'rows' => 3, 'cols' => 10]) !!}</div>
+                                <div class="col-sm-12">{!! Form::textarea('summary',$rule->summary,['class'=>'form-control', 'rows' => 4, 'cols' => 10]) !!}</div>
                             </div>
                         </div>
 
-                        <strong>Conditions:</strong>
+                        <div class="form-group" style="margin:20px 0px;">
+                            <strong>Description:</strong>
+                            <div class="form-group" id="rule_description">
+                                <div class="col-sm-12">{!! Form::textarea('rule_description',$rule->rule_description,['class'=>'form-control', 'rows' => 2, 'cols' => 10]) !!}</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-2">{!! Form::label('type_id', 'Type:') !!}</div>
+                            <div class="col-sm-4">{!! Form::text('type_id', $rule->type_id, ['class' => 'form-control', 'style' => 'width:90%;']) !!}</div>
+                            <div class="col-sm-2">{!! Form::label('sort', 'Sort:') !!}</div>
+                            <div class="col-sm-4">{!! Form::text('sort', $rule->sort, ['class' => 'form-control', 'style' => 'width:90%;']) !!}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-1">{!! Form::label('active', 'Active:') !!}</div>
+                            <div class="col-sm-3">{!! Form::text('active', $rule->active, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-1">{!! Form::label('approve', 'Approve:') !!}</div>
+                            <div class="col-sm-3">{!! Form::text('approve', $rule->approve, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-1">{!! Form::label('archive', 'Archive:') !!}</div>
+                            <div class="col-sm-3">{!! Form::text('archive', $rule->archive, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                        </div>
+
+                        <h3>Conditions:</h3>
+                        <br />
                         <div id="conditions">
                         @foreach( $rule->intrConditions as $i => $intrCondition )
                             <div class="form-group condition" id="c{{ $i }}">
@@ -77,7 +115,8 @@
                             </div>
                         </div>
 
-                        <strong>Actions:</strong>
+                        <h3>Actions:</h3>
+                        <br />
                         <div id="actions">
                         @foreach( $rule->intrActions as $i => $intrAction )
                             <div class="form-group action" id="a{{ $i }}">

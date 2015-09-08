@@ -45,7 +45,37 @@
                             </div>
                         </div>
 
-                        <h1>User Info</h1>
+                        <h1>User System Info</h1>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-2">{!! Form::label('user_login', 'Login:') !!}</div>
+                                <div class="col-xs-10">{!! Form::text('user_login', '', ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-2">{!! Form::label('user_email', 'Email:') !!}</div>
+                                <div class="col-xs-10">{!! Form::text('user_email', '', ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-2">{!! Form::label('user_pass', 'Password:') !!}</div>
+                                <div class="col-xs-4">{!! Form::password('user_pass', '', ['class' => 'form-control']) !!}</div>
+                                <div class="col-xs-2">{!! Form::label('user_pass_confirm', 'Confirm Password:') !!}</div>
+                                <div class="col-xs-4">{!! Form::password('user_pass_confirm', '', ['class' => 'form-control']) !!}</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-2">{!! Form::label('user_nicename', 'Nice Name:') !!}</div>
+                                <div class="col-xs-4">{!! Form::text('user_nicename', '', ['class' => 'form-control']) !!}</div>
+                                <div class="col-xs-2">{!! Form::label('display_name', 'Display Name:') !!}</div>
+                                <div class="col-xs-4">{!! Form::text('display_name', '', ['class' => 'form-control']) !!}</div>
+                            </div>
+                        </div>
+
+                        <h1>User Personal Info</h1>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-2">{!! Form::label('first_name', 'First Name:') !!}</div>
@@ -251,7 +281,7 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
-                                    {!! Form::button('Add User', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Add User', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>

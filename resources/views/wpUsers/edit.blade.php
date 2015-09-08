@@ -51,7 +51,6 @@
                                 <div class="pull-right">
                                     {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
-                                    </form>
                                 </div>
                             </div>
                         </div>

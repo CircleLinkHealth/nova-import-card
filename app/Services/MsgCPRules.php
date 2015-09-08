@@ -32,6 +32,8 @@ class MsgCPRules {
          *
          */
 
+        $strResponse = str_replace('/', '_', $strResponse); // not sure why this happens but its fixing hsp stuff so doing it (hacks everywhere for legacy code)
+
         // $tmpArray = explode(' ', $strResponse);
         $tmpArray = preg_split("/[ _]/", $strResponse);
         $strResponse2 = $tmpArray[0];
@@ -107,18 +109,16 @@ class MsgCPRules {
 
     public function getMixedValid($strMsgId, $pid, $strResponse) {
 
-        $query = <<<query
-select qs.*
-from rules_question_sets qs
-join rules_questions q on q.qid = qs.qid
-join rules_answers a on a.aid = qs.aid
-where provider_id = {$pid}
-and q.msg_id = '{$strMsgId}'
-and CONCAT(',',a.value,',',a.alt_answers,',') rlike ',{$strResponse},'
-LIMIT 1
-query;
+        $query = "select qs.*
+            from rules_question_sets qs
+            join rules_questions q on q.qid = qs.qid
+            join rules_answers a on a.aid = qs.aid
+            where provider_id = {$pid}
+            and q.msg_id = '{$strMsgId}'
+            and CONCAT(',',a.value,',',a.alt_answers,',') rlike ',{$strResponse},'
+            LIMIT 1";
 
-        echo '<br>MsgCPRules->getMixedValid()';
+        //echo '<br>MsgCPRules->getMixedValid()';
 
         $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
         if(isset($results[0])) {
@@ -146,13 +146,14 @@ query;
         $query = "select q.qid, q.msg_id, q.qtype, im.meta_key as msgtype, im.meta_value as message, q.obs_key,
 if(isnull(p.meta_value), ',,', p.meta_value) as cdays,
 ifnull(u2.meta_value, 'Inactive') as ucp_status,
-ifnull(im2.meta_value, 'Inactive') as pcp_status, qs.action
+ifnull(im2.meta_value, 'Inactive') as pcp_status, qs.action, imico.meta_value AS app_icon
 FROM rules_questions q
 left join rules_question_sets qs on qs.qid = q.qid and qs_type = '".$qstype."' and qs.provider_id = ".$pid."
 join rules_items i on i.qid = q.qid
 join rules_pcp pc on pc.pcp_id = i.pcp_id and pc.prov_id = ".$pid."
 left join rules_itemmeta im on im.items_id = i.items_id and im.meta_key = '".$strMsgText."'
 left join rules_itemmeta im2 on im2.items_id = i.items_id and im2.meta_key = 'AllPatients'
+left join rules_itemmeta imico on imico.items_id = i.items_id and imico.meta_key = 'app_icon'
 left join rules_items i2 on i2.items_parent = i.items_id and i2.items_text = 'Contact Days'
 left join rules_ucp p on p.items_id = i2.items_id and p.user_id = ".$intUserId."
 left join rules_ucp u2 on u2.items_id = i.items_id and u2.meta_key = 'status' and u2.user_id = ".$intUserId."
@@ -170,12 +171,13 @@ limit 1";
 
     }//getQuestion
 
-    public function getQsType($msgId, $userId) {
+    public function getQsType($msgId, $programId) {
         $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')
             ->join('rules_questions','rules_question_sets.qid','=','rules_questions.qid')
             ->select('rules_question_sets.qs_type')
             ->where('rules_questions.msg_id',$msgId)
-            ->where('rules_question_sets.provider_id',$userId)
+            ->where('rules_question_sets.provider_id',$programId)
+            ->orderBy('qs_sort', 'desc')
             ->first();
         if($qsType) {
             return $qsType->qs_type;

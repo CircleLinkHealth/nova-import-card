@@ -33,6 +33,11 @@ class CPRulesPCP extends Model {
     protected $fillable = ['pcp_id', 'prov_id', 'section_text', 'status', 'cpset_id', 'pcp_type'];
 
 
+    public function items()
+    {
+        return $this->hasMany('App\CPRulesItem', 'pcp_id');
+    }
+
     public function getCPRulesPCPForProv($provId)
     {
         $CPrulesPCP = CPRulesPCP::where('prov_id', '=', $provId)->get();

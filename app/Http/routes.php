@@ -4,15 +4,16 @@
  */
 
 //EMAIL TEST ROUTE
-use App\Services\ActivityService;
-
 //Route::get('/email', function () {
-//	$activityService = new ActivityService;
-//	$careteam = ['0' => '330','1' => '169'];
-//	$h = $activityService->sendNoteToCareTeam($careteam,'google.com','3pm',400);
-//	return $h;//Redirect::to('/');
+//	$data = [
+//		'title'=>'Email'
+//	];
+//	Mail::send('emails.newnote', $data, function($message) {
+//		$message->from('no-reply@careplanmanager.com', 'CircleLink Health');
+//		$message->to('philiplawlor@gmail.com')->subject('You have a new note!!');
+//	});
+//	return Redirect::to('/');
 //});
-
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
@@ -50,6 +51,7 @@ Route::group(['middleware' => 'auth'], function ()
 
 	Route::get('rules', 'RulesController@index');
 	Route::get('rules/create', ['uses' =>'RulesController@create', 'as'=>'rulesCreate']);
+	Route::post('rules/store', ['uses' =>'RulesController@store', 'as'=>'rulesStore']);
 	Route::get('rules/{id}', ['uses' =>'RulesController@show', 'as'=>'rulesShow']);
 	Route::get('rules/{id}/edit', ['uses' =>'RulesController@edit', 'as'=>'rulesEdit']);
 	Route::post('rules/{id}/edit', ['uses' =>'RulesController@update', 'as'=>'rulesUpdate']);
@@ -67,12 +69,19 @@ Route::group(['middleware' => 'auth'], function ()
 
 	Route::get('wpusers', 'WpUserController@index');
 	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'usersCreate']);
+	Route::post('wpusers/create', ['uses' =>'WpUserController@store', 'as'=>'usersStore']);
 	Route::get('wpusers/{id}', ['uses' =>'WpUserController@show', 'as'=>'usersShow']);
 	Route::get('wpusers/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'usersEdit']);
 	Route::post('wpusers/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'usersUpdate']);
 	Route::get('wpusers/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'usersCareplan']);
 	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenter']);
 	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenterUpdate']);
+
+	Route::get('programs', ['uses' =>'WpBlogController@index', 'as'=>'programsIndex']);
+	Route::get('programs/{id}', ['uses' =>'WpBlogController@show', 'as'=>'programsShow']);
+	Route::get('programs/{id}/edit', ['uses' =>'WpBlogController@edit', 'as'=>'programsEdit']);
+	Route::post('programs/{id}/edit', ['uses' =>'WpBlogController@update', 'as'=>'programsUpdate']);
+	Route::get('programs/{id}/questions', ['uses' =>'WpBlogController@showQuestions', 'as'=>'programsQuestionsShow']);
 
     /*
      * Third Party Apis Config Pages
@@ -154,8 +163,7 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 {
 	// activities
 	Route::resource('activities', 'ActivityController');
-	Route::post('activities/sendNote', 'ActivityController@sendExistingNote');
-	//Route::post('activities/update', 'ActivityController@update');
+	Route::post('activities/update', 'ActivityController@update');
 	Route::resource('activities.meta', 'ActivityMetaController');
 
 	// reports

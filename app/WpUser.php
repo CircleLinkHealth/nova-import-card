@@ -38,6 +38,16 @@ class WpUser extends Model {
 
     public $timestamps = false;
 
+    public $rules = array(
+        'user_login'             => 'required',                        // just a normal required validation
+        'user_email'            => 'required|email',     // required and must be unique in the wp_users table
+        'user_pass'         => 'required',
+        'user_pass_confirm' => 'required|same:user_pass',           // required and has to match the password field
+        'user_nicename'         => 'required',
+        //'user_status'         => 'required',
+        'display_name'         => 'required',
+    );
+
 
 
 
@@ -133,17 +143,15 @@ class WpUser extends Model {
     public function createNewUser($user_email, $user_pass) {
 
         // use wordpress md5 hasher class
-        $wp_hasher = new \PasswordHash(12, TRUE);
+        $wp_hasher = new \PasswordHash(8, TRUE);
         $user_pass = $wp_hasher->HashPassword($user_pass);
 
-        $user = new WpUser();
-        $user->user_login = $user_email;
-        $user->user_email = $user_email;
-        $user->user_pass = $wp_hasher->HashPassword($user_pass);
-        $user_id = $user->save();
+        $this->user_login = $user_email;
+        $this->user_email = $user_email;
+        $this->user_pass = $user_pass;
+        $this->save();
 
-        return $user_id;
-
+        return true;
     }
 
 

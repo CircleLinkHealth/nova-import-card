@@ -56,7 +56,7 @@ class MsgChooser {
         $msgSubstitutions = new MsgSubstitutions;
 
         // obtain message type
-        $qsType  = $msgCPRules->getQsType($msgId, $userId);
+        $qsType  = $msgCPRules->getQsType($msgId, $this->programId);
 
         // find comment
         $comment = Comment::find($commentId);

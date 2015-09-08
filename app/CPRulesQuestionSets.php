@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesItemMeta extends Model {
+class CPRulesQuestionSets extends Model {
 
     /**
      * The connection name for the model.
@@ -16,27 +16,26 @@ class CPRulesItemMeta extends Model {
      *
      * @var string
      */
-    protected $table = 'rules_itemmeta';
+    protected $table = 'rules_question_sets';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'itemmeta_id';
+    protected $primaryKey = 'qid';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['itemmeta_id', 'items_id', 'meta_key', 'meta_value'];
+    protected $fillable = ['qid', 'msg_id', 'qtype', 'obs_key', 'description'];
 
-    public function CPRulesItem()
+
+    public function items()
     {
-        return $this->belongsTo('App\CPRulesItem', 'items_id');
+        return $this->hasMany('App\CPRulesItem', 'qid');
     }
-
-
 
 }
