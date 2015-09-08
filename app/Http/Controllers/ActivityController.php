@@ -101,7 +101,7 @@ class ActivityController extends Controller {
 			$activityService = new ActivityService;
 			$activity = Activity::find($actId);
 			$linkToNote = $input['url'].$activity->id;
-			$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input['patient_id'],true);
+			$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input['patient_id'],null, true);
 
 			if($result)
 			{
@@ -113,24 +113,25 @@ class ActivityController extends Controller {
 
 	}
 
-//	public function sendExistingNote(Request $request, $id)
-//	{
-//		if ($request->header('Client') == 'ui') { // WP Site
-//
-//			$input = json_decode(Crypt::decrypt($request->input('data')), true);
-//
-//			$activityService = new ActivityService;
-//			$activity = Activity::find($actId);
-//			$linkToNote = $input['url'].$activity->id;
-//			$result = $activityService->sendNoteToCareTeam($input['careteam'], $linkToNote, $input['performed_at'], $input->user_id, false);
-//
-//			if ($result) {
-//				return response("Successfully Sent", 201);
-//			} else {
-//				return response("Sorry, Couldn't sent notes", 401);
-//			}
-//		}
-//	}
+	public function sendExistingNote(Request $request)
+	{
+		if ($request->header('Client') == 'ui') { // WP Site
+
+			$input = json_decode(Crypt::decrypt($request->input('data')), true);
+			$activity = Activity::findOrFail($input['activity_id']);
+			$activityService = new ActivityService;
+			$logger = WpUser::find($input['logger_id']);
+			$logger_name = $logger->display_name;
+			$linkToNote = $input['url'].$activity->id;
+			$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input['patient_id'],$logger_name, false);
+
+			if ($result) {
+				return response("Successfully Sent", 202);
+			} else {
+				return response("Sorry, could not sent Note!", 401);
+			}
+		}
+	}
 
 
 	/**
@@ -190,36 +191,36 @@ class ActivityController extends Controller {
      */
 	public function update(Request $request)
 	{
-        if ( $request->isJson() )
-        {
-            $input = $request->input();
-        }
-        else if ( $request->isMethod('POST') )
-        {
-            if ( $request->header('Client') == 'ui' ) // WP Site
-            {
-                $input = json_decode(Crypt::decrypt($request->input('data')), true);
-            }
-        }
-        else
-        {
-            return response("Unauthorized", 401);
-        }
+		if ( $request->isJson() )
+		{
+			$input = $request->input();
+		}
+		else if ( $request->isMethod('POST') )
+		{
+			if ( $request->header('Client') == 'ui' ) // WP Site
+			{
+				$input = json_decode(Crypt::decrypt($request->input('data')), true);
+			}
+		}
+		else
+		{
+			return response("Unauthorized", 401);
+		}
 
-       //  Check if there are any meta nested parts in the incoming request
-        $meta = $input['meta'];
-        unset($input['meta']);
+		//  Check if there are any meta nested parts in the incoming request
+		$meta = $input['meta'];
+		unset($input['meta']);
 
-        $activity = Activity::find($input['activity_id']);
-        $activity->fill($input)->save();
+		$activity = Activity::find($input['activity_id']);
+		$activity->fill($input)->save();
 
-        $actMeta = ActivityMeta::where('activity_id', $input['activity_id'])->where('meta_key',$meta['0']['meta_key'])->first();
-        $actMeta->fill($meta['0'])->save();
+		$actMeta = ActivityMeta::where('activity_id', $input['activity_id'])->where('meta_key',$meta['0']['meta_key'])->first();
+		$actMeta->fill($meta['0'])->save();
 
 		$activityService = new ActivityService;
 		$result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
 
-        return response("Activity Updated", 201);
+		return response("Activity Updated", 201);
 	}
 
 	/**

@@ -3,6 +3,7 @@
 use App\Activity;
 use App\WpUser;
 use App\WpUserMeta;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 class ActivityService {
@@ -68,9 +69,11 @@ class ActivityService {
 	 * @param $url
 	 * @param $performed_at
 	 * @param $user_id
+	 * @param $logger_name
 	 * @param $newNoteFlag (checks whether it's a new note or an old one)
-     */
-	public function sendNoteToCareTeam(&$careteam, $url, $performed_at,$user_id, $newNoteFlag){
+	 * @return bool
+	 */
+	public function sendNoteToCareTeam(&$careteam, $url, $performed_at,$user_id, $logger_name, $newNoteFlag){
 
 		/*
 		 *  New note: "Please see new note for patient [patient name]: [link]"
@@ -81,24 +84,24 @@ class ActivityService {
 		for($i = 0; $i < count($careteam); $i++){
 			$provider_user = WpUser::find($careteam[$i]);
 			$email = $provider_user->user_email;
+			$performed_at = Carbon::parse($performed_at)->diffForHumans();;
 			$data = array(
 				'patient_name' => $user->display_name,
 				'url' => $url,
-				'time' => $performed_at
+				'time' => $performed_at,
+				'logger' => $logger_name
 			);
 
 			if($newNoteFlag) {
 				$email_view = 'emails.newnote';
 			}	else {
-
+				$email_view = 'emails.existingnote';
 			}
-			Mail::send('emails.newnote', $data, function($message) use ($email) {
+			Mail::send($email_view, $data, function($message) use ($email) {
 				$message->from('no-reply@careplanmanager.com', 'CircleLink Health');
-				$message->to($email)->subject('You have received a new note from CarePlan Manager');
+				$message->to($email)->subject('You have received a new note notification from CarePlan Manager');
 			});
 		}
-		if( count(Mail::failures()) > 0 ){
-			return false;
-		} else return true;
+		return true;
 	}
 }
