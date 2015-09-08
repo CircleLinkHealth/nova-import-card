@@ -591,11 +591,12 @@ class WpUserController extends Controller {
 	 */
 	public function showPatientSummary(Request $request, $id)
 	{
-		$msgUI = new MsgUI;
-		$msgUsers = new MsgUser;
-		$msgChooser = new MsgChooser;
-		$msgScheduler = new MsgScheduler;
-		$observationService = new ObservationService;
+		$params = $request->all();
+		$detailSection = '';
+		if(isset($params['detail'])) {
+			$detailSection = $params['detail'];
+		}
+
 		$wpUser = WpUser::find($id);
 		if(!$wpUser) {
 			return response("User not found", 401);
@@ -607,42 +608,6 @@ class WpUserController extends Controller {
 			array('section' => 'obs_symptoms', 'id' => 'obs_symptoms_dtable', 'title' => 'Symptoms', 'col_name_question' => 'Symptom', 'col_name_severity' => 'Severity'),
 			array('section' => 'obs_lifestyle', 'id' => 'obs_lifestyle_dtable', 'title' => 'Lifestyle', 'col_name_question' => 'Question', 'col_name_severity' => 'Response'),
 		);
-
-		/*
-		 *
-		// set blog id
-		$programId = $wpUser->blogId();
-		$user_id = $wpUser->ID;
-
-		$date_sort = 'desc';
-		// observation_model->get_user_observations()
-
-		// build tables to use
-		$str_observation_table = 'ma_' . $programId . '_observations';
-		$str_observationmeta_table  = 'ma_' . $programId . '_observationmeta';
-		$str_comments_table  = 'wp_' . $programId . '_comments';
-
-		$query = DB::connection('mysql_no_prefix')->select("o.obs_key, rq.qtype, o.obs_id, o.sequence_id, o.obs_date, o.comment_id, o.user_id, o.obs_value, o.obs_unit, o.obs_method, o.obs_message_id, cm.comment_date, om.meta_key, ri.items_text, rq.description, im_lvl.meta_value AS dm_alert_level, im_log.meta_value AS dm_log",false);
-		$query->from($str_observation_table . ' AS o');
-		$query->join($str_comments_table . ' AS cm', 'o.comment_id','=','cm.comment_id');
-		$query->join('rules_questions AS rq', 'o.obs_message_id','=','rq.msg_id');
-		$query->join($str_observationmeta_table . ' AS im_log', "im_log.obs_id",'=',"o.obs_id AND im_log.meta_key = 'dm_log'", 'left');
-		$query->join($str_observationmeta_table . ' AS im_lvl', "im_lvl.obs_id",'=',"o.obs_id AND im_lvl.meta_key = 'dm_alert_level'", 'left');
-		$query->join('rules_items AS ri', 'ri.qid','=','rq.qid');
-		$query->join($str_observationmeta_table . ' AS om', 'o.obs_id','=','om.obs_id', 'left');
-		$where = array('rq.qtype !=' => 'AnswerResponse');
-		if($user_id) {
-			$where = array('o.user_id' => $user_id, 'rq.qtype !=' => 'AnswerResponse');
-		}
-		$query->where($where);
-		$query->where('o.obs_unit != "invalid"');
-		$query->where('o.obs_unit != "scheduled"');
-		$query->where('o.obs_key != ""');
-		$query->group_by("obs_id");
-		$query->order_by("comment_date", $date_sort);
-		$query->order_by("obs_id", 'DESC');
-		$result = $query->get();
-		*/
 
 		$observations = Observation::where('user_id' ,'=', $wpUser->ID);
 		$observations->where('obs_unit' ,'!=', "invalid");
@@ -722,8 +687,15 @@ class WpUserController extends Controller {
 
 		$observation_json = array();
 		foreach($obs_by_pcp as $section => $observations) {
+			$o=0;
 			$observation_json[$section] = "data:[";
 			foreach ($observations as $observation) {
+				// limit to 3 if not detail
+				if(empty($detailSection)) {
+					if ($o >= 3) {
+						continue 1;
+					}
+				}
 				// lastly format json
 				$observation_json[$section] .= "{ obs_key:'" . $observation->obs_key . "', " .
 					"description:'" . $observation->items_text . '|' . $observation->obs_key . '|'.$observation->legacy_obs_id . "', " .
@@ -732,22 +704,12 @@ class WpUserController extends Controller {
 					"obs_unit:'" . $observation->obs_unit . "', " .
 					"obs_message_id:'" . $observation->obs_message_id . "', " .
 					"comment_date:'09-04-15 06:43:56', " . "},";
-				/*
-				$observation_data[] = array(
-					'obs_key' => $observation->obs_key,
-					'description' => $observation->obs_value,
-					'obs_value' => $observation->obs_value,
-					'dm_alert_level' => $observation->obs_value,
-					'obs_unit' => $observation->obs_unit,
-					'obs_message_id' => $observation->obs_message_id,
-					'comment_date' => $observation->obs_date
-				);
-				*/
+				$o++;
 			}
 			$observation_json[$section] .= "],";
 		}
 
 		//return response()->json($cpFeed);
-		return view('wpUsers.patient.summary', ['wpUser' => $wpUser, 'sections' => $sections, 'observation_data' => $observation_json]);
+		return view('wpUsers.patient.summary', ['wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json]);
 	}
 }

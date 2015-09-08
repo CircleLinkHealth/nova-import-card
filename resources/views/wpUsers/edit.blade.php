@@ -30,7 +30,7 @@
                                     <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed JSON</a>
                                 </div>
                                 <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/edit?action=impersonate') }}" class="btn btn-primary">Impersonate</a>
+                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/summary') }}" class="btn btn-primary">Summary</a>
                                 </div>
                                 <div class="pull-right">
                                     {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
