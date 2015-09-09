@@ -642,7 +642,7 @@ class CareplanService {
 		$query->whereRaw("(rucp.meta_key = 'status' OR rucp.meta_key = 'value') AND user_id = " . $this->wpUser->ID);
 		//$query->where('rq.obs_key', '=', 'Severity');
 		$query->where('rucp.meta_value', '=', 'Active');
-		$query->where('i.pcp_id', '=', '5');
+		$query->where('pcp.section_text', '=', 'Symptoms to Monitor');
 		$query->orderBy("ui_sort", 'ASC');
 		$query->orderBy("i.items_id", 'DESC');
 		$result = $query->get();
