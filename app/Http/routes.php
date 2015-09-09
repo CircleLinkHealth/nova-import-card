@@ -40,7 +40,6 @@ Route::group(['namespace' => 'Redox'], function ()
 /****************************/
 //    AUTH ROUTES
 /****************************/
-
 Route::group(['middleware' => 'auth'], function ()
 {
 	Route::get('home', 'HomeController@index');
@@ -68,6 +67,7 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'activitiesEdit']);
 
 	Route::get('wpusers', 'WpUserController@index');
+	Route::post('wpusers', 'WpUserController@index');
 	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'usersCreate']);
 	Route::post('wpusers/create', ['uses' =>'WpUserController@store', 'as'=>'usersStore']);
 	Route::get('wpusers/{id}', ['uses' =>'WpUserController@show', 'as'=>'usersShow']);
@@ -76,12 +76,35 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'usersCareplan']);
 	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenter']);
 	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenterUpdate']);
+	Route::get('wpusers/{id}/summary', ['uses' =>'WpUserController@showPatientSummary', 'as'=>'patientSummary']);
 
-	Route::get('programs', ['uses' =>'WpBlogController@index', 'as'=>'programsIndex']);
-	Route::get('programs/{id}', ['uses' =>'WpBlogController@show', 'as'=>'programsShow']);
-	Route::get('programs/{id}/edit', ['uses' =>'WpBlogController@edit', 'as'=>'programsEdit']);
-	Route::post('programs/{id}/edit', ['uses' =>'WpBlogController@update', 'as'=>'programsUpdate']);
-	Route::get('programs/{id}/questions', ['uses' =>'WpBlogController@showQuestions', 'as'=>'programsQuestionsShow']);
+	/*
+     * Admin
+     */
+	Route::group(['prefix' => 'admin'], function ()
+	{
+		Route::get('roles', ['uses' =>'Admin\RoleController@index', 'as'=>'admin.roles']);
+		Route::get('roles/create', ['uses' =>'Admin\RoleController@create', 'as'=>'admin.roles.create']);
+		Route::post('roles/create', ['uses' =>'Admin\RoleController@store', 'as'=>'admin.roles.store']);
+		Route::get('roles/{id}', ['uses' =>'Admin\RoleController@show', 'as'=>'admin.roles.show']);
+		Route::get('roles/{id}/edit', ['uses' =>'Admin\RoleController@edit', 'as'=>'admin.roles.edit']);
+		Route::post('roles/{id}/edit', ['uses' =>'Admin\RoleController@update', 'as'=>'admin.roles.update']);
+		Route::get('roles/{id}/careplan', ['uses' =>'Admin\RoleController@show', 'as'=>'admin.roles.careplan']);
+
+		Route::get('permissions', ['uses' =>'Admin\PermissionController@index', 'as'=>'admin.permissions']);
+		Route::get('permissions/create', ['uses' =>'Admin\PermissionController@create', 'as'=>'admin.permissions.create']);
+		Route::post('permissions/create', ['uses' =>'Admin\PermissionController@store', 'as'=>'admin.permissions.store']);
+		Route::get('permissions/{id}', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissions.show']);
+		Route::get('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@edit', 'as'=>'admin.permissions.edit']);
+		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'admin.permissions.update']);
+		Route::get('permissions/{id}/careplan', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissions.careplan']);
+
+		Route::get('programs', ['uses' =>'Admin\WpBlogController@index', 'as'=>'admin.programs']);
+		Route::get('programs/{id}', ['uses' =>'Admin\WpBlogController@show', 'as'=>'admin.programs.show']);
+		Route::get('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@edit', 'as'=>'admin.programs.edit']);
+		Route::post('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@update', 'as'=>'admin.programs.update']);
+		Route::get('programs/{id}/questions', ['uses' =>'Admin\WpBlogController@showQuestions', 'as'=>'admin.programs.questions']);
+	});
 
     /*
      * Third Party Apis Config Pages

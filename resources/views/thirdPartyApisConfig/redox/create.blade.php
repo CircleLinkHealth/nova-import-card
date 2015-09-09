@@ -7,9 +7,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Configure Redox API variables</div>
                     <div class="panel-body">
-
                         @include('errors.errors')
-
                         <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ action('Redox\ConfigController@store') }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 

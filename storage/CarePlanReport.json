@@ -10,16 +10,36 @@
     },
     {
       "We Are Treating:": [
-        "Hypertension",
-        "CHF",
-        "Asthma--COPD",
-        "High Cholesterol",
-        "Diabetes",
-        "Depression",
-        "CAD",
-        "Afib",
-        "Smoking",
-        "Other Conditions"
+        {
+          "name": "Hypertension"
+        },
+        {
+          "name": "CHF"
+        },
+        {
+          "name": "Asthma--COPD"
+        },
+        {
+          "name": "High Cholesterol"
+        },
+        {
+          "name": "Diabetes"
+        },
+        {
+          "name": "Depression"
+        },
+        {
+          "name": "CAD"
+        },
+        {
+          "name": "Afib"
+        },
+        {
+          "name": "Smoking"
+        },
+        {
+          "name": "Other Conditions"
+        }
       ]
     },
     {
@@ -45,38 +65,74 @@
       "Medications:": [
         {
           "Monitoring these Medications": [
-            "Blood Pressure Meds",
-            "Cholesterol Meds",
-            "Blood Thinners (Plavix, Aspirin)",
-            "Water Pills/Diuretics",
-            "Oral Diabetes Meds",
-            "Insulin or other Injectable",
-            "Mood/Depression Meds",
-            "Other Meds"
+            {
+              "name": "Blood Pressure Meds"
+            },
+            {
+              "name": "Cholesterol Meds"
+            },
+            {
+              "name": "Blood Thinners (Plavix, Aspirin)"
+            },
+            {
+              "name": "Water Pills/Diuretics"
+            },
+            {
+              "name": "Oral Diabetes Meds"
+            },
+            {
+              "name": "Insulin or other Injectable"
+            },
+            {
+              "name": "Mood/Depression Meds"
+            },
+            {
+              "name": "Other Meds"
+            }
           ]
         },
         {
           "Taking these Medications": [
-            "Plavix",
-            "Medicinidis"
+            {
+              "name": "Plavix"
+            },
+            {
+              "name": "Medicinidis"
+            }
           ]
         }
       ]
     },
     {
       "Watch out for:": [
-        "Shortness of breath",
-        "Chest pain or Chest tightness",
-        "Swelling in the legs/feet",
-        "Feeling down, helplessness or problems sleeping"
+        {
+          "name": "Shortness of breath"
+        },
+        {
+          "name": "Chest pain or Chest tightness"
+        },
+        {
+          "name": "Swelling in the legs/feet"
+        },
+        {
+          "name": "Feeling down, helplessness or problems sleeping"
+        }
       ]
     },
     {
       "We Are Informing You About:": [
-        "Healthy Diet",
-        "Low Salt Diet",
-        "Diabetic Diet",
-        "Exercise"
+        {
+          "name": "Healthy Diet"
+        },
+        {
+          "name": "Low Salt Diet"
+        },
+        {
+          "name": "Diabetic Diet"
+        },
+        {
+          "name": "Exercise"
+        }
       ]
     },
     {

@@ -9,29 +9,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Add New Rule</div>
                     <div class="panel-body">
-                        @if (count($errors) > 0)
-                            <div class="alert alert-danger">
-                                <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
-                        @if (count($messages) > 0)
-                            <div class="alert alert-success">
-                                <strong>Messages:</strong><br><br>
-                                <ul>
-                                    @foreach ($messages as $message)
-                                        <li>{{ $message }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
-
+                        @include('errors.errors')
                         <div class="form-group">
                             <div class="col-sm-2">{!! Form::label('rule_name', 'Rule Name:') !!}</div>
                             <div class="col-sm-10">{!! Form::text('rule_name', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
