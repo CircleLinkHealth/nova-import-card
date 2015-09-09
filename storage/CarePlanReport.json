@@ -9,7 +9,8 @@
       "Clinic_Name": "Crisfield Clinic"
     },
     {
-      "We Are Treating:": [
+      "Section":"We Are Treating:",
+      "Data":[
         {
           "name": "Hypertension"
         },
@@ -43,7 +44,8 @@
       ]
     },
     {
-      "Your Health Goals:": [
+      "Section":"Your Health Goals:",
+      "Data":[
         {
           "Goal": "Lower Blood Pressure",
           "to": "120/80 mm Hg",
@@ -62,7 +64,8 @@
       ]
     },
     {
-      "Medications:": [
+      "Section":"Medications:",
+      "Data":[
         {
           "Monitoring these Medications": [
             {
@@ -92,7 +95,8 @@
           ]
         },
         {
-          "Taking these Medications": [
+          "Section":"Taking these medications:",
+          "Data":[
             {
               "name": "Plavix"
             },
@@ -104,7 +108,8 @@
       ]
     },
     {
-      "Watch out for:": [
+      "Section":"Watch up for:",
+      "Data":[
         {
           "name": "Shortness of breath"
         },
@@ -120,7 +125,8 @@
       ]
     },
     {
-      "We Are Informing You About:": [
+      "Section":"We Are Informing You About:",
+      "Data":[
         {
           "name": "Healthy Diet"
         },
@@ -136,7 +142,8 @@
       ]
     },
     {
-      "Check In Plan:": [
+      "Section":"Check In Plan:",
+      "Data":[
         {
           "Summary": "We will check in with you at 203-385-2176 every day at 09:15 am"
         },
@@ -168,7 +175,8 @@
       ]
     },
     {
-      "Follow these Instructions:": [
+      "Section":"Follow these Instructions:",
+      "Data":[
         {
           "For Hypertension:": "Nothing"
         },
@@ -202,7 +210,8 @@
       ]
     },
     {
-      "Other Information": [
+      "Section":"Other Information:",
+      "Data":[
         {
           "Allergies:": "Nothing"
         },
