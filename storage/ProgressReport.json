@@ -9,41 +9,23 @@
       "Clinic_Name": "Crisfield Clinic"
     },
     {
-      "We Are Treating:": [
-        {
-          "name": "Hypertension"
-        },
-        {
-          "name": "CHF"
-        },
-        {
-          "name": "Asthma--COPD"
-        },
-        {
-          "name": "High Cholesterol"
-        },
-        {
-          "name": "Diabetes"
-        },
-        {
-          "name": "Depression"
-        },
-        {
-          "name": "CAD"
-        },
-        {
-          "name": "Afib"
-        },
-        {
-          "name": "Smoking"
-        },
-        {
-          "name": "Other Conditions"
-        }
+      "Section":"We Are Treating:",
+      "Data":[
+        {  "name": "Hypertension" },
+        {  "name": "CHF" },
+        {  "name": "Asthma--COPD" },
+        {  "name": "High Cholesterol" },
+        {  "name": "Diabetes" },
+        {  "name": "Depression" },
+        {  "name": "CAD" },
+        {  "name": "Afib" },
+        {  "name": "Smoking" },
+        {  "name": "Other Conditions" }
       ]
     },
     {
-      "Tracking Changes:": [
+      "Section":"Tracking Changes:",
+      "Data":[
         {
           "Biometric": "Blood_Pressure",
           "Status": "Good",
@@ -222,7 +204,8 @@
       ]
     },
     {
-      "Taking Your Medications?": [
+      "Section":"Taking Your Medications?:",
+      "Data":[
         {
           "Good": [
             {
