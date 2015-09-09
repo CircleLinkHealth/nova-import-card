@@ -30,7 +30,7 @@
                                     <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed JSON</a>
                                 </div>
                                 <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/summary') }}" class="btn btn-primary">Summary</a>
+                                    <a href="{{ URL::route('patient.summary', array($wpUser->ID)) }}" class="btn btn-primary">Summary</a>
                                 </div>
                                 <div class="pull-right">
                                     {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
@@ -54,7 +54,29 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('primary_blog', 'Primary Blog:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::select('primary_blog', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'disabled' => 'disabled', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-10">{!! Form::select('primary_blog', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'disabled' => 'disabled', 'style' => 'width:80%;']) !!}{!! Form::hidden('primary_blog', $primaryBlog) !!}</div>
+                                    </div>
+                                </div>
+
+                                <h2>New User System Info</h2>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('user_login', 'Login:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('user_login', $wpUser->user_login, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('user_email', 'Email:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('user_email', $wpUser->user_email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('user_nicename', 'Nice Name:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('user_nicename', $wpUser->user_nicename, ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('display_name', 'Display Name:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('display_name', $wpUser->display_name, ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
                             </div>

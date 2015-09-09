@@ -66,7 +66,7 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('activities/{id}', ['uses' =>'ActivityController@show', 'as'=>'activitiesShow']);
 	Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'activitiesEdit']);
 
-	Route::get('wpusers', 'WpUserController@index');
+	Route::get('wpusers', ['uses' =>'WpUserController@index', 'as'=>'wpusers.index']);
 	Route::post('wpusers', 'WpUserController@index');
 	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'usersCreate']);
 	Route::post('wpusers/create', ['uses' =>'WpUserController@store', 'as'=>'usersStore']);
@@ -76,7 +76,9 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'usersCareplan']);
 	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenter']);
 	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenterUpdate']);
-	Route::get('wpusers/{id}/summary', ['uses' =>'WpUserController@showPatientSummary', 'as'=>'patientSummary']);
+
+	Route::get('patient/{id}/summary', ['uses' =>'Patient\PatientController@showPatientSummary', 'as'=>'patient.summary']);
+	Route::get('patient/{id}/careplan', ['uses' =>'Patient\PatientController@showPatientCareplan', 'as'=>'patient.careplan']);
 
 	/*
      * Admin

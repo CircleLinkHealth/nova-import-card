@@ -158,6 +158,19 @@ class WpUser extends Model {
     }
 
 
+    public function userMetaTemplate() {
+        $userMeta = array("first_name" => "",
+            "last_name" => "",
+            "nickname" => "",
+            "description" => "",
+            "primary_blog" => "",
+            "admin_color" => "fresh",
+            "cur_month_activity_time" => "0",
+        );
+
+        return $userMeta;
+    }
+
     public function userConfigTemplate() {
         $userConfig = array("status" => "Active",
           "email" => "test@test.com",

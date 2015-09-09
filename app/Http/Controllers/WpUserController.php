@@ -130,8 +130,17 @@ class WpUserController extends Controller {
 	 */
 	public function create()
 	{
-		//$result = (new WpUser())->createNewUser('test@test.com', 'testpassword');
-		//dd($result);
+		$messages = \Session::get('messages');
+
+		$wpUser = new WpUser;
+
+		$roles = Role::all();
+
+		// user config
+		$userConfig = $wpUser->userConfigTemplate();
+
+		// set role
+		$wpRole = '';
 
 		// States (for dropdown)
 		$states_arr = array('AL'=>"Alabama",'AK'=>"Alaska",'AZ'=>"Arizona",'AR'=>"Arkansas",'CA'=>"California",'CO'=>"Colorado",'CT'=>"Connecticut",'DE'=>"Delaware",'DC'=>"District Of Columbia",'FL'=>"Florida",'GA'=>"Georgia",'HI'=>"Hawaii",'ID'=>"Idaho",'IL'=>"Illinois", 'IN'=>"Indiana", 'IA'=>"Iowa",  'KS'=>"Kansas",'KY'=>"Kentucky",'LA'=>"Louisiana",'ME'=>"Maine",'MD'=>"Maryland", 'MA'=>"Massachusetts",'MI'=>"Michigan",'MN'=>"Minnesota",'MS'=>"Mississippi",'MO'=>"Missouri",'MT'=>"Montana",'NE'=>"Nebraska",'NV'=>"Nevada",'NH'=>"New Hampshire",'NJ'=>"New Jersey",'NM'=>"New Mexico",'NY'=>"New York",'NC'=>"North Carolina",'ND'=>"North Dakota",'OH'=>"Ohio",'OK'=>"Oklahoma", 'OR'=>"Oregon",'PA'=>"Pennsylvania",'RI'=>"Rhode Island",'SC'=>"South Carolina",'SD'=>"South Dakota",'TN'=>"Tennessee",'TX'=>"Texas",'UT'=>"Utah",'VT'=>"Vermont",'VA'=>"Virginia",'WA'=>"Washington",'WV'=>"West Virginia",'WI'=>"Wisconsin",'WY'=>"Wyoming");
@@ -144,8 +153,12 @@ class WpUserController extends Controller {
 		foreach($timezones_raw as $timezone) {
 			$timezones_arr[$timezone] = $timezone;
 		}
+
+		// providers
+		$providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
+
 		// display view
-		return view('wpUsers.create', ['states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs]);
+		return view('wpUsers.create', ['wpUser' => $wpUser, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'wpRole' => $wpRole, 'providers_arr' => $providers_arr, 'messages' => $messages, 'roles' => $roles]);
 	}
 
 	/**
@@ -169,107 +182,39 @@ class WpUserController extends Controller {
 		// instantiate user with meta
 		$wpUser = WpUser::with('meta')->find($wpUser->ID);
 
-		$userMeta = new WpUserMeta;
-		$userMeta->user_id = $wpUser->ID;
-		$userMeta->meta_key = 'first_name';
-		$userMeta->meta_value = $params['first_name'];
-		$wpUser->meta()->save($userMeta);
+		// the basics
+		$wpUser->user_nicename = $params['user_nicename'];
+		$wpUser->display_name = $params['display_name'];
 
-		$userMeta = new WpUserMeta;
-		$userMeta->user_id = $wpUser->ID;
-		$userMeta->meta_key = 'last_name';
-		$userMeta->meta_value = $params['last_name'];
-		$wpUser->meta()->save($userMeta);
-
-		$userMeta = new WpUserMeta;
-		$userMeta->user_id = $wpUser->ID;
-		$userMeta->meta_key = 'nickname';
-		$userMeta->meta_value = $params['nickname'];
-		$wpUser->meta()->save($userMeta);
-
-		$userMeta = new WpUserMeta;
-		$userMeta->user_id = $wpUser->ID;
-		$userMeta->meta_key = 'description';
-		$userMeta->meta_value = 'lv generated user';
-		$wpUser->meta()->save($userMeta);
-
-		$userMeta = new WpUserMeta;
-		$userMeta->user_id = $wpUser->ID;
-		$userMeta->meta_key = 'primary_blog';
-		$userMeta->meta_value = $params['primary_blog'];
-		$wpUser->meta()->save($userMeta);
-
-		$userMeta = new WpUserMeta;
-		$userMeta->user_id = $wpUser->ID;
-		$userMeta->meta_key = 'wp_'.$params['primary_blog'].'_capabilities';
-		$userMeta->meta_value = serialize(array());
-		$wpUser->meta()->save($userMeta);
-
-		$wpUser->push();
-		return redirect()->route('usersEdit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
-
-		dd('created new user id '.$wpUser->ID);
-
-		// created base user, add user info
-
-		// add user meta
-
-
-
-
-
-
-
-
-		// get user
-		$wpUser = WpUser::with('meta')->find($id);
-
-		// usermeta first_name
-		$userMeta = $wpUser->meta->where('meta_key', 'first_name')->first();
-		if($userMeta) {
-			$userMeta->meta_value = $request->input('first_name');
-			$userMeta->save();
+		// lv roles
+		if(isset($params['roles'])) {
+			$wpUser->roles()->sync($params['roles']);
+		} else {
+			$wpUser->roles()->sync(array());
 		}
 
-		// usermeta last_name
-		$userMeta = $wpUser->meta->where('meta_key', 'last_name')->first();
-		if($userMeta) {
-			$userMeta->meta_value = $request->input('last_name');
-			$userMeta->save();
+		// save meta
+		$userMetaTemplate = $wpUser->userMetaTemplate();
+		foreach($userMetaTemplate as $key => $value) {
+			$userMeta = new WpUserMeta;
+			$userMeta->user_id = $wpUser->ID;
+			$userMeta->meta_key = $key;
+			$userMeta->meta_value = $request->input($key);
+			$wpUser->meta()->save($userMeta);
 		}
 
-		// usermeta nickname
-		$userMeta = $wpUser->meta->where('meta_key', 'nickname')->first();
-		if($userMeta) {
-			$userMeta->meta_value = $request->input('nickname');
-			$userMeta->save();
-		}
-
-		// usermeta description
-		$userMeta = $wpUser->meta->where('meta_key', 'description')->first();
-		if($userMeta) {
-			$userMeta->meta_value = $request->input('description');
-			$userMeta->save();
-		}
-
-		// get user meta primary_blog
-		$userMeta = $wpUser->meta->lists('meta_value', 'meta_key');
-		$primaryBlog = $userMeta['primary_blog'];
-
-		// update role
+		// update role / capabilities (wp)
 		$input = $request->input('role');
-		if(!empty($input)) {
-			$capabilities = $wpUser->meta->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_capabilities')->first();
-			if($capabilities) {
-				$capabilities->meta_value = serialize(array($input => '1'));
-			} else {
-				$capabilities = new WpUserMeta;
-				$capabilities->meta_key = 'wp_' . $primaryBlog . '_capabilities';
-				$capabilities->meta_value = serialize(array($input => '1'));
-				$capabilities->user_id = $id;
-			}
-			$capabilities->save();
-		}
+		$capabilities = new WpUserMeta;
+		$capabilities->meta_key = 'wp_' . $params['primary_blog'] . '_capabilities';
+		$capabilities->meta_value = serialize(array($input => '1'));
+		$capabilities->user_id = $wpUser->ID;
+		$capabilities->save();
+		$capabilities = new WpUserMeta;
+		$capabilities->meta_key = 'wp_' . $params['primary_blog'] . '_user_level';
+		$capabilities->meta_value = '0';
+		$capabilities->user_id = $wpUser->ID;
+		$capabilities->save();
 
 		// update user config
 		$userConfigTemplate = $wpUser->userConfigTemplate();
@@ -279,17 +224,19 @@ class WpUserController extends Controller {
 				$userConfigTemplate[$key] = $request->input($key);
 			}
 		}
-		$userConfig = $wpUser->meta->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_user_config')->first();
+		$userConfig = $wpUser->meta->where('user_id', '=', $wpUser->ID)->where('meta_key', '=', 'wp_' . $params['primary_blog'] . '_user_config')->first();
 		if($userConfig) {
 			$userConfig->meta_value = serialize($userConfigTemplate);
 		} else {
 			$userConfig = new WpUserMeta;
-			$userConfig->meta_key = 'wp_' . $primaryBlog . '_user_config';
+			$userConfig->meta_key = 'wp_' . $params['primary_blog'] . '_user_config';
 			$userConfig->meta_value = serialize($userConfigTemplate);
-			$userConfig->user_id = $id;
+			$userConfig->user_id = $wpUser->ID;
 		}
 		$userConfig->save();
-		//dd($userConfigTemplate);
+
+		$wpUser->push();
+		return redirect()->route('usersEdit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
 
 	}
 
@@ -385,53 +332,39 @@ class WpUserController extends Controller {
 
 		$params = $request->input();
 
+		// the basics
+		$wpUser->user_nicename = $params['user_nicename'];
+		$wpUser->display_name = $params['display_name'];
+		$wpUser->save();
+
 		if(isset($params['roles'])) {
 			$wpUser->roles()->sync($params['roles']);
 		} else {
 			$wpUser->roles()->sync(array());
 		}
 
-		// usermeta first_name
-		$userMeta = $wpUser->meta()->where('meta_key', 'first_name')->first();
-		if($userMeta) {
-			$userMeta->meta_value = $request->input('first_name');
-			$userMeta->save();
+		// save meta
+		$userMetaTemplate = $wpUser->userMetaTemplate();
+		foreach($userMetaTemplate as $key => $value) {
+			$userMeta = $wpUser->meta()->where('meta_key', $key)->first();
+			if(!$userMeta) {
+				$userMeta = new WpUserMeta;
+			}
+			$userMeta->user_id = $wpUser->ID;
+			$userMeta->meta_key = $key;
+			$userMeta->meta_value = $request->input($key);
+			$wpUser->meta()->save($userMeta);
 		}
-
-		// usermeta last_name
-		$userMeta = $wpUser->meta()->where('meta_key', 'last_name')->first();
-		if($userMeta) {
-			$userMeta->meta_value = $request->input('last_name');
-			$userMeta->save();
-		}
-
-		// usermeta nickname
-		$userMeta = $wpUser->meta()->where('meta_key', 'nickname')->first();
-		if($userMeta) {
-			$userMeta->meta_value = $request->input('nickname');
-			$userMeta->save();
-		}
-
-		// usermeta description
-		$userMeta = $wpUser->meta()->where('meta_key', 'description')->first();
-		if($userMeta) {
-			$userMeta->meta_value = $request->input('description');
-			$userMeta->save();
-		}
-
-		// get user meta primary_blog
-		$userMeta = $wpUser->meta()->lists('meta_value', 'meta_key');
-		$primaryBlog = $userMeta['primary_blog'];
 
 		// update role
 		$input = $request->input('role');
 		if(!empty($input)) {
-			$capabilities = $wpUser->meta()->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_capabilities')->first();
+			$capabilities = $wpUser->meta()->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $wpUser->blogId() . '_capabilities')->first();
 			if($capabilities) {
 				$capabilities->meta_value = serialize(array($input => '1'));
 			} else {
 				$capabilities = new WpUserMeta;
-				$capabilities->meta_key = 'wp_' . $primaryBlog . '_capabilities';
+				$capabilities->meta_key = 'wp_' . $wpUser->blogId() . '_capabilities';
 				$capabilities->meta_value = serialize(array($input => '1'));
 				$capabilities->user_id = $id;
 			}
@@ -446,12 +379,12 @@ class WpUserController extends Controller {
 				$userConfigTemplate[$key] = $request->input($key);
 			}
 		}
-		$userConfig = $wpUser->meta()->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $primaryBlog . '_user_config')->first();
+		$userConfig = $wpUser->meta()->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $wpUser->blogId() . '_user_config')->first();
 		if($userConfig) {
 			$userConfig->meta_value = serialize($userConfigTemplate);
 		} else {
 			$userConfig = new WpUserMeta;
-			$userConfig->meta_key = 'wp_' . $primaryBlog . '_user_config';
+			$userConfig->meta_key = 'wp_' . $wpUser->blogId() . '_user_config';
 			$userConfig->meta_value = serialize($userConfigTemplate);
 			$userConfig->user_id = $id;
 		}
@@ -487,12 +420,6 @@ class WpUserController extends Controller {
 		$msgChooser = new MsgChooser;
 		$msgScheduler = new MsgScheduler;
 		$observationService = new ObservationService;
-		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_HSP_20', 'C', 'HSP');
-		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_50', '7', 'RPT'); // bad
-		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_50', '0', 'RPT'); // great
-		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_RPT_40', '175', 'RPT');
-		//$result = $msgChooser->setNextMessage($id, 28715, 'CF_REM_NAG_01', '', 'RPT');
-		//$result = $msgChooser->setNextMessage($id, 29311, 'CF_SOL_MED_BT', 'Y', 'RPT');
 		//dd($result);
 		$wpUser = WpUser::find($id);
 		if(!$wpUser) {
@@ -507,24 +434,7 @@ class WpUserController extends Controller {
 		if(!empty($params)) {
 			if(isset($params['action'])) {
 				if($params['action'] == 'sendTextSimulation') {
-					/*
-					// send text
-					$api = $wpUser->blogId();
-					$msgid = 'xOx';
-					$phone = $userMeta['user_config']['study_phone_number'];
-					$msg = 'Some Text Responseee';
-					$msg = str_replace("'", "''", $msg);
-					// $msg = preg_replace('/[^0-9a-zA-Z \/]/', ' ', urldecode($msg));
-					$msg = preg_replace("/[_]/", "", urldecode($msg)); // remove underscores as they will be used to replace forward slashes
-					$msg = preg_replace("/[\/]/", '_', $msg); // change forward slashes to underscores
-					$msg = preg_replace("/[^0-9a-zA-Z _]/", '', $msg);  // remove all non-alphanumeric characters
-
-					// public function getInboundStream($intBlogId, $hexMoMsgId, $strPhoneNumber, $strResponseMessage)
-					$inboundsms = 'MsgReceiver->getInboundStream(/'.$msgid.'/'.$phone.'/'.str_replace(array(' ',','),array('%20',''),$msg) . ')';
-
-					dd($inboundsms);
-					return redirect()->back()->with('messages', ['successfully did something']);
-					*/
+					// deprecated
 				} else if($params['action'] == 'run_scheduler') {
 					$result = $msgScheduler->index($wpUser->blogId());
 					return response()->json($result);
@@ -579,137 +489,5 @@ class WpUserController extends Controller {
 
 		//return response()->json($cpFeed);
 		return view('wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array(), $messageKey => $messageValue, 'activeDate' => $activeDate]);
-	}
-
-
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function showPatientSummary(Request $request, $id)
-	{
-		$params = $request->all();
-		$detailSection = '';
-		if(isset($params['detail'])) {
-			$detailSection = $params['detail'];
-		}
-
-		$wpUser = WpUser::find($id);
-		if(!$wpUser) {
-			return response("User not found", 401);
-		}
-
-		$sections = array(
-			array('section' => 'obs_biometrics', 'id' => 'obs_biometrics_dtable', 'title' => 'Biometrics', 'col_name_question' => 'Reading Type', 'col_name_severity' => 'Reading'),
-			array('section' => 'obs_medications', 'id' => 'obs_medications_dtable', 'title' => 'Medications', 'col_name_question' => 'Medication', 'col_name_severity' => 'Adherence'),
-			array('section' => 'obs_symptoms', 'id' => 'obs_symptoms_dtable', 'title' => 'Symptoms', 'col_name_question' => 'Symptom', 'col_name_severity' => 'Severity'),
-			array('section' => 'obs_lifestyle', 'id' => 'obs_lifestyle_dtable', 'title' => 'Lifestyle', 'col_name_question' => 'Question', 'col_name_severity' => 'Response'),
-		);
-
-		$observations = Observation::where('user_id' ,'=', $wpUser->ID);
-		$observations->where('obs_unit' ,'!=', "invalid");
-		$observations->where('obs_unit' ,'!=', "scheduled");
-		$observations->orderBy('obs_date' ,'desc');
-		$observations = $observations->get();
-
-		// build array of pcp
-		$obs_by_pcp = array(
-			'obs_biometrics' => array(),
-			'obs_medications' => array(),
-			'obs_symptoms' => array(),
-			'obs_lifestyle' => array(),
-		);
-		foreach($observations as $observation) {
-			if($observation['obs_value'] == '') {
-				//$obs_date = date_create($observation['obs_date']);
-				//if( (($obs_date->format('Y-m-d')) < date("Y-m-d")) && $observation['obs_key'] == 'Call' ) {
-				if( $observation['obs_key'] != 'Call' ) { // skip NR's, which are any obs that has no value (other than call)
-					continue 1;
-				}
-			}
-			$observation['parent_item_text'] = '---';
-			switch ($observation["obs_key"]) {
-				case 'HSP':
-				case 'HSP_ER':
-				case 'HSP_HOSP':
-					break;
-				case 'Blood_Pressure':
-				case 'Blood_Sugar':
-				case 'Cigarettes':
-				case 'Weight':
-					$obs_by_pcp['obs_biometrics'][] = $observation;
-					break;
-				case 'Adherence':
-					$obs_by_pcp['obs_medications'][] = $observation;
-					break;
-				//case 'Symptom':
-				case 'Severity':
-					//$obs_info = $this->cpm_1_7_datamonitor_library->process_alert_obs_severity($user_data_ucp, $observation, $this->get('blog_id'));
-					if(!empty($obs_info['extra_vars']['symptom'])) {
-						$observation['items_text'] = $obs_info['extra_vars']['symptom'];
-						$observation['description'] = $obs_info['extra_vars']['symptom'];
-						$observation['obs_key'] = $obs_info['extra_vars']['symptom'];
-					}
-					$obs_by_pcp['obs_symptoms'][] = $observation;
-					break;
-				case 'Other':
-				case 'Call':
-					// only y/n responses, skip anything that is a number as its assumed it is response to a list
-					if( ($observation['obs_key'] == 'Call') || (!is_numeric($observation['obs_value'])) ) {
-						$obs_by_pcp['obs_lifestyle'][] = $observation;
-					}
-					break;
-				default:
-					break;
-			}
-		}
-
-		// At this point, everything that didnt match went to lifestyle
-		// get array of lifestyle questions, and only include these in obs_lifestyle (also include Call observations!)
-
-		//$lifestyle_questions = $this->rules_model->getQuestionIdsByPCP(2, 7);
-		$lifestyle_questions = array();
-		$lifestyle_msg_ids = array();
-		$filtered_lifestyle_obs = array();
-		foreach($lifestyle_questions as $lifestyle_question) {
-			$lifestyle_msg_ids[] = $lifestyle_question['msg_id'];
-		}
-
-		foreach($obs_by_pcp['obs_lifestyle'] as $lifestyle_obs) {
-			if((($lifestyle_obs['obs_key'] == 'Call')) || (in_array($lifestyle_obs['obs_message_id'], $lifestyle_msg_ids) && $lifestyle_obs['obs_value'] != '')) {
-				$filtered_lifestyle_obs[] = $lifestyle_obs;
-			}
-		}
-		$obs_by_pcp['obs_lifestyle'] = $filtered_lifestyle_obs;
-
-		$observation_json = array();
-		foreach($obs_by_pcp as $section => $observations) {
-			$o=0;
-			$observation_json[$section] = "data:[";
-			foreach ($observations as $observation) {
-				// limit to 3 if not detail
-				if(empty($detailSection)) {
-					if ($o >= 3) {
-						continue 1;
-					}
-				}
-				// lastly format json
-				$observation_json[$section] .= "{ obs_key:'" . $observation->obs_key . "', " .
-					"description:'" . $observation->items_text . '|' . $observation->obs_key . '|'.$observation->legacy_obs_id . "', " .
-					"obs_value:'" . $observation->obs_value . "', " .
-					"dm_alert_level:'default', " .
-					"obs_unit:'" . $observation->obs_unit . "', " .
-					"obs_message_id:'" . $observation->obs_message_id . "', " .
-					"comment_date:'09-04-15 06:43:56', " . "},";
-				$o++;
-			}
-			$observation_json[$section] .= "],";
-		}
-
-		//return response()->json($cpFeed);
-		return view('wpUsers.patient.summary', ['wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json]);
 	}
 }
