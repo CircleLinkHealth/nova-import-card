@@ -95,35 +95,37 @@
 						</li>
 					@endif
 
-					<li role="presentation" class="dropdown">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-							Users <span class="caret"></span>
-						</a>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="{{ action('WpUserController@index') }}">All Users</a></li>
-							<li><a href="{{ url('wpusers/create') }}">Add new</a></li>
-						</ul>
-					</li>
+					@if ( ! Auth::guest())
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+								Users <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ action('WpUserController@index') }}">All Users</a></li>
+								<li><a href="{{ url('wpusers/create') }}">Add new</a></li>
+							</ul>
+						</li>
 
-					<li role="presentation" class="dropdown">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-							Roles<span class="caret"></span>
-						</a>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="{{ url('admin/roles') }}">Roles</a></li>
-							<li><a href="{{ url('admin/permissions') }}">Permissions</a></li>
-						</ul>
-					</li>
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+								Roles<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ url('admin/roles') }}">Roles</a></li>
+								<li><a href="{{ url('admin/permissions') }}">Permissions</a></li>
+							</ul>
+						</li>
 
-					<li role="presentation" class="dropdown">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-							API Settings<span class="caret"></span>
-						</a>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
-							<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
-						</ul>
-					</li>
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+								API Settings<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
+								<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
+							</ul>
+						</li>
+					@endif
 
 				</ul>
 
