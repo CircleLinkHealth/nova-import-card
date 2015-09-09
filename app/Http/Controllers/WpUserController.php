@@ -332,6 +332,11 @@ class WpUserController extends Controller {
 
 		$params = $request->input();
 
+		// the basics
+		$wpUser->user_nicename = $params['user_nicename'];
+		$wpUser->display_name = $params['display_name'];
+		$wpUser->save();
+
 		if(isset($params['roles'])) {
 			$wpUser->roles()->sync($params['roles']);
 		} else {

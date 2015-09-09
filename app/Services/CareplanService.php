@@ -188,7 +188,8 @@ class CareplanService {
 						"MessageID" => $currQuestionInfo->msg_id,
 						"Obs_Key" => $currQuestionInfo->obs_key,
 						"ParentID" => $this->stateAppCommentId,
-						"MessageIcon" => $currQuestionInfo->app_icon,
+						"MessageIcon" => $currQuestionInfo->icon,
+						"MessageCategory" => $currQuestionInfo->category,
 						"MessageContent" => $currQuestionInfo->message,
 						"ReturnFieldType" => $currQuestionInfo->qtype,
 						"ReturnDataRangeLow" => null,
@@ -232,7 +233,8 @@ class CareplanService {
 						"MessageID" => $currQuestionInfo->msg_id,
 						"Obs_Key" => $currQuestionInfo->obs_key,
 						"ParentID" => $this->stateAppCommentId,
-						"MessageIcon" => $currQuestionInfo->app_icon,
+						"MessageIcon" => $currQuestionInfo->icon,
+						"MessageCategory" => $currQuestionInfo->category,
 						"MessageContent" => $currQuestionInfo->message,
 						"ReturnFieldType" => $currQuestionInfo->qtype,
 						"ReturnDataRangeLow" => null,
@@ -266,7 +268,8 @@ class CareplanService {
 				"MessageID" => $currQuestionInfo->msg_id,
 				"Obs_Key" => $currQuestionInfo->obs_key,
 				"ParentID" => $this->stateAppCommentId,
-				"MessageIcon" => $currQuestionInfo->app_icon,
+				"MessageIcon" => $currQuestionInfo->icon,
+				"MessageCategory" => $currQuestionInfo->category,
 				"MessageContent" => 'Adherence Result Msg: '.$currQuestionInfo->message,
 				"ReturnFieldType" => $currQuestionInfo->qtype,
 				"ReturnDataRangeLow" => null,
@@ -314,7 +317,8 @@ class CareplanService {
 							"MessageID" => $currQuestionInfo->msg_id,
 							"Obs_Key" => $currQuestionInfo->obs_key,
 							"ParentID" => $this->stateAppCommentId,
-							"MessageIcon" => $currQuestionInfo->app_icon,
+							"MessageIcon" => $currQuestionInfo->icon,
+							"MessageCategory" => $currQuestionInfo->category,
 							"MessageContent" => $currQuestionInfo->message,
 							"ReturnFieldType" => $currQuestionInfo->qtype,
 							"ReturnDataRangeLow" => null,
@@ -353,7 +357,8 @@ class CareplanService {
 					"MessageID" => $currQuestionInfo->msg_id,
 					"Obs_Key" => $currQuestionInfo->obs_key,
 					"ParentID" => $this->stateAppCommentId,
-					"MessageIcon" => $currQuestionInfo->app_icon,
+					"MessageIcon" => $currQuestionInfo->icon,
+					"MessageCategory" => $currQuestionInfo->category,
 					"MessageContent" => $currQuestionInfo->message,
 					"ReturnFieldType" => 'end',
 					"ReturnDataRangeLow" => null,
@@ -420,7 +425,8 @@ class CareplanService {
 							"MessageID" => $currQuestionInfo->msg_id,
 							"Obs_Key" => $currQuestionInfo->obs_key,
 							"ParentID" => $this->stateAppCommentId,
-							"MessageIcon" => $currQuestionInfo->app_icon,
+							"MessageIcon" => $currQuestionInfo->icon,
+							"MessageCategory" => $currQuestionInfo->category,
 							"MessageContent" => $currQuestionInfo->message,
 							"ReturnFieldType" => $currQuestionInfo->qtype,
 							"ReturnDataRangeLow" => null,
@@ -459,7 +465,8 @@ class CareplanService {
 					"MessageID" => $currQuestionInfo->msg_id,
 					"Obs_Key" => $currQuestionInfo->obs_key,
 					"ParentID" => $this->stateAppCommentId,
-					"MessageIcon" => $currQuestionInfo->app_icon,
+					"MessageIcon" => $currQuestionInfo->icon,
+					"MessageCategory" => $currQuestionInfo->category,
 					"MessageContent" => $currQuestionInfo->message,
 					"ReturnFieldType" => $currQuestionInfo->qtype,
 					"ReturnDataRangeLow" => null,
@@ -514,7 +521,8 @@ class CareplanService {
 							"MessageID" => $currQuestionInfo->msg_id,
 							"Obs_Key" => $currQuestionInfo->obs_key,
 							"ParentID" => $this->stateAppCommentId,
-							"MessageIcon" => $currQuestionInfo->app_icon,
+							"MessageIcon" => $currQuestionInfo->icon,
+							"MessageCategory" => $currQuestionInfo->category,
 							"MessageContent" => $currQuestionInfo->message,
 							"ReturnFieldType" => $currQuestionInfo->qtype,
 							"ReturnDataRangeLow" => null,
@@ -553,7 +561,8 @@ class CareplanService {
 					"MessageID" => $currQuestionInfo->msg_id,
 					"Obs_Key" => $currQuestionInfo->obs_key,
 					"ParentID" => $this->stateAppCommentId,
-					"MessageIcon" => $currQuestionInfo->app_icon,
+					"MessageIcon" => $currQuestionInfo->icon,
+					"MessageCategory" => $currQuestionInfo->category,
 					"MessageContent" => $currQuestionInfo->message,
 					"ReturnFieldType" => $currQuestionInfo->qtype,
 					"ReturnDataRangeLow" => null,
@@ -576,7 +585,7 @@ class CareplanService {
 	 * @return array
      */
 	public function getScheduledDMS($programId, $userId, $date, $obsKey) {
-		$query = DB::connection('mysql_no_prefix')->table('lv_observations AS o')->select('o.*', 'rules_questions.*', 'rules_items.*', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en', 'imico.meta_value AS app_icon')
+		$query = DB::connection('mysql_no_prefix')->table('lv_observations AS o')->select('o.*', 'rules_questions.*', 'rules_items.*', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en')
 			->join('rules_questions', 'rules_questions.msg_id', '=', 'o.obs_message_id')
 			->join('rules_items', 'rules_items.qid', '=', 'rules_questions.qid')
 			->join('rules_itemmeta as imsms', function ($join) {
@@ -584,9 +593,6 @@ class CareplanService {
 			})
 			->leftJoin('rules_itemmeta as imapp', function ($join) {
 				$join->on('imapp.items_id', '=', 'rules_items.items_id')->where('imapp.meta_key', '=', 'APP_EN');
-			})
-			->leftJoin('rules_itemmeta as imico', function ($join) {
-				$join->on('imico.items_id', '=', 'rules_items.items_id')->where('imico.meta_key', '=', 'app_icon');
 			})
 			->join('rules_pcp', 'rules_pcp.pcp_id', '=', 'rules_items.pcp_id')
 			->join('wp_' . $programId . '_comments as cm', 'cm.comment_id', '=', 'o.comment_id')
@@ -614,7 +620,7 @@ class CareplanService {
 	public function getScheduledSymptoms() {
 		// query
 		$query = DB::connection('mysql_no_prefix')->table('rules_ucp AS rucp');
-		$query->select('rucp.*', 'rq.*', 'pcp.pcp_id', 'pcp.section_text', 'i.qid', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rucp.meta_value as status', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en', 'imico.meta_value AS app_icon');
+		$query->select('rucp.*', 'rq.*', 'pcp.pcp_id', 'pcp.section_text', 'i.qid', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rucp.meta_value as status', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en');
 		$query->where('user_id', '=', $this->wpUser->ID);
 		$query->join('rules_items AS i', 'i.items_id', '=', 'rucp.items_id');
 		$query->leftJoin('rules_items AS rip', 'i.items_parent', '=', 'rip.items_id'); // parent item info
@@ -627,9 +633,6 @@ class CareplanService {
 		});
 		$query->leftJoin('rules_itemmeta as imapp', function ($join) {
 			$join->on('imapp.items_id', '=', 'i.items_id')->where('imapp.meta_key', '=', 'APP_EN');
-		});
-		$query->leftJoin('rules_itemmeta as imico', function ($join) {
-			$join->on('imico.items_id', '=', 'i.items_id')->where('imico.meta_key', '=', 'app_icon');
 		});
 		$query->leftJoin('rules_questions AS rq', 'rq.qid', '=', 'i.qid');
 		$query->leftJoin('rules_questions AS rqp', 'rqp.qid', '=', 'rip.qid'); // parent question info

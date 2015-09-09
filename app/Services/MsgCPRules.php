@@ -143,7 +143,7 @@ class MsgCPRules {
         // remove leading and trailing spaces for msgId
         $strMsgId = trim($strMsgId);
 
-        $query = "select q.qid, q.msg_id, q.qtype, im.meta_key as msgtype, im.meta_value as message, q.obs_key,
+        $query = "select q.qid, q.msg_id, q.icon, q.category, q.qtype, im.meta_key as msgtype, im.meta_value as message, q.obs_key,
 if(isnull(p.meta_value), ',,', p.meta_value) as cdays,
 ifnull(u2.meta_value, 'Inactive') as ucp_status,
 ifnull(im2.meta_value, 'Inactive') as pcp_status, qs.action, imico.meta_value AS app_icon
