@@ -8,7 +8,7 @@ Route::get('/email', function () {
 	$data = [
 		'title'=>'Email'
 	];
-	Mail::send('emails.newnote', $data, function($message) {
+	Mail::send('emails.test', $data, function($message) {
 		$message->from('no-reply@careplanmanager.com', 'CircleLink Health');
 		$message->to('philiplawlor@gmail.com')->subject('You have a new note!!');
 	});
