@@ -9,7 +9,7 @@
       "Clinic_Name": "Crisfield Clinic"
     },
     {
-      "Section": "We Are Treating:",
+      "Section": "We Are Treating",
       "Data": [
         {
           "name": "Hypertension"
@@ -44,21 +44,21 @@
       ]
     },
     {
-      "Section": "Your Health Goals:",
+      "Section": "Your Health Goals",
       "Data": [
         {
-          "name": "Lower Blood Pressure to 120/80 mm Hg from 140/70 mm Hg"
+          "name": "<B>Lower Blood Pressure to 120/80 mm Hg</B> from 140/70 mm Hg"
         },
         {
-          "name": "Raise Blood Sugar to 200 mg/dl from 135 mg/dl"
+          "name": "<B>Raise Blood Sugar to 200 mg/dl</B> from 135 mg/dl"
         },
         {
-          "name": "Gain Weight to 340 lbs from 252 lbs"
+          "name": "<B>Gain Weight to 340 lbs</B> from 252 lbs"
         }
       ]
     },
     {
-      "Section": "Medications:",
+      "Section": "Medications",
       "Data": [
         {
           "SubSection": "Monitoring these Medications",
@@ -90,7 +90,7 @@
           ]
         },
         {
-          "SubSection": "Taking these medications:",
+          "SubSection": "Taking these medications",
           "Data": [
             {
               "name": "Plavix"
@@ -103,7 +103,7 @@
       ]
     },
     {
-      "Section": "Watch up for:",
+      "Section": "Watch out for",
       "Data": [
         {
           "name": "Shortness of breath"
@@ -120,7 +120,7 @@
       ]
     },
     {
-      "Section": "We Are Informing You About:",
+      "Section": "We Are Informing You About",
       "Data": [
         {
           "name": "Healthy Diet"
@@ -137,7 +137,7 @@
       ]
     },
     {
-      "Section": "Check In Plan:",
+      "Section": "Check In Plan",
       "Data": [
         {
           "Summary": "We will check in with you at 203-385-2176 every day at 09:15 am"
@@ -170,7 +170,7 @@
       ]
     },
     {
-      "Section": "Follow these Instructions:",
+      "Section": "Follow these Instructions",
       "Data": [
         {
           "name":"For Hypertension:", "comment": "Nothing"
@@ -205,7 +205,7 @@
       ]
     },
     {
-      "Section": "Other Information:",
+      "Section": "Other Information",
       "Data": [
         {
           "name":"Allergies:", "comment": "Nothing"
