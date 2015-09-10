@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\Services\MsgUI;
 use Illuminate\Database\Eloquent\Model;
 
 class CPRulesQuestions extends Model {
@@ -30,12 +31,26 @@ class CPRulesQuestions extends Model {
      *
      * @var array
      */
-    protected $fillable = ['qid', 'msg_id', 'qtype', 'obs_key', 'description'];
+    protected $fillable = ['qid', 'msg_id', 'qtype', 'obs_key', 'description', 'icon', 'category'];
+
+    public $timestamps = false;
 
 
     public function items()
     {
         return $this->hasMany('App\CPRulesItem', 'qid');
+    }
+
+
+    public function iconHtml()
+    {
+        $html = '';
+        $msgUI = new MsgUI;
+        $msgIcon = $msgUI->getMsgIcon($this->icon);
+        if(!empty($msgIcon)) {
+            $html = "<i style='color:" . $msgIcon['color'] . "' class='fa fa-2x fa-" . $msgIcon['icon'] . "'></i>";
+        }
+        return $html;
     }
 
 }

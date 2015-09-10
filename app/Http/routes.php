@@ -101,6 +101,14 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'admin.permissions.update']);
 		Route::get('permissions/{id}/careplan', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissions.careplan']);
 
+		Route::get('questions', ['uses' =>'Admin\CPRQuestionController@index', 'as'=>'admin.questions']);
+		Route::get('questions/create', ['uses' =>'Admin\CPRQuestionController@create', 'as'=>'admin.questions.create']);
+		Route::post('questions/create', ['uses' =>'Admin\CPRQuestionController@store', 'as'=>'admin.questions.store']);
+		Route::get('questions/{id}', ['uses' =>'Admin\CPRQuestionController@show', 'as'=>'admin.questions.show']);
+		Route::get('questions/{id}/edit', ['uses' =>'Admin\CPRQuestionController@edit', 'as'=>'admin.questions.edit']);
+		Route::post('questions/{id}/edit', ['uses' =>'Admin\CPRQuestionController@update', 'as'=>'admin.questions.update']);
+		Route::get('questions/{id}/destroy', ['uses' =>'Admin\CPRQuestionController@destroy', 'as'=>'admin.questions.destroy']);
+
 		Route::get('programs', ['uses' =>'Admin\WpBlogController@index', 'as'=>'admin.programs']);
 		Route::get('programs/{id}', ['uses' =>'Admin\WpBlogController@show', 'as'=>'admin.programs.show']);
 		Route::get('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@edit', 'as'=>'admin.programs.edit']);
