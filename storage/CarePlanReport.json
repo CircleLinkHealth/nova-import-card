@@ -9,8 +9,8 @@
       "Clinic_Name": "Crisfield Clinic"
     },
     {
-      "Section":"We Are Treating:",
-      "Data":[
+      "Section": "We Are Treating:",
+      "Data": [
         {
           "name": "Hypertension"
         },
@@ -44,30 +44,25 @@
       ]
     },
     {
-      "Section":"Your Health Goals:",
-      "Data":[
+      "Section": "Your Health Goals:",
+      "Data": [
         {
-          "Goal": "Lower Blood Pressure",
-          "to": "120/80 mm Hg",
-          "from": "140/70 mm Hg"
+          "name": "Lower Blood Pressure to 120/80 mm Hg from 140/70 mm Hg"
         },
         {
-          "Goal": "Raise Blood Sugar",
-          "to": "200 mg/dl",
-          "from": "135 mg/dl"
+          "name": "Raise Blood Sugar to 200 mg/dl from 135 mg/dl"
         },
         {
-          "Goal": "Gain Weight",
-          "to": "340 lbs",
-          "from": "252 lbs"
+          "name": "Gain Weight to 340 lbs from 252 lbs"
         }
       ]
     },
     {
-      "Section":"Medications:",
-      "Data":[
+      "Section": "Medications:",
+      "Data": [
         {
-          "Monitoring these Medications": [
+          "SubSection": "Monitoring these Medications",
+          "Data": [
             {
               "name": "Blood Pressure Meds"
             },
@@ -95,8 +90,8 @@
           ]
         },
         {
-          "Section":"Taking these medications:",
-          "Data":[
+          "SubSection": "Taking these medications:",
+          "Data": [
             {
               "name": "Plavix"
             },
@@ -108,8 +103,8 @@
       ]
     },
     {
-      "Section":"Watch up for:",
-      "Data":[
+      "Section": "Watch up for:",
+      "Data": [
         {
           "name": "Shortness of breath"
         },
@@ -125,8 +120,8 @@
       ]
     },
     {
-      "Section":"We Are Informing You About:",
-      "Data":[
+      "Section": "We Are Informing You About:",
+      "Data": [
         {
           "name": "Healthy Diet"
         },
@@ -142,90 +137,90 @@
       ]
     },
     {
-      "Section":"Check In Plan:",
-      "Data":[
+      "Section": "Check In Plan:",
+      "Data": [
         {
           "Summary": "We will check in with you at 203-385-2176 every day at 09:15 am"
         },
         {
           "Details": [
             {
-              "Sun": "09:15 am"
+              "day":"Sun", "time": "09:15 am"
             },
             {
-              "Mon": "09:15 am"
+              "day":"Mon", "time": "09:15 am"
             },
             {
-              "Tue": "09:15 am"
+              "day":"Tue", "time": "09:15 am"
             },
             {
-              "Wed": "09:15 am"
+              "day":"Wed", "time": "09:15 am"
             },
             {
-              "Thu": "09:15 am"
+              "day":"Thu", "time": "09:15 am"
             },
             {
-              "Fri": "09:15 am"
+              "day":"Fri", "time": "09:15 am"
             },
             {
-              "Sat": "09:15 am"
+              "day":"Sat", "time": "09:15 am"
             }
           ]
         }
       ]
     },
     {
-      "Section":"Follow these Instructions:",
-      "Data":[
+      "Section": "Follow these Instructions:",
+      "Data": [
         {
-          "For Hypertension:": "Nothing"
+          "name":"For Hypertension:", "comment": "Nothing"
         },
         {
-          "For High Cholesterol:": "Nothing"
+          "name":"For High Cholesterol:", "comment": "Nothing"
         },
         {
-          "For CAD:": "Nothing"
+          "name":"For CAD:", "comment": "Nothing"
         },
         {
-          "For CHF:": "report any sudden weight changes, moderate exersize per plan only"
+          "name":"For CHF:", "comment": "report any sudden weight changes, moderate exersize per plan only"
         },
         {
-          "For Afib:": "Remember to take your meds"
+          "name":"For Afib:", "comment": "Remember to take your meds"
         },
         {
-          "For Diabetes:": "Nothing"
+          "name":"For Diabetes:", "comment": "Nothing"
         },
         {
-          "For Asthma--COPD:": "Nothing"
+          "name":"For Asthma--COPD:", "comment": "Nothing"
         },
         {
-          "For Depression:": "Stay active, get lots of sun during warm weather"
+          "name":"For Depression:", "comment": "Stay active, get lots of sun during warm weather"
         },
         {
-          "For Other Conditions:": "OCD"
+          "name":"For Other Conditions:", "comment": "OCD"
         },
         {
-          "For Smoking:": "Try one less per week"
+          "name":"For Smoking:", "comment": "Try one less per week"
         }
       ]
     },
     {
-      "Section":"Other Information:",
-      "Data":[
+      "Section": "Other Information:",
+      "Data": [
         {
-          "Allergies:": "Nothing"
+          "name":"Allergies:", "comment": "Nothing"
         },
         {
-          "Social Services:": "Nothing"
+          "name":"Social Services:", "comment": "Nothing"
         },
         {
-          "Care Team:": "Dr T Learey,  Dr J Adler"
+          "name":"Care Team:", "comment": "Dr T Learey,  Dr J Adler"
         },
         {
-          "Appointments:": "Every two weeks"
+          "name":"Appointments:", "comment": "Every two weeks"
         },
         {
-          "Other Notes:": "Spend some time outdoors doing moderate exersize"
+          "name":"Other Notes:", "comment": "Spend some time outdoors doing moderate exersize"
         }
       ]
     }
