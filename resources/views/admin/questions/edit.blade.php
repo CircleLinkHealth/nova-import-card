@@ -33,7 +33,7 @@
                             <tbody>
                                 <tr>
                                     <td><a href="{{ URL::route('admin.questions.show', array('id' => $question->qid)) }}" class="btn btn-primary">{{ $question->qid }} Detail</a></td>
-                                    <td>{{ $question->msg_id }}</td>
+                                    <td><div class="btn btn-orange btn-xs">{{ $question->msg_id }}</div></td>
                                     <td>{{ $question->qtype }}</td>
                                     <td>{{ $question->obs_key }}</td>
                                     <td>{!! $question->iconHtml() !!}</td>

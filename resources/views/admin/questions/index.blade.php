@@ -40,13 +40,12 @@
                             @foreach( $questions as $question )
                                 <tr>
                                     <td><a href="{{ URL::route('admin.questions.show', array('id' => $question->qid)) }}" class="btn btn-primary">Detail</a></td>
-                                    <td>{{ $question->msg_id }}</td>
+                                    <td><div class="btn btn-orange btn-xs">{{ $question->msg_id }}</div></td>
                                     <td>{{ $question->qtype }}</td>
                                     <td>{{ $question->obs_key }}</td>
                                     <td>{!! $question->iconHtml() !!}</td>
                                     <td>{{ $question->category }}</td>
-                                    <td><a href="{{ URL::route('admin.questions.edit', array('id' => $question->qid)) }}" class="btn btn-primary">Edit</a></td>
-                                    <td><a href="{{ URL::route('admin.questions.destroy', array('id' => $question->qid)) }}" class="btn btn-warning">Remove</a></td>
+                                    <td><a href="{{ URL::route('admin.questions.edit', array('id' => $question->qid)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.questions.destroy', array('id' => $question->qid)) }}" class="btn btn-warning">Remove</a></td>
                                 </tr>
                             @endforeach
                             </tbody>

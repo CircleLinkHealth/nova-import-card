@@ -31,7 +31,7 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td>{{ $question->msg_id }}</td>
+                                <td><div class="btn btn-orange btn-xs">{{ $question->msg_id }}</div></td>
                                 <td>{{ $question->qtype }}</td>
                                 <td>{{ $question->obs_key }}</td>
                                 <td>{!! $question->iconHtml() !!}</td>
