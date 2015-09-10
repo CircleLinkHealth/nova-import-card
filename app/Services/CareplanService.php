@@ -168,7 +168,6 @@ class CareplanService {
 
 		$dsmObs = array();
 		$dsmAdherenceObs = array();
-		$dsmAdherenceObs = array();
 		$o = 0;
 		$msgChooser = new MsgChooser;
 		$msgCPRules = new MsgCPRules;
@@ -595,7 +594,7 @@ class CareplanService {
 				$join->on('imapp.items_id', '=', 'rules_items.items_id')->where('imapp.meta_key', '=', 'APP_EN');
 			})
 			->join('rules_pcp', 'rules_pcp.pcp_id', '=', 'rules_items.pcp_id')
-			->join('wp_' . $programId . '_comments as cm', 'cm.comment_id', '=', 'o.comment_id')
+			->join('lv_comments as cm', 'cm.id', '=', 'o.comment_id')
 			->where('o.user_id', '=', $userId)
 			->where('obs_unit', '=', 'scheduled')
 			->whereRaw("o.obs_key IN ('$obsKey')")
