@@ -125,7 +125,7 @@
             "ReturnValidAnswers": null,
             "PatientAnswer": "125/86",
             "ResponseDate": "2015-07-01 09:48:42",
-            "Response": [{
+            "Response": {
               "MessageID": "CF_RPT_BP_10",
               "Obs_Key": "Other",
               "ParentID": "601",
@@ -139,7 +139,7 @@
               "PatientAnswer": null,
               "ResponseDate": null
             }
-          ]},
+          },
           {
             "MessageID": "CF_RPT_30",
             "Obs_Key": "Blood_Sugar",
