@@ -52,51 +52,6 @@
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
 				<ul class="nav navbar-nav">
-					@if ( ! Auth::guest() && Auth::user()->hasRole(['administrator']))
-						<li><a href="{{ action('ApiKeyController@index') }}">API Keys</a></li>
-
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								Locations <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ action('LocationController@index') }}">All locations</a></li>
-								<li><a href="{{ action('LocationController@create') }}">Add new</a></li>
-							</ul>
-						</li>
-
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								Activities <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ url('activities/') }}">Activities Log</a></li>
-								<li><a href="{{ action('PageTimerController@index') }}">Page Timer Log</a></li>
-							</ul>
-						</li>
-
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								Rules <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ action('RulesController@index') }}">Rules</a></li>
-								<li><a href="{{ url('rules/create/') }}">Add new</a></li>
-							</ul>
-						</li>
-
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								Programs <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ action('Admin\WpBlogController@index') }}">Programs</a></li>
-								<li><a href="{{ url('admin/questions') }}">Questions</a></li>
-								<li><a href="{{ url('admin/observations') }}">Observations</a></li>
-							</ul>
-						</li>
-					@endif
-
 					@if ( ! Auth::guest())
 						<li role="presentation" class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
@@ -107,7 +62,6 @@
 								<li><a href="{{ url('wpusers/create') }}">Add new</a></li>
 							</ul>
 						</li>
-
 						<li role="presentation" class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
 								Roles<span class="caret"></span>
@@ -117,12 +71,44 @@
 								<li><a href="{{ url('admin/permissions') }}">Permissions</a></li>
 							</ul>
 						</li>
+					@endif
 
+					@if ( ! Auth::guest() && Auth::user()->hasRole(['administrator']))
 						<li role="presentation" class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								API Settings<span class="caret"></span>
+								Programs <span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ action('Admin\WpBlogController@index') }}">Programs</a></li>
+								<li><a href="{{ action('LocationController@index') }}">Locations</a></li>
+								<li><a href="{{ url('admin/questions') }}">Questions</a></li>
+								<li><a href="{{ url('admin/observations') }}">Observations</a></li>
+							</ul>
+						</li>
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+								Activities <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ url('activities/') }}">Activities</a></li>
+								<li><a href="{{ action('PageTimerController@index') }}">Page Timer</a></li>
+							</ul>
+						</li>
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+								Rules <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ action('RulesController@index') }}">Rules</a></li>
+								<li><a href="{{ url('rules/create/') }}">Add new</a></li>
+							</ul>
+						</li>
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+								API<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ action('ApiKeyController@index') }}">API Keys</a></li>
 								<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
 								<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
 							</ul>

@@ -26,7 +26,7 @@ class LocationController extends Controller {
 				return response("Locations not found", 401);
 			}
 		} else {
-			return view('locations.show', [
+			return view('locations.index', [
 				'locationParents' => Location::getAllParents(),
 				'locationSubs' => Location::getNonRootLocations(),
 				'locationParentsSubs' => Location::getParentsSubs($request)
