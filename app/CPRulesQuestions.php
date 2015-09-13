@@ -41,6 +41,11 @@ class CPRulesQuestions extends Model {
         return $this->hasMany('App\CPRulesItem', 'qid');
     }
 
+    public function observations()
+    {
+        return $this->hasMany('App\Observation', 'msg_id', 'obs_message_id');
+    }
+
 
     public function iconHtml()
     {

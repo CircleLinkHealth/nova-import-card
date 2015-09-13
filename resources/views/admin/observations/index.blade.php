@@ -44,15 +44,15 @@
                             @foreach( $observations as $observation )
                                 <tr>
                                     <td><a href="{{ URL::route('admin.observations.show', array('id' => $observation->id)) }}" class="btn btn-primary">{{ $observation->id }}</a></td>
-                                    <td><div class="btn btn-orange btn-xs">{{ $observation->obs_message_id }}</div></td>
-                                    <td>{{ $observation->user_id }}</td>
+                                    <td><a href="{{ URL::route('admin.questions.show', array('id' => $observation->question->qid)) }}" class="btn btn-orange btn-xs">{{ $observation->obs_message_id }}</a></td>
+                                    <td><a href="{{ URL::route('usersEdit', array('id' => $observation->user_id)) }}" class="btn btn-orange btn-xs">{{ $observation->user_id }}</a></td>
                                     <td>{{ $observation->sequence_id }}</td>
                                     <td>{{ $observation->obs_date }}</td>
                                     <td>{{ $observation->obs_key }}</td>
                                     <td>{{ $observation->obs_method }}</td>
                                     <td>{{ $observation->obs_value }}</td>
                                     <td>{{ $observation->obs_unit }}</td>
-                                    <td>{{ $observation->program_id }}</td>
+                                    <td><a href="{{ URL::route('admin.programs.show', array('id' => $observation->program_id)) }}" class="btn btn-orange btn-xs">{{ $observation->program_id }}</a></td>
                                     <td><a href="{{ URL::route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.observations.destroy', array('id' => $observation->id)) }}" class="btn btn-warning">Remove</a></td>
                                 </tr>
                             @endforeach

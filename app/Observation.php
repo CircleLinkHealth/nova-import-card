@@ -54,6 +54,11 @@ class Observation extends Model {
         return $this->hasMany('App\ObservationMeta', 'user_id', 'ID');
     }
 
+    public function question()
+    {
+        return $this->belongsTo('App\CPRulesQuestions', 'obs_message_id', 'msg_id');
+    }
+
 
     public function getObservation($obs_id)
     {
