@@ -109,6 +109,14 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::post('questions/{id}/edit', ['uses' =>'Admin\CPRQuestionController@update', 'as'=>'admin.questions.update']);
 		Route::get('questions/{id}/destroy', ['uses' =>'Admin\CPRQuestionController@destroy', 'as'=>'admin.questions.destroy']);
 
+		Route::get('observations', ['uses' =>'Admin\ObservationController@index', 'as'=>'admin.observations']);
+		Route::get('observations/create', ['uses' =>'Admin\ObservationController@create', 'as'=>'admin.observations.create']);
+		Route::post('observations/create', ['uses' =>'Admin\ObservationController@store', 'as'=>'admin.observations.store']);
+		Route::get('observations/{id}', ['uses' =>'Admin\ObservationController@show', 'as'=>'admin.observations.show']);
+		Route::get('observations/{id}/edit', ['uses' =>'Admin\ObservationController@edit', 'as'=>'admin.observations.edit']);
+		Route::post('observations/{id}/edit', ['uses' =>'Admin\ObservationController@update', 'as'=>'admin.observations.update']);
+		Route::get('observations/{id}/destroy', ['uses' =>'Admin\ObservationController@destroy', 'as'=>'admin.observations.destroy']);
+
 		Route::get('programs', ['uses' =>'Admin\WpBlogController@index', 'as'=>'admin.programs']);
 		Route::get('programs/{id}', ['uses' =>'Admin\WpBlogController@show', 'as'=>'admin.programs.show']);
 		Route::get('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@edit', 'as'=>'admin.programs.edit']);
