@@ -84,7 +84,7 @@ class ActivityService {
 		for($i = 0; $i < count($careteam); $i++){
 			$provider_user = WpUser::find($careteam[$i]);
 			$email = $provider_user->user_email;
-			$performed_at = Carbon::parse($performed_at)->diffForHumans();;
+			$performed_at = Carbon::parse($performed_at)->diffForHumans();
 			$data = array(
 				'patient_name' => $user->display_name,
 				'url' => $url,
