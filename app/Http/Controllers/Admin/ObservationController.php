@@ -1,6 +1,8 @@
 <?php namespace App\Http\Controllers\Admin;
 
+use App\WpUser;
 use App\Observation;
+use App\Role;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -17,8 +19,36 @@ class ObservationController extends Controller {
 	public function index(Request $request)
 	{
 		// display view
-		$observations = Observation::OrderBy('id', 'desc')->limit('100')->get();
-		return view('admin.observations.index', [ 'observations' => $observations ]);
+		$observations = Observation::OrderBy('id', 'desc')->limit('100');
+		$users = WpUser::OrderBy('ID', 'desc')->limit('100')->get();
+
+		// FILTERS
+		$params = $request->all();
+
+		// filter user
+		$users = WpUser::OrderBy('id', 'desc')->get()->lists('ID', 'ID');
+		$filterUser = 'all';
+		if(!empty($params['filterUser'])) {
+			$filterUser = $params['filterUser'];
+			if($params['filterUser'] != 'all') {
+				$observations = $observations->whereHas('user', function($q) use ($filterUser){
+					$q->where('ID', '=', $filterUser);
+				});
+			}
+		}
+
+		// filter key
+		$obsKeys = array('Severity' => 'Severity', 'Other' => 'Other', 'Blood_Pressure' => 'Blood_Pressure', 'Blood_Sugar' => 'Blood_Sugar', 'Cigarettes' => 'Cigarettes', 'Weight' => 'Weight', 'Adherence' => 'Adherence');
+		$filterObsKey = 'all';
+		if(!empty($params['filterObsKey'])) {
+			$filterObsKey = $params['filterObsKey'];
+			if($params['filterObsKey'] != 'all') {
+				$observations = $observations->where('obs_key', '=', $filterObsKey);
+			}
+		}
+		$observations = $observations->paginate(10);
+
+		return view('admin.observations.index', [ 'observations' => $observations, 'users' => $users, 'filterUser' => $filterUser, 'obsKeys' => $obsKeys, 'filterObsKey' => $filterObsKey ]);
 	}
 
 	/**

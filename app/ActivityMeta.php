@@ -7,7 +7,19 @@ class ActivityMeta extends Model {
 
     use SoftDeletes;
 
-    protected $table = 'activitymeta';
+    /**
+     * The connection name for the model.
+     *
+     * @var string
+     */
+    protected $connection = 'mysql_no_prefix';
+
+    /**
+     * The database table used by the model.
+     * @SWG\Property()
+     * @var string
+     */
+    protected $table = 'lv_activitymeta';
 
     /**
      * The attributes that are mass assignable.

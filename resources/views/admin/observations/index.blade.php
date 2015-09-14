@@ -24,6 +24,31 @@
                     <div class="panel-heading">All Observations</div>
                     <div class="panel-body">
                         @include('errors.errors')
+
+                        <div class="row">
+                            {!! Form::open(array('url' => URL::route('admin.observations', array()), 'class' => 'form-horizontal')) !!}
+                        </div>
+
+                        <h3>Filter</h3>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-2">{!! Form::label('filterUser', 'User:') !!}</div>
+                                <div class="col-xs-4">{!! Form::select('filterUser', array('all' => 'All Users') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                <div class="col-xs-2">{!! Form::label('filterObsKey', 'Obs Key:') !!}</div>
+                                <div class="col-xs-4">{!! Form::select('filterObsKey', array('all' => 'All') + $obsKeys, $filterObsKey, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:50px;">
+                            <div class="col-sm-12">
+                                <div class="" style="text-align:center;">
+                                    {!! Form::hidden('action', 'filter') !!}
+                                    {!! Form::submit('Apply Filters', array('class' => 'btn btn-orange')) !!}
+                                    {!! Form::submit('Reset Filters', array('class' => 'btn btn-orange')) !!}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -44,7 +69,11 @@
                             @foreach( $observations as $observation )
                                 <tr>
                                     <td><a href="{{ URL::route('admin.observations.show', array('id' => $observation->id)) }}" class="btn btn-primary">{{ $observation->id }}</a></td>
-                                    <td><a href="{{ URL::route('admin.questions.show', array('id' => $observation->question->qid)) }}" class="btn btn-orange btn-xs">{{ $observation->obs_message_id }}</a></td>
+                                    @if( isset($observation->question->qid) )
+                                        <td><a href="{{ URL::route('admin.questions.show', array('id' => $observation->question->qid)) }}" class="btn btn-orange btn-xs">{{ $observation->obs_message_id }}</a></td>
+                                    @else
+                                        <td>{{ $observation->obs_message_id }}</td>
+                                    @endif
                                     <td><a href="{{ URL::route('usersEdit', array('id' => $observation->user_id)) }}" class="btn btn-orange btn-xs">{{ $observation->user_id }}</a></td>
                                     <td>{{ $observation->sequence_id }}</td>
                                     <td>{{ $observation->obs_date }}</td>
@@ -58,6 +87,7 @@
                             @endforeach
                             </tbody>
                         </table>
+                        {!! $observations->appends(['action' => 'filter', 'filterUser' => $filterUser])->render() !!}
                     </div>
                 </div>
             </div>

@@ -113,6 +113,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('questions/{id}/destroy', ['uses' =>'Admin\CPRQuestionController@destroy', 'as'=>'admin.questions.destroy']);
 
 		Route::get('observations', ['uses' =>'Admin\ObservationController@index', 'as'=>'admin.observations']);
+		Route::post('observations', 'Admin\ObservationController@index');
 		Route::get('observations/create', ['uses' =>'Admin\ObservationController@create', 'as'=>'admin.observations.create']);
 		Route::post('observations/create', ['uses' =>'Admin\ObservationController@store', 'as'=>'admin.observations.store']);
 		Route::get('observations/{id}', ['uses' =>'Admin\ObservationController@show', 'as'=>'admin.observations.show']);

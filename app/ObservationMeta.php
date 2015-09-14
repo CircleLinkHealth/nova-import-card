@@ -12,14 +12,14 @@ class ObservationMeta extends Model {
      *
      * @var string
      */
-    //protected $connection = 'mysql_no_prefix';
+    protected $connection = 'mysql_no_prefix';
 
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'observationmeta';
+    protected $table = 'lv_observationmeta';
 
     /**
      * The primary key for the model.
