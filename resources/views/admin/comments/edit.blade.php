@@ -23,46 +23,28 @@
                             <thead>
                                 <tr>
                                     <td></td>
-                                    <td><strong>obs_msg_id</strong></td>
                                     <td><strong>user_id</strong></td>
-                                    <td><strong>sequence_id</strong></td>
-                                    <td><strong>obs_date</strong></td>
-                                    <td><strong>obs_key</strong></td>
-                                    <td><strong>obs_method</strong></td>
-                                    <td><strong>obs_value</strong></td>
-                                    <td><strong>obs_unit</strong></td>
-                                    <td><strong>program_id</strong></td>
+                                    <td><strong>author</strong></td>
+                                    <td><strong>date</strong></td>
+                                    <td><strong>type</strong></td>
+                                    <td><strong>program</strong></td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td><a href="{{ URL::route('admin.comments.show', array('id' => $comment->id)) }}" class="btn btn-primary">{{ $comment->qid }} Detail</a></td>
-                                    <td><div class="btn btn-orange btn-xs">{{ $comment->obs_message_id }}</div></td>
-                                    <td>{{ $comment->user_id }}</td>
-                                    <td>{{ $comment->sequence_id }}</td>
-                                    <td>{{ $comment->obs_date }}</td>
-                                    <td>{{ $comment->obs_key }}</td>
-                                    <td>{{ $comment->obs_method }}</td>
-                                    <td>{{ $comment->obs_value }}</td>
-                                    <td>{{ $comment->obs_unit }}</td>
-                                    <td>{{ $comment->program_id }}</td>
+                                    <td><a href="{{ URL::route('usersEdit', array('id' => $comment->user_id)) }}" class="btn btn-orange btn-xs">{{ $comment->user_id }}</a></td>
+                                    <td>{{ $comment->comment_author }}</td>
+                                    <td>{{ $comment->comment_date }}</td>
+                                    <td>{{ $comment->comment_type }}</td>
+                                    <td><a href="{{ URL::route('admin.programs.show', array('id' => $comment->program_id)) }}" class="btn btn-orange btn-xs">{{ $comment->program_id }}</a></td>
                                 </tr>
                             </tbody>
                         </table>
 
                         <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('obs_message_id', 'Msg ID:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('obs_message_id', $comment->obs_message_id, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('comment_id', 'Comment Id:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('comment_id', $comment->comment_id, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('obs_key', 'Obs Key:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('obs_key', $comment->obs_key, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-2">{!! Form::label('comment_content', 'Comment Content:') !!}</div>
+                            <div class="col-sm-12">{!! Form::textarea('comment_content',$comment->comment_content,['class'=>'form-control', 'rows' => 4, 'cols' => 10]) !!}</div>
                         </div>
 
 

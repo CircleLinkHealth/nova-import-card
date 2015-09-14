@@ -33,7 +33,7 @@
                                 <td><strong>date</strong></td>
                                 <td><strong>type</strong></td>
                                 <td><strong>program</strong></td>
-                                <td></td>
+                                <td><strong>actions</strong></td>
                             </tr>
                             </thead>
                             <tbody>
