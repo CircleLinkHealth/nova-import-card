@@ -10,11 +10,11 @@ Route::get('/email', function () {
 	$data = [
 		'title'=>'Email'
 	];
-	$activity = Activity::find(1083);
+	$activity = Activity::find(1010);
 	$linkToNote = '';
 	$activityService = new \App\Services\ActivityService();
-	$t = ['0' => '330'];
-	$result = $activityService->sendNoteToCareTeam($t,$linkToNote,'2015-09-10 15:20:21',300,null, true);
+	$t = ['0' => '391'];
+	$result = $activityService->sendNoteToCareTeam($t,$linkToNote,'2015-09-10 15:20:21',308,null, true);
 	return Redirect::to('/');
 });
 
