@@ -73,7 +73,7 @@ class ActivityService {
 	 * @param $newNoteFlag (checks whether it's a new note or an old one)
 	 * @return bool
 	 */
-	public function sendNoteToCareTeam(&$careteam, $url, $performed_at,$user_id, $logger_name, $newNoteFlag){
+	public function sendNoteToCareTeam(&$careteam, $url, $performed_at, $user_id, $logger_name, $newNoteFlag){
 
 		/*
 		 *  New note: "Please see new note for patient [patient name]: [link]"
@@ -102,6 +102,12 @@ class ActivityService {
 				$message->to($email)->subject('You have received a new note notification from CarePlan Manager');
 			});
 		}
-		return true;
+		return false;
+//		dd(count(Mail::failures()));
+//		if( count(Mail::failures()) > 0 ) {
+//			return false;
+//		} else {
+//			return true;
+//		}
 	}
 }

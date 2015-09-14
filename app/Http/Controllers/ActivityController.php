@@ -126,8 +126,7 @@ class ActivityController extends Controller {
 			$logger = WpUser::find($input['logger_id']);
 			$logger_name = $logger->display_name;
 			$linkToNote = $input['url'].$activity->id;
-			$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input['patient_id'],$logger_name, false);
-
+			$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$activity->performed_at,$input['patient_id'],$logger_name, false);
 			if ($result) {
 				return response("Successfully Sent", 202);
 			} else {
