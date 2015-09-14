@@ -6,18 +6,6 @@
 //EMAIL TEST ROUTE
 use App\Activity;
 
-Route::get('/email', function () {
-	$data = [
-		'title'=>'Email'
-	];
-	$activity = Activity::find(1010);
-	$linkToNote = '';
-	$activityService = new \App\Services\ActivityService();
-	$t = ['0' => '391'];
-	$result = $activityService->sendNoteToCareTeam($t,$linkToNote,'2015-09-10 15:20:21',308,null, true);
-	return Redirect::to('/');
-});
-
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::get('/', 'WelcomeController@index');
@@ -113,7 +101,6 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('questions/{id}/destroy', ['uses' =>'Admin\CPRQuestionController@destroy', 'as'=>'admin.questions.destroy']);
 
 		Route::get('observations', ['uses' =>'Admin\ObservationController@index', 'as'=>'admin.observations']);
-		Route::post('observations', 'Admin\ObservationController@index');
 		Route::get('observations/create', ['uses' =>'Admin\ObservationController@create', 'as'=>'admin.observations.create']);
 		Route::post('observations/create', ['uses' =>'Admin\ObservationController@store', 'as'=>'admin.observations.store']);
 		Route::get('observations/{id}', ['uses' =>'Admin\ObservationController@show', 'as'=>'admin.observations.show']);

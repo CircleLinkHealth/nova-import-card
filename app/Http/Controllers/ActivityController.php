@@ -47,7 +47,7 @@ class ActivityController extends Controller {
 	 */
 	public function create()
 	{
-
+		return view('activities.create');
 	}
 
 	/**
@@ -94,14 +94,17 @@ class ActivityController extends Controller {
 
 		// update usermeta: cur_month_activity_time
 		$activityService = new ActivityService;
-		$result = $activityService->reprocessMonthlyActivityTime($input['patient_id']);
+		$activityService->reprocessMonthlyActivityTime($input['patient_id']);
 
 		//if alerts are to be sent
 		if (array_key_exists('careteam',$input)) {
-			$activityService = new ActivityService;
+			$activitySer = new ActivityService;
 			$activity = Activity::find($actId);
 			$linkToNote = $input['url'].$activity->id;
-			$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input['patient_id'],null, true);
+			$logger = WpUser::find($input['logger_id']);
+			$logger_name = $logger->display_name;
+
+			$result = $activitySer->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input['patient_id'],$logger_name, true);
 
 			if($result)
 			{
@@ -132,7 +135,6 @@ class ActivityController extends Controller {
 			}
 		}
 	}
-
 
 	/**
 	 * Display the specified resource.
