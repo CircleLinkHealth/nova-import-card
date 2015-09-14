@@ -208,6 +208,7 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 	Route::resource('activities', 'ActivityController');
 	Route::post('activities/update', 'ActivityController@update');
 	Route::resource('activities.meta', 'ActivityMetaController');
+	Route::post('activities/sendNote','ActivityController@sendExistingNote');
 
 	// reports
     Route::get('reports/pagetimer', 'ReportsController@pageTimerReports');
