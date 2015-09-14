@@ -70,7 +70,7 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.observations', array()) }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::submit('Update Observation', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Update Observation', array('class' => 'btn btn-success', 'disabled' => 'disabled')) !!}
                                 </div>
                             </div>
                         </div>

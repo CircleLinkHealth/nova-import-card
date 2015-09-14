@@ -15,7 +15,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ url('admin/users/create') }}" class="btn btn-success">New User</a>
+                            <a href="{{ url('/wpusers/create') }}" class="btn btn-success">New User</a>
                         </div>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
                         <p><strong>See bottom of page for list of invalid users</strong></p>
 
                         <div class="row">
-                            {!! Form::open(array('url' => '/wpusers/', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('wpusers.index', array()), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <h3>Filter</h3>
