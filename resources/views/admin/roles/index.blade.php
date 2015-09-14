@@ -45,6 +45,7 @@
                         @endforeach
                         </tbody>
                     </table>
+                    {!! $roles->appends(['action' => 'filter'])->render() !!}
                 </div>
             </div>
         </div>

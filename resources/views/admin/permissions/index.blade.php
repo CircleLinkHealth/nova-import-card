@@ -45,6 +45,7 @@
                         @endforeach
                         </tbody>
                     </table>
+                    {!! $permissions->appends(['action' => 'filter'])->render() !!}
                 </div>
             </div>
         </div>
