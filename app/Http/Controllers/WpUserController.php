@@ -233,7 +233,7 @@ class WpUserController extends Controller {
 		$userConfig->save();
 
 		$wpUser->push();
-		return redirect()->route('usersEdit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
+		return redirect()->route('users.edit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
 
 	}
 

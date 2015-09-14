@@ -26,7 +26,7 @@
                         <p><strong>See bottom of page for list of invalid users</strong></p>
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('wpusers.index', array()), 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('users.index', array()), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <h3>Filter</h3>

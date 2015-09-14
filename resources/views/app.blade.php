@@ -35,105 +35,167 @@
 	<script src="{{ asset('/js/scripts.js') }}"></script>
 </head>
 <body>
-	<nav class="navbar navbar-default">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-					<span class="sr-only">Toggle Navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="{{ url('/') }}">
-					<img src="{{ asset('/img/cpm-logo.png') }}" height="40" width="70">
-				</a>
+	@if(!Request::is('patient/*'))
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Toggle Navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="{{ url('/') }}">
+						<img src="{{ asset('/img/cpm-logo.png') }}" height="40" width="70">
+					</a>
+				</div>
+
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+					<ul class="nav navbar-nav">
+						@if ( ! Auth::guest())
+							<li role="presentation" class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+									Users <span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ URL::route('users.index', array()) }}">All Users</a></li>
+									<li><a href="{{ URL::route('users.index', array()) }}">Patients</a></li>
+									<li><a href="{{ URL::route('admin.observations', array()) }}">Observations</a></li>
+									<li><a href="{{ URL::route('admin.comments', array()) }}">Comments</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+									Roles<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ url('admin/roles') }}">Roles</a></li>
+									<li><a href="{{ url('admin/permissions') }}">Permissions</a></li>
+								</ul>
+							</li>
+						@endif
+
+						@if ( ! Auth::guest() && Auth::user()->hasRole(['administrator']))
+							<li role="presentation" class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+									Programs <span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ action('Admin\WpBlogController@index') }}">Programs</a></li>
+									<li><a href="{{ action('LocationController@index') }}">Locations</a></li>
+									<li><a href="{{ url('admin/questions') }}">Questions</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+									Activities <span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ url('activities/') }}">Activities</a></li>
+									<li><a href="{{ action('PageTimerController@index') }}">Page Timer</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+									Rules <span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ action('RulesController@index') }}">Rules</a></li>
+									<li><a href="{{ url('rules/create/') }}">Add new</a></li>
+								</ul>
+							</li>
+							<li role="presentation" class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+									API<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ action('ApiKeyController@index') }}">API Keys</a></li>
+									<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
+									<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
+								</ul>
+							</li>
+						@endif
+
+					</ul>
+
+					<ul class="nav navbar-nav navbar-right">
+						@if (Auth::guest())
+							{{--<li><a href="{{ url('/auth/login') }}">Login</a></li>--}}
+							{{--<li><a href="{{ url('/auth/register') }}">Register</a></li>--}}
+						@else
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->user_nicename }} [ID:{{ Auth::user()->ID }}] [WP Role:{{ Auth::user()->role() }}]<span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ url('/auth/logout') }}">Logout</a></li>
+								</ul>
+							</li>
+						@endif
+					</ul>
+				</div>
 			</div>
+		</nav>
+	@endif
 
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-				<ul class="nav navbar-nav">
-					@if ( ! Auth::guest())
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								Users <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ action('WpUserController@index') }}">All Users</a></li>
-								<li><a href="{{ action('WpUserController@index') }}">Patients</a></li>
-								<li><a href="{{ url('admin/observations') }}">Observations</a></li>
-								<li><a href="{{ url('admin/comments') }}">Comments</a></li>
-							</ul>
-						</li>
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								Roles<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ url('admin/roles') }}">Roles</a></li>
-								<li><a href="{{ url('admin/permissions') }}">Permissions</a></li>
-							</ul>
-						</li>
-					@endif
 
-					@if ( ! Auth::guest() && Auth::user()->hasRole(['administrator']))
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								Programs <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ action('Admin\WpBlogController@index') }}">Programs</a></li>
-								<li><a href="{{ action('LocationController@index') }}">Locations</a></li>
-								<li><a href="{{ url('admin/questions') }}">Questions</a></li>
-							</ul>
-						</li>
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								Activities <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ url('activities/') }}">Activities</a></li>
-								<li><a href="{{ action('PageTimerController@index') }}">Page Timer</a></li>
-							</ul>
-						</li>
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								Rules <span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ action('RulesController@index') }}">Rules</a></li>
-								<li><a href="{{ url('rules/create/') }}">Add new</a></li>
-							</ul>
-						</li>
-						<li role="presentation" class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-								API<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ action('ApiKeyController@index') }}">API Keys</a></li>
-								<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
-								<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
-							</ul>
-						</li>
-					@endif
+	@if( Request::is('patient/*') || Request::is('provider/*') )
+		<nav class="navbar primary-navbar">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a href="" class="navbar-brand"><img src="" alt="Crisfield Clinic" width='50px' style="position:relative;top:-15px"></a>
+					<a href="" class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
+				</div>
+				<div class="navbar-right hidden-xs ">
+					<ul class="nav navbar-nav">
+						<li><a href=""><i class="icon--home--white"></i> Home</a></li>
+						<li><a href=""><i class="icon--search--white"></i> Select Patient</a></li>
+						<li><a href=""><i class="icon--add-user"></i> Add Patient</a></li>
+						<li><a href=""><i class="icon--alert--white"></i> Alerts</a></li>
+						@if ( ! Auth::guest() && Auth::user()->hasRole(['administrator']))
+							<li><a class="btn btn-orange btn-xs" href="{{ URL::route('users.edit', array('id' => $patient->ID)) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
+						@elseif (!Auth::guest())
+							<li>
+								<a href="">
+									<i class="icon--logout"></i>Logout</a>
+							</li>
+						@else
+							<li>
+								<a href="">
+									<i class="icon--logout"></i>Login</a>
+							</li>
+						@endif
+					</ul>
+				</div><!-- /navbar-collapse -->
+			</div><!-- /container-fluid -->
 
-				</ul>
+		</nav><!-- /navbar -->
 
-				<ul class="nav navbar-nav navbar-right">
-					@if (Auth::guest())
-						{{--<li><a href="{{ url('/auth/login') }}">Login</a></li>--}}
-						{{--<li><a href="{{ url('/auth/register') }}">Register</a></li>--}}
-					@else
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->user_nicename }} [ID:{{ Auth::user()->ID }}] [WP Role:{{ Auth::user()->role() }}]<span class="caret"></span></a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ url('/auth/logout') }}">Logout</a></li>
-							</ul>
-						</li>
-					@endif
+		<nav class="navbar secondary-navbar hidden-xs">
+			<div class="patient__actions text-center">
+				<ul class="navbar-nav nav">
+					<li class="inline-block"><a href="" role="button">Patient Overview</a></li>
+					<li class="inline-block"><a href="" role="button">Edit Care Plan</a></li>
+					<li class="inline-block"><a href="" role="button">Input Observations</a></li>
+					<li class="inline-block dropdown">
+						<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Patient Reports <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="">Patient Alerts</a></li>
+							<!-- <li><a href="">Progress Report</a></li> -->
+							<!-- <li><a href="">Under 20 Minute Report</a></li> -->
+							<li><a href="">Patient Listing</a></li>
+						</ul>
+					</li>
+					<!-- <li class="inline-block"><a href="" role="button">Patient Notes</a></li> -->
+					<li class="inline-block"><a href="" role="button">Print Care Plan</a></li>
 				</ul>
 			</div>
-		</div>
-	</nav>
+		</nav><!-- /navbar -->
+	@endif
+
+	<!--[if lt IE 8]>
+	<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+	<![endif]-->
 
 	@yield('content')
 </body>

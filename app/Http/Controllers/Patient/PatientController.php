@@ -154,6 +154,6 @@ class PatientController extends Controller {
 		}
 
 		//return response()->json($cpFeed);
-		return view('wpUsers.patient.summary', ['wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json]);
+		return view('wpUsers.patient.summary', ['patient' => $wpUser, 'wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json]);
 	}
 }

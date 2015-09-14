@@ -74,7 +74,7 @@
                                     @else
                                         <td>{{ $observation->obs_message_id }}</td>
                                     @endif
-                                    <td><a href="{{ URL::route('usersEdit', array('id' => $observation->user_id)) }}" class="btn btn-orange btn-xs">{{ $observation->user_id }}</a></td>
+                                    <td><a href="{{ URL::route('users.edit', array('id' => $observation->user_id)) }}" class="btn btn-orange btn-xs">{{ $observation->user_id }}</a></td>
                                     <td>{{ $observation->sequence_id }}</td>
                                     <td>{{ $observation->obs_date }}</td>
                                     <td>{{ $observation->obs_key }}</td>

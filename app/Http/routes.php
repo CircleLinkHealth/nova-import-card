@@ -57,16 +57,16 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('activities/{id}', ['uses' =>'ActivityController@show', 'as'=>'activitiesShow']);
 	Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'activitiesEdit']);
 
-	Route::get('wpusers', ['uses' =>'WpUserController@index', 'as'=>'wpusers.index']);
-	Route::post('wpusers', 'WpUserController@index');
-	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'usersCreate']);
-	Route::post('wpusers/create', ['uses' =>'WpUserController@store', 'as'=>'usersStore']);
-	Route::get('wpusers/{id}', ['uses' =>'WpUserController@show', 'as'=>'usersShow']);
-	Route::get('wpusers/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'usersEdit']);
-	Route::post('wpusers/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'usersUpdate']);
-	Route::get('wpusers/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'usersCareplan']);
-	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenter']);
-	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'usersMsgCenterUpdate']);
+	Route::get('wpusers', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
+	Route::post('wpusers', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
+	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'users.create']);
+	Route::post('wpusers/create', ['uses' =>'WpUserController@store', 'as'=>'users.store']);
+	Route::get('wpusers/{id}', ['uses' =>'WpUserController@show', 'as'=>'users.show']);
+	Route::get('wpusers/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'users.edit']);
+	Route::post('wpusers/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'users.update']);
+	Route::get('wpusers/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'users.careplan']);
+	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenter']);
+	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenterUpdate']);
 
 	Route::get('patient/{id}/summary', ['uses' =>'Patient\PatientController@showPatientSummary', 'as'=>'patient.summary']);
 	Route::get('patient/{id}/careplan', ['uses' =>'Patient\PatientController@showPatientCareplan', 'as'=>'patient.careplan']);
@@ -76,6 +76,9 @@ Route::group(['middleware' => 'auth'], function ()
      */
 	Route::group(['prefix' => 'admin'], function ()
 	{
+
+		Route::get('home', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
+
 		Route::get('roles', ['uses' =>'Admin\RoleController@index', 'as'=>'admin.roles']);
 		Route::get('roles/create', ['uses' =>'Admin\RoleController@create', 'as'=>'admin.roles.create']);
 		Route::post('roles/create', ['uses' =>'Admin\RoleController@store', 'as'=>'admin.roles.store']);

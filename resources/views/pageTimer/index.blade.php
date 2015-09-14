@@ -44,8 +44,8 @@
                                 <td>{{ $pageTime->title }}</td>
                                 <td>{{ $pageTime->activity_type }}</td>
                                 <td>{{ $pageTime->duration }} ({{ $pageTime->duration_unit }})</td>
-                                <td><a href="{{ URL::route('usersEdit', array('id' => $pageTime->patient_id)) }}" class="btn btn-orange btn-xs">{{ $pageTime->patient_id }}</a></td>
-                                <td><a href="{{ URL::route('usersEdit', array('id' => $pageTime->provider_id)) }}" class="btn btn-orange btn-xs">{{ $pageTime->provider_id }}</a></td>
+                                <td><a href="{{ URL::route('users.edit', array('id' => $pageTime->patient_id)) }}" class="btn btn-orange btn-xs">{{ $pageTime->patient_id }}</a></td>
+                                <td><a href="{{ URL::route('users.edit', array('id' => $pageTime->provider_id)) }}" class="btn btn-orange btn-xs">{{ $pageTime->provider_id }}</a></td>
                                 <td>{{ $pageTime->processed }}</td>
                                 <td>{{ $pageTime->start_time }}<br>{{ $pageTime->end_time }}</td>
                                 <td>
