@@ -13,7 +13,7 @@ Route::get('/email', function () {
 	$activity = Activity::find(1083);
 	$linkToNote = '';
 	$activityService = new \App\Services\ActivityService();
-	$t = ['0' => '330'];
+	$t = ['0' => '1'];
 	$result = $activityService->sendNoteToCareTeam($t,$linkToNote,'2015-09-10 15:20:21',300,null, true);
 	return Redirect::to('/');
 });
