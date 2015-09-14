@@ -56,7 +56,7 @@ class Activity extends Model {
 
     public function pageTime()
     {
-        return $this->belongsTo('App\PageTimer', 'page_timer_id', 'id');
+        return $this->belongsTo('App\PageTimer');
     }
 
     /**

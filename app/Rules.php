@@ -5,11 +5,18 @@ use Illuminate\Database\Eloquent\Model;
 class Rules extends Model {
 
     /**
-     * The database table used by the model.
+     * The connection name for the model.
      *
      * @var string
      */
-    protected $table = 'rules';
+    protected $connection = 'mysql_no_prefix';
+
+    /**
+     * The database table used by the model.
+     * @SWG\Property()
+     * @var string
+     */
+    protected $table = 'lv_rules';
 
     /**
      * The primary key for the model.

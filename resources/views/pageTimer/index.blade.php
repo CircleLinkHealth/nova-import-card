@@ -54,7 +54,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if (($pageTime->activities))
+                                    @if (($pageTime->activities->count()))
                                         @foreach( $pageTime->activities as $activity )
                                             <li>{{ $activity->id }} <a href="{{ url('activities/'.$activity->id.'') }}">Activity Detail</a></li>
                                         @endforeach
