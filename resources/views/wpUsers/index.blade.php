@@ -66,7 +66,7 @@
                                 @foreach( $wpUsers as $wpUser )
                                     <tr>
                                         <td>
-                                            @if($wpUser->blogId())
+                                            @if($wpUser->blogId() || !empty($wpUser->program_id) || ($wpUser->status == 1))
                                                 <a href="{{ url('wpusers/'.$wpUser->ID.'/edit') }}" class="btn btn-primary">{{ $wpUser->ID }} Edit</a>
                                             @else
                                                 <a href="{{ url('wpusers/'.$wpUser->ID.'/edit') }}" class="btn btn-danger">{{ $wpUser->ID }} Edit</a>

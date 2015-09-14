@@ -5,11 +5,18 @@ use Illuminate\Database\Eloquent\Model;
 class PageTimer extends Model {
 
     /**
-     * The database table used by the model.
+     * The connection name for the model.
      *
      * @var string
      */
-    protected $table = 'page_timer';
+    protected $connection = 'mysql_no_prefix';
+
+    /**
+     * The database table used by the model.
+     * @SWG\Property()
+     * @var string
+     */
+    protected $table = 'lv_page_timer';
 
     /**
      * The primary key for the model.

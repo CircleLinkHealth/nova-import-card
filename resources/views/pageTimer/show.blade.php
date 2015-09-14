@@ -59,11 +59,15 @@
                             <p><em>No rule for this page time</em></p>
                         @endif
                         <h2>ACTIVITIES:</h2>
-                        @if (!empty($pageTime->activities))
+                        @if (($pageTime->activities->count()))
                             <p>Activities generated that are tied to this page time</p>
-                            @foreach( $pageTime->activities as $activity )
-                                <li><a href="{{ url('activities/'.$activity->id.'') }}">{{ $activity->type }} [{{ $activity->id }}]</a></li>
-                            @endforeach
+                            @if (($pageTime->activities->count()))
+                                <ul>
+                                @foreach( $pageTime->activities as $activity )
+                                    <li>{{ $activity->id }} <a href="{{ url('activities/'.$activity->id.'') }}">Activity Detail</a></li>
+                                @endforeach
+                                </ul>
+                            @endif
                         @else
                             <p><em>No activities for this page time</em></p>
                         @endif

@@ -65,7 +65,7 @@ class WpUserController extends Controller {
 			}
 		} else {
 			// display view
-			$wpUsers = wpUser::orderBy('ID', 'desc')->limit(500);
+			$wpUsers = wpUser::orderBy('ID', 'desc');
 
 			// FILTERS
 			$params = $request->input();
