@@ -94,7 +94,7 @@ class WpUserController extends Controller {
 
 			// only let owners see owners
 			if(!Auth::user()->hasRole(['administrator'])) {
-				$wpUsers = $wpUsers->whereHas('roles', function ($q) use ($roleFilter) {
+				$wpUsers = $wpUsers->whereHas('roles', function ($q) {
 					$q->where('name', '!=', 'administrator');
 				});
 			}
