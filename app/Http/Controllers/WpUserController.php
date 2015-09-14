@@ -70,43 +70,39 @@ class WpUserController extends Controller {
 			// FILTERS
 			$params = $request->input();
 
-			// role
+			// role filter
 			$roles = Role::all()->lists('display_name', 'id');
-			$roleFilter = 'all';
-			if(isset($params['action'])) {
-				if(!empty($params['roleFilter'])) {
-					$roleFilter = $params['roleFilter'];
-					if($params['roleFilter'] != 'all') {
-						$wpUsers = $wpUsers->whereHas('roles', function($q) use ($roleFilter){
-							$q->where('id', '=', $roleFilter);
-						});
-					}
+			$filterRole = 'all';
+			if(!empty($params['filterRole'])) {
+				$filterRole = $params['filterRole'];
+				if($params['filterRole'] != 'all') {
+					$wpUsers->whereHas('roles', function($q) use ($filterRole){
+						$q->where('id', '=', $filterRole);
+					});
 				}
-				/*
-				$params['programFilter'] = 7;
-				if(!empty($params['programFilter'])) {
-					$programFilter = $params['programFilter'];
-					if($params['programFilter'] != 'all') {
-						$wpUsers = $wpUsers->whereHas('roles', function($q) use ($programFilter){
-							$q->where('id', '=', $programFilter);
-						});
-					}
+			}
+
+			// program filter
+			$programs = WpBlog::orderBy('blog_id', 'desc')->get()->lists('domain', 'blog_id');
+			$filterProgram = 'all';
+			if(!empty($params['filterProgram'])) {
+				$filterProgram = $params['filterProgram'];
+				if($params['filterProgram'] != 'all') {
+					$wpUsers->where('program_id', '=', $filterProgram);
 				}
-				*/
 			}
 
 			// only let owners see owners
 			if(!Auth::user()->hasRole(['administrator'])) {
-				/*
-				$wpUsers = $wpUsers->whereHas('r-admin', function ($q) use ($roleFilter) {
-					$q->where('name', '!=', 'owner');
+				$wpUsers = $wpUsers->whereHas('roles', function ($q) use ($roleFilter) {
+					$q->where('name', '!=', 'administrator');
 				});
-				*/
 			}
 
 
-			$wpUsers = $wpUsers->get();
+			$wpUsers = $wpUsers->paginate(10);
 			$invalidUsers = array();
+			/*
 			$validUsers = array();
 			foreach($wpUsers as $wpUser) {
 				$userMeta = $wpUser->userMeta();
@@ -118,7 +114,8 @@ class WpUserController extends Controller {
 
 				$validUsers[] = $wpUser;
 			}
-			return view('wpUsers.index', [ 'wpUsers' => $validUsers, 'roles' => $roles, 'roleFilter' => $roleFilter, 'invalidWpUsers' => $invalidUsers ]);
+			*/
+			return view('wpUsers.index', [ 'wpUsers' => $wpUsers, 'programs' => $programs, 'filterProgram' => $filterProgram, 'roles' => $roles, 'filterRole' => $filterRole, 'invalidWpUsers' => $invalidUsers ]);
 		}
 
 	}
