@@ -652,7 +652,9 @@ class CareplanService {
 		// set alert_values
 		if(!empty($result)) {
 			foreach ($result as $row) {
-				$arrReturnResult[$row->msg_id] = $row;
+				if(!empty($row->msg_id)) {
+					$arrReturnResult[$row->msg_id] = $row;
+				}
 			}
 		}
 		return $arrReturnResult;
