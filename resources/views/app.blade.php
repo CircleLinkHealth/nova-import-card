@@ -59,7 +59,9 @@
 							</a>
 							<ul class="dropdown-menu" role="menu">
 								<li><a href="{{ action('WpUserController@index') }}">All Users</a></li>
-								<li><a href="{{ url('wpusers/create') }}">Add new</a></li>
+								<li><a href="{{ action('WpUserController@index') }}">Patients</a></li>
+								<li><a href="{{ url('admin/observations') }}">Observations</a></li>
+								<li><a href="{{ url('admin/comments') }}">Comments</a></li>
 							</ul>
 						</li>
 						<li role="presentation" class="dropdown">
@@ -82,7 +84,6 @@
 								<li><a href="{{ action('Admin\WpBlogController@index') }}">Programs</a></li>
 								<li><a href="{{ action('LocationController@index') }}">Locations</a></li>
 								<li><a href="{{ url('admin/questions') }}">Questions</a></li>
-								<li><a href="{{ url('admin/observations') }}">Observations</a></li>
 							</ul>
 						</li>
 						<li role="presentation" class="dropdown">

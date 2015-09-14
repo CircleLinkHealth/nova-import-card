@@ -117,6 +117,14 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::post('observations/{id}/edit', ['uses' =>'Admin\ObservationController@update', 'as'=>'admin.observations.update']);
 		Route::get('observations/{id}/destroy', ['uses' =>'Admin\ObservationController@destroy', 'as'=>'admin.observations.destroy']);
 
+		Route::get('comments', ['uses' =>'Admin\CommentController@index', 'as'=>'admin.comments']);
+		Route::get('comments/create', ['uses' =>'Admin\CommentController@create', 'as'=>'admin.comments.create']);
+		Route::post('comments/create', ['uses' =>'Admin\CommentController@store', 'as'=>'admin.comments.store']);
+		Route::get('comments/{id}', ['uses' =>'Admin\CommentController@show', 'as'=>'admin.comments.show']);
+		Route::get('comments/{id}/edit', ['uses' =>'Admin\CommentController@edit', 'as'=>'admin.comments.edit']);
+		Route::post('comments/{id}/edit', ['uses' =>'Admin\CommentController@update', 'as'=>'admin.comments.update']);
+		Route::get('comments/{id}/destroy', ['uses' =>'Admin\CommentController@destroy', 'as'=>'admin.comments.destroy']);
+
 		Route::get('programs', ['uses' =>'Admin\WpBlogController@index', 'as'=>'admin.programs']);
 		Route::get('programs/create', ['uses' =>'Admin\WpBlogController@create', 'as'=>'admin.programs.create']);
 		Route::post('programs/create', ['uses' =>'Admin\WpBlogController@store', 'as'=>'admin.programs.store']);
