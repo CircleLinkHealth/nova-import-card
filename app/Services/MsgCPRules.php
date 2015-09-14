@@ -2,6 +2,7 @@
 
 use App\WpUser;
 use App\WpUserMeta;
+use App\CPRulesQuestionSets;
 use DB;
 
 class MsgCPRules {
@@ -164,7 +165,27 @@ limit 1";
 
         $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
         if(isset($results[0])) {
-            return $results[0];
+            $qInfo = $results[0];
+            $qInfo->low = '';
+            $qInfo->high = '';
+
+            // get low/high from question_sets
+            $questionSet = CPRulesQuestionSets::where('qid', '=', $qInfo->qid)->get();
+            if($questionSet->count()) {
+                foreach ($questionSet as $qSet) {
+                    if (!empty($qSet->low)) {
+                        if (empty($qInfo->low) || ($qSet->low < $qInfo->low)) {
+                            $qInfo->low = $qSet->low;
+                        }
+                    }
+                    if (!empty($qSet->high)) {
+                        if (empty($qInfo->high) || ($qSet->high > $qInfo->high)) {
+                            $qInfo->high = $qSet->high;
+                        }
+                    }
+                }
+            }
+            return $qInfo;
         } else {
             return false;
         }
