@@ -22,7 +22,7 @@ class PageTimerController extends Controller {
 	{
 		//$this->addPageTimerActivities(array(378));
 		// display view
-		$pageTimes = PageTimer::orderBy('id', 'desc')->take(50)->get();
+		$pageTimes = PageTimer::orderBy('id', 'desc')->paginate(10);
 		return view('pageTimer.index', [ 'pageTimes' => $pageTimes ]);
 	}
 

@@ -2,25 +2,23 @@
 
 @section('content')
     <div class="container-fluid">
-        {{-- Create a new key --}}
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 @include('errors.errors')
-                <div class="panel panel-default">
-                    <div class="panel-heading">Add/Edit Activity</div>
-                    <div class="panel-body">
-
-
-                        <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ action('ActivityController@store') }}">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        </form>
-                    </div>
-                </div>
             </div>
         </div>
-
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h1>Activities</h1>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="pull-right" style="margin:20px;">
+                            <a href="" class="btn btn-success" disabled="disabled">New Activity</a>
+                        </div>
+                    </div>
+                </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">All Activities</div>
 

@@ -2,26 +2,23 @@
 
 @section('content')
     <div class="container-fluid">
-        {{-- Create a new key --}}
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 @include('errors.errors')
-                <div class="panel panel-default">
-                    <div class="panel-heading">Add/Edit Page Time</div>
-                    <div class="panel-body">
-
-
-                        <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ action('PageTimerController@store') }}">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                        </form>
-                    </div>
-                </div>
             </div>
         </div>
-
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h1>Page Times</h1>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="pull-right" style="margin:20px;">
+                            <a href="" class="btn btn-success" disabled="disabled">New Page Time</a>
+                        </div>
+                    </div>
+                </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">All Page Times</div>
 
@@ -29,30 +26,28 @@
                         <thead>
                         <tr>
                             <td><strong>id</strong></td>
-                            <td><strong>title</strong></td>
-                            <td><strong>activity_type</strong></td>
-                            <td><strong>duration</strong></td>
-                            <td><strong>patient_id</strong></td>
-                            <td><strong>provider_id</strong></td>
+                            <td><strong>Title</strong></td>
+                            <td><strong>Activity Type</strong></td>
+                            <td><strong>Duration</strong></td>
+                            <td><strong>Patient</strong></td>
+                            <td><strong>Provider</strong></td>
                             <td><strong>processed</strong></td>
-                            <td><strong>start_time</strong></td>
-                            <td><strong>end_time</strong></td>
-                            <td><strong>rule_id</strong></td>
-                            <td><strong>activities</strong></td>
+                            <td><strong>start/end</strong></td>
+                            <td><strong>Rule</strong></td>
+                            <td><strong>Activities</strong></td>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach( $pageTimes as $pageTime )
                             <tr>
-                                <td>{{ $pageTime->id }} <a href="{{ url('pagetimer/'.$pageTime->id.'') }}">DETAILS</a></td>
+                                <td><a href="{{ url('pagetimer/'.$pageTime->id.'') }}" class="btn btn-primary">Detail</a></td>
                                 <td>{{ $pageTime->title }}</td>
                                 <td>{{ $pageTime->activity_type }}</td>
                                 <td>{{ $pageTime->duration }} ({{ $pageTime->duration_unit }})</td>
-                                <td>{{ $pageTime->patient_id }}</td>
-                                <td>{{ $pageTime->provider_id }}</td>
+                                <td><a href="{{ URL::route('usersEdit', array('id' => $pageTime->patient_id)) }}" class="btn btn-orange btn-xs">{{ $pageTime->patient_id }}</a></td>
+                                <td><a href="{{ URL::route('usersEdit', array('id' => $pageTime->provider_id)) }}" class="btn btn-orange btn-xs">{{ $pageTime->provider_id }}</a></td>
                                 <td>{{ $pageTime->processed }}</td>
-                                <td>{{ $pageTime->start_time }}</td>
-                                <td>{{ $pageTime->end_time }}</td>
+                                <td>{{ $pageTime->start_time }}<br>{{ $pageTime->end_time }}</td>
                                 <td>
                                     @if (($pageTime->rule_id))
                                         {{ $pageTime->rule_id }} <a href="{{ url('rules/'.$pageTime->rule_id.'') }}">Rule Detail</a>
@@ -69,6 +64,7 @@
                         @endforeach
                         </tbody>
                     </table>
+                    {!! $pageTimes->appends(['action' => 'filter'])->render() !!}
                 </div>
             </div>
         </div>
