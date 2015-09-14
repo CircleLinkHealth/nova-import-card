@@ -4,14 +4,17 @@
  */
 
 //EMAIL TEST ROUTE
+use App\Activity;
+
 Route::get('/email', function () {
 	$data = [
 		'title'=>'Email'
 	];
-	Mail::send('emails.test', $data, function($message) {
-		$message->from('no-reply@careplanmanager.com', 'CircleLink Health');
-		$message->to('philiplawlor@gmail.com')->subject('You have a new note!!');
-	});
+	$activity = Activity::find(1083);
+	$linkToNote = '';
+	$activityService = new \App\Services\ActivityService();
+	$t = ['0' => '330'];
+	$result = $activityService->sendNoteToCareTeam($t,$linkToNote,'2015-09-10 15:20:21',300,null, true);
 	return Redirect::to('/');
 });
 
