@@ -32,8 +32,10 @@
                         <h3>Filter</h3>
                         <div class="form-group">
                             <div class="row">
-                                <div class="col-xs-1">{!! Form::label('roleFilter', 'Role:') !!}</div>
-                                <div class="col-xs-5">{!! Form::select('roleFilter', array('all' => 'All Roles') + $roles, $roleFilter, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                <div class="col-xs-2">{!! Form::label('filterRole', 'Role:') !!}</div>
+                                <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All Roles') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                <div class="col-xs-2">{!! Form::label('filterProgram', 'Program:') !!}</div>
+                                <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                             </div>
                         </div>
                         <div class="row" style="margin-top:50px;">
@@ -67,7 +69,7 @@
                                             @if($wpUser->blogId())
                                                 <a href="{{ url('wpusers/'.$wpUser->ID.'/edit') }}" class="btn btn-primary">{{ $wpUser->ID }} Edit</a>
                                             @else
-                                                {{ $wpUser->ID }}
+                                                <a href="{{ url('wpusers/'.$wpUser->ID.'/edit') }}" class="btn btn-danger">{{ $wpUser->ID }} Edit</a>
                                             @endif
                                         </td>
                                         <td>{{ $wpUser->user_nicename }}</td>
@@ -91,6 +93,10 @@
                             @endif
                             </tbody>
                         </table>
+
+                        @if (count($wpUsers) > 0)
+                            {!! $wpUsers->appends(['action' => 'filter', 'filterRole' => $filterRole, 'filterProgram' => $filterProgram])->render() !!}
+                        @endif
 
                         @if (count($invalidWpUsers) > 0)
                             <h2>Invalid Users</h2>

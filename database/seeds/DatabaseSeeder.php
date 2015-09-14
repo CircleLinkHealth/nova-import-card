@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder {
 	{
 		Model::unguard();
 
+		/*
 		$this->call('database\seeds\UserTableSeeder');
 		$this->command->info('User table seeded!');
 
@@ -23,6 +24,10 @@ class DatabaseSeeder extends Seeder {
 
 		$this->call('database\seeds\LocationTableSeeder');
 		$this->command->info('Location table seeded!');
+
+		$this->call('database\seeds\UserProgramSeeder');
+		$this->command->info('User table program ids seeded!');
+		*/
 	}
 
 }

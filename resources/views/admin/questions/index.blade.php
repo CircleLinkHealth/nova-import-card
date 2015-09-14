@@ -50,6 +50,7 @@
                             @endforeach
                             </tbody>
                         </table>
+                        {!! $questions->appends(['action' => 'filter'])->render() !!}
                     </div>
                 </div>
             </div>

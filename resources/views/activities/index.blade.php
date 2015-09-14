@@ -30,27 +30,29 @@
                             <td><strong>id</strong></td>
                             <td><strong>type</strong></td>
                             <td><strong>duration</strong></td>
-                            <td><strong>patient_id</strong></td>
-                            <td><strong>provider_id</strong></td>
+                            <td><strong>patient</strong></td>
+                            <td><strong>provider</strong></td>
                             <td><strong>logger_id</strong></td>
-                            <td><strong>page_timer_id</strong></td>
+                            <td><strong>date</strong></td>
+                            <td><strong>page timer</strong></td>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach( $activities as $act )
                             <tr>
-                                <td>{{ $act->id }} <a href="{{ url('activities/'.$act->id.'') }}">DETAILS</a></td>
+                                <td><a href="{{ url('activities/'.$act->id.'') }}" class="btn btn-primary">Detail</a></td>
                                 <td>{{ $act->type }}</td>
                                 <td>{{ $act->duration }}</td>
-                                <td>{{ $act->patient_id }}</td>
-                                <td>{{ $act->provider_id }}</td>
-                                <td>{{ $act->logger_id }}</td>
+                                <td><a href="{{ URL::route('usersEdit', array('id' => $act->patient_id)) }}" class="btn btn-orange btn-xs">{{ $act->patient_id }}</a></td>
+                                <td><a href="{{ URL::route('usersEdit', array('id' => $act->provider_id)) }}" class="btn btn-orange btn-xs">{{ $act->provider_id }}</a></td>
+                                <td><a href="{{ URL::route('usersEdit', array('id' => $act->logger_id)) }}" class="btn btn-orange btn-xs">{{ $act->logger_id }}</a></td>
                                 <td>{{ $act->performed_at }}</td>
                                 <td><a href="{{ url('pagetimer/'.$act->page_timer_id.'') }}">{{ $act->page_timer_id }}</a></td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
+                    {!! $activities->appends(['action' => 'filter'])->render() !!}
                 </div>
             </div>
         </div>

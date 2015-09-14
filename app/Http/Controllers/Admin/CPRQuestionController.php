@@ -17,7 +17,7 @@ class CPRQuestionController extends Controller {
 	public function index(Request $request)
 	{
 		// display view
-		$questions = CPRulesQuestions::all();
+		$questions = CPRulesQuestions::paginate(10);
 		return view('admin.questions.index', [ 'questions' => $questions ]);
 	}
 

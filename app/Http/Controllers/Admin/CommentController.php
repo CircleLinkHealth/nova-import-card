@@ -17,7 +17,7 @@ class CommentController extends Controller {
 	public function index(Request $request)
 	{
 		// display view
-		$comments = Comment::OrderBy('id', 'desc')->limit('100')->get();
+		$comments = Comment::OrderBy('id', 'desc')->limit('100')->paginate(10);
 		return view('admin.comments.index', [ 'comments' => $comments ]);
 	}
 

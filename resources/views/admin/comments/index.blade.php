@@ -50,6 +50,7 @@
                             @endforeach
                             </tbody>
                         </table>
+                        {!! $comments->appends(['action' => 'filter'])->render() !!}
                     </div>
                 </div>
             </div>
