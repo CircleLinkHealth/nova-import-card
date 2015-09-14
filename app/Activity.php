@@ -10,6 +10,20 @@ use Illuminate\Support\Facades\DB;
 class Activity extends Model {
 
     /**
+     * The connection name for the model.
+     *
+     * @var string
+     */
+    protected $connection = 'mysql_no_prefix';
+
+    /**
+     * The database table used by the model.
+     * @SWG\Property()
+     * @var string
+     */
+    protected $table = 'lv_activities';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

@@ -65,6 +65,11 @@ class WpUser extends Model {
         return $this->hasMany('App\Comment', 'user_id', 'ID');
     }
 
+    public function observations()
+    {
+        return $this->hasMany('App\Observation', 'user_id', 'ID');
+    }
+
     public function activities()
     {
         return $this->hasMany('App\Activity');

@@ -8,11 +8,18 @@ use DB;
 class Comment extends Model {
 
     /**
-     * The database table used by the model.
+     * The connection name for the model.
      *
      * @var string
      */
-    protected $table = 'comments';
+    protected $connection = 'mysql_no_prefix';
+
+    /**
+     * The database table used by the model.
+     * @SWG\Property()
+     * @var string
+     */
+    protected $table = 'lv_comments';
 
     /**
      * The primary key for the model.

@@ -12,11 +12,18 @@ use DB;
 class Observation extends Model {
 
     /**
+     * The connection name for the model.
+     *
+     * @var string
+     */
+    protected $connection = 'mysql_no_prefix';
+
+    /**
      * The database table used by the model.
      * @SWG\Property()
      * @var string
      */
-    protected $table = 'observations';
+    protected $table = 'lv_observations';
 
     /**
      * The primary key for the model.
@@ -58,6 +65,12 @@ class Observation extends Model {
     {
         return $this->belongsTo('App\CPRulesQuestions', 'obs_message_id', 'msg_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('App\WpUser', 'user_id', 'ID');
+    }
+
 
 
     public function getObservation($obs_id)
