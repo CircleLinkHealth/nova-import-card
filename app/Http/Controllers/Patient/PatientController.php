@@ -33,7 +33,7 @@ class PatientController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function showPatientSummary(Request $request, $id)
+	public function showPatientSummary(Request $request, $programId, $id)
 	{
 		$params = $request->all();
 		$detailSection = '';
@@ -154,6 +154,31 @@ class PatientController extends Controller {
 		}
 
 		//return response()->json($cpFeed);
-		return view('wpUsers.patient.summary', ['patient' => $wpUser, 'wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json]);
+		return view('wpUsers.patient.summary', ['programId' => $programId, 'patient' => $wpUser, 'wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json]);
+	}
+
+
+
+
+
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function showPatientAlerts(Request $request, $programId, $id = false)
+	{
+		$wpUser = array();
+		if($id) {
+			$wpUser = WpUser::find($id);
+			if (!$wpUser) {
+				return response("User not found", 401);
+			}
+		}
+
+		//return response()->json($cpFeed);
+		return view('wpUsers.patient.alerts', ['programId' => $programId, 'patient' => $wpUser]);
 	}
 }

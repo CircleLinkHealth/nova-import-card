@@ -68,8 +68,10 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenter']);
 	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenterUpdate']);
 
-	Route::get('patient/{id}/summary', ['uses' =>'Patient\PatientController@showPatientSummary', 'as'=>'patient.summary']);
-	Route::get('patient/{id}/careplan', ['uses' =>'Patient\PatientController@showPatientCareplan', 'as'=>'patient.careplan']);
+	Route::get('/patient/{programId}/summary/{id}', ['uses' =>'Patient\PatientController@showPatientSummary', 'as'=>'patient.summary']);
+	Route::get('/patient/{programId}/alerts/{id?}', ['uses' =>'Patient\PatientController@showPatientAlerts', 'as'=>'patient.alerts']);
+	Route::get('/patient/{programId}/careplan/{id}', ['uses' =>'Patient\PatientController@showPatientCareplan', 'as'=>'patient.careplan']);
+	Route::get('/patient/{programId}/input/observation/{id}', ['uses' =>'Patient\PatientController@showPatientCareplan', 'as'=>'patient.observation.input']);
 
 	/*
      * Admin

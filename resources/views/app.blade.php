@@ -139,7 +139,7 @@
 
 
 
-	@if( Request::is('patient/*') || Request::is('provider/*') )
+	@if( !Auth::guest() && (Request::is('patient/*') || Request::is('provider/*')) )
 		<nav class="navbar primary-navbar">
 			<div class="container-fluid">
 				<div class="navbar-header">
@@ -151,9 +151,13 @@
 						<li><a href=""><i class="icon--home--white"></i> Home</a></li>
 						<li><a href=""><i class="icon--search--white"></i> Select Patient</a></li>
 						<li><a href=""><i class="icon--add-user"></i> Add Patient</a></li>
-						<li><a href=""><i class="icon--alert--white"></i> Alerts</a></li>
-						@if ( ! Auth::guest() && Auth::user()->hasRole(['administrator']))
-							<li><a class="btn btn-orange btn-xs" href="{{ URL::route('users.edit', array('id' => $patient->ID)) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
+						<li><a href="{{ URL::route('patient.alerts', array('programId' => $programId)) }}"><i class="icon--alert--white"></i> Alerts</a></li>
+						@if ( !Auth::guest() && Auth::user()->hasRole(['administrator']))
+							@if (!empty($patient))
+								<li><a class="btn btn-orange btn-xs" href="{{ URL::route('users.edit', array('id' => $patient->ID)) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
+							@else
+								<li><a class="btn btn-orange btn-xs" href="{{ URL::route('users.index', array()) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
+							@endif
 						@elseif (!Auth::guest())
 							<li>
 								<a href="">
@@ -174,20 +178,37 @@
 		<nav class="navbar secondary-navbar hidden-xs">
 			<div class="patient__actions text-center">
 				<ul class="navbar-nav nav">
-					<li class="inline-block"><a href="" role="button">Patient Overview</a></li>
-					<li class="inline-block"><a href="" role="button">Edit Care Plan</a></li>
-					<li class="inline-block"><a href="" role="button">Input Observations</a></li>
-					<li class="inline-block dropdown">
-						<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Patient Reports <span class="caret"></span></a>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="">Patient Alerts</a></li>
-							<!-- <li><a href="">Progress Report</a></li> -->
-							<!-- <li><a href="">Under 20 Minute Report</a></li> -->
-							<li><a href="">Patient Listing</a></li>
-						</ul>
-					</li>
-					<!-- <li class="inline-block"><a href="" role="button">Patient Notes</a></li> -->
-					<li class="inline-block"><a href="" role="button">Print Care Plan</a></li>
+					@if (!empty($patient))
+						<li class="inline-block dropdown">
+							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Notes/Offline Activity<span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="">Notes/Offline Activities</a></li>
+								<li><a href="">Add New Note</a></li>
+							</ul>
+						</li>
+						<li class="inline-block"><a href="{{ URL::route('patient.summary', array('programId' => $programId, 'id' => $patient->ID)) }}" role="button">Patient Overview</a></li>
+						<li class="inline-block"><a href="{{ URL::route('patient.careplan', array('programId' => $programId, 'id' => $patient->ID)) }}" role="button">Edit Care Plan</a></li>
+						<li class="inline-block dropdown">
+							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Input<span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ URL::route('patient.observation.input', array('programId' => $programId, 'id' => $patient->ID)) }}">Observations</a></li>
+								<li><a href="">Offline Activities</a></li>
+							</ul>
+						</li>
+						<li class="inline-block dropdown">
+							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Patient Reports <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="">Patient Alerts</a></li>
+								<li><a href="">Progress Report</a></li>
+								<li><a href="">Patient Activity Report</a></li>
+								<li><a href="">Under 20 Minute Report</a></li>
+								<li><a href="">Patient Billing Report</a></li>
+								<li><a href="">Patient Listing</a></li>
+							</ul>
+						</li>
+						<!-- <li class="inline-block"><a href="" role="button">Patient Notes</a></li> -->
+						<li class="inline-block"><a href="" role="button">Print Care Plan</a></li>
+					@endif
 				</ul>
 			</div>
 		</nav><!-- /navbar -->
