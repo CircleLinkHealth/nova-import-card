@@ -94,27 +94,20 @@ class WpUserController extends Controller {
 
 			// only let owners see owners
 			if(!Auth::user()->hasRole(['administrator'])) {
-				$wpUsers = $wpUsers->whereHas('roles', function ($q) use ($roleFilter) {
+				$wpUsers->whereHas('roles', function ($q) {
 					$q->where('name', '!=', 'administrator');
 				});
+				// providers can only see their patients
+				if(Auth::user()->hasRole(['provider'])) {
+					$wpUsers->whereHas('roles', function ($q) {
+						$q->where('name', '=', 'patient');
+					});
+					$wpUsers->where('program_id', '=', Auth::user()->program_id);
+				}
 			}
-
 
 			$wpUsers = $wpUsers->paginate(10);
 			$invalidUsers = array();
-			/*
-			$validUsers = array();
-			foreach($wpUsers as $wpUser) {
-				$userMeta = $wpUser->userMeta();
-
-				if(empty($userMeta['user_config'])) {
-					$invalidUsers[] = $wpUser;
-					continue 1;
-				}
-
-				$validUsers[] = $wpUser;
-			}
-			*/
 			return view('wpUsers.index', [ 'wpUsers' => $wpUsers, 'programs' => $programs, 'filterProgram' => $filterProgram, 'roles' => $roles, 'filterRole' => $filterRole, 'invalidWpUsers' => $invalidUsers ]);
 		}
 
@@ -181,7 +174,8 @@ class WpUserController extends Controller {
 
 		// the basics
 		$wpUser->user_nicename = $params['user_nicename'];
-		$wpUser->display_name = $params['display_name'];
+		$wpUser->user_nicename = $params['user_nicename'];
+		$wpUser->program_id = $params['primary_blog'];
 
 		// lv roles
 		if(isset($params['roles'])) {
@@ -332,6 +326,7 @@ class WpUserController extends Controller {
 		// the basics
 		$wpUser->user_nicename = $params['user_nicename'];
 		$wpUser->display_name = $params['display_name'];
+		$wpUser->program_id = $params['primary_blog'];
 		$wpUser->save();
 
 		if(isset($params['roles'])) {
