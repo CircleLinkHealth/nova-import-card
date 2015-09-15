@@ -195,17 +195,21 @@
 								<li><a href="">Offline Activities</a></li>
 							</ul>
 						</li>
-						<li class="inline-block dropdown">
-							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Patient Reports <span class="caret"></span></a>
-							<ul class="dropdown-menu" role="menu">
+					@endif
+					<li class="inline-block dropdown">
+						<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Patient Reports <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							@if (!empty($patient))
 								<li><a href="">Patient Alerts</a></li>
 								<li><a href="">Progress Report</a></li>
 								<li><a href="">Patient Activity Report</a></li>
-								<li><a href="">Under 20 Minute Report</a></li>
-								<li><a href="">Patient Billing Report</a></li>
-								<li><a href="">Patient Listing</a></li>
-							</ul>
-						</li>
+							@endif
+							<li><a href="">Under 20 Minute Report</a></li>
+							<li><a href="">Patient Billing Report</a></li>
+							<li><a href="">Patient Listing</a></li>
+						</ul>
+					</li>
+					@if (!empty($patient))
 						<!-- <li class="inline-block"><a href="" role="button">Patient Notes</a></li> -->
 						<li class="inline-block"><a href="{{ URL::route('patient.careplan.print', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}" role="button">Print Care Plan</a></li>
 					@endif
