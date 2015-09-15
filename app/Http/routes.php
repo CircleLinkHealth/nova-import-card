@@ -71,8 +71,9 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('/patient/{programId}/summary/{id}', ['uses' =>'Patient\PatientController@showPatientSummary', 'as'=>'patient.summary']);
 	Route::get('/patient/{programId}/alerts/{id?}', ['uses' =>'Patient\PatientController@showPatientAlerts', 'as'=>'patient.alerts']);
 	Route::get('/patient/{programId}/careplan/{id}', ['uses' =>'Patient\PatientController@showPatientCareplan', 'as'=>'patient.careplan']);
+	Route::get('/patient/{programId}/careplan/{id}/print', ['uses' =>'Patient\PatientController@showPatientCareplanPrint', 'as'=>'patient.careplan.print']);
 	Route::get('/patient/{programId}/notes/{id}', ['uses' =>'Patient\PatientController@showPatientNotes', 'as'=>'patient.notes']);
-	Route::get('/patient/{programId}/input/observation/{id}', ['uses' =>'Patient\PatientController@showPatientCareplan', 'as'=>'patient.observation.input']);
+	Route::get('/patient/{programId}/input/observation/{id}', ['uses' =>'Patient\PatientController@showPatientObservationCreate', 'as'=>'patient.observation.create']);
 
 	/*
      * Admin

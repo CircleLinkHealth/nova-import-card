@@ -143,7 +143,7 @@
 		<nav class="navbar primary-navbar">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a href="" class="navbar-brand"><img src="" alt="Crisfield Clinic" width='50px' style="position:relative;top:-15px"></a>
+					<a href="" class="navbar-brand btn btn-orange">{{ $program->blog_id }}</a>
 					<a href="" class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
 				</div>
 				<div class="navbar-right hidden-xs ">
@@ -191,7 +191,7 @@
 						<li class="inline-block dropdown">
 							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Input<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ URL::route('patient.observation.input', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}">Observations</a></li>
+								<li><a href="{{ URL::route('patient.observation.create', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}">Observations</a></li>
 								<li><a href="">Offline Activities</a></li>
 							</ul>
 						</li>
@@ -207,7 +207,7 @@
 							</ul>
 						</li>
 						<!-- <li class="inline-block"><a href="" role="button">Patient Notes</a></li> -->
-						<li class="inline-block"><a href="" role="button">Print Care Plan</a></li>
+						<li class="inline-block"><a href="{{ URL::route('patient.careplan.print', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}" role="button">Print Care Plan</a></li>
 					@endif
 				</ul>
 			</div>

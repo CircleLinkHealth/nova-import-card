@@ -207,7 +207,29 @@ class PatientController extends Controller {
 		// program
 		$program = WpBlog::find($programId);
 
-		return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
+		return view('wpUsers.patient.careplan.careplan', ['program' => $program, 'patient' => $wpUser]);
+	}
+
+	/**
+	 * Display Careplan Print
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function showPatientCareplanPrint(Request $request, $programId, $id = false)
+	{
+		$wpUser = array();
+		if($id) {
+			$wpUser = WpUser::find($id);
+			if (!$wpUser) {
+				return response("User not found", 401);
+			}
+		}
+
+		// program
+		$program = WpBlog::find($programId);
+
+		return view('wpUsers.patient.careplan.print', ['program' => $program, 'patient' => $wpUser]);
 	}
 
 
@@ -231,5 +253,31 @@ class PatientController extends Controller {
 		$program = WpBlog::find($programId);
 
 		return view('wpUsers.patient.notes', ['program' => $program, 'patient' => $wpUser]);
+	}
+
+
+
+
+
+	/**
+	 * Display Careplan Print
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function showPatientObservationCreate(Request $request, $programId, $id = false)
+	{
+		$wpUser = array();
+		if($id) {
+			$wpUser = WpUser::find($id);
+			if (!$wpUser) {
+				return response("User not found", 401);
+			}
+		}
+
+		// program
+		$program = WpBlog::find($programId);
+
+		return view('wpUsers.patient.observation.create', ['program' => $program, 'patient' => $wpUser]);
 	}
 }
