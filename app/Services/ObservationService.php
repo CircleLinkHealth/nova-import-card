@@ -49,7 +49,6 @@ class ObservationService {
 			$newObservation->save();
 			$sequence = 1;
 		}
-
 		// process obs_key
 		if(empty($obsKey)) {
 			$msgCPRules = new MsgCPRules;
@@ -59,10 +58,9 @@ class ObservationService {
 		}
 
 		// find comment
-		$comment = Comment::find($parentId);
-
 		// @todo bring comment update back to this service
 		$commentId = 0;
+		$comment = Comment::find($parentId);
 		if($comment) {
 			$commentId = $comment->id;
 		}

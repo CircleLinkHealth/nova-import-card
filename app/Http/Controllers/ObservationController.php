@@ -11,6 +11,7 @@ use App\Services\ObservationService;
 use App\WpUser;
 use Date;
 use DateTime;
+use Validator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -147,9 +148,26 @@ class ObservationController extends Controller {
 			if (!$wpUser) {
 				return response()->json(['error' => 'invalid_credentials'], 401);
 			}
+			$validator = Validator::make($input, [
+				'observationDate' => 'required|date',
+				'observationValue' => 'required',
+			]);
+			if ($validator->fails()) {
+				return response()->json(['response' => 'Validation Error'], 500);
+			}
 			// extra work here to decode from quirky UI
 			$params['user_id'] = $wpUser->ID;
-			$params['parent_id'] = 0; // needs to become state_app or state_sol??
+			// get state_app for obs_date
+			$date = DateTime::createFromFormat("Y-m-d h:i:s", $input['observationDate']);
+			$comment = Comment::where('comment_type', '=', 'state_app')
+				->where('user_id', '=', $wpUser->ID)
+				->where('comment_date', '>=', $date->format("Y-m-d") . ' 00:00:00')
+				->where('comment_date', '<=', $date->format("Y-m-d") . ' 11:59:59')
+				->first();
+			if (!$comment) {
+				return response()->json(['response' => 'No state_app comment found'], 500);
+			}
+			$params['parent_id'] = $comment->id;
 			$params['obs_value'] = str_replace("/", "_", $input['observationValue']);
 			$params['obs_date'] = $input['observationDate'];
 			$params['obs_message_id'] = $input['observationType'];
