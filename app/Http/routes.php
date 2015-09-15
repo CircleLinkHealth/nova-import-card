@@ -68,18 +68,21 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenter']);
 	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenterUpdate']);
 
-	Route::get('/patient/{programId}/summary/{id}', ['uses' =>'Patient\PatientController@showPatientSummary', 'as'=>'patient.summary']);
-	Route::get('/patient/{programId}/alerts/{id?}', ['uses' =>'Patient\PatientController@showPatientAlerts', 'as'=>'patient.alerts']);
-	Route::get('/patient/{programId}/careplan/{id}', ['uses' =>'Patient\PatientController@showPatientCareplan', 'as'=>'patient.careplan']);
-	Route::get('/patient/{programId}/careplan/{id}/print', ['uses' =>'Patient\PatientController@showPatientCareplanPrint', 'as'=>'patient.careplan.print']);
-	Route::get('/patient/{programId}/notes/{id}', ['uses' =>'Patient\PatientController@showPatientNotes', 'as'=>'patient.notes']);
-	Route::get('/patient/{programId}/input/observation/{id}', ['uses' =>'Patient\PatientController@showPatientObservationCreate', 'as'=>'patient.observation.create']);
+	// PATIENT
 
-	/*
-     * Admin
-     */
-	Route::group(['prefix' => 'admin'], function ()
-	{
+	Route::group(['prefix' => 'patient'], function () {
+		Route::get('/{programId}/summary/{id}', ['uses' => 'Patient\PatientController@showPatientSummary', 'as' => 'patient.summary']);
+		Route::get('/{programId}/alerts/{id?}', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patient.alerts']);
+		Route::get('/{programId}/careplan/{id}', ['uses' => 'Patient\PatientController@showPatientCareplan', 'as' => 'patient.careplan']);
+		Route::get('/{programId}/careplan/{id}/save', ['uses' => 'Patient\PatientController@savePatientCareplan', 'as' => 'patient.careplan.save']);
+		Route::get('/{programId}/careplan/{id}/print', ['uses' => 'Patient\PatientController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
+		Route::get('/{programId}/notes/{id}', ['uses' => 'Patient\PatientController@showPatientNotes', 'as' => 'patient.notes']);
+		Route::get('/{programId}/input/observation/{id}', ['uses' => 'Patient\PatientController@showPatientObservationCreate', 'as' => 'patient.observation.create']);
+	});
+
+	// ADMIN
+
+	Route::group(['prefix' => 'admin'], function () {
 
 		Route::get('home', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
 
@@ -91,11 +94,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::post('roles/{id}/edit', ['uses' =>'Admin\RoleController@update', 'as'=>'admin.roles.update']);
 		Route::get('roles/{id}/careplan', ['uses' =>'Admin\RoleController@show', 'as'=>'admin.roles.careplan']);
 
-		Route::get('permissions', ['uses' =>'Admin\PermissionController@index', 'as'=>'admin.permissions']);
-		Route::get('permissions/create', ['uses' =>'Admin\PermissionController@create', 'as'=>'admin.permissions.create']);
-		Route::post('permissions/create', ['uses' =>'Admin\PermissionController@store', 'as'=>'admin.permissions.store']);
-		Route::get('permissions/{id}', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissions.show']);
-		Route::get('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@edit', 'as'=>'admin.permissions.edit']);
+		Route::resource('permissions', 'Admin\PermissionController');
 		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'admin.permissions.update']);
 		Route::get('permissions/{id}/careplan', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissions.careplan']);
 
@@ -243,30 +242,13 @@ Route::group(['prefix' => 'cron'], function()
 
 
 
-
 // legacy api routes @todo migrate and remove these
 Route::group(['middleware' => 'authApiCall'], function()
 {
 
-	//Route::resource('rules', 'RulesController');
-
-	//Route::resource('pagetimer', 'PageTimerController');
-
-	//Route::resource('reports', 'ReportsController');
-
 	Route::resource('locations', 'LocationController');
 
 	Route::resource('locations/show', 'LocationController');
-
-	//Route::resource('activities', 'ActivityController');
-
-    //Route::post('activities/update', 'ActivityController@update');
-
-	//Route::resource('activities.meta', 'ActivityMetaController');
-
-	//Route::resource('wpusers', 'WpUserController');
-
-	// Route::resource('wpusers.meta', 'WpUserMetaController');
 
 	Route::resource('rulesucp', 'CPRulesUCPController');
 

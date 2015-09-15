@@ -54,7 +54,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.permissions', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ URL::route('admin.permissions.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Create Permissions', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

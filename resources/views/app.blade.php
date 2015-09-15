@@ -71,7 +71,7 @@
 								</a>
 								<ul class="dropdown-menu" role="menu">
 									<li><a href="{{ url('admin/roles') }}">Roles</a></li>
-									<li><a href="{{ url('admin/permissions') }}">Permissions</a></li>
+									<li><a href="{{ URL::route('admin.permissions.index', array()) }}">Permissions</a></li>
 								</ul>
 							</li>
 						@endif

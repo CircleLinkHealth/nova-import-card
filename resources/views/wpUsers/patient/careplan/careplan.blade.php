@@ -5,20 +5,6 @@
     <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
     <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-10 col-md-offset-1">
-                <div class="row">
-                    <div class="col-sm-8">
-                        <h2>Careplan</h2>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="pull-right" style="margin:20px;">
-                        </div>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-
 
 
     <?php
@@ -26,11 +12,7 @@
         $new_user = false;
     ?>
 
-
-
-
-
-
+    {!! Form::open(array('url' => URL::route('patient.careplan.save', array()), 'class' => 'form-horizontal')) !!}
     <form action="" id="ucpForm" method="POST">
         <div class="container">
             <section class="main-form">
@@ -40,25 +22,7 @@
                         <div class="row">
                             <div class="icon-container col-lg-12">
                                 @if(isset($patient) && !$new_user )
-                                <div class="edit-navigation-buttons col-lg-10 col-lg-offset-1">
-                                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                        <div class="btn-group" role="group">
-                                            <button type="button" dtarget="/manage-patients/add-patient/?user={{ $patient->ID }}" class="btn btn-primary submitFormBtn active"><span class="btn-number">1</span> <span class="btn-text">Patient Contact</span></button>
-                                        </div>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" dtarget="/manage-patients/patient-care-team/?user={{ $patient->ID }}" class="btn btn-primary submitFormBtn"><span class="btn-number">2</span> <span class="btn-text">Patient Care Team</span></button>
-                                        </div>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" dtarget="/manage-patients/patient-care-plan/?user={{ $patient->ID }}" class="btn btn-primary submitFormBtn" data-toggle="tooltip" data-placement="top" title="Conditions, Lifestyle & Medications Monitors"><span class="btn-number">3</span>  <span class="btn-text">Patient Monitors I</span></button>
-                                        </div>
-                                        <div class="btn-group" role="group">
-                                            <button type="button"  dtarget="/manage-patients/patient-care-plan-ii/?user={{ $patient->ID }}" class="btn btn-primary submitFormBtn" data-toggle="tooltip" data-placement="top" title="Biometrics and Transitional Care"><span class="btn-number">4</span>  <span class="btn-text">Patient Monitors II</span></button>
-                                        </div>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" dtarget="/manage-patients/patient-additional-information/?user={{ $patient->ID }}" class="btn btn-primary submitFormBtn"><span class="btn-number">5</span> <span class="btn-text">Symptoms/Other</span></button>
-                                        </div>
-                                    </div>
-                                </div>
+                                    @include('wpUsers.patient.careplan.nav')
                                 @endif
                             </div>
                         </div>
@@ -98,9 +62,6 @@
                 <div class="row">
                     <div class="main-form-container-last col-lg-8 col-lg-offset-2">
                         <div class="row">
-
-
-
                             <div class="main-form-block main-form-primary main-form-primary-vertical col-lg-7">
                                 <h4 class="form-title">Contact Information</h4>
                                 <p><span class="attention">*</span> Required Field</p>
@@ -355,74 +316,9 @@
     <div class="row">&nbsp;</div>
     <div class="row">&nbsp;</div>
 
-    <div class="main-form-progress">
-        <div class="row row-centered">
-            @if(isset($patient) && !$new_user )
-            <div class="progress-buttons col-sm-12 col-centered text-center">
-                <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="/" omitsubmit="yes">Cancel</a>
-                <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="/manage-patients/patient-care-team/?user={{ $patient->ID }}&np=1">></a>
-            </div>
-            <ul class="progress-list col-lg-12">
-                <li class="progress-item progress-first progress-active"></li>
-                <li class="progress-item progress-second"></li>
-                <li class="progress-item progress-third"></li>
-                <li class="progress-item progress-fourth"></li>
-                <li class="progress-item progress-fifth"></li>
-            </ul>
-            <div class="progress-status">
-                @if(!$user_info)
-                    <p class="">PROGRESS: 1 of 5</p>
-                @else
-                    <p class="">&nbsp;</p>
-                @endif
-            </div>
-            @endif
-        </div>
-    </div><!-- /main-form-progress -->
+    @include('wpUsers.patient.careplan.footer')
     <br /><br />
     </section>
     </form>
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </div>
-    </div>
-    </div>
     </div>
 @stop
