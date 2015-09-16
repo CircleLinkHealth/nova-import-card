@@ -41,6 +41,12 @@ class Location extends Entity implements LocationInterface
         }
     }
 
+    public static function getLocationName($id)
+    {
+        $q =  Location::where('id', '=', $id)->select('name')->first();
+        return $q['name'];
+    }
+
     public static function getAllNodes()
     {
         return Location::all()->lists('name', 'id');
