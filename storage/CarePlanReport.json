@@ -140,32 +140,28 @@
       "Section": "Check In Plan",
       "Data": [
         {
-          "Summary": "We will check in with you at 203-385-2176 every day at 09:15 am"
+          "day": "We will check in with you at 203-385-2176 every day at 09:15 am"
         },
         {
-          "Details": [
-            {
-              "day":"Sun", "time": "09:15 am"
-            },
-            {
-              "day":"Mon", "time": "09:15 am"
-            },
-            {
-              "day":"Tue", "time": "09:15 am"
-            },
-            {
-              "day":"Wed", "time": "09:15 am"
-            },
-            {
-              "day":"Thu", "time": "09:15 am"
-            },
-            {
-              "day":"Fri", "time": "09:15 am"
-            },
-            {
-              "day":"Sat", "time": "09:15 am"
-            }
-          ]
+          "day":"Sun", "time": "09:15 am"
+        },
+        {
+          "day":"Mon", "time": "09:15 am"
+        },
+        {
+          "day":"Tue", "time": "09:15 am"
+        },
+        {
+          "day":"Wed", "time": "09:15 am"
+        },
+        {
+          "day":"Thu", "time": "09:15 am"
+        },
+        {
+          "day":"Fri", "time": "09:15 am"
+        },
+        {
+          "day":"Sat", "time": "09:15 am"
         }
       ]
     },
