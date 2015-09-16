@@ -65,7 +65,7 @@ class WpUserController extends Controller {
 			}
 		} else {
 			// display view
-			$wpUsers = wpUser::orderBy('ID', 'desc');
+			$wpUsers = wpUser::where('program_id', '!=', '')->orderBy('ID', 'desc');
 
 			// FILTERS
 			$params = $request->input();
@@ -106,7 +106,7 @@ class WpUserController extends Controller {
 				}
 			}
 
-			$wpUsers = $wpUsers->paginate(10);
+			$wpUsers = $wpUsers->paginate(20);
 			$invalidUsers = array();
 			return view('wpUsers.index', [ 'wpUsers' => $wpUsers, 'programs' => $programs, 'filterProgram' => $filterProgram, 'roles' => $roles, 'filterRole' => $filterRole, 'invalidWpUsers' => $invalidUsers ]);
 		}

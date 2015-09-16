@@ -53,11 +53,11 @@
                             <thead>
                             <tr>
                                 <td><strong>ID</strong></td>
+                                <td><strong>Role</strong></td>
                                 <td><strong>user_nicename</strong></td>
                                 <td><strong>user_email</strong></td>
                                 <td><strong>status</strong></td>
                                 <td><strong>display_name</strong></td>
-                                <td><strong>roles</strong></td>
                                 <td><strong>blog</strong></td>
                             </tr>
                             </thead>
@@ -66,26 +66,26 @@
                                 @foreach( $wpUsers as $wpUser )
                                     <tr>
                                         <td>
-                                            @if($wpUser->blogId() || !empty($wpUser->program_id) || ($wpUser->status == 1))
-                                                <a href="{{ url('wpusers/'.$wpUser->ID.'/edit') }}" class="btn btn-primary">{{ $wpUser->ID }} Edit</a>
-                                            @else
-                                                <a href="{{ url('wpusers/'.$wpUser->ID.'/edit') }}" class="btn btn-danger">{{ $wpUser->ID }} Edit</a>
+                                            <a href="{{ URL::route('users.edit', array('programId' => $wpUser->program_id, 'id' => $wpUser->ID)) }}" class="btn btn-primary btn-xs">{{ $wpUser->ID }}</a><br />
+                                        </td>
+                                        <td>
+                                            @if (count($wpUser->roles) > 0)
+                                                @if($wpUser->hasRole('patient'))
+                                                    <div style="margin-left:10px;">
+                                                        <a href="{{ URL::route('patient.summary', array('programId' => $wpUser->program_id, 'id' => $wpUser->ID)) }}" class="btn btn-orange btn-xs">Patient</a>
+                                                    </div>
+                                                @else
+                                                    @foreach ($wpUser->roles as $role)
+                                                        <a href="{{ URL::route('users.edit', array('programId' => $wpUser->program_id, 'id' => $wpUser->ID)) }}" class="btn btn-info btn-xs">{{ $role->display_name }}</a><br />
+                                                    @endforeach
+                                                @endif
                                             @endif
                                         </td>
                                         <td>{{ $wpUser->user_nicename }}</td>
                                         <td>{{ $wpUser->user_email }}</td>
                                         <td>{{ $wpUser->user_status }}</td>
                                         <td>{{ $wpUser->display_name }}</td>
-                                        <td>
-                                            @if (count($wpUser->roles) > 0)
-                                                <ul>
-                                                @foreach ($wpUser->roles as $role)
-                                                    <li>{{ $role->display_name }}</li>
-                                                @endforeach
-                                                </ul>
-                                            @endif
-                                        </td>
-                                        <td>{{ $wpUser->blogId() }}</td>
+                                        <td>{{ $wpUser->program_id }}</td>
                                     </tr>
                                 @endforeach
                             @else

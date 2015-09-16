@@ -29,11 +29,13 @@
                                 <div class="pull-left" style="margin-left:10px;">
                                     <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed JSON</a>
                                 </div>
-                                <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ URL::route('patient.summary', array('programId' => $wpUser->program_id, 'id' => $wpUser->ID)) }}" class="btn btn-orange">Patient</a>
-                                </div>
+                                @if($wpUser->hasRole('patient'))
+                                    <div class="pull-left" style="margin-left:10px;">
+                                        <a href="{{ URL::route('patient.summary', array('programId' => $wpUser->program_id, 'id' => $wpUser->ID)) }}" class="btn btn-orange">Patient</a>
+                                    </div>
+                                @endif
                                 <div class="pull-right">
-                                    {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
+                                    <a href="{{ URL::route('users.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
@@ -346,7 +348,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    {!! Form::button('Cancel', array('class' => 'btn btn-danger')) !!}
+                                    <a href="{{ URL::route('users.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
                                     </form>
                                 </div>
