@@ -33,12 +33,38 @@ Route::group(['namespace' => 'Redox'], function ()
 /****************************/
 Route::group(['middleware' => 'auth'], function ()
 {
+	// HOME BASE
 	Route::get('home', 'HomeController@index');
 
+	// PATIENT (/patient/programId)
+	Route::group(['prefix' => 'patient/{programId}'], function () {
+
+		// base
+		Route::get('summary/{id}', ['uses' => 'Patient\PatientController@showPatientSummary', 'as' => 'patient.summary']);
+		Route::get('alerts/{id?}', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patient.alerts']);
+		Route::get('input/observation/{id}', ['uses' => 'Patient\PatientController@showPatientObservationCreate', 'as' => 'patient.observation.create']);
+
+		// careplan
+		Route::group(['prefix' => 'careplan'], function () {
+			Route::get('{id}', ['uses' => 'Patient\PatientCareplanController@showPatientCareplan', 'as' => 'patient.careplan']);
+			Route::post('save', ['uses' => 'Patient\PatientCareplanController@savePatientCareplan', 'as' => 'patient.careplan.save']);
+			Route::get('{id}/print', ['uses' => 'Patient\PatientCareplanController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
+		});
+
+		// notes
+		Route::group(['prefix' => 'notes'], function () {
+			Route::get('{id}', ['uses' => 'Patient\PatientController@showPatientNotes', 'as' => 'patient.notes']);
+		});
+	});
+
+	// ADMIN (without /admin)
+
+	// apikeys
 	Route::resource('apikeys', 'ApiKeyController', [
 		'only' => [ 'index', 'destroy', 'store' ],
 	]);
 
+	// rules
 	Route::get('rules', 'RulesController@index');
 	Route::get('rules/create', ['uses' =>'RulesController@create', 'as'=>'rulesCreate']);
 	Route::post('rules/store', ['uses' =>'RulesController@store', 'as'=>'rulesStore']);
@@ -47,16 +73,19 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::post('rules/{id}/edit', ['uses' =>'RulesController@update', 'as'=>'rulesUpdate']);
 	Route::get('rulesmatches', ['uses' =>'RulesController@showMatches', 'as'=>'rulesMatches']);
 
+	// pagetimer
 	Route::get('pagetimer', 'PageTimerController@index');
 	Route::get('pagetimer/create', ['uses' =>'PageTimerController@create', 'as'=>'pageTimerCreate']);
 	Route::get('pagetimer/{id}', ['uses' =>'PageTimerController@show', 'as'=>'pageTimerShow']);
 	Route::get('pagetimer/{id}/edit', ['uses' =>'PageTimerController@edit', 'as'=>'pageTimerEdit']);
 
+	// activities
 	Route::get('activities', 'ActivityController@index');
 	Route::get('activities/create', ['uses' =>'ActivityController@create', 'as'=>'activitiesCreate']);
 	Route::get('activities/{id}', ['uses' =>'ActivityController@show', 'as'=>'activitiesShow']);
 	Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'activitiesEdit']);
 
+	// wpusers
 	Route::get('wpusers', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
 	Route::post('wpusers', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
 	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'users.create']);
@@ -68,57 +97,41 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenter']);
 	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenterUpdate']);
 
-	// PATIENT
+	// locations
+	Route::resource('locations', 'LocationController');
 
-	Route::group(['prefix' => 'patient'], function () {
-		Route::get('/{programId}/summary/{id}', ['uses' => 'Patient\PatientController@showPatientSummary', 'as' => 'patient.summary']);
-		Route::get('/{programId}/alerts/{id?}', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patient.alerts']);
-		Route::get('/{programId}/careplan/{id}', ['uses' => 'Patient\PatientController@showPatientCareplan', 'as' => 'patient.careplan']);
-		Route::post('/{programId}/careplan/save', ['uses' => 'Patient\PatientController@savePatientCareplan', 'as' => 'patient.careplan.save']);
-		Route::get('/{programId}/careplan/{id}/print', ['uses' => 'Patient\PatientController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
-		Route::get('/{programId}/notes/{id}', ['uses' => 'Patient\PatientController@showPatientNotes', 'as' => 'patient.notes']);
-		Route::get('/{programId}/input/observation/{id}', ['uses' => 'Patient\PatientController@showPatientObservationCreate', 'as' => 'patient.observation.create']);
-	});
-
-	// ADMIN
-
+	// ADMIN (/admin)
+	Entrust::routeNeedsRole('admin/*', array('administrator','developer','care-center'), null, false);
 	Route::group(['prefix' => 'admin'], function () {
 
+		// home
 		Route::get('home', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
 
-		Route::get('roles', ['uses' =>'Admin\RoleController@index', 'as'=>'admin.roles']);
-		Route::get('roles/create', ['uses' =>'Admin\RoleController@create', 'as'=>'admin.roles.create']);
-		Route::post('roles/create', ['uses' =>'Admin\RoleController@store', 'as'=>'admin.roles.store']);
-		Route::get('roles/{id}', ['uses' =>'Admin\RoleController@show', 'as'=>'admin.roles.show']);
-		Route::get('roles/{id}/edit', ['uses' =>'Admin\RoleController@edit', 'as'=>'admin.roles.edit']);
+		// roles
+		Route::resource('roles', 'Admin\RoleController');
 		Route::post('roles/{id}/edit', ['uses' =>'Admin\RoleController@update', 'as'=>'admin.roles.update']);
-		Route::get('roles/{id}/careplan', ['uses' =>'Admin\RoleController@show', 'as'=>'admin.roles.careplan']);
 
+		// permissions
 		Route::resource('permissions', 'Admin\PermissionController');
 		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'admin.permissions.update']);
-		Route::get('permissions/{id}/careplan', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissions.careplan']);
 
+		// questions
 		Route::resource('questions', 'Admin\CPRQuestionController');
 		Route::post('questions/{id}/edit', ['uses' =>'Admin\CPRQuestionController@update', 'as'=>'admin.questions.update']);
 		Route::get('questions/{id}/destroy', ['uses' =>'Admin\CPRQuestionController@destroy', 'as'=>'admin.questions.destroy']);
 
-		Route::get('observations', ['uses' =>'Admin\ObservationController@index', 'as'=>'admin.observations']);
+		// observations
+		Route::resource('observations', 'Admin\ObservationController');
 		Route::post('observations', ['uses' =>'Admin\ObservationController@index', 'as'=>'admin.observations']);
-		Route::get('observations/create', ['uses' =>'Admin\ObservationController@create', 'as'=>'admin.observations.create']);
-		Route::post('observations/create', ['uses' =>'Admin\ObservationController@store', 'as'=>'admin.observations.store']);
-		Route::get('observations/{id}', ['uses' =>'Admin\ObservationController@show', 'as'=>'admin.observations.show']);
-		Route::get('observations/{id}/edit', ['uses' =>'Admin\ObservationController@edit', 'as'=>'admin.observations.edit']);
 		Route::post('observations/{id}/edit', ['uses' =>'Admin\ObservationController@update', 'as'=>'admin.observations.update']);
 		Route::get('observations/{id}/destroy', ['uses' =>'Admin\ObservationController@destroy', 'as'=>'admin.observations.destroy']);
 
-		Route::get('comments', ['uses' =>'Admin\CommentController@index', 'as'=>'admin.comments']);
-		Route::get('comments/create', ['uses' =>'Admin\CommentController@create', 'as'=>'admin.comments.create']);
-		Route::post('comments/create', ['uses' =>'Admin\CommentController@store', 'as'=>'admin.comments.store']);
-		Route::get('comments/{id}', ['uses' =>'Admin\CommentController@show', 'as'=>'admin.comments.show']);
-		Route::get('comments/{id}/edit', ['uses' =>'Admin\CommentController@edit', 'as'=>'admin.comments.edit']);
+		// comments
+		Route::resource('comments', 'Admin\CommentController');
 		Route::post('comments/{id}/edit', ['uses' =>'Admin\CommentController@update', 'as'=>'admin.comments.update']);
 		Route::get('comments/{id}/destroy', ['uses' =>'Admin\CommentController@destroy', 'as'=>'admin.comments.destroy']);
 
+		// programs
 		Route::get('programs', ['uses' =>'Admin\WpBlogController@index', 'as'=>'admin.programs']);
 		Route::get('programs/create', ['uses' =>'Admin\WpBlogController@create', 'as'=>'admin.programs.create']);
 		Route::post('programs/create', ['uses' =>'Admin\WpBlogController@store', 'as'=>'admin.programs.store']);
@@ -237,7 +250,7 @@ Route::group(['prefix' => 'cron'], function()
 
 
 
-
+/*
 // legacy api routes @todo migrate and remove these
 Route::group(['middleware' => 'authApiCall'], function()
 {
@@ -258,3 +271,4 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	Route::resource('observation.meta', 'ObservationMetaController');
 });
+*/

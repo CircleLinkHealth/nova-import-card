@@ -54,7 +54,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.roles', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ URL::route('admin.roles.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Create Role', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

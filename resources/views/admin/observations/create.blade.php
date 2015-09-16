@@ -55,7 +55,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.observations', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ URL::route('admin.observations.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Create Observation', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

@@ -26,7 +26,7 @@
                         @include('errors.errors')
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.observations', array()), 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.observations.index', array()), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <h3>Filter</h3>

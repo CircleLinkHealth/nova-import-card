@@ -162,9 +162,6 @@ class PatientController extends Controller {
 
 
 
-
-
-
 	/**
 	 * Display Alerts
 	 *
@@ -188,77 +185,9 @@ class PatientController extends Controller {
 	}
 
 
-	/**
-	 * Display Careplan
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function showPatientCareplan(Request $request, $programId, $id = false)
-	{
-		$wpUser = array();
-		if($id) {
-			$wpUser = WpUser::find($id);
-			if (!$wpUser) {
-				return response("User not found", 401);
-			}
-		}
-
-		// program
-		$program = WpBlog::find($programId);
-
-		return view('wpUsers.patient.careplan.careplan', ['program' => $program, 'patient' => $wpUser]);
-	}
-
 
 	/**
-	 * Display Careplan
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function savePatientCareplan(Request $request, $programId, $id = false)
-	{
-		return redirect()->back()->withInput()->with('messages', ['successfully updated role'])->send();
-		$wpUser = array();
-		if($id) {
-			$wpUser = WpUser::find($id);
-			if (!$wpUser) {
-				return response("User not found", 401);
-			}
-		}
-
-		// program
-		$program = WpBlog::find($programId);
-
-		return view('wpUsers.patient.careplan.careplan', ['program' => $program, 'patient' => $wpUser]);
-	}
-
-	/**
-	 * Display Careplan Print
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function showPatientCareplanPrint(Request $request, $programId, $id = false)
-	{
-		$wpUser = array();
-		if($id) {
-			$wpUser = WpUser::find($id);
-			if (!$wpUser) {
-				return response("User not found", 401);
-			}
-		}
-
-		// program
-		$program = WpBlog::find($programId);
-
-		return view('wpUsers.patient.careplan.print', ['program' => $program, 'patient' => $wpUser]);
-	}
-
-
-	/**
-	 * Display Careplan
+	 * Display Notes
 	 *
 	 * @param  int  $id
 	 * @return Response
@@ -284,7 +213,7 @@ class PatientController extends Controller {
 
 
 	/**
-	 * Display Careplan Print
+	 * Display Observation Create
 	 *
 	 * @param  int  $id
 	 * @return Response

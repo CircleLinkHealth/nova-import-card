@@ -61,8 +61,8 @@
 								<ul class="dropdown-menu" role="menu">
 									<li><a href="{{ URL::route('users.index', array()) }}">All Users</a></li>
 									<li><a href="{{ URL::route('users.index', array()) }}">Patients</a></li>
-									<li><a href="{{ URL::route('admin.observations', array()) }}">Observations</a></li>
-									<li><a href="{{ URL::route('admin.comments', array()) }}">Comments</a></li>
+									<li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a></li>
+									<li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
 								</ul>
 							</li>
 							<li role="presentation" class="dropdown">
