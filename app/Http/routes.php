@@ -3,17 +3,6 @@
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
 
-//EMAIL TEST ROUTE
-use App\Services\ReportsService;
-use App\WpUser;
-
-//Route::get('/bar', function()
-//{
-//	$report = new ReportsService();
-//	$data = $report->careplan();
-//	return $data;
-//});
-
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
