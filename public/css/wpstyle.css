@@ -2347,8 +2347,8 @@ textarea.input-lg, .input-group-lg > textarea.form-control, .input-group-lg > te
 .form-horizontal .radio, .form-horizontal .checkbox {
   min-height: 27px; }
 .form-horizontal .form-group {
-  margin-left: -15px;
-  margin-right: -15px; }
+  margin-left: 0px;
+  margin-right: 0px; }
 .form-horizontal .form-group:before, .form-horizontal .form-group:after {
   content: " ";
   display: table; }

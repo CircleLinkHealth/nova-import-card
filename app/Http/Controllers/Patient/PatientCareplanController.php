@@ -75,9 +75,7 @@ class PatientCareplanController extends Controller {
 		  "lastName" => "required",
 		  "gender" => "required",
 		  "mrn_number" => "required",
-		  "DOBMonth" => "required",
-		  "DOBDay" => "required",
-		  "DOBYear" => "required",
+		  "birth_date" => "required",
 		  "telephone" => "required",
 		  "email" => "required",
 		  "address" => "required",
@@ -86,9 +84,7 @@ class PatientCareplanController extends Controller {
 		  "zip" => "required",
 		  "preferred_contact_time" => "required",
 		  "timezone" => "required",
-		  "CDateMonth" => "required",
-		  "CDateDay" => "required",
-		  "CDateYear" => "required",);
+		  "consent_date" => "required");
 
 		// validate
 		$this->validate($request, $rules);
