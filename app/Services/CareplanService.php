@@ -279,7 +279,7 @@ class CareplanService {
 			);
 		}
 
-		return array_merge($dsmObs, $dsmAdherenceObs);
+		return array_merge($dsmAdherenceObs, $dsmObs);
 	}
 
 
