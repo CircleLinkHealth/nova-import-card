@@ -5,10 +5,10 @@ $(document).ready(function(){
     });
 
     $('#birth_date').datepicker({
-        dateFormat: "yyyy-mm-dd"
+        dateFormat: "yy-mm-dd"
     });
 
     $('#consent_date').datepicker({
-        dateFormat: "yyyy-mm-dd"
+        dateFormat: "yy-mm-dd"
     });
 });
