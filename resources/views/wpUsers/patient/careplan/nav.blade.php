@@ -1,3 +1,4 @@
+@include('errors.errors')
 <div class="edit-navigation-buttons col-lg-10 col-lg-offset-1">
     <div class="btn-group btn-group-justified" role="group" aria-label="...">
         <div class="btn-group" role="group">

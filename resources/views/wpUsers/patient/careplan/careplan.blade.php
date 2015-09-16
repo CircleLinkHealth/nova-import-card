@@ -77,15 +77,15 @@
                                 <input type=hidden name=npi_number value="<?php /*echo $validation['npi_number']['value'];*/ ?>">
                                 <div class="row">
 
-                                    <div class="form-group form-item form-item-spacing col-sm-12 <?php /*echo $validation['firstName']['class'];*/ ?>">
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('firstName') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="firstName">First Name</label>
-                                        <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name *" value="{{ (old('firstName') ? 'yes' : 'no') }}">
-                                        <?php /*echo $validation['firstName']['text'];*/ ?>
+                                        <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name *" value="{{ (old('firstName') ? old('firstName') : '') }}">
+                                        <span class="help-block">{{ $errors->first('firstName') }}</span>
                                     </div>
-                                    <div class="form-group form-item form-item-spacing col-sm-12 <?php //echo $validation['lastName']['class']; ?>">
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('lastName') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="lastName">Last Name</label>
-                                        <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last Name *"value="<?php //echo $validation['lastName']['value']; ?>">
-                                        <?php //echo $validation['lastName']['text']; ?>
+                                        <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last Name *"value="{{ (old('lastName') ? old('lastName') : '') }}">
+                                        <span class="help-block">{{ $errors->first('lastName') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 <?php //echo $validation['gender']['class']; ?>">
                                         <div class="row">
