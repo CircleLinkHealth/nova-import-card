@@ -33,6 +33,7 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
 	<script src="{{ asset('/js/scripts.js') }}"></script>
+	<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
 </head>
 <body>
 	@if(!Request::is('patient/*'))
@@ -65,6 +66,9 @@
 									<li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
 								</ul>
 							</li>
+						@endif
+
+						@if ( ! Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
 							<li role="presentation" class="dropdown">
 								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
 									Roles<span class="caret"></span>
@@ -74,9 +78,6 @@
 									<li><a href="{{ URL::route('admin.permissions.index', array()) }}">Permissions</a></li>
 								</ul>
 							</li>
-						@endif
-
-						@if ( ! Auth::guest() && Auth::user()->hasRole(['administrator']))
 							<li role="presentation" class="dropdown">
 								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
 									Programs <span class="caret"></span>
@@ -152,7 +153,7 @@
 						<li><a href=""><i class="icon--search--white"></i> Select Patient</a></li>
 						<li><a href=""><i class="icon--add-user"></i> Add Patient</a></li>
 						<li><a href="{{ URL::route('patient.alerts', array('programId' => $program->blog_id)) }}"><i class="icon--alert--white"></i> Alerts</a></li>
-						@if ( !Auth::guest() && Auth::user()->hasRole(['administrator']))
+						@if ( !Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
 							@if (!empty($patient))
 								<li><a class="btn btn-orange btn-xs" href="{{ URL::route('users.edit', array('id' => $patient->ID)) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
 							@else

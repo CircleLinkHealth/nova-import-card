@@ -15,6 +15,11 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
+/****************************/
+/****************************/
+//    REDOX
+/****************************/
+/****************************/
 Route::group(['namespace' => 'Redox'], function ()
 {
     Route::get('redox', [
@@ -29,14 +34,20 @@ Route::group(['namespace' => 'Redox'], function ()
 });
 
 /****************************/
+/****************************/
 //    AUTH ROUTES
+/****************************/
 /****************************/
 Route::group(['middleware' => 'auth'], function ()
 {
+	/****************************/
 	// HOME BASE
+	/****************************/
 	Route::get('home', 'HomeController@index');
 
+	/****************************/
 	// PATIENT (/patient/programId)
+	/****************************/
 	Route::group(['prefix' => 'patient/{programId}'], function () {
 
 		// base
@@ -57,8 +68,9 @@ Route::group(['middleware' => 'auth'], function ()
 		});
 	});
 
+	/****************************/
 	// ADMIN (without /admin)
-
+	/****************************/
 	// apikeys
 	Route::resource('apikeys', 'ApiKeyController', [
 		'only' => [ 'index', 'destroy', 'store' ],
@@ -100,7 +112,9 @@ Route::group(['middleware' => 'auth'], function ()
 	// locations
 	Route::resource('locations', 'LocationController');
 
+	/****************************/
 	// ADMIN (/admin)
+	/****************************/
 	Entrust::routeNeedsRole('admin/*', array('administrator','developer','care-center'), null, false);
 	Route::group(['prefix' => 'admin'], function () {
 
@@ -132,6 +146,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('comments/{id}/destroy', ['uses' =>'Admin\CommentController@destroy', 'as'=>'admin.comments.destroy']);
 
 		// programs
+		Route::resource('comments', 'Admin\WpBlogController');
 		Route::get('programs', ['uses' =>'Admin\WpBlogController@index', 'as'=>'admin.programs']);
 		Route::get('programs/create', ['uses' =>'Admin\WpBlogController@create', 'as'=>'admin.programs.create']);
 		Route::post('programs/create', ['uses' =>'Admin\WpBlogController@store', 'as'=>'admin.programs.store']);
@@ -158,7 +173,9 @@ Route::group(['middleware' => 'auth'], function ()
 
 
 /***********************/
+/***********************/
 //     API ROUTES
+/***********************/
 /***********************/
 
 // pagetimer

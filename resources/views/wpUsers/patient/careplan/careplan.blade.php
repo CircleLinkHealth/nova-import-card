@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
     <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
@@ -77,15 +77,15 @@
                                 <input type=hidden name=npi_number value="<?php /*echo $validation['npi_number']['value'];*/ ?>">
                                 <div class="row">
 
-                                    <div class="form-group form-item form-item-spacing col-sm-12 <?php /*echo $validation['firstName']['class'];*/ ?>">
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('firstName') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="firstName">First Name</label>
-                                        <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name *" value="{{ (old('firstName') ? 'yes' : 'no') }}">
-                                        <?php /*echo $validation['firstName']['text'];*/ ?>
+                                        <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name *" value="{{ (old('firstName') ? old('firstName') : '') }}">
+                                        <span class="help-block">{{ $errors->first('firstName') }}</span>
                                     </div>
-                                    <div class="form-group form-item form-item-spacing col-sm-12 <?php //echo $validation['lastName']['class']; ?>">
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('lastName') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="lastName">Last Name</label>
-                                        <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last Name *"value="<?php //echo $validation['lastName']['value']; ?>">
-                                        <?php //echo $validation['lastName']['text']; ?>
+                                        <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last Name *"value="{{ (old('lastName') ? old('lastName') : '') }}">
+                                        <span class="help-block">{{ $errors->first('lastName') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 <?php //echo $validation['gender']['class']; ?>">
                                         <div class="row">
@@ -200,11 +200,11 @@
                             <div class="main-form-block main-form-secondary col-lg-5">
                                 <h4 class="form-title">Contact Preferences</h4>
                                 <div class="row">
-                                    <div class="form-group form-item form-item-spacing col-sm-12 <?php //echo $validation['preferred_contact_time']['class']; ?>">
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_time') ? 'has-error' : '' }}">
                                         <label for="mf-contact">Preferred Contact Time <span class="attention">*</span>:</label>
-                                        <input id="preferred_contact_time" name="preferred_contact_time" type="input" value="<?php //echo $validation['preferred_contact_time']['value']; ?>" required/><br />
+                                        <input id="preferred_contact_time" name="preferred_contact_time" type="input" value="{{ (old('preferred_contact_time') ? old('preferred_contact_time') : '') }}"/><br />
                                         (Should be between 4pm and 9pm)
-                                        <?php //echo $validation['preferred_contact_time']['text']; ?>
+                                        <span class="help-block">{{ $errors->first('preferred_contact_time') }}</span>
                                     </div>
 
                                     <div class="form-group form-item form-item-spacing col-sm-12 <?php //echo $validation['preferred_contact_method']['class']; ?>">

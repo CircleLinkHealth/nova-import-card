@@ -58,6 +58,42 @@ class PatientCareplanController extends Controller {
 	 */
 	public function savePatientCareplan(Request $request, $programId, $id = false)
 	{
+		$params = $request->all();
+
+		// validate
+		$rules = array("user_id" => "required",
+		  "daily_reminder_optin" => "required",
+		  "daily_reminder_time" => "required",
+		  "daily_reminder_areas" => "required",
+		  "hospital_reminder_optin" => "required",
+		  "hospital_reminder_time" => "required",
+		  "hospital_reminder_areas" => "required",
+		  "qualification" => "required",
+		  "specialty" => "required",
+		  "npi_number" => "required",
+		  "firstName" => "required",
+		  "lastName" => "required",
+		  "gender" => "required",
+		  "mrn_number" => "required",
+		  "DOBMonth" => "required",
+		  "DOBDay" => "required",
+		  "DOBYear" => "required",
+		  "telephone" => "required",
+		  "email" => "required",
+		  "address" => "required",
+		  "city" => "required",
+		  "state" => "required",
+		  "zip" => "required",
+		  "preferred_contact_time" => "required",
+		  "timezone" => "required",
+		  "CDateMonth" => "required",
+		  "CDateDay" => "required",
+		  "CDateYear" => "required",);
+
+		// validate
+		$this->validate($request, $rules);
+
+		// return back
 		return redirect()->back()->withInput()->with('messages', ['successfully updated role'])->send();
 		$wpUser = array();
 		if($id) {
