@@ -12,7 +12,7 @@
         $new_user = false;
     ?>
 
-    {!! Form::open(array('url' => URL::route('patient.careplan.save', array()), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('patient.careplan.save', array('programId' => $program->blog_id)), 'class' => 'form-horizontal')) !!}
     <form action="" id="ucpForm" method="POST">
         <div class="container">
             <section class="main-form">
@@ -79,7 +79,7 @@
 
                                     <div class="form-group form-item form-item-spacing col-sm-12 <?php /*echo $validation['firstName']['class'];*/ ?>">
                                         <label class="sr-only" for="firstName">First Name</label>
-                                        <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name *" value="<?php /*echo $validation['firstName']['value'];*/ ?>">
+                                        <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name *" value="{{ (old('firstName') ? 'yes' : 'no') }}">
                                         <?php /*echo $validation['firstName']['text'];*/ ?>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 <?php //echo $validation['lastName']['class']; ?>">

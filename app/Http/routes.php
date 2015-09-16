@@ -74,7 +74,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('/{programId}/summary/{id}', ['uses' => 'Patient\PatientController@showPatientSummary', 'as' => 'patient.summary']);
 		Route::get('/{programId}/alerts/{id?}', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patient.alerts']);
 		Route::get('/{programId}/careplan/{id}', ['uses' => 'Patient\PatientController@showPatientCareplan', 'as' => 'patient.careplan']);
-		Route::get('/{programId}/careplan/{id}/save', ['uses' => 'Patient\PatientController@savePatientCareplan', 'as' => 'patient.careplan.save']);
+		Route::post('/{programId}/careplan/save', ['uses' => 'Patient\PatientController@savePatientCareplan', 'as' => 'patient.careplan.save']);
 		Route::get('/{programId}/careplan/{id}/print', ['uses' => 'Patient\PatientController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
 		Route::get('/{programId}/notes/{id}', ['uses' => 'Patient\PatientController@showPatientNotes', 'as' => 'patient.notes']);
 		Route::get('/{programId}/input/observation/{id}', ['uses' => 'Patient\PatientController@showPatientObservationCreate', 'as' => 'patient.observation.create']);
@@ -98,11 +98,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'admin.permissions.update']);
 		Route::get('permissions/{id}/careplan', ['uses' =>'Admin\PermissionController@show', 'as'=>'admin.permissions.careplan']);
 
-		Route::get('questions', ['uses' =>'Admin\CPRQuestionController@index', 'as'=>'admin.questions']);
-		Route::get('questions/create', ['uses' =>'Admin\CPRQuestionController@create', 'as'=>'admin.questions.create']);
-		Route::post('questions/create', ['uses' =>'Admin\CPRQuestionController@store', 'as'=>'admin.questions.store']);
-		Route::get('questions/{id}', ['uses' =>'Admin\CPRQuestionController@show', 'as'=>'admin.questions.show']);
-		Route::get('questions/{id}/edit', ['uses' =>'Admin\CPRQuestionController@edit', 'as'=>'admin.questions.edit']);
+		Route::resource('questions', 'Admin\CPRQuestionController');
 		Route::post('questions/{id}/edit', ['uses' =>'Admin\CPRQuestionController@update', 'as'=>'admin.questions.update']);
 		Route::get('questions/{id}/destroy', ['uses' =>'Admin\CPRQuestionController@destroy', 'as'=>'admin.questions.destroy']);
 

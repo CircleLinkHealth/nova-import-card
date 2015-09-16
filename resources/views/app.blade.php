@@ -84,7 +84,7 @@
 								<ul class="dropdown-menu" role="menu">
 									<li><a href="{{ action('Admin\WpBlogController@index') }}">Programs</a></li>
 									<li><a href="{{ action('LocationController@index') }}">Locations</a></li>
-									<li><a href="{{ url('admin/questions') }}">Questions</a></li>
+									<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>
 								</ul>
 							</li>
 							<li role="presentation" class="dropdown">
