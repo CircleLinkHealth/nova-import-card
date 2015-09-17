@@ -3,8 +3,6 @@
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
 
-//EMAIL TEST ROUTE
-use App\Activity;
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
