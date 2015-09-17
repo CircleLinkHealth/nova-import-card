@@ -158,7 +158,7 @@ class ObservationController extends Controller {
 			// extra work here to decode from quirky UI
 			$params['user_id'] = $wpUser->ID;
 			// get state_app for obs_date
-			$date = DateTime::createFromFormat("Y-m-d h:i:s", $input['observationDate']);
+			$date = DateTime::createFromFormat("Y-m-d\TH:i", $input['observationDate']);
 			$comment = Comment::where('comment_type', '=', 'state_app')
 				->where('user_id', '=', $wpUser->ID)
 				->where('comment_date', '>=', $date->format("Y-m-d") . ' 00:00:00')
