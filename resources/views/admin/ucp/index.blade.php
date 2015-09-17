@@ -12,16 +12,16 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-8">
-                        <h1>User Care Plans</h1>
+                        <h1>User Care Plan Items</h1>
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.ucp.create', array()) }}" class="btn btn-success">New User Care Plan</a>
+                            <a href="{{ URL::route('admin.ucp.create', array()) }}" class="btn btn-success" disabled="disabled">New User Care Plan</a>
                         </div>
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">All User Care Plans</div>
+                    <div class="panel-heading">All User Care Plan Items</div>
                     <div class="panel-body">
                         @include('errors.errors')
                         <table class="table table-striped">
@@ -39,7 +39,13 @@
                             @foreach( $ucps as $ucp )
                                 <tr>
                                     <td><a href="{{ URL::route('admin.ucp.show', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Detail</a></td>
-                                    <td><div class="btn btn-orange btn-xs">{{ $ucp->items_id }}</div></td>
+                                    <td>
+                                        @if($ucp->item)
+                                            <a href="{{ URL::route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->items_text }}</a>
+                                        @else
+                                            {{ $ucp->items_id }}
+                                        @endif
+                                    </td>
                                     <td>{{ $ucp->user_id }}</td>
                                     <td>{{ $ucp->meta_key }}</td>
                                     <td>{{ $ucp->meta_value }}</td>

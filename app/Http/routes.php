@@ -156,7 +156,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('comments/{id}/destroy', ['uses' =>'Admin\CommentController@destroy', 'as'=>'admin.comments.destroy']);
 
 		// programs
-		Route::resource('comments', 'Admin\WpBlogController');
+		Route::resource('programs', 'Admin\WpBlogController');
 		Route::get('programs', ['uses' =>'Admin\WpBlogController@index', 'as'=>'admin.programs']);
 		Route::get('programs/create', ['uses' =>'Admin\WpBlogController@create', 'as'=>'admin.programs.create']);
 		Route::post('programs/create', ['uses' =>'Admin\WpBlogController@store', 'as'=>'admin.programs.store']);

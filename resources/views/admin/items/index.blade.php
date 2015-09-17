@@ -28,7 +28,7 @@
                             <thead>
                             <tr>
                                 <td></td>
-                                <td><strong>pcp_id</strong></td>
+                                <td><strong>pcp</strong></td>
                                 <td><strong>items_parent</strong></td>
                                 <td><strong>qid</strong></td>
                                 <td><strong>items_text</strong></td>
@@ -39,7 +39,7 @@
                             @foreach( $items as $item )
                                 <tr>
                                     <td><a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-primary">Detail</a></td>
-                                    <td><div class="btn btn-orange btn-xs">{{ $item->pcp_id }}</div></td>
+                                    <td><div class="btn btn-orange btn-xs">{{ $item->pcp->section_text }}</div></td>
                                     <td>{{ $item->items_parent }}</td>
                                     <td><a href="{{ URL::route('admin.questions.show', array('id' => $item->qid)) }}" class="btn btn-orange btn-xs">{{ $item->qid }}</a></td>
                                     <td>{{ $item->items_text }}</td>
