@@ -61,8 +61,8 @@ Class ReportsService
         //TAKING YOUR MEDICATIONS
 
 
-        $medications_pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Medications to Monitor')->where('items_parent', 0)->lists('pcp_id');
-        dd($medications_pcp);
+        //$medications_pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Medications to Monitor')->where('items_parent', 0)->lists('pcp_id');
+        //dd($medications_pcp);
 
 
         //TRACKING CHANGES

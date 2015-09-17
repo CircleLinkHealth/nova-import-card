@@ -6,10 +6,10 @@
 use App\Services\ReportsService;
 use App\WpUser;
 
-Route::get('/bar', function()
+Route::get('/progressreport/{id}', function($id)
 {
 	$report = new ReportsService();
-	$data = $report->careplan(400);
+	$data = $report->careplan($id);
 	return $data;
 });
 
