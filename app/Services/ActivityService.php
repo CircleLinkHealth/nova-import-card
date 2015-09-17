@@ -94,12 +94,14 @@ class ActivityService {
 
 			if($newNoteFlag) {
 				$email_view = 'emails.newnote';
+				$email_subject = 'Please Review New Patient Note from CircleLink Health';
 			}	else {
 				$email_view = 'emails.existingnote';
+				$email_subject = 'You have received a new note notification from CarePlan Manager';
 			}
-			Mail::send($email_view, $data, function($message) use ($email) {
+			Mail::send($email_view, $data, function($message) use ($email,$email_subject) {
 				$message->from('no-reply@careplanmanager.com', 'CircleLink Health');
-				$message->to($email)->subject('You have received a new note notification from CarePlan Manager');
+				$message->to($email)->subject($email_subject);
 			});
 		}
 		return false;

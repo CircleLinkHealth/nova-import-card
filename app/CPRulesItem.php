@@ -32,6 +32,8 @@ class CPRulesItem extends Model {
      */
     protected $fillable = ['items_id', 'pcp_id', 'items_parent', 'qid', 'items_text'];
 
+    public $timestamps = false;
+
 
     public function meta()
     {

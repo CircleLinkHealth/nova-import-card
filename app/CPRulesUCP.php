@@ -35,7 +35,7 @@ class CPRulesUCP extends Model {
 
     public function item()
     {
-        return $this->hasOne('App\RulesItem', 'items_id');
+        return $this->belongsTo('App\CPRulesItem', 'items_id');
     }
 
     public function getCPRulesUCP($userId)

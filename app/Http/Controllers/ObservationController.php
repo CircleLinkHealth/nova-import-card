@@ -144,6 +144,11 @@ class ObservationController extends Controller {
 			$params['source'] = 'manual_input';
 		} else if ( $request->header('Client') == 'ui' ) { // WP Site
 			$input = json_decode(Crypt::decrypt($request->input('data')), true);
+		} else {
+			$input = $request->all();
+		}
+
+		if ( (!$request->header('Client')) || $request->header('Client') == 'ui' ) {
 			$wpUser = WpUser::find($input['userId']);
 			if (!$wpUser) {
 				return response()->json(['error' => 'invalid_credentials'], 401);
@@ -155,14 +160,16 @@ class ObservationController extends Controller {
 			if ($validator->fails()) {
 				return response()->json(['response' => 'Validation Error'], 500);
 			}
+
 			// extra work here to decode from quirky UI
 			$params['user_id'] = $wpUser->ID;
 			// get state_app for obs_date
-			$date = DateTime::createFromFormat("Y-m-d h:i:s", $input['observationDate']);
+			$date = DateTime::createFromFormat("Y-m-d\TH:i", $input['observationDate']);
 			$comment = Comment::where('comment_type', '=', 'state_app')
 				->where('user_id', '=', $wpUser->ID)
 				->where('comment_date', '>=', $date->format("Y-m-d") . ' 00:00:00')
-				->where('comment_date', '<=', $date->format("Y-m-d") . ' 11:59:59')
+				->where('comment_date', '<=', $date->format("Y-m-d") . ' 23:59:59')
+				->orderBy('id', 'desc')
 				->first();
 			if (!$comment) {
 				return response()->json(['response' => 'No state_app comment found'], 500);
@@ -179,10 +186,16 @@ class ObservationController extends Controller {
 
 		$result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['obs_message_id'], $params['obs_key'], $params['timezone'], $params['source']);
 
-		if($result) {
-			return response()->json(['response' => 'Observation Created'], 201);
+		if ( $request->header('Client') == 'mobi' || $request->header('Client') == 'ui' ) {
+			// api response
+			if ($result) {
+				return response()->json(['response' => 'Observation Created'], 201);
+			} else {
+				return response()->json(['response' => 'Error'], 500);
+			}
 		} else {
-			return response()->json(['response' => 'Error'], 500);
+			// ui response
+			return redirect()->route('patient.summary', ['id' => $wpUser->ID, 'programId' => $input['programId']])->with('messages', ['successfully added new observation'])->send();
 		}
     }
 
