@@ -156,9 +156,15 @@ class ObservationController extends Controller {
 			$validator = Validator::make($input, [
 				'observationDate' => 'required|date',
 				'observationValue' => 'required',
+				'observationSource' => 'required',
+				'observationDate' => 'required|size:100',
 			]);
 			if ($validator->fails()) {
-				return response()->json(['response' => 'Validation Error'], 500);
+				if ( $request->header('Client') ) {
+					return response()->json(['response' => 'Validation Error'], 500);
+				} else {
+					return redirect()->back()->withErrors($validator)->withInput();
+				}
 			}
 
 			// extra work here to decode from quirky UI

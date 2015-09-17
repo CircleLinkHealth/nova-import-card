@@ -13,7 +13,6 @@
                             New Observation
                         </div>
                         @include('errors.errors')
-
                         <div class="main-form-block main-form-horizontal col-md-12">
                             <div class="row">
                                 <div class="form-block col-md-6">
@@ -105,7 +104,7 @@
                                                 </div>
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
-                                                        <input name="observationDate" type="datetime-local" class="selectpicker form-control" data-width="95px" data-size="10" list max="<?php echo date('Y-m-d\TH:i') ?>" value="<?php echo date('Y-m-d\TH:i') ?>" required>
+                                                        <input name="observationDate" type="datetime-local" class="selectpicker form-control" data-width="95px" data-size="10" list max="<?php echo date('Y-m-d\TH:i') ?>" value="{{ (old('observationDate') ? old('observationDate') : '') }}" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -118,7 +117,7 @@
                                                     </label>
                                                 </div>
                                                 <div class="form-group col-sm-6">
-                                                    <input type="text" class="form-control" name="observationValue" id="observationValue" placeholder="Enter Data" required>
+                                                    <input type="text" class="form-control" name="observationValue" id="observationValue" placeholder="Enter Data" value="{{ (old('observationValue') ? old('observationValue') : '') }}" required>
                                                 </div>
                                             </div>
                                         </div>
