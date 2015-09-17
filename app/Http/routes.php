@@ -52,6 +52,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('summary/{id}', ['uses' => 'Patient\PatientController@showPatientSummary', 'as' => 'patient.summary']);
 		Route::get('alerts/{id?}', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patient.alerts']);
 		Route::get('input/observation/{id}', ['uses' => 'Patient\PatientController@showPatientObservationCreate', 'as' => 'patient.observation.create']);
+		Route::post('input/observation/create', ['uses' => 'ObservationController@store', 'as' => 'patient.observation.store']);
 
 		// careplan
 		Route::group(['prefix' => 'careplan'], function () {
@@ -64,6 +65,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::group(['prefix' => 'notes'], function () {
 			Route::get('{id}', ['uses' => 'Patient\PatientController@showPatientNotes', 'as' => 'patient.notes']);
 		});
+
 	});
 
 	/****************************/

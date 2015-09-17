@@ -231,6 +231,6 @@ class PatientController extends Controller {
 		// program
 		$program = WpBlog::find($programId);
 
-		return view('wpUsers.patient.observation.create', ['program' => $program, 'patient' => $wpUser]);
+		return view('wpUsers.patient.observation.create', ['program' => $program, 'programId' => $programId, 'patient' => $wpUser]);
 	}
 }
