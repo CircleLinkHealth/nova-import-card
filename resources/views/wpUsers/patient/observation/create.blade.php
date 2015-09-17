@@ -104,7 +104,7 @@
                                                 </div>
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
-                                                        <input name="observationDate" type="datetime-local" class="selectpicker form-control" data-width="95px" data-size="10" list max="<?php echo date('Y-m-d\TH:i') ?>" value="{{ (old('observationDate') ? old('observationDate') : '') }}" required>
+                                                        <input name="observationDate" type="datetime-local" class="selectpicker form-control" data-width="95px" data-size="10" list max="<?php echo date('Y-m-d\TH:i') ?>" value="{{ (old('observationDate') ? old('observationDate') : date('Y-m-d\TH:i')) }}" required>
                                                     </div>
                                                 </div>
                                             </div>
