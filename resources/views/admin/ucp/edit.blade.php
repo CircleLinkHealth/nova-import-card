@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">Edit User Care Plan: {{ $ucp->msg_id }}</div>
+                    <div class="panel-heading">Edit UCP Item: {{ $ucp->msg_id }}</div>
                     <div class="panel-body">
                         @include('errors.errors')
                         <table class="table table-striped">
@@ -31,54 +31,46 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.ucp.show', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">{{ $ucp->ucp_id }} Detail</a></td>
-                                    <td><div class="btn btn-orange btn-xs">{{ $ucp->msg_id }}</div></td>
-                                    <td>{{ $ucp->qtype }}</td>
-                                    <td>{{ $ucp->obs_key }}</td>
+                                    <td><a href="{{ URL::route('admin.ucp.show', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Detail</a></td>
+                                    <td>
+                                        @if($ucp->item)
+                                            <a href="{{ URL::route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->items_text }}</a>
+                                        @else
+                                            {{ $ucp->items_id }}
+                                        @endif
+                                    </td>
+                                    <td>{{ $ucp->user_id }}</td>
                                     <td>{{ $ucp->meta_key }}</td>
-                                    <td>{{ $ucp->category }}</td>
+                                    <td><strong>{{ $ucp->meta_value }}</strong></td>
                                 </tr>
                             </tbody>
                         </table>
 
                         <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('msg_id', 'Msg ID:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('msg_id', $ucp->msg_id, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-2">{!! Form::label('items_id', 'Items Id:') !!}</div>
+                            <div class="col-sm-10">{!! Form::text('items_id', $ucp->items_id, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                         </div>
 
                         <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('qtype', 'qtype:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('qtype', $ucp->qtype, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-2">{!! Form::label('user_id', 'User Id:') !!}</div>
+                            <div class="col-sm-10">{!! Form::text('user_id', $ucp->user_id, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                         </div>
 
                         <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('obs_key', 'Obs Key:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('obs_key', $ucp->obs_key, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-2">{!! Form::label('meta_key', 'Meta Key:') !!}</div>
+                            <div class="col-sm-10">{!! Form::text('meta_key', $ucp->meta_key, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                         </div>
 
                         <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('icon', 'Icon:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('icon', $ucp->icon, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-2">{!! Form::label('meta_value', 'Meta Value:') !!}</div>
+                            <div class="col-sm-10">{!! Form::text('meta_value', $ucp->meta_value, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                         </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('category', 'Category:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('category', $ucp->category, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
-                        </div>
-
-                        <div id="summary" style="margin:20px 0px;">
-                            <strong>Description:</strong>
-                            <div class="form-group" id="description">
-                                <div class="col-sm-12">{!! Form::textarea('description',$ucp->description,['class'=>'form-control', 'rows' => 4, 'cols' => 10]) !!}</div>
-                            </div>
-                        </div>
-
 
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.ucp.index', array()) }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::submit('Update User Care Plan', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Update UCP Item', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>

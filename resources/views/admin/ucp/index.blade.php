@@ -48,7 +48,7 @@
                                     </td>
                                     <td>{{ $ucp->user_id }}</td>
                                     <td>{{ $ucp->meta_key }}</td>
-                                    <td>{{ $ucp->meta_value }}</td>
+                                    <td><strong>{{ $ucp->meta_value }}</strong></td>
                                     <td><a href="{{ URL::route('admin.ucp.edit', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.ucp.destroy', array('id' => $ucp->ucp_id)) }}" class="btn btn-warning">Remove</a></td>
                                 </tr>
                             @endforeach

@@ -41,12 +41,10 @@ class CPRUCPController extends Controller {
 	{
 		$params = $request->input();
 		$ucp = new CPRulesUCP;
-		$ucp->msg_id = $params['msg_id'];
-		$ucp->qtype = $params['qtype'];
-		$ucp->obs_key = $params['obs_key'];
-		$ucp->description = $params['description'];
-		$ucp->icon = $params['icon'];
-		$ucp->category = $params['category'];
+		$ucp->items_id = $params['items_id'];
+		$ucp->user_id = $params['user_id'];
+		$ucp->meta_key = $params['meta_key'];
+		$ucp->meta_value = $params['meta_value'];
 		$ucp->save();
 		return redirect()->route('admin.ucp.edit', [$ucp->qid])->with('messages', ['successfully added new ucp - '.$params['msg_id']])->send();
 	}
@@ -86,12 +84,10 @@ class CPRUCPController extends Controller {
 	{
 		$params = $request->input();
 		$ucp = CPRulesUCP::find($id);
-		$ucp->msg_id = $params['msg_id'];
-		$ucp->qtype = $params['qtype'];
-		$ucp->obs_key = $params['obs_key'];
-		$ucp->description = $params['description'];
-		$ucp->icon = $params['icon'];
-		$ucp->category = $params['category'];
+		$ucp->items_id = $params['items_id'];
+		$ucp->user_id = $params['user_id'];
+		$ucp->meta_key = $params['meta_key'];
+		$ucp->meta_value = $params['meta_value'];
 		$ucp->save();
 		return redirect()->back()->with('messages', ['successfully updated ucp'])->send();
 	}

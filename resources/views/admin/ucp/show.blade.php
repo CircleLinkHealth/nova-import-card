@@ -21,54 +21,48 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <td><strong>msg_id</strong></td>
-                                <td><strong>qtype</strong></td>
-                                <td><strong>obs_key</strong></td>
-                                <td><strong>icon</strong></td>
-                                <td><strong>category</strong></td>
+                                <td><strong>items_id</strong></td>
+                                <td><strong>user_id</strong></td>
+                                <td><strong>meta_key</strong></td>
+                                <td><strong>meta_value</strong></td>
                                 <td></td>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td><div class="btn btn-orange btn-xs">{{ $ucp->msg_id }}</div></td>
-                                <td>{{ $ucp->qtype }}</td>
-                                <td>{{ $ucp->obs_key }}</td>
+                                <td>
+                                    @if($ucp->item)
+                                        <a href="{{ URL::route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->items_text }}</a>
+                                    @else
+                                        {{ $ucp->items_id }}
+                                    @endif
+                                </td>
+                                <td>{{ $ucp->user_id }}</td>
                                 <td>{{ $ucp->meta_key }}</td>
-                                <td>{{ $ucp->category }}</td>
-                                <td><a href="{{ URL::route('admin.ucp.edit', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Edit</a></td>
+                                <td><strong>{{ $ucp->meta_value }}</strong></td>
+                                <td><a href="{{ URL::route('admin.ucp.edit', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.ucp.destroy', array('id' => $ucp->ucp_id)) }}" class="btn btn-warning">Remove</a></td>
                             </tr>
                             </tbody>
                         </table>
 
                         <div class="row" style="margin:20px 0px;">
-                            <strong>Msg ID:</strong><br>
-                            {{ $ucp->msg_id }}
+                            <strong>Items Id:</strong><br>
+                            {{ $ucp->items_id }}
                         </div>
 
                         <div class="row" style="margin:20px 0px;">
-                            <strong>User Care Plan Type:</strong><br>
-                            {{ $ucp->qtype }}
+                            <strong>User Id:</strong><br>
+                            {{ $ucp->user_id }}
                         </div>
 
                         <div class="row" style="margin:20px 0px;">
-                            <strong>Obs Key:</strong><br>
-                            <p>{{ $ucp->obs_key }}</p>
+                            <strong>Meta Key:</strong><br>
+                            <p>{{ $ucp->meta_key }}</p>
                         </div>
 
                         <div class="row" style="margin:20px 0px;">
-                            <strong>Icon:</strong><br>
-                            {{ $ucp->icon }}
-                        </div>
-
-                        <div class="row" style="margin:20px 0px;">
-                            <strong>Category:</strong><br>
-                            {{ $ucp->category }}
-                        </div>
-
-                        <div class="row" style="margin:20px 0px;">
-                            <strong>Description:</strong><br>
-                            {{ $ucp->description }}
+                            <strong>Meta Value:</strong><br>
+                            {{ $ucp->meta_value }}
                         </div>
 
                     </div>
