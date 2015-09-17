@@ -21,35 +21,23 @@
                         @include('errors.errors')
 
                         <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('msg_id', 'Msg ID:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('msg_id', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-2">{!! Form::label('pcp_id', 'PCP Id:') !!}</div>
+                            <div class="col-sm-10">{!! Form::text('pcp_id', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                         </div>
 
                         <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('qtype', 'qtype:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('qtype', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-2">{!! Form::label('items_parent', 'Items Parent:') !!}</div>
+                            <div class="col-sm-10">{!! Form::text('items_parent', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                         </div>
 
                         <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('obs_key', 'Obs Key:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('obs_key', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-2">{!! Form::label('qid', 'qid:') !!}</div>
+                            <div class="col-sm-10">{!! Form::text('qid', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                         </div>
 
                         <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('icon', 'Icon:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('icon', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('category', 'Category:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('category', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
-                        </div>
-
-                        <div id="summary" style="margin:20px 0px;">
-                            <strong>Description:</strong>
-                            <div class="form-group" id="description">
-                                <div class="col-sm-12">{!! Form::textarea('description','',['class'=>'form-control', 'rows' => 4, 'cols' => 10]) !!}</div>
-                            </div>
+                            <div class="col-sm-2">{!! Form::label('items_text', 'items_text:') !!}</div>
+                            <div class="col-sm-10">{!! Form::text('items_text', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                         </div>
 
                         <div class="row" style="margin-top:50px;">

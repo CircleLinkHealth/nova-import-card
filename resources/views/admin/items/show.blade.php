@@ -21,54 +21,48 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <td><strong>msg_id</strong></td>
-                                <td><strong>qtype</strong></td>
-                                <td><strong>obs_key</strong></td>
-                                <td><strong>icon</strong></td>
-                                <td><strong>category</strong></td>
+                                <td><strong>pcp</strong></td>
+                                <td><strong>items_parent</strong></td>
+                                <td><strong>qid</strong></td>
+                                <td><strong>items_text</strong></td>
                                 <td></td>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td><div class="btn btn-orange btn-xs">{{ $item->msg_id }}</div></td>
-                                <td>{{ $item->qtype }}</td>
-                                <td>{{ $item->obs_key }}</td>
-                                <td>{{ $item->meta_key }}</td>
-                                <td>{{ $item->category }}</td>
-                                <td><a href="{{ URL::route('admin.items.edit', array('id' => $item->items_id)) }}" class="btn btn-primary">Edit</a></td>
+                                <td>
+                                    @if($item->pcp)
+                                        <a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->pcp->section_text }}</a>
+                                    @else
+                                        {{ $item->pcp_id }}
+                                    @endif
+                                </td>
+                                <td>{{ $item->items_parent }}</td>
+                                <td><a href="{{ URL::route('admin.questions.show', array('id' => $item->qid)) }}" class="btn btn-orange btn-xs">{{ $item->qid }}</a></td>
+                                <td>{{ $item->items_text }}</td>
+                                <td><a href="{{ URL::route('admin.items.edit', array('id' => $item->items_id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.items.destroy', array('id' => $item->items_id)) }}" class="btn btn-warning">Remove</a></td>
                             </tr>
                             </tbody>
                         </table>
 
                         <div class="row" style="margin:20px 0px;">
-                            <strong>Msg ID:</strong><br>
-                            {{ $item->msg_id }}
+                            <strong>PCP Id:</strong><br>
+                            {{ $item->pcp_id }}
                         </div>
 
                         <div class="row" style="margin:20px 0px;">
-                            <strong>Item Type:</strong><br>
-                            {{ $item->qtype }}
+                            <strong>Item Parent:</strong><br>
+                            {{ $item->items_parent }}
                         </div>
 
                         <div class="row" style="margin:20px 0px;">
-                            <strong>Obs Key:</strong><br>
-                            <p>{{ $item->obs_key }}</p>
+                            <strong>qid:</strong><br>
+                            <p>{{ $item->qid }}</p>
                         </div>
 
                         <div class="row" style="margin:20px 0px;">
-                            <strong>Icon:</strong><br>
-                            {{ $item->icon }}
-                        </div>
-
-                        <div class="row" style="margin:20px 0px;">
-                            <strong>Category:</strong><br>
-                            {{ $item->category }}
-                        </div>
-
-                        <div class="row" style="margin:20px 0px;">
-                            <strong>Description:</strong><br>
-                            {{ $item->description }}
+                            <strong>Items Text:</strong><br>
+                            {{ $item->items_text }}
                         </div>
 
                     </div>

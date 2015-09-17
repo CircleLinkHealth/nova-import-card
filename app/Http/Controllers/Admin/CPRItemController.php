@@ -17,7 +17,7 @@ class CPRItemController extends Controller {
 	public function index(Request $request)
 	{
 		// display view
-		$items = CPRulesItem::paginate(10);
+		$items = CPRulesItem::orderBy('items_id', 'desc')->paginate(10);
 		return view('admin.items.index', [ 'items' => $items ]);
 	}
 
@@ -41,14 +41,12 @@ class CPRItemController extends Controller {
 	{
 		$params = $request->input();
 		$item = new CPRulesItem;
-		$item->msg_id = $params['msg_id'];
-		$item->qtype = $params['qtype'];
-		$item->obs_key = $params['obs_key'];
-		$item->description = $params['description'];
-		$item->icon = $params['icon'];
-		$item->category = $params['category'];
+		$item->pcp_id = $params['pcp_id'];
+		$item->items_parent = $params['items_parent'];
+		$item->qid = $params['qid'];
+		$item->items_text = $params['items_text'];
 		$item->save();
-		return redirect()->route('admin.items.edit', [$item->qid])->with('messages', ['successfully added new item - '.$params['msg_id']])->send();
+		return redirect()->route('admin.items.edit', [$item->items_id])->with('messages', ['successfully added new item - '])->send();
 	}
 
 	/**
@@ -86,12 +84,10 @@ class CPRItemController extends Controller {
 	{
 		$params = $request->input();
 		$item = CPRulesItem::find($id);
-		$item->msg_id = $params['msg_id'];
-		$item->qtype = $params['qtype'];
-		$item->obs_key = $params['obs_key'];
-		$item->description = $params['description'];
-		$item->icon = $params['icon'];
-		$item->category = $params['category'];
+		$item->pcp_id = $params['pcp_id'];
+		$item->items_parent = $params['items_parent'];
+		$item->qid = $params['qid'];
+		$item->items_text = $params['items_text'];
 		$item->save();
 		return redirect()->back()->with('messages', ['successfully updated item'])->send();
 	}

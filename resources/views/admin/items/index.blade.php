@@ -39,7 +39,13 @@
                             @foreach( $items as $item )
                                 <tr>
                                     <td><a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-primary">Detail</a></td>
-                                    <td><div class="btn btn-orange btn-xs">{{ $item->pcp->section_text }}</div></td>
+                                    <td>
+                                        @if($item->pcp)
+                                            <a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->pcp->section_text }}</a>
+                                        @else
+                                            {{ $item->pcp_id }}
+                                        @endif
+                                    </td>
                                     <td>{{ $item->items_parent }}</td>
                                     <td><a href="{{ URL::route('admin.questions.show', array('id' => $item->qid)) }}" class="btn btn-orange btn-xs">{{ $item->qid }}</a></td>
                                     <td>{{ $item->items_text }}</td>
