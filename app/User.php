@@ -86,6 +86,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('App\Activity');
 	}
 
+	public function ucp()
+	{
+		return $this->hasMany('App\CPRulesUCP');
+	}
+
 	public function role($blogId = false)
 	{
 		if(!$blogId) {

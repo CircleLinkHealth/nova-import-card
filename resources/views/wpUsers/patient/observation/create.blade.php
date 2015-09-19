@@ -49,13 +49,13 @@
                                                             </optgroup>
 
                                                             <optgroup label="Symptoms? (1 - 9)">
-                                                                <option value="SYM/CF_SYM_MNU_01/1/CF_SYM_20">Shortness of breath</option>
-                                                                <option value="SYM/CF_SYM_MNU_01/2/CF_SYM_20">Coughing or wheezing</option>
-                                                                <option value="SYM/CF_SYM_MNU_01/3/CF_SYM_20">Chest pain or chest tightness</option>
-                                                                <option value="SYM/CF_SYM_MNU_01/4/CF_SYM_20">Fatigue</option>
-                                                                <option value="SYM/CF_SYM_MNU_01/5/CF_SYM_20">Weakness or dizziness</option>
-                                                                <option value="SYM/CF_SYM_MNU_01/6/CF_SYM_20">Swelling in legs/feet</option>
-                                                                <option value="SYM/CF_SYM_MNU_01/7/CF_SYM_20">Feeling down,  helpless, or sleep changes</option>
+                                                                <option value="SYM/CF_SYM_51">Shortness of breath</option>
+                                                                <option value="SYM/CF_SYM_52">Coughing or wheezing</option>
+                                                                <option value="SYM/CF_SYM_53">Chest pain or chest tightness</option>
+                                                                <option value="SYM/CF_SYM_54">Fatigue</option>
+                                                                <option value="SYM/CF_SYM_55">Weakness or dizziness</option>
+                                                                <option value="SYM/CF_SYM_56">Swelling in legs/feet</option>
+                                                                <option value="SYM/CF_SYM_57">Feeling down,  helpless, or sleep changes</option>
                                                             </optgroup>
 
                                                             <optgroup label="Lifestyle? Y or N">
@@ -131,7 +131,7 @@
                                 <div class="pull-right" style="margin-right:20px;">
                                     <input type="hidden" name="userId" id="userId" value="{{ $patient->ID }}">
                                     <input type="hidden" name="programId" id="programId" value="{{ $program->blog_id }}">
-                                    <a href="{{ URL::route('patient.summary', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ URL::route('patient.summary', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Add Observation', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 use App\WpUser;
+use App\Services\DatamonitorService;
 use App\WpUserMeta;
 use DB;
 
@@ -128,6 +129,10 @@ class Observation extends Model {
         }
 
         parent::save();
+
+        // run datamonitor
+        $dmService = new DatamonitorService;
+        $dmService->process_obs_alerts($this->id);
         // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
     }
 

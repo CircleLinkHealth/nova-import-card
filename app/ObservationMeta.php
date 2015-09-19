@@ -47,6 +47,7 @@ class ObservationMeta extends Model {
             return false;
         }
         $observation = Observation::find($this->obs_id);
+        $comment = Comment::find($observation->comment_id);
         $wpUser = WpUser::find($observation->user_id);
 
         if(!$wpUser || !$observation) {
@@ -54,8 +55,8 @@ class ObservationMeta extends Model {
         }
 
         // take programId(blogId) and add to wp_X_observationmeta table
-        $params['obs_id'] = $observation->id;
-        $params['comment_id'] = $this->comment_id;
+        $params['obs_id'] = $observation->legacy_obs_id;
+        $params['comment_id'] = $comment->legacy_comment_id;
         $params['message_id'] = $this->message_id;
         $params['meta_key'] = $this->meta_key;
         $params['meta_value'] = $this->meta_value;

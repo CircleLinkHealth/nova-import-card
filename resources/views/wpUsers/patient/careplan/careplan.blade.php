@@ -127,7 +127,7 @@
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                     <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
-                                    <input id="birth_date" name="birth_date" type="input" value="{{ (old('birth_date') ? old('birth_date') : '') }}"/><br />
+                                    <input id="birth_date" name="birth_date" type="input" class="form-control" value="{{ (old('birth_date') ? old('birth_date') : '') }}"/><br />
                                     <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                 </div>
                                 <div class="form-item col-sm-12">
@@ -175,7 +175,7 @@
                             <div class="row">
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_time') ? 'has-error' : '' }}">
                                     <label for="mf-contact">Preferred Contact Time <span class="attention">*</span>:</label>
-                                    <input id="preferred_contact_time" name="preferred_contact_time" type="input" value="{{ (old('preferred_contact_time') ? old('preferred_contact_time') : '') }}"/><br />
+                                    <input id="preferred_contact_time" class="form-control" name="preferred_contact_time" type="input" value="{{ (old('preferred_contact_time') ? old('preferred_contact_time') : '') }}"/><br />
                                     (Should be between 4pm and 9pm)
                                     <span class="help-block">{{ $errors->first('preferred_contact_time') }}</span>
                                 </div>
@@ -217,7 +217,7 @@
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
                                     <label for="mf-consent_date">Consent Date <span class="attention">*</span>:</label>
-                                    <input id="consent_date" name="consent_date" type="input" value="{{ (old('consent_date') ? old('consent_date') : '') }}"/><br />
+                                    <input id="consent_date" name="consent_date" class="form-control" type="input" value="{{ (old('consent_date') ? old('consent_date') : '') }}"/><br />
                                     <span class="help-block">{{ $errors->first('consent_date') }}</span>
                                 </div>
                                 <div class="col-sm-12 text-right">

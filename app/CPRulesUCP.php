@@ -38,6 +38,11 @@ class CPRulesUCP extends Model {
         return $this->belongsTo('App\CPRulesItem', 'items_id');
     }
 
+    public function user()
+    {
+        return $this->hasOne('App\WpUser', 'user_id');
+    }
+
     public function getCPRulesUCP($userId)
     {
         $rulesUCP = CPRulesUCP::where('user_id', '=', $userId)->get();

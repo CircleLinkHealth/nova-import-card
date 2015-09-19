@@ -155,7 +155,7 @@ class ObservationController extends Controller {
 			}
 			$validator = Validator::make($input, [
 				'observationDate' => 'required|date',
-				'observationValue' => 'required|size:2',
+				'observationValue' => 'required',
 				'observationSource' => 'required'
 			]);
 			if ($validator->fails()) {

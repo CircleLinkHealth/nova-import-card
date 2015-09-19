@@ -75,6 +75,11 @@ class WpUser extends Model {
         return $this->hasMany('App\Activity');
     }
 
+    public function ucp()
+    {
+        return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
+    }
+
     public function role($blogId = false)
     {
         if(!$blogId) {

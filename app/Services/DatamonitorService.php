@@ -4,8 +4,10 @@ use App\CPRulesQuestions;
 use App\Http\Requests;
 use App\WpUser;
 use App\Observation;
+use App\ObservationMeta;
 use App\WpUserMeta;
 use App\Comment;
+use DateTime;
 use DB;
 use Validator;
 
@@ -212,195 +214,207 @@ class DatamonitorService {
 	/**
 	 * Summary: run_process_obs_alerts - search for new observations and process them, checking for alerts
 	 *
-	 * @param $int_blog_id
+	 * @param $obs_id
 	 * @return string
 	 */
-	public function run_process_obs_alerts($alert_key = false, $obs_id = false, $source = false, $int_blog_id) {
+	public function process_obs_alerts($obs_id) {
 		$this->time_start = microtime(true);
 		// set blog id
-		$this->int_blog_id = $int_blog_id;
+		//$this->int_blog_id = $int_blog_id;
 
 		// start logging
-		$log_string = PHP_EOL . "---process_obs_alerts({$alert_key}) START" . PHP_EOL;
+		$log_string = PHP_EOL . "---process_obs_alerts({$obs_id}) START" . PHP_EOL;
 
 		// first get any new [alert_key or obs_id] observations that haven't been processed
-		$observations = $this->CI->observation_model->get_dm_observations($alert_key, $obs_id, $this->int_blog_id);
-		if($obs_id) {
-			// set alert_key
-			$alert_key = $observations[0]['obs_key'];
+		//$observations = $this->CI->observation_model->get_dm_observations($observation->obs_key, $obs_id, $this->int_blog_id);
+		$observation = Observation::find($obs_id);
+		if(!$observation) {
+			return false;
 		}
 
-		// loop through observations
-		if(!empty($observations)) {
-			$log_string .= "Found " . count($observations) . " observations" . PHP_EOL;
-			$i = 1;
-			foreach ($observations as $observation) {
-				// skip others (hack, bad planning)
-				if( $observation['obs_key'] == 'Other' && (!in_array($observation['obs_value'], array('y', 'Y', 'n', 'N'))) ) {
-					//continue 1;
+		// skip others (hack, bad planning)
+		if( $observation->obs_key == 'Other' && (!in_array($observation['obs_value'], array('y', 'Y', 'n', 'N'))) ) {
+			//continue 1;
+		}
+		$message_id = 'n/a';
+		$extra_vars = array(); // extra_vars get stored for later email/sms/msg substitution
+		$log_string .= "Checking ({$observation->obs_key}) observation[{$observation['obs_id']}][{$observation['obs_date']}][{$observation['obs_value']}]" . PHP_EOL;
+		// get user data for observation
+		$user = WpUser::find($observation->user_id);
+		$userUcp = $user->ucp()->with(['item.meta', 'item.question'])->get();
+		$userUcpData = array('statuses' => array(), 'values' => array());
+		$userUcpValues = array();
+		foreach($userUcp as $userUcpItem) {
+			if(isset($userUcpItem->item->question)) {
+				$question = $userUcpItem->item->question;
+				if($question) {
+					$userUcpData['statuses'][$question->obs_key] = $userUcpItem->meta_value;
 				}
-				$message_id = 'n/a';
-				$extra_vars = array(); // extra_vars get stored for later email/sms/msg substitution
-				$log_string .= "Checking ({$alert_key}) observation[{$observation['obs_id']}][{$observation['obs_date']}][{$observation['obs_value']}]" . PHP_EOL;
-				// get user data for observation
-				$user_data = $this->CI->users_model->get_users_data($observation['user_id'], 'id', $this->int_blog_id);
-				$extra_vars['patientname'] = $user_data[$observation['user_id']]["usermeta"]["first_name"] . ' ' . $user_data[$observation['user_id']]["usermeta"]["last_name"];
-				$extra_vars['alerts_url'] = ''.$this->get_alerts_url($observation['user_id'], $this->int_blog_id).'';
-				$extra_vars['alert_key'] = str_replace("_", " ", $alert_key);
-				$user_data_ucp = $user_data[$observation['user_id']]['usermeta']['user_care_plan'];
-				$obs_value = $observation['obs_value'];
-				$result = false;
-				$send_alert = false; // this will become a message string if an alert is found
-				$send_email = false;
-				// if users ucp has a value for the given alert key, compare and check if alert should be triggered
-				switch ($alert_key) {
-					// Blood Pressure
-					case 'Blood_Pressure':
-						$result = $this->process_alert_obs_blood_pressure($user_data_ucp, $observation, $this->int_blog_id);
-						if($result) {
-							$log_string .= $result['log_string'];
-							$message_id = $result['message_id'];
-							$send_alert = $result['send_alert'];
-							$send_email = $result['send_email'];
-							$extra_vars = array_merge($extra_vars, $result['extra_vars']);
-						}
-						break;
+			}
 
-					// Blood Sugar
-					case 'Blood_Sugar':
-						$result = $this->process_alert_obs_blood_sugar($user_data_ucp, $observation, $this->int_blog_id);
-						if($result) {
-							$log_string .= $result['log_string'];
-							$message_id = $result['message_id'];
-							$send_alert = $result['send_alert'];
-							$send_email = $result['send_email'];
-							$extra_vars = array_merge($extra_vars, $result['extra_vars']);
-						}
-						break;
-
-					// Weight
-					case 'Weight':
-						$result = $this->process_alert_obs_weight($user_data_ucp, $observation, $this->int_blog_id);
-						if($result) {
-							$log_string .= $result['log_string'];
-							$message_id = $result['message_id'];
-							$send_alert = $result['send_alert'];
-							$send_email = $result['send_email'];
-							$extra_vars = array_merge($extra_vars, $result['extra_vars']);
-						}
-						break;
-
-					// Weekly cigarettes smoked
-					case 'Cigarettes':
-						$result = $this->process_alert_obs_cigarettes($user_data_ucp, $observation, $this->int_blog_id);
-						if($result) {
-							$log_string .= $result['log_string'];
-							$message_id = $result['message_id'];
-							$send_alert = $result['send_alert'];
-							$send_email = $result['send_email'];
-							$extra_vars = array_merge($extra_vars, $result['extra_vars']);
-						}
-						break;
-
-					// Call requested
-					case 'Call':
-						$result = $this->process_alert_obs_call($user_data_ucp, $observation, $this->int_blog_id);
-						if($result) {
-							$log_string .= $result['log_string'];
-							$message_id = $result['message_id'];
-							$send_alert = $result['send_alert'];
-							$send_email = $result['send_email'];
-							$extra_vars = array_merge($extra_vars, $result['extra_vars']);
-						}
-						break;
-
-					// Symptoms
-					case 'Severity':
-						$result = $this->process_alert_obs_severity($user_data_ucp, $observation, $this->int_blog_id);
-						if($result) {
-							$log_string .= $result['log_string'];
-							$message_id = $result['message_id'];
-							$send_alert = $result['send_alert'];
-							$send_email = $result['send_email'];
-							$extra_vars = array_merge($extra_vars, $result['extra_vars']);
-						}
-						break;
-
-					// Adherence
-					case 'Adherence':
-						$result = $this->process_alert_obs_adherence($user_data_ucp, $observation, $this->int_blog_id);
-						if($result) {
-							$log_string .= $result['log_string'];
-							$message_id = $result['message_id'];
-							$send_alert = $result['send_alert'];
-							$send_email = $result['send_email'];
-							$extra_vars = array_merge($extra_vars, $result['extra_vars']);
-						}
-						break;
-
-					// Other
-					case 'Other':
-						$result = $this->process_alert_obs_other($user_data_ucp, $observation, $this->int_blog_id);
-						if($result) {
-							$log_string .= $result['log_string'];
-							$message_id = $result['message_id'];
-							$send_alert = $result['send_alert'];
-							$send_email = $result['send_email'];
-							$extra_vars = array_merge($extra_vars, $result['extra_vars']);
-						}
-						break;
-
-					// HSP
-					case 'HSP_ER':
-					case 'HSP_HOSP':
-						$result = $this->process_alert_obs_hsp($user_data_ucp, $observation, $this->int_blog_id);
-						if($result) {
-							$log_string .= $result['log_string'];
-							$message_id = $result['message_id'];
-							$send_alert = $result['send_alert'];
-							$send_email = $result['send_email'];
-							$extra_vars = array_merge($extra_vars, $result['extra_vars']);
-						}
-						break;
+			if(isset($userUcpItem->item->meta)) {
+				$alert_key = $userUcpItem->item->meta()->where('meta_key', '=', 'alert_key')->first();
+				if($alert_key) {
+					$userUcpData['values'][$alert_key->meta_value] = $userUcpItem->meta_value;
 				}
-
-				if(empty($result['label'])) {
-					$log_string .= "{$observation['obs_id']} no label set, not adding any obsmeta " . PHP_EOL;
-				} else {
-					// insert observationmeta for dm result
-					$observationmeta_paramaters = array(
-						'obs_id' => $observation['obs_id'],
-						'comment_id' => $observation['comment_id'],
-						'message_id' => $message_id,
-						'meta_key' => 'dm_alert_level',
-						'meta_value' => $result['label']
-					);
-					$observationmeta_id = $this->CI->observationmeta_model->insert_observationmeta($observationmeta_paramaters, $this->int_blog_id);
-					$log_string .= "added new observationmeta dm_alert_level - obsmeta_id = {$observationmeta_id}" . PHP_EOL;
-					$observationmeta_paramaters = array(
-						'obs_id' => $observation['obs_id'],
-						'comment_id' => $observation['comment_id'],
-						'message_id' => $message_id,
-						'meta_key' => 'dm_log',
-						'meta_value' => $result['log_string'] . $result['send_alert']
-					);
-					$observationmeta_id = $this->CI->observationmeta_model->insert_observationmeta($observationmeta_paramaters, $this->int_blog_id);
-					$log_string .= "added new observationmeta dm_log - obsmeta_id = {$observationmeta_id}" . PHP_EOL;
-
-					if ($send_alert !== false) {
-						$log_string .= "SEND ALERT [{$send_alert}]" . PHP_EOL;
-						// if exception, trigger alert flow
-						$log_string .= $this->send_obs_alert($observation, $message_id, $send_email, $extra_vars, $source, $this->int_blog_id);
-					}
+			}
+		}
+		$first_name = $user->meta()->where('meta_key', '=', 'last_names')->first();
+		$last_name = $user->meta()->where('meta_key', '=', 'last_name')->first();
+		$extra_vars['patientname'] = $first_name . ' ' . $last_name;
+		//$extra_vars['alerts_url'] = ''.$this->get_alerts_url($observation['user_id'], $this->int_blog_id).'';
+		$extra_vars['alerts_url'] = '';
+		$extra_vars['alert_key'] = str_replace("_", " ", $observation->obs_key);
+		//$user_data_ucp = $user_data[$observation['user_id']]['usermeta']['user_care_plan'];
+		$obs_value = $observation['obs_value'];
+		$result = false;
+		$send_alert = false; // this will become a message string if an alert is found
+		$send_email = false;
+		// if users ucp has a value for the given alert key, compare and check if alert should be triggered
+		switch ($observation->obs_key) {
+			// Blood Pressure
+			case 'Blood_Pressure':
+				$result = $this->process_alert_obs_blood_pressure($user, $userUcpData, $observation, $this->int_blog_id);
+				if($result) {
+					$log_string .= $result['log_string'];
+					$message_id = $result['message_id'];
+					$send_alert = $result['send_alert'];
+					$send_email = $result['send_email'];
+					$extra_vars = array_merge($extra_vars, $result['extra_vars']);
 				}
-				$i++;
+				break;
+
+			// Blood Sugar
+			case 'Blood_Sugar':
+				$result = $this->process_alert_obs_blood_sugar($user, $userUcpData, $observation, $this->int_blog_id);
+				if($result) {
+					$log_string .= $result['log_string'];
+					$message_id = $result['message_id'];
+					$send_alert = $result['send_alert'];
+					$send_email = $result['send_email'];
+					$extra_vars = array_merge($extra_vars, $result['extra_vars']);
+				}
+				break;
+
+			// Weight
+			case 'Weight':
+				$result = $this->process_alert_obs_weight($user, $userUcpData, $observation, $this->int_blog_id);
+				if($result) {
+					$log_string .= $result['log_string'];
+					$message_id = $result['message_id'];
+					$send_alert = $result['send_alert'];
+					$send_email = $result['send_email'];
+					$extra_vars = array_merge($extra_vars, $result['extra_vars']);
+				}
+				break;
+
+			// Weekly cigarettes smoked
+			case 'Cigarettes':
+				$result = $this->process_alert_obs_cigarettes($user, $userUcpData, $observation, $this->int_blog_id);
+				if($result) {
+					$log_string .= $result['log_string'];
+					$message_id = $result['message_id'];
+					$send_alert = $result['send_alert'];
+					$send_email = $result['send_email'];
+					$extra_vars = array_merge($extra_vars, $result['extra_vars']);
+				}
+				break;
+
+			// Call requested
+			case 'Call':
+				$result = $this->process_alert_obs_call($user, $userUcpData, $observation, $this->int_blog_id);
+				if($result) {
+					$log_string .= $result['log_string'];
+					$message_id = $result['message_id'];
+					$send_alert = $result['send_alert'];
+					$send_email = $result['send_email'];
+					$extra_vars = array_merge($extra_vars, $result['extra_vars']);
+				}
+				break;
+
+			// Symptoms
+			case 'Severity':
+				$result = $this->process_alert_obs_severity($user, $userUcpData, $observation, $this->int_blog_id);
+				if($result) {
+					$log_string .= $result['log_string'];
+					$message_id = $result['message_id'];
+					$send_alert = $result['send_alert'];
+					$send_email = $result['send_email'];
+					$extra_vars = array_merge($extra_vars, $result['extra_vars']);
+				}
+				break;
+
+			// Adherence
+			case 'Adherence':
+				$result = $this->process_alert_obs_adherence($user, $userUcpData, $observation, $this->int_blog_id);
+				if($result) {
+					$log_string .= $result['log_string'];
+					$message_id = $result['message_id'];
+					$send_alert = $result['send_alert'];
+					$send_email = $result['send_email'];
+					$extra_vars = array_merge($extra_vars, $result['extra_vars']);
+				}
+				break;
+
+			// Other
+			case 'Other':
+				$result = $this->process_alert_obs_other($user, $userUcpData, $observation, $this->int_blog_id);
+				if($result) {
+					$log_string .= $result['log_string'];
+					$message_id = $result['message_id'];
+					$send_alert = $result['send_alert'];
+					$send_email = $result['send_email'];
+					$extra_vars = array_merge($extra_vars, $result['extra_vars']);
+				}
+				break;
+
+			// HSP
+			case 'HSP_ER':
+			case 'HSP_HOSP':
+				$result = $this->process_alert_obs_hsp($user, $userUcpData, $observation, $this->int_blog_id);
+				if($result) {
+					$log_string .= $result['log_string'];
+					$message_id = $result['message_id'];
+					$send_alert = $result['send_alert'];
+					$send_email = $result['send_email'];
+					$extra_vars = array_merge($extra_vars, $result['extra_vars']);
+				}
+				break;
+		}
+
+		if(empty($result['label'])) {
+			$log_string .= "{$observation->id} no label set, not adding any obsmeta " . PHP_EOL;
+		} else {
+			// insert observationmeta for dm result
+			$observationMeta = new ObservationMeta();
+			$observationMeta->obs_id = $observation->id;
+			$observationMeta->comment_id = $observation->comment_id;
+			$observationMeta->message_id = $message_id;
+			$observationMeta->meta_key = 'dm_alert_level';
+			$observationMeta->meta_value = $result['label'];
+			$observationMeta->save();
+			$log_string .= "added new observationmeta dm_alert_level - obsmeta_id = {$observation->id}" . PHP_EOL;
+
+			$observationMeta = new ObservationMeta();
+			$observationMeta->obs_id = $observation->id;
+			$observationMeta->comment_id = $observation->comment_id;
+			$observationMeta->message_id = $message_id;
+			$observationMeta->meta_key = 'dm_log';
+			$observationMeta->meta_value =$result['log_string'] . $result['send_alert'];
+			$observationMeta->save();
+			$log_string .= "added new observationmeta dm_log - obsmeta_id = {$observation->id}" . PHP_EOL;
+
+			if ($send_alert !== false) {
+				$log_string .= "SEND ALERT [{$send_alert}]" . PHP_EOL;
+				// if exception, trigger alert flow
+				$log_string .= $this->send_obs_alert($observation, $message_id, $send_email, $extra_vars, $observation->obs_method, $this->int_blog_id);
 			}
 		}
 
 		// end logging and return
-		$log_string .= PHP_EOL . "---process_obs_alerts({$alert_key}) END" . PHP_EOL;
+		$log_string .= PHP_EOL . "---process_obs_alerts({$observation->obs_key}) END" . PHP_EOL;
 		$this->time_end = microtime(true);
-		$log_string .= PHP_EOL . "{$alert_key} Excecution Time: " . ($this->time_end - $this->time_start) ." (seconds)" . PHP_EOL;
+		$log_string .= PHP_EOL . "{$observation->obs_key} Excecution Time: " . ($this->time_end - $this->time_start) ." (seconds)" . PHP_EOL;
 		return $log_string;
 	}
 
@@ -414,11 +428,11 @@ class DatamonitorService {
 	 ******************************************/
 
 	/**
-	 * @param $user_data_ucp
+	 * @param $userUcpData
 	 * @param $observation
 	 * @return array
 	 */
-	public function process_alert_obs_blood_pressure($user_data_ucp, $observation, $int_blog_id) {
+	public function process_alert_obs_blood_pressure($user, $userUcpData, $observation, $int_blog_id) {
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
@@ -441,8 +455,8 @@ class DatamonitorService {
 		if(sizeof($pieces) == 2) {
 			$obs_value = $pieces[0];
 		}
-		$max_systolic_bp = $user_data_ucp['Blood_Pressure']['value'];
-		$min_systolic_bp = $user_data_ucp['Blood_Pressure_Low']['value'];
+		$max_systolic_bp = $userUcpData['values']['Blood_Pressure'];
+		$min_systolic_bp = $userUcpData['values']['Blood_Pressure_Low'];
 		$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp},  BP Low: {$min_systolic_bp} (systolic) - obs_value={$obs_value}" . PHP_EOL;
 		// compare observation value (systolic/diastolic) to patient max/min blood pressure limit
 		if(!empty($obs_value) && !empty($min_systolic_bp) && !empty($max_systolic_bp)) {
@@ -479,11 +493,11 @@ class DatamonitorService {
 	}
 
 	/**
-	 * @param $user_data_ucp
+	 * @param $userUcpData
 	 * @param $observation
 	 * @return array
 	 */
-	public function process_alert_obs_blood_sugar($user_data_ucp, $observation, $int_blog_id) {
+	public function process_alert_obs_blood_sugar($user, $userUcpData, $observation, $int_blog_id) {
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
@@ -500,8 +514,8 @@ class DatamonitorService {
 		if(empty($obs_value)) {
 			return false;
 		}
-		$max_blood_sugar = $user_data_ucp['Blood_Sugar']['value'];
-		$min_blood_sugar = $user_data_ucp['Blood_Sugar_Low']['value'];
+		$max_blood_sugar = $userUcpData['values']['Blood_Sugar'];
+		$min_blood_sugar = $userUcpData['values']['Blood_Sugar_Low'];
 		$extra_vars['bsvalue'] = $obs_value;
 		$log_string = PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar}, BS Low: {$min_blood_sugar}" . PHP_EOL;
 		if(!empty($obs_value) && !empty($min_blood_sugar) && !empty($max_blood_sugar)) {
@@ -538,11 +552,11 @@ class DatamonitorService {
 	}
 
 	/**
-	 * @param $user_data_ucp
+	 * @param $userUcpData
 	 * @param $observation
 	 * @return array
 	 */
-	public function process_alert_obs_weight($user_data_ucp, $observation, $int_blog_id) {
+	public function process_alert_obs_weight($user, $userUcpData, $observation, $int_blog_id) {
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
@@ -560,9 +574,16 @@ class DatamonitorService {
 			return false;
 		}
 		// WEIGHT PREVIOUS MATCH COMPARISON ALERT
-		if($user_data_ucp['Weight_CHF']['value'] == 'CHECKED') {
+		if($userUcpData['values']['Weight_CHF'] == 'CHECKED') {
 			// get previous weight observation
-			$prev_obs = $this->CI->observation_model->get_previous_observation($observation['user_id'], 'Weight', $observation['obs_id'], $this->int_blog_id, $observation['obs_date']);
+			$prev_obs = $user->observations()
+				->whereRaw("obs_date < DATE_FORMAT('{$observation['obs_date']}', '%Y-%m-%d')")
+				->where('id', '<', $observation['id'])
+				->where('obs_key', '=', $observation['obs_key'])
+				->where('obs_unit', '!=', 'invalid')
+				->where('obs_unit', '!=', 'scheduled')
+				->orderBy('obs_date', 'desc')
+				->first();
 			if (!empty($prev_obs)) {
 				// calculate dates
 				$dateLast 	= new DateTime($prev_obs->obs_date);
@@ -638,11 +659,11 @@ class DatamonitorService {
 			$label = 'success';
 			$log_string .= PHP_EOL . "user does not have chf checked for monitoring, checking weight" . PHP_EOL;
 			// WEIGHT TARGET ALERT
-			if(empty($user_data_ucp['Weight']['value'])) {
+			if(empty($userUcpData['values']['Weight'])) {
 				$log_string .= PHP_EOL . "user does not have a target weight set, cannot check" . PHP_EOL;
 				$label = 'success';
 			} else {
-				$max_weight = $user_data_ucp['Weight']['value'];
+				$max_weight = $userUcpData['values']['Weight'];
 				$obs_value = $obs_value;
 				if (($obs_value !== false)) {
 					$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] User {$observation['user_id']} Weight: {$obs_value}" . PHP_EOL;
@@ -677,11 +698,11 @@ class DatamonitorService {
 	}
 
 	/**
-	 * @param $user_data_ucp
+	 * @param $userUcpData
 	 * @param $observation
 	 * @return array
 	 */
-	public function process_alert_obs_severity($user_data_ucp, $observation, $int_blog_id) {
+	public function process_alert_obs_severity($user, $userUcpData, $observation, $int_blog_id) {
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
@@ -709,6 +730,7 @@ class DatamonitorService {
 			$label = 'danger';
 		}
 		// here is a hack to get symptoms text, first get parent observation (menu)
+		/*
 		$parent_observation_info = $this->CI->observation_model->get_parent_symptom_observation($observation['comment_id'], ((int)$observation['sequence_id']-1), $this->int_blog_id);
 		if($parent_observation_info) {
 			// get meta_key for parent menu, rpt_sum_resp_txt-{#}
@@ -717,6 +739,7 @@ class DatamonitorService {
 				$extra_vars['symptom'] = $itemmeta_result->meta_value;
 			}
 		}
+		*/
 		if(($obs_value !== false) && $obs_value >= $max_severity) {
 			$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] Severity: {$obs_value}" . PHP_EOL;
 			$send_alert = "{$obs_value} is >= {$max_severity}";
@@ -737,11 +760,11 @@ class DatamonitorService {
 	}
 
 	/**
-	 * @param $user_data_ucp
+	 * @param $userUcpData
 	 * @param $observation
 	 * @return array
 	 */
-	public function process_alert_obs_cigarettes($user_data_ucp, $observation, $int_blog_id) {
+	public function process_alert_obs_cigarettes($user, $userUcpData, $observation, $int_blog_id) {
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
@@ -758,7 +781,7 @@ class DatamonitorService {
 		if(empty($obs_value) && $obs_value != 0) {
 			return false;
 		}
-		$max_cigs = $user_data_ucp['Cigarettes']['value'];
+		$max_cigs = $userUcpData['values']['Cigarettes'];
 		if(empty($max_cigs)) {
 			$max_cigs = 4;
 		}
@@ -766,10 +789,10 @@ class DatamonitorService {
 			$label = 'danger';
 			$message_id = 'CF_AL_07';
 			$send_alert = "Patient cigs too high, {$obs_value} > 4";
-			$log_string = "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}][ucp cigs={$user_data_ucp['Cigarettes']['value']}] cigs too high, {$obs_value} > {$max_cigs}" . PHP_EOL;
+			$log_string = "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}][ucp cigs={$userUcpData['values']['Cigarettes']}] cigs too high, {$obs_value} > {$max_cigs}" . PHP_EOL;
 			$send_email = false;
 		} else {
-			$log_string = "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}][ucp cigs={$user_data_ucp['Cigarettes']['value']}] cigs lower than ucp max, {$obs_value} > {$max_cigs}" . PHP_EOL;
+			$log_string = "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}][ucp cigs={$userUcpData['values']['Cigarettes']}] cigs lower than ucp max, {$obs_value} > {$max_cigs}" . PHP_EOL;
 			$label = 'success';
 		}
 		$result_array = array(
@@ -785,11 +808,11 @@ class DatamonitorService {
 
 
 	/**
-	 * @param $user_data_ucp
+	 * @param $userUcpData
 	 * @param $observation
 	 * @return array
 	 */
-	public function process_alert_obs_call($user_data_ucp, $observation, $int_blog_id) {
+	public function process_alert_obs_call($user, $userUcpData, $observation, $int_blog_id) {
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
@@ -819,11 +842,11 @@ class DatamonitorService {
 	}
 
 	/**
-	 * @param $user_data_ucp
+	 * @param $userUcpData
 	 * @param $observation
 	 * @return array
 	 */
-	public function process_alert_obs_adherence($user_data_ucp, $observation, $int_blog_id) {
+	public function process_alert_obs_adherence($user, $userUcpData, $observation, $int_blog_id) {
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
@@ -862,11 +885,11 @@ class DatamonitorService {
 	}
 
 	/**
-	 * @param $user_data_ucp
+	 * @param $userUcpData
 	 * @param $observation
 	 * @return array
 	 */
-	public function process_alert_obs_other($user_data_ucp, $observation, $int_blog_id) {
+	public function process_alert_obs_other($user, $userUcpData, $observation, $int_blog_id) {
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
@@ -901,11 +924,11 @@ class DatamonitorService {
 
 
 	/**
-	 * @param $user_data_ucp
+	 * @param $userUcpData
 	 * @param $observation
 	 * @return array
 	 */
-	public function process_alert_obs_hsp($user_data_ucp, $observation, $int_blog_id) {
+	public function process_alert_obs_hsp($user, $userUcpData, $observation, $int_blog_id) {
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
@@ -930,7 +953,7 @@ class DatamonitorService {
 
 		//$log_string = "OBSERVATION[{$observation['obs_id']}] obs_value = " . $obs_value . PHP_EOL;
 		$log_string = "";
-		if($observation['obs_key'] == 'HSP_ER') {
+		if($observation->obs_key == 'HSP_ER') {
 			if(strtolower($obs_value) == 'c') {
 				$log_string .= "Patient in the ER as of ".$obs_date->format('m/d').", follow up required";
 				$message_id = 'CF_AL_23'; // HSP_ER + C
@@ -940,7 +963,7 @@ class DatamonitorService {
 				$message_id = 'CF_AL_24'; // HSP_ER + dd_mm
 				$send_alert = '';
 			}
-		} else if($observation['obs_key'] == 'HSP_HOSP') {
+		} else if($observation->obs_key == 'HSP_HOSP') {
 			if(strtolower($obs_value) == 'c') {
 				$log_string .= "Patient in the Hospital as of ".$obs_date->format('m/d').", follow up required";
 				$message_id = 'CF_AL_25'; // HSP_HOSP + C
@@ -1042,7 +1065,7 @@ class DatamonitorService {
 			}
 		}
 
-		// insert observationmeta
+
 		$serial_content = serialize(array(
 			'status' => $status,
 			'alert_level' => $alert_level,
@@ -1054,37 +1077,34 @@ class DatamonitorService {
 			'blogid' => $this->int_blog_id,
 			'date_time' => date("Y-m-d H:i:s")
 		));
-		// alert_status_hist
-		$observationmeta_paramaters = array(
-			'obs_id' => $observation['obs_id'],
-			'comment_id' => $observation['comment_id'],
-			'message_id' => $message_id,
-			'meta_key' => 'alert_status_hist',
-			'meta_value' => $serial_content
-		);
-		$observationmeta_id = $this->CI->observationmeta_model->insert_observationmeta($observationmeta_paramaters, $this->int_blog_id);
-		$log_string .= "added new observationmeta alert_status_hist - obsmeta_id = {$observationmeta_id}" . PHP_EOL;
 
-		// alert_status_change
-		$observationmeta_paramaters = array(
-			'obs_id' => $observation['obs_id'],
-			'comment_id' => $observation['comment_id'],
-			'message_id' => $message_id,
-			'meta_key' => 'alert_status_change',
-			'meta_value' => $serial_content
-		);
-		$observationmeta_id = $this->CI->observationmeta_model->insert_observationmeta($observationmeta_paramaters, $this->int_blog_id);
-		$log_string .= "added new observationmeta alert_status_change - obsmeta_id = {$observationmeta_id}" . PHP_EOL;
+		// insert observationmeta
+		$observationMeta = new ObservationMeta();
+		$observationMeta->obs_id = $observation->id;
+		$observationMeta->comment_id = $observation->comment_id;
+		$observationMeta->message_id = $message_id;
+		$observationMeta->meta_key = 'alert_status_hist';
+		$observationMeta->meta_value = $serial_content;
+		$observationMeta->save();
+		$log_string .= "added new observationmeta alert_status_hist - obsmeta_id = {$observationMeta->id}" . PHP_EOL;
 
-		$observationmeta_paramaters = array(
-			'obs_id' => $observation['obs_id'],
-			'comment_id' => $observation['comment_id'],
-			'message_id' => $message_id,
-			'meta_key' => 'alert_sort_weight',
-			'meta_value' => $alert_sort_weight
-		);
-		$observationmeta_id = $this->CI->observationmeta_model->insert_observationmeta($observationmeta_paramaters, $this->int_blog_id);
-		$log_string .= "added new observationmeta alert_sort_weight - obsmeta_id = {$observationmeta_id}" . PHP_EOL;
+		$observationMeta = new ObservationMeta();
+		$observationMeta->obs_id = $observation->id;
+		$observationMeta->comment_id = $observation->comment_id;
+		$observationMeta->message_id = $message_id;
+		$observationMeta->meta_key = 'alert_status_change';
+		$observationMeta->meta_value = $serial_content;
+		$observationMeta->save();
+		$log_string .= "added new observationmeta alert_status_change - obsmeta_id = {$observationMeta->id}" . PHP_EOL;
+
+		$observationMeta = new ObservationMeta();
+		$observationMeta->obs_id = $observation->id;
+		$observationMeta->comment_id = $observation->comment_id;
+		$observationMeta->message_id = $message_id;
+		$observationMeta->meta_key = 'alert_sort_weight';
+		$observationMeta->meta_value = $alert_sort_weight;
+		$observationMeta->save();
+		$log_string .= "added new observationmeta alert_sort_weight - obsmeta_id = {$observationMeta->id}" . PHP_EOL;
 
 		// send email
 		if($send_email) {
@@ -1104,6 +1124,11 @@ class DatamonitorService {
 	 * @return bool|string
 	 */
 	public function send_email($observation, $message_id, $extra_vars, $int_blog_id = 7) {
+
+		$log_string = PHP_EOL . "-BYPASSING EMAIL FOR LV MIGRATION" . PHP_EOL;
+		return $log_string;
+
+
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
@@ -1234,7 +1259,7 @@ class DatamonitorService {
 			$alert_level = 'danger';
 		} else if($alert_msg_id == 'CF_AL_07') {
 			$alert_sort_weight = 7;
-			$alert_level = 'warning';
+			$alert_level = 'danger';
 		} else if($alert_msg_id == 'CF_AL_08') {
 			$alert_sort_weight = 9;
 			$alert_level = 'danger';
