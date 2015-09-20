@@ -206,7 +206,7 @@
                                             <label for="timezone">Time Zone <span class="attention">*</span>:</label>
                                         </div>
                                         <div class="col-sm-12">
-                                            <select id="timezone" name="timezone" class="selectpicker" title="Select Time Zone">
+                                            <select id="timezone" name="timezone" class="selectpicker form-control" title="Select Time Zone">
                                                 <option value="">Select Time Zone</option>
                                                 <?php //if ($validation['timezone']['value'] == '') $validation['timezone']['value'] = 'America/New_York' ?>
                                                 <?php //showOptionsDrop($timezones_arr, $validation['timezone']['value'], true); ?>

@@ -58,40 +58,8 @@ class PatientCareplanController extends Controller {
 	 */
 	public function savePatientCareplan(Request $request, $programId, $id = false)
 	{
-		$params = $request->all();
-
-		// validate
-		$rules = array("user_id" => "required",
-		  "daily_reminder_optin" => "required",
-		  "daily_reminder_time" => "required",
-		  "daily_reminder_areas" => "required",
-		  "hospital_reminder_optin" => "required",
-		  "hospital_reminder_time" => "required",
-		  "hospital_reminder_areas" => "required",
-		  "qualification" => "required",
-		  "specialty" => "required",
-		  "npi_number" => "required",
-		  "firstName" => "required",
-		  "lastName" => "required",
-		  "gender" => "required",
-		  "mrn_number" => "required",
-		  "birth_date" => "required",
-		  "telephone" => "required",
-		  "email" => "required",
-		  "address" => "required",
-		  "city" => "required",
-		  "state" => "required",
-		  "zip" => "required",
-		  "preferred_contact_time" => "required",
-		  "timezone" => "required",
-		  "consent_date" => "required");
-
-		// validate
-		$this->validate($request, $rules);
-
-		// return back
-		return redirect()->back()->withInput()->with('messages', ['successfully updated role'])->send();
-		$wpUser = array();
+		// instantiate user
+		$wpUser = new WpUser;
 		if($id) {
 			$wpUser = WpUser::find($id);
 			if (!$wpUser) {
@@ -99,10 +67,18 @@ class PatientCareplanController extends Controller {
 			}
 		}
 
+		// validate
+		$this->validate($request, $wpUser->patient_rules);
+
+		$params = $request->all();
+
+		// return back
+		return redirect()->back()->withInput()->with('messages', ['successfully created/updated patient'])->send();
+
 		// program
 		$program = WpBlog::find($programId);
 
-		return view('wpUsers.patient.careplan.careplan', ['program' => $program, 'patient' => $wpUser]);
+		return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}
 
 	/**

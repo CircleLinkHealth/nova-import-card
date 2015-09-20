@@ -318,19 +318,39 @@ class WpUserController extends Controller {
 	 */
 	public function update(Request $request, $id)
 	{
-		// get user
+		// instantiate user
 		$wpUser = WpUser::with('meta')->find($id);
+		if (!$wpUser) {
+			return response("User not found", 401);
+		}
 
-		$params = $request->input();
+		// validate
+		$roles = $request->input('roles');
+		if(!empty($roles)) {
+			foreach($roles as $roleId) {
+				// get Role to check validation
+				$role = Role::find($roleId);
+				if ($role->name == 'patient') {
+					$this->validate($request, $wpUser->patient_rules);
+				}
+			}
+		}
+
+		// return back
+		//return redirect()->back()->withInput()->with('messages', ['successfully created/updated patient'])->send();
+
+		// input
+		$params = $request->all();
 
 		// the basics
 		$wpUser->user_nicename = $params['user_nicename'];
 		$wpUser->display_name = $params['display_name'];
-		$wpUser->program_id = $params['primary_blog'];
+		$wpUser->primary_blog = $params['primary_blog'];
 		$wpUser->save();
 
-		if(isset($params['roles'])) {
-			$wpUser->roles()->sync($params['roles']);
+		// roles
+		if(isset($roles)) {
+			$wpUser->roles()->sync($roles);
 		} else {
 			$wpUser->roles()->sync(array());
 		}

@@ -51,6 +51,33 @@ class WpUser extends Model {
         'display_name'         => 'required',
     );
 
+    public $patient_rules = array(
+        "user_id" => "required",
+        "daily_reminder_optin" => "required",
+        "daily_reminder_time" => "required",
+        "daily_reminder_areas" => "required",
+        "hospital_reminder_optin" => "required",
+        "hospital_reminder_time" => "required",
+        "hospital_reminder_areas" => "required",
+        "qualification" => "required",
+        "specialty" => "required",
+        "npi_number" => "required",
+        "firstName" => "required",
+        "lastName" => "required",
+        "gender" => "required",
+        "mrn_number" => "required",
+        "birth_date" => "required",
+        "telephone" => "required",
+        "email" => "required",
+        "address" => "required",
+        "city" => "required",
+        "state" => "required",
+        "zip" => "required",
+        "preferred_contact_time" => "required",
+        "timezone" => "required",
+        "consent_date" => "required"
+    );
+
 
 
 
