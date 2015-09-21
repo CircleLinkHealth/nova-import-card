@@ -29,7 +29,7 @@ class MsgScheduler {
 
     public function test($blogId){
         $msgUser = new MsgUser;
-        $activeUsers = $msgUser->get_all_active_users($blogId);
+        $activeUsers = $msgUser->get_all_active_patients($blogId);
         //dd($activeUsers);
         foreach ($activeUsers as $key => $intUserID) {
             if ($msgUser->check_for_scheduled_records($intUserID, $blogId)){
@@ -199,7 +199,7 @@ class MsgScheduler {
         echo "<br><br>#################### start createScheduledMessages() ######################<br>";
 
         $msgUser = new MsgUser;
-        $active_users = $msgUser->get_all_active_users($intProgramID);
+        $active_users = $msgUser->get_all_active_patients($intProgramID);
         foreach ($active_users as $key => $intUserID) {
             if ($msgUser->check_for_scheduled_records($intUserID, $intProgramID)){
                 $arrPart[$intUserID] = $msgUser->get_users_data($intUserID, 'id', $intProgramID, true);
@@ -295,7 +295,7 @@ class MsgScheduler {
     public function scheduledSMS($arrData){
         reset($arrData);
         $user_id        =  key($arrData);
-        echo "<br><br>MsgScheduler->scheduledSMS() Start $user_id";
+        echo "<br><br>MsgScheduler->scheduledSMS() Start";
         $wpUser = WpUser::find($user_id);
         $userMeta = $wpUser->userMeta();
         if(empty($userMeta['user_config'])) {
@@ -312,7 +312,7 @@ class MsgScheduler {
         $strMessageId   = 'schedulercontroller';
 
         // get question list
-        echo "$provider_id, $user_id, $qstype, $qtype";
+        echo "<br><br>MsgScheduler->scheduledSMS() $provider_id, $user_id, $qstype, $qtype";
         $msgCPRules = new MsgCPRules;
         $arrQS = $msgCPRules->getNextList($provider_id, $user_id, $qstype, $qtype);
         $tmpArr = array();

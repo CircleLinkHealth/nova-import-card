@@ -18,12 +18,15 @@ class MsgUser {
 		$query->join('wp_usermeta AS um', function ($join) use ($blog_id) {
 			$join->on('wp_users.id', '=', 'um.user_id')->where('um.meta_key', '=', 'wp_'.$blog_id.'_user_config');
 		});
+		$query->whereHas('roles', function($q){
+			$q->where('name', '=', 'patient');
+		});
 		$query->orderBy("id", "desc");
 		$allUsers = $query->get();
 		return $allUsers;
 	}
 
-	public function get_all_active_users($blog_id) {
+	public function get_all_active_patients($blog_id) {
 		// get all users
 		$allUsers = $this->get_all_users($blog_id);
 		if (!$allUsers->isEmpty()) {
@@ -421,7 +424,7 @@ class MsgUser {
             rucp.meta_key,
             rucp.meta_value,
             im.meta_value as alert_key,
-            parucp.meta_value as status,
+            parucp.meta_value as parent_status,
             parucp.ucp_id as parent_id
         FROM rules_ucp rucp
         INNER JOIN rules_itemmeta im on rucp.items_id = im.items_id
@@ -436,7 +439,7 @@ class MsgUser {
 		$arrReturnResult = array();
 		if(!empty($rulesData)) {
 			foreach ($rulesData as $row) {
-				$arrReturnResult[$row->alert_key] = array('value' => $row->meta_value, 'id' => $row->ucp_id, 'parent_status' => $row->status);
+				$arrReturnResult[$row->alert_key] = array('value' => $row->meta_value, 'id' => $row->ucp_id, 'parent_status' => $row->parent_status);
 			}
 			// hardcode severity limit of 7
 			$arrReturnResult['Severity'] = array('value' => 7);

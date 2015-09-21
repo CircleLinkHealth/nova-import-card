@@ -245,4 +245,35 @@ class WpUser extends Model {
 
         return $userConfig;
     }
+
+
+
+
+
+    public function getUCP() {
+        $userUcp = $this->ucp()->with(['item.meta', 'item.question'])->get();
+        $userUcpData = array('ucp' => array(), 'obs_keys' => array(), 'alert_keys' => array());
+        if($userUcp->count() > 0) {
+            foreach ($userUcp as $userUcpItem) {
+                $userUcpData['ucp'][] = $userUcpItem;
+                if (isset($userUcpItem->item->question)) {
+                    $question = $userUcpItem->item->question;
+                    if ($question) {
+                        // obs key should be unique
+                        $userUcpData['obs_keys'][$question->obs_key] = $userUcpItem->meta_value;
+                    }
+                }
+
+                if (isset($userUcpItem->item->meta)) {
+                    $alert_key = $userUcpItem->item->meta()->where('meta_key', '=', 'alert_key')->first();
+                    if ($alert_key) {
+                        // alert_key should be unique
+                        $userUcpData['alert_keys'][$alert_key->meta_value] = $userUcpItem->meta_value;
+                    }
+                }
+            }
+            $userUcpData['ucp'] = collect($userUcpData['ucp']);
+        }
+        return $userUcpData;
+    }
 }
