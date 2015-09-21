@@ -3,17 +3,6 @@
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
 
-use App\Services\ReportsService;
-use App\WpUser;
-
-Route::get('/progressreport/{id}', function($id)
-{
-	$report = new ReportsService();
-	$data = $report->progress($id);
-	return $data;
-});
-
-
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::get('/', 'WelcomeController@index');
