@@ -9,7 +9,7 @@ use App\WpUser;
 Route::get('/progressreport/{id}', function($id)
 {
 	$report = new ReportsService();
-	$data = $report->careplan($id);
+	$data = $report->progress($id);
 	return $data;
 });
 
