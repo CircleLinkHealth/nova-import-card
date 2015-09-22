@@ -1,17 +1,16 @@
 @extends('app')
 
 @section('content')
-    <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
-    <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
-    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
 
-    <div class="container">
-        <section class="main-form">
+    <p>This sidebar is adopted from start bootstrap simple sidebar startboostrap.com, which I modified slightly to be more cool. For tutorials and how to create it , you can read from my site here <a href="http://seegatesite.com/create-simple-cool-sidebar-menu-with-bootstrap-3/">create cool simple sidebar menu with boostrap 3</a></p>
+
+
             <div class="row">
                 <div class="main-form-container col-lg-8 col-lg-offset-2">
                     <div class="row">
                         <div class="main-form-title col-lg-12">
                             Patient Overview
+                            <button class="navbar-toggle collapse in btn btn-orange" data-toggle="collapse" id="menu-toggle-2"> <span class="btn btn-orange" aria-hidden="true"></span></button>
                         </div>
                         <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                             <?php
@@ -74,11 +73,11 @@
                                     resizeColumn:true,
                                     //select:"row",
                                     columns:[
-                                        { id:"description",   header:["<?= $section['col_name_question'] ?>" <?= $filter ?>], css:{"text-align":"left"}, sort:'string',   width:350},
-                                        { id:"obs_value",    header:["<?= $section['col_name_severity'] ?>" <?= $filter ?>], sort:'string', width:100,
+                                        { id:"description",   header:["<?= $section['col_name_question'] ?>" <?= $filter ?>], css:{"text-align":"left"}, sort:'string',   width:150, adjust:true},
+                                        { id:"obs_value",    header:["<?= $section['col_name_severity'] ?>" <?= $filter ?>], sort:'string', width:100, adjust:true,
                                             template: "<span class='label label-#dm_alert_level#'>#obs_value#</span>"
                                         },
-                                        { id:"comment_date",   header:["Date" <?= $filter ?>], sort:'string', fillspace:true}
+                                        { id:"comment_date",   header:["Date" <?= $filter ?>], sort:'string', fillspace:true, adjust:true}
                                     ],
                                     ready:function(){
                                         this.adjustRowHeight("description");
@@ -105,7 +104,6 @@
                     </div>
                 </div>
             </div>
-        </section>
-    </div>
+    <div style="height:300px;">HEYOOOO</div>
 
 @stop

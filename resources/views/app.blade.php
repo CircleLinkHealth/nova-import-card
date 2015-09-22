@@ -223,6 +223,12 @@
 	<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 	<![endif]-->
 
-	@yield('content')
+	@if( !Auth::guest() && (Request::is('patient/*') || Request::is('provider/*')) )
+		@include('patientheader')
+		@yield('content')
+		@include('patientfooter')
+	@else
+		@yield('content')
+	@endif
 </body>
 </html>
