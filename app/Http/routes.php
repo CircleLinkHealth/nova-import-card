@@ -13,6 +13,14 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
+// Password reset link request routes...
+Route::get('password/email', 'Auth\PasswordController@getEmail');
+Route::post('password/email', 'Auth\PasswordController@postEmail');
+
+// Password reset routes...
+Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
+Route::post('password/reset', 'Auth\PasswordController@postReset');
+
 /****************************/
 /****************************/
 //    REDOX
@@ -219,6 +227,9 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 {
 	// return token data, initial test
 	Route::post('tokentest', 'AuthorizationController@tokentest');
+
+	// Password reset link request routes...
+	Route::post('password/email', 'Auth\PasswordController@postEmail'); // @todo still needs to be modified to return json api response
 
 	// return data on logged in user
 	Route::post('user', 'WpUserController@index');

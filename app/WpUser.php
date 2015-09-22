@@ -80,7 +80,30 @@ class WpUser extends Model {
 
 
 
+    // WordPress uses differently named fields for create and update fields than Laravel does
+    const CREATED_AT = 'post_date';
+    const UPDATED_AT = 'post_modified';
 
+    // Whenever the user_pass field is modified, WordPress' internal hashing function will run
+    public function setUserPassAttribute($pass)
+    {
+        $this->attributes['user_pass'] = wp_hash_password($pass);
+    }
+
+    public function getAuthIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getAuthPassword()
+    {
+        return $this->user_pass;
+    }
+
+    public function getEmailForPasswordReset()
+    {
+        return $this->user_email;
+    }
 
     public function meta()
     {
@@ -150,11 +173,6 @@ class WpUser extends Model {
         }
     }
 
-
-
-
-
-
     public function getWpUserWithMeta($user_id)
     {
         $wpUser = WpUser::where('ID', '=', $user_id)->first();
@@ -174,11 +192,6 @@ class WpUser extends Model {
         return $wpUsers;
     }
 
-//    public static function getBlogId($user_id){
-//
-//        $blogID = WpUserMeta::select('meta_value')->where('user_id', $user_id)->where('meta_key','primary_blog')->get();
-//        return $blogID;
-//    }
 
     public function createNewUser($user_email, $user_pass) {
 
@@ -210,38 +223,38 @@ class WpUser extends Model {
 
     public function userConfigTemplate() {
         $userConfig = array("status" => "Active",
-          "email" => "test@test.com",
-          "mrn_number" => "12345678",
-          "study_phone_number" => "203-252-2556",
-          "active_date" => null,
-          "preferred_contact_time" => "09:00 AM",
-          "preferred_contact_timezone" => "America/New_York",
-          "preferred_contact_method" => "SMS",
-          "preferred_contact_language" => "EN",
-          "preferred_contact_location" => null,
-          "prefix" => '',
-          "gender" => "M",
-          "address" => "123 Test St",
-          "city" => "Anywhere",
-          "state" => "IA",
-          "zip" => "11233",
-          "birth_date" => "1900-01-31",
-          "consent_date" => "2012-01-31",
-          "daily_reminder_optin" => "Y",
-          "daily_reminder_time" => "09:00",
-          "daily_reminder_areas" => "TBD",
-          "hospital_reminder_optin" => "Y",
-          "hospital_reminder_time" => "09:00",
-          "hospital_reminder_areas" => "TBD",
-          "registration_date" => "2015-07-21 01:00:00",
-          "care_team" => array(),
-          "send_alert_to" => array(),
-          "billing_provider" => "",
-          "lead_contact" => "",
-          "qualification" => "",
-          "npi_number" => "",
-          "specialty" => "",
-            );
+            "email" => "test@test.com",
+            "mrn_number" => "12345678",
+            "study_phone_number" => "203-252-2556",
+            "active_date" => null,
+            "preferred_contact_time" => "09:00 AM",
+            "preferred_contact_timezone" => "America/New_York",
+            "preferred_contact_method" => "SMS",
+            "preferred_contact_language" => "EN",
+            "preferred_contact_location" => null,
+            "prefix" => '',
+            "gender" => "M",
+            "address" => "123 Test St",
+            "city" => "Anywhere",
+            "state" => "IA",
+            "zip" => "11233",
+            "birth_date" => "1900-01-31",
+            "consent_date" => "2012-01-31",
+            "daily_reminder_optin" => "Y",
+            "daily_reminder_time" => "09:00",
+            "daily_reminder_areas" => "TBD",
+            "hospital_reminder_optin" => "Y",
+            "hospital_reminder_time" => "09:00",
+            "hospital_reminder_areas" => "TBD",
+            "registration_date" => "2015-07-21 01:00:00",
+            "care_team" => array(),
+            "send_alert_to" => array(),
+            "billing_provider" => "",
+            "lead_contact" => "",
+            "qualification" => "",
+            "npi_number" => "",
+            "specialty" => "",
+        );
 
         return $userConfig;
     }

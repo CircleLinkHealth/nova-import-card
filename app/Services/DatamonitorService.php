@@ -241,24 +241,14 @@ class DatamonitorService {
 		$log_string .= "Checking ({$observation->obs_key}) observation[{$observation['obs_id']}][{$observation['obs_date']}][{$observation['obs_value']}]" . PHP_EOL;
 		// get user data for observation
 		$user = WpUser::find($observation->user_id);
-		$userUcp = $user->ucp()->with(['item.meta', 'item.question'])->get();
-		$userUcpData = array('statuses' => array(), 'values' => array());
-		$userUcpValues = array();
-		foreach($userUcp as $userUcpItem) {
-			if(isset($userUcpItem->item->question)) {
-				$question = $userUcpItem->item->question;
-				if($question) {
-					$userUcpData['statuses'][$question->obs_key] = $userUcpItem->meta_value;
-				}
-			}
 
-			if(isset($userUcpItem->item->meta)) {
-				$alert_key = $userUcpItem->item->meta()->where('meta_key', '=', 'alert_key')->first();
-				if($alert_key) {
-					$userUcpData['values'][$alert_key->meta_value] = $userUcpItem->meta_value;
-				}
-			}
-		}
+		$userUcpData = $user->getUCP();
+		/*
+		//dd($userUcpData['ucp']->first());
+		dd($userUcpData->where('items_id', '=', '27')->first());
+		dd($userUcpData['ucp']->where('ucp_id', '>', '100')->first());
+		*/
+		dd($userUcpData);
 		$first_name = $user->meta()->where('meta_key', '=', 'last_names')->first();
 		$last_name = $user->meta()->where('meta_key', '=', 'last_name')->first();
 		$extra_vars['patientname'] = $first_name . ' ' . $last_name;
@@ -765,6 +755,7 @@ class DatamonitorService {
 	 * @return array
 	 */
 	public function process_alert_obs_cigarettes($user, $userUcpData, $observation, $int_blog_id) {
+		dd($userUcpData);
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
