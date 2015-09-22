@@ -445,31 +445,40 @@ class DatamonitorService {
 		if(sizeof($pieces) == 2) {
 			$obs_value = $pieces[0];
 		}
-		$max_systolic_bp = $userUcpData->alert_keys->Blood_Pressure;
-		$min_systolic_bp = $userUcpData->alert_keys->Blood_Pressure_Low;
-		$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp},  BP Low: {$min_systolic_bp} (systolic) - obs_value={$obs_value}" . PHP_EOL;
-		// compare observation value (systolic/diastolic) to patient max/min blood pressure limit
-		if(!empty($obs_value) && !empty($min_systolic_bp) && !empty($max_systolic_bp)) {
-			if ($obs_value <= $min_systolic_bp) { //81
-				$message_id = 'CF_AL_02';
-				$send_alert = "{$obs_value} (systolic) is <= {$min_systolic_bp} (systolic)";
-				$send_email = true;
-				$label = 'danger';
-			} else if ($obs_value > $min_systolic_bp && $obs_value < 101) {
-				$label = 'warning';
-			} else if ($obs_value > 100 && $obs_value < 141) {
-				$label = 'success';
-			} else if ($obs_value > 140 && $obs_value <= $max_systolic_bp) {
-				$label = 'warning';
-			} else if ($obs_value > $max_systolic_bp) { //180
-				$message_id = 'CF_AL_03';
-				$send_alert = "{$obs_value} (systolic) is >= {$max_systolic_bp} (systolic)";
-				$send_email = true;
-				$label = 'danger';
-			}
-		} else {
+		if(!isset($userUcpData->obs_keys->Blood_Pressure) == 'Inactive') {
+			$log_string .= 'Obs Key Blood_Pressure = Inactive';
+			$label = 'success';
+		}
+		if(!isset($userUcpData->alert_keys->Blood_Pressure) || !isset($userUcpData->alert_keys->Blood_Pressure_Low)) {
 			$log_string .= 'Missing UCP data for bp and/or bp low';
 			$label = 'success';
+		} else {
+			$max_systolic_bp = $userUcpData->alert_keys->Blood_Pressure;
+			$min_systolic_bp = $userUcpData->alert_keys->Blood_Pressure_Low;
+			$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp},  BP Low: {$min_systolic_bp} (systolic) - obs_value={$obs_value}" . PHP_EOL;
+			// compare observation value (systolic/diastolic) to patient max/min blood pressure limit
+			if (!empty($obs_value) && !empty($min_systolic_bp) && !empty($max_systolic_bp)) {
+				if ($obs_value <= $min_systolic_bp) { //81
+					$message_id = 'CF_AL_02';
+					$send_alert = "{$obs_value} (systolic) is <= {$min_systolic_bp} (systolic)";
+					$send_email = true;
+					$label = 'danger';
+				} else if ($obs_value > $min_systolic_bp && $obs_value < 101) {
+					$label = 'warning';
+				} else if ($obs_value > 100 && $obs_value < 141) {
+					$label = 'success';
+				} else if ($obs_value > 140 && $obs_value <= $max_systolic_bp) {
+					$label = 'warning';
+				} else if ($obs_value > $max_systolic_bp) { //180
+					$message_id = 'CF_AL_03';
+					$send_alert = "{$obs_value} (systolic) is >= {$max_systolic_bp} (systolic)";
+					$send_email = true;
+					$label = 'danger';
+				}
+			} else {
+				$log_string .= 'Missing UCP data for bp and/or bp low';
+				$label = 'success';
+			}
 		}
 		$result_array = array(
 			'log_string' => $log_string,
@@ -504,31 +513,40 @@ class DatamonitorService {
 		if(empty($obs_value)) {
 			return false;
 		}
-		$max_blood_sugar = $userUcpData->alert_keys->Blood_Sugar;
-		$min_blood_sugar = $userUcpData->alert_keys->Blood_Sugar_Low;
-		$extra_vars['bsvalue'] = $obs_value;
-		$log_string = PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar}, BS Low: {$min_blood_sugar}" . PHP_EOL;
-		if(!empty($obs_value) && !empty($min_blood_sugar) && !empty($max_blood_sugar)) {
-			if ($obs_value <= $min_blood_sugar) { //61
-				$message_id = 'CF_AL_04';
-				$send_alert = "{$obs_value} (systolic) is <= {$min_blood_sugar} (systolic)";
-				$send_email = true;
-				$label = 'danger';
-			} else if ($obs_value > $min_blood_sugar && $obs_value < 81) { //60
-				$label = 'warning';
-			} else if ($obs_value > 80 && $obs_value < 141) {
-				$label = 'success';
-			} else if ($obs_value > 140 && $obs_value <= $max_blood_sugar) { //351
-				$label = 'warning';
-			} else if ($obs_value > $max_blood_sugar) { //350
-				$message_id = 'CF_AL_05';
-				$send_alert = "{$obs_value} (systolic) is >= {$max_blood_sugar} (systolic)";
-				$send_email = true;
-				$label = 'danger';
-			}
-		} else {
+		if(!isset($userUcpData->obs_keys->Blood_Sugar) == 'Inactive') {
+			$log_string .= 'Obs Key Blood_Sugar = Inactive';
+			$label = 'success';
+		}
+		if(!isset($userUcpData->alert_keys->Blood_Sugar) || !isset($userUcpData->alert_keys->Blood_Sugar_Low)) {
 			$log_string .= 'Missing UCP data for bs and/or bs low';
 			$label = 'success';
+		} else {
+			$max_blood_sugar = $userUcpData->alert_keys->Blood_Sugar;
+			$min_blood_sugar = $userUcpData->alert_keys->Blood_Sugar_Low;
+			$extra_vars['bsvalue'] = $obs_value;
+			$log_string = PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar}, BS Low: {$min_blood_sugar}" . PHP_EOL;
+			if (!empty($obs_value) && !empty($min_blood_sugar) && !empty($max_blood_sugar)) {
+				if ($obs_value <= $min_blood_sugar) { //61
+					$message_id = 'CF_AL_04';
+					$send_alert = "{$obs_value} (systolic) is <= {$min_blood_sugar} (systolic)";
+					$send_email = true;
+					$label = 'danger';
+				} else if ($obs_value > $min_blood_sugar && $obs_value < 81) { //60
+					$label = 'warning';
+				} else if ($obs_value > 80 && $obs_value < 141) {
+					$label = 'success';
+				} else if ($obs_value > 140 && $obs_value <= $max_blood_sugar) { //351
+					$label = 'warning';
+				} else if ($obs_value > $max_blood_sugar) { //350
+					$message_id = 'CF_AL_05';
+					$send_alert = "{$obs_value} (systolic) is >= {$max_blood_sugar} (systolic)";
+					$send_email = true;
+					$label = 'danger';
+				}
+			} else {
+				$log_string .= 'Missing UCP data for bs and/or bs low';
+				$label = 'success';
+			}
 		}
 		$result_array = array(
 			'log_string' => $log_string,
