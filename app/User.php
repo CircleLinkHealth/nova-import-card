@@ -292,14 +292,4 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 		return $userUcpData;
 	}
-
-	/**
-	 * Get the e-mail address where password reset links are sent.
-	 *
-	 * @return string
-	 */
-	public function getEmailForPasswordReset()
-	{
-		return $this->user_email;
-	}
 }
