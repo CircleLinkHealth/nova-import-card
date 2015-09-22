@@ -192,7 +192,7 @@ class MsgScheduler {
         // create Scheduled messages if they don't already exist
         $ret = $this->createScheduledMessages($intProgramID);
 
-        die('index() finished, end');
+        die('<br>index() finished, end');
     }
 
 
@@ -204,7 +204,10 @@ class MsgScheduler {
         $active_users = $msgUser->get_all_active_patients($intProgramID);
 
         foreach ($active_users as $key => $intUserID) {
-            if ($msgUser->check_for_scheduled_records($intUserID, $intProgramID)){
+            if (!$msgUser->check_for_scheduled_records($intUserID, $intProgramID)){
+                echo "<br>createScheduledMessages() -> USER $intUserID - Already processed";
+            } else {
+                echo "<br>createScheduledMessages() -> USER $intUserID - Ready to process:";
                 $arrPart[$intUserID] = $msgUser->get_users_data($intUserID, 'id', $intProgramID, true);
                 $arrPart[$intUserID][$intUserID]['usermeta']['msgtype'] = 'SOL';
                 $ret = $this->create_app_schedule($arrPart[$intUserID]);
