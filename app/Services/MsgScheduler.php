@@ -34,7 +34,7 @@ class MsgScheduler {
         foreach ($activeUsers as $key => $intUserID) {
             if ($msgUser->check_for_scheduled_records($intUserID, $blogId)){
                 $arrPart = $msgUser->get_users_data($intUserID, 'id', $blogId, true);
-                //$ret = $this->scheduledSMS($arrPart);
+                //$ret = $this->create_app_schedule($arrPart);
             }
         }
     }
@@ -187,10 +187,12 @@ class MsgScheduler {
         }
 
         // send daily reminder
-        $ret = $this->sendDailyReminder($intProgramID);
+        //$ret = $this->sendDailyReminder($intProgramID);
 
         // create Scheduled messages if they don't already exist
         $ret = $this->createScheduledMessages($intProgramID);
+
+        die('index() finished, end');
     }
 
 
@@ -200,26 +202,20 @@ class MsgScheduler {
 
         $msgUser = new MsgUser;
         $active_users = $msgUser->get_all_active_patients($intProgramID);
+
         foreach ($active_users as $key => $intUserID) {
             if ($msgUser->check_for_scheduled_records($intUserID, $intProgramID)){
                 $arrPart[$intUserID] = $msgUser->get_users_data($intUserID, 'id', $intProgramID, true);
                 $arrPart[$intUserID][$intUserID]['usermeta']['msgtype'] = 'SOL';
-                $ret = $this->scheduledSMS($arrPart[$intUserID]);
-                if($ret) {
-                    $arrCommentContent = $msgUser->get_user_state_record_by_id($intProgramID, $ret);
-                    //dd($arrCommentContent);
-                    if (isset($arrCommentContent->comment_content)) {
-                        $comment_content = unserialize($arrCommentContent->comment_content);
-                        //$retState = $this->addStateComment($intProgramID, 'state_app', $intUserID, 'schedulercontroller', $comment_content);
-                    }
-                }
+                $ret = $this->create_app_schedule($arrPart[$intUserID]);
             }
         }
 
-        // intstantiate arrays
+        // instantiate arrays
         $arrUsers = array();
         $arrPart = array();
 
+        /*
         // get ready users
         $arrUsers = $msgUser->get_readyusers($intProgramID,null); //, $strDevice, $strDate);
         // echo "<br>Ready Users:<pre>";var_export($arrUsers);echo "</pre><br>";
@@ -255,7 +251,7 @@ class MsgScheduler {
 
                 // record what messages should be sent today.
                 if ($msgUser->check_for_scheduled_records($value['user_id'], $intProgramID)){
-                    // $this->scheduledSMS($arrPart[$value['user_id']]);
+                    // $this->create_app_schedule($arrPart[$value['user_id']]);
                 }
 
                 // calculate delay
@@ -278,6 +274,7 @@ class MsgScheduler {
                 }
             }
         }
+        */
         echo "<br><br>#################### end createScheduledMessages() ######################";
     }
 
@@ -292,18 +289,18 @@ class MsgScheduler {
     }
 
 
-    public function scheduledSMS($arrData){
+    public function create_app_schedule($arrData){
         reset($arrData);
         $user_id        =  key($arrData);
-        echo "<br><br>MsgScheduler->scheduledSMS() Start";
+        echo "<br><br>MsgScheduler->create_app_schedule() Start";
         $wpUser = WpUser::find($user_id);
         $userMeta = $wpUser->userMeta();
         if(empty($userMeta['user_config'])) {
-            echo "<br>MsgScheduler->scheduledSMS() Missing User Config";
+            echo "<br>MsgScheduler->create_app_schedule() Missing User Config";
             return false;
         }
         if(!$wpUser->blogId()) {
-            echo "<br>MsgScheduler->scheduledSMS() Missing ProgramId";
+            echo "<br>MsgScheduler->create_app_schedule() Missing ProgramId";
             return false;
         }
         $provider_id    = $arrData[$user_id]['usermeta']['intProgramId']; // Provider ID
@@ -312,7 +309,7 @@ class MsgScheduler {
         $strMessageId   = 'schedulercontroller';
 
         // get question list
-        echo "<br><br>MsgScheduler->scheduledSMS() $provider_id, $user_id, $qstype, $qtype";
+        echo "<br><br>MsgScheduler->create_app_schedule() $provider_id, $user_id, $qstype, $qtype";
         $msgCPRules = new MsgCPRules;
         $arrQS = $msgCPRules->getNextList($provider_id, $user_id, $qstype, $qtype);
         $tmpArr = array();
@@ -329,34 +326,16 @@ class MsgScheduler {
         }
         // $serialOutboundMessage = serialize($tmpArr);
 
-        // write out commecomment_IDnt record
+        // write out scheduled comment
         $msgDelivery = new MsgDelivery;
         $lastkey = $msgDelivery->writeOutboundSmsMessage($user_id,$tmpArr,$strMessageId, 'scheduled',$provider_id);
 
-        // write for state_app
+        // write out state_app comment
         $lastkey = $msgDelivery->writeOutboundSmsMessage($user_id,$appArr,$strMessageId, 'state_app',$provider_id);
 
         // write out observation records
         foreach ($tmpArr as $key => $value) {
             foreach ($value as $key2 => $value2) {
-                // echo '<br>'.$key.': '.$key2.' -> '.$value2;
-                //flag obs_processor of response
-                /*
-                $data = array(
-                    'comment_id' => $lastkey,
-                    'sequence_id' => $key,
-                    'user_id' => $user_id,
-                    'obs_message_id' => $key2,
-                    'obs_method' => $qstype,
-                    'obs_key' => $value2,
-                    'obs_unit' => 'scheduled',
-                    'obs_date' => date("Y-m-d H:i:s"),
-                    'obs_date_gmt' => gmdate("Y-m-d H:i:s"),
-                );
-
-                // insert new observation record
-                $obs_id = DB::connection('mysql_no_prefix')->table('ma_'.$provider_id.'_observations')->insertGetId( $data );
-                */
                 $observation = new Observation;
                 $observation->comment_id = $lastkey;
                 $observation->sequence_id = $key;
@@ -368,12 +347,12 @@ class MsgScheduler {
                 $observation->obs_date = date("Y-m-d H:i:s");
                 $observation->obs_date_gmt = gmdate("Y-m-d H:i:s");
                 $observation->save();
-                echo "<br>MsgScheduler->scheduledSMS() Added Observation obs_id#=" . $observation->id;
+                echo "<br>MsgScheduler->create_app_schedule() Added Observation obs_id#=" . $observation->id;
 
             }
         }
-        // echo "</pre>";
-        echo "<br>MsgScheduler->scheduledSMS() End";
+
+        echo "<br>MsgScheduler->create_app_schedule() End";
         return $lastkey;
     }
 

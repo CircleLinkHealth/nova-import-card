@@ -248,7 +248,7 @@ class DatamonitorService {
 		dd($userUcpData->where('items_id', '=', '27')->first());
 		dd($userUcpData['ucp']->where('ucp_id', '>', '100')->first());
 		*/
-		dd($userUcpData);
+		//dd($userUcpData);
 		$first_name = $user->meta()->where('meta_key', '=', 'last_names')->first();
 		$last_name = $user->meta()->where('meta_key', '=', 'last_name')->first();
 		$extra_vars['patientname'] = $first_name . ' ' . $last_name;
@@ -445,8 +445,8 @@ class DatamonitorService {
 		if(sizeof($pieces) == 2) {
 			$obs_value = $pieces[0];
 		}
-		$max_systolic_bp = $userUcpData['values']['Blood_Pressure'];
-		$min_systolic_bp = $userUcpData['values']['Blood_Pressure_Low'];
+		$max_systolic_bp = $userUcpData->alert_keys->Blood_Pressure;
+		$min_systolic_bp = $userUcpData->alert_keys->Blood_Pressure_Low;
 		$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp},  BP Low: {$min_systolic_bp} (systolic) - obs_value={$obs_value}" . PHP_EOL;
 		// compare observation value (systolic/diastolic) to patient max/min blood pressure limit
 		if(!empty($obs_value) && !empty($min_systolic_bp) && !empty($max_systolic_bp)) {
@@ -504,8 +504,8 @@ class DatamonitorService {
 		if(empty($obs_value)) {
 			return false;
 		}
-		$max_blood_sugar = $userUcpData['values']['Blood_Sugar'];
-		$min_blood_sugar = $userUcpData['values']['Blood_Sugar_Low'];
+		$max_blood_sugar = $userUcpData->alert_keys->Blood_Sugar;
+		$min_blood_sugar = $userUcpData->alert_keys->Blood_Sugar_Low;
 		$extra_vars['bsvalue'] = $obs_value;
 		$log_string = PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar}, BS Low: {$min_blood_sugar}" . PHP_EOL;
 		if(!empty($obs_value) && !empty($min_blood_sugar) && !empty($max_blood_sugar)) {
@@ -564,7 +564,7 @@ class DatamonitorService {
 			return false;
 		}
 		// WEIGHT PREVIOUS MATCH COMPARISON ALERT
-		if($userUcpData['values']['Weight_CHF'] == 'CHECKED') {
+		if(isset($userUcpData->obs_keys->Weight_CHF) && $userUcpData->obs_keys->Weight_CHF == 'CHECKED') {
 			// get previous weight observation
 			$prev_obs = $user->observations()
 				->whereRaw("obs_date < DATE_FORMAT('{$observation['obs_date']}', '%Y-%m-%d')")
@@ -649,11 +649,12 @@ class DatamonitorService {
 			$label = 'success';
 			$log_string .= PHP_EOL . "user does not have chf checked for monitoring, checking weight" . PHP_EOL;
 			// WEIGHT TARGET ALERT
-			if(empty($userUcpData['values']['Weight'])) {
+			$max_cigs = 4;
+			if(!isset($userUcpData->alert_keys->Weight)) {
 				$log_string .= PHP_EOL . "user does not have a target weight set, cannot check" . PHP_EOL;
 				$label = 'success';
 			} else {
-				$max_weight = $userUcpData['values']['Weight'];
+				$max_weight = $userUcpData->alert_keys->Weight;
 				$obs_value = $obs_value;
 				if (($obs_value !== false)) {
 					$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] User {$observation['user_id']} Weight: {$obs_value}" . PHP_EOL;
@@ -755,7 +756,6 @@ class DatamonitorService {
 	 * @return array
 	 */
 	public function process_alert_obs_cigarettes($user, $userUcpData, $observation, $int_blog_id) {
-		dd($userUcpData);
 		// set blog id
 		$this->int_blog_id = $int_blog_id;
 
@@ -772,18 +772,18 @@ class DatamonitorService {
 		if(empty($obs_value) && $obs_value != 0) {
 			return false;
 		}
-		$max_cigs = $userUcpData['values']['Cigarettes'];
-		if(empty($max_cigs)) {
-			$max_cigs = 4;
+		$max_cigs = 4;
+		if(isset($userUcpData->alert_keys->Cigarettes)) {
+			$max_cigs = $userUcpData->alert_keys->Cigarettes;
 		}
 		if($obs_value > $max_cigs) {
 			$label = 'danger';
 			$message_id = 'CF_AL_07';
 			$send_alert = "Patient cigs too high, {$obs_value} > 4";
-			$log_string = "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}][ucp cigs={$userUcpData['values']['Cigarettes']}] cigs too high, {$obs_value} > {$max_cigs}" . PHP_EOL;
+			$log_string = "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}][ucp cigs={$max_cigs}] cigs too high, {$obs_value} > {$max_cigs}" . PHP_EOL;
 			$send_email = false;
 		} else {
-			$log_string = "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}][ucp cigs={$userUcpData['values']['Cigarettes']}] cigs lower than ucp max, {$obs_value} > {$max_cigs}" . PHP_EOL;
+			$log_string = "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}][ucp cigs={$max_cigs}] cigs lower than ucp max, {$obs_value} > {$max_cigs}" . PHP_EOL;
 			$label = 'success';
 		}
 		$result_array = array(
@@ -940,7 +940,7 @@ class DatamonitorService {
 			return false;
 		}
 		$obs_date = new DateTime($observation['obs_date']);
-		echo $obs_date->format('m/d');
+		//echo $obs_date->format('m/d');
 
 		//$log_string = "OBSERVATION[{$observation['obs_id']}] obs_value = " . $obs_value . PHP_EOL;
 		$log_string = "";
