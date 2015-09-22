@@ -73,7 +73,6 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::group(['prefix' => 'notes'], function () {
 			Route::get('{id}', ['uses' => 'Patient\PatientController@showPatientNotes', 'as' => 'patient.notes']);
 		});
-
 	});
 
 	/****************************/
