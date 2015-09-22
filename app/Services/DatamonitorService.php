@@ -445,10 +445,6 @@ class DatamonitorService {
 		if(sizeof($pieces) == 2) {
 			$obs_value = $pieces[0];
 		}
-		if(!isset($userUcpData->obs_keys->Blood_Pressure) == 'Inactive') {
-			$log_string .= 'Obs Key Blood_Pressure = Inactive';
-			$label = 'success';
-		}
 		if(!isset($userUcpData->alert_keys->Blood_Pressure) || !isset($userUcpData->alert_keys->Blood_Pressure_Low)) {
 			$log_string .= 'Missing UCP data for bp and/or bp low';
 			$label = 'success';
@@ -512,10 +508,6 @@ class DatamonitorService {
 		$obs_value = $observation['obs_value'];
 		if(empty($obs_value)) {
 			return false;
-		}
-		if(!isset($userUcpData->obs_keys->Blood_Sugar) == 'Inactive') {
-			$log_string .= 'Obs Key Blood_Sugar = Inactive';
-			$label = 'success';
 		}
 		if(!isset($userUcpData->alert_keys->Blood_Sugar) || !isset($userUcpData->alert_keys->Blood_Sugar_Low)) {
 			$log_string .= 'Missing UCP data for bs and/or bs low';
