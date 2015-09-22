@@ -56,7 +56,12 @@ class ObservationMeta extends Model {
 
         // take programId(blogId) and add to wp_X_observationmeta table
         $params['obs_id'] = $observation->legacy_obs_id;
-        $params['comment_id'] = $comment->legacy_comment_id;
+        if($comment) {
+            $params['comment_id'] = $comment->legacy_comment_id;
+        } else {
+            $this->comment_id = '0';
+            $params['comment_id'] = '0';
+        }
         $params['message_id'] = $this->message_id;
         $params['meta_key'] = $this->meta_key;
         $params['meta_value'] = $this->meta_value;
@@ -66,8 +71,11 @@ class ObservationMeta extends Model {
         if($this->id) {
             DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observationmeta')->where('comment_ID', $this->legacy_meta_id)->update($params);
         } else {
-            $resultId = DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observationmeta')->insertGetId($params);
-            $this->legacy_meta_id = $resultId;
+            // add to legacy if doesnt already exist
+            if(empty($this->legacy_meta_id)) {
+                $resultId = DB::connection('mysql_no_prefix')->table('ma_' . $wpUser->blogId() . '_observationmeta')->insertGetId($params);
+                $this->legacy_meta_id = $resultId;
+            }
         }
 
         parent::save();

@@ -83,8 +83,11 @@ class Comment extends Model {
         if($this->id) {
             DB::connection('mysql_no_prefix')->table('wp_' . $wpUser->blogId() . '_comments')->where('comment_ID', $this->legacy_comment_id)->update($params);
         } else {
-            $resultCommentId = DB::connection('mysql_no_prefix')->table('wp_' . $wpUser->blogId() . '_comments')->insertGetId($params);
-            $this->legacy_comment_id = $resultCommentId;
+            // add to legacy if doesnt already exist
+            if(empty($this->legacy_comment_id)) {
+                $resultCommentId = DB::connection('mysql_no_prefix')->table('wp_' . $wpUser->blogId() . '_comments')->insertGetId($params);
+                $this->legacy_comment_id = $resultCommentId;
+            }
         }
 
         parent::save();

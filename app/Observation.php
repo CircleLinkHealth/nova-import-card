@@ -103,12 +103,19 @@ class Observation extends Model {
             return false;
         }
         $comment = Comment::find($this->comment_id);
+        /*
         if(!$comment) {
             return false;
         }
+        */
 
         // take programId(blogId) and add to wp_X_observations table
-        $params['comment_id'] = $comment->legacy_comment_id;
+        if($comment) {
+            $params['comment_id'] = $comment->legacy_comment_id;
+        } else {
+            $this->comment_id = '0';
+            $params['comment_id'] = '0';
+        }
         $params['user_id'] = $this->user_id;
         $params['obs_date'] = $this->obs_date;
         $params['obs_date_gmt'] = $this->obs_date_gmt;
@@ -124,12 +131,14 @@ class Observation extends Model {
         if($this->id) {
             DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->where('comment_ID', $this->legacy_obs_id)->update($params);
         } else {
-            $resultObsId = DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->insertGetId($params);
-            $this->legacy_obs_id = $resultObsId;
+            // add to legacy if doesnt already exist
+            if(empty($this->legacy_obs_id)) {
+                $resultObsId = DB::connection('mysql_no_prefix')->table('ma_' . $wpUser->blogId() . '_observations')->insertGetId($params);
+                $this->legacy_obs_id = $resultObsId;
+            }
         }
 
         parent::save();
-
         // run datamonitor
         $dmService = new DatamonitorService;
         $dmService->process_obs_alerts($this->id);
