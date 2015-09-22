@@ -445,12 +445,12 @@ class DatamonitorService {
 		if(sizeof($pieces) == 2) {
 			$obs_value = $pieces[0];
 		}
-		if(!isset($userUcpData->alert_keys->Blood_Pressure) || !isset($userUcpData->alert_keys->Blood_Pressure_Low)) {
+		if(!isset($userUcpData['alert_keys']['Blood_Pressure']) || !isset($userUcpData['alert_keys']['Blood_Pressure_Low'])) {
 			$log_string .= 'Missing UCP data for bp and/or bp low';
 			$label = 'success';
 		} else {
-			$max_systolic_bp = $userUcpData->alert_keys->Blood_Pressure;
-			$min_systolic_bp = $userUcpData->alert_keys->Blood_Pressure_Low;
+			$max_systolic_bp = $userUcpData['alert_keys']['Blood_Pressure'];
+			$min_systolic_bp = $userUcpData['alert_keys']['Blood_Pressure_Low'];
 			$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp},  BP Low: {$min_systolic_bp} (systolic) - obs_value={$obs_value}" . PHP_EOL;
 			// compare observation value (systolic/diastolic) to patient max/min blood pressure limit
 			if (!empty($obs_value) && !empty($min_systolic_bp) && !empty($max_systolic_bp)) {
@@ -509,12 +509,12 @@ class DatamonitorService {
 		if(empty($obs_value)) {
 			return false;
 		}
-		if(!isset($userUcpData->alert_keys->Blood_Sugar) || !isset($userUcpData->alert_keys->Blood_Sugar_Low)) {
+		if(!isset($userUcpData['alert_keys']['Blood_Sugar']) || !isset($userUcpData['alert_keys']['Blood_Sugar_Low'])) {
 			$log_string .= 'Missing UCP data for bs and/or bs low';
 			$label = 'success';
 		} else {
-			$max_blood_sugar = $userUcpData->alert_keys->Blood_Sugar;
-			$min_blood_sugar = $userUcpData->alert_keys->Blood_Sugar_Low;
+			$max_blood_sugar = $userUcpData['alert_keys']['Blood_Sugar'];
+			$min_blood_sugar = $userUcpData['alert_keys']['Blood_Sugar_Low'];
 			$extra_vars['bsvalue'] = $obs_value;
 			$log_string = PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar}, BS Low: {$min_blood_sugar}" . PHP_EOL;
 			if (!empty($obs_value) && !empty($min_blood_sugar) && !empty($max_blood_sugar)) {
@@ -574,7 +574,7 @@ class DatamonitorService {
 			return false;
 		}
 		// WEIGHT PREVIOUS MATCH COMPARISON ALERT
-		if(isset($userUcpData->obs_keys->Weight_CHF) && $userUcpData->obs_keys->Weight_CHF == 'CHECKED') {
+		if(isset($userUcpData['obs_keys']['Weight_CHF']) && $userUcpData['obs_keys']['Weight_CHF'] == 'CHECKED') {
 			// get previous weight observation
 			$prev_obs = $user->observations()
 				->whereRaw("obs_date < DATE_FORMAT('{$observation['obs_date']}', '%Y-%m-%d')")
@@ -660,11 +660,11 @@ class DatamonitorService {
 			$log_string .= PHP_EOL . "user does not have chf checked for monitoring, checking weight" . PHP_EOL;
 			// WEIGHT TARGET ALERT
 			$max_cigs = 4;
-			if(!isset($userUcpData->alert_keys->Weight)) {
+			if(!isset($userUcpData['alert_keys']['Weight'])) {
 				$log_string .= PHP_EOL . "user does not have a target weight set, cannot check" . PHP_EOL;
 				$label = 'success';
 			} else {
-				$max_weight = $userUcpData->alert_keys->Weight;
+				$max_weight = $userUcpData['alert_keys']['Weight'];
 				$obs_value = $obs_value;
 				if (($obs_value !== false)) {
 					$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] User {$observation['user_id']} Weight: {$obs_value}" . PHP_EOL;
@@ -783,8 +783,8 @@ class DatamonitorService {
 			return false;
 		}
 		$max_cigs = 4;
-		if(isset($userUcpData->alert_keys->Cigarettes)) {
-			$max_cigs = $userUcpData->alert_keys->Cigarettes;
+		if(isset($userUcpData['alert_keys']['Cigarettes'])) {
+			$max_cigs = $userUcpData['alert_keys']['Cigarettes'];
 		}
 		if($obs_value > $max_cigs) {
 			$label = 'danger';
