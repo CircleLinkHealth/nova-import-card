@@ -203,14 +203,18 @@ class MsgScheduler {
         $msgUser = new MsgUser;
         $active_users = $msgUser->get_all_active_patients($intProgramID);
 
-        foreach ($active_users as $key => $intUserID) {
-            if (!$msgUser->check_for_scheduled_records($intUserID, $intProgramID)){
-                echo "<br>createScheduledMessages() -> USER $intUserID - Already processed";
-            } else {
-                echo "<br>createScheduledMessages() -> USER $intUserID - Ready to process:";
-                $arrPart[$intUserID] = $msgUser->get_users_data($intUserID, 'id', $intProgramID, true);
-                $arrPart[$intUserID][$intUserID]['usermeta']['msgtype'] = 'SOL';
-                $ret = $this->create_app_schedule($arrPart[$intUserID]);
+        if(empty($active_users)) {
+            echo "<br>createScheduledMessages() -> No patients found to process";
+        } else {
+            foreach ($active_users as $key => $intUserID) {
+                if (!$msgUser->check_for_scheduled_records($intUserID, $intProgramID)) {
+                    echo "<br>createScheduledMessages() -> Patient $intUserID - Already processed";
+                } else {
+                    echo "<br>createScheduledMessages() -> Patient $intUserID - Ready to process:";
+                    $arrPart[$intUserID] = $msgUser->get_users_data($intUserID, 'id', $intProgramID, true);
+                    $arrPart[$intUserID][$intUserID]['usermeta']['msgtype'] = 'SOL';
+                    $ret = $this->create_app_schedule($arrPart[$intUserID]);
+                }
             }
         }
 
