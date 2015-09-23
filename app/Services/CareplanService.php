@@ -80,12 +80,12 @@ class CareplanService {
 						"MessageIcon" => "hsp",
 						"MessageCategory" => "Hospital",
 						"MessageContent" => "Are you Currently in the Hospital or ER?",
-						"ReturnFieldType" => null,
-						"ReturnDataRangeLow" => null,
-						"ReturnDataRangeHigh" => null,
-						"ReturnValidAnswers" => null,
-						"PatientAnswer" => null,
-						"ResponseDate" => null,
+						"ReturnFieldType" => '',
+						"ReturnDataRangeLow" => '',
+						"ReturnDataRangeHigh" => '',
+						"ReturnValidAnswers" => '',
+						"PatientAnswer" => '',
+						"ResponseDate" => '',
 						"Response" => $this->setObsReminders())
 				);
 			}
@@ -104,12 +104,12 @@ class CareplanService {
 						"MessageIcon" => "question",
 						"MessageCategory" => "Question",
 						"MessageContent" => "Any symptoms today",
-						"ReturnFieldType" => null,
-						"ReturnDataRangeLow" => null,
-						"ReturnDataRangeHigh" => null,
-						"ReturnValidAnswers" => null,
-						"PatientAnswer" => null,
-						"ResponseDate" => null,
+						"ReturnFieldType" => '',
+						"ReturnDataRangeLow" => '',
+						"ReturnDataRangeHigh" => '',
+						"ReturnValidAnswers" => '',
+						"PatientAnswer" => '',
+						"ResponseDate" => '',
 						"Response" => $this->setObsSymptoms())
 				);
 			}
@@ -193,9 +193,9 @@ class CareplanService {
 						"ReturnFieldType" => $currQuestionInfo->qtype,
 						"ReturnDataRangeLow" => $currQuestionInfo->low,
 						"ReturnDataRangeHigh" => $currQuestionInfo->high,
-						"ReturnValidAnswers" => null,
-						"PatientAnswer" => null,
-						"ResponseDate" => null
+						"ReturnValidAnswers" => '',
+						"PatientAnswer" => '',
+						"ResponseDate" => ''
 					);
 					$obsInfo['PatientAnswer'] = $msgRow[key($msgRow)];
 					// find answer observation (patient inbound always = observation)
@@ -238,9 +238,9 @@ class CareplanService {
 						"ReturnFieldType" => $currQuestionInfo->qtype,
 						"ReturnDataRangeLow" => $currQuestionInfo->low,
 						"ReturnDataRangeHigh" => $currQuestionInfo->high,
-						"ReturnValidAnswers" => null,
-						"PatientAnswer" => null,
-						"ResponseDate" => null
+						"ReturnValidAnswers" => '',
+						"PatientAnswer" => '',
+						"ResponseDate" => ''
 					);
 					$obsInfo['PatientAnswer'] = $msgRow[key($msgRow)];
 					// find answer observation (patient inbound always = observation)
@@ -273,9 +273,9 @@ class CareplanService {
 				"ReturnFieldType" => $currQuestionInfo->qtype,
 				"ReturnDataRangeLow" => $currQuestionInfo->low,
 				"ReturnDataRangeHigh" => $currQuestionInfo->high,
-				"ReturnValidAnswers" => null,
-				"PatientAnswer" => null,
-				"ResponseDate" => null
+				"ReturnValidAnswers" => '',
+				"PatientAnswer" => '',
+				"ResponseDate" => ''
 			);
 		}
 
@@ -322,9 +322,9 @@ class CareplanService {
 							"ReturnFieldType" => $currQuestionInfo->qtype,
 							"ReturnDataRangeLow" => $currQuestionInfo->low,
 							"ReturnDataRangeHigh" => $currQuestionInfo->high,
-							"ReturnValidAnswers" => null,
-							"PatientAnswer" => null,
-							"ResponseDate" => null
+							"ReturnValidAnswers" => '',
+							"PatientAnswer" => '',
+							"ResponseDate" => ''
 						);
 						$obsInfo['PatientAnswer'] = $msgRow[key($msgRow)];
 						// find answer observation (patient inbound always = observation)
@@ -362,9 +362,9 @@ class CareplanService {
 					"ReturnFieldType" => 'end',
 					"ReturnDataRangeLow" => $currQuestionInfo->low,
 					"ReturnDataRangeHigh" => $currQuestionInfo->high,
-					"ReturnValidAnswers" => null,
-					"PatientAnswer" => null,
-					"ResponseDate" => null
+					"ReturnValidAnswers" => '',
+					"PatientAnswer" => '',
+					"ResponseDate" => ''
 				);
 				$o++; // +1 symObs
 			}
@@ -430,9 +430,9 @@ class CareplanService {
 							"ReturnFieldType" => $currQuestionInfo->qtype,
 							"ReturnDataRangeLow" => $currQuestionInfo->low,
 							"ReturnDataRangeHigh" => $currQuestionInfo->high,
-							"ReturnValidAnswers" => null,
-							"PatientAnswer" => null,
-							"ResponseDate" => null
+							"ReturnValidAnswers" => '',
+							"PatientAnswer" => '',
+							"ResponseDate" => ''
 						);
 						$bioObsTemp['PatientAnswer'] = $msgRow[key($msgRow)];
 						// find answer observation (patient inbound always = observation)
@@ -470,9 +470,9 @@ class CareplanService {
 					"ReturnFieldType" => $currQuestionInfo->qtype,
 					"ReturnDataRangeLow" => $currQuestionInfo->low,
 					"ReturnDataRangeHigh" => $currQuestionInfo->high,
-					"ReturnValidAnswers" => null,
-					"PatientAnswer" => null,
-					"ResponseDate" => null
+					"ReturnValidAnswers" => '',
+					"PatientAnswer" => '',
+					"ResponseDate" => ''
 				);
 				$o++; // +1 bioObs
 			}
@@ -526,9 +526,9 @@ class CareplanService {
 							"ReturnFieldType" => $currQuestionInfo->qtype,
 							"ReturnDataRangeLow" => $currQuestionInfo->low,
 							"ReturnDataRangeHigh" => $currQuestionInfo->high,
-							"ReturnValidAnswers" => null,
-							"PatientAnswer" => null,
-							"ResponseDate" => null
+							"ReturnValidAnswers" => '',
+							"PatientAnswer" => '',
+							"ResponseDate" => ''
 						);
 						$symObsTemp['PatientAnswer'] = $msgRow[key($msgRow)];
 						// find answer observation (patient inbound always = observation)
@@ -566,9 +566,9 @@ class CareplanService {
 					"ReturnFieldType" => $currQuestionInfo->qtype,
 					"ReturnDataRangeLow" => $currQuestionInfo->low,
 					"ReturnDataRangeHigh" => $currQuestionInfo->high,
-					"ReturnValidAnswers" => null,
-					"PatientAnswer" => null,
-					"ResponseDate" => null
+					"ReturnValidAnswers" => '',
+					"PatientAnswer" => '',
+					"ResponseDate" => ''
 				);
 				$o++; // +1 symObs
 			}

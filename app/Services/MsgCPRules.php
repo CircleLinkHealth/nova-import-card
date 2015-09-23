@@ -185,6 +185,10 @@ limit 1";
                     }
                 }
             }
+
+            if(empty($qInfo->message)) {
+                $qInfo->message = '';
+            }
             return $qInfo;
         } else {
             return false;
