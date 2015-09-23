@@ -331,7 +331,7 @@ class WpUserController extends Controller {
 				// get Role to check validation
 				$role = Role::find($roleId);
 				if ($role->name == 'patient') {
-					$this->validate($request, $wpUser->patient_rules);
+					//$this->validate($request, $wpUser->patient_rules);
 				}
 			}
 		}
