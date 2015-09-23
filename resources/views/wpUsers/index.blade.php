@@ -23,7 +23,7 @@
                     <div class="panel-heading">Users</div>
                     <div class="panel-body">
                         <p>These users are coming from the wp_users.. this laravel project has been modified to use wp_users as the primary users table.</p>
-                        <p><strong>See bottom of page for list of invalid users</strong></p>
+                        <p><strong>Users missing critical data are omitted from this page.. usually either primary_bloy meta or user_*_config meta</strong></p>
 
                         <div class="row">
                             {!! Form::open(array('url' => URL::route('users.index', array()), 'class' => 'form-horizontal')) !!}
