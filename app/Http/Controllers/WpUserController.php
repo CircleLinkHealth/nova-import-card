@@ -345,7 +345,7 @@ class WpUserController extends Controller {
 		// the basics
 		$wpUser->user_nicename = $params['user_nicename'];
 		$wpUser->display_name = $params['display_name'];
-		$wpUser->primary_blog = $params['primary_blog'];
+		$wpUser->program_id = $params['primary_blog'];
 		$wpUser->save();
 
 		// roles
