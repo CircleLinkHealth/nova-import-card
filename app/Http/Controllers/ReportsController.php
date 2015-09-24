@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Services\ReportsService;
 use App\WpUser;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
@@ -131,8 +132,11 @@ class ReportsController extends Controller {
 		}
 
 		// Dummy JSON Data for careplan
-		$str_data = json_decode(file_get_contents(getenv('REPORT_PROGRESS_JSON_PATH')));
-		return response()->json($str_data);
+		//$str_data = json_decode(file_get_contents(getenv('REPORT_PROGRESS_JSON_PATH')));
+		//return response()->json($str_data);
+
+		$progressReport = new ReportsService();
+		$progressReport->progress($wpUser->ID);
 
 		// get dates
 		$date1 = date('Y-m-d');
