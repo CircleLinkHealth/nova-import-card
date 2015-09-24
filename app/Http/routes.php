@@ -228,7 +228,7 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 	Route::post('tokentest', 'AuthorizationController@tokentest');
 
 	// Password reset link request routes...
-	Route::post('password/email', 'Auth\PasswordController@postEmail'); // @todo still needs to be modified to return json api response
+    Route::controller('password', 'Auth\PasswordController');
 
 	// return data on logged in user
 	Route::post('user', 'WpUserController@index');
