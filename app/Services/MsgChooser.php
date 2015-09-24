@@ -3,6 +3,7 @@
 use App\WpUser;
 use App\WpUserMeta;
 use App\Comment;
+use App\Observation;
 use App\Services\MsgCPRules;
 use App\Services\MsgSubstitutions;
 use App\Services\MsgTod;
@@ -152,6 +153,91 @@ class MsgChooser {
                 echo "<br>$logMsg";
             }
         }
+
+    }
+
+
+    public function setObsResponse($userId, $msgId, $answer, $obsDate, $sequence, $debug = true) {
+
+        $log = array();
+
+        // instantiate user
+        $wpUser = WpUser::find($userId);
+        if (!$wpUser) {
+            $log[] = "MsgChooser->setObsResponse() user not found";
+            return false;
+        }
+
+        $log[] = "MsgChooser->setObsResponse(".$wpUser->program_id." | $msgId | $answer) start";
+
+        $msgUser = new MsgUser;
+        $msgCPRules = new MsgCPRules;
+        $msgSubstitutions = new MsgSubstitutions;
+
+        // obtain message type
+        $qsType  = $msgCPRules->getQsType($msgId, $wpUser->program_id);
+
+        // set class vars (needed for old methods brought in from CI)
+        $this->programId = $wpUser->program_id;
+        $this->key = $userId;
+        $this->provid = $wpUser->program_id;
+
+        // current message info
+        $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', $wpUser->program_id, $qsType);
+        $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->provid, $userId);
+        $log[] = 'MsgChooser->setObsResponse() currQuestionInfo->message['.$currQuestionInfo->msgtype.'] = '.$currQuestionInfo->message.'';
+        $log[] = 'MsgChooser->setObsResponse() currQuestion answer = '.$answer.'';
+
+        // get answerResponse
+        $answerResponse =  $msgCPRules->getValidAnswer($wpUser->program_id, $qsType, $msgId, $answer, false);
+        if(!$answerResponse) {
+            $log[] = 'MsgChooser->setObsResponse() getValidAnswer result FAIL, die..';
+            dd($log);
+            return false;
+        }
+        $log[] = 'MsgChooser->setObsResponse() getValidAnswer result - qsid='.$answerResponse->qsid.' | qid='.$answerResponse->qid.' | aid='.$answerResponse->aid.' | action='.$answerResponse->action;
+
+        // process answerResponse
+        if(!empty($answerResponse->action) && ($currQuestionInfo->qtype != 'None')) { // took out  && ($currQuestionInfo->qtype == 'None')
+            $log[] = "MsgChooser->setObsResponse() [[ 1 ]] action = ".$answerResponse->action;
+            if(strpos($answerResponse->action, '(') === FALSE) {
+                $log[] = "MsgChooser->setObsResponse() [[ 2 ]] no params, simple";
+                $tmpfunc = $answerResponse->action;
+                //$nextMsgId = $this->$tmpfunc(); // for app assuming nextQ(noparams) means cut it
+                $nextMsgId = false;
+            } else {
+                $log[] = "MsgChooser->setObsResponse() [[ 2 ]] has params, complex ";
+                $exe = explode( "(", $answerResponse->action, 2);
+                $params = array($exe[1]);
+                $nextMsgId = call_user_func_array(array($this, $exe[0]), $params);
+            }
+            $log[] = "MsgChooser->setObsResponse() [[ 3 ]] nextMsgId = ".$nextMsgId;
+
+            //  get new information in case of loop
+            if($nextMsgId) {
+                $nextQuestionInfo = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $wpUser->program_id, $qsType);
+                $nextQuestionInfo->message = $msgSubstitutions->doSubstitutions($nextQuestionInfo->message, $this->provid, $userId);
+                $log[] = 'MsgChooser->setObsResponse() nextQuestionInfo->message[' . $nextQuestionInfo->msgtype . '] = ' . $nextQuestionInfo->message . '';
+                $log[] = 'MsgChooser->setObsResponse() nextQuestionInfo->qtype = ' . $nextQuestionInfo->qtype . '';
+            } else {
+                $log[] = 'MsgChooser->setObsResponse() nextMsgId = false, no next question to set';
+            }
+        }
+
+        // insert response observation
+        $newObservation = new Observation;
+        $newObservation->comment_id = 0;
+        $newObservation->obs_date = $obsDate;
+        $newObservation->obs_date_gmt = $obsDate;
+        $newObservation->sequence_id = ($sequence+1);
+        $newObservation->obs_message_id = $nextMsgId;
+        $newObservation->obs_method = 'system';
+        $newObservation->user_id = $userId;
+        $newObservation->obs_key = 'Outbound';
+        $newObservation->obs_value = '';
+        $newObservation->obs_unit = 'outbound';
+        $newObservation->save();
+        return true;
 
     }
 
