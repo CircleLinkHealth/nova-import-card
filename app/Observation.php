@@ -128,7 +128,7 @@ class Observation extends Model {
 
         // take programId(blogId) and add to wp_X_observations table
         if($updating) {
-            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->where('comment_ID', $this->legacy_obs_id)->update($params);
+            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->where('obs_id', $this->legacy_obs_id)->update($params);
         } else {
             // add to legacy if doesnt already exist
             if(empty($this->legacy_obs_id)) {
