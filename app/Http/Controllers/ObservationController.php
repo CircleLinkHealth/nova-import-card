@@ -142,6 +142,7 @@ class ObservationController extends Controller {
 			$params = $request->input();
 			$params['user_id'] = $wpUser->ID;
 			$params['source'] = 'manual_input';
+			$params['isStartingObs'] = 'N';
 		} else if ( $request->header('Client') == 'ui' ) { // WP Site
 			$input = json_decode(Crypt::decrypt($request->input('data')), true);
 		} else {
@@ -176,10 +177,12 @@ class ObservationController extends Controller {
 				->where('comment_date', '<=', $date->format("Y-m-d") . ' 23:59:59')
 				->orderBy('id', 'desc')
 				->first();
-			if (!$comment) {
-				return response()->json(['response' => 'No state_app comment found'], 500);
+			$parent_id = 0;
+			if ($comment) {
+				$parent_id = $comment->id;
+				//return response()->json(['response' => 'No state_app comment found'], 500);
 			}
-			$params['parent_id'] = $comment->id;
+			$params['parent_id'] = $parent_id;
 			$params['obs_value'] = str_replace("/", "_", $input['observationValue']);
 			$params['obs_date'] = $input['observationDate'];
 			$params['obs_message_id'] = $input['observationType'];
@@ -187,9 +190,10 @@ class ObservationController extends Controller {
 			$params['timezone'] = 'America/New_York';
 			$params['qstype'] = '';
 			$params['source'] = $input['observationSource'];
+			$params['startingObservation'] = $input['isStartingObs'];
 		}
 
-		$result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['obs_message_id'], $params['obs_key'], $params['timezone'], $params['source']);
+		$result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['obs_message_id'], $params['obs_key'], $params['timezone'], $params['source'], $input['isStartingObs']);
 
 		if ( $request->header('Client') == 'mobi' || $request->header('Client') == 'ui' ) {
 			// api response

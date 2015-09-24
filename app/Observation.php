@@ -59,7 +59,7 @@ class Observation extends Model {
 
     public function meta()
     {
-        return $this->hasMany('App\ObservationMeta', 'user_id', 'ID');
+        return $this->hasMany('App\ObservationMeta', 'obs_id', 'id');
     }
 
     public function question()
@@ -103,13 +103,6 @@ class Observation extends Model {
             return false;
         }
         $comment = Comment::find($this->comment_id);
-        /*
-        if(!$comment) {
-            return false;
-        }
-        */
-
-        // take programId(blogId) and add to wp_X_observations table
         if($comment) {
             $params['comment_id'] = $comment->legacy_comment_id;
         } else {
@@ -128,7 +121,13 @@ class Observation extends Model {
         $this->program_id = $wpUser->blogId();
 
         // updating or inserting?
+        $updating = false;
         if($this->id) {
+            $updating = true;
+        }
+
+        // take programId(blogId) and add to wp_X_observations table
+        if($updating) {
             DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->where('comment_ID', $this->legacy_obs_id)->update($params);
         } else {
             // add to legacy if doesnt already exist
@@ -139,9 +138,12 @@ class Observation extends Model {
         }
 
         parent::save();
-        // run datamonitor
-        $dmService = new DatamonitorService;
-        $dmService->process_obs_alerts($this->id);
+
+        // run datamonitor if new obs
+        if(!$updating) {
+            $dmService = new DatamonitorService;
+            $dmService->process_obs_alerts($this->id);
+        }
         // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
     }
 
