@@ -190,10 +190,13 @@ class ObservationController extends Controller {
 			$params['timezone'] = 'America/New_York';
 			$params['qstype'] = '';
 			$params['source'] = $input['observationSource'];
-			$params['startingObservation'] = $input['isStartingObs'];
+			$params['isStartingObs'] = 'N';
+			if(isset($input['isStartingObs'])) {
+				$params['isStartingObs'] = $input['isStartingObs'];
+			}
 		}
 
-		$result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['obs_message_id'], $params['obs_key'], $params['timezone'], $params['source'], $input['isStartingObs']);
+		$result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['obs_message_id'], $params['obs_key'], $params['timezone'], $params['source'], $params['isStartingObs']);
 
 		if ( $request->header('Client') == 'mobi' || $request->header('Client') == 'ui' ) {
 			// api response
