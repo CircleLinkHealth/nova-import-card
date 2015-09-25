@@ -157,7 +157,7 @@ class MsgChooser {
     }
 
 
-    public function setObsResponse($userId, $msgId, $answer, $obsDate, $sequence, $debug = true) {
+    public function setObsResponse($userId, $parentId, $msgId, $answer, $obsDate, $sequence, $debug = true) {
 
         $log = array();
 
@@ -224,19 +224,21 @@ class MsgChooser {
             }
         }
 
-        // insert response observation
-        $newObservation = new Observation;
-        $newObservation->comment_id = 0;
-        $newObservation->obs_date = $obsDate;
-        $newObservation->obs_date_gmt = $obsDate;
-        $newObservation->sequence_id = ($sequence+1);
-        $newObservation->obs_message_id = $nextMsgId;
-        $newObservation->obs_method = 'system';
-        $newObservation->user_id = $userId;
-        $newObservation->obs_key = 'Outbound';
-        $newObservation->obs_value = '';
-        $newObservation->obs_unit = 'outbound';
-        $newObservation->save();
+        if(!empty($nextMsgId)) {
+            // insert response observation
+            $newObservation = new Observation;
+            $newObservation->comment_id = $parentId;
+            $newObservation->obs_date = $obsDate;
+            $newObservation->obs_date_gmt = $obsDate;
+            $newObservation->sequence_id = ($sequence + 1);
+            $newObservation->obs_message_id = $nextMsgId;
+            $newObservation->obs_method = 'system';
+            $newObservation->user_id = $userId;
+            $newObservation->obs_key = 'Outbound';
+            $newObservation->obs_value = '';
+            $newObservation->obs_unit = 'outbound';
+            $newObservation->save();
+        }
         return true;
 
     }

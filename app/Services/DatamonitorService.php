@@ -1042,18 +1042,18 @@ class DatamonitorService {
 			$status = 'NR';
 			// override send email, set to NR if source = in-office visit
 			if ($source) {
-				if ($source == 'OV_Reading') {
+				if (strtolower($source) == 'ov_reading') {
 					$status = 'RV';
-					$log_string .= "source = OV_Reading, status = RV" . PHP_EOL;
+					$log_string .= "source = ov_reading, status = RV" . PHP_EOL;
 				}
 			}
 		} else {
 			// override send email, set to NR if source = in-office visit
 			if ($source) {
-				if ($source == 'OV_Reading') {
+				if (strtolower($source) == 'ov_reading') {
 					$send_email = false;
 					$status = 'RV';
-					$log_string .= "source = OV_Reading, dont send email, status = RV" . PHP_EOL;
+					$log_string .= "source = ov_reading, dont send email, status = RV" . PHP_EOL;
 				}
 			}
 			// override send email, set to NR if > 1day old

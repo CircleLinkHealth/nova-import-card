@@ -478,7 +478,8 @@ class WpUserController extends Controller {
 					'comment_approved' => $comment->comment_approved,
 					'comment_parent' => $comment->comment_parent,
 					'comment_content' => $comment->comment_content,
-					'comment_content_array' => unserialize($comment->comment_content),
+					//'comment_content_array' => unserialize($comment->comment_content),
+					'comment_content_array' => $comment->comment_content,
 				);
 			}
 		}

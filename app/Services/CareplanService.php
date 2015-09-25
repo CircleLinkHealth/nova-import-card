@@ -113,7 +113,6 @@ class CareplanService {
 						"Response" => $this->setObsSymptoms())
 				);
 			}
-			//$feed["CP_Feed"][$i]['Feed']["Symptoms"] = $this->setObsSymptoms();
 			$i++;
 		}
 		return $feed;
@@ -143,9 +142,8 @@ class CareplanService {
      */
 	private function setObsDMS()
 	{
-		if(!$this->stateAppCommentId) {
-			return array();
-		}
+		$msgCPRules = new MsgCPRules;
+		$msgChooser = new MsgChooser;
 		// get scheduled observations for the day
 		$scheduledObservations = $this->getScheduledDMS($this->programId, $this->wpUser->ID, $this->date, 'Other');
 		$scheduledObservationsAdherence = $this->getScheduledDMS($this->programId, $this->wpUser->ID, $this->date, 'Adherence');
@@ -166,110 +164,40 @@ class CareplanService {
 			}
 		}
 
-		$dsmObs = array();
-		$dsmAdherenceObs = array();
-		$o = 0;
-		$msgChooser = new MsgChooser;
-		$msgCPRules = new MsgCPRules;
-		$msgSubstitutions = new MsgSubstitutions;
-		foreach($this->stateAppArray as $key => $msgSet) {
-			if (in_array(key($msgSet[0]), $scheduledObsIds)) {
-				// found a DMS match
-				$scheduledObs = $scheduledObservations[key($msgSet[0])];
-				// loop through each row of message set
-				foreach($msgSet as $i => $msgRow) {
-					//obtain message type
-					$qsType  = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
-					$currQuestionInfo  = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-					$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-					// add to feed
-					$obsInfo = array(
-						"MessageID" => $currQuestionInfo->msg_id,
-						"Obs_Key" => $currQuestionInfo->obs_key,
-						"ParentID" => $this->stateAppCommentId,
-						"MessageIcon" => $currQuestionInfo->icon,
-						"MessageCategory" => $currQuestionInfo->category,
-						"MessageContent" => $currQuestionInfo->message,
-						"ReturnFieldType" => $currQuestionInfo->qtype,
-						"ReturnDataRangeLow" => $currQuestionInfo->low,
-						"ReturnDataRangeHigh" => $currQuestionInfo->high,
-						"ReturnValidAnswers" => '',
-						"PatientAnswer" => '',
-						"ResponseDate" => ''
-					);
-					$obsInfo['PatientAnswer'] = $msgRow[key($msgRow)];
-					// find answer observation (patient inbound always = observation)
-					$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
-					if ($answerObs) {
-						// if has answer, add answer and date of answer to feed
-						$obsInfo['PatientAnswer'] = $answerObs->obs_value;
-						$obsInfo['ResponseDate'] = $answerObs->obs_date;
-					}
-					if ($i == 0) {
-						$dsmObs[$o] = $obsInfo;
-					} else if ($i == 1) {
-						if (strpos($currQuestionInfo->msg_id,'MED') == false) {
-							$dsmObs[$o]['Response'][0] = $obsInfo;
-						}
-					} else if ($i == 2) {
-						if (strpos($currQuestionInfo->msg_id,'MED') == false) {
-							$dsmObs[$o]['Response']['Response'][0] = $obsInfo;
-						}
-					}
-				}
-				$o++;
-			} else if (in_array(key($msgSet[0]), $scheduledObsAdherenceIds)) {
-				// found a DMS match
-				$scheduledObs = $scheduledObservationsAdherence[key($msgSet[0])];
-				// loop through each row of message set
-				foreach($msgSet as $i => $msgRow) {
-					//obtain message type
-					$qsType  = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
-					$currQuestionInfo  = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-					$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-					// add to feed
-					$obsInfo = array(
-						"MessageID" => $currQuestionInfo->msg_id,
-						"Obs_Key" => $currQuestionInfo->obs_key,
-						"ParentID" => $this->stateAppCommentId,
-						"MessageIcon" => $currQuestionInfo->icon,
-						"MessageCategory" => $currQuestionInfo->category,
-						"MessageContent" => $currQuestionInfo->message,
-						"ReturnFieldType" => $currQuestionInfo->qtype,
-						"ReturnDataRangeLow" => $currQuestionInfo->low,
-						"ReturnDataRangeHigh" => $currQuestionInfo->high,
-						"ReturnValidAnswers" => '',
-						"PatientAnswer" => '',
-						"ResponseDate" => ''
-					);
-					$obsInfo['PatientAnswer'] = $msgRow[key($msgRow)];
-					// find answer observation (patient inbound always = observation)
-					$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
-					if ($answerObs) {
-						// if has answer, add answer and date of answer to feed
-						$obsInfo['PatientAnswer'] = $answerObs->obs_value;
-						$obsInfo['ResponseDate'] = $answerObs->obs_date;
-					}
-					if ($i == 0) {
-						$dsmAdherenceObs[$o] = $obsInfo;
-					}
-				}
-				$o++;
+		$scheduledObsIds = array_merge($scheduledObsIds, $scheduledObsAdherenceIds);
+
+		$sectionObs = array();
+		$i = 0;
+		foreach($scheduledObsIds as $obsMsgId) {
+			$observation = Observation::where('obs_message_id', '=', $obsMsgId)
+				->where('user_id', '=', $this->wpUser->ID)
+				->where('obs_unit', '!=', 'scheduled')
+				->where('obs_unit', '!=', 'invalid')
+				->where('obs_unit', '!=', 'outbound')
+				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->orderBy('obs_date', 'desc')
+				->first();
+			if(!empty($observation) && $observation->comment_id != 0) {
+				$sectionObs[$i] = $this->renderCommentThread($obsMsgId, $observation->comment_id);
+			} else {
+				$sectionObs[$i] = $this->renderCommentThread($obsMsgId, 0);
 			}
+			$i++;
 		}
 
 		// add in the response to adherence questions (this is the reason for the split weird code above, so that this always comes after the last adherence question)
+		$dsmAdherenceObs = array();
 		$adherenceResponseMsgId = $msgChooser->fxAlgorithmicForApp($this->programId, $this->wpUser->ID, $this->date);
 		if(!empty($adherenceResponseMsgId)) {
 			$qsType  = $msgCPRules->getQsType($adherenceResponseMsgId, $this->wpUser->ID);
 			$currQuestionInfo  = $msgCPRules->getQuestion($adherenceResponseMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-			$dsmAdherenceObs[$o] = array(
+			$dsmAdherenceObs[0] = array(
 				"MessageID" => $currQuestionInfo->msg_id,
 				"Obs_Key" => $currQuestionInfo->obs_key,
 				"ParentID" => $this->stateAppCommentId,
 				"MessageIcon" => $currQuestionInfo->icon,
 				"MessageCategory" => $currQuestionInfo->category,
-				"MessageContent" => 'Adherence Result Msg: '.$currQuestionInfo->message,
+				"MessageContent" => ''.$currQuestionInfo->message,
 				"ReturnFieldType" => $currQuestionInfo->qtype,
 				"ReturnDataRangeLow" => $currQuestionInfo->low,
 				"ReturnDataRangeHigh" => $currQuestionInfo->high,
@@ -279,7 +207,7 @@ class CareplanService {
 			);
 		}
 
-		return array_merge($dsmAdherenceObs, $dsmObs);
+		return array_merge($dsmAdherenceObs, $sectionObs);
 	}
 
 
@@ -295,79 +223,23 @@ class CareplanService {
 		//$hspMsg = CPRulesQuestions::where('obs_key', '=', 'HSP')->first();
 		$hspMsgIds = array('CF_HSP_20', 'CF_HSP_30');
 		$hspObs = array();
-		$o = 0;
-		$msgChooser = new MsgChooser;
-		$msgCPRules = new MsgCPRules;
-		$msgSubstitutions = new MsgSubstitutions;
-		// look for $hspMsgId in current state_app array
+		// look for $hspMsgId
+		$i = 0;
 		foreach($hspMsgIds as $hspMsgId) {
-			$matchFound = false;
-			foreach ($this->stateAppArray as $key => $msgSet) {
-				if (in_array(key($msgSet[0]), array($hspMsgId))) {
-					$matchFound = true;
-					// loop through each row of message set
-					foreach ($msgSet as $i => $msgRow) {
-						//obtain message type
-						$qsType = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
-						$currQuestionInfo = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-						$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-						// add to feed
-						$obsInfo = array(
-							"MessageID" => $currQuestionInfo->msg_id,
-							"Obs_Key" => $currQuestionInfo->obs_key,
-							"ParentID" => $this->stateAppCommentId,
-							"MessageIcon" => $currQuestionInfo->icon,
-							"MessageCategory" => $currQuestionInfo->category,
-							"MessageContent" => $currQuestionInfo->message,
-							"ReturnFieldType" => $currQuestionInfo->qtype,
-							"ReturnDataRangeLow" => $currQuestionInfo->low,
-							"ReturnDataRangeHigh" => $currQuestionInfo->high,
-							"ReturnValidAnswers" => '',
-							"PatientAnswer" => '',
-							"ResponseDate" => ''
-						);
-						$obsInfo['PatientAnswer'] = $msgRow[key($msgRow)];
-						// find answer observation (patient inbound always = observation)
-						$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
-						if ($answerObs) {
-							// if has answer, add answer and date of answer to feed
-							$obsInfo['PatientAnswer'] = $answerObs->obs_value;
-							$obsInfo['ResponseDate'] = $answerObs->obs_date;
-						}
-						if ($i == 0) {
-							$hspObs[$o] = $obsInfo;
-						} else if ($i == 1) {
-							$hspObs[$o]['Response'][0] = $obsInfo;
-						} else if ($i == 2) {
-							$hspObs[$o]['Response']['Response'][0] = $obsInfo;
-						}
-					}
-					$o++;
-				}
+			$observation = Observation::where('obs_message_id', '=', $hspMsgId)
+				->where('user_id', '=', $this->wpUser->ID)
+				->where('obs_unit', '!=', 'scheduled')
+				->where('obs_unit', '!=', 'invalid')
+				->where('obs_unit', '!=', 'outbound')
+				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->orderBy('obs_date', 'desc')
+				->first();
+			if(!empty($observation) && $observation->comment_id != 0) {
+				$hspObs[$i] = $this->renderCommentThread($hspMsgId, $observation->comment_id);
+			} else {
+				$hspObs[$i] = $this->renderCommentThread($hspMsgId, 0);
 			}
-			if (!$matchFound) {
-				// not yet in state_app, so add just the base question
-				//obtain message type
-				$qsType = $msgCPRules->getQsType($hspMsgId, $this->wpUser->ID);
-				$currQuestionInfo = $msgCPRules->getQuestion($hspMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-				$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-				// add to feed
-				$hspObs[$o] = array(
-					"MessageID" => $currQuestionInfo->msg_id,
-					"Obs_Key" => $currQuestionInfo->obs_key,
-					"ParentID" => $this->stateAppCommentId,
-					"MessageIcon" => $currQuestionInfo->icon,
-					"MessageCategory" => $currQuestionInfo->category,
-					"MessageContent" => $currQuestionInfo->message,
-					"ReturnFieldType" => 'end',
-					"ReturnDataRangeLow" => $currQuestionInfo->low,
-					"ReturnDataRangeHigh" => $currQuestionInfo->high,
-					"ReturnValidAnswers" => '',
-					"PatientAnswer" => '',
-					"ResponseDate" => ''
-				);
-				$o++; // +1 symObs
-			}
+			$i++;
 		}
 		return $hspObs;
 	}
@@ -378,11 +250,6 @@ class CareplanService {
      */
 	private function setObsBiometric()
 	{
-		if(!$this->stateAppCommentId) {
-			return array();
-		}
-		$msgCPRules = new MsgCPRules;
-		$msgSubstitutions = new MsgSubstitutions;
 		$msgUser = new MsgUser;
 		$bioMsgIds = array();
 		$userInfo = $msgUser->get_users_data($this->wpUser->ID, 'id', $this->programId, true);
@@ -404,80 +271,97 @@ class CareplanService {
 				}
 			}
 		}
-
 		$bioObs = array();
-		$o = 0;
+		$i = 0;
 		foreach($bioMsgIds as $bioMsgId) {
-			$matchFound = false;
-			foreach($this->stateAppArray as $key => $msgSet) {
-				if (key($msgSet[0]) == $bioMsgId) {
-					// found a BIO match
-					$matchFound = true;
-					// loop through each row of message set
-					foreach ($msgSet as $i => $msgRow) {
-						//obtain message type
-						$qsType = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
-						$currQuestionInfo = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-						$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-						// add to feed
-						$bioObsTemp = array(
-							"MessageID" => $currQuestionInfo->msg_id,
-							"Obs_Key" => $currQuestionInfo->obs_key,
-							"ParentID" => $this->stateAppCommentId,
-							"MessageIcon" => $currQuestionInfo->icon,
-							"MessageCategory" => $currQuestionInfo->category,
-							"MessageContent" => $currQuestionInfo->message,
-							"ReturnFieldType" => $currQuestionInfo->qtype,
-							"ReturnDataRangeLow" => $currQuestionInfo->low,
-							"ReturnDataRangeHigh" => $currQuestionInfo->high,
-							"ReturnValidAnswers" => '',
-							"PatientAnswer" => '',
-							"ResponseDate" => ''
-						);
-						$bioObsTemp['PatientAnswer'] = $msgRow[key($msgRow)];
-						// find answer observation (patient inbound always = observation)
-						$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
-						if ($answerObs) {
-							// if has answer, add answer and date of answer to feed
-							$bioObsTemp['PatientAnswer'] = $answerObs->obs_value;
-							$bioObsTemp['ResponseDate'] = $answerObs->obs_date;
-						}
-						if($i == 0) {
-							$bioObs[$o] = $bioObsTemp;
-						} else if($i == 1) {
-							$bioObs[$o]['Response'][0] = $bioObsTemp;
-						} else if($i == 2) {
-							$bioObs[$o]['Response']['Response'][0] = $bioObsTemp;
-						}
-					}
-					$o++; // +1 bioObs
-				}
+			$observation = Observation::where('obs_message_id', '=', $bioMsgId)
+				->where('user_id', '=', $this->wpUser->ID)
+				->where('obs_unit', '!=', 'scheduled')
+				->where('obs_unit', '!=', 'invalid')
+				->where('obs_unit', '!=', 'outbound')
+				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->orderBy('obs_date', 'desc')
+				->first();
+			if(!empty($observation) && $observation->comment_id != 0) {
+				$bioObs[$i] = $this->renderCommentThread($bioMsgId, $observation->comment_id);
+			} else {
+				$bioObs[$i] = $this->renderCommentThread($bioMsgId, 0);
 			}
-			if(!$matchFound) {
-				// not yet in state_app, so add just the base question
+			$i++;
+		}
+		return $bioObs;
+	}
+
+	private function renderCommentThread($msgId, $commentId = 0) {
+		$msgCPRules = new MsgCPRules;
+		$msgSubstitutions = new MsgSubstitutions;
+		// for unanswered:
+		if(empty($commentId)) {
+			$qsType = $msgCPRules->getQsType($msgId, $this->wpUser->ID);
+			$currQuestionInfo = $msgCPRules->getQuestion($msgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
+			$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+			//echo $msgId .'-'. $this->wpUser->ID .'-'. $this->msgLanguageType .'-'. $this->programId .'-'. $qsType."<br><BR>".PHP_EOL;
+			// add to feed
+			$obsArr = array(
+				"MessageID" => $currQuestionInfo->msg_id,
+				"Obs_Key" => $currQuestionInfo->obs_key,
+				"ParentID" => 0,
+				"MessageIcon" => $currQuestionInfo->icon,
+				"MessageCategory" => $currQuestionInfo->category,
+				"MessageContent" => $currQuestionInfo->message,
+				"ReturnFieldType" => $currQuestionInfo->qtype,
+				"ReturnDataRangeLow" => $currQuestionInfo->low,
+				"ReturnDataRangeHigh" => $currQuestionInfo->high,
+				"ReturnValidAnswers" => '',
+				"PatientAnswer" => '',
+				"ResponseDate" => ''
+			);
+			return $obsArr;
+		}
+		// get all observations for message_thread
+		$observations = Observation::where('comment_id', '=', $commentId)->orderBy('sequence_id', 'asc')->get();
+		//dd($observations);
+		$obsArr = array();
+		if($observations->count() > 0) {
+			$o = 0;
+			foreach($observations as $observation) {
 				//obtain message type
-				$qsType = $msgCPRules->getQsType($bioMsgId, $this->wpUser->ID);
-				$currQuestionInfo = $msgCPRules->getQuestion($bioMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-				$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-				// add to feed
-				$bioObs[$o] = array(
-					"MessageID" => $currQuestionInfo->msg_id,
-					"Obs_Key" => $currQuestionInfo->obs_key,
-					"ParentID" => $this->stateAppCommentId,
-					"MessageIcon" => $currQuestionInfo->icon,
-					"MessageCategory" => $currQuestionInfo->category,
-					"MessageContent" => $currQuestionInfo->message,
-					"ReturnFieldType" => $currQuestionInfo->qtype,
-					"ReturnDataRangeLow" => $currQuestionInfo->low,
-					"ReturnDataRangeHigh" => $currQuestionInfo->high,
-					"ReturnValidAnswers" => '',
-					"PatientAnswer" => '',
-					"ResponseDate" => ''
-				);
+
+				$qsType = $msgCPRules->getQsType($observation->obs_message_id, $this->wpUser->ID);
+				$currQuestionInfo = $msgCPRules->getQuestion($observation->obs_message_id, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
+				if($currQuestionInfo) {
+					if (isset($currQuestionInfo->message)) {
+						$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
+					} else {
+						$currQuestionInfo->message = '-';
+					}
+					// add to feed
+					$obsTemp = array(
+						"MessageID" => $currQuestionInfo->msg_id,
+						"Obs_Key" => $currQuestionInfo->obs_key,
+						"ParentID" => 0,
+						"MessageIcon" => $currQuestionInfo->icon,
+						"MessageCategory" => $currQuestionInfo->category,
+						"MessageContent" => $currQuestionInfo->message,
+						"ReturnFieldType" => $currQuestionInfo->qtype,
+						"ReturnDataRangeLow" => $currQuestionInfo->low,
+						"ReturnDataRangeHigh" => $currQuestionInfo->high,
+						"ReturnValidAnswers" => '',
+						"PatientAnswer" => $observation->obs_value,
+						"ResponseDate" => $observation->obs_date
+					);
+					if ($o == 0) {
+						$obsArr = $obsTemp;
+					} else if ($o == 1) {
+						$obsArr['Response'][0] = $obsTemp;
+					} else if ($o == 2) {
+						$obsArr['Response']['Response'][0] = $obsTemp;
+					}
+				}
 				$o++; // +1 bioObs
 			}
 		}
-		return $bioObs;
+		return $obsArr;
 	}
 
 
@@ -486,15 +370,8 @@ class CareplanService {
      */
 	private function setObsSymptoms()
 	{
-		if(!$this->stateAppCommentId) {
-			return array();
-		}
-		$msgCPRules = new MsgCPRules;
-		$msgSubstitutions = new MsgSubstitutions;
-		$msgUser = new MsgUser;
-		$symMsgIds = array();
-		// not yet in state app
 		$scheduledSymptoms = $this->getScheduledSymptoms();
+		//dd($scheduledSymptoms); @todo get this to return msg_ids!!
 		$symMsgIds = array();
 		if(!empty($scheduledSymptoms)) {
 			foreach($scheduledSymptoms as $scheduledSym) {
@@ -502,76 +379,22 @@ class CareplanService {
 			}
 		}
 		$symObs = array();
-		$o = 0;
+		$i = 0;
 		foreach($symMsgIds as $symMsgId) {
-			$matchFound = false;
-			foreach($this->stateAppArray as $key => $msgSet) {
-				if (key($msgSet[0]) == $symMsgId) {
-					// found a SYM match
-					$matchFound = true;
-					// loop through each row of message set
-					foreach ($msgSet as $i => $msgRow) {
-						//obtain message type
-						$qsType = $msgCPRules->getQsType(key($msgRow), $this->wpUser->ID);
-						$currQuestionInfo = $msgCPRules->getQuestion(key($msgRow), $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-						$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-						// add to feed
-						$symObsTemp = array(
-							"MessageID" => $currQuestionInfo->msg_id,
-							"Obs_Key" => $currQuestionInfo->obs_key,
-							"ParentID" => $this->stateAppCommentId,
-							"MessageIcon" => $currQuestionInfo->icon,
-							"MessageCategory" => $currQuestionInfo->category,
-							"MessageContent" => $currQuestionInfo->message,
-							"ReturnFieldType" => $currQuestionInfo->qtype,
-							"ReturnDataRangeLow" => $currQuestionInfo->low,
-							"ReturnDataRangeHigh" => $currQuestionInfo->high,
-							"ReturnValidAnswers" => '',
-							"PatientAnswer" => '',
-							"ResponseDate" => ''
-						);
-						$symObsTemp['PatientAnswer'] = $msgRow[key($msgRow)];
-						// find answer observation (patient inbound always = observation)
-						$answerObs = $this->getAnswerObservation($this->programId, $this->wpUser->ID, $currQuestionInfo->obs_key, $currQuestionInfo->msg_id, $this->date);
-						if ($answerObs) {
-							// if has answer, add answer and date of answer to feed
-							$symObsTemp['PatientAnswer'] = $answerObs->obs_value;
-							$symObsTemp['ResponseDate'] = $answerObs->obs_date;
-						}
-						if($i == 0) {
-							$symObs[$o] = $symObsTemp;
-						} else if($i == 1) {
-							$symObs[$o]['Response'][0] = $symObsTemp;
-						} else if($i == 2) {
-							$symObs[$o]['Response']['Response'][0] = $symObsTemp;
-						}
-					}
-					$o++; // +1 symObs
-				}
+			$observation = Observation::where('obs_message_id', '=', $symMsgId)
+				->where('user_id', '=', $this->wpUser->ID)
+				->where('obs_unit', '!=', 'scheduled')
+				->where('obs_unit', '!=', 'invalid')
+				->where('obs_unit', '!=', 'outbound')
+				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->orderBy('obs_date', 'desc')
+				->first();
+			if(!empty($observation) && $observation->comment_id != 0) {
+				$symObs[$i] = $this->renderCommentThread($symMsgId, $observation->comment_id);
+			} else {
+				$symObs[$i] = $this->renderCommentThread($symMsgId, 0);
 			}
-			if(!$matchFound) {
-				// not yet in state_app, so add just the base question
-				//obtain message type
-				$qsType = $msgCPRules->getQsType($symMsgId, $this->wpUser->ID);
-				$currQuestionInfo = $msgCPRules->getQuestion($symMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-				$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
-				// add to feed
-				$symObs[$o] = array(
-					"MessageID" => $currQuestionInfo->msg_id,
-					"Obs_Key" => $currQuestionInfo->obs_key,
-					"ParentID" => $this->stateAppCommentId,
-					"MessageIcon" => $currQuestionInfo->icon,
-					"MessageCategory" => $currQuestionInfo->category,
-					"MessageContent" => $currQuestionInfo->message,
-					"ReturnFieldType" => $currQuestionInfo->qtype,
-					"ReturnDataRangeLow" => $currQuestionInfo->low,
-					"ReturnDataRangeHigh" => $currQuestionInfo->high,
-					"ReturnValidAnswers" => '',
-					"PatientAnswer" => '',
-					"ResponseDate" => ''
-				);
-				$o++; // +1 symObs
-			}
+			$i++;
 		}
 		return $symObs;
 	}
@@ -655,6 +478,7 @@ class CareplanService {
 				if(!empty($row->msg_id)) {
 					$arrReturnResult[$row->msg_id] = $row;
 				}
+				//dd($row);
 			}
 		}
 		return $arrReturnResult;
