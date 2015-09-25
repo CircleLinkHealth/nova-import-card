@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>Laravel</title>
+		<title>CircleLeanth CPM API</title>
 		
 		<link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
 		<link href="{{ asset('/css/app.css') }}" rel="stylesheet">
@@ -44,7 +44,6 @@
 			<div class="content">
 				<div class="title">CircleLink Health<br>Care Plan Manager</div>
 				<a class="btn btn-primary subtitle" href="{{ url('/auth/login') }}">Login</a>
-				<div style="color:#000;"><?php //var_dump(Config::get('database')); ?></div>
 			</div>
 		</div>
 	</body>

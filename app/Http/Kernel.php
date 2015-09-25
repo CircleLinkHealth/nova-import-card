@@ -11,6 +11,7 @@ class Kernel extends HttpKernel {
 	 */
 	protected $middleware = [
 		'Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode',
+		'Shin1x1\ForceHttpsUrlScheme\ForceHttpsUrlScheme',
 		'Illuminate\Cookie\Middleware\EncryptCookies',
 		'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
 		'Illuminate\Session\Middleware\StartSession',
@@ -30,6 +31,7 @@ class Kernel extends HttpKernel {
 		'guest' => 'App\Http\Middleware\RedirectIfAuthenticated',
 		'authApiCall' => 'App\Http\Middleware\AuthenticateApiCall',
         'getRedoxAccessToken' => 'App\Http\Middleware\GetRedoxAccessToken',
+		'forceHttpsUrlScheme' => 'Shin1x1\ForceHttpsUrlScheme\ForceHttpsUrlScheme',
 	];
 
 }
