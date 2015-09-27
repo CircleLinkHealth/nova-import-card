@@ -80,6 +80,7 @@
                             <tr>
                                 <td></td>
                                 <td><strong>domain</strong></td>
+                                <td><strong>pcp</strong></td>
                                 <td><strong>item_id</strong></td>
                             </tr>
                             </thead>
@@ -88,9 +89,8 @@
                                 @foreach( $question->rulesItems as $item )
                                     <tr>
                                         <td>{!! Form::checkbox('care_team[]', $item->items_id, ['checked' => 'checked'], ['disabled' => 'disabled']) !!}</td>
-                                        @if( isset($item->pcp->program->first()->domain) )
-                                            <td><strong>{{ $item->pcp->program->first()->domain }}</strong></td>
-                                        @endif
+                                        <td><strong>{{ $item->pcp->program->first()->domain }}</strong></td>
+                                        <td><strong>{{ $item->pcp->section_text }}</strong></td>
                                         <td><a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->items_id }}</a></td>
                                     </tr>
                                 @endforeach
