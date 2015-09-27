@@ -74,6 +74,29 @@
                             </div>
                         </div>
 
+                        <h2>Items:</h2>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <td></td>
+                                <td><strong>domain</strong></td>
+                                <td><strong>item_id</strong></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if( $question->rulesItems->count() > 0 )
+                                @foreach( $question->rulesItems as $item )
+                                    <tr>
+                                        <td>{!! Form::checkbox('care_team[]', $item->items_id, ['checked' => 'checked'], ['disabled' => 'disabled']) !!}</td>
+                                        @if( isset($item->pcp->program->first()->domain) )
+                                            <td><strong>{{ $item->pcp->program->first()->domain }}</strong></td>
+                                        @endif
+                                        <td><a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->items_id }}</a></td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                            </tbody>
+                        </table>
 
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
