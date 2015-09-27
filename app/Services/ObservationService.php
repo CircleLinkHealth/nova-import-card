@@ -78,7 +78,10 @@ class ObservationService {
 		$newObservation->obs_method = $source;
 		$newObservation->user_id = $userId;
 		$newObservation->obs_key = $obsKey;
-		$newObservation->obs_value = $obsValue;
+		//arrays to validate input
+		$from = array("_","y");
+		$to = array("/","Y");
+		$newObservation->obs_value = str_replace($from, $to, $obsValue);
 		$newObservation->obs_unit = '';
 		$newObservation->save();
 
