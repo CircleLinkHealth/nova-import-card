@@ -270,6 +270,7 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 	// reports
     Route::get('reports/pagetimer', 'ReportsController@pageTimerReports');
 	Route::resource('reports', 'ReportsController');
+	Route::get('reports/progress', 'ReportsController@progress');
 
 	// locations
 	Route::get('locations', 'LocationController@index');
