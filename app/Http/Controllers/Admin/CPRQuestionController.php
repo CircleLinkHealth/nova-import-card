@@ -1,13 +1,15 @@
 <?php namespace App\Http\Controllers\Admin;
 
 use App\CPRulesQuestions;
+use App\WpBlog;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
-class CPRQuestionController extends Controller {
+class CPRQuestionController extends Controller
+{
 
 	/**
 	 * Display a listing of the resource.
@@ -17,8 +19,8 @@ class CPRQuestionController extends Controller {
 	public function index(Request $request)
 	{
 		// display view
-		$questions = CPRulesQuestions::paginate(10);
-		return view('admin.questions.index', [ 'questions' => $questions ]);
+		$questions = CPRulesQuestions::orderBy('qid', 'desc')->paginate(10);
+		return view('admin.questions.index', ['questions' => $questions]);
 	}
 
 	/**
@@ -48,32 +50,40 @@ class CPRQuestionController extends Controller {
 		$question->icon = $params['icon'];
 		$question->category = $params['category'];
 		$question->save();
-		return redirect()->route('admin.questions.edit', [$question->qid])->with('messages', ['successfully added new question - '.$params['msg_id']])->send();
+		return redirect()->route('admin.questions.edit', [$question->qid])->with('messages', ['successfully added new question - ' . $params['msg_id']])->send();
 	}
 
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  int $id
 	 * @return Response
 	 */
 	public function show($id)
 	{
 		// display view
 		$question = CPRulesQuestions::find($id);
-		return view('admin.questions.show', [ 'question' => $question, 'errors' => array(), 'messages' => array() ]);
+		return view('admin.questions.show', ['question' => $question, 'errors' => array(), 'messages' => array()]);
 	}
 
 	/**
 	 * Show the form for editing the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  int $id
 	 * @return Response
 	 */
 	public function edit($id)
 	{
 		$question = CPRulesQuestions::find($id);
-		return view('admin.questions.edit', [ 'question' => $question, 'messages' => \Session::get('messages') ]);
+		$programs = WpBlog::get();
+		if (!empty($question->rulesItems)) {
+			foreach ($question->rulesItems as $item) {
+				if (isset($item->pcp->program->first()->domain)) {
+					$programItems[] = $item->pcp->program->first()->domain;
+				}
+			}
+		}
+		return view('admin.questions.edit', [ 'question' => $question, 'programs' => $programs, 'messages' => \Session::get('messages') ]);
 	}
 
 	/**

@@ -55,16 +55,29 @@ class ObservationService {
 		// process obs_key
 		if (empty($obsKey)) {
 			$msgCPRules = new MsgCPRules;
-			$qsType = $msgCPRules->getQsType($obsMessageId, $userId);
-			$currQuestionInfo = $msgCPRules->getQuestion($obsMessageId, $userId, 'SMS_EN', $wpUser->blogId(), $qsType);
+			$qsType = $msgCPRules->getQsType($obsMessageId, $wpUser->program_id);
+			$currQuestionInfo = $msgCPRules->getQuestion($obsMessageId, $userId, 'SMS_EN', $wpUser->program_id, $qsType);
 			$obsKey = $currQuestionInfo->obs_key;
 		}
 
-		// find comment
-		// @todo bring comment update back to this service
+		// create new comment thread if one doesnt exist yet
 		$commentId = 0;
-		$comment = Comment::find($parentId);
-		if ($comment) {
+		if(empty($parentId)) {
+			$comment = new Comment;
+			$comment->comment_post_ID = 0;
+			$comment->comment_author = $obsMessageId;
+			$comment->comment_author_email = '';
+			$comment->comment_author_url = '';
+			$comment->comment_content = 'observation message thread';
+			$comment->comment_type = 'message_thread';
+			$comment->comment_parent = 0;
+			$comment->user_id = $userId;
+			$comment->comment_author_IP = '127.0.0.1';
+			$comment->comment_agent = 'N/A';
+			$comment->comment_date = $obsDate;
+			$comment->comment_date_gmt = $obsDate;
+			$comment->comment_approved = 1;
+			$comment->save();
 			$commentId = $comment->id;
 		}
 
@@ -77,11 +90,11 @@ class ObservationService {
 		$newObservation->obs_message_id = $obsMessageId;
 		$newObservation->obs_method = $source;
 		$newObservation->user_id = $userId;
-		$newObservation->obs_key = $obsKey;
 		//arrays to validate input
 		$from = array("_","y");
 		$to = array("/","Y");
 		$newObservation->obs_value = str_replace($from, $to, $obsValue);
+		$newObservation->obs_key = $obsKey;
 		$newObservation->obs_unit = '';
 		$newObservation->save();
 
@@ -105,15 +118,17 @@ class ObservationService {
 			$newObservationMeta->save();
 		}
 
-		return true;
+		//return true;
 
+		$msgChooser = new MsgChooser();
+		//Next Message Block
 		if(!empty($commentId)) {
-			//Next Message Block
-			$msgChooser = new MsgChooser();
-			$msgChooser->setAppAnswerAndNextMessage($userId, $commentId, $obsMessageId, $obsValue, false);
+			//$msgChooser->setAppAnswerAndNextMessage($userId, $commentId, $obsMessageId, $obsValue, false);
+			$msgChooser->setObsResponse($userId, $commentId, $obsMessageId, $obsValue, $obsDate, $sequence, false);
 			return true;
 		} else {
-			return false;
+			$msgChooser->setObsResponse($userId, $commentId, $obsMessageId, $obsValue, $obsDate, $sequence, false);
+			return true;
 		}
 
 	}

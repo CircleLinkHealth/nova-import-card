@@ -167,11 +167,22 @@ class ObservationController extends Controller {
 				}
 			}
 
-			// extra work here to decode from quirky UI
+			//***** start extra work here to decode from quirky UI ******
+			// creates params array to mimick the way mobi sends it
+
 			$params['user_id'] = $wpUser->ID;
-			// get state_app for obs_date
 			$date = DateTime::createFromFormat("Y-m-d\TH:i", $input['observationDate']);
-			$comment = Comment::where('comment_type', '=', 'state_app')
+			$date = $date->format("Y-m-d H:i:s");
+			// get state_app for obs_date
+
+
+			/*
+			 *
+			 * no longer need state_app? assume its 0 if coming from ui, because its always a start
+			 *
+
+
+			$comment = Comment::where('comment_type', '=', 'message_thread')
 				->where('user_id', '=', $wpUser->ID)
 				->where('comment_date', '>=', $date->format("Y-m-d") . ' 00:00:00')
 				->where('comment_date', '<=', $date->format("Y-m-d") . ' 23:59:59')
@@ -182,9 +193,14 @@ class ObservationController extends Controller {
 				$parent_id = $comment->id;
 				//return response()->json(['response' => 'No state_app comment found'], 500);
 			}
-			$params['parent_id'] = $parent_id;
+			*/
+
+			if(isset($input['parent_id'])) {
+				$params['parent_id'] = $input['parent_id'];
+			}
+			$params['parent_id'] = 0;
 			$params['obs_value'] = str_replace("/", "_", $input['observationValue']);
-			$params['obs_date'] = $input['observationDate'];
+			$params['obs_date'] = $date;
 			$params['obs_message_id'] = $input['observationType'];
 			$params['obs_key'] = ''; // need to get from obs_message_id
 			$params['timezone'] = 'America/New_York';
@@ -194,9 +210,12 @@ class ObservationController extends Controller {
 			if(isset($input['isStartingObs'])) {
 				$params['isStartingObs'] = $input['isStartingObs'];
 			}
+
+			//***** end extra work here to decode from quirky UI ******
 		}
 
 		$result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['obs_message_id'], $params['obs_key'], $params['timezone'], $params['source'], $params['isStartingObs']);
+
 
 		if ( $request->header('Client') == 'mobi' || $request->header('Client') == 'ui' ) {
 			// api response
