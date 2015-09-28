@@ -811,7 +811,7 @@ class MsgUser {
 		$arrUnsolicitedData = array(
 			'comment_author' => 'MsgUser',
 			'comment_author_email' => 'admin@medadherence.com',
-			'comment_author_url' => 'http://medadherence.com/',
+			'comment_author_url' => 'https://medadherence.com/',
 			'comment_content' => serialize(array()),
 			'comment_type' => 'state_'.strtolower($arrUserData[key($arrUserData)]['usermeta']['msgtype']),
 			'comment_parent' => 0,

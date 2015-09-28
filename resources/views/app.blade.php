@@ -6,9 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>CPM API</title>
 
-	<link href="{{ asset('/css/app.css') }}" rel="stylesheet">
-	<link href="{{ asset('/css/lavish.css') }}" rel="stylesheet">
-	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
+	<link href="{{ secure_asset('/css/app.css') }}" rel="stylesheet">
+	<link href="{{ secure_asset('/css/lavish.css') }}" rel="stylesheet">
+	<link href="{{ secure_asset('/img/favicon.png') }}" rel="icon">
 
 	<!-- Fonts -->
 	<link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
@@ -31,8 +31,8 @@
 
 	<script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
-	<script src="{{ asset('/js/scripts.js') }}"></script>
-	<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
+	<script src="{{ secure_asset('/js/scripts.js') }}"></script>
+	<script src="{{ secure_asset('/js/bootstrap-select.min.js') }}"></script>
 
 	<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
 	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
@@ -49,7 +49,7 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="{{ url('/') }}">
-						<img src="{{ asset('/img/cpm-logo.png') }}" height="40" width="70">
+						<img src="{{ secure_asset('/img/cpm-logo.png') }}" height="40" width="70">
 					</a>
 				</div>
 

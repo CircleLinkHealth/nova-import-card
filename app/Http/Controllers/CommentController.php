@@ -53,7 +53,7 @@ class CommentController extends Controller {
                 $newComment->user_id = $user->ID;
                 $newComment->comment_author = $input['comment_author'];
                 $newComment->comment_author_email = 'admin@circlelinkhealth.com';
-                $newComment->comment_author_url = 'http://www.circlelinkhealth.com/';
+                $newComment->comment_author_url = 'https://www.circlelinkhealth.com/';
                 $newComment->comment_author_IP = '127.0.0.1';
 
                 //**Needs to be looked at - Possibly take Time Zone from the app

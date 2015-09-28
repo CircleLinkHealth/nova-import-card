@@ -3,20 +3,11 @@
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
 
-//Test route
-Route::get('/reports/{id}', function($id){
-	$report = new \App\Services\ReportsService();
-	return $report->progress($id);
-});
-
-Route::get('/email', function(){
-	$sent = new \App\Services\DatamonitorService();
-	$observation = array('user_id' => 400, 'comment_id' => '2' );
-	$message_id = 'CF_RPT_200';
-
-	$sent->send_email($observation, $message_id, null, $int_blog_id = 7);
-});
 Route::group(['middleware' => 'forceHttpsUrlScheme'], function () {
+
+    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
+    Route::get('/', 'WelcomeController@index');
 
 	    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 	
