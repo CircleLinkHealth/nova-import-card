@@ -249,7 +249,8 @@ Class ReportsService
             else {
                 $status = 'Unchanged';
                 $progression = 'Unchanged';
-                $unit = 'Unchanged';
+                $unit = '';
+                $change = 'Unchanged';
             }
             $trackingChanges['Data'][] =
                 [

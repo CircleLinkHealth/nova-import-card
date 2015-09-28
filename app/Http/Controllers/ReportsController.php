@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Services\CareplanService;
 use App\Services\ReportsService;
 use App\WpUser;
 use Carbon\Carbon;
@@ -136,23 +137,11 @@ class ReportsController extends Controller {
 		//return response()->json($str_data);
 
 		$progressReport = new ReportsService();
-		$progressReport->progress($wpUser->ID);
-
-		// get dates
-		$date1 = date('Y-m-d');
-		$date2 = date('Y-m-d', time() - 60 * 60 * 24);
-		$date3 = date('Y-m-d', time() - ((60 * 60 * 24) * 2));
-		$dates = array($date1, $date2, $date3);
-		if(empty($dates)) {
-			return response("Date array is required", 401);
-		}
-
-		// get feed
-		$careplanService = new CareplanService;
-		$feed = $careplanService->getCareplan($wpUser, $dates);
+		$feed = $progressReport->progress($wpUser->ID);
 
 		return response()->json($feed);
 	}
+
 	public function careplan(Request $request, $id = false)
 	{
 		if ( $request->header('Client') == 'mobi' ) {

@@ -1,45 +1,47 @@
 <?php
 /*
-* NO AUTHENTICATION NEEDED FOR THESE ROUTES
-*/
+ * NO AUTHENTICATION NEEDED FOR THESE ROUTES
+ */
 
+//Test route
+Route::get('/reports/{id}', function($id){
+	$report = new \App\Services\ReportsService();
+	return $report->progress($id);
+});
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::get('/', 'WelcomeController@index');
 
-	Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
-
-	Route::get('/', 'WelcomeController@index');
-
-	Route::controllers([
+Route::controllers([
 	'auth' => 'Auth\AuthController',
 	'password' => 'Auth\PasswordController',
 ]);
-Route::get('login', ['uses' => 'Auth\AuthController@getLogin', 'as' => 'login']);
 
-	// Password reset link request routes...
+// Password reset link request routes...
 Route::get('password/email', 'Auth\PasswordController@getEmail');
 Route::post('password/email', 'Auth\PasswordController@postEmail');
 
-	// Password reset routes...
+// Password reset routes...
 Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
 Route::post('password/reset', 'Auth\PasswordController@postReset');
 
-	/****************************/
+/****************************/
 /****************************/
 //    REDOX
 /****************************/
 /****************************/
-Route::group(['namespace' => 'Redox'], function () {
-	Route::get('redox', [
-		'uses' => 'AppVerificationController@getVerificationRequest'
-	]);
+Route::group(['namespace' => 'Redox'], function ()
+{
+    Route::get('redox', [
+        'uses' => 'AppVerificationController@getVerificationRequest'
+    ]);
 
-	Route::group(['middleware' => 'getRedoxAccessToken'], function () {
-		//@todo: this is not an actual route, it was made for testing
-		Route::get('testRedoxx', 'PostToRedoxController@index');
-	});
+    Route::group(['middleware' => 'getRedoxAccessToken'], function()
+    {
+        //@todo: this is not an actual route, it was made for testing
+        Route::get('testRedoxx', 'PostToRedoxController@index');
+    });
 });
 
 /****************************/
@@ -47,7 +49,8 @@ Route::group(['namespace' => 'Redox'], function () {
 //    AUTH ROUTES
 /****************************/
 /****************************/
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => 'auth'], function ()
+{
 	/****************************/
 	// HOME BASE
 	/****************************/
@@ -175,18 +178,19 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::get('programs/{id}/questions', ['uses' =>'Admin\WpBlogController@showQuestions', 'as'=>'admin.programs.questions']);
 	});
 
-	/*
-	 * Third Party Apis Config Pages
-	 */
-	Route::group(['prefix' => 'third-party-api-settings'], function () {
-		Route::resource('redox-engine', 'Redox\ConfigController', [
-			'except' => [ 'index', 'destroy', 'show' ]
-		]);
+    /*
+     * Third Party Apis Config Pages
+     */
+    Route::group(['prefix' => 'third-party-api-settings'], function ()
+    {
+        Route::resource('redox-engine', 'Redox\ConfigController', [
+            'except' => [ 'index', 'destroy', 'show' ]
+        ]);
 
-		Route::resource('qliqsoft', 'qliqSOFT\ConfigController', [
-			'except' => [ 'index', 'destroy', 'show' ]
-		]);
-	});
+        Route::resource('qliqsoft', 'qliqSOFT\ConfigController', [
+            'except' => [ 'index', 'destroy', 'show' ]
+        ]);
+    });
 });
 
 
@@ -223,23 +227,24 @@ Route::group(['middleware' => 'cors'], function(){
 Route::post('api/v2.1/login', 'AuthorizationController@login');
 
 // JWTauth api routes
-Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'authApiCall'], function() {
+Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'authApiCall'], function()
+{
 	// return token data, initial test
 	Route::post('tokentest', 'AuthorizationController@tokentest');
 
 	// Password reset link request routes...
-	Route::controller('password', 'Auth\PasswordController');
+    Route::controller('password', 'Auth\PasswordController');
 
 	// return data on logged in user
 	Route::post('user', 'WpUserController@index');
 	Route::get('user', 'WpUserController@index');
 
 	// observations
-	Route::post('comment', 'CommentController@store');
-	Route::post('observation', 'ObservationController@store');
-	Route::get('careplan', 'CareplanController@show');
-	Route::get('reports/progress', 'ReportsController@progress');
-	Route::get('reports/careplan', 'ReportsController@careplan');
+    Route::post('comment', 'CommentController@store');
+    Route::post('observation', 'ObservationController@store');
+    Route::get('careplan', 'CareplanController@show');
+    Route::get('reports/progress', 'ReportsController@progress');
+    Route::get('reports/careplan', 'ReportsController@careplan');
 
 	// locations
 	Route::get('locations', 'LocationController@index');
@@ -248,7 +253,9 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 	Route::get('programs', 'WpBlogController@index');
 });
 
-	/**********************************/
+
+
+/**********************************/
 //  WP SPECIFIC API SITE ROUTES
 /**********************************/
 
@@ -261,7 +268,7 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 	Route::post('activities/sendNote','ActivityController@sendExistingNote');
 
 	// reports
-	Route::get('reports/pagetimer', 'ReportsController@pageTimerReports');
+    Route::get('reports/pagetimer', 'ReportsController@pageTimerReports');
 	Route::resource('reports', 'ReportsController');
 
 	// locations
@@ -302,6 +309,8 @@ Route::group(['middleware' => 'authApiCall'], function()
 
 	Route::resource('rulesitem.meta', 'CPRulesItemMetaController');
 
+	Route::resource('observation', 'ObservationController');
+
+	Route::resource('observation.meta', 'ObservationMetaController');
 });
 */
-
