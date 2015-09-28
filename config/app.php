@@ -159,7 +159,8 @@ return [
 		'Barryvdh\Cors\ServiceProvider',
 		'Collective\Html\HtmlServiceProvider',
 		'Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider',
-		'Zizaco\Entrust\EntrustServiceProvider'
+		'Zizaco\Entrust\EntrustServiceProvider',
+		'Fideloper\Proxy\TrustedProxyServiceProvider',
 
 
 	],
