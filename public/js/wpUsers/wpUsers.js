@@ -19,7 +19,8 @@ function addAction() {
 $(document).ready(function(){
 
     // select2
-    $('select').select2();
+    $('#filterRole').select2();
+    $('#filterProgram').select2();
 
     //alert('bump');
     $( "#active_date" ).datetimepicker({
