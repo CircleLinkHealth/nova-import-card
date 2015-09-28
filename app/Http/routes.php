@@ -13,6 +13,7 @@ Route::group(['middleware' => 'forceHttpsUrlScheme'], function () {
         'auth' => 'Auth\AuthController',
         'password' => 'Auth\PasswordController',
     ]);
+    Route::get('login', ['uses' => 'Auth\AuthController@getLogin', 'as' => 'login']);
 
     // Password reset link request routes...
     Route::get('password/email', 'Auth\PasswordController@getEmail');
@@ -120,7 +121,7 @@ Route::group(['middleware' => 'forceHttpsUrlScheme'], function () {
         /****************************/
         // ADMIN (/admin)
         /****************************/
-        Entrust::routeNeedsRole('admin/*', array('administrator', 'developer', 'care-center'), null, false);
+        Entrust::routeNeedsRole('admin/*', array('administrator', 'developer', 'care-center'), Redirect::to( URL::route('login') ), false);
         Route::group(['prefix' => 'admin'], function () {
 
             // home
