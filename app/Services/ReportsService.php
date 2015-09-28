@@ -193,50 +193,64 @@ Class ReportsService
 
             if(!$tracking_obs_data[$q]){return 'Error';}
             //store all the modified data in this array
-            $status = '';
-            $progression = '';
-            $unit = '';
-            $change = abs($tracking_obs_data[$q][0]->Reading - $tracking_obs_data[$q][$num_obs-1]->Reading);
 
-           if($tracking_obs_question_map[$q] == 'Cigarettes'){
-               $unit = '';
-                 if($tracking_obs_data[$q][0]->Reading > $tracking_obs_data[$q][1]->Reading){
-                    $status = 'Bad';
-                    $progression = 'up';
-                 } else if($tracking_obs_data[$q][0]->Reading == $tracking_obs_data[$q][1]->Reading){
-                    $status = 'No Change';
-                    $progression = 'N/A';
-                 } else {$status = 'Good'; $progression = 'down';}
-            } else if($tracking_obs_question_map[$q] == 'Blood Pressure'){
-               $unit = ' sbp';
-               if($tracking_obs_data[$q][0]->Reading > $tracking_obs_data[$q][1]->Reading){
-                    $status = 'Bad';
-                    $progression = 'up';
-               } else if($tracking_obs_data[$q][0]->Reading == $tracking_obs_data[$q][1]->Reading){
-                    $status = 'No Change';
-                    $progression = 'N/A';
-               } else {$status = 'Good'; $progression = 'down';}
-           } else if($tracking_obs_question_map[$q] == 'Blood Sugar'){
-               $unit = ' mg/dL';
-               if($tracking_obs_data[$q][0]->Reading > $tracking_obs_data[$q][1]->Reading){
-                    $status = 'Bad';
-                    $progression = 'up';
-               } else if($tracking_obs_data[$q][0]->Reading == $tracking_obs_data[$q][1]->Reading){
-                    $status = 'No Change';
-                    $progression = 'N/A';
-               } else {$status = 'Good';
-                   $progression = 'down';}
-           } else if($tracking_obs_question_map[$q] == 'Weight'){
-               $unit = ' lbs';
-               if($tracking_obs_data[$q][0]->Reading > $tracking_obs_data[$q][1]->Reading){
-                    $status = 'Bad';
-                    $progression = 'up';
-               } else if($tracking_obs_data[$q][0]->Reading == $tracking_obs_data[$q][1]->Reading){
-                    $status = 'No Change';
-                    $progression = 'N/A';
-               } else {$status = 'Good'; $progression = 'down';}
-           }
-
+            if($num_obs > 2) {
+                $change = abs($tracking_obs_data[$q][0]->Reading - $tracking_obs_data[$q][$num_obs-1]->Reading);
+                if ($tracking_obs_question_map[$q] == 'Cigarettes') {
+                    $unit = '';
+                    if ($tracking_obs_data[$q][0]->Reading > $tracking_obs_data[$q][1]->Reading) {
+                        $status = 'Bad';
+                        $progression = 'up';
+                    } else if ($tracking_obs_data[$q][0]->Reading == $tracking_obs_data[$q][1]->Reading) {
+                        $status = 'No Change';
+                        $progression = 'N/A';
+                    } else {
+                        $status = 'Good';
+                        $progression = 'down';
+                    }
+                } else if ($tracking_obs_question_map[$q] == 'Blood Pressure') {
+                    $unit = ' sbp';
+                    if ($tracking_obs_data[$q][0]->Reading > $tracking_obs_data[$q][1]->Reading) {
+                        $status = 'Bad';
+                        $progression = 'up';
+                    } else if ($tracking_obs_data[$q][0]->Reading == $tracking_obs_data[$q][1]->Reading) {
+                        $status = 'No Change';
+                        $progression = 'N/A';
+                    } else {
+                        $status = 'Good';
+                        $progression = 'down';
+                    }
+                } else if ($tracking_obs_question_map[$q] == 'Blood Sugar') {
+                    $unit = ' mg/dL';
+                    if ($tracking_obs_data[$q][0]->Reading > $tracking_obs_data[$q][1]->Reading) {
+                        $status = 'Bad';
+                        $progression = 'up';
+                    } else if ($tracking_obs_data[$q][0]->Reading == $tracking_obs_data[$q][1]->Reading) {
+                        $status = 'No Change';
+                        $progression = 'N/A';
+                    } else {
+                        $status = 'Good';
+                        $progression = 'down';
+                    }
+                } else if ($tracking_obs_question_map[$q] == 'Weight') {
+                    $unit = ' lbs';
+                    if ($tracking_obs_data[$q][0]->Reading > $tracking_obs_data[$q][1]->Reading) {
+                        $status = 'Bad';
+                        $progression = 'up';
+                    } else if ($tracking_obs_data[$q][0]->Reading == $tracking_obs_data[$q][1]->Reading) {
+                        $status = 'No Change';
+                        $progression = 'N/A';
+                    } else {
+                        $status = 'Good';
+                        $progression = 'down';
+                    }
+                }
+            }
+            else {
+                $status = 'Unchanged';
+                $progression = 'Unchanged';
+                $unit = 'Unchanged';
+            }
             $trackingChanges['Data'][] =
                 [
                     'Biometric' => $tracking_obs_question_map[$q],
