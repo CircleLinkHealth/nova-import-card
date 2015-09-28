@@ -13,14 +13,14 @@ return [
      * a requirement when you cannot know the address
      * of your proxy (e.g. if using Rackspace balancers).
      */
-//    'proxies' => [
-//        '192.168.1.10',
-//    ],
+    'proxies' => [
+        'https://api-test.careplanmanager.com/',
+    ],
 
     /*
      * Or, to trust all proxies, uncomment this:
      */
-     'proxies' => '*',
+//     'proxies' => '*',
 
     /*
      * Default Header Names

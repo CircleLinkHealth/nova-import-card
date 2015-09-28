@@ -148,7 +148,7 @@ class MsgScheduler {
         $comment->comment_post_ID = 0;
         $comment->comment_author = $comment_author;
         $comment->comment_author_email = 'admin@circlelinkhealth.com';
-        $comment->comment_author_url = 'http://www.circlelinkhealth.com/';
+        $comment->comment_author_url = 'https://www.circlelinkhealth.com/';
         $comment->comment_content = serialize($arrCommentContent);
         $comment->comment_type = $comment_type;
         $comment->comment_parent = '1';
