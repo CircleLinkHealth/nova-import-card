@@ -17,6 +17,7 @@ Route::controllers([
 	'auth' => 'Auth\AuthController',
 	'password' => 'Auth\PasswordController',
 ]);
+Route::get('login', ['uses' => 'Auth\AuthController@getLogin', 'as' => 'login']);
 
 // Password reset link request routes...
 Route::get('password/email', 'Auth\PasswordController@getEmail');
@@ -127,7 +128,7 @@ Route::group(['middleware' => 'auth'], function ()
 	/****************************/
 	// ADMIN (/admin)
 	/****************************/
-	Entrust::routeNeedsRole('admin/*', array('administrator','developer','care-center'), null, false);
+	Entrust::routeNeedsRole('admin/*', array('administrator','developer','care-center'), URL::route('login'), false);
 	Route::group(['prefix' => 'admin'], function () {
 
 		// home
