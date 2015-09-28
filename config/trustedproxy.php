@@ -14,7 +14,7 @@ return [
      * of your proxy (e.g. if using Rackspace balancers).
      */
     'proxies' => [
-        'https://api-test.careplanmanager.com/',
+        '167.206.112.138/53',
     ],
 
     /*
