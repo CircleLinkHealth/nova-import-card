@@ -12,16 +12,16 @@ return [
      * within TrustedProxy to trust any proxy;
      * a requirement when you cannot know the address
      * of your proxy (e.g. if using Rackspace balancers).
-     */
-    'proxies' => [
-        '167.206.112.138/53',
-        '167.206.112.138'
-    ],
+//     */
+//    'proxies' => [
+//        '167.206.112.138/53',
+//        '167.206.112.138'
+//    ],
 
     /*
      * Or, to trust all proxies, uncomment this:
      */
-//     'proxies' => '*',
+     'proxies' => '*',
 
     /*
      * Default Header Names
