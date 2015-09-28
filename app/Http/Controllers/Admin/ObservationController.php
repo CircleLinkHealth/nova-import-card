@@ -26,7 +26,7 @@ class ObservationController extends Controller {
 		$params = $request->all();
 
 		// filter user
-		$users = WpUser::OrderBy('id', 'desc')->get()->lists('ID', 'ID');
+		$users = WpUser::OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
 		$filterUser = 'all';
 		if(!empty($params['filterUser'])) {
 			$filterUser = $params['filterUser'];

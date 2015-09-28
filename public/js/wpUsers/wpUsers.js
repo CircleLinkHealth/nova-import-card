@@ -17,6 +17,10 @@ function addAction() {
 }
 
 $(document).ready(function(){
+
+    // select2
+    $('select').select2();
+
     //alert('bump');
     $( "#active_date" ).datetimepicker({
         dateFormat: "yy-mm-dd",

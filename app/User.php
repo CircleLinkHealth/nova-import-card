@@ -292,4 +292,26 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 		return $userUcpData;
 	}
+
+
+	// ATTRIBUTES
+
+	public function getFullNameAttribute() {
+		$name = '';
+		$firstName = $this->meta()->where('meta_key', '=', 'first_name')->first();
+		if(isset($firstName) ) {
+			$name .= $firstName->meta_value;
+		}
+
+		$lastName = $this->meta()->where('meta_key', '=', 'last_name')->first();
+		if(isset($lastName) ) {
+			$name .= ' '.$lastName->meta_value;
+		}
+		return $name;
+	}
+
+	public function getFullNameWithIdAttribute() {
+		$name = $this->getFullNameAttribute();
+		return $name . ' ('.$this->ID.')';
+	}
 }
