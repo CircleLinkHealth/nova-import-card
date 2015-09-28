@@ -38,6 +38,11 @@ class CPRulesPCP extends Model {
         return $this->hasMany('App\CPRulesItem', 'pcp_id');
     }
 
+    public function program()
+    {
+        return $this->hasMany('App\WpBlog', 'blog_id', 'prov_id');
+    }
+
     public function getCPRulesPCPForProv($provId)
     {
         $CPrulesPCP = CPRulesPCP::where('prov_id', '=', $provId)->get();

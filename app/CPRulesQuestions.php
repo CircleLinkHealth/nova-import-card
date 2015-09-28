@@ -36,9 +36,9 @@ class CPRulesQuestions extends Model {
     public $timestamps = false;
 
 
-    public function items()
+    public function rulesItems() // rules prefix because ->items is a protect class var on parent
     {
-        return $this->hasMany('App\CPRulesItem', 'qid');
+        return $this->hasMany('App\CPRulesItem', 'qid', 'qid');
     }
 
     public function observations()

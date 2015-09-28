@@ -26,6 +26,10 @@ class WpBlog extends Model {
     protected $primaryKey = 'blog_id';
 
 	//
+    public function pcp()
+    {
+        return $this->hasMany('App\CPRulesPCP', 'prov_id', 'blog_id');
+    }
 
     public function locationId() {
         $location = \DB::select("select * from wp_".$this->blog_id."_options where option_name = 'location_id'", []);
