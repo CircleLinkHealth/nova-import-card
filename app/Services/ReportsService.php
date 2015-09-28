@@ -275,7 +275,7 @@ Class ReportsService
         $progress['Progress_Report'][] = $trackingChanges;
         $medications['Section'] = 'Taking your medications?:';
         $progress['Progress_Report'][] = $medications;
-        return json_encode($progress);
+        return $progress;
     }
     //CarePlan API
 
