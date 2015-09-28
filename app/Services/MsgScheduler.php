@@ -335,16 +335,16 @@ class MsgScheduler {
 
         // write out scheduled comment
         $msgDelivery = new MsgDelivery;
-        $lastkey = $msgDelivery->writeOutboundSmsMessage($user_id,$tmpArr,$strMessageId, 'scheduled',$provider_id);
+        //$lastkey = $msgDelivery->writeOutboundSmsMessage($user_id,$tmpArr,$strMessageId, 'scheduled',$provider_id);
 
         // write out state_app comment
-        $lastkey = $msgDelivery->writeOutboundSmsMessage($user_id,$appArr,$strMessageId, 'state_app',$provider_id);
+        //$lastkey = $msgDelivery->writeOutboundSmsMessage($user_id,$appArr,$strMessageId, 'state_app',$provider_id);
 
         // write out observation records
         foreach ($tmpArr as $key => $value) {
             foreach ($value as $key2 => $value2) {
                 $observation = new Observation;
-                $observation->comment_id = $lastkey;
+                $observation->comment_id = 0;
                 $observation->sequence_id = $key;
                 $observation->user_id = $user_id;
                 $observation->obs_message_id = $key2;
@@ -360,7 +360,7 @@ class MsgScheduler {
         }
 
         echo "<br>MsgScheduler->create_app_schedule() End";
-        return $lastkey;
+        return 0;
     }
 
 
