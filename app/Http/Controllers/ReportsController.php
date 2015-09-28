@@ -139,7 +139,7 @@ class ReportsController extends Controller {
 		$progressReport = new ReportsService();
 		$feed = $progressReport->progress($wpUser->ID);
 
-		response()->json($feed);
+		return json_encode($feed);
 	}
 
 	public function careplan(Request $request, $id = false)
