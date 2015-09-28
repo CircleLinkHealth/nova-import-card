@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1f6f72e959efa75a9aa5e880fcf0cd93",
+    "hash": "e2fecca2af1488221798b32f38fd082a",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -51,16 +51,16 @@
         },
         {
             "name": "barryvdh/laravel-cors",
-            "version": "v0.7.1",
+            "version": "v0.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-cors.git",
-                "reference": "8a907402f44362e9d59e90c91d9f4a9992b514dd"
+                "reference": "f6f389f06d89d73536cf7ffda58850d4d09bdc4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-cors/zipball/8a907402f44362e9d59e90c91d9f4a9992b514dd",
-                "reference": "8a907402f44362e9d59e90c91d9f4a9992b514dd",
+                "url": "https://api.github.com/repos/barryvdh/laravel-cors/zipball/f6f389f06d89d73536cf7ffda58850d4d09bdc4d",
+                "reference": "f6f389f06d89d73536cf7ffda58850d4d09bdc4d",
                 "shasum": ""
             },
             "require": {
@@ -96,7 +96,7 @@
                 "crossdomain",
                 "laravel"
             ],
-            "time": "2015-07-12 13:03:19"
+            "time": "2015-09-09 16:56:18"
         },
         {
             "name": "chrisbjr/api-guard",
@@ -540,6 +540,57 @@
                 "json"
             ],
             "time": "2015-03-19 17:10:02"
+        },
+        {
+            "name": "fideloper/proxy",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fideloper/TrustedProxy.git",
+                "reference": "cc7937c3b4e285e24e020beeaff331180a641e6d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fideloper/TrustedProxy/zipball/cc7937c3b4e285e24e020beeaff331180a641e6d",
+                "reference": "cc7937c3b4e285e24e020beeaff331180a641e6d",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "~5.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "illuminate/http": "~5.0",
+                "mockery/mockery": "~0.9.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fideloper\\Proxy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Fidao",
+                    "email": "fideloper@gmail.com"
+                }
+            ],
+            "description": "Set trusted proxies for Laravel",
+            "keywords": [
+                "load balancing",
+                "proxy",
+                "trusted proxy"
+            ],
+            "time": "2015-02-04 20:24:17"
         },
         {
             "name": "franzose/closure-table",
@@ -1182,16 +1233,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.13",
+            "version": "1.0.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "76caed01a57527599b55919f0746104f288b3d56"
+                "reference": "202c7775d959f377e2e302d93e7127c47604438a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/76caed01a57527599b55919f0746104f288b3d56",
-                "reference": "76caed01a57527599b55919f0746104f288b3d56",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/202c7775d959f377e2e302d93e7127c47604438a",
+                "reference": "202c7775d959f377e2e302d93e7127c47604438a",
                 "shasum": ""
             },
             "require": {
@@ -1262,7 +1313,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2015-09-20 13:05:34"
+            "time": "2015-09-22 19:18:28"
         },
         {
             "name": "league/fractal",
@@ -1892,55 +1943,6 @@
             "time": "2015-09-14 07:02:24"
         },
         {
-            "name": "shin1x1/laravel-force-https-url-scheme",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/shin1x1/laravel-force-https-url-scheme.git",
-                "reference": "992877cc3b9d12bca04e63acce4378bc428489b4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/shin1x1/laravel-force-https-url-scheme/zipball/992877cc3b9d12bca04e63acce4378bc428489b4",
-                "reference": "992877cc3b9d12bca04e63acce4378bc428489b4",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/container": "~5.0",
-                "illuminate/http": "~5.0",
-                "php": ">5.4.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "dev-master",
-                "phpunit/phpunit": "@stable"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Shin1x1\\ForceHttpsUrlScheme\\": "src",
-                    "Shin1x1\\ForceHttpsUrlScheme\\Test\\": "tests"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Masashi Shinbara",
-                    "email": "shin1x1@gmail.com",
-                    "homepage": "https://github.com/shin1x1"
-                }
-            ],
-            "description": "Force https url schema middleware for Laravel 5",
-            "homepage": "https://github.com/shin1x1/laravel-force-https-url-scheme",
-            "keywords": [
-                "laravel",
-                "middleware"
-            ],
-            "time": "2015-04-16 10:35:40"
-        },
-        {
             "name": "swiftmailer/swiftmailer",
             "version": "v5.4.1",
             "source": {
@@ -2114,16 +2116,16 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.7.4",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "b58c916f1db03a611b72dd702564f30ad8fe83fa"
+                "reference": "ae4dcc2a8d3de98bd794167a3ccda1311597c5d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/b58c916f1db03a611b72dd702564f30ad8fe83fa",
-                "reference": "b58c916f1db03a611b72dd702564f30ad8fe83fa",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/ae4dcc2a8d3de98bd794167a3ccda1311597c5d9",
+                "reference": "ae4dcc2a8d3de98bd794167a3ccda1311597c5d9",
                 "shasum": ""
             },
             "require": {
@@ -2168,20 +2170,20 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2015-08-24 07:13:45"
+            "time": "2015-09-22 13:49:29"
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.7.4",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "f079e9933799929584200b9a926f72f29e291654"
+                "reference": "a17f8a17c20e8614c15b8e116e2f4bcde102cfab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/f079e9933799929584200b9a926f72f29e291654",
-                "reference": "f079e9933799929584200b9a926f72f29e291654",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/a17f8a17c20e8614c15b8e116e2f4bcde102cfab",
+                "reference": "a17f8a17c20e8614c15b8e116e2f4bcde102cfab",
                 "shasum": ""
             },
             "require": {
@@ -2217,7 +2219,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2015-08-27 07:03:44"
+            "time": "2015-09-09 17:42:36"
         },
         {
             "name": "symfony/finder",
@@ -4236,16 +4238,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.7.4",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Yaml.git",
-                "reference": "2dc7b06c065df96cc686c66da2705e5e18aef661"
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "31cb2ad0155c95b88ee55fe12bc7ff92232c1770"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/2dc7b06c065df96cc686c66da2705e5e18aef661",
-                "reference": "2dc7b06c065df96cc686c66da2705e5e18aef661",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/31cb2ad0155c95b88ee55fe12bc7ff92232c1770",
+                "reference": "31cb2ad0155c95b88ee55fe12bc7ff92232c1770",
                 "shasum": ""
             },
             "require": {
@@ -4281,7 +4283,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-08-24 07:13:45"
+            "time": "2015-09-14 14:14:09"
         }
     ],
     "aliases": [],

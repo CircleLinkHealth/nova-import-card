@@ -166,7 +166,7 @@ class MsgDelivery {
         $comment->comment_post_ID = 0;
         $comment->comment_author = $strMessageId;
         $comment->comment_author_email = 'admin@circlelinkhealth.com';
-        $comment->comment_author_url = 'http://www.circlelinkhealth.com/';
+        $comment->comment_author_url = 'https://www.circlelinkhealth.com/';
         $comment->comment_content = serialize($serialOutboundMessage);
         $comment->comment_type = $strCommentType;
         $comment->comment_parent = $parentID;
@@ -258,7 +258,7 @@ class MsgDelivery {
                     $serverName = 'smartwoman';
                     break;
             }
-            $urlObsLink = 'http://'. $serverName . '.careplanmanager.com/report/participant-observations/' .'?id=' . $intUserId .'&rt=' . $type;
+            $urlObsLink = 'https://'. $serverName . '.careplanmanager.com/report/participant-observations/' .'?id=' . $intUserId .'&rt=' . $type;
             $strMessage = preg_replace('/#SWObsLink#/', $urlObsLink, $strMessage);
         }
 
@@ -274,7 +274,7 @@ class MsgDelivery {
                     $serverName = 'beta';
                     break;
             }
-            $urlObsLink = 'http://'. $serverName . '.careplanmanager.com/report/progress-report/?user=' . $intUserId;
+            $urlObsLink = 'https://'. $serverName . '.careplanmanager.com/report/progress-report/?user=' . $intUserId;
             $this->load->library('tinyurl');
             $urlObsLink = $this->tinyurl->shorten($urlObsLink);
             $strMessage = preg_replace('/#BETAlinkPR#/', $urlObsLink, $strMessage);
