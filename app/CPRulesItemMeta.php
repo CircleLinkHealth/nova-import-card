@@ -32,6 +32,8 @@ class CPRulesItemMeta extends Model {
      */
     protected $fillable = ['itemmeta_id', 'items_id', 'meta_key', 'meta_value'];
 
+    public $timestamps = false;
+
     public function CPRulesItem()
     {
         return $this->belongsTo('App\CPRulesItem', 'items_id');

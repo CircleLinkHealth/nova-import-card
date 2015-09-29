@@ -47,7 +47,7 @@ class CPRulesItem extends Model {
 
     public function question()
     {
-        return $this->belongsTo('App\CPRulesQuestions', 'qid');
+        return $this->belongsTo('App\CPRulesQuestions', 'qid', 'qid');
     }
 
     public function getRulesItem($itemId)
