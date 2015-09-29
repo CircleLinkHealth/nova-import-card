@@ -292,22 +292,34 @@ class WpUser extends Model {
 
     // ATTRIBUTES
 
-    public function getFullNameAttribute() {
+    // basic attributes (meta)
+    public function getFirstNameAttribute() {
         $name = '';
         $firstName = $this->meta()->where('meta_key', '=', 'first_name')->first();
         if(isset($firstName) ) {
             $name .= $firstName->meta_value;
         }
+        return $name;
+    }
 
+    public function getLastNameAttribute() {
+        $name = '';
         $lastName = $this->meta()->where('meta_key', '=', 'last_name')->first();
         if(isset($lastName) ) {
-            $name .= ' '.$lastName->meta_value;
+            $name .= $lastName->meta_value;
         }
         return $name;
     }
 
+    // complex attributes
+    public function getFullNameAttribute() {
+        $firstName = $this->firstName;
+        $lastName = $this->lastName;
+        return $firstName . ' ' . $lastName;
+    }
+
     public function getFullNameWithIdAttribute() {
-        $name = $this->getFullNameAttribute();
+        $name = $this->fullName;
         return $name . ' ('.$this->ID.')';
     }
 }
