@@ -1,7 +1,10 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use MikeMcLin\WpPassword\Facades\WpPassword;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
+use Hautelook\Phpass\PasswordHash;
+
 
 class WpUser extends Model {
 
@@ -87,7 +90,7 @@ class WpUser extends Model {
     // Whenever the user_pass field is modified, WordPress' internal hashing function will run
     public function setUserPassAttribute($pass)
     {
-        $this->attributes['user_pass'] = wp_hash_password($pass);
+        $this->attributes['user_pass'] = WpPassword::make($pass);
     }
 
     public function getAuthIdentifier()
@@ -194,11 +197,6 @@ class WpUser extends Model {
 
 
     public function createNewUser($user_email, $user_pass) {
-
-        // use wordpress md5 hasher class
-        $wp_hasher = new \PasswordHash(8, TRUE);
-        $user_pass = $wp_hasher->HashPassword($user_pass);
-
         $this->user_login = $user_email;
         $this->user_email = $user_email;
         $this->user_pass = $user_pass;

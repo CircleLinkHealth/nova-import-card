@@ -243,9 +243,6 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 
 	// locations
 	Route::get('locations', 'LocationController@index');
-
-	// blogs (programs)
-	Route::get('programs', 'WpBlogController@index');
 });
 
 	/**********************************/

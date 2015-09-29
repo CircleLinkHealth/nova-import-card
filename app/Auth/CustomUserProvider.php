@@ -1,13 +1,14 @@
 <?php
 namespace App\Auth;
 
+use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\GenericUser;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use App\User;
 use DB;
-use PasswordHash;
+use MikeMcLin\WpPassword\Facades\WpPassword;
 
 class CustomUserProvider implements UserProvider {
 
@@ -54,18 +55,17 @@ class CustomUserProvider implements UserProvider {
     }
     public function validateCredentials(UserContract $user, array $credentials)
     {
-        // use wordpress md5 hasher class to validate
-        $wp_hasher = new PasswordHash(8, TRUE);
-
         $password_hashed = $user->getAuthPassword();
+
         if( isset($credentials['password']) ) {
             $plain_password = $credentials['password'];
         } else if( isset($credentials['user_pass']) ) {
             $plain_password = $credentials['user_pass'];
+        } else {
+            return response('Password not provided', 422);
         }
 
-        //dd( $wp_hasher->CheckPassword($plain_password, $password_hashed) );
-        if($wp_hasher->CheckPassword($plain_password, $password_hashed)) {
+        if(WpPassword::check($plain_password, $password_hashed)) {
             return true;
         } else {
             return false;
