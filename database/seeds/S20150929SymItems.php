@@ -20,42 +20,56 @@ class S20150929SymItems extends Seeder {
         $newItems = array(
             'CF_SYM_51' => array(
                 'items_text' => 'Shortness of breath',
+                'APP_EN' => 'Shortness of breath',
+                'APP_ES' => 'Shortness of breath',
                 'ui_default' => 'Inactive',
                 'ui_sort' => '1',
                 'ui_fld_type' => 'SELECT',
             ),
             'CF_SYM_52' => array(
                 'items_text' => 'Coughing/wheezing',
+                'APP_EN' => 'Coughing/wheezing',
+                'APP_ES' => 'Coughing/wheezing',
                 'ui_default' => 'Inactive',
                 'ui_sort' => '2',
                 'ui_fld_type' => 'SELECT',
             ),
             'CF_SYM_53' => array(
                 'items_text' => 'Chest pain/tightness',
+                'APP_EN' => 'Chest pain/tightness',
+                'APP_ES' => 'Chest pain/tightness',
                 'ui_default' => 'Inactive',
                 'ui_sort' => '3',
                 'ui_fld_type' => 'SELECT',
             ),
             'CF_SYM_54' => array(
                 'items_text' => 'Fatigue',
+                'APP_EN' => 'Fatigue',
+                'APP_ES' => 'Fatigue',
                 'ui_default' => 'Inactive',
                 'ui_sort' => '4',
                 'ui_fld_type' => 'SELECT',
             ),
             'CF_SYM_55' => array(
                 'items_text' => 'Weakness/dizziness',
+                'APP_EN' => 'Weakness/dizziness',
+                'APP_ES' => 'Weakness/dizziness',
                 'ui_default' => 'Inactive',
                 'ui_sort' => '5',
                 'ui_fld_type' => 'SELECT',
             ),
             'CF_SYM_56' => array(
                 'items_text' => 'Swelling in legs/feet',
+                'APP_EN' => 'Swelling in legs/feet',
+                'APP_ES' => 'Swelling in legs/feet',
                 'ui_default' => 'Inactive',
                 'ui_sort' => '6',
                 'ui_fld_type' => 'SELECT',
             ),
             'CF_SYM_57' => array(
                 'items_text' => 'Feeling down/sleep changes',
+                'APP_EN' => 'Feeling down/sleep changes',
+                'APP_ES' => 'Feeling down/sleep changes',
                 'ui_default' => 'Inactive',
                 'ui_sort' => '7',
                 'ui_fld_type' => 'SELECT',
@@ -113,6 +127,20 @@ class S20150929SymItems extends Seeder {
                     $meta->items_id = $item->items_id;
                     $meta->meta_key = 'ui_fld_type';
                     $meta->meta_value = $itemInfo['ui_fld_type'];
+                    $meta->save();
+
+                    // meta - APP_EN
+                    $meta = new CPRulesItemMeta;
+                    $meta->items_id = $item->items_id;
+                    $meta->meta_key = 'APP_EN';
+                    $meta->meta_value = $itemInfo['APP_EN'];
+                    $meta->save();
+
+                    // meta - APP_ES
+                    $meta = new CPRulesItemMeta;
+                    $meta->items_id = $item->items_id;
+                    $meta->meta_key = 'APP_ES';
+                    $meta->meta_value = $itemInfo['APP_ES'];
                     $meta->save();
                 }
             }
