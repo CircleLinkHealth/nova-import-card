@@ -3,6 +3,7 @@
 use App\CPRulesQuestions;
 use App\Http\Requests;
 use App\WpUser;
+use App\CPRulesUCP;
 use App\Observation;
 use App\WpUserMeta;
 use App\Comment;
@@ -185,6 +186,7 @@ class CareplanService {
 			$i++;
 		}
 
+		/*
 		// add in the response to adherence questions (this is the reason for the split weird code above, so that this always comes after the last adherence question)
 		$dsmAdherenceObs = array();
 		$adherenceResponseMsgId = $msgChooser->fxAlgorithmicForApp($this->programId, $this->wpUser->ID, $this->date);
@@ -206,8 +208,8 @@ class CareplanService {
 				"ResponseDate" => ''
 			);
 		}
-
-		return array_merge($dsmAdherenceObs, $sectionObs);
+		*/
+		return $sectionObs;
 	}
 
 
@@ -370,14 +372,7 @@ class CareplanService {
      */
 	private function setObsSymptoms()
 	{
-		$scheduledSymptoms = $this->getScheduledSymptoms();
-		//dd($scheduledSymptoms); @todo get this to return msg_ids!!
-		$symMsgIds = array();
-		if(!empty($scheduledSymptoms)) {
-			foreach($scheduledSymptoms as $scheduledSym) {
-				$symMsgIds[] = $scheduledSym->msg_id;
-			}
-		}
+		$symMsgIds = $this->getScheduledSymptoms();
 		$symObs = array();
 		$i = 0;
 		foreach($symMsgIds as $symMsgId) {
@@ -440,48 +435,22 @@ class CareplanService {
 	 * @return array
      */
 	public function getScheduledSymptoms() {
-		// query
-		$query = DB::connection('mysql_no_prefix')->table('rules_ucp AS rucp');
-		$query->select('rucp.*', 'rq.*', 'pcp.pcp_id', 'pcp.section_text', 'i.qid', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rucp.meta_value as status', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id', 'imsms.meta_value AS sms_en', 'imapp.meta_value AS app_en');
-		$query->where('user_id', '=', $this->wpUser->ID);
-		$query->join('rules_items AS i', 'i.items_id', '=', 'rucp.items_id');
-		$query->leftJoin('rules_items AS rip', 'i.items_parent', '=', 'rip.items_id'); // parent item info
-		$query->join('rules_pcp AS pcp', function ($join) {
-			$join->on('i.pcp_id', '=', 'pcp.pcp_id')->where('pcp.prov_id', '=', $this->programId);
-		});
-
-		$query->leftJoin('rules_itemmeta as imsms', function ($join) {
-			$join->on('imsms.items_id', '=', 'i.items_id')->where('imsms.meta_key', '=', 'SMS_EN');
-		});
-		$query->leftJoin('rules_itemmeta as imapp', function ($join) {
-			$join->on('imapp.items_id', '=', 'i.items_id')->where('imapp.meta_key', '=', 'APP_EN');
-		});
-		$query->leftJoin('rules_questions AS rq', 'rq.qid', '=', 'i.qid');
-		$query->leftJoin('rules_questions AS rqp', 'rqp.qid', '=', 'rip.qid'); // parent question info
-		$query->leftJoin('rules_itemmeta AS ims', function ($join) {
-			$join->on('ims.items_id', '=', 'i.items_id')->where('ims.meta_key', '=', 'ui_sort');
-		});
-		$query->whereRaw("(rucp.meta_key = 'status' OR rucp.meta_key = 'value') AND user_id = " . $this->wpUser->ID);
-		//$query->where('rq.obs_key', '=', 'Severity');
-		$query->where('rucp.meta_value', '=', 'Active');
-		$query->where('pcp.section_text', '=', 'Symptoms to Monitor');
-		$query->orderBy("ui_sort", 'ASC');
-		$query->orderBy("i.items_id", 'DESC');
-		$result = $query->get();
-
-		//dd($query->toSql());
-
-		$arrReturnResult = array();
-		// set alert_values
-		if(!empty($result)) {
-			foreach ($result as $row) {
-				if(!empty($row->msg_id)) {
-					$arrReturnResult[$row->msg_id] = $row;
-				}
-				//dd($row);
+		$ucp = CPRulesUCP::where('user_id', '=', $this->wpUser->ID)
+			->whereHas('item', function($q){
+				$q->whereHas('pcp', function($q2){
+					$q2->where('section_text', '=', 'Symptoms to Monitor');
+				});
+			})
+			->where('meta_value', '=', 'Active')
+			->get();
+		if($ucp->count() > 0) {
+			foreach($ucp as $ucpItem) {
+				//dd($ucpItem->item);
+				$msgIds[] = $ucpItem->item->question->msg_id;
 			}
 		}
-		return $arrReturnResult;
+		//dd($msgIds);
+		return $msgIds;
 	}
 
 

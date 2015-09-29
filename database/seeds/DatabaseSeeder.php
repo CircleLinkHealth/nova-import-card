@@ -28,6 +28,10 @@ class DatabaseSeeder extends Seeder {
 		$this->call('database\seeds\UserProgramSeeder');
 		$this->command->info('User table program ids seeded!');
 		*/
+
+		// ObservationsCommentsSeeder, kg 2015/9/24
+
+		// ModFixNewSymItems, kg 2015/9/28
 	}
 
 }

@@ -161,6 +161,7 @@ return [
 		'Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider',
 		'Zizaco\Entrust\EntrustServiceProvider',
 		'Fideloper\Proxy\TrustedProxyServiceProvider',
+		'MikeMcLin\WpPassword\WpPasswordProvider',
 
 
 	],

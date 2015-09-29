@@ -1,23 +1,4 @@
 <?php
-
-//@require '/var/vhosts/cpm/global-config.php';
-
-/*
-define('ENVIRONMENT', 'development');
-define( 'SHORTINIT', TRUE );
-define('WP_DEBUG', true);
-define('WP_USE_THEMES', false);
-define('ABSPATH', '/var/vhosts/cpm/wordpressmu/');
-define('WPINC', 'wp-includes');
-define('WP_MEMORY_LIMIT', '128M');
-$_SERVER[ 'HTTP_HOST' ] = $global_config['domain_current_site'];
-*/
-
-/* END */
-include __DIR__ . '/wp/wp-includes/class-phpass.php';
-include __DIR__ . '/wp/wp-includes/pluggable.php';
-
-
 /**
  * Laravel - A PHP Framework For Web Artisans
  *

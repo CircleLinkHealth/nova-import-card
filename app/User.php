@@ -1,10 +1,12 @@
 <?php namespace App;
 
+use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use MikeMcLin\WpPassword\Facades\WpPassword;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
@@ -89,7 +91,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	// Whenever the user_pass field is modified, WordPress' internal hashing function will run
 	public function setUserPassAttribute($pass)
 	{
-		$this->attributes['user_pass'] = wp_hash_password($pass);
+		$this->attributes['user_pass'] = WpPassword::make($pass);
     }
 
 	public function getAuthIdentifier()
@@ -197,11 +199,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function createNewUser($user_email, $user_pass) {
-
-		// use wordpress md5 hasher class
-		$wp_hasher = new \PasswordHash(8, TRUE);
-		$user_pass = $wp_hasher->HashPassword($user_pass);
-
 		$this->user_login = $user_email;
 		$this->user_email = $user_email;
 		$this->user_pass = $user_pass;
