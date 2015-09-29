@@ -23,6 +23,9 @@ Class ReportsService
         $trackingChanges = array();
         $medications = array();
 
+        $medications['Section'] = 'Taking your medications?:';
+        $trackingChanges['Section'] = 'Tracking Changes:';
+
         //USER HEADER:
 
         $userHeader['date'] = Carbon::now()->toDateString();
@@ -77,10 +80,6 @@ Class ReportsService
         //Add scaffolding to sections
 
         //$medications['Data']['Good'] = array();
-
-        $medications['Data']['Good']['description'] = 'Description for Good section';
-        $medications['Data']['Needs Work']['description'] = 'Description for Needs Work section';
-        $medications['Data']['Bad']['description'] = 'Description for Bad section';
 
         foreach ($medications_categories as $category){
             $yes = 0; $count = 0;
@@ -271,9 +270,7 @@ Class ReportsService
 
         // WRAPPING UP
         $progress['Progress_Report'][] = $userHeader;
-        $trackingChanges['Section'] = 'Tracking Changes:';
         $progress['Progress_Report'][] = $trackingChanges;
-        $medications['Section'] = 'Taking your medications?:';
         $progress['Progress_Report'][] = $medications;
         return $progress;
     }
