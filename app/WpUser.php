@@ -148,12 +148,7 @@ class WpUser extends Model {
     }
 
     public function blogId(){
-        $blogID = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','primary_blog')->first();
-        if(!$blogID) {
-            return false;
-        } else {
-            return $blogID['meta_value'];
-        }
+        return $this->program_id;
     }
 
     public function userConfig(){
