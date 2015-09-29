@@ -30,8 +30,7 @@ class DatabaseSeeder extends Seeder {
 		*/
 
 		// ObservationsCommentsSeeder, kg 2015/9/24
-
-		// ModFixNewSymItems, kg 2015/9/28
+		// S20150929SymItems, kg 2015/9/28
 	}
 
 }

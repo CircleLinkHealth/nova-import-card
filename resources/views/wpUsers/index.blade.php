@@ -30,12 +30,20 @@
                             {!! Form::open(array('url' => URL::route('users.index', array()), 'class' => 'form-horizontal')) !!}
                         </div>
 
-                        <h3>Filter</h3>
+                        <h2>Filter</h2>
+                        <div class="row" style="margin:20px 0px 40px 0px;">
+                            <div class="col-md-8 col-md-offset-2">
+                                <div class="row">
+                                    <div class="col-xs-4 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
+                                    <div class="col-xs-8">{!! Form::select('filterUser', array('all' => 'All Users') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="row">
-                                <div class="col-xs-2">{!! Form::label('filterRole', 'Role:') !!}</div>
+                                <div class="col-xs-2 text-right">{!! Form::label('filterRole', 'Role:') !!}</div>
                                 <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All Roles') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                <div class="col-xs-2">{!! Form::label('filterProgram', 'Program:') !!}</div>
+                                <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Program:') !!}</div>
                                 <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                             </div>
                         </div>

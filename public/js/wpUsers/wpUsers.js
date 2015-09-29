@@ -21,6 +21,7 @@ $(document).ready(function(){
     // select2
     $('#filterRole').select2();
     $('#filterProgram').select2();
+    $('#filterUser').select2();
 
     //alert('bump');
     $( "#active_date" ).datetimepicker({

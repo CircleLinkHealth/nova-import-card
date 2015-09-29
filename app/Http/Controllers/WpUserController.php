@@ -70,6 +70,16 @@ class WpUserController extends Controller {
 			// FILTERS
 			$params = $request->input();
 
+			// filter user
+			$users = WpUser::OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+			$filterUser = 'all';
+			if(!empty($params['filterUser'])) {
+				$filterUser = $params['filterUser'];
+				if($params['filterUser'] != 'all') {
+					$wpUsers->where('ID', '=', $filterUser);
+				}
+			}
+
 			// role filter
 			$roles = Role::all()->lists('display_name', 'id');
 			$filterRole = 'all';
@@ -108,7 +118,7 @@ class WpUserController extends Controller {
 
 			$wpUsers = $wpUsers->paginate(20);
 			$invalidUsers = array();
-			return view('wpUsers.index', [ 'wpUsers' => $wpUsers, 'programs' => $programs, 'filterProgram' => $filterProgram, 'roles' => $roles, 'filterRole' => $filterRole, 'invalidWpUsers' => $invalidUsers ]);
+			return view('wpUsers.index', [ 'wpUsers' => $wpUsers, 'users' => $users, 'filterUser' => $filterUser, 'programs' => $programs, 'filterProgram' => $filterProgram, 'roles' => $roles, 'filterRole' => $filterRole, 'invalidWpUsers' => $invalidUsers ]);
 		}
 
 	}
