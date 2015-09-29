@@ -83,6 +83,13 @@ class S20150929SymItems extends Seeder {
                     $q->where('section_text', '=', 'Symptoms to Monitor');
                     $q->where('prov_id', '=', $programId);
                 })
+                ->whereHas('question', function ($q) {
+                    $q->where('msg_id', '!=', 'CF_SYM_25');
+                    $q->where('msg_id', '!=', 'CF_SYM_30');
+                    $q->where('msg_id', '!=', 'CF_SYM_40');
+                    $q->where('msg_id', '!=', 'CF_SYM_60');
+                    $q->where('msg_id', '!=', 'CF_SYM_70');
+                })
                 ->delete();
             echo "removed all items for $programId".PHP_EOL;
             // get pcp section for program
