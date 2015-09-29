@@ -3,10 +3,10 @@
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
 
-//Test route
-Route::get('/reports/{id}', function($id){
+//Test route @todo remove after testing
+Route::get('/reports/careplan/{id}', function($id){
 	$report = new \App\Services\ReportsService();
-	return $report->progress($id);
+	return $report->careplan($id);
 });
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
