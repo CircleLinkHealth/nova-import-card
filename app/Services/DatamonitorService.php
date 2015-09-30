@@ -8,6 +8,7 @@ use App\ObservationMeta;
 use App\WpUserMeta;
 use App\Comment;
 use DateTime;
+use Mail;
 use DB;
 use Validator;
 
@@ -1164,8 +1165,8 @@ class DatamonitorService {
 		// set email params
 		$email_subject = 'New Alert from CircleLink Health CPM';
 		$email_message = $message_info->message;
-		$email_message = process_message_substitutions($email_message, $extra_vars);
-		$data = array('message' => $email_message);
+		$email_message = $this->process_message_substitutions($email_message, $extra_vars);
+		$data = array('message_text' => $email_message);
 
 
 		$email_sent_list = array();
@@ -1174,15 +1175,14 @@ class DatamonitorService {
 			$provider_user = WpUser::find($recipient_id);
 			$email = $provider_user->user_email;
 
-			Mail::send('alert', $data, function($message) use ($email,$email_subject) {
+			Mail::send('emails/dmalert', $data, function($message) use ($email,$email_subject) {
 				$message->from('Support@CircleLinkHealth.com', 'CircleLink Health');
 				$message->to($email)->subject($email_subject);
 			});
-				$email_sent_list[] = $provider_user->user_email;
+			$email_sent_list[] = $provider_user->user_email;
 		}
 
-		dd($email_sent_list);
-
+		/*
 		// log to db by adding comment record
 		$comment_content = array(
 			'user_id' => $user->ID,
@@ -1197,6 +1197,7 @@ class DatamonitorService {
 			'comment_parent' => $observation['comment_id']
 		);
 		$comment_id = $this->CI->comments_model->insert_comment($comment_params, $this->int_blog_id);
+		*/
 	}
 
 
