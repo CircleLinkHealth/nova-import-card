@@ -159,22 +159,8 @@ class ReportsController extends Controller {
 			}
 		}
 
-		// Dummy JSON Data for careplan
-		$str_data = json_decode(file_get_contents(getenv('REPORT_CAREPLAN_JSON_PATH')));
-		return response()->json($str_data);
-
-		// get dates
-		$date1 = date('Y-m-d');
-		$date2 = date('Y-m-d', time() - 60 * 60 * 24);
-		$date3 = date('Y-m-d', time() - ((60 * 60 * 24) * 2));
-		$dates = array($date1, $date2, $date3);
-		if(empty($dates)) {
-			return response("Date array is required", 401);
-		}
-
-		// get feed
-		$careplanService = new CareplanService;
-		$feed = $careplanService->getCareplan($wpUser, $dates);
+		$progressReport = new ReportsService();
+		$feed = $progressReport->progress($wpUser->ID);
 
 		return response()->json($feed);
 	}

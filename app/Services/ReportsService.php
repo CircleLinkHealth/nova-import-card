@@ -156,9 +156,9 @@ Class ReportsService
         //dd($temp_meds); //Show all the medication categories and stats
         //dd(json_encode($medications)); // show the medications by adherence category
 
-        $medications['Data'][] = $meds_array['Good'];
-        $medications['Data'][] = $meds_array['Needs Work'];
-        $medications['Data'][] = $meds_array['Bad'];
+        $medications['Data']['Good'] = $meds_array['Good'];
+        $medications['Data']['Needs Work'] = $meds_array['Needs Work'];
+        $medications['Data']['Bad'] = $meds_array['Bad'];
 
 
         //**************TRACKING CHANGES SECTION**************
@@ -312,14 +312,13 @@ Class ReportsService
         $progress['Progress_Report'][] = $userHeader;
         $progress['Progress_Report'][] = $trackingChanges;
         $progress['Progress_Report'][] = $medications;
+
         return $progress;
     }
-    //CarePlan API
 
     public function careplan($id){
 
         $user = WpUser::find($id);
-        $careplan['CarePlan_Report'][] = $this->reportHeader($id);
 
         //=======================================
         //========WE ARE TREATING================
@@ -343,7 +342,6 @@ Class ReportsService
                     //Find the items_text for the one's that are active
                     $user_items = CPRulesItem::find($item_for_user[$i]->items_id);
                     $treating['Data'][] = ['name' =>$user_items->items_text,'comment' => ($items_detail_ucp[$i]->meta_value == '' ? 'Nothing' : $items_detail_ucp[$i]->meta_value) ];
-
                 }
             }
 
@@ -418,11 +416,53 @@ Class ReportsService
         $lifestyle['Section'] = 'We Are Informing You About';
         $lifestyle['Data'] = $this->getItemsForParent('Lifestyle to Monitor', $user);
 
+        //=======================================
+        //===========CHECK IN PLAN===============
+        //=======================================
+
+        $userConfig = $user->userConfig();
+        $check['Section'] = 'Check In Plan';
+        $check['Description'] = 'We will check in with you at' . $userConfig['study_phone_number'] . ' every day at ' . $userConfig['preferred_contact_time'];
+
+        $days = array('Sun','Mon','Tues','Wed','Thurs','Fri','Sat');
+
+        for($i = 0; $i < count($days); $i++) {
+            $check['Data'][] = ['day' => $days[$i], 'time' => $userConfig['preferred_contact_time']];
+        }
+
+        //=======================================
+        //===========OTHER INFO===============
+        //=======================================
+
+        $other['Section'] = 'Other Information';
+
+        $pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
+        //Get all the items for each section
+        $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
+
+        for ($i = 0; $i < count($items); $i++) {
+            //get id's of all lifestyle items that are active for the given user
+            $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value', 'Active')->where('user_id', $user->ID)->first();
+            $items_detail[$i] = CPRulesItem::where('items_parent', $items[$i])->first();
+            $items_detail_ucp[$i] = CPRulesUCP::where('items_id',$items_detail[$i]->items_id)->where('user_id', $user->ID)->first();
+            if ($item_for_user[$i] != null) {
+                $count = 0;
+                //Find the items_text for the one's that are active
+                $user_items = CPRulesItem::find($item_for_user[$i]->items_id);
+                $other['Data'][] = ['name' =>$user_items->items_text,'comment' => ($items_detail_ucp[$i]->meta_value == '' ? 'Nothing' : $items_detail_ucp[$i]->meta_value) ];
+            }
+        }
+
+
         //ADD ALL TO MAIN ARRAY
+
+        $careplan['CarePlan_Report'][] = $this->reportHeader($id);
         $careplan['CarePlan_Report'][] = $treating;
         $careplan['CarePlan_Report'][] = $goals;
         $careplan['CarePlan_Report'][] = $medications;
         $careplan['CarePlan_Report'][] = $symptoms;
+        $careplan['CarePlan_Report'][] = $check;
+        $careplan['CarePlan_Report'][] = $other;
 
         return $careplan;
 
