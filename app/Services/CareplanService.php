@@ -16,8 +16,6 @@ class CareplanService {
 	var $programId;
 	var $msgLanguageType = 'APP_EN';
 	var $date; // date yyyy-mm-dd
-	var $stateAppArray = array(); // array of state_app comment_content
-	var $stateAppCommentId;
 
 	/**
 	 * Get Careplan
@@ -47,9 +45,6 @@ class CareplanService {
 		foreach($dates as $date) {
 			// set date
 			$this->date = $date;
-
-			// set stateApp for date
-			$this->setStateAppForDate($date);
 
 			// instantiate feed for date
 			$feed["CP_Feed"][$i] = array(
@@ -120,25 +115,6 @@ class CareplanService {
 	}
 
 	/**
-	 * @param $date
-     */
-	public function setStateAppForDate($date) {
-		$this->stateAppCommentId = false;
-		// find comment
-		$comment = DB::connection('mysql_no_prefix')
-			->table('lv_comments')
-			->where('user_id', '=', $this->wpUser->ID)
-			->where('comment_type', '=', 'state_app')
-			->whereRaw("comment_date BETWEEN '" . $date . " 00:00:00' AND '" . $date . " 23:59:59'", array())
-			->first();
-		$this->stateAppArray = array();
-		if(isset($comment->comment_content)) {
-			$this->stateAppCommentId = $comment->id;
-			$this->stateAppArray = unserialize($comment->comment_content);
-		}
-	}
-
-	/**
 	 * @return array
      */
 	private function setObsDMS()
@@ -185,30 +161,6 @@ class CareplanService {
 			}
 			$i++;
 		}
-
-		/*
-		// add in the response to adherence questions (this is the reason for the split weird code above, so that this always comes after the last adherence question)
-		$dsmAdherenceObs = array();
-		$adherenceResponseMsgId = $msgChooser->fxAlgorithmicForApp($this->programId, $this->wpUser->ID, $this->date);
-		if(!empty($adherenceResponseMsgId)) {
-			$qsType  = $msgCPRules->getQsType($adherenceResponseMsgId, $this->wpUser->ID);
-			$currQuestionInfo  = $msgCPRules->getQuestion($adherenceResponseMsgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
-			$dsmAdherenceObs[0] = array(
-				"MessageID" => $currQuestionInfo->msg_id,
-				"Obs_Key" => $currQuestionInfo->obs_key,
-				"ParentID" => $this->stateAppCommentId,
-				"MessageIcon" => $currQuestionInfo->icon,
-				"MessageCategory" => $currQuestionInfo->category,
-				"MessageContent" => ''.$currQuestionInfo->message,
-				"ReturnFieldType" => $currQuestionInfo->qtype,
-				"ReturnDataRangeLow" => $currQuestionInfo->low,
-				"ReturnDataRangeHigh" => $currQuestionInfo->high,
-				"ReturnValidAnswers" => '',
-				"PatientAnswer" => '',
-				"ResponseDate" => ''
-			);
-		}
-		*/
 		return $sectionObs;
 	}
 
@@ -218,9 +170,6 @@ class CareplanService {
      */
 	private function setObsReminders()
 	{
-		if(!$this->stateAppCommentId) {
-			return array();
-		}
 		// this only deals with HSP question
 		//$hspMsg = CPRulesQuestions::where('obs_key', '=', 'HSP')->first();
 		$hspMsgIds = array('CF_HSP_20', 'CF_HSP_30');
@@ -293,6 +242,35 @@ class CareplanService {
 		}
 		return $bioObs;
 	}
+
+
+	/**
+	 * @return array
+     */
+	private function setObsSymptoms()
+	{
+		$symMsgIds = $this->getScheduledSymptoms();
+		$symObs = array();
+		$i = 0;
+		foreach($symMsgIds as $symMsgId) {
+			$observation = Observation::where('obs_message_id', '=', $symMsgId)
+				->where('user_id', '=', $this->wpUser->ID)
+				->where('obs_unit', '!=', 'scheduled')
+				->where('obs_unit', '!=', 'invalid')
+				->where('obs_unit', '!=', 'outbound')
+				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->orderBy('obs_date', 'desc')
+				->first();
+			if(!empty($observation) && $observation->comment_id != 0) {
+				$symObs[$i] = $this->renderCommentThread($symMsgId, $observation->comment_id);
+			} else {
+				$symObs[$i] = $this->renderCommentThread($symMsgId, 0);
+			}
+			$i++;
+		}
+		return $symObs;
+	}
+
 
 	private function renderCommentThread($msgId, $commentId = 0) {
 		$msgCPRules = new MsgCPRules;
@@ -368,33 +346,6 @@ class CareplanService {
 
 
 	/**
-	 * @return array
-     */
-	private function setObsSymptoms()
-	{
-		$symMsgIds = $this->getScheduledSymptoms();
-		$symObs = array();
-		$i = 0;
-		foreach($symMsgIds as $symMsgId) {
-			$observation = Observation::where('obs_message_id', '=', $symMsgId)
-				->where('user_id', '=', $this->wpUser->ID)
-				->where('obs_unit', '!=', 'scheduled')
-				->where('obs_unit', '!=', 'invalid')
-				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
-				->orderBy('obs_date', 'desc')
-				->first();
-			if(!empty($observation) && $observation->comment_id != 0) {
-				$symObs[$i] = $this->renderCommentThread($symMsgId, $observation->comment_id);
-			} else {
-				$symObs[$i] = $this->renderCommentThread($symMsgId, 0);
-			}
-			$i++;
-		}
-		return $symObs;
-	}
-
-	/**
 	 * @param $programId
 	 * @param $userId
 	 * @param $date
@@ -443,13 +394,14 @@ class CareplanService {
 			})
 			->where('meta_value', '=', 'Active')
 			->get();
+		$msgIds = array();
 		if($ucp->count() > 0) {
 			foreach($ucp as $ucpItem) {
-				//dd($ucpItem->item);
-				$msgIds[] = $ucpItem->item->question->msg_id;
+				if($ucpItem->item->question) {
+					$msgIds[] = $ucpItem->item->question->msg_id;
+				}
 			}
 		}
-		//dd($msgIds);
 		return $msgIds;
 	}
 
