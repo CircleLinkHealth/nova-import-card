@@ -3,8 +3,8 @@
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
 
-//Test route
-Route::get('/reports/{id}', function($id){
+//Test route @todo remove after testing
+Route::get('/reports/progress/{id}', function($id){
 	$report = new \App\Services\ReportsService();
 	return $report->progress($id);
 });
