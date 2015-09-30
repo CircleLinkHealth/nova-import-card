@@ -113,11 +113,9 @@ Class ReportsService
 
         //Add scaffolding to sections
 
-        //$medications['Data']['Good'] = array();
-
-        $medications['Data']['Good']['description'] = '';
-        $medications['Data']['Needs Work']['description'] = '';
-        $medications['Data']['Bad']['description'] = '';
+        $meds_array['Good']['description'] = '';
+        $meds_array['Needs Work']['description'] = '';
+        $meds_array['Bad']['description'] = '';
 
         foreach ($medications_categories as $category){
             $yes = 0; $count = 0;
@@ -142,21 +140,26 @@ Class ReportsService
             //add to categories based on percentage of responses
             switch($temp_meds[$category]['percent']) {
                 case ($temp_meds[$category]['percent'] > 0.8):
-                    $medications['Data']['Good']['description'] .= ($medications['Data']['Good']['description'] == '' ? $category : ', ' . $category);
+                    $meds_array['Good']['description'] .= ($meds_array['Good']['description'] == '' ? $category : ', ' . $category);
                     break;
                 case ($temp_meds[$category]['percent'] >= 0.5):
-                    $medications['Data']['Needs Work']['description'] .= ($medications['Data']['Needs Work']['description'] == '' ? $category : ', ' . $category);
+                    $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
                     break;
                 case ($temp_meds[$category]['percent'] == 0):
-                    $medications['Data']['Bad']['description'] .= ($medications['Data']['Bad']['description'] == '' ? $category : ', ' . $category);
+                    $meds_array['Bad']['description'] .= ($meds_array['Bad']['description'] == '' ? $category : ', ' . $category);
                     break;
-                default: $medications['Data']['Bad']['description'] .= ($medications['Data']['Bad']['description'] == '' ? $category : ', ' . $category);
+                default: $meds_array['Bad']['description'] .= ($meds_array['Bad']['description'] == '' ? $category : ', ' . $category);
                     break;
             }
             //echo $category.': ' . $temp_meds[$category]['percent'] . ' <br /> ';
         }
         //dd($temp_meds); //Show all the medication categories and stats
         //dd(json_encode($medications)); // show the medications by adherence category
+
+        $medications['Data'][] = $meds_array['Good'];
+        $medications['Data'][] = $meds_array['Needs Work'];
+        $medications['Data'][] = $meds_array['Bad'];
+
 
         //**************TRACKING CHANGES SECTION**************
 
