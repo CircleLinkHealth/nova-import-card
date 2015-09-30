@@ -8,6 +8,7 @@ use App\ObservationMeta;
 use App\WpUserMeta;
 use App\Comment;
 use DateTime;
+use Mail;
 use DB;
 use Validator;
 
@@ -1116,94 +1117,6 @@ class DatamonitorService {
 		return $log_string;
 	}
 
-
-	/**
-	 * @param $user_id
-	 * @param $message_id
-	 * @param $extra_vars
-	 * @param int $int_blog_id
-	 * @return bool|string
-	 */
-	public function send_email($observation, $message_id, $extra_vars, $int_blog_id = 7) {
-
-		$log_string = PHP_EOL . "-BYPASSING EMAIL FOR LV MIGRATION" . PHP_EOL;
-		return $log_string;
-
-
-		// set blog id
-		$this->int_blog_id = $int_blog_id;
-
-		// start logging
-		$log_string = PHP_EOL . "-send_email START" . PHP_EOL;
-
-		// get user info
-		$user_id = $observation['user_id'];
-		$user_data = $this->CI->users_model->get_users_data($user_id, 'id', $this->int_blog_id);
-
-		// get recipients
-		if(isset($user_data[$user_id]['usermeta_clean']['wp_'.$this->int_blog_id.'_user_config']["send_alert_to"])
-			&& !empty($user_data[$user_id]['usermeta_clean']['wp_'.$this->int_blog_id.'_user_config']["send_alert_to"])) {
-			$alert_recipients = $user_data[$user_id]['usermeta_clean']['wp_'.$this->int_blog_id.'_user_config']["send_alert_to"];
-		} else {
-			return false;
-		}
-
-		// get message info
-		$message_info = $this->CI->rules_model->getQuestion($message_id, $user_id, 'EMAIL_EN', $this->int_blog_id);
-		if(empty($message_info)){
-			return false;
-		}
-
-		// set email params
-		$email_subject = 'New Alert from CircleLink Health CPM';
-		$email_message = $message_info->message;
-		$email_message = $this->process_message_substitutions($email_message, $extra_vars);
-
-		$log_string .= PHP_EOL . "email subject: {$email_subject}" . PHP_EOL;
-		$log_string .= PHP_EOL . "email message: {$email_message}" . PHP_EOL;
-
-		$email_sent_list = array();
-		foreach($alert_recipients as $recipient_id) {
-			$recipient_data = $this->CI->users_model->get_users_data($recipient_id, 'id', $this->int_blog_id);
-			$recipient_email = $recipient_data[$recipient_id]['userdata']['user_email'];
-			if(strlen($recipient_email) > 5 ) {
-				// send email
-				$this->CI->email->from('Support@CircleLinkHealth.com', 'CircleLink Health');
-				$this->CI->email->to($recipient_email);
-				//$this->CI->email->cc('another@another-example.com');
-				//$this->CI->email->bcc('them@their-example.com');
-				$this->CI->email->subject($email_subject);
-				$this->CI->email->message($email_message);
-				$this->CI->email->send();
-				//echo $this->CI->email->print_debugger();
-				$email_sent_list[] = $recipient_email;
-				$log_string .= PHP_EOL . "email sent to {$recipient_email}" . PHP_EOL;
-			}
-		}
-
-		// log to db by adding comment record
-		$comment_content = array(
-			'user_id' => $user_id,
-			'subject' => $email_subject,
-			'message' => $email_message,
-			'recipients' => $email_sent_list,
-		);
-		$comment_params = array(
-			'comment_content' => serialize($comment_content),
-			'user_id' => $user_id,
-			'comment_type' => 'dm_alert_email',
-			'comment_parent' => $observation['comment_id']
-		);
-		$comment_id = $this->CI->comments_model->insert_comment($comment_params, $this->int_blog_id);
-		$log_string .= PHP_EOL . "new comment 'dm_alert_email' created, comment id {$comment_id}" . PHP_EOL;
-
-		// donezo
-		$log_string .= PHP_EOL . "-send_email END" . PHP_EOL;
-		//echo '<pre>'.$log_string.'</pre>';
-		return $log_string;
-	}
-
-
 	/**
 	 * @param $email_message
 	 * @param $extra_vars
@@ -1221,11 +1134,72 @@ class DatamonitorService {
 	}
 
 	/**
-	 *
+	 * @param $user_id
+	 * @param $message_id
+	 * @param $extra_vars
+	 * @param int $int_blog_id
+	 * @return bool|string
 	 */
-	public function send_sms() {
+	public function send_email($observation, $message_id, $extra_vars, $int_blog_id = 7) {
 
+		// get user info
+		$user = WpUser::find($observation['user_id']);
+		$user_meta_config = WpUserMeta::where('user_id',$user->ID)->where('meta_key','like','%config%')->first();
+		$user_meta_blog = WpUserMeta::where('user_id',$user->ID)->where('meta_key','primary_blog')->first();
+		$user_data = unserialize($user_meta_config->meta_value);
+		// get recipients
+		if(!array_key_exists('send_alert_to',$user_data)) {
+			return false;
+		}
+
+		// get message info
+		$msgCPRules = new MsgCPRules();
+		$message_info = $msgCPRules->getQuestion($message_id, $user->ID, 'EMAIL_'.$user_data['preferred_contact_language'], $user_meta_blog->meta_value, 'SOL');
+
+		//Breaks down here, suspect the params are not as expected in getQuestion()
+
+		if(empty($message_info)){
+			return false;
+		}
+
+		// set email params
+		$email_subject = 'New Alert from CircleLink Health CPM';
+		$email_message = $message_info->message;
+		$email_message = $this->process_message_substitutions($email_message, $extra_vars);
+		$data = array('message_text' => $email_message);
+
+
+		$email_sent_list = array();
+		foreach($user_data['send_alert_to'] as $recipient_id) {
+
+			$provider_user = WpUser::find($recipient_id);
+			$email = $provider_user->user_email;
+
+			Mail::send('emails/dmalert', $data, function($message) use ($email,$email_subject) {
+				$message->from('Support@CircleLinkHealth.com', 'CircleLink Health');
+				$message->to($email)->subject($email_subject);
+			});
+			$email_sent_list[] = $provider_user->user_email;
+		}
+
+		/*
+		// log to db by adding comment record
+		$comment_content = array(
+			'user_id' => $user->ID,
+			'subject' => $email_subject,
+			'message' => $email_message,
+			'recipients' => $email_sent_list,
+		);
+		$comment_params = array(
+			'comment_content' => serialize($comment_content),
+			'user_id' => $user->ID,
+			'comment_type' => 'dm_alert_email',
+			'comment_parent' => $observation['comment_id']
+		);
+		$comment_id = $this->CI->comments_model->insert_comment($comment_params, $this->int_blog_id);
+		*/
 	}
+
 
 	/**
 	 * @param $user_id
