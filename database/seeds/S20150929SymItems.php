@@ -91,6 +91,12 @@ class S20150929SymItems extends Seeder {
                     $q->where('msg_id', '!=', 'CF_SYM_70');
                 })
                 ->delete();
+            CPRulesItem::whereHas('pcp', function ($q) use ($programId) {
+                    $q->where('section_text', '=', 'Symptoms to Monitor');
+                    $q->where('prov_id', '=', $programId);
+                })
+                ->where('qid', '=', '0')
+                ->delete();
             echo "removed all items for $programId".PHP_EOL;
             // get pcp section for program
             $pcp = CPRulesPCP::where('section_text', '=', 'Symptoms to Monitor')
