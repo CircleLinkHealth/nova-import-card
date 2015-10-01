@@ -227,9 +227,7 @@
 	<![endif]-->
 
 	@if( !Auth::guest() && (Request::is('patient/*') || Request::is('provider/*')) )
-		@include('patientheader')
 		@yield('content')
-		@include('patientfooter')
 	@else
 		@yield('content')
 	@endif
