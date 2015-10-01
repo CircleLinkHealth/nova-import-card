@@ -32,6 +32,7 @@ class Kernel extends HttpKernel {
 		'guest' => 'App\Http\Middleware\RedirectIfAuthenticated',
 		'authApiCall' => 'App\Http\Middleware\AuthenticateApiCall',
         'getRedoxAccessToken' => 'App\Http\Middleware\GetRedoxAccessToken',
+        'programCheck' => 'App\Http\Middleware\ProgramCheck',
 	];
 
 }

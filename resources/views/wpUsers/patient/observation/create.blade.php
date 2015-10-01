@@ -130,8 +130,8 @@
                             <div class="col-lg-12">
                                 <div class="pull-right" style="margin-right:20px;">
                                     <input type="hidden" name="userId" id="userId" value="{{ $patient->ID }}">
-                                    <input type="hidden" name="programId" id="programId" value="{{ $program->blog_id }}">
-                                    <a href="{{ URL::route('patient.summary', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}" class="btn btn-danger">Cancel</a>
+                                    <input type="hidden" name="programId" id="programId" value="{{ $patient->program_id }}">
+                                    <a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Add Observation', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

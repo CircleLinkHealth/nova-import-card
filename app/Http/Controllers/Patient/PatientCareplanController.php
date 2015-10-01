@@ -30,21 +30,21 @@ class PatientCareplanController extends Controller {
 	/**
 	 * Display Careplan
 	 *
-	 * @param  int  $id
+	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function showPatientCareplan(Request $request, $programId, $id = false)
+	public function showPatientCareplan(Request $request, $patientId = false)
 	{
 		$wpUser = array();
-		if($id) {
-			$wpUser = WpUser::find($id);
+		if($patientId) {
+			$wpUser = WpUser::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
 		}
 
 		// program
-		$program = WpBlog::find($programId);
+		$program = WpBlog::find($wpUser->program_id);
 
 		return view('wpUsers.patient.careplan.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}
@@ -53,15 +53,15 @@ class PatientCareplanController extends Controller {
 	/**
 	 * Save Careplan
 	 *
-	 * @param  int  $id
+	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function savePatientCareplan(Request $request, $programId, $id = false)
+	public function savePatientCareplan(Request $request, $patientId = false)
 	{
 		// instantiate user
 		$wpUser = new WpUser;
-		if($id) {
-			$wpUser = WpUser::find($id);
+		if($patientId) {
+			$wpUser = WpUser::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
@@ -76,7 +76,7 @@ class PatientCareplanController extends Controller {
 		return redirect()->back()->withInput()->with('messages', ['successfully created/updated patient'])->send();
 
 		// program
-		$program = WpBlog::find($programId);
+		$program = WpBlog::find($wpUser->program_id);
 
 		return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}
@@ -84,21 +84,21 @@ class PatientCareplanController extends Controller {
 	/**
 	 * Display Careplan Print
 	 *
-	 * @param  int  $id
+	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function showPatientCareplanPrint(Request $request, $programId, $id = false)
+	public function showPatientCareplanPrint(Request $request, $patientId = false)
 	{
 		$wpUser = array();
-		if($id) {
-			$wpUser = WpUser::find($id);
+		if($patientId) {
+			$wpUser = WpUser::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
 		}
 
 		// program
-		$program = WpBlog::find($programId);
+		$program = WpBlog::find($wpUser->program_id);
 
 		return view('wpUsers.patient.careplan.print', ['program' => $program, 'patient' => $wpUser]);
 	}
