@@ -160,7 +160,7 @@ class ReportsController extends Controller {
 		}
 
 		$progressReport = new ReportsService();
-		$feed = $progressReport->progress($wpUser->ID);
+		$feed = $progressReport->careplan($wpUser->ID);
 
 		return response()->json($feed);
 	}
