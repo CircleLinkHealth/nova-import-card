@@ -13,7 +13,7 @@ class ActivityService {
 		if(!$month) {
 			$month =  date('m');
 		}
-		$totalDuration = Activity::where( \DB::raw('MONTH(created_at)'), '=', $month )->where( 'patient_id', '=', $userId )->sum('duration');
+		$totalDuration = Activity::where( \DB::raw('MONTH(performed_at)'), '=', $month )->where( 'patient_id', '=', $userId )->sum('duration');
 		return $totalDuration;
 	}
 
