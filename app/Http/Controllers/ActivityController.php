@@ -45,9 +45,22 @@ class ActivityController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function create()
+	public function create($user_id)
 	{
-		return view('activities.create');
+
+		$data['activity_list'] = array(
+			'General (Clinical)' => 'General (Clinical)',
+			'Medication Reconciliation' => 'Medication Reconciliation',
+			'Appointments' => 'Appointments',
+			'Test (Scheduling, Communications, etc)' => 'Test (Scheduling, Communications, etc)',
+			'Call to Other Care Team Member' => 'Call to Other Care Team Member',
+			'Review Care Plan' => 'Review Care Plan',
+			'Review Patient Progress' => 'Review Patient Progress',
+			'Transitional Care Management Activities' => 'Transitional Care Management Activities',
+			'Other' => 'Other'
+		);
+
+		return view('activities.create', $data);
 	}
 
 	/**

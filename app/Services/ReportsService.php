@@ -21,7 +21,7 @@ Class ReportsService
         $userHeader['Patient_Name'] = $user->display_name;
         $userConfig = $user->userConfig();
         $userHeader['Patient_Phone'] = $userConfig['study_phone_number'];
-        $provider = WpUser::find($userConfig['lead_contact']);
+        $provider = WpUser::findOrFail($userConfig['lead_contact']);
         $providerConfig = $provider->userConfig();
         $userHeader['Provider_Name'] = $provider->display_name;
         $userHeader['Provider_Phone'] = $providerConfig['study_phone_number'];
@@ -32,6 +32,7 @@ Class ReportsService
 
     public function getItemsForParent($item, WpUser $user)
     {
+        $categories = array();
         //PCP has the sections for each provider, get all sections for the user's blog
         $pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', $item)->first();
         //Get all the items for each section
@@ -45,7 +46,11 @@ Class ReportsService
                 $categories[] = ['name' => $user_items->items_text];
             }
         }
-        return $categories;
+        if(count($categories) > 0) {
+            return $categories;
+        } else {
+            return 'Invalid User Setup';
+        }
     }
 
     public function biometricsUnitMapping($biometric){
@@ -350,6 +355,7 @@ Class ReportsService
         //=======================================
 
         $goals['Section'] = 'Your Health Goals';
+        $target_array = array();
 
         $tracking_pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Biometrics to Monitor')->first();
         $tracking_items = CPRulesItem::where('pcp_id', $tracking_pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
@@ -372,6 +378,7 @@ Class ReportsService
 
                 //get all the targets for biometrics that are being observed
                 $target_items = CPRulesItem::where('items_parent', $items_for_user[$i]->items_id)->where('items_text', 'like', '%Target%')->get();
+
                 foreach ($target_items as $target_item){
                     $target_value = CPRulesUCP::where('items_id', $target_item->items_id)->where('user_id', $user->ID)->lists('meta_value');
                     $target_array[str_replace('_',' ',$tracking_q->obs_key)] = $target_value[0];
@@ -399,7 +406,9 @@ Class ReportsService
         $medication_tracking_item = CPRulesItem::where('items_parent', $medication_information_item->items_id)->first();
         $medications_taking = CPRulesUCP::where('items_id', $medication_tracking_item->items_id)->where('user_id',$user->ID)->first();
 
-        $medications['Data']['Taking These Medications'][] = $medications_taking->meta_value;
+        if($medications_taking){
+            $medications['Data']['Taking These Medications'][] = $medications_taking->meta_value;
+        }
 
         //=======================================
         //========SYMPTOMS TO MONITOR============
