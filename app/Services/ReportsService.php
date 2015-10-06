@@ -347,7 +347,6 @@ Class ReportsService
     public function careplan($id)
     {
 
-        $careplan['CarePlan_Report'][] = $this->reportHeader($id);
         $user = WpUser::find($id);
 
         //=======================================
