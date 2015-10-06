@@ -4,9 +4,9 @@
  */
 
 //Test route @todo remove after testing
-Route::get('/reports/careplan/{id}', function($id){
+Route::get('/reports/progress/{id}', function($id){
 	$report = new \App\Services\ReportsService();
-	return $report->careplan($id);
+	return $report->progress($id);
 });
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
