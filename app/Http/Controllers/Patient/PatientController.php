@@ -30,23 +30,23 @@ class PatientController extends Controller {
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function showPatientSummary(Request $request, $programId, $id)
+	public function showPatientSummary(Request $request, $patientId)
 	{
+		$wpUser = WpUser::find($patientId);
+		if(!$wpUser) {
+			return response("User not found", 401);
+		}
+
 		// program
-		$program = WpBlog::find($programId);
+		$program = WpBlog::find($wpUser->program_id);
 
 		$params = $request->all();
 		$detailSection = '';
 		if(isset($params['detail'])) {
 			$detailSection = $params['detail'];
-		}
-
-		$wpUser = WpUser::find($id);
-		if(!$wpUser) {
-			return response("User not found", 401);
 		}
 
 		$sections = array(
@@ -161,25 +161,47 @@ class PatientController extends Controller {
 	}
 
 
-
 	/**
-	 * Display Alerts
+	 * Select Program
 	 *
-	 * @param  int  $id
+	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function showPatientAlerts(Request $request, $programId, $id = false)
+	public function showSelectProgram(Request $request, $patientId = false)
 	{
 		$wpUser = array();
-		if($id) {
-			$wpUser = WpUser::find($id);
+		if($patientId) {
+			$wpUser = WpUser::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
 		}
 
 		// program
-		$program = WpBlog::find($programId);
+		$program = WpBlog::find($wpUser->program_id);
+
+		return view('wpUsers.patient.alerts', ['program' => $program, 'patient' => $wpUser]);
+	}
+
+
+	/**
+	 * Display Alerts
+	 *
+	 * @param  int  $patientId
+	 * @return Response
+	 */
+	public function showPatientAlerts(Request $request, $patientId = false)
+	{
+		$wpUser = array();
+		if($patientId) {
+			$wpUser = WpUser::find($patientId);
+			if (!$wpUser) {
+				return response("User not found", 401);
+			}
+		}
+
+		// program
+		$program = WpBlog::find($request->session()->get('activeProgramId'));
 
 		return view('wpUsers.patient.alerts', ['program' => $program, 'patient' => $wpUser]);
 	}
@@ -189,21 +211,23 @@ class PatientController extends Controller {
 	/**
 	 * Display Notes
 	 *
-	 * @param  int  $id
+	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function showPatientNotes(Request $request, $programId, $id = false)
+	public function showPatientNotes(Request $request, $patientId = false)
 	{
 		$wpUser = array();
-		if($id) {
-			$wpUser = WpUser::find($id);
+		if($patientId) {
+			// patient view
+			$wpUser = WpUser::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
+			// program
+			$program = WpBlog::find($wpUser->program_id);
+		} else {
+			// program view
 		}
-
-		// program
-		$program = WpBlog::find($programId);
 
 		return view('wpUsers.patient.notes', ['program' => $program, 'patient' => $wpUser]);
 	}
@@ -215,22 +239,22 @@ class PatientController extends Controller {
 	/**
 	 * Display Observation Create
 	 *
-	 * @param  int  $id
+	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function showPatientObservationCreate(Request $request, $programId, $id = false)
+	public function showPatientObservationCreate(Request $request, $patientId = false)
 	{
 		$wpUser = array();
-		if($id) {
-			$wpUser = WpUser::find($id);
+		if($patientId) {
+			$wpUser = WpUser::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
 		}
 
 		// program
-		$program = WpBlog::find($programId);
+		$program = WpBlog::find($wpUser->program_id);
 
-		return view('wpUsers.patient.observation.create', ['program' => $program, 'programId' => $programId, 'patient' => $wpUser]);
+		return view('wpUsers.patient.observation.create', ['program' => $program, 'patient' => $wpUser]);
 	}
 }

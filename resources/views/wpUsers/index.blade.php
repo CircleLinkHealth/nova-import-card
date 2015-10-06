@@ -81,7 +81,7 @@
                                             @if (count($wpUser->roles) > 0)
                                                 @if($wpUser->hasRole('patient'))
                                                     <div style="margin-left:10px;">
-                                                        <a href="{{ URL::route('patient.summary', array('programId' => $wpUser->program_id, 'id' => $wpUser->ID)) }}" class="btn btn-orange btn-xs">Patient</a>
+                                                        <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-orange btn-xs">Patient</a>
                                                     </div>
                                                 @else
                                                     @foreach ($wpUser->roles as $role)

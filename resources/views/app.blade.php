@@ -147,7 +147,7 @@
 		<nav class="navbar primary-navbar">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a href="" class="navbar-brand btn btn-orange">{{ $program->blog_id }}</a>
+					<a href="" class="navbar-brand btn btn-orange">{{ Session::get('activeProgramId') }}</a>
 					<a href="" class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
 				</div>
 				<div class="navbar-right hidden-xs ">
@@ -155,7 +155,7 @@
 						<li><a href=""><i class="icon--home--white"></i> Home</a></li>
 						<li><a href=""><i class="icon--search--white"></i> Select Patient</a></li>
 						<li><a href=""><i class="icon--add-user"></i> Add Patient</a></li>
-						<li><a href="{{ URL::route('patient.alerts', array('programId' => $program->blog_id)) }}"><i class="icon--alert--white"></i> Alerts</a></li>
+						<li><a href="{{ URL::route('patient.alerts', array()) }}"><i class="icon--alert--white"></i> Alerts</a></li>
 						@if ( !Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
 							@if (!empty($patient))
 								<li><a class="btn btn-orange btn-xs" href="{{ URL::route('users.edit', array('id' => $patient->ID)) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
@@ -186,16 +186,16 @@
 						<li class="inline-block dropdown">
 							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Notes/Offline Activity<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ URL::route('patient.notes', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}">Notes/Offline Activities</a></li>
-								<li><a href="{{ URL::route('patient.notes', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}">Add New Note</a></li>
+								<li><a href="{{ URL::route('patient.notes', array('patientId' => $patient->ID)) }}">Notes/Offline Activities</a></li>
+								<li><a href="{{ URL::route('patient.notes', array('patientId' => $patient->ID)) }}">Add New Note</a></li>
 							</ul>
 						</li>
-						<li class="inline-block"><a href="{{ URL::route('patient.summary', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}" role="button">Patient Overview</a></li>
-						<li class="inline-block"><a href="{{ URL::route('patient.careplan', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}" role="button">Edit Care Plan</a></li>
+						<li class="inline-block"><a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" role="button">Patient Overview</a></li>
+						<li class="inline-block"><a href="{{ URL::route('patient.careplan', array('patientId' => $patient->ID)) }}" role="button">Edit Care Plan</a></li>
 						<li class="inline-block dropdown">
 							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Input<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ URL::route('patient.observation.create', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}">Observations</a></li>
+								<li><a href="{{ URL::route('patient.observation.create', array('patientId' => $patient->ID)) }}">Observations</a></li>
 								<li><a href="">Offline Activities</a></li>
 							</ul>
 						</li>
@@ -215,7 +215,7 @@
 					</li>
 					@if (!empty($patient))
 						<!-- <li class="inline-block"><a href="" role="button">Patient Notes</a></li> -->
-						<li class="inline-block"><a href="{{ URL::route('patient.careplan.print', array('programId' => $program->blog_id, 'id' => $patient->ID)) }}" role="button">Print Care Plan</a></li>
+						<li class="inline-block"><a href="{{ URL::route('patient.careplan.print', array('patientId' => $patient->ID)) }}" role="button">Print Care Plan</a></li>
 					@endif
 				</ul>
 			</div>
@@ -227,7 +227,9 @@
 	<![endif]-->
 
 	@if( !Auth::guest() && (Request::is('patient/*') || Request::is('provider/*')) )
+		@include('patientheader')
 		@yield('content')
+		@include('patientfooter')
 	@else
 		@yield('content')
 	@endif

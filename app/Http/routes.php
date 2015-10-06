@@ -60,24 +60,25 @@ Route::group(['middleware' => 'auth'], function ()
 	/****************************/
 	// PATIENT (/patient/programId)
 	/****************************/
-	Route::group(['prefix' => 'patient/{programId}'], function () {
+	Route::group(['prefix' => 'patient', 'middleware' => 'programCheck'], function () {
 
 		// base
-		Route::get('summary/{id}', ['uses' => 'Patient\PatientController@showPatientSummary', 'as' => 'patient.summary']);
-		Route::get('alerts/{id?}', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patient.alerts']);
-		Route::get('input/observation/{id}', ['uses' => 'Patient\PatientController@showPatientObservationCreate', 'as' => 'patient.observation.create']);
+		//Route::get('/', ['uses' => 'Patient\PatientController@showSelectProgram', 'as' => 'patient.selectprogram']);
+		Route::get('summary/{patientId}', ['uses' => 'Patient\PatientController@showPatientSummary', 'as' => 'patient.summary']);
+		Route::get('alerts/{patientId?}', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patient.alerts']);
+		Route::get('input/observation/{patientId}', ['uses' => 'Patient\PatientController@showPatientObservationCreate', 'as' => 'patient.observation.create']);
 		Route::post('input/observation/create', ['uses' => 'ObservationController@store', 'as' => 'patient.observation.store']);
 
 		// careplan
 		Route::group(['prefix' => 'careplan'], function () {
-			Route::get('{id}', ['uses' => 'Patient\PatientCareplanController@showPatientCareplan', 'as' => 'patient.careplan']);
+			Route::get('{patientId}', ['uses' => 'Patient\PatientCareplanController@showPatientCareplan', 'as' => 'patient.careplan']);
 			Route::post('save', ['uses' => 'Patient\PatientCareplanController@savePatientCareplan', 'as' => 'patient.careplan.save']);
-			Route::get('{id}/print', ['uses' => 'Patient\PatientCareplanController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
+			Route::get('{patientId}/print', ['uses' => 'Patient\PatientCareplanController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
 		});
 
 		// notes
 		Route::group(['prefix' => 'notes'], function () {
-			Route::get('{id}', ['uses' => 'Patient\PatientController@showPatientNotes', 'as' => 'patient.notes']);
+			Route::get('{patientId}', ['uses' => 'Patient\PatientController@showPatientNotes', 'as' => 'patient.notes']);
 		});
 	});
 
