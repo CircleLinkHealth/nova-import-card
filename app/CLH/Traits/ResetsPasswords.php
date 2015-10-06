@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\PasswordBroker;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 trait ResetsPasswords {
@@ -39,7 +40,14 @@ trait ResetsPasswords {
      */
     public function postEmail(Request $request)
     {
-        $this->validate($request, ['email' => 'required|email']);
+        $validation = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+
+        if ($validation->fails())
+        {
+            return response()->json($validation->errors(), 400);
+        }
 
         $response = $this->passwords->sendResetLink($request->only('email'), function($m)
         {
@@ -49,11 +57,11 @@ trait ResetsPasswords {
         switch ($response)
         {
             case PasswordBroker::RESET_LINK_SENT:
-                return $request->header('client') == 'mobi' ? response('We have e-mailed your password reset link!', 200)
+                return $request->header('client') == 'mobi' ? response()->json(trans($response), 200)
                     : redirect()->back()->with('status', trans($response));
 
             case PasswordBroker::INVALID_USER:
-                return $request->header('client') == 'mobi' ? response('We can\'t find a user with that e-mail address.', 404)
+                return $request->header('client') == 'mobi' ? response()->json(trans($response), 404)
                     : redirect()->back()->withErrors(['email' => trans($response)]);
         }
     }
