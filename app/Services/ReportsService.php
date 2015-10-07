@@ -178,9 +178,10 @@ Class ReportsService
         //dd($temp_meds); //Show all the medication categories and stats
         //dd(json_encode($medications)); // show the medications by adherence category
 
-        $medications['Data']['Good'] = $meds_array['Good'];
-        $medications['Data']['Needs Work'] = $meds_array['Needs Work'];
-        $medications['Data']['Bad'] = $meds_array['Bad'];
+        $medications['Data'][0] = ['name' => $meds_array['Good']['description'],'Section' => 'Good'] ;
+        $medications['Data'][1] = ['name' => $meds_array['Needs Work']['description'],'Section' => 'Needs Work'] ;
+        $medications['Data'][2] = ['name' => $meds_array['Bad']['description'],'Section' => 'Bad'] ;
+
 
 
         //**************TRACKING CHANGES SECTION**************
