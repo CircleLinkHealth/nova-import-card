@@ -1,6 +1,7 @@
 <?php namespace App\Services;
 
 use App\CPRulesQuestions;
+use App\Services\ReportsService;
 use App\Http\Requests;
 use App\WpUser;
 use App\CPRulesUCP;
@@ -275,6 +276,7 @@ class CareplanService {
 	private function renderCommentThread($msgId, $commentId = 0) {
 		$msgCPRules = new MsgCPRules;
 		$msgSubstitutions = new MsgSubstitutions;
+		$reportsService = new ReportsService;
 		// for unanswered:
 		if(empty($commentId)) {
 			$qsType = $msgCPRules->getQsType($msgId, $this->wpUser->ID);
@@ -327,7 +329,7 @@ class CareplanService {
 						"ReturnDataRangeLow" => $currQuestionInfo->low,
 						"ReturnDataRangeHigh" => $currQuestionInfo->high,
 						"ReturnValidAnswers" => '',
-						"PatientAnswer" => $observation->obs_value,
+						"PatientAnswer" => $observation->obs_value . $reportsService->biometricsUnitMapping(str_replace('_', ' ', $currQuestionInfo->obs_key)),
 						"ResponseDate" => $observation->obs_date
 					);
 					if ($o == 0) {
