@@ -450,7 +450,7 @@ Class ReportsService
         if ($medications_taking->meta_value != null) {
             $takMedications['Data'][] = ['name' => $medications_taking->meta_value];
         } else {
-            $none['name'] = 'None';
+            $none = ['name' => 'None'];
             $takMedications['Data'][] = $none;
         }
 
