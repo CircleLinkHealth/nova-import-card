@@ -377,7 +377,7 @@ Class ReportsService
         }
 
         if (count($treating['Data']) < 1) {
-            $treating['Data'] = 'None';
+            $treating['Data'] = ['name' => 'None'];
         }
 
         //=======================================
@@ -460,7 +460,7 @@ Class ReportsService
             if ($this->getItemsForParent('Symptoms to Monitor', $user) != false) {
                 $symptoms['Data'] = $this->getItemsForParent('Symptoms to Monitor', $user);
             } else {
-                $symptoms['Data'] = 'None';
+                $symptoms['Data'] = ['name' => 'None'];
             }
 
         //=======================================
@@ -472,7 +472,7 @@ Class ReportsService
             if ($this->getItemsForParent('Lifestyle to Monitor', $user) != false) {
                 $lifestyle['Data'] = $this->getItemsForParent('Lifestyle to Monitor', $user);
             } else {
-                $lifestyle['Data'] = 'None';
+                $lifestyle['Data'] = ['name' => 'None'];
             }
 
         //=======================================
@@ -514,7 +514,7 @@ Class ReportsService
             }
 
             if (count($other['Data']) < 1) {
-                $other['Data'] = 'None';
+                $other['Data'] = ['name' => 'None'];
             }
 
 
