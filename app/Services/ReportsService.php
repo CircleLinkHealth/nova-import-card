@@ -431,7 +431,7 @@ Class ReportsService
         if ($this->getItemsForParent('Medications to Monitor', $user) != false) {
             $monMedications['Data'] = $this->getItemsForParent('Medications to Monitor', $user);
         } else {
-            $monMedications['Data'] = ['name' => 'None'];
+            $monMedications['Data'][] = ['name' => 'None'];
         }
 
         //=======================================
@@ -447,9 +447,9 @@ Class ReportsService
 
 
         if ($medications_taking->meta_value != null) {
-            $takMedications['Data'] = ['name' => $medications_taking->meta_value];
+            $takMedications['Data'][] = ['name' => $medications_taking->meta_value];
         } else {
-            $takMedications['Data'] = ['name' => 'None'];
+            $takMedications['Data'][] = ['name' => 'None'];
         }
 
         //=======================================
