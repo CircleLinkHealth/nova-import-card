@@ -6,7 +6,7 @@
 //Test route @todo remove after testing
 Route::get('/reports/progress/{id}', function($id){
 	$report = new \App\Services\ReportsService();
-	return $report->progress($id);
+	return $report->careplan($id);
 });
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
@@ -260,6 +260,7 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 
 Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], function()
 {
+
 	// activities
 	Route::resource('activities', 'ActivityController');
 	Route::post('activities/update', 'ActivityController@update');
@@ -268,6 +269,7 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 
 	// reports
 	Route::get('reports/pagetimer', 'ReportsController@pageTimerReports');
+	Route::get('reports/UIprogress', 'ReportsController@UIprogress');
 	Route::resource('reports', 'ReportsController');
 	Route::get('reports/progress', 'ReportsController@progress');
 
