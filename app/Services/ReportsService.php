@@ -424,32 +424,37 @@ Class ReportsService
         }
 
         //=======================================
-        //==============MEDICATIONS==============
+        //======MONITORING MEDICATIONS===========
         //=======================================
 
-        //Monitoring Medications
-
-        $medications['Section'] = 'Medications';
+        $monMedications['Section'] = 'Medications to Monitor';
         if ($this->getItemsForParent('Medications to Monitor', $user) != false) {
-            $medications['Data']['Monitoring These Medications'] = $this->getItemsForParent('Medications to Monitor', $user);
-
-            //Taking Medications
-
-            $additional_information_item = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
-            $medication_information_item = CPRulesItem::where('pcp_id', $additional_information_item->pcp_id)->where('items_parent', 0)->where('items_text', 'Medications List')->first();
-            $medication_tracking_item = CPRulesItem::where('items_parent', $medication_information_item->items_id)->first();
-            $medications_taking = CPRulesUCP::where('items_id', $medication_tracking_item->items_id)->where('user_id', $user->ID)->first();
-
-            if ($medications_taking) {
-                $medications['Data']['Taking These Medications'][] = $medications_taking->meta_value;
-            }
+            $monMedications['Data'] = $this->getItemsForParent('Medications to Monitor', $user);
         } else {
-            $medications['Data']['Monitoring These Medications'] = 'None';
+            $monMedications['Data'] = ['name' => 'None'];
         }
 
-            //=======================================
-            //========SYMPTOMS TO MONITOR============
-            //=======================================
+        //=======================================
+        //========TAKING MEDICATIONS=============
+        //=======================================
+
+        $takMedications['Section'] = 'Taking These Medications';
+
+        $additional_information_item = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
+        $medication_information_item = CPRulesItem::where('pcp_id', $additional_information_item->pcp_id)->where('items_parent', 0)->where('items_text', 'Medications List')->first();
+        $medication_tracking_item = CPRulesItem::where('items_parent', $medication_information_item->items_id)->first();
+        $medications_taking = CPRulesUCP::where('items_id', $medication_tracking_item->items_id)->where('user_id', $user->ID)->first();
+
+
+        if ($medications_taking->meta_value != null) {
+            $takMedications['Data'] = ['name' => $medications_taking->meta_value];
+        } else {
+            $takMedications['Data'] = ['name' => 'None'];
+        }
+
+        //=======================================
+        //========SYMPTOMS TO MONITOR============
+        //=======================================
 
             $symptoms['Section'] = 'Watch out for';
             if ($this->getItemsForParent('Symptoms to Monitor', $user) != false) {
@@ -458,9 +463,9 @@ Class ReportsService
                 $symptoms['Data'] = 'None';
             }
 
-            //=======================================
-            //========LIFESTYLE TO MONITOR===========
-            //=======================================
+        //=======================================
+        //========LIFESTYLE TO MONITOR===========
+        //=======================================
 
             $lifestyle['Section'] = 'We Are Informing You About';
 
@@ -470,9 +475,9 @@ Class ReportsService
                 $lifestyle['Data'] = 'None';
             }
 
-            //=======================================
-            //===========CHECK IN PLAN===============
-            //=======================================
+        //=======================================
+        //===========CHECK IN PLAN===============
+        //=======================================
 
             $userConfig = $user->userConfig();
             $check['Section'] = 'Check In Plan';
@@ -484,9 +489,9 @@ Class ReportsService
                 $check['Data'][] = ['day' => $days[$i], 'time' => $userConfig['preferred_contact_time']];
             }
 
-            //=======================================
-            //===========OTHER INFO===============
-            //=======================================
+        //=======================================
+        //===========OTHER INFO===============
+        //=======================================
 
             $other['Section'] = 'Other Information';
 
@@ -518,7 +523,8 @@ Class ReportsService
             $careplan['CarePlan_Report'][] = $this->reportHeader($id);
             $careplan['CarePlan_Report'][] = $treating;
             $careplan['CarePlan_Report'][] = $goals;
-            $careplan['CarePlan_Report'][] = $medications;
+            $careplan['CarePlan_Report'][] = $monMedications;
+            $careplan['CarePlan_Report'][] = $takMedications;
             $careplan['CarePlan_Report'][] = $symptoms;
             $careplan['CarePlan_Report'][] = $check;
             $careplan['CarePlan_Report'][] = $other;
