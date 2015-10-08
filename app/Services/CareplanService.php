@@ -296,6 +296,7 @@ class CareplanService {
 				"ReturnDataRangeHigh" => $currQuestionInfo->high,
 				"ReturnValidAnswers" => '',
 				"PatientAnswer" => '',
+				"ReadingUnit" => '',
 				"ResponseDate" => ''
 			);
 			return $obsArr;
@@ -329,7 +330,8 @@ class CareplanService {
 						"ReturnDataRangeLow" => $currQuestionInfo->low,
 						"ReturnDataRangeHigh" => $currQuestionInfo->high,
 						"ReturnValidAnswers" => '',
-						"PatientAnswer" => $observation->obs_value . $reportsService->biometricsUnitMapping(str_replace('_', ' ', $currQuestionInfo->obs_key)),
+						"PatientAnswer" => $observation->obs_value,
+						"ReadingUnit" => $reportsService->biometricsUnitMapping(str_replace('_', ' ', $currQuestionInfo->obs_key)),
 						"ResponseDate" => $observation->obs_date
 					);
 					if ($o == 0) {

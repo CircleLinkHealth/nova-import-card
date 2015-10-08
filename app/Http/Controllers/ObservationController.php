@@ -132,6 +132,7 @@ class ObservationController extends Controller {
     public function store(Request $request)
     {
 		$observationService = new ObservationService;
+		$msgCPRules = new MsgCPRules;
 		if ( $request->header('Client') == 'mobi' ) {
 			// get and validate current user
 			\JWTAuth::setIdentifier('ID');
@@ -173,27 +174,6 @@ class ObservationController extends Controller {
 			$params['user_id'] = $wpUser->ID;
 			$date = DateTime::createFromFormat("Y-m-d\TH:i", $input['observationDate']);
 			$date = $date->format("Y-m-d H:i:s");
-			// get state_app for obs_date
-
-
-			/*
-			 *
-			 * no longer need state_app? assume its 0 if coming from ui, because its always a start
-			 *
-
-
-			$comment = Comment::where('comment_type', '=', 'message_thread')
-				->where('user_id', '=', $wpUser->ID)
-				->where('comment_date', '>=', $date->format("Y-m-d") . ' 00:00:00')
-				->where('comment_date', '<=', $date->format("Y-m-d") . ' 23:59:59')
-				->orderBy('id', 'desc')
-				->first();
-			$parent_id = 0;
-			if ($comment) {
-				$parent_id = $comment->id;
-				//return response()->json(['response' => 'No state_app comment found'], 500);
-			}
-			*/
 
 			if(isset($input['parent_id'])) {
 				$params['parent_id'] = $input['parent_id'];
@@ -214,7 +194,25 @@ class ObservationController extends Controller {
 			//***** end extra work here to decode from quirky UI ******
 		}
 
-		$result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'], $params['obs_value'], $params['obs_date'], $params['obs_message_id'], $params['obs_key'], $params['timezone'], $params['source'], $params['isStartingObs']);
+		// process message id (ui dropdown includes qstype)
+		$pieces = explode('/', $params['obs_message_id']);
+		if (count($pieces) == 1) {
+			// normal message, straight /messageId
+			$obsMessageId = $params['obs_message_id'];
+		} else if (count($pieces) == 2) {
+			// semi-normal message, qstype/messageId
+			$qstype = $pieces[0];
+			$obsMessageId = $pieces[1];
+		}
+
+		// validate answer
+		$qsType  = $msgCPRules->getQsType($obsMessageId, $wpUser->program_id);
+		$answerResponse =  $msgCPRules->getValidAnswer($wpUser->program_id, $qsType, $obsMessageId, $params['obs_value'], false);
+		if(!$answerResponse) {
+			return response()->json(['response' => 'Invalid reading'], 500);
+		}
+
+		$result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'], $params['obs_value'], $params['obs_date'], $obsMessageId, $params['obs_key'], $params['timezone'], $params['source'], $params['isStartingObs']);
 
 
 		if ( $request->header('Client') == 'mobi' || $request->header('Client') == 'ui' ) {

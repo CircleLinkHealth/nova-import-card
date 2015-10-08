@@ -20,17 +20,6 @@ class ObservationService {
 		// set sequence, usually 0
 		$sequence = 0;
 
-		// process message id
-		$pieces = explode('/', $obsMessageId);
-		if (count($pieces) == 1) {
-			// normal message, straight /messageId
-			$obsMessageId = $obsMessageId;
-		} else if (count($pieces) == 2) {
-			// semi-normal message, qstype/messageId
-			$qstype = $pieces[0];
-			$obsMessageId = $pieces[1];
-		}
-
 		// first and foremost, check if $isStartingObs, and if so, update and return true if already exists
 		if($isStartingObs == 'Y') {
 			// get starting observation for user
