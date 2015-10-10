@@ -132,14 +132,21 @@ class ReportsController extends Controller {
 			}
 		}
 
-		// Dummy JSON Data for careplan
-		//$str_data = json_decode(file_get_contents(getenv('REPORT_PROGRESS_JSON_PATH')));
-		//return response()->json($str_data);
-
 		$progressReport = new ReportsService();
 		$feed = $progressReport->progress($wpUser->ID);
 
 		return json_encode($feed);
+	}
+
+	public function UIprogress(Request $request, $id){
+		if ( $request->header('Client') == 'ui' ){ // WP Site
+			$progressReport = new ReportsService();
+			$feed = $progressReport->progress($id);
+			$response['body'] = $feed;
+			return response()->json(Crypt::encrypt($response, ['message' => 'OK']), 201);
+		} else {
+			return response()->json(Crypt::encrypt(['error' => 'Fail']), 401);
+		}
 	}
 
 	public function careplan(Request $request, $id = false)
