@@ -3,6 +3,9 @@
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
 
+//CCD Parser Demo Route
+Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
+
 //Test route @todo remove after testing
 Route::get('/reports/progress/{id}', function($id){
 	$report = new \App\Services\ReportsService();
