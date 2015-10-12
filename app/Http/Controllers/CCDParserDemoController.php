@@ -15,7 +15,7 @@ class CCDParserDemoController extends Controller {
         $patient = new CCDParser($xml);
 
         echo('<PRE>');
-        echo($patient->getPatientCCD());
+        echo($patient->getParsedCCD('json'));
         echo('</PRE>');
 
     }
