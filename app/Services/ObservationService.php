@@ -20,6 +20,11 @@ class ObservationService {
 		// set sequence, usually 0
 		$sequence = 0;
 
+		// arrays to validate input
+		$from = array("_","y","n");
+		$to = array("/","Y","N");
+		$obsValue = str_replace($from, $to, $obsValue);
+
 		// first and foremost, check if $isStartingObs, and if so, update and return true if already exists
 		if($isStartingObs == 'Y') {
 			// get starting observation for user
@@ -79,10 +84,7 @@ class ObservationService {
 		$newObservation->obs_message_id = $obsMessageId;
 		$newObservation->obs_method = $source;
 		$newObservation->user_id = $userId;
-		//arrays to validate input
-		$from = array("_","y");
-		$to = array("/","Y");
-		$newObservation->obs_value = str_replace($from, $to, $obsValue);
+		$newObservation->obs_value = $obsValue;
 		$newObservation->obs_key = $obsKey;
 		$newObservation->obs_unit = '';
 		$newObservation->save();
@@ -107,10 +109,14 @@ class ObservationService {
 			$newObservationMeta->save();
 		}
 
-		//return true;
-
+		// Next Message Block
 		$msgChooser = new MsgChooser();
-		//Next Message Block
+
+		// skip responses for adherence
+		if($obsKey == 'Adherence') {
+			return true;
+		}
+
 		if(!empty($commentId)) {
 			//$msgChooser->setAppAnswerAndNextMessage($userId, $commentId, $obsMessageId, $obsValue, false);
 			$msgChooser->setObsResponse($userId, $commentId, $obsMessageId, $obsValue, $obsDate, $sequence, false);

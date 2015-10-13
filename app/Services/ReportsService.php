@@ -46,7 +46,12 @@ Class ReportsService
             if ($item_for_user[$i] != null) {
                 //Find the items_text for the one's that are active
                 $user_items = CPRulesItem::find($item_for_user[$i]->items_id);
-                $categories[] = ['name' => $user_items->items_text];
+                $categories[] = [
+                    'name' => $user_items->items_text,
+                    'items_id' => $user_items->items_id,
+                    'section_text' => $item,
+                    'items_text' => $user_items->items_text
+                ];
             }
         }
         if (count($categories) > 0) {
