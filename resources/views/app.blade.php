@@ -88,6 +88,7 @@
 									<li><a href="{{ action('Admin\WpBlogController@index') }}">Programs</a></li>
 									<li><a href="{{ action('LocationController@index') }}">Locations</a></li>
 									<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>
+									<li><a href="{{ URL::route('admin.questionSets.index', array()) }}">Question Sets</a></li>
 									<li><a href="{{ URL::route('admin.items.index', array()) }}">Items</a></li>
 								</ul>
 							</li>

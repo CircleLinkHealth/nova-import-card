@@ -151,6 +151,11 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::post('questions/{id}/edit', ['uses' =>'Admin\CPRQuestionController@update', 'as'=>'admin.questions.update']);
 		Route::get('questions/{id}/destroy', ['uses' =>'Admin\CPRQuestionController@destroy', 'as'=>'admin.questions.destroy']);
 
+		// questionSets
+		Route::resource('questionSets', 'Admin\CPRQuestionSetController');
+		Route::post('questionSets/{id}/edit', ['uses' =>'Admin\CPRQuestionSetController@update', 'as'=>'admin.questionSets.update']);
+		Route::get('questionSets/{id}/destroy', ['uses' =>'Admin\CPRQuestionSetController@destroy', 'as'=>'admin.questionSets.destroy']);
+
 		// items
 		Route::resource('items', 'Admin\CPRItemController');
 		Route::post('items/{id}/edit', ['uses' =>'Admin\CPRItemController@update', 'as'=>'admin.items.update']);
