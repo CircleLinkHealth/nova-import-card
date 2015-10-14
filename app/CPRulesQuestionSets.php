@@ -23,19 +23,24 @@ class CPRulesQuestionSets extends Model {
      *
      * @var string
      */
-    protected $primaryKey = 'qid';
+    protected $primaryKey = 'qsid';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['qid', 'msg_id', 'qtype', 'obs_key', 'description'];
+    protected $fillable = ['provider_id', 'qs_type', 'qs_sort', 'qid', 'answer_response', 'aid', 'low', 'high', 'action'];
 
 
-    public function items()
+    public function question()
     {
-        return $this->hasMany('App\CPRulesItem', 'qid');
+        return $this->hasOne('App\CPRulesQuestions', 'qid', 'qid');
+    }
+
+    public function answer()
+    {
+        return $this->hasOne('App\CPRulesAnswers', 'qid', 'qid');
     }
 
 }
