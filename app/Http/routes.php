@@ -153,6 +153,7 @@ Route::group(['middleware' => 'auth'], function ()
 
 		// questionSets
 		Route::resource('questionSets', 'Admin\CPRQuestionSetController');
+		Route::post('questionSets', ['uses' =>'Admin\CPRQuestionSetController@index', 'as'=>'admin.questionSets']);
 		Route::post('questionSets/{id}/edit', ['uses' =>'Admin\CPRQuestionSetController@update', 'as'=>'admin.questionSets.update']);
 		Route::get('questionSets/{id}/destroy', ['uses' =>'Admin\CPRQuestionSetController@destroy', 'as'=>'admin.questionSets.destroy']);
 

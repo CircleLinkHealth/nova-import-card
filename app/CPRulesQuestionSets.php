@@ -32,6 +32,7 @@ class CPRulesQuestionSets extends Model {
      */
     protected $fillable = ['provider_id', 'qs_type', 'qs_sort', 'qid', 'answer_response', 'aid', 'low', 'high', 'action'];
 
+    public $timestamps = false;
 
     public function question()
     {

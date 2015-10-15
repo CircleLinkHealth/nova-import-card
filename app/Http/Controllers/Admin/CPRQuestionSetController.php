@@ -20,27 +20,55 @@ class CPRQuestionSetController extends Controller
 	public function index(Request $request)
 	{
 		// display view
-		$questionSets = CPRulesQuestionSets::orderBy('qid', 'desc');
+		$questionSets = CPRulesQuestionSets::orderBy('qsid', 'desc');
 
 		// FILTERS
 		$params = $request->all();
 
-		// filter user
-		$qsTypes = array('SYM', 'RPT', 'HSP');
+		// filter qsType
+		$qsTypes = array('SYM' => 'SYM', 'RPT' => 'RPT', 'HSP' => 'HSP');
 		$filterQsType = 'all';
-		if(!empty($params['filterUser'])) {
-			$filterUser = $params['filterUser'];
-			if($params['filterUser'] != 'all') {
-				$questionSets = $questionSets->whereHas('user', function($q) use ($filterUser){
-					$q->where('ID', '=', $filterUser);
+		if(!empty($params['filterQsType'])) {
+			$filterQsType = $params['filterQsType'];
+			if($params['filterQsType'] != 'all') {
+				$questionSets->where('qs_type', '=', $filterQsType);
+			}
+		}
+
+		// filter question
+		$questions = CPRulesQuestions::orderBy('qid', 'desc')->get()->lists('msg_id', 'qid');
+		$filterQuestion = 'all';
+		if(!empty($params['filterQuestion'])) {
+			$filterQuestion = $params['filterQuestion'];
+			if($params['filterQuestion'] != 'all') {
+				$questionSets = $questionSets->whereHas('question', function($q) use ($filterQuestion){
+					$q->where('qid', '=', $filterQuestion);
 				});
+			}
+		}
+
+		// filter program
+		$programs = WpBlog::orderBy('blog_id', 'desc')->get()->lists('domain', 'blog_id');
+		$filterProgram = 'all';
+		if(!empty($params['filterProgram'])) {
+			$filterProgram = $params['filterProgram'];
+			if($params['filterProgram'] != 'all') {
+				$questionSets->where('provider_id', '=', $filterProgram);
 			}
 		}
 
 		// finish query
 		$questionSets = $questionSets->paginate(10);
 
-		return view('admin.questionSets.index', ['questionSets' => $questionSets]);
+		return view('admin.questionSets.index', [
+			'questionSets' => $questionSets,
+			'qsTypes' => $qsTypes,
+			'filterQsType' => $filterQsType,
+			'questions' => $questions,
+			'filterQuestion' => $filterQuestion,
+			'programs' => $programs,
+			'filterProgram' => $filterProgram,
+		]);
 	}
 
 	/**
@@ -63,14 +91,17 @@ class CPRQuestionSetController extends Controller
 	{
 		$params = $request->input();
 		$questionSet = new CPRulesQuestionSets;
-		$questionSet->msg_id = $params['msg_id'];
-		$questionSet->qtype = $params['qtype'];
-		$questionSet->obs_key = $params['obs_key'];
-		$questionSet->description = $params['description'];
-		$questionSet->icon = $params['icon'];
-		$questionSet->category = $params['category'];
+		$questionSet->provider_id = $params['provider_id'];
+		$questionSet->qs_type = $params['qs_type'];
+		$questionSet->qs_sort = $params['qs_sort'];
+		$questionSet->qid = $params['qid'];
+		$questionSet->answer_response = $params['answer_response'];
+		$questionSet->aid = $params['aid'];
+		$questionSet->low = $params['low'];
+		$questionSet->high = $params['high'];
+		$questionSet->action = $params['action'];
 		$questionSet->save();
-		return redirect()->route('admin.questionSets.edit', [$questionSet->qid])->with('messages', ['successfully added new questionSet - ' . $params['msg_id']])->send();
+		return redirect()->route('admin.questionSets.edit', [$questionSet->qsid])->with('messages', ['successfully added new question set'])->send();
 	}
 
 	/**
@@ -116,14 +147,20 @@ class CPRQuestionSetController extends Controller
 	{
 		$params = $request->input();
 		$questionSet = CPRulesQuestionSets::find($id);
-		$questionSet->msg_id = $params['msg_id'];
-		$questionSet->qtype = $params['qtype'];
-		$questionSet->obs_key = $params['obs_key'];
-		$questionSet->description = $params['description'];
-		$questionSet->icon = $params['icon'];
-		$questionSet->category = $params['category'];
+		if(!$questionSet) {
+			return redirect()->back()->with('messages', ['could not find question set'.$id])->send();
+		}
+		$questionSet->provider_id = $params['provider_id'];
+		$questionSet->qs_type = $params['qs_type'];
+		$questionSet->qs_sort = $params['qs_sort'];
+		$questionSet->qid = $params['qid'];
+		$questionSet->answer_response = $params['answer_response'];
+		$questionSet->aid = $params['aid'];
+		$questionSet->low = $params['low'];
+		$questionSet->high = $params['high'];
+		$questionSet->action = $params['action'];
 		$questionSet->save();
-		return redirect()->back()->with('messages', ['successfully updated questionSet'])->send();
+		return redirect()->back()->with('messages', ['successfully updated question set'])->send();
 	}
 
 	/**
