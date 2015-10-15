@@ -57,4 +57,16 @@ class CPRulesItem extends Model {
         return $rulesUCP;
     }
 
+    public static function boot()
+    {
+        parent::boot();
+
+        /**
+         * Automatically delete and item's meta when the item is deleted
+         */
+        CPRulesItem::deleting(function($CPRulesItem){
+            $CPRulesItem->meta()->delete();
+        });
+    }
+
 }
