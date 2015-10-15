@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AddsClientNameToApiKeysTable extends Migration {
 
@@ -14,7 +15,9 @@ class AddsClientNameToApiKeysTable extends Migration {
 	{
 		Schema::table('api_keys', function(Blueprint $table)
 		{
-			$table->string('client_name');
+			if ( ! Schema::hasColumn('api_keys', 'client_name')) {
+				$table->string('client_name');
+			}
 		});
 	}
 
@@ -27,7 +30,9 @@ class AddsClientNameToApiKeysTable extends Migration {
 	{
 		Schema::table('api_keys', function(Blueprint $table)
 		{
-			//
+			if ( ! Schema::hasColumn('api_keys', 'client_name')) {
+				$table->dropColumn('client_name');
+			}
 		});
 	}
 
