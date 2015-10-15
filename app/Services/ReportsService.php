@@ -277,7 +277,7 @@ Class ReportsService
                         $progression = 'up';
                     } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
                         $status = 'No Change';
-                        $progression = 'N/A';
+                        $progression = 'Unchanged';
                     } else {
                         $status = 'Good';
                         $progression = 'down';
@@ -289,7 +289,7 @@ Class ReportsService
                         $progression = 'up';
                     } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
                         $status = 'No Change';
-                        $progression = 'N/A';
+                        $progression = 'Unchanged';
                     } else {
                         $status = 'Good';
                         $progression = 'down';
@@ -301,7 +301,7 @@ Class ReportsService
                         $progression = 'up';
                     } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
                         $status = 'No Change';
-                        $progression = 'N/A';
+                        $progression = 'Unchanged';
                     } else {
                         $status = 'Good';
                         $progression = 'down';
@@ -313,7 +313,7 @@ Class ReportsService
                         $progression = 'up';
                     } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
                         $status = 'No Change';
-                        $progression = 'N/A';
+                        $progression = 'Unchanged';
                     } else {
                         $status = 'Good';
                         $progression = 'down';
