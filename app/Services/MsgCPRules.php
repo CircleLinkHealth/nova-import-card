@@ -176,11 +176,17 @@ limit 1";
                     if (!empty($qSet->low)) {
                         if (empty($qInfo->low) || ($qSet->low < $qInfo->low)) {
                             $qInfo->low = $qSet->low;
+                            if($qInfo->obs_key == 'Blood_Pressure') {
+                                $qSet->low = $qSet->low .'/50';
+                            }
                         }
                     }
                     if (!empty($qSet->high)) {
                         if (empty($qInfo->high) || ($qSet->high > $qInfo->high)) {
                             $qInfo->high = $qSet->high;
+                            if($qInfo->obs_key == 'Blood_Pressure') {
+                                $qSet->high = $qSet->high .'/250';
+                            }
                         }
                     }
                 }

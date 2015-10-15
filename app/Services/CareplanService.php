@@ -206,7 +206,7 @@ class CareplanService {
 		}
 
 		if($status == 'Active') {
-			$observation = Observation::where('obs_message_id', '=', 'CF_DM_HSP_10')
+			$observation = Observation::where('obs_message_id', '=', 'CF_HSP_10')
 				->where('user_id', '=', $this->wpUser->ID)
 				->where('obs_unit', '!=', 'scheduled')
 				->where('obs_unit', '!=', 'invalid')
@@ -216,9 +216,9 @@ class CareplanService {
 				->first();
 			if(!empty($observation)) {
 				//dd($observation);
-				$hspObs[0] = $this->renderCommentThread('CF_DM_HSP_10', $observation->comment_id);
+				$hspObs[0] = $this->renderCommentThread('CF_HSP_10', $observation->comment_id);
 			} else {
-				$hspObs[0] = $this->renderCommentThread('CF_DM_HSP_10', false);
+				$hspObs[0] = $this->renderCommentThread('CF_HSP_10', false);
 			}
 		}
 
