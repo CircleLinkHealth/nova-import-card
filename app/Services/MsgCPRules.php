@@ -147,7 +147,7 @@ class MsgCPRules {
         $query = "select q.qid, q.msg_id, q.icon, q.category, q.qtype, im.meta_key as msgtype, im.meta_value as message, q.obs_key,
 if(isnull(p.meta_value), ',,', p.meta_value) as cdays,
 ifnull(u2.meta_value, 'Inactive') as ucp_status,
-ifnull(im2.meta_value, 'Inactive') as pcp_status, qs.action, imico.meta_value AS app_icon
+ifnull(im2.meta_value, 'Inactive') as pcp_status, qs.qs_sort, qs.action, imico.meta_value AS app_icon
 FROM rules_questions q
 left join rules_question_sets qs on qs.qid = q.qid and qs_type = '".$qstype."' and qs.provider_id = ".$pid."
 join rules_items i on i.qid = q.qid
@@ -176,17 +176,11 @@ limit 1";
                     if (!empty($qSet->low)) {
                         if (empty($qInfo->low) || ($qSet->low < $qInfo->low)) {
                             $qInfo->low = $qSet->low;
-                            if($qInfo->obs_key == 'Blood_Pressure') {
-                                $qSet->low = $qSet->low .'/50';
-                            }
                         }
                     }
                     if (!empty($qSet->high)) {
                         if (empty($qInfo->high) || ($qSet->high > $qInfo->high)) {
                             $qInfo->high = $qSet->high;
-                            if($qInfo->obs_key == 'Blood_Pressure') {
-                                $qSet->high = $qSet->high .'/250';
-                            }
                         }
                     }
                 }
@@ -194,6 +188,10 @@ limit 1";
 
             if(empty($qInfo->message)) {
                 $qInfo->message = '';
+            }
+            if($qInfo->obs_key == 'Blood_Pressure') {
+                $qInfo->low = $qSet->low .'/50';
+                $qInfo->high = $qSet->high .'/250';
             }
             return $qInfo;
         } else {
