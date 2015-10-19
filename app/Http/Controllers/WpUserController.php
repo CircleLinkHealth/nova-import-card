@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\CLH\Repositories\WpUserRepository;
 use App\Observation;
 use App\WpBlog;
 use App\Location;
@@ -24,6 +25,7 @@ use DB;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class WpUserController extends Controller {
 
@@ -168,77 +170,17 @@ class WpUserController extends Controller {
 	 */
 	public function store(Request $request)
 	{
-		$params = $request->input();
+		$params = new ParameterBag($request->input());
 
-		// instantiate new user
+        $userRepo = new WpUserRepository();
+
 		$wpUser = new WpUser;
 
-		// validate
 		$this->validate($request, $wpUser->rules);
 
-		// create user
-		$wpUser->createNewUser($params['user_email'], $params['user_pass']);
+        $wpUser = $userRepo->createNewUser($wpUser, $params);
 
-		// instantiate user with meta
-		$wpUser = WpUser::with('meta')->find($wpUser->ID);
-
-		// the basics
-		$wpUser->user_nicename = $params['user_nicename'];
-		$wpUser->user_nicename = $params['user_nicename'];
-		$wpUser->program_id = $params['primary_blog'];
-
-		// lv roles
-		if(isset($params['roles'])) {
-			$wpUser->roles()->sync($params['roles']);
-		} else {
-			$wpUser->roles()->sync(array());
-		}
-
-		// save meta
-		$userMetaTemplate = $wpUser->userMetaTemplate();
-		foreach($userMetaTemplate as $key => $value) {
-			$userMeta = new WpUserMeta;
-			$userMeta->user_id = $wpUser->ID;
-			$userMeta->meta_key = $key;
-			$userMeta->meta_value = $request->input($key);
-			$wpUser->meta()->save($userMeta);
-		}
-
-		// update role / capabilities (wp)
-		$input = $request->input('role');
-		$capabilities = new WpUserMeta;
-		$capabilities->meta_key = 'wp_' . $params['primary_blog'] . '_capabilities';
-		$capabilities->meta_value = serialize(array($input => '1'));
-		$capabilities->user_id = $wpUser->ID;
-		$capabilities->save();
-		$capabilities = new WpUserMeta;
-		$capabilities->meta_key = 'wp_' . $params['primary_blog'] . '_user_level';
-		$capabilities->meta_value = '0';
-		$capabilities->user_id = $wpUser->ID;
-		$capabilities->save();
-
-		// update user config
-		$userConfigTemplate = $wpUser->userConfigTemplate();
-		foreach($userConfigTemplate as $key => $value) {
-			$input = $request->input($key);
-			if(!empty($input)) {
-				$userConfigTemplate[$key] = $request->input($key);
-			}
-		}
-		$userConfig = $wpUser->meta->where('user_id', '=', $wpUser->ID)->where('meta_key', '=', 'wp_' . $params['primary_blog'] . '_user_config')->first();
-		if($userConfig) {
-			$userConfig->meta_value = serialize($userConfigTemplate);
-		} else {
-			$userConfig = new WpUserMeta;
-			$userConfig->meta_key = 'wp_' . $params['primary_blog'] . '_user_config';
-			$userConfig->meta_value = serialize($userConfigTemplate);
-			$userConfig->user_id = $wpUser->ID;
-		}
-		$userConfig->save();
-
-		$wpUser->push();
 		return redirect()->route('users.edit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
-
 	}
 
 	/**

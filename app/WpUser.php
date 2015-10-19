@@ -202,7 +202,8 @@ class WpUser extends Model {
 
 
     public function userMetaTemplate() {
-        $userMeta = array("first_name" => "",
+        $userMeta = array(
+            "first_name" => "",
             "last_name" => "",
             "nickname" => "",
             "description" => "",
