@@ -336,7 +336,7 @@ Class ReportsService
                     'Change: ' => $change . $unit,
                     'Latest Weekly Data' => $tracking_obs_data[$q][0]['Reading'] . $unit,
                     'Goal' => $target_array[$tracking_obs_question_map[$q]],
-                    'data' => $tracking_obs_data[$q]
+                    'data' => array_reverse($tracking_obs_data[$q])
                 ];
             //, 'data' => $temp_meds];
 
