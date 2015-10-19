@@ -216,11 +216,12 @@ Class ReportsService
                     $target_array[str_replace('_', ' ', $tracking_q->obs_key)] = $target_value[0];
                 }
             }
-        }//dd($tracking_obs_question_map);
+        }//dd($tracking_obs_message_ids);
 
         $tracking_obs_data = array();
+        array_reverse($tracking_obs_message_ids);
         foreach ($tracking_obs_message_ids as $q) {
-            for ($i = 0; $i < 10; $i++) {
+            for ($i = 0; $i < 12; $i++) {
 
                 $previous_week = strtotime("-" . $i . " week +1 day");
                 $start_week = strtotime("last sunday midnight", $previous_week);
@@ -257,6 +258,7 @@ Class ReportsService
                 $tracking_obs_data[$q][$i]['id'] = $i + 1;
                 $tracking_obs_data[$q][$i]['week'] = date("n/j", $end_week);
                 $tracking_obs_data[$q][$i]['Reading'] = $temp[0]->Reading == null ? 'No Readings' : $temp[0]->Reading;
+                $tracking_obs_data[$q][$i]['unit'] = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
 
             }
             //dd($tracking_obs_data[$q][0]);
@@ -325,7 +327,7 @@ Class ReportsService
                 $unit = '';
                 $change = 'Unchanged';
             }
-            $trackingChanges['Data'][] =
+            $trackingChangesUnordered['Data'][] =
                 [
                     'Biometric' => $tracking_obs_question_map[$q],
                     //'Latest Weekly Avg.' => $tracking_obs_data[$q][0]->avg,
@@ -339,12 +341,20 @@ Class ReportsService
             //, 'data' => $temp_meds];
 
         }
+
+        //Reverse Order
+        $count = count($trackingChangesUnordered['Data']);
+        $trackingChanges['Data'] = array();
+
+        for($i=$count-1;$i>=0;$i--){
+            $trackingChanges['Data'][] =$trackingChangesUnordered['Data'][$i];
+        }
+
         //dd($trackingChanges['Data']);
-        //dd($tracking_obs_data);
 
         // WRAPPING UP
         $progress['Progress_Report'][] = $userHeader;
-        $progress['Progress_Report'][] = $trackingChanges;
+        $progress['Progress_Report'][] = array_reverse($trackingChanges);
         $progress['Progress_Report'][] = $medications;
 
         return $progress;
