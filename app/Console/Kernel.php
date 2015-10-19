@@ -3,6 +3,8 @@
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
+use App\Console\Commands\NukeItemAndMeta;
+
 class Kernel extends ConsoleKernel {
 
 	/**
@@ -12,6 +14,7 @@ class Kernel extends ConsoleKernel {
 	 */
 	protected $commands = [
 		'App\Console\Commands\Inspire',
+		NukeItemAndMeta::class,
 	];
 
 	/**
