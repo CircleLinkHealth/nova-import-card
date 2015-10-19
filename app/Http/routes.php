@@ -132,7 +132,7 @@ Route::group(['middleware' => 'auth'], function ()
 	/****************************/
 	// ADMIN (/admin)
 	/****************************/
-	Entrust::routeNeedsRole('admin/*', array('administrator','developer','care-center'), URL::route('login'), false);
+	Entrust::routeNeedsRole('admin/*', array('administrator','developer','care-center'), Redirect::to( URL::route('login') ), false);
 	Route::group(['prefix' => 'admin'], function () {
 
 		// home
