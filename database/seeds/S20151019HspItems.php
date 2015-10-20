@@ -269,7 +269,7 @@ class S20151019HspItems extends Seeder {
                     */
                 }
             }
-            die("done with $programId");
+            //die("done with $programId");
         }
 
         die('end');
