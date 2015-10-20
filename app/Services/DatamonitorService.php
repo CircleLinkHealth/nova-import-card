@@ -988,6 +988,7 @@ class DatamonitorService {
 		);
 
 		// insert activity
+		/*
 		$activity_params = array(
 			'type' => 'HospitalVisit',
 			'duration' => '0',
@@ -1004,6 +1005,7 @@ class DatamonitorService {
 			'updated_at' => date('Y-m-d H:i:s')
 		);
 		$this->CI->db->insert('lv_activities', $activity_params);
+		*/
 
 		//var_dump($result_array);die();
 		return $result_array;

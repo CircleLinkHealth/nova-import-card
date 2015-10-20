@@ -215,7 +215,7 @@ class MsgChooser {
 
             //  get new information in case of loop
             if($nextMsgId) {
-                $nextQuestionInfo = $msgCPRules->getQuestion($nextMsgId, $userId, 'SMS_EN', $wpUser->program_id, $qsType);
+                $nextQuestionInfo = $msgCPRules->getQuestion($nextMsgId, $userId, 'APP_EN', $wpUser->program_id, $qsType);
                 $nextQuestionInfo->message = $msgSubstitutions->doSubstitutions($nextQuestionInfo->message, $this->provid, $userId);
                 $log[] = 'MsgChooser->setObsResponse() nextQuestionInfo->message[' . $nextQuestionInfo->msgtype . '] = ' . $nextQuestionInfo->message . '';
                 $log[] = 'MsgChooser->setObsResponse() nextQuestionInfo->qtype = ' . $nextQuestionInfo->qtype . '';
