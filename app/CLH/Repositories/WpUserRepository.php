@@ -27,7 +27,11 @@ class WpUserRepository {
             $userMeta = new WpUserMeta;
             $userMeta->user_id = $wpUser->ID;
             $userMeta->meta_key = $key;
-            $userMeta->meta_value = $params->get($key);
+            if($params->get($key)) {
+                $userMeta->meta_value = $params->get($key);
+            } else {
+                $userMeta->meta_value = $value;
+            }
             $wpUser->meta()->save($userMeta);
         }
 
