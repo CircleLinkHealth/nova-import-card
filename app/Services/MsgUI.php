@@ -47,10 +47,18 @@ class MsgUI {
 					$formOutput .= "\n<input $type id='obs_value' name='obs_value' value='" . $arrBio['PatientAnswer'] . "' REQUIRED>";
 					break;
 				case 'List':
-					$formOutput .= "\n" . '<select name="obs_value" id="obs_value" data-role="slider">
-<option value="N">No</option>
-<option value="Y">Yes</option>
-</select>';
+					$formOutput .= "\n" . '<select name="obs_value" id="obs_value" data-role="slider">';
+					if(!empty($arrBio['ReturnValidAnswers'])) {
+						$answers = explode(',', $arrBio['ReturnValidAnswers']);
+						if(!empty($answers)) {
+							foreach($answers as $answer) {
+								$formOutput .= '<option value="'.$answer.'">'.$answer.'</option>';
+							}
+						}
+					} else {
+						$formOutput .= '<option value="N">No</option><option value="Y">Yes</option>';
+					}
+					$formOutput .= '</select>';
 					break;
 				case 'Date':
 					$formOutput .= "<input $type class='form-control col-sm-1' id='obs_value' name='obs_value' value='" . $arrBio['PatientAnswer'] . "' REQUIRED>";
