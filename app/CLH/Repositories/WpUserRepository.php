@@ -72,4 +72,72 @@ class WpUserRepository {
         return $wpUser;
     }
 
+    public function editUser(WpUser $wpUser, ParameterBag $params)
+    {
+        // the basics
+        $wpUser->user_nicename = $params->get('user_nicename');
+        $wpUser->display_name = $params->get('display_name');
+        $wpUser->program_id = $params->get('primary_blog');
+        $wpUser->save();
+
+        // roles
+        if(($params->get('roles'))) {
+            $wpUser->roles()->sync($params->get('roles'));
+        } else {
+            $wpUser->roles()->sync(array());
+        }
+
+        // save meta
+        $userMetaTemplate = $wpUser->userMetaTemplate();
+        foreach($userMetaTemplate as $key => $value) {
+            $userMeta = $wpUser->meta()->where('meta_key', $key)->first();
+            if(!$userMeta) {
+                $userMeta = new WpUserMeta;
+            }
+            $userMeta->user_id = $wpUser->ID;
+            $userMeta->meta_key = $key;
+            if(($params->get($key))) {
+                $userMeta->meta_value = $params->get($key);
+            } else {
+                $userMeta->meta_value = $value;
+            }
+            $wpUser->meta()->save($userMeta);
+        }
+
+        // update role
+        $input = $params->get('role');
+        if(!empty($input)) {
+            $capabilities = $wpUser->meta()->where('user_id', '=', $wpUser->ID)->where('meta_key', '=', 'wp_' . $wpUser->blogId() . '_capabilities')->first();
+            if($capabilities) {
+                $capabilities->meta_value = serialize(array($input => '1'));
+            } else {
+                $capabilities = new WpUserMeta;
+                $capabilities->meta_key = 'wp_' . $wpUser->blogId() . '_capabilities';
+                $capabilities->meta_value = serialize(array($input => '1'));
+                $capabilities->user_id = $wpUser->ID;
+            }
+            $capabilities->save();
+        }
+
+        // update user config
+        $userConfigTemplate = $wpUser->userConfigTemplate();
+        foreach($userConfigTemplate as $key => $value) {
+            if(($params->get($key))) {
+                $userConfigTemplate[$key] = $params->get($key);
+            }
+        }
+        $userConfig = $wpUser->meta()->where('user_id', '=', $wpUser->ID)->where('meta_key', '=', 'wp_' . $wpUser->blogId() . '_user_config')->first();
+        if($userConfig) {
+            $userConfig->meta_value = serialize($userConfigTemplate);
+        } else {
+            $userConfig = new WpUserMeta;
+            $userConfig->meta_key = 'wp_' . $wpUser->blogId() . '_user_config';
+            $userConfig->meta_value = serialize($userConfigTemplate);
+            $userConfig->user_id = $id;
+        }
+        $userConfig->save();
+
+        return $wpUser;
+    }
+
 }

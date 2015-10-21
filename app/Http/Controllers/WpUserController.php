@@ -277,88 +277,12 @@ class WpUserController extends Controller {
 			return response("User not found", 401);
 		}
 
-		// validate
-		$roles = $request->input('roles');
-		if(!empty($roles)) {
-			foreach($roles as $roleId) {
-				// get Role to check validation
-				$role = Role::find($roleId);
-				if ($role->name == 'patient') {
-					//$this->validate($request, $wpUser->patient_rules);
-				}
-			}
-		}
-
-		// return back
-		//return redirect()->back()->withInput()->with('messages', ['successfully created/updated patient'])->send();
-
 		// input
-		$params = $request->all();
+		$params = new ParameterBag($request->input());
 
-		// the basics
-		$wpUser->user_nicename = $params['user_nicename'];
-		$wpUser->display_name = $params['display_name'];
-		$wpUser->program_id = $params['primary_blog'];
-		$wpUser->save();
+		$userRepo = new WpUserRepository();
 
-		// roles
-		if(isset($roles)) {
-			$wpUser->roles()->sync($roles);
-		} else {
-			$wpUser->roles()->sync(array());
-		}
-
-		// save meta
-		$userMetaTemplate = $wpUser->userMetaTemplate();
-		foreach($userMetaTemplate as $key => $value) {
-			$userMeta = $wpUser->meta()->where('meta_key', $key)->first();
-			if(!$userMeta) {
-				$userMeta = new WpUserMeta;
-			}
-			$userMeta->user_id = $wpUser->ID;
-			$userMeta->meta_key = $key;
-			if($request->input($key)) {
-				$userMeta->meta_value = $request->input($key);
-			} else {
-				$userMeta->meta_value = $value;
-			}
-			$wpUser->meta()->save($userMeta);
-		}
-
-		// update role
-		$input = $request->input('role');
-		if(!empty($input)) {
-			$capabilities = $wpUser->meta()->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $wpUser->blogId() . '_capabilities')->first();
-			if($capabilities) {
-				$capabilities->meta_value = serialize(array($input => '1'));
-			} else {
-				$capabilities = new WpUserMeta;
-				$capabilities->meta_key = 'wp_' . $wpUser->blogId() . '_capabilities';
-				$capabilities->meta_value = serialize(array($input => '1'));
-				$capabilities->user_id = $id;
-			}
-			$capabilities->save();
-		}
-
-		// update user config
-		$userConfigTemplate = $wpUser->userConfigTemplate();
-		foreach($userConfigTemplate as $key => $value) {
-			$input = $request->input($key);
-			if(!empty($input)) {
-				$userConfigTemplate[$key] = $request->input($key);
-			}
-		}
-		$userConfig = $wpUser->meta()->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $wpUser->blogId() . '_user_config')->first();
-		if($userConfig) {
-			$userConfig->meta_value = serialize($userConfigTemplate);
-		} else {
-			$userConfig = new WpUserMeta;
-			$userConfig->meta_key = 'wp_' . $wpUser->blogId() . '_user_config';
-			$userConfig->meta_value = serialize($userConfigTemplate);
-			$userConfig->user_id = $id;
-		}
-		$userConfig->save();
-		//dd($userConfigTemplate);
+		$userRepo->editUser($wpUser, $params);
 
 		return redirect()->back()->with('messages', ['successfully updated user']);
 	}
