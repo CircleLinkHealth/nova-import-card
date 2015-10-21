@@ -9,8 +9,10 @@ Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 //Test route @todo remove after testing
 Route::get('/reports/progress/{id}', function($id){
 	$report = new \App\Services\ReportsService();
-	return $report->careplan($id);
+	return $report->progress($id);
 });
+
+Route::get('test/form','WpUserController@quickAddForm');
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 

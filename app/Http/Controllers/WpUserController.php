@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\CLH\Repositories\WpUserRepository;
+use App\CPRulesPCP;
 use App\Observation;
 use App\WpBlog;
 use App\Location;
@@ -124,6 +125,41 @@ class WpUserController extends Controller {
 		}
 
 	}
+
+
+
+
+
+
+
+
+	public function quickAddForm()
+	{
+		//if ( $request->header('Client') == 'ui' ) {}
+
+			$blogItem = WpBlog::find(7)->pcp()->whereStatus('Active')->get();
+
+			foreach($blogItem as $item){
+				$sections[] = $item->section_text;
+				$subItems[$item->section_text][] = CPRulesPCP::find($item->pcp_id)->items()->where('items_parent','0')->where('items_text', '!=', '')->get();
+
+			}
+		$weekdays_arr = array('1' => 'Sunday', '2' => 'Monday', '3' => 'Tuesday', '4' => 'Wednesday', '5' => 'Thursday', '6' => 'Friday', '7' => 'Saturday' );
+
+		return view('wpUsers.quickAdd', ['headings' => $sections,'items' => $subItems, 'days' => $weekdays_arr]);
+
+	}
+
+
+
+
+
+
+
+
+
+
+
 
 	/**
 	 * Show the form for creating a new resource.
