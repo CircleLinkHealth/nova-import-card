@@ -312,6 +312,8 @@ class CareplanService {
 			$currQuestionInfo = $msgCPRules->getQuestion($msgId, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
 			$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
 			//echo $msgId .'-'. $this->wpUser->ID .'-'. $this->msgLanguageType .'-'. $this->programId .'-'. $qsType."<br><BR>".PHP_EOL;
+			//var_dump($currQuestionInfo);
+			//echo "<br><BR>".PHP_EOL;
 			// add to feed
 			$obsArr = array(
 				"MessageID" => $currQuestionInfo->msg_id,
@@ -323,7 +325,7 @@ class CareplanService {
 				"ReturnFieldType" => $currQuestionInfo->qtype,
 				"ReturnDataRangeLow" => $currQuestionInfo->low,
 				"ReturnDataRangeHigh" => $currQuestionInfo->high,
-				"ReturnValidAnswers" => '',
+				"ReturnValidAnswers" => $currQuestionInfo->valid_answers,
 				"PatientAnswer" => '',
 				"ReadingUnit" => '',
 				"ResponseDate" => ''
@@ -357,7 +359,7 @@ class CareplanService {
 						"ReturnFieldType" => $currQuestionInfo->qtype,
 						"ReturnDataRangeLow" => $currQuestionInfo->low,
 						"ReturnDataRangeHigh" => $currQuestionInfo->high,
-						"ReturnValidAnswers" => '',
+						"ReturnValidAnswers" => $currQuestionInfo->valid_answers,
 						"PatientAnswer" => $observation->obs_value,
 						"ReadingUnit" => $reportsService->biometricsUnitMapping(str_replace('_', ' ', $currQuestionInfo->obs_key)),
 						"ResponseDate" => $observation->obs_date
@@ -393,9 +395,14 @@ class CareplanService {
 						$query->orWhere('section_text', '=', 'Medications to Monitor');
 					});
 				});
+				$q->has('question');
 			})
+			->with('item')
+			->with('item.question')
+			->with('item.question.questionSets')
 			->where('meta_value', '=', 'Active')
 			->get();
+		//dd($ucp);
 		$msgIds = array();
 		$today = date('N', strtotime($this->date));
 		if($ucp->count() > 0) {
