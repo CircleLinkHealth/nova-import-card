@@ -181,6 +181,7 @@ class WpUserController extends Controller {
         $wpUser = $userRepo->createNewUser($wpUser, $params);
 
 		return redirect()->route('users.edit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
+
 	}
 
 	/**
@@ -316,7 +317,11 @@ class WpUserController extends Controller {
 			}
 			$userMeta->user_id = $wpUser->ID;
 			$userMeta->meta_key = $key;
-			$userMeta->meta_value = $request->input($key);
+			if($request->input($key)) {
+				$userMeta->meta_value = $request->input($key);
+			} else {
+				$userMeta->meta_value = $value;
+			}
 			$wpUser->meta()->save($userMeta);
 		}
 
