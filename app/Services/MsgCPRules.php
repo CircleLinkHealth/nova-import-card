@@ -63,7 +63,7 @@ class MsgCPRules {
         }
 
         // check for mm/dd format
-        if($qdata->obs_key == 'HSP' || $qdata->obs_key == 'HSP_ER' || $qdata->obs_key == 'HSP_HOSP'){
+        if($qdata->obs_key == 'HSP'){
             $question = CPRulesQuestions::where('msg_id', '=', $strMsgID)->first();
             if($question) {
                 $questionSet = CPRulesQuestionSets::where('qid', '=', $question->qid)
@@ -74,6 +74,7 @@ class MsgCPRules {
                 }
             }
             return array();
+            /*
             $mixedReturn = $this->getMixedValid($strMsgID, $pid, $strResponse);
             if(empty($mixedReturn)) {
                 $testStr = str_replace( '_', '/', $strResponse);
@@ -83,6 +84,21 @@ class MsgCPRules {
                     return array();
                 }
             }
+            */
+        }
+
+
+        if($strMsgID == 'CF_HSP_30'){
+            $question = CPRulesQuestions::where('msg_id', '=', $strMsgID)->first();
+            if($question) {
+                $questionSet = CPRulesQuestionSets::where('qid', '=', $question->qid)
+                    ->where('provider_id', '=', $pid)
+                    ->first();
+                if (!empty($questionSet)) {
+                    return $questionSet;
+                }
+            }
+            return array();
         }
 
 
@@ -181,7 +197,9 @@ limit 1";
             $qInfo->high = '';
 
             // get low/high from question_sets
-            $questionSet = CPRulesQuestionSets::where('qid', '=', $qInfo->qid)->get();
+            $questionSet = CPRulesQuestionSets::where('qid', '=', $qInfo->qid)
+                ->where('provider_id', '=', $pid)
+                ->get();
             if($questionSet->count()) {
                 foreach ($questionSet as $qSet) {
                     if (!empty($qSet->low)) {
@@ -205,8 +223,10 @@ limit 1";
                 $qInfo->high = $qSet->high .'/250';
             }
             $qInfo->valid_answers = '';
-            if($qInfo->obs_key == 'HSP') {
-                $qInfo->valid_answers = 'HSP,ER';
+            if($strMsgId == 'CF_HSP_10') {
+                $qInfo->valid_answers = 'Y,N';
+            } else if($strMsgId == 'CF_HSP_20') {
+                $qInfo->valid_answers = 'ER,HSP';
             }
             if($qInfo->obs_key == 'Severity') {
                 $qInfo->valid_answers = 'Y,N';

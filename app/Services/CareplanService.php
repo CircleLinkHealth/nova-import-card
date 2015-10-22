@@ -333,13 +333,23 @@ class CareplanService {
 			return $obsArr;
 		}
 		// get all observations for message_thread
-		$observations = Observation::where('comment_id', '=', $commentId)->orderBy('sequence_id', 'asc')->get();
+		$observations = Observation::where('comment_id', '=', $commentId)
+			->orderBy('sequence_id', 'asc')
+			->get();
 		$obsArr = array();
 		if($observations->count() > 0) {
 			$o = 0;
+			$numOutbounds = 0;
 			foreach($observations as $observation) {
+				// skip outbounds except for last response
+				if($msgId == 'CF_HSP_10') {
+					//echo(($o+$numOutbounds) . '-' . ($observations->count()-1)).PHP_EOL;
+					if(($o+$numOutbounds) != ($observations->count()-1) && $observation->obs_unit == 'outbound') {
+						$numOutbounds++;
+						continue 1;
+					}
+				}
 				//obtain message type
-
 				$qsType = $msgCPRules->getQsType($observation->obs_message_id, $this->wpUser->ID);
 				$currQuestionInfo = $msgCPRules->getQuestion($observation->obs_message_id, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
 				if($currQuestionInfo) {
@@ -349,10 +359,14 @@ class CareplanService {
 						$currQuestionInfo->message = '-';
 					}
 					// add to feed
+					$tmpCommentId = $commentId;
+					if($o == 0) {
+						$tmpCommentId = 0;
+					}
 					$obsTemp = array(
 						"MessageID" => $currQuestionInfo->msg_id,
 						"Obs_Key" => $currQuestionInfo->obs_key,
-						"ParentID" => 0,
+						"ParentID" => $tmpCommentId,
 						"MessageIcon" => $currQuestionInfo->icon,
 						"MessageCategory" => $currQuestionInfo->category,
 						"MessageContent" => $currQuestionInfo->message,
@@ -369,11 +383,18 @@ class CareplanService {
 					} else if ($o == 1) {
 						$obsArr['Response'][0] = $obsTemp;
 					} else if ($o == 2) {
-						$obsArr['Response']['Response'][0] = $obsTemp;
+						$obsArr['Response'][0]['Response'][0] = $obsTemp;
+					} else if ($o == 3) {
+						$obsArr['Response'][0]['Response'][0]['Response'][0] = $obsTemp;
+					} else if ($o == 4) {
+						$obsArr['Response'][0]['Response'][0]['Response'][0]['Response'][0] = $obsTemp;
 					}
 				}
 				$o++; // +1 bioObs
 			}
+		}
+		if($msgId == 'CF_HSP_10') {
+			//dd($obsArr);
 		}
 		return $obsArr;
 	}
