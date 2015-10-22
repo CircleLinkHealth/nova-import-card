@@ -7,6 +7,7 @@ use App\Location;
 use App\Observation;
 use App\WpBlog;
 use App\WpUser;
+use App\WpUserMeta;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use PhpSpec\Exception\Exception;
@@ -19,14 +20,15 @@ Class ReportsService
     {
 
         $user = WpUser::find($id);
-
+        $user_meta = WpUserMeta::where('user_id', '=', $user->ID)->lists('meta_value', 'meta_key');
         $userHeader['date'] = Carbon::now()->toDateString();
-        $userHeader['Patient_Name'] = $user->display_name;
+        $userHeader['Patient_Name'] = $user_meta['first_name'] . ' ' . $user_meta['last_name'];
         $userConfig = $user->userConfig();
         $userHeader['Patient_Phone'] = $userConfig['study_phone_number'];
-        $provider = WpUser::findOrFail($userConfig['lead_contact']);
+        $provider = WpUser::findOrFail($userConfig['billing_provider']);
         $providerConfig = $provider->userConfig();
-        $userHeader['Provider_Name'] = $provider->display_name;
+        $provider_meta = WpUserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
+        $userHeader['Provider_Name'] = $providerConfig['prefix'] . ' ' . $provider_meta['first_name'] . ' ' . $provider_meta['last_name'] . ' ' . $providerConfig['qualification'];
         $userHeader['Provider_Phone'] = $providerConfig['study_phone_number'];
         $userHeader['Clinic_Name'] = Location::getLocationName($userConfig['preferred_contact_location']);
 
