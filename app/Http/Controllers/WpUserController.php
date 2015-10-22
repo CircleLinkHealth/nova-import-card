@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\CLH\Repositories\WpUserRepository;
+use App\CPRulesPCP;
 use App\Observation;
 use App\WpBlog;
 use App\Location;
@@ -125,6 +126,41 @@ class WpUserController extends Controller {
 
 	}
 
+
+
+
+
+
+
+
+	public function quickAddForm()
+	{
+		//if ( $request->header('Client') == 'ui' ) {}
+
+			$blogItem = WpBlog::find(7)->pcp()->whereStatus('Active')->get();
+
+			foreach($blogItem as $item){
+				$sections[] = $item->section_text;
+				$subItems[$item->section_text][] = CPRulesPCP::find($item->pcp_id)->items()->where('items_parent','0')->where('items_text', '!=', '')->get();
+
+			}
+		$weekdays_arr = array('1' => 'Sunday', '2' => 'Monday', '3' => 'Tuesday', '4' => 'Wednesday', '5' => 'Thursday', '6' => 'Friday', '7' => 'Saturday' );
+
+		return view('wpUsers.quickAdd', ['headings' => $sections,'items' => $subItems, 'days' => $weekdays_arr]);
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
 	 * Show the form for creating a new resource.
 	 *
@@ -181,6 +217,7 @@ class WpUserController extends Controller {
         $wpUser = $userRepo->createNewUser($wpUser, $params);
 
 		return redirect()->route('users.edit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
+
 	}
 
 	/**
@@ -276,84 +313,12 @@ class WpUserController extends Controller {
 			return response("User not found", 401);
 		}
 
-		// validate
-		$roles = $request->input('roles');
-		if(!empty($roles)) {
-			foreach($roles as $roleId) {
-				// get Role to check validation
-				$role = Role::find($roleId);
-				if ($role->name == 'patient') {
-					//$this->validate($request, $wpUser->patient_rules);
-				}
-			}
-		}
-
-		// return back
-		//return redirect()->back()->withInput()->with('messages', ['successfully created/updated patient'])->send();
-
 		// input
-		$params = $request->all();
+		$params = new ParameterBag($request->input());
 
-		// the basics
-		$wpUser->user_nicename = $params['user_nicename'];
-		$wpUser->display_name = $params['display_name'];
-		$wpUser->program_id = $params['primary_blog'];
-		$wpUser->save();
+		$userRepo = new WpUserRepository();
 
-		// roles
-		if(isset($roles)) {
-			$wpUser->roles()->sync($roles);
-		} else {
-			$wpUser->roles()->sync(array());
-		}
-
-		// save meta
-		$userMetaTemplate = $wpUser->userMetaTemplate();
-		foreach($userMetaTemplate as $key => $value) {
-			$userMeta = $wpUser->meta()->where('meta_key', $key)->first();
-			if(!$userMeta) {
-				$userMeta = new WpUserMeta;
-			}
-			$userMeta->user_id = $wpUser->ID;
-			$userMeta->meta_key = $key;
-			$userMeta->meta_value = $request->input($key);
-			$wpUser->meta()->save($userMeta);
-		}
-
-		// update role
-		$input = $request->input('role');
-		if(!empty($input)) {
-			$capabilities = $wpUser->meta()->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $wpUser->blogId() . '_capabilities')->first();
-			if($capabilities) {
-				$capabilities->meta_value = serialize(array($input => '1'));
-			} else {
-				$capabilities = new WpUserMeta;
-				$capabilities->meta_key = 'wp_' . $wpUser->blogId() . '_capabilities';
-				$capabilities->meta_value = serialize(array($input => '1'));
-				$capabilities->user_id = $id;
-			}
-			$capabilities->save();
-		}
-
-		// update user config
-		$userConfigTemplate = $wpUser->userConfigTemplate();
-		foreach($userConfigTemplate as $key => $value) {
-			$input = $request->input($key);
-			if(!empty($input)) {
-				$userConfigTemplate[$key] = $request->input($key);
-			}
-		}
-		$userConfig = $wpUser->meta()->where('user_id', '=', $id)->where('meta_key', '=', 'wp_' . $wpUser->blogId() . '_user_config')->first();
-		if($userConfig) {
-			$userConfig->meta_value = serialize($userConfigTemplate);
-		} else {
-			$userConfig = new WpUserMeta;
-			$userConfig->meta_key = 'wp_' . $wpUser->blogId() . '_user_config';
-			$userConfig->meta_value = serialize($userConfigTemplate);
-			$userConfig->user_id = $id;
-		}
-		$userConfig->save();
-		//dd($userConfigTemplate);
+		$userRepo->editUser($wpUser, $params);
 
 		return redirect()->back()->with('messages', ['successfully updated user']);
 	}
