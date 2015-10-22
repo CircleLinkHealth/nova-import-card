@@ -2,6 +2,7 @@
 
 use App\WpUser;
 use App\WpUserMeta;
+use App\CPRulesQuestions;
 use App\CPRulesQuestionSets;
 use DB;
 
@@ -62,7 +63,17 @@ class MsgCPRules {
         }
 
         // check for mm/dd format
-        if($qdata->obs_key == 'HSP_ER' || $qdata->obs_key == 'HSP_HOSP'){
+        if($qdata->obs_key == 'HSP' || $qdata->obs_key == 'HSP_ER' || $qdata->obs_key == 'HSP_HOSP'){
+            $question = CPRulesQuestions::where('msg_id', '=', $strMsgID)->first();
+            if($question) {
+                $questionSet = CPRulesQuestionSets::where('qid', '=', $question->qid)
+                    ->where('provider_id', '=', $pid)
+                    ->first();
+                if (!empty($questionSet)) {
+                    return $questionSet;
+                }
+            }
+            return array();
             $mixedReturn = $this->getMixedValid($strMsgID, $pid, $strResponse);
             if(empty($mixedReturn)) {
                 $testStr = str_replace( '_', '/', $strResponse);
@@ -192,6 +203,16 @@ limit 1";
             if($qInfo->obs_key == 'Blood_Pressure') {
                 $qInfo->low = $qSet->low .'/50';
                 $qInfo->high = $qSet->high .'/250';
+            }
+            $qInfo->valid_answers = '';
+            if($qInfo->obs_key == 'HSP') {
+                $qInfo->valid_answers = 'HSP,ER';
+            }
+            if($qInfo->obs_key == 'Severity') {
+                $qInfo->valid_answers = 'Y,N';
+            }
+            if($qInfo->obs_key == 'Adherence') {
+                $qInfo->valid_answers = 'Y,N';
             }
             return $qInfo;
         } else {

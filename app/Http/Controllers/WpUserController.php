@@ -200,7 +200,11 @@ class WpUserController extends Controller {
 			$userMeta = new WpUserMeta;
 			$userMeta->user_id = $wpUser->ID;
 			$userMeta->meta_key = $key;
-			$userMeta->meta_value = $request->input($key);
+			if($request->input($key)) {
+				$userMeta->meta_value = $request->input($key);
+			} else {
+				$userMeta->meta_value = $value;
+			}
 			$wpUser->meta()->save($userMeta);
 		}
 
@@ -374,7 +378,11 @@ class WpUserController extends Controller {
 			}
 			$userMeta->user_id = $wpUser->ID;
 			$userMeta->meta_key = $key;
-			$userMeta->meta_value = $request->input($key);
+			if($request->input($key)) {
+				$userMeta->meta_value = $request->input($key);
+			} else {
+				$userMeta->meta_value = $value;
+			}
 			$wpUser->meta()->save($userMeta);
 		}
 

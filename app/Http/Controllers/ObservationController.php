@@ -209,7 +209,7 @@ class ObservationController extends Controller {
 		$qsType  = $msgCPRules->getQsType($obsMessageId, $wpUser->program_id);
 		$answerResponse =  $msgCPRules->getValidAnswer($wpUser->program_id, $qsType, $obsMessageId, $params['obs_value'], false);
 		if(!$answerResponse) {
-			return response()->json(['response' => 'Invalid reading'], 500);
+			return response()->json(['response' => 'Error - Invalid reading'], 500);
 		}
 
 		$result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'], $params['obs_value'], $params['obs_date'], $obsMessageId, $params['obs_key'], $params['timezone'], $params['source'], $params['isStartingObs']);

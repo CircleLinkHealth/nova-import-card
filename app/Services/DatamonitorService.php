@@ -179,7 +179,7 @@ class DatamonitorService {
 							$log_string .= $send_alert;
 							// add obsmeta dm_log_missed_' . strtolower($item['alert_key'])
 							$observationmeta_paramaters = array(
-								'obs_id' => $observation['obs_id'],
+								'obs_id' => $observation['id'],
 								'comment_id' => $observation['comment_id'],
 								'message_id' => $message_id,
 								'meta_key' => 'dm_log_missed_' . strtolower($item['alert_key']),
@@ -190,7 +190,7 @@ class DatamonitorService {
 							if($type == 'Adherence') { // HACK FIX
 								// update observation to ensure it has obs_key
 								$observation_paramaters = array(
-									'obs_id' => $observation['obs_id'],
+									'obs_id' => $observation['id'],
 									'obs_key' => 'Adherence'
 								);
 								$this->CI->observation_model->update_observation($observation_paramaters, $this->int_blog_id);
@@ -239,7 +239,7 @@ class DatamonitorService {
 		}
 		$message_id = 'n/a';
 		$extra_vars = array(); // extra_vars get stored for later email/sms/msg substitution
-		$log_string .= "Checking ({$observation->obs_key}) observation[{$observation['obs_id']}][{$observation['obs_date']}][{$observation['obs_value']}]" . PHP_EOL;
+		$log_string .= "Checking ({$observation->obs_key}) observation[{$observation['id']}][{$observation['obs_date']}][{$observation['obs_value']}]" . PHP_EOL;
 		// get user data for observation
 		$user = WpUser::find($observation->user_id);
 
@@ -452,7 +452,7 @@ class DatamonitorService {
 		} else {
 			$max_systolic_bp = $userUcpData['alert_keys']['Blood_Pressure'];
 			$min_systolic_bp = $userUcpData['alert_keys']['Blood_Pressure_Low'];
-			$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp},  BP Low: {$min_systolic_bp} (systolic) - obs_value={$obs_value}" . PHP_EOL;
+			$log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp},  BP Low: {$min_systolic_bp} (systolic) - obs_value={$obs_value}" . PHP_EOL;
 			// compare observation value (systolic/diastolic) to patient max/min blood pressure limit
 			if (!empty($obs_value) && !empty($min_systolic_bp) && !empty($max_systolic_bp)) {
 				if ($obs_value <= $min_systolic_bp) { //81
@@ -517,7 +517,7 @@ class DatamonitorService {
 			$max_blood_sugar = $userUcpData['alert_keys']['Blood_Sugar'];
 			$min_blood_sugar = $userUcpData['alert_keys']['Blood_Sugar_Low'];
 			$extra_vars['bsvalue'] = $obs_value;
-			$log_string = PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar}, BS Low: {$min_blood_sugar}" . PHP_EOL;
+			$log_string = PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar}, BS Low: {$min_blood_sugar}" . PHP_EOL;
 			if (!empty($obs_value) && !empty($min_blood_sugar) && !empty($max_blood_sugar)) {
 				if ($obs_value <= $min_blood_sugar) { //61
 					$message_id = 'CF_AL_04';
@@ -592,7 +592,7 @@ class DatamonitorService {
 				$intDiff    = date_diff($dateLast, $dateNow);
 				$intWtDiff	= $obs_value - $prev_obs->obs_value;
 
-				$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}({$observation['obs_date']})] Weight: {$obs_value}lbs CHF CHECK:: PREV OBSERVATION[{$prev_obs->obs_id}({$prev_obs->obs_date})][{$intDiff->days} days prior] Prev weight:{$prev_obs->obs_value}lbs" . PHP_EOL;
+				$log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}({$observation['obs_date']})] Weight: {$obs_value}lbs CHF CHECK:: PREV OBSERVATION[{$prev_obs->obs_id}({$prev_obs->obs_date})][{$intDiff->days} days prior] Prev weight:{$prev_obs->obs_value}lbs" . PHP_EOL;
 
 				switch ($intDiff->format('%a')) {
 					case 0:
@@ -654,7 +654,7 @@ class DatamonitorService {
 				}
 			} else {
 				$label = 'success';
-				$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] Missing required previous obs for chf check" . PHP_EOL;
+				$log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] Missing required previous obs for chf check" . PHP_EOL;
 			}
 		} else {
 			$label = 'success';
@@ -665,10 +665,11 @@ class DatamonitorService {
 				$log_string .= PHP_EOL . "user does not have a target weight set, cannot check" . PHP_EOL;
 				$label = 'success';
 			} else {
+				//dd($userUcpData);
 				$max_weight = $userUcpData['alert_keys']['Weight'];
 				$obs_value = $obs_value;
 				if (($obs_value !== false)) {
-					$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] User {$observation['user_id']} Weight: {$obs_value}" . PHP_EOL;
+					$log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] User {$observation['user_id']} Weight: {$obs_value}" . PHP_EOL;
 					$label = 'success';
 					if ($max_weight) {
 						if (($obs_value / $max_weight) > 1.15) {
@@ -724,10 +725,10 @@ class DatamonitorService {
 		$max_severity = 7;
 		if($obs_value < 4) {
 			$label = 'success';
-			$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] Severity: {$obs_value} < 4" . PHP_EOL;
+			$log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] Severity: {$obs_value} < 4" . PHP_EOL;
 		} else if($obs_value > 3 && $obs_value < 7) {
 			$label = 'warning';
-			$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] Severity: {$obs_value} > 3 && < 7" . PHP_EOL;
+			$log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] Severity: {$obs_value} > 3 && < 7" . PHP_EOL;
 		} else if($obs_value > 6) {
 			$label = 'danger';
 		}
@@ -742,8 +743,15 @@ class DatamonitorService {
 			}
 		}
 		*/
+
+		// get symptom label for extra_vars
+		$question = CPRulesQuestions::where('msg_id','=',$observation['obs_message_id'])->first();
+		$extra_vars['symptom'] = '-';
+		if($question) {
+			$extra_vars['symptom'] = $question->description;
+		}
 		if(($obs_value !== false) && $obs_value >= $max_severity) {
-			$log_string .= PHP_EOL . "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}] Severity: {$obs_value}" . PHP_EOL;
+			$log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] Severity: {$obs_value}" . PHP_EOL;
 			$send_alert = "{$obs_value} is >= {$max_severity}";
 			$send_email = true;
 			$message_id = 'CF_AL_08';
@@ -791,10 +799,10 @@ class DatamonitorService {
 			$label = 'danger';
 			$message_id = 'CF_AL_07';
 			$send_alert = "Patient cigs too high, {$obs_value} > 4";
-			$log_string = "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}][ucp cigs={$max_cigs}] cigs too high, {$obs_value} > {$max_cigs}" . PHP_EOL;
+			$log_string = "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}][ucp cigs={$max_cigs}] cigs too high, {$obs_value} > {$max_cigs}" . PHP_EOL;
 			$send_email = false;
 		} else {
-			$log_string = "OBSERVATION[{$observation['obs_id']}] Patient[{$observation['user_id']}][ucp cigs={$max_cigs}] cigs lower than ucp max, {$obs_value} > {$max_cigs}" . PHP_EOL;
+			$log_string = "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}][ucp cigs={$max_cigs}] cigs lower than ucp max, {$obs_value} > {$max_cigs}" . PHP_EOL;
 			$label = 'success';
 		}
 		$result_array = array(
@@ -830,7 +838,7 @@ class DatamonitorService {
 		$obs_value = $observation['obs_value'];
 		$message_id = 'CF_AL_01';
 		$send_alert = "Patient requested a call" . PHP_EOL;
-		$log_string = "OBSERVATION[{$observation['obs_id']}]  Patient[{$observation['user_id']}] requested a CALL" . PHP_EOL;
+		$log_string = "OBSERVATION[{$observation['id']}]  Patient[{$observation['user_id']}] requested a CALL" . PHP_EOL;
 		$send_email = false;
 		$result_array = array(
 			'log_string' => $log_string,
@@ -859,7 +867,7 @@ class DatamonitorService {
 		$send_alert = false;
 		$send_email = false;
 		$obs_value = $observation['obs_value'];
-		$log_string = "OBSERVATION[{$observation['obs_id']}]  Patient[{$observation['user_id']}] obs_value = " . $obs_value . PHP_EOL;
+		$log_string = "OBSERVATION[{$observation['id']}]  Patient[{$observation['user_id']}] obs_value = " . $obs_value . PHP_EOL;
 
 		// start
 		if(strtoupper($obs_value) == 'Y') {
@@ -905,7 +913,7 @@ class DatamonitorService {
 		if(empty($obs_value) || (strtoupper($obs_value) != 'Y' && strtoupper($obs_value) != 'N')) {
 			return false;
 		}
-		$log_string = "OBSERVATION[{$observation['obs_id']}] obs_value = " . $obs_value . PHP_EOL;
+		$log_string = "OBSERVATION[{$observation['id']}] obs_value = " . $obs_value . PHP_EOL;
 
 		// start
 		if(strtoupper($obs_value) == 'Y') {
@@ -953,7 +961,7 @@ class DatamonitorService {
 		$obs_date = new DateTime($observation['obs_date']);
 		//echo $obs_date->format('m/d');
 
-		//$log_string = "OBSERVATION[{$observation['obs_id']}] obs_value = " . $obs_value . PHP_EOL;
+		//$log_string = "OBSERVATION[{$observation['id']}] obs_value = " . $obs_value . PHP_EOL;
 		$log_string = "";
 		if($observation->obs_key == 'HSP_ER') {
 			if(strtolower($obs_value) == 'c') {
@@ -987,6 +995,7 @@ class DatamonitorService {
 		);
 
 		// insert activity
+		/*
 		$activity_params = array(
 			'type' => 'HospitalVisit',
 			'duration' => '0',
@@ -1003,6 +1012,7 @@ class DatamonitorService {
 			'updated_at' => date('Y-m-d H:i:s')
 		);
 		$this->CI->db->insert('lv_activities', $activity_params);
+		*/
 
 		//var_dump($result_array);die();
 		return $result_array;
@@ -1071,7 +1081,7 @@ class DatamonitorService {
 		$serial_content = serialize(array(
 			'status' => $status,
 			'alert_level' => $alert_level,
-			'obsid' => $observation['obs_id'],
+			'obsid' => $observation['id'],
 			'comment_id' => $observation['obs_comment_id'],
 			'message_id' => $message_id,
 			'user' => $observation['user_id'],
