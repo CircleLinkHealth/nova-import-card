@@ -665,7 +665,7 @@ class DatamonitorService {
 				$log_string .= PHP_EOL . "user does not have a target weight set, cannot check" . PHP_EOL;
 				$label = 'success';
 			} else {
-				dd($userUcpData);
+				//dd($userUcpData);
 				$max_weight = $userUcpData['alert_keys']['Weight'];
 				$obs_value = $obs_value;
 				if (($obs_value !== false)) {
