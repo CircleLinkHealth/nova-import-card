@@ -665,7 +665,7 @@ class DatamonitorService {
 				$log_string .= PHP_EOL . "user does not have a target weight set, cannot check" . PHP_EOL;
 				$label = 'success';
 			} else {
-				dd($userUcpData);
+				//dd($userUcpData);
 				$max_weight = $userUcpData['alert_keys']['Weight'];
 				$obs_value = $obs_value;
 				if (($obs_value !== false)) {
@@ -743,6 +743,13 @@ class DatamonitorService {
 			}
 		}
 		*/
+
+		// get symptom label for extra_vars
+		$question = CPRulesQuestions::where('msg_id','=',$observation['obs_message_id'])->first();
+		$extra_vars['symptom'] = '-';
+		if($question) {
+			$extra_vars['symptom'] = $question->description;
+		}
 		if(($obs_value !== false) && $obs_value >= $max_severity) {
 			$log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] Severity: {$obs_value}" . PHP_EOL;
 			$send_alert = "{$obs_value} is >= {$max_severity}";
