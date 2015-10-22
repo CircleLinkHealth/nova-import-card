@@ -6,6 +6,7 @@ use App\CPRulesItem;
 use App\CPRulesItemMeta;
 use App\CPRulesQuestions;
 use App\CPRulesQuestionSets;
+use App\CPRulesAnswers;
 use App\Observation;
 use App\ObservationMeta;
 use Illuminate\Support\Facades\Hash;
@@ -28,16 +29,16 @@ class S20151019HspItems extends Seeder {
 
         $newItems = array(
             'CF_HSP_10' => array(
-                'items_text' => 'Track Care Transitions', // HSP / ER
-                'APP_EN' => 'Are you currently in the hospital or ER?',
-                'APP_ES' => 'Are you currently in the hospital or ER?',
+                'items_text' => 'Track Care Transitions', // Y / N
+                'APP_EN' => 'Are you still in the hospital or ER?',
+                'APP_ES' => 'Are you still in the hospital or ER?',
                 'ui_default' => 'Inactive',
                 'ui_sort' => '1',
                 'ui_fld_type' => 'SELECT',
                 'child1' => array(
                     'items_text' => 'Contact Days',
-                    'APP_EN' => 'Are you currently in the hospital or ER?',
-                    'APP_ES' => 'Are you currently in the hospital or ER?',
+                    'APP_EN' => 'Are you still in the hospital or ER?',
+                    'APP_ES' => 'Are you still in the hospital or ER?',
                     'ui_default' => '',
                     'ui_sort' => '1',
                     'ui_show_detail' => '0',
@@ -45,6 +46,16 @@ class S20151019HspItems extends Seeder {
                     'ui_fld_select' => '',
                     'ui_fld_type' => 'RADIO',
                 ),
+            ),
+            'CF_HSP_20' => array(
+                'items_text' => 'HSP Visit Type', // ER / HSP
+                'APP_EN' => 'Which best describes your visit?',
+                'APP_ES' => 'Which best describes your visit?',
+            ),
+            'CF_HSP_30' => array(
+                'items_text' => 'HSP Visit Type', // DATE
+                'APP_EN' => 'What date were you discharged?',
+                'APP_ES' => 'What date were you discharged?',
             ),
             'CF_HSP_EX_01' => array(
                 'items_text' => 'HSP Thank you and goodbye', // exit
@@ -62,21 +73,20 @@ class S20151019HspItems extends Seeder {
                 'APP_EN' => 'Date Discharged',
                 'APP_ES' => 'Date Discharged',
             ),
-
             */
         );
 
-        /*
         // firstly set answer vars and add new answers if they dont already exist
         $answer = CPRulesAnswers::where('value', '=', 'ER')
             ->first();
         if(!$answer) {
             $newAnswer = new CPRulesAnswers;
             $newAnswer->value = 'ER';
-            $newAnswer->alt_answers = '';
+            $newAnswer->alt_answers = 'HSP';
             $newAnswer->a_sort = '1';
             $newAnswer->save();
         }
+        /*
         $answer = CPRulesAnswers::where('value', '=', 'HSP')
             ->first();
         if(!$answer) {
@@ -87,6 +97,11 @@ class S20151019HspItems extends Seeder {
             $newAnswer->save();
         }
         */
+
+
+
+
+
 
         foreach($programIds as $programId) {
             echo PHP_EOL."Program $programId".PHP_EOL.PHP_EOL;
@@ -137,13 +152,35 @@ class S20151019HspItems extends Seeder {
                     $questionSets = CPRulesQuestionSets::where('qid', '=', $question->qid)
                         ->where('provider_id', '=', $programId)
                         ->get();
+                    echo "start questionset updates for qid ".$question->qid.PHP_EOL;
                     if($questionSets->count() > 0) {
                         foreach($questionSets as $questionSet) {
-                            if($msgId == 'CF_HSP_20') {
+                            if($msgId == 'CF_HSP_10') {
+                                $question->obs_key = 'HSP';
+                                $question->save();
+                                echo "updated CF_HSP_10 obs_key to HSP".PHP_EOL;
                                 $questionSet->aid = null;
                                 $questionSet->low = null;
                                 $questionSet->high = null;
+                                $questionSet->action = "fxGoto('CF_HSP_20')";
+                            } else if($msgId == 'CF_HSP_20') {
+                                $question->obs_key = 'HSP_TYPE';
+                                $question->save();
+                                echo "updated CF_HSP_10 obs_key to HSP_TYPE".PHP_EOL;
+                                $answer = CPRulesAnswers::where('value', '=', 'ER')
+                                    ->first();
+                                $questionSet->aid = $answer->aid;
+                                $questionSet->low = null;
+                                $questionSet->high = null;
                                 $questionSet->action = "fxGoto('CF_HSP_30')";
+                            } else if($msgId == 'CF_HSP_30') {
+                                $question->obs_key = 'HSP_DISC';
+                                $question->save();
+                                echo "updated CF_HSP_10 obs_key to HSP_DISC".PHP_EOL;
+                                $questionSet->aid = null;
+                                $questionSet->low = null;
+                                $questionSet->high = null;
+                                $questionSet->action = "fxGoto('CF_HSP_EX_01')";
                             } else {
                                 $questionSet->action = "fxGoto('CF_HSP_EX_01')";
                                 if ($questionSet->aid == 1) {
@@ -158,19 +195,63 @@ class S20151019HspItems extends Seeder {
                         }
                     }
 
-                    // create item
+                    echo "start item".$question->qid.PHP_EOL;
+                    // update item
                     $item = CPRulesItem::where('qid', '=', $question->qid)
                         ->where('pcp_id', '=', $pcpId)->first();
-                    if(!empty($item)) {
-                        $item->pcp_id = $pcpId;
-                        $item->items_parent = 0;
-                        $item->qid = $question->qid;
-                        $item->items_text = $itemInfo['items_text'];
-                        $item->save();
-                        echo "updated item " . $item->items_text . "(" . $item->items_id . ")" . PHP_EOL;
+                    if(empty($item)) {
+                        $item = new CPRulesItem;
+                    }
+                    $item->pcp_id = $pcpId;
+                    $item->items_parent = 0;
+                    $item->qid = $question->qid;
+                    $item->items_text = $itemInfo['items_text'];
+                    $item->save();
+                    echo "added/updated item " . $item->items_text . "(" . $item->items_id . ")" . PHP_EOL;
+
+                    echo "itemmeta - APP_EN - ".$itemInfo['APP_EN'].PHP_EOL;
+                    // meta - APP_EN
+                    if(isset($itemInfo['APP_EN']) && !empty($item)) {
+                        $meta = CPRulesItemMeta::where('items_id', '=', $item->items_id)
+                            ->where('meta_key', '=', 'APP_EN')->first();
+                        if(empty($meta)) {
+                            $meta = new CPRulesItemMeta;
+                        }
+                        $meta->items_id = $item->items_id;
+                        $meta->meta_key = 'APP_EN';
+                        $meta->meta_value = $itemInfo['APP_EN'];
+                        $meta->save();
                     }
 
-                    /*
+                    echo "itemmeta - APP_ES - ".$itemInfo['APP_ES'].PHP_EOL;
+                    // meta - APP_ES
+                    if(isset($itemInfo['APP_ES']) && !empty($item)) {
+                        $meta = CPRulesItemMeta::where('items_id', '=', $item->items_id)
+                            ->where('meta_key', '=', 'APP_ES')->first();
+                        if(empty($meta)) {
+                            $meta = new CPRulesItemMeta;
+                        }
+                        $meta->items_id = $item->items_id;
+                        $meta->meta_key = 'APP_ES';
+                        $meta->meta_value = $itemInfo['APP_ES'];
+                        $meta->save();
+                    }
+                }
+            }
+            //die("done with $programId");
+        }
+
+        die('end');
+    }
+
+}
+
+
+
+/*
+                     *
+                     *
+                     *
                     // meta - ui_default
                     if(isset($itemInfo['ui_default'])) {
                         $meta = new CPRulesItemMeta;
@@ -197,33 +278,7 @@ class S20151019HspItems extends Seeder {
                         $meta->meta_value = $itemInfo['ui_fld_type'];
                         $meta->save();
                     }
-                    */
 
-                    // meta - APP_EN
-                    if(isset($itemInfo['APP_EN'])) {
-                        $meta = CPRulesItemMeta::where('items_id', '=', $item->items_id)
-                            ->where('meta_key', '=', 'APP_EN')->first();
-                        if(!empty($meta)) {
-                            $meta->items_id = $item->items_id;
-                            $meta->meta_key = 'APP_EN';
-                            $meta->meta_value = $itemInfo['APP_EN'];
-                            $meta->save();
-                        }
-                    }
-
-                    // meta - APP_ES
-                    if(isset($itemInfo['APP_ES'])) {
-                        $meta = CPRulesItemMeta::where('items_id', '=', $item->items_id)
-                            ->where('meta_key', '=', 'APP_ES')->first();
-                        if(!empty($meta)) {
-                            $meta->items_id = $item->items_id;
-                            $meta->meta_key = 'APP_ES';
-                            $meta->meta_value = $itemInfo['APP_ES'];
-                            $meta->save();
-                        }
-                    }
-
-                    /*
                     // child item
                     if(isset($itemInfo['child1'])) {
 
@@ -267,12 +322,3 @@ class S20151019HspItems extends Seeder {
                         $childItem1Meta->save();
                     }
                     */
-                }
-            }
-            //die("done with $programId");
-        }
-
-        die('end');
-    }
-
-}

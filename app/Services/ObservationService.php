@@ -55,7 +55,7 @@ class ObservationService {
 		}
 
 		// create new comment thread if one doesnt exist yet
-		$commentId = 0;
+		$commentId = $parentId;
 		if(empty($parentId)) {
 			$comment = new Comment;
 			$comment->comment_post_ID = 0;
