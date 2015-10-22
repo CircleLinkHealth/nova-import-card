@@ -289,6 +289,10 @@ Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], functio
 
 	// observations
 	Route::post('observation', 'ObservationController@store');
+
+	// users
+	Route::get('user/quickadd', 'WpUserController@showQuickAddAPI');
+	Route::post('user/quickadd', 'WpUserController@storeQuickAddAPI');
 });
 
 

@@ -336,6 +336,44 @@ class WpUserController extends Controller {
 	}
 
 
+
+
+
+	public function showQuickAddAPI()
+	{
+		// render quick add view
+		$viewHtml = '<html><h1>Header</h1><p>Paragraph</p></html>';
+
+		// return view html
+		return response($viewHtml);
+	}
+
+	public function storeQuickAddAPI()
+	{
+		if ( $request->header('Client') == 'ui' ) { // WP Site
+			$params = json_decode(Crypt::decrypt($request->input('data')), true);
+		} else {
+			$params = $request->all();
+		}
+
+		$params = new ParameterBag($params);
+
+		$userRepo = new WpUserRepository();
+
+		$wpUser = new WpUser;
+
+		$this->validate($request, $wpUser->rules);
+
+		$wpUser = $userRepo->createNewUser($wpUser, $params);
+
+		// render quick add view
+		$viewHtml = '<html><h1>Header</h1><p>Paragraph</p></html>';
+
+		// return view html
+		return response($viewHtml);
+	}
+
+
 	/**
 	 * Display the specified resource.
 	 *
