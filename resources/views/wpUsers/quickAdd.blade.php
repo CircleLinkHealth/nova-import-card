@@ -62,7 +62,6 @@
         </div>
     </div>
 
-
     {{--@foreach( $headings as $heading )--}}
     {{--{{ $heading }} <br />--}}
     {{--@endforeach--}}
