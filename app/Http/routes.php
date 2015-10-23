@@ -120,7 +120,8 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
 	Route::post('wpusers', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
 	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'users.create']);
-	Route::post('wpusers/create', ['uses' =>'WpUserController@store', 'as'=>'users.store']);
+	Route::get('wpusers/createQuickPatient', ['uses' =>'WpUserController@createQuickPatient', 'as'=>'users.createQuickPatient']);
+	Route::post('wpusers/createQuickPatient', ['uses' =>'WpUserController@storeQuickPatient', 'as'=>'users.storeQuickPatient']);
 	Route::get('wpusers/{id}', ['uses' =>'WpUserController@show', 'as'=>'users.show']);
 	Route::get('wpusers/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'users.edit']);
 	Route::post('wpusers/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'users.update']);

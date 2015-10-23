@@ -16,7 +16,8 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ url('/wpusers/create') }}" class="btn btn-success">New User</a>
+                            <a href="{{ URL::route('users.create', array()) }}" class="btn btn-success">New User</a>
+                            <a href="{{ URL::route('users.storeQuickPatient', array()) }}" class="btn btn-success">Patient Quick Add</a>
                         </div>
                     </div>
                 </div>

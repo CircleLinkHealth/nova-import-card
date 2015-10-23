@@ -129,7 +129,19 @@ class WpUserController extends Controller {
 
 
 
+	public function createQuickPatient()
+	{
+		return $this->quickAddForm();
+	}
 
+	public function storeQuickPatient()
+	{
+		$wpUser = new WpUser;
+
+		// create patient here
+
+		return redirect()->route('users.edit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
+	}
 
 
 
