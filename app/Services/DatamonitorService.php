@@ -743,7 +743,6 @@ class DatamonitorService {
 			}
 		}
 		*/
-
 		// get symptom label for extra_vars
 		$question = CPRulesQuestions::where('msg_id','=',$observation['obs_message_id'])->first();
 		$extra_vars['symptom'] = '-';

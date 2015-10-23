@@ -222,6 +222,10 @@ limit 1";
                 $qInfo->low = $qSet->low .'/50';
                 $qInfo->high = $qSet->high .'/250';
             }
+            if($qInfo->obs_key == 'Cigarettes') {
+                $qInfo->low = '1';
+                $qInfo->high = '50';
+            }
             $qInfo->valid_answers = '';
             if($strMsgId == 'CF_HSP_10') {
                 $qInfo->valid_answers = 'Y,N';
