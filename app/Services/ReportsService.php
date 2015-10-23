@@ -28,7 +28,7 @@ Class ReportsService
         $provider = WpUser::findOrFail($userConfig['billing_provider']);
         $providerConfig = $provider->userConfig();
         $provider_meta = WpUserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
-        $userHeader['Provider_Name'] = $providerConfig['prefix'] . ' ' . $provider_meta['first_name'] . ' ' . $provider_meta['last_name'] . ' ' . $providerConfig['qualification'];
+        $userHeader['Provider_Name'] = trim($providerConfig['prefix'] . ' ' . $provider_meta['first_name'] . ' ' . $provider_meta['last_name'] . ' ' . $providerConfig['qualification']);
         $userHeader['Provider_Phone'] = $providerConfig['study_phone_number'];
         $userHeader['Clinic_Name'] = Location::getLocationName($userConfig['preferred_contact_location']);
 

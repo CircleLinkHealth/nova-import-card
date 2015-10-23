@@ -30,6 +30,14 @@ class WpBlog extends Model {
         return $this->hasMany('App\CPRulesPCP', 'prov_id', 'blog_id');
     }
 
+    public static function getProviders($blogId){
+        $providers = WpUser::whereHas('roles', function ($q) use ($blogId) {
+            $q->where('name', '=', 'provider')
+              ->where('program_id', $blogId);
+        })->get();
+        return $providers;
+    }
+
     public function locationId() {
         $location = \DB::select("select * from wp_".$this->blog_id."_options where option_name = 'location_id'", []);
         if(isset($location[0])) {
