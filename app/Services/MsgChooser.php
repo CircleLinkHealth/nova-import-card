@@ -244,6 +244,7 @@ class MsgChooser {
             $newObservation->obs_unit = 'outbound';
             $newObservation->save();
         }
+
         return true;
 
     }
