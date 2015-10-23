@@ -145,20 +145,32 @@ class WpUserController extends Controller {
 
 
 
-	public function quickAddForm()
+	public function quickAddForm($blogId)
 	{
 		//if ( $request->header('Client') == 'ui' ) {}
 
-			$blogItem = WpBlog::find(7)->pcp()->whereStatus('Active')->get();
+			$blogItem = WpBlog::find($blogId)->pcp()->whereStatus('Active')->get();
 
 			foreach($blogItem as $item){
+				// Item Categories
 				$sections[] = $item->section_text;
-				$subItems[$item->section_text][] = CPRulesPCP::find($item->pcp_id)->items()->where('items_parent','0')->where('items_text', '!=', '')->get();
+				// Sub Items
+				$subItems[$item->section_text] = CPRulesPCP::find($item->pcp_id)->items()->where('items_parent','0')->where('items_text', '!=', '')->get();
+			}//dd($subItems['Diagnosis / Problems to Monitor'][0]->items_id);
 
-			}
+		//Array of days
 		$weekdays_arr = array('1' => 'Sunday', '2' => 'Monday', '3' => 'Tuesday', '4' => 'Wednesday', '5' => 'Thursday', '6' => 'Friday', '7' => 'Saturday' );
 
-		return view('wpUsers.quickAdd', ['headings' => $sections,'items' => $subItems, 'days' => $weekdays_arr]);
+		//List of providers
+		$provider_raw = WpBlog::getProviders($blogId);
+		$providers = array();
+		foreach ($provider_raw as $provider) {
+			$providers[$provider->ID] = $provider->getFullNameAttribute();
+		}
+		//List of locations
+		$locations = ['Bombay', 'Delhi', 'Milan', 'NYC'];
+
+		return view('wpUsers.quickAdd', ['headings' => $sections,'items' => $subItems, 'days' => $weekdays_arr, 'providers' => $providers, 'offices' => $locations]);
 
 	}
 
