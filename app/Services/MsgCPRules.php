@@ -245,6 +245,7 @@ limit 1";
 
     }//getQuestion
 
+
     public function getQsType($msgId, $programId) {
         $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')
             ->join('rules_questions','rules_question_sets.qid','=','rules_questions.qid')
