@@ -213,9 +213,11 @@ class ObservationController extends Controller {
 		}
 
 		// validate timezone
+		/*
 		if(strlen($params['timezone']) < 5) {
 			return response()->json(['response' => 'Error - Invalid timezone, please provide full timezone (not GMT offset)'], 500);
 		}
+		*/
 
 		$result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'], $params['obs_value'], $params['obs_date'], $obsMessageId, $params['obs_key'], $params['timezone'], $params['source'], $params['isStartingObs']);
 
