@@ -12,6 +12,7 @@ class MsgUI {
 
 	function getForm($arrBio = array(), $date, $offset = null)
 	{
+		date_default_timezone_set('America/New_York');
 		$formOutput ="";
 		$formOutput .= "<form action='' method=post>\n";
 		$formOutput .= "<div class='row'>\n";
