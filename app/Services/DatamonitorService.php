@@ -2,6 +2,7 @@
 
 use App\CPRulesQuestions;
 use App\Http\Requests;
+use App\WpBlog;
 use App\WpUser;
 use App\Observation;
 use App\ObservationMeta;
@@ -253,8 +254,7 @@ class DatamonitorService {
 		$first_name = $user->meta()->where('meta_key', '=', 'last_names')->first();
 		$last_name = $user->meta()->where('meta_key', '=', 'last_name')->first();
 		$extra_vars['patientname'] = $first_name . ' ' . $last_name;
-		//$extra_vars['alerts_url'] = ''.$this->get_alerts_url($observation['user_id'], $this->int_blog_id).'';
-		$extra_vars['alerts_url'] = '';
+		$extra_vars['alerts_url'] = ''.$this->get_alerts_url($observation['user_id'], $user->program_id).'';
 		$extra_vars['alert_key'] = str_replace("_", " ", $observation->obs_key);
 		//$user_data_ucp = $user_data[$observation['user_id']]['usermeta']['user_care_plan'];
 		$obs_value = $observation['obs_value'];
@@ -1215,9 +1215,12 @@ class DatamonitorService {
 	 * @return string
 	 */
 	function get_alerts_url($user_id, $blog_id) {
-		$domain = $this->CI->users_model->get_blog_domain($blog_id);
-		$alerts_url = 'https://'. $domain . '/alerts/?user=' . $user_id;
-		$alerts_url = $this->CI->tinyurl->shorten($alerts_url);
+		$wpBlog = WpBlog::where('blog_id', '=', $blog_id)->first();
+		$alerts_url = '';
+		if($wpBlog) {
+			$alerts_url = 'https://'. $wpBlog->domain . '/alerts/?user=' . $user_id;
+			$alerts_url = file_get_contents('http://tinyurl.com/api-create.php?url='.$alerts_url);
+		}
 		return $alerts_url;
 	}
 
