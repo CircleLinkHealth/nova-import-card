@@ -353,6 +353,12 @@ class CareplanService {
 				$qsType = $msgCPRules->getQsType($observation->obs_message_id, $this->wpUser->ID);
 				$currQuestionInfo = $msgCPRules->getQuestion($observation->obs_message_id, $this->wpUser->ID, $this->msgLanguageType, $this->programId, $qsType);
 				if($currQuestionInfo) {
+					// convert y/n to Yes/No for oab @todo fix this?
+					if(strtolower($observation->obs_value) == 'y') {
+						$observation->obs_value = 'Yes';
+					} else if(strtolower($observation->obs_value) == 'n') {
+						$observation->obs_value = 'No';
+					}
 					if (isset($currQuestionInfo->message)) {
 						$currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->programId, $this->wpUser->ID);
 					} else {

@@ -228,15 +228,15 @@ limit 1";
             }
             $qInfo->valid_answers = '';
             if($strMsgId == 'CF_HSP_10') {
-                $qInfo->valid_answers = 'Y,N';
+                $qInfo->valid_answers = 'Yes,No';
             } else if($strMsgId == 'CF_HSP_20') {
                 $qInfo->valid_answers = 'ER,HSP';
             }
             if($qInfo->obs_key == 'Severity') {
-                $qInfo->valid_answers = 'Y,N';
+                $qInfo->valid_answers = 'Yes,No';
             }
             if($qInfo->obs_key == 'Adherence') {
-                $qInfo->valid_answers = 'Y,N';
+                $qInfo->valid_answers = 'Yes,No';
             }
             return $qInfo;
         } else {
