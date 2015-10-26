@@ -10,7 +10,7 @@
                         @include('errors.errors')
 <strong>Parent Locations:</strong><BR>
                                         @foreach( $locationParents as $id => $loc )
-                                            <a href='/locations/show/{{ $id }}'>{{ $id }} -- {{ $loc }}</a> <BR>
+                                            <a href="{{ action('LocationController@show', $id) }}">{{ $id }} -- {{ $loc }}</a> <BR>
                                         @endforeach
 
 <strong>Parents Sub Locations:</strong><BR>
