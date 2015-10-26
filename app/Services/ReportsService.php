@@ -477,7 +477,7 @@ Class ReportsService
         //========TAKING MEDICATIONS=============
         //=======================================
 
-        $takMedications['Section'] = 'Taking These Medications';
+        $takMedications['Section'] = 'Medication Details';
 
         $additional_information_item = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
         $medication_information_item = CPRulesItem::where('pcp_id', $additional_information_item->pcp_id)->where('items_parent', 0)->where('items_text', 'Medications List')->first();
