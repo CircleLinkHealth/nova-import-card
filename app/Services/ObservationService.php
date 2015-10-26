@@ -8,6 +8,7 @@ use App\WpUser;
 use App\WpUserMeta;
 use Carbon\Carbon;
 use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 
 class ObservationService {
@@ -75,11 +76,15 @@ class ObservationService {
 			$commentId = $comment->id;
 		}
 
+		$tz = new DateTimeZone($timezone);
+		$tzDate = new DateTime($obsDate);
+		$tzDate->setTimezone($tz);
+
 		// insert new observation
 		$newObservation = new Observation;
 		$newObservation->comment_id = $commentId;
 		$newObservation->obs_date = $obsDate;
-		$newObservation->obs_date_gmt = $obsDate;
+		$newObservation->obs_date_gmt = $tzDate->format('Y-m-d H:i:s');
 		$newObservation->sequence_id = $sequence;
 		$newObservation->obs_message_id = $obsMessageId;
 		$newObservation->obs_method = $source;
