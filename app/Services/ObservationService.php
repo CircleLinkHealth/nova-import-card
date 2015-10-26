@@ -76,15 +76,21 @@ class ObservationService {
 			$commentId = $comment->id;
 		}
 
-		$tz = new DateTimeZone($timezone);
-		$tzDate = new DateTime($obsDate);
-		$tzDate->setTimezone($tz);
+		/*
+		echo 'date_default_timezone_set: ' . date_default_timezone_get() . '<br />';
+		echo 'timezone: ' . $timezone . '<br />';
+		echo 'obsDate: ' . $obsDate . '<br />';
+		echo 'date(server): ' . date('Y-m-d H:i:s', time()) . '<br />';
+		echo 'gmdate(server): ' . gmdate('Y-m-d H:i:s', time()) . '<br />';
+		echo 'gmdate(obsDate): ' . gmdate('Y-m-d H:i:s', strtotime($obsDate)) . '<br />';
+		dd('done');
+		*/
 
 		// insert new observation
 		$newObservation = new Observation;
 		$newObservation->comment_id = $commentId;
 		$newObservation->obs_date = $obsDate;
-		$newObservation->obs_date_gmt = $tzDate->format('Y-m-d H:i:s');
+		$newObservation->obs_date_gmt = gmdate('Y-m-d H:i:s', strtotime($obsDate));
 		$newObservation->sequence_id = $sequence;
 		$newObservation->obs_message_id = $obsMessageId;
 		$newObservation->obs_method = $source;
