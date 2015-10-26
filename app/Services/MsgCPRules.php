@@ -222,17 +222,21 @@ limit 1";
                 $qInfo->low = $qSet->low .'/50';
                 $qInfo->high = $qSet->high .'/250';
             }
+            if($qInfo->obs_key == 'Cigarettes') {
+                $qInfo->low = '1';
+                $qInfo->high = '50';
+            }
             $qInfo->valid_answers = '';
             if($strMsgId == 'CF_HSP_10') {
-                $qInfo->valid_answers = 'Y,N';
+                $qInfo->valid_answers = 'Yes,No';
             } else if($strMsgId == 'CF_HSP_20') {
                 $qInfo->valid_answers = 'ER,HSP';
             }
             if($qInfo->obs_key == 'Severity') {
-                $qInfo->valid_answers = 'Y,N';
+                $qInfo->valid_answers = 'Yes,No';
             }
             if($qInfo->obs_key == 'Adherence') {
-                $qInfo->valid_answers = 'Y,N';
+                $qInfo->valid_answers = 'Yes,No';
             }
             return $qInfo;
         } else {
@@ -240,6 +244,7 @@ limit 1";
         }
 
     }//getQuestion
+
 
     public function getQsType($msgId, $programId) {
         $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')

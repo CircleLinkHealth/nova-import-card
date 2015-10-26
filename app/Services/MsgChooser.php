@@ -32,6 +32,10 @@ class MsgChooser {
     private $provid;
     private $programId; // duplicate of provid
     private $smsMeth;
+
+    private $obsValue;
+
+
     var $log = array();
 
     public function __construct() {
@@ -206,6 +210,7 @@ class MsgChooser {
                 //$nextMsgId = $this->$tmpfunc(); // for app assuming nextQ(noparams) means cut it
                 $nextMsgId = false;
             } else {
+                $this->obsValue = $answer;
                 $log[] = "MsgChooser->setObsResponse() [[ 2 ]] has params, complex ";
                 $exe = explode( "(", $answerResponse->action, 2);
                 $params = array($exe[1]);
@@ -239,6 +244,7 @@ class MsgChooser {
             $newObservation->obs_unit = 'outbound';
             $newObservation->save();
         }
+
         return true;
 
     }
@@ -579,7 +585,7 @@ class MsgChooser {
         $arrSet			= $msgCPRules->getLastWeight($this->provid, $this->key);
         $objTarget		= $msgCPRules->getTargetWeight($this->key);
         $strMsgID		= '';
-        $strResponse	= urldecode($this->arrReturn[$this->key]['usermeta']['curresp']);  // String sent to us by user.)
+        $strResponse	= $this->obsValue;  // String sent to us by user.)
 
         $boolCHF		= $msgCPRules->isCHF($this->key, $this->provid);
         $boolCHF		= (!empty($boolCHF) && $boolCHF == 'CHECKED' ) ? 1 : 0;
