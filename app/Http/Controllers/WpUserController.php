@@ -130,9 +130,9 @@ class WpUserController extends Controller {
 
 
 
-	public function createQuickPatient()
+	public function createQuickPatient($programId)
 	{
-		return $this->quickAddForm();
+		return $this->quickAddForm($programId);
 	}
 
 	public function storeQuickPatient()
