@@ -11,6 +11,7 @@
                 </div>
             </div>
             <hr />
+            {{--{!! Form::open(array('url' => 'test/form/dump', 'class' => 'form-horizontal')) !!}--}}
             {!! Form::open(array('url' => '#', 'class' => 'form-horizontal')) !!}
             <div class="form-group">
                 <div class="row">
@@ -85,33 +86,64 @@
                 </div>
                 <hr />
 
-                {{--<div class="col-xs-1"><h4>Qualifying Chronic Conditions</h4></div>--}}
-                {{--<div class="form-group">--}}
-                {{--@for ($i = 0; $i < count($items['Diagnosis / Problems to Monitor']); $i++)--}}
-                {{--<div class="col-xs-1">--}}
-                {{--{!! Form::checkbox($items['Diagnosis / Problems to Monitor'][$i]->items_id, $items['Diagnosis / Problems to Monitor'][$i]->items_text) !!}--}}
-                {{--{!!Form::label($items['Diagnosis / Problems to Monitor'][$i]->items_id, $items['Diagnosis / Problems to Monitor'][$i]->items_text) !!}--}}
-                {{--</div>--}}
-                {{--@endfor--}}
-                {{--</div>--}}
-                <div class="form-group"><h4>Qualifying Chronic Conditions</h4></div>
+                <div class="form-group col-xs-4"><h4>Qualifying Chronic Conditions</h4></div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-sm-12">
                             @foreach ($items['Diagnosis / Problems to Monitor'] as $item)
-                                <input tabindex="1" type="checkbox" name="problems[]" id="{{$item->items_id}}" value="{{$item->items_id}}">
-                                {{$item->items_text}}
+                                <div class="col-sm-2"><input tabindex="1" type="checkbox" name="problems[]" id="{{$item->items_id}}" value="{{$item->items_id}}">
+                                {{$item->items_text}}</div>
                             @endforeach
                         </div>
                     </div>
+                    <br />
+
+                        <div class="col-xs-2">{!! Form::label('other_problems', 'Describe Other Conditions (Optional):') !!}</div>
+                        <div class="col-xs-5">{!! Form::text('other_problems', '', ['class' => 'form-control']) !!}</div>
+
+                </div><hr />
+                <div class="form-group col-xs-4"><h4>Medications to monitor</h4></div>
+                <div class="form-group">
                     <div class="row">
-                        <div class="col-xs-4">{!! Form::label('other_problems', 'Describe Other Condition (Optional):') !!}</div>
-                        <div class="col-xs-5">{!! Form::text('other_problems', '', ['class' => 'form-control', 'required']) !!}</div>
+                        <div class="col-sm-12">
+                            @foreach ($items['Medications to Monitor'] as $item)
+                                <div class="col-sm-2"><input tabindex="1" type="checkbox" name="medications[]" id="{{$item->items_id}}" value="{{$item->items_id}}">
+                                    {{$item->items_text}}</div>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
-                <hr />
+                </div><hr />
+
+                <div class="form-group col-xs-4"><h4>Biometrics to monitor</h4></div>
+                <div class="form-group">
+                        <div class="col-sm-12">
+                            @foreach ($items['Biometrics to Monitor'] as $item)
+                                <div class="row">
+                                    <div class="col-xs-2"><input tabindex="1" type="checkbox" name="biometrics[]" id="{{$item->items_id}}" value="{{$item->items_id}}"><strong>{{$item->items_text}}</strong></div>
+                                    <div id="{{$item->items_id . "_initial"}}">
+                                        <div class="col-xs-1">{!! Form::label('starting', 'Starting:') !!}</div>
+                                        <div class="col-xs-2">{!! Form::text('other_problems', '', ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-1">{!! Form::label('target', 'Target:') !!}</div>
+                                        <div class="col-xs-2">{!! Form::text('other_problems', '', ['class' => 'form-control']) !!}</div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div><hr />
                 {!! Form::submit('Save [test only]') !!}
             </div>
         </div>
     </div>
 </div>
+<script>
+    @foreach ($items['Biometrics to Monitor'] as $item)
+        $('#{!!$item->items_id!!}').change(function(){
+            if(this.checked) {
+                $('#{!!$item->items_id . "_initial"!!}'.next().show();
+            } else {
+                $(this).next().hide();
+            }
+        });
+    @endforeach
+</script>
