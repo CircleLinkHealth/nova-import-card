@@ -211,6 +211,9 @@ class WpUser extends Model {
             "admin_color" => "fresh",
             "cur_month_activity_time" => "0",
             "show_admin_bar_front" => "false",
+            "careplan_approved" => "",
+            "careplan_approver" => "",
+            "ccm_enabled" => "",
         );
 
         return $userMeta;
