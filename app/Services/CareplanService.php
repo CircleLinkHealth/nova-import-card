@@ -8,6 +8,8 @@ use App\Http\Requests;
 use App\WpUser;
 use App\CPRulesUCP;
 use App\Observation;
+use DateTime;
+use DateTimeZone;
 use DB;
 use Validator;
 
@@ -92,31 +94,6 @@ class CareplanService {
 		}
 		return $feed;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -211,11 +188,11 @@ class CareplanService {
 				->where('obs_unit', '!=', 'scheduled')
 				->where('obs_unit', '!=', 'invalid')
 				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
-				->orderBy('obs_date', 'desc')
+				->whereRaw("obs_date_gmt BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->orderBy('obs_date_gmt', 'desc')
 				->first();
+			//dd($observation);
 			if(!empty($observation)) {
-				//dd($observation);
 				$hspObs[0] = $this->renderCommentThread('CF_HSP_10', $observation->comment_id);
 			} else {
 				$hspObs[0] = $this->renderCommentThread('CF_HSP_10', false);
@@ -260,8 +237,8 @@ class CareplanService {
 				->where('obs_unit', '!=', 'scheduled')
 				->where('obs_unit', '!=', 'invalid')
 				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
-				->orderBy('obs_date', 'desc')
+				->whereRaw("obs_date_gmt BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->orderBy('obs_date_gmt', 'desc')
 				->first();
 			if(!empty($observation) && $observation->comment_id != 0) {
 				$bioObs[$i] = $this->renderCommentThread($bioMsgId, $observation->comment_id);
@@ -288,8 +265,8 @@ class CareplanService {
 				->where('obs_unit', '!=', 'scheduled')
 				->where('obs_unit', '!=', 'invalid')
 				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
-				->orderBy('obs_date', 'desc')
+				->whereRaw("obs_date_gmt BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->orderBy('obs_date_gmt', 'desc')
 				->first();
 			if(!empty($observation) && $observation->comment_id != 0) {
 				$symObs[$i] = $this->renderCommentThread($symMsgId, $observation->comment_id);
