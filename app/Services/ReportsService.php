@@ -84,6 +84,26 @@ Class ReportsService
         }
     }
 
+    public function biometricsMessageIdMapping($biometric)
+    {
+        switch ($biometric) {
+            case 'Blood Sugar':
+                return 'CF_RPT_30';
+                break;
+            case 'Cigarettes':
+                return 'CF_RPT_50';
+                break;
+            case 'Weight':
+                return 'CF_RPT_40';
+                break;
+            case 'Blood Pressure':
+                return 'CF_RPT_20';
+                break;
+            default:
+                return '';
+        }
+    }
+
     public function progress($id)
     {
         $user = WpUser::find($id);
@@ -431,12 +451,13 @@ Class ReportsService
                     $target_array[str_replace('_', ' ', $tracking_q->obs_key)] = $target_value[0];
                 }
             }
-        }//dd($target_array);
+        }//dd($tracking_obs_message_ids);
         if (count($target_array) < 1) {
             $goals['Data'] = 'None';
         } else {
             foreach ($target_array as $key => $value) {
-                $goals['Data'][] = ['name' => '<B>Lower ' . $key . ' to ' . $value . $this->biometricsUnitMapping($key) . ' </B> from  [STARTING READING]' . $this->biometricsUnitMapping($key)];
+                $starting_val = Observation::getStartingObservation($id, $this->biometricsMessageIdMapping($key));
+                $goals['Data'][] = ['name' => '<B>Lower ' . $key . ' to ' . $value . $this->biometricsUnitMapping($key) . ' </B> from  '.$starting_val . $this->biometricsUnitMapping($key)];
             }
         }
 
