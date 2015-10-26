@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\CLH\Repositories\WpUserRepository;
+use App\CPRulesItemMeta;
 use App\CPRulesPCP;
 use App\Observation;
 use App\WpBlog;
@@ -167,8 +168,19 @@ class WpUserController extends Controller {
 		foreach ($provider_raw as $provider) {
 			$providers[$provider->ID] = $provider->getFullNameAttribute();
 		}
+
+		// @todo Check what's the name for Smoking
+		// @todo Check how to make the biometrics dynamic
+		$biometric_arr = array('Blood Sugar','Blood Pressue', 'Smoking (# per day)','Weight');
+		foreach($subItems['Biometrics to Monitor'] as $key => $value){
+			if(!in_array($value->items_text,$biometric_arr)){
+				unset($subItems['Biometrics to Monitor'][$key]);
+				}
+		}//dd($subItems['Biometrics to Monitor']);
+
 		//List of locations
 		$locations = ['Bombay', 'Delhi', 'Milan', 'NYC'];
+	//dd($subItems['Biometrics to Monitor']);
 
 		return view('wpUsers.quickAdd', ['headings' => $sections,'items' => $subItems, 'days' => $weekdays_arr, 'providers' => $providers, 'offices' => $locations]);
 
@@ -372,29 +384,31 @@ class WpUserController extends Controller {
 		return response($viewHtml);
 	}
 
-	public function storeQuickAddAPI()
+	public function storeQuickAddAPI(Request $request)
 	{
-		if ( $request->header('Client') == 'ui' ) { // WP Site
-			$params = json_decode(Crypt::decrypt($request->input('data')), true);
-		} else {
-			$params = $request->all();
-		}
+		//return $request;
 
-		$params = new ParameterBag($params);
-
-		$userRepo = new WpUserRepository();
-
-		$wpUser = new WpUser;
-
-		$this->validate($request, $wpUser->rules);
-
-		$wpUser = $userRepo->createNewUser($wpUser, $params);
-
-		// render quick add view
-		$viewHtml = '<html><h1>Header</h1><p>Paragraph</p></html>';
-
-		// return view html
-		return response($viewHtml);
+//		if ( $request->header('Client') == 'ui' ) { // WP Site
+//			$params = json_decode(Crypt::decrypt($request->input('data')), true);
+//		} else {
+//			$params = $request->all();
+//		}
+//
+//		$params = new ParameterBag($params);
+//
+//		$userRepo = new WpUserRepository();
+//
+//		$wpUser = new WpUser;
+//
+//		$this->validate($request, $wpUser->rules);
+//
+//		$wpUser = $userRepo->createNewUser($wpUser, $params);
+//
+//		// render quick add view
+//		$viewHtml = '<html><h1>Header</h1><p>Paragraph</p></html>';
+//
+//		// return view html
+//		return response($viewHtml);
 	}
 
 

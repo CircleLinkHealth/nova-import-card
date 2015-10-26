@@ -12,7 +12,8 @@ Route::get('/reports/progress/{id}', function($id){
 	return $report->progress($id);
 });
 
-Route::get('test/form','WpUserController@quickAddForm');
+Route::get('test/form/{blogId}','WpUserController@quickAddForm');
+Route::post('test/form/dump','WpUserController@storeQuickAddAPI');
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
