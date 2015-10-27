@@ -4,6 +4,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Location;
+use App\WpBlog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
@@ -41,7 +42,8 @@ class LocationController extends Controller {
 	 */
 	public function create()
 	{
-		return view('locations.create', [ 'locations' => Location::getAllNodes() ]);
+		$blogs = WpBlog::all();
+		return view('locations.create', [ 'locations' => Location::getAllNodes(), 'blogs' => $blogs ]);
 	}
 
 	/**
