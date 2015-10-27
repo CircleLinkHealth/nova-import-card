@@ -30,7 +30,7 @@ class AddsClientNameToApiKeysTable extends Migration {
 	{
 		Schema::table('api_keys', function(Blueprint $table)
 		{
-			if ( ! Schema::hasColumn('api_keys', 'client_name')) {
+			if ( Schema::hasColumn('api_keys', 'client_name')) {
 				$table->dropColumn('client_name');
 			}
 		});
