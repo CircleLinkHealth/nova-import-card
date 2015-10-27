@@ -6,6 +6,10 @@
 //CCD Parser Demo Route
 Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 
+Route::get('upload-ccd', 'CCDUploadController@create');
+
+Route::post('upload-ccd', 'CCDUploadController@uploadFile');
+
 //Test route @todo remove after testing
 Route::get('/reports/progress/{id}', function($id){
 	$report = new \App\Services\ReportsService();
