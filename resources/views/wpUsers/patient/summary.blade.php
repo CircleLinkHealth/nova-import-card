@@ -1,16 +1,17 @@
 @extends('app')
 
 @section('content')
-
-    <p>This sidebar is adopted from start bootstrap simple sidebar startboostrap.com, which I modified slightly to be more cool. For tutorials and how to create it , you can read from my site here <a href="http://seegatesite.com/create-simple-cool-sidebar-menu-with-bootstrap-3/">create cool simple sidebar menu with boostrap 3</a></p>
-
-
+    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
+    <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <div class="container">
+        <section class="main-form">
             <div class="row">
                 <div class="main-form-container col-lg-8 col-lg-offset-2">
                     <div class="row">
                         <div class="main-form-title col-lg-12">
                             Patient Overview
-                            <button class="navbar-toggle collapse in btn btn-orange" data-toggle="collapse" id="menu-toggle-2"> <span class="btn btn-orange" aria-hidden="true"></span></button>
                         </div>
                         <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                             <?php
@@ -104,6 +105,6 @@
                     </div>
                 </div>
             </div>
-    <div style="height:300px;">HEYOOOO</div>
-
+        </section>
+    </div>
 @stop
