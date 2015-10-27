@@ -12,12 +12,12 @@ class AddProgramIdToLocationsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::table('locations', function(Blueprint $table)
+		Schema::connection('mysql_no_prefix')->table('lv_locations', function(Blueprint $table)
 		{
-			if( ! Schema::hasColumn('locations', 'program_id')) {
-				$table->integer('program_id')->unsigned();
+			if( ! Schema::hasColumn('lv_locations', 'program_id')) {
+				$table->bigInteger('program_id')->nullable();
 
-				$table->connection('mysql_no_prefix')->foreign('program_id')->references('blog_id')->on('wp_blogs');
+				$table->foreign('program_id')->references('blog_id')->on('wp_blogs');
 			}
 		});
 	}
@@ -32,7 +32,9 @@ class AddProgramIdToLocationsTable extends Migration {
 		Schema::table('locations', function(Blueprint $table)
 		{
 			if( Schema::hasColumn('locations', 'program_id')) {
-				$table->integer('program_id')->unsigned();
+				$table->dropForeign('lv_locations_program_id_foreign');
+				$table->dropColumn('program_id');
+
 			}
 		});
 	}
