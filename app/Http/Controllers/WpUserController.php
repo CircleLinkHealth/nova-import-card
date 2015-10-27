@@ -179,7 +179,7 @@ class WpUserController extends Controller {
 		}//dd($subItems['Biometrics to Monitor']);
 
 		//List of locations
-		$locations = ['Bombay', 'Delhi', 'Milan', 'NYC'];
+		$locations = Location::getLocationsForBlog($blogId);
 	//dd($subItems['Biometrics to Monitor']);
 
 		return view('wpUsers.quickAdd', ['headings' => $sections,'items' => $subItems, 'days' => $weekdays_arr, 'providers' => $providers, 'offices' => $locations]);
