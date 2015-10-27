@@ -88,6 +88,18 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="col-md-4 control-label">Blog</label>
+                                <div class="col-md-6">
+                                    <select name="program_id">
+                                        <option value="">None</option>
+                                        @foreach( $blogs as $blog )
+                                            <option value="{{ $blog->blog_id }}">{{ $blog->blog_id }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <div class="col-md-6 col-md-offset-4">
                                     <button type="submit" class="btn btn-primary">
                                         Add Location
