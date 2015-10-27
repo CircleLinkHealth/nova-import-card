@@ -12,7 +12,8 @@ Route::get('/reports/progress/{id}', function($id){
 	return $report->progress($id);
 });
 
-Route::get('test/form','WpUserController@quickAddForm');
+Route::get('test/form/{blogId}','WpUserController@quickAddForm');
+Route::post('test/form/dump','WpUserController@storeQuickAddAPI');
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
@@ -120,8 +121,8 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('wpusers', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
 	Route::post('wpusers', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
 	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'users.create']);
-	Route::get('wpusers/createQuickPatient', ['uses' =>'WpUserController@createQuickPatient', 'as'=>'users.createQuickPatient']);
-	Route::post('wpusers/createQuickPatient', ['uses' =>'WpUserController@storeQuickPatient', 'as'=>'users.storeQuickPatient']);
+	Route::get('wpusers/createQuickPatient/{blogId}', ['uses' =>'WpUserController@createQuickPatient', 'as'=>'users.createQuickPatient']);
+	Route::post('wpusers/createQuickPatient/', ['uses' =>'WpUserController@storeQuickPatient', 'as'=>'users.storeQuickPatient']);
 	Route::get('wpusers/{id}', ['uses' =>'WpUserController@show', 'as'=>'users.show']);
 	Route::get('wpusers/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'users.edit']);
 	Route::post('wpusers/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'users.update']);

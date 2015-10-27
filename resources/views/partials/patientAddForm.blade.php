@@ -16,6 +16,7 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-1">{!! Form::label('first_name', 'First Name:') !!}</div>
+                    <label for="male">Male</label>
                     <div class="col-xs-3">{!! Form::text('first_name', '', ['class' => 'form-control', 'required']) !!}</div>
                     <div class="col-xs-1">{!! Form::label('last_name', 'Last Name:') !!}</div>
                     <div class="col-xs-3">{!! Form::text('last_name', '', ['class' => 'form-control', 'required']) !!}</div>
@@ -54,7 +55,7 @@
                     <div class="col-xs-2">
                         <select class="form-control" name="lead_contact">
                             @foreach($offices as $office)
-                                <option value="{{$office}}">{{$office}}</option>
+                                <option value="{{$office->id}}">{{$office->name}}</option>
                             @endforeach
                         </select>
                     </div>

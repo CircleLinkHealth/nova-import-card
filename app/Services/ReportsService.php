@@ -84,6 +84,26 @@ Class ReportsService
         }
     }
 
+    public function biometricsMessageIdMapping($biometric)
+    {
+        switch ($biometric) {
+            case 'Blood Sugar':
+                return 'CF_RPT_30';
+                break;
+            case 'Cigarettes':
+                return 'CF_RPT_50';
+                break;
+            case 'Weight':
+                return 'CF_RPT_40';
+                break;
+            case 'Blood Pressure':
+                return 'CF_RPT_20';
+                break;
+            default:
+                return '';
+        }
+    }
+
     public function progress($id)
     {
         $user = WpUser::find($id);
@@ -95,7 +115,7 @@ Class ReportsService
         $trackingChanges = array();
         $medications = array();
 
-        $medications['Section'] = 'Taking your medications?:';
+        $medications['Section'] = 'Taking your Medications?:';
         $trackingChanges['Section'] = 'Tracking Changes:';
 
         //**************TAKING YOUR MEDICATIONS SECTION**************
@@ -138,9 +158,9 @@ Class ReportsService
 
         //Add scaffolding to sections
 
-        $meds_array['Good']['description'] = '';
+        $meds_array['Better']['description'] = '';
         $meds_array['Needs Work']['description'] = '';
-        $meds_array['Bad']['description'] = '';
+        $meds_array['Worse']['description'] = '';
 
         foreach ($medications_categories as $category) {
             $yes = 0;
@@ -168,16 +188,16 @@ Class ReportsService
             //add to categories based on percentage of responses
             switch ($temp_meds[$category]['percent']) {
                 case ($temp_meds[$category]['percent'] > 0.8):
-                    $meds_array['Good']['description'] .= ($meds_array['Good']['description'] == '' ? $category : ', ' . $category);
+                    $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
                     break;
                 case ($temp_meds[$category]['percent'] >= 0.5):
                     $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
                     break;
                 case ($temp_meds[$category]['percent'] == 0):
-                    $meds_array['Bad']['description'] .= ($meds_array['Bad']['description'] == '' ? $category : ', ' . $category);
+                    $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
                     break;
                 default:
-                    $meds_array['Bad']['description'] .= ($meds_array['Bad']['description'] == '' ? $category : ', ' . $category);
+                    $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
                     break;
             }
             //echo $category.': ' . $temp_meds[$category]['percent'] . ' <br /> ';
@@ -185,9 +205,9 @@ Class ReportsService
         //dd($temp_meds); //Show all the medication categories and stats
         //dd(json_encode($medications)); // show the medications by adherence category
 
-        $medications['Data'][0] = ['name' => $meds_array['Good']['description'],'Section' => 'Good'] ;
+        $medications['Data'][0] = ['name' => $meds_array['Better']['description'],'Section' => 'Better'] ;
         $medications['Data'][1] = ['name' => $meds_array['Needs Work']['description'],'Section' => 'Needs Work'] ;
-        $medications['Data'][2] = ['name' => $meds_array['Bad']['description'],'Section' => 'Bad'] ;
+        $medications['Data'][2] = ['name' => $meds_array['Worse']['description'],'Section' => 'Worse'] ;
 
 
 
@@ -227,7 +247,7 @@ Class ReportsService
 
                 $previous_week = strtotime("-" . $i . " week +1 day");
                 $start_week = strtotime("last sunday midnight", $previous_week);
-                $end_week = strtotime("next saturday", $start_week);
+                $end_week = strtotime("next saturday 11:59:59pm", $start_week);
                 $date_start = date("Y-m-d H:i:s", $start_week);
                 $date_end = date("Y-m-d H:i:s", $end_week);
 
@@ -277,49 +297,49 @@ Class ReportsService
                 if ($tracking_obs_question_map[$q] == 'Cigarettes') {
                     $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
                     if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'Bad';
+                        $status = 'Worse';
                         $progression = 'up';
                     } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
                         $status = 'No Change';
                         $progression = 'Unchanged';
                     } else {
-                        $status = 'Good';
+                        $status = 'Better';
                         $progression = 'down';
                     }
                 } else if ($tracking_obs_question_map[$q] == 'Blood Pressure') {
                     $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
                     if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'Bad';
+                        $status = 'Worse';
                         $progression = 'up';
                     } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
                         $status = 'No Change';
                         $progression = 'Unchanged';
                     } else {
-                        $status = 'Good';
+                        $status = 'Better';
                         $progression = 'down';
                     }
                 } else if ($tracking_obs_question_map[$q] == 'Blood Sugar') {
                     $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
                     if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'Bad';
+                        $status = 'Worse';
                         $progression = 'up';
                     } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
                         $status = 'No Change';
                         $progression = 'Unchanged';
                     } else {
-                        $status = 'Good';
+                        $status = 'Better';
                         $progression = 'down';
                     }
                 } else if ($tracking_obs_question_map[$q] == 'Weight') {
                     $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
                     if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'Bad';
+                        $status = 'Worse';
                         $progression = 'up';
                     } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
                         $status = 'No Change';
                         $progression = 'Unchanged';
                     } else {
-                        $status = 'Good';
+                        $status = 'Better';
                         $progression = 'down';
                     }
                 }
@@ -431,12 +451,13 @@ Class ReportsService
                     $target_array[str_replace('_', ' ', $tracking_q->obs_key)] = $target_value[0];
                 }
             }
-        }//dd($target_array);
+        }//dd($tracking_obs_message_ids);
         if (count($target_array) < 1) {
             $goals['Data'] = 'None';
         } else {
             foreach ($target_array as $key => $value) {
-                $goals['Data'][] = ['name' => '<B>Lower ' . $key . ' to ' . $value . $this->biometricsUnitMapping($key) . ' </B> from  [STARTING READING]' . $this->biometricsUnitMapping($key)];
+                $starting_val = Observation::getStartingObservation($id, $this->biometricsMessageIdMapping($key));
+                $goals['Data'][] = ['name' => '<B>Lower ' . $key . ' to ' . $value . $this->biometricsUnitMapping($key) . ' </B> from  '.$starting_val . $this->biometricsUnitMapping($key)];
             }
         }
 
@@ -456,7 +477,7 @@ Class ReportsService
         //========TAKING MEDICATIONS=============
         //=======================================
 
-        $takMedications['Section'] = 'Taking These Medications';
+        $takMedications['Section'] = 'Medication Details';
 
         $additional_information_item = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
         $medication_information_item = CPRulesItem::where('pcp_id', $additional_information_item->pcp_id)->where('items_parent', 0)->where('items_text', 'Medications List')->first();

@@ -25,7 +25,15 @@ class Location extends Entity implements LocationInterface
      *
      * @var array
      */
-    protected $fillable = [ 'name', 'phone', 'address_line_1', 'address_line_2', 'city', 'postal_code', 'billing_code', 'location_code' ];
+    protected $fillable = [ 'name', 'phone', 'address_line_1', 'address_line_2', 'city', 'postal_code', 'billing_code', 'location_code','program_id' ];
+
+    public static function getLocationsForBlog($blogId)
+    {
+        $q =  Location::where('program_id', '=', $blogId)->get();
+
+        return ($q == null) ? '' : $q;
+    }
+
 
     public static function getNonRootLocations($parent_location_id = false)
     {
