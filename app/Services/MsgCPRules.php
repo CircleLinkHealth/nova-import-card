@@ -202,13 +202,16 @@ limit 1";
                 ->get();
             if($questionSet->count()) {
                 foreach ($questionSet as $qSet) {
-                    if (!empty($qSet->low)) {
-                        if (empty($qInfo->low) || ($qSet->low < $qInfo->low)) {
+                    if (isset($qSet->low)) {
+                        if (($qSet->low == 0)) {
+                            $qInfo->low = $qSet->low;
+                        }
+                        if (($qSet->low < $qInfo->low)) {
                             $qInfo->low = $qSet->low;
                         }
                     }
-                    if (!empty($qSet->high)) {
-                        if (empty($qInfo->high) || ($qSet->high > $qInfo->high)) {
+                    if (isset($qSet->high)) {
+                        if (($qSet->high > $qInfo->high)) {
                             $qInfo->high = $qSet->high;
                         }
                     }
@@ -218,14 +221,14 @@ limit 1";
             if(empty($qInfo->message)) {
                 $qInfo->message = '';
             }
+
+            // low/high overrides
             if($qInfo->obs_key == 'Blood_Pressure') {
                 $qInfo->low = $qInfo->low .'/30';
                 $qInfo->high = $qInfo->high .'/300';
             }
-            if($qInfo->obs_key == 'Cigarettes') {
-                $qInfo->low = '1';
-                $qInfo->high = '50';
-            }
+
+            // valid answer manual overrides
             $qInfo->valid_answers = '';
             if($strMsgId == 'CF_HSP_10') {
                 $qInfo->valid_answers = 'Yes,No';
