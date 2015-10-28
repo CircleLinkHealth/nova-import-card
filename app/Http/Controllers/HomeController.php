@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\WpUser;
+use App\WpBlog;
 use App\WpUserMeta;
 use Auth;
 
@@ -35,8 +36,41 @@ class HomeController extends Controller {
 	public function index()
 	{
 		$user = $wpUser = WpUser::find(Auth::user()->ID);
-		$userMeta = Auth::user()->meta->lists('meta_value', 'meta_key');
-		return view('home', ['user' => $user, 'userMeta' => $userMeta]);
+
+		// switch dashboard view based on logged in user
+		if($user->hasRole('administrator')) {
+
+			$stats = array();
+			$stats['totalPrograms'] = WpBlog::all()->count();
+			$stats['totalUsers'] = WpUser::all()->count();
+			$stats['totalAdministrators'] = WpUser::whereHas('roles', function($q) {
+				$q->where('name', '=', 'administrator');
+			})
+				->get()->count();
+			$stats['totalPatients'] = WpUser::whereHas('roles', function($q) {
+					$q->where('name', '=', 'patient');
+				})
+				->get()->count();
+			$stats['totalProviders'] = WpUser::whereHas('roles', function($q) {
+				$q->where('name', '=', 'provider');
+			})
+				->get()->count();
+
+			return view('admin/dashboard', compact(['user', 'stats']));
+
+		} else if($user->hasRole('provider')) {
+
+			return view('provider/dashboard', ['user' => $user]);
+
+		} else if($user->hasRole('patient')) {
+
+			return view('patient/dashboard', ['user' => $user]);
+
+		} else {
+
+			return view('home', ['user' => $user]);
+
+		}
 	}
 
 }
