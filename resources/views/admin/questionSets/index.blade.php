@@ -26,7 +26,7 @@
                     <div class="panel-body">
                         @include('errors.errors')
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.questionSets.index', array('test' => 'ansds')), 'class' => 'form-horizontal', 'id' => 'filterForm')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.questionSets.index', array()), 'class' => 'form-horizontal', 'id' => 'filterForm')) !!}
                         </div>
 
                         <div id="filters">

@@ -155,7 +155,13 @@ class CPRQuestionSetController extends Controller
 		$questionSet->qs_sort = $params['qs_sort'];
 		$questionSet->qid = $params['qid'];
 		$questionSet->answer_response = $params['answer_response'];
+		if(empty($params['answer_response'])) {
+			$questionSet->answer_response = null;
+		}
 		$questionSet->aid = $params['aid'];
+		if(empty($params['aid'])) {
+			$questionSet->aid = null;
+		}
 		$questionSet->low = $params['low'];
 		$questionSet->high = $params['high'];
 		$questionSet->action = $params['action'];
