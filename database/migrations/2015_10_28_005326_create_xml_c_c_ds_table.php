@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateParsedCCDsTable extends Migration {
+class CreateXmlCCDsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,7 +12,7 @@ class CreateParsedCCDsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('parsed_ccds', function(Blueprint $table)
+		Schema::create('xml_ccds', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->longText('ccd');
@@ -27,7 +27,7 @@ class CreateParsedCCDsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('parsed_ccds');
+		Schema::drop('xml_ccds');
 	}
 
 }
