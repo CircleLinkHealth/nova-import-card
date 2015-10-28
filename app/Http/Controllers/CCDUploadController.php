@@ -31,7 +31,7 @@ class CCDUploadController extends Controller {
             foreach ($_FILES['file']['name'] as $position => $name) {
                 $xml = file_get_contents($_FILES['file']['tmp_name'][$position]);
 
-                $user = $this->repo->createUser();
+                $user = $this->repo->createRandomUser();
 
                 $newCCD = new XmlCCD();
                 $newCCD->ccd = $xml;
