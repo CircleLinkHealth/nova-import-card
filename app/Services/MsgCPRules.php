@@ -219,8 +219,8 @@ limit 1";
                 $qInfo->message = '';
             }
             if($qInfo->obs_key == 'Blood_Pressure') {
-                $qInfo->low = $qSet->low .'/50';
-                $qInfo->high = $qSet->high .'/250';
+                $qInfo->low = $qInfo->low .'/30';
+                $qInfo->high = $qInfo->high .'/300';
             }
             if($qInfo->obs_key == 'Cigarettes') {
                 $qInfo->low = '1';
