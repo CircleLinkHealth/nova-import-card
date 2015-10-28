@@ -8,4 +8,12 @@ class XmlCCD extends Model {
 
     protected $guarded = [];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(WpUser::class);
+    }
+
 }

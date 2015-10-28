@@ -24,7 +24,7 @@ class CCDImporterRepository
             'roles' => [$role->id],
         ]);
 
-        return debug((new WpUserRepository())->createNewUser(new WpUser(), $bag));
+        return (new WpUserRepository())->createNewUser(new WpUser(), $bag);
     }
 
 }

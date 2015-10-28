@@ -19,6 +19,8 @@ class CCDUploadController extends Controller {
     }
 
     /**
+     * Receives XML files, saves them in DB, and returns them JSON Encoded
+     *
      * @param Request $request
      * @return string
      */
@@ -33,6 +35,7 @@ class CCDUploadController extends Controller {
 
                 $newCCD = new XmlCCD();
                 $newCCD->ccd = $xml;
+                $newCCD->user_id = $user->ID;
                 $newCCD->save();
 
                 array_push($uploaded, $xml);
