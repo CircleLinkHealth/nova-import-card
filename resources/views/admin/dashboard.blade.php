@@ -22,27 +22,27 @@
 							<tr>
 								<td><strong>Total Programs</strong></td>
 								<td>{{ $stats['totalPrograms'] }}</td>
-								<td><a class="btn btn-orange btn-xs pull-right" href="{{ URL::route('admin.programs.index', array()) }}"><i class="icon--home--white"></i> Programs</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.programs.index', array()) }}"><i class="icon--home--white"></i> Programs</a></td>
 							</tr>
 							<tr>
 								<td><strong>Total Users</strong></td>
 								<td>{{ $stats['totalUsers'] }}</td>
-								<td><a class="btn btn-orange btn-xs pull-right" href="{{ URL::route('users.index', array()) }}"><i class="icon--home--white"></i> All Users</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('users.index', array()) }}"><i class="icon--home--white"></i> All Users</a></td>
 							</tr>
 							<tr>
 								<td><strong>Total Administrators</strong></td>
 								<td>{{ $stats['totalAdministrators'] }}</td>
-								<td><a class="btn btn-orange btn-xs pull-right" href="{{ URL::route('users.index', array()) }}"><i class="icon--home--white"></i> Administrators</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('users.index', array('filterRole' => 'administrator')) }}"><i class="icon--home--white"></i> Administrators</a></td>
 							</tr>
 							<tr>
 								<td><strong>Total Providers</strong></td>
 								<td>{{ $stats['totalProviders'] }}</td>
-								<td><a class="btn btn-orange btn-xs pull-right" href="{{ URL::route('users.index', array()) }}"><i class="icon--home--white"></i> Providers</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('users.index', array('filterRole' => 'provider')) }}"><i class="icon--home--white"></i> Providers</a></td>
 							</tr>
 							<tr>
 								<td><strong>Total Patients</strong></td>
 								<td>{{ $stats['totalPatients'] }}</td>
-								<td><a class="btn btn-orange btn-xs pull-right" href="{{ URL::route('users.index', array()) }}"><i class="icon--home--white"></i> Patients</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('users.index', array('filterRole' => 'patient')) }}"><i class="icon--home--white"></i> Patients</a></td>
 							</tr>
 
 						</tbody>
