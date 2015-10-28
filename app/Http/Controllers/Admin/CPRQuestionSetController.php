@@ -36,7 +36,7 @@ class CPRQuestionSetController extends Controller
 		}
 
 		// filter question
-		$questions = CPRulesQuestions::orderBy('qid', 'desc')->get()->lists('msg_id', 'qid');
+		$questions = CPRulesQuestions::orderBy('qid', 'desc')->get()->lists('msgIdAndObsKey', 'qid');
 		$filterQuestion = 'all';
 		if(!empty($params['filterQuestion'])) {
 			$filterQuestion = $params['filterQuestion'];
@@ -60,15 +60,15 @@ class CPRQuestionSetController extends Controller
 		// finish query
 		$questionSets = $questionSets->paginate(10);
 
-		return view('admin.questionSets.index', [
-			'questionSets' => $questionSets,
-			'qsTypes' => $qsTypes,
-			'filterQsType' => $filterQsType,
-			'questions' => $questions,
-			'filterQuestion' => $filterQuestion,
-			'programs' => $programs,
-			'filterProgram' => $filterProgram,
-		]);
+		return view('admin.questionSets.index', compact([
+			'questionSets',
+			'qsTypes',
+			'filterQsType',
+			'questions',
+			'filterQuestion',
+			'programs',
+			'filterProgram',
+		]));
 	}
 
 	/**
