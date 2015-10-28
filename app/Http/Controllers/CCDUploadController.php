@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -9,6 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 
 class CCDUploadController extends Controller {
+
+    private $repo;
+
+    public function __construct(CCDImporterRepository $repo)
+    {
+        $this->repo = $repo;
+    }
 
     /**
      * @param Request $request
@@ -20,6 +28,8 @@ class CCDUploadController extends Controller {
         if (!empty($_FILES['file']['name'][0])) {
             foreach ($_FILES['file']['name'] as $position => $name) {
                 $xml = file_get_contents($_FILES['file']['tmp_name'][$position]);
+
+                $user = $this->repo->createUser();
 
                 $newCCD = new XmlCCD();
                 $newCCD->ccd = $xml;
