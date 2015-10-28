@@ -205,13 +205,12 @@ limit 1";
                     if (isset($qSet->low)) {
                         if (($qSet->low == 0)) {
                             $qInfo->low = $qSet->low;
-                        }
-                        if (($qSet->low < $qInfo->low)) {
+                        } else if ($qInfo->low == '' || ($qSet->low < $qInfo->low)) {
                             $qInfo->low = $qSet->low;
                         }
                     }
                     if (isset($qSet->high)) {
-                        if (($qSet->high > $qInfo->high)) {
+                        if ($qInfo->high == '' || ($qSet->high > $qInfo->high)) {
                             $qInfo->high = $qSet->high;
                         }
                     }

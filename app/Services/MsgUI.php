@@ -44,8 +44,22 @@ class MsgUI {
 			$type = null;
 			switch ($arrBio['ReturnFieldType']) {
 				case 'Range':
-					$type = "type='range' data-type='" . $arrBio['ReturnFieldType'] . "' min='" . $arrBio['ReturnDataRangeLow'] . "' max='" . $arrBio['ReturnDataRangeHigh'] . "' value='0'";
-					$formOutput .= "\n<input $type id='obs_value' name='obs_value' value='" . $arrBio['PatientAnswer'] . "' REQUIRED>";
+					// custom for blood pressure
+					if($arrBio['Obs_Key'] == 'Blood_Pressure') {
+						if (strpos($arrBio['ReturnDataRangeLow'], '/') !== false) {
+							$lowPieces = explode('/', $arrBio['ReturnDataRangeLow']);
+						}
+						if (strpos($arrBio['ReturnDataRangeHigh'], '/') !== false) {
+							$highPieces = explode('/', $arrBio['ReturnDataRangeHigh']);
+						}
+						$type = "type='range' data-type='" . $arrBio['ReturnFieldType'] . "' min='" . $lowPieces[0] . "' max='" . $highPieces[0] . "' value='0'";
+						$formOutput .= "\n<input $type id='obs_value' name='obs_value' value='" . $arrBio['PatientAnswer'] . "' REQUIRED>";
+						$type = "type='range' data-type='" . $arrBio['ReturnFieldType'] . "' min='" . $lowPieces[1] . "' max='" . $highPieces[1] . "' value='0'";
+						$formOutput .= "\n<input $type id='obs_value' name='obs_value' value='" . $arrBio['PatientAnswer'] . "' REQUIRED>";
+					} else {
+						$type = "type='range' data-type='" . $arrBio['ReturnFieldType'] . "' min='" . $arrBio['ReturnDataRangeLow'] . "' max='" . $arrBio['ReturnDataRangeHigh'] . "' value='0'";
+						$formOutput .= "\n<input $type id='obs_value' name='obs_value' value='" . $arrBio['PatientAnswer'] . "' REQUIRED>";
+					}
 					break;
 				case 'List':
 					$formOutput .= "\n" . '<select name="obs_value" id="obs_value" data-role="slider">';
@@ -72,8 +86,8 @@ class MsgUI {
 		$formOutput .= "</div>";
 
 		// display answer if already given
-		if ($arrBio['ReturnFieldType'] == 'None' || $arrBio['PatientAnswer'] ) {
-			if ($arrBio['PatientAnswer'] )	$formOutput .= "<div class='col-sm-3 alert alert-success'>You Answered: " . $arrBio['PatientAnswer'] . " @ <small>". date('h:i:s A',strtotime($arrBio['ResponseDate'])) . "</small></div>\n";
+		if ($arrBio['ReturnFieldType'] == 'None' || (strlen($arrBio['PatientAnswer']) > 0) ) {
+			if ( (strlen($arrBio['PatientAnswer']) > 0) )	$formOutput .= "<div class='col-sm-3 alert alert-success'>You Answered: " . $arrBio['PatientAnswer'] . " @ <small>". date('h:i:s A',strtotime($arrBio['ResponseDate'])) . "</small></div>\n";
 		}
 
 		$formOutput .= "</div>\n";
