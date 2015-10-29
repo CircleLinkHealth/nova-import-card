@@ -234,7 +234,7 @@ class MsgChooser {
             $newObservation = new Observation;
             $newObservation->comment_id = $parentId;
             $newObservation->obs_date = $obsDate;
-            $newObservation->obs_date_gmt = $obsDate;
+            $newObservation->obs_date_gmt = gmdate( $obsDate);
             $newObservation->sequence_id = ($sequence + 1);
             $newObservation->obs_message_id = $nextMsgId;
             $newObservation->obs_method = 'system';
