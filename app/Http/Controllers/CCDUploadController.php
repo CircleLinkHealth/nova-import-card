@@ -41,7 +41,11 @@ class CCDUploadController extends Controller {
                 array_push($uploaded, $xml);
             }
         }
-        return json_encode($uploaded);
+        return response()->json($uploaded, 200, [
+            //These could be useless @todo erase them in not needed
+//            'Access-Control-Allow-Origin:' => 'http://localcrisfield.careplanmanager.com',
+//            'Access-Control-Allow-Credentials:' => ['http://localcrisfield.careplanmanager.com'],
+        ]);
     }
 
     /**
@@ -49,7 +53,7 @@ class CCDUploadController extends Controller {
      */
     public function create()
     {
-        return view('CCDUploader.uploader');
+        return view('CCDUploader.uploader')->render();
     }
 
     /**
@@ -66,7 +70,11 @@ class CCDUploadController extends Controller {
             $parsedCCD->save();
         }
 
-        return response('Files received and processed successfully', 200);
+        return response()->json('Files received and processed successfully', 200, [
+            //These could be useless @todo erase them in not needed
+//            'Access-Control-Allow-Origin:' => 'http://localcrisfield.careplanmanager.com',
+//            'Access-Control-Allow-Credentials:' => ['http://localcrisfield.careplanmanager.com'],
+        ]);
     }
 
 }

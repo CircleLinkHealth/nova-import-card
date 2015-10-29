@@ -42,9 +42,6 @@
 	<body>
 		<div class="container-fluid">
 			<div class="content">
-
-				<div class="col-md-12">@include('CCDUploader.uploader')</div>
-
 				<div class="title">CircleLink Health<br>Care Plan Manager</div>
 				<a class="btn btn-primary subtitle" href="{{ url('/auth/login') }}">Login</a>
 			</div>
