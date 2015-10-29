@@ -76,21 +76,56 @@ class ObservationService {
 			$commentId = $comment->id;
 		}
 
+
+
+		// SAMPLES, compare
+		//$obsDate = '2015-10-29 07:52:13';
+		//$my_timezone = new DateTimeZone("America/Denver");
+
+		//$obsDate = '2015-10-29 09:52:13';
+		//$my_timezone = new DateTimeZone("America/New_York");
+
+		//$obsDate = '2015-10-29 19:22:13';
+		//$my_timezone = new DateTimeZone("Asia/Kolkata");
+
+		//$my_timezone = new DateTimeZone("America/New_York");
+		//$my_timezone = new DateTimeZone("Asia/Kolkata");
+		//$my_timezone = new DateTimeZone("America/New_York");
+		//$my_timezone = new DateTimeZone("America/Denver");
+		//$my_timezone = new DateTimeZone("America/Los_Angeles");
+		$my_timezone = new DateTimeZone($timezone);
+		$server_timezone = new DateTimeZone("UTC");
+
+		$my_date = new DateTime($obsDate, $my_timezone);
+		$server_date = new DateTime($obsDate, $server_timezone);
+
+		$my_offset = $my_timezone->getOffset($my_date);
+		$server_offset = $server_timezone->getOffset($server_date);
+
+		$diff = $my_offset - $server_offset;
+
 		/*
-		echo 'date_default_timezone_set: ' . date_default_timezone_get() . '<br />';
-		echo 'timezone: ' . $timezone . '<br />';
-		echo 'obsDate: ' . $obsDate . '<br />';
-		echo 'date(server): ' . date('Y-m-d H:i:s', time()) . '<br />';
-		echo 'gmdate(server): ' . gmdate('Y-m-d H:i:s', time()) . '<br />';
-		echo 'gmdate(obsDate): ' . gmdate('Y-m-d H:i:s', strtotime($obsDate)) . '<br />';
-		dd('done');
+		echo var_dump(($diff / 3600))."<br>";
+		echo $obsDate ."<br>";
+		echo "--------------<br>";
+		echo 'my_date = '.$my_date->format('Y-m-d H:i:s') ."<br>";
+		echo 'my_date (u) = '.$my_date->format('U') ."<br>";
+		echo 'my_date date w/ (u) = '.date('Y-m-d H:i:s', ($my_date->format('U'))) ."<br>";
+		echo 'my_date u + diff = '.($my_date->format('U') + $diff) ."<br>";
+		echo 'my_date date w/ (u+diff) = '.date('Y-m-d H:i:s', ($my_date->format('U') + $diff)) ."<br>";
 		*/
+
+		$tzGmtDateLocal = date('Y-m-d H:i:s', ($my_date->format('U') + $diff));
+		$tzGmtDate = date('Y-m-d H:i:s', ($my_date->format('U')));
+		//dd($tzGmtDate);
+
+
 
 		// insert new observation
 		$newObservation = new Observation;
 		$newObservation->comment_id = $commentId;
 		$newObservation->obs_date = $obsDate;
-		$newObservation->obs_date_gmt = gmdate('Y-m-d H:i:s', strtotime($obsDate));
+		$newObservation->obs_date_gmt = $tzGmtDate;
 		$newObservation->sequence_id = $sequence;
 		$newObservation->obs_message_id = $obsMessageId;
 		$newObservation->obs_method = $source;
