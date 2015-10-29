@@ -79,7 +79,7 @@ class CareplanService {
 						"ParentID" => "603",
 						"MessageIcon" => "question",
 						"MessageCategory" => "Question",
-						"MessageContent" => "Any symptoms today",
+						"MessageContent" => "Any <b>symptoms</b> Today?",
 						"ReturnFieldType" => '',
 						"ReturnDataRangeLow" => '',
 						"ReturnDataRangeHigh" => '',
