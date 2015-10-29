@@ -384,6 +384,8 @@ class CareplanService {
 
 
 	public function sortObs($observations) {
+		// bypass for now
+		return $observations;
 		$obsByDate = array(); // key => obs array where key is the ResponseDate
 		$obsUnanswered = array(); // array of obs where ResponseDate is blank
 		$obsSorted = array(); // resulting sorted obs
