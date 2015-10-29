@@ -159,7 +159,11 @@
                                 <div class="form-group form-item form-item-spacing col-sm-2 state-selector {{ $errors->first('state') ? 'has-error' : '' }}">
                                     <select name="state" class="selectpicker" data-header="State*" data-width="90px" data-title="State" value="{{ (old('state') ? old('state') : '') }}">
                                         <option value="">State</option>
-                                        <?php //showOptionsDrop($states_arr, $validation['state']['value'], true); ?>
+                                        <?php
+                                        foreach($states as $abbrev => $state) {
+                                            echo '<option value="'.$abbrev.'">'.$state."</option>";
+                                        }
+                                        ?>
                                     </select>
                                     <span class="help-block">{{ $errors->first('state') }}</span>
                                 </div>
@@ -209,7 +213,11 @@
                                             <select id="timezone" name="timezone" class="selectpicker form-control" title="Select Time Zone">
                                                 <option value="">Select Time Zone</option>
                                                 <?php //if ($validation['timezone']['value'] == '') $validation['timezone']['value'] = 'America/New_York' ?>
-                                                <?php //showOptionsDrop($timezones_arr, $validation['timezone']['value'], true); ?>
+                                                <?php
+                                                foreach($timezones as $id => $timezone) {
+                                                    echo '<option value="'.$timezone.'">'.$timezone."</option>";
+                                                }
+                                                ?>
                                             </select>
                                         </div>
                                     </div>
@@ -229,11 +237,15 @@
                                             <label for="preferred_contact_location">Preferred Office Location <span class="attention">*</span>:</label>
                                         </div>
                                         <div class="col-sm-12">
-                                            <?php //if( !empty($locations_arr) ) { ?>
+                                            <?php if( !empty($locations) ) { ?>
                                             <select name="preferred_contact_location" class="selectpicker" data-width="240px" data-size="5">
-                                                <?php //showOptionsDrop($locations_arr, $validation['preferred_contact_location']['value'], true); ?>
+                                                <?php
+                                                foreach($locations as $id => $name) {
+                                                    echo '<option value="'.$id.'">'.$name."</option>";
+                                                }
+                                                ?>
                                             </select>
-                                            <?php //} else { echo "No Locations Available"; } ?>
+                                            <?php } else { echo "No Locations Available"; } ?>
                                         </div>
                                     </div>
                                     <?php //echo $validatlidation['preferred_contact_location']['text']; ?>

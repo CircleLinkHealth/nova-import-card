@@ -126,17 +126,16 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'activitiesEdit']);
 
 	// wpusers
-	Route::get('wpusers', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
-	Route::post('wpusers', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
-	Route::get('wpusers/create', ['uses' =>'WpUserController@create', 'as'=>'users.create']);
-	Route::get('wpusers/createQuickPatient/{blogId}', ['uses' =>'WpUserController@createQuickPatient', 'as'=>'users.createQuickPatient']);
-	Route::post('wpusers/createQuickPatient/', ['uses' =>'WpUserController@storeQuickPatient', 'as'=>'users.storeQuickPatient']);
-	Route::get('wpusers/{id}', ['uses' =>'WpUserController@show', 'as'=>'users.show']);
-	Route::get('wpusers/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'users.edit']);
-	Route::post('wpusers/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'users.update']);
-	Route::get('wpusers/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'users.careplan']);
-	Route::get('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenter']);
-	Route::post('wpusers/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenterUpdate']);
+	Route::get('users', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
+	Route::post('users', ['uses' =>'WpUserController@store', 'as'=>'users.store']);
+	Route::get('users/create', ['uses' =>'WpUserController@create', 'as'=>'users.create']);
+	Route::get('users/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'users.edit']);
+	Route::post('users/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'users.update']);
+	Route::get('users/createQuickPatient/{blogId}', ['uses' =>'WpUserController@createQuickPatient', 'as'=>'users.createQuickPatient']);
+	Route::post('users/createQuickPatient/', ['uses' =>'WpUserController@storeQuickPatient', 'as'=>'users.storeQuickPatient']);
+	Route::get('users/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'users.careplan']);
+	Route::get('users/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenter']);
+	Route::post('users/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenterUpdate']);
 
 	// locations
 	Route::resource('locations', 'LocationController');

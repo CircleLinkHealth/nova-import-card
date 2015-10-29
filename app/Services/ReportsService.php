@@ -114,9 +114,10 @@ Class ReportsService
         $userHeader = $this->reportHeader($id);
         $trackingChanges = array();
         $medications = array();
+        $colors = array('green', 'red', 'yellow');
 
-        $medications['Section'] = 'Taking your Medications?:';
-        $trackingChanges['Section'] = 'Tracking Changes:';
+        $medications['Section'] = 'Taking your <b>Medications</b>?';
+        $trackingChanges['Section'] = 'Tracking Changes';
 
         //**************TAKING YOUR MEDICATIONS SECTION**************
 
@@ -355,6 +356,7 @@ Class ReportsService
                     //'Latest Weekly Avg.' => $tracking_obs_data[$q][0]->avg,
                     'Status' => $status,
                     'Progression' => $progression,
+                    'Color' => $colors[array_rand($colors)],
                     'Change: ' => $change . $unit,
                     'Latest Weekly Data' => $tracking_obs_data[$q][0]['Reading'] . $unit,
                     'Goal' => $target_array[$tracking_obs_question_map[$q]],
@@ -391,7 +393,7 @@ Class ReportsService
         //========WE ARE TREATING================
         //=======================================
 
-        $treating['Section'] = 'We Are Treating:';
+        $treating['Section'] = 'We Are Treating';
         $treating['Data'] = array();
 
         //PCP has the sections for each provider, get all sections for the user's blog

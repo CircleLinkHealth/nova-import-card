@@ -27,7 +27,7 @@
                         @include('errors.errors')
 
                         <div class="row">
-                            {!! Form::open(array('url' => '/wpusers/create', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => '/users', 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <!-- Nav tabs -->

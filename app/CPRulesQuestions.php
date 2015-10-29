@@ -63,4 +63,14 @@ class CPRulesQuestions extends Model {
         return $html;
     }
 
+
+
+    // ATTRIBUTES
+
+    public function getMsgIdAndObsKeyAttribute() {
+        $msgId = $this->msg_id;
+        $obsKey = $this->obs_key;
+        return $msgId . ' [' . $obsKey . ']';
+    }
+
 }

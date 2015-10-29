@@ -72,7 +72,7 @@ class WpUserController extends Controller {
 			$wpUsers = wpUser::where('program_id', '!=', '')->orderBy('ID', 'desc');
 
 			// FILTERS
-			$params = $request->input();
+			$params = $request->all();
 
 			// filter user
 			$users = WpUser::OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
@@ -85,13 +85,13 @@ class WpUserController extends Controller {
 			}
 
 			// role filter
-			$roles = Role::all()->lists('display_name', 'id');
+			$roles = Role::all()->lists('display_name', 'name');
 			$filterRole = 'all';
 			if(!empty($params['filterRole'])) {
 				$filterRole = $params['filterRole'];
 				if($params['filterRole'] != 'all') {
 					$wpUsers->whereHas('roles', function($q) use ($filterRole){
-						$q->where('id', '=', $filterRole);
+						$q->where('name', '=', $filterRole);
 					});
 				}
 			}

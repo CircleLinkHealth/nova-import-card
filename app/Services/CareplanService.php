@@ -79,7 +79,7 @@ class CareplanService {
 						"ParentID" => "603",
 						"MessageIcon" => "question",
 						"MessageCategory" => "Question",
-						"MessageContent" => "Any symptoms today",
+						"MessageContent" => "Any <b>symptoms</b> Today?",
 						"ReturnFieldType" => '',
 						"ReturnDataRangeLow" => '',
 						"ReturnDataRangeHigh" => '',
@@ -155,7 +155,7 @@ class CareplanService {
 				);
 			}
 		}
-		return $dmsObs;
+		return $this->sortObs($dmsObs);
 	}
 
 
@@ -188,7 +188,7 @@ class CareplanService {
 				->where('obs_unit', '!=', 'scheduled')
 				->where('obs_unit', '!=', 'invalid')
 				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date_gmt BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
 				->orderBy('obs_date_gmt', 'desc')
 				->first();
 			//dd($observation);
@@ -237,7 +237,7 @@ class CareplanService {
 				->where('obs_unit', '!=', 'scheduled')
 				->where('obs_unit', '!=', 'invalid')
 				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date_gmt BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
 				->orderBy('obs_date_gmt', 'desc')
 				->first();
 			if(!empty($observation) && $observation->comment_id != 0) {
@@ -247,7 +247,7 @@ class CareplanService {
 			}
 			$i++;
 		}
-		return $bioObs;
+		return $this->sortObs($bioObs);
 	}
 
 
@@ -265,7 +265,7 @@ class CareplanService {
 				->where('obs_unit', '!=', 'scheduled')
 				->where('obs_unit', '!=', 'invalid')
 				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date_gmt BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
 				->orderBy('obs_date_gmt', 'desc')
 				->first();
 			if(!empty($observation) && $observation->comment_id != 0) {
@@ -275,7 +275,7 @@ class CareplanService {
 			}
 			$i++;
 		}
-		return $symObs;
+		return $this->sortObs($symObs);
 	}
 
 
@@ -380,6 +380,35 @@ class CareplanService {
 			//dd($obsArr);
 		}
 		return $obsArr;
+	}
+
+
+	public function sortObs($observations) {
+		// bypass for now
+		return $observations;
+		$obsByDate = array(); // key => obs array where key is the ResponseDate
+		$obsUnanswered = array(); // array of obs where ResponseDate is blank
+		$obsSorted = array(); // resulting sorted obs
+		foreach($observations as $tmpObs) {
+			if(strlen($tmpObs['ResponseDate']) > 6) {
+				$obsByDate[$tmpObs['ResponseDate']] = $tmpObs;
+			} else {
+				$obsUnanswered[] = $tmpObs;
+			}
+		}
+		// sort by date array keys
+		ksort($obsByDate);
+		$i = 0;
+		foreach($obsUnanswered as $obs) {
+			$obsSorted[$i] = $obs;
+			$i++;
+		}
+		foreach($obsByDate as $date => $obs) {
+			$obsSorted[$i] = $obs;
+			$i++;
+		}
+
+		return $obsSorted;
 	}
 
 	/**
