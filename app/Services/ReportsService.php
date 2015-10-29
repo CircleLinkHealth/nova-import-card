@@ -116,8 +116,8 @@ Class ReportsService
         $medications = array();
         $colors = array('green', 'red', 'yellow');
 
-        $medications['Section'] = 'Taking your Medications?:';
-        $trackingChanges['Section'] = 'Tracking Changes:';
+        $medications['Section'] = 'Taking your Medications?';
+        $trackingChanges['Section'] = 'Tracking Changes';
 
         //**************TAKING YOUR MEDICATIONS SECTION**************
 
