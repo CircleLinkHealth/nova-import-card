@@ -119,13 +119,11 @@ class ObservationService {
 		$tzGmtDate = date('Y-m-d H:i:s', ($my_date->format('U')));
 		//dd($tzGmtDate);
 
-
-
 		// insert new observation
 		$newObservation = new Observation;
 		$newObservation->comment_id = $commentId;
 		$newObservation->obs_date = $obsDate;
-		$newObservation->obs_date_gmt = $tzGmtDate;
+		$newObservation->obs_date_gmt = gmdate( $obsDate);
 		$newObservation->sequence_id = $sequence;
 		$newObservation->obs_message_id = $obsMessageId;
 		$newObservation->obs_method = $source;
