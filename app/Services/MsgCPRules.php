@@ -206,7 +206,7 @@ limit 1";
                         if (($qSet->low == 0)) {
                             $qInfo->low = $qSet->low;
                         } else if ($qInfo->low == '' || ($qSet->low < $qInfo->low)) {
-                            if($qInfo->low != 0) {
+                            if($qInfo->low != '0') {
                                 $qInfo->low = $qSet->low;
                             }
                         }
