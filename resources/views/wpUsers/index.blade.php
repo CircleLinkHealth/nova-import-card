@@ -28,7 +28,7 @@
                         <p><strong>Users missing critical data are omitted from this page.. usually either primary_bloy meta or user_*_config meta</strong></p>
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('users.index', array()), 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <h2>Filter</h2>
@@ -76,7 +76,7 @@
                                 @foreach( $wpUsers as $wpUser )
                                     <tr>
                                         <td>
-                                            <a href="{{ URL::route('users.edit', array('programId' => $wpUser->program_id, 'id' => $wpUser->ID)) }}" class="btn btn-primary btn-xs">{{ $wpUser->ID }}</a><br />
+                                            <a href="{{ URL::route('users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-primary btn-xs">{{ $wpUser->ID }}</a><br />
                                         </td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
@@ -86,7 +86,7 @@
                                                     </div>
                                                 @else
                                                     @foreach ($wpUser->roles as $role)
-                                                        <a href="{{ URL::route('users.edit', array('programId' => $wpUser->program_id, 'id' => $wpUser->ID)) }}" class="btn btn-info btn-xs">{{ $role->display_name }}</a><br />
+                                                        <a href="{{ URL::route('users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-info btn-xs">{{ $role->display_name }}</a><br />
                                                     @endforeach
                                                 @endif
                                             @endif

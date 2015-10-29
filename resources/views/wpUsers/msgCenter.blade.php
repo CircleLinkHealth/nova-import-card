@@ -64,7 +64,7 @@
                         @include('errors.errors')
                         <div class="row">
                             <div class="pull-left" style="margin-left:10px;">
-                                <a href="{{ url('wpusers/'.$wpUser->ID.'/msgcenter?action=run_scheduler&date=today') }}" class="btn btn-primary">Run Scheduler</a>
+                                <a href="{{ url('users/'.$wpUser->ID.'/msgcenter?action=run_scheduler&date=today') }}" class="btn btn-primary">Run Scheduler</a>
                             </div>
                         </div>
 

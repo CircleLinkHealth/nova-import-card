@@ -18,16 +18,16 @@
                         @include('errors.errors')
 
                         <div class="row">
-                            {!! Form::open(array('url' => '/wpusers/'.$wpUser->ID.'/edit', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => '/users/'.$wpUser->ID.'/edit', 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 <div class="pull-left">
-                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/msgcenter') }}" class="btn btn-primary">App Simulator</a>
+                                    <a href="{{ url('users/'.$wpUser->ID.'/msgcenter') }}" class="btn btn-primary">App Simulator</a>
                                 </div>
                                 <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ url('wpusers/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed JSON</a>
+                                    <a href="{{ url('users/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed JSON</a>
                                 </div>
                                 @if($wpUser->hasRole('patient'))
                                     <div class="pull-left" style="margin-left:10px;">
