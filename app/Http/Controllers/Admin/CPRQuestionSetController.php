@@ -36,7 +36,7 @@ class CPRQuestionSetController extends Controller
 		}
 
 		// filter question
-		$questions = CPRulesQuestions::orderBy('qid', 'desc')->get()->lists('msg_id', 'qid');
+		$questions = CPRulesQuestions::orderBy('qid', 'desc')->get()->lists('msgIdAndObsKey', 'qid');
 		$filterQuestion = 'all';
 		if(!empty($params['filterQuestion'])) {
 			$filterQuestion = $params['filterQuestion'];
@@ -60,15 +60,15 @@ class CPRQuestionSetController extends Controller
 		// finish query
 		$questionSets = $questionSets->paginate(10);
 
-		return view('admin.questionSets.index', [
-			'questionSets' => $questionSets,
-			'qsTypes' => $qsTypes,
-			'filterQsType' => $filterQsType,
-			'questions' => $questions,
-			'filterQuestion' => $filterQuestion,
-			'programs' => $programs,
-			'filterProgram' => $filterProgram,
-		]);
+		return view('admin.questionSets.index', compact([
+			'questionSets',
+			'qsTypes',
+			'filterQsType',
+			'questions',
+			'filterQuestion',
+			'programs',
+			'filterProgram',
+		]));
 	}
 
 	/**
@@ -155,7 +155,13 @@ class CPRQuestionSetController extends Controller
 		$questionSet->qs_sort = $params['qs_sort'];
 		$questionSet->qid = $params['qid'];
 		$questionSet->answer_response = $params['answer_response'];
+		if(empty($params['answer_response'])) {
+			$questionSet->answer_response = null;
+		}
 		$questionSet->aid = $params['aid'];
+		if(empty($params['aid'])) {
+			$questionSet->aid = null;
+		}
 		$questionSet->low = $params['low'];
 		$questionSet->high = $params['high'];
 		$questionSet->action = $params['action'];

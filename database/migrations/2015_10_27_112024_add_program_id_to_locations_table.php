@@ -31,10 +31,9 @@ class AddProgramIdToLocationsTable extends Migration {
 	{
 		Schema::table('locations', function(Blueprint $table)
 		{
-			if( Schema::hasColumn('locations', 'program_id')) {
+			if(Schema::hasColumn('locations', 'program_id')) {
 				$table->dropForeign('lv_locations_program_id_foreign');
 				$table->dropColumn('program_id');
-
 			}
 		});
 	}

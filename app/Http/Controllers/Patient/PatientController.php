@@ -150,7 +150,7 @@ class PatientController extends Controller {
 					"dm_alert_level:'default', " .
 					"obs_unit:'" . $observation->obs_unit . "', " .
 					"obs_message_id:'" . $observation->obs_message_id . "', " .
-					"comment_date:'09-04-15 06:43:56', " . "},";
+					"comment_date:'".$observation->obs_date."', " . "},";
 				$o++;
 			}
 			$observation_json[$section] .= "],";
