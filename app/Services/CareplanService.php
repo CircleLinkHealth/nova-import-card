@@ -188,7 +188,7 @@ class CareplanService {
 				->where('obs_unit', '!=', 'scheduled')
 				->where('obs_unit', '!=', 'invalid')
 				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date_gmt BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
 				->orderBy('obs_date_gmt', 'desc')
 				->first();
 			//dd($observation);
@@ -237,7 +237,7 @@ class CareplanService {
 				->where('obs_unit', '!=', 'scheduled')
 				->where('obs_unit', '!=', 'invalid')
 				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date_gmt BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
 				->orderBy('obs_date_gmt', 'desc')
 				->first();
 			if(!empty($observation) && $observation->comment_id != 0) {
@@ -265,7 +265,7 @@ class CareplanService {
 				->where('obs_unit', '!=', 'scheduled')
 				->where('obs_unit', '!=', 'invalid')
 				->where('obs_unit', '!=', 'outbound')
-				->whereRaw("obs_date_gmt BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
+				->whereRaw("obs_date BETWEEN '" . $this->date . " 00:00:00' AND '" . $this->date . " 23:59:59'", array())
 				->orderBy('obs_date_gmt', 'desc')
 				->first();
 			if(!empty($observation) && $observation->comment_id != 0) {
