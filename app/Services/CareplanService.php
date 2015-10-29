@@ -155,7 +155,7 @@ class CareplanService {
 				);
 			}
 		}
-		return $dmsObs;
+		return $this->sortObs($dmsObs);
 	}
 
 
@@ -247,7 +247,7 @@ class CareplanService {
 			}
 			$i++;
 		}
-		return $bioObs;
+		return $this->sortObs($bioObs);
 	}
 
 
@@ -275,7 +275,7 @@ class CareplanService {
 			}
 			$i++;
 		}
-		return $symObs;
+		return $this->sortObs($symObs);
 	}
 
 
@@ -380,6 +380,33 @@ class CareplanService {
 			//dd($obsArr);
 		}
 		return $obsArr;
+	}
+
+
+	public function sortObs($observations) {
+		$obsByDate = array(); // key => obs array where key is the ResponseDate
+		$obsUnanswered = array(); // array of obs where ResponseDate is blank
+		$obsSorted = array(); // resulting sorted obs
+		foreach($observations as $tmpObs) {
+			if(strlen($tmpObs['ResponseDate']) > 6) {
+				$obsByDate[$tmpObs['ResponseDate']] = $tmpObs;
+			} else {
+				$obsUnanswered[] = $tmpObs;
+			}
+		}
+		// sort by date array keys
+		ksort($obsByDate);
+		$i = 0;
+		foreach($obsUnanswered as $obs) {
+			$obsSorted[$i] = $obs;
+			$i++;
+		}
+		foreach($obsByDate as $date => $obs) {
+			$obsSorted[$i] = $obs;
+			$i++;
+		}
+
+		return $obsSorted;
 	}
 
 	/**
