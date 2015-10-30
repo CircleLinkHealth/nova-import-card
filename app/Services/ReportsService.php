@@ -104,6 +104,88 @@ Class ReportsService
         }
     }
 
+    /**
+     * @param $weeklyReadingFirst
+     * @param $weeklyReadingLast
+     * @param $biometric
+     *
+     * Returns an Array with Color and Arrow for a given Biometric,
+     * and a pair of reading, Usually First Week and Last Week
+     */
+    public function biometricsIndicators($weeklyReadingFirst, $weeklyReadingLast, $biometric, $target){
+
+        $change = $weeklyReadingFirst - $weeklyReadingLast;
+        $changes_array = array();
+        // arrow [progression]
+        if($weeklyReadingFirst < $weeklyReadingLast) {
+            $changes_array['progression'] = 'up';
+        } else if($weeklyReadingFirst > $weeklyReadingLast) {
+            $changes_array['progression'] = 'down';
+        }
+
+        // obs_key specific labelling
+        $target = explode('/', $target);
+        if( ( $biometric == 'Blood_Pressure' || $biometric == 'Blood_Sugar') ) {
+            // within range, green good
+            if ($biometric == 'Blood_Pressure') {
+                if ($weeklyReadingLast > 100 && $weeklyReadingLast < 141) {
+                    $changes_array['color'] = 'green';
+                }
+            }
+            if ($biometric == 'Blood_Sugar') {
+                // within range, green good
+                if ($weeklyReadingLast > 80 && $weeklyReadingLast < 141) {
+                    $changes_array['color'] = 'green';
+                }
+            }
+            // unchanged?
+            if($weeklyReadingLast == $weeklyReadingFirst){
+                $changes_array['color'] = 'yellow';
+                $changes_array['progression'] = 'Unchanged'; // no arrow
+            }
+            // outside of range
+            if (!isset($changes_array['color'])) {
+                // if current reading is ABOVE target reading
+                if ($weeklyReadingLast > $target) {
+                    if ($change < 0) { // over goal and dropping
+                        $changes_array['color'] = 'green';
+                    } else if ($change > 0) { // over goal and rising
+                        $changes_array['color'] = 'red';
+                    }
+                }
+                // if current reading is BELOW target reading
+                if ($weeklyReadingLast < $target) {
+                    if ($change > 0) { // under goal and rising
+                        $changes_array['color'] = 'better';
+                    } else if ($change < 0) { // under goal and dropping
+                        $changes_array['color'] = 'red';
+                    }
+                }
+            }
+        }
+        if($biometric == 'Weight' || 'Cigarettes') {
+            // within range, green good
+            if ($weeklyReadingLast <= $target) {
+                $changes_array['color'] = 'green';
+            }
+            // unchanged?
+            if($weeklyReadingLast == $weeklyReadingFirst) {
+                $changes_array['color'] = 'unchanged';
+                $changes_array['progression'] = 'Unchanged';
+            }
+            // outside of range
+            if (!isset($changes_array['color'])) {
+                if ($weeklyReadingLast > $target && $change < 0) { // over goal and dropping
+                    $changes_array['color'] = 'green';
+                } else if ($weeklyReadingLast > $target && $change > 0) { // over goal and rising
+                    $changes_array['color'] = 'red';
+                }
+            }
+        }
+
+        return $changes_array;
+    }
+
     public function progress($id)
     {
         $user = WpUser::find($id);
@@ -278,6 +360,8 @@ Class ReportsService
                         ->get();
                 }
 
+
+
                 $tracking_obs_data[$q][$i]['id'] = $i + 1;
                 $tracking_obs_data[$q][$i]['week'] = date("n/j", $end_week);
                 $tracking_obs_data[$q][$i]['Reading'] = $temp[0]->Reading == null ? 'No Readings' : $temp[0]->Reading;
@@ -287,6 +371,7 @@ Class ReportsService
             //dd($tracking_obs_data[$q][0]);
 
             $num_obs = count($tracking_obs_data[$q]);
+            $biometricData = ['progression' => '', 'color' => ''];
 
             if (!$tracking_obs_data[$q]) {
                 return 'Error';
@@ -294,7 +379,7 @@ Class ReportsService
             //store all the modified data in this array
 
             if ($tracking_obs_data[$q][0]['Reading'] != 'No Readings' && $tracking_obs_data[$q][1]['Reading'] != 'No Readings') {
-                $change = abs($tracking_obs_data[$q][0]['Reading'] - $tracking_obs_data[$q][9]['Reading']);
+                $change = abs($tracking_obs_data[$q][0]['Reading'] - $tracking_obs_data[$q][1]['Reading']);
                 if ($tracking_obs_question_map[$q] == 'Cigarettes') {
                     $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
                     if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
@@ -343,6 +428,16 @@ Class ReportsService
                         $status = 'Better';
                         $progression = 'down';
                     }
+
+                    if ($tracking_obs_data[$q][0]['Reading'] != 'No Readings' && $tracking_obs_data[$q][1]['Reading'] != 'No Readings')         {
+                        var_dump($tracking_obs_data[$q][10]['Reading'] . '<br/>' . $tracking_obs_data[$q][11]['Reading'] . '<br/>' . str_replace(' ', '_', $tracking_obs_question_map[$q]) . '<br/>' . $target_array[$tracking_obs_question_map[$q]]);
+                    } else {
+
+                        $biometricData['color'] = 'yellow';
+                        $biometricData['progression'] = 'Unchanged';
+
+                    }
+
                 }
             } else {
                 $status = 'Unchanged';
@@ -350,13 +445,23 @@ Class ReportsService
                 $unit = '';
                 $change = 'Unchanged';
             }
+
+            $biometricData = $this->biometricsIndicators($tracking_obs_data[$q][1]['Reading'],$tracking_obs_data[$q][0]['Reading'],str_replace(' ', '_', $tracking_obs_question_map[$q]),$target_array[$tracking_obs_question_map[$q]]);
+
+            if(str_replace(' ', '_', $tracking_obs_question_map[$q]) == 'Cigarettes'){
+                dd( $biometricData);
+                //dd($tracking_obs_data[$q][0]);
+                //dd('First: '. $tracking_obs_data[$q][1]['Reading']. ' Last: '. $tracking_obs_data[$q][0]['Reading']);
+            }
+
             $trackingChangesUnordered['Data'][] =
                 [
                     'Biometric' => $tracking_obs_question_map[$q],
                     //'Latest Weekly Avg.' => $tracking_obs_data[$q][0]->avg,
                     'Status' => $status,
-                    'Progression' => $progression,
-                    'Color' => $colors[array_rand($colors)],
+                    'Progression' => $biometricData['progression'],
+                    'Color' => $biometricData['color'],
+//                  'Color' => $colors[array_rand($colors)],
                     'Change: ' => $change . $unit,
                     'Latest Weekly Data' => $tracking_obs_data[$q][0]['Reading'] . $unit,
                     'Goal' => $target_array[$tracking_obs_question_map[$q]],
