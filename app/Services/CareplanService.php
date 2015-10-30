@@ -70,26 +70,7 @@ class CareplanService {
 			$feed["CP_Feed"][$i]['Feed']["Biometric"] = $this->setObsBiometric();
 
 			// Symptoms
-			$scheduledsyms = $this->setObsSymptoms();
-			if(!empty($scheduledsyms)) {
-				$feed["CP_Feed"][$i]['Feed']["Symptoms"] = array(
-					0 => array(
-						"MessageID" => "CF_SYM_MNU_10",
-						"Obs_Key" => "Severity",
-						"ParentID" => "603",
-						"MessageIcon" => "question",
-						"MessageCategory" => "Question",
-						"MessageContent" => "Any <b>symptoms</b> Today?",
-						"ReturnFieldType" => '',
-						"ReturnDataRangeLow" => '',
-						"ReturnDataRangeHigh" => '',
-						"ReturnValidAnswers" => '',
-						"PatientAnswer" => '',
-						"ReadingUnit" => '',
-						"ResponseDate" => '',
-						"Response" => $this->setObsSymptoms())
-				);
-			}
+			$feed["CP_Feed"][$i]['Feed']["Symptoms"] = $this->setObsSymptoms();
 			$i++;
 		}
 		return $feed;
@@ -259,6 +240,7 @@ class CareplanService {
 		$symMsgIds = $this->getScheduledSymptoms();
 		$symObs = array();
 		$i = 0;
+		$answered = '';
 		foreach($symMsgIds as $symMsgId) {
 			$observation = Observation::where('obs_message_id', '=', $symMsgId)
 				->where('user_id', '=', $this->wpUser->ID)
@@ -269,13 +251,33 @@ class CareplanService {
 				->orderBy('obs_date_gmt', 'desc')
 				->first();
 			if(!empty($observation) && $observation->comment_id != 0) {
+				$answered = 'Yes';
 				$symObs[$i] = $this->renderCommentThread($symMsgId, $observation->comment_id);
 			} else {
 				$symObs[$i] = $this->renderCommentThread($symMsgId, 0);
 			}
 			$i++;
 		}
-		return $this->sortObs($symObs);
+		if(!empty($symObs)) {
+			$symObs = array(
+				0 => array(
+					"MessageID" => "CF_SYM_MNU_10",
+					"Obs_Key" => "Severity",
+					"ParentID" => "603",
+					"MessageIcon" => "question",
+					"MessageCategory" => "Question",
+					"MessageContent" => "Any <b>symptoms</b> Today?",
+					"ReturnFieldType" => '',
+					"ReturnDataRangeLow" => '',
+					"ReturnDataRangeHigh" => '',
+					"ReturnValidAnswers" => '',
+					"PatientAnswer" => $answered,
+					"ReadingUnit" => '',
+					"ResponseDate" => '',
+					"Response" => $this->sortObs($symObs))
+			);
+		}
+		return $symObs;
 	}
 
 
