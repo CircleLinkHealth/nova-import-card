@@ -163,22 +163,47 @@ Class ReportsService
                 }
             }
         }
-        if($biometric == 'Weight' || 'Cigarettes') {
+        if($biometric == 'Weight') {
             // within range, green good
             if ($weeklyReadingLast <= $target) {
                 $changes_array['color'] = 'green';
             }
             // unchanged?
             if($weeklyReadingLast == $weeklyReadingFirst) {
-                $changes_array['color'] = 'unchanged';
+                $changes_array['color'] = 'yellow';
                 $changes_array['progression'] = 'Unchanged';
             }
             // outside of range
             if (!isset($changes_array['color'])) {
                 if ($weeklyReadingLast > $target && $change < 0) { // over goal and dropping
                     $changes_array['color'] = 'green';
+                    $changes_array['progression'] = 'Unchanged';
                 } else if ($weeklyReadingLast > $target && $change > 0) { // over goal and rising
                     $changes_array['color'] = 'red';
+                    $changes_array['progression'] = 'Unchanged';
+                }
+            }
+        }
+
+        if($biometric == 'Cigarettes') {
+            // within range, green good
+            if ($weeklyReadingLast <= $target) {
+                $changes_array['color'] = 'green';
+                $changes_array['progression'] = 'Unchanged';
+            }
+            // unchanged?
+            if($weeklyReadingLast == $weeklyReadingFirst) {
+                $changes_array['color'] = 'yellow';
+                $changes_array['progression'] = 'Unchanged';
+            }
+            // outside of range
+            if (!isset($changes_array['color'])) {
+                if ($weeklyReadingLast > $target && $change < 0) { // over goal and dropping
+                    $changes_array['color'] = 'green';
+                    $changes_array['progression'] = 'down';
+                } else if ($weeklyReadingLast > $target && $change > 0) { // over goal and rising
+                    $changes_array['color'] = 'red';
+                    $changes_array['progression'] = 'up';
                 }
             }
         }
@@ -432,11 +457,9 @@ Class ReportsService
                     if ($tracking_obs_data[$q][0]['Reading'] != 'No Readings' && $tracking_obs_data[$q][1]['Reading'] != 'No Readings')         {
 
                     } else {
-
                         $biometricData['color'] = 'yellow';
                         $biometricData['progression'] = 'Unchanged';
                     }
-
                 }
             } else {
                 $status = 'Unchanged';
