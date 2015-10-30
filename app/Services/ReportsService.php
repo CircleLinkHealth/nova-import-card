@@ -430,7 +430,7 @@ Class ReportsService
                     }
 
                     if ($tracking_obs_data[$q][0]['Reading'] != 'No Readings' && $tracking_obs_data[$q][1]['Reading'] != 'No Readings')         {
-                        var_dump($tracking_obs_data[$q][10]['Reading'] . '<br/>' . $tracking_obs_data[$q][11]['Reading'] . '<br/>' . str_replace(' ', '_', $tracking_obs_question_map[$q]) . '<br/>' . $target_array[$tracking_obs_question_map[$q]]);
+
                     } else {
 
                         $biometricData['color'] = 'yellow';
