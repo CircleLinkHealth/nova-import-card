@@ -435,7 +435,6 @@ Class ReportsService
 
                         $biometricData['color'] = 'yellow';
                         $biometricData['progression'] = 'Unchanged';
-
                     }
 
                 }
@@ -449,7 +448,7 @@ Class ReportsService
             $biometricData = $this->biometricsIndicators($tracking_obs_data[$q][1]['Reading'],$tracking_obs_data[$q][0]['Reading'],str_replace(' ', '_', $tracking_obs_question_map[$q]),$target_array[$tracking_obs_question_map[$q]]);
 
             if(str_replace(' ', '_', $tracking_obs_question_map[$q]) == 'Cigarettes'){
-                dd( $biometricData);
+                //dd( $biometricData);
                 //dd($tracking_obs_data[$q][0]);
                 //dd('First: '. $tracking_obs_data[$q][1]['Reading']. ' Last: '. $tracking_obs_data[$q][0]['Reading']);
             }
