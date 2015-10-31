@@ -135,7 +135,7 @@ Class ReportsService
             if ($biometric == 'Blood_Sugar') {
                 // within range, green good
                 if ($weeklyReadingLast > 80 && $weeklyReadingLast < 141) {
-                    $changes_array['color'] = 'green';
+                    $changes_array['color'] = 'green'; //d
                 }
             }
             // unchanged?
@@ -156,7 +156,7 @@ Class ReportsService
                 // if current reading is BELOW target reading
                 if ($weeklyReadingLast < $target) {
                     if ($change > 0) { // under goal and rising
-                        $changes_array['color'] = 'better';
+                        $changes_array['color'] = 'green';
                     } else if ($change < 0) { // under goal and dropping
                         $changes_array['color'] = 'red';
                     }
@@ -177,10 +177,10 @@ Class ReportsService
             if (!isset($changes_array['color'])) {
                 if ($weeklyReadingLast > $target && $change < 0) { // over goal and dropping
                     $changes_array['color'] = 'green';
-                    $changes_array['progression'] = 'Unchanged';
+                    $changes_array['progression'] = 'down';
                 } else if ($weeklyReadingLast > $target && $change > 0) { // over goal and rising
                     $changes_array['color'] = 'red';
-                    $changes_array['progression'] = 'Unchanged';
+                    $changes_array['progression'] = 'up';
                 }
             }
         }
@@ -189,7 +189,7 @@ Class ReportsService
             // within range, green good
             if ($weeklyReadingLast <= $target) {
                 $changes_array['color'] = 'green';
-                $changes_array['progression'] = 'Unchanged';
+                $changes_array['progression'] = 'down';
             }
             // unchanged?
             if($weeklyReadingLast == $weeklyReadingFirst) {
