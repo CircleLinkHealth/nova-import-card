@@ -163,22 +163,47 @@ Class ReportsService
                 }
             }
         }
-        if($biometric == 'Weight' || 'Cigarettes') {
+        if($biometric == 'Weight') {
             // within range, green good
             if ($weeklyReadingLast <= $target) {
                 $changes_array['color'] = 'green';
             }
             // unchanged?
             if($weeklyReadingLast == $weeklyReadingFirst) {
-                $changes_array['color'] = 'unchanged';
+                $changes_array['color'] = 'yellow';
                 $changes_array['progression'] = 'Unchanged';
             }
             // outside of range
             if (!isset($changes_array['color'])) {
                 if ($weeklyReadingLast > $target && $change < 0) { // over goal and dropping
                     $changes_array['color'] = 'green';
+                    $changes_array['progression'] = 'Unchanged';
                 } else if ($weeklyReadingLast > $target && $change > 0) { // over goal and rising
                     $changes_array['color'] = 'red';
+                    $changes_array['progression'] = 'Unchanged';
+                }
+            }
+        }
+
+        if($biometric == 'Cigarettes') {
+            // within range, green good
+            if ($weeklyReadingLast <= $target) {
+                $changes_array['color'] = 'green';
+                $changes_array['progression'] = 'Unchanged';
+            }
+            // unchanged?
+            if($weeklyReadingLast == $weeklyReadingFirst) {
+                $changes_array['color'] = 'yellow';
+                $changes_array['progression'] = 'Unchanged';
+            }
+            // outside of range
+            if (!isset($changes_array['color'])) {
+                if ($weeklyReadingLast > $target && $change < 0) { // over goal and dropping
+                    $changes_array['color'] = 'green';
+                    $changes_array['progression'] = 'down';
+                } else if ($weeklyReadingLast > $target && $change > 0) { // over goal and rising
+                    $changes_array['color'] = 'red';
+                    $changes_array['progression'] = 'up';
                 }
             }
         }
@@ -432,11 +457,9 @@ Class ReportsService
                     if ($tracking_obs_data[$q][0]['Reading'] != 'No Readings' && $tracking_obs_data[$q][1]['Reading'] != 'No Readings')         {
 
                     } else {
-
                         $biometricData['color'] = 'yellow';
                         $biometricData['progression'] = 'Unchanged';
                     }
-
                 }
             } else {
                 $status = 'Unchanged';
@@ -461,11 +484,11 @@ Class ReportsService
                     'Progression' => $biometricData['progression'],
                     'Color' => $biometricData['color'],
 //                  'Color' => $colors[array_rand($colors)],
-                    'Change: ' => $change . $unit,
-                    'Latest Weekly Data' => $tracking_obs_data[$q][0]['Reading'] . $unit,
-                    'Goal' => $target_array[$tracking_obs_question_map[$q]],
-                    'data' => array_reverse($tracking_obs_data[$q])
-                ];
+                'Change: ' => $change . $unit,
+                'Latest Weekly Data' => $tracking_obs_data[$q][0]['Reading'] . $unit,
+                'Goal' => $target_array[$tracking_obs_question_map[$q]],
+                'data' => array_reverse($tracking_obs_data[$q])
+            ];
             //, 'data' => $temp_meds];
 
         }
@@ -602,80 +625,80 @@ Class ReportsService
         //========SYMPTOMS TO MONITOR============
         //=======================================
 
-            $symptoms['Section'] = 'Watch out for';
-            if ($this->getItemsForParent('Symptoms to Monitor', $user) != false) {
-                $symptoms['Data'] = $this->getItemsForParent('Symptoms to Monitor', $user);
-            } else {
-                $symptoms['Data'] = ['name' => 'None'];
-            }
+        $symptoms['Section'] = 'Watch out for';
+        if ($this->getItemsForParent('Symptoms to Monitor', $user) != false) {
+            $symptoms['Data'] = $this->getItemsForParent('Symptoms to Monitor', $user);
+        } else {
+            $symptoms['Data'] = ['name' => 'None'];
+        }
 
         //=======================================
         //========LIFESTYLE TO MONITOR===========
         //=======================================
 
-            $lifestyle['Section'] = 'We Are Informing You About';
+        $lifestyle['Section'] = 'We Are Informing You About';
 
-            if ($this->getItemsForParent('Lifestyle to Monitor', $user) != false) {
-                $lifestyle['Data'] = $this->getItemsForParent('Lifestyle to Monitor', $user);
-            } else {
-                $lifestyle['Data'] = ['name' => 'None'];
-            }
+        if ($this->getItemsForParent('Lifestyle to Monitor', $user) != false) {
+            $lifestyle['Data'] = $this->getItemsForParent('Lifestyle to Monitor', $user);
+        } else {
+            $lifestyle['Data'] = ['name' => 'None'];
+        }
 
         //=======================================
         //===========CHECK IN PLAN===============
         //=======================================
 
-            $userConfig = $user->userConfig();
-            $check['Section'] = 'Check In Plan';
-            $check['Description'] = 'We will check in with you at' . $userConfig['study_phone_number'] . ' every day at ' . $userConfig['preferred_contact_time'];
+        $userConfig = $user->userConfig();
+        $check['Section'] = 'Check In Plan';
+        $check['Description'] = 'We will check in with you at' . $userConfig['study_phone_number'] . ' every day at ' . $userConfig['preferred_contact_time'];
 
-            $days = array('Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat');
+        $days = array('Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat');
 
-            for ($i = 0; $i < count($days); $i++) {
-                $check['Data'][] = ['day' => $days[$i], 'time' => $userConfig['preferred_contact_time']];
-            }
+        for ($i = 0; $i < count($days); $i++) {
+            $check['Data'][] = ['day' => $days[$i], 'time' => $userConfig['preferred_contact_time']];
+        }
 
         //=======================================
         //===========OTHER INFO===============
         //=======================================
 
-            $other['Section'] = 'Other Information';
+        $other['Section'] = 'Other Information';
 
-            $other['Data'] = array();
-            $pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
-            //Get all the items for each section
-            $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
+        $other['Data'] = array();
+        $pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
+        //Get all the items for each section
+        $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
 
-            for ($i = 0; $i < count($items); $i++) {
-                //get id's of all lifestyle items that are active for the given user
-                $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value', 'Active')->where('user_id', $user->ID)->first();
-                $items_detail[$i] = CPRulesItem::where('items_parent', $items[$i])->first();
-                $items_detail_ucp[$i] = CPRulesUCP::where('items_id', $items_detail[$i]->items_id)->where('user_id', $user->ID)->first();
-                if ($item_for_user[$i] != null) {
-                    $count = 0;
-                    //Find the items_text for the one's that are active
-                    $user_items = CPRulesItem::find($item_for_user[$i]->items_id);
-                    $other['Data'][] = ['name' => $user_items->items_text, 'comment' => ($items_detail_ucp[$i]->meta_value == '' ? 'Nothing' : $items_detail_ucp[$i]->meta_value)];
-                }
+        for ($i = 0; $i < count($items); $i++) {
+            //get id's of all lifestyle items that are active for the given user
+            $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value', 'Active')->where('user_id', $user->ID)->first();
+            $items_detail[$i] = CPRulesItem::where('items_parent', $items[$i])->first();
+            $items_detail_ucp[$i] = CPRulesUCP::where('items_id', $items_detail[$i]->items_id)->where('user_id', $user->ID)->first();
+            if ($item_for_user[$i] != null) {
+                $count = 0;
+                //Find the items_text for the one's that are active
+                $user_items = CPRulesItem::find($item_for_user[$i]->items_id);
+                $other['Data'][] = ['name' => $user_items->items_text, 'comment' => ($items_detail_ucp[$i]->meta_value == '' ? 'Nothing' : $items_detail_ucp[$i]->meta_value)];
             }
-
-            if (count($other['Data']) < 1) {
-                $other['Data'] = ['name' => 'None'];
-            }
-
-
-            //ADD ALL TO MAIN ARRAY
-
-            $careplan['CarePlan_Report'][] = $this->reportHeader($id);
-            $careplan['CarePlan_Report'][] = $treating;
-            $careplan['CarePlan_Report'][] = $goals;
-            $careplan['CarePlan_Report'][] = $monMedications;
-            $careplan['CarePlan_Report'][] = $takMedications;
-            $careplan['CarePlan_Report'][] = $symptoms;
-            $careplan['CarePlan_Report'][] = $check;
-            $careplan['CarePlan_Report'][] = $other;
-
-            return $careplan;
-
         }
+
+        if (count($other['Data']) < 1) {
+            $other['Data'] = ['name' => 'None'];
+        }
+
+
+        //ADD ALL TO MAIN ARRAY
+
+        $careplan['CarePlan_Report'][] = $this->reportHeader($id);
+        $careplan['CarePlan_Report'][] = $treating;
+        $careplan['CarePlan_Report'][] = $goals;
+        $careplan['CarePlan_Report'][] = $monMedications;
+        $careplan['CarePlan_Report'][] = $takMedications;
+        $careplan['CarePlan_Report'][] = $symptoms;
+        $careplan['CarePlan_Report'][] = $check;
+        $careplan['CarePlan_Report'][] = $other;
+
+        return $careplan;
+
+    }
 }
