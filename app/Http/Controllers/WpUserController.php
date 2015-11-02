@@ -120,9 +120,12 @@ class WpUserController extends Controller {
 				}
 			}
 
+			$queryString = $request->query();
+
 			$wpUsers = $wpUsers->paginate(20);
-			$invalidUsers = array();
-			return view('wpUsers.index', [ 'wpUsers' => $wpUsers, 'users' => $users, 'filterUser' => $filterUser, 'programs' => $programs, 'filterProgram' => $filterProgram, 'roles' => $roles, 'filterRole' => $filterRole, 'invalidWpUsers' => $invalidUsers ]);
+			$invalidWpUsers = array();
+
+			return view('wpUsers.index', compact(['wpUsers', 'users', 'filterUser', 'programs', 'filterProgram', 'roles', 'filterRole', 'invalidWpUsers', 'queryString']));
 		}
 
 	}
