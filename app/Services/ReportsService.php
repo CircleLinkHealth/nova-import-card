@@ -105,48 +105,53 @@ Class ReportsService
     }
 
     /**
-     * @param $weeklyReadingFirst
-     * @param $weeklyReadingLast
-     * @param $biometric
-     *
      * Returns an Array with Color and Arrow for a given Biometric,
      * and a pair of reading, Usually First Week and Last Week
+     * @param $weeklyReading1 - most recent
+     * @param $weeklyReading2 - second most recent
+     * @param $biometric
+     * @param $target
+     * @return array
      */
-    public function biometricsIndicators($weeklyReadingFirst, $weeklyReadingLast, $biometric, $target){
+    public function biometricsIndicators($weeklyReading1, $weeklyReading2, $biometric, $target){
 
-        $change = $weeklyReadingFirst - $weeklyReadingLast;
+        //Difference in most recent weekly values
+        $change = $weeklyReading1 - $weeklyReading2;
+
+        //result array
         $changes_array = array();
-        // arrow [progression]
-        if($weeklyReadingFirst < $weeklyReadingLast) {
-            $changes_array['progression'] = 'up';
-        } else if($weeklyReadingFirst > $weeklyReadingLast) {
-            $changes_array['progression'] = 'down';
+
+        //max and min for BP and BS
+        if ($biometric == 'Blood_Sugar') {
+            $max = 141; $min = 80;
+        } else if($biometric == 'Blood_Pressure') {
+            $max = 141; $min = 100;
+            $target = explode('/', $target);
+            $target = $target[0];
         }
 
-        // obs_key specific labelling
-        $target = explode('/', $target);
-        if( ( $biometric == 'Blood_Pressure' || $biometric == 'Blood_Sugar') ) {
+        if($weeklyReading1 < $weeklyReading2) {
+            $changes_array['progression'] = 'down';
+        } else if($weeklyReading1 > $weeklyReading2) {
+            $changes_array['progression'] = 'up';
+        } else {
+            $changes_array['progression'] = 'unchanged'; // no arrow
+            $changes_array['color'] = 'yellow';
+        }
+
+        if($biometric == 'Blood_Sugar' || $biometric == 'Blood_Pressure') {
+        // Color is decided by whether the reading falls between these values
+        // per old UI
+
             // within range, green good
-            if ($biometric == 'Blood_Pressure') {
-                if ($weeklyReadingLast > 100 && $weeklyReadingLast < 141) {
-                    $changes_array['color'] = 'green';
-                }
+            if ($weeklyReading1 > $min && $weeklyReading1 < $max) {
+                $changes_array['color'] = 'green';
             }
-            if ($biometric == 'Blood_Sugar') {
-                // within range, green good
-                if ($weeklyReadingLast > 80 && $weeklyReadingLast < 141) {
-                    $changes_array['color'] = 'green';
-                }
-            }
-            // unchanged?
-            if($weeklyReadingLast == $weeklyReadingFirst){
-                $changes_array['color'] = 'yellow';
-                $changes_array['progression'] = 'Unchanged'; // no arrow
-            }
+
             // outside of range
             if (!isset($changes_array['color'])) {
                 // if current reading is ABOVE target reading
-                if ($weeklyReadingLast > $target) {
+                if ($weeklyReading1 > $target) {
                     if ($change < 0) { // over goal and dropping
                         $changes_array['color'] = 'green';
                     } else if ($change > 0) { // over goal and rising
@@ -154,65 +159,62 @@ Class ReportsService
                     }
                 }
                 // if current reading is BELOW target reading
-                if ($weeklyReadingLast < $target) {
+                if ($weeklyReading1 < $target) {
                     if ($change > 0) { // under goal and rising
-                        $changes_array['color'] = 'better';
+                        $changes_array['color'] = 'green';
                     } else if ($change < 0) { // under goal and dropping
                         $changes_array['color'] = 'red';
                     }
                 }
             }
         }
+
         if($biometric == 'Weight') {
-            // within range, green good
-            if ($weeklyReadingLast <= $target) {
-                $changes_array['color'] = 'green';
-            }
-            // unchanged?
-            if($weeklyReadingLast == $weeklyReadingFirst) {
-                $changes_array['color'] = 'yellow';
-                $changes_array['progression'] = 'Unchanged';
-            }
-            // outside of range
-            if (!isset($changes_array['color'])) {
-                if ($weeklyReadingLast > $target && $change < 0) { // over goal and dropping
-                    $changes_array['color'] = 'green';
-                    $changes_array['progression'] = 'Unchanged';
-                } else if ($weeklyReadingLast > $target && $change > 0) { // over goal and rising
+
+            if ($weeklyReading1 < $target) { // under weight target
+                if($change < 0){
+                    // lost weight
                     $changes_array['color'] = 'red';
-                    $changes_array['progression'] = 'Unchanged';
+                } else {
+                    //gained weight
+                    $changes_array['color'] = 'green';
+                }
+            } else if ($weeklyReading1 > $target) { // over weight
+                if($change <= 0){
+                    // lost weight
+                    $changes_array['color'] = 'green';
+                } else {
+                    // gained weight
+                    $changes_array['color'] = 'red';
                 }
             }
         }
 
         if($biometric == 'Cigarettes') {
-            // within range, green good
-            if ($weeklyReadingLast <= $target) {
-                $changes_array['color'] = 'green';
-                $changes_array['progression'] = 'Unchanged';
-            }
-            // unchanged?
-            if($weeklyReadingLast == $weeklyReadingFirst) {
-                $changes_array['color'] = 'yellow';
-                $changes_array['progression'] = 'Unchanged';
-            }
-            // outside of range
-            if (!isset($changes_array['color'])) {
-                if ($weeklyReadingLast > $target && $change < 0) { // over goal and dropping
+            if ($weeklyReading1 < $target) { // latest reading is below target smokes
+                if($change < 0){
+                    // smoked lesser
                     $changes_array['color'] = 'green';
-                    $changes_array['progression'] = 'down';
-                } else if ($weeklyReadingLast > $target && $change > 0) { // over goal and rising
+                } else {
+                    //smoked more
                     $changes_array['color'] = 'red';
-                    $changes_array['progression'] = 'up';
+                }
+            } else if ($weeklyReading1 > $target) { // smoked more
+                if($change < 0){
+                    // smoked lesser
+                    $changes_array['color'] = 'green';
+                } else {
+                    //smoked more
+                    $changes_array['color'] = 'red';
                 }
             }
         }
-
         return $changes_array;
     }
 
     public function progress($id)
     {
+        //dd($this->biometricsIndicators(35, 20, 'Cigarettes', '0'));
         $user = WpUser::find($id);
 
         //main container
