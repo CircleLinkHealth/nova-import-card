@@ -117,9 +117,12 @@ Class ReportsService
 
         //Difference in most recent weekly values
         $change = $weeklyReading1 - $weeklyReading2;
+        //var_dump($biometric. ': '. $change);
 
         //result array
         $changes_array = array();
+        $changes_array['unit'] = $this->biometricsUnitMapping(str_replace('_', ' ',$biometric));
+        $changes_array['change'] = abs($change);
 
         //max and min for BP and BS
         if ($biometric == 'Blood_Sugar') {
@@ -129,6 +132,8 @@ Class ReportsService
             $target = explode('/', $target);
             $target = $target[0];
         }
+
+        $target = intval($target);
 
         if($weeklyReading1 < $weeklyReading2) {
             $changes_array['progression'] = 'down';
@@ -146,6 +151,7 @@ Class ReportsService
             // within range, green good
             if ($weeklyReading1 > $min && $weeklyReading1 < $max) {
                 $changes_array['color'] = 'green';
+                $changes_array['status'] = 'Better';
             }
 
             // outside of range
@@ -154,58 +160,66 @@ Class ReportsService
                 if ($weeklyReading1 > $target) {
                     if ($change < 0) { // over goal and dropping
                         $changes_array['color'] = 'green';
+                        $changes_array['status'] = 'Better';
                     } else if ($change > 0) { // over goal and rising
                         $changes_array['color'] = 'red';
+                        $changes_array['status'] = 'Worse';
                     }
                 }
                 // if current reading is BELOW target reading
                 if ($weeklyReading1 < $target) {
                     if ($change > 0) { // under goal and rising
                         $changes_array['color'] = 'green';
+                        $changes_array['status'] = 'Better';
                     } else if ($change < 0) { // under goal and dropping
                         $changes_array['color'] = 'red';
+                        $changes_array['status'] = 'Worse';
                     }
                 }
             }
-        }
-
-        if($biometric == 'Weight') {
+        } else if($biometric == 'Weight') {
 
             if ($weeklyReading1 < $target) { // under weight target
                 if($change < 0){
                     // lost weight
                     $changes_array['color'] = 'red';
+                    $changes_array['status'] = 'Worse';
                 } else {
                     //gained weight
                     $changes_array['color'] = 'green';
+                    $changes_array['status'] = 'Better';
                 }
             } else if ($weeklyReading1 > $target) { // over weight
                 if($change <= 0){
                     // lost weight
                     $changes_array['color'] = 'green';
+                    $changes_array['status'] = 'Better';
                 } else {
                     // gained weight
                     $changes_array['color'] = 'red';
+                    $changes_array['status'] = 'Worse';
                 }
             }
-        }
-
-        if($biometric == 'Cigarettes') {
+        } else if($biometric == 'Cigarettes') {
             if ($weeklyReading1 < $target) { // latest reading is below target smokes
                 if($change < 0){
                     // smoked lesser
                     $changes_array['color'] = 'green';
+                    $changes_array['status'] = 'Better';
                 } else {
                     //smoked more
                     $changes_array['color'] = 'red';
+                    $changes_array['status'] = 'Worse';
                 }
             } else if ($weeklyReading1 > $target) { // smoked more
                 if($change < 0){
                     // smoked lesser
                     $changes_array['color'] = 'green';
+                    $changes_array['status'] = 'Better';
                 } else {
                     //smoked more
                     $changes_array['color'] = 'red';
+                    $changes_array['status'] = 'Worse';
                 }
             }
         }
@@ -214,7 +228,7 @@ Class ReportsService
 
     public function progress($id)
     {
-        //dd($this->biometricsIndicators(35, 20, 'Cigarettes', '0'));
+
         $user = WpUser::find($id);
 
         //main container
@@ -223,7 +237,6 @@ Class ReportsService
         $userHeader = $this->reportHeader($id);
         $trackingChanges = array();
         $medications = array();
-        $colors = array('green', 'red', 'yellow');
 
         $medications['Section'] = 'Taking your <b>Medications</b>?';
         $trackingChanges['Section'] = 'Tracking Changes';
@@ -406,90 +419,65 @@ Class ReportsService
             //store all the modified data in this array
 
             if ($tracking_obs_data[$q][0]['Reading'] != 'No Readings' && $tracking_obs_data[$q][1]['Reading'] != 'No Readings') {
-                $change = abs($tracking_obs_data[$q][0]['Reading'] - $tracking_obs_data[$q][1]['Reading']);
-                if ($tracking_obs_question_map[$q] == 'Cigarettes') {
-                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
-                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'Worse';
-                        $progression = 'up';
-                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'No Change';
-                        $progression = 'Unchanged';
-                    } else {
-                        $status = 'Better';
-                        $progression = 'down';
-                    }
-                } else if ($tracking_obs_question_map[$q] == 'Blood Pressure') {
-                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
-                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'Worse';
-                        $progression = 'up';
-                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'No Change';
-                        $progression = 'Unchanged';
-                    } else {
-                        $status = 'Better';
-                        $progression = 'down';
-                    }
-                } else if ($tracking_obs_question_map[$q] == 'Blood Sugar') {
-                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
-                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'Worse';
-                        $progression = 'up';
-                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'No Change';
-                        $progression = 'Unchanged';
-                    } else {
-                        $status = 'Better';
-                        $progression = 'down';
-                    }
-                } else if ($tracking_obs_question_map[$q] == 'Weight') {
-                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
-                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'Worse';
-                        $progression = 'up';
-                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
-                        $status = 'No Change';
-                        $progression = 'Unchanged';
-                    } else {
-                        $status = 'Better';
-                        $progression = 'down';
-                    }
 
-                    if ($tracking_obs_data[$q][0]['Reading'] != 'No Readings' && $tracking_obs_data[$q][1]['Reading'] != 'No Readings')         {
-
-                    } else {
-                        $biometricData['color'] = 'yellow';
-                        $biometricData['progression'] = 'Unchanged';
-                    }
-                }
+                $biometricData = $this->biometricsIndicators($tracking_obs_data[$q][0]['Reading'],$tracking_obs_data[$q][1]['Reading'],str_replace(' ', '_', $tracking_obs_question_map[$q]),$target_array[$tracking_obs_question_map[$q]]);
+//                $change = abs($tracking_obs_data[$q][0]['Reading'] - $tracking_obs_data[$q][1]['Reading']);
+//                if ($tracking_obs_question_map[$q] == 'Cigarettes') {
+//                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
+//                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
+//                        $status = 'Worse';
+//                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
+//                        $status = 'No Change';
+//                    } else {
+//                        $status = 'Better';
+//                    }
+//                } else if ($tracking_obs_question_map[$q] == 'Blood Pressure') {
+//                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
+//                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
+//                        $status = 'Worse';
+//                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
+//                        $status = 'No Change';
+//                    } else {
+//                        $status = 'Better';
+//                    }
+//                } else if ($tracking_obs_question_map[$q] == 'Blood Sugar') {
+//                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
+//                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
+//                        $status = 'Worse';
+//                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
+//                        $status = 'No Change';
+//                    } else {
+//                        $status = 'Better';
+//                    }
+//                } else if ($tracking_obs_question_map[$q] == 'Weight') {
+//                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
+//                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
+//                        $status = 'Worse';
+//                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
+//                        $status = 'No Change';
+//                    } else {
+//                        $status = 'Better';
+//                    }
+//                }
             } else {
-                $status = 'Unchanged';
-                $progression = 'Unchanged';
-                $unit = '';
-                $change = 'Unchanged';
-            }
-
-            $biometricData = $this->biometricsIndicators($tracking_obs_data[$q][1]['Reading'],$tracking_obs_data[$q][0]['Reading'],str_replace(' ', '_', $tracking_obs_question_map[$q]),$target_array[$tracking_obs_question_map[$q]]);
-
-            if(str_replace(' ', '_', $tracking_obs_question_map[$q]) == 'Cigarettes'){
-                //dd( $biometricData);
-                //dd($tracking_obs_data[$q][0]);
-                //dd('First: '. $tracking_obs_data[$q][1]['Reading']. ' Last: '. $tracking_obs_data[$q][0]['Reading']);
+                $biometricData['status'] = 'Unchanged';
+                $biometricData['unit'] = '';
+                $biometricData['change'] = 'Unchanged';
+                $biometricData['color'] = 'yellow';
+                $biometricData['progression'] = 'Unchanged';
             }
 
             $trackingChangesUnordered['Data'][] =
                 [
                     'Biometric' => $tracking_obs_question_map[$q],
                     //'Latest Weekly Avg.' => $tracking_obs_data[$q][0]->avg,
-                    'Status' => $status,
+                    'Status' => $biometricData['status'],
                     'Progression' => $biometricData['progression'],
                     'Color' => $biometricData['color'],
-//                  'Color' => $colors[array_rand($colors)],
-                'Change: ' => $change . $unit,
-                'Latest Weekly Data' => $tracking_obs_data[$q][0]['Reading'] . $unit,
-                'Goal' => $target_array[$tracking_obs_question_map[$q]],
-                'data' => array_reverse($tracking_obs_data[$q])
+                    'Change: ' => $biometricData['change'] . $biometricData['unit'],
+                    'Latest Weekly Data' => $tracking_obs_data[$q][0]['Reading'] . $biometricData['unit'],
+                    'Goal' => $target_array[$tracking_obs_question_map[$q]],
+                    'data' => array_reverse($tracking_obs_data[$q])
             ];
             //, 'data' => $temp_meds];
 
