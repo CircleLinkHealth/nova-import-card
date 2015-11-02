@@ -348,7 +348,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('users.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ URL::previous() }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::hidden('user_id', $wpUser->ID) !!}
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
                                     </form>
