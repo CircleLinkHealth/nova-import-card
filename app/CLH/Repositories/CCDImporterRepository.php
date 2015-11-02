@@ -16,7 +16,7 @@ class CCDImporterRepository
      *
      * @return WpUser
      */
-    public function createRandomUser()
+    public function createRandomUser($blogId)
     {
         $role = Role::whereName('patient')->first();
 
@@ -26,7 +26,7 @@ class CCDImporterRepository
             'user_email' => $newUserId . '@careplanmanager.com',
             'user_pass' => 'whatToPutHere',
             'user_nicename' => $newUserId,
-            'primary_blog' => '7', //@todo: thoughts on how we get this?
+            'primary_blog' => $blogId,
             'roles' => [$role->id],
         ]);
 

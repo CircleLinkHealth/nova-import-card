@@ -31,7 +31,14 @@ class CCDUploadController extends Controller {
             foreach ($_FILES['file']['name'] as $position => $name) {
                 $xml = file_get_contents($_FILES['file']['tmp_name'][$position]);
 
-                $user = $this->repo->createRandomUser();
+                if($request->session()->has('blogId')) {
+                    $blogId = $request->session()->get('blogId');
+                }
+                else {
+                    throw new \Exception('Blog id not found,', 400);
+                }
+
+                $user = $this->repo->createRandomUser($blogId);
 
                 $newCCD = new XmlCCD();
                 $newCCD->ccd = $xml;
@@ -51,9 +58,9 @@ class CCDUploadController extends Controller {
     /**
      * @return \Illuminate\View\View
      */
-    public function create()
+    public function create($id)
     {
-        return view('CCDUploader.uploader')->render();
+        return view('CCDUploader.uploader');
     }
 
     /**

@@ -10,9 +10,14 @@ Route::get('ccd-parser-demo', 'WelcomeController@index');
  * UPLOAD CCD ROUTES
  * @todo How do we protect those? auth middleware?
  */
-Route::get('upload-raw-ccds', 'WelcomeController@index');
+Route::get('upload-raw-ccds', 'CCDUploadController@create');
 Route::post('upload-raw-ccds', 'CCDUploadController@uploadRawFiles');
 Route::post('upload-parsed-ccds', 'CCDUploadController@storeParsedFiles');
+
+Route::group(['middleware' => 'auth.ccd.import'], function (){
+	Route::post('{id}/import-ccds', 'CCDUploadController@create');
+});
+
 
 //Test route @todo remove after testing
 Route::get('/reports/progress/{id}', function($id){
