@@ -8,9 +8,9 @@ class WpUserRepository {
 
     public function createNewUser(WpUser $wpUser, ParameterBag $params)
     {
-        $wpUser->createNewUser($params->get('user_email'), $params->get('user_pass'));
+        $wpUser = $wpUser->createNewUser($params->get('user_email'), $params->get('user_pass'));
 
-        $wpUser = WpUser::with('meta')->find($wpUser->ID);
+        $wpUser->load('meta');
 
         $wpUser->user_nicename = $params->get('user_nicename');
         $wpUser->program_id = $params->get('primary_blog');
@@ -21,19 +21,7 @@ class WpUserRepository {
             $wpUser->roles()->sync([]);
         }
 
-        // save meta
-        $userMetaTemplate = $wpUser->userMetaTemplate();
-        foreach($userMetaTemplate as $key => $value) {
-            $userMeta = new WpUserMeta;
-            $userMeta->user_id = $wpUser->ID;
-            $userMeta->meta_key = $key;
-            if($params->get($key)) {
-                $userMeta->meta_value = $params->get($key);
-            } else {
-                $userMeta->meta_value = $value;
-            }
-            $wpUser->meta()->save($userMeta);
-        }
+        $this->saveOrUpdateUserMeta($wpUser, $params);
 
         // update role / capabilities (wp)
         $input = $params->get('role');
@@ -87,22 +75,7 @@ class WpUserRepository {
             $wpUser->roles()->sync(array());
         }
 
-        // save meta
-        $userMetaTemplate = $wpUser->userMetaTemplate();
-        foreach($userMetaTemplate as $key => $value) {
-            $userMeta = $wpUser->meta()->where('meta_key', $key)->first();
-            if(!$userMeta) {
-                $userMeta = new WpUserMeta;
-            }
-            $userMeta->user_id = $wpUser->ID;
-            $userMeta->meta_key = $key;
-            if(($params->get($key))) {
-                $userMeta->meta_value = $params->get($key);
-            } else {
-                $userMeta->meta_value = $value;
-            }
-            $wpUser->meta()->save($userMeta);
-        }
+        $this->saveOrUpdateUserMeta($wpUser, $params);
 
         // update role
         $input = $params->get('role');
@@ -138,6 +111,27 @@ class WpUserRepository {
         $userConfig->save();
 
         return $wpUser;
+    }
+
+    public function saveOrUpdateUserMeta(WpUser $wpUser, ParameterBag $params)
+    {
+        $userMetaTemplate = $wpUser->userMetaTemplate();
+
+        foreach($userMetaTemplate as $key => $value)
+        {
+            $userMeta = $wpUser->meta()->firstOrNew([
+                'meta_key' => $key,
+                'user_id' => $wpUser->ID
+            ]);
+
+            if(($params->get($key))) {
+                $userMeta->meta_value = $params->get($key);
+            } else {
+                $userMeta->meta_value = $value;
+            }
+
+            $wpUser->meta()->save($userMeta);
+        }
     }
 
 }

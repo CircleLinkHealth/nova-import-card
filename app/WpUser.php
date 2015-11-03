@@ -40,8 +40,11 @@ class WpUser extends Model {
 
     protected $hidden = ['user_pass'];
 
-    protected $dates = ['deleted'];
+    protected $dates = ['deleted','user_registered'];
 
+    /**
+     * @todo: make timestamps work
+     */
     public $timestamps = false;
 
     public $rules = array(
@@ -197,7 +200,7 @@ class WpUser extends Model {
         $this->user_pass = $user_pass;
         $this->save();
 
-        return true;
+        return $this;
     }
 
 
