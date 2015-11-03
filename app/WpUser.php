@@ -217,13 +217,15 @@ class WpUser extends Model {
             "careplan_approved" => "",
             "careplan_approver" => "",
             "ccm_enabled" => "",
+            "careplan_status" => "",
         );
 
         return $userMeta;
     }
 
     public function userConfigTemplate() {
-        $userConfig = array("status" => "Active",
+        $userConfig = array(
+            "status" => "Active",
             "email" => "test@test.com",
             "mrn_number" => "12345678",
             "study_phone_number" => "203-252-2556",
