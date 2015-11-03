@@ -106,7 +106,7 @@ class WpUserRepository {
             $userConfig = new WpUserMeta;
             $userConfig->meta_key = 'wp_' . $wpUser->blogId() . '_user_config';
             $userConfig->meta_value = serialize($userConfigTemplate);
-            $userConfig->user_id = $id;
+            $userConfig->user_id = $wpUser->ID;
         }
         $userConfig->save();
 
