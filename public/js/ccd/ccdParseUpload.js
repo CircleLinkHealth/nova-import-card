@@ -27,7 +27,7 @@
         return xhr;
     }
 
-    var url = 'http://cpm-api.dev/upload-raw-ccds';
+    var url = '/upload-raw-ccds';
 
     var xhr = createCORSRequest('post', url);
     if (!xhr) {
@@ -50,8 +50,14 @@
             var jsonCcds = [];
 
             data.forEach(function(ccd) {
-                var jsonCcd = parseCCD(ccd);
-                jsonCcds.push(jsonCcd);
+                var jsonCcd = parseCCD(ccd.xml);
+
+                var parsedCCD = {
+                    userId:ccd.userId,
+                    ccd:jsonCcd
+                };
+
+                jsonCcds.push(parsedCCD);
             });
 
         xhr.onerror = function() {
@@ -59,15 +65,15 @@
         };
 
         /**
-         * XHR POST THIS GUY TO LARAVEL
+         * XHR POST THIS GUY TO THE API
          */
 
-        var url2 = 'http://cpm-api.dev/upload-parsed-ccds';
+        var url2 = '/upload-parsed-ccds';
 
         var xhr2 = createCORSRequest('post', url2);
 
         var json = JSON.stringify(jsonCcds);
-console.log(json);
+
         xhr2.send(json);
 
         xhr2.onload = function () {

@@ -23,10 +23,12 @@ class CCDUploadController extends Controller {
      *
      * @param Request $request
      * @return string
+     * @throws \Exception
      */
 	public function uploadRawFiles(Request $request)
     {
         $uploaded = [];
+
         if (!empty($_FILES['file']['name'][0])) {
             foreach ($_FILES['file']['name'] as $position => $name) {
                 $xml = file_get_contents($_FILES['file']['tmp_name'][$position]);
@@ -45,14 +47,13 @@ class CCDUploadController extends Controller {
                 $newCCD->user_id = $user->ID;
                 $newCCD->save();
 
-                array_push($uploaded, $xml);
+                array_push($uploaded, [
+                    'userId' => $user->ID,
+                    'xml' => $xml,
+                ]);
             }
         }
-        return response()->json($uploaded, 200, [
-            //These could be useless @todo erase them in not needed
-//            'Access-Control-Allow-Origin:' => 'http://localcrisfield.careplanmanager.com',
-//            'Access-Control-Allow-Credentials:' => ['http://localcrisfield.careplanmanager.com'],
-        ]);
+        return response()->json($uploaded, 200);
     }
 
     /**
@@ -73,15 +74,12 @@ class CCDUploadController extends Controller {
 
         foreach ($receivedFiles as $file) {
             $parsedCCD = new ParsedCCD();
-            $parsedCCD->ccd = json_encode($file);
+            $parsedCCD->ccd = json_encode($file->ccd);
+            $parsedCCD->user_id = $file->userId;
             $parsedCCD->save();
         }
 
-        return response()->json('Files received and processed successfully', 200, [
-            //These could be useless @todo erase them in not needed
-//            'Access-Control-Allow-Origin:' => 'http://localcrisfield.careplanmanager.com',
-//            'Access-Control-Allow-Credentials:' => ['http://localcrisfield.careplanmanager.com'],
-        ]);
+        return response()->json('Files received and processed successfully', 200);
     }
 
 }
