@@ -15,11 +15,7 @@ class WpUserRepository {
         $wpUser->user_nicename = $params->get('user_nicename');
         $wpUser->program_id = $params->get('primary_blog');
 
-        if(!empty($params->get('roles'))) {
-            $wpUser->roles()->sync($params->get('roles'));
-        } else {
-            $wpUser->roles()->sync([]);
-        }
+        $this->saveOrUpdateRoles($wpUser, $params);
 
         $this->saveOrUpdateUserMeta($wpUser, $params);
 
@@ -68,12 +64,7 @@ class WpUserRepository {
         $wpUser->program_id = $params->get('primary_blog');
         $wpUser->save();
 
-        // roles
-        if(($params->get('roles'))) {
-            $wpUser->roles()->sync($params->get('roles'));
-        } else {
-            $wpUser->roles()->sync(array());
-        }
+        $this->saveOrUpdateRoles($wpUser, $params);
 
         $this->saveOrUpdateUserMeta($wpUser, $params);
 
@@ -131,6 +122,15 @@ class WpUserRepository {
             }
 
             $wpUser->meta()->save($userMeta);
+        }
+    }
+
+    public function saveOrUpdateRoles(WpUser $wpUser, ParameterBag $params)
+    {
+        if(!empty($params->get('roles'))) {
+            $wpUser->roles()->sync($params->get('roles'));
+        } else {
+            $wpUser->roles()->sync([]);
         }
     }
 
