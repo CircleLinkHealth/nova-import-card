@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CPM API</title>
 
-    <link href="http://cpm-api.dev/css/app.css" rel="stylesheet">
-    <link href="http://cpm-api.dev/css/lavish.css" rel="stylesheet">
-    <link href="http://cpm-api.dev/img/favicon.png" rel="icon">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/lavish.css" rel="stylesheet">
+    <link href="/img/favicon.png" rel="icon">
 
     <!-- Fonts -->
     <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
@@ -30,8 +30,8 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="http://cpm-api.dev/js/scripts.js"></script>
-    <script src="http://cpm-api.dev/js/bootstrap-select.min.js"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="/js/bootstrap-select.min.js"></script>
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
@@ -41,8 +41,8 @@
     <div class="container-fluid">
         <div class="navbar-header">
 
-            <a class="navbar-brand" href="http://cpm-api.dev">
-                <img src="http://cpm-api.dev/img/cpm-logo.png" height="40" width="70">
+            <a class="navbar-brand" href="">
+                <img src="/img/cpm-logo.png" height="40" width="70">
             </a>
         </div>
 
