@@ -97,7 +97,13 @@ class WpUserRepository {
     public function saveOrUpdateRoles(WpUser $wpUser, ParameterBag $params)
     {
         if(!empty($params->get('roles'))) {
-            $wpUser->roles()->sync($params->get('roles'));
+            // support if one role is passed in as a string
+            if(!is_array($params->get('roles'))) {
+                $roleId = $params->get('roles');
+                $wpUser->roles()->sync(array($roleId));
+            } else {
+                $wpUser->roles()->sync($params->get('roles'));
+            }
         } else {
             $wpUser->roles()->sync([]);
         }

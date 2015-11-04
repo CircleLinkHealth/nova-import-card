@@ -32,6 +32,8 @@ class PatientCareplanController extends Controller {
 	 */
 	public function showPatientCareplan(Request $request, $patientId = false)
 	{
+		$messages = \Session::get('messages');
+
 		$wpUser = false;
 		if($patientId) {
 			$wpUser = WpUser::find($patientId);
@@ -45,7 +47,8 @@ class PatientCareplanController extends Controller {
 		$program = WpBlog::find($wpUser->program_id);
 
 		// roles
-		$roles = Role::all();
+		$patientRoleId = Role::where('name', '=', 'patient')->first();
+		$patientRoleId = $patientRoleId->id;
 
 		// primary_blog
 		$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
@@ -97,7 +100,7 @@ class PatientCareplanController extends Controller {
 
 		//dd($userConfig);
 
-		return view('wpUsers.patient.careplan.careplan', compact(['program','patient', 'userConfig','states', 'locations', 'timezones', 'sectionHtml']));
+		return view('wpUsers.patient.careplan.careplan', compact(['program','patient', 'userConfig','states', 'locations', 'timezones', 'sectionHtml', 'messages', 'patientRoleId']));
 	}
 
 
