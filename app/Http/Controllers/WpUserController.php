@@ -289,10 +289,6 @@ class WpUserController extends Controller {
 
 		// primary_blog
 		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
-		if(!isset($userMeta['primary_blog'])) {
-			return response("Required meta primary_blog not found", 401);
-		}
-		$primaryBlog = $userMeta['primary_blog'];
 
 		$params = $request->all();
 		if(!empty($params)) {
@@ -306,17 +302,17 @@ class WpUserController extends Controller {
 
 		// user config
 		$userConfig = $wpUser->userConfigTemplate();
-		if(isset($userMeta['wp_' . $primaryBlog . '_user_config'])) {
-			$userConfig = unserialize($userMeta['wp_' . $primaryBlog . '_user_config']);
+		if(isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
+			$userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
 			$userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
 		}
 
 		// set role
-		$capabilities = unserialize($userMeta['wp_' . $primaryBlog . '_capabilities']);
+		$capabilities = unserialize($userMeta['wp_' . $wpUser->program_id . '_capabilities']);
 		$wpRole = key($capabilities);
 
 		// locations @todo get location id for WpBlog
-		$wpBlog = WpBlog::find($primaryBlog);
+		$wpBlog = WpBlog::find($wpUser->program_id);
 		$locations_arr = (new Location)->getNonRootLocations($wpBlog->locationId());
 
 		// States (for dropdown)
@@ -335,7 +331,7 @@ class WpUserController extends Controller {
 		$providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
 
 		// display view
-		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $primaryBlog, 'wpRole' => $wpRole, 'providers_arr' => $providers_arr, 'messages' => $messages, 'roles' => $roles]);
+		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $wpUser->program_id, 'wpRole' => $wpRole, 'providers_arr' => $providers_arr, 'messages' => $messages, 'roles' => $roles]);
 	}
 
 	/**

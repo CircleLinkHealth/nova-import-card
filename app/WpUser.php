@@ -210,7 +210,6 @@ class WpUser extends Model {
             "last_name" => "",
             "nickname" => "",
             "description" => "",
-            "primary_blog" => "",
             "admin_color" => "fresh",
             "cur_month_activity_time" => "0",
             "show_admin_bar_front" => "false",

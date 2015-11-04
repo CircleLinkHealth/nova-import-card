@@ -70,6 +70,7 @@
                             <h4 class="form-title">Contact Information</h4>
                             <p><span class="attention">*</span> Required Field</p>
                             <input type=hidden name=user_id value="{{ $patient->ID }}">
+                            <input type=hidden name=program_id value="{{ $patient->program_id }}">
                             <input type=hidden name=daily_reminder_optin value="Y">
                             <input type=hidden name=daily_reminder_time value="08:00">
                             <input type=hidden name=daily_reminder_areas value="TBD">

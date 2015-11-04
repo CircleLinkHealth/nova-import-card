@@ -1154,7 +1154,7 @@ class DatamonitorService {
 		// get user info
 		$user = WpUser::find($observation['user_id']);
 		$user_meta_config = WpUserMeta::where('user_id',$user->ID)->where('meta_key','like','%config%')->first();
-		$user_meta_blog = WpUserMeta::where('user_id',$user->ID)->where('meta_key','primary_blog')->first();
+		$user_meta_blog = $user->program_id;
 		$user_data = unserialize($user_meta_config->meta_value);
 		// get recipients
 		if(!array_key_exists('send_alert_to',$user_data)) {

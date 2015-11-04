@@ -208,7 +208,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			"last_name" => "",
 			"nickname" => "",
 			"description" => "",
-			"primary_blog" => "",
 			"admin_color" => "fresh",
 			"cur_month_activity_time" => "0",
 		);

@@ -49,10 +49,6 @@ class PatientCareplanController extends Controller {
 
 		// primary_blog
 		$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
-		if(!isset($userMeta['primary_blog'])) {
-			return response("Required meta primary_blog not found", 401);
-		}
-		$primaryBlog = $userMeta['primary_blog'];
 
 		$params = $request->all();
 		if(!empty($params)) {
@@ -66,17 +62,17 @@ class PatientCareplanController extends Controller {
 
 		// user config
 		$userConfig = $wpUser->userConfigTemplate();
-		if(isset($userMeta['wp_' . $primaryBlog . '_user_config'])) {
-			$userConfig = unserialize($userMeta['wp_' . $primaryBlog . '_user_config']);
+		if(isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
+			$userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
 			$userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
 		}
 
 		// set role
-		$capabilities = unserialize($userMeta['wp_' . $primaryBlog . '_capabilities']);
+		$capabilities = unserialize($userMeta['wp_' . $wpUser->program_id . '_capabilities']);
 		$wpRole = key($capabilities);
 
 		// locations @todo get location id for WpBlog
-		$wpBlog = WpBlog::find($primaryBlog);
+		$wpBlog = WpBlog::find($wpUser->program_id);
 		$locations = Location::where('program_id', '=', $wpUser->program_id)->lists('name', 'id');
 
 		// States (for dropdown)
@@ -111,33 +107,25 @@ class PatientCareplanController extends Controller {
 	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function savePatientCareplan(Request $request, $patientId = false)
+	public function savePatientCareplan(Request $request)
 	{
-		// instantiate user
-		$wpUser = new WpUser;
-		if($patientId) {
-			$wpUser = WpUser::find($patientId);
-			if (!$wpUser) {
-				return response("User not found", 401);
-			}
+		// input
+		$params = new ParameterBag($request->input());
+		if($params->get('user_id')) {
+			$patientId = $params->get('user_id');
 		}
 
-		$params = new ParameterBag($request->input());
+		// instantiate user
+		$wpUser = WpUser::with('meta')->find($patientId);
+		if (!$wpUser) {
+			return response("User not found", 401);
+		}
 
 		$userRepo = new WpUserRepository();
 
-		$wpUser = new WpUser;
+		$userRepo->editUser($wpUser, $params);
 
-		// validate
-		$this->validate($request, $wpUser->rules);
-
-		$wpUser = $userRepo->createNewUser($wpUser, $params);
-
-		// return back
-		return redirect()->back()->withInput()->with('messages', ['successfully created/updated patient'])->send();
-
-		// program
-		$program = WpBlog::find($wpUser->program_id);
+		return redirect()->back()->with('messages', ['successfully updated user']);
 
 		return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}

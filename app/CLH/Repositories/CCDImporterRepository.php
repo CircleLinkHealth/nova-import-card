@@ -26,7 +26,7 @@ class CCDImporterRepository
             'user_email' => $newUserId . '@careplanmanager.com',
             'user_pass' => 'whatToPutHere',
             'user_nicename' => $newUserId,
-            'primary_blog' => $blogId,
+            'program_id' => $blogId,
             'roles' => [$role->id],
         ]);
 

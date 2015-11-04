@@ -44,8 +44,8 @@
                                 <h2>Program</h2>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('primary_blog', 'Primary Blog:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::select('primary_blog', $wpBlogs, '', ['class' => 'form-control select-picker', '', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('program_id', 'Primary Blog:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::select('program_id', $wpBlogs, '', ['class' => 'form-control select-picker', '', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
 

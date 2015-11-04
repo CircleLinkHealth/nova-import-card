@@ -13,7 +13,7 @@ class WpUserRepository {
         $wpUser->load('meta');
 
         $wpUser->user_nicename = $params->get('user_nicename');
-        $wpUser->program_id = $params->get('primary_blog');
+        $wpUser->program_id = $params->get('program_id');
 
         $this->saveOrUpdateRoles($wpUser, $params);
 
@@ -22,12 +22,12 @@ class WpUserRepository {
         // update role / capabilities (wp)
         $input = $params->get('role');
         $capabilities = new WpUserMeta;
-        $capabilities->meta_key = 'wp_' . $params->get('primary_blog') . '_capabilities';
+        $capabilities->meta_key = 'wp_' . $params->get('program_id') . '_capabilities';
         $capabilities->meta_value = serialize(array($input => '1'));
         $capabilities->user_id = $wpUser->ID;
         $capabilities->save();
         $capabilities = new WpUserMeta;
-        $capabilities->meta_key = 'wp_' . $params->get('primary_blog') . '_user_level';
+        $capabilities->meta_key = 'wp_' . $params->get('program_id') . '_user_level';
         $capabilities->meta_value = '0';
         $capabilities->user_id = $wpUser->ID;
         $capabilities->save();
@@ -45,7 +45,7 @@ class WpUserRepository {
         // the basics
         $wpUser->user_nicename = $params->get('user_nicename');
         $wpUser->display_name = $params->get('display_name');
-        $wpUser->program_id = $params->get('primary_blog');
+        $wpUser->program_id = $params->get('program_id');
         $wpUser->save();
 
         $this->saveOrUpdateRoles($wpUser, $params);
@@ -115,12 +115,12 @@ class WpUserRepository {
             }
         }
 
-        $userConfig = $wpUser->meta()->whereMetaKey("wp_{$params->get('primary_blog')}_user_config")->first();
+        $userConfig = $wpUser->meta()->whereMetaKey("wp_{$params->get('program_id')}_user_config")->first();
         if($userConfig) {
             $userConfig->meta_value = serialize($userConfigTemplate);
         } else {
             $userConfig = new WpUserMeta;
-            $userConfig->meta_key = 'wp_' . $params->get('primary_blog') . '_user_config';
+            $userConfig->meta_key = 'wp_' . $params->get('program_id') . '_user_config';
             $userConfig->meta_value = serialize($userConfigTemplate);
             $userConfig->user_id = $wpUser->ID;
         }

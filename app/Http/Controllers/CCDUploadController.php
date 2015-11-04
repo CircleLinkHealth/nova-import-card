@@ -93,7 +93,7 @@ class CCDUploadController extends Controller {
             $parser = new Parser($parsedCCD);
 
             $userConfig = $parser->parseUserConfig(new UserConfigTemplate())->getArray();
-            $userConfig['primary_blog'] = $blogId;
+            $userConfig['program_id'] = $blogId;
 
             $userMeta = $parser->parseUserMeta(new UserMetaTemplate())->getArray();
 
