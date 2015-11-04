@@ -32,7 +32,7 @@ class PatientCareplanController extends Controller {
 	 */
 	public function showPatientCareplan(Request $request, $patientId = false)
 	{
-		$wpUser = array();
+		$wpUser = false;
 		if($patientId) {
 			$wpUser = WpUser::find($patientId);
 			if (!$wpUser) {
@@ -44,24 +44,64 @@ class PatientCareplanController extends Controller {
 		// program
 		$program = WpBlog::find($wpUser->program_id);
 
+		// roles
+		$roles = Role::all();
+
+		// primary_blog
+		$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
+		if(!isset($userMeta['primary_blog'])) {
+			return response("Required meta primary_blog not found", 401);
+		}
+		$primaryBlog = $userMeta['primary_blog'];
+
+		$params = $request->all();
+		if(!empty($params)) {
+			if (isset($params['action'])) {
+				if ($params['action'] == 'impersonate') {
+					Auth::login($patientId);
+					return redirect()->route('/', [])->with('messages', ['Logged in as user '.$patientId]);
+				}
+			}
+		}
+
+		// user config
+		$userConfig = $wpUser->userConfigTemplate();
+		if(isset($userMeta['wp_' . $primaryBlog . '_user_config'])) {
+			$userConfig = unserialize($userMeta['wp_' . $primaryBlog . '_user_config']);
+			$userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
+		}
+
+		// set role
+		$capabilities = unserialize($userMeta['wp_' . $primaryBlog . '_capabilities']);
+		$wpRole = key($capabilities);
+
+		// locations @todo get location id for WpBlog
+		$wpBlog = WpBlog::find($primaryBlog);
+		$locations = Location::where('program_id', '=', $wpUser->program_id)->lists('name', 'id');
+
 		// States (for dropdown)
 		$states = array('AL'=>"Alabama",'AK'=>"Alaska",'AZ'=>"Arizona",'AR'=>"Arkansas",'CA'=>"California",'CO'=>"Colorado",'CT'=>"Connecticut",'DE'=>"Delaware",'DC'=>"District Of Columbia",'FL'=>"Florida",'GA'=>"Georgia",'HI'=>"Hawaii",'ID'=>"Idaho",'IL'=>"Illinois", 'IN'=>"Indiana", 'IA'=>"Iowa",  'KS'=>"Kansas",'KY'=>"Kentucky",'LA'=>"Louisiana",'ME'=>"Maine",'MD'=>"Maryland", 'MA'=>"Massachusetts",'MI'=>"Michigan",'MN'=>"Minnesota",'MS'=>"Mississippi",'MO'=>"Missouri",'MT'=>"Montana",'NE'=>"Nebraska",'NV'=>"Nevada",'NH'=>"New Hampshire",'NJ'=>"New Jersey",'NM'=>"New Mexico",'NY'=>"New York",'NC'=>"North Carolina",'ND'=>"North Dakota",'OH'=>"Ohio",'OK'=>"Oklahoma", 'OR'=>"Oregon",'PA'=>"Pennsylvania",'RI'=>"Rhode Island",'SC'=>"South Carolina",'SD'=>"South Dakota",'TN'=>"Tennessee",'TX'=>"Texas",'UT'=>"Utah",'VT'=>"Vermont",'VA'=>"Virginia",'WA'=>"Washington",'WV'=>"West Virginia",'WI'=>"Wisconsin",'WY'=>"Wyoming");
 
-		// locations
-		$locations = Location::where('program_id', '=', $wpUser->program_id)->lists('name', 'id');
+		// programs for dd
+		$wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('domain', 'blog_id');
 
-		// timezones
-		$timezones_raw = $tzlist = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+		// timezones for dd
+		$timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
 		foreach($timezones_raw as $timezone) {
 			$timezones[$timezone] = $timezone;
 		}
 
-		$carePlanUI = new CareplanUIService;
+		// providers
+		$providers = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
+
 		//$sectionHtml = $carePlanUI->renderCareplanSection($wpUser, 'Biometrics to Monitor');
-		$sectionHtml = $carePlanUI->renderCareplanSections(array(), $wpUser->program_id, $wpUser);
+		$sectionHtml = (new CareplanUIService)->renderCareplanSections(array(), $wpUser->program_id, $wpUser);
+		$sectionHtml = '';
 		//dd($sectionHtml);
 
-		return view('wpUsers.patient.careplan.careplan', compact(['program','patient','states', 'locations', 'timezones', 'sectionHtml']));
+		//dd($userConfig);
+
+		return view('wpUsers.patient.careplan.careplan', compact(['program','patient', 'userConfig','states', 'locations', 'timezones', 'sectionHtml']));
 	}
 
 

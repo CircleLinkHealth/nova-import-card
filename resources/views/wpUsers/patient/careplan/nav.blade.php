@@ -2,7 +2,7 @@
 <div class="edit-navigation-buttons col-lg-10 col-lg-offset-1">
     <div class="btn-group btn-group-justified" role="group" aria-label="...">
         <div class="btn-group" role="group">
-            <button type="button" dtarget="/manage-patients/add-patient/?user={{ $patient->ID }}" class="btn btn-primary submitFormBtn active"><span class="btn-number">1</span> <span class="btn-text">Patient Contact</span></button>
+            <button type="button" dtarget="{{ URL::route('patient.careplan', array('patientId' => $patient->ID)) }}" class="btn btn-primary submitFormBtn active"><span class="btn-number">1</span> <span class="btn-text">Patient Contact</span></button>
         </div>
         <div class="btn-group" role="group">
             <button type="button" dtarget="/manage-patients/patient-care-team/?user={{ $patient->ID }}" class="btn btn-primary submitFormBtn"><span class="btn-number">2</span> <span class="btn-text">Patient Care Team</span></button>
