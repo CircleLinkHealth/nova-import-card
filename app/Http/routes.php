@@ -90,9 +90,17 @@ Route::group(['middleware' => 'auth'], function ()
 
 		// careplan
 		Route::group(['prefix' => 'careplan'], function () {
-			Route::get('{patientId}', ['uses' => 'Patient\PatientCareplanController@showPatientCareplan', 'as' => 'patient.careplan']);
-			Route::post('save', ['uses' => 'Patient\PatientCareplanController@savePatientCareplan', 'as' => 'patient.careplan.save']);
-			Route::get('{patientId}/print', ['uses' => 'Patient\PatientCareplanController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
+			// careplan user
+			Route::get('{patientId}', ['uses' => 'Patient\PatientCareplanController@showPatientEdit', 'as' => 'patient.edit.show']);
+			Route::post('save', ['uses' => 'Patient\PatientCareplanController@storePatientEdit', 'as' => 'patient.edit.store']);
+			// careplan team
+			Route::get('/team/{patientId}', ['uses' => 'Patient\PatientCareplanController@showPatientCareteam', 'as' => 'patient.careteam.show']);
+			Route::post('/team/{patientId}', ['uses' => 'Patient\PatientCareplanController@storePatientCareteam', 'as' => 'patient.careteam.store']);
+			// careplan sections
+			Route::get('/sections/{patientId}', ['uses' => 'Patient\PatientCareplanController@showPatientCareplanSections', 'as' => 'patient.careplansections.show']);
+			Route::post('/sections/{patientId}', ['uses' => 'Patient\PatientCareplanController@storePatientCareplanSections', 'as' => 'patient.careplansections.store']);
+			// print
+			Route::get('sections/print', ['uses' => 'Patient\PatientCareplanController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
 		});
 
 		// notes

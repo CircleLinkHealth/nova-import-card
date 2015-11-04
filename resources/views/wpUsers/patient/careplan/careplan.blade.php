@@ -10,7 +10,7 @@
         $new_user = false;
     ?>
 
-    {!! Form::open(array('url' => URL::route('patient.careplan.save', array()), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => URL::route('patient.edit.store', array()), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="container">
         <section class="main-form">
             <div class="row">

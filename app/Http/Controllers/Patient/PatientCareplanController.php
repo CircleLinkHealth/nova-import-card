@@ -30,7 +30,7 @@ class PatientCareplanController extends Controller {
 	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function showPatientCareplan(Request $request, $patientId = false)
+	public function showPatientEdit(Request $request, $patientId = false)
 	{
 		$messages = \Session::get('messages');
 
@@ -110,7 +110,7 @@ class PatientCareplanController extends Controller {
 	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function savePatientCareplan(Request $request)
+	public function storePatientEdit(Request $request)
 	{
 		// input
 		$params = new ParameterBag($request->input());
@@ -128,9 +128,12 @@ class PatientCareplanController extends Controller {
 
 		$userRepo->editUser($wpUser, $params);
 
+		if($params->get('direction')) {
+			return redirect($params->get('direction'));
+		}
 		return redirect()->back()->with('messages', ['successfully updated user']);
 
-		return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
+		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}
 
 	/**
