@@ -6,7 +6,9 @@ use App\WpBlog;
 use App\Location;
 use App\WpUser;
 use App\WpUserMeta;
+use App\CPRulesPCP;
 use App\Role;
+use App\Services\CareplanUIService;
 use App\CLH\Repositories\WpUserRepository;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -54,7 +56,12 @@ class PatientCareplanController extends Controller {
 			$timezones[$timezone] = $timezone;
 		}
 
-		return view('wpUsers.patient.careplan.careplan', compact(['program','patient','states', 'locations', 'timezones']));
+		$carePlanUI = new CareplanUIService;
+		//$sectionHtml = $carePlanUI->renderCareplanSection($wpUser, 'Biometrics to Monitor');
+		$sectionHtml = $carePlanUI->renderCareplanSections(array(), $wpUser->program_id, $wpUser);
+		//dd($sectionHtml);
+
+		return view('wpUsers.patient.careplan.careplan', compact(['program','patient','states', 'locations', 'timezones', 'sectionHtml']));
 	}
 
 
