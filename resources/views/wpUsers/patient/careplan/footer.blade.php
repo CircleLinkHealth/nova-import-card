@@ -15,11 +15,11 @@
             </ul>
             <div class="progress-status">
                 @if(!$user_info)
-                    @if(Route::is('patient.edit.show')) <p class="">PROGRESS: 1 of 5</p> @endif
+                    @if(Route::is('patient.demographics.show')) <p class="">PROGRESS: 1 of 5</p> @endif
                     @if(Route::is('patient.careteam.show')) <p class="">PROGRESS: 2 of 5</p> @endif
-                    @if(Route::is('patient.careplansections.show')) <p class="">PROGRESS: 3 of 5</p> @endif
-                    @if(Route::is('patient.careplansections.show')) <p class="">PROGRESS: 4 of 5</p> @endif
-                    @if(Route::is('patient.careplansections.show')) <p class="">PROGRESS: 5 of 5</p> @endif
+                    @if(Route::is('patient.careplan.show')) <p class="">PROGRESS: 3 of 5</p> @endif
+                    @if(Route::is('patient.careplan.show')) <p class="">PROGRESS: 4 of 5</p> @endif
+                    @if(Route::is('patient.careplan.show')) <p class="">PROGRESS: 5 of 5</p> @endif
                 @else
                     <p class="">&nbsp;</p>
                 @endif

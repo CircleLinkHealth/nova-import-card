@@ -91,14 +91,14 @@ Route::group(['middleware' => 'auth'], function ()
 		// careplan
 		Route::group(['prefix' => 'careplan'], function () {
 			// careplan user
-			Route::get('', ['uses' => 'Patient\PatientCareplanController@showPatientEdit', 'as' => 'patient.edit.show']);
-			Route::post('save', ['uses' => 'Patient\PatientCareplanController@storePatientEdit', 'as' => 'patient.edit.store']);
+			Route::get('demographics', ['uses' => 'Patient\PatientCareplanController@showPatientDemographics', 'as' => 'patient.demographics.show']);
+			Route::post('demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patient.demographics.store']);
 			// careplan team
-			Route::get('/team', ['uses' => 'Patient\PatientCareplanController@showPatientCareteam', 'as' => 'patient.careteam.show']);
-			Route::post('/team', ['uses' => 'Patient\PatientCareplanController@storePatientCareteam', 'as' => 'patient.careteam.store']);
+			Route::get('team', ['uses' => 'Patient\PatientCareplanController@showPatientCareteam', 'as' => 'patient.careteam.show']);
+			Route::post('team', ['uses' => 'Patient\PatientCareplanController@storePatientCareteam', 'as' => 'patient.careteam.store']);
 			// careplan sections
-			Route::get('/sections', ['uses' => 'Patient\PatientCareplanController@showPatientCareplanSections', 'as' => 'patient.careplansections.show']);
-			Route::post('/sections', ['uses' => 'Patient\PatientCareplanController@storePatientCareplanSections', 'as' => 'patient.careplansections.store']);
+			Route::get('sections', ['uses' => 'Patient\PatientCareplanController@showPatientCareplan', 'as' => 'patient.careplan.show']);
+			Route::post('sections', ['uses' => 'Patient\PatientCareplanController@storePatientCareplan', 'as' => 'patient.careplan.store']);
 			// print
 			Route::get('sections/print', ['uses' => 'Patient\PatientCareplanController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
 		});
