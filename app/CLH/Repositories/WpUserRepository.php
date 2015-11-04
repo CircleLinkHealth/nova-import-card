@@ -33,23 +33,7 @@ class WpUserRepository {
         $capabilities->save();
 
         // update user config
-        $userConfigTemplate = $wpUser->userConfigTemplate();
-        foreach($userConfigTemplate as $key => $value) {
-            $input = $params->get($key);
-            if(!empty($input)) {
-                $userConfigTemplate[$key] = $input = $params->get($key);
-            }
-        }
-        $userConfig = $wpUser->meta->where('user_id', '=', $wpUser->ID)->where('meta_key', '=', 'wp_' . $params->get('primary_blog') . '_user_config')->first();
-        if($userConfig) {
-            $userConfig->meta_value = serialize($userConfigTemplate);
-        } else {
-            $userConfig = new WpUserMeta;
-            $userConfig->meta_key = 'wp_' . $params->get('primary_blog') . '_user_config';
-            $userConfig->meta_value = serialize($userConfigTemplate);
-            $userConfig->user_id = $wpUser->ID;
-        }
-        $userConfig->save();
+        $this->updateUserConfig($wpUser, $params);
 
         $wpUser->push();
 
@@ -84,22 +68,7 @@ class WpUserRepository {
         }
 
         // update user config
-        $userConfigTemplate = $wpUser->userConfigTemplate();
-        foreach($userConfigTemplate as $key => $value) {
-            if(($params->get($key))) {
-                $userConfigTemplate[$key] = $params->get($key);
-            }
-        }
-        $userConfig = $wpUser->meta()->where('user_id', '=', $wpUser->ID)->where('meta_key', '=', 'wp_' . $wpUser->blogId() . '_user_config')->first();
-        if($userConfig) {
-            $userConfig->meta_value = serialize($userConfigTemplate);
-        } else {
-            $userConfig = new WpUserMeta;
-            $userConfig->meta_key = 'wp_' . $wpUser->blogId() . '_user_config';
-            $userConfig->meta_value = serialize($userConfigTemplate);
-            $userConfig->user_id = $wpUser->ID;
-        }
-        $userConfig->save();
+        $this->updateUserConfig($wpUser, $params);
 
         return $wpUser;
     }
@@ -132,6 +101,30 @@ class WpUserRepository {
         } else {
             $wpUser->roles()->sync([]);
         }
+    }
+
+    public function updateUserConfig(WpUser $wpUser, ParameterBag $params)
+    {
+        $userConfigTemplate = $wpUser->userConfigTemplate();
+
+        foreach($userConfigTemplate as $key => $value)
+        {
+            if( ! empty($params->get($key)))
+            {
+                $userConfigTemplate[$key] = $params->get($key);
+            }
+        }
+
+        $userConfig = $wpUser->meta()->whereMetaKey("wp_{$params->get('primary_blog')}_user_config")->first();
+        if($userConfig) {
+            $userConfig->meta_value = serialize($userConfigTemplate);
+        } else {
+            $userConfig = new WpUserMeta;
+            $userConfig->meta_key = 'wp_' . $params->get('primary_blog') . '_user_config';
+            $userConfig->meta_value = serialize($userConfigTemplate);
+            $userConfig->user_id = $wpUser->ID;
+        }
+        $userConfig->save();
     }
 
 }
