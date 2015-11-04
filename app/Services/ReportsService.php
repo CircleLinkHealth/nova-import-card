@@ -5,7 +5,7 @@ use App\CPRulesQuestions;
 use App\CPRulesUCP;
 use App\Location;
 use App\Observation;
-use App\WpBlog;
+use App\Services\CareplanUIService;
 use App\WpUser;
 use App\WpUserMeta;
 use Carbon\Carbon;
@@ -105,7 +105,7 @@ Class ReportsService
     }
 
     /**
-     * Returns an Array with Color and Arrow for a given Biometric,
+     * Returns an Array with Color, Unit, Status and Arrow for a given Biometric,
      * and a pair of reading, Usually First Week and Last Week
      * @param $weeklyReading1 - most recent
      * @param $weeklyReading2 - second most recent
@@ -421,44 +421,7 @@ Class ReportsService
             if ($tracking_obs_data[$q][0]['Reading'] != 'No Readings' && $tracking_obs_data[$q][1]['Reading'] != 'No Readings') {
 
                 $biometricData = $this->biometricsIndicators($tracking_obs_data[$q][0]['Reading'],$tracking_obs_data[$q][1]['Reading'],str_replace(' ', '_', $tracking_obs_question_map[$q]),$target_array[$tracking_obs_question_map[$q]]);
-//                $change = abs($tracking_obs_data[$q][0]['Reading'] - $tracking_obs_data[$q][1]['Reading']);
-//                if ($tracking_obs_question_map[$q] == 'Cigarettes') {
-//                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
-//                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-//                        $status = 'Worse';
-//                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
-//                        $status = 'No Change';
-//                    } else {
-//                        $status = 'Better';
-//                    }
-//                } else if ($tracking_obs_question_map[$q] == 'Blood Pressure') {
-//                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
-//                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-//                        $status = 'Worse';
-//                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
-//                        $status = 'No Change';
-//                    } else {
-//                        $status = 'Better';
-//                    }
-//                } else if ($tracking_obs_question_map[$q] == 'Blood Sugar') {
-//                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
-//                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-//                        $status = 'Worse';
-//                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
-//                        $status = 'No Change';
-//                    } else {
-//                        $status = 'Better';
-//                    }
-//                } else if ($tracking_obs_question_map[$q] == 'Weight') {
-//                    $unit = $this->biometricsUnitMapping($tracking_obs_question_map[$q]);
-//                    if ($tracking_obs_data[$q][0]['Reading'] > $tracking_obs_data[$q][1]['Reading']) {
-//                        $status = 'Worse';
-//                    } else if ($tracking_obs_data[$q][0]['Reading'] == $tracking_obs_data[$q][1]['Reading']) {
-//                        $status = 'No Change';
-//                    } else {
-//                        $status = 'Better';
-//                    }
-//                }
+
             } else {
                 $biometricData['status'] = 'Unchanged';
                 $biometricData['unit'] = '';
@@ -515,10 +478,9 @@ Class ReportsService
 
         //PCP has the sections for each provider, get all sections for the user's blog
         $pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Diagnosis / Problems to Monitor')->first();
+
         //Get all the items for each section
         $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
-
-
         for ($i = 0; $i < count($items); $i++) {
             //get id's of all lifestyle items that are active for the given user
             $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value', 'Active')->where('user_id', $user->ID)->first();
@@ -536,50 +498,57 @@ Class ReportsService
             $treating['Data'] = ['name' => 'None'];
         }
 
+
         //=======================================
         //========YOUR HEALTH GOALS==============
         //=======================================
-
+        $time = microtime(true);
         $goals['Section'] = 'Your Health Goals';
-        $target_array = array();
+        $progression = '';
 
-        $tracking_pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Biometrics to Monitor')->first();
-        $tracking_items = CPRulesItem::where('pcp_id', $tracking_pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
-        // gives the biometrics being monitered for the given user
-        for ($i = 0; $i < count($tracking_items); $i++) {
-            //get id's of all biometrics items that are active for the given user
-            $items_for_user[$i] = CPRulesUCP::where('items_id', $tracking_items[$i])->where('meta_value', 'Active')->where('user_id', $user->ID)->first();
-            if ($items_for_user[$i] != null) {
-                //Find the items_text for the ones that are active
-                $user_items = CPRulesItem::find($items_for_user[$i]->items_id);
+        $goals_active_biometrics = array();
 
-                $tracking_q = CPRulesQuestions::find($user_items->qid);
-                //get all the message_ids active for the user
-                $tracking_obs_message_ids[] = $tracking_q->msg_id;
-
-                //map obs_message_id => obs_key ("CF_RPT_50" => "Cigarettes")
-                $tracking_obs_question_map[$tracking_q->msg_id] = str_replace('_', ' ', $tracking_q->obs_key);
-
-                // @todo setup starting reading from obsmeta
-
-                //get all the targets for biometrics that are being observed
-                $target_items = CPRulesItem::where('items_parent', $items_for_user[$i]->items_id)->where('items_text', 'like', '%Target%')->get();
-
-                foreach ($target_items as $target_item) {
-                    $target_value = CPRulesUCP::where('items_id', $target_item->items_id)->where('user_id', $user->ID)->lists('meta_value');
-                    $target_array[str_replace('_', ' ', $tracking_q->obs_key)] = $target_value[0];
+        $goals_raw = (new CareplanUIService())->getCareplanSectionData($user->blogId(), 'Biometrics to Monitor', $user);
+        //dd($goals_raw['sub_meta']['Biometrics to Monitor']);
+        foreach ($goals_raw['sub_meta']['Biometrics to Monitor'][0] as $key => $value){
+            if($value['item_status'] == 'Active'){
+                $goals_active_biometrics[$key] = $goals_raw['sub_meta']['Biometrics to Monitor'][$key];
+//                switch($goals_raw['sub_meta']['Biometrics to Monitor'][$key]){
+//                    case 'Weight':
+//                        $goals_active_biometrics[$key]['starting'] = $goals_raw['sub_meta']['Biometrics to Monitor'][$key]['Starting Weight']['value'];
+//                        break;
                 }
-            }
-        }//dd($tracking_obs_message_ids);
-        if (count($target_array) < 1) {
-            $goals['Data'] = 'None';
-        } else {
-            foreach ($target_array as $key => $value) {
-                $starting_val = Observation::getStartingObservation($id, $this->biometricsMessageIdMapping($key));
-                $goals['Data'][] = ['name' => '<B>Lower ' . $key . ' to ' . $value . $this->biometricsUnitMapping($key) . ' </B> from  '.$starting_val . $this->biometricsUnitMapping($key)];
-            }
-        }
+                if($key == 'Weight'){
+                    $goals_active_biometrics[$key]['starting'] = $goals_raw['sub_meta']['Biometrics to Monitor'][$key]['Starting Weight']['value'];
+                    $goals_active_biometrics[$key]['target'] = $goals_raw['sub_meta']['Biometrics to Monitor'][$key]['Target Weight']['value'];
+                }
 
+                if ($key == 'Blood Sugar'){
+                    $goals_active_biometrics[$key]['starting'] = $goals_raw['sub_meta']['Biometrics to Monitor'][$key]['Starting BS']['value'];
+                    $goals_active_biometrics[$key]['target'] = $goals_raw['sub_meta']['Biometrics to Monitor'][$key]['Target BS']['value'];
+                }
+
+                if ($key == 'Blood Pressure'){
+                    $goals_active_biometrics[$key]['starting'] = $goals_raw['sub_meta']['Biometrics to Monitor'][$key]['Starting BP']['value'];
+                    $goals_active_biometrics[$key]['target'] = $goals_raw['sub_meta']['Biometrics to Monitor'][$key]['Target BP']['value'];
+                }
+
+                if ($key == 'Smoking (# per day)'){
+                    $goals_active_biometrics[$key]['starting'] = $goals_raw['sub_meta']['Biometrics to Monitor'][$key]['Starting Count']['value'];
+                    $goals_active_biometrics[$key]['target'] = $goals_raw['sub_meta']['Biometrics to Monitor'][$key]['Target Count']['value'];
+                }
+
+                if($goals_active_biometrics[$key]['target'] > $goals_active_biometrics[$key]['starting']){
+                    $progression = 'Raise ';
+                } else if (
+                    $goals_active_biometrics[$key]['target'] <= $goals_active_biometrics[$key]['starting']){
+                    $progression = 'Lower ';
+                }
+
+
+            $goals['Data'][] = ['name' => '<B>' . $progression . $key . ' to ' . $goals_active_biometrics[$key]['target'] . $this->biometricsUnitMapping($key) . ' </B> from  '.$goals_active_biometrics[$key]['starting'] . $this->biometricsUnitMapping($key)];
+
+        }
         //=======================================
         //======MONITORING MEDICATIONS===========
         //=======================================
@@ -611,6 +580,7 @@ Class ReportsService
             $takMedications['Data'][] = $none;
         }
 
+
         //=======================================
         //========SYMPTOMS TO MONITOR============
         //=======================================
@@ -621,6 +591,7 @@ Class ReportsService
         } else {
             $symptoms['Data'] = ['name' => 'None'];
         }
+
 
         //=======================================
         //========LIFESTYLE TO MONITOR===========
@@ -633,6 +604,7 @@ Class ReportsService
         } else {
             $lifestyle['Data'] = ['name' => 'None'];
         }
+
 
         //=======================================
         //===========CHECK IN PLAN===============
@@ -647,6 +619,7 @@ Class ReportsService
         for ($i = 0; $i < count($days); $i++) {
             $check['Data'][] = ['day' => $days[$i], 'time' => $userConfig['preferred_contact_time']];
         }
+
 
         //=======================================
         //===========OTHER INFO===============
