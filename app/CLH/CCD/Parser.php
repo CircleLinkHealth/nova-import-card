@@ -27,17 +27,17 @@ class Parser
         $meta->last_name = $demographics->name->family;
         $meta->nickname = "$meta->first_name $meta->last_name";
 
-        return $meta->getArray();
+        return $meta;
     }
 
-    public function parseUserConfig(UserConfigTemplate $contact)
+    public function parseUserConfig(UserConfigTemplate $userConfig)
     {
         $demographics = $this->ccd->demographics;
 
-        $contact->email = $demographics->email;
-        $contact->mrn_number = ''; //@todo
-        $contact->study_phone_number = $demographics->phone->mobile;
-        $contact->gender = call_user_func(function () use ($demographics) {
+        $userConfig->email = $demographics->email;
+        $userConfig->mrn_number = ''; //@todo
+        $userConfig->study_phone_number = $demographics->phone->mobile;
+        $userConfig->gender = call_user_func(function () use ($demographics){
             $maleVariations = ['m', 'male', 'man'];
 
             $femaleVariations = ['f', 'female', 'woman'];
@@ -53,13 +53,31 @@ class Parser
 
             return empty($gender) ? null : $gender;
         });
-        $contact->address = $demographics->address->street[0];
-        $contact->city = $demographics->address->city;
-        $contact->state = $demographics->address->state;
-        $contact->zip = $demographics->address->zip;
-        $contact->birth_date = (new Carbon($demographics->dob))->format('Y-m-d');
+        $userConfig->address = $demographics->address->street[0];
+        $userConfig->city = $demographics->address->city;
+        $userConfig->state = $demographics->address->state;
+        $userConfig->zip = $demographics->address->zip;
+        $userConfig->birth_date = (new Carbon($demographics->dob))->format('Y-m-d');
 
-        return $contact->getArray();
+        $userConfig->preferred_contact_language = call_user_func(function () use ($demographics){
+            $englishVariations = ['english', 'eng', 'en'];
+
+            $spanishVariations = ['spanish', 'es'];
+
+            if (in_array(strtolower($demographics->language), $englishVariations))
+            {
+                $language = 'EN';
+            }
+            else if (in_array(strtolower($demographics->language), $spanishVariations))
+            {
+                $language = 'ES';
+            }
+
+            return empty($language) ? null : $language;
+        });
+
+
+        return $userConfig;
     }
 
 }
