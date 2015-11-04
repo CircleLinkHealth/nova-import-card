@@ -10,7 +10,7 @@
         $new_user = false;
     ?>
 
-    {!! Form::open(array('url' => URL::route('patient.careplan.save', array()), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => URL::route('patient.edit.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="container">
         <section class="main-form">
             <div class="row">
@@ -71,6 +71,7 @@
                             <p><span class="attention">*</span> Required Field</p>
                             <input type=hidden name=user_id value="{{ $patient->ID }}">
                             <input type=hidden name=program_id value="{{ $patient->program_id }}">
+                            <input type=hidden name=roles value="{{ $patientRoleId }}">
                             <input type=hidden name=daily_reminder_optin value="Y">
                             <input type=hidden name=daily_reminder_time value="08:00">
                             <input type=hidden name=daily_reminder_areas value="TBD">
@@ -82,15 +83,15 @@
                             <input type=hidden name=npi_number value="<?php /*echo $validation['npi_number']['value'];*/ ?>">
                             <div class="row">
 
-                                <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('firstName') ? 'has-error' : '' }}">
-                                    <label class="sr-only" for="firstName">First Name</label>
-                                    <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name *" value="{{ (old('firstName') ? old('firstName') : $patient->first_name) }}">
-                                    <span class="help-block">{{ $errors->first('firstName') }}</span>
+                                <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('first_name') ? 'has-error' : '' }}">
+                                    <label class="sr-only" for="first_name">First Name</label>
+                                    <input type="text" class="form-control" name="first_name" id="first_name" placeholder="First Name *" value="{{ (old('first_name') ? old('first_name') : $patient->first_name) }}">
+                                    <span class="help-block">{{ $errors->first('first_name') }}</span>
                                 </div>
-                                <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('lastName') ? 'has-error' : '' }}">
-                                    <label class="sr-only" for="lastName">Last Name</label>
-                                    <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last Name *"value="{{ (old('lastName') ? old('lastName') : $patient->last_name) }}">
-                                    <span class="help-block">{{ $errors->first('lastName') }}</span>
+                                <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('last_name') ? 'has-error' : '' }}">
+                                    <label class="sr-only" for="last_name">Last Name</label>
+                                    <input type="text" class="form-control" name="last_name" id="last_name" placeholder="Last Name *"value="{{ (old('last_name') ? old('last_name') : $patient->last_name) }}">
+                                    <span class="help-block">{{ $errors->first('last_name') }}</span>
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('gender') ? 'has-error' : '' }}">
                                     <div class="row">

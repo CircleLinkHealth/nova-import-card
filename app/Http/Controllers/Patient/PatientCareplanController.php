@@ -25,13 +25,15 @@ use Illuminate\Support\Facades\Crypt;
 class PatientCareplanController extends Controller {
 
 	/**
-	 * Display Careplan
+	 * Display patient add/edit
 	 *
 	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function showPatientCareplan(Request $request, $patientId = false)
+	public function showPatientEdit(Request $request, $patientId = false)
 	{
+		$messages = \Session::get('messages');
+
 		$wpUser = false;
 		if($patientId) {
 			$wpUser = WpUser::find($patientId);
@@ -45,20 +47,11 @@ class PatientCareplanController extends Controller {
 		$program = WpBlog::find($wpUser->program_id);
 
 		// roles
-		$roles = Role::all();
+		$patientRoleId = Role::where('name', '=', 'patient')->first();
+		$patientRoleId = $patientRoleId->id;
 
 		// primary_blog
 		$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
-
-		$params = $request->all();
-		if(!empty($params)) {
-			if (isset($params['action'])) {
-				if ($params['action'] == 'impersonate') {
-					Auth::login($patientId);
-					return redirect()->route('/', [])->with('messages', ['Logged in as user '.$patientId]);
-				}
-			}
-		}
 
 		// user config
 		$userConfig = $wpUser->userConfigTemplate();
@@ -97,17 +90,17 @@ class PatientCareplanController extends Controller {
 
 		//dd($userConfig);
 
-		return view('wpUsers.patient.careplan.careplan', compact(['program','patient', 'userConfig','states', 'locations', 'timezones', 'sectionHtml']));
+		return view('wpUsers.patient.careplan.careplan', compact(['program','patient', 'userConfig','states', 'locations', 'timezones', 'sectionHtml', 'messages', 'patientRoleId']));
 	}
 
 
 	/**
-	 * Save Careplan
+	 * Save patient add/edit
 	 *
 	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function savePatientCareplan(Request $request)
+	public function storePatientEdit(Request $request)
 	{
 		// input
 		$params = new ParameterBag($request->input());
@@ -125,10 +118,98 @@ class PatientCareplanController extends Controller {
 
 		$userRepo->editUser($wpUser, $params);
 
+		if($params->get('direction')) {
+			return redirect($params->get('direction'));
+		}
 		return redirect()->back()->with('messages', ['successfully updated user']);
 
-		return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
+		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}
+
+
+
+
+
+
+
+	/**
+	 * Display patient careteam edit
+	 *
+	 * @param  int  $patientId
+	 * @return Response
+	 */
+	public function showPatientCareteam(Request $request, $patientId = false)
+	{
+		$messages = \Session::get('messages');
+
+		$wpUser = false;
+		if($patientId) {
+			$wpUser = WpUser::find($patientId);
+			if (!$wpUser) {
+				return response("User not found", 401);
+			}
+		}
+		$patient = $wpUser;
+
+		// program
+		$program = WpBlog::find($wpUser->program_id);
+
+		$params = $request->all();
+
+		// user config
+		$userConfig = $wpUser->userConfigTemplate();
+		if(isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
+			$userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
+			$userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
+		}
+
+		//$sectionHtml = $carePlanUI->renderCareplanSection($wpUser, 'Biometrics to Monitor');
+		$sectionHtml = (new CareplanUIService)->renderCareplanSections(array(), $wpUser->program_id, $wpUser);
+		//$sectionHtml = '';
+		//dd($sectionHtml);
+
+		//dd($userConfig);
+
+		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml']));
+	}
+
+
+	/**
+	 * Save patient careteam edit
+	 *
+	 * @param  int  $patientId
+	 * @return Response
+	 */
+	public function storePatientCareteam(Request $request)
+	{
+		// input
+		$params = new ParameterBag($request->input());
+		if($params->get('user_id')) {
+			$patientId = $params->get('user_id');
+		}
+
+		// instantiate user
+		$wpUser = WpUser::with('meta')->find($patientId);
+		if (!$wpUser) {
+			return response("User not found", 401);
+		}
+
+		$userRepo = new WpUserRepository();
+
+		$userRepo->editUser($wpUser, $params);
+
+		if($params->get('direction')) {
+			return redirect($params->get('direction'));
+		}
+		return redirect()->back()->with('messages', ['successfully updated user']);
+
+		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
+	}
+
+
+
+
+
 
 	/**
 	 * Display Careplan Print
