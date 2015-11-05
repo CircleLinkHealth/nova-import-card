@@ -6,9 +6,11 @@
 //CCD Parser Demo Route
 Route::get('ccd-parser-demo', 'WelcomeController@index');
 
-Route::get('/ccd', function()
+Route::get('/ccd/{id}', function($id)
 {
-	return View::make('bb-ccd-viewer');
+	$ccd = \App\XmlCCD::where('user_id', $id)->first();
+//	dd($ccd);
+	return View::make('bb-ccd-viewer', ['ccd' => $ccd->ccd]);
 });
 
 /**
