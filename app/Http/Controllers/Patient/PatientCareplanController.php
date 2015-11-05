@@ -111,9 +111,9 @@ class PatientCareplanController extends Controller {
 		$userRepo->editUser($user, $params);
 
 		if($params->get('direction')) {
-			return redirect($params->get('direction'));
+			return redirect($params->get('direction'))->with('messages', ['Successfully updated patient demographics.']);
 		}
-		return redirect()->back()->with('messages', ['successfully updated user']);
+		return redirect()->back()->with('messages', ['Successfully updated patient demographics.']);
 	}
 
 
@@ -132,27 +132,50 @@ class PatientCareplanController extends Controller {
 	{
 		$messages = \Session::get('messages');
 
-		$wpUser = new WpUser;
+		$user = new WpUser;
 		if($patientId) {
-			$wpUser = WpUser::find($patientId);
-			if (!$wpUser) {
+			$user = WpUser::find($patientId);
+			if (!$user) {
 				return response("User not found", 401);
 			}
 		}
-		$patient = $wpUser;
+		$patient = $user;
 
 		// get program
 		$programId = \Session::get('activeProgramId');
 
+		// get user config
+		$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
+		$userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
+		$userConfig = array_merge($user->userConfigTemplate(), $userConfig);
+
+		// care team vars
+		$careTeamUserIds = $userConfig['care_team'];
+		$ctmsa = array();
+		if(!empty($userConfig['send_alert_to'])) {
+			$ctmsa = $userConfig['send_alert_to'];
+		}
+		$ctbp = $userConfig['billing_provider'];
+		$ctlc = $userConfig['lead_contact'];
+
+		//dd($userConfig);
+
+		$careTeamUsers = array();
+		foreach($careTeamUserIds as $id) {
+			$careTeamUsers[] = WpUser::find($id);
+		}
+
 		// get providers
+		$providersData = array();
 		$providers = WpUser::where('program_id', '=', $programId)
 			->with('meta')
 			->whereHas('roles', function($q){
 				$q->where('name', '=', 'provider');
 			})->get();
 
-		$phtml = '<div id="providerInfoContainers" style="display:none;">';
+		$phtml = '<div id="providerInfoContainers" style="">Hidden containers with provider info:';
 		foreach ($providers as $provider) {
+			$providersData[$provider->ID] = $provider->fullName;
 			// meta
 			$userMeta = WpUserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
 
@@ -160,7 +183,7 @@ class PatientCareplanController extends Controller {
 			$userConfig = $provider->userConfigTemplate();
 			if (isset($userMeta['wp_' . $programId . '_user_config'])) {
 				$userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
-				$userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
+				$userConfig = array_merge($user->userConfigTemplate(), $userConfig);
 			}
 			$phtml .= '<div id="providerInfo' . $provider->ID . '">';
 			$phtml .= '<strong><span id="providerName' . $provider->ID . '" style="display:none;">' . ucwords($userMeta['first_name'] . ' ' . $userMeta['last_name']) . '</span></strong>';
@@ -170,7 +193,7 @@ class PatientCareplanController extends Controller {
 		}
 		$phtml .= '</div>';
 
-		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml', 'phtml']));
+		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml', 'phtml', 'providersData', 'careTeamUsers']));
 	}
 
 
@@ -195,9 +218,9 @@ class PatientCareplanController extends Controller {
 		}
 
 		if($params->get('direction')) {
-			return redirect($params->get('direction'));
+			return redirect($params->get('direction'))->with('messages', ['Successfully updated patient care team.']);
 		}
-		return redirect()->back()->with('messages', ['successfully updated user']);
+		return redirect()->back()->with('messages', ['Successfully updated patient care team.']);
 
 		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}
@@ -273,9 +296,9 @@ class PatientCareplanController extends Controller {
 		}
 
 		if($params->get('direction')) {
-			return redirect($params->get('direction'));
+			return redirect($params->get('direction'))->with('messages', ['Successfully updated patient care plan.']);
 		}
-		return redirect()->back()->with('messages', ['successfully updated patient careplan']);
+		return redirect()->back()->with('messages', ['successfully updated patient care plan']);
 
 		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}
