@@ -132,7 +132,7 @@ class PatientCareplanController extends Controller {
 	{
 		$messages = \Session::get('messages');
 
-		$wpUser = false;
+		$wpUser = new WpUser;
 		if($patientId) {
 			$wpUser = WpUser::find($patientId);
 			if (!$wpUser) {
@@ -141,26 +141,36 @@ class PatientCareplanController extends Controller {
 		}
 		$patient = $wpUser;
 
-		// program
-		$program = WpBlog::find($wpUser->program_id);
+		// get program
+		$programId = \Session::get('activeProgramId');
 
-		$params = $request->all();
+		// get providers
+		$providers = WpUser::where('program_id', '=', $programId)
+			->with('meta')
+			->whereHas('roles', function($q){
+				$q->where('name', '=', 'provider');
+			})->get();
 
-		// user config
-		$userConfig = $wpUser->userConfigTemplate();
-		if(isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
-			$userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
-			$userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
+		$phtml = '<div id="providerInfoContainers" style="display:none;">';
+		foreach ($providers as $provider) {
+			// meta
+			$userMeta = WpUserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
+
+			// config
+			$userConfig = $provider->userConfigTemplate();
+			if (isset($userMeta['wp_' . $programId . '_user_config'])) {
+				$userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
+				$userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
+			}
+			$phtml .= '<div id="providerInfo' . $provider->ID . '">';
+			$phtml .= '<strong><span id="providerName' . $provider->ID . '" style="display:none;">' . ucwords($userMeta['first_name'] . ' ' . $userMeta['last_name']) . '</span></strong>';
+			$phtml .= '<strong>Specialty:</strong> ' . $userConfig['specialty'];
+			$phtml .= '<BR><strong>Tel:</strong> ' . $userConfig['study_phone_number'];
+			$phtml .= '</div>';
 		}
+		$phtml .= '</div>';
 
-		//$sectionHtml = $carePlanUI->renderCareplanSection($wpUser, 'Biometrics to Monitor');
-		$sectionHtml = (new CareplanUIService)->renderCareplanSections(array(), $wpUser->program_id, $wpUser);
-		//$sectionHtml = '';
-		//dd($sectionHtml);
-
-		//dd($userConfig);
-
-		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml']));
+		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml', 'phtml']));
 	}
 
 

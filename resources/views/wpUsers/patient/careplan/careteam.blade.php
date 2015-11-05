@@ -3,7 +3,8 @@
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
-
+    <script>
+    </script>
 
     <?php
         $user_info = array();
@@ -18,7 +19,7 @@
         }
     </style>
 
-
+    {!! $phtml !!}
     <input type=hidden name=user_id value="{{ $patient->ID }}">
     <input type=hidden name=program_id value="{{ $patient->program_id }}">
     <div class="container">
@@ -62,33 +63,10 @@
                                 </div>
                             </div>
                         </div>
-
-
-
-                        <div class="col-md-12" class="careTeamMemberContainer" id="ctm0">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <?php /* echo buildProviderDropDown($providers); */ ?>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                COL6 - provider info, static
-                            </div>
-                            <div class="col-sm-2">
-                                <a href="" class="removeCtm" ctmId="0">Remove</a>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-sm-4" style="padding:20px;">
-                                <div class="radio-inline"><input type="checkbox" id="cheeb1a" /><label for="cheeb1a"><span> </span>Send Alerts</label></div>
-                            </div>
-                            <div class="col-sm-4" style="padding:20px;">
-                                <div class="radio"><input type="radio" name="billprov" id="cheeb2a" /><label for="cheeb2a"><span> </span>Billing Provider</label></div>
-                            </div>
-                            <div class="col-sm-4" style="padding:20px;">
-                                <div class="radio"><input type="radio" name="leadContact" id="cheeb3a" /><label for="cheeb3a"><span> </span>Lead Contact</label></div>
-                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <a href="" class="addCareTeamMember pull-right btn btn-orange"><span class="glyphicon glyphicon-plus-sign"></span> Add Care Team Member</a>
                         </div>
                     </div>
                 </div>
@@ -134,31 +112,6 @@
                 </div>
             </div>
 
-
-
-            <div class="row">
-                <div class="col-md-12" style="margin-top:10px;">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <a href="" class="addCareTeamMember"><span class="glyphicon glyphicon-plus-sign"></span> Add Care Team Member</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-12" style="margin-top:30px;">
-                    <div class="row">
-                        <div class="col-sm-12">
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-12" style="margin-top:30px;">
-                </div>
-
-
-
-            </div>
             <?php /* echo buildProviderInfoContainers($providers, $blog_id); */ ?>
 
 
