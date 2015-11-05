@@ -16,6 +16,7 @@ class WpUserRepository {
 
         $wpUser->user_nicename = $params->get('user_nicename');
         $wpUser->program_id = $params->get('program_id');
+        $wpUser->user_registered = date('Y-m-d H:i:s');
 
         $this->saveOrUpdateRoles($wpUser, $params);
 
