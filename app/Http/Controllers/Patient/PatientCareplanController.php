@@ -1,6 +1,8 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\Activity;
+use App\CLH\DataTemplates\UserConfigTemplate;
+use App\CLH\DataTemplates\UserMetaTemplate;
 use App\Observation;
 use App\WpBlog;
 use App\Location;
@@ -52,17 +54,17 @@ class PatientCareplanController extends Controller {
 		$patientRoleId = $patientRoleId->id;
 
 		// user meta
-		$userMeta = $user->userMetaTemplate();
+		$userMeta = (new UserMetaTemplate())->getArray();
 		if($patientId) {
 			$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
 		}
 
 		// user config
-		$userConfig = $user->userConfigTemplate();
+		$userConfig = (new UserConfigTemplate())->getArray();
 		if($patientId) {
 			if (isset($userMeta['wp_' . $programId . '_user_config'])) {
 				$userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
-				$userConfig = array_merge($user->userConfigTemplate(), $userConfig);
+				$userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
 			}
 			// set role
 			$capabilities = unserialize($userMeta['wp_' . $programId . '_capabilities']);
@@ -169,7 +171,7 @@ class PatientCareplanController extends Controller {
 		// get user config
 		$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
 		$userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
-		$userConfig = array_merge($user->userConfigTemplate(), $userConfig);
+		$userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
 
 		// care team vars
 		$careTeamUserIds = $userConfig['care_team'];
@@ -202,10 +204,10 @@ class PatientCareplanController extends Controller {
 			$userMeta = WpUserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
 
 			// config
-			$userConfig = $provider->userConfigTemplate();
+			$userConfig = (new UserConfigTemplate())->getArray();
 			if (isset($userMeta['wp_' . $programId . '_user_config'])) {
 				$userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
-				$userConfig = array_merge($user->userConfigTemplate(), $userConfig);
+				$userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
 			}
 			$phtml .= '<div id="providerInfo' . $provider->ID . '">';
 			$phtml .= '<strong><span id="providerName' . $provider->ID . '" style="display:none;">' . ucwords($userMeta['first_name'] . ' ' . $userMeta['last_name']) . '</span></strong>';
@@ -284,10 +286,10 @@ class PatientCareplanController extends Controller {
 		$params = $request->all();
 
 		// user config
-		$userConfig = $wpUser->userConfigTemplate();
+		$userConfig = (new UserConfigTemplate())->getArray();
 		if(isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
 			$userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
-			$userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
+			$userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
 		}
 
 		//$sectionHtml = $carePlanUI->renderCareplanSection($wpUser, 'Biometrics to Monitor');

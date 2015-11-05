@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\Repositories\WpUserRepository;
 use App\CPRulesItemMeta;
 use App\CPRulesPCP;
@@ -214,7 +215,7 @@ class WpUserController extends Controller {
 		$roles = Role::all();
 
 		// user config
-		$userConfig = $wpUser->userConfigTemplate();
+		$userConfig = (new UserConfigTemplate())->getArray();
 
 		// set role
 		$wpRole = '';
@@ -301,10 +302,10 @@ class WpUserController extends Controller {
 		}
 
 		// user config
-		$userConfig = $wpUser->userConfigTemplate();
+		$userConfig = (new UserConfigTemplate())->getArray();
 		if(isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
 			$userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
-			$userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
+			$userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
 		}
 
 		// set role
