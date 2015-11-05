@@ -38,7 +38,7 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 </head>
 <body>
-	@if(!Request::is('patient/*'))
+	@if(!Request::is('patient/*') && !Request::is('patients/*'))
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
 				<div class="navbar-header">
@@ -144,7 +144,7 @@
 
 
 
-	@if( !Auth::guest() && (Request::is('patient/*') || Request::is('provider/*')) )
+	@if( !Auth::guest() && (Request::is('patient/*') || Request::is('patients/*')) )
 		<nav class="navbar primary-navbar">
 			<div class="container-fluid">
 				<div class="navbar-header">
@@ -153,9 +153,9 @@
 				</div>
 				<div class="navbar-right hidden-xs ">
 					<ul class="nav navbar-nav">
-						<li><a href=""><i class="icon--home--white"></i> Home</a></li>
+						<li><a href="{{ URL::route('patients.dashboard', array()) }}"><i class="icon--home--white"></i> Home</a></li>
 						<li><a href=""><i class="icon--search--white"></i> Select Patient</a></li>
-						<li><a href=""><i class="icon--add-user"></i> Add Patient</a></li>
+						<li><a href="{{ URL::route('patients.demographics.show', array()) }}"><i class="icon--add-user"></i> Add Patient</a></li>
 						<li><a href="{{ URL::route('patient.alerts', array()) }}"><i class="icon--alert--white"></i> Alerts</a></li>
 						@if ( !Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
 							@if (!empty($patient))

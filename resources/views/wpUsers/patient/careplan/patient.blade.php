@@ -10,7 +10,7 @@
         $new_user = false;
     ?>
 
-    {!! Form::open(array('url' => URL::route('patient.demographics.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="container">
         <section class="main-form">
             <div class="row">
