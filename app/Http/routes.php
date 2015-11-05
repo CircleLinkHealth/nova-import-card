@@ -6,6 +6,11 @@
 //CCD Parser Demo Route
 Route::get('ccd-parser-demo', 'WelcomeController@index');
 
+Route::get('/ccd', function()
+{
+	return View::make('bb-ccd-viewer');
+});
+
 /**
  * UPLOAD CCD ROUTES
  * @todo How do we protect those? auth middleware?
@@ -18,11 +23,10 @@ Route::group(['middleware' => 'auth.ccd.import'], function (){
 	Route::post('{id}/import-ccds', 'CCDUploadController@create');
 });
 
-
 //Test route @todo remove after testing
 Route::get('/reports/progress/{id}', function($id){
 	$report = new \App\Services\ReportsService();
-	return $report->progress($id);
+	return $report->careplan($id);
 });
 
 Route::get('test/form/{blogId}','WpUserController@quickAddForm');
