@@ -204,67 +204,6 @@ class WpUser extends Model {
     }
 
 
-    public function userMetaTemplate() {
-        $userMeta = array(
-            "first_name" => "",
-            "last_name" => "",
-            "nickname" => "",
-            "description" => "",
-            "admin_color" => "fresh",
-            "cur_month_activity_time" => "0",
-            "show_admin_bar_front" => "false",
-            "careplan_approved" => "",
-            "careplan_approver" => "",
-            "ccm_enabled" => "",
-            "careplan_status" => "",
-        );
-
-        return $userMeta;
-    }
-
-    public function userConfigTemplate() {
-        $userConfig = array(
-            "status" => "Active",
-            "email" => "test@test.com",
-            "mrn_number" => "12345678",
-            "study_phone_number" => "203-252-2556",
-            "active_date" => null,
-            "preferred_contact_time" => "09:00 AM",
-            "preferred_contact_timezone" => "America/New_York",
-            "preferred_contact_method" => "SMS",
-            "preferred_contact_language" => "EN",
-            "preferred_contact_location" => null,
-            "prefix" => '',
-            "gender" => "M",
-            "address" => "123 Test St",
-            "city" => "Anywhere",
-            "state" => "IA",
-            "zip" => "11233",
-            "birth_date" => "1900-01-31",
-            "consent_date" => "2012-01-31",
-            "daily_reminder_optin" => "Y",
-            "daily_reminder_time" => "09:00",
-            "daily_reminder_areas" => "TBD",
-            "hospital_reminder_optin" => "Y",
-            "hospital_reminder_time" => "09:00",
-            "hospital_reminder_areas" => "TBD",
-            "registration_date" => "2015-07-21 01:00:00",
-            "care_team" => array(),
-            "send_alert_to" => array(),
-            "billing_provider" => "",
-            "lead_contact" => "",
-            "qualification" => "",
-            "npi_number" => "",
-            "specialty" => "",
-        );
-
-        return $userConfig;
-    }
-
-
-
-
-
     public function getUCP() {
         $userUcp = $this->ucp()->with(['item.meta', 'item.question'])->get();
         $userUcpData = array('ucp' => array(), 'obs_keys' => array(), 'alert_keys' => array());
