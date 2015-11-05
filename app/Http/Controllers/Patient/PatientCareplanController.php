@@ -34,45 +34,47 @@ class PatientCareplanController extends Controller {
 	{
 		$messages = \Session::get('messages');
 
-		$wpUser = false;
+		// determine if existing user or new user
+		$user = new WpUser;
 		if($patientId) {
-			$wpUser = WpUser::find($patientId);
-			if (!$wpUser) {
+			$user = WpUser::find($patientId);
+			if (!$user) {
 				return response("User not found", 401);
 			}
 		}
-		$patient = $wpUser;
+		$patient = $user;
 
-		// program
-		$program = WpBlog::find($wpUser->program_id);
+		// get program
+		$programId = \Session::get('activeProgramId');
 
 		// roles
 		$patientRoleId = Role::where('name', '=', 'patient')->first();
 		$patientRoleId = $patientRoleId->id;
 
-		// primary_blog
-		$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
-
-		// user config
-		$userConfig = $wpUser->userConfigTemplate();
-		if(isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
-			$userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
-			$userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
+		// user meta
+		$userMeta = $user->userMetaTemplate();
+		if($patientId) {
+			$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
 		}
 
-		// set role
-		$capabilities = unserialize($userMeta['wp_' . $wpUser->program_id . '_capabilities']);
-		$wpRole = key($capabilities);
+		// user config
+		$userConfig = $user->userConfigTemplate();
+		if($patientId) {
+			if (isset($userMeta['wp_' . $programId . '_user_config'])) {
+				$userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
+				$userConfig = array_merge($user->userConfigTemplate(), $userConfig);
+			}
+			// set role
+			$capabilities = unserialize($userMeta['wp_' . $programId . '_capabilities']);
+			$wpRole = key($capabilities);
+		}
 
 		// locations @todo get location id for WpBlog
-		$wpBlog = WpBlog::find($wpUser->program_id);
-		$locations = Location::where('program_id', '=', $wpUser->program_id)->lists('name', 'id');
+		$wpBlog = WpBlog::find($programId);
+		$locations = Location::where('program_id', '=', $programId)->lists('name', 'id');
 
 		// States (for dropdown)
 		$states = array('AL'=>"Alabama",'AK'=>"Alaska",'AZ'=>"Arizona",'AR'=>"Arkansas",'CA'=>"California",'CO'=>"Colorado",'CT'=>"Connecticut",'DE'=>"Delaware",'DC'=>"District Of Columbia",'FL'=>"Florida",'GA'=>"Georgia",'HI'=>"Hawaii",'ID'=>"Idaho",'IL'=>"Illinois", 'IN'=>"Indiana", 'IA'=>"Iowa",  'KS'=>"Kansas",'KY'=>"Kentucky",'LA'=>"Louisiana",'ME'=>"Maine",'MD'=>"Maryland", 'MA'=>"Massachusetts",'MI'=>"Michigan",'MN'=>"Minnesota",'MS'=>"Mississippi",'MO'=>"Missouri",'MT'=>"Montana",'NE'=>"Nebraska",'NV'=>"Nevada",'NH'=>"New Hampshire",'NJ'=>"New Jersey",'NM'=>"New Mexico",'NY'=>"New York",'NC'=>"North Carolina",'ND'=>"North Dakota",'OH'=>"Ohio",'OK'=>"Oklahoma", 'OR'=>"Oregon",'PA'=>"Pennsylvania",'RI'=>"Rhode Island",'SC'=>"South Carolina",'SD'=>"South Dakota",'TN'=>"Tennessee",'TX'=>"Texas",'UT'=>"Utah",'VT'=>"Vermont",'VA'=>"Virginia",'WA'=>"Washington",'WV'=>"West Virginia",'WI'=>"Wisconsin",'WY'=>"Wyoming");
-
-		// programs for dd
-		$wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('domain', 'blog_id');
 
 		// timezones for dd
 		$timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
@@ -80,17 +82,7 @@ class PatientCareplanController extends Controller {
 			$timezones[$timezone] = $timezone;
 		}
 
-		// providers
-		$providers = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
-
-		//$sectionHtml = $carePlanUI->renderCareplanSection($wpUser, 'Biometrics to Monitor');
-		$sectionHtml = (new CareplanUIService)->renderCareplanSections(array(), $wpUser->program_id, $wpUser);
-		$sectionHtml = '';
-		//dd($sectionHtml);
-
-		//dd($userConfig);
-
-		return view('wpUsers.patient.careplan.patient', compact(['program','patient', 'userConfig','states', 'locations', 'timezones', 'sectionHtml', 'messages', 'patientRoleId']));
+		return view('wpUsers.patient.careplan.patient', compact(['patient', 'userMeta', 'userConfig','states', 'locations', 'timezones', 'messages', 'patientRoleId']));
 	}
 
 
@@ -109,21 +101,19 @@ class PatientCareplanController extends Controller {
 		}
 
 		// instantiate user
-		$wpUser = WpUser::with('meta')->find($patientId);
-		if (!$wpUser) {
+		$user = WpUser::with('meta')->find($patientId);
+		if (!$user) {
 			return response("User not found", 401);
 		}
 
 		$userRepo = new WpUserRepository();
 
-		$userRepo->editUser($wpUser, $params);
+		$userRepo->editUser($user, $params);
 
 		if($params->get('direction')) {
 			return redirect($params->get('direction'));
 		}
 		return redirect()->back()->with('messages', ['successfully updated user']);
-
-		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}
 
 
