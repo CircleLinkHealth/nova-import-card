@@ -112,26 +112,35 @@ class WpUserRepository {
 
     public function updateUserConfig(WpUser $wpUser, ParameterBag $params)
     {
-        $userConfigTemplate = $wpUser->userConfigTemplate();
 
-        foreach($userConfigTemplate as $key => $value)
+        // meta
+        $userMeta = WpUserMeta::where('user_id', '=', $wpUser->ID)->lists('meta_value', 'meta_key');
+
+        // config
+        $userConfig = $wpUser->userConfigTemplate();
+        if (isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
+            $userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
+            $userConfig = array_merge($wpUser->userConfigTemplate(), $userConfig);
+        }
+
+        foreach($userConfig as $key => $value)
         {
             if( ! empty($params->get($key)))
             {
-                $userConfigTemplate[$key] = $params->get($key);
+                $userConfig[$key] = $params->get($key);
             }
         }
 
-        $userConfig = $wpUser->meta()->whereMetaKey("wp_{$params->get('program_id')}_user_config")->first();
-        if($userConfig) {
-            $userConfig->meta_value = serialize($userConfigTemplate);
+        $setUserConfig = $wpUser->meta()->whereMetaKey("wp_{$params->get('program_id')}_user_config")->first();
+        if($setUserConfig) {
+            $setUserConfig->meta_value = serialize($userConfig);
         } else {
-            $userConfig = new WpUserMeta;
-            $userConfig->meta_key = 'wp_' . $params->get('program_id') . '_user_config';
-            $userConfig->meta_value = serialize($userConfigTemplate);
-            $userConfig->user_id = $wpUser->ID;
+            $setUserConfig = new WpUserMeta;
+            $setUserConfig->meta_key = 'wp_' . $params->get('program_id') . '_user_config';
+            $setUserConfig->meta_value = serialize($userConfig);
+            $setUserConfig->user_id = $wpUser->ID;
         }
-        $userConfig->save();
+        $setUserConfig->save();
     }
 
 }

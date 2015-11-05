@@ -94,26 +94,48 @@ class PatientCareplanController extends Controller {
 	 */
 	public function storePatientDemographics(Request $request)
 	{
+		$programId = \Session::get('activeProgramId');
+
 		// input
 		$params = new ParameterBag($request->input());
+		$patientId = false;
 		if($params->get('user_id')) {
 			$patientId = $params->get('user_id');
 		}
 
 		// instantiate user
-		$user = WpUser::with('meta')->find($patientId);
-		if (!$user) {
-			return response("User not found", 401);
+		$user = new WpUser;
+		if($patientId) {
+			$user = WpUser::with('meta')->find($patientId);
+			if (!$user) {
+				return response("User not found", 401);
+			}
 		}
 
 		$userRepo = new WpUserRepository();
 
-		$userRepo->editUser($user, $params);
+		if($patientId) {
+			$userRepo->editUser($user, $params);
+			if($params->get('direction')) {
+				return redirect($params->get('direction'))->with('messages', ['Successfully updated patient demographics.']);
+			}
+			return redirect()->back()->with('messages', ['Successfully updated patient demographics.']);
+		} else {
+			$role = Role::whereName('patient')->first();
 
-		if($params->get('direction')) {
-			return redirect($params->get('direction'))->with('messages', ['Successfully updated patient demographics.']);
+			$newUserId = str_random(20);
+
+			$bag = new ParameterBag([
+				'user_email' => $newUserId . '@careplanmanager.com',
+				'user_pass' => 'whatToPutHere',
+				'user_nicename' => $newUserId,
+				'program_id' => $programId,
+				'roles' => [$role->id],
+			]);
+			$newUser = $userRepo->createNewUser($user, $bag);
+			$userRepo->editUser($newUser, $params);
+			return redirect(\URL::route('patient.demographics.show', array('patientId' => $newUser->ID)))->with('messages', ['Successfully created new patient with demographics.']);
 		}
-		return redirect()->back()->with('messages', ['Successfully updated patient demographics.']);
 	}
 
 

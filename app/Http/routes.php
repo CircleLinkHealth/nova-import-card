@@ -77,6 +77,16 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('home', 'HomeController@index');
 
 	/****************************/
+	// PATIENTS (/patients/
+	/****************************/
+	Route::group(['prefix' => 'patients/', 'middleware' => 'programCheck'], function () {
+		Route::get('dashboard', ['uses' => 'Patient\PatientController@showDashboard', 'as' => 'patients.dashboard']);
+		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patients.alerts']);
+		Route::get('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@showPatientDemographics', 'as' => 'patients.demographics.show']);
+		Route::post('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patients.demographics.store']);
+	});
+
+	/****************************/
 	// PATIENT (/patient/programId)
 	/****************************/
 	Route::group(['prefix' => 'patient/{patientId}', 'middleware' => 'programCheck'], function () {

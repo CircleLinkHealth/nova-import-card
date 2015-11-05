@@ -27,6 +27,18 @@ use Illuminate\Support\Facades\Crypt;
 
 class PatientController extends Controller {
 
+
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @return Response
+	 */
+	public function showDashboard(Request $request)
+	{
+		return view('wpUsers.patient.dashboard', compact([]));
+	}
+
 	/**
 	 * Display the specified resource.
 	 *
