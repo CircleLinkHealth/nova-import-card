@@ -1,5 +1,7 @@
 <?php namespace App\CLH\Repositories;
 
+use App\CLH\DataTemplates\UserConfigTemplate;
+use App\CLH\DataTemplates\UserMetaTemplate;
 use App\WpUser;
 use App\WpUserMeta;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -76,7 +78,7 @@ class WpUserRepository {
 
     public function saveOrUpdateUserMeta(WpUser $wpUser, ParameterBag $params)
     {
-        $userMetaTemplate = $wpUser->userMetaTemplate();
+        $userMetaTemplate = (new UserMetaTemplate())->getArray();
 
         foreach($userMetaTemplate as $key => $value)
         {
