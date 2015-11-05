@@ -11,9 +11,10 @@ use App\Observation;
 use DateTime;
 use DateTimeZone;
 use DB;
+use Illuminate\Support\Facades\Facade;
 use Validator;
 
-class CareplanUIService {
+class CareplanUIService extends Facade {
 
 
 	public function getCareplanSectionData($programId, $pcpSectionText, WpUser $user) {
