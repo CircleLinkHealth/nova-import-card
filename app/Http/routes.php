@@ -1,4 +1,5 @@
 <?php
+use JavaScript;
 /*
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
@@ -9,6 +10,11 @@ Route::get('ccd-parser-demo', 'WelcomeController@index');
 Route::get('/ccd/{id}', function($id)
 {
 	$ccd = \App\XmlCCD::where('user_id', $id)->first();
+
+	JavaScript::put([
+		'ccdRecord' => $ccd,
+	]);
+
 //	dd($ccd);
 	return View::make('bb-ccd-viewer', ['ccd' => $ccd->ccd]);
 });
