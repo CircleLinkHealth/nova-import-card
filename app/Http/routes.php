@@ -8,9 +8,11 @@ Route::get('ccd-parser-demo', 'WelcomeController@index');
 
 Route::get('/ccd/{id}', function($id)
 {
-	$ccd = \App\XmlCCD::where('user_id', $id)->first();
-//	dd($ccd);
-	return View::make('bb-ccd-viewer', ['ccd' => $ccd->ccd]);
+	$ccd = \App\XmlCCD::where('user_id', $id)->first()->ccd;
+
+	$template = View::make('CCDViewer.bb-ccd-viewer', compact('ccd'));
+
+	return View::make('CCDViewer.viewer', compact('template'));
 });
 
 /**
