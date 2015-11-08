@@ -6,20 +6,21 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Blue Button Health Record </title>
+    <title>CircleLink Health - Care Plan Manager</title>
     <meta name="description" content="Patient health records in the Blue Button format.">
     <meta name="viewport" content="width=device-width">
-    <meta name="author" content="M. Jackson Wilkinson / jackson@jounce.net / @mjacksonw">
 
     <!-- Injected styles -->
     <link rel='stylesheet' href='/css/ccd-template.css' type='text/css' media='screen, projection'/>
 
     <!-- Injected scripts -->
-
+    <?= View::make('partials.footer'); ?>
     <script src="/js/ccd/ccd-viewer-scripts.js"></script>
-    </head>
+</head>
+
     <body>
-        <section class="bb-template">
+
+    <section class="bb-template">
             <nav id="primaryNav">
                 <div class="container">
                     <h1>Patient Health Record</h1>
@@ -247,8 +248,4 @@
     </body>
 </html>
 
-<script style="display: none;" id="xmlBBData" type="text/plain">
-
-<?= $ccd; ?>
-
-    </script>
+<script style="display: none;" id="xmlBBData" type="text/plain"><?= $ccd; ?></script>
