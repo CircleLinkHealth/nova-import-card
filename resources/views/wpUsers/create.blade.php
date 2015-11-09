@@ -34,7 +34,6 @@
                         <ul class="nav nav-tabs" role="tablist" style="margin-top:20px;">
                             <li role="presentation" class="active"><a href="#program" aria-controls="program" role="tab" data-toggle="tab">Program</a></li>
                             <li role="presentation"><a href="#roles" aria-controls="roles" role="tab" data-toggle="tab">Roles</a></li>
-                            <li role="presentation"><a href="#userinfo" aria-controls="userinfo" role="tab" data-toggle="tab">User Info</a></li>
                             <li role="presentation"><a href="#userconfig" aria-controls="userconfig" role="tab" data-toggle="tab">User Config</a></li>
                             <li role="presentation"><a href="#usercareteam" aria-controls="usercareteam" role="tab" data-toggle="tab">Care Team</a></li>
                         </ul>
@@ -58,7 +57,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('user_email', 'Email:') !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('user_email', 'user_email:') !!}</div>
                                         <div class="col-xs-10">{!! Form::text('user_email', '', ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
@@ -70,12 +69,21 @@
                                         <div class="col-xs-4">{!! Form::password('user_pass_confirm', '', ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
+                                <h2>User Info</h2>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('user_nicename', 'Nice Name:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::text('user_nicename', '', ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('first_name', 'First Name:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('first_name', '', ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('last_name', 'Last Name:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('last_name', '', ['class' => 'form-control']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
                                         <div class="col-xs-2">{!! Form::label('display_name', 'Display Name:') !!}</div>
                                         <div class="col-xs-4">{!! Form::text('display_name', '', ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('user_status', 'User Status:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('user_status', array('0' => '0', '1' => '1'), 1, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                     </div>
                                 </div>
                             </div>
@@ -104,26 +112,6 @@
                                     </div>
                                 </div>
                                 <br />
-                            </div>
-
-                            <div role="tabpanel" class="tab-pane" id="userinfo">
-                                <h2>User Info</h2>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('first_name', 'First Name:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::text('first_name', '', ['class' => 'form-control']) !!}</div>
-                                        <div class="col-xs-2">{!! Form::label('last_name', 'Last Name:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::text('last_name', '', ['class' => 'form-control']) !!}</div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('nickname', 'Nickname:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::text('nickname', '', ['class' => 'form-control']) !!}</div>
-                                        <div class="col-xs-2">{!! Form::label('description', 'Description:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::text('description', '', ['class' => 'form-control']) !!}</div>
-                                    </div>
-                                </div>
                             </div>
 
                             <div role="tabpanel" class="tab-pane" id="userconfig">

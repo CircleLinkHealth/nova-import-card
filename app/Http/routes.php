@@ -95,7 +95,7 @@ Route::group(['middleware' => 'auth'], function ()
 	});
 
 	/****************************/
-	// PATIENT (/patient/programId)
+	// PATIENT (/patient/patientId)
 	/****************************/
 	Route::group(['prefix' => 'patient/{patientId}', 'middleware' => 'programCheck'], function () {
 

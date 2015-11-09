@@ -62,10 +62,7 @@
                             <p><span class="attention">*</span> Required Field</p>
                             <input type=hidden name=user_id value="{{ $patient->ID }}">
                             <input type=hidden name=program_id value="{{ $patient->program_id }}">
-                            <input type=hidden name=user_nicename value="{{ $patient->user_nicename }}">
                             <input type=hidden name=display_name value="{{ $patient->display_name }}">
-                            <input type=hidden name=nickname value="{{ $userMeta['nickname'] }}">
-                            <input type=hidden name=description value="{{ $userMeta['description'] }}">
                             <input type=hidden name=roles value="{{ $patientRoleId }}">
                             <input type=hidden name=daily_reminder_optin value="Y">
                             <input type=hidden name=daily_reminder_time value="08:00">

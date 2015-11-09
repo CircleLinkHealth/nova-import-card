@@ -14,7 +14,11 @@ class WpUserRepository {
 
         $wpUser->load('meta');
 
-        $wpUser->user_nicename = $params->get('user_nicename');
+        //dd($params);
+        $wpUser->user_nicename = '';
+        $wpUser->user_login = $params->get('user_login');
+        $wpUser->user_status = $params->get('user_status');
+        $wpUser->display_name = $params->get('display_name');
         $wpUser->program_id = $params->get('program_id');
         $wpUser->user_registered = date('Y-m-d H:i:s');
 
@@ -46,7 +50,9 @@ class WpUserRepository {
     public function editUser(WpUser $wpUser, ParameterBag $params)
     {
         // the basics
-        $wpUser->user_nicename = $params->get('user_nicename');
+        $wpUser->user_nicename = '';
+        $wpUser->user_login = $params->get('user_login');
+        $wpUser->user_status = $params->get('user_status');
         $wpUser->display_name = $params->get('display_name');
         $wpUser->program_id = $params->get('program_id');
         $wpUser->save();

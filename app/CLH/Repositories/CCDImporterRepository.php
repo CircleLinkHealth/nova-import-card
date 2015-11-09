@@ -25,7 +25,7 @@ class CCDImporterRepository
         $bag = new ParameterBag([
             'user_email' => $newUserId . '@careplanmanager.com',
             'user_pass' => 'whatToPutHere',
-            'user_nicename' => $newUserId,
+            'user_nicename' => '',
             'program_id' => $blogId,
             'roles' => [$role->id],
         ]);
