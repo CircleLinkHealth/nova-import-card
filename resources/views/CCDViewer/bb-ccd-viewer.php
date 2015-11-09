@@ -15,7 +15,12 @@
 
     <!-- Injected scripts -->
     <?= View::make('partials.footer'); ?>
-    <script src="/js/ccd/ccd-viewer-scripts.js"></script>
+    <script src="/js/ccd/modernizr.js"></script>
+    <script src="/js/ccd/jquery-1.9.0.js"></script>
+    <script src="/js/ccd/swig.js"></script>
+    <script src="/js/ccd/bluebutton-0.0.10.js"></script>
+<!--    <script src="/js/ccd/bluebutton.js"></script>-->
+    <script src="/js/ccd/bbclear.js"></script>
 </head>
 
     <body>
