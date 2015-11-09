@@ -1,19 +1,12 @@
-
-/* js/03-swig.min.js */
-/* swig.js v0.13.5 | Copyright (c) 2010-2011 Paul Armstrong, Dusko Jordanovski | https://github.com/paularmstrong/swig/ */
-(function() {
-
-    var str = "{{ a }}",
-        splitter;
+/* js/03-swig.min.js */ /* swig.js v0.13.5 | Copyright (c) 2010-2011 Paul Armstrong, Dusko Jordanovski | https://github.com/paularmstrong/swig/ */
+(function () {
+    var str = "{{ a }}", splitter;
     if (str.split(/(\{\{.*?\}\})/).length === 0) {
-        splitter = function(str, separator, limit) {
+        splitter = function (str, separator, limit) {
             if (Object.prototype.toString.call(separator) !== "[object RegExp]") {
                 return splitter._nativeSplit.call(str, separator, limit)
             }
-            var output = [],
-                lastLastIndex = 0,
-                flags = (separator.ignoreCase ? "i" : "") + (separator.multiline ? "m" : "") + (separator.sticky ? "y" : ""),
-                separator2, match, lastIndex, lastLength;
+            var output = [], lastLastIndex = 0, flags = (separator.ignoreCase ? "i" : "") + (separator.multiline ? "m" : "") + (separator.sticky ? "y" : ""), separator2, match, lastIndex, lastLength;
             separator = RegExp(separator.source, flags + "g");
             str = str.toString();
             if (!splitter._compliantExecNpcg) {
@@ -27,7 +20,6 @@
                     return []
                 }
             }
-
             function fixExec() {
                 var i = 1;
                 for (i; i < arguments.length - 2; i += 1) {
@@ -36,6 +28,7 @@
                     }
                 }
             }
+
             match = separator.exec(str);
             while (match) {
                 lastIndex = match.index + match[0].length;
@@ -69,45 +62,24 @@
         };
         splitter._compliantExecNpcg = /()??/.exec("")[1] === undefined;
         splitter._nativeSplit = String.prototype.split;
-        String.prototype.split = function(separator, limit) {
+        String.prototype.split = function (separator, limit) {
             return splitter(this, separator, limit)
         }
     }
 })();
-swig = function() {
-    var swig = {},
-        dateformat = {},
-        filters = {},
-        helpers = {},
-        parser = {},
-        tags = {};
-    (function() {
+
+swig = function () {
+    var swig = {}, dateformat = {}, filters = {}, helpers = {}, parser = {}, tags = {};
+    (function () {
         var root = this;
         var previousUnderscore = root._;
         var breaker = {};
-        var ArrayProto = Array.prototype,
-            ObjProto = Object.prototype,
-            FuncProto = Function.prototype;
-        var push = ArrayProto.push,
-            slice = ArrayProto.slice,
-            concat = ArrayProto.concat,
-            toString = ObjProto.toString,
-            hasOwnProperty = ObjProto.hasOwnProperty;
-        var nativeForEach = ArrayProto.forEach,
-            nativeMap = ArrayProto.map,
-            nativeReduce = ArrayProto.reduce,
-            nativeReduceRight = ArrayProto.reduceRight,
-            nativeFilter = ArrayProto.filter,
-            nativeEvery = ArrayProto.every,
-            nativeSome = ArrayProto.some,
-            nativeIndexOf = ArrayProto.indexOf,
-            nativeLastIndexOf = ArrayProto.lastIndexOf,
-            nativeIsArray = Array.isArray,
-            nativeKeys = Object.keys,
-            nativeBind = FuncProto.bind;
-        var _ = function(obj) {
-            if (obj instanceof _) return obj;
-            if (!(this instanceof _)) return new _(obj);
+        var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
+        var push = ArrayProto.push, slice = ArrayProto.slice, concat = ArrayProto.concat, toString = ObjProto.toString, hasOwnProperty = ObjProto.hasOwnProperty;
+        var nativeForEach = ArrayProto.forEach, nativeMap = ArrayProto.map, nativeReduce = ArrayProto.reduce, nativeReduceRight = ArrayProto.reduceRight, nativeFilter = ArrayProto.filter, nativeEvery = ArrayProto.every, nativeSome = ArrayProto.some, nativeIndexOf = ArrayProto.indexOf, nativeLastIndexOf = ArrayProto.lastIndexOf, nativeIsArray = Array.isArray, nativeKeys = Object.keys, nativeBind = FuncProto.bind;
+        var _ = function (obj) {
+            if (obj instanceof _)return obj;
+            if (!(this instanceof _))return new _(obj);
             this._wrapped = obj
         };
         if (typeof exports !== "undefined") {
@@ -119,40 +91,40 @@ swig = function() {
             root._ = _
         }
         _.VERSION = "1.4.3";
-        var each = _.each = _.forEach = function(obj, iterator, context) {
-            if (obj == null) return;
+        var each = _.each = _.forEach = function (obj, iterator, context) {
+            if (obj == null)return;
             if (nativeForEach && obj.forEach === nativeForEach) {
                 obj.forEach(iterator, context)
             } else if (obj.length === +obj.length) {
                 for (var i = 0, l = obj.length; i < l; i++) {
-                    if (iterator.call(context, obj[i], i, obj) === breaker) return
+                    if (iterator.call(context, obj[i], i, obj) === breaker)return
                 }
             } else {
                 for (var key in obj) {
                     if (_.has(obj, key)) {
-                        if (iterator.call(context, obj[key], key, obj) === breaker) return
+                        if (iterator.call(context, obj[key], key, obj) === breaker)return
                     }
                 }
             }
         };
-        _.map = _.collect = function(obj, iterator, context) {
+        _.map = _.collect = function (obj, iterator, context) {
             var results = [];
-            if (obj == null) return results;
-            if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
-            each(obj, function(value, index, list) {
+            if (obj == null)return results;
+            if (nativeMap && obj.map === nativeMap)return obj.map(iterator, context);
+            each(obj, function (value, index, list) {
                 results[results.length] = iterator.call(context, value, index, list)
             });
             return results
         };
         var reduceError = "Reduce of empty array with no initial value";
-        _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
+        _.reduce = _.foldl = _.inject = function (obj, iterator, memo, context) {
             var initial = arguments.length > 2;
-            if (obj == null) obj = [];
+            if (obj == null)obj = [];
             if (nativeReduce && obj.reduce === nativeReduce) {
-                if (context) iterator = _.bind(iterator, context);
+                if (context)iterator = _.bind(iterator, context);
                 return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator)
             }
-            each(obj, function(value, index, list) {
+            each(obj, function (value, index, list) {
                 if (!initial) {
                     memo = value;
                     initial = true
@@ -160,14 +132,14 @@ swig = function() {
                     memo = iterator.call(context, memo, value, index, list)
                 }
             });
-            if (!initial) throw new TypeError(reduceError);
+            if (!initial)throw new TypeError(reduceError);
             return memo
         };
-        _.reduceRight = _.foldr = function(obj, iterator, memo, context) {
+        _.reduceRight = _.foldr = function (obj, iterator, memo, context) {
             var initial = arguments.length > 2;
-            if (obj == null) obj = [];
+            if (obj == null)obj = [];
             if (nativeReduceRight && obj.reduceRight === nativeReduceRight) {
-                if (context) iterator = _.bind(iterator, context);
+                if (context)iterator = _.bind(iterator, context);
                 return initial ? obj.reduceRight(iterator, memo) : obj.reduceRight(iterator)
             }
             var length = obj.length;
@@ -175,7 +147,7 @@ swig = function() {
                 var keys = _.keys(obj);
                 length = keys.length
             }
-            each(obj, function(value, index, list) {
+            each(obj, function (value, index, list) {
                 index = keys ? keys[--length] : --length;
                 if (!initial) {
                     memo = obj[index];
@@ -184,12 +156,12 @@ swig = function() {
                     memo = iterator.call(context, memo, obj[index], index, list)
                 }
             });
-            if (!initial) throw new TypeError(reduceError);
+            if (!initial)throw new TypeError(reduceError);
             return memo
         };
-        _.find = _.detect = function(obj, iterator, context) {
+        _.find = _.detect = function (obj, iterator, context) {
             var result;
-            any(obj, function(value, index, list) {
+            any(obj, function (value, index, list) {
                 if (iterator.call(context, value, index, list)) {
                     result = value;
                     return true
@@ -197,201 +169,184 @@ swig = function() {
             });
             return result
         };
-        _.filter = _.select = function(obj, iterator, context) {
+        _.filter = _.select = function (obj, iterator, context) {
             var results = [];
-            if (obj == null) return results;
-            if (nativeFilter && obj.filter === nativeFilter) return obj.filter(iterator, context);
-            each(obj, function(value, index, list) {
-                if (iterator.call(context, value, index, list)) results[results.length] = value
+            if (obj == null)return results;
+            if (nativeFilter && obj.filter === nativeFilter)return obj.filter(iterator, context);
+            each(obj, function (value, index, list) {
+                if (iterator.call(context, value, index, list))results[results.length] = value
             });
             return results
         };
-        _.reject = function(obj, iterator, context) {
-            return _.filter(obj, function(value, index, list) {
+        _.reject = function (obj, iterator, context) {
+            return _.filter(obj, function (value, index, list) {
                 return !iterator.call(context, value, index, list)
             }, context)
         };
-        _.every = _.all = function(obj, iterator, context) {
+        _.every = _.all = function (obj, iterator, context) {
             iterator || (iterator = _.identity);
             var result = true;
-            if (obj == null) return result;
-            if (nativeEvery && obj.every === nativeEvery) return obj.every(iterator, context);
-            each(obj, function(value, index, list) {
-                if (!(result = result && iterator.call(context, value, index, list))) return breaker
+            if (obj == null)return result;
+            if (nativeEvery && obj.every === nativeEvery)return obj.every(iterator, context);
+            each(obj, function (value, index, list) {
+                if (!(result = result && iterator.call(context, value, index, list)))return breaker
             });
             return !!result
         };
-        var any = _.some = _.any = function(obj, iterator, context) {
+        var any = _.some = _.any = function (obj, iterator, context) {
             iterator || (iterator = _.identity);
             var result = false;
-            if (obj == null) return result;
-            if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
-            each(obj, function(value, index, list) {
-                if (result || (result = iterator.call(context, value, index, list))) return breaker
+            if (obj == null)return result;
+            if (nativeSome && obj.some === nativeSome)return obj.some(iterator, context);
+            each(obj, function (value, index, list) {
+                if (result || (result = iterator.call(context, value, index, list)))return breaker
             });
             return !!result
         };
-        _.contains = _.include = function(obj, target) {
-            if (obj == null) return false;
-            if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
-            return any(obj, function(value) {
+        _.contains = _.include = function (obj, target) {
+            if (obj == null)return false;
+            if (nativeIndexOf && obj.indexOf === nativeIndexOf)return obj.indexOf(target) != -1;
+            return any(obj, function (value) {
                 return value === target
             })
         };
-        _.invoke = function(obj, method) {
+        _.invoke = function (obj, method) {
             var args = slice.call(arguments, 2);
-            return _.map(obj, function(value) {
+            return _.map(obj, function (value) {
                 return (_.isFunction(method) ? method : value[method]).apply(value, args)
             })
         };
-        _.pluck = function(obj, key) {
-            return _.map(obj, function(value) {
+        _.pluck = function (obj, key) {
+            return _.map(obj, function (value) {
                 return value[key]
             })
         };
-        _.where = function(obj, attrs) {
-            if (_.isEmpty(attrs)) return [];
-            return _.filter(obj, function(value) {
+        _.where = function (obj, attrs) {
+            if (_.isEmpty(attrs))return [];
+            return _.filter(obj, function (value) {
                 for (var key in attrs) {
-                    if (attrs[key] !== value[key]) return false
+                    if (attrs[key] !== value[key])return false
                 }
                 return true
             })
         };
-        _.max = function(obj, iterator, context) {
+        _.max = function (obj, iterator, context) {
             if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
                 return Math.max.apply(Math, obj)
             }
-            if (!iterator && _.isEmpty(obj)) return -Infinity;
-            var result = {
-                computed: -Infinity,
-                value: -Infinity
-            };
-            each(obj, function(value, index, list) {
+            if (!iterator && _.isEmpty(obj))return -Infinity;
+            var result = {computed: -Infinity, value: -Infinity};
+            each(obj, function (value, index, list) {
                 var computed = iterator ? iterator.call(context, value, index, list) : value;
-                computed >= result.computed && (result = {
-                    value: value,
-                    computed: computed
-                })
+                computed >= result.computed && (result = {value: value, computed: computed})
             });
             return result.value
         };
-        _.min = function(obj, iterator, context) {
+        _.min = function (obj, iterator, context) {
             if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
                 return Math.min.apply(Math, obj)
             }
-            if (!iterator && _.isEmpty(obj)) return Infinity;
-            var result = {
-                computed: Infinity,
-                value: Infinity
-            };
-            each(obj, function(value, index, list) {
+            if (!iterator && _.isEmpty(obj))return Infinity;
+            var result = {computed: Infinity, value: Infinity};
+            each(obj, function (value, index, list) {
                 var computed = iterator ? iterator.call(context, value, index, list) : value;
-                computed < result.computed && (result = {
-                    value: value,
-                    computed: computed
-                })
+                computed < result.computed && (result = {value: value, computed: computed})
             });
             return result.value
         };
-        _.shuffle = function(obj) {
+        _.shuffle = function (obj) {
             var rand;
             var index = 0;
             var shuffled = [];
-            each(obj, function(value) {
+            each(obj, function (value) {
                 rand = _.random(index++);
                 shuffled[index - 1] = shuffled[rand];
                 shuffled[rand] = value
             });
             return shuffled
         };
-        var lookupIterator = function(value) {
-            return _.isFunction(value) ? value : function(obj) {
+        var lookupIterator = function (value) {
+            return _.isFunction(value) ? value : function (obj) {
                 return obj[value]
             }
         };
-        _.sortBy = function(obj, value, context) {
+        _.sortBy = function (obj, value, context) {
             var iterator = lookupIterator(value);
-            return _.pluck(_.map(obj, function(value, index, list) {
-                return {
-                    value: value,
-                    index: index,
-                    criteria: iterator.call(context, value, index, list)
-                }
-            }).sort(function(left, right) {
+            return _.pluck(_.map(obj, function (value, index, list) {
+                return {value: value, index: index, criteria: iterator.call(context, value, index, list)}
+            }).sort(function (left, right) {
                 var a = left.criteria;
                 var b = right.criteria;
                 if (a !== b) {
-                    if (a > b || a === void 0) return 1;
-                    if (a < b || b === void 0) return -1
+                    if (a > b || a === void 0)return 1;
+                    if (a < b || b === void 0)return -1
                 }
                 return left.index < right.index ? -1 : 1
             }), "value")
         };
-        var group = function(obj, value, context, behavior) {
+        var group = function (obj, value, context, behavior) {
             var result = {};
             var iterator = lookupIterator(value || _.identity);
-            each(obj, function(value, index) {
+            each(obj, function (value, index) {
                 var key = iterator.call(context, value, index, obj);
                 behavior(result, key, value)
             });
             return result
         };
-        _.groupBy = function(obj, value, context) {
-            return group(obj, value, context, function(result, key, value) {
+        _.groupBy = function (obj, value, context) {
+            return group(obj, value, context, function (result, key, value) {
                 (_.has(result, key) ? result[key] : result[key] = []).push(value)
             })
         };
-        _.countBy = function(obj, value, context) {
-            return group(obj, value, context, function(result, key) {
-                if (!_.has(result, key)) result[key] = 0;
+        _.countBy = function (obj, value, context) {
+            return group(obj, value, context, function (result, key) {
+                if (!_.has(result, key))result[key] = 0;
                 result[key]++
             })
         };
-        _.sortedIndex = function(array, obj, iterator, context) {
+        _.sortedIndex = function (array, obj, iterator, context) {
             iterator = iterator == null ? _.identity : lookupIterator(iterator);
             var value = iterator.call(context, obj);
-            var low = 0,
-                high = array.length;
+            var low = 0, high = array.length;
             while (low < high) {
                 var mid = low + high >>> 1;
                 iterator.call(context, array[mid]) < value ? low = mid + 1 : high = mid
             }
             return low
         };
-        _.toArray = function(obj) {
-            if (!obj) return [];
-            if (_.isArray(obj)) return slice.call(obj);
-            if (obj.length === +obj.length) return _.map(obj, _.identity);
+        _.toArray = function (obj) {
+            if (!obj)return [];
+            if (_.isArray(obj))return slice.call(obj);
+            if (obj.length === +obj.length)return _.map(obj, _.identity);
             return _.values(obj)
         };
-        _.size = function(obj) {
-            if (obj == null) return 0;
+        _.size = function (obj) {
+            if (obj == null)return 0;
             return obj.length === +obj.length ? obj.length : _.keys(obj).length
         };
-        _.first = _.head = _.take = function(array, n, guard) {
-            if (array == null) return void 0;
+        _.first = _.head = _.take = function (array, n, guard) {
+            if (array == null)return void 0;
             return n != null && !guard ? slice.call(array, 0, n) : array[0]
         };
-        _.initial = function(array, n, guard) {
+        _.initial = function (array, n, guard) {
             return slice.call(array, 0, array.length - (n == null || guard ? 1 : n))
         };
-        _.last = function(array, n, guard) {
-            if (array == null) return void 0;
+        _.last = function (array, n, guard) {
+            if (array == null)return void 0;
             if (n != null && !guard) {
                 return slice.call(array, Math.max(array.length - n, 0))
             } else {
                 return array[array.length - 1]
             }
         };
-        _.rest = _.tail = _.drop = function(array, n, guard) {
+        _.rest = _.tail = _.drop = function (array, n, guard) {
             return slice.call(array, n == null || guard ? 1 : n)
         };
-        _.compact = function(array) {
+        _.compact = function (array) {
             return _.filter(array, _.identity)
         };
-        var flatten = function(input, shallow, output) {
-            each(input, function(value) {
+        var flatten = function (input, shallow, output) {
+            each(input, function (value) {
                 if (_.isArray(value)) {
                     shallow ? push.apply(output, value) : flatten(value, shallow, output)
                 } else {
@@ -400,13 +355,13 @@ swig = function() {
             });
             return output
         };
-        _.flatten = function(array, shallow) {
+        _.flatten = function (array, shallow) {
             return flatten(array, shallow, [])
         };
-        _.without = function(array) {
+        _.without = function (array) {
             return _.difference(array, slice.call(arguments, 1))
         };
-        _.uniq = _.unique = function(array, isSorted, iterator, context) {
+        _.uniq = _.unique = function (array, isSorted, iterator, context) {
             if (_.isFunction(isSorted)) {
                 context = iterator;
                 iterator = isSorted;
@@ -415,7 +370,7 @@ swig = function() {
             var initial = iterator ? _.map(array, iterator, context) : array;
             var results = [];
             var seen = [];
-            each(initial, function(value, index) {
+            each(initial, function (value, index) {
                 if (isSorted ? !index || seen[seen.length - 1] !== value : !_.contains(seen, value)) {
                     seen.push(value);
                     results.push(array[index])
@@ -423,24 +378,24 @@ swig = function() {
             });
             return results
         };
-        _.union = function() {
+        _.union = function () {
             return _.uniq(concat.apply(ArrayProto, arguments))
         };
-        _.intersection = function(array) {
+        _.intersection = function (array) {
             var rest = slice.call(arguments, 1);
-            return _.filter(_.uniq(array), function(item) {
-                return _.every(rest, function(other) {
+            return _.filter(_.uniq(array), function (item) {
+                return _.every(rest, function (other) {
                     return _.indexOf(other, item) >= 0
                 })
             })
         };
-        _.difference = function(array) {
+        _.difference = function (array) {
             var rest = concat.apply(ArrayProto, slice.call(arguments, 1));
-            return _.filter(array, function(value) {
+            return _.filter(array, function (value) {
                 return !_.contains(rest, value)
             })
         };
-        _.zip = function() {
+        _.zip = function () {
             var args = slice.call(arguments);
             var length = _.max(_.pluck(args, "length"));
             var results = new Array(length);
@@ -449,8 +404,8 @@ swig = function() {
             }
             return results
         };
-        _.object = function(list, values) {
-            if (list == null) return {};
+        _.object = function (list, values) {
+            if (list == null)return {};
             var result = {};
             for (var i = 0, l = list.length; i < l; i++) {
                 if (values) {
@@ -461,10 +416,9 @@ swig = function() {
             }
             return result
         };
-        _.indexOf = function(array, item, isSorted) {
-            if (array == null) return -1;
-            var i = 0,
-                l = array.length;
+        _.indexOf = function (array, item, isSorted) {
+            if (array == null)return -1;
+            var i = 0, l = array.length;
             if (isSorted) {
                 if (typeof isSorted == "number") {
                     i = isSorted < 0 ? Math.max(0, l + isSorted) : isSorted
@@ -473,23 +427,21 @@ swig = function() {
                     return array[i] === item ? i : -1
                 }
             }
-            if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item, isSorted);
-            for (; i < l; i++)
-                if (array[i] === item) return i;
+            if (nativeIndexOf && array.indexOf === nativeIndexOf)return array.indexOf(item, isSorted);
+            for (; i < l; i++)if (array[i] === item)return i;
             return -1
         };
-        _.lastIndexOf = function(array, item, from) {
-            if (array == null) return -1;
+        _.lastIndexOf = function (array, item, from) {
+            if (array == null)return -1;
             var hasIndex = from != null;
             if (nativeLastIndexOf && array.lastIndexOf === nativeLastIndexOf) {
                 return hasIndex ? array.lastIndexOf(item, from) : array.lastIndexOf(item)
             }
             var i = hasIndex ? from : array.length;
-            while (i--)
-                if (array[i] === item) return i;
+            while (i--)if (array[i] === item)return i;
             return -1
         };
-        _.range = function(start, stop, step) {
+        _.range = function (start, stop, step) {
             if (arguments.length <= 1) {
                 stop = start || 0;
                 start = 0
@@ -504,56 +456,57 @@ swig = function() {
             }
             return range
         };
-        var ctor = function() {};
-        _.bind = function(func, context) {
+        var ctor = function () {
+        };
+        _.bind = function (func, context) {
             var args, bound;
-            if (func.bind === nativeBind && nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
-            if (!_.isFunction(func)) throw new TypeError;
+            if (func.bind === nativeBind && nativeBind)return nativeBind.apply(func, slice.call(arguments, 1));
+            if (!_.isFunction(func))throw new TypeError;
             args = slice.call(arguments, 2);
-            return bound = function() {
-                if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
+            return bound = function () {
+                if (!(this instanceof bound))return func.apply(context, args.concat(slice.call(arguments)));
                 ctor.prototype = func.prototype;
                 var self = new ctor;
                 ctor.prototype = null;
                 var result = func.apply(self, args.concat(slice.call(arguments)));
-                if (Object(result) === result) return result;
+                if (Object(result) === result)return result;
                 return self
             }
         };
-        _.bindAll = function(obj) {
+        _.bindAll = function (obj) {
             var funcs = slice.call(arguments, 1);
-            if (funcs.length == 0) funcs = _.functions(obj);
-            each(funcs, function(f) {
+            if (funcs.length == 0)funcs = _.functions(obj);
+            each(funcs, function (f) {
                 obj[f] = _.bind(obj[f], obj)
             });
             return obj
         };
-        _.memoize = function(func, hasher) {
+        _.memoize = function (func, hasher) {
             var memo = {};
             hasher || (hasher = _.identity);
-            return function() {
+            return function () {
                 var key = hasher.apply(this, arguments);
                 return _.has(memo, key) ? memo[key] : memo[key] = func.apply(this, arguments)
             }
         };
-        _.delay = function(func, wait) {
+        _.delay = function (func, wait) {
             var args = slice.call(arguments, 2);
-            return setTimeout(function() {
+            return setTimeout(function () {
                 return func.apply(null, args)
             }, wait)
         };
-        _.defer = function(func) {
+        _.defer = function (func) {
             return _.delay.apply(_, [func, 1].concat(slice.call(arguments, 1)))
         };
-        _.throttle = function(func, wait) {
+        _.throttle = function (func, wait) {
             var context, args, timeout, result;
             var previous = 0;
-            var later = function() {
+            var later = function () {
                 previous = new Date;
                 timeout = null;
                 result = func.apply(context, args)
             };
-            return function() {
+            return function () {
                 var now = new Date;
                 var remaining = wait - (now - previous);
                 context = this;
@@ -569,43 +522,41 @@ swig = function() {
                 return result
             }
         };
-        _.debounce = function(func, wait, immediate) {
+        _.debounce = function (func, wait, immediate) {
             var timeout, result;
-            return function() {
-                var context = this,
-                    args = arguments;
-                var later = function() {
+            return function () {
+                var context = this, args = arguments;
+                var later = function () {
                     timeout = null;
-                    if (!immediate) result = func.apply(context, args)
+                    if (!immediate)result = func.apply(context, args)
                 };
                 var callNow = immediate && !timeout;
                 clearTimeout(timeout);
                 timeout = setTimeout(later, wait);
-                if (callNow) result = func.apply(context, args);
+                if (callNow)result = func.apply(context, args);
                 return result
             }
         };
-        _.once = function(func) {
-            var ran = false,
-                memo;
-            return function() {
-                if (ran) return memo;
+        _.once = function (func) {
+            var ran = false, memo;
+            return function () {
+                if (ran)return memo;
                 ran = true;
                 memo = func.apply(this, arguments);
                 func = null;
                 return memo
             }
         };
-        _.wrap = function(func, wrapper) {
-            return function() {
+        _.wrap = function (func, wrapper) {
+            return function () {
                 var args = [func];
                 push.apply(args, arguments);
                 return wrapper.apply(this, args)
             }
         };
-        _.compose = function() {
+        _.compose = function () {
             var funcs = arguments;
-            return function() {
+            return function () {
                 var args = arguments;
                 for (var i = funcs.length - 1; i >= 0; i--) {
                     args = [funcs[i].apply(this, args)]
@@ -613,48 +564,44 @@ swig = function() {
                 return args[0]
             }
         };
-        _.after = function(times, func) {
-            if (times <= 0) return func();
-            return function() {
+        _.after = function (times, func) {
+            if (times <= 0)return func();
+            return function () {
                 if (--times < 1) {
                     return func.apply(this, arguments)
                 }
             }
         };
-        _.keys = nativeKeys || function(obj) {
-                if (obj !== Object(obj)) throw new TypeError("Invalid object");
+        _.keys = nativeKeys || function (obj) {
+                if (obj !== Object(obj))throw new TypeError("Invalid object");
                 var keys = [];
-                for (var key in obj)
-                    if (_.has(obj, key)) keys[keys.length] = key;
+                for (var key in obj)if (_.has(obj, key))keys[keys.length] = key;
                 return keys
             };
-        _.values = function(obj) {
+        _.values = function (obj) {
             var values = [];
-            for (var key in obj)
-                if (_.has(obj, key)) values.push(obj[key]);
+            for (var key in obj)if (_.has(obj, key))values.push(obj[key]);
             return values
         };
-        _.pairs = function(obj) {
+        _.pairs = function (obj) {
             var pairs = [];
-            for (var key in obj)
-                if (_.has(obj, key)) pairs.push([key, obj[key]]);
+            for (var key in obj)if (_.has(obj, key))pairs.push([key, obj[key]]);
             return pairs
         };
-        _.invert = function(obj) {
+        _.invert = function (obj) {
             var result = {};
-            for (var key in obj)
-                if (_.has(obj, key)) result[obj[key]] = key;
+            for (var key in obj)if (_.has(obj, key))result[obj[key]] = key;
             return result
         };
-        _.functions = _.methods = function(obj) {
+        _.functions = _.methods = function (obj) {
             var names = [];
             for (var key in obj) {
-                if (_.isFunction(obj[key])) names.push(key)
+                if (_.isFunction(obj[key]))names.push(key)
             }
             return names.sort()
         };
-        _.extend = function(obj) {
-            each(slice.call(arguments, 1), function(source) {
+        _.extend = function (obj) {
+            each(slice.call(arguments, 1), function (source) {
                 if (source) {
                     for (var prop in source) {
                         obj[prop] = source[prop]
@@ -663,90 +610,88 @@ swig = function() {
             });
             return obj
         };
-        _.pick = function(obj) {
+        _.pick = function (obj) {
             var copy = {};
             var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
-            each(keys, function(key) {
-                if (key in obj) copy[key] = obj[key]
+            each(keys, function (key) {
+                if (key in obj)copy[key] = obj[key]
             });
             return copy
         };
-        _.omit = function(obj) {
+        _.omit = function (obj) {
             var copy = {};
             var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
             for (var key in obj) {
-                if (!_.contains(keys, key)) copy[key] = obj[key]
+                if (!_.contains(keys, key))copy[key] = obj[key]
             }
             return copy
         };
-        _.defaults = function(obj) {
-            each(slice.call(arguments, 1), function(source) {
+        _.defaults = function (obj) {
+            each(slice.call(arguments, 1), function (source) {
                 if (source) {
                     for (var prop in source) {
-                        if (obj[prop] == null) obj[prop] = source[prop]
+                        if (obj[prop] == null)obj[prop] = source[prop]
                     }
                 }
             });
             return obj
         };
-        _.clone = function(obj) {
-            if (!_.isObject(obj)) return obj;
+        _.clone = function (obj) {
+            if (!_.isObject(obj))return obj;
             return _.isArray(obj) ? obj.slice() : _.extend({}, obj)
         };
-        _.tap = function(obj, interceptor) {
+        _.tap = function (obj, interceptor) {
             interceptor(obj);
             return obj
         };
-        var eq = function(a, b, aStack, bStack) {
-            if (a === b) return a !== 0 || 1 / a == 1 / b;
-            if (a == null || b == null) return a === b;
-            if (a instanceof _) a = a._wrapped;
-            if (b instanceof _) b = b._wrapped;
+        var eq = function (a, b, aStack, bStack) {
+            if (a === b)return a !== 0 || 1 / a == 1 / b;
+            if (a == null || b == null)return a === b;
+            if (a instanceof _)a = a._wrapped;
+            if (b instanceof _)b = b._wrapped;
             var className = toString.call(a);
-            if (className != toString.call(b)) return false;
+            if (className != toString.call(b))return false;
             switch (className) {
-                case "[object String]":
+                case"[object String]":
                     return a == String(b);
-                case "[object Number]":
+                case"[object Number]":
                     return a != +a ? b != +b : a == 0 ? 1 / a == 1 / b : a == +b;
-                case "[object Date]":
-                case "[object Boolean]":
+                case"[object Date]":
+                case"[object Boolean]":
                     return +a == +b;
-                case "[object RegExp]":
+                case"[object RegExp]":
                     return a.source == b.source && a.global == b.global && a.multiline == b.multiline && a.ignoreCase == b.ignoreCase
             }
-            if (typeof a != "object" || typeof b != "object") return false;
+            if (typeof a != "object" || typeof b != "object")return false;
             var length = aStack.length;
             while (length--) {
-                if (aStack[length] == a) return bStack[length] == b
+                if (aStack[length] == a)return bStack[length] == b
             }
             aStack.push(a);
             bStack.push(b);
-            var size = 0,
-                result = true;
+            var size = 0, result = true;
             if (className == "[object Array]") {
                 size = a.length;
                 result = size == b.length;
                 if (result) {
                     while (size--) {
-                        if (!(result = eq(a[size], b[size], aStack, bStack))) break
+                        if (!(result = eq(a[size], b[size], aStack, bStack)))break
                     }
                 }
             } else {
-                var aCtor = a.constructor,
-                    bCtor = b.constructor;
+                var aCtor = a.constructor, bCtor = b.constructor;
                 if (aCtor !== bCtor && !(_.isFunction(aCtor) && aCtor instanceof aCtor && _.isFunction(bCtor) && bCtor instanceof bCtor)) {
                     return false
                 }
                 for (var key in a) {
                     if (_.has(a, key)) {
                         size++;
-                        if (!(result = _.has(b, key) && eq(a[key], b[key], aStack, bStack))) break
+                        if (!(result = _.has(b, key) && eq(a[key], b[key], aStack, bStack)))break
                     }
                 }
                 if (result) {
                     for (key in b) {
-                        if (_.has(b, key) && !size--) break
+                        if (_.has(b, key) && !size--)break
                     }
                     result = !size
                 }
@@ -755,109 +700,99 @@ swig = function() {
             bStack.pop();
             return result
         };
-        _.isEqual = function(a, b) {
+        _.isEqual = function (a, b) {
             return eq(a, b, [], [])
         };
-        _.isEmpty = function(obj) {
-            if (obj == null) return true;
-            if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
-            for (var key in obj)
-                if (_.has(obj, key)) return false;
+        _.isEmpty = function (obj) {
+            if (obj == null)return true;
+            if (_.isArray(obj) || _.isString(obj))return obj.length === 0;
+            for (var key in obj)if (_.has(obj, key))return false;
             return true
         };
-        _.isElement = function(obj) {
+        _.isElement = function (obj) {
             return !!(obj && obj.nodeType === 1)
         };
-        _.isArray = nativeIsArray || function(obj) {
+        _.isArray = nativeIsArray || function (obj) {
                 return toString.call(obj) == "[object Array]"
             };
-        _.isObject = function(obj) {
+        _.isObject = function (obj) {
             return obj === Object(obj)
         };
-        each(["Arguments", "Function", "String", "Number", "Date", "RegExp"], function(name) {
-            _["is" + name] = function(obj) {
+        each(["Arguments", "Function", "String", "Number", "Date", "RegExp"], function (name) {
+            _["is" + name] = function (obj) {
                 return toString.call(obj) == "[object " + name + "]"
             }
         });
         if (!_.isArguments(arguments)) {
-            _.isArguments = function(obj) {
+            _.isArguments = function (obj) {
                 return !!(obj && _.has(obj, "callee"))
             }
         }
-        if (typeof /./ !== "function") {
-            _.isFunction = function(obj) {
+        if (typeof/./ !== "function") {
+            _.isFunction = function (obj) {
                 return typeof obj === "function"
             }
         }
-        _.isFinite = function(obj) {
+        _.isFinite = function (obj) {
             return isFinite(obj) && !isNaN(parseFloat(obj))
         };
-        _.isNaN = function(obj) {
+        _.isNaN = function (obj) {
             return _.isNumber(obj) && obj != +obj
         };
-        _.isBoolean = function(obj) {
+        _.isBoolean = function (obj) {
             return obj === true || obj === false || toString.call(obj) == "[object Boolean]"
         };
-        _.isNull = function(obj) {
+        _.isNull = function (obj) {
             return obj === null
         };
-        _.isUndefined = function(obj) {
+        _.isUndefined = function (obj) {
             return obj === void 0
         };
-        _.has = function(obj, key) {
+        _.has = function (obj, key) {
             return hasOwnProperty.call(obj, key)
         };
-        _.noConflict = function() {
+        _.noConflict = function () {
             root._ = previousUnderscore;
             return this
         };
-        _.identity = function(value) {
+        _.identity = function (value) {
             return value
         };
-        _.times = function(n, iterator, context) {
+        _.times = function (n, iterator, context) {
             var accum = Array(n);
-            for (var i = 0; i < n; i++) accum[i] = iterator.call(context, i);
+            for (var i = 0; i < n; i++)accum[i] = iterator.call(context, i);
             return accum
         };
-        _.random = function(min, max) {
+        _.random = function (min, max) {
             if (max == null) {
                 max = min;
                 min = 0
             }
             return min + (0 | Math.random() * (max - min + 1))
         };
-        var entityMap = {
-            escape: {
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#x27;",
-                "/": "&#x2F;"
-            }
-        };
+        var entityMap = {escape: {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#x27;", "/": "&#x2F;"}};
         entityMap.unescape = _.invert(entityMap.escape);
         var entityRegexes = {
             escape: new RegExp("[" + _.keys(entityMap.escape).join("") + "]", "g"),
             unescape: new RegExp("(" + _.keys(entityMap.unescape).join("|") + ")", "g")
         };
-        _.each(["escape", "unescape"], function(method) {
-            _[method] = function(string) {
-                if (string == null) return "";
-                return ("" + string).replace(entityRegexes[method], function(match) {
+        _.each(["escape", "unescape"], function (method) {
+            _[method] = function (string) {
+                if (string == null)return "";
+                return ("" + string).replace(entityRegexes[method], function (match) {
                     return entityMap[method][match]
                 })
             }
         });
-        _.result = function(object, property) {
-            if (object == null) return null;
+        _.result = function (object, property) {
+            if (object == null)return null;
             var value = object[property];
             return _.isFunction(value) ? value.call(object) : value
         };
-        _.mixin = function(obj) {
-            each(_.functions(obj), function(name) {
+        _.mixin = function (obj) {
+            each(_.functions(obj), function (name) {
                 var func = _[name] = obj[name];
-                _.prototype[name] = function() {
+                _.prototype[name] = function () {
                     var args = [this._wrapped];
                     push.apply(args, arguments);
                     return result.call(this, func.apply(_, args))
@@ -865,33 +800,21 @@ swig = function() {
             })
         };
         var idCounter = 0;
-        _.uniqueId = function(prefix) {
+        _.uniqueId = function (prefix) {
             var id = "" + ++idCounter;
             return prefix ? prefix + id : id
         };
-        _.templateSettings = {
-            evaluate: /<%([\s\S]+?)%>/g,
-            interpolate: /<%=([\s\S]+?)%>/g,
-            escape: /<%-([\s\S]+?)%>/g
-        };
+        _.templateSettings = {evaluate: /<%([\s\S]+?)%>/g, interpolate: /<%=([\s\S]+?)%>/g, escape: /<%-([\s\S]+?)%>/g};
         var noMatch = /(.)^/;
-        var escapes = {
-            "'": "'",
-            "\\": "\\",
-            "\r": "r",
-            "\n": "n",
-            "   ": "t",
-            "\u2028": "u2028",
-            "\u2029": "u2029"
-        };
+        var escapes = {"'": "'", "\\": "\\", "\r": "r", "\n": "n", "   ": "t", "\u2028": "u2028", "\u2029": "u2029"};
         var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
-        _.template = function(text, data, settings) {
+        _.template = function (text, data, settings) {
             settings = _.defaults({}, settings, _.templateSettings);
             var matcher = new RegExp([(settings.escape || noMatch).source, (settings.interpolate || noMatch).source, (settings.evaluate || noMatch).source].join("|") + "|$", "g");
             var index = 0;
             var source = "__p+='";
-            text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
-                source += text.slice(index, offset).replace(escaper, function(match) {
+            text.replace(matcher, function (match, escape, interpolate, evaluate, offset) {
+                source += text.slice(index, offset).replace(escaper, function (match) {
                     return "\\" + escapes[match]
                 });
                 if (escape) {
@@ -907,7 +830,7 @@ swig = function() {
                 return match
             });
             source += "';\n";
-            if (!settings.variable) source = "with(obj||{}){\n" + source + "}\n";
+            if (!settings.variable)source = "with(obj||{}){\n" + source + "}\n";
             source = "var __t,__p='',__j=Array.prototype.join," + "print=function(){__p+=__j.call(arguments,'');};\n" + source + "return __p;\n";
             try {
                 var render = new Function(settings.variable || "obj", "_", source)
@@ -915,70 +838,66 @@ swig = function() {
                 e.source = source;
                 throw e
             }
-            if (data) return render(data, _);
-            var template = function(data) {
+            if (data)return render(data, _);
+            var template = function (data) {
                 return render.call(this, data, _)
             };
             template.source = "function(" + (settings.variable || "obj") + "){\n" + source + "}";
             return template
         };
-        _.chain = function(obj) {
+        _.chain = function (obj) {
             return _(obj).chain()
         };
-        var result = function(obj) {
+        var result = function (obj) {
             return this._chain ? _(obj).chain() : obj
         };
         _.mixin(_);
-        each(["pop", "push", "reverse", "shift", "sort", "splice", "unshift"], function(name) {
+        each(["pop", "push", "reverse", "shift", "sort", "splice", "unshift"], function (name) {
             var method = ArrayProto[name];
-            _.prototype[name] = function() {
+            _.prototype[name] = function () {
                 var obj = this._wrapped;
                 method.apply(obj, arguments);
-                if ((name == "shift" || name == "splice") && obj.length === 0) delete obj[0];
+                if ((name == "shift" || name == "splice") && obj.length === 0)delete obj[0];
                 return result.call(this, obj)
             }
         });
-        each(["concat", "join", "slice"], function(name) {
+        each(["concat", "join", "slice"], function (name) {
             var method = ArrayProto[name];
-            _.prototype[name] = function() {
+            _.prototype[name] = function () {
                 return result.call(this, method.apply(this._wrapped, arguments))
             }
         });
         _.extend(_.prototype, {
-            chain: function() {
+            chain: function () {
                 this._chain = true;
                 return this
-            },
-            value: function() {
+            }, value: function () {
                 return this._wrapped
             }
         })
     }).call(this);
-    (function(exports) {
+    (function (exports) {
         var config = {
-                allowErrors: false,
-                autoescape: true,
-                cache: true,
-                encoding: "utf8",
-                filters: filters,
-                root: "/",
-                tags: tags,
-                extensions: {},
-                tzOffset: 0
-            },
-            _config = _.extend({}, config),
-            CACHE = {};
-        exports.init = function(options) {
+            allowErrors: false,
+            autoescape: true,
+            cache: true,
+            encoding: "utf8",
+            filters: filters,
+            root: "/",
+            tags: tags,
+            extensions: {},
+            tzOffset: 0
+        }, _config = _.extend({}, config), CACHE = {};
+        exports.init = function (options) {
             CACHE = {};
             _config = _.extend({}, config, options);
             _config.filters = _.extend(filters, options.filters);
             _config.tags = _.extend(tags, options.tags);
             dateformat.defaultTZOffset = _config.tzOffset
         };
-
         function TemplateError(error) {
             return {
-                render: function() {
+                render: function () {
                     return "<pre>" + error.stack + "</pre>"
                 }
             }
@@ -990,12 +909,11 @@ swig = function() {
 
         function createTemplate(data, id) {
             var template = {
-                    compileFile: exports.compileFile,
-                    blocks: {},
-                    type: parser.TEMPLATE,
-                    id: id
-                },
-                tokens, code, render;
+                compileFile: exports.compileFile,
+                blocks: {},
+                type: parser.TEMPLATE,
+                id: id
+            }, tokens, code, render;
             if (_config.allowErrors) {
                 tokens = parser.parse.call(template, data, _config.tags, _config.autoescape)
             } else {
@@ -1010,14 +928,14 @@ swig = function() {
             if (code !== false) {
                 render = createRenderFunc(code)
             } else {
-                render = function(_context, _parents, _filters, _, _ext) {
+                render = function (_context, _parents, _filters, _, _ext) {
                     template.tokens = tokens;
                     code = parser.compile.call(template, "", _context);
                     var fn = createRenderFunc(code);
                     return fn.call(this, _context, _parents, _filters, _, _ext)
                 }
             }
-            template.render = function(context, parents) {
+            template.render = function (context, parents) {
                 if (_config.allowErrors) {
                     return render.call(this, context, parents, _config.filters, _, _config.extensions)
                 }
@@ -1040,26 +958,22 @@ swig = function() {
             }
             return createTemplate(source, key)
         }
-        exports.compileFile = function(filepath, forceAllowErrors) {
+
+        exports.compileFile = function (filepath, forceAllowErrors) {
             var tpl, get;
             if (_config.cache && CACHE.hasOwnProperty(filepath)) {
                 return CACHE[filepath]
             }
             if (typeof window !== "undefined") {
-                throw new TemplateError({
-                    stack: "You must pre-compile all templates in-browser. Use `swig.compile(template);`."
-                })
+                throw new TemplateError({stack: "You must pre-compile all templates in-browser. Use `swig.compile(template);`."})
             }
-            get = function() {
+            get = function () {
                 var excp, getSingle, c;
-                getSingle = function(prefix) {
-                    var file = /^\//.test(filepath) || /^.:/.test(filepath) ? filepath : prefix + "/" + filepath,
-                        data;
+                getSingle = function (prefix) {
+                    var file = /^\//.test(filepath) || /^.:/.test(filepath) ? filepath : prefix + "/" + filepath, data;
                     try {
                         data = fs.readFileSync(file, config.encoding);
-                        tpl = getTemplate(data, {
-                            filename: filepath
-                        })
+                        tpl = getTemplate(data, {filename: filepath})
                     } catch (e) {
                         excp = e
                     }
@@ -1089,22 +1003,20 @@ swig = function() {
             }
             return tpl
         };
-        exports.compile = function(source, options) {
+        exports.compile = function (source, options) {
             var tmpl = getTemplate(source, options || {});
-            return function(source, options) {
+            return function (source, options) {
                 return tmpl.render(source, options)
             }
         }
     })(swig);
-    (function(exports) {
+    (function (exports) {
         var KEYWORDS = /^(Array|ArrayBuffer|Boolean|Date|Error|eval|EvalError|Function|Infinity|Iterator|JSON|Math|Namespace|NaN|Number|Object|QName|RangeError|ReferenceError|RegExp|StopIteration|String|SyntaxError|TypeError|undefined|uneval|URIError|XML|XMLList|break|case|catch|continue|debugger|default|delete|do|else|finally|for|function|if|in|instanceof|new|return|switch|this|throw|try|typeof|var|void|while|with)(?=(\.|$))/;
-        exports.isStringLiteral = function(string) {
+        exports.isStringLiteral = function (string) {
             if (typeof string !== "string") {
                 return false
             }
-            var first = string.substring(0, 1),
-                last = string.charAt(string.length - 1, 1),
-                teststr;
+            var first = string.substring(0, 1), last = string.charAt(string.length - 1, 1), teststr;
             if (first === last && (first === "'" || first === '"')) {
                 teststr = string.substr(1, string.length - 2).split("").reverse().join("");
                 if (first === "'" && /'(?!\\)/.test(teststr) || last === '"' && /"(?!\\)/.test(teststr)) {
@@ -1114,7 +1026,7 @@ swig = function() {
             }
             return false
         };
-        exports.isLiteral = function(string) {
+        exports.isLiteral = function (string) {
             var literal = false;
             if (/^\d+([.]\d+)?$/.test(string)) {
                 literal = true
@@ -1123,25 +1035,22 @@ swig = function() {
             }
             return literal
         };
-        exports.isValidName = function(string) {
+        exports.isValidName = function (string) {
             return typeof string === "string" && string.substr(0, 2) !== "__" && /^([$A-Za-z_]+[$A-Za-z_0-9]*)(\.?([$A-Za-z_]+[$A-Za-z_0-9]*))*$/.test(string) && !KEYWORDS.test(string)
         };
-        exports.isValidShortName = function(string) {
+        exports.isValidShortName = function (string) {
             return string.substr(0, 2) !== "__" && /^[$A-Za-z_]+[$A-Za-z_0-9]*$/.test(string) && !KEYWORDS.test(string)
         };
-        exports.isValidBlockName = function(string) {
+        exports.isValidBlockName = function (string) {
             return /^[A-Za-z]+[A-Za-z_0-9]*$/.test(string)
         };
-
         function stripWhitespace(input) {
             return input.replace(/^\s+|\s+$/g, "")
         }
-        exports.stripWhitespace = stripWhitespace;
 
+        exports.stripWhitespace = stripWhitespace;
         function filterVariablePath(props) {
-            var filtered = [],
-                literal = "",
-                i = 0;
+            var filtered = [], literal = "", i = 0;
             for (i; i < props.length; i += 1) {
                 if (props[i] && props[i].charAt(0) !== props[i].charAt(props[i].length - 1) && (props[i].indexOf('"') === 0 || props[i].indexOf("'") === 0)) {
                     literal = props[i];
@@ -1170,19 +1079,15 @@ swig = function() {
             if (exports.isLiteral(variable)) {
                 return "(true)"
             }
-            var props = variable.split(/(\.|\[|\])/),
-                chain = "",
-                output = [],
-                inArr = false,
-                prevDot = false;
+            var props = variable.split(/(\.|\[|\])/), chain = "", output = [], inArr = false, prevDot = false;
             if (typeof context === "string" && context.length) {
                 props.unshift(context)
             }
-            props = _.reject(props, function(val) {
+            props = _.reject(props, function (val) {
                 return val === ""
             });
             props = filterVariablePath(props);
-            _.each(props, function(prop) {
+            _.each(props, function (prop) {
                 if (prop === ".") {
                     prevDot = true;
                     return
@@ -1216,10 +1121,11 @@ swig = function() {
             });
             return "(" + output.join(" && ") + ")"
         }
+
         exports.check = check;
-        exports.escapeVarName = function(variable, context) {
+        exports.escapeVarName = function (variable, context) {
             if (_.isArray(variable)) {
-                _.each(variable, function(val, key) {
+                _.each(variable, function (val, key) {
                     variable[key] = exports.escapeVarName(val, context)
                 });
                 return variable
@@ -1231,15 +1137,12 @@ swig = function() {
             if (typeof context === "string" && context.length) {
                 variable = context + "." + variable
             }
-            var chain = "",
-                props = variable.split(/(\.|\[|\])/),
-                inArr = false,
-                prevDot = false;
-            props = _.reject(props, function(val) {
+            var chain = "", props = variable.split(/(\.|\[|\])/), inArr = false, prevDot = false;
+            props = _.reject(props, function (val) {
                 return val === ""
             });
             props = filterVariablePath(props);
-            _.each(props, function(prop) {
+            _.each(props, function (prop) {
                 if (prop === ".") {
                     prevDot = true;
                     return
@@ -1271,15 +1174,14 @@ swig = function() {
             });
             return chain
         };
-        exports.wrapMethod = function(variable, filter, context) {
-            var output = "(function () {\n",
-                args;
+        exports.wrapMethod = function (variable, filter, context) {
+            var output = "(function () {\n", args;
             variable = variable || '""';
             if (!filter) {
                 return variable
             }
             args = filter.args.split(",");
-            args = _.map(args, function(value) {
+            args = _.map(args, function (value) {
                 var varname, stripped = value.replace(/^\s+|\s+$/g, "");
                 try {
                     varname = "__" + parser.parseVariable(stripped).name.replace(/\W/g, "_")
@@ -1302,34 +1204,30 @@ swig = function() {
             output += ");\n";
             return output + "})()"
         };
-        exports.wrapFilter = function(variable, filter) {
-            var output = "",
-                args = "";
+        exports.wrapFilter = function (variable, filter) {
+            var output = "", args = "";
             variable = variable || '""';
             if (!filter) {
                 return variable
             }
             if (filters.hasOwnProperty(filter.name)) {
                 args = filter.args ? variable + ", " + filter.args : variable;
-                output += exports.wrapMethod(variable, {
-                    name: filter.name,
-                    args: args
-                }, "_filters")
+                output += exports.wrapMethod(variable, {name: filter.name, args: args}, "_filters")
             } else {
                 throw new Error('Filter "' + filter.name + '" not found')
             }
             return output
         };
-        exports.wrapFilters = function(variable, filters, context, escape) {
+        exports.wrapFilters = function (variable, filters, context, escape) {
             var output = exports.escapeVarName(variable, context);
             if (filters && filters.length > 0) {
-                _.each(filters, function(filter) {
+                _.each(filters, function (filter) {
                     switch (filter.name) {
-                        case "raw":
+                        case"raw":
                             escape = false;
                             return;
-                        case "e":
-                        case "escape":
+                        case"e":
+                        case"escape":
                             escape = filter.args || escape;
                             return;
                         default:
@@ -1344,14 +1242,13 @@ swig = function() {
             }
             return output
         };
-        exports.setVar = function(varName, argument) {
-            var out = "",
-                props, output, inArr;
+        exports.setVar = function (varName, argument) {
+            var out = "", props, output, inArr;
             if (/\[/.test(argument.name)) {
                 props = argument.name.split(/(\[|\])/);
                 output = [];
                 inArr = false;
-                _.each(props, function(prop) {
+                _.each(props, function (prop) {
                     if (prop === "") {
                         return
                     }
@@ -1364,11 +1261,7 @@ swig = function() {
                         return
                     }
                     if (inArr && !exports.isStringLiteral(prop)) {
-                        out += exports.setVar("___" + prop.replace(/\W/g, "_"), {
-                            name: prop,
-                            filters: [],
-                            escape: true
-                        })
+                        out += exports.setVar("___" + prop.replace(/\W/g, "_"), {name: prop, filters: [], escape: true})
                     }
                 })
             }
@@ -1380,27 +1273,17 @@ swig = function() {
             }
             return out
         };
-        exports.parseIfArgs = function(args, parser) {
-            var operators = ["==", "<", ">", "!=", "<=", ">=", "===", "!==", "&&", "||", "in", "and", "or", "mod", "%"],
-                errorString = "Bad if-syntax in `{% if " + args.join(" ") + " %}...",
-                startParen = /^\(+/,
-                endParen = /\)+$/,
-                tokens = [],
-                prevType, last, closing = 0;
-            _.each(args, function(value, index) {
-                var endsep = 0,
-                    startsep = 0,
-                    operand;
+        exports.parseIfArgs = function (args, parser) {
+            var operators = ["==", "<", ">", "!=", "<=", ">=", "===", "!==", "&&", "||", "in", "and", "or", "mod", "%"], errorString = "Bad if-syntax in `{% if " + args.join(" ") + " %}...", startParen = /^\(+/, endParen = /\)+$/, tokens = [], prevType, last, closing = 0;
+            _.each(args, function (value, index) {
+                var endsep = 0, startsep = 0, operand;
                 if (startParen.test(value)) {
                     startsep = value.match(startParen)[0].length;
                     closing += startsep;
                     value = value.replace(startParen, "");
                     while (startsep) {
                         startsep -= 1;
-                        tokens.push({
-                            type: "separator",
-                            value: "("
-                        })
+                        tokens.push({type: "separator", value: "("})
                     }
                 }
                 if (/^\![^=]/.test(value) || value === "not") {
@@ -1409,10 +1292,7 @@ swig = function() {
                     } else {
                         value = value.substr(1)
                     }
-                    tokens.push({
-                        type: "operator",
-                        value: "!"
-                    })
+                    tokens.push({type: "operator", value: "!"})
                 }
                 if (endParen.test(value) && value.indexOf("(") === -1) {
                     if (!closing) {
@@ -1430,9 +1310,7 @@ swig = function() {
                         throw new Error(errorString)
                     }
                     value = value.replace("and", "&&").replace("or", "||").replace("mod", "%");
-                    tokens.push({
-                        value: value
-                    });
+                    tokens.push({value: value});
                     prevType = "operator"
                 } else if (value !== "") {
                     if (prevType === "value") {
@@ -1446,19 +1324,13 @@ swig = function() {
                         });
                         last = null
                     } else {
-                        tokens.push({
-                            preout: exports.setVar("__op" + index, operand),
-                            value: "__op" + index
-                        })
+                        tokens.push({preout: exports.setVar("__op" + index, operand), value: "__op" + index})
                     }
                     prevType = "value"
                 }
                 while (endsep) {
                     endsep -= 1;
-                    tokens.push({
-                        type: "separator",
-                        value: ")"
-                    })
+                    tokens.push({type: "separator", value: ")"})
                 }
             });
             if (closing > 0) {
@@ -1467,75 +1339,65 @@ swig = function() {
             return tokens
         }
     })(helpers);
-    (function(exports) {
+    (function (exports) {
         var _months = {
-                full: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-                abbr: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-            },
-            _days = {
-                full: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                abbr: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-                alt: {
-                    "-1": "Yesterday",
-                    0: "Today",
-                    1: "Tomorrow"
-                }
-            };
+            full: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+            abbr: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        }, _days = {
+            full: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            abbr: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+            alt: {"-1": "Yesterday", 0: "Today", 1: "Tomorrow"}
+        };
         exports.defaultTZOffset = 0;
-        exports.DateZ = function() {
+        exports.DateZ = function () {
             var members = {
-                    "default": ["getUTCDate", "getUTCDay", "getUTCFullYear", "getUTCHours", "getUTCMilliseconds", "getUTCMinutes", "getUTCMonth", "getUTCSeconds", "toISOString", "toGMTString", "toUTCString", "valueOf", "getTime"],
-                    z: ["getDate", "getDay", "getFullYear", "getHours", "getMilliseconds", "getMinutes", "getMonth", "getSeconds", "getYear", "toDateString", "toLocaleDateString", "toLocaleTimeString"],
-                    string: ["toLocaleString", "toString", "toTimeString"],
-                    zSet: ["setDate", "setFullYear", "setHours", "setMilliseconds", "setMinutes", "setMonth", "setSeconds", "setTime", "setYear"],
-                    set: ["setUTCDate", "setUTCFullYear", "setUTCHours", "setUTCMilliseconds", "setUTCMinutes", "setUTCMonth", "setUTCSeconds"],
-                    "static": ["UTC", "parse"]
-                },
-                d = this,
-                i;
+                "default": ["getUTCDate", "getUTCDay", "getUTCFullYear", "getUTCHours", "getUTCMilliseconds", "getUTCMinutes", "getUTCMonth", "getUTCSeconds", "toISOString", "toGMTString", "toUTCString", "valueOf", "getTime"],
+                z: ["getDate", "getDay", "getFullYear", "getHours", "getMilliseconds", "getMinutes", "getMonth", "getSeconds", "getYear", "toDateString", "toLocaleDateString", "toLocaleTimeString"],
+                string: ["toLocaleString", "toString", "toTimeString"],
+                zSet: ["setDate", "setFullYear", "setHours", "setMilliseconds", "setMinutes", "setMonth", "setSeconds", "setTime", "setYear"],
+                set: ["setUTCDate", "setUTCFullYear", "setUTCHours", "setUTCMilliseconds", "setUTCMinutes", "setUTCMonth", "setUTCSeconds"],
+                "static": ["UTC", "parse"]
+            }, d = this, i;
             d.date = d.dateZ = arguments.length > 1 ? new Date(Date.UTC.apply(Date, arguments) + (new Date).getTimezoneOffset() * 6e4) : arguments.length === 1 ? new Date(new Date(arguments["0"])) : new Date;
             d.timezoneOffset = d.dateZ.getTimezoneOffset();
-
             function zeroPad(i) {
                 return i < 10 ? "0" + i : i
             }
 
             function _toTZString() {
-                var hours = zeroPad(Math.floor(Math.abs(d.timezoneOffset) / 60)),
-                    minutes = zeroPad(Math.abs(d.timezoneOffset) - hours * 60),
-                    prefix = d.timezoneOffset < 0 ? "+" : "-",
-                    abbr = d.tzAbbreviation === undefined ? "" : " (" + d.tzAbbreviation + ")";
+                var hours = zeroPad(Math.floor(Math.abs(d.timezoneOffset) / 60)), minutes = zeroPad(Math.abs(d.timezoneOffset) - hours * 60), prefix = d.timezoneOffset < 0 ? "+" : "-", abbr = d.tzAbbreviation === undefined ? "" : " (" + d.tzAbbreviation + ")";
                 return "GMT" + prefix + hours + minutes + abbr
             }
-            _.each(members.z, function(name) {
-                d[name] = function() {
+
+            _.each(members.z, function (name) {
+                d[name] = function () {
                     return d.dateZ[name]()
                 }
             });
-            _.each(members.string, function(name) {
-                d[name] = function() {
+            _.each(members.string, function (name) {
+                d[name] = function () {
                     return d.dateZ[name].apply(d.dateZ, []).replace(/GMT[+\-]\\d{4} \\(([a-zA-Z]{3,4})\\)/, _toTZString())
                 }
             });
-            _.each(members["default"], function(name) {
-                d[name] = function() {
+            _.each(members["default"], function (name) {
+                d[name] = function () {
                     return d.date[name]()
                 }
             });
-            _.each(members["static"], function(name) {
-                d[name] = function() {
+            _.each(members["static"], function (name) {
+                d[name] = function () {
                     return Date[name].apply(Date, arguments)
                 }
             });
-            _.each(members.zSet, function(name) {
-                d[name] = function() {
+            _.each(members.zSet, function (name) {
+                d[name] = function () {
                     d.dateZ[name].apply(d.dateZ, arguments);
                     d.date = new Date(d.dateZ.getTime() - d.dateZ.getTimezoneOffset() * 6e4 + d.timezoneOffset * 6e4);
                     return d
                 }
             });
-            _.each(members.set, function(name) {
-                d[name] = function() {
+            _.each(members.set, function (name) {
+                d[name] = function () {
                     d.date[name].apply(d.date, arguments);
                     d.dateZ = new Date(d.date.getTime() + d.date.getTimezoneOffset() * 6e4 - d.timezoneOffset * 6e4);
                     return d
@@ -1546,10 +1408,9 @@ swig = function() {
             }
         };
         exports.DateZ.prototype = {
-            getTimezoneOffset: function() {
+            getTimezoneOffset: function () {
                 return this.timezoneOffset
-            },
-            setTimezoneOffset: function(offset, abbr) {
+            }, setTimezoneOffset: function (offset, abbr) {
                 this.timezoneOffset = offset;
                 if (abbr) {
                     this.tzAbbreviation = abbr
@@ -1558,41 +1419,37 @@ swig = function() {
                 return this
             }
         };
-        exports.d = function(input) {
+        exports.d = function (input) {
             return (input.getDate() < 10 ? "0" : "") + input.getDate()
         };
-        exports.D = function(input) {
+        exports.D = function (input) {
             return _days.abbr[input.getDay()]
         };
-        exports.j = function(input) {
+        exports.j = function (input) {
             return input.getDate()
         };
-        exports.l = function(input) {
+        exports.l = function (input) {
             return _days.full[input.getDay()]
         };
-        exports.N = function(input) {
+        exports.N = function (input) {
             var d = input.getDay();
             return d >= 1 ? d + 1 : 7
         };
-        exports.S = function(input) {
+        exports.S = function (input) {
             var d = input.getDate();
             return d % 10 === 1 && d !== 11 ? "st" : d % 10 === 2 && d !== 12 ? "nd" : d % 10 === 3 && d !== 13 ? "rd" : "th"
         };
-        exports.w = function(input) {
+        exports.w = function (input) {
             return input.getDay()
         };
-        exports.z = function(input, offset, abbr) {
-            var year = input.getFullYear(),
-                e = new exports.DateZ(year, input.getMonth(), input.getDate(), 12, 0, 0),
-                d = new exports.DateZ(year, 0, 1, 12, 0, 0);
+        exports.z = function (input, offset, abbr) {
+            var year = input.getFullYear(), e = new exports.DateZ(year, input.getMonth(), input.getDate(), 12, 0, 0), d = new exports.DateZ(year, 0, 1, 12, 0, 0);
             e.setTimezoneOffset(offset, abbr);
             d.setTimezoneOffset(offset, abbr);
             return Math.round((e - d) / 864e5)
         };
-        exports.W = function(input) {
-            var target = new Date(input.valueOf()),
-                dayNr = (input.getDay() + 6) % 7,
-                fThurs;
+        exports.W = function (input) {
+            var target = new Date(input.valueOf()), dayNr = (input.getDay() + 6) % 7, fThurs;
             target.setDate(target.getDate() - dayNr + 3);
             fThurs = target.valueOf();
             target.setMonth(0, 1);
@@ -1601,90 +1458,89 @@ swig = function() {
             }
             return 1 + Math.ceil((fThurs - target) / 6048e5)
         };
-        exports.F = function(input) {
+        exports.F = function (input) {
             return _months.full[input.getMonth()]
         };
-        exports.m = function(input) {
+        exports.m = function (input) {
             return (input.getMonth() < 9 ? "0" : "") + (input.getMonth() + 1)
         };
-        exports.M = function(input) {
+        exports.M = function (input) {
             return _months.abbr[input.getMonth()]
         };
-        exports.n = function(input) {
+        exports.n = function (input) {
             return input.getMonth() + 1
         };
-        exports.t = function(input) {
+        exports.t = function (input) {
             return 32 - new Date(input.getFullYear(), input.getMonth(), 32).getDate()
         };
-        exports.L = function(input) {
+        exports.L = function (input) {
             return new Date(input.getFullYear(), 1, 29).getDate() === 29
         };
-        exports.o = function(input) {
+        exports.o = function (input) {
             var target = new Date(input.valueOf());
             target.setDate(target.getDate() - (input.getDay() + 6) % 7 + 3);
             return target.getFullYear()
         };
-        exports.Y = function(input) {
+        exports.Y = function (input) {
             return input.getFullYear()
         };
-        exports.y = function(input) {
+        exports.y = function (input) {
             return input.getFullYear().toString().substr(2)
         };
-        exports.a = function(input) {
+        exports.a = function (input) {
             return input.getHours() < 12 ? "am" : "pm"
         };
-        exports.A = function(input) {
+        exports.A = function (input) {
             return input.getHours() < 12 ? "AM" : "PM"
         };
-        exports.B = function(input) {
-            var hours = input.getUTCHours(),
-                beats;
+        exports.B = function (input) {
+            var hours = input.getUTCHours(), beats;
             hours = hours === 23 ? 0 : hours + 1;
             beats = Math.abs(((hours * 60 + input.getUTCMinutes()) * 60 + input.getUTCSeconds()) / 86.4).toFixed(0);
             return "000".concat(beats).slice(beats.length)
         };
-        exports.g = function(input) {
+        exports.g = function (input) {
             var h = input.getHours();
             return h === 0 ? 12 : h > 12 ? h - 12 : h
         };
-        exports.G = function(input) {
+        exports.G = function (input) {
             return input.getHours()
         };
-        exports.h = function(input) {
+        exports.h = function (input) {
             var h = input.getHours();
             return (h < 10 || 12 < h && 22 > h ? "0" : "") + (h < 12 ? h : h - 12)
         };
-        exports.H = function(input) {
+        exports.H = function (input) {
             var h = input.getHours();
             return (h < 10 ? "0" : "") + h
         };
-        exports.i = function(input) {
+        exports.i = function (input) {
             var m = input.getMinutes();
             return (m < 10 ? "0" : "") + m
         };
-        exports.s = function(input) {
+        exports.s = function (input) {
             var s = input.getSeconds();
             return (s < 10 ? "0" : "") + s
         };
-        exports.O = function(input) {
+        exports.O = function (input) {
             var tz = input.getTimezoneOffset();
             return (tz < 0 ? "-" : "+") + (tz / 60 < 10 ? "0" : "") + Math.abs(tz / 60) + "00"
         };
-        exports.Z = function(input) {
+        exports.Z = function (input) {
             return input.getTimezoneOffset() * 60
         };
-        exports.c = function(input) {
+        exports.c = function (input) {
             return input.toISOString()
         };
-        exports.r = function(input) {
+        exports.r = function (input) {
             return input.toUTCString()
         };
-        exports.U = function(input) {
+        exports.U = function (input) {
             return input.getTime() / 1e3
         }
     })(dateformat);
-    (function(exports) {
-        exports.add = function(input, addend) {
+    (function (exports) {
+        exports.add = function (input, addend) {
             if (_.isArray(input) && _.isArray(addend)) {
                 return input.concat(addend)
             }
@@ -1696,29 +1552,26 @@ swig = function() {
             }
             return input + addend
         };
-        exports.addslashes = function(input) {
+        exports.addslashes = function (input) {
             if (typeof input === "object") {
-                _.each(input, function(value, key) {
+                _.each(input, function (value, key) {
                     input[key] = exports.addslashes(value)
                 });
                 return input
             }
             return input.replace(/\\/g, "\\\\").replace(/\'/g, "\\'").replace(/\"/g, '\\"')
         };
-        exports.capitalize = function(input) {
+        exports.capitalize = function (input) {
             if (typeof input === "object") {
-                _.each(input, function(value, key) {
+                _.each(input, function (value, key) {
                     input[key] = exports.capitalize(value)
                 });
                 return input
             }
             return input.toString().charAt(0).toUpperCase() + input.toString().substr(1).toLowerCase()
         };
-        exports.date = function(input, format, offset, abbr) {
-            var l = format.length,
-                date = new dateformat.DateZ(input),
-                cur, i = 0,
-                out = "";
+        exports.date = function (input, format, offset, abbr) {
+            var l = format.length, date = new dateformat.DateZ(input), cur, i = 0, out = "";
             if (offset) {
                 date.setTimezoneOffset(offset, abbr)
             }
@@ -1732,15 +1585,14 @@ swig = function() {
             }
             return out
         };
-        exports["default"] = function(input, def) {
+        exports["default"] = function (input, def) {
             return typeof input !== "undefined" && (input || typeof input === "number") ? input : def
         };
-        exports.escape = exports.e = function(input, type) {
+        exports.escape = exports.e = function (input, type) {
             type = type || "html";
             if (typeof input === "string") {
                 if (type === "js") {
-                    var i = 0,
-                        code, out = "";
+                    var i = 0, code, out = "";
                     input = input.replace(/\\/g, "\\u005C");
                     for (i; i < input.length; i += 1) {
                         code = input.charCodeAt(i);
@@ -1758,7 +1610,7 @@ swig = function() {
             }
             return input
         };
-        exports.first = function(input) {
+        exports.first = function (input) {
             if (typeof input === "object" && !_.isArray(input)) {
                 return ""
             }
@@ -1767,23 +1619,23 @@ swig = function() {
             }
             return _.first(input)
         };
-        exports.join = function(input, separator) {
+        exports.join = function (input, separator) {
             if (_.isArray(input)) {
                 return input.join(separator)
             }
             if (typeof input === "object") {
                 var out = [];
-                _.each(input, function(value, key) {
+                _.each(input, function (value, key) {
                     out.push(value)
                 });
                 return out.join(separator)
             }
             return input
         };
-        exports.json_encode = function(input, indent) {
+        exports.json_encode = function (input, indent) {
             return JSON.stringify(input, null, indent || 0)
         };
-        exports.last = function(input) {
+        exports.last = function (input) {
             if (typeof input === "object" && !_.isArray(input)) {
                 return ""
             }
@@ -1792,83 +1644,73 @@ swig = function() {
             }
             return _.last(input)
         };
-        exports.length = function(input) {
+        exports.length = function (input) {
             if (typeof input === "object") {
                 return _.keys(input).length
             }
             return input.length
         };
-        exports.lower = function(input) {
+        exports.lower = function (input) {
             if (typeof input === "object") {
-                _.each(input, function(value, key) {
+                _.each(input, function (value, key) {
                     input[key] = exports.lower(value)
                 });
                 return input
             }
             return input.toString().toLowerCase()
         };
-        exports.replace = function(input, search, replacement, flags) {
+        exports.replace = function (input, search, replacement, flags) {
             var r = new RegExp(search, flags);
             return input.replace(r, replacement)
         };
-        exports.reverse = function(input) {
+        exports.reverse = function (input) {
             if (_.isArray(input)) {
                 return input.reverse()
             }
             return input
         };
-        exports.striptags = function(input) {
+        exports.striptags = function (input) {
             if (typeof input === "object") {
-                _.each(input, function(value, key) {
+                _.each(input, function (value, key) {
                     input[key] = exports.striptags(value)
                 });
                 return input
             }
             return input.toString().replace(/(<([^>]+)>)/gi, "")
         };
-        exports.title = function(input) {
+        exports.title = function (input) {
             if (typeof input === "object") {
-                _.each(input, function(value, key) {
+                _.each(input, function (value, key) {
                     input[key] = exports.title(value)
                 });
                 return input
             }
-            return input.toString().replace(/\w\S*/g, function(str) {
+            return input.toString().replace(/\w\S*/g, function (str) {
                 return str.charAt(0).toUpperCase() + str.substr(1).toLowerCase()
             })
         };
-        exports.uniq = function(input) {
+        exports.uniq = function (input) {
             return _.uniq(input)
         };
-        exports.upper = function(input) {
+        exports.upper = function (input) {
             if (typeof input === "object") {
-                _.each(input, function(value, key) {
+                _.each(input, function (value, key) {
                     input[key] = exports.upper(value)
                 });
                 return input
             }
             return input.toString().toUpperCase()
         };
-        exports.url_encode = function(input) {
+        exports.url_encode = function (input) {
             return encodeURIComponent(input)
         };
-        exports.url_decode = function(input) {
+        exports.url_decode = function (input) {
             return decodeURIComponent(input)
         }
     })(filters);
-    (function(exports) {
-        var variableRegexp = /^\{\{[^\r]*?\}\}$/,
-            logicRegexp = /^\{%[^\r]*?%\}$/,
-            commentRegexp = /^\{#[^\r]*?#\}$/,
-            TEMPLATE = exports.TEMPLATE = 0,
-            LOGIC_TOKEN = 1,
-            VAR_TOKEN = 2;
-        exports.TOKEN_TYPES = {
-            TEMPLATE: TEMPLATE,
-            LOGIC: LOGIC_TOKEN,
-            VAR: VAR_TOKEN
-        };
-
+    (function (exports) {
+        var variableRegexp = /^\{\{[^\r]*?\}\}$/, logicRegexp = /^\{%[^\r]*?%\}$/, commentRegexp = /^\{#[^\r]*?#\}$/, TEMPLATE = exports.TEMPLATE = 0, LOGIC_TOKEN = 1, VAR_TOKEN = 2;
+        exports.TOKEN_TYPES = {TEMPLATE: TEMPLATE, LOGIC: LOGIC_TOKEN, VAR: VAR_TOKEN};
         function getMethod(input) {
             return helpers.stripWhitespace(input).match(/^[\w\.]+/)[0]
         }
@@ -1891,14 +1733,10 @@ swig = function() {
 
         function getTokenArgs(token, parts) {
             parts = _.map(parts, doubleEscape);
-            var i = 0,
-                l = parts.length,
-                arg, ender, out = [];
+            var i = 0, l = parts.length, arg, ender, out = [];
 
             function concat(from, ending) {
-                var end = new RegExp("\\" + ending + "$"),
-                    i = from,
-                    out = "";
+                var end = new RegExp("\\" + ending + "$"), i = from, out = "";
                 while (!end.test(out) && i < parts.length) {
                     out += " " + parts[i];
                     parts[i] = null;
@@ -1909,6 +1747,7 @@ swig = function() {
                 }
                 return out.replace(/^ /, "")
             }
+
             for (i; i < l; i += 1) {
                 arg = parts[i];
                 if (arg === null || /^\s+$/.test(arg)) {
@@ -1916,16 +1755,16 @@ swig = function() {
                 }
                 if (/^\"/.test(arg) && !/\"[\]\}]?$/.test(arg) || /^\'/.test(arg) && !/\'[\]\}]?$/.test(arg) || /^\{/.test(arg) && !/\}$/.test(arg) || /^\[/.test(arg) && !/\]$/.test(arg)) {
                     switch (arg.substr(0, 1)) {
-                        case "'":
+                        case"'":
                             ender = "'";
                             break;
-                        case '"':
+                        case'"':
                             ender = '"';
                             break;
-                        case "[":
+                        case"[":
                             ender = "]";
                             break;
-                        case "{":
+                        case"{":
                             ender = "}";
                             break
                     }
@@ -1938,7 +1777,7 @@ swig = function() {
         }
 
         function findSubBlocks(topToken, blocks) {
-            _.each(topToken.tokens, function(token, index) {
+            _.each(topToken.tokens, function (token, index) {
                 if (token.name === "block") {
                     blocks[token.args[0]] = token;
                     findSubBlocks(token, blocks)
@@ -1955,73 +1794,35 @@ swig = function() {
             }
             return block
         }
-        exports.parseVariable = function(token, escape) {
+
+        exports.parseVariable = function (token, escape) {
             if (!token) {
-                return {
-                    type: null,
-                    name: "",
-                    filters: [],
-                    escape: escape
-                }
+                return {type: null, name: "", filters: [], escape: escape}
             }
-            var filters = [],
-                parts = token.replace(/^\{\{\s*|\s*\}\}$/g, "").split("|"),
-                varname = parts.shift(),
-                args = null,
-                part;
+            var filters = [], parts = token.replace(/^\{\{\s*|\s*\}\}$/g, "").split("|"), varname = parts.shift(), args = null, part;
             if (/\(/.test(varname)) {
                 args = getArgs(varname.replace(/^\w+\./, ""));
                 varname = getMethod(varname)
             }
-            _.each(parts, function(part, i) {
+            _.each(parts, function (part, i) {
                 if (part && (/^[\w\.]+\(/.test(part) || /\)$/.test(part)) && !/^[\w\.]+\([^\)]*\)$/.test(part)) {
                     parts[i] += parts[i + 1] ? "|" + parts[i + 1] : "";
                     parts[i + 1] = false
                 }
             });
             parts = _.without(parts, false);
-            _.each(parts, function(part) {
+            _.each(parts, function (part) {
                 var filter_name = getMethod(part);
                 if (/\(/.test(part)) {
-                    filters.push({
-                        name: filter_name,
-                        args: getArgs(part)
-                    })
+                    filters.push({name: filter_name, args: getArgs(part)})
                 } else {
-                    filters.push({
-                        name: filter_name,
-                        args: ""
-                    })
+                    filters.push({name: filter_name, args: ""})
                 }
             });
-            return {
-                type: VAR_TOKEN,
-                name: varname,
-                args: args,
-                filters: filters,
-                escape: escape
-            }
+            return {type: VAR_TOKEN, name: varname, args: args, filters: filters, escape: escape}
         };
-        exports.parse = function(data, tags, autoescape) {
-            var rawtokens = helpers.stripWhitespace(data).split(/(\{%[^\r]*?%\}|\{\{.*?\}\}|\{#[^\r]*?#\})/),
-                escape = !!autoescape,
-                last_escape = escape,
-                stack = [
-                    []
-                ],
-                index = 0,
-                i = 0,
-                j = rawtokens.length,
-                token, parts, tagname, lines = 1,
-                curline = 1,
-                newlines = null,
-                lastToken, rawStart = /^\{\% *raw *\%\}/,
-                rawEnd = /\{\% *endraw *\%\}$/,
-                inRaw = false,
-                stripAfter = false,
-                stripBefore = false,
-                stripStart = false,
-                stripEnd = false;
+        exports.parse = function (data, tags, autoescape) {
+            var rawtokens = helpers.stripWhitespace(data).split(/(\{%[^\r]*?%\}|\{\{.*?\}\}|\{#[^\r]*?#\})/), escape = !!autoescape, last_escape = escape, stack = [[]], index = 0, i = 0, j = rawtokens.length, token, parts, tagname, lines = 1, curline = 1, newlines = null, lastToken, rawStart = /^\{\% *raw *\%\}/, rawEnd = /\{\% *endraw *\%\}$/, inRaw = false, stripAfter = false, stripBefore = false, stripStart = false, stripEnd = false;
             for (i; i < j; i += 1) {
                 token = rawtokens[i];
                 curline = lines;
@@ -2091,12 +1892,7 @@ swig = function() {
                         name: tagname,
                         compile: tags[tagname],
                         parent: _.uniq(stack[stack.length - 2] || []),
-                        strip: {
-                            before: stripBefore,
-                            after: stripAfter,
-                            start: false,
-                            end: false
-                        }
+                        strip: {before: stripBefore, after: stripAfter, start: false, end: false}
                     };
                     token.args = getTokenArgs(token, parts);
                     if (tags[tagname].ends) {
@@ -2119,11 +1915,10 @@ swig = function() {
             }
             return stack[index]
         };
-
         function precompile(indent, context) {
             var filepath, extendsHasVar, preservedTokens = [];
             if (this.type === TEMPLATE) {
-                _.each(this.tokens, function(token, index) {
+                _.each(this.tokens, function (token, index) {
                     if (!extendsHasVar) {
                         if (token.name === "extends") {
                             filepath = token.args[0];
@@ -2144,8 +1939,7 @@ swig = function() {
                             this.parent = token.template;
                             this.blocks = _.extend({}, this.parent.blocks, this.blocks)
                         } else if (token.name === "block") {
-                            var blockname = token.args[0],
-                                parentBlockIndex;
+                            var blockname = token.args[0], parentBlockIndex;
                             if (!helpers.isValidBlockName(blockname) || token.args.length !== 1) {
                                 throw new Error('Invalid block tag name "' + blockname + '" on line ' + token.line + ".")
                             }
@@ -2171,9 +1965,9 @@ swig = function() {
                 }
             }
         }
+
         exports.compile = function compile(indent, context, template) {
-            var code = "",
-                wrappedInMethod, blockname, parentBlock;
+            var code = "", wrappedInMethod, blockname, parentBlock;
             indent = indent || "";
             if (this.type === TEMPLATE) {
                 template = this
@@ -2184,7 +1978,7 @@ swig = function() {
             if (precompile.call(this, indent, context) === false) {
                 return false
             }
-            _.each(this.tokens, function(token, index) {
+            _.each(this.tokens, function (token, index) {
                 var name, key, args, prev, next;
                 if (typeof token === "string") {
                     prev = this.tokens[index - 1];
@@ -2206,17 +2000,11 @@ swig = function() {
                     key = helpers.isLiteral(name) ? '["' + name + '"]' : "." + name;
                     args = token.args && token.args.length ? token.args : "";
                     code += 'if (typeof _context !== "undefined" && typeof _context' + key + ' === "function") {\n';
-                    wrappedInMethod = helpers.wrapMethod("", {
-                        name: name,
-                        args: args
-                    }, "_context");
+                    wrappedInMethod = helpers.wrapMethod("", {name: name, args: args}, "_context");
                     code += '  _output = (typeof _output === "undefined") ? ' + wrappedInMethod + ": _output + " + wrappedInMethod + ";\n";
                     if (helpers.isValidName(name)) {
                         code += "} else if (typeof " + name + ' === "function") {\n';
-                        wrappedInMethod = helpers.wrapMethod("", {
-                            name: name,
-                            args: args
-                        });
+                        wrappedInMethod = helpers.wrapMethod("", {name: name, args: args});
                         code += '  _output = (typeof _output === "undefined") ? ' + wrappedInMethod + ": _output + " + wrappedInMethod + ";\n"
                     }
                     code += "} else {\n";
@@ -2254,27 +2042,23 @@ swig = function() {
             return code
         }
     })(parser);
-    tags["autoescape"] = function() {
+    tags["autoescape"] = function () {
         module = {};
-        module.exports = function(indent, parser) {
+        module.exports = function (indent, parser) {
             return parser.compile.apply(this, [indent])
         };
         module.exports.ends = true;
         return module.exports
     }();
-    tags["block"] = function() {
+    tags["block"] = function () {
         module = {};
-        module.exports = {
-            ends: true
-        };
+        module.exports = {ends: true};
         return module.exports
     }();
-    tags["else"] = function() {
+    tags["else"] = function () {
         module = {};
-        module.exports = function(indent, parser) {
-            var last = _.last(this.parent).name,
-                thisArgs = _.clone(this.args),
-                ifarg, args, out;
+        module.exports = function (indent, parser) {
+            var last = _.last(this.parent).name, thisArgs = _.clone(this.args), ifarg, args, out;
             if (last === "for") {
                 if (thisArgs.length) {
                     throw new Error('"else" tag cannot accept arguments in the "for" context.')
@@ -2290,13 +2074,13 @@ swig = function() {
             if (ifarg) {
                 out += "} else if (\n";
                 out += "  (function () {\n";
-                _.each(args, function(token) {
+                _.each(args, function (token) {
                     if (token.hasOwnProperty("preout") && token.preout) {
                         out += token.preout + "\n"
                     }
                 });
                 out += "return (\n";
-                _.each(args, function(token) {
+                _.each(args, function (token) {
                     out += token.value + " "
                 });
                 out += ");\n";
@@ -2308,39 +2092,28 @@ swig = function() {
         };
         return module.exports
     }();
-    tags["extends"] = function() {
+    tags["extends"] = function () {
         module = {};
         module.exports = {};
         return module.exports
     }();
-    tags["filter"] = function() {
+    tags["filter"] = function () {
         module = {};
-        module.exports = function(indent, parser) {
-            var thisArgs = _.clone(this.args),
-                name = thisArgs.shift(),
-                args = thisArgs.length ? thisArgs.join(", ") : "",
-                value = "(function () {\n";
+        module.exports = function (indent, parser) {
+            var thisArgs = _.clone(this.args), name = thisArgs.shift(), args = thisArgs.length ? thisArgs.join(", ") : "", value = "(function () {\n";
             value += '  var _output = "";\n';
             value += parser.compile.apply(this, [indent + "  "]) + "\n";
             value += "  return _output;\n";
             value += "})()\n";
-            return "_output += " + helpers.wrapFilter(value.replace(/\n/g, ""), {
-                    name: name,
-                    args: args
-                }) + ";\n"
+            return "_output += " + helpers.wrapFilter(value.replace(/\n/g, ""), {name: name, args: args}) + ";\n"
         };
         module.exports.ends = true;
         return module.exports
     }();
-    tags["for"] = function() {
+    tags["for"] = function () {
         module = {};
-        module.exports = function(indent, parser) {
-            var thisArgs = _.clone(this.args),
-                operand1 = thisArgs[0],
-                operator = thisArgs[1],
-                operand2 = parser.parseVariable(thisArgs[2]),
-                out = "",
-                loopShared;
+        module.exports = function (indent, parser) {
+            var thisArgs = _.clone(this.args), operand1 = thisArgs[0], operator = thisArgs[1], operand2 = parser.parseVariable(thisArgs[2]), out = "", loopShared;
             indent = indent || "";
             if (typeof operator !== "undefined" && operator !== "in") {
                 throw new Error('Invalid syntax in "for" tag')
@@ -2359,19 +2132,17 @@ swig = function() {
         module.exports.ends = true;
         return module.exports
     }();
-    tags["if"] = function() {
+    tags["if"] = function () {
         module = {};
-        module.exports = function(indent, parser) {
-            var thisArgs = _.clone(this.args),
-                args = helpers.parseIfArgs(thisArgs, parser),
-                out = "(function () {\n";
-            _.each(args, function(token) {
+        module.exports = function (indent, parser) {
+            var thisArgs = _.clone(this.args), args = helpers.parseIfArgs(thisArgs, parser), out = "(function () {\n";
+            _.each(args, function (token) {
                 if (token.hasOwnProperty("preout") && token.preout) {
                     out += token.preout + "\n"
                 }
             });
             out += "\nif (\n";
-            _.each(args, function(token) {
+            _.each(args, function (token) {
                 out += token.value + " "
             });
             out += ") {\n";
@@ -2383,15 +2154,12 @@ swig = function() {
         module.exports.ends = true;
         return module.exports
     }();
-    tags["import"] = function() {
+    tags["import"] = function () {
         module = {};
-        module.exports = function(indent, parser) {
-            if (this.args.length !== 3) {}
-            var thisArgs = _.clone(this.args),
-                file = thisArgs[0],
-                as = thisArgs[1],
-                name = thisArgs[2],
-                out = "";
+        module.exports = function (indent, parser) {
+            if (this.args.length !== 3) {
+            }
+            var thisArgs = _.clone(this.args), file = thisArgs[0], as = thisArgs[1], name = thisArgs[2], out = "";
             if (!helpers.isLiteral(file) && !helpers.isValidName(file)) {
                 throw new Error('Invalid attempt to import "' + file + '".')
             }
@@ -2405,15 +2173,10 @@ swig = function() {
         };
         return module.exports
     }();
-    tags["include"] = function() {
+    tags["include"] = function () {
         module = {};
-        module.exports = function(indent, parser) {
-            var args = _.clone(this.args),
-                template = args.shift(),
-                context = "_context",
-                ignore = false,
-                out = "",
-                ctx;
+        module.exports = function (indent, parser) {
+            var args = _.clone(this.args), template = args.shift(), context = "_context", ignore = false, out = "", ctx;
             indent = indent || "";
             if (!helpers.isLiteral(template) && !helpers.isValidName(template)) {
                 throw new Error("Invalid arguments passed to 'include' tag.")
@@ -2455,13 +2218,10 @@ swig = function() {
         };
         return module.exports
     }();
-    tags["macro"] = function() {
+    tags["macro"] = function () {
         module = {};
-        module.exports = function(indent, parser) {
-            var thisArgs = _.clone(this.args),
-                macro = thisArgs.shift(),
-                args = "",
-                out = "";
+        module.exports = function (indent, parser) {
+            var thisArgs = _.clone(this.args), macro = thisArgs.shift(), args = "", out = "";
             if (thisArgs.length) {
                 args = JSON.stringify(thisArgs).replace(/^\[|\'|\"|\]$/g, "")
             }
@@ -2475,24 +2235,20 @@ swig = function() {
         module.exports.ends = true;
         return module.exports
     }();
-    tags["parent"] = function() {
+    tags["parent"] = function () {
         module = {};
         module.exports = {};
         return module.exports
     }();
-    tags["raw"] = function() {
+    tags["raw"] = function () {
         module = {};
-        module.exports = {
-            ends: true
-        };
+        module.exports = {ends: true};
         return module.exports
     }();
-    tags["set"] = function() {
+    tags["set"] = function () {
         module = {};
-        module.exports = function(indent, parser) {
-            var thisArgs = _.clone(this.args),
-                varname = helpers.escapeVarName(thisArgs.shift(), "_context"),
-                value;
+        module.exports = function (indent, parser) {
+            var thisArgs = _.clone(this.args), varname = helpers.escapeVarName(thisArgs.shift(), "_context"), value;
             if (thisArgs.shift() !== "=") {
                 throw new Error('Invalid token "' + thisArgs[1] + '" in {% set ' + thisArgs[0] + ' %}. Missing "=".')
             }
@@ -2501,9 +2257,7 @@ swig = function() {
                 return " " + varname + " = " + value + ";"
             }
             value = parser.parseVariable(value);
-            return " " + varname + " = " + "(function () {\n" + "  var _output;\n" + parser.compile.apply({
-                    tokens: [value]
-                }, [indent]) + "\n" + "  return _output;\n" + "})();\n"
+            return " " + varname + " = " + "(function () {\n" + "  var _output;\n" + parser.compile.apply({tokens: [value]}, [indent]) + "\n" + "  return _output;\n" + "})();\n"
         };
         return module.exports
     }();
