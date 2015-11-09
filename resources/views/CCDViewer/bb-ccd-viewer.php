@@ -18,8 +18,8 @@
     <script src="/js/ccd/modernizr.js"></script>
     <script src="/js/ccd/jquery-1.9.0.js"></script>
     <script src="/js/ccd/swig.js"></script>
-    <script src="/js/ccd/bluebutton-0.0.10.js"></script>
-<!--    <script src="/js/ccd/bluebutton.js"></script>-->
+<!--    <script src="/js/ccd/bluebutton-0.0.10.js"></script>-->
+    <script src="/js/ccd/bluebutton.js"></script>
     <script src="/js/ccd/bbclear.js"></script>
 </head>
 
@@ -35,7 +35,7 @@
                         <li><a href="#medications">Medications</a></li>
                         <li><a href="#immunizations">Immunizations</a></li>
                         <li><a href="#history">History</a></li>
-                        <li><a href="#labs">Labs</a></li>
+                        <li><a href="#labs">Lab Results</a></li>
                     </ul>
                 </div>
             </nav>
@@ -209,11 +209,11 @@
             </div>
             <div id="labs" class="panel">
                 <h1>Lab Results</h1>
-                {% for panel in labs %}
+                {% for panel in labResults %}
                     {% if loop.first %}<ul>{% endif %}
                     <li>
                         <h2>
-                            <span class="date">{{panel.results[0].date|date('M j, Y')}}</span>
+                            <span class="date">{{panel.tests[0].date|date('M j, Y')}}</span>
                             {{panel.name|fallback("Laboratory Panel")}}
                         </h2>
                         <ul class="results">
@@ -223,12 +223,12 @@
                                 <span class="lab-low">Low</span>
                                 <span class="lab-high">High</span>
                             </li>
-                            {% for result in panel.results %}
+                            {% for result in panel.tests %}
                                 <li>
                                     <span class="lab-component">{{result.name}}</span>
                                     <span class="lab-value">{{result.value|fallback("Unknown")}}{% if result.unit %} {{result.unit|format_unit|raw}}{% endif %}</span>
-                                    <span class="lab-low">{% if result.reference.low %}{{result.reference.low}}{% endif %}</span>
-                                    <span class="lab-high">{% if result.reference.high %}{{result.reference.high}}{% endif %}</span>
+                                    <span class="lab-low">{% if result.reference_range.low_value %}{{result.reference_range.low_value}} {{result.reference_range.low_unit|format_unit|raw}}{% endif %}</span>
+                                    <span class="lab-high">{% if result.reference_range.high_value %}{{result.reference_range.high_value}} {{result.reference_range.high_unit|format_unit|raw}}{% endif %}</span>
                                 </li>
                             {% endfor %}
                         </ul>
