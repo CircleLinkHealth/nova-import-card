@@ -52,7 +52,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		'user_email'            => 'required|email',     // required and must be unique in the wp_users table
 		'user_pass'         => 'required',
 		'user_pass_confirm' => 'required|same:user_pass',           // required and has to match the password field
-		'user_nicename'         => 'required',
+		//'user_nicename'         => 'required',
 		//'user_status'         => 'required',
 		'display_name'         => 'required',
 	);

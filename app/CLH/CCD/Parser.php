@@ -25,7 +25,7 @@ class Parser
 
         $meta->first_name = $demographics->name->given[0];
         $meta->last_name = $demographics->name->family;
-        $meta->nickname = "$meta->first_name $meta->last_name";
+        $meta->nickname = "";
 
         return $meta;
     }

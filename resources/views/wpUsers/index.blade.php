@@ -64,7 +64,7 @@
                             <tr>
                                 <td><strong>ID</strong></td>
                                 <td><strong>Role</strong></td>
-                                <td><strong>user_nicename</strong></td>
+                                <td><strong>user_login</strong></td>
                                 <td><strong>user_email</strong></td>
                                 <td><strong>status</strong></td>
                                 <td><strong>display_name</strong></td>
@@ -91,7 +91,7 @@
                                                 @endif
                                             @endif
                                         </td>
-                                        <td>{{ $wpUser->user_nicename }}</td>
+                                        <td>{{ $wpUser->user_login }}</td>
                                         <td>{{ $wpUser->user_email }}</td>
                                         <td>{{ $wpUser->user_status }}</td>
                                         <td>{{ $wpUser->display_name }}</td>

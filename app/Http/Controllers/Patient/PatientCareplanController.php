@@ -130,7 +130,7 @@ class PatientCareplanController extends Controller {
 			$bag = new ParameterBag([
 				'user_email' => $newUserId . '@careplanmanager.com',
 				'user_pass' => 'whatToPutHere',
-				'user_nicename' => $newUserId,
+				//'user_nicename' => $newUserId,
 				'program_id' => $programId,
 				'roles' => [$role->id],
 			]);
