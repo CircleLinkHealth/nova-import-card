@@ -152,6 +152,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->program_id;
 	}
 
+	public function programs() {
+		return $this->belongsToMany('App\WpBlog', 'lv_user_program', 'user_id', 'role_id');
+	}
 
 	public function userConfig(){
 		$key = 'wp_'.$this->blogId().'_user_config';
@@ -171,26 +174,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		} else {
 			return $userMeta;
 		}
-	}
-
-
-	public function getWpUserWithMeta($user_id)
-	{
-		$wpUser = WpUser::where('ID', '=', $user_id)->first();
-
-		return $wpUser;
-	}
-
-	public function getWpUsersWithMeta($user_id)
-	{
-		$wpUsers = WpUser::where('ID', '=', $user_id)->get();
-
-		foreach ( $wpUsers as $wpUser )
-		{
-			$wpUser['meta'] = $wpUser->meta;
-		}
-
-		return $wpUsers;
 	}
 
 	public function createNewUser($user_email, $user_pass) {

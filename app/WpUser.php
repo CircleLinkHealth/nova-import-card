@@ -154,6 +154,10 @@ class WpUser extends Model {
         return $this->program_id;
     }
 
+    public function programs() {
+        return $this->belongsToMany('App\WpBlog', 'lv_program_user', 'user_id', 'program_id');
+    }
+
     public function userConfig(){
         $key = 'wp_'.$this->blogId().'_user_config';
         $userConfig = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key',$key)->first();
@@ -173,26 +177,6 @@ class WpUser extends Model {
             return $userMeta;
         }
     }
-
-    public function getWpUserWithMeta($user_id)
-    {
-        $wpUser = WpUser::where('ID', '=', $user_id)->first();
-
-        return $wpUser;
-    }
-
-    public function getWpUsersWithMeta($user_id)
-    {
-        $wpUsers = WpUser::where('ID', '=', $user_id)->get();
-
-        foreach ( $wpUsers as $wpUser )
-        {
-            $wpUser['meta'] = $wpUser->meta;
-        }
-
-        return $wpUsers;
-    }
-
 
     public function createNewUser($user_email, $user_pass) {
         $this->user_login = $user_email;

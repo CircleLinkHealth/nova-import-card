@@ -4,6 +4,7 @@ use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\WpUser;
 use App\WpUserMeta;
+use App\WpBlog;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class WpUserRepository {
@@ -14,7 +15,7 @@ class WpUserRepository {
 
         $wpUser->load('meta');
 
-        //dd($params);
+        // the basics
         $wpUser->user_nicename = '';
         $wpUser->user_login = $params->get('user_login');
         $wpUser->user_status = $params->get('user_status');
@@ -23,23 +24,8 @@ class WpUserRepository {
         $wpUser->user_registered = date('Y-m-d H:i:s');
 
         $this->saveOrUpdateRoles($wpUser, $params);
-
+        $this->saveOrUpdatePrograms($wpUser, $params);
         $this->saveOrUpdateUserMeta($wpUser, $params);
-
-        // update role / capabilities (wp)
-        $input = $params->get('role');
-        $capabilities = new WpUserMeta;
-        $capabilities->meta_key = 'wp_' . $params->get('program_id') . '_capabilities';
-        $capabilities->meta_value = serialize(array($input => '1'));
-        $capabilities->user_id = $wpUser->ID;
-        $capabilities->save();
-        $capabilities = new WpUserMeta;
-        $capabilities->meta_key = 'wp_' . $params->get('program_id') . '_user_level';
-        $capabilities->meta_value = '0';
-        $capabilities->user_id = $wpUser->ID;
-        $capabilities->save();
-
-        // update user config
         $this->updateUserConfig($wpUser, $params);
 
         $wpUser->push();
@@ -58,25 +44,8 @@ class WpUserRepository {
         $wpUser->save();
 
         $this->saveOrUpdateRoles($wpUser, $params);
-
+        $this->saveOrUpdatePrograms($wpUser, $params);
         $this->saveOrUpdateUserMeta($wpUser, $params);
-
-        // update role
-        $input = $params->get('role');
-        if(!empty($input)) {
-            $capabilities = $wpUser->meta()->where('user_id', '=', $wpUser->ID)->where('meta_key', '=', 'wp_' . $wpUser->blogId() . '_capabilities')->first();
-            if($capabilities) {
-                $capabilities->meta_value = serialize(array($input => '1'));
-            } else {
-                $capabilities = new WpUserMeta;
-                $capabilities->meta_key = 'wp_' . $wpUser->blogId() . '_capabilities';
-                $capabilities->meta_value = serialize(array($input => '1'));
-                $capabilities->user_id = $wpUser->ID;
-            }
-            $capabilities->save();
-        }
-
-        // update user config
         $this->updateUserConfig($wpUser, $params);
 
         return $wpUser;
@@ -116,6 +85,51 @@ class WpUserRepository {
             }
         } else {
             $wpUser->roles()->sync([]);
+        }
+    }
+
+    public function saveOrUpdatePrograms(WpUser $wpUser, ParameterBag $params)
+    {
+        $userPrograms = $params->get('programs');
+        if(!$userPrograms) {
+            $userPrograms = array();
+        }
+        $role = $params->get('role'); // use entrust role names, deprecate wp roles
+
+        // first remove any that dont still exist
+        $wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('blog_id');
+        $wpUser->programs()->detach();
+        foreach($wpBlogs as $wpBlogId) {
+            if (!in_array($wpBlogId, $userPrograms)) {
+                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->delete();
+                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->delete();
+            } else {
+                $wpUser->programs()->attach($wpBlogId);
+                // user level
+                $userLevel = $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->first();
+                if($userLevel) {
+                    $userLevel->meta_value = "0";
+                } else {
+                    $userLevel = new WpUserMeta;
+                    $userLevel = new WpUserMeta;
+                    $userLevel->meta_key = "wp_{$wpBlogId}_user_level";
+                    $userLevel->meta_value = "0";
+                    $userLevel->user_id = $wpUser->ID;
+                }
+                $userLevel->save();
+
+                // capabilities
+                $capabilities = $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->first();
+                if($capabilities) {
+                    $capabilities->meta_value = serialize(array($role => '1'));
+                } else {
+                    $capabilities = new WpUserMeta;
+                    $capabilities->meta_key = "wp_{$wpBlogId}_capabilities";
+                    $capabilities->meta_value = serialize(array($role => '1'));
+                    $capabilities->user_id = $wpUser->ID;
+                }
+                $capabilities->save();
+            }
         }
     }
 

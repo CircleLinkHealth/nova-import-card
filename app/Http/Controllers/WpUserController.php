@@ -43,9 +43,9 @@ class WpUserController extends Controller {
 		{
 			$userId = Crypt::decrypt($request->header('UserId'));
 
-			$wpUsers = (new WpUser())->getWpUsersWithMeta($userId);
+			$wpUser = WpUser::find($userId);
 
-			return response()->json( Crypt::encrypt( json_encode( $wpUsers ) ) );
+			return response()->json( Crypt::encrypt( json_encode( $wpUser ) ) );
 
 		} else if ( $request->header('Client') == 'mobi' ) {
 			$response = [
@@ -59,7 +59,7 @@ class WpUserController extends Controller {
 				return response()->json(['error' => 'invalid_credentials'], 401);
 			} else {
 				$userId = $user->ID;
-				$wpUser = (new WpUser())->getWpUserWithMeta($userId);
+				$wpUser = WpUser::find($userId);
 				$response = [
 					'id' => $wpUser->ID,
 					'user_email' => $wpUser->user_email,

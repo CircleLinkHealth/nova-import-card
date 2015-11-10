@@ -51,12 +51,28 @@
 
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" id="program">
-                                <h2>Program</h2>
+                                <h2>Primary Program</h2>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('program_id', 'Primary Blog:') !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('program_id', 'Primary Program:') !!}</div>
                                         <div class="col-xs-10">{!! Form::select('program_id', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'disabled' => 'disabled', 'style' => 'width:80%;']) !!}{!! Form::hidden('program_id', $primaryBlog) !!}</div>
                                     </div>
+                                </div>
+
+                                <h2>Programs:</h2>
+                                <div id="programs">
+                                    @foreach( $wpBlogs as $wpBlogId => $domain )
+                                        <div class="form-group role" id="program_{{ $wpBlogId }}">
+                                            <div class="col-sm-1">
+                                                @if( in_array($wpBlogId, $wpUser->programs()->lists('blog_id')) )
+                                                    {!! Form::checkbox('programs[]', $wpBlogId, ['checked' => "checked"], ['style' => '']) !!}
+                                                @else
+                                                    {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '']) !!}
+                                                @endif
+                                            </div>
+                                            <div class="col-sm-11">{!! Form::label('Value', 'Program: '.$domain, array('class' => '')) !!}</div>
+                                        </div>
+                                    @endforeach
                                 </div>
 
                                 <h2>New User System Info</h2>
