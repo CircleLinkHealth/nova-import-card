@@ -37,21 +37,21 @@ var filters = {
         var date, batch;
         var list = [];
         if (kind == 'encounters') {
-            batch = bb.encounters();
+            batch = bb.data.encounters;
         } else if (kind == 'procedures') {
-            batch = bb.procedures();
+            batch = bb.data.procedures;
         } else if (kind == 'problems') {
-            batch = bb.problems();
+            batch = bb.data.problems;
         } else if (kind == 'immunizations') {
-            batch = bb.immunizations();
+            batch = bb.data.immunizations;
         } else if (kind == 'medications') {
-            batch = bb.medications();
+            batch = bb.data.medications;
             return [];
         } else if (kind == 'labs') {
             batch = [];
-            for (var m in bb.labs()) {
-                for (var l in bb.labs()[m].results) {
-                    batch.push(bb.labs()[m].results[l]);
+            for (var m in bb.data.results) {
+                for (var l in bb.data.results[m].results) {
+                    batch.push(bb.data.results[m].results[l]);
                 }
             }
         }
@@ -227,17 +227,24 @@ function init_template() {
 
     template = swig.compile($(".bb-template").html());
     renderedHtml = template({
-        bb: bb,
-        demographics: bb.demographics(),
-        allergies: bb.allergies(),
-        encounters: bb.encounters(),
-        immunizations: bb.immunizations(),
-        labs: bb.labs(),
-        medications: bb.medications(),
-        problems: bb.problems(),
-        procedures: bb.procedures(),
-        vitals: bb.vitals()
+        bb: bb.data,
+        document: bb.data.document,
+        allergies: bb.data.allergies,
+        careplan: bb.data.care_plan,
+        chiefComplaint: bb.data.chief_complaint,
+        demographics: bb.data.demographics,
+        encounters: bb.data.encounters,
+        functionalStatuses: bb.data.functional_statuses,
+        immunizations: bb.data.immunizations,
+        instructions: bb.data.instructions,
+        labResults: bb.data.results,
+        medications: bb.data.medications,
+        problems: bb.data.problems,
+        procedures: bb.data.procedures,
+        smokingStatus: bb.data.smoking_status,
+        vitals: bb.data.vitals
     });
+
     $(".bb-template").html(renderedHtml);
     $("#loader").fadeOut(function () {
         $(".bb-template").fadeIn();
