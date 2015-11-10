@@ -211,6 +211,12 @@ var filters = {
         } else {
             return exists === 0 ? "no" : exists > 1 ? "multiple" : "";
         }
+    }, problem_status: function (input) {
+        if (input.status.toLowerCase() == "resolved") {
+            return "resolved";
+        } else if (input.status.toLowerCase() == "active") {
+            return "active";
+        }
     }
 };
 function init_template() {
@@ -259,7 +265,7 @@ $(function () {
         text = $.text($("script#xmlBBData"));
         $("script#xmlBBData").remove();
         bb = BlueButton(text);
-
+console.log(bb.data.problems);
         init_template();
     });
     $(document).on('click', 'nav a', function () {

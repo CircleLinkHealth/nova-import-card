@@ -18,6 +18,7 @@
     <script src="/js/ccd/modernizr.js"></script>
     <script src="/js/ccd/jquery-1.9.0.js"></script>
     <script src="/js/ccd/swig.js"></script>
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/swig/1.4.1/swig.min.js"></script>-->
 <!--    <script src="/js/ccd/bluebutton-0.0.10.js"></script>-->
     <script src="/js/ccd/bluebutton.js"></script>
     <script src="/js/ccd/bbclear.js"></script>
@@ -28,14 +29,15 @@
     <section class="bb-template">
             <nav id="primaryNav">
                 <div class="container">
-                    <h1>Patient Health Record</h1>
+                    <h1>CCD Viewer</h1>
                     <ul>
-                        <li><a href="#demographics">Profile</a></li>
-                        <li><a href="#allergies">Allergies</a></li>
-                        <li><a href="#medications">Medications</a></li>
-                        <li><a href="#immunizations">Immunizations</a></li>
-                        <li><a href="#history">History</a></li>
-                        <li><a href="#labs">Lab Results</a></li>
+                        <a href="#demographics"><li>Profile</li></a>
+                        <a href="#allergies"><li>Allergies</li></a>
+                        <a href="#problems"><li>Problems</li></a>
+                        <a href="#medications"><li>Medications</li></a>
+                        <a href="#immunizations"><li>Immunizations</li></a>
+                        <a href="#history"><li>History</li></a>
+                        <a href="#labs"><li>Lab Results</li></a>
                     </ul>
                 </div>
             </nav>
@@ -102,6 +104,7 @@
                     </li>{% endif %}
                 </dl>
             </div>
+
             <div id="allergies" class="panel">
                 <h1>Allergies</h1>
                 {% for allergy in allergies %}
@@ -116,6 +119,38 @@
                     <p>No known allergies</p>
                 {% endfor %}
             </div>
+
+            <div id="problems" class="panel">
+                <h1>Problems</h1>
+                {% for problem in problems %}
+                    {% if loop.first %}<ul class="listless">{% endif %}
+                    <li class="problem-{{problem|problem_status}}">
+                        <p class="problem-status">{{problem.status}}</p>
+                        <h2>{{problem.name}}</h2>
+                        {% if problem.comment %}<p>{{problem.comment}}</p>{% endif %}
+                        {% if allergy.reaction.name %}<p>Causes {{allergy.reaction.name|lower}}</p>{% endif %}
+
+                        <dl class="footer">
+                            {% if problem.code or problem.code_system %}<li>
+                                <dt>Code {% if problem.code_system_name %}<small>({{problem.code_system_name}})</small>{% endif %}</dt>
+                                {% if problem.code_system %}<dd>{{problem.code_system}}</dd>{% endif %}
+                                {% if problem.code %}<dd>{{problem.code}}</dd>{% endif %}
+                            </li>{% endif %}
+                            {% if problem.date_range.start or problem.date_range.end %}<li>
+                                <dt>Date Range</dt>
+                                <dd>
+                                    {% if problem.date_range.start %}{{problem.date_range.start|date('M j, Y')}}{% endif %}
+                                    {% if problem.date_range.end %}&ndash; {{problem.date_range.end|date('M j, Y')}}{% endif %}
+                                </dd>
+                            </li>{% endif %}
+                        </dl>
+                    </li>
+                    {% if loop.last %}</ul>{% endif %}
+                {% else %}
+                    <p>No known Problems</p>
+                {% endfor %}
+
+          </div>
             <div id="medications" class="panel">
                 <h1>Medication History</h1>
                 {% for med in medications %}
@@ -174,7 +209,9 @@
                             <li>
                                 <dt>Encounter</dt>
                                 <dd class="head">{{encounter.name|fallback("Unknown Visit")|title}}</dd>
-                                {% if encounter.finding.name %}<dd>Finding: {{encounter.finding.name}}</dd>{% endif %}
+                                {% for finding in encounter.findings %}
+                                    {% if finding.name %}<dd>Finding: {{finding.name}}</dd>{% endif %}
+                                {% endfor %}
                             </li>
                             {% for problem in encounter|related_by_date('problems') %}
                                 <li>
