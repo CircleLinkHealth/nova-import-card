@@ -181,7 +181,9 @@ var filters = {
             } else if (input.severity.match(/mild/i)) {
                 mild++;
             } else {
-                exists++;
+                if (input.name) {
+                    exists++;
+                }
             }
         } else {
             for (i in input) {
@@ -194,10 +196,14 @@ var filters = {
                         } else if (input[i].severity.match(/mild/i)) {
                             mild++;
                         } else {
-                            exists++;
+                            if (input[i].name) {
+                                exists++;
+                            }
                         }
                     } else {
-                        exists++;
+                        if (input.name) {
+                            exists++;
+                        }
                     }
                 }
             }

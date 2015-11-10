@@ -108,13 +108,16 @@
             <div id="allergies" class="panel">
                 <h1>Allergies</h1>
                 {% for allergy in allergies %}
+                <!-- Hide null names -->
+                {% if allergy.allergen.name %}
                     {% if loop.first %}<ul>{% endif %}
-                    <li class="allergy-{{allergy|max_severity}}">
-                        <h2>{{allergy.allergen.name}}</h2>
-                        {% if allergy.severity %}<p>{{allergy.severity}}</p>{% endif %}
-                        {% if allergy.reaction.name %}<p>Causes {{allergy.reaction.name|lower}}</p>{% endif %}
-                    </li>
-                    {% if loop.last %}</ul>{% endif %}
+                        <li class="allergy-{{allergy|max_severity}}">
+                            <h2>{{allergy.allergen.name}}</h2>
+                            {% if allergy.severity %}<p>{{allergy.severity}}</p>{% endif %}
+                            {% if allergy.reaction.name %}<p>Causes {{allergy.reaction.name|lower}}</p>{% endif %}
+                        </li>
+                        {% if loop.last %}</ul>{% endif %}
+                {% endif %}
                 {% else %}
                     <p>No known allergies</p>
                 {% endfor %}
@@ -126,16 +129,30 @@
                     {% if loop.first %}<ul class="listless">{% endif %}
                     <li class="problem-{{problem|problem_status}}">
                         <p class="problem-status">{{problem.status}}</p>
-                        <h2>{{problem.name}}</h2>
+                        <h2>
+                            {% if problem.name %}
+                                {{problem.name}}
+                            {% else if problem.translation.name %}
+                                {{problem.translation.name}}
+                            {% endif %}
+                        </h2>
                         {% if problem.comment %}<p>{{problem.comment}}</p>{% endif %}
                         {% if allergy.reaction.name %}<p>Causes {{allergy.reaction.name|lower}}</p>{% endif %}
 
                         <dl class="footer">
+                            <!-- Get problem variables, if not empty -->
                             {% if problem.code or problem.code_system %}<li>
                                 <dt>Code {% if problem.code_system_name %}<small>({{problem.code_system_name}})</small>{% endif %}</dt>
                                 {% if problem.code_system %}<dd>{{problem.code_system}}</dd>{% endif %}
                                 {% if problem.code %}<dd>{{problem.code}}</dd>{% endif %}
+                            </li>
+                            <!-- other wise, get problem translation variables -->
+                            {% else if problem.translation.code or problem.translation.code_system %}<li>
+                                <dt>Code {% if problem.translation.code_system_name %}<small>({{problem.translation.code_system_name}})</small>{% endif %}</dt>
+                                {% if problem.translation.code_system %}<dd>{{problem.translation.code_system}}</dd>{% endif %}
+                                {% if problem.translation.code %}<dd>{{problem.translation.code}}</dd>{% endif %}
                             </li>{% endif %}
+
                             {% if problem.date_range.start or problem.date_range.end %}<li>
                                 <dt>Date Range</dt>
                                 <dd>
