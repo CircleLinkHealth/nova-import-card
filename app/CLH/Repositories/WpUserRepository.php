@@ -24,9 +24,9 @@ class WpUserRepository {
         $wpUser->user_registered = date('Y-m-d H:i:s');
 
         $this->saveOrUpdateRoles($wpUser, $params);
-        $this->saveOrUpdatePrograms($wpUser, $params);
         $this->saveOrUpdateUserMeta($wpUser, $params);
         $this->updateUserConfig($wpUser, $params);
+        $this->saveOrUpdatePrograms($wpUser, $params);
 
         $wpUser->push();
 
@@ -44,9 +44,9 @@ class WpUserRepository {
         $wpUser->save();
 
         $this->saveOrUpdateRoles($wpUser, $params);
-        $this->saveOrUpdatePrograms($wpUser, $params);
         $this->saveOrUpdateUserMeta($wpUser, $params);
         $this->updateUserConfig($wpUser, $params);
+        $this->saveOrUpdatePrograms($wpUser, $params);
 
         return $wpUser;
     }
