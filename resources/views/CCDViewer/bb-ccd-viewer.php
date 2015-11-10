@@ -112,7 +112,7 @@
                 {% if allergy.allergen.name %}
                     {% if loop.first %}<ul>{% endif %}
                         <li class="allergy-{{allergy|max_severity}}">
-                            <h2>{{allergy.allergen.name}}</h2>
+                            <h2>{{allergy.allergen.name|title}}</h2>
                             {% if allergy.severity %}<p>{{allergy.severity}}</p>{% endif %}
                             {% if allergy.reaction.name %}<p>Causes {{allergy.reaction.name|lower}}</p>{% endif %}
                         </li>
@@ -131,9 +131,9 @@
                         <p class="problem-status">{{problem.status}}</p>
                         <h2>
                             {% if problem.name %}
-                                {{problem.name}}
+                                {{problem.name|title}}
                             {% else if problem.translation.name %}
-                                {{problem.translation.name}}
+                                {{problem.translation.name|title}}
                             {% endif %}
                         </h2>
                         {% if problem.comment %}<p>{{problem.comment}}</p>{% endif %}
@@ -142,13 +142,13 @@
                         <dl class="footer">
                             <!-- Get problem variables, if not empty -->
                             {% if problem.code or problem.code_system %}<li>
-                                <dt>Code {% if problem.code_system_name %}<small>({{problem.code_system_name}})</small>{% endif %}</dt>
+                                <dt>Code {% if problem.code_system_name %}<small>({{problem.code_system.name|upper}})</small>{% endif %}</dt>
                                 {% if problem.code_system %}<dd>{{problem.code_system}}</dd>{% endif %}
                                 {% if problem.code %}<dd>{{problem.code}}</dd>{% endif %}
                             </li>
                             <!-- other wise, get problem translation variables -->
                             {% else if problem.translation.code or problem.translation.code_system %}<li>
-                                <dt>Code {% if problem.translation.code_system_name %}<small>({{problem.translation.code_system_name}})</small>{% endif %}</dt>
+                                <dt>Code {% if problem.translation.code_system_name %}<small>({{problem.translation.code_system.name|upper}})</small>{% endif %}</dt>
                                 {% if problem.translation.code_system %}<dd>{{problem.translation.code_system}}</dd>{% endif %}
                                 {% if problem.translation.code %}<dd>{{problem.translation.code}}</dd>{% endif %}
                             </li>{% endif %}
@@ -174,7 +174,7 @@
                     {% if loop.first %}<ul>{% endif %}
                     <li class="{{loop.cycle('odd', 'even')}}">
                         <header>
-                            <h2>{{med.product.name}}</h2>
+                            <h2>{{med.product.name|title}}</h2>
                             {% if med.administration.name %}<small>{{med.administration.name|title}}</small>{% endif %}
                             {% if med.reason.name %}<small>for {{med.reason.name}}</small>{% endif %}
                         </header>
@@ -227,7 +227,7 @@
                                 <dt>Encounter</dt>
                                 <dd class="head">{{encounter.name|fallback("Unknown Visit")|title}}</dd>
                                 {% for finding in encounter.findings %}
-                                    {% if finding.name %}<dd>Finding: {{finding.name}}</dd>{% endif %}
+                                    {% if finding.name %}<dd>Finding: {{finding.name|title}}</dd>{% endif %}
                                 {% endfor %}
                             </li>
                             {% for problem in encounter|related_by_date('problems') %}
