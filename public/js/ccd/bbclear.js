@@ -119,7 +119,7 @@ var filters = {
             numbers = input.replace(/\D/g, '');
             numbers = numbers.replace(/(^1)/g, '');
             number = [numbers.substr(0, 3), numbers.substr(3, 3), numbers.substr(6, 4)];
-            return number.join('.');
+            return number.join('-');
         }
     }, format_unit: function (input) {
         if (input) {
@@ -271,7 +271,7 @@ $(function () {
         text = $.text($("script#xmlBBData"));
         $("script#xmlBBData").remove();
         bb = BlueButton(text);
-console.log(bb.data.problems);
+
         init_template();
     });
     $(document).on('click', 'nav a', function () {
