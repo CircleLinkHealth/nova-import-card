@@ -23,6 +23,7 @@ class WpUserRepository {
         $wpUser->display_name = $params->get('display_name');
         $wpUser->program_id = $params->get('program_id');
         $wpUser->user_registered = date('Y-m-d H:i:s');
+        $wpUser->save();
 
         $this->saveOrUpdateRoles($wpUser, $params);
         $this->saveOrUpdateUserMeta($wpUser, $params);
@@ -98,8 +99,8 @@ class WpUserRepository {
     public function saveOrUpdatePrograms(WpUser $wpUser, ParameterBag $params)
     {
         // return if form doesnt contain program editor
-        if(!$params->get('programs')) {
-            return false;
+        if(!$params->get('programs') && ($wpUser->programs->count() > 0)) {
+            return true;
         }
 
         // get selected programs
@@ -115,7 +116,11 @@ class WpUserRepository {
 
         // get role
         $roleId = $params->get('role');
-        $role = Role::find($roleId);
+        if($roleId) {
+            $role = Role::find($roleId);
+        } else {
+            $role = Role::where('name', '=', 'patient')->first();
+        }
 
         // first detatch relationship
         $wpUser->programs()->detach();
