@@ -119,7 +119,7 @@ var filters = {
             numbers = input.replace(/\D/g, '');
             numbers = numbers.replace(/(^1)/g, '');
             number = [numbers.substr(0, 3), numbers.substr(3, 3), numbers.substr(6, 4)];
-            return number.join('.');
+            return number.join('-');
         }
     }, format_unit: function (input) {
         if (input) {
@@ -181,7 +181,9 @@ var filters = {
             } else if (input.severity.match(/mild/i)) {
                 mild++;
             } else {
-                exists++;
+                if (input.name) {
+                    exists++;
+                }
             }
         } else {
             for (i in input) {
@@ -194,10 +196,14 @@ var filters = {
                         } else if (input[i].severity.match(/mild/i)) {
                             mild++;
                         } else {
-                            exists++;
+                            if (input[i].name) {
+                                exists++;
+                            }
                         }
                     } else {
-                        exists++;
+                        if (input.name) {
+                            exists++;
+                        }
                     }
                 }
             }
@@ -210,6 +216,12 @@ var filters = {
             return mild > 1 ? "multiple mild" : "mild";
         } else {
             return exists === 0 ? "no" : exists > 1 ? "multiple" : "";
+        }
+    }, problem_status: function (input) {
+        if (input.status.toLowerCase() == "resolved") {
+            return "resolved";
+        } else if (input.status.toLowerCase() == "active") {
+            return "active";
         }
     }
 };
