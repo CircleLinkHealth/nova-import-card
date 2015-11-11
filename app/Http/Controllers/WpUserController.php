@@ -293,7 +293,9 @@ class WpUserController extends Controller {
 		}
 
 		// primary_blog
+		$userMetaTemplate = (new UserConfigTemplate())->getArray();
 		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
+		$userMeta = array_merge($userMeta, $userMetaTemplate);
 
 		$params = $request->all();
 		if(!empty($params)) {
