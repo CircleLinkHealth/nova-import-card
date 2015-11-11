@@ -4,16 +4,9 @@
  */
 
 //CCD Parser Demo Route
-Route::get('ccd-parser-demo', 'WelcomeController@index');
+Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 
-Route::get('/ccd/{id}', function($id)
-{
-	$ccd = \App\XmlCCD::whereUserId($id)->first()->ccd;
-
-	$template = View::make('CCDViewer.bb-ccd-viewer', compact('ccd'))->render();
-
-	return View::make('CCDViewer.viewer', compact('template'));
-});
+Route::get('/ccd/{id}', 'CCDViewer\CCDViewerController@viewByUserId');
 
 /**
  * UPLOAD CCD ROUTES
