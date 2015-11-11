@@ -97,10 +97,23 @@ class WpUserRepository {
 
     public function saveOrUpdatePrograms(WpUser $wpUser, ParameterBag $params)
     {
+        // return if form doesnt contain program editor
+        if(!$params->get('programs')) {
+            return false;
+        }
+
+        // get selected programs
         $userPrograms = $params->get('programs');
         if(!$userPrograms) {
-            $userPrograms = array();
+            $userPrograms = $wpUser->programs()->lists('blog_id');
         }
+        if($params->get('program_id')) {
+            if(!in_array($params->get('program_id'), $userPrograms)) {
+                $userPrograms[] = $params->get('program_id');
+            }
+        }
+
+        // get role
         $roleId = $params->get('role');
         $role = Role::find($roleId);
 

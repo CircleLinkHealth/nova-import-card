@@ -81,6 +81,15 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('ccm_enabled', 'CCM Enabled:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('ccm_enabled', array('false' => 'false', 'true' => 'true'), $userMeta['ccm_enabled'], ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('careplan_status', 'Careplan Status:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('careplan_status', array('draft' => 'draft', 'clh_approved' => 'clh_approved', 'provider_approved' => 'provider_approved'), $userMeta['careplan_status'], ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                    </div>
+                                </div>
+
                                 <h2>Role:</h2>
                                 <div id="roles">
                                     <div class="form-group">

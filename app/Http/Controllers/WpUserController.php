@@ -288,9 +288,14 @@ class WpUserController extends Controller {
 
 		$roles = Role::lists('name', 'id');
 		$role = $wpUser->roles()->first();
+		if(!$role) {
+			$role = Role::first();
+		}
 
 		// primary_blog
+		$userMetaTemplate = (new UserConfigTemplate())->getArray();
 		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
+		$userMeta = array_merge($userMeta, $userMetaTemplate);
 
 		$params = $request->all();
 		if(!empty($params)) {
