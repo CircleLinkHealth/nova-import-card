@@ -54,7 +54,35 @@
                     </a>
                 </li>
 
- -->			</ul>
+			</ul>
+
+            <div class="row row-centered">
+                <div class="col-sm-12">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th colspan="3">Pending Approvals</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        if(count($pendingApprovals) > 0) {
+                            foreach ($pendingApprovals as $user) {
+                            ?>
+                                <tr>
+                                    <td>{{ $user->fullName }}</td>
+                                    <td>{{ $user->user_registered }}</td>
+                                    <td>{{ $user->meta()->where('meta_key', '=', 'careplan_status')->first()->meta_value }}</td>
+                                    <td><a class="btn btn-primary" href="{{ URL::route('patient.demographics.show', array('patientId' => $user->ID)) }}">Approve Patient</a></td>
+                                </tr>
+                            <?php
+                            }
+                        }
+                        ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
         </div>
     </div>

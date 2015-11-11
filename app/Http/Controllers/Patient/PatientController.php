@@ -36,7 +36,11 @@ class PatientController extends Controller {
 	 */
 	public function showDashboard(Request $request)
 	{
-		return view('wpUsers.patient.dashboard', compact([]));
+		$pendingApprovals = WpUser::with('meta')->whereHas('meta', function($q) {
+			$q->where('meta_key', '=', 'careplan_status');
+			$q->where('meta_value', '!=', 'provider_approved');
+		})->get();
+		return view('wpUsers.patient.dashboard', compact(['pendingApprovals']));
 	}
 
 	/**
