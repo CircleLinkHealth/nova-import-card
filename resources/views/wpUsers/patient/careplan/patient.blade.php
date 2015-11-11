@@ -63,7 +63,7 @@
                             <input type=hidden name=user_id value="{{ $patient->ID }}">
                             <input type=hidden name=program_id value="{{ $patient->program_id }}">
                             <input type=hidden name=display_name value="{{ $patient->display_name }}">
-                            <input type=hidden name=roles value="{{ $patientRoleId }}">
+                            <input type=hidden name=role value="{{ $patientRoleId }}">
                             <input type=hidden name=daily_reminder_optin value="Y">
                             <input type=hidden name=daily_reminder_time value="08:00">
                             <input type=hidden name=daily_reminder_areas value="TBD">

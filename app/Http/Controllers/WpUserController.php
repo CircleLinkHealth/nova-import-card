@@ -288,6 +288,9 @@ class WpUserController extends Controller {
 
 		$roles = Role::lists('name', 'id');
 		$role = $wpUser->roles()->first();
+		if(!$role) {
+			$role = Role::first();
+		}
 
 		// primary_blog
 		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
