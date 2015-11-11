@@ -8,13 +8,25 @@ use Illuminate\Http\Request;
 
 class CCDViewerController extends Controller {
 
-	public function viewByUserId($id)
+	public function showByUserId($userId)
     {
-        $ccd = XmlCCD::whereUserId($id)->first()->ccd;
+        $ccd = XmlCCD::whereUserId($userId)->first()->ccd;
 
         $template = view('CCDViewer.bb-ccd-viewer', compact('ccd'))->render();
 
         return view('CCDViewer.viewer', compact('template'));
+    }
+
+    public function showUploadedCcd(Request $request)
+    {
+        if ($request->hasFile('uploadedCcd'))
+        {
+            $ccd = file_get_contents($request->file('uploadedCcd'));
+
+            $template = view('CCDViewer.bb-ccd-viewer', compact('ccd'))->render();
+
+            return view('CCDViewer.viewer', compact('template'));
+        }
     }
 
 }

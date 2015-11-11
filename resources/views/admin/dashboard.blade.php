@@ -7,6 +7,25 @@
 			<h2>Welcome, {{ $user->fullName }}</h2>
 		</div>
 
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">CCD Viewer</div>
+
+				<div class="panel-body">
+					@include('CCDViewer.create')
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">Box</div>
+
+				<div class="panel-body">
+					Administrator Useful stuff box 1
+				</div>
+			</div>
+		</div>
+
 		<div class="col-md-12">
 			<div class="panel panel-default">
 				<div class="panel-heading">Statistics</div>
@@ -47,25 +66,6 @@
 
 						</tbody>
 					</table>
-				</div>
-			</div>
-		</div>
-
-		<div class="col-md-6">
-			<div class="panel panel-default">
-				<div class="panel-heading">Stats</div>
-
-				<div class="panel-body">
-					Administrator Useful stuff box 1
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="panel panel-default">
-				<div class="panel-heading">Box</div>
-
-				<div class="panel-body">
-					Administrator Useful stuff box 1
 				</div>
 			</div>
 		</div>

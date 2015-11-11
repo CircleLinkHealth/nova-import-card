@@ -6,7 +6,9 @@
 //CCD Parser Demo Route
 Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 
-Route::get('/ccd/{id}', 'CCDViewer\CCDViewerController@viewByUserId');
+Route::get('ccd/show/{userId}', 'CCDViewer\CCDViewerController@showByUserId');
+
+Route::post('ccd', ['uses' => 'CCDViewer\CCDViewerController@showUploadedCcd', 'as' => 'ccd-viewer.post']);
 
 /**
  * UPLOAD CCD ROUTES
