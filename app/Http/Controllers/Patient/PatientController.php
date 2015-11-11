@@ -36,7 +36,11 @@ class PatientController extends Controller {
 	 */
 	public function showDashboard(Request $request)
 	{
-		$pendingApprovals = WpUser::with('meta')->whereHas('meta', function($q) {
+		// get program
+		$programId = \Session::get('activeProgramId');
+
+		$pendingApprovals = WpUser::where('program_id', '=', $programId)
+			->with('meta')->whereHas('meta', function($q) {
 			$q->where('meta_key', '=', 'careplan_status');
 			$q->where('meta_value', '!=', 'provider_approved');
 		})->get();

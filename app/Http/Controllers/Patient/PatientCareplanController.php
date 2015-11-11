@@ -38,11 +38,13 @@ class PatientCareplanController extends Controller {
 
 		// determine if existing user or new user
 		$user = new WpUser;
+		$programId = \Session::get('activeProgramId');
 		if($patientId) {
 			$user = WpUser::find($patientId);
 			if (!$user) {
 				return response("User not found", 401);
 			}
+			$programId = $user->program_id;
 		}
 		$patient = $user;
 
@@ -84,7 +86,7 @@ class PatientCareplanController extends Controller {
 			$timezones[$timezone] = $timezone;
 		}
 
-		return view('wpUsers.patient.careplan.patient', compact(['patient', 'userMeta', 'userConfig','states', 'locations', 'timezones', 'messages', 'patientRoleId']));
+		return view('wpUsers.patient.careplan.patient', compact(['patient', 'userMeta', 'userConfig','states', 'locations', 'timezones', 'messages', 'patientRoleId', 'programId']));
 	}
 
 
@@ -135,7 +137,7 @@ class PatientCareplanController extends Controller {
 				'roles' => [$role->id],
 			]);
 			$newUser = $userRepo->createNewUser($user, $bag);
-			$userRepo->editUser($newUser, $params);
+			$newUser = $userRepo->editUser($newUser, $params);
 			return redirect(\URL::route('patient.demographics.show', array('patientId' => $newUser->ID)))->with('messages', ['Successfully created new patient with demographics.']);
 		}
 	}
