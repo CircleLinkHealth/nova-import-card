@@ -73,7 +73,7 @@
                                     <td>{{ $user->fullName }}</td>
                                     <td>{{ $user->user_registered }}</td>
                                     <td>{{ $user->meta()->where('meta_key', '=', 'careplan_status')->first()->meta_value }}</td>
-                                    <td><a class="btn btn-primary" href="">Approve Patient</a></td>
+                                    <td><a class="btn btn-primary" href="{{ URL::route('patient.demographics.show', array('patientId' => $user->ID)) }}">Approve Patient</a></td>
                                 </tr>
                             <?php
                             }
