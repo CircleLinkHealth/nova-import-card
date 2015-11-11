@@ -65,7 +65,7 @@ class CCDUploadController extends Controller {
     /**
      * @return \Illuminate\View\View
      */
-    public function create($id)
+    public function create()
     {
         return view('CCDUploader.uploader');
     }
