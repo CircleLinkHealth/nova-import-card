@@ -212,7 +212,7 @@ class WpUserController extends Controller {
 
 		$wpUser = new WpUser;
 
-		$roles = Role::all();
+		$roles = Role::lists('name', 'id');
 
 		// user config
 		$userConfig = (new UserConfigTemplate())->getArray();
@@ -236,7 +236,7 @@ class WpUserController extends Controller {
 		$providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
 
 		// display view
-		return view('wpUsers.create', ['wpUser' => $wpUser, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'wpRole' => $wpRole, 'providers_arr' => $providers_arr, 'messages' => $messages, 'roles' => $roles]);
+		return view('wpUsers.create', ['wpUser' => $wpUser, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'providers_arr' => $providers_arr, 'messages' => $messages, 'roles' => $roles]);
 	}
 
 	/**
@@ -286,7 +286,8 @@ class WpUserController extends Controller {
 			return response("User not found", 401);
 		}
 
-		$roles = Role::all();
+		$roles = Role::lists('name', 'id');
+		$role = $wpUser->roles()->first();
 
 		// primary_blog
 		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
@@ -332,7 +333,7 @@ class WpUserController extends Controller {
 		$providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
 
 		// display view
-		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $wpUser->program_id, 'wpRole' => $wpRole, 'providers_arr' => $providers_arr, 'messages' => $messages, 'roles' => $roles]);
+		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $wpUser->program_id, 'providers_arr' => $providers_arr, 'messages' => $messages, 'role' => $role, 'roles' => $roles]);
 	}
 
 	/**

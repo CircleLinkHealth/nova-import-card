@@ -5,6 +5,7 @@ use App\CLH\DataTemplates\UserMetaTemplate;
 use App\WpUser;
 use App\WpUserMeta;
 use App\WpBlog;
+use App\Role;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class WpUserRepository {
@@ -75,6 +76,12 @@ class WpUserRepository {
 
     public function saveOrUpdateRoles(WpUser $wpUser, ParameterBag $params)
     {
+        // support for both single or array or roles
+        if(!empty($params->get('role'))) {
+            $wpUser->roles()->sync(array($params->get('role')));
+            return true;
+        }
+
         if(!empty($params->get('roles'))) {
             // support if one role is passed in as a string
             if(!is_array($params->get('roles'))) {
@@ -94,7 +101,8 @@ class WpUserRepository {
         if(!$userPrograms) {
             $userPrograms = array();
         }
-        $role = $params->get('role'); // use entrust role names, deprecate wp roles
+        $roleId = $params->get('role'); // use entrust role names, deprecate wp roles
+        $role = Role::find($roleId);
 
         // first remove any that dont still exist
         $wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('blog_id');
@@ -121,11 +129,11 @@ class WpUserRepository {
                 // capabilities
                 $capabilities = $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->first();
                 if($capabilities) {
-                    $capabilities->meta_value = serialize(array($role => '1'));
+                    $capabilities->meta_value = serialize(array($role->name => '1'));
                 } else {
                     $capabilities = new WpUserMeta;
                     $capabilities->meta_key = "wp_{$wpBlogId}_capabilities";
-                    $capabilities->meta_value = serialize(array($role => '1'));
+                    $capabilities->meta_value = serialize(array($role->name => '1'));
                     $capabilities->user_id = $wpUser->ID;
                 }
                 $capabilities->save();

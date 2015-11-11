@@ -23,17 +23,17 @@
 
                         <div class="row" style="">
                             <div class="col-sm-12">
-                                <div class="pull-left">
-                                    <a href="{{ url('users/'.$wpUser->ID.'/msgcenter') }}" class="btn btn-primary">App Simulator</a>
-                                </div>
-                                <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ url('users/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed JSON</a>
-                                </div>
                                 @if($wpUser->hasRole('patient'))
+                                    <div class="pull-left">
+                                        <a href="{{ url('users/'.$wpUser->ID.'/msgcenter') }}" class="btn btn-primary">App Simulator</a>
+                                    </div>
                                     <div class="pull-left" style="margin-left:10px;">
                                         <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-orange">Patient</a>
                                     </div>
                                 @endif
+                                <div class="pull-left" style="margin-left:10px;">
+                                    <a href="{{ url('users/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed JSON</a>
+                                </div>
                                 <div class="pull-right">
                                     <a href="{{ URL::route('users.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
@@ -44,38 +44,14 @@
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist" style="margin-top:20px;">
                             <li role="presentation" class="active"><a href="#program" aria-controls="program" role="tab" data-toggle="tab">User Info</a></li>
-                            <li role="presentation"><a href="#roles" aria-controls="roles" role="tab" data-toggle="tab">Roles</a></li>
                             <li role="presentation"><a href="#userconfig" aria-controls="userconfig" role="tab" data-toggle="tab">User Config</a></li>
                             <li role="presentation"><a href="#usercareteam" aria-controls="usercareteam" role="tab" data-toggle="tab">Care Team</a></li>
                         </ul>
 
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" id="program">
-                                <h2>Primary Program</h2>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('program_id', 'Primary Program:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::select('program_id', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'disabled' => 'disabled', 'style' => 'width:80%;']) !!}{!! Form::hidden('program_id', $primaryBlog) !!}</div>
-                                    </div>
-                                </div>
 
-                                <h2>Programs:</h2>
-                                <div id="programs">
-                                    @foreach( $wpBlogs as $wpBlogId => $domain )
-                                        <div class="form-group role" id="program_{{ $wpBlogId }}">
-                                            <div class="col-sm-1">
-                                                @if( in_array($wpBlogId, $wpUser->programs()->lists('blog_id')) )
-                                                    {!! Form::checkbox('programs[]', $wpBlogId, ['checked' => "checked"], ['style' => '']) !!}
-                                                @else
-                                                    {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '']) !!}
-                                                @endif
-                                            </div>
-                                            <div class="col-sm-11">{!! Form::label('Value', 'Program: '.$domain, array('class' => '')) !!}</div>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                                <h2>New User System Info</h2>
+                                <h2>User Info</h2>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('user_login', 'Login:') !!}</div>
@@ -88,7 +64,6 @@
                                         <div class="col-xs-10">{!! Form::text('user_email', $wpUser->user_email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
-                                <h2>User Info</h2>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('first_name', 'First Name:') !!}</div>
@@ -105,36 +80,40 @@
                                         <div class="col-xs-4">{!! Form::select('user_status', array('0' => '0', '1' => '1'), $wpUser->user_status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div role="tabpanel" class="tab-pane" id="roles">
-                                <h2>Roles:</h2>
+                                <h2>Role:</h2>
                                 <div id="roles">
-                                    @foreach( $roles as $role )
-                                        <div class="form-group role" id="role_{{ $role }}">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-2">{!! Form::label('role', 'Role:') !!}</div>
+                                            <div class="col-xs-10">{!! Form::select('role', $roles, $role->id, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h2>Primary Program</h2>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('program_id', 'Primary Program:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::select('program_id', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'disabled' => 'disabled', 'style' => 'width:80%;']) !!}{!! Form::hidden('program_id', $primaryBlog) !!}</div>
+                                    </div>
+                                </div>
+
+                                <h2>Programs:</h2>
+                                <div id="programs">
+                                    @foreach( $wpBlogs as $wpBlogId => $domain )
+                                        <div class="row role" id="program_{{ $wpBlogId }}">
                                             <div class="col-sm-1">
-                                                @if( in_array($role->id, $wpUser->roles()->lists('id')) )
-                                                    {!! Form::checkbox('roles[]', $role->id, ['checked' => "checked"], ['style' => '']) !!}
+                                                @if( in_array($wpBlogId, $wpUser->programs()->lists('blog_id')) )
+                                                    {!! Form::checkbox('programs[]', $wpBlogId, ['checked' => "checked"], ['style' => '']) !!}
                                                 @else
-                                                    {!! Form::checkbox('roles[]', $role->id, [], ['style' => '']) !!}
+                                                    {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '']) !!}
                                                 @endif
                                             </div>
-                                            <div class="col-sm-11">{!! Form::label('Value', 'Role: '.$role->display_name, array('class' => '')) !!}</div>
+                                            <div class="col-sm-11">{!! Form::label('Value', 'Program: '.$domain, array('class' => '')) !!}</div>
                                         </div>
                                     @endforeach
                                 </div>
-                                <br />
-                                <br />
-                                <br />
-
-                                <h3>WP Role</h3>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('role', 'WP Role:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::select('role', $providers_arr, $wpRole, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
-                                    </div>
-                                </div>
-                                <br />
                             </div>
 
                             <div role="tabpanel" class="tab-pane" id="userconfig">
