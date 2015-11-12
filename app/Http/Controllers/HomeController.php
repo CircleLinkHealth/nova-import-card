@@ -48,7 +48,7 @@ class HomeController extends Controller {
 			})
 				->get()->count();
 			$stats['totalPatients'] = WpUser::whereHas('roles', function($q) {
-					$q->where('name', '=', 'patient');
+					$q->where('name', '=', 'participant');
 				})
 				->get()->count();
 			$stats['totalProviders'] = WpUser::whereHas('roles', function($q) {
@@ -62,7 +62,7 @@ class HomeController extends Controller {
 
 			return view('provider/dashboard', ['user' => $user]);
 
-		} else if($user->hasRole('patient')) {
+		} else if($user->hasRole('participant')) {
 
 			return view('patient/dashboard', ['user' => $user]);
 

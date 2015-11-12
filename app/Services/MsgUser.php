@@ -19,7 +19,7 @@ class MsgUser {
 			$join->on('wp_users.id', '=', 'um.user_id')->where('um.meta_key', '=', 'wp_'.$blog_id.'_user_config');
 		});
 		$query->whereHas('roles', function($q){
-			$q->where('name', '=', 'patient');
+			$q->where('name', '=', 'participant');
 		});
 		$query->orderBy("id", "desc");
 		$allUsers = $query->get();

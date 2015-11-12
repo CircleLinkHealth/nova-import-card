@@ -52,7 +52,7 @@ class PatientCareplanController extends Controller {
 		$programId = \Session::get('activeProgramId');
 
 		// roles
-		$patientRoleId = Role::where('name', '=', 'patient')->first();
+		$patientRoleId = Role::where('name', '=', 'participant')->first();
 		$patientRoleId = $patientRoleId->id;
 
 		// user meta
@@ -125,7 +125,7 @@ class PatientCareplanController extends Controller {
 			}
 			return redirect()->back()->with('messages', ['Successfully updated patient demographics.']);
 		} else {
-			$role = Role::whereName('patient')->first();
+			$role = Role::whereName('participant')->first();
 
 			$newUserId = str_random(20);
 

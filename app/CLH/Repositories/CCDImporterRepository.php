@@ -18,7 +18,7 @@ class CCDImporterRepository
      */
     public function createRandomUser($blogId)
     {
-        $role = Role::whereName('patient')->first();
+        $role = Role::whereName('participant')->first();
 
         $newUserId = str_random(20);
 

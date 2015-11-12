@@ -23,7 +23,7 @@
 
                         <div class="row" style="">
                             <div class="col-sm-12">
-                                @if($wpUser->hasRole('patient'))
+                                @if($wpUser->hasRole('participant'))
                                     <div class="pull-left">
                                         <a href="{{ url('users/'.$wpUser->ID.'/msgcenter') }}" class="btn btn-primary">App Simulator</a>
                                     </div>

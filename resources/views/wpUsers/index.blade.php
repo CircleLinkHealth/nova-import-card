@@ -80,9 +80,9 @@
                                         </td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
-                                                @if($wpUser->hasRole('patient'))
+                                                @if($wpUser->hasRole('participant'))
                                                     <div style="margin-left:10px;">
-                                                        <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-orange btn-xs">Patient</a>
+                                                        <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-orange btn-xs">Participant</a>
                                                     </div>
                                                 @else
                                                     @foreach ($wpUser->roles as $role)

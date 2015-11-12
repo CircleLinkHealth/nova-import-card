@@ -119,7 +119,7 @@ class WpUserRepository {
         if($roleId) {
             $role = Role::find($roleId);
         } else {
-            $role = Role::where('name', '=', 'patient')->first();
+            $role = Role::where('name', '=', 'participant')->first();
         }
 
         // first detatch relationship

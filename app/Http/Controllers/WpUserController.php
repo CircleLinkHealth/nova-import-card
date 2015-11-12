@@ -112,10 +112,10 @@ class WpUserController extends Controller {
 				$wpUsers = $wpUsers->whereHas('roles', function ($q) {
 					$q->where('name', '!=', 'administrator');
 				});
-				// providers can only see their patients
+				// providers can only see their participants
 				if(Auth::user()->hasRole(['provider'])) {
 					$wpUsers->whereHas('roles', function ($q) {
-						$q->where('name', '=', 'patient');
+						$q->where('name', '=', 'participant');
 					});
 					$wpUsers->where('program_id', '=', Auth::user()->program_id);
 				}
@@ -143,7 +143,7 @@ class WpUserController extends Controller {
 	{
 		$wpUser = new WpUser;
 
-		// create patient here
+		// create participant here
 
 		return redirect()->route('users.edit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
 	}
