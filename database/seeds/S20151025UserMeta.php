@@ -1,7 +1,7 @@
 <?php
 
 use App\WpUser;
-use App\CPRulesItemMeta;
+use App\WpUserMeta;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,11 +24,14 @@ class S20151025UserMeta extends Seeder {
 
         if(count($users) > 0) {
             foreach($users as $user) {
-                $meta = new CPRulesItemMeta;
+                $removed = WpUserMeta::where('user_id', '=', $user->ID)
+                    ->where('meta_key' , '=', 'careplan_status')
+                    ->delete();
+                $meta = new WpUserMeta;
                 $meta->user_id = $user->ID;
                 $meta->meta_key = 'careplan_status';
                 $meta->meta_value = 'qa_approved';
-                //$meta->save();
+                $meta->save();
                 echo 'added careplan_status = qa_approved to '.$user->ID.PHP_EOL;
             }
         }
@@ -48,18 +51,30 @@ class S20151025UserMeta extends Seeder {
 
         if(count($users) > 0) {
             foreach($users as $user) {
-                $meta = new CPRulesItemMeta;
+                $removed = WpUserMeta::where('user_id', '=', $user->ID)
+                    ->where('meta_key' , '=', 'careplan_approved')
+                    ->delete();
+                $removed = WpUserMeta::where('user_id', '=', $user->ID)
+                    ->where('meta_key' , '=', 'careplan_approver')
+                    ->delete();
+                $removed = WpUserMeta::where('user_id', '=', $user->ID)
+                    ->where('meta_key' , '=', 'careplan_qa_approver')
+                    ->delete();
+                $meta = new WpUserMeta;
                 $meta->user_id = $user->ID;
                 $meta->meta_key = 'careplan_qa_approver';
                 $meta->meta_value = '1';
-                //$meta->save();
+                $meta->save();
                 echo 'added careplan_qa_approver = qa_approved to '.$user->ID.PHP_EOL;
-                $meta = new CPRulesItemMeta;
+                $removed = WpUserMeta::where('user_id', '=', $user->ID)
+                    ->where('meta_key' , '=', 'careplan_qa_date')
+                    ->delete();
+                $meta = new WpUserMeta;
                 $meta->user_id = $user->ID;
                 $meta->meta_key = 'careplan_qa_date';
                 $meta->meta_value = date('Y-m-d H:i:s');
-                //$meta->save();
-                echo 'added careplan_qa_date = careplan_qa_date to '.$user->ID.PHP_EOL;
+                $meta->save();
+                echo 'added careplan_qa_date = '.date('Y-m-d H:i:s').' to '.$user->ID.PHP_EOL;
             }
         }
 
@@ -78,11 +93,14 @@ class S20151025UserMeta extends Seeder {
 
         if(count($users) > 0) {
             foreach($users as $user) {
-                $meta = new CPRulesItemMeta;
+                $removed = WpUserMeta::where('user_id', '=', $user->ID)
+                    ->where('meta_key' , '=', 'ccm_enabled')
+                    ->delete();
+                $meta = new WpUserMeta;
                 $meta->user_id = $user->ID;
                 $meta->meta_key = 'ccm_enabled';
                 $meta->meta_value = 'true'; // set everyone to true
-                //$meta->save();
+                $meta->save();
                 echo 'adding ccm_enabled = true to '.$user->ID.PHP_EOL;
             }
         }
