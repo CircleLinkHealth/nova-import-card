@@ -19,20 +19,58 @@
                     <div class="panel-body">
                         @include('errors.errors')
 
-                        <strong>Parent Locations:</strong><BR>
+                        <h2>Parent Locations:</h2>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <td><strong>Location</strong></td>
+                                <td><strong>Detail</strong></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if (count($locationParents) > 0)
+                                @foreach( $locationParents as $id => $loc )
+                                    <tr>
+                                        <td>
+                                            <a href='/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ action('LocationController@show', $id) }}" class="btn btn-info btn-xs">{{ $loc }}</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr><td colspan="7">No parent locations found</td></tr>
+                            @endif
+                            </tbody>
+                        </table>
 
-                        @foreach( $locationParents as $id => $loc )
-<<<<<<< HEAD
-                            <a href='/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a> <BR>
-=======
-                            <a href="{{ action('LocationController@show', $id) }}">{{ $id }} -- {{ $loc }}</a> <BR>
->>>>>>> e9f5858661d87b17c00404877a6782c66a23c11a
-                        @endforeach
 
-                        <strong>Parents Sub Locations:</strong><BR>
-                        @foreach( $locationParentsSubs as $id => $loc )
-                            {{ $id }} -- {{ $loc }} <BR>
-                        @endforeach
+                        <h2>Parents Sub Locations:</h2>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <td><strong>Location</strong></td>
+                                <td><strong>Detail</strong></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if (count($locationParentsSubs) > 0)
+                                @foreach( $locationParentsSubs as $id => $loc )
+                                    <tr>
+                                        <td>
+                                            <a href='/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ action('LocationController@show', $id) }}" class="btn btn-info btn-xs">{{ $loc }}</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr><td colspan="7">No sub locations found</td></tr>
+                            @endif
+                            </tbody>
+                        </table>
 
                     </div>
                 </div>

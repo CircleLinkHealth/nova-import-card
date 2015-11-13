@@ -4,6 +4,16 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h1>Add New Location</h1>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="pull-right" style="margin:20px;">
+                            <a href="{{ action('LocationController@index') }}" class="btn btn-danger">Back</a>
+                        </div>
+                    </div>
+                </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">Add location</div>
                     <div class="panel-body">
