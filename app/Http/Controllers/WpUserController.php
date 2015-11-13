@@ -316,7 +316,10 @@ class WpUserController extends Controller {
 
 		// set role
 		$capabilities = unserialize($userMeta['wp_' . $wpUser->program_id . '_capabilities']);
-		$wpRole = key($capabilities);
+		$wpRole = '';
+		if(is_array($capabilities)) {
+			$wpRole = key($capabilities);
+		}
 
 		// locations @todo get location id for WpBlog
 		$wpBlog = WpBlog::find($wpUser->program_id);

@@ -11,10 +11,10 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-2">
                         <h1>Users</h1>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-10">
                         <div class="pull-right" style="margin:20px;">
                             <a href="{{ URL::route('users.create', array()) }}" class="btn btn-success">New User</a>
                             <a href="{{ URL::route('users.createQuickPatient', array('blogId' => '7')) }}" class="btn btn-success">Patient Quick Add (Program 7)</a>
@@ -24,8 +24,6 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Users</div>
                     <div class="panel-body">
-                        <p>These users are coming from the wp_users.. this laravel project has been modified to use wp_users as the primary users table.</p>
-                        <p><strong>Users missing critical data are omitted from this page.. usually either primary_bloy meta or user_*_config meta</strong></p>
 
                         <div class="row">
                             {!! Form::open(array('url' => URL::route('users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
