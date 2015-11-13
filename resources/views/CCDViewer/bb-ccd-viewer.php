@@ -20,7 +20,7 @@
     <script src="/js/ccd/swig.js"></script>
 <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/swig/1.4.1/swig.min.js"></script>-->
 <!--    <script src="/js/ccd/bluebutton-0.0.10.js"></script>-->
-    <script src="/js/ccd/bluebutton.js"></script>
+    <script src="/js/ccd/bluebutton.min.js"></script>
     <script src="/js/ccd/bbclear.js"></script>
 </head>
 
@@ -41,7 +41,8 @@
                     </ul>
                 </div>
             </nav>
-            <div id="demographics" class="panel">
+
+        <div id="demographics" class="panel">
                 <h1>{{demographics.name|full_name}}</h1>
                 <p class="narrative">
                     <span class="general">
@@ -304,7 +305,15 @@
             </div>
             <p>Reticulating splines...</p>
         </div>
+    <form id="oldViewer" action="ccd/old-viewer/" style="display: block;" method="post">
+        <input id="sendThis" type="hidden" name="xml" value="<?= base64_encode($ccd); ?>">
+        <input type="submit">
+    </form>
     </body>
+
 </html>
 
+
+
 <script style="display: none;" id="xmlBBData" type="text/plain"><?= $ccd; ?></script>
+
