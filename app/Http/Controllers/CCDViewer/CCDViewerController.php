@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 
 use App\XmlCCD;
 use Illuminate\Http\Request;
+use JavaScript;
 
 class CCDViewerController extends Controller {
 
@@ -27,6 +28,17 @@ class CCDViewerController extends Controller {
 
             return view('CCDViewer.viewer', compact('template'));
         }
+    }
+
+    public function oldViewer(Request $request)
+    {
+        $xml = base64_decode($request->input('xml'));
+
+//        JavaScript::put([
+//           'clhXml' => $xml
+//        ]);
+
+        return view('CCDViewer.old-viewer', compact('xml'));
     }
 
 }

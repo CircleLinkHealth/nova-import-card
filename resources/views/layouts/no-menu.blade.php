@@ -33,6 +33,7 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
 	<script src="{{ asset('/js/scripts.js') }}"></script>
 	<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
+	<script src="{{ asset('/js/ccd/bluebutton.min.js') }}"></script>
 
 	<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
 	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
@@ -48,7 +49,7 @@
 			</div>
 
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				{{--<h1 class="text-center">CCD Importer</h1>--}}
+				<h1 class="text-center">CCD Importer</h1>
 			</div>
 		</div>
 	</nav>

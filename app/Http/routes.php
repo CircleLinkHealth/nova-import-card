@@ -6,10 +6,6 @@
 //CCD Parser Demo Route
 Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 
-Route::get('ccd/show/{userId}', 'CCDViewer\CCDViewerController@showByUserId');
-
-Route::post('ccd', ['uses' => 'CCDViewer\CCDViewerController@showUploadedCcd', 'as' => 'ccd-viewer.post']);
-
 /**
  * UPLOAD CCD ROUTES
  * @todo How do we protect those? auth middleware?
@@ -74,6 +70,14 @@ Route::group(['namespace' => 'Redox'], function ()
 /****************************/
 Route::group(['middleware' => 'auth'], function ()
 {
+	/****************************
+	 * CCD STUFF
+	 ****************************/
+	Route::get('ccd/show/{userId}', 'CCDViewer\CCDViewerController@showByUserId');
+	Route::post('ccd/old-viewer', 'CCDViewer\CCDViewerController@oldViewer');
+	Route::post('ccd', ['uses' => 'CCDViewer\CCDViewerController@showUploadedCcd', 'as' => 'ccd-viewer.post']);
+
+
 	/****************************/
 	// HOME BASE
 	/****************************/
