@@ -59,9 +59,9 @@
 								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('users.index', array('filterRole' => 'provider')) }}"><i class="icon--home--white"></i> Providers</a></td>
 							</tr>
 							<tr>
-								<td><strong>Total Patients</strong></td>
-								<td>{{ $stats['totalPatients'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('users.index', array('filterRole' => 'patient')) }}"><i class="icon--home--white"></i> Patients</a></td>
+								<td><strong>Total Participant</strong></td>
+								<td>{{ $stats['totalParticipants'] }}</td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('users.index', array('filterRole' => 'participant')) }}"><i class="icon--home--white"></i> Participant</a></td>
 							</tr>
 
 						</tbody>
