@@ -78,15 +78,15 @@ class S20151025UserMeta extends Seeder {
             }
         }
 
-        // ccm_enabled
+        // ccm_status
 
-        // get users without ccm_enabled
-        echo PHP_EOL.PHP_EOL.'Users missing ccm_enabled'.PHP_EOL.PHP_EOL;
+        // get users without ccm_status
+        echo PHP_EOL.PHP_EOL.'Users missing ccm_status'.PHP_EOL.PHP_EOL;
         $users = WpUser::whereDoesntHave('meta', function ($q) {
-            $q->where('meta_key', '=', 'ccm_enabled');
+            $q->where('meta_key', '=', 'ccm_status');
         })
             ->orWhereHas('meta', function ($q) {
-                $q->where('meta_key', '=', 'ccm_enabled');
+                $q->where('meta_key', '=', 'ccm_status');
                 $q->where('meta_value', '=', '');
             })
             ->get();
@@ -96,12 +96,15 @@ class S20151025UserMeta extends Seeder {
                 $removed = WpUserMeta::where('user_id', '=', $user->ID)
                     ->where('meta_key' , '=', 'ccm_enabled')
                     ->delete();
+                $removed = WpUserMeta::where('user_id', '=', $user->ID)
+                    ->where('meta_key' , '=', 'ccm_status')
+                    ->delete();
                 $meta = new WpUserMeta;
                 $meta->user_id = $user->ID;
-                $meta->meta_key = 'ccm_enabled';
-                $meta->meta_value = 'true'; // set everyone to true
+                $meta->meta_key = 'ccm_status';
+                $meta->meta_value = 'paused'; // set everyone to true
                 $meta->save();
-                echo 'adding ccm_enabled = true to '.$user->ID.PHP_EOL;
+                echo 'adding ccm_status = paused to '.$user->ID.PHP_EOL;
             }
         }
 
