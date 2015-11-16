@@ -32,11 +32,8 @@ class CCDViewerController extends Controller {
 
     public function oldViewer(Request $request)
     {
-        $xml = base64_decode($request->input('xml'));
-
-//        JavaScript::put([
-//           'clhXml' => $xml
-//        ]);
+//        $xml = base64_decode($request->input('xml'));
+        $xml = urldecode($request->input('xml'));
 
         return view('CCDViewer.old-viewer', compact('xml'));
     }
