@@ -47,7 +47,7 @@ class HomeController extends Controller {
 				$q->where('name', '=', 'administrator');
 			})
 				->get()->count();
-			$stats['totalPatients'] = WpUser::whereHas('roles', function($q) {
+			$stats['totalParticipants'] = WpUser::whereHas('roles', function($q) {
 					$q->where('name', '=', 'participant');
 				})
 				->get()->count();
