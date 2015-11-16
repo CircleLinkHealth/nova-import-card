@@ -18,5 +18,5 @@ class UserMetaTemplate extends DataTemplate
     public $careplan_provider_approver;
     public $careplan_provider_date;
     public $careplan_status = 'draft';
-    public $ccm_enabled;
+    public $ccm_status;
 }
