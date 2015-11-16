@@ -8,12 +8,15 @@
 
             <div class="page-content">
 
-                <textarea id="xml" style="display: none;">{{ $xml }}</textarea>
+                <textarea id="xml" style="display: block;">{{ $xml }}</textarea>
 
                 <h2>View by section:</h2>
-                <a href="#document-section">Document</a>, <a href="#demographics-section">Demographics</a>,
-                <a href="#allergies-section">Allergies</a>, <a href="#careplan-section">Care Plan</a>,
-                <a href="#chiefcomplaint-section">Chief Complaint</a>, <a href="#encounters-section">Encounters</a>,
+                <a href="#document-section">Document</a>,
+                <a href="#demographics-section">Demographics</a>,
+                <a href="#allergies-section">Allergies</a>,
+                <a href="#careplan-section">Care Plan</a>,
+                <a href="#chiefcomplaint-section">Chief Complaint</a>,
+                <a href="#encounters-section">Encounters</a>,
                 <a href="#functionalstatus-section">Functional Status</a>,
                 <a href="#immunizations-section">Immunizations</a>,
                 <a href="#immunizationdeclines-section">Declined Immunizations</a>,
@@ -217,10 +220,7 @@
     </script>
 
     <script>
-        //        (function () {
-        //            alert('asd');
-        convert();
-        //        });
+        document.onload = convert();
     </script>
 
     </body>
