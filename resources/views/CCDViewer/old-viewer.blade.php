@@ -8,7 +8,13 @@
 
             <div class="page-content">
 
-                <textarea id="xml" style="display: block;">{{ $xml }}</textarea>
+                <textarea id="xml" style="display: block;">
+                    @if(!empty($xml))
+                        {{ $xml }}
+                    @endif
+                </textarea>
+
+                <button style="background-color: orange; color: white;" onclick="convert()">Convert to Human Form</button>
 
                 <h2>View by section:</h2>
                 <a href="#document-section">Document</a>,

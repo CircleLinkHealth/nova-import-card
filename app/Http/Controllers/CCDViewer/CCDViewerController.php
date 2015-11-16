@@ -9,6 +9,11 @@ use JavaScript;
 
 class CCDViewerController extends Controller {
 
+    public function create()
+    {
+        return view('CCDViewer.old-viewer');
+    }
+
 	public function showByUserId($userId)
     {
         $ccd = XmlCCD::whereUserId($userId)->first()->ccd;
