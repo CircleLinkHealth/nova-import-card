@@ -36,7 +36,7 @@ class Parser
 
         $userConfig->email = $demographics->email;
         $userConfig->mrn_number = $demographics->mrn_number;
-        $userConfig->study_phone_number = $demographics->phone->home;
+//        $userConfig->study_phone_number = $demographics->phone->home;
         $userConfig->gender = call_user_func(function () use ($demographics){
             $maleVariations = ['m', 'male', 'man'];
 
