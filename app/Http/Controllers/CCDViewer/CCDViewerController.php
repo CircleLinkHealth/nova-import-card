@@ -9,6 +9,11 @@ use JavaScript;
 
 class CCDViewerController extends Controller {
 
+    public function create()
+    {
+        return view('CCDViewer.old-viewer');
+    }
+
 	public function showByUserId($userId)
     {
         $ccd = XmlCCD::whereUserId($userId)->first()->ccd;
@@ -32,10 +37,20 @@ class CCDViewerController extends Controller {
 
     public function oldViewer(Request $request)
     {
-//        $xml = base64_decode($request->input('xml'));
-        $xml = urldecode($request->input('xml'));
+        if ($request->hasFile('uploadedCcd'))
+        {
+            $xml = file_get_contents($request->file('uploadedCcd'));
 
-        return view('CCDViewer.old-viewer', compact('xml'));
+            return view('CCDViewer.old-viewer', compact('xml'));
+        }
+    }
+
+    public function viewSource(Request $request)
+    {
+        if ($xml = urldecode($request->input('xml')))
+        {
+            return view('CCDViewer.old-viewer', compact('xml'));
+        }
     }
 
 }

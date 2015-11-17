@@ -1,7 +1,7 @@
  <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <form action="{{ route('ccd-viewer.post') }}" method="post" enctype="multipart/form-data" target="_blank">
+                <form action="{{ route('ccd-old-viewer.post') }}" method="post" enctype="multipart/form-data" target="_blank">
                     <div class="form-group">
                         <label for="uploadedCcd">Select CCD to upload :</label>
                         <input type="file" name="uploadedCcd" id="uploadedCcd">

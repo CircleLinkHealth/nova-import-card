@@ -8,25 +8,37 @@
 
             <div class="page-content">
 
-                <textarea id="xml" style="display: block;">{{ $xml }}</textarea>
+                <h1 class="text-center">Raw CCD Viewer</h1>
 
-                <h2>View by section:</h2>
-                <a href="#document-section">Document</a>,
-                <a href="#demographics-section">Demographics</a>,
-                <a href="#allergies-section">Allergies</a>,
-                <a href="#careplan-section">Care Plan</a>,
-                <a href="#chiefcomplaint-section">Chief Complaint</a>,
-                <a href="#encounters-section">Encounters</a>,
-                <a href="#functionalstatus-section">Functional Status</a>,
-                <a href="#immunizations-section">Immunizations</a>,
-                <a href="#immunizationdeclines-section">Declined Immunizations</a>,
-                <a href="#instructions-section">Patient Instructions</a>,
-                <a href="#medications-section">Medications</a>,
-                <a href="#problems-section">Problems</a>,
-                <a href="#procedures-section">Procedures</a>,
-                <a href="#results-section">Results (Labs)</a>,
-                <a href="#smokingstatus-section">Smoking Status</a>,
-                <a href="#vitals-section">Vitals</a>
+                <div class="hide">
+                    <textarea id="xml">
+                        @if(!empty($xml))
+                                {{ htmlentities($xml) }}
+                            @endif
+                    </textarea>
+
+                    <button style="background-color: orange; color: white;" onclick="convert()">Convert to Human Form</button>
+                </div>
+
+                <nav id="fixed-ccd-viewer-menu" class="col-md-10">
+                    <a href="#document-section">Document</a> || 
+                    <a href="#demographics-section">Demographics</a> || 
+                    <a href="#allergies-section">Allergies</a> || 
+                    <a href="#careplan-section">Care Plan</a> || 
+                    <a href="#chiefcomplaint-section">Chief Complaint</a> || 
+                    <a href="#encounters-section">Encounters</a> || 
+                    <a href="#functionalstatus-section">Functional Status</a> || 
+                    <a href="#immunizations-section">Immunizations</a> || 
+                    <br>
+                    <a href="#immunizationdeclines-section">Declined Immunizations</a> || 
+                    <a href="#instructions-section">Patient Instructions</a> || 
+                    <a href="#medications-section">Medications</a> || 
+                    <a href="#problems-section">Problems</a> || 
+                    <a href="#procedures-section">Procedures</a> || 
+                    <a href="#results-section">Results (Labs)</a> || 
+                    <a href="#smokingstatus-section">Smoking Status</a> || 
+                    <a href="#vitals-section">Vitals</a>
+                </nav>
 
                 <a name="document-section"></a>
 

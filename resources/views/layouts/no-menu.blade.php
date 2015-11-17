@@ -49,7 +49,7 @@
 			</div>
 
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				<h1 class="text-center">CCD Importer</h1>
+				<h1 class="text-center"></h1>
 			</div>
 		</div>
 	</nav>

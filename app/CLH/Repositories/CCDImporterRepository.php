@@ -20,6 +20,8 @@ class CCDImporterRepository
     {
         $role = Role::whereName('participant')->first();
 
+        if (empty($role)) throw new \Exception('User role not found.', 500);
+
         $newUserId = str_random(20);
 
         $bag = new ParameterBag([

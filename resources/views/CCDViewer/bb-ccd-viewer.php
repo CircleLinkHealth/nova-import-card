@@ -44,10 +44,12 @@
 
         <div id="demographics" class="panel">
                 <h1>{{demographics.name|full_name}}</h1>
-            <form id="oldViewer" action="<?= route('ccd.old.viewer'); ?>" style="display: block;" method="post" target="_blank">
-                <input id="sendThis" type="text" name="xml" style="display: none;" value="<?= urlencode($ccd); ?>">
-                <input type="submit" value="View Source" >
-            </form>
+
+                <form id="oldViewer" action="<?= route('ccd.old.viewer'); ?>" style="display: block;" method="post" target="_blank">
+                    <input id="sendThis" type="text" name="xml" style="display: none;" value="<?= urlencode($ccd); ?>">
+                    <input type="submit" value="View Source" >
+                </form>
+
                 <p class="narrative">
                     <span class="general">
                         <strong>{{demographics.name|display_name}}</strong> is a {% if demographics.dob %}<strong>{{demographics.dob|age}}</strong> year old{% endif %}
