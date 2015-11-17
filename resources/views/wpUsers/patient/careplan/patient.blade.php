@@ -220,6 +220,7 @@
                                 <div class="col-sm-12 text-right">
                                     <span class="btn btn-group  text-right"><a class="btn btn-green btn-sm inline-block" omitsubmit="yes" role="button" target="_Blank" href="https://s3.amazonaws.com/clh-downloads/Circlelink+CCM+Consent+Form.pdf">Download Form</a></span>
                                 </div>
+
                                 <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_location') ? 'has-error' : '' }}">
                                     <div class="row">
                                         <div class="col-sm-12">
@@ -231,6 +232,7 @@
                                     </div>
                                     <span class="help-block">{{ $errors->first('preferred_contact_location') }}</span>
                                 </div>
+
                                 <div class="form-group form-item form-item-spacing col-lg-7 col-sm-12 <?php //echo $validatlidation['status']['class']; ?>">
                                     <div class="row">
                                         <div class="col-sm-2 col-lg-4">
@@ -248,6 +250,14 @@
                                         </div>
                                     </div>
                                     <span class="help-block">{{ $errors->first('status') }}</span>
+                                </div>
+
+
+                                <div class="form-group form-item form-item-spacing col-lg-7 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-2 col-lg-4">{!! Form::label('ccm_status', 'CCM Status: '.$userMeta['ccm_status']) !!}</div>
+                                        <div class="col-sm-9 col-lg-8">{!! Form::select('ccm_status', array('paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn'), $userMeta['ccm_status'], ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                    </div>
                                 </div>
 
                             </div>

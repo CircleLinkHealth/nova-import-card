@@ -38,7 +38,7 @@ class HomeController extends Controller {
 		$user = $wpUser = WpUser::find(Auth::user()->ID);
 
 		// switch dashboard view based on logged in user
-		if($user->hasRole('administrator')) {
+		if($user->hasRole('administrator') || $user->hasRole('provider')) {
 
 			$stats = array();
 			$stats['totalPrograms'] = WpBlog::all()->count();
@@ -57,10 +57,6 @@ class HomeController extends Controller {
 				->get()->count();
 
 			return view('admin/dashboard', compact(['user', 'stats']));
-
-		} else if($user->hasRole('provider')) {
-
-			return view('provider/dashboard', ['user' => $user]);
 
 		} else if($user->hasRole('participant')) {
 
