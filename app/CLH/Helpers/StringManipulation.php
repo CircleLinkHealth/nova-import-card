@@ -19,7 +19,11 @@ class StringManipulation
     }
 
 
-
+    /**
+     * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx
+     * @param $string
+     * @return string
+     */
     public function formatPhoneNumber($string)
     {
         $sanitized = $this->extractNumbers($string);
@@ -29,6 +33,5 @@ class StringManipulation
         }
 
         return substr($sanitized, 0, 3) . '-' . substr($sanitized, 4, 3) . '-' . substr($sanitized, 7, 4);
-
     }
 }
