@@ -45,4 +45,12 @@ class CCDViewerController extends Controller {
         }
     }
 
+    public function viewSource(Request $request)
+    {
+        if ($xml = urldecode($request->input('xml')))
+        {
+            return view('CCDViewer.old-viewer', compact('xml'));
+        }
+    }
+
 }
