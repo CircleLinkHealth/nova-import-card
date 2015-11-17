@@ -37,10 +37,12 @@ class CCDViewerController extends Controller {
 
     public function oldViewer(Request $request)
     {
-//        $xml = base64_decode($request->input('xml'));
-        $xml = urldecode($request->input('xml'));
+        if ($request->hasFile('uploadedCcd'))
+        {
+            $xml = file_get_contents($request->file('uploadedCcd'));
 
-        return view('CCDViewer.old-viewer', compact('xml'));
+            return view('CCDViewer.old-viewer', compact('xml'));
+        }
     }
 
 }

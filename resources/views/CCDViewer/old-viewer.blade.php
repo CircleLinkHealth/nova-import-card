@@ -8,13 +8,17 @@
 
             <div class="page-content">
 
-                <textarea id="xml" style="display: block;">
-                    @if(!empty($xml))
-                        {{ $xml }}
-                    @endif
-                </textarea>
+                <h1 class="text-left">Raw CCD Viewer (Stable)</h1>
 
-                <button style="background-color: orange; color: white;" onclick="convert()">Convert to Human Form</button>
+                <div class="hide">
+                    <textarea id="xml">
+                        @if(!empty($xml))
+                                {{ htmlentities($xml) }}
+                            @endif
+                    </textarea>
+
+                    <button style="background-color: orange; color: white;" onclick="convert()">Convert to Human Form</button>
+                </div>
 
                 <h2>View by section:</h2>
                 <a href="#document-section">Document</a>,

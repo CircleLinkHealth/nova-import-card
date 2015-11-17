@@ -9,7 +9,7 @@
 
 		<div class="col-md-6">
 			<div class="panel panel-default">
-				<div class="panel-heading">CCD Viewer</div>
+				<div class="panel-heading">BETA Color-coded CCD Viewer</div>
 
 				<div class="panel-body">
 					@include('CCDViewer.create')
@@ -18,10 +18,10 @@
 		</div>
 		<div class="col-md-6">
 			<div class="panel panel-default">
-				<div class="panel-heading">Box</div>
+				<div class="panel-heading">STABLE Raw CCD Viewer</div>
 
 				<div class="panel-body">
-					Administrator Useful stuff box 1
+					@include('CCDViewer.create-old-viewer')
 				</div>
 			</div>
 		</div>
