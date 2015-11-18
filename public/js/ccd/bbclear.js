@@ -148,6 +148,8 @@ var filters = {
             }
         }
         var name, first_given, other_given, names = input.given.slice(0);
+        var prefix = (input.prefix === null) ? '' : input.prefix;
+        var suffix = (input.suffix === null) ? '' : input.suffix;
         if (names instanceof Array) {
             first_given = names.splice(0, 1);
             other_given = names.join(" ");
@@ -157,7 +159,7 @@ var filters = {
         name = first_given;
         name = input.call_me ? name + " \"" + input.call_me + "\"" : name;
         name = (other_given) ? name + " " + other_given : name;
-        name = name + " " + input.family;
+        name = prefix + " " + name + " " + input.family + " " + suffix;
         return name;
     }, display_name: function (input) {
         if (input.given instanceof Array) {

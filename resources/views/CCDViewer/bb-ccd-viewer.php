@@ -127,6 +127,20 @@
             </dl>
             </div>
 
+        <div id="provider" class="panel">
+            <h1>Provider</h1>
+            <dl>
+                {% if document.legal_authenticator %}<li>
+                    <dt>{{document.legal_authenticator.assigned_person|full_name}}</dt>
+                    <dd>{{document.legal_authenticator.representedOrganization.name}}</dd>
+                    <dd>IdType: IdValue</dd>
+                    {% for id in document.legal_authenticator.ids %}
+                    {% if id %}<dd class="id">{{id.assigningAuthorityName}}: <span>{{id.extension}}</span></dd>{% endif %}
+                    {% endfor %}
+                </li>{% endif %}
+            </dl>
+        </div>
+
             <div id="allergies" class="panel">
                 <h1>Allergies</h1>
                 {% for allergy in allergies %}
