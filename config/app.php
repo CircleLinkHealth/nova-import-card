@@ -150,6 +150,8 @@ return [
 		'App\Providers\EventServiceProvider',
 		'App\Providers\RouteServiceProvider',
 		'App\Providers\CustomAuthProvider',
+		\App\Providers\UserMetaParserHelpersServiceProvider::class,
+		\App\Providers\StringManipulationServiceProvider::class,
 
 		/*
 		 * CPM Providers
@@ -163,6 +165,7 @@ return [
 		'Zizaco\Entrust\EntrustServiceProvider',
 		'Fideloper\Proxy\TrustedProxyServiceProvider',
 		'MikeMcLin\WpPassword\WpPasswordProvider',
+
 
 
 	],

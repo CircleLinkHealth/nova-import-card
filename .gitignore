@@ -3,6 +3,7 @@
 .idea/
 .elasticbeanstalk/
 .env
+_ide_helper.php
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

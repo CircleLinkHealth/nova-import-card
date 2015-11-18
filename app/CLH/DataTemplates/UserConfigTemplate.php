@@ -9,6 +9,9 @@ class UserConfigTemplate extends DataTemplate
     public $email;
     public $mrn_number;
     public $study_phone_number;
+    public $home_phone_number;
+    public $mobile_phone_number;
+    public $work_phone_number;
     public $active_date = null;
     public $preferred_contact_time;
     public $preferred_contact_timezone;

@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\CCD\Parser;
+use App\CLH\CCD\Importer\Parsers\UserMetaParser;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\CLH\Repositories\CCDImporterRepository;
@@ -90,7 +90,7 @@ class CCDUploadController extends Controller {
                 throw new \Exception('Blog ID missing.', 400);
             }
 
-            $parser = new Parser($parsedCCD);
+            $parser = new UserMetaParser($parsedCCD);
 
             $userConfig = $parser->parseUserConfig(new UserConfigTemplate())->getArray();
             $userConfig['program_id'] = $blogId;

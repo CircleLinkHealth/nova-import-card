@@ -1,17 +1,17 @@
 <?php
 
-namespace App\CLH\CCD;
+namespace App\CLH\CCD\Importer\Parsers;
 
 
+use App\CLH\CCD\Importer\Parsers\Facades\UserMetaParserHelpers;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\ParsedCCD;
 use App\WpUser;
 use Carbon\Carbon;
 
-class Parser
+class UserMetaParser
 {
-
     public $ccd;
 
     public function __construct(ParsedCCD $ccd)
@@ -36,7 +36,21 @@ class Parser
 
         $userConfig->email = $demographics->email;
         $userConfig->mrn_number = $demographics->mrn_number;
-//        $userConfig->study_phone_number = $demographics->phone->home;
+
+        $phones = UserMetaParserHelpers::getAllPhoneNumbers($demographics->phones);
+
+        $userConfig->home_phone_number = $phones['home'][0];
+        $userConfig->mobile_phone_number = $phones['mobile'][0];
+        $userConfig->work_phone_number = $phones['work'][0];
+
+        //primary phone number
+        $userConfig->study_phone_number =
+            empty($userConfig->mobile_phone_number)
+            ? empty($userConfig->home_phone_number)
+                ? $userConfig->work_phone_number
+                : $userConfig->home_phone_number
+            : $userConfig->mobile_phone_number;
+
         $userConfig->gender = call_user_func(function () use ($demographics){
             $maleVariations = ['m', 'male', 'man'];
 
