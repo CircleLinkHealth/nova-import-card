@@ -94,22 +94,37 @@
                     </li>
                     <li>
                         <dt>Telephone</dt>
-                        {% for number in demographics.phone %}
-                            {% if number %}<dd class="phone-{{loop.key}}">{{loop.key|slice(0,1)}}: <a href="{{number}}">{{number|format_phone}}</a></dd>{% endif %}
+                        {% for phone in demographics.phones %}
+                            {% if phone %}<dd class="phone-{{phone.type}}">{{phone.type|title}}: <a href="{{phone.number}}">{{phone.number|format_phone}}</a></dd>{% endif %}
                         {% else %}
                             <dd>No known number</dd>
                         {% endfor %}
                     </li>
-                    {% if demographics.guardian and demographics.guardian.name.family %}<li>
-                        <dt>{{demographics.guardian.relationship|fallback("Guardian")}}</dt>
-                        <dd>{{demographics.guardian.name|full_name}}</dd>
-                        {% for number in demographics.guardian.phone %}
-                            {% if number %}<dd class="phone-{{loop.key}}">{{loop.key|slice(0,1)}}: <a href="{{number}}">{{number|format_phone}}</a></dd>{% endif %}
-                        {% else %}
-                            <dd>No known number</dd>
-                        {% endfor %}
-                    </li>{% endif %}
                 </dl>
+
+            <h3>Patient Contacts</h3>
+
+            <dl>
+                {% if demographics.guardian and demographics.guardian.name.family %}<li>
+                    <dt>{{demographics.guardian.relationship|fallback("Guardian")}}</dt>
+                    <dd>{{demographics.guardian.name|full_name}}</dd>
+                    {% for number in demographics.guardian.phone %}
+                    {% if number %}<dd class="phone-{{loop.key}}">{{loop.key|slice(0,1)}}: <a href="{{number}}">{{number|format_phone}}</a></dd>{% endif %}
+                    {% else %}
+                    <dd>No known number</dd>
+                    {% endfor %}
+                </li>{% endif %}
+                {% for contact in demographics.patient_contacts %}<li>
+                    <dt>{{contact.relationship|title|fallback(contact.role_details.displayName)}},
+                    {{contact.relationship_code.displayName|title)}}</dt>
+                    <dd>{{contact.name|full_name}}</dd>
+                    {% for phone in contact.phones %}
+                    {% if phone %}<dd class="phone-{{phone.type}}">{{phone.type|title}}: <a href="{{phone.number}}">{{phone.number|format_phone}}</a></dd>{% endif %}
+                    {% else %}
+                    <dd>No known number</dd>
+                    {% endfor %}
+                </li>{% endfor %}
+            </dl>
             </div>
 
             <div id="allergies" class="panel">
