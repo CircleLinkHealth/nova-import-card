@@ -131,8 +131,8 @@
             <h1>Provider</h1>
             <dl>
                 {% if document.legal_authenticator %}<li>
-                    <dt>{{document.legal_authenticator.assigned_person|full_name}}</dt>
-                    <dd>{{document.legal_authenticator.representedOrganization.name}}</dd>
+                    <dt>{{document.legal_authenticator.assigned_person|full_name|fallback('')}}</dt>
+                    <dd>{{document.legal_authenticator.representedOrganization.name|fallback('')}}</dd>
                     <dd>IdType: IdValue</dd>
                     {% for id in document.legal_authenticator.ids %}
                     {% if id %}<dd class="id">{{id.assigningAuthorityName}}: <span>{{id.extension}}</span></dd>{% endif %}
