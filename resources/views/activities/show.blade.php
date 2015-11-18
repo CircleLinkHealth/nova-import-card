@@ -18,7 +18,7 @@
                                 <td><strong>id</strong></td>
                                 <td><strong>type</strong></td>
                                 <td><strong>duration</strong></td>
-                                <td><strong>patient_id</strong></td>
+                                <td><strong>participant</strong></td>
                                 <td><strong>provider_id</strong></td>
                                 <td><strong>logger_id</strong></td>
                             </tr>

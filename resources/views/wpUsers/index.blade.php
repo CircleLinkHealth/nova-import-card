@@ -17,7 +17,7 @@
                     <div class="col-sm-10">
                         <div class="pull-right" style="margin:20px;">
                             <a href="{{ URL::route('users.create', array()) }}" class="btn btn-success">New User</a>
-                            <a href="{{ URL::route('users.createQuickPatient', array('blogId' => '7')) }}" class="btn btn-success">Patient Quick Add (Program 7)</a>
+                            <a href="{{ URL::route('users.createQuickPatient', array('blogId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a>
                         </div>
                     </div>
                 </div>

@@ -28,7 +28,7 @@
                                         <a href="{{ url('users/'.$wpUser->ID.'/msgcenter') }}" class="btn btn-primary">App Simulator</a>
                                     </div>
                                     <div class="pull-left" style="margin-left:10px;">
-                                        <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-orange">Patient</a>
+                                        <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-orange">Participant</a>
                                     </div>
                                 @endif
                                 <div class="pull-left" style="margin-left:10px;">

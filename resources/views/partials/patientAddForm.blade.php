@@ -3,7 +3,7 @@
         <div class="col-md-10 col-md-offset-1 well well">
             <div class="row">
                 <div class="col-sm-8">
-                    <h2>Quick Add Patient</h2>
+                    <h2>Quick Add Participant</h2>
                 </div>
                 <div class="col-sm-4">
                     <div class="pull-right" style="margin:20px;">

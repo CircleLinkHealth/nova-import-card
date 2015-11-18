@@ -29,7 +29,7 @@
                             <td><strong>Title</strong></td>
                             <td><strong>Activity Type</strong></td>
                             <td><strong>Duration</strong></td>
-                            <td><strong>Patient</strong></td>
+                            <td><strong>Participant</strong></td>
                             <td><strong>Provider</strong></td>
                             <td><strong>processed</strong></td>
                             <td><strong>start/end</strong></td>
