@@ -320,12 +320,12 @@ ul.pills li {
     font-size: 18px
 }
 
-.container {
-    overflow: hidden;
-    *zoom: 1;
-    width: 800px;
-    margin: 0 auto
-}
+/*.container {*/
+    /*overflow: hidden;*/
+    /**zoom: 1;*/
+    /*width: 800px;*/
+    /*margin: 0 auto*/
+/*}*/
 
 nav#primaryNav {
     position: fixed;

@@ -239,7 +239,7 @@ function init_template() {
         tzOffset: 0
     });
 
-    template = swig.compile($(".bb-template").html());
+    template = swig.compile($("#clh-template").html());
     renderedHtml = template({
         bb: bb.data,
         document: bb.data.document,
@@ -259,9 +259,9 @@ function init_template() {
         vitals: bb.data.vitals
     });
 
-    $(".bb-template").html(renderedHtml);
+    $("#clh-template").html(renderedHtml);
     $("#loader").fadeOut(function () {
-        $(".bb-template").fadeIn();
+        $("#clh-template").fadeIn();
     });
 }
 function scrollToElement(element) {

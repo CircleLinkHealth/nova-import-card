@@ -11,44 +11,50 @@
     <meta name="viewport" content="width=device-width">
 
     <!-- Injected styles -->
-    <link rel='stylesheet' href='/css/ccd-template.css' type='text/css' media='screen, projection'/>
+    <link href="/css/app.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/ccd-template.css" type="text/css" media="screen, projection"/>
 
     <!-- Injected scripts -->
-    <?= View::make('partials.footer'); ?>
     <script src="/js/ccd/modernizr.js"></script>
     <script src="/js/ccd/jquery-1.9.0.js"></script>
     <script src="/js/ccd/swig.js"></script>
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/swig/1.4.1/swig.min.js"></script>-->
-<!--    <script src="/js/ccd/bluebutton-0.0.10.js"></script>-->
     <script src="/js/ccd/bluebutton.min.js"></script>
     <script src="/js/ccd/bbclear.js"></script>
 </head>
 
     <body>
 
-    <section class="bb-template">
-            <nav id="primaryNav">
-                <div class="container">
-                    <h1>CCD Viewer</h1>
-                    <ul>
-                        <a href="#demographics"><li>Profile</li></a>
-                        <a href="#allergies"><li>Allergies</li></a>
-                        <a href="#problems"><li>Problems</li></a>
-                        <a href="#medications"><li>Medications</li></a>
-                        <a href="#immunizations"><li>Immunizations</li></a>
-                        <a href="#history"><li>History</li></a>
-                        <a href="#labs"><li>Lab Results</li></a>
-                    </ul>
+    <section id="clh-template" class="container">
+
+        <nav id="primaryNav" class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <div class="navbar-brand">
+                        <img src="/img/cpm-logo.png" height="40" width="70">
+                    </div>
                 </div>
-            </nav>
+
+                <form id="oldViewer" action="<?= route('ccd.old.viewer'); ?>" class="navbar-form navbar-left" method="post" target="_blank">
+                    <div class="form-group">
+                        <input id="sendThis" type="text" name="xml" style="display: none;" value="<?= urlencode($ccd); ?>">
+                    </div>
+                    <input type="submit" class="btn btn-default" value="View in Raw CCD Viewer" >
+                </form>
+<!--                <h1>CCD Viewer</h1>-->
+                <ul class="nav navbar-nav">
+                    <a href="#demographics"><li>Profile</li></a>
+                    <a href="#allergies"><li>Allergies</li></a>
+                    <a href="#problems"><li>Problems</li></a>
+                    <a href="#medications"><li>Medications</li></a>
+                    <a href="#immunizations"><li>Immunizations</li></a>
+                    <a href="#history"><li>History</li></a>
+                    <a href="#labs"><li>Lab Results</li></a>
+                </ul>
+            </div>
+        </nav>
 
         <div id="demographics" class="panel">
                 <h1>{{demographics.name|full_name}}</h1>
-
-                <form id="oldViewer" action="<?= route('ccd.old.viewer'); ?>" style="display: block;" method="post" target="_blank">
-                    <input id="sendThis" type="text" name="xml" style="display: none;" value="<?= urlencode($ccd); ?>">
-                    <input type="submit" value="View Source" >
-                </form>
 
                 <p class="narrative">
                     <span class="general">
