@@ -1,12 +1,14 @@
 <html>
 	<head>
 		<title>CircleHealth CPM API</title>
-		
+
 		<link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
 		<link href="{{ asset('/css/app.css') }}" rel="stylesheet">
 
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 
-		<style>
+
+        <style>
 			body {
 				margin: 0;
 				padding: 0;
@@ -41,10 +43,31 @@
 	</head>
 	<body>
 		<div class="container-fluid">
+            <div id="app">
+                <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="ccd">
+                            CCD Record:
+                        </label>
+                        <input type="file" id="ccd" multiple>
+
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">
+                            Add Category
+                        </button>
+                    </div>
+                </form>
+
+                <pre>@{{ $data | json }}</pre>
+            </div>
+
+
 			<div class="content">
 				<div class="title">CircleLink Health<br>Care Plan Manager</div>
 				<a class="btn btn-primary subtitle" href="{{ url('/auth/login') }}">Login</a>
 			</div>
 		</div>
-	</body>
+        <script src="/js/app.js"></script>
+    </body>
 </html>
