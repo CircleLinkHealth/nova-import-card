@@ -1,4 +1,10 @@
 <?php
+Route::get('vue', function () {
+	return view('CCDViewer.new-vuer');
+});
+Route::get('getVueVar', function () {
+	return App\XmlCCD::find(425)->ccd;
+});
 /*
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
