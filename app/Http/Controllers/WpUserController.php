@@ -292,6 +292,30 @@ class WpUserController extends Controller {
 			$role = Role::first();
 		}
 
+		// build revision info
+		$userHistory = collect([]);
+
+		// first for user
+		foreach ( $wpUser->revisionHistory->sortByDesc('updated_at')->take(10) as $history ) {
+			if($history->key == 'created_at' && !$history->old_value) {
+				$userHistory->push($history);
+			}
+		}
+
+		// than for usermeta
+		$userMetas = WpUserMeta::where('user_id', '=', $id)->get();
+		if( $userMetas->count() > 0 ) {
+			foreach ($userMetas as $userMeta ) {
+				$metaItemHistory = $userMeta->revisionHistory->sortByDesc('updated_at')->take(10);
+				if( $metaItemHistory->count() > 0 ) {
+					foreach ($metaItemHistory as $history ) {
+						$userHistory->push($history);
+					}
+				}
+			}
+		}
+		$revisions = $userHistory->sortByDesc('updated_at');
+
 		// primary_blog
 		$userMetaTemplate = (new UserConfigTemplate())->getArray();
 		$userMeta = WpUserMeta::where('user_id', '=', $id)->lists('meta_value', 'meta_key');
@@ -341,7 +365,7 @@ class WpUserController extends Controller {
 		$providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
 
 		// display view
-		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $wpUser->program_id, 'providers_arr' => $providers_arr, 'messages' => $messages, 'role' => $role, 'roles' => $roles]);
+		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $wpUser->program_id, 'providers_arr' => $providers_arr, 'messages' => $messages, 'role' => $role, 'roles' => $roles, 'revisions' => $revisions]);
 	}
 
 	/**

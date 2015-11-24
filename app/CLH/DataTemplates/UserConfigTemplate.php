@@ -40,5 +40,6 @@ class UserConfigTemplate extends DataTemplate
     public $qualification;
     public $npi_number;
     public $specialty;
+    public $preferred_cc_contact_days;
 
 }

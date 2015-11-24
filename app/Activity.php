@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\DB;
 
 class Activity extends Model {
 
+    // for revisionable
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    protected $revisionCreationsEnabled = true;
+
     /**
      * The connection name for the model.
      *
@@ -35,6 +39,13 @@ class Activity extends Model {
     protected $dates = ['deleted_at'];
 
     protected $appends = ['performed_at_year_month'];
+
+
+    // for revisionable
+    public static function boot()
+    {
+        parent::boot();
+    }
 
     public function getPerformedAtYearMonthAttribute()
     {
