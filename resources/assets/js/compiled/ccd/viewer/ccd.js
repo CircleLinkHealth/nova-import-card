@@ -11224,7 +11224,9 @@ new Vue({
     },
     methods: {
         loadCCD: function loadCCD() {
-            this.$http.get('getVueVar', function (ccdRecord) {
+            var resource = this.$resource('getVueVar/:id');
+
+            resource.get({ id: 430 }, function (ccdRecord) {
                 var bb = BlueButton(ccdRecord);
                 this.$set('bb', bb.data);
                 this.$set('document', bb.data.document);
@@ -11243,7 +11245,7 @@ new Vue({
                 this.$set('smokingStatus', bb.data.smoking_status);
                 this.$set('vitals', bb.data.vitals);
             }).error(function (data, status, request) {
-                console.log('error');
+                console.log(status + ' error: ' + data);
             });
         }
     }
@@ -11251,14 +11253,16 @@ new Vue({
 
 Vue.filter('age', require('./filters/age.js'));
 Vue.filter('display_name', require('./filters/display_name.js'));
+Vue.filter('fallback', require('./filters/fallback.js'));
 Vue.filter('full_name', require('./filters/full_name.js'));
 Vue.filter('gender_pronoun', require('./filters/gender_pronoun.js'));
 Vue.filter('iso_language', require('./filters/iso_language.js'));
 Vue.filter('max_severity', require('./filters/max_severity.js'));
+Vue.filter('related_by_date', require('./filters/related_by_date.js'));
 Vue.filter('since_days', require('./filters/since_days.js'));
 Vue.filter('strict_length', require('./filters/strict_length.js'));
 
-},{"./filters/age.js":78,"./filters/display_name.js":79,"./filters/full_name.js":80,"./filters/gender_pronoun.js":81,"./filters/iso_language.js":82,"./filters/max_severity.js":83,"./filters/since_days.js":84,"./filters/strict_length.js":85,"vue":75,"vue-resource":3}],78:[function(require,module,exports){
+},{"./filters/age.js":78,"./filters/display_name.js":79,"./filters/fallback.js":80,"./filters/full_name.js":81,"./filters/gender_pronoun.js":82,"./filters/iso_language.js":83,"./filters/max_severity.js":84,"./filters/related_by_date.js":85,"./filters/since_days.js":86,"./filters/strict_length.js":87,"vue":75,"vue-resource":3}],78:[function(require,module,exports){
 "use strict";
 
 module.exports = function (date) {
@@ -11280,6 +11284,13 @@ module.exports = function (input) {
 };
 
 },{}],80:[function(require,module,exports){
+"use strict";
+
+module.exports = function (input, output) {
+    return input ? input : output;
+};
+
+},{}],81:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input) {
@@ -11312,7 +11323,7 @@ module.exports = function (input) {
     return name;
 };
 
-},{}],81:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input, possessive, absolute) {
@@ -11323,7 +11334,7 @@ module.exports = function (input, possessive, absolute) {
     }
 };
 
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input) {
@@ -11520,7 +11531,7 @@ module.exports = function (input) {
     }
 };
 
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input) {
@@ -11580,7 +11591,55 @@ module.exports = function (input) {
     }
 };
 
-},{}],84:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
+'use strict';
+
+module.exports = function (input, kind) {
+    var date, batch;
+    var list = [];
+    if (kind == 'encounters') {
+        batch = bb.data.encounters;
+    } else if (kind == 'procedures') {
+        batch = bb.data.procedures;
+    } else if (kind == 'problems') {
+        batch = bb.data.problems;
+    } else if (kind == 'immunizations') {
+        batch = bb.data.immunizations;
+    } else if (kind == 'medications') {
+        batch = bb.data.medications;
+        return [];
+    } else if (kind == 'labs') {
+        batch = [];
+        for (var m in bb.data.results) {
+            for (var l in bb.data.results[m].results) {
+                batch.push(bb.data.results[m].results[l]);
+            }
+        }
+    }
+    if (input.date) {
+        if (input.date instanceof Date) {
+            dates = [input.date.toDateString()];
+        } else {
+            dates = [input.date_range.start.toDateString(), input.date_range.end.toDateString()];
+        }
+        for (var k in batch) {
+            if (typeof k == "number") {
+                target = batch[k];
+                if (target.date instanceof Date) {
+                    target_date = [target.date.toDateString()];
+                } else {
+                    target_dates = [target.date_range.start.toDateString, target.date_range.end.toDateString()];
+                }
+                if (filters.intersects(dates, target_dates).length > 0) {
+                    list.push(target);
+                }
+            }
+        }
+    }
+    return list;
+};
+
+},{}],86:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input, days) {
@@ -11605,7 +11664,7 @@ module.exports = function (input, days) {
     return batch;
 };
 
-},{}],85:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input) {

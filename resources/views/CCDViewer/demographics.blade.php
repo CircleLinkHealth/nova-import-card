@@ -35,24 +35,23 @@
                 @{{demographics.gender | gender_pronoun | capitalize}} has
             </span>
             <strong v-if="allergies" class="@{{allergies | max_severity}}">
-                @{{allergies | max_severity}} allergies.
-            </strong>
+                @{{allergies | max_severity}} allergies</strong>.
         </span>
 
         <span v-if="demographics.gender" class="yearReview">
             In the past year, @{{demographics.gender | gender_pronoun}}
-            <span v-if="encounters | since_days '365' | strict_length < 1" id="yearReviewEncounters">
-                did not have medical encounters
-            </span>
-            <span v-else>
+            <span v-if="encounters | since_days '365' | strict_length" id="yearReviewEncounters">
                 <strong>had medical encounters</strong>
             </span>
+            <span v-else>
+                did not have medical encounters
+            </span>
             and has
-            <span v-if="medications | since_days '365' | strict_length < 1" id="yearReviewMedications">
-                not had any medications prescribed.
+            <span v-if="medications | since_days '365' | strict_length" id="yearReviewMedications">
+                been <strong>prescribed medications</strong>.
             </span>
             <span v-else>
-                been <strong>prescribed medications</strong>.
+                not had any medications prescribed.
             </span>
         </span>
     </p>
