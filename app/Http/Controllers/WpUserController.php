@@ -297,9 +297,7 @@ class WpUserController extends Controller {
 
 		// first for user
 		foreach ( $wpUser->revisionHistory->sortByDesc('updated_at')->take(10) as $history ) {
-			if($history->key == 'created_at' && !$history->old_value) {
-				$userHistory->push($history);
-			}
+			$userHistory->push($history);
 		}
 
 		// than for usermeta
