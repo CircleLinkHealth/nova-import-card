@@ -11222,9 +11222,9 @@ new Vue({
 });
 
 Vue.filter('full_name', require('./filters/full_name.js'));
-Vue.filter('isolanguage', require('./filters/isolanguage.js'));
+Vue.filter('iso_language', require('./filters/iso_language.js'));
 
-},{"./filters/full_name.js":78,"./filters/isolanguage.js":79,"vue":75,"vue-resource":3}],78:[function(require,module,exports){
+},{"./filters/full_name.js":78,"./filters/iso_language.js":79,"vue":75,"vue-resource":3}],78:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input) {

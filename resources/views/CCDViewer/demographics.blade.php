@@ -11,7 +11,7 @@
                 who is @{{demographics.religion}}
             </strong>
             <strong v-if="demographics.language">
-                and speaks @{{demographics.language | isolanguage}}
+                and speaks @{{demographics.language | iso_language}}
             </strong>
         {{--</span>--}}
         {{--<span class="allergies">--}}

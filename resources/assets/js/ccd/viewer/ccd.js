@@ -24,6 +24,6 @@ new Vue({
 });
 
 Vue.filter('full_name', require('./filters/full_name.js'));
-Vue.filter('isolanguage', require('./filters/isolanguage.js'));
+Vue.filter('iso_language', require('./filters/iso_language.js'));
 
 
