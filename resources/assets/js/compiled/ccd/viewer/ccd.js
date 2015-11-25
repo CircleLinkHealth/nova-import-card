@@ -11226,8 +11226,9 @@ Vue.filter('display_name', require('./filters/display_name.js'));
 Vue.filter('full_name', require('./filters/full_name.js'));
 Vue.filter('iso_language', require('./filters/iso_language.js'));
 Vue.filter('since_days', require('./filters/since_days.js'));
+Vue.filter('strict_length', require('./filters/strict_length.js'));
 
-},{"./filters/age.js":78,"./filters/display_name.js":79,"./filters/full_name.js":80,"./filters/iso_language.js":81,"./filters/since_days.js":82,"vue":75,"vue-resource":3}],78:[function(require,module,exports){
+},{"./filters/age.js":78,"./filters/display_name.js":79,"./filters/full_name.js":80,"./filters/iso_language.js":81,"./filters/since_days.js":82,"./filters/strict_length.js":83,"vue":75,"vue-resource":3}],78:[function(require,module,exports){
 "use strict";
 
 module.exports = function (date) {
@@ -11495,6 +11496,13 @@ module.exports = function (input, days) {
         }
     }
     return batch;
+};
+
+},{}],83:[function(require,module,exports){
+"use strict";
+
+module.exports = function (input) {
+    return input.length;
 };
 
 },{}]},{},[77]);
