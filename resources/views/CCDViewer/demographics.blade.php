@@ -5,14 +5,19 @@
 
     <p class="narrative">
         <span class="general">
-            {{--<strong>@{{demographics.name|display_name}}</strong> is a {% if demographics.dob %}<strong>@{{demographics.dob|age}}</strong> year old{% endif %}--}}
+            <strong v-text="demographics.name | display_name"></strong>
+
+            <span v-if="demographics.dob">
+                is a <strong>@{{demographics.dob | age}}</strong> year old
+            </span>
+
             {{--<strong>{% if demographics.race %}@{{demographics.race}} {% endif %}{% if demographics.marital_status %}@{{demographics.marital_status|lower}} {% endif %}@{{demographics.gender|lower}}</strong>--}}
-            <strong v-if="demographics.religion">
-                who is @{{demographics.religion}}
-            </strong>
-            <strong v-if="demographics.language">
-                and speaks @{{demographics.language | iso_language}}
-            </strong>
+            <span v-if="demographics.religion">
+                who is <strong>@{{demographics.religion}}</strong>
+            </span>
+            <span v-if="demographics.language">
+                and speaks <strong>@{{demographics.language | iso_language}}</strong>
+            </span>
         {{--</span>--}}
         {{--<span class="allergies">--}}
             {{--@{{demographics.gender|gender_pronoun|title}} has <strong class="@{{allergies|max_severity}}">@{{allergies|max_severity}} allergies</strong>.--}}

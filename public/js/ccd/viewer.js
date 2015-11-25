@@ -11221,10 +11221,34 @@ new Vue({
     }
 });
 
+Vue.filter('age', require('./filters/age.js'));
+Vue.filter('display_name', require('./filters/display_name.js'));
 Vue.filter('full_name', require('./filters/full_name.js'));
 Vue.filter('iso_language', require('./filters/iso_language.js'));
+Vue.filter('since_days', require('./filters/since_days.js'));
 
-},{"./filters/full_name.js":78,"./filters/iso_language.js":79,"vue":75,"vue-resource":3}],78:[function(require,module,exports){
+},{"./filters/age.js":78,"./filters/display_name.js":79,"./filters/full_name.js":80,"./filters/iso_language.js":81,"./filters/since_days.js":82,"vue":75,"vue-resource":3}],78:[function(require,module,exports){
+"use strict";
+
+module.exports = function (date) {
+    var today = new Date();
+    var ms = today - date;
+    var years = ms / (1000 * 60 * 60 * 24 * 365);
+    return Math.floor(years);
+};
+
+},{}],79:[function(require,module,exports){
+"use strict";
+
+module.exports = function (input) {
+    if (input.given instanceof Array) {
+        return input.call_me ? input.call_me : input.given[0];
+    } else {
+        return input.call_me ? input.call_me : input.given;
+    }
+};
+
+},{}],80:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input) {
@@ -11257,7 +11281,7 @@ module.exports = function (input) {
     return name;
 };
 
-},{}],79:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input) {
@@ -11452,6 +11476,25 @@ module.exports = function (input) {
     } else {
         return input;
     }
+};
+
+},{}],82:[function(require,module,exports){
+"use strict";
+
+module.exports = function (input, days) {
+    var batch = [];
+    var today = new Date();
+    var target_date = new Date(today.setDate(today.getDate() - days));
+    for (var k in input) {
+        if (isInt(k)) {
+            if (input[k].effective_time && input[k].effective_time.low && input[k].effective_time.low > target_date) {
+                batch.push(input[k]);
+            } else if (input[k].date && input[k].date > target_date) {
+                batch.push(input[k]);
+            }
+        }
+    }
+    return batch;
 };
 
 },{}]},{},[77]);
