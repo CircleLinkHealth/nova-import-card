@@ -1,4 +1,9 @@
 module.exports = (function (input) {
+
+    function isInt(input) {
+        return parseInt(input, 10) % 1 === 0;
+    }
+
     var i, mild = 0, moderate = 0, severe = 0, exists = 0;
     if (input.severity) {
         if (input.severity.match(/severe/i)) {

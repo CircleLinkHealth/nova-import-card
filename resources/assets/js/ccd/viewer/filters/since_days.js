@@ -1,4 +1,9 @@
 module.exports = (function (input, days) {
+
+    function isInt(input) {
+        return parseInt(input, 10) % 1 === 0;
+    }
+
     var batch = [];
     var today = new Date();
     var target_date = new Date(today.setDate(today.getDate() - days));
@@ -11,5 +16,6 @@ module.exports = (function (input, days) {
             }
         }
     }
+
     return batch;
 });

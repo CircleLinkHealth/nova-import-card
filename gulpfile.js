@@ -19,7 +19,7 @@ elixir(function(mix) {
 
     mix.browserify('ccd/viewer/ccd.js', 'resources/assets/js/compiled/ccd/viewer');
     //mix.browserify('ccd/viewer/demographics.js', 'resources/assets/js/compiled/ccd/viewer');
-    mix.browserify('ccd/viewer/document.js', 'resources/assets/js/compiled/ccd/viewer');
+    //mix.browserify('ccd/viewer/document.js', 'resources/assets/js/compiled/ccd/viewer');
 
     mix.scriptsIn('resources/assets/js/compiled/ccd/viewer', 'public/js/ccd/viewer.js');
     mix.copy('resources/assets/js/ccd/parser/bluebutton.min.js', 'public/js/ccd/bluebutton.min.js');

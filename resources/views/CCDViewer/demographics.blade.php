@@ -31,28 +31,31 @@
             </span>
         </span>
         <span class="allergies">
-            @{{demographics.gender | gender_pronoun | capitalize}} has
-            <strong class="@{{allergies | max_severity}}">
+            <span v-if="demographics.gender">
+                @{{demographics.gender | gender_pronoun | capitalize}} has
+            </span>
+            <strong v-if="allergies" class="@{{allergies | max_severity}}">
                 @{{allergies | max_severity}} allergies.
             </strong>
         </span>
-        {{--<span class="yearReview">--}}
-        {{--In the past year, @{{demographics.gender | gender_pronoun}}--}}
-        {{--<span id="yearReviewEncounters">--}}
-        {{--{% if encounters | since_days(365) | strict_length == 0 %}--}}
-        {{--did not have medical encounters--}}
-        {{--{% else %}--}}
-        {{--had <strong>medical encounters</strong>--}}
-        {{--{% endif %}--}}
-        {{--</span> and has <span id="yearReviewMedications">--}}
-        {{--{% if medications | since_days(365) | strict_length == 0 %}--}}
-        {{--not had any medications prescribed.--}}
-        {{--{% else %}--}}
-        {{--been <strong>prescribed medications</strong>.--}}
-        {{--{% endif %}--}}
-        {{--</span>--}}
-        {{--</span>--}}
-        {{--</p>--}}
+
+        <span v-if="demographics.gender" class="yearReview">
+            In the past year, @{{demographics.gender | gender_pronoun}}
+            <span v-if="encounters | since_days '365' | strict_length < 1" id="yearReviewEncounters">
+                did not have medical encounters
+            </span>
+            <span v-else>
+                <strong>had medical encounters</strong>
+            </span>
+            and has
+            <span v-if="medications | since_days '365' | strict_length < 1" id="yearReviewMedications">
+                not had any medications prescribed.
+            </span>
+            <span v-else>
+                been <strong>prescribed medications</strong>.
+            </span>
+        </span>
+    </p>
         {{--<dl id="demographicsExtras">--}}
         {{--<li>--}}
         {{--<dt>Birthday</dt>--}}

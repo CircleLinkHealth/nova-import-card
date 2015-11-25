@@ -11202,8 +11202,22 @@ Vue.use(require('vue-resource'));
 new Vue({
     el: 'body',
     data: {
+        bb: '',
         document: '',
-        demographics: ''
+        allergies: '',
+        careplan: '',
+        chiefComplaint: '',
+        demographics: '',
+        encounters: '',
+        functionalStatuses: '',
+        immunizations: '',
+        instructions: '',
+        labResults: '',
+        medications: '',
+        problems: '',
+        procedures: '',
+        smokingStatus: '',
+        vitals: ''
     },
     ready: function ready() {
         this.loadCCD();
@@ -11212,8 +11226,22 @@ new Vue({
         loadCCD: function loadCCD() {
             this.$http.get('getVueVar', function (ccdRecord) {
                 var bb = BlueButton(ccdRecord);
+                this.$set('bb', bb.data);
                 this.$set('document', bb.data.document);
+                this.$set('allergies', bb.data.allergies);
+                this.$set('careplan', bb.data.care_plan);
+                this.$set('chiefComplaint', bb.data.chief_complaint);
                 this.$set('demographics', bb.data.demographics);
+                this.$set('encounters', bb.data.encounters);
+                this.$set('functionalStatuses', bb.data.functional_statuses);
+                this.$set('immunizations', bb.data.immunizations);
+                this.$set('instructions', bb.data.instructions);
+                this.$set('labResults', bb.data.results);
+                this.$set('medications', bb.data.medications);
+                this.$set('problems', bb.data.problems);
+                this.$set('procedures', bb.data.procedures);
+                this.$set('smokingStatus', bb.data.smoking_status);
+                this.$set('vitals', bb.data.vitals);
             }).error(function (data, status, request) {
                 console.log('error');
             });
@@ -11496,6 +11524,11 @@ module.exports = function (input) {
 "use strict";
 
 module.exports = function (input) {
+
+    function isInt(input) {
+        return parseInt(input, 10) % 1 === 0;
+    }
+
     var i,
         mild = 0,
         moderate = 0,
@@ -11551,6 +11584,11 @@ module.exports = function (input) {
 "use strict";
 
 module.exports = function (input, days) {
+
+    function isInt(input) {
+        return parseInt(input, 10) % 1 === 0;
+    }
+
     var batch = [];
     var today = new Date();
     var target_date = new Date(today.setDate(today.getDate() - days));
@@ -11563,6 +11601,7 @@ module.exports = function (input, days) {
             }
         }
     }
+
     return batch;
 };
 
@@ -11576,49 +11615,5 @@ module.exports = function (input) {
 },{}]},{},[77]);
 
 //# sourceMappingURL=ccd.js.map
-
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-"use strict";
-
-module.exports = function (input) {
-    if (typeof input.given == 'undefined') {
-        return "John Doe";
-    }
-    if (input.given === null) {
-        if (input.family === null) {
-            return "Unknown";
-        } else {
-            return input.family;
-        }
-    }
-    var name,
-        first_given,
-        other_given,
-        names = input.given.slice(0);
-    var prefix = input.prefix === null ? '' : input.prefix;
-    var suffix = input.suffix === null ? '' : input.suffix;
-    if (names instanceof Array) {
-        first_given = names.splice(0, 1);
-        other_given = names.join(" ");
-    } else {
-        first_given = names;
-    }
-    name = first_given;
-    name = input.call_me ? name + " \"" + input.call_me + "\"" : name;
-    name = other_given ? name + " " + other_given : name;
-    name = prefix + " " + name + " " + input.family + " " + suffix;
-    return name;
-};
-
-},{}]},{},[1]);
-
-//# sourceMappingURL=demographics.js.map
-
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-"use strict";
-
-},{}]},{},[1]);
-
-//# sourceMappingURL=document.js.map
 
 //# sourceMappingURL=viewer.js.map
