@@ -46,7 +46,7 @@ new Vue({
                 this.$set('procedures', bb.data.procedures);
                 this.$set('smokingStatus', bb.data.smoking_status);
                 this.$set('vitals', bb.data.vitals);
-            }).error(function (data, status, request) {
+            }).error(function (data, status) {
                 console.log(status + ' error: ' + data);
             });
         }

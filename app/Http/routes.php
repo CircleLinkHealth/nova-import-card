@@ -1,10 +1,4 @@
 <?php
-Route::get('vue', function () {
-	return view('CCDViewer.new-vuer');
-});
-Route::get('getVueVar', function () {
-	return App\XmlCCD::find(430)->ccd;
-});
 /*
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
@@ -85,6 +79,23 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::post('ccd/old-viewer', ['uses' => 'CCDViewer\CCDViewerController@viewSource', 'as' => 'ccd.old.viewer']);
 	Route::get('ccd/old-viewer', 'CCDViewer\CCDViewerController@create');
 	Route::post('ccd-old', ['uses' => 'CCDViewer\CCDViewerController@oldViewer', 'as' => 'ccd-old-viewer.post']);
+
+
+    /****************************
+     * VUE CCD VIEWER
+     ****************************/
+    Route::get('vue', function () {
+        return view('CCDViewer.new-vuer');
+    });
+    Route::get('getVueVar/{ccdId}', function ($ccdId) {
+        //Amazing Charts Sample
+//        return App\XmlCCD::find(434)->ccd;
+//        return response('123', 400);
+        return App\XmlCCD::find($ccdId)->ccd;
+
+        //BB Sample
+        //	return App\XmlCCD::find(430)->ccd;
+    });
 
 
 	/****************************/
