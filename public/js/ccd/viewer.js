@@ -11224,11 +11224,13 @@ new Vue({
 Vue.filter('age', require('./filters/age.js'));
 Vue.filter('display_name', require('./filters/display_name.js'));
 Vue.filter('full_name', require('./filters/full_name.js'));
+Vue.filter('gender_pronoun', require('./filters/gender_pronoun.js'));
 Vue.filter('iso_language', require('./filters/iso_language.js'));
+Vue.filter('max_severity', require('./filters/max_severity.js'));
 Vue.filter('since_days', require('./filters/since_days.js'));
 Vue.filter('strict_length', require('./filters/strict_length.js'));
 
-},{"./filters/age.js":78,"./filters/display_name.js":79,"./filters/full_name.js":80,"./filters/iso_language.js":81,"./filters/since_days.js":82,"./filters/strict_length.js":83,"vue":75,"vue-resource":3}],78:[function(require,module,exports){
+},{"./filters/age.js":78,"./filters/display_name.js":79,"./filters/full_name.js":80,"./filters/gender_pronoun.js":81,"./filters/iso_language.js":82,"./filters/max_severity.js":83,"./filters/since_days.js":84,"./filters/strict_length.js":85,"vue":75,"vue-resource":3}],78:[function(require,module,exports){
 "use strict";
 
 module.exports = function (date) {
@@ -11283,6 +11285,17 @@ module.exports = function (input) {
 };
 
 },{}],81:[function(require,module,exports){
+"use strict";
+
+module.exports = function (input, possessive, absolute) {
+    if (input == "female") {
+        return possessive ? absolute ? "hers" : "her" : "she";
+    } else {
+        return possessive ? "his" : "he";
+    }
+};
+
+},{}],82:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input) {
@@ -11479,7 +11492,62 @@ module.exports = function (input) {
     }
 };
 
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
+"use strict";
+
+module.exports = function (input) {
+    var i,
+        mild = 0,
+        moderate = 0,
+        severe = 0,
+        exists = 0;
+    if (input.severity) {
+        if (input.severity.match(/severe/i)) {
+            severe++;
+        } else if (input.severity.match(/moderate/i)) {
+            moderate++;
+        } else if (input.severity.match(/mild/i)) {
+            mild++;
+        } else {
+            if (input.name) {
+                exists++;
+            }
+        }
+    } else {
+        for (i in input) {
+            if (isInt(i)) {
+                if (input[i].severity) {
+                    if (input[i].severity.match(/severe/i)) {
+                        severe++;
+                    } else if (input[i].severity.match(/moderate/i)) {
+                        moderate++;
+                    } else if (input[i].severity.match(/mild/i)) {
+                        mild++;
+                    } else {
+                        if (input[i].name) {
+                            exists++;
+                        }
+                    }
+                } else {
+                    if (input.name) {
+                        exists++;
+                    }
+                }
+            }
+        }
+    }
+    if (severe) {
+        return severe > 1 ? "multiple severe" : "severe";
+    } else if (moderate) {
+        return moderate > 1 ? "multiple moderate" : "moderate";
+    } else if (mild) {
+        return mild > 1 ? "multiple mild" : "mild";
+    } else {
+        return exists === 0 ? "no" : exists > 1 ? "multiple" : "";
+    }
+};
+
+},{}],84:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input, days) {
@@ -11498,7 +11566,7 @@ module.exports = function (input, days) {
     return batch;
 };
 
-},{}],83:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 "use strict";
 
 module.exports = function (input) {

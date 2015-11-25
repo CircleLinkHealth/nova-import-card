@@ -26,7 +26,9 @@ new Vue({
 Vue.filter('age', require('./filters/age.js'));
 Vue.filter('display_name', require('./filters/display_name.js'));
 Vue.filter('full_name', require('./filters/full_name.js'));
+Vue.filter('gender_pronoun', require('./filters/gender_pronoun.js'));
 Vue.filter('iso_language', require('./filters/iso_language.js'));
+Vue.filter('max_severity', require('./filters/max_severity.js'));
 Vue.filter('since_days', require('./filters/since_days.js'));
 Vue.filter('strict_length', require('./filters/strict_length.js'));
 
