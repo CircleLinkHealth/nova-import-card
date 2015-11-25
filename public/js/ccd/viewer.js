@@ -11218,73 +11218,278 @@ new Vue({
                 console.log('error');
             });
         }
-    },
-    filters: {
-        full_name: function full_name(input) {
-            if (typeof input.given == 'undefined') {
-                return "John Doe";
-            }
-            if (input.given === null) {
-                if (input.family === null) {
-                    return "Unknown";
-                } else {
-                    return input.family;
-                }
-            }
-            var name,
-                first_given,
-                other_given,
-                names = input.given.slice(0);
-            var prefix = input.prefix === null ? '' : input.prefix;
-            var suffix = input.suffix === null ? '' : input.suffix;
-            if (names instanceof Array) {
-                first_given = names.splice(0, 1);
-                other_given = names.join(" ");
-            } else {
-                first_given = names;
-            }
-            name = first_given;
-            name = input.call_me ? name + " \"" + input.call_me + "\"" : name;
-            name = other_given ? name + " " + other_given : name;
-            name = prefix + " " + name + " " + input.family + " " + suffix;
-            return name;
-        }
     }
 });
 
-},{"vue":75,"vue-resource":3}]},{},[77]);
+Vue.filter('full_name', require('./filters/full_name.js'));
+Vue.filter('isolanguage', require('./filters/isolanguage.js'));
+
+},{"./filters/full_name.js":78,"./filters/isolanguage.js":79,"vue":75,"vue-resource":3}],78:[function(require,module,exports){
+"use strict";
+
+module.exports = function (input) {
+    if (typeof input.given == 'undefined') {
+        return "John Doe";
+    }
+    if (input.given === null) {
+        if (input.family === null) {
+            return "Unknown";
+        } else {
+            return input.family;
+        }
+    }
+    var name,
+        first_given,
+        other_given,
+        names = input.given.slice(0);
+    var prefix = input.prefix === null ? '' : input.prefix;
+    var suffix = input.suffix === null ? '' : input.suffix;
+    if (names instanceof Array) {
+        first_given = names.splice(0, 1);
+        other_given = names.join(" ");
+    } else {
+        first_given = names;
+    }
+    name = first_given;
+    name = input.call_me ? name + " \"" + input.call_me + "\"" : name;
+    name = other_given ? name + " " + other_given : name;
+    name = prefix + " " + name + " " + input.family + " " + suffix;
+    return name;
+};
+
+},{}],79:[function(require,module,exports){
+"use strict";
+
+module.exports = function (input) {
+    var isoLangs = {
+        "ab": "Abkhaz",
+        "aa": "Afar",
+        "af": "Afrikaans",
+        "ak": "Akan",
+        "sq": "Albanian",
+        "am": "Amharic",
+        "ar": "Arabic",
+        "an": "Aragonese",
+        "hy": "Armenian",
+        "as": "Assamese",
+        "av": "Avaric",
+        "ae": "Avestan",
+        "ay": "Aymara",
+        "az": "Azerbaijani",
+        "bm": "Bambara",
+        "ba": "Bashkir",
+        "eu": "Basque",
+        "be": "Belarusian",
+        "bn": "Bengali",
+        "bh": "Bihari",
+        "bi": "Bislama",
+        "bs": "Bosnian",
+        "br": "Breton",
+        "bg": "Bulgarian",
+        "my": "Burmese",
+        "ca": "Catalan",
+        "ch": "Chamorro",
+        "ce": "Chechen",
+        "ny": "Chichewa",
+        "zh": "Chinese",
+        "cv": "Chuvash",
+        "kw": "Cornish",
+        "co": "Corsican",
+        "cr": "Cree",
+        "hr": "Croatian",
+        "cs": "Czech",
+        "da": "Danish",
+        "dv": "Divehi",
+        "nl": "Dutch",
+        "en": "English",
+        "eo": "Esperanto",
+        "et": "Estonian",
+        "ee": "Ewe",
+        "fo": "Faroese",
+        "fj": "Fijian",
+        "fi": "Finnish",
+        "fr": "French",
+        "ff": "Fula",
+        "gl": "Galician",
+        "ka": "Georgian",
+        "de": "German",
+        "el": "Greek, Modern",
+        "gn": "Guarani",
+        "gu": "Gujarati",
+        "ht": "Haitian",
+        "ha": "Hausa",
+        "he": "Hebrew (modern)",
+        "hz": "Herero",
+        "hi": "Hindi",
+        "ho": "Hiri Motu",
+        "hu": "Hungarian",
+        "ia": "Interlingua",
+        "id": "Indonesian",
+        "ie": "Interlingue",
+        "ga": "Irish",
+        "ig": "Igbo",
+        "ik": "Inupiaq",
+        "io": "Ido",
+        "is": "Icelandic",
+        "it": "Italian",
+        "iu": "Inuktitut",
+        "ja": "Japanese",
+        "jv": "Javanese",
+        "kl": "Greenlandic",
+        "kn": "Kannada",
+        "kr": "Kanuri",
+        "ks": "Kashmiri",
+        "kk": "Kazakh",
+        "km": "Khmer",
+        "ki": "Kikuyu",
+        "rw": "Kinyarwanda",
+        "ky": "Kirghiz",
+        "kv": "Komi",
+        "kg": "Kongo",
+        "ko": "Korean",
+        "ku": "Kurdish",
+        "kj": "Kwanyama",
+        "la": "Latin",
+        "lb": "Luxembourgish",
+        "lg": "Luganda",
+        "li": "Limburgish",
+        "ln": "Lingala",
+        "lo": "Lao",
+        "lt": "Lithuanian",
+        "lu": "Luba-Katanga",
+        "lv": "Latvian",
+        "gv": "Manx",
+        "mk": "Macedonian",
+        "mg": "Malagasy",
+        "ms": "Malay",
+        "ml": "Malayalam",
+        "mt": "Maltese",
+        "mi": "Maori",
+        "mr": "Marathi",
+        "mh": "Marshallese",
+        "mn": "Mongolian",
+        "na": "Nauru",
+        "nv": "Navajo",
+        "nb": "Norwegian Bokmal",
+        "nd": "North Ndebele",
+        "ne": "Nepali",
+        "ng": "Ndonga",
+        "nn": "Norwegian Nynorsk",
+        "no": "Norwegian",
+        "ii": "Nuosu",
+        "nr": "South Ndebele",
+        "oc": "Occitan",
+        "oj": "Ojibwe",
+        "cu": "Old Church Slavonic",
+        "om": "Oromo",
+        "or": "Oriya",
+        "os": "Ossetian",
+        "pa": "Panjabi",
+        "pi": "Pali",
+        "fa": "Persian",
+        "pl": "Polish",
+        "ps": "Pashto",
+        "pt": "Portuguese",
+        "qu": "Quechua",
+        "rm": "Romansh",
+        "rn": "Kirundi",
+        "ro": "Romanian",
+        "ru": "Russian",
+        "sa": "Sanskrit",
+        "sc": "Sardinian",
+        "sd": "Sindhi",
+        "se": "Northern Sami",
+        "sm": "Samoan",
+        "sg": "Sango",
+        "sr": "Serbian",
+        "gd": "Gaelic",
+        "sn": "Shona",
+        "si": "Sinhalese",
+        "sk": "Slovak",
+        "sl": "Slovene",
+        "so": "Somali",
+        "st": "Southern Sotho",
+        "es": "Spanish",
+        "su": "Sundanese",
+        "sw": "Swahili",
+        "ss": "Swati",
+        "sv": "Swedish",
+        "ta": "Tamil",
+        "te": "Telugu",
+        "tg": "Tajik",
+        "th": "Thai",
+        "ti": "Tigrinya",
+        "bo": "Tibetan,",
+        "tk": "Turkmen",
+        "tl": "Tagalog",
+        "tn": "Tswana",
+        "to": "Tonga",
+        "tr": "Turkish",
+        "ts": "Tsonga",
+        "tt": "Tatar",
+        "tw": "Twi",
+        "ty": "Tahitian",
+        "ug": "Uighur",
+        "uk": "Ukrainian",
+        "ur": "Urdu",
+        "uz": "Uzbek",
+        "ve": "Venda",
+        "vi": "Vietnamese",
+        "vo": "Volapuk",
+        "wa": "Walloon",
+        "cy": "Welsh",
+        "wo": "Wolof",
+        "fy": "Western Frisian",
+        "xh": "Xhosa",
+        "yi": "Yiddish",
+        "yo": "Yoruba",
+        "za": "Zhuang"
+    };
+
+    if (input.length >= 2) {
+        var code = input.substr(0, 2);
+        return isoLangs[code];
+    } else {
+        return input;
+    }
+};
+
+},{}]},{},[77]);
 
 //# sourceMappingURL=ccd.js.map
 
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
-//Vue.filter('full_name', function (input) {
-//    if (typeof input.given == 'undefined') {
-//        return "John Doe";
-//    }
-//    if (input.given === null) {
-//        if (input.family === null) {
-//            return "Unknown";
-//        } else {
-//            return input.family;
-//        }
-//    }
-//    var name, first_given, other_given, names = input.given.slice(0);
-//    var prefix = (input.prefix === null) ? '' : input.prefix;
-//    var suffix = (input.suffix === null) ? '' : input.suffix;
-//    if (names instanceof Array) {
-//        first_given = names.splice(0, 1);
-//        other_given = names.join(" ");
-//    } else {
-//        first_given = names;
-//    }
-//    name = first_given;
-//    name = input.call_me ? name + " \"" + input.call_me + "\"" : name;
-//    name = (other_given) ? name + " " + other_given : name;
-//    name = prefix + " " + name + " " + input.family + " " + suffix;
-//    return name;
-//});
+module.exports = function (input) {
+    if (typeof input.given == 'undefined') {
+        return "John Doe";
+    }
+    if (input.given === null) {
+        if (input.family === null) {
+            return "Unknown";
+        } else {
+            return input.family;
+        }
+    }
+    var name,
+        first_given,
+        other_given,
+        names = input.given.slice(0);
+    var prefix = input.prefix === null ? '' : input.prefix;
+    var suffix = input.suffix === null ? '' : input.suffix;
+    if (names instanceof Array) {
+        first_given = names.splice(0, 1);
+        other_given = names.join(" ");
+    } else {
+        first_given = names;
+    }
+    name = first_given;
+    name = input.call_me ? name + " \"" + input.call_me + "\"" : name;
+    name = other_given ? name + " " + other_given : name;
+    name = prefix + " " + name + " " + input.family + " " + suffix;
+    return name;
+};
 
 },{}]},{},[1]);
 

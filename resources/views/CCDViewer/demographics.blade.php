@@ -3,11 +3,16 @@
 
     {{--@{{ $data | json }}--}}
 
-    {{--<p class="narrative">--}}
-        {{--<span class="general">--}}
+    <p class="narrative">
+        <span class="general">
             {{--<strong>@{{demographics.name|display_name}}</strong> is a {% if demographics.dob %}<strong>@{{demographics.dob|age}}</strong> year old{% endif %}--}}
             {{--<strong>{% if demographics.race %}@{{demographics.race}} {% endif %}{% if demographics.marital_status %}@{{demographics.marital_status|lower}} {% endif %}@{{demographics.gender|lower}}</strong>--}}
-            {{--{% if demographics.religion or demographics.language %}who {% if demographics.religion %}is <strong>@{{demographics.religion}}</strong>{% if demographics.language %} and {% endif %}{% endif %}{% if demographics.language %}speaks <strong>@{{demographics.language|isolanguage|title}}</strong>{% endif %}{% endif %}.--}}
+            <strong v-if="demographics.religion">
+                who is @{{demographics.religion}}
+            </strong>
+            <strong v-if="demographics.language">
+                and speaks @{{demographics.language | isolanguage}}
+            </strong>
         {{--</span>--}}
         {{--<span class="allergies">--}}
             {{--@{{demographics.gender|gender_pronoun|title}} has <strong class="@{{allergies|max_severity}}">@{{allergies|max_severity}} allergies</strong>.--}}
