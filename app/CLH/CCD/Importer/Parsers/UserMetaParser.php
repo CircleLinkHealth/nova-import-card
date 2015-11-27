@@ -78,6 +78,8 @@ class UserMetaParser
 
             $spanishVariations = ['spanish', 'es'];
 
+            $default = 'EN';
+
             if (in_array(strtolower($demographics->language), $englishVariations))
             {
                 $language = 'EN';
@@ -87,9 +89,22 @@ class UserMetaParser
                 $language = 'ES';
             }
 
-            return empty($language) ? null : $language;
+            return empty($language) ? $default : $language;
         });
 
+        $userConfig->consent_date = date("Y-m-d");
+
+        $userConfig->preferred_contact_timezone = call_user_func(function () use ($userConfig){
+            $zip = $userConfig->zip;
+            $default = 'America/New_York';
+
+            /**
+             * TimeZone lookup goes here
+             */
+            $timezone = '';
+
+            return empty($timezone) ? $default : $timezone;
+        });
 
         return $userConfig;
     }

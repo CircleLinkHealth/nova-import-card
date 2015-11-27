@@ -13,10 +13,10 @@ class UserConfigTemplate extends DataTemplate
     public $mobile_phone_number;
     public $work_phone_number;
     public $active_date = null;
-    public $preferred_contact_time;
-    public $preferred_contact_timezone;
-    public $preferred_contact_method;
-    public $preferred_contact_language;
+    public $preferred_contact_time = '11:00 AM';
+    public $preferred_contact_timezone = 'America/New_York';
+    public $preferred_contact_method = 'CCT';
+    public $preferred_contact_language = 'EN';
     public $preferred_contact_location = null;
     public $prefix;
     public $gender;
@@ -40,6 +40,6 @@ class UserConfigTemplate extends DataTemplate
     public $qualification;
     public $npi_number;
     public $specialty;
-    public $preferred_cc_contact_days;
+    public $preferred_cc_contact_days = '2'; //tuesday
 
 }
