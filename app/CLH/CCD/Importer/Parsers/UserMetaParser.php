@@ -6,6 +6,9 @@ namespace App\CLH\CCD\Importer\Parsers;
 use App\CLH\CCD\Importer\Parsers\Facades\UserMetaParserHelpers;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
+use App\CPRulesItem;
+use App\CPRulesPCP;
+use App\CPRulesUCP;
 use App\ParsedCCD;
 use App\WpUser;
 use Carbon\Carbon;
@@ -14,8 +17,11 @@ class UserMetaParser
 {
     public $ccd;
 
+    protected $userId;
+
     public function __construct(ParsedCCD $ccd)
     {
+        $this->userId = $ccd->user_id;
         $this->ccd = json_decode($ccd->ccd);
     }
 
@@ -28,6 +34,36 @@ class UserMetaParser
         $meta->nickname = "";
 
         return $meta;
+    }
+
+    /**
+     * THIS IS GROSS. NEEDS REFACTORING.
+     * Updates Medications List
+     */
+    public function parseMedications($blogId)
+    {
+        $pcp = CPRulesPCP::whereProvId($blogId)->whereSectionText('Additional Information')->first();
+        $pcpId = $pcp->pcp_id;
+        $medListPCP = CPRulesItem::wherePcpId($pcpId)->whereItemsText('Medications List')->first();
+        $parentItemId = $medListPCP->items_id;
+        $details = CPRulesItem::wherePcpId($pcpId)->whereItemsParent($parentItemId)->whereItemsText('Details')->first();
+        $itemId = $details->items_id;
+        //UI Item
+        CPRulesUCP::updateOrCreate([
+            'items_id' => $parentItemId,
+            'user_id' => $this->userId,
+            'meta_key' => 'status',
+        ], [
+            'meta_value' => 'Active',
+        ]);
+        //Value
+        CPRulesUCP::updateOrCreate([
+            'items_id' => $itemId,
+            'user_id' => $this->userId,
+            'meta_key' => 'value',
+        ], [
+            'meta_value' => 'Michalis testing',
+        ]);
     }
 
     public function parseUserConfig(UserConfigTemplate $userConfig)
@@ -74,7 +110,7 @@ class UserMetaParser
         $userConfig->birth_date = (new Carbon($demographics->dob))->format('Y-m-d');
 
         $userConfig->preferred_contact_language = call_user_func(function () use ($demographics){
-            $englishVariations = ['english', 'eng', 'en'];
+            $englishVariations = ['english', 'eng', 'en', 'e'];
 
             $spanishVariations = ['spanish', 'es'];
 

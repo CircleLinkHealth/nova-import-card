@@ -13,8 +13,8 @@
                 <div class="hide">
                     <textarea id="xml">
                         @if(!empty($xml))
-                                {{ htmlentities($xml) }}
-                            @endif
+                            {{ htmlentities($xml) }}
+                        @endif
                     </textarea>
 
                     <button style="background-color: orange; color: white;" onclick="convert()">Convert to Human Form</button>

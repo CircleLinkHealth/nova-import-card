@@ -4,6 +4,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CPRulesUCP extends Model {
 
+    public $timestamps = false;
+
     /**
      * The connection name for the model.
      *

@@ -97,6 +97,8 @@ class CCDUploadController extends Controller {
 
             $userMeta = $parser->parseUserMeta(new UserMetaTemplate())->getArray();
 
+            $medicationsList = $parser->parseMedications($blogId);
+
             $userRepo = new WpUserRepository();
             $wpUser = WpUser::find($parsedCCD->user_id);
 
