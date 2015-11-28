@@ -3,7 +3,9 @@
 namespace App\CLH\DataTemplates;
 
 
-class UserConfigTemplate extends DataTemplate
+use App\CLH\Contracts\DataTemplate;
+
+class UserConfigTemplate extends BaseDataTemplate implements DataTemplate
 {
     public $status = 'Inactive';
     public $email;
@@ -41,5 +43,6 @@ class UserConfigTemplate extends DataTemplate
     public $npi_number;
     public $specialty;
     public $preferred_cc_contact_days = '2'; //tuesday
+    public $program_id;
 
 }

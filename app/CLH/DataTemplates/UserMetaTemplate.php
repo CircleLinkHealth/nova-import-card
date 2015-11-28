@@ -3,9 +3,10 @@
 namespace App\CLH\DataTemplates;
 
 
+use App\CLH\Contracts\DataTemplate;
 use App\WpUser;
 
-class UserMetaTemplate extends DataTemplate
+class UserMetaTemplate extends BaseDataTemplate implements DataTemplate
 {
     public $first_name;
     public $last_name;

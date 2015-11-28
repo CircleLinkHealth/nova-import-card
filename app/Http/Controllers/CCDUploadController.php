@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\CCD\Importer\Parsers\UserMetaParser;
+use App\CLH\CCD\Importer\Parsers\CCDImportParser;
+
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\CLH\Repositories\CCDImporterRepository;
@@ -90,21 +91,14 @@ class CCDUploadController extends Controller {
                 throw new \Exception('Blog ID missing.', 400);
             }
 
-            $parser = new UserMetaParser($parsedCCD);
-
-            $userConfig = $parser->parseUserConfig(new UserConfigTemplate())->getArray();
-            $userConfig['program_id'] = $blogId;
-
-            $userMeta = $parser->parseUserMeta(new UserMetaTemplate())->getArray();
-
-            $medicationsList = $parser->parseMedications($blogId);
+            $importParser = (new CCDImportParser($blogId, $parsedCCD))->parse();
 
             $userRepo = new WpUserRepository();
             $wpUser = WpUser::find($parsedCCD->user_id);
 
-            $userRepo->updateUserConfig($wpUser, new ParameterBag($userConfig));
+            $userRepo->updateUserConfig($wpUser, new ParameterBag($importParser->userConfig));
 
-            $userRepo->saveOrUpdateUserMeta($wpUser, new ParameterBag($userMeta));
+            $userRepo->saveOrUpdateUserMeta($wpUser, new ParameterBag($importParser->userMeta));
         }
 
         return response()->json('Files received and processed successfully', 200);
