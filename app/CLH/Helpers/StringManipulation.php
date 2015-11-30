@@ -32,6 +32,8 @@ class StringManipulation
             $sanitized = substr($sanitized, -10);
         }
 
-        return substr($sanitized, 0, 3) . '-' . substr($sanitized, 4, 3) . '-' . substr($sanitized, 7, 4);
+        return substr($sanitized, 0, 3) . '-' . substr($sanitized, 3, 3) . '-' . substr($sanitized, 6, 4);
     }
+
+
 }
