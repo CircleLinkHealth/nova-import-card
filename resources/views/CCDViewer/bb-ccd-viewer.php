@@ -214,28 +214,30 @@
                 <h1>Medication History</h1>
                 {% for med in medications %}
                     {% if loop.first %}<ul>{% endif %}
-                    <li class="{{loop.cycle('odd', 'even')}}">
-                        <header>
-                            <h2>{{med.product.name|title}}</h2>
-                            {% if med.administration.name %}<small>{{med.administration.name|title}}</small>{% endif %}
-                            {% if med.reason.name %}<small>for {{med.reason.name}}</small>{% endif %}
-                        </header>
+                    {% if med.product.name %}
+                        <li class="{{loop.cycle('odd', 'even')}}">
+                            <header>
+                                <h2>{{med.product.name|title}}</h2>
+                                {% if med.administration.name %}<small>{{med.administration.name|title}}</small>{% endif %}
+                                {% if med.reason.name %}<small>for {{med.reason.name}}</small>{% endif %}
+                            </header>
 
-                        <dl class="footer">
-                            {% if med.prescriber.organization or med.prescriber.person %}<li>
-                                <dt>Prescriber</dt>
-                                {% if med.prescriber.organization %}<dd>{{med.prescriber.organization}}</dd>{% endif %}
-                                {% if med.prescriber.person %}<dd>{{med.prescriber.person}}</dd>{% endif %}
-                            </li>{% endif %}
-                            {% if med.date_range.start or med.date_range.end %}<li>
-                                <dt>Date</dt>
-                                <dd>
-                                    {% if med.date_range.start %}{{med.date_range.start|date('M j, Y')}}{% endif %}
-                                    {% if med.date_range.end %}&ndash; {{med.date_range.end|date('M j, Y')}}{% endif %}
-                                </dd>
-                            </li>{% endif %}
-                        </dl>
-                    </li>
+                            <dl class="footer">
+                                {% if med.prescriber.organization or med.prescriber.person %}<li>
+                                    <dt>Prescriber</dt>
+                                    {% if med.prescriber.organization %}<dd>{{med.prescriber.organization}}</dd>{% endif %}
+                                    {% if med.prescriber.person %}<dd>{{med.prescriber.person}}</dd>{% endif %}
+                                </li>{% endif %}
+                                {% if med.date_range.start or med.date_range.end %}<li>
+                                    <dt>Date</dt>
+                                    <dd>
+                                        {% if med.date_range.start %}{{med.date_range.start|date('M j, Y')}}{% endif %}
+                                        {% if med.date_range.end %}&ndash; {{med.date_range.end|date('M j, Y')}}{% endif %}
+                                    </dd>
+                                </li>{% endif %}
+                            </dl>
+                        </li>
+                    {% endif %}
                     {% if loop.last %}</ul>{% endif %}
                 {% else %}
                     <p>No known medications</p>

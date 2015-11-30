@@ -44,5 +44,5 @@ class UserConfigTemplate extends BaseDataTemplate implements DataTemplate
     public $specialty;
     public $preferred_cc_contact_days = '2'; //tuesday
     public $program_id;
-
+    public $ccm_status = 'enrolled';
 }
