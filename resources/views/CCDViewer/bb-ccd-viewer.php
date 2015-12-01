@@ -235,6 +235,12 @@
                                     {% if med.prescriber.organization %}<dd>{{med.prescriber.organization}}</dd>{% endif %}
                                     {% if med.prescriber.person %}<dd>{{med.prescriber.person}}</dd>{% endif %}
                                 </li>{% endif %}
+
+                                {% if med.text %}<li>
+                                    Instructions:<dd>{{med.text | medicNameFormat}}</dd>
+                                </li>{% endif %}
+
+
                                 {% if med.date_range.start or med.date_range.end %}<li>
                                     <dt>Date</dt>
                                     <dd>

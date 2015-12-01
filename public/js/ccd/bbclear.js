@@ -12,7 +12,10 @@ var filters = {
         }
     }, oid: function(input){
         return oidLookup[input];
-    }, since_days: function (input, days) {
+    }, medicNameFormat: function(input){
+        input = input.substring(input.indexOf(",") + 1);
+        return input;
+    },since_days: function (input, days) {
         batch = [];
         today = new Date();
         target_date = new Date(today.setDate(today.getDate() - days));
