@@ -10,6 +10,8 @@ var filters = {
         } else {
             return input;
         }
+    }, oid: function(input){
+        return oidLookup[input];
     }, since_days: function (input, days) {
         batch = [];
         today = new Date();
@@ -282,6 +284,13 @@ $(function () {
         return false;
     });
 });
+
+oidLookup = {
+    "2.16.840.1.113883.6.103": "ICD-9",
+    "2.16.840.1.113883.6.3": "ICD-10",
+    "2.16.840.1.113883.6.96": "snomed"
+};
+
 isoLangs = {
     "ab": "Abkhaz",
     "aa": "Afar",
