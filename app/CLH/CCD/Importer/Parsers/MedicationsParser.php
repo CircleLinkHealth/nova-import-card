@@ -14,6 +14,6 @@ class MedicationsParser extends BaseParser
     {
         $medications = $this->ccd->medications;
 
-        (new MedicationsParserHelpers())->import($this->userId, $this->blogId, $medications);
+        (new MedicationsParserHelpers())->importFromCCD($this->userId, $this->blogId, $medications);
     }
 }

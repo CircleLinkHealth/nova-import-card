@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer\Parsers\Helpers;
 
 use App\CLH\CCD\APILookups\Medications\RxNORM;
+use App\CLH\Facades\StringManipulation;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
@@ -62,6 +63,20 @@ class MedicationsParserHelpers
         $this->createOrUpdateMedicationsList($userId, $blogId, $medsList);
     }
 
+    public function importFromCCD($userId, $blogId, $medications)
+    {
+        $medsList = '';
+        foreach ($medications as $medication) {
+            $endDate = Carbon::createFromTimestamp(strtotime($medication->date_range->end));
+            if (! $endDate->isPast()) {
+                $medsList .= ucfirst(strtolower($medication->product->name))
+                    . ucfirst(strtolower(StringManipulation::stringDiff($medication->product->name, $medication->text)))
+                    . "; \n\n";
+            }
+        }
+        $this->createOrUpdateMedicationsList($userId, $blogId, $medsList);
+    }
+
     public function medicationLookup($medication)
     {
         $medName = explode(' ', $medication->product->name);
@@ -76,7 +91,6 @@ class MedicationsParserHelpers
     public function oidLookup($code)
     {
         $className = array_search($code, $this->oidMap);
-
         return $className;
     }
 
