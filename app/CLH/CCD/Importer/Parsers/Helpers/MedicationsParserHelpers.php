@@ -68,7 +68,13 @@ class MedicationsParserHelpers
         $medsList = '';
         foreach ($medications as $medication) {
             $endDate = Carbon::createFromTimestamp(strtotime($medication->date_range->end));
-            if (! $endDate->isPast()) {
+            if (! empty($medication->status)) {
+                if (strtolower($medication->status) == 'active') {
+                    $medsList .= ucfirst(strtolower($medication->product->name))
+                        . ucfirst(strtolower(StringManipulation::stringDiff($medication->product->name, $medication->text)))
+                        . "; \n\n";
+                }
+            } elseif (! $endDate->isPast()) {
                 $medsList .= ucfirst(strtolower($medication->product->name))
                     . ucfirst(strtolower(StringManipulation::stringDiff($medication->product->name, $medication->text)))
                     . "; \n\n";
