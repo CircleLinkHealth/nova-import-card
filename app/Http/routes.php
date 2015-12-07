@@ -125,7 +125,8 @@ Route::group(['middleware' => 'auth'], function ()
 
 		// notes
 		Route::group(['prefix' => 'notes'], function () {
-			Route::get('', ['uses' => 'Patient\PatientController@showPatientNotes', 'as' => 'patient.notes']);
+			Route::get('create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create']);
+			Route::get('', ['uses' => 'NotesController@create', 'as' => 'patient.note.index']);
 		});
 	});
 
