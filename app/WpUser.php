@@ -1,14 +1,18 @@
 <?php namespace App;
 
+use Hautelook\Phpass\PasswordHash;
+use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use MikeMcLin\WpPassword\Facades\WpPassword;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
-use Hautelook\Phpass\PasswordHash;
 
 
-class WpUser extends Model {
+class WpUser extends Model implements AuthenticatableContract, CanResetPasswordContract {
 
-    use EntrustUserTrait; // add this trait to your user model
+    use Authenticatable, CanResetPassword, EntrustUserTrait;
 
     // for revisionable
     use \Venturecraft\Revisionable\RevisionableTrait;
