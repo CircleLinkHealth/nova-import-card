@@ -4,6 +4,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class WpUserMeta extends Model {
 
+    // for revisionable
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    protected $revisionCreationsEnabled = true;
+
     /**
      * The connection name for the model.
      *
@@ -39,6 +43,10 @@ class WpUserMeta extends Model {
         return $this->belongsTo('App\WpUser', 'user_id', 'ID');
     }
 
-
+    // for revisionable
+    public static function boot()
+    {
+        parent::boot();
+    }
 
 }

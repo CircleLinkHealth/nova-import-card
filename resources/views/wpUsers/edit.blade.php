@@ -15,6 +15,9 @@
                         User ID: {{ $wpUser->ID }}
                     </div>
                     <div class="panel-body">
+
+                        @include('partials.revisions')
+
                         @include('errors.errors')
 
                         <div class="row">

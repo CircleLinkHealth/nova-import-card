@@ -10,6 +10,10 @@ class WpUser extends Model {
 
     use EntrustUserTrait; // add this trait to your user model
 
+    // for revisionable
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    protected $revisionCreationsEnabled = true;
+
     /**
      * The connection name for the model.
      *
@@ -89,6 +93,13 @@ class WpUser extends Model {
     // WordPress uses differently named fields for create and update fields than Laravel does
     const CREATED_AT = 'post_date';
     const UPDATED_AT = 'post_modified';
+
+
+    // for revisionable
+    public static function boot()
+    {
+        parent::boot();
+    }
 
     // Whenever the user_pass field is modified, WordPress' internal hashing function will run
     public function setUserPassAttribute($pass)

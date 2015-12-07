@@ -169,6 +169,7 @@
                 <h1>Problems</h1>
                 {% for problem in problems %}
                     {% if loop.first %}<ul class="listless">{% endif %}
+                    {% if problem.name or problem.translation.name%}
                     <li class="problem-{{problem|problem_status}}">
                         <p class="problem-status">{{problem.status}}</p>
                         <h2>
@@ -182,18 +183,24 @@
                         {% if allergy.reaction.name %}<p>Causes {{allergy.reaction.name|lower}}</p>{% endif %}
 
                         <dl class="footer">
-                            <!-- Get problem variables, if not empty -->
-                            {% if problem.code or problem.code_system %}<li>
-                                <dt>Code {% if problem.code_system_name %}<small>({{problem.code_system.name|upper}})</small>{% endif %}</dt>
-                                {% if problem.code_system %}<dd>{{problem.code_system}}</dd>{% endif %}
-                                {% if problem.code %}<dd>{{problem.code}}</dd>{% endif %}
-                            </li>
-                            <!-- other wise, get problem translation variables -->
-                            {% else if problem.translation.code or problem.translation.code_system %}<li>
-                                <dt>Code {% if problem.translation.code_system_name %}<small>({{problem.translation.code_system.name|upper}})</small>{% endif %}</dt>
-                                {% if problem.translation.code_system %}<dd>{{problem.translation.code_system}}</dd>{% endif %}
-                                {% if problem.translation.code %}<dd>{{problem.translation.code}}</dd>{% endif %}
+                            {% if problem.code_system %}<li>
+                                <dt>Code</dt>
+                                {% if problem.code_system %}
+                                <dd>{{problem.code_system|oid|upper}}
+                                    {% endif %}
+                                    {% if problem.code %}:
+                                    {{problem.code}}
+                                </dd></li>{% endif %}
+                            {% else if problem.translation.code_system%}<li>
+                                <dt>Code</dt>
+                                {% if problem.translation.code_system %}
+                                <dd>{{problem.translation.code_system|oid|upper}}
+                                    {% endif %}
+                                    {% if problem.translation.code %}:
+                                    {{problem.translation.code}}
+                                    {% endif %}</dd>
                             </li>{% endif %}
+
 
                             {% if problem.date_range.start or problem.date_range.end %}<li>
                                 <dt>Date Range</dt>
@@ -203,7 +210,7 @@
                                 </dd>
                             </li>{% endif %}
                         </dl>
-                    </li>
+                    </li>{% endif %}
                     {% if loop.last %}</ul>{% endif %}
                 {% else %}
                     <p>No known Problems</p>
@@ -214,28 +221,36 @@
                 <h1>Medication History</h1>
                 {% for med in medications %}
                     {% if loop.first %}<ul>{% endif %}
-                    <li class="{{loop.cycle('odd', 'even')}}">
-                        <header>
-                            <h2>{{med.product.name|title}}</h2>
-                            {% if med.administration.name %}<small>{{med.administration.name|title}}</small>{% endif %}
-                            {% if med.reason.name %}<small>for {{med.reason.name}}</small>{% endif %}
-                        </header>
+                    {% if med.product.name %}
+                        <li class="{{loop.cycle('odd', 'even')}}">
+                            <header>
+                                <h2>{{med.product.name|title}}</h2>
+                                {% if med.administration.name %}<small>{{med.administration.name|title}}</small>{% endif %}
+                                {% if med.reason.name %}<small>for {{med.reason.name}}</small>{% endif %}
+                            </header>
 
-                        <dl class="footer">
-                            {% if med.prescriber.organization or med.prescriber.person %}<li>
-                                <dt>Prescriber</dt>
-                                {% if med.prescriber.organization %}<dd>{{med.prescriber.organization}}</dd>{% endif %}
-                                {% if med.prescriber.person %}<dd>{{med.prescriber.person}}</dd>{% endif %}
-                            </li>{% endif %}
-                            {% if med.date_range.start or med.date_range.end %}<li>
-                                <dt>Date</dt>
-                                <dd>
-                                    {% if med.date_range.start %}{{med.date_range.start|date('M j, Y')}}{% endif %}
-                                    {% if med.date_range.end %}&ndash; {{med.date_range.end|date('M j, Y')}}{% endif %}
-                                </dd>
-                            </li>{% endif %}
-                        </dl>
-                    </li>
+                            <dl class="footer">
+                                {% if med.prescriber.organization or med.prescriber.person %}<li>
+                                    <dt>Prescriber</dt>
+                                    {% if med.prescriber.organization %}<dd>{{med.prescriber.organization}}</dd>{% endif %}
+                                    {% if med.prescriber.person %}<dd>{{med.prescriber.person}}</dd>{% endif %}
+                                </li>{% endif %}
+
+                                {% if med.text %}<li>
+                                    Instructions:<dd>{{med.text | medicNameFormat}}</dd>
+                                </li>{% endif %}
+
+
+                                {% if med.date_range.start or med.date_range.end %}<li>
+                                    <dt>Date</dt>
+                                    <dd>
+                                        {% if med.date_range.start %}{{med.date_range.start|date('M j, Y')}}{% endif %}
+                                        {% if med.date_range.end %}&ndash; {{med.date_range.end|date('M j, Y')}}{% endif %}
+                                    </dd>
+                                </li>{% endif %}
+                            </dl>
+                        </li>
+                    {% endif %}
                     {% if loop.last %}</ul>{% endif %}
                 {% else %}
                     <p>No known medications</p>

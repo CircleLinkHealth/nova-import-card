@@ -3,7 +3,7 @@
 namespace App\CLH\DataTemplates;
 
 
-abstract class DataTemplate
+abstract class BaseDataTemplate
 {
     public function getArray()
     {

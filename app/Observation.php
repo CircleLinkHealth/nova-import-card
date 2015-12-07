@@ -12,6 +12,10 @@ use DB;
 
 class Observation extends Model {
 
+    // for revisionable
+    use \Venturecraft\Revisionable\RevisionableTrait;
+    protected $revisionCreationsEnabled = true;
+
     /**
      * The connection name for the model.
      *
@@ -51,6 +55,13 @@ class Observation extends Model {
      * @var array
      */
     public $timestamps = true;
+
+
+    // for revisionable
+    public static function boot()
+    {
+        parent::boot();
+    }
 
     public function comment()
     {
