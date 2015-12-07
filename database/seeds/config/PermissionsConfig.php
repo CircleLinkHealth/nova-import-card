@@ -7,6 +7,7 @@ use App\WpUserMeta;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
+
 class PermissionsConfig extends Seeder {
 
     var $roles = array();
