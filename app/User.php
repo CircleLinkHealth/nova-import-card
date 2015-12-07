@@ -13,6 +13,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	use Authenticatable, CanResetPassword, EntrustUserTrait;
 
+	// for revisionable
+	use \Venturecraft\Revisionable\RevisionableTrait;
+	protected $revisionCreationsEnabled = true;
+
 	/**
 	 * The connection name for the model.
 	 *
@@ -43,8 +47,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	protected $hidden = ['user_pass'];
 
-	protected $dates = ['deleted'];
+	protected $dates = ['deleted','user_registered'];
 
+	/**
+	 * @todo: make timestamps work
+	 */
 	public $timestamps = false;
 
 	public $rules = array(
@@ -65,9 +72,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"hospital_reminder_optin" => "required",
 		"hospital_reminder_time" => "required",
 		"hospital_reminder_areas" => "required",
-		"qualification" => "required",
-		"specialty" => "required",
-		"npi_number" => "required",
+		"qualification" => "",
+		"specialty" => "",
+		"npi_number" => "",
 		"firstName" => "required",
 		"lastName" => "required",
 		"gender" => "required",
@@ -84,57 +91,66 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"consent_date" => "required"
 	);
 
+
+
 	// WordPress uses differently named fields for create and update fields than Laravel does
 	const CREATED_AT = 'post_date';
 	const UPDATED_AT = 'post_modified';
 
-	// Whenever the user_pass field is modified, WordPress' internal hashing function will run
-	public function setUserPassAttribute($pass)
+
+	// for revisionable
+	public static function boot()
+	{
+		parent::boot();
+	}
+
+    // Whenever the user_pass field is modified, WordPress' internal hashing function will run
+    public function setUserPassAttribute($pass)
 	{
 		$this->attributes['user_pass'] = WpPassword::make($pass);
-    }
+	}
 
-	public function getAuthIdentifier()
+    public function getAuthIdentifier()
 	{
 		return $this->getKey();
 	}
 
-	public function getAuthPassword()
+    public function getAuthPassword()
 	{
 		return $this->user_pass;
 	}
 
-	public function getEmailForPasswordReset()
+    public function getEmailForPasswordReset()
 	{
 		return $this->user_email;
 	}
 
-	public function meta()
+    public function meta()
 	{
 		return $this->hasMany('App\WpUserMeta', 'user_id', 'ID');
 	}
 
-	public function comment()
+    public function comment()
 	{
 		return $this->hasMany('App\Comment', 'user_id', 'ID');
 	}
 
-	public function observations()
+    public function observations()
 	{
 		return $this->hasMany('App\Observation', 'user_id', 'ID');
 	}
 
-	public function activities()
+    public function activities()
 	{
 		return $this->hasMany('App\Activity');
 	}
 
-	public function ucp()
+    public function ucp()
 	{
 		return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
 	}
 
-	public function role($blogId = false)
+    public function role($blogId = false)
 	{
 		if(!$blogId) {
 			$blogId = $this->blogId();
@@ -148,15 +164,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 	}
 
-	public function blogId(){
+    public function blogId(){
 		return $this->program_id;
 	}
 
-	public function programs() {
-		return $this->belongsToMany('App\WpBlog', 'lv_user_program', 'user_id', 'role_id');
+    public function programs() {
+		return $this->belongsToMany('App\WpBlog', 'lv_program_user', 'user_id', 'program_id');
 	}
 
-	public function userConfig(){
+    public function userConfig(){
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key',$key)->first();
 		if(!$userConfig) {
@@ -166,7 +182,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 	}
 
-	public function userMeta($key=null){
+    public function userMeta($key=null){
 		$userMeta = $this->meta->lists('meta_value', 'meta_key');
 		$userMeta['user_config'] = $this->userConfig();
 		if(!$userMeta) {
@@ -176,71 +192,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 	}
 
-	public function createNewUser($user_email, $user_pass) {
+    public function createNewUser($user_email, $user_pass) {
 		$this->user_login = $user_email;
 		$this->user_email = $user_email;
 		$this->user_pass = $user_pass;
 		$this->save();
 
-		return true;
+		return $this;
 	}
 
 
-	public function userMetaTemplate() {
-		$userMeta = array("first_name" => "",
-			"last_name" => "",
-			"nickname" => "",
-			"description" => "",
-			"admin_color" => "fresh",
-			"cur_month_activity_time" => "0",
-		);
-
-		return $userMeta;
-	}
-
-	public function userConfigTemplate() {
-		$userConfig = array("status" => "Active",
-			"email" => "test@test.com",
-			"mrn_number" => "12345678",
-			"study_phone_number" => "203-252-2556",
-			"active_date" => null,
-			"preferred_contact_time" => "09:00 AM",
-			"preferred_contact_timezone" => "America/New_York",
-			"preferred_contact_method" => "SMS",
-			"preferred_contact_language" => "EN",
-			"preferred_contact_location" => null,
-			"prefix" => '',
-			"gender" => "M",
-			"address" => "123 Test St",
-			"city" => "Anywhere",
-			"state" => "IA",
-			"zip" => "11233",
-			"birth_date" => "1900-01-31",
-			"consent_date" => "2012-01-31",
-			"daily_reminder_optin" => "Y",
-			"daily_reminder_time" => "09:00",
-			"daily_reminder_areas" => "TBD",
-			"hospital_reminder_optin" => "Y",
-			"hospital_reminder_time" => "09:00",
-			"hospital_reminder_areas" => "TBD",
-			"registration_date" => "2015-07-21 01:00:00",
-			"care_team" => array(),
-			"send_alert_to" => array(),
-			"billing_provider" => "",
-			"lead_contact" => "",
-			"qualification" => "",
-			"npi_number" => "",
-			"specialty" => "",
-		);
-
-		return $userConfig;
-	}
-
-
-
-
-
-	public function getUCP() {
+    public function getUCP() {
 		$userUcp = $this->ucp()->with(['item.meta', 'item.question'])->get();
 		$userUcpData = array('ucp' => array(), 'obs_keys' => array(), 'alert_keys' => array());
 		if($userUcp->count() > 0) {
@@ -268,10 +230,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 
-	// ATTRIBUTES
 
-	// basic attributes (meta)
-	public function getFirstNameAttribute() {
+    // ATTRIBUTES
+
+    // basic attributes (meta)
+    public function getFirstNameAttribute() {
 		$name = '';
 		$firstName = $this->meta()->where('meta_key', '=', 'first_name')->first();
 		if(isset($firstName) ) {
@@ -280,7 +243,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $name;
 	}
 
-	public function getLastNameAttribute() {
+    public function getLastNameAttribute() {
 		$name = '';
 		$lastName = $this->meta()->where('meta_key', '=', 'last_name')->first();
 		if(isset($lastName) ) {
@@ -289,14 +252,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $name;
 	}
 
-	// complex attributes
-	public function getFullNameAttribute() {
+    // complex attributes
+    public function getFullNameAttribute() {
 		$firstName = $this->firstName;
 		$lastName = $this->lastName;
 		return $firstName . ' ' . $lastName;
 	}
 
-	public function getFullNameWithIdAttribute() {
+    public function getFullNameWithIdAttribute() {
 		$name = $this->fullName;
 		return $name . ' ('.$this->ID.')';
 	}
