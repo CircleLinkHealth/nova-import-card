@@ -187,8 +187,8 @@
 						<li class="inline-block dropdown">
 							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Notes/Offline Activity<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ URL::route('patient.notes', array('patientId' => $patient->ID)) }}">Notes/Offline Activities</a></li>
-								<li><a href="{{ URL::route('patient.notes', array('patientId' => $patient->ID)) }}">Add New Note</a></li>
+								<li><a href="{{ URL::route('patient.note.create', array('patientId' => $patient->ID)) }}">Notes/Offline Activities</a></li>
+								<li><a href="{{ URL::route('patient.note.index', array('patientId' => $patient->ID)) }}">Add New Note</a></li>
 							</ul>
 						</li>
 						<li class="inline-block"><a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" role="button">Patient Overview</a></li>
