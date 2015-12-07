@@ -57,7 +57,7 @@
 
 					<ul class="nav navbar-nav">
 						@if ( ! Auth::guest())
-							<li role="presentation" class="dropdown">
+							<li role="presentation" 0lass="dropdown">
 								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
 									Users <span class="caret"></span>
 								</a>
