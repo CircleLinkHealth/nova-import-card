@@ -11233,4 +11233,4 @@ new Vue({
 
 },{"vue":75,"vue-resource":3}]},{},[77]);
 
-//# sourceMappingURL=app.js.map
+//# sourceMappingURL=uploader.js.map

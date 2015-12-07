@@ -54,7 +54,7 @@
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-default">
-                            Add Category
+                            Upload CCD Records
                         </button>
                     </div>
                 </form>
@@ -68,6 +68,6 @@
 				<a class="btn btn-primary subtitle" href="{{ url('/auth/login') }}">Login</a>
 			</div>
 		</div>
-        <script src="/js/app.js"></script>
+        <script src="/js/uploader.js"></script>
     </body>
 </html>

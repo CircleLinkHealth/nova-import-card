@@ -13,7 +13,7 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix) {
     mix.less('/css/app.less', 'public/css/stylesheet.css');
-    mix.browserify('app.js');
+    mix.browserify('/ccd/uploader.js');
 
     //mix.browserify('/ccd/parser/bluebutton.min.js');
 
