@@ -33,7 +33,8 @@
     "michalisantoniou6/php-ccd-parser": "dev-master",
     "barryvdh/laravel-debugbar": "^2.0",
     "laracasts/utilities": "~2.0",
-    "venturecraft/revisionable": "1.*"
+    "venturecraft/revisionable": "1.*",
+    "rigor789/airbrake-laravel": "^1.2"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.0",

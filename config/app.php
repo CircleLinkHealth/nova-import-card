@@ -144,6 +144,7 @@ return [
 		Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
 		Barryvdh\Debugbar\ServiceProvider::class,
 
+
 		'App\Providers\AppServiceProvider',
 		'App\Providers\BusServiceProvider',
 		'App\Providers\ConfigServiceProvider',
@@ -165,6 +166,7 @@ return [
 		'Zizaco\Entrust\EntrustServiceProvider',
 		'Fideloper\Proxy\TrustedProxyServiceProvider',
 		'MikeMcLin\WpPassword\WpPasswordProvider',
+        \rigor789\AirbrakeLaravel\AirbrakeServiceProvider::class,
 
 
 

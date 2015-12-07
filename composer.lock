@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "52acf338d1efdbc6e67123d6178a5bac",
-    "content-hash": "da1920505e0ae4fc0817984fd2bce045",
+    "hash": "1d61ff52f15d6a16d43e79a919cffca7",
+    "content-hash": "1648a05af5d10d9286c3ddc4a10f47c3",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -313,6 +313,53 @@
                 "utils"
             ],
             "time": "2015-07-23 00:54:12"
+        },
+        {
+            "name": "dbtlr/php-airbrake",
+            "version": "1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dbtlr/php-airbrake.git",
+                "reference": "69fd4782219ba22fcfe4c278de1eebbbe38f0950"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dbtlr/php-airbrake/zipball/69fd4782219ba22fcfe4c278de1eebbbe38f0950",
+                "reference": "69fd4782219ba22fcfe4c278de1eebbbe38f0950",
+                "shasum": ""
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "php": ">=5.3.3",
+                "phpunit/phpunit": "*",
+                "squizlabs/php_codesniffer": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Airbrake\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Drew Butler",
+                    "email": "hi@dbtlr.com",
+                    "homepage": "http://dbtlr.com"
+                }
+            ],
+            "description": "A PHP 5.3 library for sending errors to the Airbrake.io service.",
+            "homepage": "https://github.com/dbtlr/php-airbrake",
+            "keywords": [
+                "airbrake",
+                "errors",
+                "exceptions",
+                "logging"
+            ],
+            "time": "2015-08-25 15:01:23"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -2231,6 +2278,54 @@
                 "logging"
             ],
             "time": "2015-10-13 08:18:50"
+        },
+        {
+            "name": "rigor789/airbrake-laravel",
+            "version": "1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rigor789/airbrake-laravel.git",
+                "reference": "cbad0355c91d26ed874ae1e85e80070cfd9d0a66"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rigor789/airbrake-laravel/zipball/cbad0355c91d26ed874ae1e85e80070cfd9d0a66",
+                "reference": "cbad0355c91d26ed874ae1e85e80070cfd9d0a66",
+                "shasum": ""
+            },
+            "require": {
+                "dbtlr/php-airbrake": "~1.1",
+                "illuminate/contracts": "5.*",
+                "illuminate/support": "5.*",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "rigor789\\AirbrakeLaravel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Igor",
+                    "email": "rigor789@gmail.com"
+                }
+            ],
+            "description": "Laravel package for the Airbrake API, which supports Errbit",
+            "keywords": [
+                "airbrake",
+                "bug",
+                "catch",
+                "errbit",
+                "error",
+                "laravel",
+                "monitor"
+            ],
+            "time": "2015-10-23 15:16:22"
         },
         {
             "name": "swiftmailer/swiftmailer",
