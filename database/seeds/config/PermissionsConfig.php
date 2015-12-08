@@ -22,114 +22,28 @@ class PermissionsConfig extends Seeder {
         echo 'Start role/permissions sync.' .$this->msg. PHP_EOL.PHP_EOL;
 
         // permissions
-        /*
-         * activities-manage
-         * activities-view
-         * time-tracking-manage
-         * time-tracking-view
-         * api-manage
-         * api-view
-         * locations-manage
-         * locations-view
-         * programs-manage
-         * programs-view
-         * roles-manage
-         * roles-view
-         * roles-permissions-manage
-         * roles-permissions-view
-         * rules-engine-manage
-         * rules-engine-view
-         * user-create
-         * user-edit-all
-         * user-edit-self
-         * user-view-all
-         * user-view-self
-         */
         $this->permissions = array(
-            'activities-manage' => array(
-                'display_name' => 'Activities Manage',
-                'description' => '',
-            ),
-            'activities-view' => array(
-                'display_name' => 'Activities View',
-                'description' => '',
-            ),
-            'time-tracking-manage' => array(
-                'display_name' => 'Time Tracking Manage',
-                'description' => '',
-            ),
-            'time-tracking-view' => array(
-                'display_name' => 'Time Tracking View',
-                'description' => '',
-            ),
-            'api-manage' => array(
-                'display_name' => 'API Manage',
-                'description' => '',
-            ),
-            'api-view' => array(
-                'display_name' => 'API View',
-                'description' => '',
-            ),
-            'locations-manage' => array(
-                'display_name' => 'Locations Manage',
-                'description' => '',
-            ),
-            'locations-view' => array(
-                'display_name' => 'Locations View',
-                'description' => '',
-            ),
-            'programs-manage' => array(
-                'display_name' => 'Programs Manage',
-                'description' => '',
-            ),
-            'programs-view' => array(
-                'display_name' => 'Programs View',
-                'description' => '',
-            ),
-            'roles-manage' => array(
-                'display_name' => 'Roles Manage',
-                'description' => '',
-            ),
-            'roles-view' => array(
-                'display_name' => 'Roles View',
-                'description' => '',
-            ),
-            'roles-permissions-manage' => array(
-                'display_name' => 'Roles Permissions Manage',
-                'description' => '',
-            ),
-            'roles-permissions-view' => array(
-                'display_name' => 'Roles Permissions View',
-                'description' => '',
-            ),
-            'rules-engine-manage' => array(
-                'display_name' => 'Rules Engine Manage',
-                'description' => '',
-            ),
-            'rules-engine-view' => array(
-                'display_name' => 'Rules Engine View',
-                'description' => '',
-            ),
-            'user-create' => array(
-                'display_name' => 'User Create New User',
-                'description' => '',
-            ),
-            'user-edit-all' => array(
-                'display_name' => 'User Edit All',
-                'description' => '',
-            ),
-            'user-edit-self' => array(
-                'display_name' => 'User Edit Self',
-                'description' => '',
-            ),
-            'user-view-all' => array(
-                'display_name' => 'User View All',
-                'description' => '',
-            ),
-            'user-view-self' => array(
-                'display_name' => 'User View Self',
-                'description' => '',
-            ),
+            'activities-manage' => array('display_name' => 'Activities Manage', 'description' => '',),
+            'activities-view' => array('display_name' => 'Activities View', 'description' => '',),
+            'time-tracking-manage' => array('display_name' => 'Time Tracking Manage', 'description' => '',),
+            'time-tracking-view' => array('display_name' => 'Time Tracking View', 'description' => '',),
+            'api-manage' => array('display_name' => 'API Manage', 'description' => '',),
+            'api-view' => array('display_name' => 'API View', 'description' => '',),
+            'locations-manage' => array('display_name' => 'Locations Manage', 'description' => '',),
+            'locations-view' => array('display_name' => 'Locations View', 'description' => '',),
+            'programs-manage' => array('display_name' => 'Programs Manage', 'description' => '',),
+            'programs-view' => array('display_name' => 'Programs View', 'description' => '',),
+            'roles-manage' => array('display_name' => 'Roles Manage', 'description' => '',),
+            'roles-view' => array('display_name' => 'Roles View', 'description' => '',),
+            'roles-permissions-manage' => array('display_name' => 'Roles Permissions Manage', 'description' => '',),
+            'roles-permissions-view' => array('display_name' => 'Roles Permissions View', 'description' => '',),
+            'rules-engine-manage' => array('display_name' => 'Rules Engine Manage', 'description' => '',),
+            'rules-engine-view' => array('display_name' => 'Rules Engine View', 'description' => '',),
+            'user-create' => array('display_name' => 'User Create New User', 'description' => '',),
+            'user-edit-all' => array('display_name' => 'User Edit All', 'description' => '',),
+            'user-edit-self' => array('display_name' => 'User Edit Self', 'description' => '',),
+            'user-view-all' => array('display_name' => 'User View All', 'description' => '',),
+            'user-view-self' => array('display_name' => 'User View Self', 'description' => '',),
 
         );
 
