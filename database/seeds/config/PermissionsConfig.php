@@ -137,14 +137,14 @@ class PermissionsConfig extends Seeder {
         $this->roles = array(
             'administrator' => array(
                 'display_name' => 'Administrator',
-                'description' => '',
+                'description' => 'Administrator',
                 'permissions' => array(
                     // administrator will always get all permissions
                 )
             ),
             'manager' => array(
                 'display_name' => 'Manager',
-                'description' => '',
+                'description' => 'Manager',
                 'permissions' => array(
                     'activities-view',
                     'locations-manage',
@@ -159,7 +159,7 @@ class PermissionsConfig extends Seeder {
             ),
             'participant' => array(
                 'display_name' => 'Participant',
-                'description' => '',
+                'description' => 'Participant',
                 'permissions' => array(
                     'user-view-self',
                     'user-edit-self',
@@ -167,7 +167,7 @@ class PermissionsConfig extends Seeder {
             ),
             'provider' => array(
                 'display_name' => 'Provider',
-                'description' => '',
+                'description' => 'Provider',
                 'permissions' => array(
                     'activities-view',
                     'locations-manage',
@@ -200,6 +200,8 @@ class PermissionsConfig extends Seeder {
             $permission = Permission::where('name', '=', $permissionName)->first();
             if(!empty($permission)) {
                 $permissions[$permission->name]['id'] = $permission->id;
+                $permission->description = $permissionInfo['description']; // update description
+                $permission->save();
             } else {
                 // permission not in db, add
                 $permission = new Permission;
@@ -232,6 +234,8 @@ class PermissionsConfig extends Seeder {
             $role = Role::where('name', '=', $roleName)->first();
             if(!empty($role)) {
                 $roles[$roleName]['id'] = $role->id;
+                $role->description = $roleInfo['description']; // update description
+                $role->save();
             } else {
                 // permission not in db, add
                 $role = new Role;
@@ -270,7 +274,6 @@ class PermissionsConfig extends Seeder {
         if($existingRoles->count() > 0) {
             foreach($existingRoles as $existingRole) {
                 if(!array_key_exists($existingRole->name, $roles)) {
-                    echo "START " . $existingRole->name . PHP_EOL;
                     //dd($existingRole->users()->get());
                     //dd($existingRole->users()->sync([]));
                     $existingRole->users()->sync([]); // Delete relationship data
