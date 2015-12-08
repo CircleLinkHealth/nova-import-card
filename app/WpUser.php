@@ -202,7 +202,6 @@ class WpUser extends Model implements AuthenticatableContract, CanResetPasswordC
         return $this;
     }
 
-
     public function getUCP() {
         $userUcp = $this->ucp()->with(['item.meta', 'item.question'])->get();
         $userUcpData = array('ucp' => array(), 'obs_keys' => array(), 'alert_keys' => array());
@@ -264,4 +263,15 @@ class WpUser extends Model implements AuthenticatableContract, CanResetPasswordC
         $name = $this->fullName;
         return $name . ' ('.$this->ID.')';
     }
+
+    public function getUserTimeZone() {
+        $userConfig = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','wp_'.$this->blogId().'_user_config')->first();
+        if(!$userConfig) {
+            return false;
+        } else {
+            $data = unserialize($userConfig['meta_value']);
+            return $data['preferred_contact_timezone'];
+        }
+    }
+
 }

@@ -31,9 +31,10 @@ class WpBlog extends Model {
     }
 
     public static function getProviders($blogId){
-        $providers = WpUser::whereHas('roles', function ($q) use ($blogId) {
-            $q->where('name', '=', 'provider')
-              ->where('program_id', $blogId);
+        $providers = WpUser::whereHas('programs', function ($q) use ($blogId) {
+            $q->where('blog_id', '=', $blogId);
+        })->whereHas('roles', function ($q) {
+            $q->where('name', '=', 'provider');
         })->get();
         return $providers;
     }
