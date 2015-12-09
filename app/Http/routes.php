@@ -126,6 +126,7 @@ Route::group(['middleware' => 'auth'], function ()
 		// notes
 		Route::group(['prefix' => 'notes'], function () {
 			Route::get('create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create']);
+			Route::post('store', ['uses' => 'NotesController@store', 'as' => 'patient.note.store']);
 			Route::get('', ['uses' => 'NotesController@create', 'as' => 'patient.note.index']);
 		});
 	});

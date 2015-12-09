@@ -46,15 +46,17 @@
         </div>
         <div class="navbar-right hidden-xs ">
             <ul class="nav navbar-nav">
-                <li><a href="{{ URL::route('patients.dashboard', array()) }}"><i class="icon--home--white"></i> Home</a></li>
-                <li><a href=""><i class="icon--search--white"></i> Select Patient</a></li>
-                <li><a href="{{ URL::route('patients.demographics.show', array()) }}"><i class="icon--add-user"></i> Add Patient</a></li>
+                {{--URL::route('patients.dashboard', array())--}}
+                <li><a href="#"><i class="icon--home--white"></i> Home</a></li>
+                <li><a href="#"><i class="icon--search--white"></i> Select Patient</a></li>
+                <li><a href="#"><i class="icon--add-user"></i> Add Patient</a></li>
                 <li><a href="{{ URL::route('patient.alerts', array()) }}"><i class="icon--alert--white"></i> Alerts</a></li>
                 @if ( !Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
                     @if (!empty($patient))
-                        <li><a class="btn btn-orange btn-xs" href="{{ URL::route('users.edit', array('id' => $patient->ID)) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
+                        {{--URL::route('users.edit', array('id' => $patient->ID))--}}
+                        <li><a class="btn btn-orange btn-xs" href="#"><i class="icon--home--white"></i> Back to Admin</a></li>
                     @else
-                        <li><a class="btn btn-orange btn-xs" href="{{ URL::route('users.index', array()) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
+                        <li><a class="btn btn-orange btn-xs" href="#"><i class="icon--home--white"></i> Back to Admin</a></li>
                     @endif
                 @elseif (!Auth::guest())
                     <li>
@@ -125,7 +127,6 @@
 <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 <![endif]-->
 
-@section('content')
     <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
     <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
@@ -138,7 +139,5 @@
                 </div>
             </div>
     </div>
-
-<div style="clear:both;height:100px;"></div>
 </body>
 </html>

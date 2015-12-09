@@ -265,13 +265,13 @@ class WpUser extends Model implements AuthenticatableContract, CanResetPasswordC
     }
 
     public function getUserTimeZone() {
-        $userConfig = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','wp_'.$this->blogId().'_user_config')->first();
-        if(!$userConfig) {
-            return false;
-        } else {
-            $data = unserialize($userConfig['meta_value']);
-            return $data['preferred_contact_timezone'];
-        }
+        $userConfig = $this->userConfig();
+        return $userConfig['preferred_contact_timezone'];
     }
+
+    public function getCareTeamIDs() {
+        $userConfig = $this->userConfig();
+            return $userConfig['care_team'];
+        }
 
 }
