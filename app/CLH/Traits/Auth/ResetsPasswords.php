@@ -1,4 +1,4 @@
-<?php namespace App\CLH\Traits;
+<?php namespace App\CLH\Traits\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard;
