@@ -25,7 +25,7 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td>{{ $activity->id }} <a href="{{ url('activities/'.$activity->id.'') }}">DETAILS</a></td>
+                                <td>{{ $activity->id }} <a href="{{ URL::route('admin.activities.show', array('id' => $activity->id)) }}">DETAILS</a></td>
                                 <td>{{ $activity->type }}</td>
                                 <td>{{ $activity->duration }} ({{ $activity->duration_unit }})</td>
                                 <td>{{ $activity->patient_id }}</td>

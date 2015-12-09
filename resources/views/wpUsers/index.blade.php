@@ -16,8 +16,8 @@
                     </div>
                     <div class="col-sm-10">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('users.create', array()) }}" class="btn btn-success">New User</a>
-                            <a href="{{ URL::route('users.createQuickPatient', array('blogId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a>
+                            <a href="{{ URL::route('admin.users.create', array()) }}" class="btn btn-success">New User</a>
+                            <a href="{{ URL::route('admin.users.createQuickPatient', array('blogId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a>
                         </div>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
                     <div class="panel-body">
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <h2>Filter</h2>
@@ -74,7 +74,7 @@
                                 @foreach( $wpUsers as $wpUser )
                                     <tr>
                                         <td>
-                                            <a href="{{ URL::route('users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-primary btn-xs">{{ $wpUser->ID }}</a><br />
+                                            <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-primary btn-xs">{{ $wpUser->ID }}</a><br />
                                         </td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
@@ -84,7 +84,7 @@
                                                     </div>
                                                 @else
                                                     @foreach ($wpUser->roles as $role)
-                                                        <a href="{{ URL::route('users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-info btn-xs">{{ $role->display_name }}</a><br />
+                                                        <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-info btn-xs">{{ $role->display_name }}</a><br />
                                                     @endforeach
                                                 @endif
                                             @endif

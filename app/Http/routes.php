@@ -132,50 +132,6 @@ Route::group(['middleware' => 'auth'], function ()
 	});
 
 	/****************************/
-	// ADMIN (without /admin)
-	/****************************/
-	// apikeys
-	Route::resource('apikeys', 'ApiKeyController', [
-		'only' => [ 'index', 'destroy', 'store' ],
-	]);
-
-	// rules
-	Route::get('rules', 'RulesController@index');
-	Route::get('rules/create', ['uses' =>'RulesController@create', 'as'=>'rulesCreate']);
-	Route::post('rules/store', ['uses' =>'RulesController@store', 'as'=>'rulesStore']);
-	Route::get('rules/{id}', ['uses' =>'RulesController@show', 'as'=>'rulesShow']);
-	Route::get('rules/{id}/edit', ['uses' =>'RulesController@edit', 'as'=>'rulesEdit']);
-	Route::post('rules/{id}/edit', ['uses' =>'RulesController@update', 'as'=>'rulesUpdate']);
-	Route::get('rulesmatches', ['uses' =>'RulesController@showMatches', 'as'=>'rulesMatches']);
-
-	// pagetimer
-	Route::get('pagetimer', 'PageTimerController@index');
-	Route::get('pagetimer/create', ['uses' =>'PageTimerController@create', 'as'=>'pageTimerCreate']);
-	Route::get('pagetimer/{id}', ['uses' =>'PageTimerController@show', 'as'=>'pageTimerShow']);
-	Route::get('pagetimer/{id}/edit', ['uses' =>'PageTimerController@edit', 'as'=>'pageTimerEdit']);
-
-	// activities
-	Route::get('activities', 'ActivityController@index');
-	Route::get('activities/create', ['uses' =>'ActivityController@create', 'as'=>'activitiesCreate']);
-	Route::get('activities/{id}', ['uses' =>'ActivityController@show', 'as'=>'activitiesShow']);
-	Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'activitiesEdit']);
-
-	// wpusers
-	Route::get('users', ['uses' =>'WpUserController@index', 'as'=>'users.index']);
-	Route::post('users', ['uses' =>'WpUserController@store', 'as'=>'users.store']);
-	Route::get('users/create', ['uses' =>'WpUserController@create', 'as'=>'users.create']);
-	Route::get('users/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'users.edit']);
-	Route::post('users/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'users.update']);
-	Route::get('users/createQuickPatient/{blogId}', ['uses' =>'WpUserController@createQuickPatient', 'as'=>'users.createQuickPatient']);
-	Route::post('users/createQuickPatient/', ['uses' =>'WpUserController@storeQuickPatient', 'as'=>'users.storeQuickPatient']);
-	Route::get('users/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'users.careplan']);
-	Route::get('users/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenter']);
-	Route::post('users/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'users.msgCenterUpdate']);
-
-	// locations
-	Route::resource('locations', 'LocationController');
-
-	/****************************/
 	// ADMIN (/admin)
 	/****************************/
 	Entrust::routeNeedsRole('admin/*', array('administrator','developer','care-center'), Redirect::to( URL::route('login') ), false);
@@ -183,6 +139,39 @@ Route::group(['middleware' => 'auth'], function ()
 
 		// home
 		Route::get('home', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
+
+		// activities
+		Route::resource('activities', 'ActivityController');
+		Route::get('activities/create', ['uses' =>'ActivityController@create', 'as'=>'admin.activities.create']);
+		Route::get('activities/{id}', ['uses' =>'ActivityController@show', 'as'=>'admin.activities.show']);
+		Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'admin.activities.edit']);
+
+		// pagetimer
+		Route::resource('pagetimer', 'PageTimerController');
+		Route::get('pagetimer/create', ['uses' =>'PageTimerController@create', 'as'=>'admin.pagetimer.create']);
+		Route::get('pagetimer/{id}', ['uses' =>'PageTimerController@show', 'as'=>'admin.pagetimer.show']);
+		Route::get('pagetimer/{id}/edit', ['uses' =>'PageTimerController@edit', 'as'=>'admin.pagetimer.edit']);
+
+		// wpusers
+		Route::get('users', ['uses' =>'WpUserController@index', 'as'=>'admin.users.index']);
+		Route::post('users', ['uses' =>'WpUserController@store', 'as'=>'admin.users.store']);
+		Route::get('users/create', ['uses' =>'WpUserController@create', 'as'=>'admin.users.create']);
+		Route::get('users/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'admin.users.edit']);
+		Route::post('users/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'admin.users.update']);
+		Route::get('users/createQuickPatient/{blogId}', ['uses' =>'WpUserController@createQuickPatient', 'as'=>'admin.users.createQuickPatient']);
+		Route::post('users/createQuickPatient/', ['uses' =>'WpUserController@storeQuickPatient', 'as'=>'admin.users.storeQuickPatient']);
+		Route::get('users/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'admin.users.careplan']);
+		Route::get('users/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'admin.users.msgCenter']);
+		Route::post('users/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'admin.users.msgCenterUpdate']);
+
+		// rules
+		Route::resource('rules', 'RulesController');
+		Route::get('rules/create', ['uses' =>'RulesController@create', 'as'=>'admin.rules.create']);
+		Route::post('rules/store', ['uses' =>'RulesController@store', 'as'=>'admin.rules.store']);
+		Route::get('rules/{id}', ['uses' =>'RulesController@show', 'as'=>'admin.rules.show']);
+		Route::get('rules/{id}/edit', ['uses' =>'RulesController@edit', 'as'=>'admin.rules.edit']);
+		Route::post('rules/{id}/edit', ['uses' =>'RulesController@update', 'as'=>'admin.rules.update']);
+		Route::get('rulesmatches', ['uses' =>'RulesController@showMatches', 'as'=>'admin.rules.matches']);
 
 		// roles
 		Route::resource('roles', 'Admin\RoleController');
@@ -233,6 +222,14 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@edit', 'as'=>'admin.programs.edit']);
 		Route::post('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@update', 'as'=>'admin.programs.update']);
 		Route::get('programs/{id}/questions', ['uses' =>'Admin\WpBlogController@showQuestions', 'as'=>'admin.programs.questions']);
+
+		// locations
+		Route::resource('locations', 'LocationController');
+
+		// apikeys
+		Route::resource('apikeys', 'ApiKeyController', [
+			'only' => [ 'index', 'destroy', 'store' ],
+		]);
 	});
 
 	/*

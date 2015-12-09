@@ -27,7 +27,7 @@
                         @include('errors.errors')
 
                         <div class="row">
-                            {!! Form::open(array('url' => '/users', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.users.store'), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <!-- Nav tabs -->
@@ -131,7 +131,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('users.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Create User', array('class' => 'btn btn-success')) !!}
                                     </form>
                                 </div>

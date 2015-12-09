@@ -97,7 +97,7 @@ class RulesController extends Controller {
 			$rule->intrActions()->saveMany($newActions);
 		}
 		$rule->push();
-		return redirect()->route('rulesEdit', [$rule->id])->with('messages', ['successfully added new rule - '.$params['rule_name']]);
+		return redirect()->route('admin.rules.edit', [$rule->id])->with('messages', ['successfully added new rule - '.$params['rule_name']]);
 	}
 
 	/**
@@ -109,7 +109,7 @@ class RulesController extends Controller {
 	public function show($id)
 	{
 		$rule = Rules::find($id);
-		return redirect()->route('rulesEdit', [$rule->id]);
+		return redirect()->route('admin.rules.edit', [$rule->id]);
 		return view('rules.show', [ 'rule' => $rule ]);
 	}
 

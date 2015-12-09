@@ -28,7 +28,7 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td>{{ $pageTime->id }} <a href="{{ url('pagetimer/'.$pageTime->id.'') }}">DETAILS</a></td>
+                                <td>{{ $pageTime->id }} <a href="{{ URL::route('admin.pagetimer.show', array('id' => $pageTime->id)) }}">DETAILS</a></td>
                                 <td>{{ $pageTime->title }}</td>
                                 <td>{{ $pageTime->duration }} ({{ $pageTime->duration_unit }})</td>
                                 <td>{{ $pageTime->patient_id }}</td>
@@ -51,10 +51,10 @@
                         <p>query_string: {{ $pageTime->query_string }}</p>
                         <p>program_id: {{ $pageTime->program_id }}</p>
                         <p>processed: {{ $pageTime->processed }}</p>
-                        <p>rule_params: {{ $pageTime->rule_params }} <a href="{{ route('rulesMatches', unserialize($pageTime->rule_params)) }}">click here to match rules</a></p>
+                        <p>rule_params: {{ $pageTime->rule_params }} <a href="{{ URL::route('admin.rules.matches', unserialize($pageTime->rule_params)) }}">click here to match rules</a></p>
                         <p>rule_id: {{ $pageTime->rule_id }}</p>
                         @if (($pageTime->rule))
-                            <p>found rule:<a href="{{ url('rules/'.$pageTime->rule->id.'') }}">{{ $pageTime->rule->rule_name }} [{{ $pageTime->rule->id }}]</a></p>
+                            <p>found rule:<a href="{{ URL::route('admin.rules.show', array('id' => $pageTime->rule->id)) }}">{{ $pageTime->rule->rule_name }} [{{ $pageTime->rule->id }}]</a></p>
                         @else
                             <p><em>No rule for this page time</em></p>
                         @endif
@@ -64,7 +64,7 @@
                             @if (($pageTime->activities->count()))
                                 <ul>
                                 @foreach( $pageTime->activities as $activity )
-                                    <li>{{ $activity->id }} <a href="{{ url('activities/'.$activity->id.'') }}">Activity Detail</a></li>
+                                    <li>{{ $activity->id }} <a href="{{ URL::route('admin.activities.show', array('id' => $activity->id)) }}">Activity Detail</a></li>
                                 @endforeach
                                 </ul>
                             @endif

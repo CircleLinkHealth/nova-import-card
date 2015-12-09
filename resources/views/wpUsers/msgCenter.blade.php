@@ -62,11 +62,6 @@
                     </div>
                     <div class="panel-body">
                         @include('errors.errors')
-                        <div class="row">
-                            <div class="pull-left" style="margin-left:10px;">
-                                <a href="{{ url('users/'.$wpUser->ID.'/msgcenter?action=run_scheduler&date=today') }}" class="btn btn-primary">Run Scheduler</a>
-                            </div>
-                        </div>
 
                         <h2>App Simulator:</h2>
                         @if (count($cpFeed['CP_Feed']) == 0)
@@ -160,38 +155,6 @@
                                 </div>
                             @endforeach
                         @endif
-
-
-
-
-
-
-
-
-
-
-
-                        <div class="row">
-                            {!! Form::open(array('url' => '/wpusers/'.$wpUser->ID.'/edit', 'class' => 'form-horizontal')) !!}
-                        </div>
-                        <h2>Respond</h2>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-xs-2">New Message</div>
-                                <div class="col-xs-10">
-                                    {!! Form::textarea('msgText','Enter text here',['class'=>'form-control', 'rows' => 3, 'cols' => 10]) !!}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row" style="margin-top:50px;">
-                            <div class="col-sm-12">
-                                <div class="pull-right">
-                                    {!! Form::submit('Send Text', array('class' => 'btn btn-success', 'disabled' => 'disabled')) !!}
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
 
                         <h2>Recent Action:</h2>
                         @if (count($comments) == 0)

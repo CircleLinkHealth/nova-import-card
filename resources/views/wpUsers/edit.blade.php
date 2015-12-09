@@ -21,24 +21,24 @@
                         @include('errors.errors')
 
                         <div class="row">
-                            {!! Form::open(array('url' => '/users/'.$wpUser->ID.'/edit', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $wpUser->ID)), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 @if($wpUser->hasRole('participant'))
                                     <div class="pull-left">
-                                        <a href="{{ url('users/'.$wpUser->ID.'/msgcenter') }}" class="btn btn-primary">App Simulator</a>
+                                        <a href="{{ URL::route('admin.users.msgCenter', array('patientId' => $wpUser->ID)) }}" class="btn btn-primary">App Simulator</a>
                                     </div>
                                     <div class="pull-left" style="margin-left:10px;">
                                         <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-orange">Participant</a>
                                     </div>
                                 @endif
                                 <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ url('users/'.$wpUser->ID.'/careplan') }}" class="btn btn-primary">Care Plan Feed JSON</a>
+                                    <a href="{{ URL::route('admin.users.careplan', array('patientId' => $wpUser->ID)) }}" class="btn btn-primary">Care Plan Feed JSON</a>
                                 </div>
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('users.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
@@ -289,13 +289,13 @@
                             </div>
 
                             <div role="tabpanel" class="tab-pane" id="usercareteam">
+                                <h2>Care Team</h2>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('care_team', 'Care Team:') !!}</div>
                                         <div class="col-xs-10">
                                             @if (count($userConfig['care_team']) > 0)
                                                 <div class="alert alert-warning">
-                                                    <strong>Care Team</strong>
                                                     <ul>
                                                         @foreach ($userConfig['care_team'] as $id)
                                                             <li>{!! Form::checkbox('care_team[]', $id, ['checked' => 'checked']) !!}{{ $id }}</li>

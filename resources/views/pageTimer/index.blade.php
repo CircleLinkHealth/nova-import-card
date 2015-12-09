@@ -40,23 +40,23 @@
                         <tbody>
                         @foreach( $pageTimes as $pageTime )
                             <tr>
-                                <td><a href="{{ url('pagetimer/'.$pageTime->id.'') }}" class="btn btn-primary">Detail</a></td>
+                                <td><a href="{{ URL::route('admin.pagetimer.show', array('id' => $pageTime->id)) }}" class="btn btn-primary">Detail</a></td>
                                 <td>{{ $pageTime->title }}</td>
                                 <td>{{ $pageTime->activity_type }}</td>
                                 <td>{{ $pageTime->duration }} ({{ $pageTime->duration_unit }})</td>
-                                <td><a href="{{ URL::route('users.edit', array('id' => $pageTime->patient_id)) }}" class="btn btn-orange btn-xs">{{ $pageTime->patient_id }}</a></td>
-                                <td><a href="{{ URL::route('users.edit', array('id' => $pageTime->provider_id)) }}" class="btn btn-orange btn-xs">{{ $pageTime->provider_id }}</a></td>
+                                <td><a href="{{ URL::route('admin.users.edit', array('id' => $pageTime->patient_id)) }}" class="btn btn-orange btn-xs">{{ $pageTime->patient_id }}</a></td>
+                                <td><a href="{{ URL::route('admin.users.edit', array('id' => $pageTime->provider_id)) }}" class="btn btn-orange btn-xs">{{ $pageTime->provider_id }}</a></td>
                                 <td>{{ $pageTime->processed }}</td>
                                 <td>{{ $pageTime->start_time }}<br>{{ $pageTime->end_time }}</td>
                                 <td>
                                     @if (($pageTime->rule_id))
-                                        {{ $pageTime->rule_id }} <a href="{{ url('rules/'.$pageTime->rule_id.'') }}">Rule Detail</a>
+                                        {{ $pageTime->rule_id }} <a href="{{ URL::route('admin.rules.show', array('id' => $pageTime->rule_id)) }}">Rule Detail</a>
                                     @endif
                                 </td>
                                 <td>
                                     @if (($pageTime->activities->count()))
                                         @foreach( $pageTime->activities as $activity )
-                                            <li>{{ $activity->id }} <a href="{{ url('activities/'.$activity->id.'') }}">Activity Detail</a></li>
+                                            <li>{{ $activity->id }} <a href="{{ URL::route('admin.activities.show', array('id' => $activity->id)) }}">Activity Detail</a></li>
                                         @endforeach
                                     @endif
                                 </td>

@@ -62,7 +62,7 @@
 									Users <span class="caret"></span>
 								</a>
 								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ URL::route('users.index', array()) }}">All Users</a></li>
+									<li><a href="{{ URL::route('admin.users.index', array()) }}">All Users</a></li>
 									<li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a></li>
 									<li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
 									<li><a href="{{ URL::route('admin.ucp.index', array()) }}">UCP</a></li>
@@ -76,7 +76,7 @@
 									Roles<span class="caret"></span>
 								</a>
 								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ url('admin/roles') }}">Roles</a></li>
+									<li><a href="{{ URL::route('admin.roles.index', array()) }}">Roles</a></li>
 									<li><a href="{{ URL::route('admin.permissions.index', array()) }}">Permissions</a></li>
 								</ul>
 							</li>
@@ -97,8 +97,8 @@
 									Activities <span class="caret"></span>
 								</a>
 								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ url('activities/') }}">Activities</a></li>
-									<li><a href="{{ action('PageTimerController@index') }}">Page Timer</a></li>
+									<li><a href="{{ URL::route('admin.activities.index', array()) }}">Activities</a></li>
+									<li><a href="{{ URL::route('admin.pagetimer.index', array()) }}">Page Timer</a></li>
 								</ul>
 							</li>
 							<li role="presentation" class="dropdown">
@@ -106,8 +106,8 @@
 									Rules <span class="caret"></span>
 								</a>
 								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ action('RulesController@index') }}">Rules</a></li>
-									<li><a href="{{ url('rules/create/') }}">Add new</a></li>
+									<li><a href="{{ URL::route('admin.rules.index', array()) }}">Rules</a></li>
+									<li><a href="{{ URL::route('admin.rules.create', array()) }}">Add new</a></li>
 								</ul>
 							</li>
 							<li role="presentation" class="dropdown">
@@ -115,7 +115,7 @@
 									API<span class="caret"></span>
 								</a>
 								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ action('ApiKeyController@index') }}">API Keys</a></li>
+									<li><a href="{{ URL::route('admin.apikeys.index', array()) }}">API Keys</a></li>
 									<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
 									<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
 								</ul>
@@ -159,9 +159,9 @@
 						<li><a href="{{ URL::route('patient.alerts', array()) }}"><i class="icon--alert--white"></i> Alerts</a></li>
 						@if ( !Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
 							@if (!empty($patient))
-								<li><a class="btn btn-orange btn-xs" href="{{ URL::route('users.edit', array('id' => $patient->ID)) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
+								<li><a class="btn btn-orange btn-xs" href="{{ URL::route('admin.users.edit', array('id' => $patient->ID)) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
 							@else
-								<li><a class="btn btn-orange btn-xs" href="{{ URL::route('users.index', array()) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
+								<li><a class="btn btn-orange btn-xs" href="{{ URL::route('admin.users.index', array()) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
 							@endif
 						@elseif (!Auth::guest())
 							<li>

@@ -2,7 +2,7 @@
 
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
-    {!! Form::open(array('url' => '/rules/'.$rule->id.'/edit', 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('admin.rules.update', array('id' => $rule->id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
@@ -25,7 +25,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><a href="{{ url('rules/'.$rule->id.'') }}" class="btn btn-primary">{{ $rule->id }} Detail</a></td>
+                                    <td><a href="{{ URL::route('admin.rules.show', array('id' => $rule->id)) }}" class="btn btn-primary">{{ $rule->id }} Detail</a></td>
                                     <td>{{ $rule->rule_name }}</td>
                                     <td>{{ $rule->rule_description }}</td>
                                     <td>{{ $rule->active }}</td>

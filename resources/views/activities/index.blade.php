@@ -38,14 +38,14 @@
                         <tbody>
                         @foreach( $activities as $act )
                             <tr>
-                                <td><a href="{{ url('activities/'.$act->id.'') }}" class="btn btn-primary">Detail</a></td>
+                                <td><a href="{{ URL::route('admin.activities.show', array('id' => $act->id)) }}" class="btn btn-primary">Detail</a></td>
                                 <td>{{ $act->type }}</td>
                                 <td>{{ $act->duration }}</td>
-                                <td><a href="{{ URL::route('users.edit', array('id' => $act->patient_id)) }}" class="btn btn-orange btn-xs">{{ $act->patient_id }}</a></td>
-                                <td><a href="{{ URL::route('users.edit', array('id' => $act->provider_id)) }}" class="btn btn-orange btn-xs">{{ $act->provider_id }}</a></td>
-                                <td><a href="{{ URL::route('users.edit', array('id' => $act->logger_id)) }}" class="btn btn-orange btn-xs">{{ $act->logger_id }}</a></td>
+                                <td><a href="{{ URL::route('admin.users.edit', array('id' => $act->patient_id)) }}" class="btn btn-orange btn-xs">{{ $act->patient_id }}</a></td>
+                                <td><a href="{{ URL::route('admin.users.edit', array('id' => $act->provider_id)) }}" class="btn btn-orange btn-xs">{{ $act->provider_id }}</a></td>
+                                <td><a href="{{ URL::route('admin.users.edit', array('id' => $act->logger_id)) }}" class="btn btn-orange btn-xs">{{ $act->logger_id }}</a></td>
                                 <td>{{ $act->performed_at }}</td>
-                                <td><a href="{{ url('pagetimer/'.$act->page_timer_id.'') }}">{{ $act->page_timer_id }}</a></td>
+                                <td><a href="{{ URL::route('admin.pagetimer.show', array('id' => $act->page_timer_id)) }}">{{ $act->page_timer_id }}</a></td>
                             </tr>
                         @endforeach
                         </tbody>
