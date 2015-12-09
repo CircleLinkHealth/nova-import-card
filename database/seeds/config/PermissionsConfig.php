@@ -42,12 +42,12 @@ class PermissionsConfig extends Seeder {
             /*
             'rules-engine-manage' => array('display_name' => 'Rules Engine Manage', 'description' => '',),
             'rules-engine-view' => array('display_name' => 'Rules Engine View', 'description' => '',),
+            */
             'user-create' => array('display_name' => 'User Create New User', 'description' => '',),
             'user-edit-all' => array('display_name' => 'User Edit All', 'description' => '',),
             'user-edit-self' => array('display_name' => 'User Edit Self', 'description' => '',),
             'user-view-all' => array('display_name' => 'User View All', 'description' => '',),
             'user-view-self' => array('display_name' => 'User View Self', 'description' => '',),
-            */
 
         );
 
