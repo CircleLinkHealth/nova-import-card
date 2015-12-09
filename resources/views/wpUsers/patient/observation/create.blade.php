@@ -3,16 +3,16 @@
 @section('content')
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('patient.observation.store', array()), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('patient.observation.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal')) !!}
     <div class="container">
         <section class="main-form">
             <div class="row">
+                @include('errors.errors')
                 <div class="main-form-container col-lg-8 col-lg-offset-2">
                     <div class="row">
                         <div class="main-form-title">
                             New Observation
                         </div>
-                        @include('errors.errors')
                         <div class="main-form-block main-form-horizontal col-md-12">
                             <div class="row">
                                 <div class="form-block col-md-6">
@@ -129,6 +129,7 @@
                         <div class="row" style="margin:30px 0px;">
                             <div class="col-lg-12">
                                 <div class="pull-right" style="margin-right:20px;">
+                                    <input type="hidden" name="patientId" id="patientId" value="{{ $patient->ID }}">
                                     <input type="hidden" name="userId" id="userId" value="{{ $patient->ID }}">
                                     <input type="hidden" name="programId" id="programId" value="{{ $patient->program_id }}">
                                     <a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" class="btn btn-danger">Cancel</a>

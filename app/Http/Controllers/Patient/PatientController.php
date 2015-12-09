@@ -55,6 +55,8 @@ class PatientController extends Controller {
 	 */
 	public function showPatientSummary(Request $request, $patientId)
 	{
+		$messages = \Session::get('messages');
+
 		$wpUser = WpUser::find($patientId);
 		if(!$wpUser) {
 			return response("User not found", 401);
@@ -177,7 +179,7 @@ class PatientController extends Controller {
 		}
 
 		//return response()->json($cpFeed);
-		return view('wpUsers.patient.summary', ['program' => $program, 'patient' => $wpUser, 'wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json]);
+		return view('wpUsers.patient.summary', ['program' => $program, 'patient' => $wpUser, 'wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json, 'messages' => $messages]);
 	}
 
 
