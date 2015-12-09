@@ -23,6 +23,7 @@ class PermissionsConfig extends Seeder {
 
         // permissions ALPHABETICAL
         $this->permissions = array(
+            /*
             'activities-manage' => array('display_name' => 'Activities Manage', 'description' => '',),
             'activities-view' => array('display_name' => 'Activities View', 'description' => '',),
             'time-tracking-manage' => array('display_name' => 'Time Tracking Manage', 'description' => '',),
@@ -33,10 +34,12 @@ class PermissionsConfig extends Seeder {
             'locations-view' => array('display_name' => 'Locations View', 'description' => '',),
             'programs-manage' => array('display_name' => 'Programs Manage', 'description' => '',),
             'programs-view' => array('display_name' => 'Programs View', 'description' => '',),
+            */
             'roles-manage' => array('display_name' => 'Roles Manage', 'description' => '',),
             'roles-view' => array('display_name' => 'Roles View', 'description' => '',),
             'roles-permissions-manage' => array('display_name' => 'Roles Permissions Manage', 'description' => '',),
             'roles-permissions-view' => array('display_name' => 'Roles Permissions View', 'description' => '',),
+            /*
             'rules-engine-manage' => array('display_name' => 'Rules Engine Manage', 'description' => '',),
             'rules-engine-view' => array('display_name' => 'Rules Engine View', 'description' => '',),
             'user-create' => array('display_name' => 'User Create New User', 'description' => '',),
@@ -44,6 +47,7 @@ class PermissionsConfig extends Seeder {
             'user-edit-self' => array('display_name' => 'User Edit Self', 'description' => '',),
             'user-view-all' => array('display_name' => 'User View All', 'description' => '',),
             'user-view-self' => array('display_name' => 'User View Self', 'description' => '',),
+            */
 
         );
 
@@ -56,17 +60,20 @@ class PermissionsConfig extends Seeder {
                     // administrator will always get all permissions
                 )
             ),
+            'care-center' => array(
+                'display_name' => 'Care Center',
+                'description' => 'Care Center',
+                'permissions' => array(
+                    'user-view-all',
+                    'user-view-self'
+                )
+            ),
             'manager' => array(
                 'display_name' => 'Manager',
                 'description' => 'Manager',
                 'permissions' => array(
-                    'activities-view',
-                    'locations-manage',
-                    'locations-view',
-                    'programs-manage',
-                    'programs-view',
-                    'user-create',
-                    'user-edit-self',
+                    'roles-view',
+                    'roles-permissions-view',
                     'user-view-all',
                     'user-view-self'
                 )
@@ -75,20 +82,13 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'Participant',
                 'description' => 'Participant',
                 'permissions' => array(
-                    'user-view-self',
-                    'user-edit-self',
+                    'user-view-self'
                 )
             ),
             'provider' => array(
                 'display_name' => 'Provider',
                 'description' => 'Provider',
                 'permissions' => array(
-                    'activities-view',
-                    'locations-manage',
-                    'locations-view',
-                    'user-create',
-                    'user-edit-self',
-                    'user-view-all',
                     'user-view-self'
                 )
             ),
