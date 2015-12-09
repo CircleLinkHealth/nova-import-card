@@ -137,6 +137,8 @@ Route::group(['middleware' => 'auth'], function ()
 	Entrust::routeNeedsRole('admin/*', array('administrator','developer','care-center'), Redirect::to( URL::route('login') ), false);
 	Route::group(['prefix' => 'admin'], function () {
 
+		$ap = 'admin/'; // admin prefix
+
 		// home
 		Route::get('home', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
 
@@ -178,6 +180,8 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::post('roles/{id}/edit', ['uses' =>'Admin\RoleController@update', 'as'=>'admin.roles.update']);
 
 		// permissions
+		Entrust::routeNeedsPermission($ap.'permissions/*', 'roles-permissions-view');
+		Entrust::routeNeedsPermission($ap.'permissions/*/*', 'roles-permissions-manage');
 		Route::resource('permissions', 'Admin\PermissionController');
 		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'admin.permissions.update']);
 
