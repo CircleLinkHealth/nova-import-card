@@ -46,22 +46,22 @@
 							<tr>
 								<td><strong>Total Users</strong></td>
 								<td>{{ $stats['totalUsers'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('users.index', array()) }}"><i class="icon--home--white"></i> All Users</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array()) }}"><i class="icon--home--white"></i> All Users</a></td>
 							</tr>
 							<tr>
 								<td><strong>Total Administrators</strong></td>
 								<td>{{ $stats['totalAdministrators'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('users.index', array('filterRole' => 'administrator')) }}"><i class="icon--home--white"></i> Administrators</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'administrator')) }}"><i class="icon--home--white"></i> Administrators</a></td>
 							</tr>
 							<tr>
 								<td><strong>Total Providers</strong></td>
 								<td>{{ $stats['totalProviders'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('users.index', array('filterRole' => 'provider')) }}"><i class="icon--home--white"></i> Providers</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'provider')) }}"><i class="icon--home--white"></i> Providers</a></td>
 							</tr>
 							<tr>
 								<td><strong>Total Participant</strong></td>
 								<td>{{ $stats['totalParticipants'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('users.index', array('filterRole' => 'participant')) }}"><i class="icon--home--white"></i> Participant</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'participant')) }}"><i class="icon--home--white"></i> Participant</a></td>
 							</tr>
 
 						</tbody>
