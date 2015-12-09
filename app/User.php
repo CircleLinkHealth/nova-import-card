@@ -252,15 +252,25 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $name;
 	}
 
-    // complex attributes
-    public function getFullNameAttribute() {
+	// complex attributes
+	public function getFullNameAttribute() {
 		$firstName = $this->firstName;
 		$lastName = $this->lastName;
 		return $firstName . ' ' . $lastName;
 	}
 
-    public function getFullNameWithIdAttribute() {
+	public function getFullNameWithIdAttribute() {
 		$name = $this->fullName;
 		return $name . ' ('.$this->ID.')';
+	}
+
+	public function getUserTimeZone() {
+		$userConfig = $this->userConfig();
+		return $userConfig['preferred_contact_timezone'];
+	}
+
+	public function getCareTeamIDs() {
+		$userConfig = $this->userConfig();
+		return $userConfig['care_team'];
 	}
 }

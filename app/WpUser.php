@@ -271,7 +271,7 @@ class WpUser extends Model implements AuthenticatableContract, CanResetPasswordC
 
     public function getCareTeamIDs() {
         $userConfig = $this->userConfig();
-            return $userConfig['care_team'];
-        }
+        return $userConfig['care_team'];
+    }
 
 }

@@ -18,10 +18,10 @@ class PermissionsConfig extends Seeder {
     {
 
         // init
-        $this->msg = 'This should always stay in sync with git branch, and all permissions ALWAYS LISTING IN ALPHABETICAL ORDER!!' . PHP_EOL.PHP_EOL;
+        $this->msg = 'This should always stay in sync with git branch, and all permissions arrays ALWAYS LISTING IN ALPHABETICAL ORDER!important! for organization' . PHP_EOL.PHP_EOL;
         echo 'Start role/permissions sync.' .$this->msg. PHP_EOL.PHP_EOL;
 
-        // permissions
+        // permissions ALPHABETICAL
         $this->permissions = array(
             'activities-manage' => array('display_name' => 'Activities Manage', 'description' => '',),
             'activities-view' => array('display_name' => 'Activities View', 'description' => '',),
@@ -188,8 +188,6 @@ class PermissionsConfig extends Seeder {
         if($existingRoles->count() > 0) {
             foreach($existingRoles as $existingRole) {
                 if(!array_key_exists($existingRole->name, $roles)) {
-                    //dd($existingRole->users()->get());
-                    //dd($existingRole->users()->sync([]));
                     $existingRole->users()->sync([]); // Delete relationship data
                     $existingRole->perms()->sync([]); // Delete relationship data
                     $existingRole->forceDelete();
