@@ -30,7 +30,11 @@
                             <tr>
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->display_name }}</td>
-                                <td><a href="{{ URL::route('admin.roles.edit', array('id' => $role->id)) }}" class="btn btn-primary">Edit</a></td>
+                                <td>
+                                    @if(Entrust::can('roles-manage'))
+                                        <a href="{{ URL::route('admin.roles.edit', array('id' => $role->id)) }}" class="btn btn-primary">Edit</a>
+                                    @endif
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -38,14 +42,12 @@
                         <h3>Permissions:</h3>
                         <div id="permissions">
                             @foreach( $role->perms as $permission )
-                                <div class="form-group condition" id="perm_{{ $permission }}">
-                                    <div class="col-sm-1">
-                                        {!! Form::checkbox('permissions[]', $permission->id, ['checked' => "checked", 'disabled' => "disabled"], ['style' => '']) !!}
-                                    </div>
-                                    <div class="col-sm-11">{!! Form::label('Value', ''.$permission->display_name, array('class' => '')) !!}</div>
+                                <div class="col-sm-12">
+                                    {!! $permission->display_name !!}
                                 </div>
                             @endforeach
                         </div>
+                        <br><br>
 
                         <div class="row" style="margin:20px 0px;">
                             <strong>Role Name:</strong><br>

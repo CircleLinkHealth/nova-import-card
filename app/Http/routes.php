@@ -134,8 +134,10 @@ Route::group(['middleware' => 'auth'], function ()
 	/****************************/
 	// ADMIN (/admin)
 	/****************************/
-	Entrust::routeNeedsRole('admin/*', array('administrator','developer','care-center'), Redirect::to( URL::route('login') ), false);
 	Route::group(['prefix' => 'admin'], function () {
+
+		$prefix = 'admin/'; // admin prefix
+		Entrust::routeNeedsRole($prefix.'*', array('administrator', 'manager'), Redirect::to( URL::route('login') ), false);
 
 		// home
 		Route::get('home', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
@@ -174,46 +176,61 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('rulesmatches', ['uses' =>'RulesController@showMatches', 'as'=>'admin.rules.matches']);
 
 		// roles
+		Entrust::routeNeedsPermission($prefix.'roles*', 'roles-view');
+		Entrust::routeNeedsPermission($prefix.'roles/*/*', 'roles-manage');
 		Route::resource('roles', 'Admin\RoleController');
 		Route::post('roles/{id}/edit', ['uses' =>'Admin\RoleController@update', 'as'=>'admin.roles.update']);
 
 		// permissions
+		Entrust::routeNeedsPermission($prefix.'permissions*', 'roles-permissions-view');
+		Entrust::routeNeedsPermission($prefix.'permissions/*/*', 'roles-permissions-manage');
 		Route::resource('permissions', 'Admin\PermissionController');
 		Route::post('permissions/{id}/edit', ['uses' =>'Admin\PermissionController@update', 'as'=>'admin.permissions.update']);
 
 		// questions
+		Entrust::routeNeedsPermission($prefix.'questions*', 'programs-manage');
 		Route::resource('questions', 'Admin\CPRQuestionController');
 		Route::post('questions/{id}/edit', ['uses' =>'Admin\CPRQuestionController@update', 'as'=>'admin.questions.update']);
 		Route::get('questions/{id}/destroy', ['uses' =>'Admin\CPRQuestionController@destroy', 'as'=>'admin.questions.destroy']);
 
 		// questionSets
+		Entrust::routeNeedsPermission($prefix.'questionSets*', 'programs-manage');
 		Route::resource('questionSets', 'Admin\CPRQuestionSetController');
 		Route::post('questionSets', ['uses' =>'Admin\CPRQuestionSetController@index', 'as'=>'admin.questionSets']);
 		Route::post('questionSets/{id}/edit', ['uses' =>'Admin\CPRQuestionSetController@update', 'as'=>'admin.questionSets.update']);
 		Route::get('questionSets/{id}/destroy', ['uses' =>'Admin\CPRQuestionSetController@destroy', 'as'=>'admin.questionSets.destroy']);
 
 		// items
+		Entrust::routeNeedsPermission($prefix.'items*', 'programs-manage');
 		Route::resource('items', 'Admin\CPRItemController');
 		Route::post('items/{id}/edit', ['uses' =>'Admin\CPRItemController@update', 'as'=>'admin.items.update']);
 		Route::get('items/{id}/destroy', ['uses' =>'Admin\CPRItemController@destroy', 'as'=>'admin.items.destroy']);
 
 		// ucp
+		Entrust::routeNeedsPermission($prefix.'ucp*', 'programs-manage');
 		Route::resource('ucp', 'Admin\CPRUCPController');
 		Route::post('ucp/{id}/edit', ['uses' =>'Admin\CPRUCPController@update', 'as'=>'admin.ucp.update']);
 		Route::get('ucp/{id}/destroy', ['uses' =>'Admin\CPRUCPController@destroy', 'as'=>'admin.ucp.destroy']);
 
 		// observations
+		Entrust::routeNeedsPermission($prefix.'observations*', 'observations-view');
+		Entrust::routeNeedsPermission($prefix.'observations/edit', 'observations-edit');
+		Entrust::routeNeedsPermission($prefix.'observations/create', 'observations-create');
 		Route::resource('observations', 'Admin\ObservationController');
 		Route::post('observations', ['uses' =>'Admin\ObservationController@index', 'as'=>'admin.observations']);
 		Route::post('observations/{id}/edit', ['uses' =>'Admin\ObservationController@update', 'as'=>'admin.observations.update']);
 		Route::get('observations/{id}/destroy', ['uses' =>'Admin\ObservationController@destroy', 'as'=>'admin.observations.destroy']);
 
 		// comments
+		Entrust::routeNeedsPermission($prefix.'comments*', 'observations-view');
+		Entrust::routeNeedsPermission($prefix.'comments/edit', 'observations-edit');
+		Entrust::routeNeedsPermission($prefix.'comments/create', 'observations-create');
 		Route::resource('comments', 'Admin\CommentController');
 		Route::post('comments/{id}/edit', ['uses' =>'Admin\CommentController@update', 'as'=>'admin.comments.update']);
 		Route::get('comments/{id}/destroy', ['uses' =>'Admin\CommentController@destroy', 'as'=>'admin.comments.destroy']);
 
 		// programs
+		Entrust::routeNeedsPermission($prefix.'programs*', 'programs-view');
 		Route::resource('programs', 'Admin\WpBlogController');
 		Route::get('programs', ['uses' =>'Admin\WpBlogController@index', 'as'=>'admin.programs']);
 		Route::get('programs/create', ['uses' =>'Admin\WpBlogController@create', 'as'=>'admin.programs.create']);
@@ -224,6 +241,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('programs/{id}/questions', ['uses' =>'Admin\WpBlogController@showQuestions', 'as'=>'admin.programs.questions']);
 
 		// locations
+		Entrust::routeNeedsPermission($prefix.'locations*', 'programs-view');
 		Route::resource('locations', 'LocationController');
 
 		// apikeys

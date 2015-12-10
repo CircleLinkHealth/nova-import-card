@@ -16,6 +16,9 @@ class CPRItemController extends Controller {
 	 */
 	public function index(Request $request)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		// display view
 		$items = CPRulesItem::orderBy('items_id', 'desc')->paginate(10);
 		return view('admin.items.index', [ 'items' => $items ]);
@@ -28,6 +31,9 @@ class CPRItemController extends Controller {
 	 */
 	public function create()
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		// display view
 		return view('admin.items.create', []);
 	}
@@ -39,6 +45,9 @@ class CPRItemController extends Controller {
 	 */
 	public function store(Request $request)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		$params = $request->input();
 		$item = new CPRulesItem;
 		$item->pcp_id = $params['pcp_id'];
@@ -57,6 +66,9 @@ class CPRItemController extends Controller {
 	 */
 	public function show($id)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		// display view
 		$item = CPRulesItem::find($id);
 		return view('admin.items.show', [ 'item' => $item, 'errors' => array(), 'messages' => array() ]);
@@ -70,6 +82,9 @@ class CPRItemController extends Controller {
 	 */
 	public function edit($id)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		$item = CPRulesItem::find($id);
 		return view('admin.items.edit', [ 'item' => $item, 'messages' => \Session::get('messages') ]);
 	}
@@ -82,6 +97,9 @@ class CPRItemController extends Controller {
 	 */
 	public function update(Request $request, $id)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		$params = $request->input();
 		$item = CPRulesItem::find($id);
 		$item->pcp_id = $params['pcp_id'];
@@ -100,6 +118,9 @@ class CPRItemController extends Controller {
 	 */
 	public function destroy($id)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		CPRulesItem::destroy($id);
 		return redirect()->back()->with('messages', ['successfully removed item'])->send();
 	}

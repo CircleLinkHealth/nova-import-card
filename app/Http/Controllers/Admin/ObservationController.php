@@ -18,6 +18,9 @@ class ObservationController extends Controller {
 	 */
 	public function index(Request $request)
 	{
+		if(!Auth::user()->can('observations-view')) {
+			abort(403);
+		}
 		// display view
 		$observations = Observation::OrderBy('id', 'desc')->limit('100');
 		$users = WpUser::OrderBy('ID', 'desc')->limit('100')->get();
@@ -58,6 +61,9 @@ class ObservationController extends Controller {
 	 */
 	public function create()
 	{
+		if(!Auth::user()->can('observations-create')) {
+			abort(403);
+		}
 		// display view
 		return view('admin.observations.create', []);
 	}
@@ -69,6 +75,9 @@ class ObservationController extends Controller {
 	 */
 	public function store(Request $request)
 	{
+		if(!Auth::user()->can('observations-create')) {
+			abort(403);
+		}
 		$params = $request->input();
 		$observation = new Observation;
 		$observation->msg_id = $params['msg_id'];
@@ -89,6 +98,9 @@ class ObservationController extends Controller {
 	 */
 	public function show($id)
 	{
+		if(!Auth::user()->can('observations-view')) {
+			abort(403);
+		}
 		// display view
 		$observation = Observation::find($id);
 		return view('admin.observations.show', [ 'observation' => $observation, 'errors' => array(), 'messages' => array() ]);
@@ -102,6 +114,9 @@ class ObservationController extends Controller {
 	 */
 	public function edit($id)
 	{
+		if(!Auth::user()->can('observations-edit')) {
+			abort(403);
+		}
 		$observation = Observation::find($id);
 		return view('admin.observations.edit', [ 'observation' => $observation, 'messages' => \Session::get('messages') ]);
 	}
@@ -114,6 +129,9 @@ class ObservationController extends Controller {
 	 */
 	public function update(Request $request, $id)
 	{
+		if(!Auth::user()->can('observations-edit')) {
+			abort(403);
+		}
 		$params = $request->input();
 		$observation = Observation::find($id);
 		$observation->msg_id = $params['msg_id'];
@@ -134,6 +152,9 @@ class ObservationController extends Controller {
 	 */
 	public function destroy($id)
 	{
+		if(!Auth::user()->can('observations-destroy')) {
+			abort(403);
+		}
 		Observation::destroy($id);
 		return redirect()->back()->with('messages', ['successfully removed observation'])->send();
 	}

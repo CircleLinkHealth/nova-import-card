@@ -71,27 +71,40 @@
 						@endif
 
 						@if ( ! Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
-							<li role="presentation" class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-									Roles<span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ URL::route('admin.roles.index', array()) }}">Roles</a></li>
-									<li><a href="{{ URL::route('admin.permissions.index', array()) }}">Permissions</a></li>
-								</ul>
-							</li>
-							<li role="presentation" class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-									Programs <span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ action('Admin\WpBlogController@index') }}">Programs</a></li>
-									<li><a href="{{ action('LocationController@index') }}">Locations</a></li>
-									<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>
-									<li><a href="{{ URL::route('admin.questionSets.index', array()) }}">Question Sets</a></li>
-									<li><a href="{{ URL::route('admin.items.index', array()) }}">Items</a></li>
-								</ul>
-							</li>
+
+							@if(Entrust::can('roles-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Roles<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.roles.index', array()) }}">Roles</a></li>
+										@if(Entrust::can('roles-permissions-view'))
+											<li><a href="{{ URL::route('admin.permissions.index', array()) }}">Permissions</a></li>
+										@endif
+									</ul>
+								</li>
+							@endif
+
+							@if(Entrust::can('programs-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Programs <span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.programs.index', array()) }}">Programs</a></li>
+										@if(Entrust::can('locations-view'))
+											<li><a href="{{ URL::route('admin.locations.index', array()) }}">Locations</a></li>
+										@endif
+										@if(Entrust::can('programs-manage'))
+											<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>
+											<li><a href="{{ URL::route('admin.questionSets.index', array()) }}">Question Sets</a></li>
+											<li><a href="{{ URL::route('admin.items.index', array()) }}">Items</a></li>
+										@endif
+									</ul>
+								</li>
+							@endif
+
 							<li role="presentation" class="dropdown">
 								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
 									Activities <span class="caret"></span>

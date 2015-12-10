@@ -18,6 +18,9 @@ class CPRQuestionController extends Controller
 	 */
 	public function index(Request $request)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		// display view
 		$questions = CPRulesQuestions::orderBy('qid', 'desc')->paginate(10);
 		return view('admin.questions.index', ['questions' => $questions]);
@@ -30,6 +33,9 @@ class CPRQuestionController extends Controller
 	 */
 	public function create()
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		// display view
 		return view('admin.questions.create', []);
 	}
@@ -41,6 +47,9 @@ class CPRQuestionController extends Controller
 	 */
 	public function store(Request $request)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		$params = $request->input();
 		$question = new CPRulesQuestions;
 		$question->msg_id = $params['msg_id'];
@@ -61,6 +70,9 @@ class CPRQuestionController extends Controller
 	 */
 	public function show($id)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		// display view
 		$question = CPRulesQuestions::find($id);
 		return view('admin.questions.show', ['question' => $question, 'errors' => array(), 'messages' => array()]);
@@ -74,6 +86,9 @@ class CPRQuestionController extends Controller
 	 */
 	public function edit($id)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		$question = CPRulesQuestions::find($id);
 		$programs = WpBlog::get();
 		if (!empty($question->rulesItems)) {
@@ -94,6 +109,9 @@ class CPRQuestionController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		$params = $request->input();
 		$question = CPRulesQuestions::find($id);
 		$question->msg_id = $params['msg_id'];
@@ -114,6 +132,9 @@ class CPRQuestionController extends Controller
 	 */
 	public function destroy($id)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		CPRulesQuestions::destroy($id);
 		return redirect()->back()->with('messages', ['successfully removed question'])->send();
 	}

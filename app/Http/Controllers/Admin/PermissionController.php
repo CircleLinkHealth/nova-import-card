@@ -7,6 +7,7 @@ use App\CPRulesPCP;
 use App\CPRulesItemMeta;
 use App\CPRulesItem;
 use App\Http\Controllers\Controller;
+use Auth;
 
 use App\WpBlog;
 use Illuminate\Http\Request;
@@ -20,6 +21,9 @@ class PermissionController extends Controller {
 	 */
 	public function index()
 	{
+		if(!Auth::user()->can('roles-permissions-view')) {
+			abort(403);
+		}
 		// display view
 		$permissions = Permission::paginate(10);
 		return view('admin.permissions.index', [ 'permissions' => $permissions ]);
@@ -32,6 +36,9 @@ class PermissionController extends Controller {
 	 */
 	public function create()
 	{
+		if(!Auth::user()->can('roles-permissions-manage')) {
+			abort(403);
+		}
 		// display view
 		$roles = Role::all();
 		return view('admin.permissions.create', [ 'roles' => $roles, 'errors' => array(), 'messages' => array() ]);
@@ -44,6 +51,9 @@ class PermissionController extends Controller {
 	 */
 	public function store(Request $request)
 	{
+		if(!Auth::user()->can('roles-permissions-manage')) {
+			abort(403);
+		}
 		$params = $request->input();
 		$permission = new Permission;
 		$permission->name = $params['name'];
@@ -65,6 +75,9 @@ class PermissionController extends Controller {
 	 */
 	public function show($id)
 	{
+		if(!Auth::user()->can('roles-permissions-view')) {
+			abort(403);
+		}
 		// display view
 		$permission = Permission::find($id);
 		return view('admin.permissions.show', [ 'permission' => $permission, 'errors' => array(), 'messages' => array() ]);
@@ -78,6 +91,9 @@ class PermissionController extends Controller {
 	 */
 	public function edit($id)
 	{
+		if(!Auth::user()->can('roles-permissions-manage')) {
+			abort(403);
+		}
 		$permission = Permission::find($id);
 		$roles = Role::all();
 		$permissionRoles = $permission->roles()->lists('id');
@@ -92,6 +108,9 @@ class PermissionController extends Controller {
 	 */
 	public function update(Request $request, $id)
 	{
+		if(!Auth::user()->can('roles-permissions-manage')) {
+			abort(403);
+		}
 		$params = $request->input();
 		$permission = Permission::find($id);
 		$permission->name = $params['name'];
@@ -112,6 +131,9 @@ class PermissionController extends Controller {
 	 */
 	public function destroy($id)
 	{
+		if(!Auth::user()->can('roles-permissions-manage')) {
+			abort(403);
+		}
 		//
 	}
 

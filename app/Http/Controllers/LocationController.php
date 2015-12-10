@@ -7,6 +7,8 @@ use App\Location;
 use App\WpBlog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Auth;
+use Entrust;
 
 class LocationController extends Controller {
 
@@ -17,6 +19,9 @@ class LocationController extends Controller {
 	 */
 	public function index(Request $request)
 	{
+		if(!Auth::user()->can('locations-view')) {
+			abort(403);
+		}
 		if ( $request->header('Client') == 'ui' ) // WP Site
 		{
 			$parent_location_id = Crypt::decrypt($request->header('parent-location-id'));
@@ -42,6 +47,9 @@ class LocationController extends Controller {
 	 */
 	public function create()
 	{
+		if(!Auth::user()->can('locations-manage')) {
+			abort(403);
+		}
 		$blogs = WpBlog::all();
 		return view('locations.create', [ 'locations' => Location::getAllNodes(), 'blogs' => $blogs ]);
 	}
@@ -53,6 +61,9 @@ class LocationController extends Controller {
 	 */
 	public function store(Request $request)
 	{
+		if(!Auth::user()->can('locations-manage')) {
+			abort(403);
+		}
 		$input = $request->input();
 
 		$newLocation = new Location( $input );
@@ -76,6 +87,9 @@ class LocationController extends Controller {
 	 */
 	public function show($id)
 	{
+		if(!Auth::user()->can('locations-view')) {
+			abort(403);
+		}
 		// return $id;
 		return view('locations.show', [ 
 			'locationParents' => Location::getAllParents(),
@@ -92,6 +106,9 @@ class LocationController extends Controller {
 	 */
 	public function edit($id)
 	{
+		if(!Auth::user()->can('locations-manage')) {
+			abort(403);
+		}
 		//
 	}
 
@@ -103,6 +120,9 @@ class LocationController extends Controller {
 	 */
 	public function update($id)
 	{
+		if(!Auth::user()->can('locations-manage')) {
+			abort(403);
+		}
 		//
 	}
 
@@ -114,6 +134,9 @@ class LocationController extends Controller {
 	 */
 	public function destroy($id)
 	{
+		if(!Auth::user()->can('locations-manage')) {
+			abort(403);
+		}
 		Location::destroy($id);
 
 		return 'deleted ' . $id;

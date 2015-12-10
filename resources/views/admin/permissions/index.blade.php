@@ -13,11 +13,13 @@
                     <div class="col-sm-8">
                         <h1>Permissions</h1>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.permissions.create', array()) }}" class="btn btn-success">New Permission</a>
+                    @if(Entrust::can('roles-permissions-manage'))
+                        <div class="col-sm-4">
+                            <div class="pull-right" style="margin:20px;">
+                                <a href="{{ URL::route('admin.permissions.create', array()) }}" class="btn btn-success">New Permission</a>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">All Permissions</div>
@@ -40,7 +42,11 @@
                                 <td>{{ $permission->display_name }}</td>
                                 <td>{{ $permission->description }}</td>
                                 <td>{{ $permission->created_at }}</td>
-                                <td><a href="{{ URL::route('admin.permissions.edit', array('id' => $permission->id)) }}" class="btn btn-primary">Edit</a></td>
+                                <td>
+                                    @if(Entrust::can('roles-permissions-manage'))
+                                        <a href="{{ URL::route('admin.permissions.edit', array('id' => $permission->id)) }}" class="btn btn-primary">Edit</a>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>

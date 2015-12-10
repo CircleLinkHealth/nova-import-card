@@ -23,22 +23,30 @@ class PermissionsConfig extends Seeder {
 
         // permissions ALPHABETICAL
         $this->permissions = array(
+            /*
             'activities-manage' => array('display_name' => 'Activities Manage', 'description' => '',),
             'activities-view' => array('display_name' => 'Activities View', 'description' => '',),
             'time-tracking-manage' => array('display_name' => 'Time Tracking Manage', 'description' => '',),
             'time-tracking-view' => array('display_name' => 'Time Tracking View', 'description' => '',),
             'api-manage' => array('display_name' => 'API Manage', 'description' => '',),
             'api-view' => array('display_name' => 'API View', 'description' => '',),
+            */
             'locations-manage' => array('display_name' => 'Locations Manage', 'description' => '',),
             'locations-view' => array('display_name' => 'Locations View', 'description' => '',),
+            'observations-create' => array('display_name' => 'Observations Create', 'description' => '',),
+            'observations-destroy' => array('display_name' => 'Observations Destroy', 'description' => '',),
+            'observations-edit' => array('display_name' => 'Observations Edit', 'description' => '',),
+            'observations-view' => array('display_name' => 'Observations View', 'description' => '',),
             'programs-manage' => array('display_name' => 'Programs Manage', 'description' => '',),
             'programs-view' => array('display_name' => 'Programs View', 'description' => '',),
             'roles-manage' => array('display_name' => 'Roles Manage', 'description' => '',),
             'roles-view' => array('display_name' => 'Roles View', 'description' => '',),
             'roles-permissions-manage' => array('display_name' => 'Roles Permissions Manage', 'description' => '',),
             'roles-permissions-view' => array('display_name' => 'Roles Permissions View', 'description' => '',),
+            /*
             'rules-engine-manage' => array('display_name' => 'Rules Engine Manage', 'description' => '',),
             'rules-engine-view' => array('display_name' => 'Rules Engine View', 'description' => '',),
+            */
             'user-create' => array('display_name' => 'User Create New User', 'description' => '',),
             'user-edit-all' => array('display_name' => 'User Edit All', 'description' => '',),
             'user-edit-self' => array('display_name' => 'User Edit Self', 'description' => '',),
@@ -56,17 +64,30 @@ class PermissionsConfig extends Seeder {
                     // administrator will always get all permissions
                 )
             ),
-            'manager' => array(
-                'display_name' => 'Manager',
-                'description' => 'Manager',
+            'care-center' => array(
+                'display_name' => 'Care Center',
+                'description' => 'Care Center',
                 'permissions' => array(
-                    'activities-view',
-                    'locations-manage',
+                    'observations-view',
+                    'observations-create',
                     'locations-view',
-                    'programs-manage',
                     'programs-view',
-                    'user-create',
-                    'user-edit-self',
+                    'roles-view',
+                    'roles-permissions-view',
+                    'user-view-all',
+                    'user-view-self'
+                )
+            ),
+            'clh-admin' => array(
+                'display_name' => 'CLH Admin',
+                'description' => 'CLH Admin',
+                'permissions' => array(
+                    'observations-view',
+                    'observations-create',
+                    'locations-view',
+                    'programs-view',
+                    'roles-view',
+                    'roles-permissions-view',
                     'user-view-all',
                     'user-view-self'
                 )
@@ -75,19 +96,17 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'Participant',
                 'description' => 'Participant',
                 'permissions' => array(
-                    'user-view-self',
-                    'user-edit-self',
+                    'observations-view',
+                    'observations-create',
+                    'user-view-self'
                 )
             ),
             'provider' => array(
                 'display_name' => 'Provider',
                 'description' => 'Provider',
                 'permissions' => array(
-                    'activities-view',
-                    'locations-manage',
-                    'locations-view',
-                    'user-create',
-                    'user-edit-self',
+                    'observations-view',
+                    'observations-create',
                     'user-view-all',
                     'user-view-self'
                 )

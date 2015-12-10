@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 
 use App\WpBlog;
 use Illuminate\Http\Request;
+use Auth;
 
 class WpBlogController extends Controller {
 
@@ -18,6 +19,9 @@ class WpBlogController extends Controller {
 	 */
 	public function index()
 	{
+		if(!Auth::user()->can('programs-view')) {
+			abort(403);
+		}
 		// display view
 		$wpBlogs = WpBlog::orderBy('blog_id', 'desc')->get();
 		return view('admin.wpBlogs.index', [ 'wpBlogs' => $wpBlogs ]);
@@ -30,6 +34,9 @@ class WpBlogController extends Controller {
 	 */
 	public function create()
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		//
 	}
 
@@ -40,6 +47,9 @@ class WpBlogController extends Controller {
 	 */
 	public function store()
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		//
 	}
 
@@ -51,6 +61,9 @@ class WpBlogController extends Controller {
 	 */
 	public function show($id)
 	{
+		if(!Auth::user()->can('programs-view')) {
+			abort(403);
+		}
 		// display view
 		$wpBlog = WpBlog::find($id);
 		$cPRulesPCP = CPRulesPCP::where('prov_id', '=', $id)->where('status', '=', 'Active')->with('items.meta')->get();
@@ -91,6 +104,9 @@ class WpBlogController extends Controller {
 	 */
 	public function edit($id)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		//
 	}
 
@@ -102,6 +118,9 @@ class WpBlogController extends Controller {
 	 */
 	public function update($id)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		//
 	}
 
@@ -113,6 +132,9 @@ class WpBlogController extends Controller {
 	 */
 	public function destroy($id)
 	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
 		//
 	}
 
