@@ -134,11 +134,11 @@
                                 <input type="hidden" name="duration_unit" value="seconds">
                                 <input type="hidden" name="duration" value="0">
                                 <input type="hidden" name="perfomred_at_gmt" value="{{ $userTimeGMT }}">
-                                <input type="hidden" name="patient_id" value="{{$patient}}">
+                                <input type="hidden" name="patient_id" value="{{$patient->ID}}">
                                 <input type="hidden" name="logged_from" value="note">
                                 <input type="hidden" name="logger_id" value="{{Auth::user()->ID}}">
                                 <input type="hidden" name="url" value="">
-                                <input type="hidden" name="patientID" id="patientID" value="{{$patient}}">
+                                <input type="hidden" name="patientID" id="patientID" value="{{$patient->ID}}">
                                 <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                             </div>
                         <div class="new-note-item">

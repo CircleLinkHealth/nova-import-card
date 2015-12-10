@@ -18,15 +18,6 @@ Route::group(['middleware' => 'auth.ccd.import'], function (){
 	Route::post('{id}/import-ccds', 'CCDUploadController@create');
 });
 
-//Test route @todo remove after testing
-Route::get('/reports/progress/{id}', function($id){
-	$report = new \App\Services\ReportsService();
-	return $report->careplan($id);
-});
-
-Route::get('test/form/{blogId}','WpUserController@quickAddForm');
-Route::post('test/form/dump','WpUserController@storeQuickAddAPI');
-
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::get('/', 'WelcomeController@index');
@@ -127,7 +118,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::group(['prefix' => 'notes'], function () {
 			Route::get('create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create']);
 			Route::post('store', ['uses' => 'NotesController@store', 'as' => 'patient.note.store']);
-			Route::get('', ['uses' => 'NotesController@create', 'as' => 'patient.note.index']);
+			Route::get('', ['uses' => 'NotesController@index', 'as' => 'patient.note.index']);
 		});
 	});
 

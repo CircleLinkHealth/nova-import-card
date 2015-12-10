@@ -25,6 +25,8 @@ class NotesController extends Controller {
 	 */
 	public function index(Request $request, $patientId)
 	{
+		$view_data = array();
+		return view('wpUsers.patient.note.index',$view_data);
 
 	}
 
@@ -65,7 +67,7 @@ class NotesController extends Controller {
 
 			$view_data = [
 				'program_id' => $wpUser->blogId(),
-				'patient' => $patientId,
+				'patient' => $wpUser,
 				'note_types' => Activity::input_activity_types(),
 				'provider_info' => $provider_info,
 				'careteam_info' => $careteam_info,
@@ -88,21 +90,8 @@ class NotesController extends Controller {
 			$input['duration'] = $input['duration'] * 60;
 		}
 
-		// store activity
-//		$activity = new Activity();
-//		$activity->type = $input['type'];
-//		$activity->duration = $input['duration'];
-//		$activity->duration_unit = $input['duration_unit'];
-//		$activity->patient_id = $input['patient_id'];
-//		$activity->provider_id = $input['provider_id'];
-//		$activity->logger_id = $input['logger_id'];
-//		$activity->logged_from = $input['logged_from'];
-//		$activity->performed_at = $input['performed_at'];
-//		$activity->performed_at_gmt = $input['performed_at_gmt'];
-		//$activity->page_timer_id = $input['page_timer_id'];
-
 		$input = $input->all();
-		dd($input);
+
 
 		$activity_id = Activity::createNewActivity($input);
 

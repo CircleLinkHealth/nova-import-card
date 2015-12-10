@@ -12,7 +12,6 @@
 
     <!-- Fonts -->
     <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
-
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -53,7 +52,6 @@
                 <li><a href="{{ URL::route('patient.alerts', array()) }}"><i class="icon--alert--white"></i> Alerts</a></li>
                 @if ( !Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
                     @if (!empty($patient))
-                        {{--URL::route('users.edit', array('id' => $patient->ID))--}}
                         <li><a class="btn btn-orange btn-xs" href="#"><i class="icon--home--white"></i> Back to Admin</a></li>
                     @else
                         <li><a class="btn btn-orange btn-xs" href="#"><i class="icon--home--white"></i> Back to Admin</a></li>
@@ -78,47 +76,45 @@
 <nav class="navbar secondary-navbar hidden-xs">
     <div class="patient__actions text-center">
         <ul class="navbar-nav nav">
-{{--            @if (!empty($patient))--}}
+            @if (!empty($patient))
                 <li class="inline-block dropdown">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Notes/Offline Activity<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        {{--<li><a href="{{ URL::route('patient.note.create', array('patientId' => $patient->ID)) }}">Notes/Offline Activities</a></li>--}}
-                        <li><a href="#">Notes/Offline Activities</a></li>
-{{--                        <li><a href="{{ URL::route('patient.note.index', array('patientId' => $patient->ID)) }}">Add New Note</a></li>--}}
-                        <li><a href="#">Add New Note</a></li>
+                        <li><a href="{{ URL::route('patient.note.index', array('patient' => $patient->ID)) }}">Notes/Offline Activities</a></li>
+                        <li><a href="{{ URL::route('patient.note.create', array('patient' => $patient->ID)) }}">Add New Note</a></li>
                     </ul>
                 </li>
-{{--                <li class="inline-block"><a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" role="button">Patient Overview</a></li>--}}
+                <li class="inline-block"><a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}" role="button">Patient Overview</a></li>
                 <li class="inline-block"><a href="#" role="button">Patient Overview</a></li>
-{{--                <li class="inline-block"><a href="{{ URL::route('patient.demographics.show', array('patientId' => $patient->ID)) }}" role="button">Edit Care Plan</a></li>--}}
+                <li class="inline-block"><a href="{{ URL::route('patient.demographics.show', array('patient' => $patient->ID)) }}" role="button">Edit Care Plan</a></li>
                 <li class="inline-block"><a href="#" role="button">Edit Care Plan</a></li>
                 <li class="inline-block dropdown">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Input<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        {{--<li><a href="{{ URL::route('patient.observation.create', array('patientId' => $patient->ID)) }}">Observations</a></li>--}}
+                        {{--<li><a href="{{ URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">Observations</a></li>--}}
                         <li><a href="#">Observations</a></li>
                         <li><a href="#">Offline Activities</a></li>
                     </ul>
                 </li>
-            {{--@endif--}}
+            @endif
             <li class="inline-block dropdown">
                 <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Patient Reports <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
-                    {{--@if (!empty($patient))--}}
+                    @if (!empty($patient))
                         <li><a href="">Patient Alerts</a></li>
                         <li><a href="">Progress Report</a></li>
                         <li><a href="">Patient Activity Report</a></li>
-                    {{--@endif--}}
+                    @endif
                     <li><a href="">Under 20 Minute Report</a></li>
                     <li><a href="">Patient Billing Report</a></li>
                     <li><a href="">Patient Listing</a></li>
                 </ul>
             </li>
-{{--            @if (!empty($patient))--}}
+            @if (!empty($patient))
                     <!-- <li class="inline-block"><a href="" role="button">Patient Notes</a></li> -->
             <li class="inline-block"><a href="#" role="button">Print Care Plan</a></li>
-{{--            <li class="inline-block"><a href="{{ URL::route('patient.careplan.print', array('patientId' => $patient->ID)) }}" role="button">Print Care Plan</a></li>--}}
-            {{--@endif--}}
+{{--            <li class="inline-block"><a href="{{ URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" role="button">Print Care Plan</a></li>--}}
+            @endif
         </ul>
     </div>
 </nav><!-- /navbar -->
