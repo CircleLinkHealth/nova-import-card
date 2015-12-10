@@ -104,7 +104,7 @@ class ActivityService {
 				$message->to($email)->subject($email_subject);
 			});
 		}
-		return false;
+		return true;
 //		dd(count(Mail::failures()));
 //		if( count(Mail::failures()) > 0 ) {
 //			return false;
