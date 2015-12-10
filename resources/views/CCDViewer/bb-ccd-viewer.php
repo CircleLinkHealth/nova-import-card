@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width">
 
     <!-- Injected styles -->
-    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/stylesheet.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/ccd-template.css" type="text/css" media="screen, projection"/>
 
     <!-- Injected scripts -->
@@ -169,9 +169,9 @@
                 <h1>Problems</h1>
                 {% for problem in problems %}
                     {% if loop.first %}<ul class="listless">{% endif %}
-                    {% if problem.name or problem.translation.name%}
-                    <li class="problem-{{problem|problem_status}}">
-                        <p class="problem-status">{{problem.status|fallback('N/A')}}</p>
+                    {% if problem.name or problem.translation.name %}
+                    <li class="{{problem|problem_status}}-status-container">
+                        <p class="status-box">{{problem|problem_status|fallback('Unknown')|capitalize}}</p>
                         <h2>
                             {% if problem.name %}
                                 {{problem.name|title}}
@@ -222,7 +222,8 @@
                 {% for med in medications %}
                     {% if loop.first %}<ul>{% endif %}
                     {% if med.product.name %}
-                        <li class="{{loop.cycle('odd', 'even')}}">
+                    <li class="{{med|medication_status}}-status-container">
+                        <p class="status-box">{{med|medication_status|fallback('Unknown')|capitalize}}</p>
                             <header>
                                 <h2>{{med.product.name|title}}</h2>
                                 {% if med.administration.name %}<small>{{med.administration.name|title}}</small>{% endif %}

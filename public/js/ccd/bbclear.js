@@ -1,4 +1,16 @@
 /* js/05-bbclear.js */
+function getStatus(endDate) {
+    var endDateTimestamp = new Date(endDate).getTime();
+    var now = Date.now();
+
+    if (now > endDateTimestamp) {
+        return 'inactive';
+    } else if (now < endDateTimestamp) {
+        return 'active';
+    } else {
+        return 'unknown';
+    }
+}
 function isInt(input) {
     return parseInt(input, 10) % 1 === 0;
 }
@@ -225,14 +237,43 @@ var filters = {
             return exists === 0 ? "no" : exists > 1 ? "multiple" : "";
         }
     }, problem_status: function (input) {
-        if (! input.status) {
-            return 'Unknown';
+        /**
+         *  If the input field exists, we have an Aprima CCD.
+         *  Then we want to just return that and ignore the end date.
+         */
+        if (input.status) {
+            if (input.status.toLowerCase() == "resolved") {
+                return "inactive";
+            } else if (input.status.toLowerCase() == "active") {
+                return "active";
+            }
+        } else if (input.date_range.end) {
+            return getStatus(input.date_range.end);
+        } else {
+            return 'unknown';
         }
-        else if (input.status.toLowerCase() == "resolved") {
-            return "resolved";
-        } else if (input.status.toLowerCase() == "active") {
-            return "active";
+    }, medication_status: function (input) {
+        /**
+         *  If the input field exists, we have an Aprima CCD.
+         *  Then we want to just return that and ignore the end date.
+         */
+        if (input.status) {
+            return input.status;
         }
+
+        /**
+         * THIS MAY NOT BE TRUE
+         * If the end Date is null, then we have an STI CCD.
+         * Then this means Med is active.
+         */
+        if (! input.date_range.end) {
+            return 'active';
+        }
+
+        /**
+         * Or just compare the end date to now
+         */
+        return getStatus(input.date_range.end);
     }
 };
 function init_template() {
