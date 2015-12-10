@@ -30,11 +30,11 @@ class PermissionsConfig extends Seeder {
             'time-tracking-view' => array('display_name' => 'Time Tracking View', 'description' => '',),
             'api-manage' => array('display_name' => 'API Manage', 'description' => '',),
             'api-view' => array('display_name' => 'API View', 'description' => '',),
+            */
             'locations-manage' => array('display_name' => 'Locations Manage', 'description' => '',),
             'locations-view' => array('display_name' => 'Locations View', 'description' => '',),
             'programs-manage' => array('display_name' => 'Programs Manage', 'description' => '',),
             'programs-view' => array('display_name' => 'Programs View', 'description' => '',),
-            */
             'roles-manage' => array('display_name' => 'Roles Manage', 'description' => '',),
             'roles-view' => array('display_name' => 'Roles View', 'description' => '',),
             'roles-permissions-manage' => array('display_name' => 'Roles Permissions Manage', 'description' => '',),
@@ -64,14 +64,20 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'Care Center',
                 'description' => 'Care Center',
                 'permissions' => array(
+                    'locations-view',
+                    'programs-view',
+                    'roles-view',
+                    'roles-permissions-view',
                     'user-view-all',
                     'user-view-self'
                 )
             ),
-            'manager' => array(
-                'display_name' => 'Manager',
-                'description' => 'Manager',
+            'clh-admin' => array(
+                'display_name' => 'CLH Admin',
+                'description' => 'CLH Admin',
                 'permissions' => array(
+                    'locations-view',
+                    'programs-view',
                     'roles-view',
                     'roles-permissions-view',
                     'user-view-all',

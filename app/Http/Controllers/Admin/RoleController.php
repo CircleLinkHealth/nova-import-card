@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 
 use App\WpBlog;
 use Illuminate\Http\Request;
+use Auth;
 
 class RoleController extends Controller {
 
@@ -20,6 +21,9 @@ class RoleController extends Controller {
 	 */
 	public function index()
 	{
+		if(!Auth::user()->can('roles-view')) {
+			abort(403);
+		}
 		// display view
 		$roles = Role::paginate(10);
 		return view('admin.roles.index', [ 'roles' => $roles ]);
@@ -32,6 +36,9 @@ class RoleController extends Controller {
 	 */
 	public function create()
 	{
+		if(!Auth::user()->can('roles-manage')) {
+			abort(403);
+		}
 		// display view
 		$permissions = Permission::all();
 		return view('admin.roles.create', [ 'permissions' => $permissions, 'errors' => array(), 'messages' => array() ]);
@@ -44,6 +51,9 @@ class RoleController extends Controller {
 	 */
 	public function store(Request $request)
 	{
+		if(!Auth::user()->can('roles-manage')) {
+			abort(403);
+		}
 		$params = $request->input();
 		$role = new Role;
 		$role->name = $params['name'];
@@ -65,6 +75,9 @@ class RoleController extends Controller {
 	 */
 	public function show($id)
 	{
+		if(!Auth::user()->can('roles-view')) {
+			abort(403);
+		}
 		// display view
 		$role = Role::find($id);
 		return view('admin.roles.show', [ 'role' => $role, 'errors' => array(), 'messages' => array() ]);
@@ -78,6 +91,9 @@ class RoleController extends Controller {
 	 */
 	public function edit($id)
 	{
+		if(!Auth::user()->can('roles-manage')) {
+			abort(403);
+		}
 		$role = Role::find($id);
 		$permissions = Permission::all();
 		return view('admin.roles.edit', [ 'role' => $role, 'permissions' => $permissions, 'messages' => \Session::get('messages') ]);
@@ -91,6 +107,9 @@ class RoleController extends Controller {
 	 */
 	public function update(Request $request, $id)
 	{
+		if(!Auth::user()->can('roles-manage')) {
+			abort(403);
+		}
 		$params = $request->input();
 		$role = Role::find($id);
 		$role->name = $params['name'];
@@ -111,6 +130,9 @@ class RoleController extends Controller {
 	 */
 	public function destroy($id)
 	{
+		if(!Auth::user()->can('roles-manage')) {
+			abort(403);
+		}
 		//
 	}
 
