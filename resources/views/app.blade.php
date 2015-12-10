@@ -123,16 +123,18 @@
 									<li><a href="{{ URL::route('admin.rules.create', array()) }}">Add new</a></li>
 								</ul>
 							</li>
-							<li role="presentation" class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-									API<span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ URL::route('admin.apikeys.index', array()) }}">API Keys</a></li>
-									<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
-									<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
-								</ul>
-							</li>
+							@if(Entrust::can('apikeys-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										API<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.apikeys.index', array()) }}">API Keys</a></li>
+										<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
+										<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
+									</ul>
+								</li>
+							@endif
 						@endif
 
 					</ul>

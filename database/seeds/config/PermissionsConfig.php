@@ -28,9 +28,9 @@ class PermissionsConfig extends Seeder {
             'activities-view' => array('display_name' => 'Activities View', 'description' => '',),
             'time-tracking-manage' => array('display_name' => 'Time Tracking Manage', 'description' => '',),
             'time-tracking-view' => array('display_name' => 'Time Tracking View', 'description' => '',),
-            'api-manage' => array('display_name' => 'API Manage', 'description' => '',),
-            'api-view' => array('display_name' => 'API View', 'description' => '',),
             */
+            'apikeys-manage' => array('display_name' => 'API Manage', 'description' => '',),
+            'apikeys-view' => array('display_name' => 'API View', 'description' => '',),
             'locations-manage' => array('display_name' => 'Locations Manage', 'description' => '',),
             'locations-view' => array('display_name' => 'Locations View', 'description' => '',),
             'observations-create' => array('display_name' => 'Observations Create', 'description' => '',),

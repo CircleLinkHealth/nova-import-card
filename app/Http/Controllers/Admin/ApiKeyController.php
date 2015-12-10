@@ -1,10 +1,11 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers\Admin;
 
 use App\ApiKey;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+use Auth;
 
 class ApiKeyController extends Controller {
 
@@ -15,9 +16,13 @@ class ApiKeyController extends Controller {
 	 */
 	public function index()
 	{
+		if(!Auth::user()->can('apikeys-view')) {
+			abort(403);
+		}
+
 		$apiKeys = ApiKey::all()->sortBy('client_name');
 
-		return view('apiKeys.index', [ 'apiKeys' => $apiKeys ]);
+		return view('admin.apiKeys.index', [ 'apiKeys' => $apiKeys ]);
 	}
 
 	/**
@@ -27,6 +32,10 @@ class ApiKeyController extends Controller {
 	 */
 	public function store(Request $request)
 	{
+		if(!Auth::user()->can('apikeys-manage')) {
+			abort(403);
+		}
+
 		$clientName = $request->input('client_name');
 
 		$apiKey = new ApiKey();
@@ -47,7 +56,7 @@ class ApiKeyController extends Controller {
 
 		$apiKeys = ApiKey::all()->sortBy('client_name');
 
-		return view('apiKeys.index', [ 'apiKeys' => $apiKeys,
+		return view('admin.apiKeys.index', [ 'apiKeys' => $apiKeys,
 										$messageKey => $messageValue
 		]);
 	}
@@ -60,6 +69,9 @@ class ApiKeyController extends Controller {
 	 */
 	public function destroy($id)
 	{
+		if(!Auth::user()->can('apikeys-manage')) {
+			abort(403);
+		}
 		ApiKey::destroy($id);
 
 //		Come back here letter.
@@ -68,7 +80,7 @@ class ApiKeyController extends Controller {
 
 		$apiKeys = ApiKey::all()->sortBy('client_name');
 
-		return view('apiKeys.index', [ 'apiKeys' => $apiKeys,
+		return view('admin.apiKeys.index', [ 'apiKeys' => $apiKeys,
 			'success' => 'Successfully deleted key!'
 		]);
 	}

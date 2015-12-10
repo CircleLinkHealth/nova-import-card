@@ -20,31 +20,34 @@
                         </ul>
                     </div>
                 @endif
-                <div class="panel panel-default">
-                    <div class="panel-heading">Create a new Api Key</div>
-                    <div class="panel-body">
+
+                @if(Entrust::can('apikeys-manage'))
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Create a new Api Key</div>
+                        <div class="panel-body">
 
 
-                        <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ action('ApiKeyController@store') }}">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ URL::route('admin.apikeys.store', array()) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Client Name (eg. Android App Testing, Staging Site)</label>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" name="client_name" value="{{ old('client_name') }}" required>
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Client Name (eg. Android App Testing, Staging Site)</label>
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" name="client_name" value="{{ old('client_name') }}" required>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="form-group">
-                                <div class="col-md-6 col-md-offset-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        Create
-                                    </button>
+                                <div class="form-group">
+                                    <div class="col-md-6 col-md-offset-4">
+                                        <button type="submit" class="btn btn-primary">
+                                            Create
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
 
@@ -66,7 +69,7 @@
 
                         @foreach( $apiKeys as $key )
 
-                            <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ action('ApiKeyController@destroy', $key->id) }}">
+                            <form id="location-form" class="form-horizontal" role="form" method="POST" action="{{ URL::route('admin.apikeys.destroy', array('id' => $key->id)) }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                 <input name="_method" type="hidden" value="DELETE">
 
@@ -74,9 +77,11 @@
                                     <div class="col-md-12">
                                         <p style="display: inline-block;">{{ $key->client_name }} => {{ $key->key }}</p>
 
-                                        <button type="submit" class="btn btn-primary pull-right">
-                                            Delete Key
-                                        </button>
+                                        @if(Entrust::can('apikeys-manage'))
+                                            <button type="submit" class="btn btn-primary pull-right">
+                                                Delete Key
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             </form>
