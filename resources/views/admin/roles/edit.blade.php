@@ -1,4 +1,4 @@
-@extends('app')
+@extends('partials.adminUI')
 
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>

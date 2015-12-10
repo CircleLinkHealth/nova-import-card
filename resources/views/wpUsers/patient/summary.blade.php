@@ -1,4 +1,4 @@
-@extends('partials.ProviderUIHeader')
+@extends('partials.providerUI')
 @section('content')
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">

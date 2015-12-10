@@ -1,4 +1,4 @@
-@extends('app')
+@extends('partials.adminUI')
 
 @section('content')
     {!! Form::open(array('url' => URL::route('admin.roles.store', array()), 'class' => 'form-horizontal')) !!}

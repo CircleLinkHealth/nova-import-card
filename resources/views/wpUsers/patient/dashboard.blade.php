@@ -1,4 +1,4 @@
-@extends('app')
+@extends('partials.adminUI')
 
 @section('content')
 <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">

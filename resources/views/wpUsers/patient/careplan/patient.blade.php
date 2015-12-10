@@ -3,7 +3,7 @@ $user_info = array();
 $new_user = false;
 ?>
 
-@extends('partials.ProviderUIHeader')
+@extends('partials.providerUI')
 
 @section('content.before')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>

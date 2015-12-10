@@ -1,4 +1,4 @@
-@extends('partials.ProviderUIHeader')
+@extends('partials.providerUI')
 
 @section('content')
 
