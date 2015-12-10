@@ -45,6 +45,8 @@ class NotesController extends Controller {
 				return response("User not found", 401);
 			}
 
+			$patient_name = $wpUser->getFullNameAttribute();
+
 			//Gather details to generate form
 
 			//timezone
@@ -68,6 +70,7 @@ class NotesController extends Controller {
 			$view_data = [
 				'program_id' => $wpUser->blogId(),
 				'patient' => $wpUser,
+				'patient_name' => $patient_name,
 				'note_types' => Activity::input_activity_types(),
 				'provider_info' => $provider_info,
 				'careteam_info' => $careteam_info,

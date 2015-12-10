@@ -12,6 +12,9 @@
     ?>
     <div class="main-form-title col-lg-12">Record New Note</div>
     {!! Form::open(array('url' => URL::route('patient.note.store', ['patientId' => $patient]), 'class' => 'form-horizontal')) !!}
+
+        @include('partials.userheader')
+
     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
         <div class="form-block col-md-6">
             <div class="row">
