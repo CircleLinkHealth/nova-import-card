@@ -14,11 +14,13 @@
                     <div class="col-sm-8">
                         <h1>Comments</h1>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.comments.create', array()) }}" class="btn btn-success" disabled="disabled">Input Comment</a>
+                    @if(Entrust::can('comments-create'))
+                        <div class="col-sm-4">
+                            <div class="pull-right" style="margin:20px;">
+                                <a href="{{ URL::route('admin.comments.create', array()) }}" class="btn btn-success" disabled="disabled">Input Comment</a>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">All Comments</div>
@@ -40,12 +42,19 @@
                             @foreach( $comments as $comment )
                                 <tr>
                                     <td><a href="{{ URL::route('admin.comments.show', array('id' => $comment->id)) }}" class="btn btn-primary">{{ $comment->id }}</a></td>
-                                    <td><a href="{{ URL::route('users.edit', array('id' => $comment->user_id)) }}" class="btn btn-orange btn-xs">{{ $comment->user_id }}</a></td>
+                                    <td><a href="{{ URL::route('admin.users.edit', array('id' => $comment->user_id)) }}" class="btn btn-orange btn-xs">{{ $comment->user_id }}</a></td>
                                     <td>{{ $comment->comment_author }}</td>
                                     <td>{{ $comment->comment_date }}</td>
                                     <td>{{ $comment->comment_type }}</td>
                                     <td><a href="{{ URL::route('admin.programs.show', array('id' => $comment->program_id)) }}" class="btn btn-orange btn-xs">{{ $comment->program_id }}</a></td>
-                                    <td><a href="{{ URL::route('admin.comments.edit', array('id' => $comment->id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.comments.destroy', array('id' => $comment->id)) }}" class="btn btn-warning">Remove</a></td>
+                                    <td>
+                                        @if(Entrust::can('observations-edit'))
+                                            <a href="{{ URL::route('admin.comments.edit', array('id' => $comment->id)) }}" class="btn btn-primary">Edit</a>
+                                        @endif
+                                        @if(Entrust::can('observations-destroy'))
+                                            <a href="{{ URL::route('admin.comments.destroy', array('id' => $comment->id)) }}" class="btn btn-warning">Remove</a>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>

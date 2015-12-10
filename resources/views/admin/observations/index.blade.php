@@ -15,11 +15,13 @@
                     <div class="col-sm-8">
                         <h1>Observations</h1>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.observations.create', array()) }}" class="btn btn-success" disabled="disabled">Input Observation</a>
+                    @if(Entrust::can('observations-create'))
+                        <div class="col-sm-4">
+                            <div class="pull-right" style="margin:20px;">
+                                <a href="{{ URL::route('admin.observations.create', array()) }}" class="btn btn-success" disabled="disabled">Input Observation</a>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">All Observations</div>
@@ -83,7 +85,13 @@
                                     <td>{{ $observation->obs_value }}</td>
                                     <td>{{ $observation->obs_unit }}</td>
                                     <td><a href="{{ URL::route('admin.programs.show', array('id' => $observation->program_id)) }}" class="btn btn-orange btn-xs">{{ $observation->program_id }}</a></td>
-                                    <td><a href="{{ URL::route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.observations.destroy', array('id' => $observation->id)) }}" class="btn btn-warning">Remove</a></td>
+                                    <td>
+                                        @if(Entrust::can('observations-edit'))
+                                            <a href="{{ URL::route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a>
+                                        @endif
+                                        @if(Entrust::can('observations-destroy'))
+                                            <a href="{{ URL::route('admin.observations.destroy', array('id' => $observation->id)) }}" class="btn btn-warning">Remove</a></td>
+                                        @endif
                                 </tr>
                             @endforeach
                             </tbody>

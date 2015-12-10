@@ -44,7 +44,11 @@
                                 <td>{{ $observation->obs_value }}</td>
                                 <td>{{ $observation->obs_unit }}</td>
                                 <td>{{ $observation->program_id }}</td>
-                                <td><a href="{{ URL::route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a></td>
+                                <td>
+                                    @if(Entrust::can('observations-edit'))
+                                        <a href="{{ URL::route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a>
+                                    @endif
+                                </td>
                             </tr>
                             </tbody>
                         </table>
