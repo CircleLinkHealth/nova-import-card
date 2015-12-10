@@ -171,7 +171,7 @@
                     {% if loop.first %}<ul class="listless">{% endif %}
                     {% if problem.name or problem.translation.name%}
                     <li class="problem-{{problem|problem_status}}">
-                        <p class="problem-status">{{problem.status}}</p>
+                        <p class="problem-status">{{problem.status|fallback('N/A')}}</p>
                         <h2>
                             {% if problem.name %}
                                 {{problem.name|title}}

@@ -225,7 +225,10 @@ var filters = {
             return exists === 0 ? "no" : exists > 1 ? "multiple" : "";
         }
     }, problem_status: function (input) {
-        if (input.status.toLowerCase() == "resolved") {
+        if (! input.status) {
+            return 'Unknown';
+        }
+        else if (input.status.toLowerCase() == "resolved") {
             return "resolved";
         } else if (input.status.toLowerCase() == "active") {
             return "active";
