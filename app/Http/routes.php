@@ -213,12 +213,18 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('ucp/{id}/destroy', ['uses' =>'Admin\CPRUCPController@destroy', 'as'=>'admin.ucp.destroy']);
 
 		// observations
+		Entrust::routeNeedsPermission($prefix.'observations*', 'observations-view');
+		Entrust::routeNeedsPermission($prefix.'observations/edit', 'observations-edit');
+		Entrust::routeNeedsPermission($prefix.'observations/create', 'observations-create');
 		Route::resource('observations', 'Admin\ObservationController');
 		Route::post('observations', ['uses' =>'Admin\ObservationController@index', 'as'=>'admin.observations']);
 		Route::post('observations/{id}/edit', ['uses' =>'Admin\ObservationController@update', 'as'=>'admin.observations.update']);
 		Route::get('observations/{id}/destroy', ['uses' =>'Admin\ObservationController@destroy', 'as'=>'admin.observations.destroy']);
 
 		// comments
+		Entrust::routeNeedsPermission($prefix.'comments*', 'observations-view');
+		Entrust::routeNeedsPermission($prefix.'comments/edit', 'observations-edit');
+		Entrust::routeNeedsPermission($prefix.'comments/create', 'observations-create');
 		Route::resource('comments', 'Admin\CommentController');
 		Route::post('comments/{id}/edit', ['uses' =>'Admin\CommentController@update', 'as'=>'admin.comments.update']);
 		Route::get('comments/{id}/destroy', ['uses' =>'Admin\CommentController@destroy', 'as'=>'admin.comments.destroy']);

@@ -33,6 +33,10 @@ class PermissionsConfig extends Seeder {
             */
             'locations-manage' => array('display_name' => 'Locations Manage', 'description' => '',),
             'locations-view' => array('display_name' => 'Locations View', 'description' => '',),
+            'observations-create' => array('display_name' => 'Observations Create', 'description' => '',),
+            'observations-destroy' => array('display_name' => 'Observations Destroy', 'description' => '',),
+            'observations-edit' => array('display_name' => 'Observations Edit', 'description' => '',),
+            'observations-view' => array('display_name' => 'Observations View', 'description' => '',),
             'programs-manage' => array('display_name' => 'Programs Manage', 'description' => '',),
             'programs-view' => array('display_name' => 'Programs View', 'description' => '',),
             'roles-manage' => array('display_name' => 'Roles Manage', 'description' => '',),
@@ -64,6 +68,8 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'Care Center',
                 'description' => 'Care Center',
                 'permissions' => array(
+                    'observations-view',
+                    'observations-create',
                     'locations-view',
                     'programs-view',
                     'roles-view',
@@ -76,6 +82,8 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'CLH Admin',
                 'description' => 'CLH Admin',
                 'permissions' => array(
+                    'observations-view',
+                    'observations-create',
                     'locations-view',
                     'programs-view',
                     'roles-view',
@@ -88,6 +96,8 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'Participant',
                 'description' => 'Participant',
                 'permissions' => array(
+                    'observations-view',
+                    'observations-create',
                     'user-view-self'
                 )
             ),
@@ -95,6 +105,9 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'Provider',
                 'description' => 'Provider',
                 'permissions' => array(
+                    'observations-view',
+                    'observations-create',
+                    'user-view-all',
                     'user-view-self'
                 )
             ),
