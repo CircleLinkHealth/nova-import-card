@@ -135,11 +135,17 @@
                     <div class="main-form-title">
                         Heading
                     </div>
+                    ** to include user header **:
+                            @include('partials.userheader')
                     <div class="main-form-block main-form-horizontal col-md-12">
                         <div class="row">
                             Content
                         </div>
                     </div>
+
+
+
+
                     --}}
                 </div>
             </div>
