@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use DateTime;
 use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -269,9 +270,35 @@ class WpUser extends Model implements AuthenticatableContract, CanResetPasswordC
         return $userConfig['preferred_contact_timezone'];
     }
 
+    public function getPhone() {
+        $userConfig = $this->userConfig();
+        return $userConfig['study_phone_number'];
+    }
+
+    public function getDOB() {
+        $userConfig = $this->userConfig();
+        return $userConfig['birth_date'];
+    }
+
+    public function getGender() {
+        $userConfig = $this->userConfig();
+        return $userConfig['gender'];
+    }
+
+    public function getAge() {
+        $from = new DateTime($this->getDOB());
+        $to   = new DateTime('today');
+        return $from->diff($to)->y;
+    }
+
     public function getCareTeamIDs() {
         $userConfig = $this->userConfig();
         return $userConfig['care_team'];
+    }
+
+    public function getMonthlyTime() {
+        $time = $this->meta->where('meta_key', 'cur_month_activity_time')->lists('meta_value');
+        return $time[0];
     }
 
 }
