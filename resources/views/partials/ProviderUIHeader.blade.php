@@ -125,7 +125,7 @@
     <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <div class="container-fluid">
-        @include('errors.errors')
+        @yield('content.before')
         <div class="row" style="margin-top:60px;">
             <div class="main-form-container col-lg-8 col-lg-offset-2">
                 <div class="row">
@@ -149,6 +149,7 @@
                     --}}
                 </div>
             </div>
-    </div>
+        </div>
+        @yield('content.after')
 </body>
 </html>
