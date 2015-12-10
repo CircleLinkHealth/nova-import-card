@@ -8,11 +8,13 @@
                     <div class="col-sm-8">
                         <h1>Programs</h1>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.programs.create', array()) }}" class="btn btn-success" disabled="disabled">New Program</a>
+                    @if(Entrust::can('programs-manage'))
+                        <div class="col-sm-4">
+                            <div class="pull-right" style="margin:20px;">
+                                <a href="{{ URL::route('admin.programs.create', array()) }}" class="btn btn-success" disabled="disabled">New Program</a>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">Wordpress Blogs (programs)</div>

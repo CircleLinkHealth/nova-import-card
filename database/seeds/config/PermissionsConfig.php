@@ -27,6 +27,7 @@ class PermissionsConfig extends Seeder {
             'activities-view' => array('display_name' => 'Activities View', 'description' => '',),
             'activities-pagetimer-manage' => array('display_name' => 'Time Tracking Manage', 'description' => '',),
             'activities-pagetimer-view' => array('display_name' => 'Time Tracking View', 'description' => '',),
+            'admin-access' => array('display_name' => 'Admin Access', 'description' => '',),
             'apikeys-manage' => array('display_name' => 'API Manage', 'description' => '',),
             'apikeys-view' => array('display_name' => 'API View', 'description' => '',),
             'locations-manage' => array('display_name' => 'Locations Manage', 'description' => '',),
@@ -64,9 +65,10 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'Care Center',
                 'description' => 'Care Center',
                 'permissions' => array(
-                    'observations-view',
-                    'observations-create',
+                    'admin-access',
                     'locations-view',
+                    'observations-create',
+                    'observations-view',
                     'programs-view',
                     'roles-view',
                     'roles-permissions-view',
@@ -78,9 +80,9 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'CLH Admin',
                 'description' => 'CLH Admin',
                 'permissions' => array(
-                    'observations-view',
-                    'observations-create',
                     'locations-view',
+                    'observations-create',
+                    'observations-view',
                     'programs-view',
                     'roles-view',
                     'roles-permissions-view',
@@ -92,8 +94,8 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'Participant',
                 'description' => 'Participant',
                 'permissions' => array(
-                    'observations-view',
                     'observations-create',
+                    'observations-view',
                     'users-view-self'
                 )
             ),

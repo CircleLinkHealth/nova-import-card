@@ -128,7 +128,7 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::group(['prefix' => 'admin'], function () {
 
 		$prefix = 'admin/'; // admin prefix
-		Entrust::routeNeedsRole($prefix.'*', array('administrator', 'manager'), Redirect::to( URL::route('login') ), false);
+		Entrust::routeNeedsPermission($prefix.'*', 'admin-access');
 
 		// home
 		Route::get('home', ['uses' =>'HomeController@index', 'as'=>'admin.home']);

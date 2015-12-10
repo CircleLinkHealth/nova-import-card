@@ -142,10 +142,6 @@
                             Content
                         </div>
                     </div>
-
-
-
-
                     --}}
                 </div>
             </div>

@@ -38,23 +38,22 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 </head>
 <body>
-	@if(!Request::is('patient/*') && !Request::is('patients/*'))
-		<nav class="navbar navbar-default">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-						<span class="sr-only">Toggle Navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="{{ url('/') }}">
-						<img src="{{ asset('/img/cpm-logo.png') }}" height="40" width="70">
-					</a>
-				</div>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle Navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="{{ url('/') }}">
+					<img src="{{ asset('/img/cpm-logo.png') }}" height="40" width="70">
+				</a>
+			</div>
 
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				@if ( ! Auth::guest() && Entrust::can('admin-access'))
 					<ul class="nav navbar-nav">
 						@if ( ! Auth::guest())
 							<li role="presentation" 0lass="dropdown">
@@ -70,182 +69,97 @@
 							</li>
 						@endif
 
-						@if ( ! Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
-
-							@if(Entrust::can('roles-view'))
-								<li role="presentation" class="dropdown">
-									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-										Roles<span class="caret"></span>
-									</a>
-									<ul class="dropdown-menu" role="menu">
-										<li><a href="{{ URL::route('admin.roles.index', array()) }}">Roles</a></li>
-										@if(Entrust::can('roles-permissions-view'))
-											<li><a href="{{ URL::route('admin.permissions.index', array()) }}">Permissions</a></li>
-										@endif
-									</ul>
-								</li>
-							@endif
-
-							@if(Entrust::can('programs-view'))
-								<li role="presentation" class="dropdown">
-									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-										Programs <span class="caret"></span>
-									</a>
-									<ul class="dropdown-menu" role="menu">
-										<li><a href="{{ URL::route('admin.programs.index', array()) }}">Programs</a></li>
-										@if(Entrust::can('locations-view'))
-											<li><a href="{{ URL::route('admin.locations.index', array()) }}">Locations</a></li>
-										@endif
-										@if(Entrust::can('programs-manage'))
-											<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>
-											<li><a href="{{ URL::route('admin.questionSets.index', array()) }}">Question Sets</a></li>
-											<li><a href="{{ URL::route('admin.items.index', array()) }}">Items</a></li>
-										@endif
-									</ul>
-								</li>
-							@endif
-
-							@if(Entrust::can('activities-view'))
-								<li role="presentation" class="dropdown">
-									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-										Activities <span class="caret"></span>
-									</a>
-									<ul class="dropdown-menu" role="menu">
-										<li><a href="{{ URL::route('admin.activities.index', array()) }}">Activities</a></li>
-										@if(Entrust::can('activities-pagetimer-view'))
-											<li><a href="{{ URL::route('admin.pagetimer.index', array()) }}">Page Timer</a></li>
-										@endif
-									</ul>
-								</li>
-							@endif
-
-							@if(Entrust::can('rules-engine-view'))
-								<li role="presentation" class="dropdown">
-									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-										Rules <span class="caret"></span>
-									</a>
-									<ul class="dropdown-menu" role="menu">
-										<li><a href="{{ URL::route('admin.rules.index', array()) }}">Rules</a></li>
-										@if(Entrust::can('rules-engine-manage'))
-											<li><a href="{{ URL::route('admin.rules.create', array()) }}">Add new</a></li>
-										@endif
-									</ul>
-								</li>
-							@endif
-							@if(Entrust::can('apikeys-view'))
-								<li role="presentation" class="dropdown">
-									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-										API<span class="caret"></span>
-									</a>
-									<ul class="dropdown-menu" role="menu">
-										<li><a href="{{ URL::route('admin.apikeys.index', array()) }}">API Keys</a></li>
-										<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
-										<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
-									</ul>
-								</li>
-							@endif
+						@if(Entrust::can('roles-view'))
+							<li role="presentation" class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+									Roles<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ URL::route('admin.roles.index', array()) }}">Roles</a></li>
+									@if(Entrust::can('roles-permissions-view'))
+										<li><a href="{{ URL::route('admin.permissions.index', array()) }}">Permissions</a></li>
+									@endif
+								</ul>
+							</li>
 						@endif
 
-					</ul>
-
-					<ul class="nav navbar-nav navbar-right">
-						@if (Auth::guest())
-							{{--<li><a href="{{ url('/auth/login') }}">Login</a></li>--}}
-							{{--<li><a href="{{ url('/auth/register') }}">Register</a></li>--}}
-						@else
-							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->user_login }} [ID:{{ Auth::user()->ID }}] [WP Role:{{ Auth::user()->role() }}]<span class="caret"></span></a>
+						@if(Entrust::can('programs-view'))
+							<li role="presentation" class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+									Programs <span class="caret"></span>
+								</a>
 								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ url('/auth/logout') }}">Logout</a></li>
+									<li><a href="{{ URL::route('admin.programs.index', array()) }}">Programs</a></li>
+									@if(Entrust::can('locations-view'))
+										<li><a href="{{ URL::route('admin.locations.index', array()) }}">Locations</a></li>
+									@endif
+									@if(Entrust::can('programs-manage'))
+										<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>
+										<li><a href="{{ URL::route('admin.questionSets.index', array()) }}">Question Sets</a></li>
+										<li><a href="{{ URL::route('admin.items.index', array()) }}">Items</a></li>
+									@endif
+								</ul>
+							</li>
+						@endif
+
+						@if(Entrust::can('activities-view'))
+							<li role="presentation" class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+									Activities <span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ URL::route('admin.activities.index', array()) }}">Activities</a></li>
+									@if(Entrust::can('activities-pagetimer-view'))
+										<li><a href="{{ URL::route('admin.pagetimer.index', array()) }}">Page Timer</a></li>
+									@endif
+								</ul>
+							</li>
+						@endif
+
+						@if(Entrust::can('rules-engine-view'))
+							<li role="presentation" class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+									Rules <span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ URL::route('admin.rules.index', array()) }}">Rules</a></li>
+									@if(Entrust::can('rules-engine-manage'))
+										<li><a href="{{ URL::route('admin.rules.create', array()) }}">Add new</a></li>
+									@endif
+								</ul>
+							</li>
+						@endif
+						@if(Entrust::can('apikeys-view'))
+							<li role="presentation" class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+									API<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ URL::route('admin.apikeys.index', array()) }}">API Keys</a></li>
+									<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
+									<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
 								</ul>
 							</li>
 						@endif
 					</ul>
-				</div>
-			</div>
-		</nav>
-	@endif
+				@endif
 
-
-
-	@if( !Auth::guest() && (Request::is('patient/*') || Request::is('patients/*')) )
-		<nav class="navbar primary-navbar">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<a href="" class="navbar-brand btn btn-orange">{{ Session::get('activeProgramId') }}</a>
-					<a href="" class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
-				</div>
-				<div class="navbar-right hidden-xs ">
-					<ul class="nav navbar-nav">
-						<li><a href="{{ URL::route('patients.dashboard', array()) }}"><i class="icon--home--white"></i> Home</a></li>
-						<li><a href=""><i class="icon--search--white"></i> Select Patient</a></li>
-						<li><a href="{{ URL::route('patients.demographics.show', array()) }}"><i class="icon--add-user"></i> Add Patient</a></li>
-						<li><a href="{{ URL::route('patient.alerts', array()) }}"><i class="icon--alert--white"></i> Alerts</a></li>
-						@if ( !Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
-							@if (!empty($patient))
-								<li><a class="btn btn-orange btn-xs" href="{{ URL::route('admin.users.edit', array('id' => $patient->ID)) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
-							@else
-								<li><a class="btn btn-orange btn-xs" href="{{ URL::route('admin.users.index', array()) }}"><i class="icon--home--white"></i> Back to Admin</a></li>
-							@endif
-						@elseif (!Auth::guest())
-							<li>
-								<a href="">
-									<i class="icon--logout"></i>Logout</a>
-							</li>
-						@else
-							<li>
-								<a href="">
-									<i class="icon--logout"></i>Login</a>
-							</li>
-						@endif
-					</ul>
-				</div><!-- /navbar-collapse -->
-			</div><!-- /container-fluid -->
-
-		</nav><!-- /navbar -->
-
-		<nav class="navbar secondary-navbar hidden-xs">
-			<div class="patient__actions text-center">
-				<ul class="navbar-nav nav">
-					@if (!empty($patient))
-						<li class="inline-block dropdown">
-							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Notes/Offline Activity<span class="caret"></span></a>
+				<ul class="nav navbar-nav navbar-right">
+					@if (Auth::guest())
+						{{--<li><a href="{{ url('/auth/login') }}">Login</a></li>--}}
+						{{--<li><a href="{{ url('/auth/register') }}">Register</a></li>--}}
+					@else
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->user_login }} [ID:{{ Auth::user()->ID }}] [WP Role:{{ Auth::user()->role() }}]<span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ URL::route('patient.note.create', array('patientId' => $patient->ID)) }}">Notes/Offline Activities</a></li>
-								<li><a href="{{ URL::route('patient.note.index', array('patientId' => $patient->ID)) }}">Add New Note</a></li>
+								<li><a href="{{ url('/auth/logout') }}">Logout</a></li>
 							</ul>
 						</li>
-						<li class="inline-block"><a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" role="button">Patient Overview</a></li>
-						<li class="inline-block"><a href="{{ URL::route('patient.demographics.show', array('patientId' => $patient->ID)) }}" role="button">Edit Care Plan</a></li>
-						<li class="inline-block dropdown">
-							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Input<span class="caret"></span></a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ URL::route('patient.observation.create', array('patientId' => $patient->ID)) }}">Observations</a></li>
-								<li><a href="">Offline Activities</a></li>
-							</ul>
-						</li>
-					@endif
-					<li class="inline-block dropdown">
-						<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Patient Reports <span class="caret"></span></a>
-						<ul class="dropdown-menu" role="menu">
-							@if (!empty($patient))
-								<li><a href="">Patient Alerts</a></li>
-								<li><a href="">Progress Report</a></li>
-								<li><a href="">Patient Activity Report</a></li>
-							@endif
-							<li><a href="">Under 20 Minute Report</a></li>
-							<li><a href="">Patient Billing Report</a></li>
-							<li><a href="">Patient Listing</a></li>
-						</ul>
-					</li>
-					@if (!empty($patient))
-						<!-- <li class="inline-block"><a href="" role="button">Patient Notes</a></li> -->
-						<li class="inline-block"><a href="{{ URL::route('patient.careplan.print', array('patientId' => $patient->ID)) }}" role="button">Print Care Plan</a></li>
 					@endif
 				</ul>
 			</div>
-		</nav><!-- /navbar -->
-	@endif
+		</div>
+	</nav>
 
 	<!--[if lt IE 8]>
 		<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
