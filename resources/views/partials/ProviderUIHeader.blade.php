@@ -85,14 +85,11 @@
                     </ul>
                 </li>
                 <li class="inline-block"><a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}" role="button">Patient Overview</a></li>
-                <li class="inline-block"><a href="#" role="button">Patient Overview</a></li>
                 <li class="inline-block"><a href="{{ URL::route('patient.demographics.show', array('patient' => $patient->ID)) }}" role="button">Edit Care Plan</a></li>
-                <li class="inline-block"><a href="#" role="button">Edit Care Plan</a></li>
                 <li class="inline-block dropdown">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Input<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        {{--<li><a href="{{ URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">Observations</a></li>--}}
-                        <li><a href="#">Observations</a></li>
+                        <li><a href="{{ URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">Observations</a></li>
                         <li><a href="#">Offline Activities</a></li>
                     </ul>
                 </li>
@@ -128,10 +125,22 @@
     <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <div class="container-fluid">
-        <div class="row">
+        @include('errors.errors')
+        <div class="row" style="margin-top:60px;">
             <div class="main-form-container col-lg-8 col-lg-offset-2">
                 <div class="row">
-        @yield('content')
+                    @yield('content')
+                    {{--
+                    PROVIDER UI TEMPLATE:
+                    <div class="main-form-title">
+                        Heading
+                    </div>
+                    <div class="main-form-block main-form-horizontal col-md-12">
+                        <div class="row">
+                            Content
+                        </div>
+                    </div>
+                    --}}
                 </div>
             </div>
     </div>
