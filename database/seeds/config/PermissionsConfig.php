@@ -23,12 +23,10 @@ class PermissionsConfig extends Seeder {
 
         // permissions ALPHABETICAL
         $this->permissions = array(
-            /*
             'activities-manage' => array('display_name' => 'Activities Manage', 'description' => '',),
             'activities-view' => array('display_name' => 'Activities View', 'description' => '',),
-            'time-tracking-manage' => array('display_name' => 'Time Tracking Manage', 'description' => '',),
-            'time-tracking-view' => array('display_name' => 'Time Tracking View', 'description' => '',),
-            */
+            'activities-pagetimer-manage' => array('display_name' => 'Time Tracking Manage', 'description' => '',),
+            'activities-pagetimer-view' => array('display_name' => 'Time Tracking View', 'description' => '',),
             'apikeys-manage' => array('display_name' => 'API Manage', 'description' => '',),
             'apikeys-view' => array('display_name' => 'API View', 'description' => '',),
             'locations-manage' => array('display_name' => 'Locations Manage', 'description' => '',),
@@ -43,15 +41,13 @@ class PermissionsConfig extends Seeder {
             'roles-view' => array('display_name' => 'Roles View', 'description' => '',),
             'roles-permissions-manage' => array('display_name' => 'Roles Permissions Manage', 'description' => '',),
             'roles-permissions-view' => array('display_name' => 'Roles Permissions View', 'description' => '',),
-            /*
             'rules-engine-manage' => array('display_name' => 'Rules Engine Manage', 'description' => '',),
             'rules-engine-view' => array('display_name' => 'Rules Engine View', 'description' => '',),
-            */
-            'user-create' => array('display_name' => 'User Create New User', 'description' => '',),
-            'user-edit-all' => array('display_name' => 'User Edit All', 'description' => '',),
-            'user-edit-self' => array('display_name' => 'User Edit Self', 'description' => '',),
-            'user-view-all' => array('display_name' => 'User View All', 'description' => '',),
-            'user-view-self' => array('display_name' => 'User View Self', 'description' => '',),
+            'users-create' => array('display_name' => 'User Create New User', 'description' => '',),
+            'users-edit-all' => array('display_name' => 'User Edit All', 'description' => '',),
+            'users-edit-self' => array('display_name' => 'User Edit Self', 'description' => '',),
+            'users-view-all' => array('display_name' => 'User View All', 'description' => '',),
+            'users-view-self' => array('display_name' => 'User View Self', 'description' => '',),
 
         );
 
@@ -74,8 +70,8 @@ class PermissionsConfig extends Seeder {
                     'programs-view',
                     'roles-view',
                     'roles-permissions-view',
-                    'user-view-all',
-                    'user-view-self'
+                    'users-view-all',
+                    'users-view-self'
                 )
             ),
             'clh-admin' => array(
@@ -88,8 +84,8 @@ class PermissionsConfig extends Seeder {
                     'programs-view',
                     'roles-view',
                     'roles-permissions-view',
-                    'user-view-all',
-                    'user-view-self'
+                    'users-view-all',
+                    'users-view-self'
                 )
             ),
             'participant' => array(
@@ -98,7 +94,7 @@ class PermissionsConfig extends Seeder {
                 'permissions' => array(
                     'observations-view',
                     'observations-create',
-                    'user-view-self'
+                    'users-view-self'
                 )
             ),
             'provider' => array(
@@ -107,8 +103,8 @@ class PermissionsConfig extends Seeder {
                 'permissions' => array(
                     'observations-view',
                     'observations-create',
-                    'user-view-all',
-                    'user-view-self'
+                    'users-view-all',
+                    'users-view-self'
                 )
             ),
         );

@@ -134,18 +134,21 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('home', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
 
 		// activities
+		Entrust::routeNeedsPermission($prefix.'activities*', 'activities-view');
 		Route::resource('activities', 'ActivityController');
 		Route::get('activities/create', ['uses' =>'ActivityController@create', 'as'=>'admin.activities.create']);
 		Route::get('activities/{id}', ['uses' =>'ActivityController@show', 'as'=>'admin.activities.show']);
 		Route::get('activities/{id}/edit', ['uses' =>'ActivityController@edit', 'as'=>'admin.activities.edit']);
 
 		// pagetimer
+		Entrust::routeNeedsPermission($prefix.'pagetimer*', 'activities-pagetimer-view');
 		Route::resource('pagetimer', 'PageTimerController');
 		Route::get('pagetimer/create', ['uses' =>'PageTimerController@create', 'as'=>'admin.pagetimer.create']);
 		Route::get('pagetimer/{id}', ['uses' =>'PageTimerController@show', 'as'=>'admin.pagetimer.show']);
 		Route::get('pagetimer/{id}/edit', ['uses' =>'PageTimerController@edit', 'as'=>'admin.pagetimer.edit']);
 
 		// wpusers
+		Entrust::routeNeedsPermission($prefix.'users*', 'users-view-all');
 		Route::get('users', ['uses' =>'WpUserController@index', 'as'=>'admin.users.index']);
 		Route::post('users', ['uses' =>'WpUserController@store', 'as'=>'admin.users.store']);
 		Route::get('users/create', ['uses' =>'WpUserController@create', 'as'=>'admin.users.create']);
@@ -158,6 +161,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::post('users/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'admin.users.msgCenterUpdate']);
 
 		// rules
+		Entrust::routeNeedsPermission($prefix.'rules*', 'rules-engine-view');
 		Route::resource('rules', 'RulesController');
 		Route::get('rules/create', ['uses' =>'RulesController@create', 'as'=>'admin.rules.create']);
 		Route::post('rules/store', ['uses' =>'RulesController@store', 'as'=>'admin.rules.store']);

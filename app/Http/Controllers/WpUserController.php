@@ -39,6 +39,9 @@ class WpUserController extends Controller {
 	 */
 	public function index(Request $request)
 	{
+		if(!Auth::user()->can('users-view-all')) {
+			abort(403);
+		}
 		if ( $request->header('Client') == 'ui' )
 		{
 			$userId = Crypt::decrypt($request->header('UserId'));
@@ -141,6 +144,9 @@ class WpUserController extends Controller {
 
 	public function storeQuickPatient()
 	{
+		if(!Auth::user()->can('users-create')) {
+			abort(403);
+		}
 		$wpUser = new WpUser;
 
 		// create participant here
@@ -152,6 +158,9 @@ class WpUserController extends Controller {
 
 	public function quickAddForm($blogId)
 	{
+		if(!Auth::user()->can('users-create')) {
+			abort(403);
+		}
 		//if ( $request->header('Client') == 'ui' ) {}
 
 			$blogItem = WpBlog::find($blogId)->pcp()->whereStatus('Active')->get();
@@ -208,6 +217,9 @@ class WpUserController extends Controller {
 	 */
 	public function create()
 	{
+		if(!Auth::user()->can('users-create')) {
+			abort(403);
+		}
 		$messages = \Session::get('messages');
 
 		$wpUser = new WpUser;
@@ -246,6 +258,9 @@ class WpUserController extends Controller {
 	 */
 	public function store(Request $request)
 	{
+		if(!Auth::user()->can('users-create')) {
+			abort(403);
+		}
 		$params = new ParameterBag($request->input());
 
         $userRepo = new WpUserRepository();
@@ -268,6 +283,9 @@ class WpUserController extends Controller {
 	 */
 	public function show(Request $request, $id)
 	{
+		if(!Auth::user()->can('users-view-all')) {
+			abort(403);
+		}
 		dd('user /edit to view user info');
 	}
 
@@ -279,6 +297,9 @@ class WpUserController extends Controller {
 	 */
 	public function edit(Request $request, $id)
 	{
+		if(!Auth::user()->can('users-edit-all')) {
+			abort(403);
+		}
 		$messages = \Session::get('messages');
 
 		$wpUser = WpUser::find($id);
@@ -374,6 +395,9 @@ class WpUserController extends Controller {
 	 */
 	public function update(Request $request, $id)
 	{
+		if(!Auth::user()->can('users-edit-all')) {
+			abort(403);
+		}
 		// instantiate user
 		$wpUser = WpUser::with('meta')->find($id);
 		if (!$wpUser) {
@@ -399,6 +423,9 @@ class WpUserController extends Controller {
 	 */
 	public function destroy($id)
 	{
+		if(!Auth::user()->can('users-edit-all')) {
+			abort(403);
+		}
 		//
 	}
 
@@ -451,6 +478,9 @@ class WpUserController extends Controller {
 	 */
 	public function showMsgCenter(Request $request, $id)
 	{
+		if(!Auth::user()->can('users-view-all')) {
+			abort(403);
+		}
 		$msgUI = new MsgUI;
 		$msgUsers = new MsgUser;
 		$msgChooser = new MsgChooser;

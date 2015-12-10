@@ -105,24 +105,33 @@
 								</li>
 							@endif
 
-							<li role="presentation" class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-									Activities <span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ URL::route('admin.activities.index', array()) }}">Activities</a></li>
-									<li><a href="{{ URL::route('admin.pagetimer.index', array()) }}">Page Timer</a></li>
-								</ul>
-							</li>
-							<li role="presentation" class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-									Rules <span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ URL::route('admin.rules.index', array()) }}">Rules</a></li>
-									<li><a href="{{ URL::route('admin.rules.create', array()) }}">Add new</a></li>
-								</ul>
-							</li>
+							@if(Entrust::can('activities-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Activities <span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.activities.index', array()) }}">Activities</a></li>
+										@if(Entrust::can('activities-pagetimer-view'))
+											<li><a href="{{ URL::route('admin.pagetimer.index', array()) }}">Page Timer</a></li>
+										@endif
+									</ul>
+								</li>
+							@endif
+
+							@if(Entrust::can('rules-engine-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Rules <span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.rules.index', array()) }}">Rules</a></li>
+										@if(Entrust::can('rules-engine-manage'))
+											<li><a href="{{ URL::route('admin.rules.create', array()) }}">Add new</a></li>
+										@endif
+									</ul>
+								</li>
+							@endif
 							@if(Entrust::can('apikeys-view'))
 								<li role="presentation" class="dropdown">
 									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">

@@ -14,12 +14,14 @@
                     <div class="col-sm-2">
                         <h1>Users</h1>
                     </div>
-                    <div class="col-sm-10">
-                        <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.users.create', array()) }}" class="btn btn-success">New User</a>
-                            <a href="{{ URL::route('admin.users.createQuickPatient', array('blogId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a>
+                    @if(Entrust::can('users-create'))
+                        <div class="col-sm-10">
+                            <div class="pull-right" style="margin:20px;">
+                                <a href="{{ URL::route('admin.users.create', array()) }}" class="btn btn-success">New User</a>
+                                <a href="{{ URL::route('admin.users.createQuickPatient', array('blogId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">Users</div>
@@ -74,7 +76,9 @@
                                 @foreach( $wpUsers as $wpUser )
                                     <tr>
                                         <td>
-                                            <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-primary btn-xs">{{ $wpUser->ID }}</a><br />
+                                            @if(Entrust::can('users-edit-all'))
+                                                <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-primary btn-xs">{{ $wpUser->ID }}</a><br />
+                                            @endif
                                         </td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
@@ -84,7 +88,9 @@
                                                     </div>
                                                 @else
                                                     @foreach ($wpUser->roles as $role)
-                                                        <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-info btn-xs">{{ $role->display_name }}</a><br />
+                                                        @if(Entrust::can('users-edit-all'))
+                                                            <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-info btn-xs">{{ $role->display_name }}</a><br />
+                                                        @endif
                                                     @endforeach
                                                 @endif
                                             @endif
