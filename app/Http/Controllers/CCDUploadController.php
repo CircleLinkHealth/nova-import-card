@@ -43,7 +43,7 @@ class CCDUploadController extends Controller {
                     throw new \Exception('Blog id not found,', 400);
                 }
 
-                $xml = (new CCDParser($xml));
+                $xml = new CCDParser($xml);
                 $fullName = $xml->demographics['name']['first'] . ' ' . $xml->demographics['name']['last'];
                 $dob = $xml->demographics['birthdate'];
 
