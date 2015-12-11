@@ -27,8 +27,6 @@ Route::get('/reports/progress/{id}', function($id){
 Route::get('test/form/{blogId}','WpUserController@quickAddForm');
 Route::post('test/form/dump','WpUserController@storeQuickAddAPI');
 
-Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
-
 Route::get('/', 'WelcomeController@index');
 
 Route::controllers([
@@ -70,7 +68,12 @@ Route::group(['namespace' => 'Redox'], function ()
 /****************************/
 Route::group(['middleware' => 'auth'], function ()
 {
-	/****************************
+    /**
+     * LOGGER
+     */
+    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
+    /****************************
 	 * CCD STUFF
 	 ****************************/
 	Route::get('ccd/show/{userId}', 'CCDViewer\CCDViewerController@showByUserId');
