@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\CLH\CCD\Importer\Parsers\CCDImportParser;
+use App\CLH\CCD\Parser\CCDParser;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\CLH\Repositories\WpUserRepository;
 use App\Http\Requests;
@@ -8,7 +9,6 @@ use App\ParsedCCD;
 use App\WpUser;
 use App\XmlCCD;
 use Illuminate\Http\Request;
-use michalisantoniou6\PhpCCDParser\CCDParser;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CCDUploadController extends Controller {
@@ -43,9 +43,9 @@ class CCDUploadController extends Controller {
                     throw new \Exception('Blog id not found,', 400);
                 }
 
-                $xml = new CCDParser($xml);
-                $fullName = $xml->demographics['name']['first'] . ' ' . $xml->demographics['name']['last'];
-                $dob = $xml->demographics['birthdate'];
+                $parser = new CCDParser($xml);
+                $fullName = $parser->getFullName();
+                $dob = $parser->getDob();
 
                 if (XmlCCD::wherePatientName($fullName)->wherePatientDob($dob)->exists()) {
                     array_push($duplicates, $file->getClientOriginalName());
