@@ -13,6 +13,7 @@ use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /** @todo Move Store and Send note functions from Activity Controller to here */
 
@@ -25,8 +26,116 @@ class NotesController extends Controller {
 	 */
 	public function index(Request $request, $patientId)
 	{
-		$view_data = array();
-		return view('wpUsers.patient.note.index',$view_data);
+		$patient = WpUser::find($patientId);
+		$input = $request->all();
+
+		if(isset($input['months'])){
+			$time = $input['months'];
+			$start = Carbon::createFromFormat('Y-m-d', $time)->startOfMonth();
+			$end = Carbon::createFromFormat('Y-m-d', $time)->endOfMonth();
+		} else {
+			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
+			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
+		}
+
+		$acts = DB::table('activities')
+			->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration)'))
+			->whereBetween('performed_at', [
+				$start,$end
+			])
+			->where('patient_id', $patientId)
+			->where('logged_from', 'note')
+			->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+			->orderBy('performed_at', 'desc')
+			->get();
+
+
+		$acts = json_decode(json_encode($acts), true);
+
+		foreach($acts as $key => $value){
+			$acts[$key]['patient'] = WpUser::find($patientId);
+		}
+
+		foreach($acts as $key => $value){
+			$act_id = $acts[$key]['id'];
+			$acts_ = Activity::find($act_id);
+			$comment = $acts_->getActivityCommentFromMeta($act_id);
+			$acts[$key]['comment'] = $comment;
+		}
+
+		$activities_data_with_users = array();
+		$activities_data_with_users[$patientId] = $acts;
+
+			$reportData[$patientId] = array();
+
+		foreach ($activities_data_with_users as $patientAct)
+		{
+			$reportData[$patientAct[0]['patient_id']] = collect($patientAct)->groupBy('performed_at_year_month');
+			//$reportData[$patientAct[0]['patient_id']]getActivityCommentFromMeta($id)
+		}
+		foreach ($reportData as $user_id => $date_month) {
+			foreach ($date_month as $month => $user_activities) {
+				$i = 0;
+				foreach ($user_activities as $user_activity) {
+
+					$activity_json[$i] = $user_activity;
+
+					$activity_json[$i]['comment'] = $user_activity['comment'];
+
+					// logger details
+					$logger_user = WpUser::find($user_activity['logger_id']);
+					$logger_name = $logger_user->getFullNameAttribute();
+					$activity_json[$i]['logger_name'] = $logger_name;
+
+					// provider details
+					if ($user_activity['provider_id'] == $user_activity['logger_id']) {
+						$activity_json[$i]['provider_name'] = $logger_name;
+					} else {
+						$provider_user = WpUser::find($user_activity['provider_id']);
+						$provider_name = $provider_user->getFullNameAttribute();
+						$activity_json[$i]['provider_name'] = $provider_name;
+					}
+
+					// Type
+					if ($user_activity['logged_from'] == 'note') {
+						$activity_json[$i]['note_type'] = 'Note';
+					} else {
+						$activity_json[$i]['note_type'] = 'Offline Activity';
+					}
+
+					// date format
+					if ($user_activity['logged_from'] == 'manual_input') {
+						$activity_json[$i]['performed_at_date'] = date('m-d-y h:i:s A', strtotime($user_activity['performed_at']));
+					} else {
+						$activity_json[$i]['performed_at_date'] = date('m-d-y', strtotime($user_activity['performed_at']));
+					}
+
+					// type name
+					foreach (Activity::input_activity_types() as $abbrev => $activity_type) {
+						if ($user_activity['type'] == $abbrev) {
+							$activity_json[$i]['type_name'] = $user_activity['type'];
+							// echo '<pre>'; var_export($activity_json[$i]['logged_from']);echo '</pre>';
+						}
+					}
+					$i++;
+				}
+			}
+		}
+
+
+		$reportData = "data:" . json_encode($reportData) . "";
+
+		$years = array();
+		for($i = 0; $i < 3; $i++) {
+			$years[] = Carbon::now()->subYear($i)->year;
+		}
+		debug($years);
+
+		return view('wpUsers.patient.note.index',
+			['activity_json' => $reportData,
+			 'years' => array_reverse($years),
+			'patient'=> $patient
+			]);
 
 	}
 
