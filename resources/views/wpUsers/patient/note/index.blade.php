@@ -1,5 +1,4 @@
 @extends('partials.providerUI')
-{{ $activity_json }}
 @section('content')
 <div class="main-form-title">
     Notes / Offline Activities
@@ -85,11 +84,11 @@
                                                 },
 
                                                 width:175, sort:'string' , css:{ "color":"black","text-align":"right" }},
-                                            {id:"note_type",   header:["Type",{content:"textFilter", placeholder:"Filter"}],    width:120, sort:'string'},
-                                            {id:"comment",   header:["Preview"],    fillspace:true ,width:220, sort:'string'},
-                                            {id:"performed_at_date",   header:["Date",{content:"textFilter", placeholder:"Filter"}],    width:85, sort:'string'},
+                                            {id:"type",   header:["Type",{content:"textFilter", placeholder:"Filter"}],    width:120, sort:'string'},
+                                            {id:"comment",   header:["Preview"],    fillspace:true ,width:200, sort:'string'},
+                                            {id:"performed_at",   header:["Date",{content:"textFilter", placeholder:"Filter"}],    width:100, sort:'string'},
 
-                                            {id:"provider_name",    header:["Provider",{content:"textFilter", placeholder:"Filter"}],    width:210, sort:'string' , css:{ "color":"black","text-align":"right" }},
+                                            {id:"logger_id",    header:["Provider",{content:"textFilter", placeholder:"Filter"}],    width:210, sort:'string' , css:{ "color":"black","text-align":"right" }},
                                         ],
                                         ready:function(){
                                             this.adjustRowHeight("obs_key");

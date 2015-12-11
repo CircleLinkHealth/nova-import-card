@@ -45,6 +45,7 @@ class NotesController extends Controller {
 			])
 			->where('patient_id', $patientId)
 			->where('logged_from', 'note')
+			->where('logged_from', 'manual_input')
 			->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
 			->orderBy('performed_at', 'desc')
 			->get();
@@ -66,11 +67,15 @@ class NotesController extends Controller {
 		$activities_data_with_users = array();
 		$activities_data_with_users[$patientId] = $acts;
 
+//			$reportData[$patientId] = array();
 			$reportData[$patientId] = array();
 
 		foreach ($activities_data_with_users as $patientAct)
 		{
-			$reportData[$patientAct[0]['patient_id']] = collect($patientAct)->groupBy('performed_at_year_month');
+			debug($patientAct);
+			$reportData[] = collect($patientAct)->groupBy('performed_at_year_month');
+			debug($reportData);
+
 			//$reportData[$patientAct[0]['patient_id']]getActivityCommentFromMeta($id)
 		}
 		foreach ($reportData as $user_id => $date_month) {
@@ -122,14 +127,14 @@ class NotesController extends Controller {
 			}
 		}
 
-
-		$reportData = "data:" . json_encode($reportData) . "";
+		$reportData = "data:" . json_encode($patientAct) . "";
+//		$reportData = 'data:[{"id":"1136","type":"Medication Reconciliation","duration":"0","duration_unit":"seconds","patient_id":"400","provider_id":"404","logger_id":"330","comment_id":"0","sequence_id":null,"obs_message_id":"","logged_from":"note","performed_at":"2015-12-08 03:48:00","performed_at_gmt":"0000-00-00 00:00:00","created_at":"2015-12-07 14:48:33","updated_at":"2015-12-07 14:48:33","deleted_at":null,"page_timer_id":null,"DATE(performed_at)":"2015-12-08","SUM(duration)":"0","patient":{"ID":"400","user_login":"7-srd6wzwsyc","program_id":"7","user_nicename":"","user_email":"a@b.c","user_url":"","user_registered":"2015-08-27 12:49:40","user_activation_key":"","user_status":"0","display_name":"Issac Newton","spam":"0","deleted":"1969-12-31 19:00:00"},"comment":"afefawefawefawefawee","logger_name":"Rohan Maheshwari","provider_name":"Dr. Who","note_type":"Note","performed_at_date":"12-08-15","type_name":"Medication Reconciliation"}]';
 
 		$years = array();
 		for($i = 0; $i < 3; $i++) {
 			$years[] = Carbon::now()->subYear($i)->year;
 		}
-		debug($years);
+
 
 		return view('wpUsers.patient.note.index',
 			['activity_json' => $reportData,
