@@ -11203,7 +11203,8 @@ var uploader = new Vue({
     el: '#ccd-uploader',
     data: {
         ccdRecords: new FormData(),
-        parsedJsonCCDs: []
+        parsedJsonCCDs: [],
+        uploadedXmlCCDs: []
     },
     ready: function ready() {
         this.watchForFileInput();
@@ -11247,7 +11248,39 @@ var uploader = new Vue({
             e.preventDefault();
 
             this.$http.post('/upload-raw-ccds', this.ccdRecords, function (data, status, request) {
-                data.forEach(function (ccd) {
+                var duplicates = data.duplicates;
+                var importAgain = [];
+
+                if (duplicates.length > 0) {
+                    duplicates.forEach(function (duplicate) {
+                        if (confirm(duplicate.fileName + " has already been imported. Do you wish to re-import it?")) {
+                            var uniqueSuffix = '_*duplicate*_' + Date.now();
+                            importAgain.push({
+                                'blogId': duplicate.blogId,
+                                'xml': duplicate.ccd,
+                                'fullName': duplicate.fullName + uniqueSuffix,
+                                'dob': duplicate.dob + uniqueSuffix,
+                                'fileName': duplicate.fileName
+                            });
+                        }
+                    });
+
+                    if (importAgain.length > 0) {
+                        var json = JSON.stringify(importAgain);
+
+                        this.$http.post('/upload-duplicate-raw-ccds', json, function (data, status, request) {
+                            var uploaded = uploader.uploadedXmlCCDs;
+                            uploaded = uploaded.concat(data.uploaded);
+                        }).error(function (data, status, request) {
+                            alert('Error uploading dups: ' + data);
+                        });
+                    }
+                }
+
+                var uploaded = uploader.uploadedXmlCCDs;
+                var uploadedCCDs = uploaded.concat(data.uploaded);
+
+                uploadedCCDs.forEach(function (ccd) {
                     var jsonCcd = uploader.parseCCDwithBB(ccd.xml);
 
                     var parsedCCD = {
@@ -11260,14 +11293,11 @@ var uploader = new Vue({
                 var json = JSON.stringify(uploader.parsedJsonCCDs);
 
                 this.$http.post('/upload-parsed-ccds', json, function (data, status, request) {
-                    console.log('Success: ' + data + status + request);
                     alert('Success: ' + data);
                 }).error(function (data, status, request) {
-                    console.log('Error: ' + data + status + request);
                     alert('Error: ' + data);
                 });
             }).error(function (data, status, request) {
-                console.log('Error: ' + data + status + request);
                 alert('Error: ' + data);
             });
         }

@@ -12,6 +12,7 @@ Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
  */
 Route::get('upload-raw-ccds', 'CCDUploadController@create');
 Route::post('upload-raw-ccds', 'CCDUploadController@uploadRawFiles');
+Route::post('upload-duplicate-raw-ccds', 'CCDUploadController@uploadDuplicateRawFiles');
 Route::post('upload-parsed-ccds', 'CCDUploadController@storeParsedFiles');
 
 Route::group(['middleware' => 'auth.ccd.import'], function (){
