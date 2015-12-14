@@ -7661,58 +7661,6 @@ button.close {
   }
 }
 
-@media (min-width: 1200px) {
-  .container {
-    width: 1240px;
-  }
-}
-
-#fixed-ccd-viewer-menu {
-  position: fixed;
-  top: 0.9rem;
-  right: 1.5rem;
-  line-height: 2.5rem;
-  text-align: right;
-}
-
-#fixed-ccd-viewer-menu a {
-  color: black;
-  font-size: 1.5rem;
-  text-decoration: underline;
-}
-
-.status-box {
-  text-align: right;
-  margin: -15px -15px 0 0;
-  font-size: 13px !important;
-}
-
-.status-container {
-  min-height: 200px;
-}
-
-.active-status-container {
-  min-height: 200px;
-  background-color: rgba(161, 211, 255, 0.1) !important;
-}
-
-.active-status-container .status-box {
-  color: red;
-}
-
-.inactive-status-container {
-  min-height: 200px;
-  background-color: #ddd !important;
-}
-
-.inactive-status-container .status-box {
-  color: #aaaaaa;
-}
-
-.unknown-status-container {
-  min-height: 200px;
-}
-
 body,
 label,
 .checkbox label {
@@ -7730,9 +7678,29 @@ label,
   color: #ccc;
   line-height: 300px;
   text-align: center;
+  background-color: rgba(174, 219, 239, 0.21);
 }
 
 .dropzone.dragover {
   border-color: #000;
   color: #000;
+}
+
+#fixed-ccd-viewer-menu {
+  position: fixed;
+  top: 0.9rem;
+  right: 1.5rem;
+  line-height: 2.5rem;
+  text-align: right;
+}
+
+#fixed-ccd-viewer-menu a {
+  color: black;
+  font-size: 1.5rem;
+  text-decoration: underline;
+}
+
+.btn-green {
+  background: #47beab;
+  color: white;
 }

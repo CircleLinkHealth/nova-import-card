@@ -91,6 +91,8 @@ class CCDUploadController extends Controller {
     {
         $receivedFiles = json_decode($request->getContent());
 
+        if (empty($receivedFiles)) return response()->json('Transporting CCDs to the server has failed.', 500);
+
         foreach ($receivedFiles as $file) {
             $parsedCCD = new ParsedCCD();
             $parsedCCD->ccd = json_encode($file->ccd);

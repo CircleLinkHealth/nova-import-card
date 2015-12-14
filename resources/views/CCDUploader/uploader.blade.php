@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CPM API</title>
 
-    <link href="/css/app.css" rel="stylesheet">
-    <link href="/css/lavish.css" rel="stylesheet">
+    <link href="/css/stylesheet.css" rel="stylesheet">
     <link href="/img/favicon.png" rel="icon">
 
     <!-- Fonts -->
@@ -46,8 +45,9 @@
             </a>
         </div>
 
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <h1 class="text-center">CCD Importer</h1>
+        <div class="collapse navbar-collapse text-center" id="bs-example-navbar-collapse-1">
+            <h1 style="color: cornflowerblue;">CCD Importer</h1>
+            <h5>Drop CCD Records in the box below, or click Choose Files to browse your computer for CCDs:</h5>
         </div>
     </div>
 </nav>
@@ -56,8 +56,21 @@
 <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 <![endif]-->
 
-<div id="uploads"></div>
-<div class="dropzone" id="dropzone">Drop one or more XML CCD records here to import patients and generate care plans.</div>
+<div id="ccd-uploader">
+    <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="ccd"></label>
+            <input type="file" id="ccd" class="dropzone" multiple>
+
+        </div>
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-green">
+                Upload CCD Records
+            </button>
+        </div>
+    </form>
+</div>
 
 <script src="{{ asset('/js/ccd/bluebutton.min.js') }}"></script>
-<script src="{{ asset('/js/ccd/ccdParseUpload.js') }}"></script>
+<script src="/js/uploader.js"></script>
+{{--<script src="{{ asset('/js/ccd/ccdParseUpload.js') }}"></script>--}}
