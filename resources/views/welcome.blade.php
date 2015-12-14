@@ -1,50 +1,64 @@
-<html>
-	<head>
-		<title>CircleHealth CPM API</title>
-		
-		<link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
-		<link href="{{ asset('/css/app.css') }}" rel="stylesheet">
+@extends('partials.adminUI')
 
+@section('content')
+<div class="container-fluid">
+	<div class="content text-center" style="margin-top:30px;">
+		<h1>CircleLink Health<br>Care Plan Manager</h1>
+	</div>
+	<div class="row" style="margin-top:30px;">
+		<div class="col-md-8 col-md-offset-2">
+			<div class="panel panel-default">
+				<div class="panel-heading">Login</div>
+				<div class="panel-body">
+					@if (count($errors) > 0)
+						<div class="alert alert-danger">
+							<strong>Whoops!</strong> There were some problems with your input.<br><br>
+							<ul>
+								@foreach ($errors->all() as $error)
+									<li>{{ $error }}</li>
+								@endforeach
+							</ul>
+						</div>
+					@endif
 
-		<style>
-			body {
-				margin: 0;
-				padding: 0;
-				width: 100%;
-				height: 100%;
-				color: #B0BEC5;
-				display: table;
-				font-weight: 100;
-				font-family: 'Lato';
-			}
+					<form class="form-horizontal" role="form" method="POST" action="{{ url('/auth/login') }}">
+						<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-			.container-fluid {
-				text-align: center;
-				display: table-cell;
-				vertical-align: middle;
-			}
+						<div class="form-group">
+							<label class="col-md-4 control-label">Username</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control" name="email" value="{{ old('email') }}">
+							</div>
+						</div>
 
-			.content {
-				text-align: center;
-				display: inline-block;
-			}
+						<div class="form-group">
+							<label class="col-md-4 control-label">Password</label>
+							<div class="col-md-6">
+								<input type="password" class="form-control" name="password">
+							</div>
+						</div>
 
-			.title {
-				font-size: 96px;
-				margin-bottom: 40px;
-			}
+						<div class="form-group">
+							<div class="col-md-6 col-md-offset-4">
+								<div class="checkbox">
+									<label>
+										<input type="checkbox" name="remember"> Remember Me
+									</label>
+								</div>
+							</div>
+						</div>
 
-			.subtitle {
-				font-size: 24px !important;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container-fluid">
-			<div class="content">
-				<div class="title">CircleLink Health<br>Care Plan Manager</div>
-				<a class="btn btn-primary subtitle" href="{{ url('/auth/login') }}">Login</a>
+						<div class="form-group">
+							<div class="col-md-6 col-md-offset-4">
+								<button type="submit" class="btn btn-primary">Login</button>
+
+								<a class="btn btn-link" href="{{ url('/password/email') }}">Forgot Your Password?</a>
+							</div>
+						</div>
+					</form>
+				</div>
 			</div>
 		</div>
-	</body>
-</html>
+	</div>
+</div>
+@endsection

@@ -7,7 +7,7 @@
 		<title>CPM API</title>
 
 		<link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
-		<link href="{{ asset('/css/lavish.css') }}" rel="stylesheet">
+		<link href="{{ asset('/css/lavish-2.css') }}" rel="stylesheet">
 		<link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
 		<!-- Fonts -->
