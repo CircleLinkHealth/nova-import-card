@@ -5,7 +5,7 @@ use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use Auth;
 
-class programCheck {
+class patientProgramSecurity {
 
 	/**
 	 * The Guard implementation.

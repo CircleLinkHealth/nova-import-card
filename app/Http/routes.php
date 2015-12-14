@@ -76,7 +76,7 @@ Route::group(['middleware' => 'auth'], function ()
 	/****************************/
 
 	// **** PATIENTS (/manage-patients/
-	Route::group(['prefix' => 'manage-patients/', 'middleware' => 'programCheck'], function () {
+	Route::group(['prefix' => 'manage-patients/', 'middleware' => 'patientProgramSecurity'], function () {
 		Route::get('dashboard', ['uses' => 'Patient\PatientController@showDashboard', 'as' => 'patients.dashboard']);
 		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patients.alerts']);
 		Route::get('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@showPatientDemographics', 'as' => 'patients.demographics.show']);
@@ -84,7 +84,7 @@ Route::group(['middleware' => 'auth'], function ()
 	});
 
 	// **** PATIENTS (/manage-patients/{patientId}/)
-	Route::group(['prefix' => 'manage-patients/{patientId}', 'middleware' => 'programCheck'], function () {
+	Route::group(['prefix' => 'manage-patients/{patientId}', 'middleware' => 'patientProgramSecurity'], function () {
 
 		// base
 		//Route::get('/', ['uses' => 'Patient\PatientController@showSelectProgram', 'as' => 'patient.selectprogram']);
