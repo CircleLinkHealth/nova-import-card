@@ -311,8 +311,6 @@ class WpUserController extends Controller {
 			return response("User not found", 401);
 		}
 
-		dd($wpUser->viewablePatientIds());
-
 		$roles = Role::lists('name', 'id');
 		$role = $wpUser->roles()->first();
 		if(!$role) {
