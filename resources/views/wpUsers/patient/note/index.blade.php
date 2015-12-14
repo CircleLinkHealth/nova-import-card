@@ -34,7 +34,7 @@
                     <div class="row">
                             <div class="row">
                                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                                @if($activity_json)
+                                @if($data)
                                 <div id="obs_alerts_container" class=""></div><br/>
                                 <div id="paging_container"></div><br/>
                                 <style>

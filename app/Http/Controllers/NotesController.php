@@ -135,8 +135,12 @@ class NotesController extends Controller
                 $patientAct[$i]['logger_name'] = 'N/A';
             }
         }
-
+        $data = true;
         $reportData = "data:" . json_encode($patientAct) . "";
+        if($patientAct == null){
+            $data = false;
+        }
+
 
         $years = array();
         for ($i = 0; $i < 3; $i++) {
@@ -151,7 +155,8 @@ class NotesController extends Controller
                 'years' => array_reverse($years),
                 'month_selected' => $month_selected,
                 'months' => $months,
-                'patient' => $patient
+                'patient' => $patient,
+                'data' => $data
             ]);
 
     }
