@@ -185,11 +185,17 @@ class WpUser extends Model implements AuthenticatableContract, CanResetPasswordC
     public function viewablePatientIds() {
         // get all patients who are in the same programs
         $programIds = $this->viewableProgramIds();
-        $patientIds = WpUser::whereHas('roles', function ($q) {
-            $q->where('name', '=', 'participant');
-        })->whereHas('programs', function ($q) use ($programIds) {
+        $patientIds = WpUser::whereHas('programs', function ($q) use ($programIds) {
             $q->whereIn('program_id', $programIds);
-        })->lists('ID');
+        });
+
+        if(!Auth::user()->can('admin-access')) {
+            $patientIds->whereHas('roles', function ($q) {
+                $q->where('name', '=', 'participant');
+            });
+        }
+
+        $patientIds = $patientIds->lists('ID');
         return $patientIds;
     }
 

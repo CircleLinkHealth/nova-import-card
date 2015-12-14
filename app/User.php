@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use MikeMcLin\WpPassword\Facades\WpPassword;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
+use Auth;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
 
@@ -183,11 +184,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function viewablePatientIds() {
 		// get all patients who are in the same programs
 		$programIds = $this->viewableProgramIds();
-		$patientIds = WpUser::whereHas('roles', function ($q) {
-			$q->where('name', '=', 'participant');
-		})->whereHas('programs', function ($q) use ($programIds) {
+		$patientIds = WpUser::whereHas('programs', function ($q) use ($programIds) {
 			$q->whereIn('program_id', $programIds);
-		})->lists('ID');
+		});
+
+		if(!Auth::user()->can('admin-access')) {
+			$patientIds->whereHas('roles', function ($q) {
+				$q->where('name', '=', 'participant');
+			});
+		}
+
+		$patientIds = $patientIds->lists('ID');
 		return $patientIds;
 	}
 
