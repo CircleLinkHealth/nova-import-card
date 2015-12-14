@@ -33,11 +33,12 @@ class NotesController extends Controller
             $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
             $start = $time->startOfMonth()->format('Y-m-d');
             $end = $time->endOfMonth()->format('Y-m-d');
-            $month_selected = $time->month;
+            $month_selected = $time->format('m');
         } else {
+            $time = Carbon::now();
             $start = Carbon::now()->startOfMonth()->format('Y-m-d');
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
-            $month_selected = $start->month;
+            $month_selected = $time->format('m');
         }
 
         $acts = DB::table('activities')
