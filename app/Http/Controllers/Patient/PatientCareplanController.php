@@ -38,7 +38,6 @@ class PatientCareplanController extends Controller {
 
 		// determine if existing user or new user
 		$user = new WpUser;
-		$programId = \Session::get('activeProgramId');
 		if($patientId) {
 			$user = WpUser::find($patientId);
 			if (!$user) {
@@ -48,8 +47,13 @@ class PatientCareplanController extends Controller {
 		}
 		$patient = $user;
 
+		// security
+		if(!Auth::user()->can('observations-view')) {
+			abort(403);
+		}
+
 		// get program
-		$programId = \Session::get('activeProgramId');
+		$programId = $user->program_id;
 
 		// roles
 		$patientRoleId = Role::where('name', '=', 'participant')->first();
@@ -98,8 +102,6 @@ class PatientCareplanController extends Controller {
 	 */
 	public function storePatientDemographics(Request $request)
 	{
-		$programId = \Session::get('activeProgramId');
-
 		// input
 		$params = new ParameterBag($request->input());
 		$patientId = false;
@@ -133,7 +135,7 @@ class PatientCareplanController extends Controller {
 				'user_email' => $newUserId . '@careplanmanager.com',
 				'user_pass' => 'whatToPutHere',
 				//'user_nicename' => $newUserId,
-				'program_id' => $programId,
+				'program_id' => '99999999',
 				'roles' => [$role->id],
 			]);
 			$newUser = $userRepo->createNewUser($user, $bag);
@@ -168,7 +170,7 @@ class PatientCareplanController extends Controller {
 		$patient = $user;
 
 		// get program
-		$programId = \Session::get('activeProgramId');
+		$programId = $user->program_id;
 
 		// get user config
 		$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');

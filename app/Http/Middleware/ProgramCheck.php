@@ -3,6 +3,7 @@
 use App\WpUser;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Auth;
 
 class programCheck {
 
@@ -33,32 +34,31 @@ class programCheck {
 	 */
 	public function handle($request, Closure $next)
 	{
+		// admins can see and do all
+		if ( !Auth::guest() && Auth::user()->hasRole(['administrator'])) {
+			//return $next($request);
+		}
+
 		if($request->route()->patientId) {
 			// viewing a specific patient, get patients program_id
 			$user = WpUser::find($request->route()->patientId);
 			if(!$user) {
 				return response('Could not locate patient.', 401);
 			} else {
-				$request->session()->put('activeProgramId', $user->program_id);
-			}
-			// should validate here that viewing user has access to users program
-
-		} else {
-			if ($request->session()->has('activeProgramId')) {
-				// good, program already set
-			} else {
-				if (!empty($this->auth->user()->program_id)) {
-					$request->session()->put('activeProgramId', $this->auth->user()->program_id);
+				// security
+				if($user->ID == Auth::user()->ID && !Auth::user()->can('users-view-self')) {
+					abort(403);
+				}
+				if($user->ID != Auth::user()->ID && !Auth::user()->can('users-view-all')) {
+					abort(403);
+				}
+				if(!in_array($user->ID, Auth::user()->viewablePatientIds())) {
+					abort(403);
 				}
 			}
-		}
+		} else {
 
-		// in the end ensure theres a program set to view
-		if (!$request->session()->has('activeProgramId')) {
-			return response('Unauthorized program access.', 401);
 		}
-
-		// here we will enforce validation that restricts provider->program access
 
 		return $next($request);
 	}

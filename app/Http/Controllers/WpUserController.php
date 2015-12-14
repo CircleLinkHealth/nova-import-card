@@ -79,7 +79,7 @@ class WpUserController extends Controller {
 			$params = $request->all();
 
 			// filter user
-			$users = WpUser::OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+			$users = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
 			$filterUser = 'all';
 			if(!empty($params['filterUser'])) {
 				$filterUser = $params['filterUser'];
@@ -101,7 +101,9 @@ class WpUserController extends Controller {
 			}
 
 			// program filter
-			$programs = WpBlog::orderBy('blog_id', 'desc')->get()->lists('domain', 'blog_id');
+			$programs = WpBlog::orderBy('blog_id', 'desc')
+				->whereIn('blog_id', Auth::user()->viewableProgramIds())
+				->get()->lists('domain', 'blog_id');
 			$filterProgram = 'all';
 			if(!empty($params['filterProgram'])) {
 				$filterProgram = $params['filterProgram'];
@@ -126,6 +128,8 @@ class WpUserController extends Controller {
 
 			$queryString = $request->query();
 
+			// patient restriction
+			$wpUsers->whereIn('ID', Auth::user()->viewablePatientIds());
 			$wpUsers = $wpUsers->paginate(20);
 			$invalidWpUsers = array();
 
@@ -306,6 +310,8 @@ class WpUserController extends Controller {
 		if(!$wpUser) {
 			return response("User not found", 401);
 		}
+
+		dd($wpUser->viewablePatientIds());
 
 		$roles = Role::lists('name', 'id');
 		$role = $wpUser->roles()->first();

@@ -40,7 +40,6 @@
 <nav class="navbar primary-navbar">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a href="" class="navbar-brand btn btn-orange">{{ Session::get('activeProgramId') }}</a>
             <a href="" class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
         </div>
         <div class="navbar-right hidden-xs ">
@@ -51,11 +50,7 @@
                 <li><a href="#"><i class="icon--add-user"></i> Add Patient</a></li>
                 <li><a href="{{ URL::route('patient.alerts', array()) }}"><i class="icon--alert--white"></i> Alerts</a></li>
                 @if ( !Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
-                    @if (!empty($patient))
-                        <li><a class="btn btn-orange btn-xs" href="#"><i class="icon--home--white"></i> Back to Admin</a></li>
-                    @else
-                        <li><a class="btn btn-orange btn-xs" href="#"><i class="icon--home--white"></i> Back to Admin</a></li>
-                    @endif
+                    <li><a class="btn btn-orange btn-xs" href="#"><i class="icon--home--white"></i> Back to Admin</a></li>
                 @elseif (!Auth::guest())
                     <li>
                         <a href="">

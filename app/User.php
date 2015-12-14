@@ -172,6 +172,25 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->belongsToMany('App\WpBlog', 'lv_program_user', 'user_id', 'program_id');
 	}
 
+	public function viewableProgramIds() {
+		$programIds = $this->programs()->lists('blog_id');
+		if(empty($programIds)) {
+			return false;
+		}
+		return $programIds;
+	}
+
+	public function viewablePatientIds() {
+		// get all patients who are in the same programs
+		$programIds = $this->viewableProgramIds();
+		$patientIds = WpUser::whereHas('roles', function ($q) {
+			$q->where('name', '=', 'participant');
+		})->whereHas('programs', function ($q) use ($programIds) {
+			$q->whereIn('program_id', $programIds);
+		})->lists('ID');
+		return $patientIds;
+	}
+
     public function userConfig(){
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key',$key)->first();

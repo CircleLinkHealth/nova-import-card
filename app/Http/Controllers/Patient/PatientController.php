@@ -27,8 +27,6 @@ use Illuminate\Support\Facades\Crypt;
 
 class PatientController extends Controller {
 
-
-
 	/**
 	 * Display the specified resource.
 	 *
@@ -36,10 +34,7 @@ class PatientController extends Controller {
 	 */
 	public function showDashboard(Request $request)
 	{
-		// get program
-		$programId = \Session::get('activeProgramId');
-
-		$pendingApprovals = WpUser::where('program_id', '=', $programId)
+		$pendingApprovals = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())
 			->with('meta')->whereHas('meta', function($q) {
 			$q->where('meta_key', '=', 'careplan_status');
 			$q->where('meta_value', '!=', 'provider_approved');
@@ -60,6 +55,11 @@ class PatientController extends Controller {
 		$wpUser = WpUser::find($patientId);
 		if(!$wpUser) {
 			return response("User not found", 401);
+		}
+
+		// security
+		if(!Auth::user()->can('observations-view')) {
+			abort(403);
 		}
 
 		// program
@@ -222,10 +222,7 @@ class PatientController extends Controller {
 			}
 		}
 
-		// program
-		$program = WpBlog::find($request->session()->get('activeProgramId'));
-
-		return view('wpUsers.patient.alerts', ['program' => $program, 'patient' => $wpUser]);
+		return view('wpUsers.patient.alerts', ['patient' => $wpUser]);
 	}
 
 
@@ -266,17 +263,19 @@ class PatientController extends Controller {
 	 */
 	public function showPatientObservationCreate(Request $request, $patientId = false)
 	{
-		$wpUser = array();
+		$patient = array();
 		if($patientId) {
-			$wpUser = WpUser::find($patientId);
-			if (!$wpUser) {
+			$patient = WpUser::find($patientId);
+			if (!$patient) {
 				return response("User not found", 401);
 			}
 		}
 
-		// program
-		$program = WpBlog::find($wpUser->program_id);
+		// security
+		if(!Auth::user()->can('observations-create')) {
+			abort(403);
+		}
 
-		return view('wpUsers.patient.observation.create', ['program' => $program, 'patient' => $wpUser]);
+		return view('wpUsers.patient.observation.create', ['patient' => $patient]);
 	}
 }
