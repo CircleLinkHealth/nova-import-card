@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width">
 
     <!-- Injected styles -->
-    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/stylesheet.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/ccd-template.css" type="text/css" media="screen, projection"/>
 
     <!-- Injected scripts -->
@@ -169,8 +169,9 @@
                 <h1>Problems</h1>
                 {% for problem in problems %}
                     {% if loop.first %}<ul class="listless">{% endif %}
-                    <li class="problem-{{problem|problem_status}}">
-                        <p class="problem-status">{{problem.status}}</p>
+                    {% if problem.name or problem.translation.name %}
+                    <li class="{{problem|problem_status}}-status-container">
+                        <p class="status-box">{{problem|problem_status|fallback('Unknown')|capitalize}}</p>
                         <h2>
                             {% if problem.name %}
                                 {{problem.name|title}}
@@ -182,18 +183,24 @@
                         {% if allergy.reaction.name %}<p>Causes {{allergy.reaction.name|lower}}</p>{% endif %}
 
                         <dl class="footer">
-                            <!-- Get problem variables, if not empty -->
-                            {% if problem.code or problem.code_system %}<li>
-                                <dt>Code {% if problem.code_system_name %}<small>{{problem.code_system_name|upper}}</small>{% endif %}</dt>
-                                {% if problem.code_system %}<dd>{{problem.code_system}}</dd>{% endif %}
-                                {% if problem.code %}<dd>{{problem.code}}</dd>{% endif %}
-                            </li>
-                            <!-- other wise, get problem translation variables -->
-                            {% else if problem.translation.code or problem.translation.code_system %}<li>
-                                <dt>Code {% if problem.translation.code_system_name %}<small>{{problem.translation.code_system_name|upper}}</small>{% endif %}</dt>
-                                {% if problem.translation.code_system %}<dd>{{problem.translation.code_system}}</dd>{% endif %}
-                                {% if problem.translation.code %}<dd>{{problem.translation.code}}</dd>{% endif %}
+                            {% if problem.code_system %}<li>
+                                <dt>Code</dt>
+                                {% if problem.code_system %}
+                                <dd>{{problem.code_system|oid|upper}}
+                                    {% endif %}
+                                    {% if problem.code %}:
+                                    {{problem.code}}
+                                </dd></li>{% endif %}
+                            {% else if problem.translation.code_system%}<li>
+                                <dt>Code</dt>
+                                {% if problem.translation.code_system %}
+                                <dd>{{problem.translation.code_system|oid|upper}}
+                                    {% endif %}
+                                    {% if problem.translation.code %}:
+                                    {{problem.translation.code}}
+                                    {% endif %}</dd>
                             </li>{% endif %}
+
 
                             {% if problem.date_range.start or problem.date_range.end %}<li>
                                 <dt>Date Range</dt>
@@ -203,7 +210,7 @@
                                 </dd>
                             </li>{% endif %}
                         </dl>
-                    </li>
+                    </li>{% endif %}
                     {% if loop.last %}</ul>{% endif %}
                 {% else %}
                     <p>No known Problems</p>
@@ -215,7 +222,8 @@
                 {% for med in medications %}
                     {% if loop.first %}<ul>{% endif %}
                     {% if med.product.name %}
-                        <li class="{{loop.cycle('odd', 'even')}}">
+                    <li class="{{med|medication_status}}-status-container">
+                        <p class="status-box">{{med|medication_status|fallback('Unknown')|capitalize}}</p>
                             <header>
                                 <h2>{{med.product.name|title}}</h2>
                                 {% if med.administration.name %}<small>{{med.administration.name|title}}</small>{% endif %}
@@ -228,6 +236,12 @@
                                     {% if med.prescriber.organization %}<dd>{{med.prescriber.organization}}</dd>{% endif %}
                                     {% if med.prescriber.person %}<dd>{{med.prescriber.person}}</dd>{% endif %}
                                 </li>{% endif %}
+
+                                {% if med.text %}<li>
+                                    Instructions:<dd>{{med.text | medicNameFormat}}</dd>
+                                </li>{% endif %}
+
+
                                 {% if med.date_range.start or med.date_range.end %}<li>
                                     <dt>Date</dt>
                                     <dd>

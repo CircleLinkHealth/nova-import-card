@@ -693,12 +693,6 @@ div#problems ul > li dl, .small-text {
     font-size: 13px
 }
 
-.problem-status {
-    text-align: right;
-    margin: -15px -15px 0 0;
-    font-size: 13px !important;
-}
-
 div#problems ul > li dl li {
     width: 50%;
     float: left
