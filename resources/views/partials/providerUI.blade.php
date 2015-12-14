@@ -45,7 +45,7 @@
         <div class="navbar-right hidden-xs ">
             <ul class="nav navbar-nav">
                 {{--URL::route('patients.dashboard', array())--}}
-                <li><a href="#"><i class="icon--home--white"></i> Home</a></li>
+                <li><a href="{{ URL::route('patients.dashboard', array()) }}"><i class="icon--home--white"></i> Home</a></li>
                 <li><a href="#"><i class="icon--search--white"></i> Select Patient</a></li>
                 <li><a href="#"><i class="icon--add-user"></i> Add Patient</a></li>
                 <li><a href="{{ URL::route('patient.alerts', array()) }}"><i class="icon--alert--white"></i> Alerts</a></li>
@@ -119,28 +119,21 @@
     <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
     <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
-    <div class="container-fluid">
-        @yield('content.before')
-        <div class="row" style="margin-top:60px;">
-            <div class="main-form-container col-lg-8 col-lg-offset-2">
-                <div class="row">
-                    @yield('content')
-                    {{--
-                    PROVIDER UI TEMPLATE:
-                    <div class="main-form-title">
-                        Heading
-                    </div>
-                    ** to include user header **:
-                            @include('partials.userheader')
-                    <div class="main-form-block main-form-horizontal col-md-12">
-                        <div class="row">
-                            Content
-                        </div>
-                    </div>
-                    --}}
+    @yield('content')
+    {{--
+    PROVIDER UI TEMPLATE:
+    <div class="row" style="margin-top:60px;">
+        <div class="main-form-container col-lg-8 col-lg-offset-2">
+            <div class="row">
+                <div class="main-form-title col-lg-12">
+                    title
+                </div>
+                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+                    content text
                 </div>
             </div>
         </div>
-        @yield('content.after')
+    </div>
+    --}}
 </body>
 </html>
