@@ -5,27 +5,19 @@
 </div>
 @include('partials.userheader')
                 <div class="col-sm-2">
-                    <a href="#" class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW NOTE</a><br>
+                    <a href="{{ URL::route('patient.note.create', array('patient' => $patient->ID)) }}" class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW NOTE</a><br>
                 </div>
-                    <form action="" method="POST">
+        {!! Form::open(array('url' => URL::route('patient.note.index', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                         <div class="form-group  pull-right" style="margin-top:10px;">
                             <i class="icon icon--date-time"></i>
                             <div class="inline-block">
                                 <label for="selectMonth" class="sr-only">Select Month:</label>
                                 <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="200px" data-size="10" style="display: none;">
                                     <option value="">Select Month</option>
-                                    <option value="01">Jan</option>
-                                    <option value="02">Feb</option>
-                                    <option value="03">Mar</option>
-                                    <option value="04">Apr</option>
-                                    <option value="05">May</option>
-                                    <option value="06">June</option>
-                                    <option value="07">July</option>
-                                    <option value="08">Aug</option>
-                                    <option value="09">Sept</option>
-                                    <option value="10">Oct</option>
-                                    <option value="11">Nov</option>
-                                    <option value="12" selected="selected">Dec</option>
+                                    @for($i = 0; $i < count($months); $i++)
+                                        <option value="{{$i+1}}" @if($month_selected == $i+1) {{'selected'}} @endif>{{$months[$i]}}</option>
+                                    @endfor
+
                             </select>
                             <div class="inline-block">
                                 <label for="selectYear" class="sr-only">Select Year:</label>
@@ -38,11 +30,11 @@
                             <button type="submit" value="Search" name="find" id="find" class="btn btn-primary">Go</button>
                         </div>
                         </div>
-                    </form>
+{!! Form::close() !!}
                     <div class="row">
                             <div class="row">
                                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                                @if($activity_json)
+                                @if($data)
                                 <div id="obs_alerts_container" class=""></div><br/>
                                 <div id="paging_container"></div><br/>
                                 <style>
@@ -76,19 +68,27 @@
                                             {id:"type_name",    header:["Topic / Offline Activity",{content:"textFilter", placeholder:"Filter"}],
                                                 template:function(obj){
                                                     if (obj.logged_from == "note")
-                                                        return "#";
+                                                        return "<a href=\"#\">" + obj.type + "</a>";
                                                     else if(obj.logged_from == "manual_input"){
-                                                        return "#";
+                                                        return obj.type;
                                                     }
                                                     return obj.type_name;
                                                 },
 
                                                 width:175, sort:'string' , css:{ "color":"black","text-align":"right" }},
-                                            {id:"type",   header:["Type",{content:"textFilter", placeholder:"Filter"}],    width:120, sort:'string'},
+                                            {id:"logged_from",   header:["Type",{content:"textFilter", placeholder:"Filter"}],
+                                                template:function(obj){
+                                                    if (obj.logged_from == "note")
+                                                        return "Note";
+                                                    else if(obj.logged_from == "manual_input"){
+                                                        return "Offline Activity";
+                                                    }
+                                                    return obj.type_namez;
+                                                },    width:120, sort:'string'},
                                             {id:"comment",   header:["Preview"],    fillspace:true ,width:200, sort:'string'},
                                             {id:"performed_at",   header:["Date",{content:"textFilter", placeholder:"Filter"}],    width:100, sort:'string'},
 
-                                            {id:"logger_id",    header:["Provider",{content:"textFilter", placeholder:"Filter"}],    width:210, sort:'string' , css:{ "color":"black","text-align":"right" }},
+                                            {id:"logger_name",    header:["Provider",{content:"textFilter", placeholder:"Filter"}],    width:210, sort:'string' , css:{ "color":"black","text-align":"right" }},
                                         ],
                                         ready:function(){
                                             this.adjustRowHeight("obs_key");
