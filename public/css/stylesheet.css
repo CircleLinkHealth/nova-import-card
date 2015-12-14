@@ -7678,6 +7678,7 @@ label,
   color: #ccc;
   line-height: 300px;
   text-align: center;
+  background-color: rgba(174, 219, 239, 0.21);
 }
 
 .dropzone.dragover {
@@ -7697,4 +7698,9 @@ label,
   color: black;
   font-size: 1.5rem;
   text-decoration: underline;
+}
+
+.btn-green {
+  background: #47beab;
+  color: white;
 }
