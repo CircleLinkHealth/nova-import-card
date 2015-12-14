@@ -77,7 +77,7 @@ class AuthController extends Controller {
 			case 'manager': return '/manager';
 			case 'participant': return '/participant';
 			case 'provider': return '/provider';
-			default: return '/home';
+			default: return '/';
 		}
 	}
 }
