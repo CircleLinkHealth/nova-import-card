@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-@if ( ! Auth::guest() && Entrust::can('admin-access'))
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -39,136 +38,133 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 	</head>
 	<body>
-		<nav class="navbar navbar-default">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-						<span class="sr-only">Toggle Navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="{{ url('/') }}">
-						<img src="{{ asset('/img/cpm-logo.png') }}" height="40" width="70">
-					</a>
+		@if ( ! Auth::guest() && Entrust::can('admin-access'))
+			<nav class="navbar navbar-default">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle Navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="{{ URL::route('admin.home', array()) }}">
+							<img src="{{ asset('/img/cpm-logo.png') }}" height="40" width="70">
+						</a>
+					</div>
+
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav">
+							@if ( ! Auth::guest())
+								<li role="presentation" 0lass="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Users <span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.users.index', array()) }}">All Users</a></li>
+										<li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a></li>
+										<li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
+										<li><a href="{{ URL::route('admin.ucp.index', array()) }}">UCP</a></li>
+									</ul>
+								</li>
+							@endif
+
+							@if(Entrust::can('roles-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Roles<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.roles.index', array()) }}">Roles</a></li>
+										@if(Entrust::can('roles-permissions-view'))
+											<li><a href="{{ URL::route('admin.permissions.index', array()) }}">Permissions</a></li>
+										@endif
+									</ul>
+								</li>
+							@endif
+
+							@if(Entrust::can('programs-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Programs <span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.programs.index', array()) }}">Programs</a></li>
+										@if(Entrust::can('locations-view'))
+											<li><a href="{{ URL::route('admin.locations.index', array()) }}">Locations</a></li>
+										@endif
+										@if(Entrust::can('programs-manage'))
+											<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>
+											<li><a href="{{ URL::route('admin.questionSets.index', array()) }}">Question Sets</a></li>
+											<li><a href="{{ URL::route('admin.items.index', array()) }}">Items</a></li>
+										@endif
+									</ul>
+								</li>
+							@endif
+
+							@if(Entrust::can('activities-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Activities <span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.activities.index', array()) }}">Activities</a></li>
+										@if(Entrust::can('activities-pagetimer-view'))
+											<li><a href="{{ URL::route('admin.pagetimer.index', array()) }}">Page Timer</a></li>
+										@endif
+									</ul>
+								</li>
+							@endif
+
+							@if(Entrust::can('rules-engine-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Rules <span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.rules.index', array()) }}">Rules</a></li>
+										@if(Entrust::can('rules-engine-manage'))
+											<li><a href="{{ URL::route('admin.rules.create', array()) }}">Add new</a></li>
+										@endif
+									</ul>
+								</li>
+							@endif
+							@if(Entrust::can('apikeys-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										API<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.apikeys.index', array()) }}">API Keys</a></li>
+										<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
+										<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
+									</ul>
+								</li>
+							@endif
+						</ul>
+
+						<ul class="nav navbar-nav navbar-right">
+							@if (Auth::guest())
+								{{--<li><a href="{{ url('/auth/login') }}">Login</a></li>--}}
+								{{--<li><a href="{{ url('/auth/register') }}">Register</a></li>--}}
+							@else
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->ID }}]<span class="caret"></span></a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ url('/auth/logout') }}">Logout</a></li>
+									</ul>
+								</li>
+							@endif
+						</ul>
+					</div>
 				</div>
+			</nav>
 
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">
-						@if ( ! Auth::guest())
-							<li role="presentation" 0lass="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-									Users <span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ URL::route('admin.users.index', array()) }}">All Users</a></li>
-									<li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a></li>
-									<li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
-									<li><a href="{{ URL::route('admin.ucp.index', array()) }}">UCP</a></li>
-								</ul>
-							</li>
-						@endif
-
-						@if(Entrust::can('roles-view'))
-							<li role="presentation" class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-									Roles<span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ URL::route('admin.roles.index', array()) }}">Roles</a></li>
-									@if(Entrust::can('roles-permissions-view'))
-										<li><a href="{{ URL::route('admin.permissions.index', array()) }}">Permissions</a></li>
-									@endif
-								</ul>
-							</li>
-						@endif
-
-						@if(Entrust::can('programs-view'))
-							<li role="presentation" class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-									Programs <span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ URL::route('admin.programs.index', array()) }}">Programs</a></li>
-									@if(Entrust::can('locations-view'))
-										<li><a href="{{ URL::route('admin.locations.index', array()) }}">Locations</a></li>
-									@endif
-									@if(Entrust::can('programs-manage'))
-										<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>
-										<li><a href="{{ URL::route('admin.questionSets.index', array()) }}">Question Sets</a></li>
-										<li><a href="{{ URL::route('admin.items.index', array()) }}">Items</a></li>
-									@endif
-								</ul>
-							</li>
-						@endif
-
-						@if(Entrust::can('activities-view'))
-							<li role="presentation" class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-									Activities <span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ URL::route('admin.activities.index', array()) }}">Activities</a></li>
-									@if(Entrust::can('activities-pagetimer-view'))
-										<li><a href="{{ URL::route('admin.pagetimer.index', array()) }}">Page Timer</a></li>
-									@endif
-								</ul>
-							</li>
-						@endif
-
-						@if(Entrust::can('rules-engine-view'))
-							<li role="presentation" class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-									Rules <span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ URL::route('admin.rules.index', array()) }}">Rules</a></li>
-									@if(Entrust::can('rules-engine-manage'))
-										<li><a href="{{ URL::route('admin.rules.create', array()) }}">Add new</a></li>
-									@endif
-								</ul>
-							</li>
-						@endif
-						@if(Entrust::can('apikeys-view'))
-							<li role="presentation" class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-									API<span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ URL::route('admin.apikeys.index', array()) }}">API Keys</a></li>
-									<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
-									<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
-								</ul>
-							</li>
-						@endif
-					</ul>
-
-					<ul class="nav navbar-nav navbar-right">
-						@if (Auth::guest())
-							{{--<li><a href="{{ url('/auth/login') }}">Login</a></li>--}}
-							{{--<li><a href="{{ url('/auth/register') }}">Register</a></li>--}}
-						@else
-							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->user_login }} [ID:{{ Auth::user()->ID }}] [WP Role:{{ Auth::user()->role() }}]<span class="caret"></span></a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="{{ url('/auth/logout') }}">Logout</a></li>
-								</ul>
-							</li>
-						@endif
-					</ul>
-				</div>
-			</div>
-		</nav>
-
-		<!--[if lt IE 8]>
-			<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-			<![endif]-->
-
+			<!--[if lt IE 8]>
+				<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+				<![endif]-->
+		@endif
 		@yield('content')
 		<div style="clear:both;height:100px;"></div>
 	</body>
-@else
-	<head></head>
-	<body>You should not be here.</body>
-@endif
 </html>

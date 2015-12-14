@@ -71,12 +71,6 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::get('ccd/old-viewer', 'CCDViewer\CCDViewerController@create');
 	Route::post('ccd-old', ['uses' => 'CCDViewer\CCDViewerController@oldViewer', 'as' => 'ccd-old-viewer.post']);
 
-
-	/****************************/
-	// HOME BASE
-	/****************************/
-	Route::get('home', 'HomeController@index');
-
 	/****************************/
 	// PROVIDER UI (/manage-patients, /reports, ect)
 	/****************************/
@@ -131,7 +125,8 @@ Route::group(['middleware' => 'auth'], function ()
 		Entrust::routeNeedsPermission($prefix.'*', 'admin-access');
 
 		// home
-		Route::get('home', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
+		Route::get('', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
+		//Route::get('home', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
 
 		// activities
 		Entrust::routeNeedsPermission($prefix.'activities*', 'activities-view');
