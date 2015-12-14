@@ -31,7 +31,7 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td><a href="{{ URL::route('users.edit', array('id' => $comment->user_id)) }}" class="btn btn-orange btn-xs">{{ $comment->user_id }}</a></td>
+                                <td><a href="{{ URL::route('admin.users.edit', array('id' => $comment->user_id)) }}" class="btn btn-orange btn-xs">{{ $comment->user_id }}</a></td>
                                 <td>{{ $comment->comment_author }}</td>
                                 <td>{{ $comment->comment_date }}</td>
                                 <td>{{ $comment->comment_type }}</td>

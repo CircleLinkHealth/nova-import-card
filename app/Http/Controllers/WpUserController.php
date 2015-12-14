@@ -155,7 +155,7 @@ class WpUserController extends Controller {
 
 		// create participant here
 
-		return redirect()->route('users.edit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
+		return redirect()->route('admin.users.edit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
 	}
 
 
@@ -275,7 +275,7 @@ class WpUserController extends Controller {
 
         $wpUser = $userRepo->createNewUser($wpUser, $params);
 
-		return redirect()->route('users.edit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
+		return redirect()->route('admin.users.edit', [$wpUser->ID])->with('messages', ['successfully created new user - '.$wpUser->ID]);
 
 	}
 
