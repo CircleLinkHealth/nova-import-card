@@ -2,7 +2,6 @@
 /*
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
-
 //CCD Parser Demo Route
 Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 
@@ -113,6 +112,13 @@ Route::group(['middleware' => 'auth'], function ()
 			Route::get('create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create']);
 			Route::post('store', ['uses' => 'NotesControllr@store', 'as' => 'patient.note.store']);
 			Route::get('', ['uses' => 'NotesController@index', 'as' => 'patient.note.index']);
+		});
+
+		// activities
+		Route::group(['prefix' => 'activities'], function () {
+			Route::get('create', ['uses' => 'ActivityController@create', 'as' => 'patient.activity.create']);
+			Route::post('store', ['uses' => 'ActivityController@store', 'as' => 'patient.activity.store']);
+			Route::get('', ['uses' => 'ActivityController@index', 'as' => 'patient.activity.index']);
 		});
 	});
 
