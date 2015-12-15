@@ -94,14 +94,13 @@
                             <div class="new-activity-item">
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        <label for="activityKey">
+                                        <label for="activityValue">
                                             For How Long?
                                         </label>
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <select id="performedBy" name="provider_id"
-                                                    class="selectpicker dropdown Valid form-control" data-size="10" required>
+                                            <select id="activityValue" name="duration" class="selectpicker dropdown Valid form-control" data-size="10" required>
                                                 @for($i = 1; $i < 121 ; $i++)
                                                     <option value="{{$i}}" name="duration"> {{$i}} </option>
                                                 @endfor
@@ -134,7 +133,6 @@
                                     <input type="hidden" name="patient_id" value="{{$patient->ID}}">
                                     <input type="hidden" name="logged_from" value="activity">
                                     <input type="hidden" name="logger_id" value="{{Auth::user()->ID}}">
-                                    <input type="hidden" name="url" value="">
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->ID}}">
                                     <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                 </div>

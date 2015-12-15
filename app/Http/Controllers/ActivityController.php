@@ -92,17 +92,16 @@ class ActivityController extends Controller {
 	 */
 	public function store(Request $request, $params = false)
 	{
+
         if($params) {
-			$input = $params;
+			$input = $request->all();
 		} else if ( $request->isJson() ) {
 			$input = $request->input();
-		} else if ( $request->isMethod('POST') ) {
-			if ( $request->header('Client') == 'ui' ) { // WP Site
-				$input = json_decode(Crypt::decrypt($request->input('data')), true);
-			}
 		} else {
 			return response("Unauthorized", 401);
 		}
+
+		debug($request->all());
 
         // convert minutes to seconds.
 		if($input['duration']) {
