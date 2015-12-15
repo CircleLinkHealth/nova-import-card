@@ -48,7 +48,10 @@ var uploader = new Vue({
             e.preventDefault();
 
             this.$http.post('/upload-raw-ccds', this.ccdRecords, function (data, status, request) {
-                $('#spinner').toggleClass('hide').toggleClass('fadeInRightBig');
+                notification(
+                    "Uploading and Importing CCD Record(s). This may take a while.",
+                    'info', '#notification'
+                );
 
                 this.ccdRecords = new FormData;
 
@@ -57,8 +60,7 @@ var uploader = new Vue({
                 uploader.parseAndUploadDuplicateCCDs(data.duplicates);
 
             }).error(function (data, status, request) {
-                $('#spinner').toggleClass('hide').toggleClass('fadeOutRightBig');
-                alert('Error: ' + data);
+                console.log('Error: ' + data);
             });
 
 
@@ -79,12 +81,10 @@ var uploader = new Vue({
 
             this.$http.post('/upload-parsed-ccds', json, function (data, status, request) {
                 if (data) {
-                    $('#spinner').toggleClass('hide').toggleClass('fadeOutRightBig');
-                    alert('Success: ' + data);
+                    notification(data, 'success', '#success');
                 }
             }).error(function (data, status, request) {
-                $('#spinner').toggleClass('hide').toggleClass('fadeOutRightBig');
-                alert('Error: ' + data);
+                console.log('Error: ' + data);
             });
         },
         parseAndUploadDuplicateCCDs: function (duplicates) {
@@ -108,13 +108,24 @@ var uploader = new Vue({
                 }
             }
 
-            var json = JSON.stringify(importAgain);
-            this.$http.post('/upload-duplicate-raw-ccds', json, function (data, status, request) {
-                uploader.parseAndUploadCCDs(data.uploaded);
-            }).error(function (data, status, request) {
-                $('#spinner').toggleClass('hide').toggleClass('fadeOutRightBig');
-                alert('Error uploading duplicates: ' + data);
-            });
+            if (importAgain.length == numberOfDuplicates) {
+                var json = JSON.stringify(importAgain);
+                this.$http.post('/upload-duplicate-raw-ccds', json, function (data, status, request) {
+                    uploader.parseAndUploadCCDs(data.uploaded);
+                }).error(function (data, status, request) {
+                });
+            }
         }
     }
 });
+
+function notification(text, type, element) {
+    var notificationType = (type == 'success') ? 'alert-success' : 'alert-info';
+
+    $(element).html(text)
+        .toggleClass('hide')
+        .toggleClass(notificationType)
+        .toggleClass('fadeInRightBig')
+        .delay(10000)
+        .fadeOut(1000);
+}
