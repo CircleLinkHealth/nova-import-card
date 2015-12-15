@@ -35,9 +35,6 @@ class CCDUploadController extends Controller {
         //CCDs just added to XML_CCDs table
         $uploaded = [];
 
-        //CCDs to be added to XML_CCDs table
-        $toBeAdded = [];
-
         if ($request->hasFile('file')) {
             foreach ($request->file('file') as $file) {
 
@@ -91,7 +88,13 @@ class CCDUploadController extends Controller {
 
         $receivedFiles = json_decode($request->getContent());
 
-        if (empty($receivedFiles)) return response()->json('Transporting duplicae CCDs to the server has failed.', 500);
+        /**
+         * Returns empty because it's most probably called asynchronously from the uploader,
+         * and we don't really want to trigger any errors.
+         * @todo: there must be a much better way to do this on the JS side
+         */
+//        if (empty($receivedFiles)) return response()->json('Transporting duplicate CCDs to the server has failed.', 500);
+        if (empty($receivedFiles)) return;
 
         foreach ($receivedFiles as $file) {
             $user = $this->repo->createRandomUser($file->blogId);
@@ -128,7 +131,13 @@ class CCDUploadController extends Controller {
     {
         $receivedFiles = json_decode($request->getContent());
 
-        if (empty($receivedFiles)) return response()->json('Transporting CCDs to the server has failed.', 500);
+        /**
+         * Returns empty because it's most probably called asynchronously from the uploader,
+         * and we don't really want to trigger any errors.
+         * @todo: there must be a much better way to do this on the JS side
+         */
+//        if (empty($receivedFiles)) return response()->json('Transporting parsed CCDs to the server has failed.', 500);
+        if (empty($receivedFiles)) return;
 
         foreach ($receivedFiles as $file) {
             $parsedCCD = new ParsedCCD();

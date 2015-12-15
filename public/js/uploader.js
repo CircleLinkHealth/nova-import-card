@@ -11202,9 +11202,7 @@ Vue.use(require('vue-resource'));
 var uploader = new Vue({
     el: '#ccd-uploader',
     data: {
-        ccdRecords: new FormData(),
-        parsedJsonCCDs: [],
-        uploadedXmlCCDs: []
+        ccdRecords: new FormData()
     },
     ready: function ready() {
         this.watchForFileInput();
@@ -11248,57 +11246,69 @@ var uploader = new Vue({
             e.preventDefault();
 
             this.$http.post('/upload-raw-ccds', this.ccdRecords, function (data, status, request) {
-                var duplicates = data.duplicates;
-                var importAgain = [];
+                $('#spinner').toggleClass('hide').toggleClass('fadeInRightBig');
 
-                if (duplicates.length > 0) {
-                    duplicates.forEach(function (duplicate) {
-                        if (confirm(duplicate.fileName + " has already been imported. Do you wish to re-import it?")) {
-                            var uniqueSuffix = '_*duplicate*_' + Date.now();
-                            importAgain.push({
-                                'blogId': duplicate.blogId,
-                                'xml': duplicate.ccd,
-                                'fullName': duplicate.fullName + uniqueSuffix,
-                                'dob': duplicate.dob + uniqueSuffix,
-                                'fileName': duplicate.fileName
-                            });
-                        }
-                    });
+                this.ccdRecords = new FormData();
 
-                    if (importAgain.length > 0) {
-                        var json = JSON.stringify(importAgain);
+                uploader.parseAndUploadCCDs(data.uploaded);
 
-                        this.$http.post('/upload-duplicate-raw-ccds', json, function (data, status, request) {
-                            var uploaded = uploader.uploadedXmlCCDs;
-                            uploaded = uploaded.concat(data.uploaded);
-                        }).error(function (data, status, request) {
-                            alert('Error uploading dups: ' + data);
+                uploader.parseAndUploadDuplicateCCDs(data.duplicates);
+            }).error(function (data, status, request) {
+                $('#spinner').toggleClass('hide').toggleClass('fadeOutRightBig');
+                alert('Error: ' + data);
+            });
+        },
+        parseAndUploadCCDs: function parseAndUploadCCDs(uploadedCCDs) {
+            var parsedJsonCCDs = [];
+
+            uploadedCCDs.forEach(function (ccd) {
+                var jsonCcd = uploader.parseCCDwithBB(ccd.xml);
+                var parsedCCD = {
+                    userId: ccd.userId,
+                    ccd: jsonCcd
+                };
+                parsedJsonCCDs.push(parsedCCD);
+            });
+
+            var json = JSON.stringify(parsedJsonCCDs);
+
+            this.$http.post('/upload-parsed-ccds', json, function (data, status, request) {
+                if (data) {
+                    $('#spinner').toggleClass('hide').toggleClass('fadeOutRightBig');
+                    alert('Success: ' + data);
+                }
+            }).error(function (data, status, request) {
+                $('#spinner').toggleClass('hide').toggleClass('fadeOutRightBig');
+                alert('Error: ' + data);
+            });
+        },
+        parseAndUploadDuplicateCCDs: function parseAndUploadDuplicateCCDs(duplicates) {
+            var importAgain = [];
+
+            var numberOfDuplicates = duplicates.length;
+
+            if (numberOfDuplicates > 0) {
+                for (var i = 0; i < numberOfDuplicates; i++) {
+                    var duplicate = duplicates[i];
+                    if (confirm(duplicate.fileName + " has already been imported. Do you wish to re-import it?")) {
+                        var uniqueSuffix = '_*duplicate*_' + Date.now();
+                        importAgain.push({
+                            'blogId': duplicate.blogId,
+                            'xml': duplicate.ccd,
+                            'fullName': duplicate.fullName + uniqueSuffix,
+                            'dob': duplicate.dob + uniqueSuffix,
+                            'fileName': duplicate.fileName
                         });
                     }
                 }
+            }
 
-                var uploaded = uploader.uploadedXmlCCDs;
-                var uploadedCCDs = uploaded.concat(data.uploaded);
-
-                uploadedCCDs.forEach(function (ccd) {
-                    var jsonCcd = uploader.parseCCDwithBB(ccd.xml);
-
-                    var parsedCCD = {
-                        userId: ccd.userId,
-                        ccd: jsonCcd
-                    };
-                    uploader.parsedJsonCCDs.push(parsedCCD);
-                });
-
-                var json = JSON.stringify(uploader.parsedJsonCCDs);
-
-                this.$http.post('/upload-parsed-ccds', json, function (data, status, request) {
-                    alert('Success: ' + data);
-                }).error(function (data, status, request) {
-                    alert('Error: ' + data);
-                });
+            var json = JSON.stringify(importAgain);
+            this.$http.post('/upload-duplicate-raw-ccds', json, function (data, status, request) {
+                uploader.parseAndUploadCCDs(data.uploaded);
             }).error(function (data, status, request) {
-                alert('Error: ' + data);
+                $('#spinner').toggleClass('hide').toggleClass('fadeOutRightBig');
+                alert('Error uploading duplicates: ' + data);
             });
         }
     }
