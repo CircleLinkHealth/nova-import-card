@@ -3,7 +3,10 @@
 @section('content')
 <div class="container-fluid">
 	<div class="content text-center" style="margin-top:30px;">
-		<h1>CircleLink Health<br>Care Plan Manager</h1>
+		<a href="http://www.circlelinkhealth.com">
+			<img src="img/logo.svg" alt="Logo" class="logo--small" style="width:200px;">
+		</a>
+		<h3>Care Plan Manager</h3>
 	</div>
 	<div class="row" style="margin-top:30px;">
 		<div class="col-md-8 col-md-offset-2">

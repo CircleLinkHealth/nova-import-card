@@ -1,5 +1,7 @@
 <?php namespace App\Http\Controllers;
 
+use Auth;
+
 class WelcomeController extends Controller {
 
 	/*
@@ -30,6 +32,22 @@ class WelcomeController extends Controller {
 	 */
 	public function index()
 	{
+		if(Auth::user()) {
+			$role = Auth::user()->roles[0]->name;
+
+			switch ($role) {
+				case 'administrator':
+					return redirect('/admin');
+				case 'manager':
+					return redirect('/admin');
+				case 'participant':
+					return redirect('/manage-pataients');
+				case 'provider':
+					return redirect('/manage-pataients');
+				default:
+					return view('welcome');
+			}
+		}
 		return view('welcome');
 	}
 
