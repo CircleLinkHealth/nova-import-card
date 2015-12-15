@@ -85,7 +85,7 @@
                     <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Input<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="{{ URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">Observations</a></li>
-                        <li><a href="#">Offline Activities</a></li>
+                        <li><a href="{{ URL::route('patient.activity.create', array('patient' => $patient->ID)) }}">Offline Activities</a></li>
                     </ul>
                 </li>
             @endif
@@ -95,7 +95,7 @@
                     @if (!empty($patient))
                         <li><a href="">Patient Alerts</a></li>
                         <li><a href="">Progress Report</a></li>
-                        <li><a href="">Patient Activity Report</a></li>
+                        <li><a href="{{ URL::route('patient.activity.index', array('patient' => $patient->ID)) }}">Patient Activity Report</a></li>
                     @endif
                     <li><a href="">Under 20 Minute Report</a></li>
                     <li><a href="">Patient Billing Report</a></li>
