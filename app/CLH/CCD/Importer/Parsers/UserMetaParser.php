@@ -10,8 +10,8 @@ class UserMetaParser extends BaseParser
 
         $userMeta = $this->meta;
 
-        $userMeta->first_name = $demographics->name->given[0];
-        $userMeta->last_name = $demographics->name->family;
+        $userMeta->first_name = ucfirst(strtolower($demographics->name->given[0]));
+        $userMeta->last_name = ucfirst(strtolower($demographics->name->family));
         $userMeta->nickname = "";
 
         return $userMeta;
