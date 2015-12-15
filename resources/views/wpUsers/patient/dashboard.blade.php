@@ -1,21 +1,30 @@
 @extends('partials.providerUI')
 
 @section('content')
-<div class="row" style="margin-top:60px;">
-    <div class="main-form-container col-lg-8 col-lg-offset-2">
-        <div class="row">
-            <div class="main-form-title col-lg-12">
-                Patient Overview
-            </div>
-            <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                <ul>
+    <div class="container container--menu">
+        <div class="row row-centered">
+            <div class="col-sm-12">
+                <ul class="" style="margin:0;padding:0;">
                     <li class="menu-item">
-                        <a href="#">
+                        <a href="{{ URL::route('patients.demographics.show', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--find-patient--big icon--menu"></i>
                             </div>
                             <div>
-                                <p class="text-medium-big text--menu text-serif">Patient List<BR><BR></p>
+                                <p class="text-medium-big text--menu text-serif">Select a Patient<BR><BR><br></p>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="{{ URL::route('patients.demographics.show', array()) }}">
+                            <div class="icon-container column-centered">
+                                <i class="icon--list-patient--big icon--menu">
+                                    <div class="notification btn-warning">{{ $pendingApprovals }}</div>
+                                </i>
+                            </div>
+                            <div>
+                                <p class="text-medium-big text--menu text-serif">Patient List<br><span style="color:red;font-style:italic;font-size:85%;" class="text-thin">{{ $pendingApprovals }} Pending<br>Approvals</span><br></p>
                             </div>
                         </a>
                     </li>
@@ -26,20 +35,20 @@
                                 <i class="icon--add-patient--big icon--menu"></i>
                             </div>
                             <div class="">
-                                <p class="text-medium-big text--menu text-serif">Add a Patient<BR><BR></p>
+                                <p class="text-medium-big text--menu text-serif">Add a Patient<BR><BR><BR></p>
                             </div>
                         </a>
                     </li>
 
                     <li class="menu-item">
-                        <a href="#">
+                        <a href="{{ URL::route('patients.demographics.show', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--alerts--big icon--menu">
-                                    <div class="notification btn-warning">99</div>
+                                    <div class="notification btn-warning">-</div>
                                 </i>
                             </div>
                             <div class="icon-container column-centered">
-                                <p class="text-medium-big text--menu text-serif">My Alerts & &nbsp;&nbsp;<br> Tasks</p>
+                                <p class="text-medium-big text--menu text-serif">My Alerts & &nbsp;&nbsp;<br> Tasks<BR><BR></p>
                             </div>
                         </a>
                     </li>
@@ -48,5 +57,4 @@
             </div>
         </div>
     </div>
-</div>
 @stop

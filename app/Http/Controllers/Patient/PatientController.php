@@ -34,11 +34,36 @@ class PatientController extends Controller {
 	 */
 	public function showDashboard(Request $request)
 	{
-		$pendingApprovals = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())
-			->with('meta')->whereHas('meta', function($q) {
-			$q->where('meta_key', '=', 'careplan_status');
-			$q->where('meta_value', '!=', 'provider_approved');
-		})->get();
+		// get number of approvals
+		$patients = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())
+			->with('meta')->whereHas('roles', function($q) {
+				$q->where('name', '=', 'participant');
+			})->get();
+		$p=0;
+		if($patients->count() > 0) {
+			foreach ($patients as $user) {
+				$userMeta = $user->userMeta();
+				if(!isset($userMeta['careplan_status'])) {
+					continue 1;
+				}
+				$careplan_status = $userMeta['careplan_status'];
+				// patient approval counts
+				if(Auth::user()->hasRole(['administrator', 'care-center'])) {
+					// care-center and administrator counts number of drafts
+					if ($careplan_status == 'draft') {
+						$p++;
+					}
+				} else if(Auth::user()->hasRole(['provider'])) {
+					// provider counts number of drafts
+					if ($careplan_status == 'qa_approved') {
+						$p++;
+					}
+
+				}
+			}
+		}
+		$pendingApprovals = $p;
+
 		return view('wpUsers.patient.dashboard', compact(['pendingApprovals']));
 	}
 
