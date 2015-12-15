@@ -304,4 +304,19 @@ class NotesController extends Controller
         //
     }
 
+    public function sendExistingNote($activity_id, $logger_id, $url, $careteam)
+    {
+            $activity = Activity::findOrFail($activity_id);
+            $activityService = new ActivityService;
+            $logger = WpUser::find($logger_id);
+            $logger_name = $logger->display_name;
+            $linkToNote = $url.$activity->id;
+            $result = $activityService->sendNoteToCareTeam($careteam,$linkToNote,$activity->performed_at,$input['patient_id'],$logger_name, false);
+            if ($result) {
+                return response("Successfully Sent", 202);
+            } else {
+                return response("Sorry, could not sent Note!", 401);
+            }
+    }
+
 }
