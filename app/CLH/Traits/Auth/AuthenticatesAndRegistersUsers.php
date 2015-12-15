@@ -122,7 +122,7 @@ trait AuthenticatesAndRegistersUsers {
 			return $this->redirectPath;
 		}
 
-		return property_exists($this, 'redirectTo') ? $this->redirectTo : '/home';
+		return property_exists($this, 'redirectTo') ? $this->redirectTo : '/';
 	}
 
 	/**
@@ -132,7 +132,7 @@ trait AuthenticatesAndRegistersUsers {
 	 */
 	public function loginPath()
 	{
-		return property_exists($this, 'loginPath') ? $this->loginPath : '/auth/login';
+		return property_exists($this, 'loginPath') ? $this->loginPath : '/login';
 	}
 
 }

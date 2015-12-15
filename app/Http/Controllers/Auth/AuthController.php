@@ -22,6 +22,10 @@ class AuthController extends Controller {
 		$this->registrar = $registrar;
 
 		$this->middleware('guest', ['except' => 'getLogout']);
+
+		if ( \Auth::check() ) {
+			return redirect()->route('admin.dashboard', [])->send();
+		}
 	}
 
 
@@ -77,7 +81,7 @@ class AuthController extends Controller {
 			case 'manager': return '/manager';
 			case 'participant': return '/participant';
 			case 'provider': return '/provider';
-			default: return '/alerts';
+			default: return '/';
 		}
 	}
 }
