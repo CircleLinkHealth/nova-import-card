@@ -51,7 +51,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label for="observationDate">
-                                            Observation Date and Time:
+                                            When:
                                         </label>
                                     </div>
                                     <div class="col-sm-12">
