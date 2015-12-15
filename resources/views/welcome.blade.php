@@ -43,31 +43,10 @@
 	</head>
 	<body>
 		<div class="container-fluid">
-            <div id="app">
-                <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="ccd">
-                            CCD Record:
-                        </label>
-                        <input type="file" id="ccd" multiple>
-
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-default">
-                            Upload CCD Records
-                        </button>
-                    </div>
-                </form>
-
-                <pre>@{{ $data | json }}</pre>
-            </div>
-
-
 			<div class="content">
 				<div class="title">CircleLink Health<br>Care Plan Manager</div>
 				<a class="btn btn-primary subtitle" href="{{ url('/auth/login') }}">Login</a>
 			</div>
 		</div>
-        <script src="/js/uploader.js"></script>
     </body>
 </html>
