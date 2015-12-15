@@ -8,6 +8,7 @@ use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class MedicationsParserHelpers
@@ -24,11 +25,28 @@ class MedicationsParserHelpers
 
         if (empty($medsList)) return;
 
-        $pcp = CPRulesPCP::whereProvId($blogId)->whereSectionText('Additional Information')->first();
+        $pcp = CPRulesPCP::whereProvId($blogId)->whereSectionText('Medications to Monitor')->first();
+        if (empty($pcp)) {
+            Log::error('Medication import for userID ' . $userId . ', blogId ' . $blogId . ' has failed.'
+                . ' $pcp was empty in ' . self::class . '@createOrUpdateMedicationsList()');
+            return;
+        }
         $pcpId = $pcp->pcp_id;
-        $medListPCP = CPRulesItem::wherePcpId($pcpId)->whereItemsText('Medications List')->first();
+
+        $medListPCP = CPRulesItem::wherePcpId($pcpId)->whereItemsText('Medication List')->first();
+        if (empty($medListPCP)) {
+            Log::error('Medication import for userID ' . $userId . ', blogId ' . $blogId . ' has failed.'
+                . ' $medListPCP was empty in ' . self::class . '@createOrUpdateMedicationsList()');
+            return;
+        }
         $parentItemId = $medListPCP->items_id;
+
         $details = CPRulesItem::wherePcpId($pcpId)->whereItemsParent($parentItemId)->whereItemsText('Details')->first();
+        if (empty($details)) {
+            Log::error('Medication import for userID ' . $userId . ', blogId ' . $blogId . ' has failed.'
+                . ' $details was empty in ' . self::class . '@createOrUpdateMedicationsList()');
+            return;
+        }
         $itemId = $details->items_id;
         //UI Item
         CPRulesUCP::updateOrCreate([
