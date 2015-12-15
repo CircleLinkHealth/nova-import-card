@@ -141,10 +141,7 @@
                                     size: 10, // the number of records per a page
                                     group: 5   // the number of pages in the pager
                                 },
-                            {
-                                !!$activity_json
-                                !!
-                            }
+                            {!!$activity_json!!}
                             })
                             ;
                             webix.event(window, "resize", function () {
