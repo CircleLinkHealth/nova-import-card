@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\ActivityMeta;
+use App\WpBlog;
 use App\WpUser;
 use App\WpUserMeta;
 use App\Services\ActivityService;
@@ -27,17 +28,10 @@ class ActivityController extends Controller {
      */
 	public function index(Request $request)
 	{
-		if ( $request->header('Client') == 'ui' ) {
-			// 'ui' api request
-			$user_id = Crypt::decrypt($request->header('UserId'));
-			$activityService = new ActivityService;
-			$activities = $activityService->getActivitiesWithMeta($user_id);
-			return response()->json( Crypt::encrypt( json_encode( $activities ) ) );
-		} else {
 			// display view
 			$activities = Activity::orderBy('id', 'desc')->paginate(10);
 			return view('activities.index', [ 'activities' => $activities ]);
-		}
+
 	}
 
 	/**
@@ -45,22 +39,49 @@ class ActivityController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function create($user_id)
+	public function create(Request $request, $patientId)
 	{
 
-		$data['activity_list'] = array(
-			'General (Clinical)' => 'General (Clinical)',
-			'Medication Reconciliation' => 'Medication Reconciliation',
-			'Appointments' => 'Appointments',
-			'Test (Scheduling, Communications, etc)' => 'Test (Scheduling, Communications, etc)',
-			'Call to Other Care Team Member' => 'Call to Other Care Team Member',
-			'Review Care Plan' => 'Review Care Plan',
-			'Review Patient Progress' => 'Review Patient Progress',
-			'Transitional Care Management Activities' => 'Transitional Care Management Activities',
-			'Other' => 'Other'
-		);
+		if ($patientId) {
+			// patient view
+			$wpUser = WpUser::find($patientId);
+			if (!$wpUser) {
+				return response("User not found", 401);
+			}
 
-		return view('activities.create', $data);
+			$patient_name = $wpUser->getFullNameAttribute();
+
+			//Gather details to generate form
+
+			//timezone
+
+			//careteam
+			$careteam_info = array();
+			$careteam_ids = $wpUser->getCareTeamIDs();
+			foreach ($careteam_ids as $id) {
+				$careteam_info[$id] = WpUser::find($id)->getFullNameAttribute();;
+			}
+
+			//providers
+			$providers = WpBlog::getProviders($wpUser->blogId());
+			$provider_info = array();
+
+			foreach ($providers as $provider) {
+				$provider_info[$provider->ID] = WpUser::find($provider->ID)->getFullNameAttribute();
+			}
+
+			$view_data = [
+				'program_id' => $wpUser->blogId(),
+				'patient' => $wpUser,
+				'patient_name' => $patient_name,
+				'activity_types' => Activity::input_activity_types(),
+				'provider_info' => $provider_info,
+				'careteam_info' => $careteam_info,
+				'userTimeZone' => $wpUser->getUserTimeZone()
+			];
+
+			return view('wpUsers.patient.activity.create', $view_data);
+		}
 	}
 
 	/**
@@ -129,24 +150,7 @@ class ActivityController extends Controller {
 
 	}
 
-	public function sendExistingNote(Request $request)
-	{
-		if ($request->header('Client') == 'ui') { // WP Site
 
-			$input = json_decode(Crypt::decrypt($request->input('data')), true);
-			$activity = Activity::findOrFail($input['activity_id']);
-			$activityService = new ActivityService;
-			$logger = WpUser::find($input['logger_id']);
-			$logger_name = $logger->display_name;
-			$linkToNote = $input['url'].$activity->id;
-			$result = $activityService->sendNoteToCareTeam($input['careteam'],$linkToNote,$activity->performed_at,$input['patient_id'],$logger_name, false);
-			if ($result) {
-				return response("Successfully Sent", 202);
-			} else {
-				return response("Sorry, could not sent Note!", 401);
-			}
-		}
-	}
 
 	/**
 	 * Display the specified resource.
