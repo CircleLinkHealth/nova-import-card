@@ -1,11 +1,17 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers\Admin;
 
 use App\WpUser;
 use App\WpBlog;
-use App\WpUserMeta;
+use App\Observation;
+use App\Role;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Auth;
 
-class HomeController extends Controller {
+class DashboardController extends Controller {
 
 	/*
 	|--------------------------------------------------------------------------

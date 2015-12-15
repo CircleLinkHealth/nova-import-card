@@ -1,5 +1,7 @@
 <?php namespace App\Http\Controllers;
 
+use Auth;
+
 class WelcomeController extends Controller {
 
 	/*
@@ -30,6 +32,23 @@ class WelcomeController extends Controller {
 	 */
 	public function index()
 	{
+		//dd(Auth::redirectPath());
+		if(Auth::user()) {
+			$role = Auth::user()->roles[0]->name;
+
+			switch ($role) {
+				case 'administrator':
+					return redirect()->route('admin.dashboard', [])->send();
+				case 'manager':
+					return redirect()->route('admin.dashboard', [])->send();
+				case 'participant':
+					return redirect()->route('patients.dashboard', [])->send();
+				case 'provider':
+					return redirect()->route('patients.dashboard', [])->send();
+				default:
+					return view('welcome');
+			}
+		}
 		return view('welcome');
 	}
 

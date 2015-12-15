@@ -2,7 +2,13 @@
 
 @section('content')
 <div class="container-fluid">
-	<div class="row" style="margin-top:100px;">
+	<div class="content text-center" style="margin-top:30px;">
+		<a href="http://www.circlelinkhealth.com">
+			<img src="img/logo.svg" alt="Logo" class="logo--small" style="width:200px;">
+		</a>
+		<h3>Care Plan Manager</h3>
+	</div>
+	<div class="row" style="margin-top:30px;">
 		<div class="col-md-8 col-md-offset-2">
 			<div class="panel panel-default">
 				<div class="panel-heading">Login</div>
@@ -17,7 +23,6 @@
 							</ul>
 						</div>
 					@endif
-
 					<form class="form-horizontal" role="form" method="POST" action="{{ url('/auth/login') }}">
 						<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
@@ -53,6 +58,9 @@
 							</div>
 						</div>
 					</form>
+
+
+
 				</div>
 			</div>
 		</div>

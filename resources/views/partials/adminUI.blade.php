@@ -48,7 +48,7 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="{{ URL::route('admin.home', array()) }}">
+						<a class="navbar-brand" href="{{ URL::route('admin.dashboard', array()) }}">
 							<img src="{{ asset('/img/cpm-logo.png') }}" height="40" width="70">
 						</a>
 					</div>

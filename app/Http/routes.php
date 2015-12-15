@@ -124,9 +124,8 @@ Route::group(['middleware' => 'auth'], function ()
 		$prefix = 'admin/'; // admin prefix
 		Entrust::routeNeedsPermission($prefix.'*', 'admin-access');
 
-		// home
-		Route::get('', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
-		//Route::get('home', ['uses' =>'HomeController@index', 'as'=>'admin.home']);
+		// dashboard
+		Route::get('', ['uses' =>'Admin\DashboardController@index', 'as'=>'admin.dashboard']);
 
 		// activities
 		Entrust::routeNeedsPermission($prefix.'activities*', 'activities-view');
