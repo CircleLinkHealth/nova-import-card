@@ -1,6 +1,8 @@
 <?php namespace App\Http\Controllers\Admin;
 
+use App\WpUser;
 use App\CPRulesUCP;
+use App\CPRulesPCP;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -21,8 +23,40 @@ class CPRUCPController extends Controller {
 			abort(403);
 		}
 		// display view
-		$ucps = CPRulesUCP::paginate(10);
-		return view('admin.ucp.index', [ 'ucps' => $ucps ]);
+		$ucps = CPRulesUCP::orderBy('items_id', 'desc');
+
+		// FILTERS
+		$params = $request->all();
+
+		// filter user
+		$users = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+		$filterUser = 'all';
+		if(!empty($params['filterUser'])) {
+			$filterUser = $params['filterUser'];
+			if($params['filterUser'] != 'all') {
+				$ucps->where('user_id', '=', $filterUser);
+			}
+		}
+
+		// filter pcp
+		$pcps = CPRulesPCP::select('section_text')->groupBy('section_text')->get()->lists('section_text', 'section_text');
+		$filterPCP = 'all';
+		if(!empty($params['filterPCP'])) {
+			$filterPCP = $params['filterPCP'];
+			if($params['filterPCP'] != 'all') {
+				$ucps->whereHas('item', function($q) use ($filterPCP){
+					$q->whereHas('pcp', function($qp) use ($filterPCP){
+						$qp->where('section_text', '=', $filterPCP);
+					});
+				});
+			}
+		}
+
+		$ucps = $ucps->paginate(10);
+
+		//dd($pcps);
+
+		return view('admin.ucp.index', [ 'ucps' => $ucps, 'users' => $users, 'filterUser' => $filterUser, 'pcps' => $pcps, 'filterPCP' => $filterPCP ]);
 	}
 
 	/**
