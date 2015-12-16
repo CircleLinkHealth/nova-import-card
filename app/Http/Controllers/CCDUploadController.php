@@ -53,6 +53,10 @@ class CCDUploadController extends Controller {
                 $fullName = $parser->getFullName();
                 $dob = $parser->getDob();
 
+                $email = empty($parser->getEmail())
+                    ? ''
+                    : $parser->getEmail();
+
                 if (XmlCCD::wherePatientName($fullName)->wherePatientDob($dob)->exists()) {
                     array_push($duplicates, [
                         'blogId' => $blogId,
@@ -64,7 +68,7 @@ class CCDUploadController extends Controller {
                     continue;
                 }
 
-                $user = $this->repo->createRandomUser($blogId);
+                $user = $this->repo->createRandomUser($blogId, $email, $fullName);
 
                 $newCCD = new XmlCCD();
                 $newCCD->ccd = $xml;
@@ -97,7 +101,14 @@ class CCDUploadController extends Controller {
         if (empty($receivedFiles)) return;
 
         foreach ($receivedFiles as $file) {
-            $user = $this->repo->createRandomUser($file->blogId);
+
+            $parser = new CCDParser($file->xml);
+            $fullName = $parser->getFullName();
+            $email = empty($parser->getEmail())
+                ? ''
+                : $parser->getEmail();
+
+            $user = $this->repo->createRandomUser($file->blogId, $email) ;
 
             $newCCD = new XmlCCD();
             $newCCD->ccd = $file->xml;
