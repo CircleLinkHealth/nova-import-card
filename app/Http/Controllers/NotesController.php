@@ -14,6 +14,7 @@ use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Laracasts\Flash\Flash;
 
 /** @todo Move Store and Send note functions from Activity Controller to here */
 class NotesController extends Controller

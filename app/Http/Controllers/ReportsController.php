@@ -1,6 +1,9 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\CPRulesItem;
+use App\CPRulesPCP;
+use App\CPRulesUCP;
 use App\Services\CareplanService;
 use App\Services\ReportsService;
 use App\WpUser;
@@ -20,36 +23,42 @@ class ReportsController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index(Request $request)
+	public function index(Request $request, $patientId = false)
 	{
-		if ( $request->header('Client') == 'ui' )
-		{
-			$months = Crypt::decrypt($request->header('months'));
+		$treating = array();
 
-			$patients = [];
-			if( !empty( $request->header('patients') ) ) {
-				$patients = Crypt::decrypt($request->header('patients'));
-			};
+		$dat = (new ReportsService())->progress($patientId);
+		$user = WpUser::find($patientId);
 
-			$range = true;
-			if($request->header('range')) {
-				$range = Crypt::decrypt($request->header('range'));
-			};
+		//PCP has the sections for each provider, get all sections for the user's blog
+		$pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Diagnosis / Problems to Monitor')->first();
 
-			$timeLessThan = 1200;
-			if( !empty( $request->header('timeLessThan') ) ) {
-				$timeLessThan = Crypt::decrypt($request->header('timeLessThan'));
-			};
-
-			$reportData = Activity::getReportData($months,$timeLessThan,$patients,$range);
-
-			if(!empty($reportData)) {
-				return response()->json(Crypt::encrypt(json_encode($reportData)));
-			} else {
-				return response('Not Found', 204);
+		//Get all the items for each section
+		$items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
+		for ($i = 0; $i < count($items); $i++) {
+			//get id's of all lifestyle items that are active for the given user
+			$item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value', 'Active')->where('user_id', $user->ID)->first();
+			$items_detail[$i] = CPRulesItem::where('items_parent', $items[$i])->first();
+			$items_detail_ucp[$i] = CPRulesUCP::where('items_id', $items_detail[$i]->items_id)->where('user_id', $user->ID)->first();
+			if ($item_for_user[$i] != null) {
+				//Find the items_text for the one's that are active
+				$user_items = CPRulesItem::find($item_for_user[$i]->items_id);
+				$treating[] = $user_items->items_text;
 			}
 		}
-		return response('Unauthorized', 401);
+
+		//Medication Tracking:
+		$medications = (new ReportsService())->medicationStatus($user);
+		debug($medications);
+
+		$data = [
+			'treating' => $treating,
+			'patientId'	=> $patientId,
+			'medications' => $medications
+		];
+
+		return view('wpUsers.patient.progress', $data);
+
 	}
 
 	/**

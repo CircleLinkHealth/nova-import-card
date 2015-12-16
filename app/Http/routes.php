@@ -110,7 +110,7 @@ Route::group(['middleware' => 'auth'], function ()
 		// notes
 		Route::group(['prefix' => 'notes'], function () {
 			Route::get('create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create']);
-			Route::post('store', ['uses' => 'NotesControllr@store', 'as' => 'patient.note.store']);
+			Route::post('store', ['uses' => 'NotesController@store', 'as' => 'patient.note.store']);
 			Route::get('', ['uses' => 'NotesController@index', 'as' => 'patient.note.index']);
 		});
 
@@ -120,6 +120,9 @@ Route::group(['middleware' => 'auth'], function ()
 			Route::post('store', ['uses' => 'ActivityController@store', 'as' => 'patient.activity.store']);
 			Route::get('', ['uses' => 'ActivityController@index', 'as' => 'patient.activity.index']);
 		});
+
+		Route::get('progress', ['uses' => 'ReportsController@index', 'as' => 'patient.activity.index']);
+
 	});
 
 	/****************************/
@@ -316,38 +319,6 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 
 	// locations
 	Route::get('locations', 'LocationController@index');
-});
-
-
-
-/**********************************/
-//  WP SPECIFIC API SITE ROUTES
-/**********************************/
-
-Route::group(['prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], function()
-{
-
-	// activities
-	Route::resource('activities', 'ActivityController');
-	Route::post('activities/update', 'ActivityController@update');
-	Route::resource('activities.meta', 'ActivityMetaController');
-	Route::post('activities/sendNote','ActivityController@sendExistingNote');
-
-	// reports
-	Route::get('reports/pagetimer', 'ReportsController@pageTimerReports');
-	Route::get('reports/UIprogress', 'ReportsController@UIprogress');
-	Route::resource('reports', 'ReportsController');
-	Route::get('reports/progress', 'ReportsController@progress');
-
-	// locations
-	Route::get('locations', 'LocationController@index');
-
-	// observations
-	Route::post('observation', 'ObservationController@store');
-
-	// users
-	Route::get('user/quickadd', 'WpUserController@showQuickAddAPI');
-	Route::post('user/quickadd', 'WpUserController@storeQuickAddAPI');
 });
 
 

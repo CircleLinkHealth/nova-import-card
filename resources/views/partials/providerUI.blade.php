@@ -94,8 +94,8 @@
                 <ul class="dropdown-menu" role="menu">
                     @if (!empty($patient))
                         <li><a href="">Patient Alerts</a></li>
-                        <li><a href="">Progress Report</a></li>
-                        <li><a href="{{ URL::route('patient.activity.index', array('patient' => $patient->ID)) }}">Patient Activity Report</a></li>
+                        <li><a href="{{ URL::route('patient.activity.index', array('patient' => $patient->ID)) }}">Progress Report</a></li>
+                        <li><a href="">Patient Activity Report</a></li>
                     @endif
                     <li><a href="">Under 20 Minute Report</a></li>
                     <li><a href="">Patient Billing Report</a></li>
