@@ -12,29 +12,8 @@
     <!-- Fonts -->
     <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
     <!-- Scripts -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
-    <!-- http://trentrichardson.com/examples/timepicker/ -->
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
-
-    <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="/js/scripts.js"></script>
-    <script src="/js/bootstrap-select.min.js"></script>
-
-    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-default">
@@ -46,9 +25,10 @@
             </a>
         </div>
 
-        <div class="collapse navbar-collapse text-center" id="bs-example-navbar-collapse-1">
+        <div class="collapse navbar-collapse text-right" id="bs-example-navbar-collapse-1">
             <h1 style="color: cornflowerblue;">CCD Importer</h1>
-            <h5>Drop CCD Records in the box below, or click Choose Files to browse your computer for CCDs:</h5>
+            <h5>Drop CCD Records in the box below, or click on it to browse your computer for CCDs.</h5>
+            <h5><b>It is recommended that you import up to 5 CCDs in one go.</b></h5>
         </div>
     </div>
 </nav>
@@ -77,4 +57,3 @@
 
 <script src="{{ asset('/js/ccd/bluebutton.min.js') }}"></script>
 <script src="/js/uploader.js"></script>
-{{--<script src="{{ asset('/js/ccd/ccdParseUpload.js') }}"></script>--}}
