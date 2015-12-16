@@ -16,7 +16,7 @@ class CCDImporterRepository
      *
      * @return WpUser
      */
-    public function createRandomUser($blogId)
+    public function createRandomUser($blogId, $email = '', $fullName = '')
     {
         $role = Role::whereName('participant')->first();
 
@@ -24,11 +24,19 @@ class CCDImporterRepository
 
         $newUserId = str_random(20);
 
+        $user_email = empty($email)
+            ? $newUserId . '@careplanmanager.com'
+            : $email;
+
+        $user_login = empty($email)
+            ? $newUserId
+            : $email;
+
         $bag = new ParameterBag([
-            'user_email' => $newUserId . '@careplanmanager.com',
+            'user_email' => $user_email,
             'user_pass' => 'whatToPutHere',
             'user_nicename' => $newUserId,
-            'user_login' => $newUserId,
+            'user_login' => $user_login,
             'program_id' => $blogId,
             'roles' => [$role->id],
         ]);

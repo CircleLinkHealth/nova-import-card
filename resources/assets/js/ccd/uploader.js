@@ -57,7 +57,9 @@ var uploader = new Vue({
 
                 uploader.parseAndUploadCCDs(data.uploaded);
 
-                uploader.parseAndUploadDuplicateCCDs(data.duplicates);
+                if (data.duplicates.length > 0) {
+                    uploader.parseAndUploadDuplicateCCDs(data.duplicates);
+                }
 
             }).error(function (data, status, request) {
                 console.log('Error: ' + data);

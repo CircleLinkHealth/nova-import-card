@@ -28,6 +28,31 @@ class CCDParser
         }
     }
 
+    public function getEmail()
+    {
+        //telecom field
+        $telecoms = $this->xml->recordTarget->patientRole->telecom;
+
+        foreach ($telecoms as $telecom) {
+
+            $telecom = (string) $telecom['value'];
+
+            if (! str_contains($telecom, ['@'])) {
+                continue;
+            }
+
+            if (str_contains($telecom, [':', 'mailto:'])) {
+                 $telecom = explode(':', $telecom);
+
+                return (string) $telecom[1];
+            }
+
+            return (string) $telecom;
+        }
+
+        return false;
+    }
+
     public function getFullName()
     {
         $xmlDemo = $this->xml->recordTarget->patientRole;
