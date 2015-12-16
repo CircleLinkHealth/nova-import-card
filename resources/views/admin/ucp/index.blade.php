@@ -24,6 +24,30 @@
                     <div class="panel-heading">All User Care Plan Items</div>
                     <div class="panel-body">
                         @include('errors.errors')
+
+                        <div class="row">
+                            {!! Form::open(array('url' => URL::route('admin.ucp.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                        </div>
+
+                        <h2>Filter</h2>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-2 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
+                                <div class="col-xs-4">{!! Form::select('filterUser', array('all' => 'All Users') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                <div class="col-xs-2 text-right">{!! Form::label('filterPCP', 'PCP:') !!}</div>
+                                <div class="col-xs-4">{!! Form::select('filterPCP', array('all' => 'All PCP') + $pcps, $filterPCP, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:50px;">
+                            <div class="col-sm-12">
+                                <div class="" style="text-align:center;">
+                                    {!! Form::hidden('action', 'filter') !!}
+                                    {!! Form::submit('Apply Filters', array('class' => 'btn btn-orange')) !!}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -41,7 +65,7 @@
                                     <td><a href="{{ URL::route('admin.ucp.show', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Detail</a></td>
                                     <td>
                                         @if($ucp->item)
-                                            <a href="{{ URL::route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->items_text }}</a>
+                                            <a href="{{ URL::route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->pcp->section_text }}({{ $ucp->item->pcp->pcp_id }})</a> <br> <a href="{{ URL::route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs" style="margin-top:5px;">{{ $ucp->item->items_text }}({{ $ucp->items_id }})</a>
                                         @else
                                             {{ $ucp->items_id }}
                                         @endif
@@ -54,7 +78,9 @@
                             @endforeach
                             </tbody>
                         </table>
-                        {!! $ucps->appends(['action' => 'filter'])->render() !!}
+                        @if (count($ucps) > 0)
+                            {!! $ucps->appends(['action' => 'filter', 'filterUser' => $filterUser, 'filterPCP' => $filterPCP])->render() !!}
+                        @endif
                     </div>
                 </div>
             </div>

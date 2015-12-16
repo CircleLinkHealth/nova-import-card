@@ -109,7 +109,7 @@
                         </table>
 
                         @if (count($wpUsers) > 0)
-                            {!! $wpUsers->appends(['action' => 'filter', 'filterRole' => $filterRole, 'filterProgram' => $filterProgram])->render() !!}
+                            {!! $wpUsers->appends(['action' => 'filter', 'filterUser' => $filterUser, 'filterRole' => $filterRole, 'filterProgram' => $filterProgram])->render() !!}
                         @endif
 
                         @if (count($invalidWpUsers) > 0)
