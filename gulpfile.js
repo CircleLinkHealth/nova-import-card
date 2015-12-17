@@ -13,5 +13,14 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix) {
     mix.less('/css/app.less', 'public/css/stylesheet.css');
-    mix.less('/css/wpstyle.less', 'public/css/wpstyle.css');
+    mix.browserify('/ccd/uploader.js');
+
+    //mix.browserify('/ccd/parser/bluebutton.min.js');
+
+    mix.browserify('ccd/viewer/ccd.js', 'resources/assets/js/compiled/ccd/viewer');
+    //mix.browserify('ccd/viewer/demographics.js', 'resources/assets/js/compiled/ccd/viewer');
+    //mix.browserify('ccd/viewer/document.js', 'resources/assets/js/compiled/ccd/viewer');
+
+    mix.scriptsIn('resources/assets/js/compiled/ccd/viewer', 'public/js/ccd/viewer.js');
+    mix.copy('resources/assets/js/ccd/parser/bluebutton.min.js', 'public/js/ccd/bluebutton.min.js');
 });

@@ -47,7 +47,12 @@ class UserConfigParser extends BaseParser
 
             return empty($gender) ? null : $gender;
         });
-        $userConfig->address = $demographics->address->street[0];
+        $userConfig->address = call_user_func(function () use ($demographics) {
+            $street = $demographics->address->street;
+            if (array_key_exists(1, $street)) return $street[0] . ', ' . $street[1];
+            if (array_key_exists(0, $street)) return $street[0];
+            return false;
+        });
         $userConfig->city = $demographics->address->city;
         $userConfig->state = $demographics->address->state;
         $userConfig->zip = $demographics->address->zip;

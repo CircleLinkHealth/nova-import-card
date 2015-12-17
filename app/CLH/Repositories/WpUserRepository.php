@@ -6,6 +6,9 @@ use App\WpUser;
 use App\WpUserMeta;
 use App\WpBlog;
 use App\Role;
+use App\CPRulesPCP;
+use App\CPRulesUCP;
+use App\Services\CareplanUIService;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class WpUserRepository {
@@ -17,7 +20,7 @@ class WpUserRepository {
         $wpUser->load('meta');
 
         // the basics
-        $wpUser->user_nicename = '';
+        $wpUser->user_nicename = $params->get('user_nicename');
         $wpUser->user_login = $params->get('user_login');
         $wpUser->user_status = $params->get('user_status');
         $wpUser->display_name = $params->get('display_name');
@@ -29,6 +32,7 @@ class WpUserRepository {
         $this->saveOrUpdateUserMeta($wpUser, $params);
         $this->updateUserConfig($wpUser, $params);
         $this->saveOrUpdatePrograms($wpUser, $params);
+        $this->createDefaultCarePlan($wpUser, $params);
 
         $wpUser->push();
 
@@ -190,5 +194,68 @@ class WpUserRepository {
             $setUserConfig->user_id = $wpUser->ID;
         }
         $setUserConfig->save();
+    }
+
+
+    public function createDefaultCarePlan($wpUser, $params) {
+        // get providers
+        $sections = CPRulesPCP::where('prov_id', '=' , $wpUser->program_id)->get();
+        if(count($sections) > 0) {
+            foreach ($sections as $section) {
+                $sectionData = (new CareplanUIService)->getCareplanSectionData($wpUser->program_id, $section->section_text, $wpUser);
+                if (empty($sectionData)) {
+                    return false;
+                }
+                $parentItems = $sectionData['items'];
+                $itemData = $sectionData['sub_meta'];
+                foreach ($parentItems as $parentItemName => $parentItemInfo) {
+                    //echo '<h2>' . $parentItemName . '</h2>';
+                    foreach ($parentItemInfo as $child1Key => $child1Info) {
+                        //echo '<h3>' . $child1Key . '</h3>';
+                        // does it have children?
+                        if (isset($itemData[$parentItemName][$child1Key])) {
+                            // HAS CHILDREN ITEMS
+                        } else if (isset($itemData[$parentItemName][0][$child1Key]['items_id'])) {
+                            // SINGLETON, HAS NO CHILDREN
+                        }
+                        // ensure status is set
+                        if (strlen($child1Info['status']) < 3) {
+                            $child1Info['status'] = 'Inactive';
+                        }
+                        $item_checkbox_key = 'CHECK_STATUS|' . $itemData[$parentItemName][0][$child1Key]['items_id'] . '|' . $itemData[$parentItemName][0][$child1Key]['items_id'] . "|status";
+                        //echo "Adding to UCP! meta_key = status meta_value = " . $child1Info['status'] . "<br><br>";
+                        $newUCP = new CPRulesUCP;
+                        $newUCP->items_id = $itemData[$parentItemName][0][$child1Key]['items_id'];
+                        $newUCP->user_id = $wpUser->ID;
+                        $newUCP->meta_key = 'status';
+                        $newUCP->meta_value = $child1Info['status'];
+                        $newUCP->save();
+                        if (isset($itemData[$parentItemName][$child1Key])) {
+                            foreach ($itemData[$parentItemName][$child1Key] as $child2Key => $child2Info) {
+                                // item heading
+                                //echo '<br><strong>' . $child2Key . '</strong><br>';
+                                // show info
+                                foreach ($child2Info as $key => $value) {
+                                    //echo $key . ' :: ' . $value . '<br>';
+                                }
+                                // set null to empty string
+                                if (strtolower($child2Info['ui_default']) == 'null') {
+                                    $child2Info['ui_default'] = '';
+                                }
+                                // add to ucp
+                                //echo "Adding to UCP! meta_key = value meta_value = " . $child2Info['ui_default'];
+                                $newUCP = new CPRulesUCP;
+                                $newUCP->items_id = $child2Info['items_id'];
+                                $newUCP->user_id = $wpUser->ID;
+                                $newUCP->meta_key = 'value';
+                                $newUCP->meta_value = $child2Info['ui_default'];
+                                $newUCP->save();
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
     }
 }

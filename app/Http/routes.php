@@ -11,6 +11,7 @@ Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
  */
 Route::get('upload-raw-ccds', 'CCDUploadController@create');
 Route::post('upload-raw-ccds', 'CCDUploadController@uploadRawFiles');
+Route::post('upload-duplicate-raw-ccds', 'CCDUploadController@uploadDuplicateRawFiles');
 Route::post('upload-parsed-ccds', 'CCDUploadController@storeParsedFiles');
 
 Route::group(['middleware' => 'auth.ccd.import'], function (){
@@ -60,7 +61,12 @@ Route::group(['namespace' => 'Redox'], function ()
 /****************************/
 Route::group(['middleware' => 'auth'], function ()
 {
-	/****************************
+    /**
+     * LOGGER
+     */
+    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
+    /****************************
 	 * CCD STUFF
 	 ****************************/
 	Route::get('ccd/show/{userId}', 'CCDViewer\CCDViewerController@showByUserId');
@@ -69,6 +75,23 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::post('ccd/old-viewer', ['uses' => 'CCDViewer\CCDViewerController@viewSource', 'as' => 'ccd.old.viewer']);
 	Route::get('ccd/old-viewer', 'CCDViewer\CCDViewerController@create');
 	Route::post('ccd-old', ['uses' => 'CCDViewer\CCDViewerController@oldViewer', 'as' => 'ccd-old-viewer.post']);
+
+
+    /****************************
+     * VUE CCD VIEWER
+     ****************************/
+    Route::get('vue', function () {
+        return view('CCDViewer.new-vuer');
+    });
+    Route::get('getVueVar/{ccdId}', function ($ccdId) {
+        //Amazing Charts Sample
+//        return App\XmlCCD::find(434)->ccd;
+//        return response('123', 400);
+        return App\XmlCCD::find($ccdId)->ccd;
+
+        //BB Sample
+        //	return App\XmlCCD::find(430)->ccd;
+    });
 
 	/****************************/
 	// PROVIDER UI (/manage-patients, /reports, ect)

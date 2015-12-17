@@ -84,6 +84,7 @@ order by ui_sort
 				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_row_end'] = $row->ui_row_end;
 				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_col_start'] = $row->ui_col_start;
 				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_col_end'] = $row->ui_col_end;
+				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_default'] = $row->ui_default;
 				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['track_as_observation'] = $row->track_as_observation;
 				$sub_meta[$row->section_text][$row->sub_parent][$row->items_text]['ui_placeholder'] = $row->ui_placeholder;
 				if ($row->ui_fld_type == 'SELECT') {
