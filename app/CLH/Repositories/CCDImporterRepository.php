@@ -32,10 +32,16 @@ class CCDImporterRepository
             ? $newUserId
             : $email;
 
+        //user_nicename, display_name
+        $user_nicename = empty($fullName)
+            ? ''
+            : ucwords(strtolower($fullName));
+
         $bag = new ParameterBag([
             'user_email' => $user_email,
             'user_pass' => 'whatToPutHere',
-            'user_nicename' => $newUserId,
+            'user_nicename' => $user_nicename,
+            'display_name' => $user_nicename,
             'user_login' => $user_login,
             'program_id' => $blogId,
             'roles' => [$role->id],
