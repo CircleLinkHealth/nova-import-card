@@ -102,6 +102,18 @@
 								</li>
 							@endif
 
+							@if(Entrust::can('programs-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Care Plans <span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.careplans.index', array()) }}">Care Plans</a></li>
+										<li><a href="{{ URL::route('admin.careitems.index', array()) }}">Care Items</a></li>
+									</ul>
+								</li>
+							@endif
+
 							@if(Entrust::can('activities-view'))
 								<li role="presentation" class="dropdown">
 									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">

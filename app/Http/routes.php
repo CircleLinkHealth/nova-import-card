@@ -219,8 +219,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::post('observations/{id}/edit', ['uses' =>'Admin\ObservationController@update', 'as'=>'admin.observations.update']);
 		Route::get('observations/{id}/destroy', ['uses' =>'Admin\ObservationController@destroy', 'as'=>'admin.observations.destroy']);
 
-		// comments
-		Entrust::routeNeedsPermission($prefix.'comments*', 'observations-view');
+		// commentspets);
 		Entrust::routeNeedsPermission($prefix.'comments/edit', 'observations-edit');
 		Entrust::routeNeedsPermission($prefix.'comments/create', 'observations-create');
 		Route::resource('comments', 'Admin\CommentController');
@@ -247,6 +246,25 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::resource('apikeys', 'Admin\ApiKeyController', [
 			'only' => [ 'index', 'destroy', 'store' ],
 		]);
+
+
+		// care items
+		Entrust::routeNeedsPermission($prefix.'careitems*', 'programs-manage');
+		Route::resource('careitems', 'Admin\CareItemController');
+		Route::post('careitems/{id}/edit', ['uses' =>'Admin\CareItemController@update', 'as'=>'admin.careitems.update']);
+		Route::get('careitems/{id}/destroy', ['uses' =>'Admin\CareItemController@destroy', 'as'=>'admin.careitems.destroy']);
+
+		// care plans
+		Entrust::routeNeedsPermission($prefix.'careplans*', 'programs-manage');
+		Route::resource('careplans', 'Admin\CarePlanController');
+		Route::post('careplans/{id}/edit', ['uses' =>'Admin\CarePlanController@update', 'as'=>'admin.careplans.update']);
+		Route::get('careplans/{id}/destroy', ['uses' =>'Admin\CarePlanController@destroy', 'as'=>'admin.careplans.destroy']);
+
+		// care plan sections
+		Entrust::routeNeedsPermission($prefix.'careplansections*', 'programs-manage');
+		Route::resource('careplansections', 'Admin\CarePlanSectionController');
+		Route::post('careplansections/{id}/edit', ['uses' =>'Admin\CarePlanSectionController@update', 'as'=>'admin.careplansections.update']);
+		Route::get('careplansections/{id}/destroy', ['uses' =>'Admin\CarePlanSectionController@destroy', 'as'=>'admin.careplansections.destroy']);
 	});
 
 	/*
