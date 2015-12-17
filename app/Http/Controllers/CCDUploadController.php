@@ -9,6 +9,7 @@ use App\ParsedCCD;
 use App\WpUser;
 use App\XmlCCD;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CCDUploadController extends Controller {
@@ -38,7 +39,11 @@ class CCDUploadController extends Controller {
         if ($request->hasFile('file')) {
             foreach ($request->file('file') as $file) {
 
-                if (empty($file)) continue;
+                if (empty($file)) {
+                    Log::error('It seems like this file did not upload. Here is what I have for $file in '
+                        . self::class . '@uploadRawFiles() ==>' . $file);
+                    continue;
+                }
 
                 $xml = file_get_contents($file);
 
@@ -97,15 +102,16 @@ class CCDUploadController extends Controller {
 
         $receivedFiles = json_decode($request->getContent());
 
-        /**
-         * Returns empty because it's most probably called asynchronously from the uploader,
-         * and we don't really want to trigger any errors.
-         * @todo: there must be a much better way to do this on the JS side
-         */
 //        if (empty($receivedFiles)) return response()->json('Transporting duplicate CCDs to the server has failed.', 500);
         if (empty($receivedFiles)) return;
 
         foreach ($receivedFiles as $file) {
+
+            if (empty($file)) {
+                Log::error('It seems like this file did not upload. Here is what I have for $file in '
+                    . self::class . '@uploadDuplicateRawFiles() ==>' . $file);
+                continue;
+            }
 
             $parser = new CCDParser($file->xml);
             $fullName = $parser->getFullName();
