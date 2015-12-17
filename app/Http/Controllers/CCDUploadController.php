@@ -83,6 +83,11 @@ class CCDUploadController extends Controller {
                 ]);
             }
         }
+
+        if (empty($uploaded) && empty($duplicates)) {
+            return response()->json('No CCDs were uploaded.', 400);
+        }
+
         return response()->json(compact('uploaded', 'duplicates'), 200);
     }
 
