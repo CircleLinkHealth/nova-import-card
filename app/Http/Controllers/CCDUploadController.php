@@ -108,7 +108,7 @@ class CCDUploadController extends Controller {
                 ? ''
                 : $parser->getEmail();
 
-            $user = $this->repo->createRandomUser($file->blogId, $email) ;
+            $user = $this->repo->createRandomUser($file->blogId, $email, $fullName);
 
             $newCCD = new XmlCCD();
             $newCCD->ccd = $file->xml;
