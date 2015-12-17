@@ -29,8 +29,11 @@ class CCDUploadController extends Controller {
      */
 	public function uploadRawFiles(Request $request)
     {
-        $uploaded = [];
+        //CCDs that already exist in XML_CCDs table
         $duplicates = [];
+
+        //CCDs just added to XML_CCDs table
+        $uploaded = [];
 
         if ($request->hasFile('file')) {
             foreach ($request->file('file') as $file) {
@@ -50,14 +53,22 @@ class CCDUploadController extends Controller {
                 $fullName = $parser->getFullName();
                 $dob = $parser->getDob();
 
+                $email = empty($parser->getEmail())
+                    ? ''
+                    : $parser->getEmail();
+
                 if (XmlCCD::wherePatientName($fullName)->wherePatientDob($dob)->exists()) {
-                    array_push($duplicates, $file->getClientOriginalName());
+                    array_push($duplicates, [
+                        'blogId' => $blogId,
+                        'ccd' => $xml,
+                        'fullName' => $fullName,
+                        'dob' => $dob,
+                        'fileName' => $file->getClientOriginalName()
+                    ]);
                     continue;
                 }
 
-
-
-                $user = $this->repo->createRandomUser($blogId);
+                $user = $this->repo->createRandomUser($blogId, $email, $fullName);
 
                 $newCCD = new XmlCCD();
                 $newCCD->ccd = $xml;
@@ -72,7 +83,52 @@ class CCDUploadController extends Controller {
                 ]);
             }
         }
-        return response()->json($uploaded, 200);
+
+        if (empty($uploaded) && empty($duplicates)) {
+            return response()->json('No CCDs were uploaded.', 400);
+        }
+
+        return response()->json(compact('uploaded', 'duplicates'), 200);
+    }
+
+    public function uploadDuplicateRawFiles(Request $request)
+    {
+        $uploaded = [];
+
+        $receivedFiles = json_decode($request->getContent());
+
+        /**
+         * Returns empty because it's most probably called asynchronously from the uploader,
+         * and we don't really want to trigger any errors.
+         * @todo: there must be a much better way to do this on the JS side
+         */
+//        if (empty($receivedFiles)) return response()->json('Transporting duplicate CCDs to the server has failed.', 500);
+        if (empty($receivedFiles)) return;
+
+        foreach ($receivedFiles as $file) {
+
+            $parser = new CCDParser($file->xml);
+            $fullName = $parser->getFullName();
+            $email = empty($parser->getEmail())
+                ? ''
+                : $parser->getEmail();
+
+            $user = $this->repo->createRandomUser($file->blogId, $email, $fullName);
+
+            $newCCD = new XmlCCD();
+            $newCCD->ccd = $file->xml;
+            $newCCD->user_id = $user->ID;
+            $newCCD->patient_name = (string) $file->fullName;
+            $newCCD->patient_dob = (string) $file->dob;
+            $newCCD->save();
+
+            array_push($uploaded, [
+                'userId' => $user->ID,
+                'xml' => $file->xml,
+            ]);
+        }
+
+        return response()->json(compact('uploaded'), 200);
     }
 
     /**
@@ -90,6 +146,14 @@ class CCDUploadController extends Controller {
     public function storeParsedFiles(Request $request)
     {
         $receivedFiles = json_decode($request->getContent());
+
+        /**
+         * Returns empty because it's most probably called asynchronously from the uploader,
+         * and we don't really want to trigger any errors.
+         * @todo: there must be a much better way to do this on the JS side
+         */
+//        if (empty($receivedFiles)) return response()->json('Transporting parsed CCDs to the server has failed.', 500);
+        if (empty($receivedFiles)) return;
 
         foreach ($receivedFiles as $file) {
             $parsedCCD = new ParsedCCD();
