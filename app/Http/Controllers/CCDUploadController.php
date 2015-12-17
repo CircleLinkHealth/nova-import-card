@@ -38,9 +38,9 @@ class CCDUploadController extends Controller {
         if ($request->hasFile('file')) {
             foreach ($request->file('file') as $file) {
 
-                if (empty($file->getPathName())) continue;
+                if (empty($file)) continue;
 
-                $xml = file_get_contents($file->getPathName());
+                $xml = file_get_contents($file);
 
                 if($request->session()->has('blogId')) {
                     $blogId = $request->session()->get('blogId');
