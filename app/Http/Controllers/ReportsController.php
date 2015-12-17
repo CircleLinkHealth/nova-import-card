@@ -47,14 +47,73 @@ class ReportsController extends Controller {
 			}
 		}
 
+		$biometrics = ['Weight','Blood_Sugar','Blood_Pressure'];
+		$biometrics_data = array();
+		$biometrics_array = array();
+
+		foreach($biometrics as $biometric){
+			$biometrics_data[$biometric] =
+					DB::table('observations')
+						->select(DB::raw('user_id, replace(obs_key,\'_\',\' \') \'Observation\',
+					week(obs_date) week, year(obs_date) year, floor(datediff(now(), obs_date)/7) realweek,
+					date_format(max(obs_date), \'%c/%e\') as day, date_format(min(obs_date), \'%c/%e\') as day_low,
+					min(obs_date) as min_obs_id, max(obs_date) as obs_id,
+					round(avg(obs_value)) \'Avg\''))
+						->where('obs_key', '=' ,$biometric)
+						->where('user_id', $user->ID)
+						->where(DB::raw('datediff(now(), obs_date)/7'),'<=', 11)
+						->where('obs_unit', '!=', 'invalid')
+						->where('obs_unit', '!=', 'scheduled')
+						->groupBy('user_id')
+						->groupBy('obs_key')
+						->groupBy('realweek')
+						->orderBy('obs_date')
+						->get();
+
+		}			//debug($biometrics_data);
+
+		foreach($biometrics_data as $key => $value){
+			$bio_name = $key;
+			$first = reset($value);
+			$last = end($value);
+			$biometrics_array[$bio_name]['change'] = intval($last->Avg) - intval($first->Avg);
+
+			if($first < $last) {
+				$biometrics_array[$bio_name]['change_arrow'] = 'up';
+			} else if($first > $last) {
+				$biometrics_array[$bio_name]['change_arrow'] = 'down';
+			}
+
+			$count = 1;
+			$biometrics_array[$bio_name]['data'] = '';
+			$biometrics_array[$bio_name]['max'] = -1;
+			//$first = reset($array);
+			if($value){
+				foreach($value as $key => $value){
+					$biometrics_array[$bio_name]['unit'] = (new ReportsService())->biometricsUnitMapping(str_replace('_', ' ',$bio_name));
+					$biometrics_array[$bio_name]['reading'] = intval($value->Avg);
+					if (intval($value->Avg) > $biometrics_array[$bio_name]['max']){
+						$biometrics_array[$bio_name]['max'] = intval($value->Avg);
+					}
+					$biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval($value->Avg).'} ,';
+					$count++;
+				}
+			} else {
+				unset($biometrics_array[$bio_name]);
+			}
+		}
+		debug($biometrics_array);
+
+
 		//Medication Tracking:
 		$medications = (new ReportsService())->medicationStatus($user);
-		debug($medications);
 
 		$data = [
 			'treating' => $treating,
 			'patientId'	=> $patientId,
-			'medications' => $medications
+			'patient'=> $user,
+			'medications' => $medications,
+			'tracking_biometrics' => $biometrics_array
 		];
 
 		return view('wpUsers.patient.progress', $data);
