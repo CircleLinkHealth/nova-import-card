@@ -55,7 +55,9 @@ var uploader = new Vue({
 
                 this.ccdRecords = new FormData;
 
-                uploader.parseAndUploadCCDs(data.uploaded);
+                if (data.uploaded.length > 0) {
+                    uploader.parseAndUploadCCDs(data.uploaded);
+                }
 
                 if (data.duplicates.length > 0) {
                     uploader.parseAndUploadDuplicateCCDs(data.duplicates);
