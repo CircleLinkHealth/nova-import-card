@@ -77,6 +77,7 @@ class ReportsController extends Controller {
 			$first = reset($value);
 			$last = end($value);
 			$biometrics_array[$bio_name]['change'] = intval($last->Avg) - intval($first->Avg);
+			$biometrics_array[$bio_name]['lastWeekAvg'] = intval($last->Avg);
 
 			if($first < $last) {
 				$biometrics_array[$bio_name]['change_arrow'] = 'up';

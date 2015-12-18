@@ -83,7 +83,7 @@
                         <div class="row">
                             <div class="col-xs-3" style="Zoom:75%">
                                 <div class="patient-summary__info unchanged">
-                                    <span><i class="icon--unchanged-"> </i></span>0 <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
+                                    <span><i class="icon--unchanged-"> </i></span>{{abs($value['change'])}}  <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
                                 </div>
                                 <div class="patient-summary__info__legend">
                                     Change  <!-- Wks. -->
@@ -91,7 +91,7 @@
                             </div>
                             <div class="col-xs-3 text-center" style="Zoom:75%">
                                 <div class="patient-summary__info">
-                                    {{abs($value['change'])}} <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
+                                    {{abs($value['lastWeekAvg'])}} <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
                                 </div>
                                 <div class="patient-summary__info__legend">
                                     Latest Weekly Avg.
