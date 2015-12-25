@@ -122,8 +122,21 @@ class CarePlanController extends Controller {
 			abort(403);
 		}
 		$users = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
-		$careplan = CarePlan::find($id);
-		return view('admin.carePlans.edit', [ 'careplan' => $careplan, 'users' => $users, 'messages' => \Session::get('messages') ]);
+
+		$carePlan = CarePlan::find($id);
+		foreach($carePlan->careSections as $careSection) {
+			// add parent items to each section
+			$careSection->planItems = $carePlan->carePlanItems()
+				->where('section_id', '=', $careSection->id)
+				->where('parent_id', '=', 0)
+				->orderBy('ui_sort', 'asc')
+				->with(array('children' => function ($query) {
+						$query->orderBy('ui_sort', 'asc');
+					}))
+				->get();
+		}
+
+		return view('admin.carePlans.edit', [ 'carePlan' => $carePlan, 'users' => $users, 'messages' => \Session::get('messages') ]);
 	}
 
 	/**

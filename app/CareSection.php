@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CarePlanItem extends Model {
+class CareSection extends Model {
 
     /**
      * The connection name for the model.
@@ -16,7 +16,7 @@ class CarePlanItem extends Model {
      *
      * @var string
      */
-    protected $table = 'lv_care_plan_care_item';
+    protected $table = 'care_sections';
 
     /**
      * The primary key for the model.
@@ -30,16 +30,16 @@ class CarePlanItem extends Model {
      *
      * @var array
      */
-    protected $fillable = ['parent_id', 'name', 'display_name', 'description'];
+    protected $fillable = ['plan_id', 'display_name', 'description'];
 
-    public function ucp()
+    public function carePlans()
     {
-        return $this->hasMany('App\CareplanUcp', 'id', 'ucp_id');
+        return $this->belongsToMany('App\CarePlan', 'care_item_care_plan', 'section_id', 'plan_id');
     }
 
-    public function item()
+    public function careItems()
     {
-        return $this->hasMany('App\Careplan', 'qid', 'qid');
+        return $this->hasMany('App\CarePlanItem', 'id', 'section_id');
     }
 
     public static function boot()

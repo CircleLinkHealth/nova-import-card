@@ -16,7 +16,7 @@ class CarePlanSection extends Model {
      *
      * @var string
      */
-    protected $table = 'lv_care_plan_sections';
+    protected $table = 'care_plan_care_section';
 
     /**
      * The primary key for the model.
@@ -32,14 +32,8 @@ class CarePlanSection extends Model {
      */
     protected $fillable = ['plan_id', 'display_name', 'description'];
 
-    public function careplan()
-    {
-        return $this->hasMany('App\CarePlan', 'id', 'plan_id');
-    }
-
-    public function item()
-    {
-        return $this->hasMany('App\Careplan', 'qid', 'qid');
+    public function carePlans() {
+        return $this->item('App\CareSection', 'care_plan_care_section', 'section_id', 'plan_id');
     }
 
     public static function boot()

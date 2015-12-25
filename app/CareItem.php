@@ -16,7 +16,7 @@ class CareItem extends Model {
      *
      * @var string
      */
-    protected $table = 'lv_care_items';
+    protected $table = 'care_items';
 
     /**
      * The primary key for the model.
@@ -32,14 +32,9 @@ class CareItem extends Model {
      */
     protected $fillable = ['parent_id', 'name', 'display_name', 'description'];
 
-    public function ucp()
+    public function carePlans()
     {
-        return $this->hasMany('App\CareplanUcp', 'id', 'ucp_id');
-    }
-
-    public function item()
-    {
-        return $this->hasMany('App\Careplan', 'qid', 'qid');
+        return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
     }
 
     public static function boot()
