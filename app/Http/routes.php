@@ -1,4 +1,7 @@
 <?php
+Route::get('careplan/{id}', ['uses' => 'Admin\CarePlanController@carePlan', 'as' => 'careplan']);
+Route::get('careplan/{id}/section/{sectionId}', ['uses' => 'Admin\CarePlanController@carePlanSection', 'as' => 'careplan.section']);
+
 /*
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */

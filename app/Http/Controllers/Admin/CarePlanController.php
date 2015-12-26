@@ -139,6 +139,70 @@ class CarePlanController extends Controller {
 		return view('admin.carePlans.edit', [ 'carePlan' => $carePlan, 'users' => $users, 'messages' => \Session::get('messages') ]);
 	}
 
+
+
+	/**
+	 *
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function carePlan($id)
+	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
+		$users = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+
+		$carePlan = CarePlan::find($id);
+		foreach($carePlan->careSections as $careSection) {
+			// add parent items to each section
+			$careSection->planItems = $carePlan->carePlanItems()
+				->where('section_id', '=', $careSection->id)
+				->where('parent_id', '=', 0)
+				->orderBy('ui_sort', 'asc')
+				->with(array('children' => function ($query) {
+					$query->orderBy('ui_sort', 'asc');
+				}))
+				->get();
+		}
+
+		return view('admin.carePlans.careplan', [ 'carePlan' => $carePlan, 'users' => $users, 'messages' => \Session::get('messages') ]);
+	}
+
+	/**
+	 *
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function carePlanSection($id, $sectionId)
+	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
+		$users = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+
+		$carePlan = CarePlan::find($id);
+		foreach($carePlan->careSections as $careSection) {
+			// add parent items to each section
+			$careSection->planItems = $carePlan->carePlanItems()
+				->where('section_id', '=', $careSection->id)
+				->where('parent_id', '=', 0)
+				->orderBy('ui_sort', 'asc')
+				->with(array('careSection' => function ($query) use ($sectionId){
+					$query->where('name', '=', $sectionId);
+				}))
+				->with(array('children' => function ($query) {
+					$query->orderBy('ui_sort', 'asc');
+				}))
+				->get();
+		}
+
+		return view('admin.carePlans.careplansection', [ 'carePlan' => $carePlan, 'users' => $users, 'section' => $sectionId, 'messages' => \Session::get('messages') ]);
+	}
+
+
 	/**
 	 * Update the specified resource in storage.
 	 *
