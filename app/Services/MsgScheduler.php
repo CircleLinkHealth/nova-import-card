@@ -3,8 +3,8 @@
 use App\Observation;
 use App\ObservationMeta;
 use App\Comment;
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use App\Services\MsgUser;
 use App\Services\MsgChooser;
 
@@ -234,7 +234,7 @@ class MsgScheduler {
                 //echo "<BR><pre>". $key."|";
                 echo '<br><br>[---Process User #'.$value['user_id'].'---]<br>';
 
-                $wpUser = WpUser::find($value['user_id']);
+                $wpUser = User::find($value['user_id']);
                 $userMeta = $wpUser->userMeta();
                 if(empty($userMeta['user_config'])) {
                     echo "<br>MsgScheduler->createScheduledMessages() Skip, Missing User Config";
@@ -300,7 +300,7 @@ class MsgScheduler {
         reset($arrData);
         $user_id        =  key($arrData);
         echo "<br><br>MsgScheduler->create_app_schedule() Start";
-        $wpUser = WpUser::find($user_id);
+        $wpUser = User::find($user_id);
         $userMeta = $wpUser->userMeta();
         if(empty($userMeta['user_config'])) {
             echo "<br>MsgScheduler->create_app_schedule() Missing User Config";

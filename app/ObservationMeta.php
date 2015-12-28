@@ -1,7 +1,7 @@
 <?php namespace App;
 
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
@@ -48,7 +48,7 @@ class ObservationMeta extends Model {
         }
         $observation = Observation::find($this->obs_id);
         $comment = Comment::find($observation->comment_id);
-        $wpUser = WpUser::find($observation->user_id);
+        $wpUser = User::find($observation->user_id);
 
         if(!$wpUser || !$observation) {
             return false;

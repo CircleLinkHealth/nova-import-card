@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\WpUser;
+use App\User;
 use App\CPRulesUCP;
 use App\CPRulesPCP;
 use App\Http\Requests;
@@ -29,7 +29,7 @@ class CPRUCPController extends Controller {
 		$params = $request->all();
 
 		// filter user
-		$users = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
 		$filterUser = 'all';
 		if(!empty($params['filterUser'])) {
 			$filterUser = $params['filterUser'];

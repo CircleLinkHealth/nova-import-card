@@ -3,8 +3,8 @@
 use App\Activity;
 use App\ActivityMeta;
 use App\WpBlog;
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use App\Services\ActivityService;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -44,7 +44,7 @@ class ActivityController extends Controller {
 
 		if ($patientId) {
 			// patient view
-			$wpUser = WpUser::find($patientId);
+			$wpUser = User::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
@@ -59,7 +59,7 @@ class ActivityController extends Controller {
 			$careteam_info = array();
 			$careteam_ids = $wpUser->getCareTeamIDs();
 			foreach ($careteam_ids as $id) {
-				$careteam_info[$id] = WpUser::find($id)->getFullNameAttribute();;
+				$careteam_info[$id] = User::find($id)->getFullNameAttribute();;
 			}
 
 			//providers
@@ -67,7 +67,7 @@ class ActivityController extends Controller {
 			$provider_info = array();
 
 			foreach ($providers as $provider) {
-				$provider_info[$provider->ID] = WpUser::find($provider->ID)->getFullNameAttribute();
+				$provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
 			}
 
 			$view_data = [
@@ -134,7 +134,7 @@ class ActivityController extends Controller {
 			$activitySer = new ActivityService;
 			$activity = Activity::find($actId);
 			$linkToNote = $input['url'].$activity->id;
-			$logger = WpUser::find($input['logger_id']);
+			$logger = User::find($input['logger_id']);
 			$logger_name = $logger->display_name;
 
 			$result = $activitySer->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input['patient_id'],$logger_name, true);

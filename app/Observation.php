@@ -1,9 +1,9 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\WpUser;
+use App\User;
 use App\Services\DatamonitorService;
-use App\WpUserMeta;
+use App\UserMeta;
 use DB;
 
 /**
@@ -80,7 +80,7 @@ class Observation extends Model {
 
     public function user()
     {
-        return $this->belongsTo('App\WpUser', 'user_id', 'ID');
+        return $this->belongsTo('App\User', 'user_id', 'ID');
     }
 
 
@@ -126,7 +126,7 @@ class Observation extends Model {
         if(empty($this->user_id)) {
             return false;
         }
-        $wpUser = WpUser::find($this->user_id);
+        $wpUser = User::find($this->user_id);
         if(!$wpUser->blogId()) {
             return false;
         }

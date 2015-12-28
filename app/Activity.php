@@ -1,7 +1,7 @@
 <?php namespace App;
 
 use SoftDeletingTrait;
-use App\WpUser;
+use App\User;
 use App\Services\ActivityService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -62,7 +62,7 @@ class Activity extends Model {
 
     public function patient()
     {
-        return $this->belongsTo('App\WpUser', 'patient_id', 'ID');
+        return $this->belongsTo('App\User', 'patient_id', 'ID');
     }
 
     public function pageTime()

@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\WpUser;
+use App\User;
 use App\WpBlog;
 use App\Observation;
 use App\Role;
@@ -41,23 +41,23 @@ class DashboardController extends Controller {
 	 */
 	public function index()
 	{
-		$user = $wpUser = WpUser::find(Auth::user()->ID);
+		$user = $wpUser = User::find(Auth::user()->ID);
 
 		// switch dashboard view based on logged in user
 		if($user->hasRole('administrator') || $user->hasRole('provider')) {
 
 			$stats = array();
 			$stats['totalPrograms'] = WpBlog::all()->count();
-			$stats['totalUsers'] = WpUser::all()->count();
-			$stats['totalAdministrators'] = WpUser::whereHas('roles', function($q) {
+			$stats['totalUsers'] = User::all()->count();
+			$stats['totalAdministrators'] = User::whereHas('roles', function($q) {
 				$q->where('name', '=', 'administrator');
 			})
 				->get()->count();
-			$stats['totalParticipants'] = WpUser::whereHas('roles', function($q) {
+			$stats['totalParticipants'] = User::whereHas('roles', function($q) {
 					$q->where('name', '=', 'participant');
 				})
 				->get()->count();
-			$stats['totalProviders'] = WpUser::whereHas('roles', function($q) {
+			$stats['totalProviders'] = User::whereHas('roles', function($q) {
 				$q->where('name', '=', 'provider');
 			})
 				->get()->count();

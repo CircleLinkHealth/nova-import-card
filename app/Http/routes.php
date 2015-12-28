@@ -103,6 +103,7 @@ Route::group(['middleware' => 'auth'], function ()
 	// **** PATIENTS (/manage-patients/
 	Route::group(['prefix' => 'manage-patients/', 'middleware' => 'patientProgramSecurity'], function () {
 		Route::get('dashboard', ['uses' => 'Patient\PatientController@showDashboard', 'as' => 'patients.dashboard']);
+		Route::get('listing', ['uses' => 'Patient\PatientController@showPatientListing', 'as' => 'patients.listing']);
 		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patients.alerts']);
 		Route::get('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@showPatientDemographics', 'as' => 'patients.demographics.show']);
 		Route::post('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patients.demographics.store']);
@@ -178,16 +179,16 @@ Route::group(['middleware' => 'auth'], function ()
 
 		// wpusers
 		Entrust::routeNeedsPermission($prefix.'users*', 'users-view-all');
-		Route::get('users', ['uses' =>'WpUserController@index', 'as'=>'admin.users.index']);
-		Route::post('users', ['uses' =>'WpUserController@store', 'as'=>'admin.users.store']);
-		Route::get('users/create', ['uses' =>'WpUserController@create', 'as'=>'admin.users.create']);
-		Route::get('users/{id}/edit', ['uses' =>'WpUserController@edit', 'as'=>'admin.users.edit']);
-		Route::post('users/{id}/edit', ['uses' =>'WpUserController@update', 'as'=>'admin.users.update']);
-		Route::get('users/createQuickPatient/{blogId}', ['uses' =>'WpUserController@createQuickPatient', 'as'=>'admin.users.createQuickPatient']);
-		Route::post('users/createQuickPatient/', ['uses' =>'WpUserController@storeQuickPatient', 'as'=>'admin.users.storeQuickPatient']);
+		Route::get('users', ['uses' =>'UserController@index', 'as'=>'admin.users.index']);
+		Route::post('users', ['uses' =>'UserController@store', 'as'=>'admin.users.store']);
+		Route::get('users/create', ['uses' =>'UserController@create', 'as'=>'admin.users.create']);
+		Route::get('users/{id}/edit', ['uses' =>'UserController@edit', 'as'=>'admin.users.edit']);
+		Route::post('users/{id}/edit', ['uses' =>'UserController@update', 'as'=>'admin.users.update']);
+		Route::get('users/createQuickPatient/{blogId}', ['uses' =>'UserController@createQuickPatient', 'as'=>'admin.users.createQuickPatient']);
+		Route::post('users/createQuickPatient/', ['uses' =>'UserController@storeQuickPatient', 'as'=>'admin.users.storeQuickPatient']);
 		Route::get('users/{id}/careplan', ['uses' =>'CareplanController@show', 'as'=>'admin.users.careplan']);
-		Route::get('users/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'admin.users.msgCenter']);
-		Route::post('users/{id}/msgcenter', ['uses' =>'WpUserController@showMsgCenter', 'as'=>'admin.users.msgCenterUpdate']);
+		Route::get('users/{id}/msgcenter', ['uses' =>'UserController@showMsgCenter', 'as'=>'admin.users.msgCenter']);
+		Route::post('users/{id}/msgcenter', ['uses' =>'UserController@showMsgCenter', 'as'=>'admin.users.msgCenterUpdate']);
 
 		// rules
 		Entrust::routeNeedsPermission($prefix.'rules*', 'rules-engine-view');
@@ -351,8 +352,8 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'a
 	Route::controller('password', 'Auth\PasswordController');
 
 	// return data on logged in user
-	Route::post('user', 'WpUserController@index');
-	Route::get('user', 'WpUserController@index');
+	Route::post('user', 'UserController@index');
+	Route::get('user', 'UserController@index');
 
 	// observations
 	Route::post('comment', 'CommentController@store');

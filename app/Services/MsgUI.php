@@ -1,8 +1,8 @@
 <?php namespace App\Services;
 
 use App\Activity;
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use DB;
 use DateTime;
 use DateTimeZone;

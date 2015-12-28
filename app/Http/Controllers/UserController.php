@@ -30,7 +30,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class WpUserControllerDELETE extends Controller {
+class UserController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
@@ -73,7 +73,7 @@ class WpUserControllerDELETE extends Controller {
 			}
 		} else {
 			// display view
-			$wpUsers = wpUser::where('program_id', '!=', '')->orderBy('ID', 'desc');
+			$wpUsers = User::where('program_id', '!=', '')->orderBy('ID', 'desc');
 
 			// FILTERS
 			$params = $request->all();

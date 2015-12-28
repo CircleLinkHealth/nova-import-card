@@ -4,8 +4,8 @@ use App\Activity;
 use App\Comment;
 use App\Observation;
 use App\ObservationMeta;
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
@@ -16,7 +16,7 @@ class ObservationService {
 	public function storeObservationFromApp($userId, $parentId, $obsValue, $obsDate, $obsMessageId, $obsKey, $timezone, $source = 'manual_input', $isStartingObs = 'N') {
 
 		// get user
-		$wpUser = WpUser::find($userId);
+		$wpUser = User::find($userId);
 
 		// set sequence, usually 0
 		$sequence = 0;

@@ -3,10 +3,10 @@
 use App\CLH\CCD\Importer\Parsers\CCDImportParser;
 use App\CLH\CCD\Parser\CCDParser;
 use App\CLH\Repositories\CCDImporterRepository;
-use App\CLH\Repositories\WpUserRepository;
+use App\CLH\Repositories\UserRepository;
 use App\Http\Requests;
 use App\ParsedCCD;
-use App\WpUser;
+use App\User;
 use App\XmlCCD;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -169,8 +169,8 @@ class CCDUploadController extends Controller {
 
             $importParser = (new CCDImportParser($blogId, $parsedCCD))->parse();
 
-            $userRepo = new WpUserRepository();
-            $wpUser = WpUser::find($parsedCCD->user_id);
+            $userRepo = new UserRepository();
+            $wpUser = User::find($parsedCCD->user_id);
 
             $userRepo->updateUserConfig($wpUser, new ParameterBag($importParser->userConfig));
 

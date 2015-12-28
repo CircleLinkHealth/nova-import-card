@@ -5,7 +5,7 @@ use App\CPRulesQuestions;
 use App\CPRulesPCP;
 use App\Services\ReportsService;
 use App\Http\Requests;
-use App\WpUser;
+use App\User;
 use App\CPRulesUCP;
 use App\Observation;
 use DateTime;
@@ -17,7 +17,7 @@ use Validator;
 class CareplanUIService extends Facade {
 
 
-	public function getCareplanSectionData($programId, $pcpSectionText, WpUser $user) {
+	public function getCareplanSectionData($programId, $pcpSectionText, User $user) {
 
 		$blog_id = $programId;
 		$section_text = $pcpSectionText;
@@ -118,7 +118,7 @@ order by ui_sort
 	 * @param $wpUser
 	 * @return string
 	 */
-	public function renderCareplanSections($pcpSections = array(), $programId, WpUser $user = null)
+	public function renderCareplanSections($pcpSections = array(), $programId, User $user = null)
 	{
 		// if not set, get all pcp sections
 		if(!$pcpSections) {
@@ -150,7 +150,7 @@ order by ui_sort
 	 * @param $wpUser
 	 * @return string
 	 */
-	public function renderCareplanSection($pcpSectionText, $programId, WpUser $user = null)
+	public function renderCareplanSection($pcpSectionText, $programId, User $user = null)
 	{
 		// start content
 		$content = '';

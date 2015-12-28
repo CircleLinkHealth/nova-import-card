@@ -1,9 +1,9 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\WpUser;
+use App\User;
 use App\Observation;
-use App\WpUserMeta;
+use App\UserMeta;
 use App\Services\CareplanService;
 use App\Http\Controllers\Controller;
 
@@ -58,7 +58,7 @@ class CareplanController extends Controller {
 			}
 		} else {
 			// get user
-			$wpUser = WpUser::find($id);
+			$wpUser = User::find($id);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}

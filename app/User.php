@@ -128,7 +128,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function meta()
 	{
-		return $this->hasMany('App\WpUserMeta', 'user_id', 'ID');
+		return $this->hasMany('App\UserMeta', 'user_id', 'ID');
 	}
 
     public function comment()
@@ -156,7 +156,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		if(!$blogId) {
 			$blogId = $this->blogId();
 		}
-		$role = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','wp_'.$blogId.'_capabilities')->first();
+		$role = UserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','wp_'.$blogId.'_capabilities')->first();
 		if(!$role) {
 			return false;
 		} else {
@@ -184,7 +184,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function viewablePatientIds() {
 		// get all patients who are in the same programs
 		$programIds = $this->viewableProgramIds();
-		$patientIds = WpUser::whereHas('programs', function ($q) use ($programIds) {
+		$patientIds = User::whereHas('programs', function ($q) use ($programIds) {
 			$q->whereIn('program_id', $programIds);
 		});
 
@@ -200,7 +200,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function userConfig(){
 		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = WpUserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key',$key)->first();
+		$userConfig = UserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key',$key)->first();
 		if(!$userConfig) {
 			return false;
 		} else {

@@ -7,7 +7,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
 use App\WpBlog;
-use App\WpUser;
+use App\User;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
@@ -27,7 +27,7 @@ class NotesController extends Controller
     public function index(Request $request, $patientId)
     {
 
-        $patient = WpUser::find($patientId);
+        $patient = User::find($patientId);
         $input = $request->all();
 
         if (isset($input['selectMonth'])) {
@@ -60,7 +60,7 @@ class NotesController extends Controller
         $acts = json_decode(json_encode($acts), true);
 
         foreach ($acts as $key => $value) {
-            $acts[$key]['patient'] = WpUser::find($patientId);
+            $acts[$key]['patient'] = User::find($patientId);
         }
 
         foreach ($acts as $key => $value) {
@@ -90,7 +90,7 @@ class NotesController extends Controller
 //                    $activity_json[$i]['comment'] = $user_activity['comment'];
 //
 //                    // logger details
-//                    $logger_user = WpUser::find($user_activity['logger_id']);
+//                    $logger_user = User::find($user_activity['logger_id']);
 //                    $logger_name = $logger_user->getFullNameAttribute();
 //                    $activity_json[$i]['logger_name'] = $logger_name;
 //
@@ -98,7 +98,7 @@ class NotesController extends Controller
 //                    if ($user_activity['provider_id'] == $user_activity['logger_id']) {
 //                        $activity_json[$i]['provider_name'] = $logger_name;
 //                    } else {
-//                        $provider_user = WpUser::find($user_activity['provider_id']);
+//                        $provider_user = User::find($user_activity['provider_id']);
 //                        $provider_name = $provider_user->getFullNameAttribute();
 //                        $activity_json[$i]['provider_name'] = $provider_name;
 //                    }
@@ -129,7 +129,7 @@ class NotesController extends Controller
 //            }
 //        }
         for($i = 0; $i < count($patientAct) - 1; $i++){
-            $logger_user = WpUser::find($patientAct[$i]['logger_id']);
+            $logger_user = User::find($patientAct[$i]['logger_id']);
             if($logger_user){
             $patientAct[$i]['logger_name'] = $logger_user->getFullNameAttribute();
             } else {
@@ -172,7 +172,7 @@ class NotesController extends Controller
 
         if ($patientId) {
             // patient view
-            $wpUser = WpUser::find($patientId);
+            $wpUser = User::find($patientId);
             if (!$wpUser) {
                 return response("User not found", 401);
             }
@@ -188,7 +188,7 @@ class NotesController extends Controller
             $careteam_info = array();
             $careteam_ids = $wpUser->getCareTeamIDs();
             foreach ($careteam_ids as $id) {
-                $careteam_info[$id] = WpUser::find($id)->getFullNameAttribute();;
+                $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
             }
 
             //providers
@@ -196,7 +196,7 @@ class NotesController extends Controller
             $provider_info = array();
 
             foreach ($providers as $provider) {
-                $provider_info[$provider->ID] = WpUser::find($provider->ID)->getFullNameAttribute();
+                $provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
             }
 
             $view_data = [
@@ -249,7 +249,7 @@ class NotesController extends Controller
             $activitySer = new ActivityService;
             $activity = Activity::find($activity_id);
             $linkToNote = $input['url'] . $activity->id;
-            $logger = WpUser::find($input['logger_id']);
+            $logger = User::find($input['logger_id']);
             $logger_name = $logger->display_name;
 
             $result = $activitySer->sendNoteToCareTeam($input['careteam'], $linkToNote, $input['performed_at'], $input['patient_id'], $logger_name, true);
@@ -309,7 +309,7 @@ class NotesController extends Controller
     {
             $activity = Activity::findOrFail($activity_id);
             $activityService = new ActivityService;
-            $logger = WpUser::find($logger_id);
+            $logger = User::find($logger_id);
             $logger_name = $logger->display_name;
             $linkToNote = $url.$activity->id;
             $result = $activityService->sendNoteToCareTeam($careteam,$linkToNote,$activity->performed_at,$input['patient_id'],$logger_name, false);

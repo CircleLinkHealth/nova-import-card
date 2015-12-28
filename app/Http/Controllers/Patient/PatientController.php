@@ -4,8 +4,8 @@ use App\Activity;
 use App\Observation;
 use App\WpBlog;
 use App\Location;
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use App\Role;
 use App\Services\ActivityService;
 use App\Services\CareplanService;
@@ -35,7 +35,7 @@ class PatientController extends Controller {
 	public function showDashboard(Request $request)
 	{
 		// get number of approvals
-		$patients = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())
+		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
 			->with('meta')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get();
@@ -77,7 +77,7 @@ class PatientController extends Controller {
 	{
 		$messages = \Session::get('messages');
 
-		$wpUser = WpUser::find($patientId);
+		$wpUser = User::find($patientId);
 		if(!$wpUser) {
 			return response("User not found", 401);
 		}
@@ -216,7 +216,7 @@ class PatientController extends Controller {
 	public function showPatientListing(Request $request)
 	{
 		// get number of approvals
-		$patients = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())
+		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
 			->with('meta')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get();
@@ -245,7 +245,33 @@ class PatientController extends Controller {
 		}
 		$pendingApprovals = $p;
 
-		return view('wpUsers.patient.dashboard', compact(['pendingApprovals']));
+
+
+
+		$patientData = array();
+		foreach ($patients as $patient) {
+			$patientData[] = array('key'=> $patient->ID, // $part->ID,
+				'patient_name'=> $patient->ID, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
+				'first_name'=> $patient->firstName, //$meta[$part->ID]["first_name"][0],
+				'last_name'=> $patient->lastName, //$meta[$part->ID]["last_name"][0],
+				'ccm_status'=> $patient->fullName, //ucfirst($meta[$part->ID]["ccm_status"][0]),
+				'careplan_status'=> 'uk', //$careplanStatus,
+				'tooltip'=> 'uk', //$tooltip,
+				'careplan_status_link'=> 'uk', //$careplanStatusLink,
+				'careplan_provider_approver'=> 'uk', //$approverName,
+				'dob'=> 'uk', //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
+				'phone' => 'uk', //$user_config[$part->ID]["study_phone_number"], 'age' => $age,
+				'reg_date' => 'uk', //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
+				'last_read' => 'uk', //date("m/d/Y", strtotime($last_read)),
+				'ccm_time' => 'uk', //$ccm_time[0],
+				'ccm_seconds' => 'uk', //$meta[$part->ID]['cur_month_activity_time'][0]
+			);
+		}
+		$patientJson = json_encode($patientData);
+
+
+
+		return view('wpUsers.patient.listing', compact(['pendingApprovals', 'patientJson']));
 	}
 
 	/**
@@ -258,7 +284,7 @@ class PatientController extends Controller {
 	{
 		$wpUser = array();
 		if($patientId) {
-			$wpUser = WpUser::find($patientId);
+			$wpUser = User::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
@@ -281,7 +307,7 @@ class PatientController extends Controller {
 	{
 		$wpUser = array();
 		if($patientId) {
-			$wpUser = WpUser::find($patientId);
+			$wpUser = User::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
@@ -303,7 +329,7 @@ class PatientController extends Controller {
 		$wpUser = array();
 		if($patientId) {
 			// patient view
-			$wpUser = WpUser::find($patientId);
+			$wpUser = User::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
@@ -330,7 +356,7 @@ class PatientController extends Controller {
 	{
 		$patient = array();
 		if($patientId) {
-			$patient = WpUser::find($patientId);
+			$patient = User::find($patientId);
 			if (!$patient) {
 				return response("User not found", 401);
 			}

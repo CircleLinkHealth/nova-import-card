@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\WpUser;
+use App\User;
 use App\Observation;
 use App\Role;
 use App\Http\Requests;
@@ -24,13 +24,13 @@ class ObservationController extends Controller {
 		}
 		// display view
 		$observations = Observation::OrderBy('id', 'desc')->limit('100');
-		$users = WpUser::OrderBy('ID', 'desc')->limit('100')->get();
+		$users = User::OrderBy('ID', 'desc')->limit('100')->get();
 
 		// FILTERS
 		$params = $request->all();
 
 		// filter user
-		$users = WpUser::OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+		$users = User::OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
 		$filterUser = 'all';
 		if(!empty($params['filterUser'])) {
 			$filterUser = $params['filterUser'];

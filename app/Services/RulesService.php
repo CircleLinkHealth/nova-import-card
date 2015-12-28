@@ -2,9 +2,9 @@
 
 use App\Rules;
 use App\Http\Requests;
-use App\WpUser;
+use App\User;
 use App\Observation;
-use App\WpUserMeta;
+use App\UserMeta;
 use App\Comment;
 use DB;
 use Validator;

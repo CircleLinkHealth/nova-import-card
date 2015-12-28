@@ -1,7 +1,7 @@
 <?php namespace App\Services;
 
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 /*
 $this->load->library('cpm_1_7_msgchooser_library');
         $this->load->model('cpm_1_7_users_model','users_model');

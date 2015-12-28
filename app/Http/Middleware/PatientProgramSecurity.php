@@ -1,6 +1,6 @@
 <?php namespace App\Http\Middleware;
 
-use App\WpUser;
+use App\User;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use Auth;
@@ -41,7 +41,7 @@ class patientProgramSecurity {
 
 		if($request->route()->patientId) {
 			// viewing a specific patient, get patients program_id
-			$user = WpUser::find($request->route()->patientId);
+			$user = User::find($request->route()->patientId);
 			if(!$user) {
 				return response('Could not locate patient.', 401);
 			} else {

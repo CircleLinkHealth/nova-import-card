@@ -1,7 +1,7 @@
 <?php namespace App\Services;
 
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use App\Comment;
 use App\Observation;
 use App\Services\MsgCPRules;
@@ -46,7 +46,7 @@ class MsgChooser {
         $log = array();
 
         // instantiate user
-        $wpUser = WpUser::find($userId);
+        $wpUser = User::find($userId);
         if (!$wpUser) {
             $log[] = "MsgChooser->setNextMessage() user not found";
             return false;
@@ -166,7 +166,7 @@ class MsgChooser {
         $log = array();
 
         // instantiate user
-        $wpUser = WpUser::find($userId);
+        $wpUser = User::find($userId);
         if (!$wpUser) {
             $log[] = "MsgChooser->setObsResponse() user not found";
             return false;

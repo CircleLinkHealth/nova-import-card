@@ -3,10 +3,10 @@
 use App\CPRulesQuestions;
 use App\Http\Requests;
 use App\WpBlog;
-use App\WpUser;
+use App\User;
 use App\Observation;
 use App\ObservationMeta;
-use App\WpUserMeta;
+use App\UserMeta;
 use App\Comment;
 use DateTime;
 use Mail;
@@ -242,7 +242,7 @@ class DatamonitorService {
 		$extra_vars = array(); // extra_vars get stored for later email/sms/msg substitution
 		$log_string .= "Checking ({$observation->obs_key}) observation[{$observation['id']}][{$observation['obs_date']}][{$observation['obs_value']}]" . PHP_EOL;
 		// get user data for observation
-		$user = WpUser::find($observation->user_id);
+		$user = User::find($observation->user_id);
 
 		$userUcpData = $user->getUCP();
 		/*
@@ -1152,8 +1152,8 @@ class DatamonitorService {
 	public function send_email($observation, $message_id, $extra_vars, $int_blog_id = 7) {
 
 		// get user info
-		$user = WpUser::find($observation['user_id']);
-		$user_meta_config = WpUserMeta::where('user_id',$user->ID)->where('meta_key','like','%config%')->first();
+		$user = User::find($observation['user_id']);
+		$user_meta_config = UserMeta::where('user_id',$user->ID)->where('meta_key','like','%config%')->first();
 		$user_meta_blog = $user->program_id;
 		$user_data = unserialize($user_meta_config->meta_value);
 		// get recipients
@@ -1181,7 +1181,7 @@ class DatamonitorService {
 		$email_sent_list = array();
 		foreach($user_data['send_alert_to'] as $recipient_id) {
 
-			$provider_user = WpUser::find($recipient_id);
+			$provider_user = User::find($recipient_id);
 			$email = $provider_user->user_email;
 
 			Mail::send('emails/dmalert', $data, function($message) use ($email,$email_subject) {
