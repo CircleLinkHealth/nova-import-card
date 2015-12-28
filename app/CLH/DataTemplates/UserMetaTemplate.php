@@ -4,7 +4,7 @@ namespace App\CLH\DataTemplates;
 
 
 use App\CLH\Contracts\DataTemplate;
-use App\WpUser;
+use App\User;
 
 class UserMetaTemplate extends BaseDataTemplate implements DataTemplate
 {

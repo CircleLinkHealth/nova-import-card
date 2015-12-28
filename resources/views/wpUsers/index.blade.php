@@ -112,11 +112,11 @@
                             {!! $wpUsers->appends(['action' => 'filter', 'filterUser' => $filterUser, 'filterRole' => $filterRole, 'filterProgram' => $filterProgram])->render() !!}
                         @endif
 
-                        @if (count($invalidWpUsers) > 0)
+                        @if (count($invalidUsers) > 0)
                             <h2>Invalid Users</h2>
                             <h3>Missing Config</h3>
-                            @foreach( $invalidWpUsers as $wpUser )
-                                User {{ $wpUser->ID }} - {{ $wpUser->display_name }}<br>
+                            @foreach( $invalidUsers as $user )
+                                User {{ $user->ID }} - {{ $user->display_name }}<br>
                             @endforeach
                         @endif
                     </div>

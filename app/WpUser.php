@@ -11,7 +11,7 @@ use MikeMcLin\WpPassword\Facades\WpPassword;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 
-class WpUser extends Model implements AuthenticatableContract, CanResetPasswordContract {
+class WpUserDELETE extends Model implements AuthenticatableContract, CanResetPasswordContract {
 
     use Authenticatable, CanResetPassword, EntrustUserTrait;
 

@@ -1,8 +1,8 @@
 <?php namespace App\Services;
 
 use App\Activity;
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use DB;
 use DateTime;
 use DateTimeZone;
@@ -14,7 +14,7 @@ class MsgUser {
 		// set blog id
 		$this->int_blog_id = $blog_id;
 
-		$query = WpUser::select('wp_users.*', 'um.meta_value AS user_config');
+		$query = User::select('wp_users.*', 'um.meta_value AS user_config');
 		$query->join('wp_usermeta AS um', function ($join) use ($blog_id) {
 			$join->on('wp_users.id', '=', 'um.user_id')->where('um.meta_key', '=', 'wp_'.$blog_id.'_user_config');
 		});
@@ -139,11 +139,11 @@ class MsgUser {
 		$intUserId = implode(',', $arrUserId);
 
 		// get user(s)
-		$wpUsers = WpUser::whereRaw('ID IN ('.$intUserId.')')->get();
+		$wpUsers = User::whereRaw('ID IN ('.$intUserId.')')->get();
 
 		if (!$wpUsers->isEmpty()) {
 			foreach ($wpUsers as $wpUser) {
-				$wpUserMeta = WpUserMeta::where('user_id', '=', $wpUser->ID)->get();
+				$wpUserMeta = UserMeta::where('user_id', '=', $wpUser->ID)->get();
 				if (!$wpUsers->isEmpty()) {
 					$arrUserMeta = array();
 					foreach($wpUserMeta as $meta)
@@ -287,7 +287,7 @@ class MsgUser {
 // if ($serverDateTime->format('U') > $strContactTime->format('U') ) {echo "[".$row->ID."]Contact before server time<BR>";} else
 //  {echo "[".$row->ID."]Contact after server time<BR>";}
 // echo "Corrected Contact Time: [".$strContactTime->format('Y-m-d H:i:s T')."]<BR>".date("Y-m-d H:i:s T")."<BR><BR>";
-						$wpUser = WpUser::find($row->ID);
+						$wpUser = User::find($row->ID);
 						$userMeta = $wpUser->userMeta();
 						if(empty($userMeta['user_config'])) {
 							$logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [".$row->ID."] Missing User Config";

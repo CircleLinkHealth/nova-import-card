@@ -1,7 +1,7 @@
 <?php namespace App\Services;
 
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use App\Services\MsgCPRules;
 use App\Services\MsgDelivery;
 use App\Services\MsgUsers;

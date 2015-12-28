@@ -2,8 +2,8 @@
 
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use App\WpBlog;
 use App\Role;
 use App\CPRulesPCP;
@@ -11,9 +11,9 @@ use App\CPRulesUCP;
 use App\Services\CareplanUIService;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class WpUserRepository {
+class UserRepository {
 
-    public function createNewUser(WpUser $wpUser, ParameterBag $params)
+    public function createNewUser(User $wpUser, ParameterBag $params)
     {
         $wpUser = $wpUser->createNewUser($params->get('user_email'), $params->get('user_pass'));
 
@@ -39,7 +39,7 @@ class WpUserRepository {
         return $wpUser;
     }
 
-    public function editUser(WpUser $wpUser, ParameterBag $params)
+    public function editUser(User $wpUser, ParameterBag $params)
     {
         // the basics
         $wpUser->user_nicename = '';
@@ -58,7 +58,7 @@ class WpUserRepository {
     }
 
 
-    public function saveOrUpdateUserMeta(WpUser $wpUser, ParameterBag $params)
+    public function saveOrUpdateUserMeta(User $wpUser, ParameterBag $params)
     {
         $userMetaTemplate = (new UserMetaTemplate())->getArray();
 
@@ -79,7 +79,7 @@ class WpUserRepository {
         }
     }
 
-    public function saveOrUpdateRoles(WpUser $wpUser, ParameterBag $params)
+    public function saveOrUpdateRoles(User $wpUser, ParameterBag $params)
     {
         // support for both single or array or roles
         if(!empty($params->get('role'))) {
@@ -100,7 +100,7 @@ class WpUserRepository {
         }
     }
 
-    public function saveOrUpdatePrograms(WpUser $wpUser, ParameterBag $params)
+    public function saveOrUpdatePrograms(User $wpUser, ParameterBag $params)
     {
         // return if form doesnt contain program editor
         if(!$params->get('programs') && ($wpUser->programs->count() > 0)) {
@@ -141,7 +141,7 @@ class WpUserRepository {
                 if($userLevel) {
                     $userLevel->meta_value = "0";
                 } else {
-                    $userLevel = new WpUserMeta;
+                    $userLevel = new UserMeta;
                     $userLevel->meta_key = "wp_{$wpBlogId}_user_level";
                     $userLevel->meta_value = "0";
                     $userLevel->user_id = $wpUser->ID;
@@ -153,7 +153,7 @@ class WpUserRepository {
                 if($capabilities) {
                     $capabilities->meta_value = serialize(array($role->name => '1'));
                 } else {
-                    $capabilities = new WpUserMeta;
+                    $capabilities = new UserMeta;
                     $capabilities->meta_key = "wp_{$wpBlogId}_capabilities";
                     $capabilities->meta_value = serialize(array($role->name => '1'));
                     $capabilities->user_id = $wpUser->ID;
@@ -164,10 +164,10 @@ class WpUserRepository {
     }
 
 
-    public function updateUserConfig(WpUser $wpUser, ParameterBag $params)
+    public function updateUserConfig(User $wpUser, ParameterBag $params)
     {
         // meta
-        $userMeta = WpUserMeta::where('user_id', '=', $wpUser->ID)->lists('meta_value', 'meta_key');
+        $userMeta = UserMeta::where('user_id', '=', $wpUser->ID)->lists('meta_value', 'meta_key');
 
         // config
         $userConfig = (new UserConfigTemplate())->getArray();
@@ -188,7 +188,7 @@ class WpUserRepository {
         if($setUserConfig) {
             $setUserConfig->meta_value = serialize($userConfig);
         } else {
-            $setUserConfig = new WpUserMeta;
+            $setUserConfig = new UserMeta;
             $setUserConfig->meta_key = "wp_{$params->get('program_id')}_user_config";
             $setUserConfig->meta_value = serialize($userConfig);
             $setUserConfig->user_id = $wpUser->ID;

@@ -5,7 +5,7 @@ use App\CPRulesQuestions;
 use App\CPRulesPCP;
 use App\Services\ReportsService;
 use App\Http\Requests;
-use App\WpUser;
+use App\User;
 use App\CPRulesUCP;
 use App\Observation;
 use DateTime;

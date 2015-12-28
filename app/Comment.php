@@ -1,7 +1,7 @@
 <?php namespace App;
 
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
@@ -39,7 +39,7 @@ class Comment extends Model {
 
     public function user()
     {
-        return $this->belongsTo('App\WpUser', 'ID');
+        return $this->belongsTo('App\User', 'ID');
     }
 
     public function observation()
@@ -52,7 +52,7 @@ class Comment extends Model {
         if(empty($this->user_id)) {
             dd('user_id is required for comment');
         }
-        $wpUser = WpUser::find($this->user_id);
+        $wpUser = User::find($this->user_id);
 
         if(!$wpUser->blogId()) {
             dd($this->user_id . ' is missing a program id');

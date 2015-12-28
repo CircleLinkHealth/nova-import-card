@@ -1,8 +1,8 @@
 <?php namespace App\Services;
 
 use App\Activity;
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
@@ -41,7 +41,7 @@ class ActivityService {
 				$totalDuration = $this->getTotalActivityTimeForMonth($wpUser->ID, $month);
 
 				// update user_meta with total
-				$userMeta = WpUserMeta::where('user_id', '=', $wpUser->ID)
+				$userMeta = UserMeta::where('user_id', '=', $wpUser->ID)
 					->where('meta_key', '=', 'cur_month_activity_time')->first();
 				if(!$userMeta) {
 					// add in initial user meta: cur_month_activity_time
@@ -50,11 +50,11 @@ class ActivityService {
 						'meta_key' => 'cur_month_activity_time',
 						'meta_value' => $totalDuration,
 					);
-					$newUserMeta = WpUserMeta::create($newUserMetaAttr);
+					$newUserMeta = UserMeta::create($newUserMetaAttr);
 					//echo "<pre>CREATED";var_dump($newUserMeta);echo "</pre>";die();
 				} else {
 					// update existing user meta: cur_month_activity_time
-					$userMeta = WpUserMeta::where('user_id', '=', $wpUser->ID)
+					$userMeta = UserMeta::where('user_id', '=', $wpUser->ID)
 						->where('meta_key', '=', 'cur_month_activity_time')
 						->update(array('meta_value' => $totalDuration));
 					//echo "<pre>UPDATED";var_dump($totalDuration);echo "</pre>";die();
@@ -80,9 +80,9 @@ class ActivityService {
 		 *  Old/Fw'd note: "Please see forwarded note for patient [patient  name], created on [creation date] by [note creator]: [link]
 		 */
 
-		$user = WpUser::find($user_id);
+		$user = User::find($user_id);
 		for($i = 0; $i < count($careteam); $i++){
-			$provider_user = WpUser::find($careteam[$i]);
+			$provider_user = User::find($careteam[$i]);
 			$email = $provider_user->user_email;
 			$performed_at = Carbon::parse($performed_at)->toFormattedDateString();
 			$data = array(

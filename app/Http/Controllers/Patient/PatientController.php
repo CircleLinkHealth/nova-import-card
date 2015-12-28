@@ -4,8 +4,8 @@ use App\Activity;
 use App\Observation;
 use App\WpBlog;
 use App\Location;
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use App\Role;
 use App\Services\ActivityService;
 use App\Services\CareplanService;
@@ -35,7 +35,7 @@ class PatientController extends Controller {
 	public function showDashboard(Request $request)
 	{
 		// get number of approvals
-		$patients = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())
+		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
 			->with('meta')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get();
@@ -77,7 +77,7 @@ class PatientController extends Controller {
 	{
 		$messages = \Session::get('messages');
 
-		$wpUser = WpUser::find($patientId);
+		$wpUser = User::find($patientId);
 		if(!$wpUser) {
 			return response("User not found", 401);
 		}
@@ -216,7 +216,7 @@ class PatientController extends Controller {
 	public function showPatientListing(Request $request)
 	{
 		// get number of approvals
-		$patients = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())
+		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
 			->with('meta')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get();
@@ -284,7 +284,7 @@ class PatientController extends Controller {
 	{
 		$wpUser = array();
 		if($patientId) {
-			$wpUser = WpUser::find($patientId);
+			$wpUser = User::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
@@ -307,7 +307,7 @@ class PatientController extends Controller {
 	{
 		$wpUser = array();
 		if($patientId) {
-			$wpUser = WpUser::find($patientId);
+			$wpUser = User::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
@@ -329,7 +329,7 @@ class PatientController extends Controller {
 		$wpUser = array();
 		if($patientId) {
 			// patient view
-			$wpUser = WpUser::find($patientId);
+			$wpUser = User::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
@@ -356,7 +356,7 @@ class PatientController extends Controller {
 	{
 		$patient = array();
 		if($patientId) {
-			$patient = WpUser::find($patientId);
+			$patient = User::find($patientId);
 			if (!$patient) {
 				return response("User not found", 401);
 			}

@@ -3,9 +3,9 @@
 namespace App\CLH\Repositories;
 
 
-use App\CLH\Repositories\WpUserRepository;
+use App\CLH\Repositories\UserRepository;
 use App\Role;
-use App\WpUser;
+use App\User;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CCDImporterRepository
@@ -14,7 +14,7 @@ class CCDImporterRepository
      * Creates a user with random credentials
      * Used to attach XML CCDs to a Patient
      *
-     * @return WpUser
+     * @return User
      */
     public function createRandomUser($blogId, $email = '', $fullName = '')
     {
@@ -47,7 +47,7 @@ class CCDImporterRepository
             'roles' => [$role->id],
         ]);
 
-        return (new WpUserRepository())->createNewUser(new WpUser(), $bag);
+        return (new UserRepository())->createNewUser(new User(), $bag);
     }
 
 }

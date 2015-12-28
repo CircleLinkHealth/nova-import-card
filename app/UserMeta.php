@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class WpUserMetaDELETE extends Model {
+class UserMeta extends Model {
 
     // for revisionable
     use \Venturecraft\Revisionable\RevisionableTrait;
@@ -40,7 +40,7 @@ class WpUserMetaDELETE extends Model {
 
     public function wpUser()
     {
-        return $this->belongsTo('App\WpUser', 'user_id', 'ID');
+        return $this->belongsTo('App\User', 'user_id', 'ID');
     }
 
     // for revisionable

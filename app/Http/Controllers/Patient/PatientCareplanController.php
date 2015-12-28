@@ -6,12 +6,12 @@ use App\CLH\DataTemplates\UserMetaTemplate;
 use App\Observation;
 use App\WpBlog;
 use App\Location;
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use App\CPRulesPCP;
 use App\Role;
 use App\Services\CareplanUIService;
-use App\CLH\Repositories\WpUserRepository;
+use App\CLH\Repositories\UserRepository;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
@@ -37,9 +37,9 @@ class PatientCareplanController extends Controller {
 		$messages = \Session::get('messages');
 
 		// determine if existing user or new user
-		$user = new WpUser;
+		$user = new User;
 		if($patientId) {
-			$user = WpUser::find($patientId);
+			$user = User::find($patientId);
 			if (!$user) {
 				return response("User not found", 401);
 			}
@@ -62,7 +62,7 @@ class PatientCareplanController extends Controller {
 		// user meta
 		$userMeta = (new UserMetaTemplate())->getArray();
 		if($patientId) {
-			$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
+			$userMeta = UserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
 		}
 
 		// user config
@@ -110,15 +110,15 @@ class PatientCareplanController extends Controller {
 		}
 
 		// instantiate user
-		$user = new WpUser;
+		$user = new User;
 		if($patientId) {
-			$user = WpUser::with('meta')->find($patientId);
+			$user = User::with('meta')->find($patientId);
 			if (!$user) {
 				return response("User not found", 401);
 			}
 		}
 
-		$userRepo = new WpUserRepository();
+		$userRepo = new UserRepository();
 
 		if($patientId) {
 			$userRepo->editUser($user, $params);
@@ -160,9 +160,9 @@ class PatientCareplanController extends Controller {
 	{
 		$messages = \Session::get('messages');
 
-		$user = new WpUser;
+		$user = new User;
 		if($patientId) {
-			$user = WpUser::find($patientId);
+			$user = User::find($patientId);
 			if (!$user) {
 				return response("User not found", 401);
 			}
@@ -173,7 +173,7 @@ class PatientCareplanController extends Controller {
 		$programId = $user->program_id;
 
 		// get user config
-		$userMeta = WpUserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
+		$userMeta = UserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
 		$userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
 		$userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
 
@@ -190,12 +190,12 @@ class PatientCareplanController extends Controller {
 
 		$careTeamUsers = array();
 		foreach($careTeamUserIds as $id) {
-			$careTeamUsers[] = WpUser::find($id);
+			$careTeamUsers[] = User::find($id);
 		}
 
 		// get providers
 		$providersData = array();
-		$providers = WpUser::where('program_id', '=', $programId)
+		$providers = User::where('program_id', '=', $programId)
 			->with('meta')
 			->whereHas('roles', function($q){
 				$q->where('name', '=', 'provider');
@@ -205,7 +205,7 @@ class PatientCareplanController extends Controller {
 		foreach ($providers as $provider) {
 			$providersData[$provider->ID] = $provider->fullName;
 			// meta
-			$userMeta = WpUserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
+			$userMeta = UserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
 
 			// config
 			$userConfig = (new UserConfigTemplate())->getArray();
@@ -240,7 +240,7 @@ class PatientCareplanController extends Controller {
 		}
 
 		// instantiate user
-		$wpUser = WpUser::with('meta')->find($patientId);
+		$wpUser = User::with('meta')->find($patientId);
 		if (!$wpUser) {
 			return response("User not found", 401);
 		}
@@ -277,7 +277,7 @@ class PatientCareplanController extends Controller {
 
 		$wpUser = false;
 		if($patientId) {
-			$wpUser = WpUser::find($patientId);
+			$wpUser = User::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
@@ -318,7 +318,7 @@ class PatientCareplanController extends Controller {
 		}
 
 		// instantiate user
-		$wpUser = WpUser::with('meta')->find($patientId);
+		$wpUser = User::with('meta')->find($patientId);
 		if (!$wpUser) {
 			return response("User not found", 401);
 		}
@@ -346,7 +346,7 @@ class PatientCareplanController extends Controller {
 	{
 		$wpUser = array();
 		if($patientId) {
-			$wpUser = WpUser::find($patientId);
+			$wpUser = User::find($patientId);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}

@@ -6,8 +6,8 @@ use App\CPRulesUCP;
 use App\Location;
 use App\Observation;
 use App\Services\CareplanUIService;
-use App\WpUser;
-use App\WpUserMeta;
+use App\User;
+use App\UserMeta;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use PhpSpec\Exception\Exception;
@@ -19,15 +19,15 @@ Class ReportsService
     public function reportHeader($id)
     {
         debug($id);
-        $user = WpUser::find($id);
-        $user_meta = WpUserMeta::where('user_id', '=', $user->ID)->lists('meta_value', 'meta_key');
+        $user = User::find($id);
+        $user_meta = UserMeta::where('user_id', '=', $user->ID)->lists('meta_value', 'meta_key');
         $userHeader['date'] = Carbon::now()->toDateString();
         $userHeader['Patient_Name'] = $user_meta['first_name'] . ' ' . $user_meta['last_name'];
         $userConfig = $user->userConfig();
         $userHeader['Patient_Phone'] = $userConfig['study_phone_number'];
-        $provider = WpUser::findOrFail($userConfig['billing_provider']);
+        $provider = User::findOrFail($userConfig['billing_provider']);
         $providerConfig = $provider->userConfig();
-        $provider_meta = WpUserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
+        $provider_meta = UserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
         $userHeader['Provider_Name'] = trim($providerConfig['prefix'] . ' ' . $provider_meta['first_name'] . ' ' . $provider_meta['last_name'] . ' ' . $providerConfig['qualification']);
         $userHeader['Provider_Phone'] = $providerConfig['study_phone_number'];
         $userHeader['Clinic_Name'] = Location::getLocationName($userConfig['preferred_contact_location']);
@@ -35,7 +35,7 @@ Class ReportsService
         return $userHeader;
     }
 
-    public static function getItemsForParent($item, WpUser $user)
+    public static function getItemsForParent($item, User $user)
     {
         $categories = array();
         //PCP has the sections for each provider, get all sections for the user's blog
@@ -226,7 +226,7 @@ Class ReportsService
         return $changes_array;
     }
 
-    public function medicationStatus(WpUser $user){
+    public function medicationStatus(User $user){
         $medications_pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Medications to Monitor')->first();
         $medications_items = CPRulesItem::where('pcp_id', $medications_pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
 
@@ -323,7 +323,7 @@ Class ReportsService
     public function progress($id)
     {
 
-        $user = WpUser::find($id);
+        $user = User::find($id);
 
         //main container
 
@@ -472,7 +472,7 @@ Class ReportsService
     public function careplan($id)
     {
 
-        $user = WpUser::find($id);
+        $user = User::find($id);
 
         //=======================================
         //========WE ARE TREATING================

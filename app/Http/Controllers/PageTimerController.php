@@ -7,7 +7,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\PageTimer;
 use App\Rules;
-use App\WpUser;
+use App\User;
 
 use Illuminate\Http\Request;
 
@@ -117,7 +117,7 @@ class PageTimerController extends Controller {
 
 				// check params to see if rule exists
 				$params = array();
-				$provider = WpUser::find( $pageTime->provider_id );
+				$provider = User::find( $pageTime->provider_id );
 				$params['role'] = $provider->role($pageTime->program_id);
 				$providerMeta = $provider->meta;
 				$params['activity'] = $pageTime->activity_type;

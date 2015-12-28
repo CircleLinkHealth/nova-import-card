@@ -13,7 +13,7 @@ class XmlCCD extends Model {
      */
     public function user()
     {
-        return $this->belongsTo(WpUser::class);
+        return $this->belongsTo(User::class);
     }
 
 }

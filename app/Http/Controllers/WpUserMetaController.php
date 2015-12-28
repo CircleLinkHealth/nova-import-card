@@ -1,12 +1,12 @@
 <?php namespace App\Http\Controllers;
 
-use App\WpUserMeta;
+use App\UserMeta;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
-class WpUserMetaController extends Controller {
+class WpUserMetaControllerDELETE extends Controller {
 
 	/**
 	 * Display a listing of the resource.

@@ -42,7 +42,7 @@ class CPRulesUCP extends Model {
 
     public function user()
     {
-        return $this->hasOne('App\WpUser', 'user_id');
+        return $this->hasOne('App\User', 'user_id');
     }
 
     public function getCPRulesUCP($userId)

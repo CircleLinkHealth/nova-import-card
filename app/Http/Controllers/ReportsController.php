@@ -6,7 +6,7 @@ use App\CPRulesPCP;
 use App\CPRulesUCP;
 use App\Services\CareplanService;
 use App\Services\ReportsService;
-use App\WpUser;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use App\Http\Requests;
@@ -28,7 +28,7 @@ class ReportsController extends Controller {
 		$treating = array();
 
 		$dat = (new ReportsService())->progress($patientId);
-		$user = WpUser::find($patientId);
+		$user = User::find($patientId);
 
 		//PCP has the sections for each provider, get all sections for the user's blog
 		$pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Diagnosis / Problems to Monitor')->first();
@@ -152,7 +152,7 @@ class ReportsController extends Controller {
             $acts = json_decode(json_encode($acts), true);
 
             foreach($acts as $key => $value){
-                $acts[$key]['patient'] = WpUser::find($patients[0]);
+                $acts[$key]['patient'] = User::find($patients[0]);
             }
 
 			foreach($acts as $key => $value){
@@ -195,7 +195,7 @@ class ReportsController extends Controller {
 			}
 		} else {
 			// get user
-			$wpUser = WpUser::find($id);
+			$wpUser = User::find($id);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}
@@ -229,7 +229,7 @@ class ReportsController extends Controller {
 			}
 		} else {
 			// get user
-			$wpUser = WpUser::find($id);
+			$wpUser = User::find($id);
 			if (!$wpUser) {
 				return response("User not found", 401);
 			}

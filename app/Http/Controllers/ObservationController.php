@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Services\MsgChooser;
 use App\Services\MsgCPRules;
 use App\Services\ObservationService;
-use App\WpUser;
+use App\User;
 use Date;
 use DateTime;
 use Validator;
@@ -25,7 +25,7 @@ class ObservationController extends Controller {
 		{
 			$obs_id = Crypt::decrypt($request->header('obsId'));
 
-			$wpUsers = (new WpUser())->getObservation($obs_id);
+			$wpUsers = (new User())->getObservation($obs_id);
 
 			return response()->json( Crypt::encrypt( json_encode( $wpUsers ) ) );
 		}
@@ -151,7 +151,7 @@ class ObservationController extends Controller {
 		}
 
 		if ( (!$request->header('Client')) || $request->header('Client') == 'ui' ) {
-			$wpUser = WpUser::find($input['userId']);
+			$wpUser = User::find($input['userId']);
 			if (!$wpUser) {
 				return response()->json(['error' => 'invalid_credentials'], 401);
 			}
