@@ -245,7 +245,33 @@ class PatientController extends Controller {
 		}
 		$pendingApprovals = $p;
 
-		return view('wpUsers.patient.listing', compact(['pendingApprovals']));
+
+
+
+		$patientData = array();
+		foreach ($patients as $patient) {
+			$patientData[] = array('key'=> $patient->ID, // $part->ID,
+				'patient_name'=> $patient->ID, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
+				'first_name'=> $patient->firstName, //$meta[$part->ID]["first_name"][0],
+				'last_name'=> $patient->lastName, //$meta[$part->ID]["last_name"][0],
+				'ccm_status'=> $patient->fullName, //ucfirst($meta[$part->ID]["ccm_status"][0]),
+				'careplan_status'=> 'uk', //$careplanStatus,
+				'tooltip'=> 'uk', //$tooltip,
+				'careplan_status_link'=> 'uk', //$careplanStatusLink,
+				'careplan_provider_approver'=> 'uk', //$approverName,
+				'dob'=> 'uk', //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
+				'phone' => 'uk', //$user_config[$part->ID]["study_phone_number"], 'age' => $age,
+				'reg_date' => 'uk', //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
+				'last_read' => 'uk', //date("m/d/Y", strtotime($last_read)),
+				'ccm_time' => 'uk', //$ccm_time[0],
+				'ccm_seconds' => 'uk', //$meta[$part->ID]['cur_month_activity_time'][0]
+			);
+		}
+		$patientJson = json_encode($patientData);
+
+
+
+		return view('wpUsers.patient.listing', compact(['pendingApprovals', 'patientJson']));
 	}
 
 	/**
