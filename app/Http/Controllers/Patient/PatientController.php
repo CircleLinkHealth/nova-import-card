@@ -245,7 +245,7 @@ class PatientController extends Controller {
 		}
 		$pendingApprovals = $p;
 
-		return view('wpUsers.patient.dashboard', compact(['pendingApprovals']));
+		return view('wpUsers.patient.listing', compact(['pendingApprovals']));
 	}
 
 	/**
