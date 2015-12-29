@@ -11,16 +11,19 @@ $new_user = false;
     {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row">
         <div class="icon-container col-lg-12">
-            @if(isset($patient) && !$new_user )
+            @if(isset($patient->ID) && !$new_user )
                 @include('wpUsers.patient.careplan.nav')
             @endif
         </div>
     </div>
     <div class="row" style="margin-top:60px;">
+        @if(!isset($patient->ID) && !$new_user )
+            <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
+        @endif
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title">
-                    @if(isset($patient) && !$new_user )
+                    @if(isset($patient->ID) && !$new_user )
                         <div class="main-form-title col-lg-12">
                             Edit Patient
                         </div>

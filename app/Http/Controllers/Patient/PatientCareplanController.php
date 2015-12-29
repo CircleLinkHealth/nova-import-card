@@ -135,11 +135,11 @@ class PatientCareplanController extends Controller {
 				'user_email' => $newUserId . '@careplanmanager.com',
 				'user_pass' => 'whatToPutHere',
 				//'user_nicename' => $newUserId,
-				'program_id' => '99999999',
+				'program_id' => '7',
 				'roles' => [$role->id],
 			]);
 			$newUser = $userRepo->createNewUser($user, $bag);
-			$newUser = $userRepo->editUser($newUser, $params);
+			//$newUser = $userRepo->editUser($newUser, $params);
 			return redirect(\URL::route('patient.demographics.show', array('patientId' => $newUser->ID)))->with('messages', ['Successfully created new patient with demographics.']);
 		}
 	}

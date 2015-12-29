@@ -17,7 +17,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ URL::route('patients.demographics.show', array()) }}">
+                        <a href="{{ URL::route('patients.listing', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--list-patient--big icon--menu">
                                     <div class="notification btn-warning">{{ $pendingApprovals }}</div>
