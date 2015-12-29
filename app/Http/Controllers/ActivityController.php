@@ -9,6 +9,7 @@ use App\Services\ActivityService;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -251,4 +252,88 @@ class ActivityController extends Controller {
 		//
 	}
 
+	public function providerUIIndex(Request $request, $patientId)
+	{
+		$patient = User::find($patientId);
+		$input = $request->all();
+
+		if (isset($input['selectMonth'])) {
+			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+			$start = $time->startOfMonth()->format('Y-m-d');
+			$end = $time->endOfMonth()->format('Y-m-d');
+			$month_selected = $time->format('m');
+		} else {
+			$time = Carbon::now();
+			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
+			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
+			$month_selected = $time->format('m');
+		}
+
+		$acts = DB::table('activities')
+			->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration)'))
+			->whereBetween('performed_at', [
+				$start, $end
+			])
+			->where('patient_id', $patientId)
+			->where('logged_from', 'activity')
+			->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+			->orderBy('performed_at', 'desc')
+			->get();
+
+
+		$acts = json_decode(json_encode($acts), true);
+
+		foreach ($acts as $key => $value) {
+			$acts[$key]['patient'] = User::find($patientId);
+		}
+
+		foreach ($acts as $key => $value) {
+			$act_id = $acts[$key]['id'];
+			$acts_ = Activity::find($act_id);
+			$comment = $acts_->getActivityCommentFromMeta($act_id);
+			$acts[$key]['comment'] = $comment;
+		}
+
+		$activities_data_with_users = array();
+		$activities_data_with_users[$patientId] = $acts;
+
+//			$reportData[$patientId] = array();
+		$reportData[$patientId] = array();
+		foreach ($activities_data_with_users as $patientAct) {
+			//debug($patientAct);
+			$reportData[] = collect($patientAct)->groupBy('performed_at_year_month');
+			//$reportData[$patientAct[0]['patient_id']]getActivityCommentFromMeta($id)
+		}
+		for($i = 0; $i < count($patientAct) - 1; $i++){
+			$logger_user = User::find($patientAct[$i]['logger_id']);
+			if($logger_user){
+				$patientAct[$i]['logger_name'] = $logger_user->getFullNameAttribute();
+			} else {
+				$patientAct[$i]['logger_name'] = 'N/A';
+			}
+		}
+		$data = true;
+		$reportData = "data:" . json_encode($patientAct) . "";
+		if($patientAct == null){
+			$data = false;
+		}
+
+
+		$years = array();
+		for ($i = 0; $i < 3; $i++) {
+			$years[] = Carbon::now()->subYear($i)->year;
+		}
+
+		$months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+		debug($reportData);
+
+		return view('wpUsers.patient.activity.index',
+			['activity_json' => $reportData,
+				'years' => array_reverse($years),
+				'month_selected' => $month_selected,
+				'months' => $months,
+				'patient' => $patient,
+				'data' => $data
+			]);
+		}
 }
