@@ -275,6 +275,25 @@ class PatientController extends Controller {
 	}
 
 	/**
+	 * Display the specified resource.
+	 *
+	 * @return Response
+	 */
+	public function showPatientSelect(Request $request)
+	{
+		// get number of approvals
+		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+			->with('meta')->whereHas('roles', function($q) {
+				$q->where('name', '=', 'participant');
+			})->get();
+		$p=0;
+
+
+
+		return view('wpUsers.patient.select', compact(['patients']));
+	}
+
+	/**
 	 * Select Program
 	 *
 	 * @param  int  $patientId
