@@ -137,6 +137,7 @@ Route::group(['middleware' => 'auth'], function ()
 			Route::get('create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create']);
 			Route::post('store', ['uses' => 'NotesController@store', 'as' => 'patient.note.store']);
 			Route::get('', ['uses' => 'NotesController@index', 'as' => 'patient.note.index']);
+			Route::get('view', ['uses' => 'NotesController@view', 'as' => 'patient.note.view']);
 		});
 
 		// activities
@@ -147,7 +148,8 @@ Route::group(['middleware' => 'auth'], function ()
 		});
 
 		Route::get('progress', ['uses' => 'ReportsController@index', 'as' => 'patient.activity.index']);
-
+		Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
+		Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
 	});
 
 	/****************************/
