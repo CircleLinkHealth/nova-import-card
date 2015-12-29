@@ -111,7 +111,7 @@
                         <a href="{{ empty($patient) ? '' : '' }}">Patient Activity Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '' : '' }}">Under 20 Minute Report</a>
+                        <a href="{{ URL::route('patient.reports.u20', array('patient' => $patient->ID)) }}">Under 20 Minute Report</a>
                     </li>
                     <li>
                         <a href="{{ empty($patient) ? '' : '' }}">Patient Billing Report</a>
