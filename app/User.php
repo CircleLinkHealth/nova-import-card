@@ -326,4 +326,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$time = $this->meta->where('meta_key', 'cur_month_activity_time')->lists('meta_value');
 		return $time[0];
 	}
+
+	public function getCCMStatus() {
+		$status = $this->meta->where('meta_key', 'ccm_status')->lists('meta_value');
+		return $status[0];
+	}
 }
