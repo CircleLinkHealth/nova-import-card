@@ -217,24 +217,24 @@ class PatientController extends Controller {
 	{
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-			->with('meta')->whereHas('roles', function($q) {
+				->with('meta')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get();
-		//dd($patients->count());
 		if($patients->count() > 0) {
 			foreach ($patients as $patient) {
 				// careplan status stuff from 2.x
 				$careplanStatus = $patient->carePlanStatus;
 				$careplanStatusLink = '';
 				$approverName = 'NA';
-				if ($patient->carePlanStatus != 'draft') {
-					dd($patient);
+				if ($patient->carePlanStatus  == 'provider_approved') {
 					$approverId = $patient->carePlanProviderApprover;
 					$approver = User::find($approverId);
-					$approverName = $approver->fullName;
-					$careplanStatus = 'Approved';
-					$careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
-					$tooltip = $approverName . ' ' . $patient->carePlanProviderDate;
+					if($approver) {
+						$approverName = $approver->fullName;
+						$careplanStatus = 'Approved';
+						$careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
+						$tooltip = $approverName . ' ' . $patient->carePlanProviderDate;
+					}
 				} else if ($patient->carePlanStatus == 'qa_approved') {
 					$careplanStatus = 'Approve Now';
 					$tooltip = $careplanStatus;
@@ -251,20 +251,27 @@ class PatientController extends Controller {
 					}
 				}
 
+				// get date of last observation
+				$lastObservationDate = '';
+				$lastObservation = $patient->observations()->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->first();
+				if(!empty($lastObservation)) {
+					$lastObservationDate = date("m/d/Y", strtotime($lastObservation->obs_date));
+				}
+
 				$patientData[] = array('key' => $patient->ID, // $part->ID,
 					'patient_name' => $patient->ID, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
 					'first_name' => $patient->firstName, //$meta[$part->ID]["first_name"][0],
 					'last_name' => $patient->lastName, //$meta[$part->ID]["last_name"][0],
-					'ccm_status' => $patient->fullName, //ucfirst($meta[$part->ID]["ccm_status"][0]),
+					'ccm_status' => $patient->ccmStatus, //ucfirst($meta[$part->ID]["ccm_status"][0]),
 					'careplan_status' => $careplanStatus, //$careplanStatus,
 					'tooltip' => $tooltip, //$tooltip,
 					'careplan_status_link' => $careplanStatusLink, //$careplanStatusLink,
-					'careplan_provider_approver' => 'approver', //$approverName,
+					'careplan_provider_approver' => $approverName, //$approverName,
 					'dob' => $patient->birthDate, //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
 					'phone' => $patient->phone, //$user_config[$part->ID]["study_phone_number"],
 					'age' => $patient->age,
-					'reg_date' => date("m/d/Y"), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
-					'last_read' => date("m/d/Y"), //date("m/d/Y", strtotime($last_read)),
+					'reg_date' => $patient->registrationDate, //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
+					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
 					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
 					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
 				);

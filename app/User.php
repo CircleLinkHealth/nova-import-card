@@ -154,9 +154,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function viewableProgramIds() {
 		$programIds = $this->programs()->lists('blog_id');
-		if(empty($programIds)) {
-			return false;
-		}
 		return $programIds;
 	}
 
@@ -235,6 +232,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $userConfig['study_phone_number'];
 	}
 
+	public function getRegistrationDateAttribute() {
+		$userConfig = $this->userConfig();
+		return $userConfig['registration_date'];
+	}
+
 	public function getBirthDateAttribute() {
 		$userConfig = $this->userConfig();
 		return $userConfig['birth_date'];
@@ -304,6 +306,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function getCarePlanStatusAttribute() {
 		$meta = $this->meta->where('meta_key', 'careplan_status')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
+	public function getCCMStatusAttribute() {
+		$meta = $this->meta->where('meta_key', 'ccm_status')->lists('meta_value');
 		if(!empty($meta)) {
 			return $meta[0];
 		}
