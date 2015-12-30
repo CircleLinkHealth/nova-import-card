@@ -270,6 +270,46 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $userConfig['care_team'];
 	}
 
+	public function getCarePlanQAApproverAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_qa_approver')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return 0;
+	}
+
+	public function getCarePlanQADateAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_qa_date')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
+	public function getCarePlanProviderApproverAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_provider_approver')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
+	public function getCarePlanProviderDateAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_provider_date')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
+	public function getCarePlanStatusAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_status')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
 	// Whenever the user_pass field is modified, WordPress' internal hashing function will run
 	public function setUserPassAttribute($pass)
 	{

@@ -215,57 +215,60 @@ class PatientController extends Controller {
 	 */
 	public function showPatientListing(Request $request)
 	{
-		// get number of approvals
+		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
 			->with('meta')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get();
-		$p=0;
+		//dd($patients->count());
 		if($patients->count() > 0) {
-			foreach ($patients as $user) {
-				$userMeta = $user->userMeta();
-				if(!isset($userMeta['careplan_status'])) {
-					continue 1;
+			foreach ($patients as $patient) {
+				// careplan status stuff from 2.x
+				$careplanStatus = $patient->carePlanStatus;
+				$careplanStatusLink = '';
+				$approverName = 'NA';
+				if ($patient->carePlanStatus != 'draft') {
+					dd($patient);
+					$approverId = $patient->carePlanProviderApprover;
+					$approver = User::find($approverId);
+					$approverName = $approver->fullName;
+					$careplanStatus = 'Approved';
+					$careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
+					$tooltip = $approverName . ' ' . $patient->carePlanProviderDate;
+				} else if ($patient->carePlanStatus == 'qa_approved') {
+					$careplanStatus = 'Approve Now';
+					$tooltip = $careplanStatus;
+					$careplanStatusLink = 'Approve Now';
+					if ($patient->hasRole('provider')) {
+						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '/manage-patients/patient-care-plan/?user=' . $patient->ID . '"><strong>Approve Now</strong></a>';
+					}
+				} else if ($patient->carePlanStatus == 'draft') {
+					$careplanStatus = 'CLH Approve';
+					$tooltip = $careplanStatus;
+					$careplanStatusLink = 'CLH Approve';
+					if ($patient->hasRole('care-center', 'administrator')) {
+						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '/manage-patients/add-patient/?user=' . $patient->ID . '"><strong>CLH Approve</strong></a>';
+					}
 				}
-				$careplan_status = $userMeta['careplan_status'];
-				// patient approval counts
-				if(Auth::user()->hasRole(['administrator', 'care-center'])) {
-					// care-center and administrator counts number of drafts
-					if ($careplan_status == 'draft') {
-						$p++;
-					}
-				} else if(Auth::user()->hasRole(['provider'])) {
-					// provider counts number of drafts
-					if ($careplan_status == 'qa_approved') {
-						$p++;
-					}
 
-				}
+				$patientData[] = array('key' => $patient->ID, // $part->ID,
+					'patient_name' => $patient->ID, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
+					'first_name' => $patient->firstName, //$meta[$part->ID]["first_name"][0],
+					'last_name' => $patient->lastName, //$meta[$part->ID]["last_name"][0],
+					'ccm_status' => $patient->fullName, //ucfirst($meta[$part->ID]["ccm_status"][0]),
+					'careplan_status' => $careplanStatus, //$careplanStatus,
+					'tooltip' => $tooltip, //$tooltip,
+					'careplan_status_link' => $careplanStatusLink, //$careplanStatusLink,
+					'careplan_provider_approver' => 'approver', //$approverName,
+					'dob' => $patient->birthDate, //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
+					'phone' => $patient->phone, //$user_config[$part->ID]["study_phone_number"],
+					'age' => $patient->age,
+					'reg_date' => date("m/d/Y"), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
+					'last_read' => date("m/d/Y"), //date("m/d/Y", strtotime($last_read)),
+					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
+					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
+				);
 			}
-		}
-		$pendingApprovals = $p;
-
-
-
-
-		$patientData = array();
-		foreach ($patients as $patient) {
-			$patientData[] = array('key'=> $patient->ID, // $part->ID,
-				'patient_name'=> $patient->ID, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
-				'first_name'=> $patient->firstName, //$meta[$part->ID]["first_name"][0],
-				'last_name'=> $patient->lastName, //$meta[$part->ID]["last_name"][0],
-				'ccm_status'=> $patient->fullName, //ucfirst($meta[$part->ID]["ccm_status"][0]),
-				'careplan_status'=> 'st', //$careplanStatus,
-				'tooltip'=> 'tt', //$tooltip,
-				'careplan_status_link'=> 'stlnk', //$careplanStatusLink,
-				'careplan_provider_approver'=> 'approver', //$approverName,
-				'dob'=> $patient->birthDate, //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
-				'phone' => $patient->phone, //$user_config[$part->ID]["study_phone_number"], 'age' => $age,
-				'reg_date' => date("m/d/Y"), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
-				'last_read' => date("m/d/Y"), //date("m/d/Y", strtotime($last_read)),
-				'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
-				'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
-			);
 		}
 		$patientJson = json_encode($patientData);
 

@@ -147,7 +147,7 @@ Route::group(['middleware' => 'auth'], function ()
 			Route::get('', ['uses' => 'ActivityController@index', 'as' => 'patient.activity.index']);
 		});
 
-		Route::get('progress', ['uses' => 'ReportsController@index', 'as' => 'patient.activity.index']);
+		Route::get('progress', ['uses' => 'ReportsController@index', 'as' => 'patient.reports.progress']);
 		Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
 		Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
 	});
