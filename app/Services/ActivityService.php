@@ -28,10 +28,10 @@ class ActivityService {
 			if(!is_array($userIds)) {
 				$userIds = array($userIds);
 			}
-			$wpUsers = wpUser::whereIn('id', $userIds)->orderBy('ID', 'desc')->get();
+			$wpUsers = User::whereIn('id', $userIds)->orderBy('ID', 'desc')->get();
 		} else {
 			// get all users
-			$wpUsers = wpUser::orderBy('ID', 'desc')->get();
+			$wpUsers = User::orderBy('ID', 'desc')->get();
 		}
 
 		if(!empty($wpUsers)) {

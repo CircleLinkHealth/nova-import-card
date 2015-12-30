@@ -8,6 +8,7 @@ use App\Services\CareplanService;
 use App\Services\ReportsService;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -73,11 +74,14 @@ class ReportsController extends Controller {
 		}			//debug($biometrics_data);
 
 		foreach($biometrics_data as $key => $value){
+			debug($key);
 			$bio_name = $key;
-			$first = reset($value);
-			$last = end($value);
-			$biometrics_array[$bio_name]['change'] = intval($last->Avg) - intval($first->Avg);
-			$biometrics_array[$bio_name]['lastWeekAvg'] = intval($last->Avg);
+			if($value != null) {
+				$first = reset($value);
+				$last = end($value);
+				$biometrics_array[$bio_name]['change'] = intval($last->Avg) - intval($first->Avg);
+				$biometrics_array[$bio_name]['lastWeekAvg'] = intval($last->Avg);
+			}
 
 			if($first < $last) {
 				$biometrics_array[$bio_name]['change_arrow'] = 'up';
@@ -103,8 +107,6 @@ class ReportsController extends Controller {
 				unset($biometrics_array[$bio_name]);
 			}
 		}
-		debug($biometrics_array);
-
 
 		//Medication Tracking:
 		$medications = (new ReportsService())->medicationStatus($user);
@@ -127,62 +129,212 @@ class ReportsController extends Controller {
 	 * @return Response
 	 */
 
-    public function pageTimerReports(Request $request){
+    public function u20(Request $request, $patientId = false)
+	{
 
-        if ( $request->header('Client') == 'ui' )
-        {
-            $patients = [];
-            if( !empty( $request->header('patients') ) ) {
-                $patients = Crypt::decrypt($request->header('patients'));
-            };
+		$patient = User::find($patientId);
+		$input = $request->all();
 
-			$months = Crypt::decrypt($request->header('months'));
+		if (isset($input['selectMonth'])) {
+			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+			$start = $time->startOfMonth()->format('Y-m-d');
+			$end = $time->endOfMonth()->format('Y-m-d');
+			$month_selected = $time->format('m');
+		} else {
+			$time = Carbon::now();
+			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
+			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
+			$month_selected = $time->format('m');
+		}
 
-            $acts = DB::table('activities')
-                ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration)'))
-				->whereBetween('performed_at', [
-					Carbon::createFromFormat('Y-n', $months[0])->startOfMonth(),
-					Carbon::createFromFormat('Y-n', $months[1])->endOfMonth()
-				])
-                ->where('patient_id', $patients[0])
-                ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                ->orderBy('performed_at', 'desc')
-                ->get();
+		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
 
-            $acts = json_decode(json_encode($acts), true);
+		$u20_patients = array();
+		$billable_patients = array();
 
-            foreach($acts as $key => $value){
-                $acts[$key]['patient'] = User::find($patients[0]);
-            }
+		// ROLLUP CATEGORIES
+		$CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
+		$Progress = array('Review Patient Progress (offline)', 'Progress Report Review/Print');
+		$RPM = array('Patient Alerts Review', 'Patient Overview Review', 'Biometrics Data Review', 'Lifestyle Data Review', 'Symptoms Data Review', 'Assessments Scores Review',
+			'Medications Data Review', 'Input Observation');
+		$TCM = array('Test (Scheduling, Communications, etc)', 'Transitional Care Management Activities', 'Call to Other Care Team Member', 'Appointments');
+		$Other = array('other', 'Medication Reconciliation');
+		$act_count = 0;
+		foreach ($patients as $patient) {
+			$monthly_time = intval($patient->getMonthlyTime());
+			if ($monthly_time < 1200 && $patient->role() == 'participant') {
+				$u20_patients[$act_count]['colsum_careplan'] = 0;
+				$u20_patients[$act_count]['colsum_changes'] = 0;
+				$u20_patients[$act_count]['colsum_progress'] = 0;
+				$u20_patients[$act_count]['colsum_rpm'] = 0;
+				$u20_patients[$act_count]['colsum_tcc'] = 0;
+				$u20_patients[$act_count]['colsum_other'] = 0;
+				$u20_patients[$act_count]['colsum_total'] = 0;
+				$u20_patients[$act_count]['ccm_status'] = $patient->getCCMStatus();
+				$u20_patients[$act_count]['dob'] = $patient->getDOB();
+				$u20_patients[$act_count]['patient_name'] = $patient->getFullNameAttribute();
+				$acts = DB::table('activities')
+					->select(DB::raw('*,DATE(performed_at),provider_id, type'))
+					->where('patient_id', $patient->ID)
+					->whereBetween('performed_at', [
+						$start, $end
+					])
+					->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+					->orderBy('performed_at', 'desc')
+					->get();
 
-			foreach($acts as $key => $value){
-				$act_id = $acts[$key]['id'];
-				$acts_ = Activity::find($act_id);
-				$comment = $acts_->getActivityCommentFromMeta($act_id);
-				$acts[$key]['comment'] = $comment;
+//				foreach ($acts as $key => $value) {
+//					$acts[$key]['patient'] = User::find($patient->ID);
+//				}
+
+				foreach ($acts as $activity) {
+					if (in_array($activity->type, $CarePlan)) {
+						$u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
+					} else if (in_array($activity->type, $Progress)) {
+						$u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
+					} else if (in_array($activity->type, $RPM)) {
+						$u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
+					} else if (in_array($activity->type, $TCM)) {
+						$u20_patients[$act_count]['colsum_tcc'] += intval($activity->duration);
+					} else {
+						$u20_patients[$act_count]['colsum_other'] += intval($activity->duration);
+					}
+					$u20_patients[$act_count]['colsum_total'] += intval($activity->duration);
+
+				}
+				$act_count++;
 			}
 
-            $activities_data_with_users = array();
-            $activities_data_with_users[$patients[0]] = $acts;
+		}
 
-            foreach($patients as $patientId) {
-                $reportData[$patientId] = array();
-            }
-            foreach ($activities_data_with_users as $patientAct)
-            {
-                $reportData[$patientAct[0]['patient_id']] = collect($patientAct)->groupBy('performed_at_year_month');
-				//$reportData[$patientAct[0]['patient_id']]getActivityCommentFromMeta($id)
-            }
+			$years = array();
+			for ($i = 0; $i < 3; $i++) {
+				$years[] = Carbon::now()->subYear($i)->year;
+			}
 
-            if(!empty($reportData)) {
-               return response()->json(Crypt::encrypt(json_encode($reportData)));
-				//return response($months, 201);
-            } else {
-                return response('Not Found', 204);
-            }
-        }
-        return response('Unauthorized', 401);
-    }
+			$months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+			$act_data = true;
+			if ($u20_patients == null) {
+				$act_data = false;
+			}
+
+			$reportData = "data:" . json_encode($u20_patients) . "";
+			debug(json_encode($u20_patients));
+			$data = [
+				'activity_json' => $reportData,
+				'years' => array_reverse($years),
+				'month_selected' => $month_selected,
+				'months' => $months,
+				'patient' => $patient,
+				'data' => $act_data
+			];
+			//debug($reportData);
+
+			return view('reports.u20', $data);
+		}
+	public function billing(Request $request, $patientId = false)
+	{
+
+		$patient = User::find($patientId);
+		$input = $request->all();
+
+		if (isset($input['selectMonth'])) {
+			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+			$start = $time->startOfMonth()->format('Y-m-d');
+			$end = $time->endOfMonth()->format('Y-m-d');
+			$month_selected = $time->format('m');
+		} else {
+			$time = Carbon::now();
+			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
+			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
+			$month_selected = $time->format('m');
+		}
+
+		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
+
+		$u20_patients = array();
+		$billable_patients = array();
+
+		// ROLLUP CATEGORIES
+		$CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
+		$Progress = array('Review Patient Progress (offline)', 'Progress Report Review/Print');
+		$RPM = array('Patient Alerts Review', 'Patient Overview Review', 'Biometrics Data Review', 'Lifestyle Data Review', 'Symptoms Data Review', 'Assessments Scores Review',
+			'Medications Data Review', 'Input Observation');
+		$TCM = array('Test (Scheduling, Communications, etc)', 'Transitional Care Management Activities', 'Call to Other Care Team Member', 'Appointments');
+		$Other = array('other', 'Medication Reconciliation');
+		$act_count = 0;
+		foreach ($patients as $patient) {
+			$monthly_time = intval($patient->getMonthlyTime());
+			if ($monthly_time >= 1200 && $patient->role() == 'participant') {
+				$u20_patients[$act_count]['colsum_careplan'] = 0;
+				$u20_patients[$act_count]['colsum_changes'] = 0;
+				$u20_patients[$act_count]['colsum_progress'] = 0;
+				$u20_patients[$act_count]['colsum_rpm'] = 0;
+				$u20_patients[$act_count]['colsum_tcc'] = 0;
+				$u20_patients[$act_count]['colsum_other'] = 0;
+				$u20_patients[$act_count]['colsum_total'] = 0;
+				$u20_patients[$act_count]['ccm_status'] = $patient->getCCMStatus();
+				$u20_patients[$act_count]['dob'] = $patient->getDOB();
+				$u20_patients[$act_count]['patient_name'] = $patient->getFullNameAttribute();
+				$acts = DB::table('activities')
+					->select(DB::raw('*,DATE(performed_at),provider_id, type'))
+					->where('patient_id', $patient->ID)
+					->whereBetween('performed_at', [
+						$start, $end
+					])
+					->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+					->orderBy('performed_at', 'desc')
+					->get();
+
+//				foreach ($acts as $key => $value) {
+//					$acts[$key]['patient'] = User::find($patient->ID);
+//				}
+
+				foreach ($acts as $activity) {
+					if (in_array($activity->type, $CarePlan)) {
+						$u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
+					} else if (in_array($activity->type, $Progress)) {
+						$u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
+					} else if (in_array($activity->type, $RPM)) {
+						$u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
+					} else if (in_array($activity->type, $TCM)) {
+						$u20_patients[$act_count]['colsum_tcc'] += intval($activity->duration);
+					} else {
+						$u20_patients[$act_count]['colsum_other'] += intval($activity->duration);
+					}
+					$u20_patients[$act_count]['colsum_total'] += intval($activity->duration);
+
+				}
+				$act_count++;
+			}
+
+		}
+
+		$years = array();
+		for ($i = 0; $i < 3; $i++) {
+			$years[] = Carbon::now()->subYear($i)->year;
+		}
+
+		$months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+		$act_data = true;
+		if ($u20_patients == null) {
+			$act_data = false;
+		}
+
+		$reportData = "data:" . json_encode($u20_patients) . "";
+		debug(json_encode($u20_patients));
+		$data = [
+			'activity_json' => $reportData,
+			'years' => array_reverse($years),
+			'month_selected' => $month_selected,
+			'months' => $months,
+			'patient' => $patient,
+			'data' => $act_data
+		];
+		//debug($reportData);
+
+		return view('reports.u20', $data);
+	}
 
 	public function progress(Request $request, $id = false)
 	{
@@ -205,17 +357,6 @@ class ReportsController extends Controller {
 		$feed = $progressReport->progress($wpUser->ID);
 
 		return json_encode($feed);
-	}
-
-	public function UIprogress(Request $request, $id){
-		if ( $request->header('Client') == 'ui' ){ // WP Site
-			$progressReport = new ReportsService();
-			$feed = $progressReport->progress($id);
-			$response['body'] = $feed;
-			return response()->json(Crypt::encrypt($response, ['message' => 'OK']), 201);
-		} else {
-			return response()->json(Crypt::encrypt(['error' => 'Fail']), 401);
-		}
 	}
 
 	public function careplan(Request $request, $id = false)

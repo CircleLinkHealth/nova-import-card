@@ -342,4 +342,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 		return $userUcpData;
 	}
+
+	public function getCCMStatus() {
+		$status = $this->meta->where('meta_key', 'ccm_status')->lists('meta_value');
+		return $status[0];
+	}
 }
