@@ -186,7 +186,7 @@ class NotesController extends Controller
 
             //careteam
             $careteam_info = array();
-            $careteam_ids = $wpUser->getCareTeamIDs();
+            $careteam_ids = $wpUser->careTeam;
             foreach ($careteam_ids as $id) {
                 $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
             }
@@ -206,7 +206,7 @@ class NotesController extends Controller
                 'note_types' => Activity::input_activity_types(),
                 'provider_info' => $provider_info,
                 'careteam_info' => $careteam_info,
-                'userTimeZone' => $wpUser->getUserTimeZone()
+                'userTimeZone' => $wpUser->timeZone
             ];
 
             return view('wpUsers.patient.note.create', $view_data);

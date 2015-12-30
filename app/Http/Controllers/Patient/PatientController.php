@@ -264,7 +264,7 @@ class PatientController extends Controller {
 				'reg_date' => 'uk', //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
 				'last_read' => 'uk', //date("m/d/Y", strtotime($last_read)),
 				'ccm_time' => 'uk', //$ccm_time[0],
-				'ccm_seconds' => 'uk', //$meta[$part->ID]['cur_month_activity_time'][0]
+				'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
 			);
 		}
 		$patientJson = json_encode($patientData);
