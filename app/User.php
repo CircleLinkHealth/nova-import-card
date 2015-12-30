@@ -199,7 +199,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     // basic attributes
     public function getFirstNameAttribute() {
-		$name = '-first_name-';
+		$name = '';
 		$firstName = $this->meta()->where('meta_key', '=', 'first_name')->first();
 		if( !empty($firstName) && $firstName->meta_value != '' ) {
 			$name = $firstName->meta_value;
@@ -208,7 +208,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
     public function getLastNameAttribute() {
-		$name = '-last_name-';
+		$name = '';
 		$lastName = $this->meta()->where('meta_key', '=', 'last_name')->first();
 		if(!empty($lastName && $lastName->meta_value != '' ) ) {
 			$name = $lastName->meta_value;
