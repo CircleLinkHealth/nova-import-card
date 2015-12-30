@@ -30,6 +30,7 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
     <script src="{{ asset('/js/scripts.js') }}"></script>
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
 
@@ -127,6 +128,12 @@
         </ul>
     </div>
 </nav><!-- /navbar -->
+
+
+<!-- PAGE TIMER START -->
+@include('partials.providerUItimer')
+<!-- PAGE TIMER END -->
+
 
 	<!--[if lt IE 8]>
 <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
