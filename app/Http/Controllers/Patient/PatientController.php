@@ -259,7 +259,7 @@ class PatientController extends Controller {
 				}
 
 				$patientData[] = array('key' => $patient->ID, // $part->ID,
-					'patient_name' => $patient->ID, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
+					'patient_name' => $patient->fullNameWithId, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
 					'first_name' => $patient->firstName, //$meta[$part->ID]["first_name"][0],
 					'last_name' => $patient->lastName, //$meta[$part->ID]["last_name"][0],
 					'ccm_status' => $patient->ccmStatus, //ucfirst($meta[$part->ID]["ccm_status"][0]),
