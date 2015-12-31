@@ -3,7 +3,7 @@
 
 // patient stuff
 $patientId = 0;
-if ( !empty(empty($patient)) ) {
+if ( !empty($patient) ) {
     $patientId = $patient->ID;
 }
 
@@ -79,6 +79,9 @@ $urlShort = $pieces[0];
 $enableTimeTracking = true;
 $enableTimeTracking = false; // override it
 if (strpos($_SERVER['REQUEST_URI'],'login') !== false) {
+    $enableTimeTracking = false;
+}
+if (empty($patient)) {
     $enableTimeTracking = false;
 }
 if($enableTimeTracking) {
