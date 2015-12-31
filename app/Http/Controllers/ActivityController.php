@@ -270,7 +270,7 @@ class ActivityController extends Controller {
 		}
 
 		$acts = DB::table('activities')
-			->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration)'))
+			->select(DB::raw('provider_id,DATE(performed_at), type, duration'))
 			->whereBetween('performed_at', [
 				$start, $end
 			])
@@ -280,44 +280,17 @@ class ActivityController extends Controller {
 			->orderBy('performed_at', 'desc')
 			->get();
 
-
 		$acts = json_decode(json_encode($acts), true);
 
 		foreach ($acts as $key => $value) {
-			$acts[$key]['patient'] = User::find($patientId);
+			$provider = User::find($acts[$key]['provider_id']);
+			$acts[$key]['provider_name'] = $provider->getFullNameAttribute();
+			unset($acts[$key]['provider_id']);
 		}
 
-		foreach ($acts as $key => $value) {
-			$act_id = $acts[$key]['id'];
-			$acts_ = Activity::find($act_id);
-			$comment = $acts_->getActivityCommentFromMeta($act_id);
-			$acts[$key]['comment'] = $comment;
-		}
+		if ($acts) {$data = true;} else {$data = false;}
 
-		$activities_data_with_users = array();
-		$activities_data_with_users[$patientId] = $acts;
-
-//			$reportData[$patientId] = array();
-		$reportData[$patientId] = array();
-		foreach ($activities_data_with_users as $patientAct) {
-			//debug($patientAct);
-			$reportData[] = collect($patientAct)->groupBy('performed_at_year_month');
-			//$reportData[$patientAct[0]['patient_id']]getActivityCommentFromMeta($id)
-		}
-		for($i = 0; $i < count($patientAct) - 1; $i++){
-			$logger_user = User::find($patientAct[$i]['logger_id']);
-			if($logger_user){
-				$patientAct[$i]['logger_name'] = $logger_user->getFullNameAttribute();
-			} else {
-				$patientAct[$i]['logger_name'] = 'N/A';
-			}
-		}
-		$data = true;
-		$reportData = "data:" . json_encode($patientAct) . "";
-		if($patientAct == null){
-			$data = false;
-		}
-
+		$reportData = "data:" . json_encode($acts) . "";
 
 		$years = array();
 		for ($i = 0; $i < 3; $i++) {
@@ -325,7 +298,6 @@ class ActivityController extends Controller {
 		}
 
 		$months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-		debug($reportData);
 
 		return view('wpUsers.patient.activity.index',
 			['activity_json' => $reportData,

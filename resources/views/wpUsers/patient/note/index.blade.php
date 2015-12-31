@@ -82,7 +82,7 @@
                                         }],
                                         template: function (obj) {
                                             if (obj.logged_from == "note")
-                                                return "<a href=\"#\">" + obj.type + "</a>";
+                                                return "<a href=\'<?php echo URL::route('patient.note.show', array('patiendId' => $patient->ID, 'noteId' => 1149 )); ?>\'>" + obj.type + "</a>";
                                             else if (obj.logged_from == "manual_input") {
                                                 return obj.type;
                                             }
