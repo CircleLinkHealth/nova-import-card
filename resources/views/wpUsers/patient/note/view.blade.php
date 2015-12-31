@@ -102,9 +102,7 @@
                                     <div class="col-sm-12">
                                         <input type="hidden" name="meta[1][meta_key]" value="comment">
                                         <textarea id="note" class="form-control" rows="10"
-                                                  name="meta[1][meta_value]" disabled>
-                                            {{$note['comment']}}
-                                        </textarea> <br/>
+                                                  name="meta[1][meta_value]" disabled>{{trim($note['comment'])}}</textarea> <br/>
                                     </div>
                                 </div>
                                 <div class="form-block col-md-6">

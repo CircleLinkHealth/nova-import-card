@@ -82,7 +82,7 @@
                                         }],
                                         template: function (obj) {
                                             if (obj.logged_from == "note")
-                                                return "<a href=\'<?php echo URL::route('patient.note.show', array('patiendId' => $patient->ID, 'noteId' => 1149 )); ?>\'>" + obj.type + "</a>";
+                                            return "<a href='http://clapi.cpm.com/manage-patients/{{$patient->ID}}/notes/view/"+obj.id+"'>" + obj.type + "</a>"
                                             else if (obj.logged_from == "manual_input") {
                                                 return obj.type;
                                             }
