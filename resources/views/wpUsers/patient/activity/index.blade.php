@@ -8,7 +8,7 @@
                 </div>
                 @include('partials.userheader')
                 <div class="col-sm-2">
-                    <a href="{{ URL::route('patient.note.create', array('patient' => $patient->ID)) }}"
+                    <a href="{{ URL::route('patient.activity.create', array('patient' => $patient->ID)) }}"
                        class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                         OFFLINE ACTIVITY</a><br>
                 </div>
@@ -50,6 +50,90 @@
                                 background-color: #d2e3ef;
                             }
                         </style>
+                        <script>
+                            function startCompare(value, filter){
+                                value = value.toString().toLowerCase();
+                                filter = '<'+filter.toString().toLowerCase();
+                                return value.indexOf(filter) === 0;
+                            }
+                            webix.locale.pager = {
+                                first: "<<",// the first button
+                                last: ">>",// the last button
+                                next: ">",// the next button
+                                prev: "<"// the previous button
+                            };
+                            webix.ui.datafilter.mySummColumn = webix.extend({
+                                refresh:function(master, node, value){
+                                    var seconds = 0;
+                                    master.data.each(function(obj){
+                                        seconds = seconds+parseInt(obj.duration);
+                                    });
+                                    var date = new Date(seconds * 1000);
+                                    var mm = Math.floor(seconds/60);
+                                    var ss = date.getSeconds();
+                                    if (ss < 10) {ss = "0"+ss;}
+                                    var time = ""+mm+":"+ss;
+                                    result = "<span title='"+mm+":"+ss+"' style='float:right;'><b>" + time + "</b></span>";
+                                    node.firstChild.innerHTML = result;
+                                }
+                            }, webix.ui.datafilter.summColumn);
+
+                            obs_alerts_dtable = new webix.ui({
+                                container:"obs_alerts_container",
+                                view:"datatable",
+                                //css:"webix_clh_cf_style",
+                                autoheight:true,
+                                fixedRowHeight:false,  rowLineHeight:25, rowHeight:25,
+                                // leftSplit:2,
+                                scrollX:false,
+                                resizeColumn:true,
+                                footer:true,
+                                columns:[
+
+
+
+                                    {id:"DATE(performed_at)",   header:["Date",{content:"textFilter", placeholder:"Filter"}], footer:{text:"Total Time for the Month (Min:Sec):", colspan:3},    width:180, sort:'string'},
+                                    {id:"type",    header:["Activity",{content:"textFilter", placeholder:"Filter"}],
+
+                                        template:function(obj){
+                                            if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
+                                            return "<a href='http://clapi.cpm.com/manage-patients/{{$patient->ID}}/activities/view/"+ obj.id +"'>" + obj.type + "</a>";
+                                            else
+                                                return obj.type;
+                                        },
+
+                                        fillspace:true ,    width:200, sort:'string' , css:{ "color":"black","text-align":"left" }},
+
+                                    {id:"provider_name",    header:["Provider",{content:"textFilter", placeholder:"Filter"}],    width:200, sort:'string' , css:{ "color":"black","text-align":"right" }},
+                                    {id:"Sum(duration)",    header:["Total", "(Min:Sec)"],    width:100, sort:'string' , css:{ "color":"black","text-align":"right"},
+                                        footer:{ content:"mySummColumn" },
+                                        template:function (obj) {
+                                            var seconds = obj.duration;
+                                            var date = new Date(seconds * 1000);
+                                            var mm = Math.floor(seconds/60);
+                                            var ss = date.getSeconds();
+                                            if (ss < 10) {ss = "0"+ss;}
+                                            var time = mm+":"+ss;
+                                            return "<span title=':"+mm+":"+ss+"' style='float:right;'>" + time + "</span>";
+                                        }
+                                    }
+                                ],
+                                ready:function(){
+                                    this.adjustRowHeight("obs_key");
+                                },
+                                /*ready:function(){
+                                 this.adjustRowHeight("obs_value");
+                                 },*/
+                                pager:{
+                                    animate:true,
+                                    container:"paging_container",// the container where the pager controls will be placed into
+                                    template:"{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
+                                    size:10, // the number of records per a page
+                                    group:5   // the number of pages in the pager
+                                },
+                            {!! $activity_json !!}                         });
+                            webix.event(window, "resize", function(){ obs_alerts_dtable.adjust(); })
+                        </script>
                         <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                onclick="obs_alerts_dtable.exportToPDF();">
                         <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'

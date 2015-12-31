@@ -144,6 +144,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::group(['prefix' => 'activities'], function () {
 			Route::get('create', ['uses' => 'ActivityController@create', 'as' => 'patient.activity.create']);
 			Route::post('store', ['uses' => 'ActivityController@store', 'as' => 'patient.activity.store']);
+			Route::get('view/{actId}', ['uses' => 'ActivityController@view', 'as' => 'patient.activity.view']);
 			Route::get('', ['uses' => 'ActivityController@providerUIIndex', 'as' => 'patient.activity.providerUIIndex']);
 		});
 

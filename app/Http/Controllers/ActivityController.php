@@ -158,11 +158,9 @@ class ActivityController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show(Request $request, $id)
+	public function show(Request $request, $actId)
 	{
-		if ( $request->header('Client') == 'ui' ) // WP Site
-		{
-			$activity = Activity::findOrFail($id);
+			$activity = Activity::findOrFail($actId);
 
 			//extract and attach the 'comment' value from the ActivityMeta table
 			$metaComment = $activity->getActivityCommentFromMeta($id);
@@ -175,18 +173,8 @@ class ActivityController extends Controller {
 
 			$activity['comment'] = $metaComment;
 			$activity['message'] = 'OK';
-			$json = Array();
-			$json['body'] = $activity;
-			$json['message'] = 'OK';
-			return response(Crypt::encrypt(json_encode($json)));
-		} else {
-			$activity = Activity::find($id);
-			if($activity) {
-				return view('activities.show', ['activity' => $activity]);
-			} else {
-				return response("Activity not found", 401);
-			}
-        }
+
+
     }
 
 
@@ -270,12 +258,15 @@ class ActivityController extends Controller {
 		}
 
 		$acts = DB::table('activities')
-			->select(DB::raw('provider_id,DATE(performed_at), type, duration'))
+			->select(DB::raw('id,provider_id,logged_from,DATE(performed_at), type, duration'))
 			->whereBetween('performed_at', [
 				$start, $end
 			])
 			->where('patient_id', $patientId)
-			->where('logged_from', 'activity')
+			->where(function ($q) {
+				$q->where('logged_from', 'activity')
+					->Orwhere('logged_from', 'manual_input');
+			})
 			->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
 			->orderBy('performed_at', 'desc')
 			->get();
@@ -298,7 +289,7 @@ class ActivityController extends Controller {
 		}
 
 		$months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-
+		debug($reportData);
 		return view('wpUsers.patient.activity.index',
 			['activity_json' => $reportData,
 				'years' => array_reverse($years),
