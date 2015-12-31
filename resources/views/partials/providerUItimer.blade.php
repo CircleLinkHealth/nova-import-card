@@ -247,6 +247,6 @@ if($enableTimeTracking) {
 </div>
 
 
-<h3>TIMER DEBUG</h3>
+<!--<h3>TIMER DEBUG</h3>-->
 <span id="timerDebug"><?php echo $enableTimeTracking; ?></span>
 <!-- PAGE TIMER END -->

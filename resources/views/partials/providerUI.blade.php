@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CPM API</title>
 
-    <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
-    <link href="{{ asset('/css/lavish.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
+    <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
     <!-- Fonts -->
@@ -138,11 +139,6 @@
 	<!--[if lt IE 8]>
 <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 <![endif]-->
-
-    <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
-    <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
-    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     @yield('content')
     {{--
     PROVIDER UI TEMPLATE:
