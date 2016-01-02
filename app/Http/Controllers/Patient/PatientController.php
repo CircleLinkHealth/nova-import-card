@@ -21,6 +21,7 @@ use EllipseSynergie\ApiResponse\Laravel\Response;
 use PasswordHash;
 use Auth;
 use DB;
+use URL;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -295,12 +296,31 @@ class PatientController extends Controller {
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
 			->with('meta')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
-			})->get();
+			})->get()->lists('fullNameWithId', 'ID');
 		$p=0;
 
 
 
 		return view('wpUsers.patient.select', compact(['patients']));
+	}
+
+	/**
+	 * Process the specified resource.
+	 *
+	 * @return Response
+	 */
+	public function processPatientSelect(Request $request)
+	{
+		$params = $request->all();
+		if (!empty($params)) {
+			if (isset($params['findUser'])) {
+				$user = User::find($params['findUser']);
+				if($user) {
+					return redirect()->route('patient.summary', [$params['findUser']]);
+				}
+			}
+		}
+		return redirect()->route('patient.dashboard', [$params['findUser']]);
 	}
 
 	/**

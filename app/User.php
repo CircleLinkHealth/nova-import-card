@@ -223,7 +223,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function getFullNameWithIdAttribute() {
-		return 'sdasdas';
 		$name = $this->fullName;
 		return $name . ' ('.$this->ID.')';
 	}
