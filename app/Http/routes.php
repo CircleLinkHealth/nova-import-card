@@ -138,14 +138,15 @@ Route::group(['middleware' => 'auth'], function ()
 			Route::get('create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create']);
 			Route::post('store', ['uses' => 'NotesController@store', 'as' => 'patient.note.store']);
 			Route::get('', ['uses' => 'NotesController@index', 'as' => 'patient.note.index']);
-			Route::get('view', ['uses' => 'NotesController@view', 'as' => 'patient.note.view']);
+			Route::get('view/{noteId}', ['uses' => 'NotesController@show', 'as' => 'patient.note.show']);
 		});
 
 		// activities
 		Route::group(['prefix' => 'activities'], function () {
 			Route::get('create', ['uses' => 'ActivityController@create', 'as' => 'patient.activity.create']);
 			Route::post('store', ['uses' => 'ActivityController@store', 'as' => 'patient.activity.store']);
-			Route::get('', ['uses' => 'ActivityController@index', 'as' => 'patient.activity.index']);
+			Route::get('view/{actId}', ['uses' => 'ActivityController@view', 'as' => 'patient.activity.view']);
+			Route::get('', ['uses' => 'ActivityController@providerUIIndex', 'as' => 'patient.activity.providerUIIndex']);
 		});
 
 		Route::get('progress', ['uses' => 'ReportsController@index', 'as' => 'patient.reports.progress']);

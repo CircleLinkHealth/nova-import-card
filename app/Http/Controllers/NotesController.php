@@ -217,9 +217,33 @@ class NotesController extends Controller
      * @param  int $id
      * @return Response
      */
-    public function show($id)
+    public function show(Request $input, $patientId, $noteId)
     {
+        $patient = User::find($patientId);
+        $note_act =Activity::find($noteId);
+        $metaComment = $note_act->getActivityCommentFromMeta($noteId);
+        $phone = DB::table('activitymeta')->where('activity_id',$noteId)->where('meta_key','phone')->pluck('meta_value');
 
+        //Set up note pack for view
+        $note = array();
+        if($phone){
+            $note['phone'] = $phone;
+        }
+        $note['type'] = $note_act->type;
+        $note['performed_at'] = $note_act->performed_at;
+        $note['provider_name'] = (User::find($note_act->provider_id)->getFullNameAttribute());
+        $note['comment'] = $metaComment;
+
+        $careteam_info = array();
+        $careteam_ids = $patient->careTeam;
+        foreach ($careteam_ids as $id) {
+            $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
+        }
+
+        $view_data = ['note' => $note, 'userTimeZone' => $patient->timeZone,'careteam_info' => $careteam_info, 'patient' => $patient,'program_id' => $patient->blogId()];
+
+        debug($note);
+        return view('wpUsers.patient.note.view', $view_data);
     }
 
     /**
