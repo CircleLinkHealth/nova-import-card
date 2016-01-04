@@ -272,6 +272,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $userConfig['care_team'];
 	}
 
+	public function getBillingProviderIDAttribute() {
+			$userConfig = $this->userConfig();
+			return $userConfig['billing_provider'];
+	}
+
+	public function getLeadContactIDAttribute() {
+		$userConfig = $this->userConfig();
+		return $userConfig['lead_contact'];
+	}
+
 	public function getCarePlanQAApproverAttribute() {
 		$meta = $this->meta->where('meta_key', 'careplan_qa_approver')->lists('meta_value');
 		if(!empty($meta)) {
