@@ -2,7 +2,16 @@
     <div class="row">
         <div class="col-sm-12">
             <p class="text-medium clearfix">
-                <span class="pull-left">Patient Name:</span><a href="#"><span class="pull-right">{{
+                <span class="pull-left"><strong>
+                        <?php
+                            debug($patient->getLeadContactIDAttribute());
+                        $provider = App\User::find($patient->getLeadContactIDAttribute());
+                        ?>
+                        Provider: </strong> {{$provider->getFullNameAttribute()}}<strong>
+                        Location:</strong>
+                                {{$patient->getPreferredLocationName()}}
+                </span>
+               <a href="{{URL::route('patient.summary', array('patient' => $patient->ID))}}"><span class="pull-right">{{
                 date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
                  }} Time: {{$patient->monthlyTime}}</span></a></p>
             <a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}">
