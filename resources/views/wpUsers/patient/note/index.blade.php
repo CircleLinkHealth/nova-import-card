@@ -82,7 +82,7 @@
                                         }],
                                         template: function (obj) {
                                             if (obj.logged_from == "note")
-                                            return "<a href='<?php echo URL::route('patient.note.show', array('patientId' => $patient->ID)); ?>/"  + obj.id + "'>" + obj.type + "</a>"
+                                            return "<a href='<?php echo URL::route('patient.note.view', array('patientId' => $patient->ID)); ?>/"  + obj.id + "'>" + obj.type + "</a>"
                                             else if (obj.logged_from == "manual_input") {
                                                 return obj.type;
                                             }
@@ -91,7 +91,7 @@
 
                                         width: 175,
                                         sort: 'string',
-                                        css: {"color": "black", "text-align": "right"}
+                                        css: {"color": "black", "text-align": "left"}
                                     },
                                     {
                                         id: "logged_from",
