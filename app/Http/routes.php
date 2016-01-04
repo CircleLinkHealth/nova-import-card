@@ -265,6 +265,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('programs/{id}', ['uses' =>'Admin\WpBlogController@show', 'as'=>'admin.programs.show']);
 		Route::get('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@edit', 'as'=>'admin.programs.edit']);
 		Route::post('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@update', 'as'=>'admin.programs.update']);
+		Route::get('programs/{id}/destroy', ['uses' =>'Admin\WpBlogController@destroy', 'as'=>'admin.programs.destroy']);
 		Route::get('programs/{id}/questions', ['uses' =>'Admin\WpBlogController@showQuestions', 'as'=>'admin.programs.questions']);
 
 		// locations
