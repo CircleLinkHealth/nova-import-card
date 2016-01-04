@@ -2,6 +2,7 @@
 
 use App\Http\Requests;
 use App\CPRulesPCP;
+use App\Location;
 use App\CPRulesItemMeta;
 use App\CPRulesItem;
 use App\Http\Controllers\Controller;
@@ -65,7 +66,9 @@ class WpBlogController extends Controller {
 			abort(403);
 		}
 		// display view
-		$wpBlog = WpBlog::find($id);
+		$program = WpBlog::find($id);
+
+		/*
 		$cPRulesPCP = CPRulesPCP::where('prov_id', '=', $id)->where('status', '=', 'Active')->with('items.meta')->get();
 		if(!empty($cPRulesPCP)) {
 			$programItems = array();
@@ -93,7 +96,11 @@ class WpBlogController extends Controller {
 				}
 			}
 		}
-		return view('admin.wpBlogs.show', [ 'wpBlog' => $wpBlog, 'programItems' => $programItems, 'errors' => array(), 'messages' => array() ]);
+		*/
+
+		$locations = Location::orderBy('id', 'desc')->lists('name', 'id');
+
+		return view('admin.wpBlogs.show', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
 
 	/**
@@ -107,7 +114,14 @@ class WpBlogController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		//
+
+		$messages = \Session::get('messages');
+
+		$program = WpBlog::find($id);
+
+		$locations = Location::orderBy('id', 'desc')->lists('name', 'id');
+
+		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
 
 	/**
@@ -116,12 +130,22 @@ class WpBlogController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Request $request, $id)
 	{
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		//
+		// find program
+		$program = WpBlog::find($id);
+		if(!$program) {
+			abort(400);
+		}
+		// get params
+		$params = $request->input();
+		$program->location_id = $params['location_id'];
+		$program->domain = $params['domain'];
+		$program->save();
+		return redirect()->back()->with('messages', ['successfully updated program']);
 	}
 
 	/**

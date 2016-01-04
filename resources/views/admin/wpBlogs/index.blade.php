@@ -35,6 +35,8 @@
                                 <td><strong>{{ $wpBlog->domain }}</strong></td>
                                 <td>{{ $wpBlog->blog_id }}</td>
                                 <td>{{ $wpBlog->registered }}</td>
+                                <td><a href="{{ URL::route('admin.programs.edit', array('id' => $wpBlog->blog_id)) }}" class="btn btn-info">Edit</a></td>
+                                <td><a href="{{ URL::route('admin.programs.edit', array('id' => $wpBlog->blog_id)) }}" class="btn btn-warning">Remove</a></td>
                             </tr>
                         @endforeach
                         </tbody>
