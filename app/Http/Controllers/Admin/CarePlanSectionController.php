@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\WpUser;
+use App\User;
 use App\CarePlanSection;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -28,7 +28,7 @@ class CarePlanSectionController extends Controller {
 		$params = $request->all();
 
 		// filter user
-		$users = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
 		$filterUser = 'all';
 		if(isset($params['filterUser'])) {
 			$filterUser = $params['filterUser'];
@@ -68,7 +68,7 @@ class CarePlanSectionController extends Controller {
 			abort(403);
 		}
 
-		$users = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
 
 		// display view
 		return view('admin.carePlans.create', [ 'users' => $users ]);
@@ -121,7 +121,7 @@ class CarePlanSectionController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		$users = WpUser::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
 		$careplan = CarePlanSection::find($id);
 		return view('admin.carePlans.edit', [ 'careplan' => $careplan, 'users' => $users, 'messages' => \Session::get('messages') ]);
 	}
