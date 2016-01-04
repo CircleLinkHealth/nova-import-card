@@ -12,7 +12,7 @@
                        class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                         OFFLINE ACTIVITY</a><br>
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.note.index', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                {!! Form::open(array('url' => URL::route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                 <div class="form-group  pull-right" style="margin-top:10px;">
                     <i class="icon icon--date-time"></i>
 
@@ -97,7 +97,7 @@
 
                                         template:function(obj){
                                             if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                            return "<a href='http://clapi.cpm.com/manage-patients/{{$patient->ID}}/activities/view/"+ obj.id +"'>" + obj.type + "</a>";
+                                                return "<a href='<?php echo URL::route('patient.activity.view', array('patientId' => $patient->ID)); ?>/"  + obj.id + "'>" + obj.type + "</a>"
                                             else
                                                 return obj.type;
                                         },

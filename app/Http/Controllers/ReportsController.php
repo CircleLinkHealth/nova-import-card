@@ -161,7 +161,7 @@ class ReportsController extends Controller {
 		$Other = array('other', 'Medication Reconciliation');
 		$act_count = 0;
 		foreach ($patients as $patient) {
-			$monthly_time = intval($patient->getMonthlyTime());
+			$monthly_time = intval($patient->getMonthlyTimeAttribute());
 			if ($monthly_time < 1200 && $patient->role() == 'participant') {
 				$u20_patients[$act_count]['colsum_careplan'] = 0;
 				$u20_patients[$act_count]['colsum_changes'] = 0;
@@ -171,7 +171,7 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['colsum_other'] = 0;
 				$u20_patients[$act_count]['colsum_total'] = 0;
 				$u20_patients[$act_count]['ccm_status'] = $patient->getCCMStatus();
-				$u20_patients[$act_count]['dob'] = $patient->getDOB();
+				$u20_patients[$act_count]['dob'] = $patient->DOB;
 				$u20_patients[$act_count]['patient_name'] = $patient->getFullNameAttribute();
 				$acts = DB::table('activities')
 					->select(DB::raw('*,DATE(performed_at),provider_id, type'))
@@ -264,7 +264,7 @@ class ReportsController extends Controller {
 		$Other = array('other', 'Medication Reconciliation');
 		$act_count = 0;
 		foreach ($patients as $patient) {
-			$monthly_time = intval($patient->getMonthlyTime());
+			$monthly_time = intval($patient->getMonthlyTimeAttribute());
 			if ($monthly_time >= 1200 && $patient->role() == 'participant') {
 				$u20_patients[$act_count]['colsum_careplan'] = 0;
 				$u20_patients[$act_count]['colsum_changes'] = 0;
@@ -274,7 +274,7 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['colsum_other'] = 0;
 				$u20_patients[$act_count]['colsum_total'] = 0;
 				$u20_patients[$act_count]['ccm_status'] = $patient->getCCMStatus();
-				$u20_patients[$act_count]['dob'] = $patient->getDOB();
+				$u20_patients[$act_count]['dob'] = $patient->DOB;
 				$u20_patients[$act_count]['patient_name'] = $patient->getFullNameAttribute();
 				$acts = DB::table('activities')
 					->select(DB::raw('*,DATE(performed_at),provider_id, type'))

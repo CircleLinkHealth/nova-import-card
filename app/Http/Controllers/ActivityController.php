@@ -158,24 +158,29 @@ class ActivityController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show(Request $request, $actId)
+	public function show(Request $input, $patientId, $actId)
 	{
-			$activity = Activity::findOrFail($actId);
+		$patient = User::find($patientId);
+		$act = Activity::find($actId);
+		//Set up note pack for view
+		$activity = array();
 
-			//extract and attach the 'comment' value from the ActivityMeta table
-			$metaComment = $activity->getActivityCommentFromMeta($id);
+		$activity['type'] = $act->type;
+		$activity['performed_at'] = $act->performed_at;
+		$activity['provider_name'] = (User::find($act->provider_id)->getFullNameAttribute());
+		$activity['duration'] = intval($act->duration)/60;
 
-			//If it's a note, search for phone meta value
-			$phone = DB::table('activitymeta')->where('activity_id',$id)->where('meta_key','phone')->pluck('meta_value');
-			if($phone){
-				$activity['phone'] = $phone;
-			}
+		$careteam_info = array();
+		$careteam_ids = $patient->careTeam;
+		foreach ($careteam_ids as $id) {
+			$careteam_info[$id] = User::find($id)->getFullNameAttribute();;
+		}
 
-			$activity['comment'] = $metaComment;
-			$activity['message'] = 'OK';
+		$view_data = ['activity' => $activity, 'userTimeZone' => $patient->timeZone,'careteam_info' => $careteam_info, 'patient' => $patient,'program_id' => $patient->blogId()];
 
-
-    }
+		debug($activity);
+		return view('wpUsers.patient.activity.view', $view_data);
+	}
 
 
 	/**
