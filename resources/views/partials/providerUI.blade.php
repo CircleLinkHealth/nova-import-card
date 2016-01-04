@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CPM API</title>
 
-    <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
     <link href="{{ asset('/css/lavish.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
     <!-- Fonts -->
@@ -30,11 +30,15 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
     <script src="{{ asset('/js/scripts.js') }}"></script>
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
+    <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
+    <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
 </head>
 <body>
 <nav class="navbar primary-navbar">
@@ -45,12 +49,12 @@
         <div class="navbar-right hidden-xs ">
             <ul class="nav navbar-nav">
                 {{--URL::route('patients.dashboard', array())--}}
-                <li><a href="{{ URL::route('patients.dashboard', array()) }}"><i class="icon--home--white"></i> Home</a></li>
-                <li><a href="#"><i class="icon--search--white"></i> Select Patient</a></li>
-                <li><a href="#"><i class="icon--add-user"></i> Add Patient</a></li>
-                <li><a href="{{ URL::route('patient.alerts', array()) }}"><i class="icon--alert--white"></i> Alerts</a></li>
-                @if ( !Auth::guest() && Auth::user()->hasRole(['administrator', 'developer']))
-                    <li><a class="btn btn-orange btn-xs" href="#"><i class="icon--home--white"></i> Back to Admin</a></li>
+                <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
+                <li><a href="{{ URL::route('patients.select') }}"><i class="icon--search--white"></i> Select Patient</a></li>
+                <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add Patient</a></li>
+                <li><a href="{{ URL::route('patients.alerts') }}"><i class="icon--alert--white"></i> Alerts</a></li>
+                @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+                    <li><a class="btn btn-orange btn-xs" href="{{ URL::route('admin.dashboard') }}"><i class="icon--home--white"></i> Admin</a></li>
                 @elseif (!Auth::guest())
                     <li>
                         <a href="">
@@ -105,19 +109,19 @@
                         <a href="{{ empty($patient) ? '' : '' }}">Patient Alerts</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '' : URL::route('patient.activity.index', array('patient' => $patient->ID)) }}">Progress Report</a>
+                        <a href="{{ empty($patient) ? '' : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">Progress Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '' : '' }}">Patient Activity Report</a>
+                        <a href="{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient Activity Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '' : '' }}">Under 20 Minute Report</a>
+                        <a href="{{ empty($patient) ? '' : URL::route('patient.reports.u20', array('patient' => $patient->ID)) }}">Under 20 Minute Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '' : '' }}">Patient Billing Report</a>
+                        <a href="{{ empty($patient) ? '' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">Patient Billing Report</a>
                     </li>
                     <li>
-                        <a href="{{ URL::route('patients.listing', array()) }}">Patient Listing</a>
+                        <a href="{{ URL::route('patients.listing') }}">Patient Listing</a>
                     </li>
                 </ul>
             </li>
@@ -128,14 +132,15 @@
     </div>
 </nav><!-- /navbar -->
 
+
+<!-- PAGE TIMER START -->
+@include('partials.providerUItimer')
+<!-- PAGE TIMER END -->
+
+
 	<!--[if lt IE 8]>
 <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 <![endif]-->
-
-    <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
-    <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
-    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     @yield('content')
     {{--
     PROVIDER UI TEMPLATE:

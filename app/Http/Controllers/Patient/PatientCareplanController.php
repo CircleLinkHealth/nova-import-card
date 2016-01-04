@@ -128,18 +128,18 @@ class PatientCareplanController extends Controller {
 			return redirect()->back()->with('messages', ['Successfully updated patient demographics.']);
 		} else {
 			$role = Role::whereName('participant')->first();
-
-			$newUserId = str_random(20);
-
-			$bag = new ParameterBag([
+			$newUserId = str_random(15);
+			$params->add(array(
+				'user_login' => $newUserId,
 				'user_email' => $newUserId . '@careplanmanager.com',
-				'user_pass' => 'whatToPutHere',
-				//'user_nicename' => $newUserId,
-				'program_id' => '99999999',
+				'user_pass' => $newUserId,
+				'user_status' => '1',
+				'user_nicename' => 'Happy Gilmore',
+				'program_id' => '7',
 				'roles' => [$role->id],
-			]);
-			$newUser = $userRepo->createNewUser($user, $bag);
-			$newUser = $userRepo->editUser($newUser, $params);
+			));
+			$newUser = $userRepo->createNewUser($user, $params);
+			//$newUser = $userRepo->editUser($newUser, $params);
 			return redirect(\URL::route('patient.demographics.show', array('patientId' => $newUser->ID)))->with('messages', ['Successfully created new patient with demographics.']);
 		}
 	}

@@ -85,6 +85,78 @@ class Observation extends Model {
 
 
 
+
+
+
+
+    // START META ATTRIBUTES
+
+    public function getAlertLevelAttribute() {
+        $name = '';
+        $meta = $this->meta()->where('meta_key', '=', 'dm_alert_level')->first();
+        if(isset($meta) ) {
+            $name = $meta->meta_value;
+        }
+        return $name;
+    }
+
+    public function getAlertLogAttribute() {
+        $name = '';
+        $meta = $this->meta()->where('meta_key', '=', 'dm_log')->first();
+        if(isset($meta) ) {
+            $name = $meta->meta_value;
+        }
+        return $name;
+    }
+
+    public function getAlertStatusHistoryAttribute() {
+        $name = '';
+        $meta = $this->meta()->where('meta_key', '=', 'alert_status_hist')->first();
+        if(isset($meta) ) {
+            $name = $meta->meta_value;
+        }
+        return $name;
+    }
+
+    public function getAlertStatusChangeAttribute() {
+        $name = '';
+        $meta = $this->meta()->where('meta_key', '=', 'alert_status_change')->first();
+        if(isset($meta) ) {
+            $name = $meta->meta_value;
+        }
+        return $name;
+    }
+
+    public function getAlertSortWeightAttribute() {
+        $name = '';
+        $meta = $this->meta()->where('meta_key', '=', 'alert_sort_weight')->first();
+        if(isset($meta) ) {
+            $name = $meta->meta_value;
+        }
+        return $name;
+    }
+
+    public function getTimezoneAttribute() {
+        $name = '';
+        $meta = $this->meta()->where('meta_key', '=', 'timezone')->first();
+        if(isset($meta) ) {
+            $name = $meta->meta_value;
+        }
+        return $name;
+    }
+
+    public function getStartingObservationAttribute() {
+        $name = 'no';
+        $meta = $this->meta()->where('meta_key', '=', 'starting_observation')->first();
+        if(isset($meta) ) {
+            $name = $meta->meta_value;
+        }
+        return $name;
+    }
+
+    // END META ATTRIBUTES
+
+
     public function getObservation($obs_id)
     {
         $observation = Observation::where('obs_id', '=', $obs_id)->get();

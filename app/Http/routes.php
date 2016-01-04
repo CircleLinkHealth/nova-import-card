@@ -104,6 +104,8 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::group(['prefix' => 'manage-patients/', 'middleware' => 'patientProgramSecurity'], function () {
 		Route::get('dashboard', ['uses' => 'Patient\PatientController@showDashboard', 'as' => 'patients.dashboard']);
 		Route::get('listing', ['uses' => 'Patient\PatientController@showPatientListing', 'as' => 'patients.listing']);
+		Route::get('select', ['uses' => 'Patient\PatientController@showPatientSelect', 'as' => 'patients.select']);
+		Route::post('select', ['uses' => 'Patient\PatientController@processPatientSelect', 'as' => 'patients.select.process']);
 		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patients.alerts']);
 		Route::get('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@showPatientDemographics', 'as' => 'patients.demographics.show']);
 		Route::post('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patients.demographics.store']);
@@ -139,17 +141,20 @@ Route::group(['middleware' => 'auth'], function ()
 			Route::get('create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create']);
 			Route::post('store', ['uses' => 'NotesController@store', 'as' => 'patient.note.store']);
 			Route::get('', ['uses' => 'NotesController@index', 'as' => 'patient.note.index']);
+			Route::get('view/{noteId}', ['uses' => 'NotesController@show', 'as' => 'patient.note.show']);
 		});
 
 		// activities
 		Route::group(['prefix' => 'activities'], function () {
 			Route::get('create', ['uses' => 'ActivityController@create', 'as' => 'patient.activity.create']);
 			Route::post('store', ['uses' => 'ActivityController@store', 'as' => 'patient.activity.store']);
-			Route::get('', ['uses' => 'ActivityController@index', 'as' => 'patient.activity.index']);
+			Route::get('view/{actId}', ['uses' => 'ActivityController@view', 'as' => 'patient.activity.view']);
+			Route::get('', ['uses' => 'ActivityController@providerUIIndex', 'as' => 'patient.activity.providerUIIndex']);
 		});
 
-		Route::get('progress', ['uses' => 'ReportsController@index', 'as' => 'patient.activity.index']);
-
+		Route::get('progress', ['uses' => 'ReportsController@index', 'as' => 'patient.reports.progress']);
+		Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
+		Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
 	});
 
 	/****************************/

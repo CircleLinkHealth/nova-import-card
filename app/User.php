@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use DateTime;
 use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -105,12 +106,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		parent::boot();
 	}
 
-    // Whenever the user_pass field is modified, WordPress' internal hashing function will run
-    public function setUserPassAttribute($pass)
-	{
-		$this->attributes['user_pass'] = WpPassword::make($pass);
-	}
-
     public function getAuthIdentifier()
 	{
 		return $this->getKey();
@@ -125,6 +120,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	{
 		return $this->user_email;
 	}
+
+
+	// START RELATIONSHIPS
 
     public function meta()
 	{
@@ -151,33 +149,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
 	}
 
-    public function role($blogId = false)
-	{
-		if(!$blogId) {
-			$blogId = $this->blogId();
-		}
-		$role = UserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','wp_'.$blogId.'_capabilities')->first();
-		if(!$role) {
-			return false;
-		} else {
-			$data = unserialize($role['meta_value']);
-			return key($data);
-		}
-	}
+	// END RELATIONSHIPS
 
-    public function blogId(){
-		return $this->program_id;
-	}
-
-    public function programs() {
-		return $this->belongsToMany('App\WpBlog', 'lv_program_user', 'user_id', 'program_id');
-	}
 
 	public function viewableProgramIds() {
 		$programIds = $this->programs()->lists('blog_id');
-		if(empty($programIds)) {
-			return false;
-		}
 		return $programIds;
 	}
 
@@ -218,7 +194,169 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 	}
 
-    public function createNewUser($user_email, $user_pass) {
+
+    // START ATTRIBUTES
+
+    // basic attributes
+    public function getFirstNameAttribute() {
+		$name = '';
+		$firstName = $this->meta()->where('meta_key', '=', 'first_name')->first();
+		if( !empty($firstName) && $firstName->meta_value != '' ) {
+			$name = $firstName->meta_value;
+		}
+		return $name;
+	}
+
+    public function getLastNameAttribute() {
+		$name = '';
+		$lastName = $this->meta()->where('meta_key', '=', 'last_name')->first();
+		if(!empty($lastName && $lastName->meta_value != '' ) ) {
+			$name = $lastName->meta_value;
+		}
+		return $name;
+	}
+
+	public function getFullNameAttribute() {
+		$firstName = $this->firstName;
+		$lastName = $this->lastName;
+		return $firstName . ' ' . $lastName;
+	}
+
+	public function getFullNameWithIdAttribute() {
+		$name = $this->fullName;
+		return $name . ' ('.$this->ID.')';
+	}
+
+	public function getPhoneAttribute() {
+		$userConfig = $this->userConfig();
+		return $userConfig['study_phone_number'];
+	}
+
+	public function getRegistrationDateAttribute() {
+		$userConfig = $this->userConfig();
+		return $userConfig['registration_date'];
+	}
+
+	public function getBirthDateAttribute() {
+		$userConfig = $this->userConfig();
+		return $userConfig['birth_date'];
+	}
+
+	public function getGenderAttribute() {
+		$userConfig = $this->userConfig();
+		return $userConfig['gender'];
+	}
+
+	public function getAgeAttribute() {
+		$from = new DateTime($this->birthDate);
+		$to   = new DateTime('today');
+		return $from->diff($to)->y;
+	}
+
+	public function getMonthlyTimeAttribute() {
+		$time = $this->meta->where('meta_key', 'cur_month_activity_time')->lists('meta_value');
+		if(!empty($time)) {
+			return $time[0];
+		} else {
+			return 0;
+		}
+	}
+
+	public function getTimeZoneAttribute() {
+		$userConfig = $this->userConfig();
+		return $userConfig['preferred_contact_timezone'];
+	}
+
+	public function getCareTeamAttribute() {
+		$userConfig = $this->userConfig();
+		return $userConfig['care_team'];
+	}
+
+	public function getCarePlanQAApproverAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_qa_approver')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return 0;
+	}
+
+	public function getCarePlanQADateAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_qa_date')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
+	public function getCarePlanProviderApproverAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_provider_approver')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
+	public function getCarePlanProviderDateAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_provider_date')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
+	public function getCarePlanStatusAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_status')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
+	public function getCCMStatusAttribute() {
+		$meta = $this->meta->where('meta_key', 'ccm_status')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
+	// Whenever the user_pass field is modified, WordPress' internal hashing function will run
+	public function setUserPassAttribute($pass)
+	{
+		$this->attributes['user_pass'] = WpPassword::make($pass);
+	}
+	// END ATTRIBUTES
+
+
+
+
+
+
+	// MISC, these should be removed eventually
+
+	public function role($blogId = false)
+	{
+		if(!$blogId) {
+			$blogId = $this->blogId();
+		}
+		$role = UserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key','wp_'.$blogId.'_capabilities')->first();
+		if(!$role) {
+			return false;
+		} else {
+			$data = unserialize($role['meta_value']);
+			return key($data);
+		}
+	}
+
+	public function blogId(){
+		return $this->program_id;
+	}
+
+	public function programs() {
+		return $this->belongsToMany('App\WpBlog', 'lv_program_user', 'user_id', 'program_id');
+	}
+
+	public function createNewUser($user_email, $user_pass) {
 		$this->user_login = $user_email;
 		$this->user_email = $user_email;
 		$this->user_pass = $user_pass;
@@ -228,7 +366,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 
-    public function getUCP() {
+	public function getUCP() {
 		$userUcp = $this->ucp()->with(['item.meta', 'item.question'])->get();
 		$userUcpData = array('ucp' => array(), 'obs_keys' => array(), 'alert_keys' => array());
 		if($userUcp->count() > 0) {
@@ -255,48 +393,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $userUcpData;
 	}
 
-
-
-    // ATTRIBUTES
-
-    // basic attributes (meta)
-    public function getFirstNameAttribute() {
-		$name = '';
-		$firstName = $this->meta()->where('meta_key', '=', 'first_name')->first();
-		if(isset($firstName) ) {
-			$name .= $firstName->meta_value;
-		}
-		return $name;
-	}
-
-    public function getLastNameAttribute() {
-		$name = '';
-		$lastName = $this->meta()->where('meta_key', '=', 'last_name')->first();
-		if(isset($lastName) ) {
-			$name .= $lastName->meta_value;
-		}
-		return $name;
-	}
-
-	// complex attributes
-	public function getFullNameAttribute() {
-		$firstName = $this->firstName;
-		$lastName = $this->lastName;
-		return $firstName . ' ' . $lastName;
-	}
-
-	public function getFullNameWithIdAttribute() {
-		$name = $this->fullName;
-		return $name . ' ('.$this->ID.')';
-	}
-
-	public function getUserTimeZone() {
-		$userConfig = $this->userConfig();
-		return $userConfig['preferred_contact_timezone'];
-	}
-
-	public function getCareTeamIDs() {
-		$userConfig = $this->userConfig();
-		return $userConfig['care_team'];
+	public function getCCMStatus() {
+		$status = $this->meta->where('meta_key', 'ccm_status')->lists('meta_value');
+		return $status[0];
 	}
 }

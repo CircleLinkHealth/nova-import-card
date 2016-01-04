@@ -21,6 +21,7 @@ use EllipseSynergie\ApiResponse\Laravel\Response;
 use PasswordHash;
 use Auth;
 use DB;
+use URL;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -192,9 +193,9 @@ class PatientController extends Controller {
 				}
 				// lastly format json
 				$observation_json[$section] .= "{ obs_key:'" . $observation->obs_key . "', " .
-					"description:'" . $observation->items_text . '|' . $observation->obs_key . '|'.$observation->legacy_obs_id . "', " .
+					"description:'" . $observation->items_text . '|' . $observation->obs_key . '|'.$observation->id . "', " .
 					"obs_value:'" . $observation->obs_value . "', " .
-					"dm_alert_level:'default', " .
+					"dm_alert_level:'" . $observation->alert_level . "', " .
 					"obs_unit:'" . $observation->obs_unit . "', " .
 					"obs_message_id:'" . $observation->obs_message_id . "', " .
 					"comment_date:'".$observation->obs_date."', " . "},";
@@ -215,63 +216,111 @@ class PatientController extends Controller {
 	 */
 	public function showPatientListing(Request $request)
 	{
-		// get number of approvals
+		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-			->with('meta')->whereHas('roles', function($q) {
+				->with('meta')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get();
-		$p=0;
 		if($patients->count() > 0) {
-			foreach ($patients as $user) {
-				$userMeta = $user->userMeta();
-				if(!isset($userMeta['careplan_status'])) {
-					continue 1;
+			foreach ($patients as $patient) {
+				// careplan status stuff from 2.x
+				$careplanStatus = $patient->carePlanStatus;
+				$careplanStatusLink = '';
+				$approverName = 'NA';
+				if ($patient->carePlanStatus  == 'provider_approved') {
+					$approverId = $patient->carePlanProviderApprover;
+					$approver = User::find($approverId);
+					if($approver) {
+						$approverName = $approver->fullName;
+						$careplanStatus = 'Approved';
+						$careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
+						$tooltip = $approverName . ' ' . $patient->carePlanProviderDate;
+					}
+				} else if ($patient->carePlanStatus == 'qa_approved') {
+					$careplanStatus = 'Approve Now';
+					$tooltip = $careplanStatus;
+					$careplanStatusLink = 'Approve Now';
+					if ($patient->hasRole('provider')) {
+						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '/manage-patients/patient-care-plan/?user=' . $patient->ID . '"><strong>Approve Now</strong></a>';
+					}
+				} else if ($patient->carePlanStatus == 'draft') {
+					$careplanStatus = 'CLH Approve';
+					$tooltip = $careplanStatus;
+					$careplanStatusLink = 'CLH Approve';
+					if ($patient->hasRole('care-center', 'administrator')) {
+						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '/manage-patients/add-patient/?user=' . $patient->ID . '"><strong>CLH Approve</strong></a>';
+					}
 				}
-				$careplan_status = $userMeta['careplan_status'];
-				// patient approval counts
-				if(Auth::user()->hasRole(['administrator', 'care-center'])) {
-					// care-center and administrator counts number of drafts
-					if ($careplan_status == 'draft') {
-						$p++;
-					}
-				} else if(Auth::user()->hasRole(['provider'])) {
-					// provider counts number of drafts
-					if ($careplan_status == 'qa_approved') {
-						$p++;
-					}
 
+				// get date of last observation
+				$lastObservationDate = '';
+				$lastObservation = $patient->observations()->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->first();
+				if(!empty($lastObservation)) {
+					$lastObservationDate = date("m/d/Y", strtotime($lastObservation->obs_date));
 				}
+
+				$patientData[] = array('key' => $patient->ID, // $part->ID,
+					'patient_name' => $patient->fullNameWithId, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
+					'first_name' => $patient->firstName, //$meta[$part->ID]["first_name"][0],
+					'last_name' => $patient->lastName, //$meta[$part->ID]["last_name"][0],
+					'ccm_status' => $patient->ccmStatus, //ucfirst($meta[$part->ID]["ccm_status"][0]),
+					'careplan_status' => $careplanStatus, //$careplanStatus,
+					'tooltip' => $tooltip, //$tooltip,
+					'careplan_status_link' => $careplanStatusLink, //$careplanStatusLink,
+					'careplan_provider_approver' => $approverName, //$approverName,
+					'dob' => $patient->birthDate, //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
+					'phone' => $patient->phone, //$user_config[$part->ID]["study_phone_number"],
+					'age' => $patient->age,
+					'reg_date' => $patient->registrationDate, //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
+					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
+					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
+					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
+				);
 			}
-		}
-		$pendingApprovals = $p;
-
-
-
-
-		$patientData = array();
-		foreach ($patients as $patient) {
-			$patientData[] = array('key'=> $patient->ID, // $part->ID,
-				'patient_name'=> $patient->ID, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
-				'first_name'=> $patient->firstName, //$meta[$part->ID]["first_name"][0],
-				'last_name'=> $patient->lastName, //$meta[$part->ID]["last_name"][0],
-				'ccm_status'=> $patient->fullName, //ucfirst($meta[$part->ID]["ccm_status"][0]),
-				'careplan_status'=> 'uk', //$careplanStatus,
-				'tooltip'=> 'uk', //$tooltip,
-				'careplan_status_link'=> 'uk', //$careplanStatusLink,
-				'careplan_provider_approver'=> 'uk', //$approverName,
-				'dob'=> 'uk', //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
-				'phone' => 'uk', //$user_config[$part->ID]["study_phone_number"], 'age' => $age,
-				'reg_date' => 'uk', //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
-				'last_read' => 'uk', //date("m/d/Y", strtotime($last_read)),
-				'ccm_time' => 'uk', //$ccm_time[0],
-				'ccm_seconds' => 'uk', //$meta[$part->ID]['cur_month_activity_time'][0]
-			);
 		}
 		$patientJson = json_encode($patientData);
 
 
 
 		return view('wpUsers.patient.listing', compact(['pendingApprovals', 'patientJson']));
+	}
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @return Response
+	 */
+	public function showPatientSelect(Request $request)
+	{
+		// get number of approvals
+		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+			->with('meta')->whereHas('roles', function($q) {
+				$q->where('name', '=', 'participant');
+			})->get()->lists('fullNameWithId', 'ID');
+		$p=0;
+
+
+
+		return view('wpUsers.patient.select', compact(['patients']));
+	}
+
+	/**
+	 * Process the specified resource.
+	 *
+	 * @return Response
+	 */
+	public function processPatientSelect(Request $request)
+	{
+		$params = $request->all();
+		if (!empty($params)) {
+			if (isset($params['findUser'])) {
+				$user = User::find($params['findUser']);
+				if($user) {
+					return redirect()->route('patient.summary', [$params['findUser']]);
+				}
+			}
+		}
+		return redirect()->route('patient.dashboard', [$params['findUser']]);
 	}
 
 	/**

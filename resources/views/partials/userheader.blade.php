@@ -4,14 +4,14 @@
             <p class="text-medium clearfix">
                 <span class="pull-left">Patient Name:</span><a href="#"><span class="pull-right">{{
                 date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
-                 }} Time: {{$patient->getMonthlyTime()}}</span></a></p>
+                 }} Time: {{$patient->monthlyTime}}</span></a></p>
             <a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}">
-                <span class="person-name text-big text-dark text-serif" title="400">{{$patient->getFullNameAttribute()}}</span></a>
+                <span class="person-name text-big text-dark text-serif" title="400">{{$patient->fullName}}</span></a>
             <ul class="person-info-list inline-block text-medium">
-                <li class="inline-block">DOB: {{$patient->getDOB()}}</li>
-                <li class="inline-block">{{$patient->getGender()}}</li>
-                <li class="inline-block">{{$patient->getAge()}} yrs</li>
-                <li class="inline-block">{{$patient->getPhone()}}</li>
+                <li class="inline-block">DOB: {{$patient->birthDate}}</li>
+                <li class="inline-block">{{$patient->gender}}</li>
+                <li class="inline-block">{{$patient->age}} yrs</li>
+                <li class="inline-block">{{$patient->phone}}</li>
             </ul>
         </div>
     </div>

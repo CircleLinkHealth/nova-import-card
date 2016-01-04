@@ -34,8 +34,8 @@ class UserRepository {
         $this->saveOrUpdatePrograms($wpUser, $params);
         $this->createDefaultCarePlan($wpUser, $params);
 
+        //dd($wpUser);
         $wpUser->push();
-
         return $wpUser;
     }
 
@@ -102,20 +102,20 @@ class UserRepository {
 
     public function saveOrUpdatePrograms(User $wpUser, ParameterBag $params)
     {
-        // return if form doesnt contain program editor
-        if(!$params->get('programs') && ($wpUser->programs->count() > 0)) {
-            return true;
-        }
-
         // get selected programs
-        $userPrograms = $params->get('programs');
-        if(!$userPrograms) {
-            $userPrograms = $wpUser->programs()->lists('blog_id');
+        $userPrograms = array();
+        if($params->get('programs')) { // && ($wpUser->programs->count() > 0)
+            $userPrograms = $params->get('programs');
         }
         if($params->get('program_id')) {
             if(!in_array($params->get('program_id'), $userPrograms)) {
                 $userPrograms[] = $params->get('program_id');
             }
+        }
+
+        // if still empty at this point, no program_id or program param
+        if(empty($userPrograms)) {
+            return true;
         }
 
         // get role

@@ -73,61 +73,11 @@ class NotesController extends Controller
         $activities_data_with_users = array();
         $activities_data_with_users[$patientId] = $acts;
 
-//			$reportData[$patientId] = array();
         $reportData[$patientId] = array();
         foreach ($activities_data_with_users as $patientAct) {
-            //debug($patientAct);
             $reportData[] = collect($patientAct)->groupBy('performed_at_year_month');
-            //$reportData[$patientAct[0]['patient_id']]getActivityCommentFromMeta($id)
         }
-//        foreach ($reportData as $user_id => $date_month) {
-//            foreach ($date_month as $month => $user_activities) {
-//                $i = 0;
-//                foreach ($user_activities as $user_activity) {
-//
-//                    $activity_json[$i] = $user_activity;
-//
-//                    $activity_json[$i]['comment'] = $user_activity['comment'];
-//
-//                    // logger details
-//                    $logger_user = User::find($user_activity['logger_id']);
-//                    $logger_name = $logger_user->getFullNameAttribute();
-//                    $activity_json[$i]['logger_name'] = $logger_name;
-//
-//                    // provider details
-//                    if ($user_activity['provider_id'] == $user_activity['logger_id']) {
-//                        $activity_json[$i]['provider_name'] = $logger_name;
-//                    } else {
-//                        $provider_user = User::find($user_activity['provider_id']);
-//                        $provider_name = $provider_user->getFullNameAttribute();
-//                        $activity_json[$i]['provider_name'] = $provider_name;
-//                    }
-//
-//                    // Type
-//                    if ($user_activity['logged_from'] == 'note') {
-//                        $activity_json[$i]['note_type'] = 'Note';
-//                    } else {
-//                        $activity_json[$i]['note_type'] = 'Offline Activity';
-//                    }
-//
-//                    // date format
-//                    if ($user_activity['logged_from'] == 'manual_input') {
-//                        $activity_json[$i]['performed_at_date'] = date('m-d-y h:i:s A', strtotime($user_activity['performed_at']));
-//                    } else {
-//                        $activity_json[$i]['performed_at_date'] = date('m-d-y', strtotime($user_activity['performed_at']));
-//                    }
-//
-//                    // type name
-//                    foreach (Activity::input_activity_types() as $abbrev => $activity_type) {
-//                        if ($user_activity['type'] == $abbrev) {
-//                            $activity_json[$i]['type_name'] = $user_activity['type'];
-//                            // echo '<pre>'; var_export($activity_json[$i]['logged_from']);echo '</pre>';
-//                        }
-//                    }
-//                    $i++;
-//                }
-//            }
-//        }
+
         for($i = 0; $i < count($patientAct) - 1; $i++){
             $logger_user = User::find($patientAct[$i]['logger_id']);
             if($logger_user){
@@ -149,7 +99,7 @@ class NotesController extends Controller
         }
 
         $months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-
+        debug($reportData);
 
         return view('wpUsers.patient.note.index',
             ['activity_json' => $reportData,
@@ -186,7 +136,7 @@ class NotesController extends Controller
 
             //careteam
             $careteam_info = array();
-            $careteam_ids = $wpUser->getCareTeamIDs();
+            $careteam_ids = $wpUser->careTeam;
             foreach ($careteam_ids as $id) {
                 $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
             }
@@ -206,7 +156,7 @@ class NotesController extends Controller
                 'note_types' => Activity::input_activity_types(),
                 'provider_info' => $provider_info,
                 'careteam_info' => $careteam_info,
-                'userTimeZone' => $wpUser->getUserTimeZone()
+                'userTimeZone' => $wpUser->timeZone
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
@@ -267,9 +217,33 @@ class NotesController extends Controller
      * @param  int $id
      * @return Response
      */
-    public function show($id)
+    public function show(Request $input, $patientId, $noteId)
     {
-        //
+        $patient = User::find($patientId);
+        $note_act =Activity::find($noteId);
+        $metaComment = $note_act->getActivityCommentFromMeta($noteId);
+        $phone = DB::table('activitymeta')->where('activity_id',$noteId)->where('meta_key','phone')->pluck('meta_value');
+
+        //Set up note pack for view
+        $note = array();
+        if($phone){
+            $note['phone'] = $phone;
+        }
+        $note['type'] = $note_act->type;
+        $note['performed_at'] = $note_act->performed_at;
+        $note['provider_name'] = (User::find($note_act->provider_id)->getFullNameAttribute());
+        $note['comment'] = $metaComment;
+
+        $careteam_info = array();
+        $careteam_ids = $patient->careTeam;
+        foreach ($careteam_ids as $id) {
+            $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
+        }
+
+        $view_data = ['note' => $note, 'userTimeZone' => $patient->timeZone,'careteam_info' => $careteam_info, 'patient' => $patient,'program_id' => $patient->blogId()];
+
+        debug($note);
+        return view('wpUsers.patient.note.view', $view_data);
     }
 
     /**

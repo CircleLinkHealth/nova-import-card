@@ -9,6 +9,7 @@ use App\Services\ActivityService;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -57,7 +58,7 @@ class ActivityController extends Controller {
 
 			//careteam
 			$careteam_info = array();
-			$careteam_ids = $wpUser->getCareTeamIDs();
+			$careteam_ids = $wpUser->careTeam;
 			foreach ($careteam_ids as $id) {
 				$careteam_info[$id] = User::find($id)->getFullNameAttribute();;
 			}
@@ -77,7 +78,7 @@ class ActivityController extends Controller {
 				'activity_types' => Activity::input_activity_types(),
 				'provider_info' => $provider_info,
 				'careteam_info' => $careteam_info,
-				'userTimeZone' => $wpUser->getUserTimeZone()
+				'userTimeZone' => $wpUser->timeZone
 			];
 
 			return view('wpUsers.patient.activity.create', $view_data);
@@ -157,11 +158,9 @@ class ActivityController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show(Request $request, $id)
+	public function show(Request $request, $actId)
 	{
-		if ( $request->header('Client') == 'ui' ) // WP Site
-		{
-			$activity = Activity::findOrFail($id);
+			$activity = Activity::findOrFail($actId);
 
 			//extract and attach the 'comment' value from the ActivityMeta table
 			$metaComment = $activity->getActivityCommentFromMeta($id);
@@ -174,18 +173,8 @@ class ActivityController extends Controller {
 
 			$activity['comment'] = $metaComment;
 			$activity['message'] = 'OK';
-			$json = Array();
-			$json['body'] = $activity;
-			$json['message'] = 'OK';
-			return response(Crypt::encrypt(json_encode($json)));
-		} else {
-			$activity = Activity::find($id);
-			if($activity) {
-				return view('activities.show', ['activity' => $activity]);
-			} else {
-				return response("Activity not found", 401);
-			}
-        }
+
+
     }
 
 
@@ -251,4 +240,63 @@ class ActivityController extends Controller {
 		//
 	}
 
+	public function providerUIIndex(Request $request, $patientId)
+	{
+		$patient = User::find($patientId);
+		$input = $request->all();
+
+		if (isset($input['selectMonth'])) {
+			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+			$start = $time->startOfMonth()->format('Y-m-d');
+			$end = $time->endOfMonth()->format('Y-m-d');
+			$month_selected = $time->format('m');
+		} else {
+			$time = Carbon::now();
+			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
+			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
+			$month_selected = $time->format('m');
+		}
+
+		$acts = DB::table('activities')
+			->select(DB::raw('id,provider_id,logged_from,DATE(performed_at), type, duration'))
+			->whereBetween('performed_at', [
+				$start, $end
+			])
+			->where('patient_id', $patientId)
+			->where(function ($q) {
+				$q->where('logged_from', 'activity')
+					->Orwhere('logged_from', 'manual_input');
+			})
+			->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+			->orderBy('performed_at', 'desc')
+			->get();
+
+		$acts = json_decode(json_encode($acts), true);
+
+		foreach ($acts as $key => $value) {
+			$provider = User::find($acts[$key]['provider_id']);
+			$acts[$key]['provider_name'] = $provider->getFullNameAttribute();
+			unset($acts[$key]['provider_id']);
+		}
+
+		if ($acts) {$data = true;} else {$data = false;}
+
+		$reportData = "data:" . json_encode($acts) . "";
+
+		$years = array();
+		for ($i = 0; $i < 3; $i++) {
+			$years[] = Carbon::now()->subYear($i)->year;
+		}
+
+		$months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+		debug($reportData);
+		return view('wpUsers.patient.activity.index',
+			['activity_json' => $reportData,
+				'years' => array_reverse($years),
+				'month_selected' => $month_selected,
+				'months' => $months,
+				'patient' => $patient,
+				'data' => $data
+			]);
+		}
 }
