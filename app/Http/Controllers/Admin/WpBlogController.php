@@ -180,7 +180,14 @@ class WpBlogController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		//
+		// find program
+		$program = WpBlog::find($id);
+		if(!$program) {
+			abort(400);
+		}
+
+		$program->delete();
+		return redirect()->back()->with('messages', ['successfully removed program'])->send();
 	}
 
 }

@@ -8,6 +8,7 @@
                     <div class="col-sm-8">
                         <h1>Programs</h1>
                     </div>
+                    @include('errors.errors')
                     @if(Entrust::can('programs-manage'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
@@ -36,7 +37,7 @@
                                 <td>{{ $wpBlog->blog_id }}</td>
                                 <td>{{ $wpBlog->registered }}</td>
                                 <td><a href="{{ URL::route('admin.programs.edit', array('id' => $wpBlog->blog_id)) }}" class="btn btn-info">Edit</a></td>
-                                <td><a href="{{ URL::route('admin.programs.edit', array('id' => $wpBlog->blog_id)) }}" class="btn btn-warning">Remove</a></td>
+                                <td><a href="{{ URL::route('admin.programs.destroy', array('id' => $wpBlog->blog_id)) }}" class="btn btn-warning">Remove</a></td>
                             </tr>
                         @endforeach
                         </tbody>
