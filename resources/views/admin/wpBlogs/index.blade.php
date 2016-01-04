@@ -11,7 +11,7 @@
                     @if(Entrust::can('programs-manage'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
-                                <a href="{{ URL::route('admin.programs.create', array()) }}" class="btn btn-success" disabled="disabled">New Program</a>
+                                <a href="{{ URL::route('admin.programs.create', array()) }}" class="btn btn-success">New Program</a>
                             </div>
                         </div>
                     @endif
