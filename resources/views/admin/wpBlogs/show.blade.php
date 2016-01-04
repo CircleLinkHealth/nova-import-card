@@ -1,7 +1,6 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>
     <style>
         .form-group {
             margin:20px;

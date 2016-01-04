@@ -1,7 +1,6 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>
     <style>
         .form-group {
             margin:20px;
@@ -26,28 +25,26 @@
                     <div class="panel-body">
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.programs.update', array('id' => $program->blog_id)), 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.programs.store', array()), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::submit('Update Program', array('class' => 'btn btn-success')) !!}
-                                    </form>
+                                    {!! Form::submit('Add Program', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>
 
-                        <h2>Program - {{ $program->domain }}</h2>
-                        <p>Program Info</p>
+                        <h2>New Program</h2>\
 
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-1">{!! Form::label('domain', 'Domain:') !!}</div>
-                                <div class="col-xs-5">{!! Form::text('domain', $program->domain, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                <div class="col-xs-5">{!! Form::text('domain', '', ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                 <div class="col-xs-2">{!! Form::label('location_id', 'Location:') !!}</div>
-                                <div class="col-xs-4">{!! Form::select('location_id', $locations, $program->location_id, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                <div class="col-xs-4">{!! Form::select('location_id', $locations, '', ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                             </div>
                         </div>
 
@@ -57,7 +54,7 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::submit('Update Program', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Add Program', array('class' => 'btn btn-success')) !!}
                                     </form>
                                 </div>
                             </div>

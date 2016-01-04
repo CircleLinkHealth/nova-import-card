@@ -38,7 +38,12 @@ class WpBlogController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		//
+
+		$messages = \Session::get('messages');
+
+		$locations = Location::orderBy('id', 'desc')->lists('name', 'id');
+
+		return view('admin.wpBlogs.create', compact([ 'locations', 'errors', 'messages' ]));
 	}
 
 	/**
@@ -46,12 +51,28 @@ class WpBlogController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Request $request)
 	{
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		//
+
+		// get params
+		$params = $request->input();
+
+		$program = new WpBlog;
+		$program->location_id = $params['location_id'];
+		$program->domain = $params['domain'];
+		$program->site_id = 1;
+		$program->path = '/';
+		$program->public = 0;
+		$program->archived = 0;
+		$program->mature = 0;
+		$program->spam = 0;
+		$program->deleted = 0;
+		$program->lang_id = 0;
+		$program->save();
+		return redirect()->route('admin.programs.edit', ['program' => $program])->with('messages', ['successfully created new program'])->send();
 	}
 
 	/**
