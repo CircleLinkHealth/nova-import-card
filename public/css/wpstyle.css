@@ -9817,6 +9817,10 @@ a:hover .icon--menu {
   background-repeat: no-repeat;
 }
 
+.icon--list-patient--big {
+  background-image: url('../img/ui/list-patient-icon--big.png');
+  background-repeat: no-repeat; }
+
 .icon--alert {
   background-image: url('../img/ui/alert-icon.png');
   background-repeat: no-repeat;
