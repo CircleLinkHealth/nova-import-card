@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Support\Facades\App;
 use MikeMcLin\WpPassword\Facades\WpPassword;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Auth;
@@ -270,6 +271,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function getCareTeamAttribute() {
 		$userConfig = $this->userConfig();
 		return $userConfig['care_team'];
+	}
+
+	public function getBillingProviderIDAttribute() {
+			$userConfig = $this->userConfig();
+			return $userConfig['billing_provider'];
+	}
+
+	public function getPreferredLocationName() {
+			$userConfig = $this->userConfig();
+		$location = Location::find($userConfig['preferred_contact_location']);
+		return $location->name;
+	}
+
+	public function getLeadContactIDAttribute() {
+		$userConfig = $this->userConfig();
+		return $userConfig['lead_contact'];
 	}
 
 	public function getCarePlanQAApproverAttribute() {
