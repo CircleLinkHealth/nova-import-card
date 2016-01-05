@@ -50,14 +50,14 @@
         <div class="navbar-right hidden-xs ">
             <ul class="nav navbar-nav">
                 {{--URL::route('patients.dashboard', array())--}}
-                @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
-                    <li><a class="btn btn-primary btn-xs" href="{{ URL::route('admin.dashboard') }}"><i class="icon--home--white"></i> Admin</a></li>
-                @endif
                 <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
                 <li><a href="{{ URL::route('patients.select') }}"><i class="icon--search--white"></i> Select Patient</a></li>
                 <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a></li>
                 <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add Patient</a></li>
                 <li><a href="{{ URL::route('patients.alerts') }}"><i class="icon--alert--white"></i> Alerts</a></li>
+                @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+                    <li><a class="btn btn-primary btn-xs" href="{{ URL::route('admin.dashboard') }}"><i class="icon--home--white"></i> Admin</a></li>
+                @endif
                 <li><a href="{{ url('/auth/logout') }}"><i class="icon--logout"></i> Logout</a></li>
             </ul>
         </div><!-- /navbar-collapse -->
