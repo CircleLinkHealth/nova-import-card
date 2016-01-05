@@ -51,6 +51,7 @@
                 {{--URL::route('patients.dashboard', array())--}}
                 <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
                 <li><a href="{{ URL::route('patients.select') }}"><i class="icon--search--white"></i> Select Patient</a></li>
+                <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a></li>
                 <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add Patient</a></li>
                 <li><a href="{{ URL::route('patients.alerts') }}"><i class="icon--alert--white"></i> Alerts</a></li>
                 @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
@@ -121,7 +122,7 @@
                         <a href="{{ empty($patient) ? '' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">Patient Billing Report</a>
                     </li>
                     <li>
-                        <a href="{{ URL::route('patients.listing') }}">Patient Listing</a>
+                        <a href="">Patient Care Plan Print List</a>
                     </li>
                 </ul>
             </li>
