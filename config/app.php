@@ -158,7 +158,7 @@ return [
 		 * CPM Providers
 		 */
 		'Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider',
-		'Franzose\ClosureTable\ClosureTableServiceProvider',
+		//'Franzose\ClosureTable\ClosureTableServiceProvider',
 		'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
 		'Barryvdh\Cors\ServiceProvider',
 		'Collective\Html\HtmlServiceProvider',
