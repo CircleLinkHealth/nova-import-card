@@ -11,6 +11,7 @@ class CreateRevisionsTable2 extends Migration
      */
     public function up()
     {
+        /*
         Schema::create('revisions', function ($table) {
             $table->increments('id');
             $table->string('revisionable_type');
@@ -23,6 +24,7 @@ class CreateRevisionsTable2 extends Migration
 
             $table->index(array('revisionable_id', 'revisionable_type'));
         });
+        */
     }
 
     /**
@@ -32,6 +34,6 @@ class CreateRevisionsTable2 extends Migration
      */
     public function down()
     {
-        Schema::drop('revisions');
+        //Schema::drop('revisions');
     }
 }
