@@ -67,27 +67,28 @@ class CustomUserProvider implements UserProvider {
             return response('Password not provided', 422);
         }
 
+        if ($user->user_email != $credentials['email']) {
+            return false;
+        }
+
         /*
          * Migrating Passwords from WP
          *
          * If the User has a WP password, a new hash will be created using Laravel's method
          * and it will be saved in the password field.
          */
-        if(WpPassword::check($plain_password, $password_hashed)) {
 
-            $hash = \Hash::make($plain_password);
-            $user->user_pass = $hash;
-            $user->password = $hash;
+        //Get rid of this when we phase WP out.
+        if(WpPassword::check($plain_password, $password_hashed)) {
+            $user->password = \Hash::make($plain_password);
             $user->save();
             return true;
-        } else {
-            if ($user->user_email == $credentials['email']) {
-                if (\Hash::check($plain_password, $user->password)) {
-                    return true;
-                }
-            }
-            return false;
         }
+
+        if (\Hash::check($plain_password, $user->password)) {
+            return true;
+        }
+        return false;
     }
 
     protected function dummyUser()
