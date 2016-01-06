@@ -39,6 +39,7 @@ class UserController extends Controller {
 	 */
 	public function index(Request $request)
 	{
+		$messages = \Session::get('messages');
 		if(!Auth::user()->can('users-view-all')) {
 			abort(403);
 		}
@@ -133,7 +134,7 @@ class UserController extends Controller {
 			$wpUsers = $wpUsers->paginate(20);
 			$invalidUsers = array();
 
-			return view('wpUsers.index', compact(['wpUsers', 'users', 'filterUser', 'programs', 'filterProgram', 'roles', 'filterRole', 'invalidUsers', 'queryString']));
+			return view('wpUsers.index', compact(['messages', 'wpUsers', 'users', 'filterUser', 'programs', 'filterProgram', 'roles', 'filterRole', 'invalidUsers', 'queryString']));
 		}
 
 	}
@@ -436,7 +437,7 @@ class UserController extends Controller {
 			return response("User not found", 401);
 		}
 
-		$user->programs()->detach();
+		//$user->programs()->detach();
 		$user->delete();
 
 		return redirect()->back()->with('messages', ['successfully deleted user']);
