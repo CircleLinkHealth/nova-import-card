@@ -336,7 +336,7 @@
                                 </div>
                             </div>
 
-                            <div role="tabpanel" class="tab-pane active" id="revisions">
+                            <div role="tabpanel" class="tab-pane" id="revisions">
                                 @include('partials.revisions')
                             </div>
                         </div>

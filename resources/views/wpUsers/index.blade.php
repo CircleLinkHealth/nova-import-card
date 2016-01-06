@@ -62,9 +62,7 @@
                                 <td><strong>Role</strong></td>
                                 <td><strong>Name</strong></td>
                                 <td><strong>user_email</strong></td>
-                                <td><strong>status</strong></td>
-                                <td><strong>display_name</strong></td>
-                                <td><strong>blog</strong></td>
+                                <td><strong>program</strong></td>
                             </tr>
                             </thead>
                             <tbody>
@@ -93,8 +91,6 @@
                                         </td>
                                         <td>{{ $wpUser->fullName }}</td>
                                         <td>{{ $wpUser->user_email }}</td>
-                                        <td>{{ $wpUser->user_status }}</td>
-                                        <td>{{ $wpUser->display_name }}</td>
                                         <td>{{ $wpUser->program_id }}</td>
                                         <td>
                                             @if(Entrust::can('users-edit-all'))
