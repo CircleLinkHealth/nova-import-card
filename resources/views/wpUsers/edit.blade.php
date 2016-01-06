@@ -16,8 +16,6 @@
                     </div>
                     <div class="panel-body">
 
-                        @include('partials.revisions')
-
                         @include('errors.errors')
 
                         <div class="row">
@@ -49,6 +47,7 @@
                             <li role="presentation" class="active"><a href="#program" aria-controls="program" role="tab" data-toggle="tab">User Info</a></li>
                             <li role="presentation"><a href="#userconfig" aria-controls="userconfig" role="tab" data-toggle="tab">User Config</a></li>
                             <li role="presentation"><a href="#usercareteam" aria-controls="usercareteam" role="tab" data-toggle="tab">Care Team</a></li>
+                            <li role="presentation"><a href="#revisions" aria-controls="revisions" role="tab" data-toggle="tab">History</a></li>
                         </ul>
 
                         <div class="tab-content">
@@ -335,6 +334,10 @@
                                         <div class="col-xs-10">{!! Form::text('lead_contact', $userConfig['lead_contact'], ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div role="tabpanel" class="tab-pane active" id="revisions">
+                                @include('partials.revisions')
                             </div>
                         </div>
 
