@@ -63,6 +63,10 @@ class WpBlogController extends Controller {
 		$program = new WpBlog;
 		$program->location_id = $params['location_id'];
 		$program->domain = $params['domain'];
+		$program->name = $params['name'];
+		$program->display_name = $params['display_name'];
+		$program->short_display_name = $params['short_display_name'];
+		$program->description = $params['description'];
 		$program->site_id = 1;
 		$program->path = '/';
 		$program->public = 0;
@@ -165,6 +169,10 @@ class WpBlogController extends Controller {
 		$params = $request->input();
 		$program->location_id = $params['location_id'];
 		$program->domain = $params['domain'];
+		$program->name = $params['name'];
+		$program->display_name = $params['display_name'];
+		$program->short_display_name = $params['short_display_name'];
+		$program->description = $params['description'];
 		$program->save();
 		return redirect()->back()->with('messages', ['successfully updated program']);
 	}

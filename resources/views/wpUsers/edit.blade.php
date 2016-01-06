@@ -48,6 +48,7 @@
                             <li role="presentation"><a href="#userconfig" aria-controls="userconfig" role="tab" data-toggle="tab">User Config</a></li>
                             <li role="presentation"><a href="#usercareteam" aria-controls="usercareteam" role="tab" data-toggle="tab">Care Team</a></li>
                             <li role="presentation"><a href="#revisions" aria-controls="revisions" role="tab" data-toggle="tab">History</a></li>
+                            <li role="presentation"><a href="#observations" aria-controls="observations" role="tab" data-toggle="tab">Observations</a></li>
                         </ul>
 
                         <div class="tab-content">
@@ -338,6 +339,22 @@
 
                             <div role="tabpanel" class="tab-pane" id="revisions">
                                 @include('partials.revisions')
+                            </div>
+
+                            <div role="tabpanel" class="tab-pane" id="observations">
+                                @if ($wpUser->observations()->count() > 0)
+                                    found {{ $wpUser->observations()->count() }}
+                                @else
+                                    <br><br><em>No observations found for this user</em>
+                                @endif
+                                <h3>Observation Seeding</h3>
+                                    Form here<br>
+                                    date range<br>
+                                    checkboxes of what types, that accordian down to ranges<br>
+                                    velocity up/down option<br>
+                                    can get crazy technical with this :)<br>
+                                    <br>Idea: bulk observation adder, add 10 at once<br><br>
+                                <a href="" class="btn btn-info">Seed Random Observations</a>
                             </div>
                         </div>
 

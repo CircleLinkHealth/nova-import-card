@@ -39,12 +39,33 @@
 
                         <div class="form-group">
                             <div class="row">
-                                <div class="col-xs-1"><strong>Domain:</strong></div>
-                                <div class="col-xs-5">{!! $program->domain !!}</div>
-                                <div class="col-xs-2"><strong>Location:</strong></div>
-                                <div class="col-xs-4">
-                                    {{ $program->location ? $program->location->name.'('.$program->location->id.')' : 'no location' }}
-                                </div>
+                                <div class="col-xs-2">Domain:</div>
+                                <div class="col-xs-10">{!! $program->domain !!}</div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">Location:</div>
+                                <div class="col-xs-4">{!! $program->location_id !!}</div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">Display Name:</div>
+                                <div class="col-xs-10">{!! $program->display_name !!}</div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">Unique Name:</div>
+                                <div class="col-xs-10">{!! $program->name !!}</div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">Short Display Name:</div>
+                                <div class="col-xs-10">{!! $program->short_display_name !!}</div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
+                                <div class="col-xs-2">Description:</div>
+                                <div class="col-xs-10">{{ $program->description }}</div>
                             </div>
                         </div>
 
