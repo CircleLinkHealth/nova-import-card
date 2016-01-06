@@ -29,6 +29,8 @@ class NotesController extends Controller
 
         $patient = User::find($patientId);
         $input = $request->all();
+        $messages = \Session::get('messages');
+
 
         if (isset($input['selectMonth'])) {
             $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
@@ -107,6 +109,7 @@ class NotesController extends Controller
                 'month_selected' => $month_selected,
                 'months' => $months,
                 'patient' => $patient,
+                'messages' => $messages,
                 'data' => $data
             ]);
 
@@ -205,10 +208,10 @@ class NotesController extends Controller
             $result = $activitySer->sendNoteToCareTeam($input['careteam'], $linkToNote, $input['performed_at'], $input['patient_id'], $logger_name, true);
 
             if ($result) {
-                return response("Successfully Created And Note Sent", 202);
-            } else return response("Unable to send emails", 401);
+                return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created And Note Sent']);
+            } else return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Unable To Send Emails.']);
 
-        } else return response("Successfully Created", 201);
+        } return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
 
     /**

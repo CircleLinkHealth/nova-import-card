@@ -1,8 +1,11 @@
 @extends('partials.providerUI')
 @section('content')
     <div class="row" style="margin-top:60px;">
+        <div class="panel-body col-lg-8 col-lg-offset-2">
+            @include('errors.errors')
+        </div>
         <div class="main-form-container col-lg-8 col-lg-offset-2">
-            <div class="row">
+            <div class="row" style="border-bottom: 3px solid #50b2e2;">
                 <div class="main-form-title">
                     Notes / Offline Activities
                 </div>
@@ -12,6 +15,7 @@
                        class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                         NOTE</a><br>
                 </div>
+                <div class="row">
                 {!! Form::open(array('url' => URL::route('patient.note.index', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                 <div class="form-group  pull-right" style="margin-top:10px;">
                     <i class="icon icon--date-time"></i>
@@ -40,6 +44,8 @@
                     </div>
                 </div>
                 {!! Form::close() !!}
+                </div>
+                
 
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                     @if($data)

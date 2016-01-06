@@ -104,7 +104,11 @@ class Activity extends Model {
     {
         $comment = DB::table('activitymeta')->where('activity_id',$id)->where('meta_key','comment')->pluck('meta_value');
 
+        if($comment){
         return $comment;
+        } else {
+            return false;
+        }
     }
 
 

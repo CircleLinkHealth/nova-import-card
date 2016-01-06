@@ -1,5 +1,4 @@
 @extends('partials.providerUI')
-
 @section('content')
     <?php
     $userTime = \Carbon\Carbon::now();
@@ -9,12 +8,14 @@
     $userTime = $userTime->format('Y-m-d\TH:i');
     $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
     ?>
-
     <div class="row" style="margin-top:60px;">
+        <div class="panel-body col-lg-8 col-lg-offset-2">
+            @include('errors.errors')
+        </div>
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title col-lg-12">
-                    View Note
+                    View Offline Activity
                 </div>
                 @include('partials.userheader')
 
@@ -99,7 +100,7 @@
                 <div class="form-group">
                     <div class="col-sm-12">
                         <input type="hidden" name="meta[0][meta_key]" value="comment">
-                        <textarea readonly class="form-control" placeholder="Enter Comment..." name="meta[0][meta_value]">er</textarea>
+                        <textarea readonly class="form-control" placeholder="Enter Comment..." name="meta[0][meta_value]">{{$activity['comment']}}</textarea>
                     </div>
                 </div>
             </div>

@@ -111,6 +111,9 @@ class ReportsController extends Controller {
 		//Medication Tracking:
 		$medications = (new ReportsService())->medicationStatus($user);
 
+		$provider_data = array();
+
+
 		$data = [
 			'treating' => $treating,
 			'patientId'	=> $patientId,

@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+<?php
+$today = \Carbon\Carbon::now()->toFormattedDateString();
+?>
 @section('content')
     <div class="container">
         <section class="patient-summary">
@@ -17,9 +20,9 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-md-4 print-row text-bold">!!Issac Newton</div>
-            <div class="col-xs-12 col-md-4 print-row">999-999-9999</div>
-            <div class="col-xs-12 col-md-3 print-row">12/16/2015</div>
+            <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->getFullNameAttribute()}}</div>
+            <div class="col-xs-12 col-md-4 print-row">{{$patient->getPhoneAttribute()}}</div>
+            <div class="col-xs-12 col-md-3 print-row">{{$today}}</div>
         </div>
         <div class="row">
             <div class="col-xs-12 col-md-4 print-row text-bold"> Linda Warshavsky </div>
@@ -131,7 +134,7 @@
                                     xAxis:{
                                         template:"#Week#",
                                         step:2,
-                                        title: "Week",
+                                        title: "Week"
                                     },
                                     yAxis:{
                                         start:40,                                                                                                step:20,                                                // title: "Reading",

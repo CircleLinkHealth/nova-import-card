@@ -1,8 +1,8 @@
 @extends('partials.providerUI')
 @section('content')
-    <div class="row" style="margin-top:60px;">
+    <div class="row" style="margin-top:60px; border-bottom:0px, solid, #50b2e2;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
-            <div class="row">
+            <div class="row" >
                 <div class="main-form-title">
                     Under 20 Minute Report
                 </div>
@@ -94,13 +94,12 @@
                                         fillspace: true,
                                         width: 100,
                                         sort:'string'
-//                                        ,template: function (obj, common) {
-//                                            if (obj.$group) return common.treetable(obj, common) + obj.value; // Grouped by Patient button
-//                                            return '<a href="#"></a>';
-//                                            //Grouped by Patient button row text
-//                                            // return obj.patient_name; //Grouped by Patient button row text
-//                                            // return 'By Patient';//obj.patient_name; //Grouped by Patient button row text
-//                                        }
+//                                        ,template: function (obj) {
+                                            //return '<a href=\"{{URL::route('patient.summary', array('patient' => $patient->ID)) }}\">' + obj.patient_name+ '</a>';
+                                            //Grouped by Patient button row text
+                                            // return obj.patient_name; //Grouped by Patient button row text
+                                            // return 'By Patient';//obj.patient_name; //Grouped by Patient button row text
+
                                     },
                                     {
                                         id: "patient_status_ccm",
