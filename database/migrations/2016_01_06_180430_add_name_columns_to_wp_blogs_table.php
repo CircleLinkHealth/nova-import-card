@@ -15,7 +15,7 @@ class AddNameColumnsToWpBlogsTable extends Migration {
 		Schema::connection('mysql_no_prefix')->table('wp_blogs', function(Blueprint $table)
 		{
 			if (!Schema::connection('mysql_no_prefix')->hasColumn('wp_blogs', 'name')) {
-				$table->string('name')->after('blog_id');
+				$table->string('name', 100)->after('blog_id');
 				$table->string('display_name')->nullable()->after('name');
 				$table->string('short_display_name')->nullable()->after('display_name');
 				$table->string('description')->nullable()->after('short_display_name');
