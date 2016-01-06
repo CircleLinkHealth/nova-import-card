@@ -44,6 +44,7 @@
 <nav class="navbar primary-navbar">
     <div class="container-fluid">
         <div class="navbar-header">
+            <a href="http://www.circlelinkhealth.com" class="navbar-brand"><img src="/img/ui/clh_logo_lt.png" alt="Care Plan Manager" style="position:relative;top:-15px" width="50px" /></a>
             <a href="" class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
         </div>
         <div class="navbar-right hidden-xs ">
@@ -51,21 +52,13 @@
                 {{--URL::route('patients.dashboard', array())--}}
                 <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
                 <li><a href="{{ URL::route('patients.select') }}"><i class="icon--search--white"></i> Select Patient</a></li>
+                <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a></li>
                 <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add Patient</a></li>
                 <li><a href="{{ URL::route('patients.alerts') }}"><i class="icon--alert--white"></i> Alerts</a></li>
                 @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
-                    <li><a class="btn btn-orange btn-xs" href="{{ URL::route('admin.dashboard') }}"><i class="icon--home--white"></i> Admin</a></li>
-                @elseif (!Auth::guest())
-                    <li>
-                        <a href="">
-                            <i class="icon--logout"></i>Logout</a>
-                    </li>
-                @else
-                    <li>
-                        <a href="">
-                            <i class="icon--logout"></i>Login</a>
-                    </li>
+                    <li><a class="btn btn-primary btn-xs" href="{{ URL::route('admin.dashboard') }}"><i class="icon--home--white"></i> Admin</a></li>
                 @endif
+                <li><a href="{{ url('/auth/logout') }}"><i class="icon--logout"></i> Logout</a></li>
             </ul>
         </div><!-- /navbar-collapse -->
     </div><!-- /container-fluid -->
@@ -121,7 +114,7 @@
                         <a href="{{ empty($patient) ? '' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">Patient Billing Report</a>
                     </li>
                     <li>
-                        <a href="{{ URL::route('patients.listing') }}">Patient Listing</a>
+                        <a href="">Patient Care Plan Print List</a>
                     </li>
                 </ul>
             </li>

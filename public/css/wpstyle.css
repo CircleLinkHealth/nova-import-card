@@ -9740,10 +9740,8 @@ a:hover .icon--menu {
 }
 
 .icon--patients {
-  background-image: url('../img/ui/heart-icon.png');
+  background-image: url('../img/ui/icon--patients.png');
   background-repeat: no-repeat;
-  height: 18px;
-  width: 21px;
 }
 
 .icon--heart--white {
