@@ -179,12 +179,13 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('pagetimer/{id}', ['uses' =>'PageTimerController@show', 'as'=>'admin.pagetimer.show']);
 		Route::get('pagetimer/{id}/edit', ['uses' =>'PageTimerController@edit', 'as'=>'admin.pagetimer.edit']);
 
-		// wpusers
+		// users
 		Entrust::routeNeedsPermission($prefix.'users*', 'users-view-all');
 		Route::get('users', ['uses' =>'UserController@index', 'as'=>'admin.users.index']);
 		Route::post('users', ['uses' =>'UserController@store', 'as'=>'admin.users.store']);
 		Route::get('users/create', ['uses' =>'UserController@create', 'as'=>'admin.users.create']);
 		Route::get('users/{id}/edit', ['uses' =>'UserController@edit', 'as'=>'admin.users.edit']);
+		Route::get('users/{id}/destroy', ['uses' =>'UserController@destroy', 'as'=>'admin.users.destroy']);
 		Route::post('users/{id}/edit', ['uses' =>'UserController@update', 'as'=>'admin.users.update']);
 		Route::get('users/createQuickPatient/{blogId}', ['uses' =>'UserController@createQuickPatient', 'as'=>'admin.users.createQuickPatient']);
 		Route::post('users/createQuickPatient/', ['uses' =>'UserController@storeQuickPatient', 'as'=>'admin.users.storeQuickPatient']);

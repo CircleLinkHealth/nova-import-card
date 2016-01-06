@@ -64,7 +64,7 @@
                             <tr>
                                 <td><strong>ID</strong></td>
                                 <td><strong>Role</strong></td>
-                                <td><strong>user_login</strong></td>
+                                <td><strong>Name</strong></td>
                                 <td><strong>user_email</strong></td>
                                 <td><strong>status</strong></td>
                                 <td><strong>display_name</strong></td>
@@ -95,11 +95,16 @@
                                                 @endif
                                             @endif
                                         </td>
-                                        <td>{{ $wpUser->user_login }}</td>
+                                        <td>{{ $wpUser->fullName }}</td>
                                         <td>{{ $wpUser->user_email }}</td>
                                         <td>{{ $wpUser->user_status }}</td>
                                         <td>{{ $wpUser->display_name }}</td>
                                         <td>{{ $wpUser->program_id }}</td>
+                                        <td>
+                                            @if(Entrust::can('users-edit-all'))
+                                                <a href="{{ URL::route('admin.users.destroy', array('id' => $wpUser->ID)) }}" class="btn btn-danger btn-xs">Delete</a><br />
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             @else

@@ -430,7 +430,16 @@ class UserController extends Controller {
 		if(!Auth::user()->can('users-edit-all')) {
 			abort(403);
 		}
-		//
+
+		$user = User::find($id);
+		if (!$user) {
+			return response("User not found", 401);
+		}
+
+		$user->programs()->detach();
+		$user->delete();
+
+		return redirect()->back()->with('messages', ['successfully deleted user']);
 	}
 
 
