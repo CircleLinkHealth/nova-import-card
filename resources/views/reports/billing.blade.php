@@ -40,6 +40,11 @@
             </div>
             <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                 @if($data)
+                    <input type="button"
+                           value="Group by Provider"
+                           onclick='gby()'>
+                    <!-- <input type="button" value="Group by Patient" onclick='gbyp()'> -->
+                    <input type="button" value="Clear Grouping" onclick='ug()'>
                     <div id="obs_alerts_container" class=""></div><br/>
                     <div id="paging_container"></div><br/>
                     <style>
@@ -93,16 +98,16 @@
                                 header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
                                 width: 140,
                                 sort: 'string',
-//                                template: function (obj, common) {
-//                                if (obj.$group) return common.treetable(obj, common) + obj.value; // Grouped by Provider button
-//                                    return obj.provider; //Grouped by Provider button row text
-//                                }
+                                template: function (obj, common) {
+                                if (obj.$group) return common.treetable(obj, common) + obj.value; // Grouped by Provider button
+                                    return obj.provider_name; //Grouped by Provider button row text
+                                }
                         },
                                 {
                                     id: "patient_name",
                                     header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
                                     fillspace: true,
-                                    width: 100,
+                                    width: 90,
                                     sort:'string'
 //                                        ,template: function (obj, common) {
 //                                            if (obj.$group) return common.treetable(obj, common) + obj.value; // Grouped by Patient button
@@ -113,15 +118,15 @@
 //                                        }
                                 },
                                 {
-                                    id: "patient_status_ccm",
+                                    id: "ccm_status",
                                     header: ["CCM Status", {content: "selectFilter", placeholder: "Filter"}],
                                     width: 110,
                                     sort: 'string'
                                 },
                                 {
-                                    id: "patient_dob",
+                                    id: "dob",
                                     header: ["DOB", {content: "textFilter", placeholder: "Filter"}],
-                                    width: 80,
+                                    width: 105,
                                     sort: 'string'
                                 },
                                 {
@@ -169,7 +174,7 @@
                                 {
                                     id: "colsum_tcc",
                                     header: ["CC", "(Min:Sec)"],
-                                    width: 70,
+                                    width: 50,
                                     sort: 'int',
                                     css: {"color": "black", "text-align": "right"},
                                     format: webix.numberFormat,
@@ -199,6 +204,7 @@
                                 {
                                     id: "colsum_total",
                                     header:["Total", "(Min:Sec)"],
+                                    width: 70,
                                     sort: 'int',
                                     css: {"color": "black", "text-align": "right"},
                                     format: webix.numberFormat,
@@ -214,27 +220,27 @@
                             ready: function () {
                                 this.adjustRowHeight("obs_key");
                             },
-//
-//                            scheme: {
-//                                $group: {
-////											by: "provider",
-////											map: {
-////												colsum_total: ["colsum_total", "sum"],
-////												title: ["provider"]
-////											},
-//                                    by: "patient_name",
-//                                    map: {
-//                                        colsum_total: ["colsum_total", "sum"],
-//                                        title: ["patient_name"]
-//                                    },
-//                                    footer: {
-//                                        colsum_total: ["colsum_total", "sum"],
-//                                        row: function (obj) {
-//                                            return "<span style='float:right;'>Total: " + zeroPad(Math.floor(obj.colsum_total/60),10) + "</span>";
-//                                        }
-//                                    }
-//                                }
-//                            },
+
+                            scheme: {
+                                $group: {
+//											by: "provider",
+//											map: {
+//												colsum_total: ["colsum_total", "sum"],
+//												title: ["provider"]
+//											},
+                                    by: "patient_name",
+                                    map: {
+                                        colsum_total: ["colsum_total", "sum"],
+                                        title: ["patient_name"]
+                                    },
+                                    footer: {
+                                        colsum_total: ["colsum_total", "sum"],
+                                        row: function (obj) {
+                                            return "<span style='float:right;'>Total: " + zeroPad(Math.floor(obj.colsum_total/60),10) + "</span>";
+                                        }
+                                    }
+                                }
+                            },
 
                             /*ready:function(){
                              this.adjustRowHeight("obs_value");
@@ -250,10 +256,10 @@
                         function gby() {
                             obs_alerts_dtable.ungroup();
                             obs_alerts_dtable.group({
-                                by: "provider",
+                                by: "provider_name",
                                 map: {
                                     colsum_total: ["colsum_total", "sum"],
-                                    title: ["provider"]
+                                    title: ["provider_name"]
                                 },
                                 footer: {
                                     colsum_total: ["colsum_total", "sum"],
@@ -266,7 +272,7 @@
                                         return "<span style='float:right;'>Total Time: " + time + "</span>";
                                     }
                                 },
-                                row: "provider"
+                                row: "provider_name"
                             });
                         }
                         function gbyp() {

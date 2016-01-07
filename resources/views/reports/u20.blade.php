@@ -102,13 +102,13 @@
 
                                     },
                                     {
-                                        id: "patient_status_ccm",
+                                        id: "ccm_status",
                                         header: ["CCM Status", {content: "selectFilter", placeholder: "Filter"}],
                                         width: 110,
                                         sort: 'string'
                                     },
                                     {
-                                        id: "patient_dob",
+                                        id: "dob",
                                         header: ["DOB", {content: "textFilter", placeholder: "Filter"}],
                                         width: 110,
                                         sort: 'string'
