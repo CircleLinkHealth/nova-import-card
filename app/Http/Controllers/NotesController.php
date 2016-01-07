@@ -14,6 +14,7 @@ use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Laracasts\Flash\Flash;
 
 /** @todo Move Store and Send note functions from Activity Controller to here */
@@ -201,7 +202,8 @@ class NotesController extends Controller
         if (array_key_exists('careteam', $input)) {
             $activitySer = new ActivityService;
             $activity = Activity::find($activity_id);
-            $linkToNote = $input['url'] . $activity->id;
+            $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId)) .'/'. $activity->id;
+            debug($linkToNote);
             $logger = User::find($input['logger_id']);
             $logger_name = $logger->display_name;
 
