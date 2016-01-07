@@ -81,17 +81,17 @@ class NotesController extends Controller
             $reportData[] = collect($patientAct)->groupBy('performed_at_year_month');
         }
 
-        for($i = 0; $i < count($patientAct) - 1; $i++){
+        for ($i = 0; $i < count($patientAct) - 1; $i++) {
             $logger_user = User::find($patientAct[$i]['logger_id']);
-            if($logger_user){
-            $patientAct[$i]['logger_name'] = $logger_user->getFullNameAttribute();
+            if ($logger_user) {
+                $patientAct[$i]['logger_name'] = $logger_user->getFullNameAttribute();
             } else {
                 $patientAct[$i]['logger_name'] = 'N/A';
             }
         }
         $data = true;
         $reportData = "data:" . json_encode($patientAct) . "";
-        if($patientAct == null){
+        if ($patientAct == null) {
             $data = false;
         }
 
@@ -165,7 +165,7 @@ class NotesController extends Controller
 
             return view('wpUsers.patient.note.create', $view_data);
         }
-	}
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -178,7 +178,7 @@ class NotesController extends Controller
         if ($input['duration']) {
             $input['duration'] = $input['duration'] * 60;
         }
-         $input = $input->all();
+        $input = $input->all();
         $activity_id = Activity::createNewActivity($input);
 
         // store meta
@@ -202,8 +202,7 @@ class NotesController extends Controller
         if (array_key_exists('careteam', $input)) {
             $activitySer = new ActivityService;
             $activity = Activity::find($activity_id);
-            $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId)) .'/'. $activity->id;
-            debug($linkToNote);
+            $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId)) . '/' . $activity->id;
             $logger = User::find($input['logger_id']);
             $logger_name = $logger->display_name;
 
@@ -213,7 +212,8 @@ class NotesController extends Controller
                 return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created And Note Sent']);
             } else return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Unable To Send Emails.']);
 
-        } return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
+        }
+        return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
 
     /**
@@ -225,13 +225,13 @@ class NotesController extends Controller
     public function show(Request $input, $patientId, $noteId)
     {
         $patient = User::find($patientId);
-        $note_act =Activity::find($noteId);
+        $note_act = Activity::find($noteId);
         $metaComment = $note_act->getActivityCommentFromMeta($noteId);
-        $phone = DB::table('activitymeta')->where('activity_id',$noteId)->where('meta_key','phone')->pluck('meta_value');
+        $phone = DB::table('activitymeta')->where('activity_id', $noteId)->where('meta_key', 'phone')->pluck('meta_value');
 
         //Set up note pack for view
         $note = array();
-        if($phone){
+        if ($phone) {
             $note['phone'] = $phone;
         }
 
@@ -247,7 +247,7 @@ class NotesController extends Controller
             $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
         }
 
-        $view_data = ['note' => $note, 'userTimeZone' => $patient->timeZone,'careteam_info' => $careteam_info, 'patient' => $patient,'program_id' => $patient->blogId()];
+        $view_data = ['note' => $note, 'userTimeZone' => $patient->timeZone, 'careteam_info' => $careteam_info, 'patient' => $patient, 'program_id' => $patient->blogId()];
 
         debug($note);
         return view('wpUsers.patient.note.view', $view_data);
@@ -291,23 +291,18 @@ class NotesController extends Controller
         debug($input->all());
         $input = $input->all();
 
-       if(isset($input['careteam'])){
-            return 'Emails to be sent.';
-       } else {
+        if (isset($input['careteam'])) {
+            $activity = Activity::findOrFail($input['noteId']);
+            $activityService = new ActivityService;
+            $logger = User::find($input['logger_id']);
+            $logger_name = $logger->getFullNameAttribute();
+            $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId)) . '/' . $activity->id;
+
+            $result = $activityService->sendNoteToCareTeam($input['careteam'], $linkToNote, $activity->performed_at, $input['patient_id'], $logger_name, false);
+
+            return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Note Successfully Sent!']);
+        }
             return redirect()->route('patient.note.index', ['patient' => $patientId]);
-       }
-
-//            $activity = Activity::findOrFail($noteId);
-//            $activityService = new ActivityService;
-//            $logger = User::find($logger_id);
-//            $logger_name = $logger->display_name;
-//            $linkToNote = $url.$activity->id;
-//            $result = $activityService->sendNoteToCareTeam($careteam,$linkToNote,$activity->performed_at,$input['patient_id'],$logger_name, false);
-//            if ($result) {
-//                return response("Successfully Sent", 202);
-//            } else {
-//                return response("Sorry, could not sent Note!", 401);
-//            }
     }
-
 }
+

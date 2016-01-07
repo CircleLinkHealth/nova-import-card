@@ -130,13 +130,8 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-4">
-                                    <input type="hidden" name="duration_unit" value="seconds">
-                                    <input type="hidden" name="duration" value="0">
-                                    <input type="hidden" name="perfomred_at_gmt" value="{{ $userTimeGMT }}">
                                     <input type="hidden" name="patient_id" value="{{$patient->ID}}">
-                                    <input type="hidden" name="logged_from" value="note">
-                                    <input type="hidden" name="logger_id" value="{{Auth::user()->ID}}">
-                                    <input type="hidden" name="url" value="">
+                                    <input type="hidden" name="noteId" value="{{$note['id']}}">
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->ID}}">
                                     <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                 </div>
@@ -148,7 +143,7 @@
                                                     <input type="hidden" value="new_activity"/>
                                                     <button id="update" name="submitAction" type="submit" value="new_activity"
                                                             class="btn btn-primary btn-lg form-item--button form-item-spacing">
-                                                        Save/Send Note
+                                                        Return / Send
                                                     </button>
                                                 </div>
                                             </div>
