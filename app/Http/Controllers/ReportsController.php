@@ -134,8 +134,9 @@ class ReportsController extends Controller {
 
     public function u20(Request $request, $patientId = false)
 	{
+		debug($patientId);
 
-		$patient = User::find($patientId);
+		$patient_ = User::find($patientId);
 		$input = $request->all();
 
 		if (isset($input['selectMonth'])) {
@@ -153,7 +154,6 @@ class ReportsController extends Controller {
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
 
 		$u20_patients = array();
-		$billable_patients = array();
 
 		// ROLLUP CATEGORIES
 		$CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
@@ -165,6 +165,7 @@ class ReportsController extends Controller {
 		$act_count = 0;
 		foreach ($patients as $patient) {
 			$monthly_time = intval($patient->getMonthlyTimeAttribute());
+			var_dump($patient->ID);var_dump($monthly_time);
 			if ($monthly_time < 1200 && $patient->role() == 'participant') {
 				$u20_patients[$act_count]['colsum_careplan'] = 0;
 				$u20_patients[$act_count]['colsum_changes'] = 0;
@@ -174,7 +175,7 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['colsum_other'] = 0;
 				$u20_patients[$act_count]['colsum_total'] = 0;
 				$u20_patients[$act_count]['ccm_status'] = $patient->getCCMStatus();
-				$u20_patients[$act_count]['dob'] = $patient->DOB;
+				$u20_patients[$act_count]['dob'] = $patient->getBirthDateAttribute();
 				$u20_patients[$act_count]['patient_name'] = $patient->getFullNameAttribute();
 				$acts = DB::table('activities')
 					->select(DB::raw('*,DATE(performed_at),provider_id, type'))
@@ -228,7 +229,7 @@ class ReportsController extends Controller {
 				'years' => array_reverse($years),
 				'month_selected' => $month_selected,
 				'months' => $months,
-				'patient' => $patient,
+				'patient' => $patient_,
 				'data' => $act_data
 			];
 			//debug($reportData);
@@ -237,8 +238,9 @@ class ReportsController extends Controller {
 		}
 	public function billing(Request $request, $patientId = false)
 	{
+		debug($patientId);
 
-		$patient = User::find($patientId);
+		$patient_ = User::find($patientId);
 		$input = $request->all();
 
 		if (isset($input['selectMonth'])) {
@@ -268,6 +270,7 @@ class ReportsController extends Controller {
 		$act_count = 0;
 		foreach ($patients as $patient) {
 			$monthly_time = intval($patient->getMonthlyTimeAttribute());
+			debug($monthly_time);
 			if ($monthly_time >= 1200 && $patient->role() == 'participant') {
 				$u20_patients[$act_count]['colsum_careplan'] = 0;
 				$u20_patients[$act_count]['colsum_changes'] = 0;
@@ -277,7 +280,7 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['colsum_other'] = 0;
 				$u20_patients[$act_count]['colsum_total'] = 0;
 				$u20_patients[$act_count]['ccm_status'] = $patient->getCCMStatus();
-				$u20_patients[$act_count]['dob'] = $patient->DOB;
+				$u20_patients[$act_count]['dob'] = $patient->getBirthDateAttribute();
 				$u20_patients[$act_count]['patient_name'] = $patient->getFullNameAttribute();
 				$acts = DB::table('activities')
 					->select(DB::raw('*,DATE(performed_at),provider_id, type'))
@@ -294,6 +297,7 @@ class ReportsController extends Controller {
 //				}
 
 				foreach ($acts as $activity) {
+					//$u20_patients[$act_count]['provider'] = User::find($activity->provider_id)->getFullNameAttribute();
 					if (in_array($activity->type, $CarePlan)) {
 						$u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
 					} else if (in_array($activity->type, $Progress)) {
@@ -331,12 +335,12 @@ class ReportsController extends Controller {
 			'years' => array_reverse($years),
 			'month_selected' => $month_selected,
 			'months' => $months,
-			'patient' => $patient,
+			'patient' => $patient_,
 			'data' => $act_data
 		];
 		//debug($reportData);
 
-		return view('reports.u20', $data);
+		return view('reports.billing', $data);
 	}
 
 	public function progress(Request $request, $id = false)

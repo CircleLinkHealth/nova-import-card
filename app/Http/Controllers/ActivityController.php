@@ -236,7 +236,8 @@ class ActivityController extends Controller {
 	}
 
 	public function providerUIIndex(Request $request, $patientId)
-	{
+	{		debug($patientId);
+
 
 		$patient = User::find($patientId);
 		$input = $request->all();

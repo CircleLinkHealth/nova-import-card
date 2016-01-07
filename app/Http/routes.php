@@ -139,6 +139,7 @@ Route::group(['middleware' => 'auth'], function ()
 			Route::post('store', ['uses' => 'NotesController@store', 'as' => 'patient.note.store']);
 			Route::get('', ['uses' => 'NotesController@index', 'as' => 'patient.note.index']);
 			Route::get('view/{noteId}', ['uses' => 'NotesController@show', 'as' => 'patient.note.view']);
+			Route::post('send/{noteId}', ['uses' => 'NotesController@send', 'as' => 'patient.note.send']);
 		});
 
 		// activities

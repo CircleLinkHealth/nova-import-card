@@ -6,7 +6,7 @@
                 <div class="main-form-title">
                     Under 20 Minute Report
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.reports.u20', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                {!! Form::open(array('url' => URL::route('patient.reports.u20', ['patientId' => $patient->ID]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                 <div class="col-sm-2">
                     <h4 class="time-report__month">December 2015</h4>
                 </div>

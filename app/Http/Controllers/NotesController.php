@@ -232,7 +232,9 @@ class NotesController extends Controller
         if($phone){
             $note['phone'] = $phone;
         }
+
         $note['type'] = $note_act->type;
+        $note['id'] = $note_act->id;
         $note['performed_at'] = $note_act->performed_at;
         $note['provider_name'] = (User::find($note_act->provider_id)->getFullNameAttribute());
         $note['comment'] = $metaComment;
@@ -282,19 +284,28 @@ class NotesController extends Controller
         //
     }
 
-    public function sendExistingNote($activity_id, $logger_id, $url, $careteam)
+    public function send(Request $input, $patientId, $noteId)
     {
-            $activity = Activity::findOrFail($activity_id);
-            $activityService = new ActivityService;
-            $logger = User::find($logger_id);
-            $logger_name = $logger->display_name;
-            $linkToNote = $url.$activity->id;
-            $result = $activityService->sendNoteToCareTeam($careteam,$linkToNote,$activity->performed_at,$input['patient_id'],$logger_name, false);
-            if ($result) {
-                return response("Successfully Sent", 202);
-            } else {
-                return response("Sorry, could not sent Note!", 401);
-            }
+        debug($input->all());
+        $input = $input->all();
+
+       if(isset($input['careteam'])){
+            return 'Emails to be sent.';
+       } else {
+            return redirect()->route('patient.note.index', ['patient' => $patientId]);
+       }
+
+//            $activity = Activity::findOrFail($noteId);
+//            $activityService = new ActivityService;
+//            $logger = User::find($logger_id);
+//            $logger_name = $logger->display_name;
+//            $linkToNote = $url.$activity->id;
+//            $result = $activityService->sendNoteToCareTeam($careteam,$linkToNote,$activity->performed_at,$input['patient_id'],$logger_name, false);
+//            if ($result) {
+//                return response("Successfully Sent", 202);
+//            } else {
+//                return response("Sorry, could not sent Note!", 401);
+//            }
     }
 
 }
