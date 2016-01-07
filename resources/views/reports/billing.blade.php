@@ -108,14 +108,8 @@
                                     header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
                                     fillspace: true,
                                     width: 90,
-                                    sort:'string'
-//                                        ,template: function (obj, common) {
-//                                            if (obj.$group) return common.treetable(obj, common) + obj.value; // Grouped by Patient button
-//                                            return '<a href="#"></a>';
-//                                            //Grouped by Patient button row text
-//                                            // return obj.patient_name; //Grouped by Patient button row text
-//                                            // return 'By Patient';//obj.patient_name; //Grouped by Patient button row text
-//                                        }
+                                    sort:'string',
+                                    template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
                                 },
                                 {
                                     id: "ccm_status",

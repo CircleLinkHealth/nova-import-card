@@ -93,12 +93,8 @@
                                         header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
                                         fillspace: true,
                                         width: 100,
-                                        sort:'string'
-//                                        ,template: function (obj) {
-                                            //return '<a href=\"{{URL::route('patient.summary', array('patient' => $patient->ID)) }}\">' + obj.patient_name+ '</a>';
-                                            //Grouped by Patient button row text
-                                            // return obj.patient_name; //Grouped by Patient button row text
-                                            // return 'By Patient';//obj.patient_name; //Grouped by Patient button row text
+                                        sort:'string',
+                                       template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
 
                                     },
                                     {
