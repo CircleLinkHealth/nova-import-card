@@ -134,7 +134,7 @@
                                     header: ["CarePlan", "(Min:Sec)"],
                                     width: 70,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"},
+                                    css: {"color": "black", "text-align": "left"},
                                     template:function (obj) {
                                         var seconds = obj.colsum_careplan;
                                         var date = new Date(seconds * 1000);
@@ -148,7 +148,7 @@
                                     header: ["Progress", "(Min:Sec)"],
                                     width: 70,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"},
+                                    css: {"color": "black", "text-align": "left"},
                                     template:function (obj) {
                                         var seconds = obj.colsum_progress;
                                         var date = new Date(seconds * 1000);
@@ -162,7 +162,7 @@
                                     header: ["RPM", "(Min:Sec)"],
                                     width: 70,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"},
+                                    css: {"color": "black", "text-align": "left"},
                                     template:function (obj) {
                                         var seconds = obj.colsum_rpm;
                                         var date = new Date(seconds * 1000);
@@ -176,7 +176,7 @@
                                     header: ["CC", "(Min:Sec)"],
                                     width: 50,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"},
+                                    css: {"color": "black", "text-align": "left"},
                                     format: webix.numberFormat,
                                     template:function (obj) {
                                         var seconds = obj.colsum_tcc;
@@ -191,7 +191,7 @@
                                     header: ["Other", "(Min:Sec)"],
                                     width: 70,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"}
+                                    css: {"color": "black", "text-align": "left"}
                                     ,template:function (obj) {
                                     var seconds = obj.colsum_other;
                                     var date = new Date(seconds * 1000);
@@ -206,7 +206,7 @@
                                     header:["Total", "(Min:Sec)"],
                                     width: 70,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"},
+                                    css: {"color": "black", "text-align": "left"},
                                     format: webix.numberFormat,
                                     template: function (obj, common) {
                                         var seconds = obj.colsum_total;

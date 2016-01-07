@@ -132,7 +132,7 @@
                                         header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
                                         width: 210,
                                         sort: 'string',
-                                        css: {"color": "black", "text-align": "right"}
+                                        css: {"color": "black", "text-align": "left"}
                                     },
                                 ],
                                 ready: function () {
