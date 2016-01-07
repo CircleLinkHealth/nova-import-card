@@ -89,14 +89,14 @@
                             resizeColumn: true,
                             columns: [
                                 {
-                                id: "provider",
+                                id: "provider_name",
                                 header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
                                 width: 140,
                                 sort: 'string',
-                                template: function (obj, common) {
-                            if (obj.$group) return common.treetable(obj, common) + obj.value; // Grouped by Provider button
-                            return obj.provider; //Grouped by Provider button row text
-                        }
+//                                template: function (obj, common) {
+//                                if (obj.$group) return common.treetable(obj, common) + obj.value; // Grouped by Provider button
+//                                    return obj.provider; //Grouped by Provider button row text
+//                                }
                         },
                                 {
                                     id: "patient_name",
@@ -214,6 +214,28 @@
                             ready: function () {
                                 this.adjustRowHeight("obs_key");
                             },
+//
+//                            scheme: {
+//                                $group: {
+////											by: "provider",
+////											map: {
+////												colsum_total: ["colsum_total", "sum"],
+////												title: ["provider"]
+////											},
+//                                    by: "patient_name",
+//                                    map: {
+//                                        colsum_total: ["colsum_total", "sum"],
+//                                        title: ["patient_name"]
+//                                    },
+//                                    footer: {
+//                                        colsum_total: ["colsum_total", "sum"],
+//                                        row: function (obj) {
+//                                            return "<span style='float:right;'>Total: " + zeroPad(Math.floor(obj.colsum_total/60),10) + "</span>";
+//                                        }
+//                                    }
+//                                }
+//                            },
+
                             /*ready:function(){
                              this.adjustRowHeight("obs_value");
                              },*/
