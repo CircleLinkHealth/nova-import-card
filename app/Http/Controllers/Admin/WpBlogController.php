@@ -41,7 +41,7 @@ class WpBlogController extends Controller {
 
 		$messages = \Session::get('messages');
 
-		$locations = Location::orderBy('id', 'desc')->lists('name', 'id');
+		$locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->lists('name', 'id');
 
 		return view('admin.wpBlogs.create', compact([ 'locations', 'errors', 'messages' ]));
 	}
@@ -123,7 +123,7 @@ class WpBlogController extends Controller {
 		}
 		*/
 
-		$locations = Location::orderBy('id', 'desc')->lists('name', 'id');
+		$locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->lists('name', 'id');
 
 		return view('admin.wpBlogs.show', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
@@ -144,7 +144,7 @@ class WpBlogController extends Controller {
 
 		$program = WpBlog::find($id);
 
-		$locations = Location::orderBy('id', 'desc')->lists('name', 'id');
+		$locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->lists('name', 'id');
 
 		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
