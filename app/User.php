@@ -4,6 +4,7 @@ use DateTime;
 use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
@@ -13,6 +14,8 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Auth;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
+
+	use SoftDeletes;
 
 	use Authenticatable, CanResetPassword, EntrustUserTrait;
 

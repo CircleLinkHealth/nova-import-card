@@ -35,7 +35,7 @@
                                 <td><a href="{{ URL::route('admin.programs.show', array('id' => $wpBlog->blog_id)) }}" class="btn btn-primary">Details</a></td>
                                 <td><strong>{{ $wpBlog->domain }}</strong></td>
                                 <td>{{ $wpBlog->blog_id }}</td>
-                                <td>{{ $wpBlog->registered }}</td>
+                                <td>{{ $wpBlog->created_at }}</td>
                                 <td><a href="{{ URL::route('admin.programs.edit', array('id' => $wpBlog->blog_id)) }}" class="btn btn-info">Edit</a></td>
                                 <td><a href="{{ URL::route('admin.programs.destroy', array('id' => $wpBlog->blog_id)) }}" class="btn btn-warning">Remove</a></td>
                             </tr>
