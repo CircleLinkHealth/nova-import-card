@@ -161,7 +161,7 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::group(['prefix' => 'admin'], function () {
 
 		$prefix = 'admin/'; // admin prefix
-		Entrust::routeNeedsPermission($prefix.'*', 'admin-access');
+		Entrust::routeNeedsPermission($prefix.'*', 'admin-access', Redirect::to(URL::route('login')));
 
 		// dashboard
 		Route::get('', ['uses' =>'Admin\DashboardController@index', 'as'=>'admin.dashboard']);
