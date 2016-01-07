@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CPM API - {!! Route::current()->getName() !!}</title>
 
-    <link href="{{ asset('/css/lavish.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
@@ -126,11 +126,6 @@
 </nav><!-- /navbar -->
 
 
-<!-- PAGE TIMER START -->
-@include('partials.providerUItimer')
-<!-- PAGE TIMER END -->
-
-
 	<!--[if lt IE 8]>
 <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 <![endif]-->
@@ -150,5 +145,8 @@
         </div>
     </div>
     --}}
+<!-- PAGE TIMER START -->
+@include('partials.providerUItimer')
+<!-- PAGE TIMER END -->
 </body>
 </html>
