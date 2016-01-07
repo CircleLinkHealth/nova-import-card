@@ -4,9 +4,9 @@
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title">
-                    Under 20 Minute Report
+                    Patient Billing Report
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.reports.u20', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                {!! Form::open(array('url' => URL::route('patient.reports.billing', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                 <div class="col-sm-2">
                     <h4 class="time-report__month">December 2015</h4>
                 </div>
@@ -89,6 +89,16 @@
                             resizeColumn: true,
                             columns: [
                                 {
+                                id: "provider_name",
+                                header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
+                                width: 140,
+                                sort: 'string',
+//                                template: function (obj, common) {
+//                                if (obj.$group) return common.treetable(obj, common) + obj.value; // Grouped by Provider button
+//                                    return obj.provider; //Grouped by Provider button row text
+//                                }
+                        },
+                                {
                                     id: "patient_name",
                                     header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
                                     fillspace: true,
@@ -111,13 +121,13 @@
                                 {
                                     id: "patient_dob",
                                     header: ["DOB", {content: "textFilter", placeholder: "Filter"}],
-                                    width: 110,
+                                    width: 80,
                                     sort: 'string'
                                 },
                                 {
                                     id: "colsum_careplan",
                                     header: ["CarePlan", "(Min:Sec)"],
-                                    width: 80,
+                                    width: 70,
                                     sort: 'int',
                                     css: {"color": "black", "text-align": "right"},
                                     template:function (obj) {
@@ -131,7 +141,7 @@
                                 {
                                     id: "colsum_progress",
                                     header: ["Progress", "(Min:Sec)"],
-                                    width: 80,
+                                    width: 70,
                                     sort: 'int',
                                     css: {"color": "black", "text-align": "right"},
                                     template:function (obj) {
@@ -145,7 +155,7 @@
                                 {
                                     id: "colsum_rpm",
                                     header: ["RPM", "(Min:Sec)"],
-                                    width: 80,
+                                    width: 70,
                                     sort: 'int',
                                     css: {"color": "black", "text-align": "right"},
                                     template:function (obj) {
@@ -159,7 +169,7 @@
                                 {
                                     id: "colsum_tcc",
                                     header: ["CC", "(Min:Sec)"],
-                                    width: 80,
+                                    width: 70,
                                     sort: 'int',
                                     css: {"color": "black", "text-align": "right"},
                                     format: webix.numberFormat,
@@ -174,7 +184,7 @@
                                 {
                                     id: "colsum_other",
                                     header: ["Other", "(Min:Sec)"],
-                                    width: 80,
+                                    width: 70,
                                     sort: 'int',
                                     css: {"color": "black", "text-align": "right"}
                                     ,template:function (obj) {
@@ -204,6 +214,28 @@
                             ready: function () {
                                 this.adjustRowHeight("obs_key");
                             },
+//
+//                            scheme: {
+//                                $group: {
+////											by: "provider",
+////											map: {
+////												colsum_total: ["colsum_total", "sum"],
+////												title: ["provider"]
+////											},
+//                                    by: "patient_name",
+//                                    map: {
+//                                        colsum_total: ["colsum_total", "sum"],
+//                                        title: ["patient_name"]
+//                                    },
+//                                    footer: {
+//                                        colsum_total: ["colsum_total", "sum"],
+//                                        row: function (obj) {
+//                                            return "<span style='float:right;'>Total: " + zeroPad(Math.floor(obj.colsum_total/60),10) + "</span>";
+//                                        }
+//                                    }
+//                                }
+//                            },
+
                             /*ready:function(){
                              this.adjustRowHeight("obs_value");
                              },*/

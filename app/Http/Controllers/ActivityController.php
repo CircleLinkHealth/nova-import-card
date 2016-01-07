@@ -238,10 +238,10 @@ class ActivityController extends Controller {
 	public function providerUIIndex(Request $request, $patientId)
 	{
 
+
 		$patient = User::find($patientId);
 		$input = $request->all();
 		$messages = \Session::get('messages');
-		debug($messages);
 		if (isset($input['selectMonth'])) {
 			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
 			$start = $time->startOfMonth()->format('Y-m-d');

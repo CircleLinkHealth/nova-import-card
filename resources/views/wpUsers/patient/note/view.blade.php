@@ -16,7 +16,7 @@
                 <div class="main-form-title col-lg-12">
                     View Note
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.note.store', ['patientId' => $patient]), 'class' => 'form-horizontal')) !!}
+                {!! Form::open(array('url' => URL::route('patient.note.send', ['patientId' => $patient, 'noteId' => $note['id']]), 'class' => 'form-horizontal')) !!}
 
                 @include('partials.userheader')
 

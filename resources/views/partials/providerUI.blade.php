@@ -99,19 +99,19 @@
                 <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Patient Reports <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li>
-                        <a href="{{ empty($patient) ? '' : '' }}">Patient Alerts</a>
+                        <a href="{{ empty($patient) ? '#' : '' }}">Patient Alerts</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '' : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">Progress Report</a>
+                        <a href="{{ empty($patient) ? '#' : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">Progress Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient Activity Report</a>
+                        <a href="{{ empty($patient) ? '#' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient Activity Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '' : URL::route('patient.reports.u20', array('patient' => $patient->ID)) }}">Under 20 Minute Report</a>
+                        <a href="{{ empty($patient) ? '#' : URL::route('patient.reports.u20', array('patient' => $patient->ID)) }}">Under 20 Minute Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">Patient Billing Report</a>
+                        <a href="{{ empty($patient) ? '#' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">Patient Billing Report</a>
                     </li>
                     <li>
                         <a href="">Patient Care Plan Print List</a>
