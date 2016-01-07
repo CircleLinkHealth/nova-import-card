@@ -43,6 +43,23 @@ class UserController extends Controller {
 		if(!Auth::user()->can('users-view-all')) {
 			abort(403);
 		}
+		// TEMPORARY HACK SEED FIX TO REPAIR USER DATA, REMOVE AT LATER DATE
+		// START
+		$missingProgramId = array();
+		$users = User::get();
+		foreach($users as $user) {
+			// ensure program relationship is set
+			if(!empty($user->program_id) && $user->program_id < 100) {
+				if (!$user->programs->contains($user->program_id)) {
+					$user->programs()->attach($user->program_id);
+				}
+			} else {
+				$user->delete();
+				$missingProgramId[] = '';
+			}
+		}
+		// END
+
 		if ( $request->header('Client') == 'ui' )
 		{
 			$userId = Crypt::decrypt($request->header('UserId'));

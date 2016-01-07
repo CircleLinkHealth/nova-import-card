@@ -306,7 +306,7 @@ Route::group(['middleware' => 'auth'], function ()
 // pagetimer
 Route::group(['middleware' => 'cors'], function(){
 	//Route::get('pagetimer', 'PageTimerController@store');
-	Route::post('api/v2.1/pagetimer', 'PageTimerController@store');
+	Route::post('api/v2.1/pagetimer', ['uses' => 'PageTimerController@store', 'as' => 'api.pagetracking']);
 });
 
 /*
@@ -364,28 +364,3 @@ Route::group(['prefix' => 'cron'], function()
 		$msgScheduler->index($id);
 	});
 });
-
-
-
-/*
-// legacy api routes @todo migrate and remove these
-Route::group(['middleware' => 'authApiCall'], function()
-{
-
-	Route::resource('locations', 'LocationController');
-
-	Route::resource('locations/show', 'LocationController');
-
-	Route::resource('rulesucp', 'CPRulesUCPController');
-
-	Route::resource('rulespcp', 'CPRulesPCPController');
-
-	Route::resource('rulesitem', 'CPRulesItemController');
-
-	Route::resource('rulesitem.meta', 'CPRulesItemMetaController');
-
-	Route::resource('observation', 'ObservationController');
-
-	Route::resource('observation.meta', 'ObservationMetaController');
-});
-*/
