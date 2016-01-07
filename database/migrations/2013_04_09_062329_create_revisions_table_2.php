@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRevisionsTable extends Migration
+class CreateRevisionsTable2 extends Migration
 {
     /**
      * Run the migrations.
@@ -11,6 +11,7 @@ class CreateRevisionsTable extends Migration
      */
     public function up()
     {
+        /*
         Schema::create('revisions', function ($table) {
             $table->increments('id');
             $table->string('revisionable_type');
@@ -23,6 +24,7 @@ class CreateRevisionsTable extends Migration
 
             $table->index(array('revisionable_id', 'revisionable_type'));
         });
+        */
     }
 
     /**
@@ -32,6 +34,6 @@ class CreateRevisionsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('revisions');
+        //Schema::drop('revisions');
     }
 }

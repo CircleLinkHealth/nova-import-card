@@ -120,6 +120,8 @@ class PatientCareplanController extends Controller {
 
 		$userRepo = new UserRepository();
 
+		$this->validate($request, $user->patient_rules);
+
 		if($patientId) {
 			$userRepo->editUser($user, $params);
 			if($params->get('direction')) {

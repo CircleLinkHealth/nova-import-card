@@ -1,6 +1,23 @@
 <!-- PAGE TIMER START -->
-<?php
+<div class="modal fade" id="timerModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                <h4 class="modal-title" id="myModalLabel">You have gone idle....</h4>
+            </div>
+            <div class="modal-body">
+                <p>We haven’t heard from you in a while. Do you wish to keep this session open?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="timeModalNo" class="btn btn-warning" data-dismiss="modal">No</button>
+                <button type="button" id="timeModalYes" class="btn btn-success"  data-dismiss="modal">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<?php
 // patient stuff
 $patientId = 0;
 if ( !empty($patient) ) {
@@ -74,43 +91,57 @@ if(!$ipAddr) {
 $pieces = explode("?", $_SERVER['REQUEST_URI']);
 $urlShort = $pieces[0];
 
-
 // should we process time on this page?
 $enableTimeTracking = true;
-$enableTimeTracking = false; // override it
+//$enableTimeTracking = false; // override it
+
+// disable if login
 if (strpos($_SERVER['REQUEST_URI'],'login') !== false) {
     $enableTimeTracking = false;
 }
+// disable if no patient object
 if (empty($patient)) {
     $enableTimeTracking = false;
 }
-if($enableTimeTracking) {
+if ($enableTimeTracking) {
 ?>
 <script>
     (function ($) {
 
         var startTime = new Date();
         var noResponse = true; // set to false if user clicks yes/no button
-        var totalTime = 0;
+        var totalTime = 0; // total accumulated time on page
+        var modalDelay = 90000; // ms modal waits before force logout (60000 = 1min)
         var isTimerProcessed = false;
         var redirectLocation = false;
+        var idleTime = 120000; // ms before modal display (60000 = 1min)
+        var consoleDebug = true; // debug toggle
+
+        // instantiate idleTimer
+        if (consoleDebug) console.log('setting idleTimer @ ' + idleTime);
+        $(document).idleTimer(idleTime);
+
+        // idleTimer ^
         $(document).on("idle.idleTimer", function (event, elem, obj) {
-            $("#timerDebug").html("time limit hit.....");
+            if (consoleDebug) console.log('idleTimer hit');
+            if (consoleDebug) console.log('totalTime = ' + totalTime);
             // set to false if user clicks yes/no button
             noResponse = true;
 
             // pause timer
             $(document).idleTimer("pause");
-
-            // debug msg
-            $("#timerDebug").html("idle, loading modal");
+            if (consoleDebug) console.log('paused idleTimer');
+            if (consoleDebug) console.log('totalTime = ' + totalTime);
 
             // we went idle, add previously active time to total time
             endTime = new Date();
             totalTime = (totalTime + (endTime - startTime));
+            if (consoleDebug) console.log('added previously active time to total time');
+            if (consoleDebug) console.log('totalTime = ' + totalTime);
 
             // reset startTime to time modal was opened
             startTime = new Date();
+            if (consoleDebug) console.log('set startTime back to 0');
 
             function millisToMinutesAndSeconds(millis) {
                 var minutes = Math.floor(millis / 60000);
@@ -120,25 +151,29 @@ if($enableTimeTracking) {
 
             // set html to modal and instantiate
             //$('#timeModalTotal').html(' Total elapsed: ' + millisToMinutesAndSeconds(totalTime) + ' minutes');
-            $('#timerModal').modal();
+            if (consoleDebug) console.log('display timerModal()');
+            $('#timerModal').modal('show');
 
             // no response logic
             // http://www.sitepoint.com/jquery-settimeout-function-examples/
-            var delayMin = 8;
-            function noResponseTotalTime() {
-                // we went idle, add previously active time to total time
-                endTime = new Date();
-                totalTime = (totalTime + (endTime - startTime));
-                // subtract 45 seconds for modal idle = 45000
-                // subtract 9:30 for modal idle = 1000*60*delayMin - 90000
 
-                totalTime = ( totalTime - 1000*60*delayMin - 90000 );
+            // if no response to modal, log out after {modalDelay}
+            if (consoleDebug) console.log('modalDelay = ' + modalDelay + ' time modal will wait to force logout ');
+            var noResponseTimer = setTimeout(noResponseTotalTime, modalDelay);
+            function noResponseTotalTime() {
+                if (consoleDebug) console.log('noResponseTotalTime() start');
+                if (consoleDebug) console.log('totalTime = ' + totalTime);
+                // we went idle, add previously active time to total time
+                //endTime = new Date();
+                //totalTime = (totalTime + (endTime - startTime)) - modalDelay;
+                //totalTime = (totalTime - modalDelay);
+                if (consoleDebug) console.log('totalTime = ' + totalTime);
+                // subtract 45 seconds for modal idle = 45000
+                // subtract 9:30 for modal idle = 1000*60*modalDelay - 90000
+                //totalTime = ( totalTime - modalDelay - 90000 );
                 redirectLocation = 'logout';
                 submitTotalTime();
             }
-
-            // if no response to modal, log out after {delayMin}
-            var noResponseTimer = setTimeout(noResponseTotalTime, 1000*60*delayMin);
 
             // yes/no button in modal
             $('#timeModalNo').on("click", function () {
@@ -165,6 +200,7 @@ if($enableTimeTracking) {
 
         });
 
+        // this runs when the browser window is closed
         window.onbeforeunload = function () {
             //alert('Elapsed: ' + $( document ).idleTimer("getElapsedTime"));
             $(document).idleTimer("pause");
@@ -174,21 +210,23 @@ if($enableTimeTracking) {
             //return false;
         };
 
-        // instantiate ifleTimer @ 2 min
-        $(document).idleTimer(12000);
-
+        // this is the ajax call that is made to store the time
+        // first store time than redirect based on result, logout if idle
         function submitTotalTime() {
+            if (consoleDebug) console.log('start submitTotalTime()');
+            if (consoleDebug) console.log('totalTime = ' + totalTime);
             if (isTimerProcessed == true) {
                 return true;
             }
             $('#timerModal').modal('hide');
             $("#timerDebug").html("COMPLETED, totalTime = " + totalTime + " .. LEAVE PAGE -> LOGOUT");
+            if (consoleDebug) console.log("COMPLETED, totalTime = " + totalTime + " .. LEAVE PAGE -> LOGOUT");
             $(document).idleTimer("pause");
 
 
             var data = {
                 "patientId": '<?php echo $patientId; ?>',
-                "providerId": '<?php Auth::user()->ID ?>',
+                "providerId": '<?php echo Auth::user()->ID ?>',
                 "totalTime": totalTime,
                 "programId": '<?php echo $patient->program_id; ?>',
                 "startTime": '<?php echo date('Y-m-d H:i:s'); ?>',
@@ -200,9 +238,11 @@ if($enableTimeTracking) {
                 "qs": '<?php echo $qs; ?>'
             };
 
+            if (consoleDebug) console.log(data);
+
             $.ajax({
                 type: "POST",
-                url: 'api/v2.1/pagetimer',
+                url: '<?php echo URL::route('api.pagetracking'); ?>',
                 data: data,
                 //cache: false,
                 encode: true,
@@ -211,11 +251,9 @@ if($enableTimeTracking) {
                     // redirect
                     if (redirectLocation) {
                         if (redirectLocation == 'logout') {
-                            alert('logout');
-                            window.location.href = "<?php echo 'site_url()?ajaxlogout=1'; ?>";
+                            window.location.href = "<?php echo url('/auth/logout'); ?>";
                         } else if (redirectLocation == 'home') {
-                            alert('home');
-                            window.location.href = "<?php echo 'site_url()'; ?>";
+                            window.location.href = "<?php echo URL::route('patients.dashboard'); ?>";
                         }
                     }
                 }
@@ -232,24 +270,11 @@ if($enableTimeTracking) {
 <?php
 } // end enableTimeTracking check
 ?>
-<div class="modal fade" id="timerModal" tabindex="-1" role="dialog" aria-labelledby="timerModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                You have gone idle....
-            </div>
-            <div class="modal-body">
-                <p>We haven’t heard from you in a while. Do you wish to keep this session open?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="timeModalNo" class="btn btn-warning" data-dismiss="modal">No</button>
-                <button type="button" id="timeModalYes" class="btn btn-success"  data-dismiss="modal">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 <!--<h3>TIMER DEBUG</h3>-->
-<span id="timerDebug"><?php echo $enableTimeTracking; ?></span>
+<span id="timerDebug" style="display:none;">
+    Page Route Name: {{ Route::currentRouteName() }}<br>
+    Tracking Enabled: <?php echo $enableTimeTracking; ?>
+</span>
 <!-- PAGE TIMER END -->

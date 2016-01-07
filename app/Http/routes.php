@@ -141,14 +141,15 @@ Route::group(['middleware' => 'auth'], function ()
 			Route::get('create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create']);
 			Route::post('store', ['uses' => 'NotesController@store', 'as' => 'patient.note.store']);
 			Route::get('', ['uses' => 'NotesController@index', 'as' => 'patient.note.index']);
-			Route::get('view/{noteId}', ['uses' => 'NotesController@show', 'as' => 'patient.note.show']);
+			Route::get('view/{noteId}', ['uses' => 'NotesController@show', 'as' => 'patient.note.view']);
+			Route::post('send/{noteId}', ['uses' => 'NotesController@send', 'as' => 'patient.note.send']);
 		});
 
 		// activities
 		Route::group(['prefix' => 'activities'], function () {
 			Route::get('create', ['uses' => 'ActivityController@create', 'as' => 'patient.activity.create']);
 			Route::post('store', ['uses' => 'ActivityController@store', 'as' => 'patient.activity.store']);
-			Route::get('view/{actId}', ['uses' => 'ActivityController@view', 'as' => 'patient.activity.view']);
+			Route::get('view/{actId}', ['uses' => 'ActivityController@show', 'as' => 'patient.activity.view']);
 			Route::get('', ['uses' => 'ActivityController@providerUIIndex', 'as' => 'patient.activity.providerUIIndex']);
 		});
 
@@ -163,7 +164,7 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::group(['prefix' => 'admin'], function () {
 
 		$prefix = 'admin/'; // admin prefix
-		Entrust::routeNeedsPermission($prefix.'*', 'admin-access');
+		Entrust::routeNeedsPermission($prefix.'*', 'admin-access', Redirect::to(URL::route('login')));
 
 		// dashboard
 		Route::get('', ['uses' =>'Admin\DashboardController@index', 'as'=>'admin.dashboard']);
@@ -182,12 +183,13 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('pagetimer/{id}', ['uses' =>'PageTimerController@show', 'as'=>'admin.pagetimer.show']);
 		Route::get('pagetimer/{id}/edit', ['uses' =>'PageTimerController@edit', 'as'=>'admin.pagetimer.edit']);
 
-		// wpusers
+		// users
 		Entrust::routeNeedsPermission($prefix.'users*', 'users-view-all');
 		Route::get('users', ['uses' =>'UserController@index', 'as'=>'admin.users.index']);
 		Route::post('users', ['uses' =>'UserController@store', 'as'=>'admin.users.store']);
 		Route::get('users/create', ['uses' =>'UserController@create', 'as'=>'admin.users.create']);
 		Route::get('users/{id}/edit', ['uses' =>'UserController@edit', 'as'=>'admin.users.edit']);
+		Route::get('users/{id}/destroy', ['uses' =>'UserController@destroy', 'as'=>'admin.users.destroy']);
 		Route::post('users/{id}/edit', ['uses' =>'UserController@update', 'as'=>'admin.users.update']);
 		Route::get('users/createQuickPatient/{blogId}', ['uses' =>'UserController@createQuickPatient', 'as'=>'admin.users.createQuickPatient']);
 		Route::post('users/createQuickPatient/', ['uses' =>'UserController@storeQuickPatient', 'as'=>'admin.users.storeQuickPatient']);
@@ -267,6 +269,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('programs/{id}', ['uses' =>'Admin\WpBlogController@show', 'as'=>'admin.programs.show']);
 		Route::get('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@edit', 'as'=>'admin.programs.edit']);
 		Route::post('programs/{id}/edit', ['uses' =>'Admin\WpBlogController@update', 'as'=>'admin.programs.update']);
+		Route::get('programs/{id}/destroy', ['uses' =>'Admin\WpBlogController@destroy', 'as'=>'admin.programs.destroy']);
 		Route::get('programs/{id}/questions', ['uses' =>'Admin\WpBlogController@showQuestions', 'as'=>'admin.programs.questions']);
 
 		// locations
@@ -324,7 +327,7 @@ Route::group(['middleware' => 'auth'], function ()
 // pagetimer
 Route::group(['middleware' => 'cors'], function(){
 	//Route::get('pagetimer', 'PageTimerController@store');
-	Route::post('api/v2.1/pagetimer', 'PageTimerController@store');
+	Route::post('api/v2.1/pagetimer', ['uses' => 'PageTimerController@store', 'as' => 'api.pagetracking']);
 });
 
 /*
@@ -382,28 +385,3 @@ Route::group(['prefix' => 'cron'], function()
 		$msgScheduler->index($id);
 	});
 });
-
-
-
-/*
-// legacy api routes @todo migrate and remove these
-Route::group(['middleware' => 'authApiCall'], function()
-{
-
-	Route::resource('locations', 'LocationController');
-
-	Route::resource('locations/show', 'LocationController');
-
-	Route::resource('rulesucp', 'CPRulesUCPController');
-
-	Route::resource('rulespcp', 'CPRulesPCPController');
-
-	Route::resource('rulesitem', 'CPRulesItemController');
-
-	Route::resource('rulesitem.meta', 'CPRulesItemMetaController');
-
-	Route::resource('observation', 'ObservationController');
-
-	Route::resource('observation.meta', 'ObservationMetaController');
-});
-*/

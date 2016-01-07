@@ -39,9 +39,27 @@ class UserController extends Controller {
 	 */
 	public function index(Request $request)
 	{
+		$messages = \Session::get('messages');
 		if(!Auth::user()->can('users-view-all')) {
 			abort(403);
 		}
+		// TEMPORARY HACK SEED FIX TO REPAIR USER DATA, REMOVE AT LATER DATE
+		// START
+		$missingProgramId = array();
+		$users = User::get();
+		foreach($users as $user) {
+			// ensure program relationship is set
+			if(!empty($user->program_id) && $user->program_id < 100) {
+				if (!$user->programs->contains($user->program_id)) {
+					$user->programs()->attach($user->program_id);
+				}
+			} else {
+				$user->delete();
+				$missingProgramId[] = '';
+			}
+		}
+		// END
+
 		if ( $request->header('Client') == 'ui' )
 		{
 			$userId = Crypt::decrypt($request->header('UserId'));
@@ -133,7 +151,7 @@ class UserController extends Controller {
 			$wpUsers = $wpUsers->paginate(20);
 			$invalidUsers = array();
 
-			return view('wpUsers.index', compact(['wpUsers', 'users', 'filterUser', 'programs', 'filterProgram', 'roles', 'filterRole', 'invalidUsers', 'queryString']));
+			return view('wpUsers.index', compact(['messages', 'wpUsers', 'users', 'filterUser', 'programs', 'filterProgram', 'roles', 'filterRole', 'invalidUsers', 'queryString']));
 		}
 
 	}
@@ -430,7 +448,16 @@ class UserController extends Controller {
 		if(!Auth::user()->can('users-edit-all')) {
 			abort(403);
 		}
-		//
+
+		$user = User::find($id);
+		if (!$user) {
+			return response("User not found", 401);
+		}
+
+		//$user->programs()->detach();
+		$user->delete();
+
+		return redirect()->back()->with('messages', ['successfully deleted user']);
 	}
 
 

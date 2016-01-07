@@ -4,9 +4,9 @@
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title">
-                    Under 20 Minute Report
+                    Patient Billing Report
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.reports.u20', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                {!! Form::open(array('url' => URL::route('patient.reports.billing', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                 <div class="col-sm-2">
                     <h4 class="time-report__month">December 2015</h4>
                 </div>
@@ -40,6 +40,11 @@
             </div>
             <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                 @if($data)
+                    <input type="button"
+                           value="Group by Provider"
+                           onclick='gby()'>
+                    <!-- <input type="button" value="Group by Patient" onclick='gbyp()'> -->
+                    <input type="button" value="Clear Grouping" onclick='ug()'>
                     <div id="obs_alerts_container" class=""></div><br/>
                     <div id="paging_container"></div><br/>
                     <style>
@@ -89,10 +94,20 @@
                             resizeColumn: true,
                             columns: [
                                 {
+                                id: "provider_name",
+                                header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
+                                width: 140,
+                                sort: 'string',
+                                template: function (obj, common) {
+                                if (obj.$group) return common.treetable(obj, common) + obj.value; // Grouped by Provider button
+                                    return obj.provider_name; //Grouped by Provider button row text
+                                }
+                        },
+                                {
                                     id: "patient_name",
                                     header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
                                     fillspace: true,
-                                    width: 100,
+                                    width: 90,
                                     sort:'string'
 //                                        ,template: function (obj, common) {
 //                                            if (obj.$group) return common.treetable(obj, common) + obj.value; // Grouped by Patient button
@@ -103,23 +118,23 @@
 //                                        }
                                 },
                                 {
-                                    id: "patient_status_ccm",
+                                    id: "ccm_status",
                                     header: ["CCM Status", {content: "selectFilter", placeholder: "Filter"}],
                                     width: 110,
                                     sort: 'string'
                                 },
                                 {
-                                    id: "patient_dob",
+                                    id: "dob",
                                     header: ["DOB", {content: "textFilter", placeholder: "Filter"}],
-                                    width: 110,
+                                    width: 105,
                                     sort: 'string'
                                 },
                                 {
                                     id: "colsum_careplan",
                                     header: ["CarePlan", "(Min:Sec)"],
-                                    width: 80,
+                                    width: 70,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"},
+                                    css: {"color": "black", "text-align": "left"},
                                     template:function (obj) {
                                         var seconds = obj.colsum_careplan;
                                         var date = new Date(seconds * 1000);
@@ -131,9 +146,9 @@
                                 {
                                     id: "colsum_progress",
                                     header: ["Progress", "(Min:Sec)"],
-                                    width: 80,
+                                    width: 70,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"},
+                                    css: {"color": "black", "text-align": "left"},
                                     template:function (obj) {
                                         var seconds = obj.colsum_progress;
                                         var date = new Date(seconds * 1000);
@@ -145,9 +160,9 @@
                                 {
                                     id: "colsum_rpm",
                                     header: ["RPM", "(Min:Sec)"],
-                                    width: 80,
+                                    width: 70,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"},
+                                    css: {"color": "black", "text-align": "left"},
                                     template:function (obj) {
                                         var seconds = obj.colsum_rpm;
                                         var date = new Date(seconds * 1000);
@@ -159,9 +174,9 @@
                                 {
                                     id: "colsum_tcc",
                                     header: ["CC", "(Min:Sec)"],
-                                    width: 80,
+                                    width: 50,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"},
+                                    css: {"color": "black", "text-align": "left"},
                                     format: webix.numberFormat,
                                     template:function (obj) {
                                         var seconds = obj.colsum_tcc;
@@ -174,9 +189,9 @@
                                 {
                                     id: "colsum_other",
                                     header: ["Other", "(Min:Sec)"],
-                                    width: 80,
+                                    width: 70,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"}
+                                    css: {"color": "black", "text-align": "left"}
                                     ,template:function (obj) {
                                     var seconds = obj.colsum_other;
                                     var date = new Date(seconds * 1000);
@@ -189,8 +204,9 @@
                                 {
                                     id: "colsum_total",
                                     header:["Total", "(Min:Sec)"],
+                                    width: 70,
                                     sort: 'int',
-                                    css: {"color": "black", "text-align": "right"},
+                                    css: {"color": "black", "text-align": "left"},
                                     format: webix.numberFormat,
                                     template: function (obj, common) {
                                         var seconds = obj.colsum_total;
@@ -204,6 +220,28 @@
                             ready: function () {
                                 this.adjustRowHeight("obs_key");
                             },
+
+                            scheme: {
+                                $group: {
+//											by: "provider",
+//											map: {
+//												colsum_total: ["colsum_total", "sum"],
+//												title: ["provider"]
+//											},
+                                    by: "patient_name",
+                                    map: {
+                                        colsum_total: ["colsum_total", "sum"],
+                                        title: ["patient_name"]
+                                    },
+                                    footer: {
+                                        colsum_total: ["colsum_total", "sum"],
+                                        row: function (obj) {
+                                            return "<span style='float:right;'>Total: " + zeroPad(Math.floor(obj.colsum_total/60),10) + "</span>";
+                                        }
+                                    }
+                                }
+                            },
+
                             /*ready:function(){
                              this.adjustRowHeight("obs_value");
                              },*/
@@ -218,10 +256,10 @@
                         function gby() {
                             obs_alerts_dtable.ungroup();
                             obs_alerts_dtable.group({
-                                by: "provider",
+                                by: "provider_name",
                                 map: {
                                     colsum_total: ["colsum_total", "sum"],
-                                    title: ["provider"]
+                                    title: ["provider_name"]
                                 },
                                 footer: {
                                     colsum_total: ["colsum_total", "sum"],
@@ -234,7 +272,7 @@
                                         return "<span style='float:right;'>Total Time: " + time + "</span>";
                                     }
                                 },
-                                row: "provider"
+                                row: "provider_name"
                             });
                         }
                         function gbyp() {

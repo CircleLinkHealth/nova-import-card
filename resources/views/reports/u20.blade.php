@@ -1,12 +1,12 @@
 @extends('partials.providerUI')
 @section('content')
-    <div class="row" style="margin-top:60px;">
+    <div class="row" style="margin-top:60px; border-bottom:0px, solid, #50b2e2;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
-            <div class="row">
+            <div class="row" >
                 <div class="main-form-title">
                     Under 20 Minute Report
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.reports.u20', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                {!! Form::open(array('url' => URL::route('patient.reports.u20', ['patientId' => $patient->ID]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                 <div class="col-sm-2">
                     <h4 class="time-report__month">December 2015</h4>
                 </div>
@@ -94,22 +94,21 @@
                                         fillspace: true,
                                         width: 100,
                                         sort:'string'
-//                                        ,template: function (obj, common) {
-//                                            if (obj.$group) return common.treetable(obj, common) + obj.value; // Grouped by Patient button
-//                                            return '<a href="#"></a>';
-//                                            //Grouped by Patient button row text
-//                                            // return obj.patient_name; //Grouped by Patient button row text
-//                                            // return 'By Patient';//obj.patient_name; //Grouped by Patient button row text
-//                                        }
+//                                        ,template: function (obj) {
+                                            //return '<a href=\"{{URL::route('patient.summary', array('patient' => $patient->ID)) }}\">' + obj.patient_name+ '</a>';
+                                            //Grouped by Patient button row text
+                                            // return obj.patient_name; //Grouped by Patient button row text
+                                            // return 'By Patient';//obj.patient_name; //Grouped by Patient button row text
+
                                     },
                                     {
-                                        id: "patient_status_ccm",
+                                        id: "ccm_status",
                                         header: ["CCM Status", {content: "selectFilter", placeholder: "Filter"}],
                                         width: 110,
                                         sort: 'string'
                                     },
                                     {
-                                        id: "patient_dob",
+                                        id: "dob",
                                         header: ["DOB", {content: "textFilter", placeholder: "Filter"}],
                                         width: 110,
                                         sort: 'string'

@@ -14,6 +14,7 @@ use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Laracasts\Flash\Flash;
 
 /** @todo Move Store and Send note functions from Activity Controller to here */
@@ -29,6 +30,8 @@ class NotesController extends Controller
 
         $patient = User::find($patientId);
         $input = $request->all();
+        $messages = \Session::get('messages');
+
 
         if (isset($input['selectMonth'])) {
             $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
@@ -107,6 +110,7 @@ class NotesController extends Controller
                 'month_selected' => $month_selected,
                 'months' => $months,
                 'patient' => $patient,
+                'messages' => $messages,
                 'data' => $data
             ]);
 
@@ -198,17 +202,18 @@ class NotesController extends Controller
         if (array_key_exists('careteam', $input)) {
             $activitySer = new ActivityService;
             $activity = Activity::find($activity_id);
-            $linkToNote = $input['url'] . $activity->id;
+            $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId)) .'/'. $activity->id;
+            debug($linkToNote);
             $logger = User::find($input['logger_id']);
             $logger_name = $logger->display_name;
 
             $result = $activitySer->sendNoteToCareTeam($input['careteam'], $linkToNote, $input['performed_at'], $input['patient_id'], $logger_name, true);
 
             if ($result) {
-                return response("Successfully Created And Note Sent", 202);
-            } else return response("Unable to send emails", 401);
+                return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created And Note Sent']);
+            } else return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Unable To Send Emails.']);
 
-        } else return response("Successfully Created", 201);
+        } return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
 
     /**
@@ -229,7 +234,9 @@ class NotesController extends Controller
         if($phone){
             $note['phone'] = $phone;
         }
+
         $note['type'] = $note_act->type;
+        $note['id'] = $note_act->id;
         $note['performed_at'] = $note_act->performed_at;
         $note['provider_name'] = (User::find($note_act->provider_id)->getFullNameAttribute());
         $note['comment'] = $metaComment;
@@ -279,19 +286,28 @@ class NotesController extends Controller
         //
     }
 
-    public function sendExistingNote($activity_id, $logger_id, $url, $careteam)
+    public function send(Request $input, $patientId, $noteId)
     {
-            $activity = Activity::findOrFail($activity_id);
-            $activityService = new ActivityService;
-            $logger = User::find($logger_id);
-            $logger_name = $logger->display_name;
-            $linkToNote = $url.$activity->id;
-            $result = $activityService->sendNoteToCareTeam($careteam,$linkToNote,$activity->performed_at,$input['patient_id'],$logger_name, false);
-            if ($result) {
-                return response("Successfully Sent", 202);
-            } else {
-                return response("Sorry, could not sent Note!", 401);
-            }
+        debug($input->all());
+        $input = $input->all();
+
+       if(isset($input['careteam'])){
+            return 'Emails to be sent.';
+       } else {
+            return redirect()->route('patient.note.index', ['patient' => $patientId]);
+       }
+
+//            $activity = Activity::findOrFail($noteId);
+//            $activityService = new ActivityService;
+//            $logger = User::find($logger_id);
+//            $logger_name = $logger->display_name;
+//            $linkToNote = $url.$activity->id;
+//            $result = $activityService->sendNoteToCareTeam($careteam,$linkToNote,$activity->performed_at,$input['patient_id'],$logger_name, false);
+//            if ($result) {
+//                return response("Successfully Sent", 202);
+//            } else {
+//                return response("Sorry, could not sent Note!", 401);
+//            }
     }
 
 }

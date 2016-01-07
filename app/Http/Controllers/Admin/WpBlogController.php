@@ -2,6 +2,7 @@
 
 use App\Http\Requests;
 use App\CPRulesPCP;
+use App\Location;
 use App\CPRulesItemMeta;
 use App\CPRulesItem;
 use App\Http\Controllers\Controller;
@@ -37,7 +38,12 @@ class WpBlogController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		//
+
+		$messages = \Session::get('messages');
+
+		$locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->lists('name', 'id');
+
+		return view('admin.wpBlogs.create', compact([ 'locations', 'errors', 'messages' ]));
 	}
 
 	/**
@@ -45,12 +51,32 @@ class WpBlogController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Request $request)
 	{
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		//
+
+		// get params
+		$params = $request->input();
+
+		$program = new WpBlog;
+		$program->location_id = $params['location_id'];
+		$program->domain = $params['domain'];
+		$program->name = $params['name'];
+		$program->display_name = $params['display_name'];
+		$program->short_display_name = $params['short_display_name'];
+		$program->description = $params['description'];
+		$program->site_id = 1;
+		$program->path = '/';
+		$program->public = 0;
+		$program->archived = 0;
+		$program->mature = 0;
+		$program->spam = 0;
+		$program->deleted = 0;
+		$program->lang_id = 0;
+		$program->save();
+		return redirect()->route('admin.programs.edit', ['program' => $program])->with('messages', ['successfully created new program'])->send();
 	}
 
 	/**
@@ -65,7 +91,9 @@ class WpBlogController extends Controller {
 			abort(403);
 		}
 		// display view
-		$wpBlog = WpBlog::find($id);
+		$program = WpBlog::find($id);
+
+		/*
 		$cPRulesPCP = CPRulesPCP::where('prov_id', '=', $id)->where('status', '=', 'Active')->with('items.meta')->get();
 		if(!empty($cPRulesPCP)) {
 			$programItems = array();
@@ -93,7 +121,11 @@ class WpBlogController extends Controller {
 				}
 			}
 		}
-		return view('admin.wpBlogs.show', [ 'wpBlog' => $wpBlog, 'programItems' => $programItems, 'errors' => array(), 'messages' => array() ]);
+		*/
+
+		$locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->lists('name', 'id');
+
+		return view('admin.wpBlogs.show', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
 
 	/**
@@ -107,7 +139,14 @@ class WpBlogController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		//
+
+		$messages = \Session::get('messages');
+
+		$program = WpBlog::find($id);
+
+		$locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->lists('name', 'id');
+
+		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
 
 	/**
@@ -116,12 +155,26 @@ class WpBlogController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Request $request, $id)
 	{
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		//
+		// find program
+		$program = WpBlog::find($id);
+		if(!$program) {
+			abort(400);
+		}
+		// get params
+		$params = $request->input();
+		$program->location_id = $params['location_id'];
+		$program->domain = $params['domain'];
+		$program->name = $params['name'];
+		$program->display_name = $params['display_name'];
+		$program->short_display_name = $params['short_display_name'];
+		$program->description = $params['description'];
+		$program->save();
+		return redirect()->back()->with('messages', ['successfully updated program']);
 	}
 
 	/**
@@ -135,7 +188,14 @@ class WpBlogController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		//
+		// find program
+		$program = WpBlog::find($id);
+		if(!$program) {
+			abort(400);
+		}
+
+		$program->delete();
+		return redirect()->back()->with('messages', ['successfully removed program'])->send();
 	}
 
 }

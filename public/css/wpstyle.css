@@ -9740,10 +9740,8 @@ a:hover .icon--menu {
 }
 
 .icon--patients {
-  background-image: url('../img/ui/heart-icon.png');
+  background-image: url('../img/ui/icon--patients.png');
   background-repeat: no-repeat;
-  height: 18px;
-  width: 21px;
 }
 
 .icon--heart--white {
@@ -9816,6 +9814,10 @@ a:hover .icon--menu {
   background-image: url('../img/ui/find-patient-icon--big.png');
   background-repeat: no-repeat;
 }
+
+.icon--list-patient--big {
+  background-image: url('../img/ui/list-patient-icon--big.png');
+  background-repeat: no-repeat; }
 
 .icon--alert {
   background-image: url('../img/ui/alert-icon.png');
@@ -11143,4 +11145,93 @@ li[class*="subareas__item"] {
   .patient-info__subareas {
     page-break-inside: avoid;
   }
+}
+
+
+
+
+
+
+
+
+
+/*
+----------------------------------------------------
+----------------------------------------------------
+        CUSTOM STUFF 3.0
+----------------------------------------------------
+----------------------------------------------------
+*/
+
+.btn-orange {
+  background:#E5692F;
+  color:#fff;
+}
+
+.btn-orange:hover {
+  color:#fff;
+}
+
+.btn-orange:focus {
+  color:#fff;
+}
+
+.bg-orange {
+  background:#E5692F;
+  color:#fff;
+}
+
+
+
+
+.sub-form-title {
+  font-family: "Roboto Slab", Georgia, Times, "Times New Roman", serif;
+  font-weight: 300;
+  background: #ccc;
+  color: #222;
+  text-align: left;
+  padding:0px 10px;
+  font-size: 14px;
+  line-height: 28px;
+  height: 30px; }
+
+.sub-form-title-lh {
+  float:left;
+  font-weight:bold;
+}
+
+.sub-form-title-rh {
+  float:right;
+}
+
+.sub-form-title a {
+  text-decoration: underline;
+  color:#666;
+}
+
+.sub-form-indented-table {
+  margin-left:30px;
+}
+
+/*
+WEBIX STYLING
+*/
+.webix_clh_cf_style .webix_hcell{
+  background:#fff;
+  color:white;
+  font-weight:bold;
+
+}
+.webix_clh_cf_style .webix_column{
+  background: #fff;
+}
+.webix_clh_cf_style .webix_column > div{
+  border-color:#ddd;
+}
+.highlight_t{
+  background-color:#fff;
+}
+.webix_cell:nth-child(2n){
+  /* background-color:#eff; */
+  background-color:#eee;
 }

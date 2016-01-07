@@ -14,9 +14,9 @@
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title col-lg-12">
-                    Record New Note
+                    View Note
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.note.store', ['patientId' => $patient]), 'class' => 'form-horizontal')) !!}
+                {!! Form::open(array('url' => URL::route('patient.note.send', ['patientId' => $patient, 'noteId' => $note['id']]), 'class' => 'form-horizontal')) !!}
 
                 @include('partials.userheader')
 

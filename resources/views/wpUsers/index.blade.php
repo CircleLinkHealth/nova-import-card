@@ -4,11 +4,6 @@
     <script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                @include('errors.errors')
-            </div>
-        </div>
-        <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-2">
@@ -26,6 +21,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Users</div>
                     <div class="panel-body">
+                        @include('errors.errors')
 
                         <div class="row">
                             {!! Form::open(array('url' => URL::route('admin.users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
@@ -64,11 +60,9 @@
                             <tr>
                                 <td><strong>ID</strong></td>
                                 <td><strong>Role</strong></td>
-                                <td><strong>user_login</strong></td>
+                                <td><strong>Name</strong></td>
                                 <td><strong>user_email</strong></td>
-                                <td><strong>status</strong></td>
-                                <td><strong>display_name</strong></td>
-                                <td><strong>blog</strong></td>
+                                <td><strong>program</strong></td>
                             </tr>
                             </thead>
                             <tbody>
@@ -95,11 +89,14 @@
                                                 @endif
                                             @endif
                                         </td>
-                                        <td>{{ $wpUser->user_login }}</td>
+                                        <td>{{ $wpUser->fullName }}</td>
                                         <td>{{ $wpUser->user_email }}</td>
-                                        <td>{{ $wpUser->user_status }}</td>
-                                        <td>{{ $wpUser->display_name }}</td>
                                         <td>{{ $wpUser->program_id }}</td>
+                                        <td>
+                                            @if(Entrust::can('users-edit-all'))
+                                                <a href="{{ URL::route('admin.users.destroy', array('id' => $wpUser->ID)) }}" class="btn btn-danger btn-xs">Delete</a><br />
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             @else

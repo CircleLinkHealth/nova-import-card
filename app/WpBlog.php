@@ -1,8 +1,11 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class WpBlog extends Model {
+
+    use SoftDeletes;
 
     /**
      * The connection name for the model.
@@ -30,6 +33,11 @@ class WpBlog extends Model {
         return $this->hasMany('App\CPRulesPCP', 'prov_id', 'blog_id');
     }
 
+    public function location()
+    {
+        return $this->belongsTo('App\Location', 'location_id');
+    }
+
     public static function getProviders($blogId){
         $providers = User::whereHas('programs', function ($q) use ($blogId) {
             $q->where('blog_id', '=', $blogId);
@@ -40,12 +48,11 @@ class WpBlog extends Model {
     }
 
     public function locationId() {
+        /*
         $location = \DB::select("select * from wp_".$this->blog_id."_options where option_name = 'location_id'", []);
-        if(isset($location[0])) {
-            return $location[0]->option_value;
-        } else {
-            return false;
-        }
+        return $location[0]->option_value;
+        */
+        return $this->location_id;
     }
 
     public static function getItemsForParent($item, $blogId)

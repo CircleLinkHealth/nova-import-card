@@ -1,8 +1,11 @@
 @extends('partials.providerUI')
 @section('content')
     <div class="row" style="margin-top:60px;">
+        <div class="panel-body col-lg-8 col-lg-offset-2">
+            @include('errors.errors')
+        </div>
         <div class="main-form-container col-lg-8 col-lg-offset-2">
-            <div class="row">
+            <div class="row" style="border-bottom: 3px solid #50b2e2;">
                 <div class="main-form-title">
                     Notes / Offline Activities
                 </div>
@@ -12,6 +15,7 @@
                        class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                         NOTE</a><br>
                 </div>
+                <div class="row">
                 {!! Form::open(array('url' => URL::route('patient.note.index', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                 <div class="form-group  pull-right" style="margin-top:10px;">
                     <i class="icon icon--date-time"></i>
@@ -40,6 +44,8 @@
                     </div>
                 </div>
                 {!! Form::close() !!}
+                </div>
+                
 
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                     @if($data)
@@ -82,16 +88,16 @@
                                         }],
                                         template: function (obj) {
                                             if (obj.logged_from == "note")
-                                            return "<a href='http://clapi.cpm.com/manage-patients/{{$patient->ID}}/notes/view/"+obj.id+"'>" + obj.type + "</a>"
-                                            else if (obj.logged_from == "manual_input") {
-                                                return obj.type;
+                                            return "<a href='<?php echo URL::route('patient.note.view', array('patientId' => $patient->ID)); ?>/"  + obj.id + "'>" + obj.type + "</a>"
+                                            else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
+                                                return  "<a href='<?php echo URL::route('patient.activity.view', array('patientId' => $patient->ID)); ?>/"  + obj.id + "'>" + obj.type + "</a>"
                                             }
                                             return obj.type_name;
                                         },
 
                                         width: 175,
                                         sort: 'string',
-                                        css: {"color": "black", "text-align": "right"}
+                                        css: {"color": "black", "text-align": "left"}
                                     },
                                     {
                                         id: "logged_from",
@@ -126,7 +132,7 @@
                                         header: ["Provider", {content: "textFilter", placeholder: "Filter"}],
                                         width: 210,
                                         sort: 'string',
-                                        css: {"color": "black", "text-align": "right"}
+                                        css: {"color": "black", "text-align": "left"}
                                     },
                                 ],
                                 ready: function () {

@@ -130,24 +130,7 @@ class ActivityController extends Controller {
 		$activityService = new ActivityService;
 		$activityService->reprocessMonthlyActivityTime($input['patient_id']);
 
-		//if alerts are to be sent
-		if (array_key_exists('careteam',$input)) {
-			$activitySer = new ActivityService;
-			$activity = Activity::find($actId);
-			$linkToNote = $input['url'].$activity->id;
-			$logger = User::find($input['logger_id']);
-			$logger_name = $logger->display_name;
-
-			$result = $activitySer->sendNoteToCareTeam($input['careteam'],$linkToNote,$input['performed_at'],$input['patient_id'],$logger_name, true);
-
-			if($result)
-			{
-				return response("Successfully Created And Note Sent", 202);
-			}
-			else return  response("Unable to send emails", 401);
-
-		} else return response("Successfully Created", 201);
-
+		return redirect()->route('patient.activity.view', ['patient' => $activity->patient_id, 'actId' => $activity->id])->with('messages', ['Successfully Created New Offline Activity']);
 	}
 
 
@@ -158,24 +141,36 @@ class ActivityController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show(Request $request, $actId)
+	public function show(Request $input, $patientId, $actId)
 	{
-			$activity = Activity::findOrFail($actId);
+		$patient = User::find($patientId);
+		$act = Activity::find($actId);
+		//Set up note pack for view
+		$activity = array();
+		$messages = \Session::get('messages');
+		$activity['type'] = $act->type;
+		$activity['performed_at'] = $act->performed_at;
+		$activity['provider_name'] = (User::find($act->provider_id)->getFullNameAttribute());
+		$activity['duration'] = intval($act->duration)/60;
 
-			//extract and attach the 'comment' value from the ActivityMeta table
-			$metaComment = $activity->getActivityCommentFromMeta($id);
+		$careteam_info = array();
+		$careteam_ids = $patient->careTeam;
+		foreach ($careteam_ids as $id) {
+			$careteam_info[$id] = User::find($id)->getFullNameAttribute();;
+		}
 
-			//If it's a note, search for phone meta value
-			$phone = DB::table('activitymeta')->where('activity_id',$id)->where('meta_key','phone')->pluck('meta_value');
-			if($phone){
-				$activity['phone'] = $phone;
-			}
+		$comment = $act->getActivityCommentFromMeta($actId);
+		if($comment){
+			$activity['comment'] = $comment;
+		} else {
+			$activity['comment'] = '';
+		}
 
-			$activity['comment'] = $metaComment;
-			$activity['message'] = 'OK';
+		$view_data = ['activity' => $activity, 'userTimeZone' => $patient->timeZone,'careteam_info' => $careteam_info, 'patient' => $patient,'program_id' => $patient->blogId(), 'messages' => $messages];
 
-
-    }
+		debug($activity);
+		return view('wpUsers.patient.activity.view', $view_data);
+	}
 
 
 	/**
@@ -242,9 +237,11 @@ class ActivityController extends Controller {
 
 	public function providerUIIndex(Request $request, $patientId)
 	{
+
+
 		$patient = User::find($patientId);
 		$input = $request->all();
-
+		$messages = \Session::get('messages');
 		if (isset($input['selectMonth'])) {
 			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
 			$start = $time->startOfMonth()->format('Y-m-d');
@@ -296,7 +293,8 @@ class ActivityController extends Controller {
 				'month_selected' => $month_selected,
 				'months' => $months,
 				'patient' => $patient,
-				'data' => $data
+				'data' => $data,
+				'messages' => $messages
 			]);
 		}
 }

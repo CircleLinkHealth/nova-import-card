@@ -4,14 +4,18 @@ use DateTime;
 use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Support\Facades\App;
 use MikeMcLin\WpPassword\Facades\WpPassword;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Auth;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
+
+	use SoftDeletes;
 
 	use Authenticatable, CanResetPassword, EntrustUserTrait;
 
@@ -77,12 +81,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"qualification" => "",
 		"specialty" => "",
 		"npi_number" => "",
-		"firstName" => "required",
-		"lastName" => "required",
+		"first_name" => "required",
+		"last_name" => "required",
 		"gender" => "required",
 		"mrn_number" => "required",
 		"birth_date" => "required",
-		"telephone" => "required",
+		"study_phone_number" => "required",
 		"email" => "required",
 		"address" => "required",
 		"city" => "required",
@@ -270,6 +274,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function getCareTeamAttribute() {
 		$userConfig = $this->userConfig();
 		return $userConfig['care_team'];
+	}
+
+	public function getBillingProviderIDAttribute() {
+			$userConfig = $this->userConfig();
+			return $userConfig['billing_provider'];
+	}
+
+	public function getPreferredLocationName() {
+			$userConfig = $this->userConfig();
+		$location = Location::find($userConfig['preferred_contact_location']);
+		return $location->name;
+	}
+
+	public function getLeadContactIDAttribute() {
+		$userConfig = $this->userConfig();
+		return $userConfig['lead_contact'];
 	}
 
 	public function getCarePlanQAApproverAttribute() {
