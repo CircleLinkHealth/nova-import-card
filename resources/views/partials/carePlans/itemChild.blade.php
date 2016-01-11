@@ -2,7 +2,7 @@
 {!! $planItemChild->ui_row_start > 0 ? '<div class="row item-row" style="">' : '' !!}
 
 @if ($planItemChild->ui_col_start > 0)
-    <div class="col-sm-{!! $planItemChild->ui_col_start !!} item-child" style="">
+    <div class="col-sm-{!! $planItemChild->ui_col_start !!} cp-item-child" style="">
 @endif
 
 @if(isset($editMode) && $editMode != false)
@@ -17,7 +17,8 @@
 @elseif ($planItemChild->ui_fld_type == 'RADIO_MULT')
     <?php
     //$modal_content .= $key . " "; // HIDE CONTACT DAYS
-    $modal_content = '<div class="row">'; // HIDE CONTACT DAYS
+    $modal_content = '<div class="row"><div class="form-group">
+        <div class="form-item col-sm-12">'; // HIDE CONTACT DAYS
     for ($i = 1; $i < 8; $i++) {
         if ($i == 1) {
             $day = 'M';
@@ -46,13 +47,31 @@
         $name = $planItem->careItem->name;
         $modal_content .= '<div class="radio-inline"><input type="checkbox" id="' . $name . $i . '" name="' . $name . '[]" value="' . $i . '" ' . $status . '><label for="' . $name . $i . '"><span> </span>&nbsp;' . $day . '</label></div>';  // HIDE CONTACT DAYS
     }
-    $modal_content .= '</div>';
+    $modal_content .= '</div></div></div>';
     ?>
     {{ $planItemChild->careItem->display_name }}
     {!! $modal_content !!}
 @elseif ($planItemChild->ui_fld_type == 'INPUT')
     {{ $planItemChild->careItem->display_name }}<br>
-    <input name="INPUT|60||value" value="" placeholder="" type="text">
+    <input name="item|{{ $planItemChild->id }}" value="{{ $planItemChild->meta_value }}" placeholder="" type="text">
+@elseif ($planItemChild->ui_fld_type == 'CHECK')
+    <div class="row">
+        <div class="form-group">
+            <div class="form-item col-sm-12">
+                <div class="checkbox text-medium-big">
+                    <div class="radio-inline"><input id="carePlanItem{{ $planItemChild->id }}" name="item|{{ $planItem->id }}" value="{{ $planItemChild->meta_value }}" class="itemTrigger" data-toggle="collapse" data-target="#{{ $planItemChild->id }}_modal_contentclone" type="checkbox"
+                        @if ($planItemChild->meta_value == 'Active')
+                             checked="checked"
+                        @endif
+                        >
+                        <label for="carePlanItem{{ $planItemChild->id }}">
+                            <span></span>{{ $planItemChild->careItem->display_name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @else
     {{ $planItemChild->careItem->display_name }}
 @endif
