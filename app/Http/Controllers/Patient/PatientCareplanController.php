@@ -121,6 +121,7 @@ class PatientCareplanController extends Controller {
 
 		$userRepo = new UserRepository();
 
+		// validate
 		$this->validate($request, $user->patient_rules);
 
 		if($patientId) {

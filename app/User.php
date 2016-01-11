@@ -71,7 +71,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	);
 
 	public $patient_rules = array(
-		"user_id" => "required",
+		//"user_id" => "required",
 		"daily_reminder_optin" => "required",
 		"daily_reminder_time" => "required",
 		"daily_reminder_areas" => "required",
