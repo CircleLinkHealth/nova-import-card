@@ -74,11 +74,11 @@ $new_user = false;
                                         </div>
                                         <div class="col-sm-8">
                                             <div class="radio-inline">
-                                                <input type="radio" id="radioMale" name="gender" value="M" {{ ((old('gender') == 'M') ? 'checked="checked"' : ($userConfig['gender'] == 'M') ? 'checked="checked"' : '') }}>
+                                                <input type="radio" id="radioMale" name="gender" value="M" {{ ((old('gender') == 'M') ? 'checked="checked"' : (($userConfig['gender'] == 'M') ? 'checked="checked"' : '')) }}>
                                                 <label for="radioMale"><span> </span>Male</label>
                                             </div>
                                             <div class="radio-inline">
-                                                <input type="radio" id="radioFemale" name="gender" value="F" {{ ((old('gender') == 'F') ? 'checked="checked"' : ($userConfig['gender'] == 'F') ? 'checked="checked"' : '') }}>
+                                                <input type="radio" id="radioFemale" name="gender" value="F" {{ ((old('gender') == 'F') ? 'checked="checked"' : (($userConfig['gender'] == 'F') ? 'checked="checked"' : '')) }}>
                                                 <label for="radioFemale"><span> </span>Female</label>
                                             </div>
                                             <span class="help-block">{{ $errors->first('gender') }}</span>
@@ -93,25 +93,25 @@ $new_user = false;
                                         </div>
                                         <div class="col-sm-10 col-lg-4">
                                             <div class="radio">
-                                                <input type="radio" name="preferred_contact_language" id="languageEnglish" value="EN" {{ ((old('preferred_contact_language') == 'EN' || !old('preferred_contact_language')) ? 'checked="checked"' : ($userConfig['preferred_contact_language'] == 'EN') ? 'checked="checked"' : '') }}>
+                                                <input type="radio" name="preferred_contact_language" id="languageEnglish" value="EN" {{ ((old('preferred_contact_language') == 'EN' || !old('preferred_contact_language')) ? 'checked="checked"' : (($userConfig['preferred_contact_language'] == 'EN') ? 'checked="checked"' : '')) }}>
                                                 <label for="languageEnglish"><span> </span>English</label>
                                             </div>
                                             <div class="radio radio-v-margin">
-                                                <input type="radio" name="preferred_contact_language" id="languageSpanish"  value="ES" {{ ((old('preferred_contact_language') == 'ES') ? 'checked="checked"' : ($userConfig['preferred_contact_language'] == 'ES') ? 'checked="checked"' : '') }}>
+                                                <input type="radio" name="preferred_contact_language" id="languageSpanish"  value="ES" {{ ((old('preferred_contact_language') == 'ES') ? 'checked="checked"' : (($userConfig['preferred_contact_language'] == 'ES') ? 'checked="checked"' : '')) }}>
                                                 <label for="languageSpanish"><span> </span>Spanish</label>
                                             </div>
                                             <span class="help-block">{{ $errors->first('preferred_contact_language') }}</span>
                                         </div>
                                         <div class="form-group form-item form-item-spacing col-sm-12 col-lg-5 {{ $errors->first('mrn_number') ? 'has-error' : '' }}">
                                             <label class="sr-only" for="mrn_number">MRN</label>
-                                            <input type="text" class="form-control" name="mrn_number" id="mrn_number" placeholder="MRN *" value="{{ (old('mrn_number') ? old('mrn_number') : $userConfig['mrn_number'] ? $userConfig['mrn_number'] : '') }}">
-                                                <span class="help-block">{{ $errors->first('mrn_number') }}</span>
+                                            <input type="text" class="form-control" name="mrn_number" id="mrn_number" placeholder="MRN *" value="{{ (old('mrn_number') ? old('mrn_number') : ($userConfig['mrn_number'] ? $userConfig['mrn_number'] : '')) }}">
+                                            <span class="help-block">{{ $errors->first('mrn_number') }}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                     <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
-                                    <input id="birth_date" name="birth_date" type="input" class="form-control" value="{{ (old('birth_date') ? old('birth_date') : $userConfig['birth_date'] ? $userConfig['birth_date'] : '') }}"/><br />
+                                    <input id="birth_date" name="birth_date" type="input" class="form-control" value="{{ (old('birth_date') ? old('birth_date') : ($userConfig['birth_date'] ? $userConfig['birth_date'] : '')) }}"/><br />
                                     <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                 </div>
                                 <div class="form-item col-sm-12">
@@ -119,7 +119,7 @@ $new_user = false;
                                         <div class="col-sm-6">
                                             <div class="form-group {{ $errors->first('study_phone_number') ? 'has-error' : '' }}">
                                                 <label class="sr-only" for="telephone">Phone</label>
-                                                <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}' class="form-control" name="study_phone_number" id="study_phone_number" placeholder="Telephone *" value="{{ (old('study_phone_number') ? old('study_phone_number') : $userConfig['study_phone_number'] ? $userConfig['study_phone_number'] : '') }}">
+                                                <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}' class="form-control" name="study_phone_number" id="study_phone_number" placeholder="Telephone *" value="{{ (old('study_phone_number') ? old('study_phone_number') : ($userConfig['study_phone_number'] ? $userConfig['study_phone_number'] : '')) }}">
                                                 <span class="help-block">{{ $errors->first('study_phone_number') }}</span>
                                             </div>
                                         </div>
@@ -127,17 +127,17 @@ $new_user = false;
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('email') ? 'has-error' : '' }}">
                                     <label class="sr-only" for="lastName">Email Address</label>
-                                    <input type="email" class="form-control" name="email" id="email" placeholder="Email Address" value="{{ (old('email') ? old('email') : $userConfig['email'] ? $userConfig['email'] : '') }}">
+                                    <input type="email" class="form-control" name="email" id="email" placeholder="Email Address" value="{{ (old('email') ? old('email') : ($userConfig['email'] ? $userConfig['email'] : '')) }}">
                                     <span class="help-block">{{ $errors->first('email') }}</span>
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('address') ? 'has-error' : '' }}">
                                     <label class="sr-only" for="address">Street Address</label>
-                                    <input type="text" class="form-control" name="address" id="address" placeholder="Street Address" value="{{ (old('address') ? old('address') : $userConfig['address'] ? $userConfig['address'] : '') }}">
+                                    <input type="text" class="form-control" name="address" id="address" placeholder="Street Address" value="{{ (old('address') ? old('address') : ($userConfig['address'] ? $userConfig['address'] : '')) }}">
                                     <span class="help-block">{{ $errors->first('address') }}</span>
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-6 city-input {{ $errors->first('city') ? 'has-error' : '' }}">
                                     <label class="sr-only" for="city">City Name</label>
-                                    <input type="text" class="form-control" name="city" id="city" placeholder="City Name" value="{{ (old('city') ? old('city') : $userConfig['city'] ? $userConfig['city'] : '') }}">
+                                    <input type="text" class="form-control" name="city" id="city" placeholder="City Name" value="{{ (old('city') ? old('city') : ($userConfig['city'] ? $userConfig['city'] : '')) }}">
                                     <span class="help-block">{{ $errors->first('city') }}</span>
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-2 state-selector {{ $errors->first('state') ? 'has-error' : '' }}">
@@ -146,7 +146,7 @@ $new_user = false;
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-4 {{ $errors->first('zip') ? 'has-error' : '' }}">
                                     <label class="sr-only" for="zip">Zip Code</label>
-                                    <input type="text" class="form-control" name="zip" id="zip" placeholder="Zip Code" value="{{ (old('zip') ? old('zip') : $userConfig['zip'] ? $userConfig['zip'] : '') }}">
+                                    <input type="text" class="form-control" name="zip" id="zip" placeholder="Zip Code" value="{{ (old('zip') ? old('zip') : ($userConfig['zip'] ? $userConfig['zip'] : '')) }}">
                                     <span class="help-block">{{ $errors->first('zip') }}</span>
                                 </div>
                             </div>
@@ -156,7 +156,7 @@ $new_user = false;
                             <div class="row">
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_time') ? 'has-error' : '' }}">
                                     <label for="mf-contact">Preferred Contact Time <span class="attention">*</span>:</label>
-                                    <input id="preferred_contact_time" class="form-control" name="preferred_contact_time" type="input" value="{{ (old('preferred_contact_time') ? old('preferred_contact_time') : $userConfig['preferred_contact_time'] ? $userConfig['preferred_contact_time'] : '') }}"/><br />
+                                    <input id="preferred_contact_time" class="form-control" name="preferred_contact_time" type="input" value="{{ (old('preferred_contact_time') ? old('preferred_contact_time') : ($userConfig['preferred_contact_time'] ? $userConfig['preferred_contact_time'] : '')) }}"/><br />
                                     (Should be between 4pm and 9pm)
                                     <span class="help-block">{{ $errors->first('preferred_contact_time') }}</span>
                                 </div>
@@ -170,11 +170,11 @@ $new_user = false;
                                         </div>
                                         <div class="col-sm-10 col-lg-5 contact-method">
                                             <div class="radio">
-                                                <input type="radio" name="preferred_contact_method" id="contactMethodSMS" value="SMS" {{ ((old('preferred_contact_method') == 'SMS' || !old('preferred_contact_method')) ? 'checked="checked"' : ($userConfig['preferred_contact_method'] == 'SMS') ? 'checked="checked"' : '') }}>
+                                                <input type="radio" name="preferred_contact_method" id="contactMethodSMS" value="SMS" {{ ((old('preferred_contact_method') == 'SMS' || !old('preferred_contact_method')) ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'SMS') ? 'checked="checked"' : '')) }}>
                                                 <label for="contactMethodSMS"><span> </span>SMS</label>
                                             </div>
                                             <div class="radio radio-v-margin">
-                                                <input type="radio" name="preferred_contact_method" id="contactMethodApp"  value="APP" {{ (old('preferred_contact_method') == 'APP' ? 'checked="checked"' : ($userConfig['preferred_contact_method'] == 'APP') ? 'checked="checked"' : '') }}>
+                                                <input type="radio" name="preferred_contact_method" id="contactMethodApp"  value="APP" {{ (old('preferred_contact_method') == 'APP' ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'APP') ? 'checked="checked"' : '')) }}>
                                                 <label for="contactMethodApp"><span> </span>App</label>
                                             </div>
                                         </div>
@@ -187,14 +187,14 @@ $new_user = false;
                                             <label for="timezone">Time Zone <span class="attention">*</span>:</label>
                                         </div>
                                         <div class="col-sm-12">
-                                                {!! Form::select('timezone', $timezones, (old('timezone') ? old('timezone') : $userConfig['preferred_contact_timezone'] ? $userConfig['preferred_contact_timezone'] : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                            {!! Form::select('timezone', $timezones, (old('timezone') ? old('timezone') : $userConfig['preferred_contact_timezone'] ? $userConfig['preferred_contact_timezone'] : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                         </div>
                                     </div>
                                     <span class="help-block">{{ $errors->first('timezone') }}</span>
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
                                     <label for="mf-consent_date">Consent Date <span class="attention">*</span>:</label>
-                                    <input id="consent_date" name="consent_date" class="form-control" type="input" value="{{ (old('consent_date') ? old('consent_date') : $userConfig['consent_date'] ? $userConfig['consent_date'] : '') }}"/><br />
+                                    <input id="consent_date" name="consent_date" class="form-control" type="input" value="{{ (old('consent_date') ? old('consent_date') : ($userConfig['consent_date'] ? $userConfig['consent_date'] : '')) }}"/><br />
                                     <span class="help-block">{{ $errors->first('consent_date') }}</span>
                                 </div>
                                 <div class="col-sm-12 text-right">
@@ -220,11 +220,11 @@ $new_user = false;
                                         </div>
                                         <div class="col-sm-9 col-lg-8 status-buttons">
                                             <div class="radio">
-                                                <input type="radio" id="statusActive" name="status" value="Active" {{ ((old('status') == 'Active' || !old('status')) ? 'checked="checked"' : ($userConfig['status'] == 'SMS') ? 'checked="checked"' : '') }}>
+                                                <input type="radio" id="statusActive" name="status" value="Active" {{ ((old('status') == 'Active' || !old('status')) ? 'checked="checked"' : (($userConfig['status'] == 'SMS') ? 'checked="checked"' : '')) }}>
                                                 <label for="statusActive"><span> </span>Active</label>
                                             </div>
                                             <div class="radio radio-v-margin">
-                                                <input type="radio" id="statusInactive" name="status"  value="Inactive" {{ (old('status') == 'Inactive' ? 'checked="checked"' : ($userConfig['status'] == 'SMS') ? 'checked="checked"' : '') }}>
+                                                <input type="radio" id="statusInactive" name="status"  value="Inactive" {{ (old('status') == 'Inactive' ? 'checked="checked"' : (($userConfig['status'] == 'SMS') ? 'checked="checked"' : '')) }}>
                                                 <label for="statusInactive"><span> </span>Inactive</label>
                                             </div>
                                         </div>

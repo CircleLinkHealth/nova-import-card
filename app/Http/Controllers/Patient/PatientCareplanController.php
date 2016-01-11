@@ -19,6 +19,7 @@ use DateTimeZone;
 use EllipseSynergie\ApiResponse\Laravel\Response;
 use PasswordHash;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Input;
 use Auth;
 use DB;
 
@@ -367,8 +368,6 @@ class PatientCareplanController extends Controller {
 				}))
 				->get();
 		}
-
-		$messages = \Session::get('messages');
 		$editMode = false;
 
 		return view('wpUsers.patient.careplan.careplan', compact(['patient', 'editMode', 'carePlan', 'messages']));

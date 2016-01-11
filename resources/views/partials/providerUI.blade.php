@@ -146,7 +146,7 @@
     </div>
     --}}
 <!-- PAGE TIMER START -->
-@include('partials.providerUItimer')
+{{-- @include('partials.providerUItimer') --}}
 <!-- PAGE TIMER END -->
 </body>
 </html>
