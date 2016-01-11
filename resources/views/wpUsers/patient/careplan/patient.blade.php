@@ -202,17 +202,6 @@ $new_user = false;
                                 </div>
 
                                 <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_location') ? 'has-error' : '' }}">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <label for="timezone">Time Zone <span class="attention">*</span>:</label>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            {!! Form::select('preferred_contact_location', $locations, (old('preferred_contact_location') ? old('preferred_contact_location') : $userConfig['preferred_contact_location'] ? $userConfig['preferred_contact_location'] : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
-                                        </div>
-                                    </div>
-                                    <span class="help-block">{{ $errors->first('preferred_contact_location') }}</span>
-                                </div>
-
                                 <div class="form-group form-item form-item-spacing col-lg-7 col-sm-12 <?php //echo $validatlidation['status']['class']; ?>">
                                     <div class="row">
                                         <div class="col-sm-2 col-lg-4">
