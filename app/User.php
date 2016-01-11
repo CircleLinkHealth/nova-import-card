@@ -289,7 +289,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function getLeadContactIDAttribute() {
 		$userConfig = $this->userConfig();
+		if(isset($userConfig['lead_contact'])){
 		return $userConfig['lead_contact'];
+		} else return '';
 	}
 
 	public function getCarePlanQAApproverAttribute() {
