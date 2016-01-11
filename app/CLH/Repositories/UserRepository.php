@@ -9,6 +9,7 @@ use App\Role;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
 use App\Services\CareplanUIService;
+use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserRepository {
@@ -34,7 +35,11 @@ class UserRepository {
         $this->saveOrUpdatePrograms($wpUser, $params);
         $this->createDefaultCarePlan($wpUser, $params);
 
-        //dd($wpUser);
+        //Add Email Notification
+        $sendTo =  ['rohanm@circlelinkhealth.com'];
+//        $sendTo =  ['Plawlor@circlelinkhealth.com','lindaw@circlelinkhealth.com'];
+        $this->adminEmailNotify($wpUser, $sendTo);
+
         $wpUser->push();
         return $wpUser;
     }
@@ -257,5 +262,33 @@ class UserRepository {
                 }
             }
         }
+    }
+
+    public function adminEmailNotify(User $user, $recipients){
+
+//   Template:
+//        From: CircleLink Health
+//        Sent: Tuesday, January 5, 10:11 PM
+//        Subject: [Site Name] New User Registration!
+//        To: Phil Lawlor       Plawlor@circlelinkhealth.com
+//            Linda Warshavsky  lindaw@circlelinkhealth.com
+//
+//New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
+
+        $email_view = 'emails.newpatientnotify';
+        $program = WpBlog::find($user->blogId());
+        $program_name = $program->domain;
+        $email_subject = '[' . $program_name . '] New User Registration!';
+        $data = array(
+            'patient_name' => $user->getFullNameAttribute(),
+            'patient_id' => $user->ID,
+            'patient_email' => $user->getEmailForPasswordReset(),
+            'program' => $program_name
+        );
+
+        Mail::send($email_view, $data, function($message) use ($recipients,$email_subject) {
+            $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
+            $message->to($recipients)->subject($email_subject);
+        });
     }
 }
