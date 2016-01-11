@@ -276,7 +276,7 @@ class UserRepository {
 
         $email_view = 'emails.newpatientnotify';
         $program = WpBlog::find($user->blogId());
-        $program_name = $program->domain;
+        $program_name = $program->display_name;
         $email_subject = '[' . $program_name . '] New '. ucwords($user->role()) .' Registration!';
         $data = array(
             'patient_name' => $user->getFullNameAttribute(),
