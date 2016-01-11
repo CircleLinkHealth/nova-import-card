@@ -32,7 +32,7 @@
                                 @foreach( $locationParents as $id => $loc )
                                     <tr>
                                         <td>
-                                            <a href='/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
+                                            <a href='/admin/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
                                         </td>
                                         <td>
                                             <a href="{{ action('LocationController@show', $id) }}" class="btn btn-info btn-xs">{{ $loc }}</a>
@@ -59,7 +59,7 @@
                                 @foreach( $locationParentsSubs as $id => $loc )
                                     <tr>
                                         <td>
-                                            <a href='/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
+                                            <a href='/admin/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
                                         </td>
                                         <td>
                                             <a href="{{ action('LocationController@show', $id) }}" class="btn btn-info btn-xs">{{ $loc }}</a>
