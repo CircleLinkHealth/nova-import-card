@@ -13,6 +13,8 @@ $new_user = false;
         <div class="icon-container col-lg-12">
             @if(isset($patient->ID) && !$new_user )
                 @include('wpUsers.patient.careplan.nav')
+            @else
+                @include('errors.errors')
             @endif
         </div>
     </div>
