@@ -5,6 +5,7 @@ use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\Observation;
 use App\CarePlan;
+use App\CareItemCarePlan;
 use App\WpBlog;
 use App\Location;
 use App\User;
@@ -261,83 +262,6 @@ class PatientCareplanController extends Controller {
 
 
 
-
-
-
-
-
-
-
-
-
-	/**
-	 * Display patient careplan
-	 *
-	 * @param  int  $patientId
-	 * @return Response
-	 */
-	public function showPatientCareplanWP(Request $request, $patientId = false)
-	{
-		$messages = \Session::get('messages');
-
-		$wpUser = false;
-		if($patientId) {
-			$wpUser = User::find($patientId);
-			if (!$wpUser) {
-				return response("User not found", 401);
-			}
-		}
-		$patient = $wpUser;
-
-		// program
-		$program = WpBlog::find($wpUser->program_id);
-
-		$params = $request->all();
-
-		// user config
-		$userConfig = (new UserConfigTemplate())->getArray();
-		if(isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
-			$userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
-			$userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
-		}
-
-		//$sectionHtml = $carePlanUI->renderCareplanSection($wpUser, 'Biometrics to Monitor');
-		$sectionHtml = (new CareplanUIService)->renderCareplanSections(array(), $wpUser->program_id, $wpUser);
-
-		return view('wpUsers.patient.careplan.careplan', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml']));
-	}
-
-	/**
-	 * Save patient careplan
-	 *
-	 * @param  int  $patientId
-	 * @return Response
-	 */
-	public function storePatientCareplanWP(Request $request)
-	{
-		// input
-		$params = new ParameterBag($request->input());
-		if($params->get('user_id')) {
-			$patientId = $params->get('user_id');
-		}
-
-		// instantiate user
-		$wpUser = User::with('meta')->find($patientId);
-		if (!$wpUser) {
-			return response("User not found", 401);
-		}
-
-		if($params->get('direction')) {
-			return redirect($params->get('direction'))->with('messages', ['Successfully updated patient care plan.']);
-		}
-		return redirect()->back()->with('messages', ['successfully updated patient care plan']);
-
-		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
-	}
-
-
-
-
 	/**
 	 * Display patient careplan
 	 *
@@ -381,6 +305,7 @@ class PatientCareplanController extends Controller {
 	 */
 	public function storePatientCareplan(Request $request)
 	{
+
 		// input
 		$params = new ParameterBag($request->input());
 		if($params->get('user_id')) {
@@ -393,12 +318,32 @@ class PatientCareplanController extends Controller {
 			return response("User not found", 401);
 		}
 
+		// get carePlan
+		$careplan = CarePlan::find($params->get('careplan_id'));
+
+		// loop through care plan items
+		foreach($careplan->careItems as $careItem) {
+			$carePlanItem = CareItemCarePlan::where('item_id', '=', $careItem->id)
+			->where('plan_id', '=', $careplan->id)
+			->first();
+			if(!$carePlanItem) {
+				continue 1;
+			}
+			$value = $params->get('item|'.$carePlanItem->id);
+			// if checkbox and unchecked on the ui it doesnt post, so set these to Inactive
+			if(!$value && ($carePlanItem->ui_fld_type == 'SELECT' || $carePlanItem->ui_fld_type == 'CHECK')) {
+				$value = 'Inactive';
+			}
+			if($value) {
+				$carePlanItem->meta_value = $value;
+				$carePlanItem->save();
+			}
+		}
+
 		if($params->get('direction')) {
 			return redirect($params->get('direction'))->with('messages', ['Successfully updated patient care plan.']);
 		}
 		return redirect()->back()->with('messages', ['successfully updated patient care plan']);
-
-		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}
 
 
@@ -426,4 +371,75 @@ class PatientCareplanController extends Controller {
 
 		return view('wpUsers.patient.careplan.print', ['program' => $program, 'patient' => $wpUser]);
 	}
+
+
+
+	/**
+	 * Display patient careplan
+	 *
+	 * @param  int  $patientId
+	 * @return Response
+	 */
+	/*
+	public function showPatientCareplanWP(Request $request, $patientId = false)
+	{
+		$messages = \Session::get('messages');
+
+		$wpUser = false;
+		if($patientId) {
+			$wpUser = User::find($patientId);
+			if (!$wpUser) {
+				return response("User not found", 401);
+			}
+		}
+		$patient = $wpUser;
+
+		// program
+		$program = WpBlog::find($wpUser->program_id);
+
+		$params = $request->all();
+
+		// user config
+		$userConfig = (new UserConfigTemplate())->getArray();
+		if(isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
+			$userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
+			$userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
+		}
+
+		//$sectionHtml = $carePlanUI->renderCareplanSection($wpUser, 'Biometrics to Monitor');
+		$sectionHtml = (new CareplanUIService)->renderCareplanSections(array(), $wpUser->program_id, $wpUser);
+
+		return view('wpUsers.patient.careplan.careplan', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml']));
+	}
+	*/
+
+	/**
+	 * Save patient careplan
+	 *
+	 * @param  int  $patientId
+	 * @return Response
+	 */
+	/*
+	public function storePatientCareplanWP(Request $request)
+	{
+		// input
+		$params = new ParameterBag($request->input());
+		if($params->get('user_id')) {
+			$patientId = $params->get('user_id');
+		}
+
+		// instantiate user
+		$wpUser = User::with('meta')->find($patientId);
+		if (!$wpUser) {
+			return response("User not found", 401);
+		}
+
+		if($params->get('direction')) {
+			return redirect($params->get('direction'))->with('messages', ['Successfully updated patient care plan.']);
+		}
+		return redirect()->back()->with('messages', ['successfully updated patient care plan']);
+
+		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
+	}
+	*/
 }

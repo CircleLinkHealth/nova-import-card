@@ -20,6 +20,7 @@ $new_user = false;
 
     <input type=hidden name=user_id value="{{ $patient->ID }}">
     <input type=hidden name=program_id value="{{ $patient->program_id }}">
+    <input type=hidden name=careplan_id value="{{ $carePlan->id }}">
 
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container-last col-lg-8 col-lg-offset-2">

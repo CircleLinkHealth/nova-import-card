@@ -43,7 +43,7 @@
             <div class="form-group">
                 <div class="form-item col-sm-12">
                     <div class="checkbox text-medium-big">
-                        <div class="radio-inline"><input id="carePlanItem{{ $planItem->id }}" name="item|{{ $planItem->id }}" value="{{ $planItem->meta_value }}" class="itemTrigger" data-toggle="collapse" data-target="#{{ $planItem->id }}_modal_contentclone" type="checkbox"
+                        <div class="radio-inline"><input id="carePlanItem{{ $planItem->id }}" name="item|{{ $planItem->id }}" value="Active" class="itemTrigger" data-toggle="collapse" data-target="#{{ $planItem->id }}_modal_contentclone" type="checkbox"
                             @if ($planItem->meta_value == 'Active')
                                 checked="checked"
                             @endif
