@@ -13,7 +13,7 @@
 
 @if (isset($messages))
     @if (count($messages) > 0)
-        <div class="alert alert-success error">
+        <div class="alert alert-success success">
             <strong>Messages:</strong><br><br>
             <ul>
                 @foreach ($messages as $message)
@@ -25,9 +25,9 @@
 @endif
 
 <script>
-    $(".error").slideDown(function() {
+    $(".success").slideDown(function() {
         setTimeout(function() {
-            $(".error").slideUp();
+            $(".success").slideUp();
         }, 3000);
     });
 </script>
