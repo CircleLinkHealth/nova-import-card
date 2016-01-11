@@ -9,8 +9,6 @@ use App\CPRulesUCP;
 use App\CPRulesItem;
 use App\CPRulesItemMeta;
 use App\User;
-use App\WpUser;
-use App\WpUserMeta;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,13 +36,16 @@ class S20151215ItemNames2 extends Seeder {
                     if(!$carePlan) {
                         $user = User::find($rulesUCP['user_id']);
                         if(!$user) {
-                            echo "NO USER??? ok.. skip!".PHP_EOL;
-                            continue 1;
+                            echo "NO USER??? ok.. should skip! but not gunna....".PHP_EOL;
+                            //continue 1;
+                            $programId = '';
+                        } else {
+                            $programId = $user->program_id;
                         }
                         // add careplan
                         $carePlan = new CarePlan;
                         $carePlan->user_id = $rulesUCP['user_id'];
-                        $carePlan->program_id = $user->program_id;
+                        $carePlan->program_id = $programId;
                         $carePlan->name = 'patient-'.$rulesUCP['user_id'].'-default';
                         $carePlan->display_name = 'Patient '.$rulesUCP['user_id'].' Care Plan';
                         $carePlan->type = 'Patient Default';
@@ -93,6 +94,9 @@ class S20151215ItemNames2 extends Seeder {
                     if($careItem) {
                         // build pivot data
                         echo 'care_item_id = ' . $careItem['id'] .PHP_EOL;
+                        if(is_null($rulesUCP['meta_value'])) {
+                            $rulesUCP['meta_value'] = '';
+                        }
                         $rowData = array('section_id' => $careSection['id'],
                             'meta_key' => $rulesUCP['meta_key'],
                             'meta_value' => $rulesUCP['meta_value']);

@@ -10,8 +10,6 @@ use App\CPRulesQuestions;
 use App\CPRulesItem;
 use App\CPRulesItemMeta;
 use App\User;
-use App\WpUser;
-use App\WpUserMeta;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,7 +19,7 @@ class S20151215ItemNames1 extends Seeder {
     public function run()
     {
         
-        $programIds = array('7','8','9');
+        $programIds = array(7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30);
         foreach($programIds as $programId) {
             // get all items
             $items = CPRulesItem::whereHas('pcp', function ($q) use ($programId) {

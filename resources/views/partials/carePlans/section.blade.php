@@ -1,10 +1,12 @@
-<div class="col-sm-12" id="section{{ $careSection->id }}" style="border:2px solid #111;margin-top:20px;">
-    @include('partials.carePlans.sectionEdit')
-    {{-- VIEW ONLY:
-    <a class="" role="" data-toggle="collapse" href="#collapseSection{{ $careSection->id }}" aria-expanded="false" aria-controls="collapseSection{{ $careSection->id }}">
-    <h1>{{ $careSection->display_name }}</h1>
-</a>
-    --}}
+<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"  id="section{{ $careSection->id }}">
+    @if(isset($editMode) && $editMode != false)
+        @include('partials.carePlans.sectionEdit')
+    @else
+        {{-- VIEW ONLY: --}}
+        <a class="" role="" data-toggle="collapse" href="#collapseSection{{ $careSection->id }}" aria-expanded="false" aria-controls="collapseSection{{ $careSection->id }}">
+            <h4>{{ $careSection->display_name }}</h4>
+        </a>
+    @endif
     @if(!empty($careSection->planItems))
         <?php $i=0; ?>
         <?php $r=1; ?>
@@ -12,7 +14,7 @@
             @foreach($careSection->planItems as $planItem)
                 @if ($planItem->careItem->display_name != '')
                     @if($i % 2 == 0)
-                        START ROW {{ $r }}
+                        @if(isset($editMode) && $editMode != false) START ROW {{ $r }} @endif
                         <div class="row">
                     @endif
                     <div class="col-sm-6">
@@ -22,7 +24,7 @@
                         {{ $planItem->ui_row_end > 0 ? '</div>' : '' }}
                         {{ $planItem->ui_col_end > 0 ? '</div>' : '' }}
                     @if( ($i % 2 != 0) || ($careSection->planItems->count() == ($i+1)) )
-                        END ROW {{ $r }}
+                        @if(isset($editMode) && $editMode != false) END ROW {{ $r }} @endif
                         </div>
                         <?php $r++; ?>
                     @endif

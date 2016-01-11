@@ -1,16 +1,67 @@
-<div class="row">
-    <button type="button" class="btn btn-success btn-xs" data-toggle="collapse" href="#itemEdit{{ $planItemChild->id }}" aria-expanded="false" aria-controls="itemEdit{{ $planItemChild->id }}">Edit</button>
-    <a href="{{ URL::route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-danger btn-xs section-reload" section="{{ $careSection->id }}">Remove</a>
+@if(isset($editMode) && $editMode != false && $planItemChild->ui_row_start > 0) start row @endif
+{!! $planItemChild->ui_row_start > 0 ? '<div class="row item-row" style="">' : '' !!}
+
+@if ($planItemChild->ui_col_start > 0)
+    <div class="col-sm-{!! $planItemChild->ui_col_start !!} item-child" style="">
+@endif
+
+@if(isset($editMode) && $editMode != false)
+    @include('partials.carePlans.itemChildEdit')
+@else
+    {{-- VIEW ONLY:
+    <strong>{{ $planItem->meta_key . ' = ' . $planItem->meta_value }}</strong><br /> --}}
+@endif
+
+@if ($planItemChild->ui_fld_type == 'SELECT')
+    <input id="Hypertension" name="CHECK_STATUS|27|39|status" value="Active" checked="checked" class="itemTrigger" data-toggle="collapse" data-target="#39_modal_contentclone" type="checkbox"><label for="Hypertension"><span> </span>{{ $planItemChild->careItem->display_name }}</label><br />
+@elseif ($planItemChild->ui_fld_type == 'RADIO_MULT')
+    <?php
+    //$modal_content .= $key . " "; // HIDE CONTACT DAYS
+    $modal_content = '<div class="row">'; // HIDE CONTACT DAYS
+    for ($i = 1; $i < 8; $i++) {
+        if ($i == 1) {
+            $day = 'M';
+        }
+        if ($i == 2) {
+            $day = 'T';
+        }
+        if ($i == 3) {
+            $day = 'W';
+        }
+        if ($i == 4) {
+            $day = 'T';
+        }
+        if ($i == 5) {
+            $day = 'F';
+        }
+        if ($i == 6) {
+            $day = 'S';
+        }
+        if ($i == 7) {
+            $day = 'S';
+        }
+        $status = '';
+        if (strpos($planItem->meta_value, strval($i)) > -1) $status = ' checked="checked"';
+        // $modal_content .= '<input type="checkbox" name="test" id="" value="1">';
+        $name = $planItem->careItem->name;
+        $modal_content .= '<div class="radio-inline"><input type="checkbox" id="' . $name . $i . '" name="' . $name . '[]" value="' . $i . '" ' . $status . '><label for="' . $name . $i . '"><span> </span>&nbsp;' . $day . '</label></div>';  // HIDE CONTACT DAYS
+    }
+    $modal_content .= '</div>';
+    ?>
+    {{ $planItemChild->careItem->display_name }}
+    {!! $modal_content !!}
+@elseif ($planItemChild->ui_fld_type == 'INPUT')
+    {{ $planItemChild->careItem->display_name }}<br>
+    <input name="INPUT|60||value" value="" placeholder="" type="text">
+@else
+    {{ $planItemChild->careItem->display_name }}
+@endif
+
+
+
+@if ($planItemChild->ui_col_end > 0)
 </div>
-<div class="collapse" id="itemEdit{{ $planItemChild->id }}" style="background:#ccc;">
-    [ui_sort:{{ $planItemChild->ui_sort }}]<br />
-    [ui_fld_type:{{ $planItemChild->ui_fld_type }}]<br />
-    [ui_row_start:{{ $planItemChild->ui_row_start }}]<br />
-    [ui_row_end:{{ $planItemChild->ui_row_end }}]<br />
-    [ui_col_start:{{ $planItemChild->ui_col_start }}]<br />
-    [ui_default:{{ $planItemChild->ui_default }}]<br />
-    [ui_sort:{{ $planItemChild->ui_sort }}]<br />
-</div>
-{{-- VIEW ONLY:
-<h3>{{ $planItemChild->careItem->display_name }}</h3>
---}}
+@endif
+{!! $planItemChild->ui_row_end > 0 ? '</div>' : '' !!}
+@if(isset($editMode) && $editMode != false && $planItemChild->ui_row_end > 0) end row<br /> @endif
+{!! $planItemChild->ui_row_end > 0 ? '<br />' : '' !!}

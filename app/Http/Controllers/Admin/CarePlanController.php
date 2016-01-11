@@ -136,7 +136,9 @@ class CarePlanController extends Controller {
 				->get();
 		}
 
-		return view('admin.carePlans.edit', [ 'carePlan' => $carePlan, 'users' => $users, 'messages' => \Session::get('messages') ]);
+		$editMode = false;
+
+		return view('admin.carePlans.edit', [ 'editMode' => $editMode, 'carePlan' => $carePlan, 'users' => $users, 'messages' => \Session::get('messages') ]);
 	}
 
 

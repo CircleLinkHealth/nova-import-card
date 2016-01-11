@@ -30,6 +30,9 @@ class S20151215ItemNames extends Seeder {
 
         $this->call('database\seeds\S20151215ItemNames3');
         $this->command->info('Part 3 Completed Successfully');
+
+        $this->call('database\seeds\S20151215ItemNames4');
+        $this->command->info('Part 4 Completed Successfully');
         die('done!');
 
     }

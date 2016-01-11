@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCarePlanTables extends Migration {
+class CreateCarePlanTables2 extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,7 +12,21 @@ class CreateCarePlanTables extends Migration {
 	 */
 	public function up()
 	{
-		/*
+
+		Schema::connection('mysql_no_prefix')->table('rules_items', function(Blueprint $table)
+		{
+			if( ! Schema::connection('mysql_no_prefix')->hasColumn('rules_items', 'name' )){
+				$table->string('care_item_id')->after('qid');
+				$table->string('name')->after('care_item_id');
+				$table->string('display_name')->after('name');
+				$table->string('description')->after('display_name');
+			}
+
+			if( ! Schema::connection('mysql_no_prefix')->hasColumn('rules_items', 'deleted_at' )) {
+				$table->softDeletes();
+			}
+		});
+
 		// care_items
 		Schema::connection('mysql_no_prefix')->create('care_items', function(Blueprint $table)
 		{
@@ -32,12 +46,13 @@ class CreateCarePlanTables extends Migration {
 		{
 			$table->increments('id');
 			$table->unsignedInteger('parent_id');
-			$table->string('name');
 			$table->string('type'); // template, provider_default, patient_default
+			$table->string('name');
 			$table->string('display_name'); // Provider Default, Patient Careplan
 			$table->string('description');
 			$table->unsignedInteger('user_id');
 			$table->unsignedInteger('program_id');
+			$table->unique('name');
 			$table->timestamps();
 		});
 
@@ -48,7 +63,7 @@ class CreateCarePlanTables extends Migration {
 			$table->string('name');
 			$table->string('display_name');
 			$table->string('description');
-			$table->string('alert_key');
+			$table->string('template');
 			$table->unique('name');
 			$table->timestamps();
 		});
@@ -59,6 +74,7 @@ class CreateCarePlanTables extends Migration {
 			$table->unsignedInteger('plan_id');
 			$table->unsignedInteger('section_id');
 			$table->string('status');
+			$table->string('template');
 			$table->string('ui_sort');
 			$table->foreign('plan_id')->references('id')->on('care_plans');
 			$table->foreign('section_id')->references('id')->on('care_sections');
@@ -73,7 +89,8 @@ class CreateCarePlanTables extends Migration {
 			$table->unsignedInteger('plan_id');
 			$table->unsignedInteger('section_id');
 			$table->string('meta_key');
-			$table->string('meta_value');
+			$table->string('meta_value')->nullable();
+			$table->string('status');
 			$table->string('alert_key');
 			$table->string('ui_placeholder');
 			$table->string('ui_default');
@@ -93,7 +110,6 @@ class CreateCarePlanTables extends Migration {
 			$table->foreign('section_id')->references('id')->on('care_sections');
 			$table->unique(['plan_id', 'item_id', 'section_id', 'parent_id'], 'plan_item_section_parent');
 		});
-		*/
 	}
 
 	/**

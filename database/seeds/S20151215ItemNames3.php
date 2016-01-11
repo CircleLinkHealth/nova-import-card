@@ -9,8 +9,6 @@ use App\CPRulesUCP;
 use App\CPRulesItem;
 use App\CPRulesItemMeta;
 use App\User;
-use App\WpUser;
-use App\WpUserMeta;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 

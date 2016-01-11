@@ -4,6 +4,7 @@ use App\Activity;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\Observation;
+use App\CarePlan;
 use App\WpBlog;
 use App\Location;
 use App\User;
@@ -268,12 +269,12 @@ class PatientCareplanController extends Controller {
 
 
 	/**
-	 * Display patient careteam edit
+	 * Display patient careplan
 	 *
 	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function showPatientCareplan(Request $request, $patientId = false)
+	public function showPatientCareplanWP(Request $request, $patientId = false)
 	{
 		$messages = \Session::get('messages');
 
@@ -304,9 +305,76 @@ class PatientCareplanController extends Controller {
 		return view('wpUsers.patient.careplan.careplan', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml']));
 	}
 
+	/**
+	 * Save patient careplan
+	 *
+	 * @param  int  $patientId
+	 * @return Response
+	 */
+	public function storePatientCareplanWP(Request $request)
+	{
+		// input
+		$params = new ParameterBag($request->input());
+		if($params->get('user_id')) {
+			$patientId = $params->get('user_id');
+		}
+
+		// instantiate user
+		$wpUser = User::with('meta')->find($patientId);
+		if (!$wpUser) {
+			return response("User not found", 401);
+		}
+
+		if($params->get('direction')) {
+			return redirect($params->get('direction'))->with('messages', ['Successfully updated patient care plan.']);
+		}
+		return redirect()->back()->with('messages', ['successfully updated patient care plan']);
+
+		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
+	}
+
+
+
 
 	/**
-	 * Save patient careteam edit
+	 * Display patient careplan
+	 *
+	 * @param  int  $patientId
+	 * @return Response
+	 */
+	public function showPatientCareplan(Request $request, $patientId = false) {
+		$messages = \Session::get('messages');
+
+		$wpUser = false;
+		if($patientId) {
+			$wpUser = User::find($patientId);
+			if (!$wpUser) {
+				return response("User not found", 401);
+			}
+		}
+		$patient = $wpUser;
+		$id = 352;
+		$carePlan = CarePlan::find($id);
+		foreach($carePlan->careSections as $careSection) {
+			// add parent items to each section
+			$careSection->planItems = $carePlan->carePlanItems()
+				->where('section_id', '=', $careSection->id)
+				->where('parent_id', '=', 0)
+				->orderBy('ui_sort', 'asc')
+				->with(array('children' => function ($query) {
+					$query->orderBy('ui_sort', 'asc');
+				}))
+				->get();
+		}
+
+		$messages = \Session::get('messages');
+		$editMode = false;
+
+		return view('wpUsers.patient.careplan.careplan', compact(['patient', 'editMode', 'carePlan', 'messages']));
+	}
+
+	/**
+	 * Store patient careplan
 	 *
 	 * @param  int  $patientId
 	 * @return Response
@@ -332,7 +400,6 @@ class PatientCareplanController extends Controller {
 
 		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}
-
 
 
 
