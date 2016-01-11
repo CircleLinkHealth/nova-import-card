@@ -36,8 +36,7 @@ class UserRepository {
         $this->createDefaultCarePlan($wpUser, $params);
 
         //Add Email Notification
-//        $sendTo =  ['rohanm@circlelinkhealth.com'];
-        $sendTo =  ['Plawlor@circlelinkhealth.com','lindaw@circlelinkhealth.com'];
+        $sendTo =  ['Plawlor@circlelinkhealth.com','rohanm@circlelinkhealth.com','lindaw@circlelinkhealth.com'];
         $this->adminEmailNotify($wpUser, $sendTo);
 
         $wpUser->push();
@@ -278,7 +277,7 @@ class UserRepository {
         $email_view = 'emails.newpatientnotify';
         $program = WpBlog::find($user->blogId());
         $program_name = $program->domain;
-        $email_subject = '[' . $program_name . '] New User Registration!';
+        $email_subject = '[' . $program_name . '] New '. ucwords($user->role()) .' Registration!';
         $data = array(
             'patient_name' => $user->getFullNameAttribute(),
             'patient_id' => $user->ID,
