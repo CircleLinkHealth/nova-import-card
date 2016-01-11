@@ -226,7 +226,8 @@ Class ReportsService
         return $changes_array;
     }
 
-    public function medicationStatus(User $user){
+    public function medicationStatus(User $user, $fromApp = true){
+
         $medications_pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Medications to Monitor')->first();
         $medications_items = CPRulesItem::where('pcp_id', $medications_pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
 
@@ -264,10 +265,15 @@ Class ReportsService
         $temp_meds = array();
 
         //Add scaffolding to sections
-
-        $meds_array['Better']['description'] = '';
-        $meds_array['Needs Work']['description'] = '';
-        $meds_array['Worse']['description'] = '';
+        if ($fromApp) {
+            $meds_array['Better']['description'] = '';
+            $meds_array['Needs Work']['description'] = '';
+            $meds_array['Worse']['description'] = '';
+        } else {
+            $meds_array['Better']['description'] = array();
+            $meds_array['Needs Work']['description'] = array();
+            $meds_array['Worse']['description'] = array();
+        }
 
         foreach ($medications_categories as $category) {
             $yes = 0;
@@ -291,27 +297,42 @@ Class ReportsService
             } else {
                 $temp_meds[$category]['percent'] = 0;
             }
-
-            //add to categories based on percentage of responses
-            switch ($temp_meds[$category]['percent']) {
-                case ($temp_meds[$category]['percent'] > 0.8):
-                    $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
-                    break;
-                case ($temp_meds[$category]['percent'] >= 0.5):
-                    $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
-                    break;
-                case ($temp_meds[$category]['percent'] == 0):
-                    $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-                    break;
-                default:
-                    $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-                    break;
+            if ($fromApp) {
+                //add to categories based on percentage of responses
+                switch ($temp_meds[$category]['percent']) {
+                    case ($temp_meds[$category]['percent'] > 0.8):
+                        $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
+                        break;
+                    case ($temp_meds[$category]['percent'] >= 0.5):
+                        $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
+                        break;
+                    case ($temp_meds[$category]['percent'] == 0):
+                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+                        break;
+                    default:
+                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+                        break;
+                }
+                //echo $category.': ' . $temp_meds[$category]['percent'] . ' <br /> ';
+            } else {
+                // for provider UI
+                switch ($temp_meds[$category]['percent']) {
+                    case ($temp_meds[$category]['percent'] > 0.8):
+                        $meds_array['Better']['description'][] = $category;
+                        break;
+                    case ($temp_meds[$category]['percent'] >= 0.5):
+                        $meds_array['Needs Work']['description'][] = $category;
+                        break;
+                    case ($temp_meds[$category]['percent'] == 0):
+                        $meds_array['Worse']['description'][] = $category;
+                    default:
+                        $meds_array['Worse']['description'][] = $category;
+                        break;
+                }
             }
-            //echo $category.': ' . $temp_meds[$category]['percent'] . ' <br /> ';
+            //dd($temp_meds); //Show all the medication categories and stats
+            //dd(json_encode($medications)); // show the medications by adherence category
         }
-        //dd($temp_meds); //Show all the medication categories and stats
-        //dd(json_encode($medications)); // show the medications by adherence category
-
         $medications[0] = ['name' => $meds_array['Better']['description'],'Section' => 'Better'] ;
         $medications[1] = ['name' => $meds_array['Needs Work']['description'],'Section' => 'Needs Work'] ;
         $medications[2] = ['name' => $meds_array['Worse']['description'],'Section' => 'Worse'] ;

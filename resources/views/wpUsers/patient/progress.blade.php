@@ -103,7 +103,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
                             <div class="col-xs-3  text-center" style="Zoom:75%">
                                 <div class="patient-summary__info">
-                                    120&nbsp;
+                                    [TBA]&nbsp;
                                 </div>
                                 <div class="patient-summary__info__legend">
                                     Goal
@@ -171,9 +171,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </i>
                         <ul>
                             <li class='text-bold medication-rating__title'>Good</li>
-                            @foreach($medications as $section)
-                                @if($section['Section'] == 'Better')
-                            <li>{{$section['name']}}</li>
+                            @foreach($medications as $key => $value)
+                                @if($value['Section'] == 'Better')
+                                    @foreach($value['name'] as $section)
+                                        <li>{{$section}}</li>
+                                    @endforeach
                                 @endif
                             @endforeach
                         </ul>
@@ -183,9 +185,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </i>
                         <ul>
                             <li class='text-bold medication-rating__title'>Needs Work</li>
-                            @foreach($medications as $section)
-                                @if($section['Section'] == 'Needs Work')
-                                    <li>{{$section['name']}}</li>
+                            @foreach($medications as $key => $value)
+                                @if($value['Section'] == 'Needs Work')
+                                    @foreach($value['name'] as $section)
+                                        <li>{{$section}}</li>
+                                    @endforeach
                                 @endif
                             @endforeach
                         </ul>
@@ -195,9 +199,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </i>
                         <ul>
                             <li class='text-bold medication-rating__title'>Bad</li>
-                            @foreach($medications as $section)
-                                @if($section['Section'] == 'Worse')
-                                    <li>{{$section['name']}}</li>
+                            @foreach($medications as $key => $value)
+                                @if($value['Section'] == 'Worse')
+                                    @foreach($value['name'] as $section)
+                                        <li>{{$section}}</li>
+                                    @endforeach
                                 @endif
                             @endforeach
                         </ul>
