@@ -14,7 +14,8 @@ $(document).ready(function(){
 });
 
 $(document).ready(function(){
-    $( ".submitFormBtn, a").click(function(e) {
+    /* $( ".submitFormBtn, a").click(function(e) { */
+    $( ".submitFormBtn").click(function(e) {
         if ($(this).attr('omitsubmit')) {
             if(typeof $(this).attr('dtarget') === 'undefined') {
                 return true; // no redirect dtarget

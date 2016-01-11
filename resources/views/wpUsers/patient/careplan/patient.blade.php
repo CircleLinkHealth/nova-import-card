@@ -22,7 +22,7 @@ $new_user = false;
         @if(!isset($patient->ID) && !$new_user )
             <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
         @endif
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container-last col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title">
                     @if(isset($patient->ID) && !$new_user )
@@ -233,10 +233,10 @@ $new_user = false;
                         </div>
                     </div>
                 </div>
-                @include('wpUsers.patient.careplan.footer')
-                <br /><br />
-                </form>
             </div>
         </div>
     </div>
+    @include('wpUsers.patient.careplan.footer')
+    <br /><br />
+    </form>
 @stop

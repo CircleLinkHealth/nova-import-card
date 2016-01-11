@@ -22,7 +22,7 @@ $new_user = false;
     <input type=hidden name=program_id value="{{ $patient->program_id }}">
 
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container-last col-lg-8 col-lg-offset-2">
             <div class="row">
                 @if(isset($patient) && !$new_user )
                     <div class="main-form-title col-lg-12">
@@ -41,8 +41,9 @@ $new_user = false;
                     @endforeach
                 @endif
             </div>
-
-            @include('wpUsers.patient.careplan.footer')
         </div>
     </div>
+    @include('wpUsers.patient.careplan.footer')
+    <br /><br />
+    </form>
 @stop
