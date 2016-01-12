@@ -275,6 +275,8 @@ Route::group(['middleware' => 'auth'], function ()
 		// locations
 		Entrust::routeNeedsPermission($prefix.'locations*', 'programs-view');
 		Route::resource('locations', 'LocationController');
+		Route::get('locations/{id}', ['uses' =>'LocationController@show']);
+
 
 		// apikeys
 		Entrust::routeNeedsPermission($prefix.'apikeys*', 'apikeys-view');
