@@ -93,7 +93,7 @@ class MedicationsParserHelpers
 
             if (! empty($endDate) && ! $endDate->isPast())
             {
-                $medsList .= ucfirst(strtolower($medication->product->name))
+                $medsList .= ucfirst(strtolower($medication->product->name)) . ', '
                     . ucfirst(strtolower(StringManipulation::stringDiff($medication->product->name, $medication->text)))
                     . "; \n\n";
             }
