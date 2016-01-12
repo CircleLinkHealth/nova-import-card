@@ -271,26 +271,27 @@ class PatientCareplanController extends Controller {
 	public function showPatientCareplan(Request $request, $patientId = false) {
 		$messages = \Session::get('messages');
 
-		$wpUser = false;
+		$user = false;
 		if($patientId) {
-			$wpUser = User::find($patientId);
-			if (!$wpUser) {
+			$user = User::find($patientId);
+			if (!$user) {
 				return response("User not found", 401);
 			}
 		}
-		$patient = $wpUser;
-		$id = 352;
-		$carePlan = CarePlan::find($id);
-		foreach($carePlan->careSections as $careSection) {
-			// add parent items to each section
-			$careSection->planItems = $carePlan->carePlanItems()
-				->where('section_id', '=', $careSection->id)
-				->where('parent_id', '=', 0)
-				->orderBy('ui_sort', 'asc')
-				->with(array('children' => function ($query) {
-					$query->orderBy('ui_sort', 'asc');
-				}))
-				->get();
+		$patient = $user;
+		$carePlan = CarePlan::where('user_id', '=', $user->ID)->where('type', '=', 'Patient Default')->first();
+		if($carePlan) {
+			foreach($carePlan->careSections as $careSection) {
+				// add parent items to each section
+				$careSection->planItems = $carePlan->carePlanItems()
+					->where('section_id', '=', $careSection->id)
+					->where('parent_id', '=', 0)
+					->orderBy('ui_sort', 'asc')
+					->with(array('children' => function ($query) {
+						$query->orderBy('ui_sort', 'asc');
+					}))
+					->get();
+			}
 		}
 		$editMode = false;
 
@@ -313,8 +314,8 @@ class PatientCareplanController extends Controller {
 		}
 
 		// instantiate user
-		$wpUser = User::with('meta')->find($patientId);
-		if (!$wpUser) {
+		$user = User::with('meta')->find($patientId);
+		if (!$user) {
 			return response("User not found", 401);
 		}
 

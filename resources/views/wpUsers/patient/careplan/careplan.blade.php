@@ -18,10 +18,6 @@ $new_user = false;
         </div>
     </div>
 
-    <input type=hidden name=user_id value="{{ $patient->ID }}">
-    <input type=hidden name=program_id value="{{ $patient->program_id }}">
-    <input type=hidden name=careplan_id value="{{ $carePlan->id }}">
-
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container-last col-lg-8 col-lg-offset-2">
             <div class="row">
@@ -36,10 +32,21 @@ $new_user = false;
                 @endif
             </div>
             <div class="row">
-                @if($carePlan->careSections)
-                    @foreach($carePlan->careSections as $careSection)
-                        @include('partials.carePlans.section')
-                    @endforeach
+                <input type=hidden name=user_id value="{{ $patient->ID }}">
+                <input type=hidden name=program_id value="{{ $patient->program_id }}">
+                @if($carePlan)
+                    <input type=hidden name=careplan_id value="{{ $carePlan->id }}">
+                    @if($carePlan->careSections)
+                        @foreach($carePlan->careSections as $careSection)
+                            @include('partials.carePlans.section')
+                        @endforeach
+                    @endif
+                @else
+                    <div class="row" style="margin:60px 0px;">
+                        <div class="col-lg-8 col-lg-offset-2 text-center">
+                            No careplan found for this patient
+                        </div>
+                    </div>
                 @endif
             </div>
         </div>
