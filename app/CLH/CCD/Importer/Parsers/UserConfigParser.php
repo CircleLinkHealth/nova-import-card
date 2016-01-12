@@ -56,7 +56,7 @@ class UserConfigParser extends BaseParser
         $userConfig->city = $demographics->address->city;
         $userConfig->state = $demographics->address->state;
         $userConfig->zip = $demographics->address->zip;
-        $userConfig->birth_date = (new Carbon($demographics->dob))->format('Y-m-d');
+        $userConfig->birth_date = (new Carbon($demographics->dob, 'America/New_York'))->format('Y-m-d');
 
         $userConfig->preferred_contact_language = call_user_func(function () use ($demographics){
             $englishVariations = ['english', 'eng', 'en', 'e'];
