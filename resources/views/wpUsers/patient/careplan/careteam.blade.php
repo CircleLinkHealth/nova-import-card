@@ -1,12 +1,166 @@
 <?php
 $user_info = array();
 $new_user = false;
+
+$careTeamUserIds = $patient->careTeam;
+$ctmsa = array();
+if(!empty($patient->sendAlertTo)) {
+    $ctmsa = $patient->sendAlertTo;
+}
+$ctbp = $patient->billingProviderID;
+$ctlc = $patient->leadContactID;
+
+function buildProviderDropDown($providers, $activeId = false) {
+    $html = '<select name="provider_id" class="selectpicker ctselectpicker" data-size="10">';
+    $html .= '<option value="">Choose..</option>';
+    foreach ($providers as $provider) :
+        $selected = '';
+        if($provider->ID == $activeId) {
+            $selected = 'selected="selected"';
+        }
+        $html .= '<option value="'.$provider->ID.'" "'.$selected.'">'.ucwords( $provider->firstName . ' ' . $provider->lastName ).'</option>';
+    endforeach;
+    $html .= '</select>';
+    return $html;
+}
+
+function buildProviderInfoContainers($providers) {
+    $html = '<div id="providerInfoContainers" style="display:none;">';
+    foreach ($providers as $provider) :
+        $html .= '<div id="providerInfo'.$provider->ID.'">';
+        $html .= '<strong><span id="providerName'.$provider->ID.'" style="display:none;">'.ucwords( $provider->firstName . ' ' . $provider->lastName) . '</span></strong>';
+        $html .= '<strong>Specialty:</strong> ' . $provider->ID;
+        $html .= '<BR><strong>Tel:</strong> ' . $provider->firstName;
+        $html .= '</div>';
+    endforeach;
+    $html .= '</div>';
+    return $html;
+}
 ?>
 
 @extends('partials.providerUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/js/patient/careteam.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            // CARE TEAM JS
+            var ctmCount = 0;
+            var ctMembers = [];
+            $( ".addCareTeamMember" ).on('click', function() {
+                //alert('adding care team member ' + ctmCount);
+                addCareTeamMember();
+                //return false;
+            });
+
+            $('body').on('click', '.removeCtm', function(event) {
+                event.preventDefault();
+                ctmId = $(this).attr('ctmId');
+                $('#ctm' + ctmId).remove();
+                return false;
+            });
+
+            $('body').on('change', '.ctselectpicker', function(event) {
+                event.preventDefault();
+                // set vars
+                selectpickerid = $(this).attr('id');
+                providerid = $(this).val();
+                ctmCountId = $(this).closest('.row').find('.ctmCountArr').val();
+                $('#ctm' + ctmCountId + 'Info').html('');
+
+                // error notification if new selection is already in ctMembers
+                if(jQuery.inArray(providerid, ctMembers) !== -1) {
+                    // set to choose
+                    $("#" + selectpickerid + " option[value='']").prop('selected', true);
+                    $("#" + selectpickerid + "").selectpicker('refresh');
+                }
+
+                // reprocess ctMembers from all selectpickers
+                ctMembers = [];
+                $('.carePlanMemberIds').remove();
+                $(".ctselectpicker").each(function() {
+                    selectpickerid = $(this).attr('id');
+                    var providerid = $("#" + selectpickerid + " option:selected").val();
+                    if(providerid !== undefined && providerid !== '') {
+                        ctmCountId = $(this).closest('.row').find('.ctmCountArr').val();
+                        ctMembers.push(providerid);
+                        $('#careTeamMembers').append('<input class="carePlanMemberIds" type="hidden" name="carePlanMemberIds[]" value="' + providerid + '">');
+                        providerInfoHtml = $('#providerInfo' + providerid).html();
+                        $('#ctm' + ctmCountId + 'Info').html(providerInfoHtml);
+                        $('#ctm' + ctmCountId + 'sa').val(providerid);
+                        $('#ctm' + ctmCountId + 'bp').val(providerid);
+                        $('#ctm' + ctmCountId + 'lc').val(providerid);
+                    }
+                });
+                console.log('Selected Providers: ' + ctMembers.join("\n"));
+                return false;
+            });
+            function addCareTeamMember() {
+                ctmCount++;
+                // build html
+                html1 = '<div class="col-md-12" class="careTeamMemberContainer" id="ctm' + ctmCount + '">';
+                // first row
+                html1 += '<div class="row">';
+                html1 += '<input class="ctmCountArr" type="hidden" name="ctmCountArr[]" value="' + ctmCount + '">';
+                html1 += '<div class="col-sm-4">';
+                html1 += '<?php echo buildProviderDropDown($careTeamUsers); ?>';
+                html1 += '</div>';
+                html1 += '<div class="col-sm-5" id="ctm' + ctmCount + 'Info">';
+                html1 += '';
+                html1 += '</div>';
+                html1 += '<div class="col-sm-3">';
+                html1 += '<a href="" class="removeCtm" ctmId="' + ctmCount + '"><span class="glyphicon glyphicon-remove-sign"></span> Remove Member</a>';
+                html1 += '</div>';
+                html1 += '</div>';
+                // second row
+                html2 = '<div class="row">';
+                html2 += '<div class="col-sm-4" style="padding:20px;">';
+                html2 += '<div class="radio-inline"><input type="checkbox" name="ctmsa[]" id="ctm' + ctmCount + 'sa" /><label for="ctm' + ctmCount + 'sa"><span> </span>Send Alerts</label></div>';
+                html2 += '</div>';
+                html2 += '<div class="col-sm-4" style="padding:20px;">';
+                html2 += '<div class="radio"><input type="radio" name="ctbp" id="ctm' + ctmCount + 'bp" /><label for="ctm' + ctmCount + 'bp"><span> </span>Billing Provider</label></div>';
+                html2 += '</div>';
+                html2 += '<div class="col-sm-4" style="padding:20px;">';
+                html2 += '<div class="radio"><input type="radio" name="ctlc" id="ctm' + ctmCount + 'lc" /><label for="ctm' + ctmCount + 'lc"><span> </span>Lead Contact</label></div>';
+                html2 += '</div>';
+                html2 += '</div>';
+                // remove already used members from new select
+                $( "#careTeamMembers" ).append( html1 + html2 );
+                thisSelect = $('#ctm' + ctmCount + '').find('.ctselectpicker');
+                selectName = thisSelect.attr('name', 'ctm' + ctmCount + 'provider');
+                selectId = thisSelect.attr('id', 'ctm' + ctmCount + 'provider');
+                //alert(thisSelect.attr('id'));
+                $('.ctselectpicker').selectpicker();
+
+                // add class (doesnt persist through append() for some reason??)
+                $('#ctm'+ctmCount+'').addClass('careTeamMemberContainer');
+                console.log('Selected Providers: ' + ctMembers.join("\n"));
+                hasFormChanged = false;
+                return false;
+            }
+            <?php
+            if(!empty($careTeamUsers)) {
+                foreach ($careTeamUsers as $careTeamUser) {
+                    ?>
+                    addCareTeamMember();
+                    $('#ctm' + ctmCount + 'provider').val(<?php echo $careTeamUser->ID; ?>);
+                    $('#ctm' + ctmCount + 'provider').change();
+                    <?php
+                    if(in_array($careTeamUser->ID, $ctmsa)) {
+                        echo "$( '#ctm' + ctmCount + 'sa' ).prop('checked', true);";
+                    }
+                    if($careTeamUser->ID == $ctbp) {
+                        echo "$( '#ctm' + ctmCount + 'bp' ).prop('checked', true);";
+                    }
+                    if($careTeamUser->ID == $ctlc) {
+                        echo "$( '#ctm' + ctmCount + 'lc' ).prop('checked', true);";
+                    }
+                }
+            }
+            ?>
+        });
+    </script>
+
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <script>
     </script>
@@ -30,7 +184,7 @@ $new_user = false;
 
 
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container-last col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title">
                     @if(isset($patient) && !$new_user )
@@ -56,6 +210,7 @@ $new_user = false;
                 <div class="row">
                     <div class="col-sm-12">
                         @foreach($careTeamUsers as $careTeamUser)
+                            {{--
                             <div class="col-md-12" class="careTeamMemberContainer" id="ctm' + ctmCount + '">
                                 <div class="row">
                                     <input class="ctmCountArr" type="hidden" name="ctmCountArr[]" value="' + ctmCount + '">
@@ -81,6 +236,7 @@ $new_user = false;
                                     </div>
                                 </div>
                             </div>
+                            --}}
                         @endforeach
                         {!! $phtml !!}
                         <a href="" class="addCareTeamMember pull-right btn btn-orange"><span class="glyphicon glyphicon-plus-sign"></span> Add Care Team Member</a>
@@ -128,11 +284,12 @@ $new_user = false;
                         </div>
                     </div>
                 </div>
-                @include('wpUsers.patient.careplan.footer')
-                <br /><br />
-                </form>
             </div>
         </div>
     </div>
+    <?php echo buildProviderInfoContainers($careTeamUsers); ?>
+    @include('wpUsers.patient.careplan.footer')
+    <br /><br />
+    </form>
 @stop
 
