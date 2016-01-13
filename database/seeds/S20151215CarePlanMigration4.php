@@ -12,7 +12,7 @@ use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
-class S20151215ItemNames4 extends Seeder {
+class S20151215CarePlanMigration4 extends Seeder {
 
 
     public function run()

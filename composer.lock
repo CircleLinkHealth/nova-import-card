@@ -696,16 +696,16 @@
         },
         {
             "name": "franzose/closure-table",
-            "version": "v4.1",
+            "version": "v4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/franzose/ClosureTable.git",
-                "reference": "6f26c1c4257cb7a47bebd975508a192a3c746273"
+                "reference": "f6a121d364a8109ee7e9e794b5b37c272650bb1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/franzose/ClosureTable/zipball/6f26c1c4257cb7a47bebd975508a192a3c746273",
-                "reference": "6f26c1c4257cb7a47bebd975508a192a3c746273",
+                "url": "https://api.github.com/repos/franzose/ClosureTable/zipball/f6a121d364a8109ee7e9e794b5b37c272650bb1c",
+                "reference": "f6a121d364a8109ee7e9e794b5b37c272650bb1c",
                 "shasum": ""
             },
             "require": {
@@ -750,7 +750,7 @@
                 "laravel",
                 "pages"
             ],
-            "time": "2015-12-25 00:45:00"
+            "time": "2016-01-06 11:18:50"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -3270,16 +3270,16 @@
         },
         {
             "name": "venturecraft/revisionable",
-            "version": "1.24.0",
+            "version": "1.26.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/VentureCraft/revisionable.git",
-                "reference": "99c27d94f80ae9240cec89c4276f61e748e989a5"
+                "reference": "7a3d5304de6c10d43cfb0d9ebe0bbdbb6e5b82ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/99c27d94f80ae9240cec89c4276f61e748e989a5",
-                "reference": "99c27d94f80ae9240cec89c4276f61e748e989a5",
+                "url": "https://api.github.com/repos/VentureCraft/revisionable/zipball/7a3d5304de6c10d43cfb0d9ebe0bbdbb6e5b82ee",
+                "reference": "7a3d5304de6c10d43cfb0d9ebe0bbdbb6e5b82ee",
                 "shasum": ""
             },
             "require": {
@@ -3314,7 +3314,7 @@
                 "model",
                 "revision"
             ],
-            "time": "2015-12-09 21:48:10"
+            "time": "2016-01-13 12:14:05"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -3702,16 +3702,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "v2.5.3",
+            "version": "v2.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "2fbcea96eae34a53183377cdbb0b9bec33974648"
+                "reference": "abbdfd1cff43a7b99d027af3be709bc8fc7d4769"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/2fbcea96eae34a53183377cdbb0b9bec33974648",
-                "reference": "2fbcea96eae34a53183377cdbb0b9bec33974648",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/abbdfd1cff43a7b99d027af3be709bc8fc7d4769",
+                "reference": "abbdfd1cff43a7b99d027af3be709bc8fc7d4769",
                 "shasum": ""
             },
             "require": {
@@ -3769,7 +3769,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2015-12-25 16:28:24"
+            "time": "2016-01-05 22:11:12"
         },
         {
             "name": "doctrine/instantiator",
