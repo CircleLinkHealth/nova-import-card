@@ -273,25 +273,39 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function getCareTeamAttribute() {
 		$userConfig = $this->userConfig();
+		if(!isset($userConfig['care_team'])) {
+			return array();
+		}
 		return $userConfig['care_team'];
 	}
 
+	public function getSendAlertToAttribute() {
+		$userConfig = $this->userConfig();
+		if(!isset($userConfig['send_alert_to'])) {
+			return array();
+		}
+		return $userConfig['send_alert_to'];
+	}
+
 	public function getBillingProviderIDAttribute() {
-			$userConfig = $this->userConfig();
-			return $userConfig['billing_provider'];
+		$userConfig = $this->userConfig();
+		if(!isset($userConfig['billing_provider'])) {
+			return '';
+		}
+		return $userConfig['billing_provider'];
+	}
+
+	public function getLeadContactIDAttribute() {
+		$userConfig = $this->userConfig();
+		if(isset($userConfig['lead_contact'])){
+			return $userConfig['lead_contact'];
+		} else return '';
 	}
 
 	public function getPreferredLocationName() {
 			$userConfig = $this->userConfig();
 		$location = Location::find($userConfig['preferred_contact_location']);
 		return $location->name;
-	}
-
-	public function getLeadContactIDAttribute() {
-		$userConfig = $this->userConfig();
-		if(isset($userConfig['lead_contact'])){
-		return $userConfig['lead_contact'];
-		} else return '';
 	}
 
 	public function getCarePlanQAApproverAttribute() {

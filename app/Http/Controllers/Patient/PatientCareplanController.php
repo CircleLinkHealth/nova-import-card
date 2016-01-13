@@ -207,25 +207,7 @@ class PatientCareplanController extends Controller {
 				$q->where('name', '=', 'provider');
 			})->get();
 
-		$phtml = '<div id="providerInfoContainers" style="">Hidden containers with provider info:';
-		foreach ($providers as $provider) {
-			$providersData[$provider->ID] = $provider->fullName;
-			// meta
-			$userMeta = UserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
-
-			// config
-			$userConfig = (new UserConfigTemplate())->getArray();
-			if (isset($userMeta['wp_' . $programId . '_user_config'])) {
-				$userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
-				$userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
-			}
-			$phtml .= '<div id="providerInfo' . $provider->ID . '">';
-			$phtml .= '<strong><span id="providerName' . $provider->ID . '" style="display:none;">' . ucwords($userMeta['first_name'] . ' ' . $userMeta['last_name']) . '</span></strong>';
-			$phtml .= '<strong>Specialty:</strong> ' . $userConfig['specialty'];
-			$phtml .= '<BR><strong>Tel:</strong> ' . $userConfig['study_phone_number'];
-			$phtml .= '</div>';
-		}
-		$phtml .= '</div>';
+		$phtml = '';
 
 		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml', 'phtml', 'providersData', 'careTeamUsers']));
 	}
@@ -249,6 +231,57 @@ class PatientCareplanController extends Controller {
 		$wpUser = User::with('meta')->find($patientId);
 		if (!$wpUser) {
 			return response("User not found", 401);
+		}
+
+		// process form
+		if($params->get('formSubmit') == "Save") {
+			/*
+			dd('save');
+			// save_ucp_section($user_info, $_POST, $con_ucp);
+			if(isset($_POST['direction'])) {
+				if(isset($_POST['ctmCountArr'])) {
+					if(!empty($_POST['ctmCountArr'])) {
+						//echo "<pre>";
+						//var_dump($user_config);
+						// get provider specific info
+						$careTeamUserIds = array();
+						foreach( $_POST['ctmCountArr'] as $ctmCount) {
+							if(isset($_POST['ctm'.$ctmCount.'provider']) && !empty($_POST['ctm'.$ctmCount.'provider'])) {
+								//echo 'Provider ID = ' . $_POST['ctm'.$ctmCount.'provider'];
+								$careTeamUserIds[] = $_POST['ctm'.$ctmCount.'provider'];
+							}
+						}
+						$user_config['care_team'] = $careTeamUserIds;
+						// get send alerts
+						if(isset($_POST['ctmsa']) && !empty($_POST['ctmsa'])) {
+							//echo '<br />Send alerts arr:: ';
+							//var_dump($_POST['ctmsa']);
+							$user_config['send_alert_to'] = $_POST['ctmsa'];
+						}
+
+						// get billing provider
+						if(isset($_POST['ctbp']) && !empty($_POST['ctbp'])) {
+							//echo '<br />Billing Provider = ' . $_POST['ctbp'];
+							$user_config['billing_provider'] = $_POST['ctbp'];
+						}
+
+						// get lead contact
+						if(isset($_POST['ctlc']) && !empty($_POST['ctlc'])) {
+							//echo '<br />Lead Contact = ' . $_POST['ctlc'];
+							$user_config['lead_contact'] = $_POST['ctlc'];
+						}
+
+						// validation
+						// @todo add validation here no time!!
+						update_user_meta($user_id, "wp_" . $blog_id . "_user_config", $user_config);
+						if (get_user_meta($user_id, "wp_" . $blog_id . "_user_config", true) != $user_config) wp_die('An error occurred');
+					}
+				}
+				header("Location: " . $_REQUEST['direction'] . '');
+				//var_dump($_POST);
+				//echo "Location: " . $_REQUEST['direction'] . '';
+			}
+			*/
 		}
 
 		if($params->get('direction')) {
