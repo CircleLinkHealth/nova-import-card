@@ -178,6 +178,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $patientIds;
 	}
 
+	public function viewableUserIds() {
+		// get all patients who are in the same programs
+		$programIds = $this->viewableProgramIds();
+		$patientIds = User::whereHas('programs', function ($q) use ($programIds) {
+			$q->whereIn('program_id', $programIds);
+		});
+
+		$patientIds = $patientIds->lists('ID');
+		return $patientIds;
+	}
+
     public function userConfig(){
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key',$key)->first();
@@ -279,12 +290,35 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $userConfig['care_team'];
 	}
 
+	public function setCareTeamAttribute($value) {
+		if(empty($value)) {
+			return false;
+		}
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['care_team'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+		return true;
+	}
+
 	public function getSendAlertToAttribute() {
 		$userConfig = $this->userConfig();
 		if(!isset($userConfig['send_alert_to'])) {
 			return array();
 		}
 		return $userConfig['send_alert_to'];
+	}
+
+	public function setSendAlertToAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['send_alert_to'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+		return true;
 	}
 
 	public function getBillingProviderIDAttribute() {
@@ -295,11 +329,31 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $userConfig['billing_provider'];
 	}
 
+	public function setBillingProviderIDAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['billing_provider'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+		return true;
+	}
+
 	public function getLeadContactIDAttribute() {
 		$userConfig = $this->userConfig();
 		if(isset($userConfig['lead_contact'])){
 			return $userConfig['lead_contact'];
 		} else return '';
+	}
+
+	public function setLeadContactIDAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['lead_contact'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+		return true;
 	}
 
 	public function getPreferredLocationName() {

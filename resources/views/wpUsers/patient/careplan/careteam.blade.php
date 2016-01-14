@@ -103,7 +103,7 @@ function buildProviderInfoContainers($providers) {
                 html1 += '<div class="row">';
                 html1 += '<input class="ctmCountArr" type="hidden" name="ctmCountArr[]" value="' + ctmCount + '">';
                 html1 += '<div class="col-sm-4">';
-                html1 += '<?php echo buildProviderDropDown($careTeamUsers); ?>';
+                html1 += '<?php echo buildProviderDropDown($providers); ?>';
                 html1 += '</div>';
                 html1 += '<div class="col-sm-5" id="ctm' + ctmCount + 'Info">';
                 html1 += '';
@@ -180,7 +180,7 @@ function buildProviderInfoContainers($providers) {
     </div>
     <input type=hidden name=user_id value="{{ $patient->ID }}">
     <input type=hidden name=program_id value="{{ $patient->program_id }}">
-
+    <input id="save" name="formSubmit" type="hidden" value="Save" tabindex="0">
 
 
     <div class="row" style="margin-top:60px;">
@@ -267,26 +267,6 @@ function buildProviderInfoContainers($providers) {
                         </div>
                     </div>
                 </div>
-
-                <div class="modal fade" id="ctConfModal" tabindex="-1" role="dialog" aria-labelledby="ctConfModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                Confirm Care Team
-                            </div>
-                            <div class="modal-body">
-                                <p><span id="ctConfModalError"></span></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" id="ctConfModalNo" class="btn btn-warning"  data-dismiss="modal">Continue editing</button>
-                                <button type="button" id="ctConfModalYes" class="btn btn-success"  data-dismiss="modal">Confirm and save</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @include('wpUsers.patient.careplan.footer')
-                <br /><br />
-                </form>
             </div>
         </div>
     </div>

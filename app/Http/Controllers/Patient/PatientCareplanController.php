@@ -200,16 +200,15 @@ class PatientCareplanController extends Controller {
 		}
 
 		// get providers
-		$providersData = array();
-		$providers = User::where('program_id', '=', $programId)
+		$providers = array();
+		$providers = User::whereIn('ID', Auth::user()->viewableUserIds())
 			->with('meta')
 			->whereHas('roles', function($q){
 				$q->where('name', '=', 'provider');
 			})->get();
-
 		$phtml = '';
 
-		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml', 'phtml', 'providersData', 'careTeamUsers']));
+		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml', 'phtml', 'providers', 'careTeamUsers']));
 	}
 
 
@@ -228,68 +227,56 @@ class PatientCareplanController extends Controller {
 		}
 
 		// instantiate user
-		$wpUser = User::with('meta')->find($patientId);
-		if (!$wpUser) {
-			return response("User not found", 401);
+		$patient = User::with('meta')->find($patientId);
+		if (!$patient) {
+			return response("Patient user not found", 401);
 		}
 
 		// process form
 		if($params->get('formSubmit') == "Save") {
-			/*
-			dd('save');
-			// save_ucp_section($user_info, $_POST, $con_ucp);
-			if(isset($_POST['direction'])) {
-				if(isset($_POST['ctmCountArr'])) {
-					if(!empty($_POST['ctmCountArr'])) {
-						//echo "<pre>";
-						//var_dump($user_config);
-						// get provider specific info
-						$careTeamUserIds = array();
-						foreach( $_POST['ctmCountArr'] as $ctmCount) {
-							if(isset($_POST['ctm'.$ctmCount.'provider']) && !empty($_POST['ctm'.$ctmCount.'provider'])) {
-								//echo 'Provider ID = ' . $_POST['ctm'.$ctmCount.'provider'];
-								$careTeamUserIds[] = $_POST['ctm'.$ctmCount.'provider'];
-							}
+			if($params->get('ctmCountArr')) {
+				if(!empty($params->get('ctmCountArr'))) {
+					// get provider specific info
+					$careTeamUserIds = array();
+					foreach( $_POST['ctmCountArr'] as $ctmCount) {
+						if($params->get('ctm'.$ctmCount.'provider') && !empty($params->get('ctm'.$ctmCount.'provider'))) {
+							$careTeamUserIds[] = $params->get('ctm'.$ctmCount.'provider');
 						}
-						$user_config['care_team'] = $careTeamUserIds;
-						// get send alerts
-						if(isset($_POST['ctmsa']) && !empty($_POST['ctmsa'])) {
-							//echo '<br />Send alerts arr:: ';
-							//var_dump($_POST['ctmsa']);
-							$user_config['send_alert_to'] = $_POST['ctmsa'];
-						}
+					}
+					$user_config['care_team'] = $careTeamUserIds;
+					$patient->careTeam = $user_config['care_team'];
 
-						// get billing provider
-						if(isset($_POST['ctbp']) && !empty($_POST['ctbp'])) {
-							//echo '<br />Billing Provider = ' . $_POST['ctbp'];
-							$user_config['billing_provider'] = $_POST['ctbp'];
-						}
+					// get send alerts
+					if($params->get('ctmsa') && !empty($params->get('ctmsa'))) {
+						$user_config['send_alert_to'] = $params->get('ctmsa');
+						$patient->sendAlertTo = $user_config['send_alert_to'];
+					} else {
+						$patient->sendAlertTo = '';
+					}
 
-						// get lead contact
-						if(isset($_POST['ctlc']) && !empty($_POST['ctlc'])) {
-							//echo '<br />Lead Contact = ' . $_POST['ctlc'];
-							$user_config['lead_contact'] = $_POST['ctlc'];
-						}
+					// get billing provider
+					if($params->get('ctbp') && !empty($params->get('ctbp'))) {
+						$user_config['billing_provider'] = $params->get('ctbp');
+						$patient->billingProviderID = $user_config['billing_provider'];
+					} else {
+						$patient->billingProviderID = '';
+					}
 
-						// validation
-						// @todo add validation here no time!!
-						update_user_meta($user_id, "wp_" . $blog_id . "_user_config", $user_config);
-						if (get_user_meta($user_id, "wp_" . $blog_id . "_user_config", true) != $user_config) wp_die('An error occurred');
+					// get lead contact
+					if($params->get('ctlc') && !empty($params->get('ctlc'))) {
+						$user_config['lead_contact'] = $params->get('ctlc');
+						$patient->leadContactID = $user_config['lead_contact'];
+					} else {
+						$patient->leadContactID = '';
 					}
 				}
-				header("Location: " . $_REQUEST['direction'] . '');
-				//var_dump($_POST);
-				//echo "Location: " . $_REQUEST['direction'] . '';
 			}
-			*/
 		}
 
 		if($params->get('direction')) {
 			return redirect($params->get('direction'))->with('messages', ['Successfully updated patient care team.']);
 		}
 		return redirect()->back()->with('messages', ['Successfully updated patient care team.']);
-
-		//return view('wpUsers.patient.careplan', ['program' => $program, 'patient' => $wpUser]);
 	}
 
 
@@ -354,21 +341,27 @@ class PatientCareplanController extends Controller {
 
 		// get carePlan
 		$careplan = CarePlan::find($params->get('careplan_id'));
+		if (!$careplan) {
+			if($params->get('direction')) {
+				return redirect($params->get('direction'))->with('messages', ['No care plan found to update.']);
+			}
+			return redirect()->back()->with('errors', ['No care plan found to update.']);
+		}
 
 		// loop through care plan items
-		foreach($careplan->careItems as $careItem) {
+		foreach ($careplan->careItems as $careItem) {
 			$carePlanItem = CareItemCarePlan::where('item_id', '=', $careItem->id)
-			->where('plan_id', '=', $careplan->id)
-			->first();
-			if(!$carePlanItem) {
+				->where('plan_id', '=', $careplan->id)
+				->first();
+			if (!$carePlanItem) {
 				continue 1;
 			}
-			$value = $params->get('item|'.$carePlanItem->id);
+			$value = $params->get('item|' . $carePlanItem->id);
 			// if checkbox and unchecked on the ui it doesnt post, so set these to Inactive
-			if(!$value && ($carePlanItem->ui_fld_type == 'SELECT' || $carePlanItem->ui_fld_type == 'CHECK')) {
+			if (!$value && ($carePlanItem->ui_fld_type == 'SELECT' || $carePlanItem->ui_fld_type == 'CHECK')) {
 				$value = 'Inactive';
 			}
-			if($value) {
+			if ($value) {
 				$carePlanItem->meta_value = $value;
 				$carePlanItem->save();
 			}
