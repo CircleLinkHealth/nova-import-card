@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\CPRulesItem;
+use App\CareItem;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Auth;
 
-class CPRItemController extends Controller {
+class CareItemController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
@@ -21,8 +21,8 @@ class CPRItemController extends Controller {
 			abort(403);
 		}
 		// display view
-		$items = CareItem::orderBy('items_id', 'desc')->paginate(10);
-		return view('admin.items.index', [ 'items' => $items ]);
+		$items = CareItem::orderBy('id', 'desc')->paginate(10);
+		return view('admin.careItems.index', [ 'items' => $items ]);
 	}
 
 	/**

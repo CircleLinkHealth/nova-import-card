@@ -12,7 +12,7 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-8">
-                        <h1>Items</h1>
+                        <h1>Care Items</h1>
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
@@ -23,7 +23,8 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">All Items</div>
                     <div class="panel-body">
-                        @include('errors.errors')
+                        coming soon
+                        {{--
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -55,6 +56,7 @@
                             </tbody>
                         </table>
                         {!! $items->appends(['action' => 'filter'])->render() !!}
+                        --}}
                     </div>
                 </div>
             </div>
