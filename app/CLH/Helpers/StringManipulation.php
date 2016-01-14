@@ -19,6 +19,19 @@ class StringManipulation
     }
 
     /**
+     * Returns only decimal numbers (numerical values and dots) in a string
+     *
+     * @param $string
+     * @return string
+     */
+    public function extractDecimalNumbers($string)
+    {
+        preg_match_all('/[0-9]*\.?[0-9]+/', $string, $match);
+
+        return implode($match[0]);
+    }
+
+    /**
      * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx
      * @param $string
      * @return string
