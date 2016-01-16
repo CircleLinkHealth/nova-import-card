@@ -135,5 +135,7 @@ class CPMProblemsSeeder extends Seeder
             'contains' => 'Obesity'
         ]);
 
+        $this->command->info('All good!');
+
     }
 }
