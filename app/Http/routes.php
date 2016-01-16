@@ -8,6 +8,8 @@ Route::get('careplan/{id}/section/{sectionId}', ['uses' => 'Admin\CarePlanContro
 //CCD Parser Demo Route
 Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 
+
+Route::post('account/login', 'PatientController@patientAjaxSearch');
 /**
  * UPLOAD CCD ROUTES
  * @todo How do we protect those? auth middleware?
@@ -106,6 +108,8 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('listing', ['uses' => 'Patient\PatientController@showPatientListing', 'as' => 'patients.listing']);
 		Route::get('select', ['uses' => 'Patient\PatientController@showPatientSelect', 'as' => 'patients.select']);
 		Route::post('select', ['uses' => 'Patient\PatientController@processPatientSelect', 'as' => 'patients.select.process']);
+		Route::get('search', ['uses' => 'Patient\PatientController@searchView', 'as' => 'patients.search']);
+		Route::get('query', ['uses' => 'Patient\PatientController@searchView', 'as' => 'patients.query']);
 		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patients.alerts']);
 		Route::get('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@showPatientDemographics', 'as' => 'patients.demographics.show']);
 		Route::post('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patients.demographics.store']);
@@ -275,7 +279,10 @@ Route::group(['middleware' => 'auth'], function ()
 		// locations
 		Entrust::routeNeedsPermission($prefix.'locations*', 'programs-view');
 		Route::resource('locations', 'LocationController');
-		Route::get('locations/{id}', ['uses' =>'LocationController@show']);
+		Route::get('locations', ['uses' =>'LocationController@index','as'=>'locations.index']);
+		Route::get('locations/{id}', ['uses' =>'LocationController@show','as'=>'locations.show']);
+		Route::get('locations/{id}/edit', ['uses' =>'LocationController@edit','as'=>'locations.edit']);
+		Route::post('locations/update', ['uses' =>'LocationController@update','as'=>'locations.update']);
 
 
 		// apikeys

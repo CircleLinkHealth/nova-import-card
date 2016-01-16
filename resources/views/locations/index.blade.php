@@ -15,7 +15,6 @@
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">Locations</div>
                     <div class="panel-body">
                         @include('errors.errors')
 
@@ -23,7 +22,7 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <td><strong>Location</strong></td>
+                                <td><strong>Name</strong></td>
                                 <td><strong>Detail</strong></td>
                             </tr>
                             </thead>
@@ -35,7 +34,7 @@
                                             <a href='/admin/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
                                         </td>
                                         <td>
-                                            <a href="{{ action('LocationController@show', $id) }}" class="btn btn-info btn-xs">{{ $loc }}</a>
+                                            <a href="{{ URL::route('locations.edit', array('id' => $id)) }}" class="btn btn-info btn-xs">Edit</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -50,7 +49,7 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <td><strong>Location</strong></td>
+                                <td><strong>Name</strong></td>
                                 <td><strong>Detail</strong></td>
                             </tr>
                             </thead>
@@ -62,7 +61,7 @@
                                             <a href='/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
                                         </td>
                                         <td>
-                                            <a href="{{ action('LocationController@show', $id) }}" class="btn btn-info btn-xs">{{ $loc }}</a>
+                                            <a href="{{ URL::route('locations.edit', array('id' => $id)) }}" class="btn btn-info btn-xs">Edit</a>
                                         </td>
                                     </tr>
                                 @endforeach

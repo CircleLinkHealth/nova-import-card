@@ -32,9 +32,11 @@ class LocationController extends Controller {
 				return response("Locations not found", 401);
 			}
 		} else {
+			$messages = \Session::get('messages');
 			return view('locations.index', [
 				'locationParents' => Location::getAllParents(),
 				'locationSubs' => Location::getNonRootLocations(),
+				'messages' => $messages,
 				'locationParentsSubs' => Location::getParentsSubs($request)
 			]);
 		}
@@ -75,7 +77,7 @@ class LocationController extends Controller {
 		}
 
 		return $saved ?
-			response('Location created', 201) :
+			redirect()->route('locations.index')->with('messages', ['Location Created!!']) :
 			response('Error', 500);
 	}
 
@@ -90,8 +92,10 @@ class LocationController extends Controller {
 		if(!Auth::user()->can('locations-view')) {
 			abort(403);
 		}
+		$messages = \Session::get('messages');
 		// return $id;
-		return view('locations.show', [ 
+		return view('locations.show', [
+			'messages' => $messages,
 			'locationParents' => Location::getAllParents(),
 			'locationSubs' => Location::getNonRootLocations(),
 			'locationParentsSubs' => Location::getParentsSubs($id)	 
@@ -109,7 +113,8 @@ class LocationController extends Controller {
 		if(!Auth::user()->can('locations-manage')) {
 			abort(403);
 		}
-		//
+		$blogs = WpBlog::all();
+		return view('locations.edit', ['location' => Location::find($id), 'locations' => Location::getAllNodes(), 'blogs' => $blogs]);
 	}
 
 	/**
@@ -118,12 +123,17 @@ class LocationController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Request $request)
 	{
 		if(!Auth::user()->can('locations-manage')) {
 			abort(403);
 		}
-		//
+
+		$input = $request->all();
+
+		Location::find($input['id'])->update($input);
+
+		return redirect()->route('locations.index')->with('messages', ['Location Updated!!']);
 	}
 
 	/**
