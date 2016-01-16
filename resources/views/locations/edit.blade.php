@@ -15,7 +15,6 @@
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">Add location</div>
                     <div class="panel-body">
                         @include('errors.errors')
 
@@ -101,7 +100,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-md-4 control-label">Blog</label>
+                                <label class="col-md-4 control-label">Program</label>
                                 <div class="col-md-6">
                                     <select name="program_id">
                                         <option value="">None</option>

@@ -22,16 +22,6 @@ class LocationController extends Controller {
 		if(!Auth::user()->can('locations-view')) {
 			abort(403);
 		}
-		if ( $request->header('Client') == 'ui' ) // WP Site
-		{
-			$parent_location_id = Crypt::decrypt($request->header('parent-location-id'));
-			$locations = Location::getNonRootLocations($parent_location_id);
-			if($locations) {
-				return response()->json( Crypt::encrypt(json_encode($locations)) );
-			} else {
-				return response("Locations not found", 401);
-			}
-		} else {
 			$messages = \Session::get('messages');
 			return view('locations.index', [
 				'locationParents' => Location::getAllParents(),
@@ -39,7 +29,6 @@ class LocationController extends Controller {
 				'messages' => $messages,
 				'locationParentsSubs' => Location::getParentsSubs($request)
 			]);
-		}
 	}
 
 	/**
