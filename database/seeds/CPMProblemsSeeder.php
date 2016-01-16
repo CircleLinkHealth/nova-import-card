@@ -1,14 +1,14 @@
 <?php
 
-use App\CLH\CCD\Importer\CCDProblem;
+use App\CLH\CCD\Importer\CPMProblem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
-class CCDProblemsSeeder extends Seeder
+class CPMProblemsSeeder extends Seeder
 {
     public function run()
     {
-//        CCDProblem::updateOrCreate([
+//        CPMProblem::updateOrCreate([
 //            'name' => '',
 //            'icd10from' => '',
 //            'icd10to' => '',
@@ -17,7 +17,7 @@ class CCDProblemsSeeder extends Seeder
 //            'contains' => ''
 //        ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'Diabetes',
             'icd10from' => 'E08.0',
             'icd10to' => 'E13.0',
@@ -26,7 +26,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => 'diabetes, diabetes mellitus'
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'Hypertension',
             'icd10from' => 'I10.0',
             'icd10to' => 'I13.11',
@@ -35,7 +35,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => 'hypertension'
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'Afib',
             'icd10from' => 'I48.0',
             'icd10to' => 'I48.99',
@@ -44,7 +44,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => 'atrial fibrillation, paroxysmal supraventricular tachycardia, atrial flutter, sinoatrial node dysfunction'
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'CAD',
             'icd10from' => 'I25.1',
             'icd10to' => 'I25.9',
@@ -53,7 +53,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => ''
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'Depression',
             'icd10from' => 'F32.3',
             'icd10to' => 'F32.9',
@@ -62,7 +62,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => ''
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'CHF',
             'icd10from' => 'I50.1',
             'icd10to' => 'I50.9',
@@ -71,7 +71,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => 'Heart failure'
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'High Cholesterol',
             'icd10from' => 'E78.0',
             'icd10to' => 'E78.9',
@@ -80,7 +80,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => 'Hyperlipidemia'
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'Kidney Disease',
             'icd10from' => 'N18.0',
             'icd10to' => 'N18.9',
@@ -89,7 +89,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => ''
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'Dementia',
             'icd10from' => 'F01',
             'icd10to' => 'F09',
@@ -98,7 +98,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => ''
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'Alzheimers Dementia'
         ], [
             'icd10from' => 'G30.9',
@@ -108,7 +108,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => ''
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'Asthma--COPD',
             'icd10from' => 'J44.9',
             'icd10to' => 'J45.99',
@@ -117,7 +117,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => 'COPD, Chronic obstructive pulmonary disease, Asthma'
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'Chronic Pain',
             'icd10from' => 'G89.4',
             'icd10to' => 'G89.4',
@@ -126,7 +126,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => 'Chronic Pain'
         ]);
 
-        CCDProblem::updateOrCreate([
+        CPMProblem::updateOrCreate([
             'name' => 'Obesity',
             'icd10from' => 'E66',
             'icd10to' => 'E66.9',

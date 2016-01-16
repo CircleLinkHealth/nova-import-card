@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer\Parsers;
 
 
-use App\CLH\CCD\Importer\CCDProblem;
+use App\CLH\CCD\Importer\CPMProblem;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
@@ -13,7 +13,7 @@ class ProblemsParser extends BaseParser
 {
     public function parse()
     {
-        $cpmProblems = CCDProblem::all();
+        $cpmProblems = CPMProblem::all();
         $ccdProblems = $this->ccd->problems;
 
         foreach ($ccdProblems as $ccdProblem)
