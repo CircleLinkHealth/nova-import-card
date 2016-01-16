@@ -39,8 +39,6 @@ class CCDUploadController extends Controller {
 
         if ($request->hasFile('file')) {
             foreach ($request->file('file') as $file) {
-                Log::info('L42: ' . json_encode($file));
-
                 if (empty($file)) {
                     Log::error('It seems like this file did not upload. Here is what I have for $file in '
                         . self::class . '@uploadRawFiles() ==>' . $file);
@@ -103,9 +101,7 @@ class CCDUploadController extends Controller {
         $uploaded = [];
 
         $receivedFiles = json_decode($request->getContent());
-        Log::info('L106: ' . json_encode($receivedFiles));
 
-//        if (empty($receivedFiles)) return response()->json('Transporting duplicate CCDs to the server has failed.', 500);
         if (empty($receivedFiles)) return;
 
         foreach ($receivedFiles as $file) {
@@ -176,6 +172,7 @@ class CCDUploadController extends Controller {
                 throw new \Exception('Blog ID missing.', 400);
             }
 
+            //Parsing and Importing happens in the CCDImportParser
             $importParser = (new CCDImportParser($blogId, $parsedCCD))->parse();
 
             $userRepo = new WpUserRepository();

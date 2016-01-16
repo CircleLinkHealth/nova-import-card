@@ -15,7 +15,7 @@ class CCDImportParser extends BaseParser
         $parsedCCD = $this->parsedCcdObj;
 
         /**
-         * MedicationsParser is actually an Importer
+         * Parsers are also Importers
          * @todo: come back here to clean up
          */
         (new MedicationsParser($blogId, $parsedCCD))->parse();
