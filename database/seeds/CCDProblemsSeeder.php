@@ -19,20 +19,11 @@ class CCDProblemsSeeder extends Seeder
 
         CCDProblem::updateOrCreate([
             'name' => 'Diabetes',
-            'icd10from' => 'E11.0',
-            'icd10to' => 'E11.9',
-            'icd9from' => '250.00',
-            'icd9to' => '259.93',
-            'contains' => 'diabetes, diabetes mellitus'
-        ]);
-
-        CCDProblem::updateOrCreate([
-            'name' => 'Diabetes',
             'icd10from' => 'E08.0',
             'icd10to' => 'E13.0',
             'icd9from' => '250.00',
             'icd9to' => '259.93',
-            'contains' => ''
+            'contains' => 'diabetes, diabetes mellitus'
         ]);
 
         CCDProblem::updateOrCreate([
@@ -42,15 +33,6 @@ class CCDProblemsSeeder extends Seeder
             'icd9from' => '401.00',
             'icd9to' => '405.00',
             'contains' => 'hypertension'
-        ]);
-
-        CCDProblem::updateOrCreate([
-            'name' => 'Asthma--COPD',
-            'icd10from' => 'J44.9',
-            'icd10to' => 'J45.99',
-            'icd9from' => '490.00',
-            'icd9to' => '496.00',
-            'contains' => 'COPD, Chronic obstructive pulmonary disease'
         ]);
 
         CCDProblem::updateOrCreate([
@@ -71,7 +53,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => ''
         ]);
 
-                CCDProblem::updateOrCreate([
+        CCDProblem::updateOrCreate([
             'name' => 'Depression',
             'icd10from' => 'F32.3',
             'icd10to' => 'F32.9',
@@ -80,7 +62,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => ''
         ]);
 
-                CCDProblem::updateOrCreate([
+        CCDProblem::updateOrCreate([
             'name' => 'CHF',
             'icd10from' => 'I50.1',
             'icd10to' => 'I50.9',
@@ -89,7 +71,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => 'Heart failure'
         ]);
 
-                CCDProblem::updateOrCreate([
+        CCDProblem::updateOrCreate([
             'name' => 'High Cholesterol',
             'icd10from' => 'E78.0',
             'icd10to' => 'E78.9',
@@ -98,7 +80,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => 'Hyperlipidemia'
         ]);
 
-                CCDProblem::updateOrCreate([
+        CCDProblem::updateOrCreate([
             'name' => 'Kidney Disease',
             'icd10from' => 'N18.0',
             'icd10to' => 'N18.9',
@@ -107,7 +89,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => ''
         ]);
 
-                CCDProblem::updateOrCreate([
+        CCDProblem::updateOrCreate([
             'name' => 'Dementia',
             'icd10from' => 'F01',
             'icd10to' => 'F09',
@@ -116,7 +98,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => ''
         ]);
 
-                CCDProblem::updateOrCreate([
+        CCDProblem::updateOrCreate([
             'name' => 'Alzheimers Dementia'
         ], [
             'icd10from' => 'G30.9',
@@ -126,16 +108,16 @@ class CCDProblemsSeeder extends Seeder
             'contains' => ''
         ]);
 
-                CCDProblem::updateOrCreate([
+        CCDProblem::updateOrCreate([
             'name' => 'Asthma--COPD',
-            'icd10from' => 'J45.2',
-            'icd10to' => 'J45.90',
-            'icd9from' => '493.00',
-            'icd9to' => '493.92',
-            'contains' => 'Asthma'
+            'icd10from' => 'J44.9',
+            'icd10to' => 'J45.99',
+            'icd9from' => '490.00',
+            'icd9to' => '496.00',
+            'contains' => 'COPD, Chronic obstructive pulmonary disease, Asthma'
         ]);
 
-                CCDProblem::updateOrCreate([
+        CCDProblem::updateOrCreate([
             'name' => 'Chronic Pain',
             'icd10from' => 'G89.4',
             'icd10to' => 'G89.4',
@@ -144,7 +126,7 @@ class CCDProblemsSeeder extends Seeder
             'contains' => 'Chronic Pain'
         ]);
 
-                CCDProblem::updateOrCreate([
+        CCDProblem::updateOrCreate([
             'name' => 'Obesity',
             'icd10from' => 'E66',
             'icd10to' => 'E66.9',
