@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\Activity;
+use App\CareSection;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\Observation;
@@ -288,7 +289,7 @@ class PatientCareplanController extends Controller {
 	 * @param  int  $patientId
 	 * @return Response
 	 */
-	public function showPatientCareplan(Request $request, $patientId = false) {
+	public function showPatientCareplan(Request $request, $patientId = false, $page) {
 		$messages = \Session::get('messages');
 
 		$user = false;
@@ -299,7 +300,31 @@ class PatientCareplanController extends Controller {
 			}
 		}
 		$patient = $user;
-		$carePlan = CarePlan::where('user_id', '=', $user->ID)->where('type', '=', 'Patient Default')->first();
+		$carePlan = CarePlan::where('user_id', '=', $user->ID)
+			->where('type', '=', 'Patient Default')
+			->first();
+
+		// determine which sections to show
+		if($page == 1) {
+			$careSectionNames = array(
+				'diagnosis-problems-to-monitor',
+				'lifestyle-to-monitor',
+				'medications-to-monitor',
+			);
+		} else if($page == 2) {
+			$careSectionNames = array(
+				'biometrics-to-monitor',
+				'additional-information',
+			);
+		} else if($page == 3) {
+			$careSectionNames = array(
+				'transitional-care-management',
+				'misc',
+				'symptoms-to-monitor'
+			);
+		}
+
+
 		if($carePlan) {
 			foreach($carePlan->careSections as $careSection) {
 				// add parent items to each section
@@ -315,7 +340,7 @@ class PatientCareplanController extends Controller {
 		}
 		$editMode = false;
 
-		return view('wpUsers.patient.careplan.careplan', compact(['patient', 'editMode', 'carePlan', 'messages']));
+		return view('wpUsers.patient.careplan.careplan', compact(['page', 'careSectionNames', 'patient', 'editMode', 'carePlan', 'messages']));
 	}
 
 	/**
@@ -329,6 +354,7 @@ class PatientCareplanController extends Controller {
 
 		// input
 		$params = new ParameterBag($request->input());
+
 		if($params->get('user_id')) {
 			$patientId = $params->get('user_id');
 		}
@@ -348,22 +374,25 @@ class PatientCareplanController extends Controller {
 			return redirect()->back()->with('errors', ['No care plan found to update.']);
 		}
 
-		// loop through care plan items
-		foreach ($careplan->careItems as $careItem) {
-			$carePlanItem = CareItemCarePlan::where('item_id', '=', $careItem->id)
-				->where('plan_id', '=', $careplan->id)
-				->first();
-			if (!$carePlanItem) {
-				continue 1;
-			}
-			$value = $params->get('item|' . $carePlanItem->id);
-			// if checkbox and unchecked on the ui it doesnt post, so set these to Inactive
-			if (!$value && ($carePlanItem->ui_fld_type == 'SELECT' || $carePlanItem->ui_fld_type == 'CHECK')) {
-				$value = 'Inactive';
-			}
-			if ($value) {
-				$carePlanItem->meta_value = $value;
-				$carePlanItem->save();
+		// loop through care plan items in viewed sections
+		if($params->get('careSections')) {
+			$sectionCareItems = $careplan->careItems()->whereIn('section_id', $params->get('careSections'))->get();
+			foreach ($sectionCareItems as $careItem) {
+				$carePlanItem = CareItemCarePlan::where('item_id', '=', $careItem->id)
+					->where('plan_id', '=', $careplan->id)
+					->first();
+				if (!$carePlanItem) {
+					continue 1;
+				}
+				$value = $params->get('item|' . $carePlanItem->id);
+				// if checkbox and unchecked on the ui it doesnt post, so set these to Inactive
+				if (!$value && ($carePlanItem->ui_fld_type == 'SELECT' || $carePlanItem->ui_fld_type == 'CHECK')) {
+					$value = 'Inactive';
+				}
+				if ($value) {
+					$carePlanItem->meta_value = $value;
+					$carePlanItem->save();
+				}
 			}
 		}
 

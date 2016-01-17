@@ -1,3 +1,4 @@
+<input type=hidden name="careSections[]" value="{{ $careSection->id }}">
 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 cp-section"  id="section{{ $careSection->id }}">
     @if(isset($editMode) && $editMode != false)
         @include('partials.carePlans.sectionEdit')

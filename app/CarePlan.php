@@ -41,7 +41,7 @@ class CarePlan extends Model {
     }
 
     public function careSections() {
-        return $this->belongsToMany('App\CareSection', 'care_plan_care_section', 'plan_id', 'section_id')->withPivot('id');
+        return $this->belongsToMany('App\CareSection', 'care_plan_care_section', 'plan_id', 'section_id')->withPivot('id', 'section_id');
     }
 
     public static function boot()
