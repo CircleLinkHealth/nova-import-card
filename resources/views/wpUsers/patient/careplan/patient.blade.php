@@ -1,6 +1,21 @@
 <?php
 $user_info = array();
 $new_user = false;
+        /*
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+Home Phone study_phone_number
+Work Phone mobile_phone_number
+Agent Name Field (One Field?)
+Agent Phone
+Agent Email Address Field
+Agent Relationship Field
+         */
 ?>
 
 @extends('partials.providerUI')
@@ -123,6 +138,13 @@ $new_user = false;
                                                 <span class="help-block">{{ $errors->first('study_phone_number') }}</span>
                                             </div>
                                         </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group {{ $errors->first('mobile_phone_number') ? 'has-error' : '' }}">
+                                                <label class="sr-only" for="mobile_phone_number">Phone</label>
+                                                <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}' class="form-control" name="mobile_phone_number" id="mobile_phone_number" placeholder="Mobile Telephone *" value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($userConfig['mobile_phone_number'] ? $userConfig['mobile_phone_number'] : '')) }}">
+                                                <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('email') ? 'has-error' : '' }}">
@@ -148,6 +170,39 @@ $new_user = false;
                                     <label class="sr-only" for="zip">Zip Code</label>
                                     <input type="text" class="form-control" name="zip" id="zip" placeholder="Zip Code" value="{{ (old('zip') ? old('zip') : ($userConfig['zip'] ? $userConfig['zip'] : '')) }}">
                                     <span class="help-block">{{ $errors->first('zip') }}</span>
+                                </div>
+                                <div class="form-item col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group {{ $errors->first('agent_name') ? 'has-error' : '' }}">
+                                                <input type="text" class="form-control" name="agent_name" id="agent_name" placeholder="Agent Name" value="{{ (old('agent_name') ? old('agent_name') : ($userConfig['agent_name'] ? $userConfig['agent_name'] : '')) }}">
+                                                <span class="help-block">{{ $errors->first('agent_name') }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group {{ $errors->first('agent_telephone') ? 'has-error' : '' }}">
+                                                <label class="sr-only" for="agent_telephone">Agent Telephone</label>
+                                                <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}' class="form-control" name="agent_telephone" id="agent_telephone" placeholder="Agent Telephone *" value="{{ (old('agent_telephone') ? old('agent_telephone') : ($userConfig['agent_telephone'] ? $userConfig['agent_telephone'] : '')) }}">
+                                                <span class="help-block">{{ $errors->first('agent_telephone') }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-item col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group {{ $errors->first('agent_relationship') ? 'has-error' : '' }}">
+                                                <input type="text" class="form-control" name="agent_relationship" id="agent_relationship" placeholder="Agent Relationship" value="{{ (old('agent_relationship') ? old('agent_relationship') : ($userConfig['agent_relationship'] ? $userConfig['agent_relationship'] : '')) }}">
+                                                <span class="help-block">{{ $errors->first('agent_relationship') }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group {{ $errors->first('agent_email') ? 'has-error' : '' }}">
+                                                <input type="text" class="form-control" name="agent_email" id="agent_email" placeholder="Agent Email" value="{{ (old('agent_email') ? old('agent_email') : ($userConfig['agent_email'] ? $userConfig['agent_email'] : '')) }}">
+                                                <span class="help-block">{{ $errors->first('agent_email') }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

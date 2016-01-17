@@ -43,4 +43,8 @@ class UserConfigTemplate extends BaseDataTemplate implements DataTemplate
     public $npi_number;
     public $specialty;
     public $preferred_cc_contact_days = '2'; //tuesday
+    public $agent_name;
+    public $agent_telephone;
+    public $agent_email;
+    public $agent_relationship;
 }
