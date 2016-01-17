@@ -31,6 +31,9 @@ $new_user = false;
                     </div>
                 @endif
             </div>
+            <div class="col-sm-12" id="careTeamMembers">
+                <h4><span class="person-name text-big text-dark text-serif" title="">CarePlan</span></h4>
+            </div>
             <div class="row">
                 <input type=hidden name=user_id value="{{ $patient->ID }}">
                 <input type=hidden name=program_id value="{{ $patient->program_id }}">

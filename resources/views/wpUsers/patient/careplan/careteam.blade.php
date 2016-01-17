@@ -98,7 +98,7 @@ function buildProviderInfoContainers($providers) {
             function addCareTeamMember() {
                 ctmCount++;
                 // build html
-                html1 = '<div class="col-md-12" class="careTeamMemberContainer" id="ctm' + ctmCount + '">';
+                html1 = '<div class="col-md-12 careTeamMemberContainer" id="ctm' + ctmCount + '">';
                 // first row
                 html1 += '<div class="row">';
                 html1 += '<input class="ctmCountArr" type="hidden" name="ctmCountArr[]" value="' + ctmCount + '">';
@@ -198,51 +198,43 @@ function buildProviderInfoContainers($providers) {
                     @endif
                 </div>
 
-                <div class="row" id="careTeamMembers">
-                    <div class="col-md-12" style="margin-top:30px;">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <span class="person-name text-big text-dark text-serif" title="">Care Team Setup</span>
+                <div class="col-sm-12" id="careTeamMembers">
+                    <h4><span class="person-name text-big text-dark text-serif" title="">Care Team Setup</span></h4>
+                </div>
+                <div class="col-sm-12">
+                    @foreach($careTeamUsers as $careTeamUser)
+                        {{--
+                        <div class="col-md-12" class="careTeamMemberContainer" id="ctm' + ctmCount + '">
+                            <div class="row">
+                                <input class="ctmCountArr" type="hidden" name="ctmCountArr[]" value="' + ctmCount + '">
+                                <div class="col-sm-4">';
+                                    {!! Form::select('providers', $providersData, (old('providers') ? old('providers') : $careTeamUser->ID ? $careTeamUser->ID : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                </div>
+                                <div class="col-sm-5" id="ctm' + ctmCount + 'Info">
+                                </div>
+                                <div class="col-sm-3">
+                                <a href="" class="removeCtm" ctmId="' + ctmCount + '"><span class="glyphicon glyphicon-remove-sign"></span> Remove Member</a>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-4" style="padding:20px;">
+                                <div class="radio-inline"><input type="checkbox" name="ctmsa[]" id="ctm' + ctmCount + 'sa" /><label for="ctm' + ctmCount + 'sa"><span> </span>Send Alerts</label></div>
+                                </div>
+                                <div class="col-sm-4" style="padding:20px;">
+                                <div class="radio"><input type="radio" name="ctbp" id="ctm' + ctmCount + 'bp" /><label for="ctm' + ctmCount + 'bp"><span> </span>Billing Provider</label></div>
+                                </div>
+                                <div class="col-sm-4" style="padding:20px;">
+                                <div class="radio"><input type="radio" name="ctlc" id="ctm' + ctmCount + 'lc" /><label for="ctm' + ctmCount + 'lc"><span> </span>Lead Contact</label></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        @foreach($careTeamUsers as $careTeamUser)
-                            {{--
-                            <div class="col-md-12" class="careTeamMemberContainer" id="ctm' + ctmCount + '">
-                                <div class="row">
-                                    <input class="ctmCountArr" type="hidden" name="ctmCountArr[]" value="' + ctmCount + '">
-                                    <div class="col-sm-4">';
-                                        {!! Form::select('providers', $providersData, (old('providers') ? old('providers') : $careTeamUser->ID ? $careTeamUser->ID : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
-                                    </div>
-                                    <div class="col-sm-5" id="ctm' + ctmCount + 'Info">
-                                    </div>
-                                    <div class="col-sm-3">
-                                    <a href="" class="removeCtm" ctmId="' + ctmCount + '"><span class="glyphicon glyphicon-remove-sign"></span> Remove Member</a>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-sm-4" style="padding:20px;">
-                                    <div class="radio-inline"><input type="checkbox" name="ctmsa[]" id="ctm' + ctmCount + 'sa" /><label for="ctm' + ctmCount + 'sa"><span> </span>Send Alerts</label></div>
-                                    </div>
-                                    <div class="col-sm-4" style="padding:20px;">
-                                    <div class="radio"><input type="radio" name="ctbp" id="ctm' + ctmCount + 'bp" /><label for="ctm' + ctmCount + 'bp"><span> </span>Billing Provider</label></div>
-                                    </div>
-                                    <div class="col-sm-4" style="padding:20px;">
-                                    <div class="radio"><input type="radio" name="ctlc" id="ctm' + ctmCount + 'lc" /><label for="ctm' + ctmCount + 'lc"><span> </span>Lead Contact</label></div>
-                                    </div>
-                                </div>
-                            </div>
-                            --}}
-                        @endforeach
-                        {!! $phtml !!}
-                        <a href="" class="addCareTeamMember pull-right btn btn-orange"><span class="glyphicon glyphicon-plus-sign"></span> Add Care Team Member</a>
-                        <br />
-                        <br />
-                    </div>
+                        --}}
+                    @endforeach
+                    {!! $phtml !!}
+                    <a href="" class="addCareTeamMember pull-right btn btn-orange"><span class="glyphicon glyphicon-plus-sign"></span> Add Care Team Member</a>
+                    <br />
+                    <br />
                 </div>
 
 
