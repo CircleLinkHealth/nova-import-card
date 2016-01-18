@@ -4,14 +4,14 @@
         @include('partials.carePlans.sectionEdit')
     @else
         {{-- VIEW ONLY: --}}
-        <a class="" role="" data-toggle="collapse" href="#collapseSection{{ $careSection->id }}" aria-expanded="false" aria-controls="collapseSection{{ $careSection->id }}">
+        <a class="" role="" data-toggle="collapse" href="#collapseSection{{ $careSection->id }}" aria-expanded="true" aria-controls="collapseSection{{ $careSection->id }}">
             <h4>{{ $careSection->display_name }}</h4>
         </a>
     @endif
     @if(!empty($careSection->planItems))
         <?php $i=0; ?>
         <?php $r=1; ?>
-        <div class="collapse" id="collapseSection{{ $careSection->id }}">
+        <div class="collapse in" id="collapseSection{{ $careSection->id }}">
             @foreach($careSection->planItems as $planItem)
                 @if ($planItem->careItem->display_name != '')
                     @if($i % 2 == 0)
