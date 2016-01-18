@@ -317,13 +317,13 @@ class PatientCareplanController extends Controller {
 		} else if($page == 2) {
 			$careSectionNames = array(
 				'biometrics-to-monitor',
-				'additional-information',
+				'transitional-care-management',
 			);
 		} else if($page == 3) {
 			$careSectionNames = array(
-				'transitional-care-management',
-				'misc',
-				'symptoms-to-monitor'
+				'additional-information',
+				'symptoms-to-monitor',
+				//'misc',
 			);
 		}
 
