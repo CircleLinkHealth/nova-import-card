@@ -2,7 +2,6 @@
 
 namespace App\CLH\CCD\Importer\Parsers;
 
-
 use App\CLH\CCD\Importer\CPMProblem;
 use App\CPRulesItem;
 use App\CPRulesPCP;
@@ -35,7 +34,7 @@ class ProblemsParser extends BaseParser
             /*
              * ICD-9 Check
              */
-            if ($problemCodes->code_system_name == 'ICD-9' || $problemCodes->code_system == '2.16.840.1.113883.6.103')
+            if (in_array($problemCodes->code_system_name, ['ICD-9', 'ICD9']) || $problemCodes->code_system == '2.16.840.1.113883.6.103')
             {
                 foreach ($cpmProblems as $cpmProblem)
                 {
@@ -53,7 +52,7 @@ class ProblemsParser extends BaseParser
             /*
              * ICD-10 Check
              */
-            if ($problemCodes->code_system_name == 'ICD-10' || $problemCodes->code_system == '2.16.840.1.113883.6.3')
+            if (in_array($problemCodes->code_system_name, ['ICD-10', 'ICD10']) || $problemCodes->code_system == '2.16.840.1.113883.6.3')
             {
                 foreach ($cpmProblems as $cpmProblem)
                 {
