@@ -66,23 +66,22 @@ class MedicationsParserHelpers
         ]);
     }
 
-    public function import($userId, $blogId, $medications)
-    {
-        $medsList = '';
-        foreach ($medications as $medication) {
-            $endDate = Carbon::createFromTimestamp(strtotime($medication->date_range->end));
-            if (! $endDate->isPast()) {
-                if (! empty($med = $this->medicationLookup($medication))) {
-                    $medsList .= ucwords(strtolower($med)) . ", \n";
-                }
-            }
-        }
 
-        $this->createOrUpdateMedicationsList($userId, $blogId, $medsList);
-    }
-
-    public function importFromCCD($userId, $blogId, $medications)
+    public function importFromCCD($userId, $blogId, $ccd)
     {
+        $medications = $ccd->medications;
+        $importIfEndDateIsNull = false;
+
+        /**
+         * The EHRs listed below do not fill out the end end date, or status for medications.
+         * Medications that DO have a start date, but DO NOT HAVE an end date will be considered active.
+         * We are setting the $importIfEndDateIsNull flag to point out those EHRs, and then we check if
+         * the HAVE a start date but DO NOT HAVE and end date.
+         */
+        if (in_array($ccd->document->legal_authenticator->ids[0]->root, [
+            '2.16.840.1.113883.3.929', // STI
+        ])) $importIfEndDateIsNull = true;
+
         $medsList = '';
         foreach ($medications as $medication) {
             $endDate = '';
@@ -91,7 +90,8 @@ class MedicationsParserHelpers
                 $endDate = Carbon::createFromTimestamp( strtotime( $medication->date_range->end ) );
             }
 
-            if (! empty($endDate) && ! $endDate->isPast())
+            if ( (! empty($endDate) && ! $endDate->isPast())
+                || ($importIfEndDateIsNull && ! empty($medication->date_range->start) && empty($medication->date_range->end)))
             {
                 $medsList .= ucfirst(strtolower($medication->product->name)) . ', '
                     . ucfirst(strtolower(StringManipulation::stringDiff($medication->product->name, $medication->text)))
