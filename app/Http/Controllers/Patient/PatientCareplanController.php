@@ -304,6 +304,9 @@ class PatientCareplanController extends Controller {
 			->where('type', '=', 'Patient Default')
 			->first();
 
+		//$carePlan->setCareItemValue('blood-pressure-target-bp', '115');
+		//$value = $carePlan->getCareItemValue('blood-pressure-target-bp');
+
 		// determine which sections to show
 		if($page == 1) {
 			$careSectionNames = array(

@@ -51,9 +51,31 @@ class CarePlan extends Model {
         /**
          * Automatically delete and item's meta when the item is deleted
          */
+        /*
         CPRulesItem::deleting(function($CPRulesItem){
             $CPRulesItem->meta()->delete();
         });
+        */
     }
+
+    public function getCareItemValue($name) {
+        $careItem = $this->careItems()->where('name','=',$name)->withPivot('id','meta_value')->first();
+        if(!$careItem) {
+            return false;
+        }
+        return $careItem->pivot->meta_value;
+    }
+
+    public function setCareItemValue($name, $value) {
+        $careItem = $this->careItems()->where('name','=',$name)->withPivot('meta_value')->first();
+        if(!$careItem) {
+            return false;
+        }
+        $careItem->pivot->meta_value = $value;
+        $careItem->pivot->save();
+        return true;
+    }
+
+
 
 }
