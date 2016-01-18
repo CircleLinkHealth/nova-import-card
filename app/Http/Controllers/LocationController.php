@@ -42,7 +42,7 @@ class LocationController extends Controller {
 			abort(403);
 		}
 		$blogs = WpBlog::all();
-		return view('locations.create', [ 'locations' => Location::getAllNodes(), 'blogs' => $blogs ]);
+		return view('locations.create', [ 'locations' => Location::getAllParents(), 'blogs' => $blogs ]);
 	}
 
 	/**
@@ -55,7 +55,14 @@ class LocationController extends Controller {
 		if(!Auth::user()->can('locations-manage')) {
 			abort(403);
 		}
+
 		$input = $request->input();
+
+		if(is_null($input['parent_id'])){
+			$input['position'] = 0;
+		} else {
+			$input['position'] = 1;
+		}
 
 		$newLocation = new Location( $input );
 		$saved = $newLocation->save();
@@ -82,10 +89,17 @@ class LocationController extends Controller {
 			abort(403);
 		}
 		$messages = \Session::get('messages');
+		$location = Location::find($id);
+		if(is_null($location->parent_id)){
+			$locationParents = null;
+		} else {
+			$locationParents = Location::getAllParents();
+		}
 		// return $id;
 		return view('locations.show', [
 			'messages' => $messages,
-			'locationParents' => Location::getAllParents(),
+			'location' => $location,
+			'locationParents' => $locationParents,
 			'locationSubs' => Location::getNonRootLocations(),
 			'locationParentsSubs' => Location::getParentsSubs($id)	 
 			]);
@@ -103,7 +117,7 @@ class LocationController extends Controller {
 			abort(403);
 		}
 		$blogs = WpBlog::all();
-		return view('locations.edit', ['location' => Location::find($id), 'locations' => Location::getAllNodes(), 'blogs' => $blogs]);
+		return view('locations.edit', ['location' => Location::find($id), 'locations' => Location::getAllParents(), 'blogs' => $blogs]);
 	}
 
 	/**
@@ -119,6 +133,12 @@ class LocationController extends Controller {
 		}
 
 		$input = $request->all();
+
+		if(is_null($input['parent_id'])){
+			$input['position'] = 0;
+		} else {
+			$input['position'] = 1;
+		}
 
 		Location::find($input['id'])->update($input);
 

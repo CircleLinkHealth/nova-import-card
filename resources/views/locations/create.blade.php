@@ -88,21 +88,10 @@
                                 <label class="col-md-4 control-label">Parent</label>
                                 <div class="col-md-6">
                                     <select name="parent_id">
-                                        <option value="0">None</option>
-                                        @foreach( $locations as $id => $loc )
-                                            <option value="{{ $id }}">{{ $loc }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Program</label>
-                                <div class="col-md-6">
-                                    <select name="program_id">
                                         <option value="">None</option>
-                                        @foreach( $blogs as $blog )
-                                            <option value="{{ $blog->blog_id }}">{{ $blog->blog_id }}</option>
+                                        @foreach( $locations as $id => $loc )
+                                            <?php debug($loc) ?>
+                                            <option value="{{ $id }}">{{ $loc }}</option>
                                         @endforeach
                                     </select>
                                 </div>

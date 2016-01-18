@@ -25,7 +25,7 @@ class Location extends Entity implements LocationInterface
      *
      * @var array
      */
-    protected $fillable = [ 'name', 'phone', 'address_line_1', 'address_line_2', 'city', 'postal_code', 'billing_code', 'location_code','program_id' ];
+    protected $fillable = [ 'name', 'phone', 'address_line_1', 'address_line_2', 'city', 'state', 'postal_code', 'billing_code', 'location_code','position' ];
 
 
     public function program()
@@ -68,7 +68,7 @@ class Location extends Entity implements LocationInterface
 
     public static function getAllParents()
     {
-        return Location::whereRaw('position = 0 AND real_depth = 0')->lists('name', 'id');
+        return Location::whereRaw('parent_id IS NULL')->lists('name', 'id');
     }
 
     public static function getParentsSubs($id)

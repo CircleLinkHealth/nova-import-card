@@ -89,28 +89,18 @@
                                 <div class="col-md-6">
                                     <select name="parent_id">
                                         <option value="">None</option>
-                                        @foreach( $locations as $id => $loc )
+                                        <?php foreach( $locations as $id => $loc ){ ?>
                                             <option value="{{ $id }}"
-
-
+                                                    <?php
+                                                    if($location->parent_id == $id){
+                                                        echo 'selected';
+                                                    }
+                                                    ?>
                                                     >{{ $loc }}</option>
-                                        @endforeach
+                                        <?php } ?>
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Program</label>
-                                <div class="col-md-6">
-                                    <select name="program_id">
-                                        <option value="">None</option>
-                                        @foreach( $blogs as $blog )
-                                            <option value="{{ $blog->blog_id }}">{{ $blog->blog_id }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
                             <div class="form-group">
                                 <div class="col-md-6 col-md-offset-4">
                                     <button type="submit" class="btn btn-primary">

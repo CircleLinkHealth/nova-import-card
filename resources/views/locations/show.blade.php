@@ -6,7 +6,7 @@
             <div class="col-md-8 col-md-offset-2">
                 <div class="row">
                     <div class="col-sm-8">
-                        <h1>Location Detail</h1>
+                        <h1>{{ucwords($location->name)}} Detail</h1>
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
@@ -15,9 +15,9 @@
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">Locations</div>
                     <div class="panel-body">
                         @include('errors.errors')
+                        <h3>Parent Locations:</h3>
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -30,7 +30,7 @@
                                 @foreach( $locationParents as $id => $loc )
                                     <tr>
                                         <td>
-                                            <a href='/admin/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
+                                            <a href='/admin/locations/{{ $id }}'>{{ $loc }} ({{ $id }})</a>
                                         </td>
                                         <td>
                                             <a href="{{ URL::route('locations.edit', array('id' => $id)) }}" class="btn btn-info btn-xs">Edit</a>
@@ -44,7 +44,7 @@
                         </table>
 
 
-                        <h2>Parents Sub Locations:</h2>
+                        <h3>Child Locations:</h3>
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -57,7 +57,7 @@
                                 @foreach( $locationParentsSubs as $id => $loc )
                                     <tr>
                                         <td>
-                                            <a href='/admin/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
+                                            <a href='/admin/locations/{{ $id }}'>{{ $loc }} ({{ $id }})</a>
                                         </td>
                                         <td>
                                             <a href="{{ URL::route('locations.edit', array('id' => $id)) }}" class="btn btn-info btn-xs">Edit</a>

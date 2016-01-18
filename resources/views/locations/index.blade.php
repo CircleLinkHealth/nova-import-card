@@ -18,7 +18,7 @@
                     <div class="panel-body">
                         @include('errors.errors')
 
-                        <h2>Parent Locations:</h2>
+                        <h3>Parent Locations:</h3>
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -31,7 +31,7 @@
                                 @foreach( $locationParents as $id => $loc )
                                     <tr>
                                         <td>
-                                            <a href='/admin/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
+                                            <a href='/admin/locations/{{ $id }}'>{{ $loc }} ({{ $id }})</a>
                                         </td>
                                         <td>
                                             <a href="{{ URL::route('locations.edit', array('id' => $id)) }}" class="btn btn-info btn-xs">Edit</a>
@@ -43,34 +43,6 @@
                             @endif
                             </tbody>
                         </table>
-
-
-                        <h2>Parents Sub Locations:</h2>
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <td><strong>Name</strong></td>
-                                <td><strong>Detail</strong></td>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @if (count($locationParentsSubs) > 0)
-                                @foreach( $locationParentsSubs as $id => $loc )
-                                    <tr>
-                                        <td>
-                                            <a href='/locations/{{ $id }}'>{{ $id }} -- {{ $loc }}</a>
-                                        </td>
-                                        <td>
-                                            <a href="{{ URL::route('locations.edit', array('id' => $id)) }}" class="btn btn-info btn-xs">Edit</a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @else
-                                <tr><td colspan="7">No sub locations found</td></tr>
-                            @endif
-                            </tbody>
-                        </table>
-
                     </div>
                 </div>
             </div>
