@@ -59,7 +59,7 @@
         <div class="form-group">
             <div class="form-item col-sm-12">
                 <div class="checkbox text-medium-big">
-                    <div class="radio-inline"><input id="carePlanItem{{ $planItemChild->id }}" name="item|{{ $planItem->id }}" value="Active" class="itemTrigger" data-toggle="collapse" data-target="#{{ $planItemChild->id }}_modal_contentclone" type="checkbox"
+                    <div class="radio-inline"><input id="carePlanItem{{ $planItemChild->id }}" name="item|{{ $planItemChild->id }}" value="Active" class="itemTrigger" data-toggle="collapse" data-target="#{{ $planItemChild->id }}_modal_contentclone" type="checkbox"
                         @if ($planItemChild->meta_value == 'Active')
                              checked="checked"
                         @endif
@@ -72,6 +72,32 @@
             </div>
         </div>
     </div>
+@elseif ($planItemChild->ui_fld_type == 'TEXTAREA')
+    @if($planItemChild->careItem->display_name == 'Details')
+    <!-- Trigger the modal with a button -->
+        <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#carePlanItem{{ $planItem->careItem->id }}Detail">Instructions</button>
+
+        <!-- Modal -->
+        <div id="carePlanItem{{ $planItem->careItem->id }}Detail" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">{{ $planItem->careItem->display_name }} :: Details</h4>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="item{{ $planItemChild->id }}modal" name="item|{{ $planItemChild->id }}">{{ $planItemChild->meta_value }}</textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    @endif
 @else
     {{ $planItemChild->careItem->display_name }}
 @endif

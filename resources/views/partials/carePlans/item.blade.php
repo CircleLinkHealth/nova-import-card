@@ -51,7 +51,6 @@
                             <label for="carePlanItem{{ $planItem->id }}">
                             <span></span>{{ $planItem->careItem->display_name }}</label>
                         </div>
-                        <button style="display: none;" type="button" class="btn btn-default btn-xs btn-monitor text-right" data-toggle="modal" id="carePlanItem{{ $planItem->careItem->id }}Detail" data-target="#{{ $planItem->id }}_modalModal">Instructions</button>
                     </div>
                 </div>
             </div>
