@@ -88,6 +88,76 @@ class ProblemsParser extends BaseParser
         }
     }
 
+    public function createProblemsList()
+    {
+        $ccdProblems = $this->ccd->problems;
+        $problemsList = '';
+
+        foreach ($ccdProblems as $ccdProblem)
+        {
+            /**
+             * Problems can only be active or chronic
+             */
+            if (! in_array(strtolower($ccdProblem->status), ['active', 'chronic'])) return;
+
+            /**
+             * Check if the information is in the Translation Section of BB
+             */
+            $problemCodes = $ccdProblem;
+
+            if (empty($problemCodes->code)) {
+                $problemCodes = $ccdProblem->translation;
+            }
+
+            $problemsList .= $problemCodes->name . ', ' . $problemCodes->code_system_name . ', ' . $problemCodes->code . ";\n\n";
+        }
+        $this->saveProblemsList($this->userId, $this->blogId, $problemsList);
+    }
+
+    private function saveProblemsList($userId, $blogId, $problemsList)
+    {
+        if (empty($blogId) or empty($userId)) throw new \Exception('UserID and BlogID are required.');
+
+        $pcp = CPRulesPCP::whereProvId($blogId)->whereSectionText('Diagnosis / Problems to Monitor')->first();
+        if (empty($pcp)) {
+            Log::error(__METHOD__ . ' ' . __LINE__ . ' for userID ' . $userId . ', blogId ' . $blogId . ' has failed.');
+            return;
+        }
+        $pcpId = $pcp->pcp_id;
+
+        $rulesItem = CPRulesItem::wherePcpId($pcpId)->whereItemsText('Other Conditions')->first();
+        if (empty($rulesItem)) {
+            Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $userId . ', blogId ' . $blogId . ' has failed.');
+            return;
+        }
+        $parentItemId = $rulesItem->items_id;
+
+        $details = CPRulesItem::wherePcpId($pcpId)->whereItemsParent($parentItemId)->whereItemsText('Details')->first();
+        if (empty($details)) {
+            Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $userId . ', blogId ' . $blogId . ' has failed.');
+            return;
+        }
+        $itemId = $details->items_id;
+
+        //Set UI Item to Active
+        CPRulesUCP::updateOrCreate([
+            'items_id' => $parentItemId,
+            'user_id' => $userId,
+            'meta_key' => 'status',
+        ], [
+            'meta_value' => 'Active',
+        ]);
+
+        //Value
+        CPRulesUCP::updateOrCreate([
+            'items_id' => $itemId,
+            'user_id' => $userId,
+            'meta_key' => 'value',
+        ], [
+            'meta_value' => $problemsList,
+        ]);
+    }
+
     private function createOrUpdateProblems($userId, $blogId, $cpmProblem)
     {
         if (empty($blogId) or empty($userId)) throw new \Exception('UserID and BlogID are required.');
@@ -106,6 +176,7 @@ class ProblemsParser extends BaseParser
         }
         $parentItemId = $rulesItem->items_id;
 
+// This may be useful
 //        $details = CPRulesItem::wherePcpId($pcpId)->whereItemsParent($parentItemId)->whereItemsText('Details')->first();
 //        if (empty($details)) {
 //            Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $userId . ', blogId ' . $blogId . ' has failed.');
@@ -122,6 +193,7 @@ class ProblemsParser extends BaseParser
             'meta_value' => 'Active',
         ]);
 
+        // This may be useful
         //Value
 //        CPRulesUCP::updateOrCreate([
 //            'items_id' => $itemId,

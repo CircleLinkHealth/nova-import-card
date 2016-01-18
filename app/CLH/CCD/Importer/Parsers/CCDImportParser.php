@@ -20,6 +20,7 @@ class CCDImportParser extends BaseParser
          */
         (new MedicationsParser($blogId, $parsedCCD))->parse();
         (new ProblemsParser($blogId, $parsedCCD))->parse();
+        (new ProblemsParser($blogId, $parsedCCD))->createProblemsList();
         $ccd->userConfig =  (new UserConfigParser($blogId, $parsedCCD, new UserConfigTemplate()))->parse()->getArray();
         $ccd->userMeta = (new UserMetaParser($blogId, $parsedCCD, new UserMetaTemplate()))->parse()->getArray();
 
