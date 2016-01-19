@@ -18,37 +18,26 @@
 </div>
 
 <?php
-// patient stuff
-$patientId = 0;
-if ( !empty($patient) ) {
-    $patientId = $patient->ID;
-}
-
 $qs = '';
 $option = 'att_config';
-$activity = '';
+if(!$activity) {
+    $activity = '';
+}
 $role = '';
-$title  = 'Patient Overview Review'; //get_the_title();
+$title  = Route::currentRouteName(); //get_the_title();
 //$activity_assignment = get_option($option,'No Data');
-$activity_assignment = '{"Patient Summary":{"user=%":{"activity":"Patient Overview Review"},"detail=obs_biometrics":{"activity":"Biometrics Data Review"},"detail=obs_lifestyle":{"activity":"Lifestyle Data Review"},"detail=obs_medications":{"activity":"Medications Data Review"},"detail=obs_symptoms":{"activity":"Symptoms Data Review"}},"Add Patient":{"user=%":{"activity":"Edit/Modify Care Plan"},"":{"activity":"Initial Care Plan Setup"}},"Patient Care Plan":{"user=%":{"activity":"Edit/Modify Care Plan"},"np=1":{"activity":"Initial Care Plan Setup"}},"Patient Care Plan II":{"user=%":{"activity":"Edit/Modify Care Plan"},"np=1":{"activity":"Initial Care Plan Setup"}},"Patient Additional Information":{"user=%":{"activity":"Edit/Modify Care Plan"},"np=1":{"activity":"Initial Care Plan Setup"}},"Input Observations":{"user=%":{"activity":"Input Observations"}},"Record New Activity":{"user=%":{"activity":"Input Activity"}},"Print Care Plan":{"user=%":{"activity":"Care Plan View/Print"},"np=1":{"activity":"Initial Care Plan Setup"}},"Alerts":{"":{"activity":"Alerts Review"},"user=%":{"activity":"Patient Alerts Review"}},"Progress Report":{"user=%":{"activity":"Progress Report Review/Print"}},"Patient Activity Report":{"user=%":{"activity":"Patient Activity Report Review"}}}';
+
+$activity_assignment = 'a:14:{s:23:"Patient Biometric Chart";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:31:"Patient Biometrics Chart Review";}}s:15:"Patient Summary";a:5:{s:6:"user=%";a:1:{s:8:"activity";s:23:"Patient Overview Review";}s:21:"detail=obs_biometrics";a:1:{s:8:"activity";s:22:"Biometrics Data Review";}s:20:"detail=obs_lifestyle";a:1:{s:8:"activity";s:21:"Lifestyle Data Review";}s:22:"detail=obs_medications";a:1:{s:8:"activity";s:23:"Medications Data Review";}s:19:"detail=obs_symptoms";a:1:{s:8:"activity";s:20:"Symptoms Data Review";}}s:11:"Add Patient";a:2:{s:6:"user=%";a:1:{s:8:"activity";s:21:"Edit/Modify Care Plan";}s:0:"";a:1:{s:8:"activity";s:23:"Initial Care Plan Setup";}}s:17:"Patient Care Plan";a:2:{s:6:"user=%";a:1:{s:8:"activity";s:21:"Edit/Modify Care Plan";}s:4:"np=1";a:1:{s:8:"activity";s:23:"Initial Care Plan Setup";}}s:20:"Patient Care Plan II";a:2:{s:6:"user=%";a:1:{s:8:"activity";s:21:"Edit/Modify Care Plan";}s:4:"np=1";a:1:{s:8:"activity";s:23:"Initial Care Plan Setup";}}s:30:"Patient Additional Information";a:2:{s:6:"user=%";a:1:{s:8:"activity";s:21:"Edit/Modify Care Plan";}s:4:"np=1";a:1:{s:8:"activity";s:23:"Initial Care Plan Setup";}}s:18:"Input Observations";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:18:"Input Observations";}}s:20:"Report Patient Notes";a:1:{s:7:"actId=%";a:1:{s:8:"activity";s:17:"Patient Note View";}}s:8:"New Note";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:21:"Patient Note Creation";}}s:19:"Record New Activity";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:14:"Input Activity";}}s:15:"Print Care Plan";a:2:{s:6:"user=%";a:1:{s:8:"activity";s:20:"Care Plan View/Print";}s:4:"np=1";a:1:{s:8:"activity";s:23:"Initial Care Plan Setup";}}s:6:"Alerts";a:2:{s:0:"";a:1:{s:8:"activity";s:13:"Alerts Review";}s:6:"user=%";a:1:{s:8:"activity";s:21:"Patient Alerts Review";}}s:15:"Progress Report";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:28:"Progress Report Review/Print";}}s:23:"Patient Activity Report";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:30:"Patient Activity Report Review";}}}';
+
+
+
 // var_dump($activity_assignment);
 if(!is_array($activity_assignment)) {
-    $activity_assignment = json_decode($activity_assignment, 1);
+    $activity_assignment = unserialize($activity_assignment);
 }
-/*
-if ($_REQUEST['user']) $qs = 'user=%';
-if ($_REQUEST['detail']) $qs = 'detail='.$_REQUEST['detail'];
-if ($_REQUEST['np']) $qs = 'np='.$_REQUEST['np'];
-*/
-if (! Auth::guest()) {
-    /*
-    $meta = get_user_meta(Auth::user()->ID, 'wp_' . $blogId . '_capabilities', true);
-    //var_dump($meta);
-    $activity = $activity_assignment[$title][$qs]['activity'];
-    $role = array_keys($meta);
-    if($_GET['d'])	echo "Activity: <strong>$activity</strong> for page $title using: $qs. Your Role is: " . $role[0];
-    */
-}
+
+//dd($activity_assignment);
+//die('yo');
 
 // ip address stuff
 function get_ip_address() {
@@ -225,7 +214,7 @@ if ($enableTimeTracking) {
 
 
             var data = {
-                "patientId": '<?php echo $patientId; ?>',
+                "patientId": '<?php echo $patient->ID; ?>',
                 "providerId": '<?php echo Auth::user()->ID ?>',
                 "totalTime": totalTime,
                 "programId": '<?php echo $patient->program_id; ?>',
