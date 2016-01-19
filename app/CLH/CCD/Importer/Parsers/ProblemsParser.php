@@ -62,6 +62,14 @@ class ProblemsParser extends BaseParser
             {
                 foreach ($cpmProblems as $cpmProblem)
                 {
+                    /**
+                     * Since we are doing string comparison, I10 != I10.0
+                     * This is is to prevent this
+                     */
+                    if (! strpos($problemCodes->code, '.')) {
+                        $problemCodes->code .= '.0';
+                    }
+
                     if ((string) $problemCodes->code >= (string) $cpmProblem->icd10from
                         && (string) $problemCodes->code <= (string) $cpmProblem->icd10to)
                     {
