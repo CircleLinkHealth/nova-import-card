@@ -14,22 +14,28 @@ class ProblemsParser extends BaseParser
     {
         $cpmProblems = CPMProblem::all();
         $ccdProblems = $this->ccd->problems;
+        $importIfEndDateIsNull = $this->importIfEndDateIsNullAndStartDateExists();
 
         foreach ($ccdProblems as $ccdProblem)
         {
             /**
-             * Problems can only be active or chronic
+             * Problems can only be active or chronic, unless this is a CCD we can $importIfEndDateIsNull
              */
-            if (! in_array(strtolower($ccdProblem->status), ['active', 'chronic'])) return;
+            if (! $importIfEndDateIsNull) {
+                if (! in_array(strtolower($ccdProblem->status), ['active', 'chronic'])) continue;
+            }
 
             /**
              * Check if the information is in the Translation Section of BB
              */
             $problemCodes = $ccdProblem;
 
-            if (empty($problemCodes->code)) {
+            if (empty($problemCodes->code) || empty($problemCodes->code_system_name)) {
                 $problemCodes = $ccdProblem->translation;
             }
+
+            if ($importIfEndDateIsNull
+                && (empty($ccdProblem->date_range->start) || ! empty($ccdProblem->date_range->end))) continue;
 
             /*
              * ICD-9 Check
@@ -91,27 +97,35 @@ class ProblemsParser extends BaseParser
     public function createProblemsList()
     {
         $ccdProblems = $this->ccd->problems;
+        $importIfEndDateIsNull = $this->importIfEndDateIsNullAndStartDateExists();
         $problemsList = '';
 
         foreach ($ccdProblems as $ccdProblem)
         {
             /**
-             * Problems can only be active or chronic
+             * Problems can only be active or chronic, unless this is a CCD we can $importIfEndDateIsNull
              */
-            if (! in_array(strtolower($ccdProblem->status), ['active', 'chronic'])) return;
+            if (! $importIfEndDateIsNull) {
+                if (! in_array(strtolower($ccdProblem->status), ['active', 'chronic'])) continue;
+            }
 
             /**
              * Check if the information is in the Translation Section of BB
              */
             $problemCodes = $ccdProblem;
 
-            if (empty($problemCodes->code)) {
+            if (empty($problemCodes->code) || empty($problemCodes->code_system_name)) {
                 $problemCodes = $ccdProblem->translation;
             }
 
+            if ($importIfEndDateIsNull
+            && (empty($ccdProblem->date_range->start) || ! empty($ccdProblem->date_range->end))) continue;
+
             $problemsList .= $problemCodes->name . ', ' . $problemCodes->code_system_name . ', ' . $problemCodes->code . ";\n\n";
         }
-        $this->saveProblemsList($this->userId, $this->blogId, $problemsList);
+        if (! empty($problemsList)) {
+            $this->saveProblemsList( $this->userId, $this->blogId, $problemsList );
+        }
     }
 
     private function saveProblemsList($userId, $blogId, $problemsList)

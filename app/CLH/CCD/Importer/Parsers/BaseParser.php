@@ -22,4 +22,17 @@ abstract class BaseParser implements Parser
         $this->parsedCcdObj = $ccd;
         $this->userId = $ccd->user_id;
     }
+
+    /**
+     * The EHRs listed below do not fill out the end end date, or status for medications.
+     * Medications that DO have a start date, but DO NOT HAVE an end date will be considered active.
+     * We are setting the $importIfEndDateIsNull flag to point out those EHRs, and then we check if
+     * the HAVE a start date but DO NOT HAVE and end date.
+     */
+    protected function importIfEndDateIsNullAndStartDateExists()
+    {
+        return in_array($this->ccd->document->legal_authenticator->ids[0]->root, [
+            '2.16.840.1.113883.3.929', // STI
+        ]);
+    }
 }
