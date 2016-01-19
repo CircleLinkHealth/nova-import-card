@@ -48,7 +48,7 @@ class ProblemsParser extends BaseParser
                         && $problemCodes->code <= $cpmProblem->icd9to)
                     {
                         $this->createOrUpdateProblems($this->userId, $this->blogId, $cpmProblem->name);
-                        continue;
+                        break;
                     }
                 }
 
@@ -74,7 +74,7 @@ class ProblemsParser extends BaseParser
                         && (string) $problemCodes->code <= (string) $cpmProblem->icd10to)
                     {
                         $this->createOrUpdateProblems($this->userId, $this->blogId, $cpmProblem->name);
-                        continue;
+                        break;
                     }
                 }
 
@@ -92,7 +92,7 @@ class ProblemsParser extends BaseParser
                 {
                     if (empty($keyword)) continue;
 
-                    if (strpos($cpmProblem->name, $keyword))
+                    if (strpos($problemCodes->name, $keyword))
                     {
                         $this->createOrUpdateProblems($this->userId, $this->blogId, $cpmProblem->name);
                         continue;
