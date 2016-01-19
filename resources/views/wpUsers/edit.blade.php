@@ -294,14 +294,16 @@
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('care_team', 'Care Team:') !!}</div>
                                         <div class="col-xs-10">
-                                            @if (count($userConfig['care_team']) > 0)
-                                                <div class="alert alert-warning">
-                                                    <ul>
-                                                        @foreach ($userConfig['care_team'] as $id)
-                                                            <li>{!! Form::checkbox('care_team[]', $id, ['checked' => 'checked']) !!}{{ $id }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
+                                            @if (isset($userConfig['care_team']))
+                                                @if (count($userConfig['care_team']) > 0)
+                                                    <div class="alert alert-warning">
+                                                        <ul>
+                                                            @foreach ($userConfig['care_team'] as $id)
+                                                                <li>{!! Form::checkbox('care_team[]', $id, ['checked' => 'checked']) !!}{{ $id }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                @endif
                                             @endif
                                         </div>
                                     </div>
@@ -310,15 +312,17 @@
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('send_alert_to', 'Send alerts to:') !!}</div>
                                         <div class="col-xs-10">
-                                            @if (count($userConfig['send_alert_to']) > 0)
-                                                <div class="alert alert-warning">
-                                                    <strong>Send alerts to</strong>
-                                                    <ul>
-                                                        @foreach ($userConfig['send_alert_to'] as $id)
-                                                            <li>{!! Form::checkbox('send_alert_to[]', $id, ['checked' => 'checked']) !!}{{ $id }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
+                                            @if (isset($userConfig['send_alert_to']))
+                                                @if (count($userConfig['send_alert_to']) > 0)
+                                                    <div class="alert alert-warning">
+                                                        <strong>Send alerts to</strong>
+                                                        <ul>
+                                                            @foreach ($userConfig['send_alert_to'] as $id)
+                                                                <li>{!! Form::checkbox('send_alert_to[]', $id, ['checked' => 'checked']) !!}{{ $id }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                @endif
                                             @endif
                                         </div>
                                     </div>
