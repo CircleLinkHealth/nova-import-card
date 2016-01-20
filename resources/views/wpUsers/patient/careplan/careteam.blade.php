@@ -109,7 +109,7 @@ function buildProviderInfoContainers($providers) {
                 html1 += '';
                 html1 += '</div>';
                 html1 += '<div class="col-sm-3">';
-                html1 += '<a href="" class="removeCtm" ctmId="' + ctmCount + '"><i class="glyphicon glyphicon-minus-sign"></i> Remove Member</a>';
+                html1 += '<button class="btn btn-xs btn-danger removeCtm" ctmId="' + ctmCount + '"><i class="glyphicon glyphicon-minus-sign"></i> Remove Member</button>';
                 html1 += '</div>';
                 html1 += '</div>';
                 // second row
@@ -232,7 +232,7 @@ function buildProviderInfoContainers($providers) {
                         --}}
                     @endforeach
                     {!! $phtml !!}
-                    <a href="" class="addCareTeamMember pull-right btn btn-orange"><span class="glyphicon glyphicon-plus-sign"></span> Add Care Team Member</a>
+                    <a href="" class="addCareTeamMember pull-right btn btn-success" style="margin:20px;"><span class="glyphicon glyphicon-plus-sign"></span> Add Care Team Member</a>
                     <br />
                     <br />
                 </div>

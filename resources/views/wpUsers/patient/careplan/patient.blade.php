@@ -217,21 +217,19 @@ Agent Relationship Field
                                 </div>
 
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
-                                    <div class="row">
-                                        <div class="col-sm-2 col-lg-7">
-                                            <label for="preferred_contact_method" class="text-right contact-method">
-                                                Preferred Contact Method:
-                                            </label>
+                                    <div class="col-sm-6">
+                                        <label for="preferred_contact_method" class="contact-method">
+                                            Preferred Contact Method:
+                                        </label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="radio">
+                                            <input type="radio" name="preferred_contact_method" id="contactMethodSMS" value="SMS" {{ ((old('preferred_contact_method') == 'SMS' || !old('preferred_contact_method')) ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'SMS') ? 'checked="checked"' : '')) }}>
+                                            <label for="contactMethodSMS"><span> </span>SMS</label>
                                         </div>
-                                        <div class="col-sm-10 col-lg-5 contact-method">
-                                            <div class="radio">
-                                                <input type="radio" name="preferred_contact_method" id="contactMethodSMS" value="SMS" {{ ((old('preferred_contact_method') == 'SMS' || !old('preferred_contact_method')) ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'SMS') ? 'checked="checked"' : '')) }}>
-                                                <label for="contactMethodSMS"><span> </span>SMS</label>
-                                            </div>
-                                            <div class="radio radio-v-margin">
-                                                <input type="radio" name="preferred_contact_method" id="contactMethodApp"  value="APP" {{ (old('preferred_contact_method') == 'APP' ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'APP') ? 'checked="checked"' : '')) }}>
-                                                <label for="contactMethodApp"><span> </span>App</label>
-                                            </div>
+                                        <div class="radio radio-v-margin">
+                                            <input type="radio" name="preferred_contact_method" id="contactMethodApp"  value="APP" {{ (old('preferred_contact_method') == 'APP' ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'APP') ? 'checked="checked"' : '')) }}>
+                                            <label for="contactMethodApp"><span> </span>App</label>
                                         </div>
                                     </div>
                                     <span class="help-block">{{ $errors->first('preferred_contact_method') }}</span>
@@ -256,8 +254,12 @@ Agent Relationship Field
                                     <span class="btn btn-group  text-right"><a class="btn btn-green btn-sm inline-block" omitsubmit="yes" role="button" target="_Blank" href="https://s3.amazonaws.com/clh-downloads/Circlelink+CCM+Consent+Form.pdf">Download Form</a></span>
                                 </div>
 
-                                <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_location') ? 'has-error' : '' }}">
-                                <div class="form-group form-item form-item-spacing col-lg-7 col-sm-12 <?php //echo $validatlidation['status']['class']; ?>">
+                                <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_location') ? 'has-error' : '' }}">
+                                        {!! Form::label('preferred_contact_location', 'Contact Location:') !!}
+                                        {!! Form::select('preferred_contact_location', $locations, $userConfig['preferred_contact_location'], ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
+                                </div>
+
+                                <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('status') ? 'has-error' : '' }}">
                                     <div class="row">
                                         <div class="col-sm-2 col-lg-4">
                                             <label for="status">Status<span class="attention">*</span>:</label>
@@ -277,10 +279,10 @@ Agent Relationship Field
                                 </div>
 
 
-                                <div class="form-group form-item form-item-spacing col-lg-7 col-sm-12">
+                                <div class="form-group form-item form-item-spacing col-sm-12">
                                     <div class="row">
-                                        <div class="col-sm-2 col-lg-4">{!! Form::label('ccm_status', 'CCM Status: '.$userMeta['ccm_status']) !!}</div>
-                                        <div class="col-sm-9 col-lg-8">{!! Form::select('ccm_status', array('paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn'), $userMeta['ccm_status'], ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                        <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Status: ') !!}</div>
+                                        <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn'), $userMeta['ccm_status'], ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                     </div>
                                 </div>
 
