@@ -38,7 +38,7 @@
                             </div>
                         </div>
 
-                        <h2>Program - {{ $program->domain }}</h2>
+                        <h2>Program - {{ $program->display_name }}</h2>
 
                         <div class="form-group">
                             <div class="row">
@@ -72,6 +72,8 @@
                             </div>
                         </div>
 
+                        <h3>Careplans:</h3>
+                        <em>No careplans found for this program.</em>
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">

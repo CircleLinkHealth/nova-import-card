@@ -34,7 +34,7 @@
                             </div>
                         </div>
 
-                        <h2>Program - {{ $program->domain }}</h2>
+                        <h2>Program - {{ $program->display_name }}</h2>
                         <p>Program Info</p>
 
                         <div class="form-group">

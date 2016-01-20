@@ -24,7 +24,8 @@
                         <thead>
                         <tr>
                             <td></td>
-                            <td><strong>domain</strong></td>
+                            <td><strong>display_name</strong></td>
+                            <td><strong>name</strong></td>
                             <td><strong>id</strong></td>
                             <td><strong>registered</strong></td>
                         </tr>
@@ -33,7 +34,8 @@
                         @foreach( $wpBlogs as $wpBlog )
                             <tr>
                                 <td><a href="{{ URL::route('admin.programs.show', array('id' => $wpBlog->blog_id)) }}" class="btn btn-primary">Details</a></td>
-                                <td><strong>{{ $wpBlog->domain }}</strong></td>
+                                <td><strong>{{ $wpBlog->display_name }}</strong></td>
+                                <td>{{ $wpBlog->name }}</td>
                                 <td>{{ $wpBlog->blog_id }}</td>
                                 <td>{{ $wpBlog->created_at }}</td>
                                 <td><a href="{{ URL::route('admin.programs.edit', array('id' => $wpBlog->blog_id)) }}" class="btn btn-info">Edit</a></td>
