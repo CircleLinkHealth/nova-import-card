@@ -41,7 +41,7 @@
                                 <td>{{ $permission->name }}</td>
                                 <td>{{ $permission->display_name }}</td>
                                 <td>{{ $permission->description }}</td>
-                                <td>{{ $permission->created_at }}</td>
+                                <td>{{ date('F d, Y g:i A', strtotime($permission->created_at)) }}</td>
                                 <td>
                                     @if(Entrust::can('roles-permissions-manage'))
                                         <a href="{{ URL::route('admin.permissions.edit', array('id' => $permission->id)) }}" class="btn btn-primary">Edit</a>

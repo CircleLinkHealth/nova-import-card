@@ -55,7 +55,7 @@
 
                         <div class="row" style="margin:20px 0px;">
                             <strong>Created:</strong><br>
-                            {{ $permission->created_at }}
+                            {{ date('F d, Y g:i A', strtotime($permission->created_at)) }}
                         </div>
 
                         <h3>Roles:</h3>

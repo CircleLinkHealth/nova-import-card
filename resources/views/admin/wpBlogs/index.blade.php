@@ -26,8 +26,7 @@
                             <td></td>
                             <td><strong>display_name</strong></td>
                             <td><strong>name</strong></td>
-                            <td><strong>id</strong></td>
-                            <td><strong>registered</strong></td>
+                            <td><strong>created</strong></td>
                         </tr>
                         </thead>
                         <tbody>
@@ -36,8 +35,7 @@
                                 <td><a href="{{ URL::route('admin.programs.show', array('id' => $wpBlog->blog_id)) }}" class="btn btn-primary">Details</a></td>
                                 <td><strong>{{ $wpBlog->display_name }}</strong></td>
                                 <td>{{ $wpBlog->name }}</td>
-                                <td>{{ $wpBlog->blog_id }}</td>
-                                <td>{{ $wpBlog->created_at }}</td>
+                                <td>{{ date('F d, Y g:i A', strtotime($wpBlog->created_at)) }}</td>
                                 <td><a href="{{ URL::route('admin.programs.edit', array('id' => $wpBlog->blog_id)) }}" class="btn btn-info">Edit</a></td>
                                 <td><a href="{{ URL::route('admin.programs.destroy', array('id' => $wpBlog->blog_id)) }}" class="btn btn-warning">Remove</a></td>
                             </tr>

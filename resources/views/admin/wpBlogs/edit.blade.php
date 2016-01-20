@@ -72,8 +72,6 @@
                             </div>
                         </div>
 
-                        <h3>Careplans:</h3>
-                        <em>No careplans found for this program.</em>
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">

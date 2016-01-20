@@ -41,7 +41,7 @@
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->display_name }}</td>
                                 <td>{{ $role->description }}</td>
-                                <td>{{ $role->created_at }}</td>
+                                <td>{{ date('F d, Y g:i A', strtotime($role->created_at)) }}</td>
                                 <td>
                                     @if(Entrust::can('roles-manage'))
                                         <a href="{{ URL::route('admin.roles.edit', array('id' => $role->id)) }}" class="btn btn-primary">Edit</a>

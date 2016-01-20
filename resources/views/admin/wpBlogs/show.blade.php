@@ -11,69 +11,74 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-8">
-                        <h2>View Program</h2>
+                        <h2>Program: {{ $program->display_name }}</h2>
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
+                            <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger"><i class="glyphicon glyphicon-plus-sign"></i> Back</a>
                         </div>
                     </div>
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Program ID: {{ $program->blog_id }}
+                        {{ $program->display_name }}
                     </div>
                     <div class="panel-body">
                         @include('errors.errors')
 
-                        <div class="row" style="">
-                            <div class="col-sm-12">
-                                <div class="pull-right">
-                                    <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Back</a>
-                                    </form>
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist" style="margin-top:20px;">
+                            <li role="presentation" class="active"><a href="#programTab" aria-controls="programTab" role="tab" data-toggle="tab">Program Info</a></li>
+                            <li role="presentation"><a href="#statsTab" aria-controls="careplansTab" role="tab" data-toggle="tab">Statistics</a></li>
+                            <li role="presentation"><a href="#careplansTab" aria-controls="careplansTab" role="tab" data-toggle="tab">Careplans</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="programTab">
+
+                                <h2>Program - {{ $program->display_name }}</h2>
+                                <p>Program Info</p>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">Domain:</div>
+                                        <div class="col-xs-10">{!! $program->domain !!}</div>
+                                    </div>
+
+                                    <div class="row" style="margin-top:20px;">
+                                        <div class="col-xs-2">Location:</div>
+                                        <div class="col-xs-4">{!! $program->location_id !!}</div>
+                                    </div>
+
+                                    <div class="row" style="margin-top:20px;">
+                                        <div class="col-xs-2">Display Name:</div>
+                                        <div class="col-xs-10">{!! $program->display_name !!}</div>
+                                    </div>
+
+                                    <div class="row" style="margin-top:20px;">
+                                        <div class="col-xs-2">Unique Name:</div>
+                                        <div class="col-xs-10">{!! $program->name !!}</div>
+                                    </div>
+
+                                    <div class="row" style="margin-top:20px;">
+                                        <div class="col-xs-2">Short Display Name:</div>
+                                        <div class="col-xs-10">{!! $program->short_display_name !!}</div>
+                                    </div>
+
+                                    <div class="row" style="margin-top:20px;">
+                                        <div class="col-xs-2">Description:</div>
+                                        <div class="col-xs-10">{{ $program->description }}</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <h2>Program - {{ $program->display_name }}</h2>
-                        <p>Program Info</p>
-
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-xs-2">Domain:</div>
-                                <div class="col-xs-10">{!! $program->domain !!}</div>
+                            <div role="tabpanel" class="tab-pane" id="statsTab">
+                                <h3>Statistics:</h3>
                             </div>
 
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">Location:</div>
-                                <div class="col-xs-4">{!! $program->location_id !!}</div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">Display Name:</div>
-                                <div class="col-xs-10">{!! $program->display_name !!}</div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">Unique Name:</div>
-                                <div class="col-xs-10">{!! $program->name !!}</div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">Short Display Name:</div>
-                                <div class="col-xs-10">{!! $program->short_display_name !!}</div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">Description:</div>
-                                <div class="col-xs-10">{{ $program->description }}</div>
-                            </div>
-                        </div>
-
-                        <div class="row" style="margin-top:50px;">
-                            <div class="col-sm-12">
-                                <div class="pull-right">
-                                    <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Back</a>
-                                </div>
+                            <div role="tabpanel" class="tab-pane" id="careplansTab">
+                                <h3>Careplans:</h3>
+                                <em>No careplans found for this program.</em>
                             </div>
                         </div>
 

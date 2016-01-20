@@ -66,7 +66,7 @@
 
                         <div class="row" style="margin:20px 0px;">
                             <strong>Created:</strong><br>
-                            {{ $role->created_at }}
+                            {{ date('F d, Y g:i A', strtotime($role->created_at)) }}
                         </div>
 
                     </div>
