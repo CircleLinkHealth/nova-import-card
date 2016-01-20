@@ -1,21 +1,6 @@
 <?php
 $user_info = array();
 $new_user = false;
-        /*
-         *
-         *
-         *
-         *
-         *
-         *
-         *
-Home Phone study_phone_number
-Work Phone mobile_phone_number
-Agent Name Field (One Field?)
-Agent Phone
-Agent Email Address Field
-Agent Relationship Field
-         */
 ?>
 
 @extends('partials.providerUI')

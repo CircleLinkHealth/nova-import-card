@@ -20,8 +20,8 @@
 <?php
 $qs = '';
 $option = 'att_config';
-if(!$activity) {
-    $activity = '';
+if(!isset($activity)) {
+    $activity = 'test';
 }
 $role = '';
 $title  = Route::currentRouteName(); //get_the_title();
