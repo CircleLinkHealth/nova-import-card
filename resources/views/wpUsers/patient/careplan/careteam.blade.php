@@ -109,7 +109,7 @@ function buildProviderInfoContainers($providers) {
                 html1 += '';
                 html1 += '</div>';
                 html1 += '<div class="col-sm-3">';
-                html1 += '<a href="" class="removeCtm" ctmId="' + ctmCount + '"><span class="glyphicon glyphicon-remove-sign"></span> Remove Member</a>';
+                html1 += '<a href="" class="removeCtm" ctmId="' + ctmCount + '"><i class="glyphicon glyphicon-minus-sign"></i> Remove Member</a>';
                 html1 += '</div>';
                 html1 += '</div>';
                 // second row

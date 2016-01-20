@@ -3,23 +3,23 @@
         @if(isset($patient) && !$new_user )
             <div class="progress-buttons col-sm-12 col-centered text-center">
                 @if(Route::is('patient.demographics.show'))
-                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->ID)) }}">Approve Page ></a>
+                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->ID)) }}">Approve Page&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                 @endif
                 @if(Route::is('patient.careteam.show'))
-                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.demographics.show', array('patientId' => $patient->ID)) }}" omitsubmit="yes"><</a>
-                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 1)) }}">Approve Page ></a>
+                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.demographics.show', array('patientId' => $patient->ID)) }}" omitsubmit="yes"><span class="glyphicon glyphicon-circle-arrow-left"></span></a>
+                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 1)) }}">Approve Page&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                 @endif
                 @if(Route::is('patient.careplan.show') && isset($page) && $page == 1)
-                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->ID)) }}" omitsubmit="yes"><</a>
-                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 2)) }}">Approve CarePlan ></a>
+                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->ID)) }}" omitsubmit="yes"><span class="glyphicon glyphicon-circle-arrow-left"></span></a>
+                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 2)) }}">Approve CarePlan&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                 @endif
                 @if(Route::is('patient.careplan.show') && isset($page) && $page == 2)
-                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 1)) }}" omitsubmit="yes"><</a>
-                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 3)) }}">Approve CarePlan ></a>
+                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 1)) }}" omitsubmit="yes"><span class="glyphicon glyphicon-circle-arrow-left"></span></a>
+                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 3)) }}">Approve CarePlan&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                 @endif
                 @if(Route::is('patient.careplan.show') && isset($page) && $page == 3)
-                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 2)) }}" omitsubmit="yes"><</a>
-                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 3)) }}">Approve CarePlan ></a>
+                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 2)) }}" omitsubmit="yes"><span class="glyphicon glyphicon-circle-arrow-left"></span></a>
+                    <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 3)) }}">Approve CarePlan&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                 @endif
                 <button type="submit" class="btn btn-orange">Submit</button>
             </div>
