@@ -17,7 +17,7 @@ use Validator;
 class CareplanUIService extends Facade {
 
 
-	public function getCareplanSectionData($programId, $pcpSectionText, User $user) {
+	public function getCareplanSectionData($programId, $pcpSectionText, $user) {
 
 		$blog_id = $programId;
 		$section_text = $pcpSectionText;
