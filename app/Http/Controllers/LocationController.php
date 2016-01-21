@@ -117,7 +117,7 @@ class LocationController extends Controller {
 			abort(403);
 		}
 		$blogs = WpBlog::all();
-		return view('locations.edit', ['location' => Location::find($id), 'locations' => Location::getAllParents(), 'blogs' => $blogs]);
+		return view('locations.edit', ['location' => Location::find($id), 'locations' => Location::getParents($id), 'blogs' => $blogs]);
 	}
 
 	/**
