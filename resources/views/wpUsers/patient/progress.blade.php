@@ -25,9 +25,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             <div class="col-xs-12 col-md-3 print-row">{{$today}}</div>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-md-4 print-row text-bold"> Linda Warshavsky </div>
-            <div class="col-xs-12 col-md-4 print-row">203-252-2556</div>
-            <div class="col-xs-12 col-md-4 print-row text-bold">Crisfield Clinic South</div>
+            <div class="col-xs-12 col-md-4 print-row text-bold"> XXX </div>
+            <div class="col-xs-12 col-md-4 print-row">XXX</div>
+            <div class="col-xs-12 col-md-4 print-row text-bold">XXX</div>
         </div>
     </div>
     </div>
@@ -82,11 +82,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <div class="row">
                 <div class="col-xs-12 col-lg-12">
                     <div class="col-xs-12 col-sm-8 print-column">
-                        <h4 class="patient-summary__info__title"><span class="unchanged">Unchanged</span><span class=""> </span> {{str_replace('_',' ',$key)}}</h4>
+                        <h4 class="patient-summary__info__title"><span class="{{strtolower($value['status'])}}">{{ucwords($value['status'])}}</span><span class=""> </span> {{str_replace('_',' ',$key)}}</h4>
                         <div class="row">
                             <div class="col-xs-3" style="Zoom:75%">
-                                <div class="patient-summary__info unchanged">
-                                    <span><i class="icon--unchanged-"> </i></span>{{abs($value['change'])}}  <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
+                                <div class="patient-summary__info {{strtolower($value['status'])}}">
+                                    <span><i class="icon--{{strtolower($value['status'])}}"> </i></span>{{abs($value['change'])}}  <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
                                 </div>
                                 <div class="patient-summary__info__legend">
                                     Change  <!-- Wks. -->
@@ -103,7 +103,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
                             <div class="col-xs-3  text-center" style="Zoom:75%">
                                 <div class="patient-summary__info">
-                                    [TBA]&nbsp;
+                                    {{$value['target']}} <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
                                 </div>
                                 <div class="patient-summary__info__legend">
                                     Goal
@@ -115,7 +115,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <div class="patient-summary__info__graph">
                             <div id="chartDiv-mg/dL" style="width:360px;height:160px;margin:1px;"></div>
                             <script src="http://sbcf.cpm.com/wp-content/themes/CLH_Provider/respo/webix/codebase/webix.js" type="text/javascript"></script>
-                            <link rel="stylesheet" href="http://sbcf.cpm.com/wp-content/themes/CLH_Provider/respo/webix/codebase/webix.css" type="text/css">
+
                             <script>
 
                                 webix.ui({

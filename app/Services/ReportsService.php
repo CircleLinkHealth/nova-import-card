@@ -1,4 +1,5 @@
 <?php namespace App\Services;
+use App\CarePlan;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesQuestions;
@@ -63,6 +64,199 @@ Class ReportsService
         }
     }
 
+    public function getProblemsToMonitor(User $user){
+        $carePlan = CarePlan::where('user_id', '=', $user->ID)->where('type', '=', 'Patient Default')->first();
+
+// process the parent items in careplans active sections
+        if($carePlan) {
+            foreach($carePlan->careSections as $careSection) {
+                // add parent items to each section
+                $careSection->planItems = $carePlan->carePlanItems()
+                    ->where('section_id', '=', $careSection->id)
+                    ->where('parent_id', '=', 0)
+                    ->where('meta_key','status')
+                    ->where('meta_value','Active')
+                    ->orderBy('ui_sort', 'asc')
+                    ->with(array('children' => function ($query) {
+                        $query->orderBy('ui_sort', 'asc');
+                    }))
+                    ->get();
+            }
+        }
+        $itemsToMonitor = array();
+        foreach($carePlan->careSections as $section){
+            if($section->name == 'diagnosis-problems-to-monitor'){
+                foreach($section->planItems as $item){
+                    $itemsToMonitor[] = $item->careItem->display_name;
+                }
+            }
+        }
+        return $itemsToMonitor;
+    }
+    public function getMedicationStatus(User $user, $fromApp = true){
+
+        $carePlan = CarePlan::where('user_id', '=', $user->ID)->where('type', '=', 'Patient Default')->first();
+
+// process the parent items in careplans active sections
+        if($carePlan) {
+            foreach($carePlan->careSections as $careSection) {
+                // add parent items to each section
+                $careSection->planItems = $carePlan->carePlanItems()
+                    ->where('section_id', '=', $careSection->id)
+                    ->where('parent_id', '=', 0)
+                    ->where('meta_key','status')
+                    ->where('meta_value','Active')
+                    ->orderBy('ui_sort', 'asc')
+                    ->with(array('children' => function ($query) {
+                        $query->orderBy('ui_sort', 'asc');
+                    }))
+                    ->get();
+            }
+        }
+        $medications_categories = array();
+        foreach($carePlan->careSections as $section){
+            if($section->name == 'medications-to-monitor'){
+                foreach($section->planItems as $item){
+                    $medications_categories[] = $item->careItem->display_name;
+                }
+            }
+        }
+
+
+        //dd($medications_categories);
+
+        //get all medication observations for the user
+
+        $medication_obs = DB::connection('mysql_no_prefix')
+            ->table('rules_questions')
+            ->select('lv_observations.id', 'rules_items.items_text', 'lv_observations.obs_date', 'lv_observations.obs_value', 'lv_observations.obs_key', 'lv_observations.obs_message_id')
+            ->join('lv_observations', 'rules_questions.msg_id', '=', 'lv_observations.obs_message_id')
+            ->join('rules_items', 'rules_questions.qid', '=', 'rules_items.qid')
+            ->where('user_id', $user->ID)
+            ->where('lv_observations.obs_key', 'Adherence')
+            ->where('lv_observations.obs_unit', '!=', 'invalid')
+            ->where('lv_observations.obs_unit', '!=', 'scheduled')
+            ->where('obs_unit', '!=', 'outbound')
+            ->distinct('lv_observations.id')
+            ->orderBy('lv_observations.id')
+            ->get();
+
+        //dd($medication_obs);
+
+        //group observation readings by medicine
+
+        $temp_meds = array();
+
+        //Add scaffolding to sections
+        if ($fromApp) {
+            $meds_array['Better']['description'] = '';
+            $meds_array['Needs Work']['description'] = '';
+            $meds_array['Worse']['description'] = '';
+        } else {
+            $meds_array['Better']['description'] = array();
+            $meds_array['Needs Work']['description'] = array();
+            $meds_array['Worse']['description'] = array();
+        }
+
+        foreach ($medications_categories as $category) {
+            $yes = 0;
+            $count = 0;
+            foreach ($medication_obs as $obs) {
+                if ($obs->items_text == $category) {
+                    //$temp_meds[$category]['obs'][] = $obs; //(Will create arrays to categorize obs by medicine)
+                    if (strtoupper($obs->obs_value) == 'Y') {
+                        $yes++;
+                    }
+                    unset($medication_obs[$count]);
+                    $count++;
+                }
+            }
+            $temp_meds[$category]['yes'] = $yes;
+            $temp_meds[$category]['total'] = $count;
+
+            if ($temp_meds[$category]['yes'] != 0 && $temp_meds[$category]['total'] != 0) {
+                //calculate ratio to tenth of a decimal place
+                $temp_meds[$category]['percent'] = round($yes / $count, 1);
+            } else {
+                $temp_meds[$category]['percent'] = 0;
+            }
+            if ($fromApp) {
+                //add to categories based on percentage of responses
+                switch ($temp_meds[$category]['percent']) {
+                    case ($temp_meds[$category]['percent'] > 0.8):
+                        $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
+                        break;
+                    case ($temp_meds[$category]['percent'] >= 0.5):
+                        $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
+                        break;
+                    case ($temp_meds[$category]['percent'] == 0):
+                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+                        break;
+                    default:
+                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+                        break;
+                }
+                //echo $category.': ' . $temp_meds[$category]['percent'] . ' <br /> ';
+            } else {
+                // for provider UI
+                switch ($temp_meds[$category]['percent']) {
+                    case ($temp_meds[$category]['percent'] > 0.8):
+                        $meds_array['Better']['description'][] = $category;
+                        break;
+                    case ($temp_meds[$category]['percent'] >= 0.5):
+                        $meds_array['Needs Work']['description'][] = $category;
+                        break;
+                    case ($temp_meds[$category]['percent'] == 0):
+                        $meds_array['Worse']['description'][] = $category;
+                    default:
+                        $meds_array['Worse']['description'][] = $category;
+                        break;
+                }
+            }
+            //dd($temp_meds); //Show all the medication categories and stats
+            //dd(json_encode($medications)); // show the medications by adherence category
+        }
+        $medications[0] = ['name' => $meds_array['Better']['description'],'Section' => 'Better'] ;
+        $medications[1] = ['name' => $meds_array['Needs Work']['description'],'Section' => 'Needs Work'] ;
+        $medications[2] = ['name' => $meds_array['Worse']['description'],'Section' => 'Worse'] ;
+
+        return $medications;
+
+    }
+
+    public function getTargetValueForBiometric($biometric, $user){
+        $carePlan = CarePlan::where('user_id', '=', $user->ID)->where('type', '=', 'Patient Default')->first();
+        switch($biometric){
+            case "Weight":
+                return $carePlan->getCareItemValue('weight-target-weight'); break;
+            case "Blood_Sugar":
+                return $carePlan->getCareItemValue('blood-sugar-target-bs'); break;
+            case "Blood_Pressure":
+                return $carePlan->getCareItemValue('blood-pressure-target-bp'); break;
+            case "Smoking":
+                return $carePlan->getCareItemValue('smoking-per-day-target-count'); break;
+            default: return '0';
+        }
+    }
+    public function getBiometricsData($biometric, $user){
+        $data = DB::table('observations')
+            ->select(DB::raw('user_id, replace(obs_key,\'_\',\' \') \'Observation\',
+					week(obs_date) week, year(obs_date) year, floor(datediff(now(), obs_date)/7) realweek,
+					date_format(max(obs_date), \'%c/%e\') as day, date_format(min(obs_date), \'%c/%e\') as day_low,
+					min(obs_date) as min_obs_id, max(obs_date) as obs_id,
+					round(avg(obs_value)) \'Avg\''))
+            ->where('obs_key', '=' ,$biometric)
+            ->where('user_id', $user->ID)
+            ->where(DB::raw('datediff(now(), obs_date)/7'),'<=', 11)
+            ->where('obs_unit', '!=', 'invalid')
+            ->where('obs_unit', '!=', 'scheduled')
+            ->groupBy('user_id')
+            ->groupBy('obs_key')
+            ->groupBy('realweek')
+            ->orderBy('obs_date')
+            ->get();
+        return ($data) ? $data : '';
+    }
     public function biometricsUnitMapping($biometric)
     {
 
@@ -83,7 +277,6 @@ Class ReportsService
                 return '';
         }
     }
-
     public function biometricsMessageIdMapping($biometric)
     {
         switch ($biometric) {
@@ -226,120 +419,6 @@ Class ReportsService
         return $changes_array;
     }
 
-    public function medicationStatus(User $user, $fromApp = true){
-
-        $medications_pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Medications to Monitor')->first();
-        $medications_items = CPRulesItem::where('pcp_id', $medications_pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
-
-        // gives the medications being monitered for the given user
-        for ($i = 0; $i < count($medications_items); $i++) {
-            //get id's of all medication items that are active for the given user
-            $item_for_user[$i] = CPRulesUCP::where('items_id', $medications_items[$i])->where('meta_value', 'Active')->where('user_id', $user->ID)->first();
-            if ($item_for_user[$i] != null) {
-                //Find the items_text for the one's that are active
-                $user_items = CPRulesItem::find($item_for_user[$i]->items_id);
-                $medications_categories[] = $user_items->items_text;
-            }
-        }//dd($medications_categories);
-
-        //get all medication observations for the user
-
-        $medication_obs = DB::connection('mysql_no_prefix')
-            ->table('rules_questions')
-            ->select('lv_observations.id', 'rules_items.items_text', 'lv_observations.obs_date', 'lv_observations.obs_value', 'lv_observations.obs_key', 'lv_observations.obs_message_id')
-            ->join('lv_observations', 'rules_questions.msg_id', '=', 'lv_observations.obs_message_id')
-            ->join('rules_items', 'rules_questions.qid', '=', 'rules_items.qid')
-            ->where('user_id', $user->ID)
-            ->where('lv_observations.obs_key', 'Adherence')
-            ->where('lv_observations.obs_unit', '!=', 'invalid')
-            ->where('lv_observations.obs_unit', '!=', 'scheduled')
-            ->where('obs_unit', '!=', 'outbound')
-            ->distinct('lv_observations.id')
-            ->orderBy('lv_observations.id')
-            ->get();
-
-        //dd($medication_obs);
-
-        //group observation readings by medicine
-
-        $temp_meds = array();
-
-        //Add scaffolding to sections
-        if ($fromApp) {
-            $meds_array['Better']['description'] = '';
-            $meds_array['Needs Work']['description'] = '';
-            $meds_array['Worse']['description'] = '';
-        } else {
-            $meds_array['Better']['description'] = array();
-            $meds_array['Needs Work']['description'] = array();
-            $meds_array['Worse']['description'] = array();
-        }
-
-        foreach ($medications_categories as $category) {
-            $yes = 0;
-            $count = 0;
-            foreach ($medication_obs as $obs) {
-                if ($obs->items_text == $category) {
-                    //$temp_meds[$category]['obs'][] = $obs; //(Will create arrays to categorize obs by medicine)
-                    if (strtoupper($obs->obs_value) == 'Y') {
-                        $yes++;
-                    }
-                    unset($medication_obs[$count]);
-                    $count++;
-                }
-            }
-            $temp_meds[$category]['yes'] = $yes;
-            $temp_meds[$category]['total'] = $count;
-
-            if ($temp_meds[$category]['yes'] != 0 && $temp_meds[$category]['total'] != 0) {
-                //calculate ratio to tenth of a decimal place
-                $temp_meds[$category]['percent'] = round($yes / $count, 1);
-            } else {
-                $temp_meds[$category]['percent'] = 0;
-            }
-            if ($fromApp) {
-                //add to categories based on percentage of responses
-                switch ($temp_meds[$category]['percent']) {
-                    case ($temp_meds[$category]['percent'] > 0.8):
-                        $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    case ($temp_meds[$category]['percent'] >= 0.5):
-                        $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    case ($temp_meds[$category]['percent'] == 0):
-                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    default:
-                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                }
-                //echo $category.': ' . $temp_meds[$category]['percent'] . ' <br /> ';
-            } else {
-                // for provider UI
-                switch ($temp_meds[$category]['percent']) {
-                    case ($temp_meds[$category]['percent'] > 0.8):
-                        $meds_array['Better']['description'][] = $category;
-                        break;
-                    case ($temp_meds[$category]['percent'] >= 0.5):
-                        $meds_array['Needs Work']['description'][] = $category;
-                        break;
-                    case ($temp_meds[$category]['percent'] == 0):
-                        $meds_array['Worse']['description'][] = $category;
-                    default:
-                        $meds_array['Worse']['description'][] = $category;
-                        break;
-                }
-            }
-            //dd($temp_meds); //Show all the medication categories and stats
-            //dd(json_encode($medications)); // show the medications by adherence category
-        }
-        $medications[0] = ['name' => $meds_array['Better']['description'],'Section' => 'Better'] ;
-        $medications[1] = ['name' => $meds_array['Needs Work']['description'],'Section' => 'Needs Work'] ;
-        $medications[2] = ['name' => $meds_array['Worse']['description'],'Section' => 'Worse'] ;
-
-    return $medications;
-
-    }
 
     public function progress($id)
     {
@@ -358,7 +437,7 @@ Class ReportsService
         //**************TAKING YOUR MEDICATIONS SECTION**************
 
         $medications['Section'] = 'Taking your <b>Medications</b>?';
-        $medications['Data'] = $this->medicationStatus($user);
+        $medications['Data'] = $this->getMedicationStatus($user);
 
         //**************TRACKING CHANGES SECTION**************
 
@@ -390,6 +469,7 @@ Class ReportsService
         }//dd($tracking_obs_message_ids);
 
         $tracking_obs_data = array();
+        debug($tracking_obs_message_ids);
         array_reverse($tracking_obs_message_ids);
         foreach ($tracking_obs_message_ids as $q) {
             for ($i = 0; $i < 12; $i++) {
