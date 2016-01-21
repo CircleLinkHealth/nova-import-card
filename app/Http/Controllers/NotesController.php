@@ -32,24 +32,8 @@ class NotesController extends Controller
         $input = $request->all();
         $messages = \Session::get('messages');
 
-
-        if (isset($input['selectMonth'])) {
-            $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
-            $start = $time->startOfMonth()->format('Y-m-d');
-            $end = $time->endOfMonth()->format('Y-m-d');
-            $month_selected = $time->format('m');
-        } else {
-            $time = Carbon::now();
-            $start = Carbon::now()->startOfMonth()->format('Y-m-d');
-            $end = Carbon::now()->endOfMonth()->format('Y-m-d');
-            $month_selected = $time->format('m');
-        }
-
         $acts = DB::table('activities')
             ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration)'))
-            ->whereBetween('performed_at', [
-                $start, $end
-            ])
             ->where('patient_id', $patientId)
             ->where(function ($q) {
                 $q->where('logged_from', 'note')
@@ -95,20 +79,8 @@ class NotesController extends Controller
             $data = false;
         }
 
-
-        $years = array();
-        for ($i = 0; $i < 3; $i++) {
-            $years[] = Carbon::now()->subYear($i)->year;
-        }
-
-        $months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-        debug($reportData);
-
         return view('wpUsers.patient.note.index',
             ['activity_json' => $reportData,
-                'years' => array_reverse($years),
-                'month_selected' => $month_selected,
-                'months' => $months,
                 'patient' => $patient,
                 'messages' => $messages,
                 'data' => $data

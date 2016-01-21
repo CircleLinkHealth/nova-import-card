@@ -93,7 +93,7 @@ class LocationController extends Controller {
 		if(is_null($location->parent_id)){
 			$locationParents = null;
 		} else {
-			$locationParents = Location::getAllParents();
+			$locationParents = Location::getParents($id);
 		}
 		// return $id;
 		return view('locations.show', [
@@ -115,9 +115,9 @@ class LocationController extends Controller {
 	{
 		if(!Auth::user()->can('locations-manage')) {
 			abort(403);
-		}
+		}debug(Location::getParents($id));
 		$blogs = WpBlog::all();
-		return view('locations.edit', ['location' => Location::find($id), 'locations' => Location::getAllParents(), 'blogs' => $blogs]);
+		return view('locations.edit', ['location' => Location::find($id), 'locations' => Location::getParents($id), 'blogs' => $blogs]);
 	}
 
 	/**

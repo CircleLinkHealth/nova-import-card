@@ -71,6 +71,12 @@ class Location extends Entity implements LocationInterface
         return Location::whereRaw('parent_id IS NULL')->lists('name', 'id');
     }
 
+    public static function getParents($id)
+    {
+        $l = Location::find($id);
+        return Location::where('id',$l->parent_id)->lists('name', 'id');
+    }
+
     public static function getParentsSubs($id)
     {
         return Location::where('parent_id', '=', $id)->lists('name', 'id');

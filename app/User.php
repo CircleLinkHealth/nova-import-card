@@ -359,7 +359,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function getPreferredLocationName() {
 			$userConfig = $this->userConfig();
 		$location = Location::find($userConfig['preferred_contact_location']);
-		return $location->name;
+		return (isset($location->name)) ?
+			$location->name :
+			'';
 	}
 
 	public function getCarePlanQAApproverAttribute() {
