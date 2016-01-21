@@ -2,6 +2,7 @@
 
 <?php
 $today = \Carbon\Carbon::now()->toFormattedDateString();
+$provider = App\User::find($patient->getLeadContactIDAttribute());
 ?>
 @section('content')
     <div class="container">
@@ -25,9 +26,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             <div class="col-xs-12 col-md-3 print-row">{{$today}}</div>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-md-4 print-row text-bold"> XXX </div>
-            <div class="col-xs-12 col-md-4 print-row">XXX</div>
-            <div class="col-xs-12 col-md-4 print-row text-bold">XXX</div>
+            <div class="col-xs-12 col-md-4 print-row text-bold"> {{$provider->getFullNameAttribute()}} </div>
+            <div class="col-xs-12 col-md-4 print-row">{{$provider->getPhoneAttribute()}}</div>
+            <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->getPreferredLocationName()}}</div>
         </div>
     </div>
     </div>
