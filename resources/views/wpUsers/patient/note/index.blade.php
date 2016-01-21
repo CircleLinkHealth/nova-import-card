@@ -15,37 +15,6 @@
                        class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                         NOTE</a><br>
                 </div>
-                <div class="row">
-                {!! Form::open(array('url' => URL::route('patient.note.index', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
-                <div class="form-group  pull-right" style="margin-top:10px;">
-                    <i class="icon icon--date-time"></i>
-
-                    <div class="inline-block">
-                        <label for="selectMonth" class="sr-only">Select Month:</label>
-                        <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="200px"
-                                data-size="10" style="display: none;">
-                            <option value="">Select Month</option>
-                            @for($i = 0; $i < count($months); $i++)
-                                <option value="{{$i+1}}" @if($month_selected == $i+1) {{'selected'}} @endif>{{$months[$i]}}</option>
-                            @endfor
-
-                        </select>
-
-                        <div class="inline-block">
-                            <label for="selectYear" class="sr-only">Select Year:</label>
-                            <select name="selectYear" id="selectYear" class="selectpicker" data-width="100px"
-                                    data-size="10" style="display: none;">
-                                @foreach($years as $year)
-                                    <option value="{{$year}}" selected="selected">{{$year}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <button type="submit" value="Search" name="find" id="find" class="btn btn-primary">Go</button>
-                    </div>
-                </div>
-                {!! Form::close() !!}
-                </div>
-                
 
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                     @if($data)
@@ -123,8 +92,7 @@
                                     {
                                         id: "performed_at",
                                         header: ["Date", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 100,
-                                        sort: 'string'
+                                        width: 100
                                     },
 
                                     {
