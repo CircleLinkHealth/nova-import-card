@@ -1,9 +1,9 @@
 <?php
 
-use App\WpUser;
+use App\User;
 use App\Permission;
 use App\Role;
-use App\WpUserMeta;
+use App\UserMeta;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
