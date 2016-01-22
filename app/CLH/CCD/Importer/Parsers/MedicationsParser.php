@@ -94,7 +94,7 @@ class MedicationsParser extends BaseParser
             elseif (strtolower($medication->status) == 'active')
             {
                 empty($medication->product->name)
-                    ? $medsList .= 'NULL_MED_NAME, '
+                    ? $medsList .= ''
                     : $medsList .= ucfirst(strtolower($medication->product->name)) . ', ';
 
                 $medsList .= ucfirst(strtolower(StringManipulation::stringDiff($medication->product->name, $medication->text)))
