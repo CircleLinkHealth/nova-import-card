@@ -21,7 +21,8 @@ class UserMetaParserHelpers
         foreach ($phones as $phone)
         {
             $type = $phone->type;
-            $number = StringManipulation::formatPhoneNumber($phone->number);
+
+            if (! $number = StringManipulation::formatPhoneNumber($phone->number)) continue;
 
             if ($type == 'home')
             {

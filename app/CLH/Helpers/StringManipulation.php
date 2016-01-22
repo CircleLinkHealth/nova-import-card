@@ -40,6 +40,10 @@ class StringManipulation
     {
         $sanitized = $this->extractNumbers($string);
 
+        if (strlen($sanitized) < 10) {
+            return false;
+        }
+
         if (strlen($sanitized) > 10) {
             $sanitized = substr($sanitized, -10);
         }
