@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
 	<div class="row">
+
 		<div class="col-md-12">
 			<h1>Welcome, {{ $user->fullName }}</h1>
 		</div>
@@ -22,6 +23,21 @@
 
 				<div class="panel-body">
 					@include('CCDViewer.create-old-viewer')
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">Impersonation</div>
+				<div class="panel-body">
+					<form action="{{ route('post.impersonate') }}" method="POST">
+						<div class="form-group">
+							<label for="email">Email address</label>
+							<input class="form-control" type="email" name="email" placeholder="Impersonated user's email address" required>
+						</div>
+						<input class="btn btn-primary" type="submit" value="Impersonate">
+					</form>
 				</div>
 			</div>
 		</div>

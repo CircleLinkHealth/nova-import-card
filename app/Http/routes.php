@@ -103,7 +103,7 @@ Route::group(['middleware' => 'auth'], function ()
 	/****************************/
 
 	// **** PATIENTS (/manage-patients/
-	Route::group(['prefix' => 'manage-patients/', 'middleware' => 'patientProgramSecurity'], function () {
+	Route::group(['prefix' => 'manage-patients/', 'middleware' => ['patientProgramSecurity', 'impersonation.check']], function () {
 		Route::get('dashboard', ['uses' => 'Patient\PatientController@showDashboard', 'as' => 'patients.dashboard']);
 		Route::get('listing', ['uses' => 'Patient\PatientController@showPatientListing', 'as' => 'patients.listing']);
 		Route::get('select', ['uses' => 'Patient\PatientController@showPatientSelect', 'as' => 'patients.select']);
@@ -172,6 +172,9 @@ Route::group(['middleware' => 'auth'], function ()
 
 		// dashboard
 		Route::get('', ['uses' =>'Admin\DashboardController@index', 'as'=>'admin.dashboard']);
+
+		// impersonation
+		Route::post('impersonate', ['uses' => 'ImpersonationController@postImpersonate', 'as' => 'post.impersonate']);
 
 		// activities
 		Entrust::routeNeedsPermission($prefix.'activities*', 'activities-view');
