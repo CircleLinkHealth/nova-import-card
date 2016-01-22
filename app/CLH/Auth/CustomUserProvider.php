@@ -1,15 +1,10 @@
 <?php
-namespace App\Auth;
+namespace App\CLH\Auth;
 
-use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\GenericUser;
 use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use App\User;
-use DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use MikeMcLin\WpPassword\Facades\WpPassword;
 
 class CustomUserProvider implements UserProvider {
@@ -20,6 +15,7 @@ class CustomUserProvider implements UserProvider {
     {
         $this->model = $model;
     }
+
     public function retrieveById($identifier)
     {
         $user = User::find($identifier);
@@ -28,12 +24,15 @@ class CustomUserProvider implements UserProvider {
         $this->user = $user;
         return $user;
     }
+
     public function retrieveByToken($identifier, $token)
     {
     }
+
     public function updateRememberToken(UserContract $user, $token)
     {
     }
+
     public function retrieveByCredentials(array $credentials)
     {
         // First we will add each credential element to the query as a where clause.
