@@ -34,6 +34,7 @@ class Kernel extends HttpKernel {
         'getRedoxAccessToken' => 'App\Http\Middleware\GetRedoxAccessToken',
         'patientProgramSecurity' => 'App\Http\Middleware\PatientProgramSecurity',
 		'auth.ccd.import' => Middleware\AuthenticateCCDImporter::class,
+		'impersonation.check' => Middleware\ImpersonationMiddleware::class,
 	];
 
 }
