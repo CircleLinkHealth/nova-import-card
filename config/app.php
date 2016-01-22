@@ -114,7 +114,9 @@ return [
 		 * Laravel Framework Service Providers...
 		 */
 		'Illuminate\Foundation\Providers\ArtisanServiceProvider',
-		'Illuminate\Auth\AuthServiceProvider',
+		//Replace Laravel Auth with with CLH Auth
+//		'Illuminate\Auth\AuthServiceProvider',
+		App\Providers\CustomAuthServiceProvider::class,
 		'Illuminate\Bus\BusServiceProvider',
 		'Illuminate\Cache\CacheServiceProvider',
 		'Illuminate\Foundation\Providers\ConsoleSupportServiceProvider',
@@ -150,9 +152,8 @@ return [
 		'App\Providers\ConfigServiceProvider',
 		'App\Providers\EventServiceProvider',
 		'App\Providers\RouteServiceProvider',
-		'App\Providers\CustomAuthProvider',
-		\App\Providers\UserMetaParserHelpersServiceProvider::class,
-		\App\Providers\StringManipulationServiceProvider::class,
+		App\Providers\UserMetaParserHelpersServiceProvider::class,
+		App\Providers\StringManipulationServiceProvider::class,
 
 		/*
 		 * CPM Providers
