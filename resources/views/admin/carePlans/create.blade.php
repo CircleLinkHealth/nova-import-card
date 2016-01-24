@@ -44,7 +44,7 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.careplans.index', array()) }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::submit('Create UCP Item', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Create Care Plan', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>

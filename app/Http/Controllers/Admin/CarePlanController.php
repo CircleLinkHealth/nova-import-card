@@ -4,7 +4,8 @@ use App\User;
 use App\CarePlan;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use App\CLH\Repositories\CarePlanRepository;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Auth;
@@ -84,14 +85,18 @@ class CarePlanController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		$params = $request->input();
-		$ucp = new CarePlan;
-		$ucp->name = $params['name'];
-		$ucp->display_name = $params['display_name'];
-		$ucp->type = $params['type'];
-		$ucp->user_id = $params['user_id'];
-		$ucp->save();
-		return redirect()->route('admin.careplans.edit', [$ucp->id])->with('messages', ['successfully added new care plan -  '.$params['display_name']])->send();
+
+		$this->validate($request, [
+			'name' => 'required|unique:care_plans,name|max:255',
+			'display_name' => 'required',
+			'type' => 'required',
+		]);
+
+		$carePlanRepo = new CarePlanRepository();
+		$params = new ParameterBag($request->input());
+		$carePlan = $carePlanRepo->createCarePlan(new CarePlan, $params);
+
+		return redirect()->route('admin.careplans.edit', [$carePlan->id])->with('messages', ['successfully added new care plan -  '.$params->get('display_name')])->send();
 	}
 
 	/**
@@ -142,6 +147,86 @@ class CarePlanController extends Controller {
 	}
 
 
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function update(Request $request, $id)
+	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
+
+		$this->validate($request, [
+			'name' => 'required',
+			'display_name' => 'required',
+			'type' => 'required',
+		]);
+
+		$carePlan = CarePlan::find($id);
+		$carePlanRepo = new CarePlanRepository();
+		$params = new ParameterBag($request->input());
+		$carePlan = $carePlanRepo->updateCarePlan($carePlan, $params);
+
+		return redirect()->back()->with('messages', ['successfully updated care plan'])->send();
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function destroy($id)
+	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
+		CarePlan::destroy($id);
+		return redirect()->back()->with('messages', ['successfully removed ucp'])->send();
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+	/**
+	 *
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function duplicateCarePlan(Request $request, $id)
+	{
+		if(!Auth::user()->can('programs-manage')) {
+			abort(403);
+		}
+		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+
+		$carePlan = CarePlan::find($id);
+		foreach($carePlan->careSections as $careSection) {
+			// add parent items to each section
+			$careSection->planItems = $carePlan->carePlanItems()
+				->where('section_id', '=', $careSection->id)
+				->where('parent_id', '=', 0)
+				->orderBy('ui_sort', 'asc')
+				->with(array('children' => function ($query) {
+					$query->orderBy('ui_sort', 'asc');
+				}))
+				->get();
+		}
+
+		return view('admin.carePlans.careplan', [ 'carePlan' => $carePlan, 'users' => $users, 'messages' => \Session::get('messages') ]);
+	}
 
 	/**
 	 *
@@ -202,43 +287,6 @@ class CarePlanController extends Controller {
 		}
 
 		return view('admin.carePlans.careplansection', [ 'carePlan' => $carePlan, 'users' => $users, 'section' => $sectionId, 'messages' => \Session::get('messages') ]);
-	}
-
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update(Request $request, $id)
-	{
-		if(!Auth::user()->can('programs-manage')) {
-			abort(403);
-		}
-		$params = $request->input();
-		$ucp = CarePlan::find($id);
-		$ucp->name = $params['name'];
-		$ucp->display_name = $params['display_name'];
-		$ucp->type = $params['type'];
-		$ucp->user_id = $params['user_id'];
-		$ucp->save();
-		return redirect()->back()->with('messages', ['successfully updated care plan'])->send();
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		if(!Auth::user()->can('programs-manage')) {
-			abort(403);
-		}
-		CarePlan::destroy($id);
-		return redirect()->back()->with('messages', ['successfully removed ucp'])->send();
 	}
 
 }

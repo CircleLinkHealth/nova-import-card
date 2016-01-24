@@ -101,7 +101,7 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.careplans.index', array()) }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::submit('Edit Care Plan', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Update Care Plan', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>
