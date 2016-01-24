@@ -212,13 +212,18 @@ class CarePlanController extends Controller {
 		}
 
 		$this->validate($request, [
-			'name' => 'required|unique:care_plans,name|max:255',
-			'display_name' => 'required',
-			'type' => 'required',
+			'name_copy' => 'required|unique:care_plans,name|max:255',
+			'display_name_copy' => 'required',
+			'type_copy' => 'required',
 		]);
 
 		$carePlanRepo = new CarePlanRepository();
-		$params = new ParameterBag($request->input());
+		$params = $request->input();
+		$params['name'] = $params['name_copy'];
+		$params['display_name'] = $params['display_name_copy'];
+		$params['type'] = $params['type_copy'];
+		$params['user_id'] = $params['user_id_copy'];
+		$params = new ParameterBag($params);
 		$carePlan = $carePlanRepo->duplicateCarePlan(CarePlan::find($id), $params);
 
 		return redirect()->route('admin.careplans.edit', [$carePlan->id])->with('messages', ['successfully created new care plan -  '.$params->get('display_name')])->send();

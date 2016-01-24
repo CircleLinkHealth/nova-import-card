@@ -38,21 +38,21 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="form-group">
-                                                <div class="col-sm-2">{!! Form::label('user_id', 'User:') !!}</div>
-                                                <div class="col-sm-4">{!! Form::select('user_id', array('' => 'No User') + $users, $carePlan->user_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                                <div class="col-sm-2">{!! Form::label('user_id_copy', 'User:') !!}</div>
+                                                <div class="col-sm-4">{!! Form::select('user_id_copy', array('' => 'No User') + $users, $carePlan->user_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                                             </div>
                                             <div class="form-group">
-                                                <div class="col-sm-2">{!! Form::label('name', 'Name:') !!}</div>
-                                                <div class="col-sm-10">{!! Form::text('name', $carePlan->name .'-copy', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                                                <div class="col-sm-2">{!! Form::label('name_copy', 'Name:') !!}</div>
+                                                <div class="col-sm-10">{!! Form::text('name_copy', $carePlan->name .'-copy', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                                             </div>
                                             <div class="form-group">
-                                                <div class="col-sm-2">{!! Form::label('display_name', 'Display Name:') !!}</div>
-                                                <div class="col-sm-10">{!! Form::text('display_name', $carePlan->display_name .' Copy', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                                                <div class="col-sm-2">{!! Form::label('display_name_copy', 'Display Name:') !!}</div>
+                                                <div class="col-sm-10">{!! Form::text('display_name_copy', $carePlan->display_name .' Copy', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                                             </div>
 
                                             <div class="form-group">
-                                                <div class="col-sm-2">{!! Form::label('type', 'Type:') !!}</div>
-                                                <div class="col-sm-10">{!! Form::select('type', array('test' => 'test', 'Provider Default' => 'Provider Default', 'Patient Default' => 'Patient Default'), $carePlan->type, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                                <div class="col-sm-2">{!! Form::label('type_copy', 'Type:') !!}</div>
+                                                <div class="col-sm-10">{!! Form::select('type_copy', array('test' => 'test', 'Provider Default' => 'Provider Default', 'Patient Default' => 'Patient Default'), $carePlan->type, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                                             </div>
                                         </div>
                                         <div class="modal-footer">

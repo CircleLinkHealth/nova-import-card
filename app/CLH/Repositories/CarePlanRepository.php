@@ -36,6 +36,30 @@ class CarePlanRepository {
         return $carePlan;
     }
 
+    public function attachCareItemToCarePlan(CareSection $careSection, CarePlan $carePlan, CareItemCarePlan $careItemCarePlan) {
+        $rowData = array(
+            'section_id' => $careSection->id,
+            "meta_key" => $careItemCarePlan->meta_key,
+            "meta_value" => $careItemCarePlan->meta_value,
+            "status" => $careItemCarePlan->status,
+            "alert_key" => $careItemCarePlan->alert_key,
+            "ui_placeholder" => $careItemCarePlan->ui_placeholder,
+            "ui_default" => $careItemCarePlan->ui_default,
+            "ui_title" => $careItemCarePlan->ui_title,
+            "ui_fld_type" => $careItemCarePlan->ui_fld_type,
+            "ui_show_detail" => $careItemCarePlan->ui_show_detail,
+            "ui_row_start" => $careItemCarePlan->ui_row_start,
+            "ui_row_end" => $careItemCarePlan->ui_row_end,
+            "ui_sort" => $careItemCarePlan->ui_sort,
+            "ui_col_start" => $careItemCarePlan->ui_col_start,
+            "ui_col_end" => $careItemCarePlan->ui_col_end,
+            "ui_track_as_observation" => $careItemCarePlan->ui_track_as_observation,
+            "msg_app_en" => $careItemCarePlan->msg_app_en,
+            "msg_app_es" => $careItemCarePlan->msg_app_es);
+        $carePlan->careItems()->attach(array($careItemCarePlan['item_id'] => $rowData));
+    }
+
+
     public function duplicateCarePlan(CarePlan $carePlan, ParameterBag $params)
     {
         // create new careplan
@@ -53,33 +77,14 @@ class CarePlanRepository {
                 $carePlanDupe->careSections()->attach(array($careSection['id'] => array('status' => 'active')));
             }
             $carePlanItems = CareItemCarePlan::where('plan_id', '=', $carePlan->id)->where('section_id', '=', $careSection['id'])->get();
-            foreach ($carePlanItems as $planItem) {
-                $rowData = array(
-                'section_id' => $careSection->id,
-                "meta_key" => $planItem->meta_key,
-                "meta_value" => $planItem->meta_value,
-                "status" => $planItem->status,
-                "alert_key" => $planItem->alert_key,
-                "ui_placeholder" => $planItem->ui_placeholder,
-                "ui_default" => $planItem->ui_default,
-                "ui_title" => $planItem->ui_title,
-                "ui_fld_type" => $planItem->ui_fld_type,
-                "ui_show_detail" => $planItem->ui_show_detail,
-                "ui_row_start" => $planItem->ui_row_start,
-                "ui_row_end" => $planItem->ui_row_end,
-                "ui_sort" => $planItem->ui_sort,
-                "ui_col_start" => $planItem->ui_col_start,
-                "ui_col_end" => $planItem->ui_col_end,
-                "ui_track_as_observation" => $planItem->ui_track_as_observation,
-                "msg_app_en" => $planItem->msg_app_en,
-                "msg_app_es" => $planItem->msg_app_es);
-                $carePlanDupe->careItems()->attach(array($planItem['item_id'] => $rowData));
+            foreach ($carePlanItems as $careItemCarePlan) {
+                $this->attachCareItemToCarePlan($careSection, $carePlanDupe, $careItemCarePlan);
             }
         }
 
         $carePlanDupe->push();
 
-        // now populate parent ids
+        // now populate parent ids @todo shouldnt have to do this
         $carePlanItems = CareItemCarePlan::where('plan_id', '=', $carePlanDupe->id)->get();
         if($carePlanItems->count() > 0) {
             foreach ($carePlanItems as $carePlanItem) {
