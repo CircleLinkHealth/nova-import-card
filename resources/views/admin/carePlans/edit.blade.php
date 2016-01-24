@@ -31,12 +31,12 @@
 
                                     <!-- Modal content-->
                                     <div class="modal-content">
+                                        {!! Form::open(array('url' => URL::route('admin.careplans.duplicate', array('id' => $carePlan->id)), 'class' => 'form-horizontal')) !!}
                                         <div class="modal-header">
                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                                             <h4 class="modal-title">Duplicate</h4>
                                         </div>
                                         <div class="modal-body">
-                                            {!! Form::open(array('url' => URL::route('admin.careplans.duplicate', array('id' => $carePlan->id)), 'class' => 'form-horizontal')) !!}
                                             <div class="form-group">
                                                 <div class="col-sm-2">{!! Form::label('user_id', 'User:') !!}</div>
                                                 <div class="col-sm-4">{!! Form::select('user_id', array('' => 'No User') + $users, $carePlan->user_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
@@ -54,12 +54,12 @@
                                                 <div class="col-sm-2">{!! Form::label('type', 'Type:') !!}</div>
                                                 <div class="col-sm-10">{!! Form::select('type', array('test' => 'test', 'Provider Default' => 'Provider Default', 'Patient Default' => 'Patient Default'), $carePlan->type, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                                             </div>
-                                            {!! Form::submit('Copy', array('class' => 'btn btn-success')) !!}
-                                            {!! Form::close() !!}
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            {!! Form::submit('Copy', array('class' => 'btn btn-success')) !!}
                                         </div>
+                                        {!! Form::close() !!}
                                     </div>
 
                                 </div>

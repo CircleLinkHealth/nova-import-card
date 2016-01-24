@@ -211,23 +211,17 @@ class CarePlanController extends Controller {
 			abort(403);
 		}
 
-		dd($request);
-		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+		$this->validate($request, [
+			'name' => 'required|unique:care_plans,name|max:255',
+			'display_name' => 'required',
+			'type' => 'required',
+		]);
 
-		$carePlan = CarePlan::find($id);
-		foreach($carePlan->careSections as $careSection) {
-			// add parent items to each section
-			$careSection->planItems = $carePlan->carePlanItems()
-				->where('section_id', '=', $careSection->id)
-				->where('parent_id', '=', 0)
-				->orderBy('ui_sort', 'asc')
-				->with(array('children' => function ($query) {
-					$query->orderBy('ui_sort', 'asc');
-				}))
-				->get();
-		}
+		$carePlanRepo = new CarePlanRepository();
+		$params = new ParameterBag($request->input());
+		$carePlan = $carePlanRepo->duplicateCarePlan(CarePlan::find($id), $params);
 
-		return view('admin.carePlans.careplan', [ 'carePlan' => $carePlan, 'users' => $users, 'messages' => \Session::get('messages') ]);
+		return redirect()->route('admin.careplans.edit', [$carePlan->id])->with('messages', ['successfully created new care plan -  '.$params->get('display_name')])->send();
 	}
 
 	/**

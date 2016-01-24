@@ -37,6 +37,15 @@ class CareItem extends Model {
         return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
     }
 
+
+
+    // START ATTRIBUTES
+    public function getMetaKeyAttribute()
+    {
+        return $this->pivot->meta_key;
+    }
+    // END ATTRIBUTES
+
     public static function boot()
     {
         parent::boot();
