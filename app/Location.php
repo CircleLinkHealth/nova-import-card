@@ -11,7 +11,7 @@ class Location extends Entity implements LocationInterface
      * @var string
 
      */
-    protected $table = 'locations';
+    protected $table = 'lv_locations';
 
     /**
      * ClosureTable model instance.

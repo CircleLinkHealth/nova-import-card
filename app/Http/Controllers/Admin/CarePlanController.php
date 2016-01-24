@@ -205,11 +205,13 @@ class CarePlanController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function duplicateCarePlan(Request $request, $id)
+	public function duplicate(Request $request, $id)
 	{
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
+
+		dd($request);
 		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
 
 		$carePlan = CarePlan::find($id);

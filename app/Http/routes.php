@@ -305,6 +305,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Entrust::routeNeedsPermission($prefix.'careplans*', 'programs-manage');
 		Route::resource('careplans', 'Admin\CarePlanController');
 		Route::post('careplans/{id}/edit', ['uses' =>'Admin\CarePlanController@update', 'as'=>'admin.careplans.update']);
+		Route::post('careplans/{id}/duplicate', ['uses' =>'Admin\CarePlanController@duplicate', 'as'=>'admin.careplans.duplicate']);
 		Route::get('careplans/{id}/destroy', ['uses' =>'Admin\CarePlanController@destroy', 'as'=>'admin.careplans.destroy']);
 
 		// care plan sections
