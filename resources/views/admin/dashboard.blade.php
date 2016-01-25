@@ -5,7 +5,14 @@
 	<div class="row">
 
 		<div class="col-md-12">
-			<h1>Welcome, {{ $user->fullName }}</h1>
+			<div class="col-sm-6">
+				<h1>Welcome, {{ $user->fullName }}</h1>
+			</div>
+			<div class="col-sm-6">
+				<div class="pull-right" style="margin:20px;">
+					<a href="{{ URL::route('patients.dashboard', array()) }}" class="btn btn-info" style="margin-left:10px;"><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
+				</div>
+			</div>
 		</div>
 
 		<div class="col-md-12">
