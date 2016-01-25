@@ -1,59 +1,32 @@
 @extends('partials.adminUI')
 
 @section('content')
-<div class="container">
-	<div class="row">
+	<div class="container">
+		<div class="row">
 
-		<div class="col-md-12">
-			<h1>Welcome, {{ $user->fullName }}</h1>
-		</div>
-
-		<div class="col-md-6">
-			<div class="panel panel-default">
-				<div class="panel-heading">BETA Color-coded CCD Viewer</div>
-
-				<div class="panel-body">
-					@include('CCDViewer.create')
+			<div class="col-md-12">
+				<div class="col-sm-6">
+					<h1>Welcome, {{ $user->fullName }}</h1>
+				</div>
+				<div class="col-sm-6">
+					<div class="pull-right" style="margin:20px;">
+						<a href="{{ URL::route('patients.dashboard', array()) }}" class="btn btn-info" style="margin-left:10px;"><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="panel panel-default">
-				<div class="panel-heading">STABLE Raw CCD Viewer</div>
 
-				<div class="panel-body">
-					@include('CCDViewer.create-old-viewer')
-				</div>
-			</div>
-		</div>
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">Statistics</div>
 
-		<div class="col-md-6">
-			<div class="panel panel-default">
-				<div class="panel-heading">Impersonation</div>
-				<div class="panel-body">
-					<form action="{{ route('post.impersonate') }}" method="POST">
-						<div class="form-group">
-							<label for="email">Email address</label>
-							<input class="form-control" type="email" name="email" placeholder="Impersonated user's email address" required>
-						</div>
-						<input class="btn btn-primary" type="submit" value="Impersonate">
-					</form>
-				</div>
-			</div>
-		</div>
-
-		<div class="col-md-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">Statistics</div>
-
-				<div class="panel-body">
-					<table class="table table-striped">
-						<thead>
+					<div class="panel-body">
+						<table class="table table-striped">
+							<thead>
 							<td></td>
 							<td></td>
 							<td></td>
-						</thead>
-						<tbody>
+							</thead>
+							<tbody>
 							<tr>
 								<td><strong>Total Programs</strong></td>
 								<td>{{ $stats['totalPrograms'] }}</td>
@@ -80,11 +53,45 @@
 								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'participant')) }}"><i class="icon--home--white"></i> Participant</a></td>
 							</tr>
 
-						</tbody>
-					</table>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">BETA Color-coded CCD Viewer</div>
+
+					<div class="panel-body">
+						@include('CCDViewer.create')
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">STABLE Raw CCD Viewer</div>
+
+					<div class="panel-body">
+						@include('CCDViewer.create-old-viewer')
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">Impersonation</div>
+					<div class="panel-body">
+						<form action="{{ route('post.impersonate') }}" method="POST">
+							<div class="form-group">
+								<label for="email">Email address</label>
+								<input class="form-control" type="email" name="email" placeholder="Impersonated user's email address" required>
+							</div>
+							<input class="btn btn-primary" type="submit" value="Impersonate">
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
 @endsection

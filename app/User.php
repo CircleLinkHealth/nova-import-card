@@ -282,6 +282,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $userConfig['preferred_contact_timezone'];
 	}
 
+	public function getSpecialtyAttribute() {
+		$userConfig = $this->userConfig();
+		if(isset($userConfig['specialty'])){
+			return $userConfig['specialty'];
+		} else return '';
+	}
+
 	public function getCareTeamAttribute() {
 		$userConfig = $this->userConfig();
 		if(!isset($userConfig['care_team'])) {

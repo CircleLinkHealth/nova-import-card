@@ -35,7 +35,7 @@ $new_user = false;
                         </div>
                     @endif
                 </div>
-                <div class="main-form-block main-form-horizontal col-md-12">
+                <div class="">
                     <div class="row">
                         <div class="main-form-block main-form-primary main-form-primary-vertical col-lg-7">
                             <h4 class="form-title">Contact Information</h4>

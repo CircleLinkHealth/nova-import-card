@@ -13,7 +13,7 @@
                         <div class="col-sm-10">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ URL::route('admin.users.create', array()) }}" class="btn btn-success">New User</a>
-                                <a href="{{ URL::route('admin.users.createQuickPatient', array('blogId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a>
+                                {{-- <a href="{{ URL::route('admin.users.createQuickPatient', array('blogId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a> --}}
                             </div>
                         </div>
                     @endif
@@ -48,8 +48,8 @@
                             <div class="col-sm-12">
                                 <div class="" style="text-align:center;">
                                     {!! Form::hidden('action', 'filter') !!}
-                                    {!! Form::submit('Apply Filters', array('class' => 'btn btn-orange')) !!}
-                                    {!! Form::submit('Reset Filters', array('class' => 'btn btn-orange')) !!}
+                                    <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
+                                    <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</button>
                                     </form>
                                 </div>
                             </div>
@@ -58,43 +58,40 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <td><strong>ID</strong></td>
-                                <td><strong>Role</strong></td>
                                 <td><strong>Name</strong></td>
-                                <td><strong>user_email</strong></td>
-                                <td><strong>program</strong></td>
+                                <td><strong>Role</strong></td>
+                                <td><strong>Email</strong></td>
+                                <td><strong>Program</strong></td>
+                                <td><strong>Actions</strong></td>
                             </tr>
                             </thead>
                             <tbody>
                             @if (count($wpUsers) > 0)
                                 @foreach( $wpUsers as $wpUser )
                                     <tr>
-                                        <td>
-                                            @if(Entrust::can('users-edit-all'))
-                                                <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-primary btn-xs">{{ $wpUser->ID }}</a><br />
-                                            @endif
-                                        </td>
+                                        <td>{{ $wpUser->fullNameWithID }}</td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
                                                 @if($wpUser->hasRole('participant'))
-                                                    <div style="margin-left:10px;">
-                                                        <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-orange btn-xs">Participant</a>
-                                                    </div>
-                                                @else
-                                                    @foreach ($wpUser->roles as $role)
-                                                        @if(Entrust::can('users-edit-all'))
-                                                            <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-info btn-xs">{{ $role->display_name }}</a><br />
-                                                        @endif
+                                                    @foreach($wpUser->roles as $role)
+                                                        {{ $role->display_name }}
                                                     @endforeach
                                                 @endif
                                             @endif
                                         </td>
-                                        <td>{{ $wpUser->fullName }}</td>
                                         <td>{{ $wpUser->user_email }}</td>
                                         <td>{{ $wpUser->program_id }}</td>
-                                        <td>
+                                        <td class="text-right">
                                             @if(Entrust::can('users-edit-all'))
-                                                <a href="{{ URL::route('admin.users.destroy', array('id' => $wpUser->ID)) }}" class="btn btn-danger btn-xs">Delete</a><br />
+                                                <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+                                            @endif
+                                            @if (count($wpUser->roles) > 0)
+                                                @if($wpUser->hasRole('participant'))
+                                                    <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-info btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
+                                                @endif
+                                            @endif
+                                            @if(Entrust::can('users-edit-all'))
+                                                <a href="{{ URL::route('admin.users.destroy', array('id' => $wpUser->ID)) }}" class="btn btn-danger btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-remove-sign"></i> Delete</a>
                                             @endif
                                         </td>
                                     </tr>
