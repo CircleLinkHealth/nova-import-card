@@ -442,11 +442,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function setDatePausedAttribute($value) {
 		$meta = $this->meta->where('meta_key', 'date_paused')->first();
-		if(empty($meta)) {
-			return false;
+		if(!empty($meta)) {
+			$meta->meta_value = $value;
+			$meta->save();
+		} else {
+			$userMeta = $this->meta()->firstOrNew([
+				'meta_key' => 'date_paused',
+				'meta_value' => $value,
+				'user_id' => $this->ID
+			]);
+			$this->meta()->save($userMeta);
 		}
-		$meta->value = $value;
-		$meta->save();
+		return true;
 	}
 
 	public function getDateWithdrawnAttribute() {
@@ -459,11 +466,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function setDateWithdrawnAttribute($value) {
 		$meta = $this->meta->where('meta_key', 'date_withdrawn')->first();
-		if(empty($meta)) {
-			return false;
+		if(!empty($meta)) {
+			$meta->meta_value = $value;
+			$meta->save();
+		} else {
+			$userMeta = $this->meta()->firstOrNew([
+				'meta_key' => 'date_withdrawn',
+				'meta_value' => $value,
+				'user_id' => $this->ID
+			]);
+			$this->meta()->save($userMeta);
 		}
-		$meta->value = $value;
-		$meta->save();
+		return true;
 	}
 
 	// Whenever the user_pass field is modified, WordPress' internal hashing function will run
