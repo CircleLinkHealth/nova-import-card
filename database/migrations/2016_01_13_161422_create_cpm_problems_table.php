@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCCDProblemsTable extends Migration {
+class CreateCpmProblemsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,7 +12,7 @@ class CreateCCDProblemsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('ccd_problems', function(Blueprint $table)
+		Schema::create('cpm_problems', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->string('name');
@@ -32,7 +32,7 @@ class CreateCCDProblemsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('ccd_problems');
+		Schema::drop('cpm_problems');
 	}
 
 }
