@@ -2,6 +2,10 @@
 
 namespace App\CLH\CCD\Importer\Parsers;
 
+use App\CLH\Repositories\WpUserRepository;
+use App\WpUser;
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 class UserMetaParser extends BaseParser
 {
     public function parse()
@@ -15,5 +19,12 @@ class UserMetaParser extends BaseParser
         $userMeta->nickname = "";
 
         return $userMeta;
+    }
+
+    public function save($data)
+    {
+        $userRepo = new WpUserRepository();
+        $wpUser = WpUser::find($this->userId);
+        $userRepo->saveOrUpdateUserMeta($wpUser, new ParameterBag($data));
     }
 }

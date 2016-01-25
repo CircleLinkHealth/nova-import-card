@@ -4,7 +4,10 @@ namespace App\CLH\CCD\Importer\Parsers;
 
 
 use App\CLH\CCD\Importer\Parsers\Facades\UserMetaParserHelpers;
+use App\CLH\Repositories\WpUserRepository;
+use App\WpUser;
 use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserConfigParser extends BaseParser
 {
@@ -90,5 +93,12 @@ class UserConfigParser extends BaseParser
         $userConfig->program_id = $this->blogId;
 
         return $userConfig;
+    }
+
+    public function save($data)
+    {
+        $userRepo = new WpUserRepository();
+        $wpUser = WpUser::find($this->userId);
+        $userRepo->updateUserConfig($wpUser, new ParameterBag($data));
     }
 }

@@ -9,21 +9,42 @@ class CCDImportParser extends BaseParser
 {
     public function parse()
     {
-        $ccd = new \stdClass();
-
         $blogId = $this->blogId;
         $parsedCCD = $this->parsedCcdObj;
 
         /**
-         * Parsers are also Importers
-         * @todo: come back here to clean up
+         * Import Medications
          */
-        (new MedicationsParser($blogId, $parsedCCD))->parse();
-        (new ProblemsParser($blogId, $parsedCCD))->parse();
-        (new ProblemsParser($blogId, $parsedCCD))->createProblemsList();
-        $ccd->userConfig =  (new UserConfigParser($blogId, $parsedCCD, new UserConfigTemplate()))->parse()->getArray();
-        $ccd->userMeta = (new UserMetaParser($blogId, $parsedCCD, new UserMetaTemplate()))->parse()->getArray();
+        $medsParser = new MedicationsParser($blogId, $parsedCCD);
+        $medsList = $medsParser->parse();
+        $medsParser->save($medsList);
 
-        return $ccd;
+        /**
+         * Import Problems
+         */
+        $problemsParser = new ProblemsParser($blogId, $parsedCCD);
+        $problemsList = $problemsParser->parse();
+        $problemsParser->save($problemsList);
+
+        $problemsParser->activateCPProblems();
+
+        /**
+         * Import User Config
+         */
+        $userConfigParser = new UserConfigParser($blogId, $parsedCCD, new UserConfigTemplate());
+        $userConfig =  $userConfigParser->parse()->getArray();
+        $userConfigParser->save($userConfig);
+
+        /**
+         * Import User Meta
+         */
+        $userMetaParser = new UserMetaParser($blogId, $parsedCCD, new UserMetaTemplate());
+        $userMeta = $userMetaParser->parse()->getArray();
+        $userMetaParser->save($userMeta);
+    }
+
+    public function save($data)
+    {
+        // TODO: Implement save() method.
     }
 }
