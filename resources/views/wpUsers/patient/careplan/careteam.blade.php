@@ -262,7 +262,7 @@ function buildProviderInfoContainers($providers) {
             </div>
         </div>
     </div>
-    <?php echo buildProviderInfoContainers($careTeamUsers); ?>
+    <?php echo buildProviderInfoContainers($providers); ?>
     @include('wpUsers.patient.careplan.footer')
     <br /><br />
     </form>
