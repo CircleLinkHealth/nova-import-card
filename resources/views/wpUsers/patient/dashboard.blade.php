@@ -6,7 +6,7 @@
             <div class="col-sm-12">
                 <ul class="" style="margin:0;padding:0;">
                     <li class="menu-item">
-                        <a href="{{ URL::route('patients.select', array()) }}">
+                        <a href="{{ URL::route('patients.search', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--find-patient--big icon--menu"></i>
                             </div>
