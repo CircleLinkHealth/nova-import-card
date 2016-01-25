@@ -36,7 +36,7 @@ class AllergiesParser extends BaseParser implements Parser
 
             if (empty($ccdAllergen->name)) continue;
 
-            $allergiesList .= $ccdAllergen->name . ";\n\n";
+            $allergiesList .= ucfirst(strtolower($ccdAllergen->name)) . ";\n\n";
         }
 
         return $allergiesList;
