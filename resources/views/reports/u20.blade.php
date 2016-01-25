@@ -2,41 +2,43 @@
 @section('content')
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
-            <div class="row" >
-                <div class="main-form-title">
+            <div class="row">
+                <div class="main-form-title col-lg-12">
                     Under 20 Minute Report
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.reports.u20', ['patientId' => $patient->ID]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
-                <div class="col-sm-2">
-                    <h4 class="time-report__month">December 2015</h4>
-                </div>
-                <div class="form-group  pull-right" style="margin-top:10px;">
-                    <i class="icon icon--date-time"></i>
+                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
-                    <div class="inline-block">
-                        <label for="selectMonth" class="sr-only">Select Month:</label>
-                        <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="200px"
-                                data-size="10" style="display: none;">
-                            <option value="">Select Month</option>
-                            @for($i = 0; $i < count($months); $i++)
-                                <option value="{{$i+1}}" @if($month_selected == $i+1) {{'selected'}} @endif>{{$months[$i]}}</option>
-                            @endfor
-
-                        </select>
+                    {!! Form::open(array('url' => URL::route('patient.reports.u20', ['patientId' => $patient->ID]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                    <div class="col-sm-2">
+                        <h4 class="time-report__month">December 2015</h4>
+                    </div>
+                    <div class="form-group  pull-right" style="margin-top:10px;">
+                        <i class="icon icon--date-time"></i>
 
                         <div class="inline-block">
-                            <label for="selectYear" class="sr-only">Select Year:</label>
-                            <select name="selectYear" id="selectYear" class="selectpicker" data-width="100px"
+                            <label for="selectMonth" class="sr-only">Select Month:</label>
+                            <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="200px"
                                     data-size="10" style="display: none;">
-                                @foreach($years as $year)
-                                    <option value="{{$year}}" selected="selected">{{$year}}</option>
-                                @endforeach
+                                <option value="">Select Month</option>
+                                @for($i = 0; $i < count($months); $i++)
+                                    <option value="{{$i+1}}" @if($month_selected == $i+1) {{'selected'}} @endif>{{$months[$i]}}</option>
+                                @endfor
+
                             </select>
+
+                            <div class="inline-block">
+                                <label for="selectYear" class="sr-only">Select Year:</label>
+                                <select name="selectYear" id="selectYear" class="selectpicker" data-width="100px"
+                                        data-size="10" style="display: none;">
+                                    @foreach($years as $year)
+                                        <option value="{{$year}}" selected="selected">{{$year}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <button type="submit" value="Search" name="find" id="find" class="btn btn-primary">Go</button>
                         </div>
-                        <button type="submit" value="Search" name="find" id="find" class="btn btn-primary">Go</button>
                     </div>
-                </div>
-                {!! Form::close() !!}
+                    {!! Form::close() !!}
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                     @if($data)
@@ -94,7 +96,7 @@
                                         fillspace: true,
                                         width: 100,
                                         sort:'string',
-                                       template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
+                                        template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
 
                                     },
                                     {
@@ -173,13 +175,13 @@
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "right"}
                                         ,template:function (obj) {
-                                            var seconds = obj.colsum_other;
-                                            var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
-                                            var ss = date.getSeconds();
-                                            console.log("This: " + obj);
-                                            return "<span style='float:right;'>"+mm + ":" + zeroPad(ss,10)+"</span>";
-                                        }
+                                        var seconds = obj.colsum_other;
+                                        var date = new Date(seconds * 1000);
+                                        var mm = Math.floor(seconds/60);
+                                        var ss = date.getSeconds();
+                                        console.log("This: " + obj);
+                                        return "<span style='float:right;'>"+mm + ":" + zeroPad(ss,10)+"</span>";
+                                    }
                                     },
                                     {
                                         id: "colsum_total",
@@ -274,8 +276,9 @@
                             display for this month.
                         </div>
                     @endif
-                </div>
 
+                </div>
             </div>
         </div>
+    </div>
 @stop
