@@ -152,12 +152,6 @@ class CCDUploadController extends Controller {
     {
         $receivedFiles = json_decode($request->getContent());
 
-        /**
-         * Returns empty because it's most probably called asynchronously from the uploader,
-         * and we don't really want to trigger any errors.
-         * @todo: there must be a much better way to do this on the JS side
-         */
-//        if (empty($receivedFiles)) return response()->json('Transporting parsed CCDs to the server has failed.', 500);
         if (empty($receivedFiles)) return;
 
         foreach ($receivedFiles as $file) {
@@ -174,13 +168,6 @@ class CCDUploadController extends Controller {
 
             //Parsing and Importing happens in the CCDImportParser
             $importParser = (new CCDImportParser($blogId, $parsedCCD))->parse();
-
-            $userRepo = new WpUserRepository();
-            $wpUser = WpUser::find($parsedCCD->user_id);
-
-            $userRepo->updateUserConfig($wpUser, new ParameterBag($importParser->userConfig));
-
-            $userRepo->saveOrUpdateUserMeta($wpUser, new ParameterBag($importParser->userMeta));
         }
 
         return response()->json('Files received and processed successfully', 200);
