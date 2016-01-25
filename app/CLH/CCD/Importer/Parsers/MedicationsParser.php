@@ -28,8 +28,11 @@ class MedicationsParser extends BaseParser
             if ( (! empty($endDate) && ! $endDate->isPast())
                 || ($importIfEndDateIsNull && ! empty($medication->date_range->start) && empty($medication->date_range->end)))
             {
-                $medsList .= ucfirst(strtolower($medication->product->name)) . ', '
-                    . ucfirst(strtolower(StringManipulation::stringDiff($medication->product->name, $medication->text)))
+                empty($medication->product->name)
+                    ? $medsList .= ''
+                    : $medsList .= ucfirst(strtolower($medication->product->name)) . ', ';
+
+                $medsList .= ucfirst(strtolower(StringManipulation::stringDiff($medication->product->name, $medication->text)))
                     . "; \n\n";
             }
             elseif (strtolower($medication->status) == 'active')
