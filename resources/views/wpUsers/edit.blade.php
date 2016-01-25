@@ -10,9 +10,10 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
+                <h1>{{ $wpUser->fullName }}</h1>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        User ID: {{ $wpUser->ID }}
+                        Edit {{ $wpUser->fullNameWithID }}
                     </div>
                     <div class="panel-body">
 
@@ -29,11 +30,11 @@
                                         <a href="{{ URL::route('admin.users.msgCenter', array('patientId' => $wpUser->ID)) }}" class="btn btn-primary">App Simulator</a>
                                     </div>
                                     <div class="pull-left" style="margin-left:10px;">
-                                        <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-orange">Participant</a>
+                                        <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-info">Go To Provider UI</a>
                                     </div>
                                 @endif
                                 <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ URL::route('admin.users.careplan', array('patientId' => $wpUser->ID)) }}" class="btn btn-primary">Care Plan Feed JSON</a>
+                                    <a href="{{ URL::route('admin.users.careplan', array('patientId' => $wpUser->ID)) }}" class="btn btn-primary">View Care Plan Feed JSON</a>
                                 </div>
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
@@ -90,6 +91,15 @@
                                         <div class="col-xs-4">{!! Form::select('ccm_status', array('paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn'), $wpUser->ccmStatus, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                         <div class="col-xs-2">{!! Form::label('careplan_status', 'Careplan Status:') !!}</div>
                                         <div class="col-xs-4">{!! Form::select('careplan_status', array('draft' => 'draft', 'qa_approved' => 'qa_approved', 'provider_approved' => 'provider_approved'), $userMeta['careplan_status'], ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('date_paused', 'Date Paused:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('date_paused', $wpUser->date_paused, ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('date_withdrawn', 'Date Withdrawn:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('date_withdrawn', $wpUser->date_withdrawn, ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
 

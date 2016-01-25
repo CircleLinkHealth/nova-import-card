@@ -6,7 +6,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>CPM API</title>
 
-		<link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
+		<!-- Stylesheets -->
+		{{-- <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet"> --}}
 		{{-- <link href="{{ asset('/css/lavish-2.css') }}" rel="stylesheet"> --}}
 		<link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
 		<link href="{{ asset('/img/favicon.png') }}" rel="icon">
@@ -21,7 +22,7 @@
 			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 		<![endif]-->
 
-		<!-- Scripts -->
+		<!-- JQuery -->
 		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
@@ -30,13 +31,24 @@
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
 
+		<!-- Parsley -->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
-		<script src="{{ asset('/js/scripts.js') }}"></script>
-		<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
 
+		<!-- START BOOTSTRAP -->
+		<!-- Latest compiled and minified CSS -->
+		<link href="{{ asset('/css/bootstrap-bootstwatch-superhero.css') }}" rel="stylesheet">
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+		<!-- END BOOTSTRAP -->
+
+		<!-- select2 -->
+		<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
 		<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
 		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
+		<!-- misc scripts -->
+		<script src="{{ asset('/js/scripts.js') }}"></script>
+
 	</head>
 	<body>
 		@if ( ! Auth::guest() && Entrust::can('admin-access'))
@@ -50,7 +62,7 @@
 							<span class="icon-bar"></span>
 						</button>
 						<a class="navbar-brand" href="{{ URL::route('admin.dashboard', array()) }}">
-							<img src="{{ asset('/img/cpm-logo.png') }}" height="40" width="70">
+							<img src="{{ asset('/img/cpm-logo.png') }}" height="30" width="50">
 						</a>
 					</div>
 

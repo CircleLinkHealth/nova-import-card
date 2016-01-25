@@ -282,6 +282,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $userConfig['preferred_contact_timezone'];
 	}
 
+	public function getSpecialtyAttribute() {
+		$userConfig = $this->userConfig();
+		if(isset($userConfig['specialty'])){
+			return $userConfig['specialty'];
+		} else return '';
+	}
+
 	public function getCareTeamAttribute() {
 		$userConfig = $this->userConfig();
 		if(!isset($userConfig['care_team'])) {
@@ -410,6 +417,74 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			return $meta[0];
 		}
 		return '';
+	}
+
+	public function setCCMStatusAttribute($status) {
+		$meta = $this->meta()->where('meta_key', 'ccm_status')->first();
+		if(empty($meta)) {
+			return false;
+		}
+		$statusBefore = $meta->meta_value;
+		$meta->meta_value = $status;
+		$meta->save();
+		// update date tracking
+		if( $statusBefore !== $status ) {
+			if ($status == 'paused') {
+				$this->datePaused = date("Y-m-d H:i:s");
+			};
+			if ($status == 'withdrawn') {
+				$this->dateWithdrawn = date("Y-m-d H:i:s");
+			};
+		}
+		return true;
+	}
+
+	public function getDatePausedAttribute() {
+		$meta = $this->meta->where('meta_key', 'date_paused')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
+	public function setDatePausedAttribute($value) {
+		$meta = $this->meta->where('meta_key', 'date_paused')->first();
+		if(!empty($meta)) {
+			$meta->meta_value = $value;
+			$meta->save();
+		} else {
+			$userMeta = $this->meta()->firstOrNew([
+				'meta_key' => 'date_paused',
+				'meta_value' => $value,
+				'user_id' => $this->ID
+			]);
+			$this->meta()->save($userMeta);
+		}
+		return true;
+	}
+
+	public function getDateWithdrawnAttribute() {
+		$meta = $this->meta->where('meta_key', 'date_withdrawn')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return '';
+	}
+
+	public function setDateWithdrawnAttribute($value) {
+		$meta = $this->meta->where('meta_key', 'date_withdrawn')->first();
+		if(!empty($meta)) {
+			$meta->meta_value = $value;
+			$meta->save();
+		} else {
+			$userMeta = $this->meta()->firstOrNew([
+				'meta_key' => 'date_withdrawn',
+				'meta_value' => $value,
+				'user_id' => $this->ID
+			]);
+			$this->meta()->save($userMeta);
+		}
+		return true;
 	}
 
 	// Whenever the user_pass field is modified, WordPress' internal hashing function will run

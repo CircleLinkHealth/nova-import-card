@@ -29,7 +29,7 @@ function buildProviderInfoContainers($providers) {
     foreach ($providers as $provider) :
         $html .= '<div id="providerInfo'.$provider->ID.'">';
         $html .= '<strong><span id="providerName'.$provider->ID.'" style="display:none;">'.ucwords( $provider->firstName . ' ' . $provider->lastName) . '</span></strong>';
-        $html .= '<strong>Specialty:</strong> ' . $provider->ID;
+        $html .= '<strong>Specialty:</strong> ' . $provider->specialty;
         $html .= '<BR><strong>Tel:</strong> ' . $provider->firstName;
         $html .= '</div>';
     endforeach;
@@ -262,7 +262,7 @@ function buildProviderInfoContainers($providers) {
             </div>
         </div>
     </div>
-    <?php echo buildProviderInfoContainers($careTeamUsers); ?>
+    <?php echo buildProviderInfoContainers($providers); ?>
     @include('wpUsers.patient.careplan.footer')
     <br /><br />
     </form>

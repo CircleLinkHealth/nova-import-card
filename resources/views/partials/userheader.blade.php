@@ -7,7 +7,11 @@
                             debug($patient->getLeadContactIDAttribute());
                         $provider = App\User::find($patient->getLeadContactIDAttribute());
                         ?>
-                        Provider: </strong> {{$provider->getFullNameAttribute()}}<strong>
+                        @if($provider)
+                            Provider: </strong> {{$provider->getFullNameAttribute()}}<strong>
+                        @else
+                            Provider: <em>No Provider</em>
+                        @endif
                         Location:</strong>
                                 {{$patient->getPreferredLocationName()}}
                 </span>

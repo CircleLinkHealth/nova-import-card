@@ -51,10 +51,10 @@ $(document).ready(function(){
                 lc_name = $('#providerName' + lc_id).html();
                 bp_id = $('input:radio[name="ctbp"]:checked').val();
                 bp_name = $('#providerName' + bp_id).html();
-                $('#ctConfModalError').html('Are you sure <strong>'+bp_name+' is the Billing Provider</strong> and <strong>'+lc_name+' is the Lead Contact</strong>?');
-                $('#ctConfModal').modal();
+                $('#ctModalError').html('Are you sure <strong>'+bp_name+' is the Billing Provider</strong> and <strong>'+lc_name+' is the Lead Contact</strong>?');
+                $('#ctModal').modal();
                 // yes/no button in modal
-                $('#ctConfModalYes').on("click", function () {
+                $('#ctModalYes').on("click", function () {
                     $('<input>').attr({
                         type: 'hidden',
                         id: 'direction',

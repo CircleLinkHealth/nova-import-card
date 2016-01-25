@@ -254,7 +254,7 @@ class ActivityController extends Controller {
 			$month_selected = $time->format('m');
 		}
 
-		$acts = DB::table('activities')
+		$acts = DB::table('lv_activities')
 			->select(DB::raw('id,provider_id,logged_from,DATE(performed_at), type, duration'))
 			->whereBetween('performed_at', [
 				$start, $end

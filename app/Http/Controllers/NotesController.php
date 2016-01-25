@@ -32,7 +32,7 @@ class NotesController extends Controller
         $input = $request->all();
         $messages = \Session::get('messages');
 
-        $acts = DB::table('activities')
+        $acts = DB::table('lv_activities')
             ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration)'))
             ->where('patient_id', $patientId)
             ->where(function ($q) {

@@ -21,13 +21,23 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->getFullNameAttribute()}}</div>
-            <div class="col-xs-12 col-md-4 print-row">{{$patient->getPhoneAttribute()}}</div>
+            <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
+            <div class="col-xs-12 col-md-4 print-row">{{$patient->phone}}</div>
             <div class="col-xs-12 col-md-3 print-row">{{$today}}</div>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-md-4 print-row text-bold"> {{$provider->getFullNameAttribute()}} </div>
-            <div class="col-xs-12 col-md-4 print-row">{{$provider->getPhoneAttribute()}}</div>
+            <div class="col-xs-12 col-md-4 print-row text-bold">
+                @if($provider)
+                    {{$provider->fullName}}
+                @else
+                    <em>no lead contact</em>
+                @endif
+            </div>
+            <div class="col-xs-12 col-md-4 print-row">
+                @if($provider)
+                    {{$provider->phone}}
+                @endif
+            </div>
             <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->getPreferredLocationName()}}</div>
         </div>
     </div>

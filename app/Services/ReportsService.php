@@ -239,7 +239,7 @@ Class ReportsService
         }
     }
     public function getBiometricsData($biometric, $user){
-        $data = DB::table('observations')
+        $data = DB::table('lv_observations')
             ->select(DB::raw('user_id, replace(obs_key,\'_\',\' \') \'Observation\',
 					week(obs_date) week, year(obs_date) year, floor(datediff(now(), obs_date)/7) realweek,
 					date_format(max(obs_date), \'%c/%e\') as day, date_format(min(obs_date), \'%c/%e\') as day_low,
@@ -481,7 +481,7 @@ Class ReportsService
                 $date_end = date("Y-m-d H:i:s", $end_week);
 
                 if ($q == 'CF_RPT_20') {
-                    $temp = DB::table('observations')
+                    $temp = DB::table('lv_observations')
                         ->select(DB::raw('floor(avg(CAST(SUBSTRING_INDEX(obs_value, \'/\', 1) as UNSIGNED))) as Reading'))
                         ->where('obs_message_id', $q)
                         ->where('obs_unit', '!=', 'invalid')
@@ -493,7 +493,7 @@ Class ReportsService
                         ->where('obs_unit', '!=', 'outbound')
                         ->get();
                 } else {
-                    $temp = DB::table('observations')
+                    $temp = DB::table('lv_observations')
                         ->select(DB::raw('floor(AVG(CAST(obs_value as UNSIGNED))) as Reading'))
                         ->where('user_id', $user->ID)
                         ->where('obs_message_id', $q)
