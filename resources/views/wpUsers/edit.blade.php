@@ -10,9 +10,10 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
+                <h1>{{ $wpUser->fullName }}</h1>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        User ID: {{ $wpUser->ID }}
+                        Edit {{ $wpUser->fullNameWithID }}
                     </div>
                     <div class="panel-body">
 
@@ -29,11 +30,11 @@
                                         <a href="{{ URL::route('admin.users.msgCenter', array('patientId' => $wpUser->ID)) }}" class="btn btn-primary">App Simulator</a>
                                     </div>
                                     <div class="pull-left" style="margin-left:10px;">
-                                        <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-orange">Participant</a>
+                                        <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-info">Go To Provider UI</a>
                                     </div>
                                 @endif
                                 <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ URL::route('admin.users.careplan', array('patientId' => $wpUser->ID)) }}" class="btn btn-primary">Care Plan Feed JSON</a>
+                                    <a href="{{ URL::route('admin.users.careplan', array('patientId' => $wpUser->ID)) }}" class="btn btn-primary">View Care Plan Feed JSON</a>
                                 </div>
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>

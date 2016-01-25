@@ -62,7 +62,7 @@
 							<span class="icon-bar"></span>
 						</button>
 						<a class="navbar-brand" href="{{ URL::route('admin.dashboard', array()) }}">
-							<img src="{{ asset('/img/cpm-logo.png') }}" height="40" width="70">
+							<img src="{{ asset('/img/cpm-logo.png') }}" height="30" width="50">
 						</a>
 					</div>
 
