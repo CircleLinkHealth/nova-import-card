@@ -44,7 +44,7 @@ class DashboardController extends Controller {
 		$user = $wpUser = User::find(Auth::user()->ID);
 
 		// switch dashboard view based on logged in user
-		if($user->hasRole('administrator') || $user->hasRole('provider')) {
+		if($user->can('admin-access')) {
 
 			$stats = array();
 			$stats['totalPrograms'] = WpBlog::all()->count();
@@ -64,15 +64,13 @@ class DashboardController extends Controller {
 
 			return view('admin/dashboard', compact(['user', 'stats']));
 
-		} else if($user->hasRole('participant')) {
-
-			return view('patient/dashboard', ['user' => $user]);
-
 		} else {
 
-			return view('home', ['user' => $user]);
+			return redirect()->route('patients.dashboard', [])->send();
 
 		}
+
+		return view('home', ['user' => $user]);
 	}
 
 }

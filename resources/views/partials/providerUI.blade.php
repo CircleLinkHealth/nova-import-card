@@ -33,9 +33,7 @@
     <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
     <script src="{{ asset('/js/scripts.js') }}"></script>
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
-
-    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
 
     <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
     <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
@@ -56,7 +54,7 @@
             <ul class="nav navbar-nav">
                 {{--URL::route('patients.dashboard', array())--}}
                 <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
-                <li><a href="{{ URL::route('patients.select') }}"><i class="icon--search--white"></i> Select Patient</a></li>
+                <li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Select Patient</a></li>
                 <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a></li>
                 <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add Patient</a></li>
                 <li><a href="{{ URL::route('patients.alerts') }}"><i class="icon--alert--white"></i> Alerts</a></li>
