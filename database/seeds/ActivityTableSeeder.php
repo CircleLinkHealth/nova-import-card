@@ -8,7 +8,7 @@ class ActivityTableSeeder extends Seeder {
 
     public function run()
     {
-        DB::table('activities')->delete();
+        DB::table('lv_activities')->delete();
 
         Activity::create([
             'type' => 'Care Plan Setup',
