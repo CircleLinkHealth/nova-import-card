@@ -93,6 +93,15 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('date_paused', 'Date Paused:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('date_paused', $wpUser->date_paused, ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('date_withdrawn', 'Date Withdrawn:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('date_withdrawn', $wpUser->date_withdrawn, ['class' => 'form-control']) !!}</div>
+                                    </div>
+                                </div>
+
                                 <h2>Role:</h2>
                                 <div id="roles">
                                     <div class="form-group">
