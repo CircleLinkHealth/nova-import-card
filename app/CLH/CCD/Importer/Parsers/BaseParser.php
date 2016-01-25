@@ -31,7 +31,11 @@ abstract class BaseParser
      */
     protected function importIfEndDateIsNullAndStartDateExists()
     {
-        return in_array($this->ccd->document->legal_authenticator->representedOrganization->ids[0]->root, [
+        if (empty($this->ccd->document->legal_authenticator->representedOrganization->ids[0]->root)) return false;
+
+        $ehrId = $this->ccd->document->legal_authenticator->representedOrganization->ids[0]->root;
+
+        return in_array($ehrId, [
             '2.16.840.1.113883.3.929', // STI
         ]);
     }
