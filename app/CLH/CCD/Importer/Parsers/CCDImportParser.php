@@ -13,6 +13,13 @@ class CCDImportParser extends BaseParser
         $parsedCCD = $this->parsedCcdObj;
 
         /**
+         * Import Allergies
+         */
+        $allergiesParser = new AllergiesParser($blogId, $parsedCCD);
+        $allergiesList = $allergiesParser->parse();
+        $allergiesParser->save($allergiesList);
+
+        /**
          * Import Medications
          */
         $medsParser = new MedicationsParser($blogId, $parsedCCD);
