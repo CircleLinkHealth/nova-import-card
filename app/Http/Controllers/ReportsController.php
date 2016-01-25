@@ -68,6 +68,9 @@ class ReportsController extends Controller {
 			}//debug($biometrics_array);
 		}
 
+		// get provider
+		$provider = User::find($user->leadContactID);
+
 		//Medication Tracking:
 		$medications = (new ReportsService())->getMedicationStatus($user, false);
 
@@ -75,6 +78,7 @@ class ReportsController extends Controller {
 			'treating' => $treating,
 			'patientId'	=> $patientId,
 			'patient'=> $user,
+			'provider'=> $provider,
 			'medications' => $medications,
 			'tracking_biometrics' => $biometrics_array
 		];
