@@ -64,15 +64,13 @@ class DashboardController extends Controller {
 
 			return view('admin/dashboard', compact(['user', 'stats']));
 
-		} else if($user->hasRole('participant') || $user->hasRole('provider')) {
+		} else {
 
 			return redirect()->route('patients.dashboard', [])->send();
 
-		} else {
-
-			return view('home', ['user' => $user]);
-
 		}
+
+		return view('home', ['user' => $user]);
 	}
 
 }
