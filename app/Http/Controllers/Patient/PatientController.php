@@ -297,13 +297,27 @@ class PatientController extends Controller {
 			->with('meta')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get()->lists('fullNameWithId', 'ID');
-		$p=0;
-
-
 
 		return view('wpUsers.patient.select', compact(['patients']));
 	}
 
+	public function patientAjaxSearch(Request $request){
+
+		$data = User::whereIn('ID', Auth::user()->viewablePatientIds())->lists('ID');
+		$patients = '[';
+		$i = 0;
+		foreach($data as $d){
+			$name = (User::find($d)->getFullNameAttribute());
+			if($i == count($data) - 1){
+				$patients .=  '{id : "' . $d . '", link: "' . URL::route('patient.summary', array('patient' => $d)). '", name: "'. $name .'"}] ';
+			} else {
+				$patients .= '{id : "' .  $d . '", link: "'.URL::route('patient.summary', array('patient' => $d)).'", name: "'.$name.'"}, ';
+			}
+			$i++;
+		}
+
+		return view('wpUsers.patient.select',  ['data' => $patients]);
+	}
 	/**
 	 * Process the specified resource.
 	 *
