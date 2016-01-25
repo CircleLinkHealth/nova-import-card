@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer\Parsers;
 
 use App\CLH\CCD\APILookups\Medications\RxNORM;
+use App\CLH\Contracts\CCD\Parser;
 use App\CLH\Facades\StringManipulation;
 use App\CPRulesItem;
 use App\CPRulesPCP;
@@ -10,7 +11,7 @@ use App\CPRulesUCP;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
-class MedicationsParser extends BaseParser
+class MedicationsParser extends BaseParser implements Parser
 {
     public function parse()
     {

@@ -3,12 +3,13 @@
 namespace App\CLH\CCD\Importer\Parsers;
 
 use App\CLH\CCD\Importer\CPMProblem;
+use App\CLH\Contracts\CCD\Parser;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
 use Illuminate\Support\Facades\Log;
 
-class ProblemsParser extends BaseParser
+class ProblemsParser extends BaseParser implements Parser
 {
     public function parse()
     {
@@ -48,7 +49,9 @@ class ProblemsParser extends BaseParser
                 && empty($problemCodes->code_system_name)
                 && empty($problemCodes->code)) continue;
 
-            $problemsList .= $problemCodes->name . ', ' . $problemCodes->code_system_name . ', ' . $problemCodes->code . ";\n\n";
+            $problemsList .= ucwords(strtolower($problemCodes->name)) . ', '
+                . strtoupper($problemCodes->code_system_name) . ', '
+                . $problemCodes->code . ";\n\n";
         }
 
         return $problemsList;

@@ -2,11 +2,12 @@
 
 namespace App\CLH\CCD\Importer\Parsers;
 
+use App\CLH\Contracts\CCD\Parser;
 use App\CLH\Repositories\WpUserRepository;
 use App\WpUser;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class UserMetaParser extends BaseParser
+class UserMetaParser extends BaseParser implements Parser
 {
     public function parse()
     {

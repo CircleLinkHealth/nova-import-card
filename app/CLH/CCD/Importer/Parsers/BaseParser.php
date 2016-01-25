@@ -6,7 +6,7 @@ use App\CLH\Contracts\CCD\Parser;
 use App\CLH\Contracts\DataTemplate;
 use App\ParsedCCD;
 
-abstract class BaseParser implements Parser
+abstract class BaseParser
 {
     protected $blogId;
     protected $ccd;

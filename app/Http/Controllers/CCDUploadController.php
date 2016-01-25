@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\CCD\Importer\Parsers\CCDImportParser;
+use App\CLH\CCD\Importer\Parsers\CCDImporter;
 use App\CLH\CCD\Parser\CCDParser;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\CLH\Repositories\WpUserRepository;
@@ -166,8 +166,11 @@ class CCDUploadController extends Controller {
                 throw new \Exception('Blog ID missing.', 400);
             }
 
-            //Parsing and Importing happens in the CCDImportParser
-            $importParser = (new CCDImportParser($blogId, $parsedCCD))->parse();
+            /**
+             * The CCDImporter calls any necessary Parsers
+             */
+            $importer = new CCDImporter($blogId, $parsedCCD);
+            $importer->generateCarePlanFromCCD();
         }
 
         return response()->json('Files received and processed successfully', 200);

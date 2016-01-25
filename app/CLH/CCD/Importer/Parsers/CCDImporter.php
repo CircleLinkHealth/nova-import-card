@@ -9,9 +9,9 @@ use App\CPRulesPCP;
 use App\CPRulesUCP;
 use Illuminate\Support\Facades\Log;
 
-class CCDImportParser extends BaseParser
+class CCDImporter extends BaseParser
 {
-    public function parse()
+    public function generateCarePlanFromCCD()
     {
         $blogId = $this->blogId;
         $parsedCCD = $this->parsedCcdObj;
@@ -57,11 +57,6 @@ class CCDImportParser extends BaseParser
          * CarePlan Defaults
          */
         $this->setTransitionalCareDefaults();
-    }
-
-    public function save($data)
-    {
-
     }
 
     public function setTransitionalCareDefaults()

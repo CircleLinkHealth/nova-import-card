@@ -4,12 +4,13 @@ namespace App\CLH\CCD\Importer\Parsers;
 
 
 use App\CLH\CCD\Importer\Parsers\Facades\UserMetaParserHelpers;
+use App\CLH\Contracts\CCD\Parser;
 use App\CLH\Repositories\WpUserRepository;
 use App\WpUser;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class UserConfigParser extends BaseParser
+class UserConfigParser extends BaseParser implements Parser
 {
     public function parse()
     {

@@ -2,12 +2,13 @@
 
 namespace App\CLH\CCD\Importer\Parsers;
 
+use App\CLH\Contracts\CCD\Parser;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
 use Illuminate\Support\Facades\Log;
 
-class AllergiesParser extends BaseParser
+class AllergiesParser extends BaseParser implements Parser
 {
     public function parse()
     {
