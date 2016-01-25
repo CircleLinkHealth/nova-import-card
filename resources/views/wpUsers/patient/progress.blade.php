@@ -29,6 +29,8 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
             <div class="col-xs-12 col-md-4 print-row text-bold">
                 @if($provider)
                     {{$provider->fullName}}
+                @else
+                    <em>no lead contact</em>
                 @endif
             </div>
             <div class="col-xs-12 col-md-4 print-row">
