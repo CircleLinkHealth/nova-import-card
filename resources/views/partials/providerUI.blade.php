@@ -41,6 +41,11 @@
     <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
 </head>
 <body>
+@if(!empty($impersonatedUserEmail))
+    <div class="container-fluid text-center" style="background-color: #E46745; color: black; padding: 0.6%;">
+        You are impersonating user with email <b>{{ $impersonatedUserEmail }}</b>
+    </div>
+@endif
 <nav class="navbar primary-navbar">
     <div class="container-fluid">
         <div class="navbar-header">

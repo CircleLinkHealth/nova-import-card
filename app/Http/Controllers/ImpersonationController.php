@@ -22,7 +22,7 @@ class ImpersonationController extends Controller
 
         auth()->setUserToImpersonate( $user );
 
-        return redirect()->route( 'patients.dashboard', [$email] );
+        return redirect()->route( 'patients.dashboard', ['impersonatedUserEmail' => $email] );
     }
 
 }

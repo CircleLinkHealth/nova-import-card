@@ -65,7 +65,12 @@ class PatientController extends Controller {
 		}
 		$pendingApprovals = $p;
 
-		return view('wpUsers.patient.dashboard', compact(['pendingApprovals']));
+		if (! $impersonatedUserEmail = $request->input('impersonatedUserEmail'))
+		{
+			$impersonatedUserEmail = '';
+		}
+
+		return view('wpUsers.patient.dashboard', compact(['pendingApprovals', 'impersonatedUserEmail']));
 	}
 
 	/**

@@ -82,7 +82,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">Impersonation</div>
 					<div class="panel-body">
-						<form action="{{ route('post.impersonate') }}" method="POST">
+						<form action="{{ route('post.impersonate') }}" method="POST" target="_blank">
 							<div class="form-group">
 								<label for="email">Email address</label>
 								<input class="form-control" type="email" name="email" placeholder="Impersonated user's email address" required>
