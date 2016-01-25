@@ -31,7 +31,7 @@ abstract class BaseParser implements Parser
      */
     protected function importIfEndDateIsNullAndStartDateExists()
     {
-        return in_array($this->ccd->document->legal_authenticator->ids[0]->root, [
+        return in_array($this->ccd->document->legal_authenticator->representedOrganization->ids[0]->root, [
             '2.16.840.1.113883.3.929', // STI
         ]);
     }
