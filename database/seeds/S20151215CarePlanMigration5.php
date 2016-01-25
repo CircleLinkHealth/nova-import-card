@@ -4,7 +4,7 @@ use App\CarePlan;
 use App\CareSection;
 use App\CareItem;
 use App\CarePlanCareSection;
-use App\CareItemCarePlan;
+use App\CarePlanItem;
 use App\CPRulesUCP;
 use App\CPRulesItem;
 use App\CPRulesItemMeta;
@@ -26,7 +26,7 @@ class S20151215CarePlanMigration5 extends Seeder {
             echo "Start Remove Care Items Loop".PHP_EOL;
             foreach ($careItems as $careItem) {
                 echo PHP_EOL.PHP_EOL.PHP_EOL." Remove Care Item ". $careItem->id ." name = ". $careItem->name .PHP_EOL;
-                $carePlanItems = CareItemCarePlan::where('item_id', '=', $careItem->id)->get();
+                $carePlanItems = CarePlanItem::where('item_id', '=', $careItem->id)->get();
                 if($carePlanItems->count() > 0) {
                     foreach ($carePlanItems as $carePlanItem) {
                         echo "Remove Care Plan Item ".$carePlanItem->id.PHP_EOL;
@@ -40,7 +40,7 @@ class S20151215CarePlanMigration5 extends Seeder {
 
         /*
         // remove any parent item w/o a title
-        $carePlanItems = CareItemCarePlan::where('parent_id', '=', '0')
+        $carePlanItems = CarePlanItem::where('parent_id', '=', '0')
             ->where('meta_key', '=', 'value')
             ->get();
         if($carePlanItems->count() > 0) {

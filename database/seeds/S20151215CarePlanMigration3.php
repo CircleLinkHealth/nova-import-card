@@ -8,7 +8,7 @@ use App\User;
 use App\Permission;
 use App\Role;
 use App\UserMeta;
-use App\CareItemCarePlan;
+use App\CarePlanItem;
 use App\CPRulesUCP;
 use App\CPRulesPCP;
 use App\CPRulesItem;

@@ -57,18 +57,18 @@ class CarePlan extends Model {
     }
 
     public function carePlanItems() {
-        return $this->hasMany('App\CareItemCarePlan', 'plan_id', 'id');
+        return $this->hasMany('App\CarePlanItem', 'plan_id', 'id');
     }
 
     public function careSections() {
-        return $this->belongsToMany('App\CareSection', 'care_plan_care_section', 'plan_id', 'section_id')->withPivot('id', 'section_id');
+        return $this->belongsToMany('App\CareSection', 'care_plan_care_section', 'plan_id', 'section_id')->withPivot('id', 'section_id', 'status');
     }
 
     public function build() {
         // build careplan
         foreach($this->careSections as $careSection) {
             // add parent items to each section
-            $careSection->planItems = $this->carePlanItems()
+            $careSection->carePlanItems = $this->carePlanItems()
                 ->where('section_id', '=', $careSection->id)
                 ->where('parent_id', '=', 0)
                 ->orderBy('ui_sort', 'asc')

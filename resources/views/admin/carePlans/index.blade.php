@@ -59,7 +59,7 @@
                                     <td>{{ $careplan->name }}</td>
                                     <td>{{ $careplan->type }}</td>
                                     <td>{{ $careplan->user_id }}</td>
-                                    <td><a href="{{ URL::route('admin.careplans.edit', array('id' => $careplan->id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.careplans.destroy', array('id' => $careplan->id)) }}" class="btn btn-warning">Remove</a></td>
+                                    <td class="pull-right"><a href="{{ URL::route('admin.careplans.edit', array('id' => $careplan->id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.careplans.destroy', array('id' => $careplan->id)) }}" class="btn btn-danger">Remove</a></td>
                                 </tr>
                             @endforeach
                             </tbody>

@@ -1,6 +1,6 @@
 <?php namespace App\CLH\Repositories;
 
-use App\CareItemCarePlan;
+use App\CarePlanItem;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\CarePlan;
@@ -36,7 +36,7 @@ class CarePlanRepository {
         return $carePlan;
     }
 
-    public function attachCareItemToCarePlan(CareSection $careSection, CarePlan $carePlan, CareItemCarePlan $careItemCarePlan) {
+    public function attachCareItemToCarePlan(CareSection $careSection, CarePlan $carePlan, CarePlanItem $careItemCarePlan) {
         $rowData = array(
             'section_id' => $careSection->id,
             "meta_key" => $careItemCarePlan->meta_key,
@@ -71,12 +71,12 @@ class CarePlanRepository {
 
         // copy each item
         foreach($carePlan->careSections as $careSection) {
-            // attach if doesnt already exist
+            // attach to dupe if doesnt already exist
             $carePlanSection = $carePlanDupe->careSections()->where('section_id', '=', $careSection['id'])->first();
             if(empty($carePlanSection)) {
                 $carePlanDupe->careSections()->attach(array($careSection['id'] => array('status' => 'active')));
             }
-            $carePlanItems = CareItemCarePlan::where('plan_id', '=', $carePlan->id)->where('section_id', '=', $careSection['id'])->get();
+            $carePlanItems = CarePlanItem::where('plan_id', '=', $carePlan->id)->where('section_id', '=', $careSection['id'])->get();
             foreach ($carePlanItems as $careItemCarePlan) {
                 $this->attachCareItemToCarePlan($careSection, $carePlanDupe, $careItemCarePlan);
             }
@@ -85,7 +85,7 @@ class CarePlanRepository {
         $carePlanDupe->push();
 
         // now populate parent ids @todo shouldnt have to do this
-        $carePlanItems = CareItemCarePlan::where('plan_id', '=', $carePlanDupe->id)->get();
+        $carePlanItems = CarePlanItem::where('plan_id', '=', $carePlanDupe->id)->get();
         if($carePlanItems->count() > 0) {
             foreach ($carePlanItems as $carePlanItem) {
 
@@ -104,7 +104,7 @@ class CarePlanRepository {
                     continue 1;
                 }
                 // get id for parent care plan item
-                $carePlanItemParent = CareItemCarePlan::where('item_id', '=', $careItemParent->id)
+                $carePlanItemParent = CarePlanItem::where('item_id', '=', $careItemParent->id)
                     ->where('plan_id', '=', $carePlanDupe->id)
                     ->first();
                 // skip if no care item relation

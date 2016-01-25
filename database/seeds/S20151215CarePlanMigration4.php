@@ -4,7 +4,7 @@ use App\CarePlan;
 use App\CareSection;
 use App\CareItem;
 use App\CarePlanCareSection;
-use App\CareItemCarePlan;
+use App\CarePlanItem;
 use App\CPRulesUCP;
 use App\CPRulesItem;
 use App\CPRulesItemMeta;
@@ -24,7 +24,7 @@ class S20151215CarePlanMigration4 extends Seeder {
         if($carePlans->count() > 0) {
             echo "Start Care Plan Loop".PHP_EOL;
             foreach ($carePlans as $carePlan) {
-                $carePlanItems = CareItemCarePlan::where('plan_id', '=', $carePlan->id)->get();
+                $carePlanItems = CarePlanItem::where('plan_id', '=', $carePlan->id)->get();
                 if($carePlanItems->count() > 0) {
                     echo "Start Care Plan ".$carePlan->id.PHP_EOL;
                     foreach ($carePlanItems as $carePlanItem) {
@@ -56,7 +56,7 @@ class S20151215CarePlanMigration4 extends Seeder {
                         // get id for parent care plan item
                         echo "found parent care_item ". $careItemParent->id ." - ". $careItemParent->name.PHP_EOL;
                         echo "lookup parent care_item_care_plan id".PHP_EOL;
-                        $carePlanItemParent = CareItemCarePlan::where('item_id', '=', $careItemParent->id)
+                        $carePlanItemParent = CarePlanItem::where('item_id', '=', $careItemParent->id)
                             ->where('plan_id', '=', $carePlan->id)
                             ->first();
 

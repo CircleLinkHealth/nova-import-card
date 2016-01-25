@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CareItemCarePlan extends Model {
+class CarePlanItem extends Model {
 
     public $timestamps = false;
 
@@ -48,12 +48,12 @@ class CareItemCarePlan extends Model {
 
     public function parents()
     {
-        return $this->belongsTo('App\CareItemCarePlan', 'parent_id');
+        return $this->belongsTo('App\CarePlanItem', 'parent_id');
     }
 
     public function children()
     {
-        return $this->hasMany('App\CareItemCarePlan', 'parent_id');
+        return $this->hasMany('App\CarePlanItem', 'parent_id');
     }
 
 }

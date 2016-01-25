@@ -4,7 +4,7 @@
     <a href="{{ URL::route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-orange btn-xs section-reload" section="{{ $careSection->id }}">Add Child Item</a>
 </div>
 <div class="collapse" id="collapseItemEdit{{ $planItem->id }}" style="background:#ccc;">
-    [EYE:{{ $i+1 .' of '.$careSection->planItems->count() }}]<br />
+    [EYE:{{ $i+1 .' of '.$careSection->carePlanItems->count() }}]<br />
     [CarePlanItem:{{ $planItem->id }}]<br />
     [ui_sort:{{ $planItem->ui_sort }}]<br />
     [ui_fld_type:{{ $planItem->ui_fld_type }}]<br />

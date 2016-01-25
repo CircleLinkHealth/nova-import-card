@@ -6,7 +6,7 @@ use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\Observation;
 use App\CarePlan;
-use App\CareItemCarePlan;
+use App\CarePlanItem;
 use App\WpBlog;
 use App\Location;
 use App\User;
@@ -331,7 +331,7 @@ class PatientCareplanController extends Controller {
 		if($carePlan) {
 			foreach($carePlan->careSections as $careSection) {
 				// add parent items to each section
-				$careSection->planItems = $carePlan->carePlanItems()
+				$careSection->carePlanItems = $carePlan->carePlanItems()
 					->where('section_id', '=', $careSection->id)
 					->where('parent_id', '=', 0)
 					->orderBy('ui_sort', 'asc')
@@ -381,7 +381,7 @@ class PatientCareplanController extends Controller {
 		if($params->get('careSections')) {
 			$sectionCareItems = $careplan->careItems()->whereIn('section_id', $params->get('careSections'))->get();
 			foreach ($sectionCareItems as $careItem) {
-				$carePlanItem = CareItemCarePlan::where('item_id', '=', $careItem->id)
+				$carePlanItem = CarePlanItem::where('item_id', '=', $careItem->id)
 					->where('plan_id', '=', $careplan->id)
 					->first();
 				if (!$carePlanItem) {

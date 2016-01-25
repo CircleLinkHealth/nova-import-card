@@ -71,7 +71,7 @@ Class ReportsService
         if($carePlan) {
             foreach($carePlan->careSections as $careSection) {
                 // add parent items to each section
-                $careSection->planItems = $carePlan->carePlanItems()
+                $careSection->carePlanItems = $carePlan->carePlanItems()
                     ->where('section_id', '=', $careSection->id)
                     ->where('parent_id', '=', 0)
                     ->where('meta_key','status')
@@ -86,7 +86,7 @@ Class ReportsService
         $itemsToMonitor = array();
         foreach($carePlan->careSections as $section){
             if($section->name == 'diagnosis-problems-to-monitor'){
-                foreach($section->planItems as $item){
+                foreach($section->carePlanItems as $item){
                     $itemsToMonitor[] = $item->careItem->display_name;
                 }
             }
@@ -101,7 +101,7 @@ Class ReportsService
         if($carePlan) {
             foreach($carePlan->careSections as $careSection) {
                 // add parent items to each section
-                $careSection->planItems = $carePlan->carePlanItems()
+                $careSection->carePlanItems = $carePlan->carePlanItems()
                     ->where('section_id', '=', $careSection->id)
                     ->where('parent_id', '=', 0)
                     ->where('meta_key','status')
@@ -116,7 +116,7 @@ Class ReportsService
         $medications_categories = array();
         foreach($carePlan->careSections as $section){
             if($section->name == 'medications-to-monitor'){
-                foreach($section->planItems as $item){
+                foreach($section->carePlanItems as $item){
                     $medications_categories[] = $item->careItem->display_name;
                 }
             }

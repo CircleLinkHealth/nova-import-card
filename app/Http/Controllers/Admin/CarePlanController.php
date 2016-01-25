@@ -129,9 +129,11 @@ class CarePlanController extends Controller {
 		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
 
 		$carePlan = CarePlan::find($id);
+		$carePlan->build();
+		/*
 		foreach($carePlan->careSections as $careSection) {
 			// add parent items to each section
-			$careSection->planItems = $carePlan->carePlanItems()
+			$careSection->carePlanItems = $carePlan->carePlanItems()
 				->where('section_id', '=', $careSection->id)
 				->where('parent_id', '=', 0)
 				->orderBy('ui_sort', 'asc')
@@ -140,6 +142,7 @@ class CarePlanController extends Controller {
 					}))
 				->get();
 		}
+		*/
 
 		$editMode = true;
 
@@ -245,7 +248,7 @@ class CarePlanController extends Controller {
 		$carePlan = CarePlan::find($id);
 		foreach($carePlan->careSections as $careSection) {
 			// add parent items to each section
-			$careSection->planItems = $carePlan->carePlanItems()
+			$careSection->carePlanItems = $carePlan->carePlanItems()
 				->where('section_id', '=', $careSection->id)
 				->where('parent_id', '=', 0)
 				->orderBy('ui_sort', 'asc')
@@ -274,7 +277,7 @@ class CarePlanController extends Controller {
 		$carePlan = CarePlan::find($id);
 		foreach($carePlan->careSections as $careSection) {
 			// add parent items to each section
-			$careSection->planItems = $carePlan->carePlanItems()
+			$careSection->carePlanItems = $carePlan->carePlanItems()
 				->where('section_id', '=', $careSection->id)
 				->where('parent_id', '=', 0)
 				->orderBy('ui_sort', 'asc')

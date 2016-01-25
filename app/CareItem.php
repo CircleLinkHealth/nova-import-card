@@ -37,6 +37,16 @@ class CareItem extends Model {
         return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
     }
 
+    public function parents()
+    {
+        return $this->belongsTo('App\CareItem', 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany('App\CareItem', 'parent_id');
+    }
+
 
 
     // START ATTRIBUTES

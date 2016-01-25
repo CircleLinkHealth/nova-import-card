@@ -37,9 +37,9 @@ class CareSection extends Model {
         return $this->belongsToMany('App\CarePlan', 'care_item_care_plan', 'section_id', 'plan_id');
     }
 
-    public function careItems()
+    public function carePlanItems()
     {
-        return $this->hasMany('App\CarePlanItem', 'id', 'section_id');
+        return $this->hasMany('App\CarePlanItem', 'section_id');
     }
 
     public static function boot()

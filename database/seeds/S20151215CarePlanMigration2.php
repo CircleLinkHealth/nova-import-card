@@ -4,7 +4,7 @@ use App\CarePlan;
 use App\CareSection;
 use App\CareItem;
 use App\CarePlanCareSection;
-use App\CareItemCarePlan;
+use App\CarePlanItem;
 use App\CPRulesUCP;
 use App\CPRulesItem;
 use App\CPRulesItemMeta;

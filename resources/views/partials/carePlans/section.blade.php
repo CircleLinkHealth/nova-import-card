@@ -8,11 +8,11 @@
             <h4>{{ $careSection->display_name }}</h4>
         </a>
     @endif
-    @if(!empty($careSection->planItems))
+    @if(!empty($careSection->carePlanItems))
         <?php $i=0; ?>
         <?php $r=1; ?>
         <div class="collapse in" id="collapseSection{{ $careSection->id }}">
-            @foreach($careSection->planItems as $planItem)
+            @foreach($careSection->carePlanItems as $planItem)
                 @if ($planItem->careItem->display_name != '')
                     @if($i % 2 == 0)
                         @if(isset($editMode) && $editMode != false) START ROW {{ $r }} @endif
@@ -24,7 +24,7 @@
                         @include('partials.carePlans.item')
                         {{ $planItem->ui_row_end > 0 ? '</div>' : '' }}
                         {{ $planItem->ui_col_end > 0 ? '</div>' : '' }}
-                    @if( ($i % 2 != 0) || ($careSection->planItems->count() == ($i+1)) )
+                    @if( ($i % 2 != 0) || ($careSection->carePlanItems->count() == ($i+1)) )
                         @if(isset($editMode) && $editMode != false) END ROW {{ $r }} @endif
                         </div>
                         <?php $r++; ?>

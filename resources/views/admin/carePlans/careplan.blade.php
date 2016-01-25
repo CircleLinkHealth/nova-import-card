@@ -4,10 +4,10 @@
             <a class="" role="" data-toggle="collapse" href="#collapseSection{{ $careSection->name }}" aria-expanded="false" aria-controls="collapseSection{{ $careSection->name }}">
                 <h1> {{ $careSection->display_name }} <a href="{{ URL::route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-orange btn-xs">Edit</a></h1>
             </a>
-            @if(!empty($careSection->planItems))
+            @if(!empty($careSection->carePlanItems))
                 <?php $i=0; ?>
                 <div class="collapse" id="collapseSection{{ $careSection->name }}">
-                    @foreach($careSection->planItems as $planItem)
+                    @foreach($careSection->carePlanItems as $planItem)
                         @if ($planItem->careItem->display_name != '')
                             @if($i % 2 == 0) START ROW<div class="row"> @endif
                                 <div class="col-sm-6">
@@ -16,7 +16,7 @@
                                     <div style="border:1px solid blue;margin:0px;padding:0px;">
                                         <h2>{{ $planItem->careItem->display_name }} <a href="{{ URL::route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-orange btn-xs">Edit</a></h2><br />
                                         <strong>{{ $planItem->meta_key . ' = ' . $planItem->meta_value }}</strong><br />
-                                        {{--[EYE:{{ $i+1 .' of '.$careSection->planItems->count() }}]<br />
+                                        {{--[EYE:{{ $i+1 .' of '.$careSection->carePlanItems->count() }}]<br />
                                         [CarePlanItem:{{ $planItem->id }}]<br />
                                         [ui_fld_type:{{ $planItem->ui_fld_type }}]<br />
                                         [ui_row_start:{{ $planItem->ui_row_start }}]<br />
@@ -47,7 +47,7 @@
                                     </div>
                                     {{ $planItem->ui_row_end > 0 ? '</div>' : '' }}
                                     {{ $planItem->ui_col_end > 0 ? '</div>' : '' }}
-                                    @if( ($i % 2 != 0) || ($careSection->planItems->count() == ($i+1)) ) END ROW</div> @endif
+                                    @if( ($i % 2 != 0) || ($careSection->carePlanItems->count() == ($i+1)) ) END ROW</div> @endif
                             </div>
                             @endif
                             <?php $i++; ?>
