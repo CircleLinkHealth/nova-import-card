@@ -16,7 +16,7 @@ class CareItemUserValue extends Model {
      *
      * @var string
      */
-    protected $table = 'care_item_user_value';
+    protected $table = 'care_item_user_values';
 
     /**
      * The primary key for the model.

@@ -37,6 +37,10 @@ class CareItem extends Model {
         return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
     }
 
+    public function userValues() {
+        return $this->hasMany('App\CareItemUserValue', 'care_item_id', 'id');
+    }
+
     public function parents()
     {
         return $this->belongsTo('App\CareItem', 'parent_id');

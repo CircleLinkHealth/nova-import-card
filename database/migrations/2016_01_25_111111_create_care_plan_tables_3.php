@@ -17,7 +17,7 @@ class CreateCarePlanTables3 extends Migration {
 			$table->increments('id');
 			$table->unsignedInteger('care_item_id');
 			$table->unsignedInteger('user_id');
-			$table->text('value')->nullable();
+			$table->longText('value')->nullable();
 			$table->foreign('care_item_id')->references('id')->on('care_items');
 			$table->foreign('user_id')->references('id')->on('wp_users');
 			$table->unique(['care_item_id', 'user_id'], 'plan_item_user');

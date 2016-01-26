@@ -41,7 +41,7 @@ class S20151215CarePlanMigration extends Seeder {
         $this->command->info('Part 4 Completed Successfully');
 
         $this->call('database\seeds\S20151215CarePlanMigration5');
-        $this->command->info('Part 4 Completed Successfully');
+        $this->command->info('Part 5 Completed Successfully');
         die('done!');
 
     }

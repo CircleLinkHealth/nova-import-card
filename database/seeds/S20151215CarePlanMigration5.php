@@ -34,6 +34,7 @@ class S20151215CarePlanMigration5 extends Seeder {
                     }
                 }
                 echo PHP_EOL."Remove Care Item ".$careItem->id.PHP_EOL;
+                $careItem->userValues()->delete();
                 $careItem->delete();
             }
         }

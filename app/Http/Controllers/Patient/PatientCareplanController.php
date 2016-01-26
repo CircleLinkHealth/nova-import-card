@@ -303,7 +303,9 @@ class PatientCareplanController extends Controller {
 		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
 			->first();
 
-		$carePlan->build($user->ID);
+		if($carePlan) {
+			$carePlan->build($user->ID);
+		}
 
 		//$carePlan->setCareItemUserValue($user->ID, 'blood-pressure-target-bp', '115');
 		//$value = $carePlan->getCareItemUserValue($user->ID, 'blood-pressure-target-bp');
