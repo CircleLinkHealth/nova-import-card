@@ -10,7 +10,7 @@ class CustomGuard extends Guard
 {
     public function impersonate()
     {
-        if ( $id = session( 'impersonate_member' ) ) {
+        if ( $id = session( 'impersonateUserId' ) ) {
             parent::onceUsingId( $id );
             return true;
         }
@@ -19,11 +19,11 @@ class CustomGuard extends Guard
 
     public function isImpersonating()
     {
-        return $this->session->has( 'impersonate_member' );
+        return $this->session->has( 'impersonateUserId' );
     }
 
     public function setUserToImpersonate(User $user)
     {
-        session( ['impersonate_member' => $user->ID] );
+        session( ['impersonateUserId' => $user->ID] );
     }
 }

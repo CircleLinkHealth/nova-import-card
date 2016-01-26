@@ -1,4 +1,9 @@
 <?php
+use App\CarePlan;
+use Illuminate\Support\Facades\Request;
+
+Route::get('question', 'TestController@index');
+
 Route::get('careplan/{id}', ['uses' => 'Admin\CarePlanController@carePlan', 'as' => 'careplan']);
 Route::get('careplan/{id}/section/{sectionId}', ['uses' => 'Admin\CarePlanController@carePlanSection', 'as' => 'careplan.section']);
 
@@ -7,8 +12,6 @@ Route::get('careplan/{id}/section/{sectionId}', ['uses' => 'Admin\CarePlanContro
  */
 //CCD Parser Demo Route
 Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
-
-
 Route::post('account/login', 'PatientController@patientAjaxSearch');
 /**
  * UPLOAD CCD ROUTES
@@ -106,10 +109,8 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::group(['prefix' => 'manage-patients/', 'middleware' => ['patientProgramSecurity', 'impersonation.check']], function () {
 		Route::get('dashboard', ['uses' => 'Patient\PatientController@showDashboard', 'as' => 'patients.dashboard']);
 		Route::get('listing', ['uses' => 'Patient\PatientController@showPatientListing', 'as' => 'patients.listing']);
-		Route::get('select', ['uses' => 'Patient\PatientController@showPatientSelect', 'as' => 'patients.select']);
 		Route::post('select', ['uses' => 'Patient\PatientController@processPatientSelect', 'as' => 'patients.select.process']);
-		Route::get('search', ['uses' => 'Patient\PatientController@searchView', 'as' => 'patients.search']);
-		Route::get('query', ['uses' => 'Patient\PatientController@searchView', 'as' => 'patients.query']);
+		Route::get('search', ['uses' => 'Patient\PatientController@patientAjaxSearch', 'as' => 'patients.search']);
 		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patients.alerts']);
 		Route::get('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@showPatientDemographics', 'as' => 'patients.demographics.show']);
 		Route::post('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patients.demographics.store']);

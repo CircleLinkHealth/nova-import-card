@@ -1,24 +1,64 @@
 @extends('partials.providerUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/patient/select.js') }}"></script>
-    <div class="row" style="margin-top:60px;">
-        <div class="row" style="margin:20px 0px 40px 0px;">
-            <div class="col-md-8 col-md-offset-2">
-                <div class="row">
-                    {!! Form::open(array('url' => URL::route('patients.select.process', array()), 'method' => 'post', 'class' => 'form-horizontal')) !!}
-                </div>
-                <div class="row">
-                    <div class="col-xs-4 text-right">{!! Form::label('findUser', 'Find User:') !!}</div>
-                    <div class="col-xs-8">{!! Form::select('findUser', $patients, '', ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12 text-center" style="margin:20px 0px;">
-                        {!! Form::submit('View patient', array('class' => 'btn btn-success')) !!}
-                        </form>
+    <style>
+        #bloodhound .empty-message {
+            padding: 5px 10px;
+            text-align: center;
+        }
+    </style>
+    <div class="container">
+        <section class="main-form" >
+            <div class="row">
+                <div class="main-form-container col-lg-6 col-lg-offset-3 main-form-container-last" style="border-bottom: 3px solid #50b2e2">
+                    <div class="row">
+                        <div class="main-form-title">
+                            Select a Patient
+                        </div>
+                    </div>
+
+                    <div class="form-item form-item-spacing form-item--first col-sm-12 col-lg-12">
+                        <div class="ui-widget form-item form-item-spacing form-item--first col-sm-12 col-lg-12">
+                            <label for="patients">MRN, Patient Name or DOB [mm-dd-yyyy]</label>
+                            <div id="bloodhound">
+                                <input class="typeahead form-item-spacing form-control" type="text" autofocus="autofocus" placeholder="Enter Patient Name...">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
+                <script>
+                    jQuery(document).ready(function ($) {
+                        var states = new Bloodhound({
+                            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                            queryTokenizer: Bloodhound.tokenizers.whitespace,
+                            // `states` is an array of state names defined in "The Basics"
+                            local: {!! $data !!}
+
+                        });
+
+                        states.initialize();
+
+                        $('#bloodhound .typeahead').typeahead({
+                                    hint: true,
+                                    highlight: true,
+                                    minLength: 3
+                                },
+                                {
+                                    name: 'matched-states',
+                                    displayKey: 'name',
+                                    source: states,
+                                    templates: {
+                                        empty: [
+                                            '<div class="empty-message">', 'No Patients Found...', '</div>'
+                                        ].join('\n'),
+                                        suggestion: function (data) {
+                                            return '<li><a href="' + data.link + '">' + data.name + '</a></li>';
+                                        }
+                                    }
+                                });
+                    });
+                </script>
 @stop

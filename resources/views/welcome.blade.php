@@ -1,6 +1,16 @@
-@extends('partials.adminUI')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>CPM API - {!! Route::current()->getName() !!}</title>
 
-@section('content')
+	<link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
+	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
+	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
+</head>
+<body>
 <div class="container-fluid">
 	<div class="content text-center" style="margin-top:30px;">
 		<a href="http://www.circlelinkhealth.com">
@@ -64,4 +74,5 @@
 		</div>
 	</div>
 </div>
-@endsection
+</body>
+</html>
