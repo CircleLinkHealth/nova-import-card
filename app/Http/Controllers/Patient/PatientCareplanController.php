@@ -300,12 +300,13 @@ class PatientCareplanController extends Controller {
 			}
 		}
 		$patient = $user;
-		$carePlan = CarePlan::where('user_id', '=', $user->ID)
-			->where('type', '=', 'Patient Default')
+		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
 			->first();
 
-		//$carePlan->setCareItemValue('blood-pressure-target-bp', '115');
-		//$value = $carePlan->getCareItemValue('blood-pressure-target-bp');
+		$carePlan->build($user->ID);
+
+		//$carePlan->setCareItemUserValue($user->ID, 'blood-pressure-target-bp', '115');
+		//$value = $carePlan->getCareItemUserValue($user->ID, 'blood-pressure-target-bp');
 
 		// determine which sections to show
 		if($page == 1) {
@@ -325,21 +326,6 @@ class PatientCareplanController extends Controller {
 				'symptoms-to-monitor',
 				//'misc',
 			);
-		}
-
-
-		if($carePlan) {
-			foreach($carePlan->careSections as $careSection) {
-				// add parent items to each section
-				$careSection->carePlanItems = $carePlan->carePlanItems()
-					->where('section_id', '=', $careSection->id)
-					->where('parent_id', '=', 0)
-					->orderBy('ui_sort', 'asc')
-					->with(array('children' => function ($query) {
-						$query->orderBy('ui_sort', 'asc');
-					}))
-					->get();
-			}
 		}
 		$editMode = false;
 
@@ -394,8 +380,10 @@ class PatientCareplanController extends Controller {
 					$value = 'Inactive';
 				}
 				if ($value) {
-					$carePlanItem->meta_value = $value;
-					$carePlanItem->save();
+					// update user item
+					$carePlanItem->meta_value = $careplan->setCareItemUserValue($user, $carePlanItem->careItem->name, $value);
+					//$carePlanItem->meta_value = $value;
+					//$carePlanItem->save();
 				}
 			}
 		}

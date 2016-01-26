@@ -64,7 +64,11 @@ class CarePlan extends Model {
         return $this->belongsToMany('App\CareSection', 'care_plan_care_section', 'plan_id', 'section_id')->withPivot('id', 'section_id', 'status');
     }
 
-    public function build() {
+    public function build($userId = false) {
+        $this->user_id = false;
+        if($userId) {
+            $this->user_id = $userId;
+        }
         // build careplan
         foreach($this->careSections as $careSection) {
             // add parent items to each section
@@ -76,6 +80,27 @@ class CarePlan extends Model {
                     $query->orderBy('ui_sort', 'asc');
                 }))
                 ->get();
+            // user override
+            if($userId) {
+                $user = User::find($userId);
+                if($user) {
+                    if ($careSection->carePlanItems->count() > 0) {
+                        foreach ($careSection->carePlanItems as $carePlanItem) {
+                            // parents
+                            $carePlanItem->meta_value = $this->getCareItemUserValue($user, $carePlanItem->careItem->name);
+                            // children
+                            if ($carePlanItem->children->count() > 0) {
+                                foreach ($carePlanItem->children as $carePlanItemChild) {
+                                    if($carePlanItemChild->item_id == '42') {
+                                        //dd($carePlanItem->careItem->name);
+                                        $carePlanItemChild->meta_value = $this->getCareItemUserValue($user, $carePlanItemChild->careItem->name);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -94,21 +119,28 @@ class CarePlan extends Model {
         */
     }
 
-    public function getCareItemValue($name) {
+    public function getCareItemUserValue(User $user, $name) {
         $careItem = $this->careItems()->where('name','=',$name)->withPivot('id','meta_value')->first();
         if(!$careItem) {
             return false;
         }
-        return $careItem->pivot->meta_value;
+        $userCareItemValue = $user->careItems()->where('name', '=', $careItem->name)->first();
+        if($userCareItemValue) {
+            return $userCareItemValue->pivot->value;
+        }
+        return '';
     }
 
-    public function setCareItemValue($name, $value) {
+    public function setCareItemUserValue(User $user, $name, $value) {
         $careItem = $this->careItems()->where('name','=',$name)->withPivot('meta_value')->first();
         if(!$careItem) {
             return false;
         }
-        $careItem->pivot->meta_value = $value;
-        $careItem->pivot->save();
+        $userCareItemValue = $user->careItems()->where('name', '=', $careItem->name)->first();
+        if($userCareItemValue) {
+            $userCareItemValue->pivot->value = $value;
+            $userCareItemValue->pivot->save();
+        }
         return true;
     }
 

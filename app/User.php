@@ -143,6 +143,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('App\Observation', 'user_id', 'ID');
 	}
 
+	public function careItems()
+	{
+		return $this->belongsToMany('App\CareItem', 'care_item_user_values', 'user_id', 'care_item_id')->withPivot('value');
+	}
+
     public function activities()
 	{
 		return $this->hasMany('App\Activity');

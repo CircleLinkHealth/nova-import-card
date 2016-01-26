@@ -178,6 +178,15 @@ class S20151215CarePlanMigration3 extends Seeder {
                     }
                 }
             }
+
+            // get all program users and attach them to this programs careplan
+            $programUsers = User::where('program_id', '=', $program->blog_id)->get();
+            if($programUsers->count() > 0) {
+                foreach($programUsers as $user) {
+                    $user->care_plan_id = $carePlan->id;
+                    $user->save();
+                }
+            }
         }
     }
 

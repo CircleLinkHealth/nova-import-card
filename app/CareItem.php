@@ -63,9 +63,11 @@ class CareItem extends Model {
         /**
          * Automatically delete and item's meta when the item is deleted
          */
+        /*
         CPRulesItem::deleting(function($CPRulesItem){
             $CPRulesItem->meta()->delete();
         });
+        */
     }
 
 }

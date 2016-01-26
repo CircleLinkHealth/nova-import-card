@@ -19,6 +19,7 @@ class S20151215CarePlanMigration2 extends Seeder {
     {
         $r=1;
         // now migrate rules_items to care_plan_care_items pivot table
+        //$rulesUCPs = CPRulesUCP::where('user_id', '>', '499')->where('user_id', '<', '504')->get();
         $rulesUCPs = CPRulesUCP::all();
         if($rulesUCPs->count() > 0) {
             foreach($rulesUCPs as $rulesUCP) {
@@ -29,8 +30,7 @@ class S20151215CarePlanMigration2 extends Seeder {
                 } else {
                     echo 'items_id = ' . $rulesItem['items_id'] .PHP_EOL;
 
-
-
+                    /*
                     // CARE PLAN
                     $carePlan = CarePlan::where('user_id', '=', $rulesUCP['user_id'])->first();
                     if(!$carePlan) {
@@ -52,6 +52,7 @@ class S20151215CarePlanMigration2 extends Seeder {
                         $carePlan->save();
                         echo 'Created new care plan ' . $carePlan->id .PHP_EOL;
                     }
+                    */
 
 
 
@@ -71,6 +72,7 @@ class S20151215CarePlanMigration2 extends Seeder {
                                 $careSection->save();
                                 echo 'Created new care section ' . $careSection->id .PHP_EOL;
                             }
+                            /*
                             // attach if doesnt already exist
                             $carePlanSection = $carePlan->careSections()->where('section_id', '=', $careSection['id'])->first();
                             if(empty($carePlanSection)) {
@@ -79,6 +81,7 @@ class S20151215CarePlanMigration2 extends Seeder {
                             } else {
                                 echo $r.' section already attached! Plan '.$carePlan['name'].' - Section ' . $careSection['name'] .PHP_EOL;
                             }
+                            */
                         } else {
                             echo "NO PCP?";
                         }
@@ -86,8 +89,7 @@ class S20151215CarePlanMigration2 extends Seeder {
                         echo "NO ITEM?";
                     }
 
-
-
+                    /*
                     // CARE ITEM
                     echo 'CARE ITEM'.PHP_EOL;
                     $careItem = CareItem::where('name', '=', $rulesItem['name'])->first();
@@ -150,6 +152,27 @@ class S20151215CarePlanMigration2 extends Seeder {
                         $careItem->save();
                         $r++;
                     }
+                    */
+
+
+                    // And instead we are going to attach user value to care_item_user_value
+                    // ensure we continue with a user
+                    if(!isset($user)) {
+                        $user = User::find($rulesUCP['user_id']);
+                    }
+
+                    // and boom simple value attachment
+                    if($user) {
+                        $careItem = CareItem::where('name', '=', $rulesItem['name'])->first();
+                        if ($careItem) {
+                            $rowData = array('value' => $rulesUCP['meta_value']);
+                            $careItemUserValue = $user->careItems()->find($careItem['id']);
+                            if(!$careItemUserValue) {
+                                $user->careItems()->attach(array($careItem['id'] => $rowData));
+                            }
+                        }
+                    }
+
                 }
             }
         }
