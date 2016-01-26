@@ -91,10 +91,11 @@ class CarePlan extends Model {
                             // children
                             if ($carePlanItem->children->count() > 0) {
                                 foreach ($carePlanItem->children as $carePlanItemChild) {
-                                    if($carePlanItemChild->item_id == '42') {
+                                    //if($carePlanItemChild->item_id == '42') {
                                         //dd($carePlanItem->careItem->name);
                                         $carePlanItemChild->meta_value = $this->getCareItemUserValue($user, $carePlanItemChild->careItem->name);
-                                    }
+                                        //dd($carePlanItemChild);
+                                    //}
                                 }
                             }
                         }

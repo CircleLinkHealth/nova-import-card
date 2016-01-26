@@ -23,6 +23,11 @@ class S20151215CarePlanMigration2 extends Seeder {
         $rulesUCPs = CPRulesUCP::all();
         if($rulesUCPs->count() > 0) {
             foreach($rulesUCPs as $rulesUCP) {
+                $user = User::find($rulesUCP['user_id']);
+                // ensure we continue with a user
+                if(!$user){
+                    continue 1;
+                }
                 echo 'START'.PHP_EOL.'ucp_id = ' . $rulesUCP['ucp_id'] .PHP_EOL;
                 $rulesItem = CPRulesItem::where('items_id', '=', $rulesUCP['items_id'])->first();
                 if(empty($rulesItem->care_item_id)) {
@@ -156,20 +161,13 @@ class S20151215CarePlanMigration2 extends Seeder {
 
 
                     // And instead we are going to attach user value to care_item_user_value
-                    // ensure we continue with a user
-                    if(!isset($user)) {
-                        $user = User::find($rulesUCP['user_id']);
-                    }
-
                     // and boom simple value attachment
-                    if($user) {
-                        $careItem = CareItem::where('name', '=', $rulesItem['name'])->first();
-                        if ($careItem) {
-                            $rowData = array('value' => $rulesUCP['meta_value']);
-                            $careItemUserValue = $user->careItems()->find($careItem['id']);
-                            if(!$careItemUserValue) {
-                                $user->careItems()->attach(array($careItem['id'] => $rowData));
-                            }
+                    $careItem = CareItem::where('name', '=', $rulesItem['name'])->first();
+                    if ($careItem) {
+                        $rowData = array('value' => $rulesUCP['meta_value']);
+                        $careItemUserValue = $user->careItems()->find($careItem['id']);
+                        if(!$careItemUserValue) {
+                            $user->careItems()->attach(array($careItem['id'] => $rowData));
                         }
                     }
 
