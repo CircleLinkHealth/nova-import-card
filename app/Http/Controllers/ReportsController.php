@@ -128,7 +128,7 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['colsum_tcc'] = 0;
 				$u20_patients[$act_count]['colsum_other'] = 0;
 				$u20_patients[$act_count]['colsum_total'] = 0;
-				$u20_patients[$act_count]['ccm_status'] = ucwords($patient->getCCMStatus());
+				$u20_patients[$act_count]['ccm_status'] = ucwords($patient->CCMStatus);
 				$u20_patients[$act_count]['dob'] = $patient->getBirthDateAttribute();
 				$u20_patients[$act_count]['patient_name'] = $patient->getFullNameAttribute();
 				$u20_patients[$act_count]['patient_id'] = $patient->ID;
@@ -240,7 +240,7 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['colsum_tcc'] = 0;
 				$u20_patients[$act_count]['colsum_other'] = 0;
 				$u20_patients[$act_count]['colsum_total'] = 0;
-				$u20_patients[$act_count]['ccm_status'] = ucwords($patient->getCCMStatus());
+				$u20_patients[$act_count]['ccm_status'] = ucwords($patient->CCMStatus);
 				$u20_patients[$act_count]['dob'] = $patient->getBirthDateAttribute();
 				$u20_patients[$act_count]['patient_name'] = $patient->getFullNameAttribute();
 				$provider = User::find(intval($patient->getLeadContactIDAttribute()));
