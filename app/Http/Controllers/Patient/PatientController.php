@@ -253,14 +253,14 @@ class PatientController extends Controller {
 					$tooltip = $careplanStatus;
 					$careplanStatusLink = 'Approve Now';
 					if (Auth::user()->hasRole('provider')) {
-						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '/manage-patients/patient-care-plan/?user=' . $patient->ID . '"><strong>Approve Now</strong></a>';
+						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
 					}
 				} else if ($patient->carePlanStatus == 'draft') {
 					$careplanStatus = 'CLH Approve';
 					$tooltip = $careplanStatus;
 					$careplanStatusLink = 'CLH Approve';
 					if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
-						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '/manage-patients/add-patient/?user=' . $patient->ID . '"><strong>CLH Approve</strong></a>';
+						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
 					}
 				}
 

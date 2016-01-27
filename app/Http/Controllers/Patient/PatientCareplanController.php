@@ -98,7 +98,16 @@ class PatientCareplanController extends Controller {
 			$timezones[$timezone] = $timezone;
 		}
 
-		return view('wpUsers.patient.careplan.patient', compact(['patient', 'userMeta', 'userConfig','states', 'locations', 'timezones', 'messages', 'patientRoleId', 'programs', 'programId']));
+		$showApprovalButton = false;
+		if( Auth::user()->hasRole('provider') ) {
+			if( $patient->carePlanStatus != 'provider_approved' ) {
+				$showApprovalButton = true;
+			}
+		} else if( $patient->carePlanStatus == 'draft' ) {
+			$showApprovalButton = true;
+		}
+
+		return view('wpUsers.patient.careplan.patient', compact(['patient', 'userMeta', 'userConfig','states', 'locations', 'timezones', 'messages', 'patientRoleId', 'programs', 'programId', 'showApprovalButton']));
 	}
 
 
@@ -214,7 +223,16 @@ class PatientCareplanController extends Controller {
 			})->get();
 		$phtml = '';
 
-		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml', 'phtml', 'providers', 'careTeamUsers']));
+		$showApprovalButton = false;
+		if( Auth::user()->hasRole('provider') ) {
+			if( $patient->carePlanStatus != 'provider_approved' ) {
+				$showApprovalButton = true;
+			}
+		} else if( $patient->carePlanStatus == 'draft' ) {
+			$showApprovalButton = true;
+		}
+
+		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml', 'phtml', 'providers', 'careTeamUsers', 'showApprovalButton']));
 	}
 
 
@@ -336,7 +354,16 @@ class PatientCareplanController extends Controller {
 		}
 		$editMode = false;
 
-		return view('wpUsers.patient.careplan.careplan', compact(['page', 'careSectionNames', 'patient', 'editMode', 'carePlan', 'messages']));
+		$showApprovalButton = false;
+		if( Auth::user()->hasRole('provider') ) {
+			if( $patient->carePlanStatus != 'provider_approved' ) {
+				$showApprovalButton = true;
+			}
+		} else if( $patient->carePlanStatus == 'draft' ) {
+			$showApprovalButton = true;
+		}
+
+		return view('wpUsers.patient.careplan.careplan', compact(['page', 'careSectionNames', 'patient', 'editMode', 'carePlan', 'messages', 'showApprovalButton']));
 	}
 
 	/**
@@ -359,6 +386,25 @@ class PatientCareplanController extends Controller {
 		$user = User::with('meta')->find($patientId);
 		if (!$user) {
 			return response("User not found", 401);
+		}
+
+		// get page
+		$page = $params->get('page');
+		if($page == 3) {
+			// check for approval here
+			// should we update careplan_status?
+			if($user->carePlanStatus != 'provider_approved') {
+				if (Auth::user()->hasRole('provider')) {
+					$user->carePlanStatus = 'provider_approved'; // careplan_status
+					$user->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver
+					$user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
+				} else {
+					$user->carePlanStatus = 'qa_approved'; // careplan_status
+					$user->carePlanQaApprover = Auth::user()->ID; // careplan_qa_approver
+					$user->carePlanQaDate = date('Y-m-d H:i:s'); // careplan_qa_date
+				}
+				$user->save();
+			}
 		}
 
 		// get carePlan

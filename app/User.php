@@ -386,12 +386,44 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return 0;
 	}
 
+	public function setCarePlanQAApproverAttribute($value) {
+		$meta = $this->meta->where('meta_key', 'careplan_qa_approver')->first();
+		if(!empty($meta)) {
+			$meta->meta_value = $value;
+			$meta->save();
+		} else {
+			$userMeta = $this->meta()->firstOrNew([
+				'meta_key' => 'careplan_qa_approver',
+				'meta_value' => $value,
+				'user_id' => $this->ID
+			]);
+			$this->meta()->save($userMeta);
+		}
+		return true;
+	}
+
 	public function getCarePlanQADateAttribute() {
 		$meta = $this->meta->where('meta_key', 'careplan_qa_date')->lists('meta_value');
 		if(!empty($meta)) {
 			return $meta[0];
 		}
 		return '';
+	}
+
+	public function setCarePlanQADateAttribute($value) {
+		$meta = $this->meta->where('meta_key', 'careplan_qa_date')->first();
+		if(!empty($meta)) {
+			$meta->meta_value = $value;
+			$meta->save();
+		} else {
+			$userMeta = $this->meta()->firstOrNew([
+				'meta_key' => 'careplan_qa_date',
+				'meta_value' => $value,
+				'user_id' => $this->ID
+			]);
+			$this->meta()->save($userMeta);
+		}
+		return true;
 	}
 
 	public function getCarePlanProviderApproverAttribute() {
@@ -402,12 +434,44 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return '';
 	}
 
-	public function getCarePlanProviderDateAttribute() {
+	public function setCarePlanProviderApproverAttribute($value) {
+		$meta = $this->meta->where('meta_key', 'careplan_provider_approver')->first();
+		if(!empty($meta)) {
+			$meta->meta_value = $value;
+			$meta->save();
+		} else {
+			$userMeta = $this->meta()->firstOrNew([
+				'meta_key' => 'careplan_provider_approver',
+				'meta_value' => $value,
+				'user_id' => $this->ID
+			]);
+			$this->meta()->save($userMeta);
+		}
+		return true;
+	}
+
+	public function getCarePlanProviderApproverDateAttribute() {
 		$meta = $this->meta->where('meta_key', 'careplan_provider_date')->lists('meta_value');
 		if(!empty($meta)) {
 			return $meta[0];
 		}
 		return '';
+	}
+
+	public function setCarePlanProviderApproverDateAttribute($value) {
+		$meta = $this->meta->where('meta_key', 'careplan_provider_date')->first();
+		if(!empty($meta)) {
+			$meta->meta_value = $value;
+			$meta->save();
+		} else {
+			$userMeta = $this->meta()->firstOrNew([
+				'meta_key' => 'careplan_provider_date',
+				'meta_value' => $value,
+				'user_id' => $this->ID
+			]);
+			$this->meta()->save($userMeta);
+		}
+		return true;
 	}
 
 	public function getCarePlanStatusAttribute() {
@@ -416,6 +480,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			return $meta[0];
 		}
 		return '';
+	}
+
+	public function setCarePlanStatusAttribute($value) {
+		$meta = $this->meta->where('meta_key', 'careplan_status')->first();
+		if(!empty($meta)) {
+			$meta->meta_value = $value;
+			$meta->save();
+		} else {
+			$meta = $this->meta()->firstOrNew([
+				'meta_key' => 'careplan_status',
+				'meta_value' => $value,
+				'user_id' => $this->ID
+			]);
+			$this->meta()->save($meta);
+		}
+		return true;
 	}
 
 	public function getCCMStatusAttribute() {
