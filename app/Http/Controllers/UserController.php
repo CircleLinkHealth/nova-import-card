@@ -380,9 +380,9 @@ class UserController extends Controller {
 		}
 
 		// set role
-		$capabilities = unserialize($userMeta['wp_' . $wpUser->program_id . '_capabilities']);
-		$wpRole = '';
-		if(is_array($capabilities)) {
+		$capabilities = array();
+		if(isset($userMeta['wp_' . $wpUser->program_id . '_capabilities'])) {
+			$capabilities = unserialize($userMeta['wp_' . $wpUser->program_id . '_capabilities']);
 			$wpRole = key($capabilities);
 		}
 

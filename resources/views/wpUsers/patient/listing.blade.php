@@ -60,7 +60,7 @@
                                 { id:"first_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#key#')); ?>'>#first_name# #last_name#</a>", width:100, sort:'string',adjust:true, fillspace:true},
                                 { id:"last_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#key#')); ?>'>#last_name#, #first_name#</a>", width:120, sort:'string',adjust:true, fillspace:true},
                                 { id:"ccm_status",   header:["CCM Status",{content:"selectFilter"}],    width:105, sort:'string'},
-                                { id:"careplan_status",    header:["CP Status",{content:"selectFilter", placeholder:"Filter"}], tooltip:"#tooltip#" , width:125,
+                                { id:"careplan_status",    header:["CarePlan Status",{content:"selectFilter", placeholder:"Filter"}], tooltip:"#tooltip#" , width:125,
                                     template: function (obj) {
                                         return ""+obj.careplan_status_link+"";}},
                                 { id:"dob",   header:["DOB",{content:"dateFilter", placeholder:"Filter"}],    width:100, sort:'string'},
