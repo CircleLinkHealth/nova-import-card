@@ -65,24 +65,9 @@ Class ReportsService
     }
 
     public function getProblemsToMonitor(User $user){
-        $carePlan = CarePlan::where('user_id', '=', $user->ID)->where('type', '=', 'Patient Default')->first();
-
-// process the parent items in careplans active sections
-        if($carePlan) {
-            foreach($carePlan->careSections as $careSection) {
-                // add parent items to each section
-                $careSection->carePlanItems = $carePlan->carePlanItems()
-                    ->where('section_id', '=', $careSection->id)
-                    ->where('parent_id', '=', 0)
-                    ->where('meta_key','status')
-                    ->where('meta_value','Active')
-                    ->orderBy('ui_sort', 'asc')
-                    ->with(array('children' => function ($query) {
-                        $query->orderBy('ui_sort', 'asc');
-                    }))
-                    ->get();
-            }
-        }
+        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+            ->first();
+        $carePlan->build($user->ID);
         $itemsToMonitor = array();
         foreach($carePlan->careSections as $section){
             if($section->name == 'diagnosis-problems-to-monitor'){
@@ -95,24 +80,9 @@ Class ReportsService
     }
     public function getMedicationStatus(User $user, $fromApp = true){
 
-        $carePlan = CarePlan::where('user_id', '=', $user->ID)->where('type', '=', 'Patient Default')->first();
-
-// process the parent items in careplans active sections
-        if($carePlan) {
-            foreach($carePlan->careSections as $careSection) {
-                // add parent items to each section
-                $careSection->carePlanItems = $carePlan->carePlanItems()
-                    ->where('section_id', '=', $careSection->id)
-                    ->where('parent_id', '=', 0)
-                    ->where('meta_key','status')
-                    ->where('meta_value','Active')
-                    ->orderBy('ui_sort', 'asc')
-                    ->with(array('children' => function ($query) {
-                        $query->orderBy('ui_sort', 'asc');
-                    }))
-                    ->get();
-            }
-        }
+        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+            ->first();
+        $carePlan->build($user->ID);
         $medications_categories = array();
         foreach($carePlan->careSections as $section){
             if($section->name == 'medications-to-monitor'){
@@ -225,7 +195,9 @@ Class ReportsService
     }
 
     public function getTargetValueForBiometric($biometric, $user){
-        $carePlan = CarePlan::where('user_id', '=', $user->ID)->where('type', '=', 'Patient Default')->first();
+        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+            ->first();
+        $carePlan->build($user->ID);
         switch($biometric){
             case "Weight":
                 return $carePlan->getCareItemValue('weight-target-weight'); break;
