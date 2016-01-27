@@ -13,10 +13,10 @@ class CreateSnomedToIcdMapTable extends Migration {
 	public function up()
 	{
 		Schema::create('snomed_to_icd10_map', function(Blueprint $table) {
-			$table->bigInteger('snomedCode');
-			$table->string('snomedName');
-			$table->string('icd10Code');
-			$table->string('icd10Name');
+			$table->bigInteger('snomed_code');
+			$table->string('snomed_name');
+			$table->string('icd_10_code');
+			$table->string('icd_10_name');
 		});
 
 
