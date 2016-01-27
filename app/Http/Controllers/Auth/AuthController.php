@@ -78,10 +78,10 @@ class AuthController extends Controller {
 		switch ($role)
 		{
 			case 'administrator': return '/admin';
-			case 'manager': return '/manager';
-			case 'participant': return '/participant';
-			case 'provider': return '/provider';
-			default: return '/';
+			case 'manager': return '/manage-patients';
+			case 'participant': return '/manage-patients';
+			case 'provider': return '/manage-patients';
+			default: return '/manage-patients';
 		}
 	}
 }
