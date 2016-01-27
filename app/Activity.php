@@ -102,7 +102,7 @@ class Activity extends Model {
 
     public function getActivityCommentFromMeta($id)
     {
-        $comment = DB::table('activitymeta')->where('activity_id',$id)->where('meta_key','comment')->pluck('meta_value');
+        $comment = DB::table('lv_activitymeta')->where('activity_id',$id)->where('meta_key','comment')->pluck('meta_value');
 
         if($comment){
         return $comment;

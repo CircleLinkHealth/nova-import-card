@@ -199,7 +199,7 @@ class NotesController extends Controller
         $patient = User::find($patientId);
         $note_act = Activity::find($noteId);
         $metaComment = $note_act->getActivityCommentFromMeta($noteId);
-        $phone = DB::table('activitymeta')->where('activity_id', $noteId)->where('meta_key', 'phone')->pluck('meta_value');
+        $phone = DB::table('lv_activitymeta')->where('activity_id', $noteId)->where('meta_key', 'phone')->pluck('meta_value');
 
         //Set up note pack for view
         $note = array();
