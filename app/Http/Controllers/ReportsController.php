@@ -129,8 +129,8 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['colsum_other'] = 0;
 				$u20_patients[$act_count]['colsum_total'] = 0;
 				$u20_patients[$act_count]['ccm_status'] = ucwords($patient->CCMStatus);
-				$u20_patients[$act_count]['dob'] = $patient->getBirthDateAttribute();
-				$u20_patients[$act_count]['patient_name'] = $patient->getFullNameAttribute();
+				$u20_patients[$act_count]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
+				$u20_patients[$act_count]['patient_name'] = $patient->fullName;
 				$u20_patients[$act_count]['patient_id'] = $patient->ID;
 				$acts = DB::table('lv_activities')
 					->select(DB::raw('*,DATE(performed_at),provider_id, type'))
@@ -241,11 +241,11 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['colsum_other'] = 0;
 				$u20_patients[$act_count]['colsum_total'] = 0;
 				$u20_patients[$act_count]['ccm_status'] = ucwords($patient->CCMStatus);
-				$u20_patients[$act_count]['dob'] = $patient->getBirthDateAttribute();
-				$u20_patients[$act_count]['patient_name'] = $patient->getFullNameAttribute();
-				$provider = User::find(intval($patient->getLeadContactIDAttribute()));
+				$u20_patients[$act_count]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
+				$u20_patients[$act_count]['patient_name'] = $patient->fullName;
+				$provider = User::find(intval($patient->leadContactID));
 				if($provider){
-					$u20_patients[$act_count]['provider_name'] = $provider->getFullNameAttribute();
+					$u20_patients[$act_count]['provider_name'] = $provider->fullName;
 				} else {
 					$u20_patients[$act_count]['provider_name'] = '';
 				}
