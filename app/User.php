@@ -94,7 +94,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"zip" => "required",
 		"preferred_contact_time" => "required",
 		"timezone" => "required",
-		"consent_date" => "required"
+		"consent_date" => "required",
+		"ccm_status" => "required",
+		"program_id" => "required"
 	);
 
 
@@ -427,7 +429,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setCCMStatusAttribute($status) {
 		$meta = $this->meta()->where('meta_key', 'ccm_status')->first();
 		if(empty($meta)) {
-			return false;
+			$meta = new UserMeta;
+			$meta->meta_key = 'ccm_status';
+			$meta->user_id = $this->ID;
 		}
 		$statusBefore = $meta->meta_value;
 		$meta->meta_value = $status;

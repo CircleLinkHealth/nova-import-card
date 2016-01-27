@@ -1,6 +1,6 @@
 <div class="main-form-progress">
     <div class="row row-centered">
-        @if(isset($patient) && !$new_user )
+        @if(isset($patient->ID) )
             <div class="progress-buttons col-sm-12 col-centered text-center">
                 @if(Route::is('patient.demographics.show'))
                     <button type="submit" class="btn btn-green btn-next inline-block">Submit</button>
@@ -44,6 +44,10 @@
                 @else
                     <p class="">&nbsp;</p>
                 @endif
+            </div>
+        @else
+            <div class="progress-buttons col-sm-12 col-centered text-center">
+                <button type="submit" class="btn btn-green btn-next inline-block">Add Patient</button>
             </div>
         @endif
     </div>

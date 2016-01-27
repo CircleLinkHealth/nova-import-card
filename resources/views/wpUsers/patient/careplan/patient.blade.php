@@ -1,6 +1,5 @@
 <?php
 $user_info = array();
-$new_user = false;
 ?>
 
 @extends('partials.providerUI')
@@ -11,7 +10,7 @@ $new_user = false;
     {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row">
         <div class="icon-container col-lg-12">
-            @if(isset($patient->ID) && !$new_user )
+            @if(isset($patient->ID) )
                 @include('wpUsers.patient.careplan.nav')
             @else
                 @include('errors.errors')
@@ -19,13 +18,13 @@ $new_user = false;
         </div>
     </div>
     <div class="row" style="margin-top:60px;">
-        @if(!isset($patient->ID) && !$new_user )
+        @if(!isset($patient->ID) )
             <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
         @endif
         <div class="main-form-container-last col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title">
-                    @if(isset($patient->ID) && !$new_user )
+                    @if(isset($patient->ID) )
                         <div class="main-form-title col-lg-12">
                             Edit Patient
                         </div>
@@ -41,7 +40,6 @@ $new_user = false;
                             <h4 class="form-title">Contact Information</h4>
                             <p><span class="attention">*</span> Required Field</p>
                             <input type=hidden name=user_id value="{{ $patient->ID }}">
-                            <input type=hidden name=program_id value="{{ $programId }}">
                             <input type=hidden name=display_name value="{{ $patient->display_name }}">
                             <input type=hidden name=role value="{{ $patientRoleId }}">
                             <input type=hidden name=daily_reminder_optin value="Y">
@@ -239,10 +237,22 @@ $new_user = false;
                                     <span class="btn btn-group  text-right"><a class="btn btn-green btn-sm inline-block" omitsubmit="yes" role="button" target="_Blank" href="https://s3.amazonaws.com/clh-downloads/Circlelink+CCM+Consent+Form.pdf">Download Form</a></span>
                                 </div>
 
-                                <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_location') ? 'has-error' : '' }}">
+                                @if(isset($patient->ID) )
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
+                                        {!! Form::label('program_id', 'Program:') !!}
+                                        {!! Form::select('program_id', $programs, $patient->program_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;', 'disabled' => 'disabled']) !!}
+                                    </div>
+                                    <input type=hidden name=program_id value="{{ $programId }}">
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
                                         {!! Form::label('preferred_contact_location', 'Contact Location:') !!}
                                         {!! Form::select('preferred_contact_location', $locations, $userConfig['preferred_contact_location'], ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
-                                </div>
+                                    </div>
+                                @else
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
+                                        {!! Form::label('program_id', 'Program:') !!}
+                                        {!! Form::select('program_id', $programs, $patient->program_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
+                                    </div>
+                                @endif
 
                                 <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('status') ? 'has-error' : '' }}">
                                     <div class="row">

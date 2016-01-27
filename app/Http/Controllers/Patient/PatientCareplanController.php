@@ -42,6 +42,7 @@ class PatientCareplanController extends Controller {
 
 		// determine if existing user or new user
 		$user = new User;
+		$programId = false;
 		if($patientId) {
 			$user = User::find($patientId);
 			if (!$user) {
@@ -57,7 +58,7 @@ class PatientCareplanController extends Controller {
 		}
 
 		// get program
-		$programId = $user->program_id;
+		$programs = WpBlog::lists('name', 'blog_id');
 
 		// roles
 		$patientRoleId = Role::where('name', '=', 'participant')->first();
@@ -83,7 +84,10 @@ class PatientCareplanController extends Controller {
 
 		// locations @todo get location id for WpBlog
 		$program = WpBlog::find($programId);
-		$locations = Location::where('parent_id', '=', $program->location_id)->lists('name', 'id');
+		$locations = array();
+		if($program) {
+			$locations = Location::where('parent_id', '=', $program->location_id)->lists('name', 'id');
+		}
 
 		// States (for dropdown)
 		$states = array('AL'=>"Alabama",'AK'=>"Alaska",'AZ'=>"Arizona",'AR'=>"Arkansas",'CA'=>"California",'CO'=>"Colorado",'CT'=>"Connecticut",'DE'=>"Delaware",'DC'=>"District Of Columbia",'FL'=>"Florida",'GA'=>"Georgia",'HI'=>"Hawaii",'ID'=>"Idaho",'IL'=>"Illinois", 'IN'=>"Indiana", 'IA'=>"Iowa",  'KS'=>"Kansas",'KY'=>"Kentucky",'LA'=>"Louisiana",'ME'=>"Maine",'MD'=>"Maryland", 'MA'=>"Massachusetts",'MI'=>"Michigan",'MN'=>"Minnesota",'MS'=>"Mississippi",'MO'=>"Missouri",'MT'=>"Montana",'NE'=>"Nebraska",'NV'=>"Nevada",'NH'=>"New Hampshire",'NJ'=>"New Jersey",'NM'=>"New Mexico",'NY'=>"New York",'NC'=>"North Carolina",'ND'=>"North Dakota",'OH'=>"Ohio",'OK'=>"Oklahoma", 'OR'=>"Oregon",'PA'=>"Pennsylvania",'RI'=>"Rhode Island",'SC'=>"South Carolina",'SD'=>"South Dakota",'TN'=>"Tennessee",'TX'=>"Texas",'UT'=>"Utah",'VT'=>"Vermont",'VA'=>"Virginia",'WA'=>"Washington",'WV'=>"West Virginia",'WI'=>"Wisconsin",'WY'=>"Wyoming");
@@ -94,7 +98,7 @@ class PatientCareplanController extends Controller {
 			$timezones[$timezone] = $timezone;
 		}
 
-		return view('wpUsers.patient.careplan.patient', compact(['patient', 'userMeta', 'userConfig','states', 'locations', 'timezones', 'messages', 'patientRoleId', 'programId']));
+		return view('wpUsers.patient.careplan.patient', compact(['patient', 'userMeta', 'userConfig','states', 'locations', 'timezones', 'messages', 'patientRoleId', 'programs', 'programId']));
 	}
 
 
@@ -124,16 +128,17 @@ class PatientCareplanController extends Controller {
 
 		$userRepo = new UserRepository();
 
-		// validate
-		$this->validate($request, $user->patient_rules);
-
 		if($patientId) {
+			// validate
+			$this->validate($request, $user->patient_rules);
 			$userRepo->editUser($user, $params);
 			if($params->get('direction')) {
 				return redirect($params->get('direction'))->with('messages', ['Successfully updated patient demographics.']);
 			}
 			return redirect()->back()->with('messages', ['Successfully updated patient demographics.']);
 		} else {
+			// validate
+			$this->validate($request, $user->patient_rules);
 			$role = Role::whereName('participant')->first();
 			$newUserId = str_random(15);
 			$params->add(array(
@@ -142,7 +147,7 @@ class PatientCareplanController extends Controller {
 				'user_pass' => $newUserId,
 				'user_status' => '1',
 				'user_nicename' => 'Happy Gilmore',
-				'program_id' => '7',
+				'program_id' => $params->get('program_id'),
 				'roles' => [$role->id],
 			));
 			$newUser = $userRepo->createNewUser($user, $params);
