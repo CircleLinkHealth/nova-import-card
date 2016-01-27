@@ -22,6 +22,7 @@ use PasswordHash;
 use Auth;
 use DB;
 use URL;
+use Carbon\Carbon;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -236,9 +237,6 @@ class PatientController extends Controller {
 				$careplanStatus = $patient->carePlanStatus;
 				$careplanStatusLink = '';
 				$approverName = 'NA';
-				if($patient->ID == 437) {
-					dd($patient);
-				}
 				if ($patient->carePlanStatus  == 'provider_approved') {
 					$approverId = $patient->carePlanProviderApprover;
 					$approver = User::find($approverId);
@@ -265,7 +263,7 @@ class PatientController extends Controller {
 				}
 
 				// get date of last observation
-				$lastObservationDate = '';
+				$lastObservationDate = 'No Readings';
 				$lastObservation = $patient->observations()->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->first();
 				if(!empty($lastObservation)) {
 					$lastObservationDate = date("m/d/Y", strtotime($lastObservation->obs_date));
@@ -275,15 +273,15 @@ class PatientController extends Controller {
 					'patient_name' => $patient->fullName, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
 					'first_name' => $patient->firstName, //$meta[$part->ID]["first_name"][0],
 					'last_name' => $patient->lastName, //$meta[$part->ID]["last_name"][0],
-					'ccm_status' => $patient->ccmStatus, //ucfirst($meta[$part->ID]["ccm_status"][0]),
+					'ccm_status' => ucfirst($patient->ccmStatus), //ucfirst($meta[$part->ID]["ccm_status"][0]),
 					'careplan_status' => $careplanStatus, //$careplanStatus,
 					'tooltip' => $tooltip, //$tooltip,
 					'careplan_status_link' => $careplanStatusLink, //$careplanStatusLink,
 					'careplan_provider_approver' => $approverName, //$approverName,
-					'dob' => $patient->birthDate, //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
+					'dob' => Carbon::parse($patient->birthDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
 					'phone' => $patient->phone, //$user_config[$part->ID]["study_phone_number"],
 					'age' => $patient->age,
-					'reg_date' => $patient->registrationDate, //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
+					'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
 					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
 					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
 					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
