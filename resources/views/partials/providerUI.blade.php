@@ -122,7 +122,7 @@
                 </ul>
             </li>
             <li class="inline-block">
-                <a href="{{ empty($patient) ? '' : '' }}" role="button">Print Care Plan</a>
+                <a href="{{ empty($patient) ? '#' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" role="button">Print Care Plan</a>
             </li>
         </ul>
     </div>

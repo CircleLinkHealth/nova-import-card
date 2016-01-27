@@ -2,7 +2,6 @@
 use App\CarePlan;
 use Illuminate\Support\Facades\Request;
 
-Route::get('question', 'TestController@index');
 
 Route::get('careplan/{id}', ['uses' => 'Admin\CarePlanController@carePlan', 'as' => 'careplan']);
 Route::get('careplan/{id}/section/{sectionId}', ['uses' => 'Admin\CarePlanController@carePlanSection', 'as' => 'careplan.section']);
@@ -124,6 +123,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('summary', ['uses' => 'Patient\PatientController@showPatientSummary', 'as' => 'patient.summary']);
 		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patient.alerts']);
 		Route::get('input/observation', ['uses' => 'Patient\PatientController@showPatientObservationCreate', 'as' => 'patient.observation.create']);
+		Route::get('view-careplan', ['uses' => 'Patient\PatientCareplanController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
 		Route::post('input/observation/create', ['uses' => 'ObservationController@store', 'as' => 'patient.observation.store']);
 
 		// careplan
@@ -137,8 +137,6 @@ Route::group(['middleware' => 'auth'], function ()
 			// careplan sections
 			Route::get('sections/{page}', ['uses' => 'Patient\PatientCareplanController@showPatientCareplan', 'as' => 'patient.careplan.show']);
 			Route::post('sections', ['uses' => 'Patient\PatientCareplanController@storePatientCareplan', 'as' => 'patient.careplan.store']);
-			// print
-			Route::get('sections/print', ['uses' => 'Patient\PatientCareplanController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
 		});
 
 		// notes

@@ -409,12 +409,14 @@ class PatientCareplanController extends Controller {
 	 */
 	public function showPatientCareplanPrint(Request $request, $patientId = false)
 	{
+		debug('h');
 		$wpUser = array();
 		if($patientId) {
-			$wpUser = User::find($patientId);
-			if (!$wpUser) {
+			$user = User::find($patientId);
+			if (!$user) {
 				return response("User not found", 401);
 			}
+			return view('wpUsers.patient.careplan.print', ['patient' => $user]);
 		}
 
 		// program
