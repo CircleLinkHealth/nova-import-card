@@ -78,8 +78,11 @@ class PatientCareplanController extends Controller {
 				$userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
 			}
 			// set role
-			$capabilities = unserialize($userMeta['wp_' . $programId . '_capabilities']);
-			$wpRole = key($capabilities);
+			$capabilities = array();
+			if(isset($userMeta['wp_' . $programId . '_capabilities'])) {
+				$capabilities = unserialize($userMeta['wp_' . $programId . '_capabilities']);
+				$wpRole = key($capabilities);
+			}
 		}
 
 		// locations @todo get location id for WpBlog
