@@ -228,10 +228,17 @@ class PatientController extends Controller {
 			})->get();
 		if($patients->count() > 0) {
 			foreach ($patients as $patient) {
+				// skip if patient has no name
+				if(empty($patient->firstName)) {
+					continue 1;
+				}
 				// careplan status stuff from 2.x
 				$careplanStatus = $patient->carePlanStatus;
 				$careplanStatusLink = '';
 				$approverName = 'NA';
+				if($patient->ID == 437) {
+					dd($patient);
+				}
 				if ($patient->carePlanStatus  == 'provider_approved') {
 					$approverId = $patient->carePlanProviderApprover;
 					$approver = User::find($approverId);
@@ -245,14 +252,14 @@ class PatientController extends Controller {
 					$careplanStatus = 'Approve Now';
 					$tooltip = $careplanStatus;
 					$careplanStatusLink = 'Approve Now';
-					if ($patient->hasRole('provider')) {
+					if (Auth::user()->hasRole('provider')) {
 						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '/manage-patients/patient-care-plan/?user=' . $patient->ID . '"><strong>Approve Now</strong></a>';
 					}
 				} else if ($patient->carePlanStatus == 'draft') {
 					$careplanStatus = 'CLH Approve';
 					$tooltip = $careplanStatus;
 					$careplanStatusLink = 'CLH Approve';
-					if ($patient->hasRole('care-center', 'administrator')) {
+					if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
 						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '/manage-patients/add-patient/?user=' . $patient->ID . '"><strong>CLH Approve</strong></a>';
 					}
 				}
@@ -265,7 +272,7 @@ class PatientController extends Controller {
 				}
 
 				$patientData[] = array('key' => $patient->ID, // $part->ID,
-					'patient_name' => $patient->fullNameWithId, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
+					'patient_name' => $patient->fullName, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
 					'first_name' => $patient->firstName, //$meta[$part->ID]["first_name"][0],
 					'last_name' => $patient->lastName, //$meta[$part->ID]["last_name"][0],
 					'ccm_status' => $patient->ccmStatus, //ucfirst($meta[$part->ID]["ccm_status"][0]),
