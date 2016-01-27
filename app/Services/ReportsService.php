@@ -200,13 +200,13 @@ Class ReportsService
         $carePlan->build($user->ID);
         switch($biometric){
             case "Weight":
-                return $carePlan->getCareItemValue('weight-target-weight'); break;
+                return $carePlan->getCareItemUserValue($user, 'weight-target-weight'); break;
             case "Blood_Sugar":
-                return $carePlan->getCareItemValue('blood-sugar-target-bs'); break;
+                return $carePlan->getCareItemUserValue($user, 'blood-sugar-target-bs'); break;
             case "Blood_Pressure":
-                return $carePlan->getCareItemValue('blood-pressure-target-bp'); break;
+                return $carePlan->getCareItemUserValue($user, 'blood-pressure-target-bp'); break;
             case "Smoking":
-                return $carePlan->getCareItemValue('smoking-per-day-target-count'); break;
+                return $carePlan->getCareItemUserValue($user, 'smoking-per-day-target-count'); break;
             default: return '0';
         }
     }
