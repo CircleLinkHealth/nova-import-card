@@ -64,7 +64,7 @@
                 <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add Patient</a></li>
                 <li><a href="{{ URL::route('patients.alerts') }}"><i class="icon--alert--white"></i> Alerts</a></li>
                 @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
-                    <li><a class="btn btn-primary btn-xs" href="{{ empty($patient) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->ID)) }}"><i class="icon--home--white"></i> Admin</a></li>
+                    <li><a class="btn btn-primary btn-xs" href="{{ empty($patient->ID) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->ID)) }}"><i class="icon--home--white"></i> Admin</a></li>
                 @endif
                 <li><a href="{{ url('/auth/logout') }}"><i class="icon--logout"></i> Logout</a></li>
             </ul>
