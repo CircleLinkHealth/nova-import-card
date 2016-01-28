@@ -168,9 +168,6 @@ return [
 		'Fideloper\Proxy\TrustedProxyServiceProvider',
 		'MikeMcLin\WpPassword\WpPasswordProvider',
         \rigor789\AirbrakeLaravel\AirbrakeServiceProvider::class,
-
-
-
 	],
 
 	/*

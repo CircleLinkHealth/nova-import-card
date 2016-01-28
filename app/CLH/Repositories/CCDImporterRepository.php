@@ -2,8 +2,6 @@
 
 namespace App\CLH\Repositories;
 
-
-use App\CLH\Repositories\UserRepository;
 use App\Role;
 use App\User;
 use Symfony\Component\HttpFoundation\ParameterBag;

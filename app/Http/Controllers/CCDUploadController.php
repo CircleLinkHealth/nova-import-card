@@ -1,15 +1,13 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\CCD\Importer\Parsers\CCDImportParser;
+use App\CLH\CCD\Importer\Parsers\CCDImporter;
 use App\CLH\CCD\Parser\CCDParser;
 use App\CLH\Repositories\CCDImporterRepository;
-use App\CLH\Repositories\UserRepository;
 use App\Http\Requests;
 use App\ParsedCCD;
-use App\User;
 use App\XmlCCD;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Illuminate\Support\Facades\Log;
 
 class CCDUploadController extends Controller {
 
@@ -35,12 +33,16 @@ class CCDUploadController extends Controller {
         //CCDs just added to XML_CCDs table
         $uploaded = [];
 
+
         if ($request->hasFile('file')) {
             foreach ($request->file('file') as $file) {
+                if (empty($file)) {
+                    Log::error('It seems like this file did not upload. Here is what I have for $file in '
+                        . self::class . '@uploadRawFiles() ==>' . $file);
+                    continue;
+                }
 
-                if (empty($file->getPathName())) continue;
-
-                $xml = file_get_contents($file->getPathName());
+                $xml = file_get_contents($file);
 
                 if($request->session()->has('blogId')) {
                     $blogId = $request->session()->get('blogId');
@@ -97,15 +99,15 @@ class CCDUploadController extends Controller {
 
         $receivedFiles = json_decode($request->getContent());
 
-        /**
-         * Returns empty because it's most probably called asynchronously from the uploader,
-         * and we don't really want to trigger any errors.
-         * @todo: there must be a much better way to do this on the JS side
-         */
-//        if (empty($receivedFiles)) return response()->json('Transporting duplicate CCDs to the server has failed.', 500);
         if (empty($receivedFiles)) return;
 
         foreach ($receivedFiles as $file) {
+
+            if (empty($file)) {
+                Log::error('It seems like this file did not upload. Here is what I have for $file in '
+                    . self::class . '@uploadDuplicateRawFiles() ==>' . $file);
+                continue;
+            }
 
             $parser = new CCDParser($file->xml);
             $fullName = $parser->getFullName();
@@ -147,12 +149,6 @@ class CCDUploadController extends Controller {
     {
         $receivedFiles = json_decode($request->getContent());
 
-        /**
-         * Returns empty because it's most probably called asynchronously from the uploader,
-         * and we don't really want to trigger any errors.
-         * @todo: there must be a much better way to do this on the JS side
-         */
-//        if (empty($receivedFiles)) return response()->json('Transporting parsed CCDs to the server has failed.', 500);
         if (empty($receivedFiles)) return;
 
         foreach ($receivedFiles as $file) {
@@ -167,14 +163,11 @@ class CCDUploadController extends Controller {
                 throw new \Exception('Blog ID missing.', 400);
             }
 
-            $importParser = (new CCDImportParser($blogId, $parsedCCD))->parse();
-
-            $userRepo = new UserRepository();
-            $wpUser = User::find($parsedCCD->user_id);
-
-            $userRepo->updateUserConfig($wpUser, new ParameterBag($importParser->userConfig));
-
-            $userRepo->saveOrUpdateUserMeta($wpUser, new ParameterBag($importParser->userMeta));
+            /**
+             * The CCDImporter calls any necessary Parsers
+             */
+            $importer = new CCDImporter($blogId, $parsedCCD);
+            $importer->generateCarePlanFromCCD();
         }
 
         return response()->json('Files received and processed successfully', 200);

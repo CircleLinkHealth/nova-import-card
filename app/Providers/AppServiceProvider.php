@@ -29,6 +29,12 @@ class AppServiceProvider extends ServiceProvider {
 			'Illuminate\Contracts\Auth\Registrar',
 			'App\Services\Registrar'
 		);
+
+		if ($this->app->environment('local')) {
+			$this->app->register('Orangehill\Iseed\IseedServiceProvider');
+			$this->app->register('Way\Generators\GeneratorsServiceProvider');
+			$this->app->register('Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider');
+		}
 	}
 
 }

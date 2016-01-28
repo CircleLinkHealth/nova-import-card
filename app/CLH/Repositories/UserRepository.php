@@ -14,55 +14,60 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserRepository {
 
-    public function createNewUser(User $wpUser, ParameterBag $params)
+    public function createNewUser(User $user, ParameterBag $params)
     {
-        $wpUser = $wpUser->createNewUser($params->get('user_email'), $params->get('user_pass'));
+        $user = $user->createNewUser($params->get('user_email'), $params->get('user_pass'));
 
-        $wpUser->load('meta');
+        $user->load('meta');
 
         // the basics
-        $wpUser->user_nicename = $params->get('user_nicename');
-        $wpUser->user_login = $params->get('user_login');
-        $wpUser->user_status = $params->get('user_status');
-        $wpUser->display_name = $params->get('display_name');
-        $wpUser->program_id = $params->get('program_id');
-        $wpUser->user_registered = date('Y-m-d H:i:s');
-        $wpUser->save();
+        $user->user_nicename = $params->get('user_nicename');
+        $user->user_login = $params->get('user_login');
+        $user->user_status = $params->get('user_status');
+        $user->display_name = $params->get('display_name');
+        $user->program_id = $params->get('program_id');
+        $user->user_registered = date('Y-m-d H:i:s');
+        $user->save();
 
-        $this->saveOrUpdateRoles($wpUser, $params);
-        $this->saveOrUpdateUserMeta($wpUser, $params);
-        $this->updateUserConfig($wpUser, $params);
-        $this->saveOrUpdatePrograms($wpUser, $params);
-        $this->createDefaultCarePlan($wpUser, $params);
+        $this->saveOrUpdateRoles($user, $params);
+        $this->saveOrUpdateUserMeta($user, $params);
+        $this->updateUserConfig($user, $params);
+        $this->saveOrUpdatePrograms($user, $params);
+        $this->createDefaultCarePlan($user, $params);
 
         //Add Email Notification
+<<<<<<< Updated upstream
         $sendTo =  ['Plawlor@circlelinkhealth.com','rohanm@circlelinkhealth.com'];
         $this->adminEmailNotify($wpUser, $sendTo);
+=======
+        $sendTo =  ['Plawlor@circlelinkhealth.com','rohanm@circlelinkhealth.com','lindaw@circlelinkhealth.com'];
+        $this->adminEmailNotify($user, $sendTo);
+>>>>>>> Stashed changes
 
-        $wpUser->push();
-        return $wpUser;
+        $user->push();
+        return $user;
     }
 
-    public function editUser(User $wpUser, ParameterBag $params)
+    public function editUser(User $user, ParameterBag $params)
     {
         // the basics
-        $wpUser->user_nicename = '';
-        $wpUser->user_login = $params->get('user_login');
-        $wpUser->user_status = $params->get('user_status');
-        $wpUser->display_name = $params->get('display_name');
-        $wpUser->program_id = $params->get('program_id');
-        $wpUser->save();
+        $user->user_nicename = '';
+        $user->user_login = $params->get('user_login');
+        $user->user_status = $params->get('user_status');
+        $user->display_name = $params->get('display_name');
+        $user->program_id = $params->get('program_id');
+        $user->save();
 
-        $this->saveOrUpdateRoles($wpUser, $params);
-        $this->saveOrUpdateUserMeta($wpUser, $params);
-        $this->updateUserConfig($wpUser, $params);
-        $this->saveOrUpdatePrograms($wpUser, $params);
+        $this->saveOrUpdateRoles($user, $params);
+        $this->saveOrUpdateUserMeta($user, $params);
+        $this->updateUserConfig($user, $params);
+        $this->saveOrUpdatePrograms($user, $params);
 
-        return $wpUser;
+        return $user;
     }
 
 
-    public function saveOrUpdateUserMeta(User $wpUser, ParameterBag $params)
+    public function saveOrUpdateUserMeta(User $user, ParameterBag $params)
     {
         $userMetaTemplate = (new UserMetaTemplate())->getArray();
 
@@ -70,12 +75,12 @@ class UserRepository {
         {
             // ccm_status use set attribute
             if($key == 'ccm_status') {
-                $wpUser->ccmStatus = $params->get($key);
+                $user->ccmStatus = $params->get($key);
                 continue 1;
             }
-            $userMeta = $wpUser->meta()->firstOrNew([
+            $userMeta = $user->meta()->firstOrNew([
                 'meta_key' => $key,
-                'user_id' => $wpUser->ID
+                'user_id' => $user->ID
             ]);
 
             if(($params->get($key))) {
@@ -84,15 +89,46 @@ class UserRepository {
                 $userMeta->meta_value = $value;
             }
 
-            $wpUser->meta()->save($userMeta);
+            $user->meta()->save($userMeta);
         }
+<<<<<<< Updated upstream
+=======
+
+        $ccmStatusAfter = $userMeta = $user->meta()->firstOrNew([
+            'meta_key' => 'ccm_status',
+            'user_id' => $user->ID
+        ]);
+
+        /*
+        if( $ccmStatusBefore !== $ccmStatusAfter ) {
+            if ($ccmStatusAfter == 'enrolled') {
+                if  ($ccmStatusBefore == 'paused' ){
+                    update_user_meta($user->ID, "date_paused", date("Y-m-d H:i:s"));
+                }
+                if  ($ccmStatusBefore == 'withdrawn' ){
+                    update_user_meta($user->ID, "date_withdrawn", date("Y-m-d H:i:s"));
+                }
+            };
+            if ($ccmStatusAfter == 'paused') {
+                if  ($ccmStatusBefore == 'withdrawn' ){
+                    update_user_meta($user->ID, "date_withdrawn", date("Y-m-d H:i:s"));
+                }
+            };
+            if ($ccmStatusAfter == 'withdrawn') {
+                if  ($ccmStatusBefore == 'paused' ){
+                    update_user_meta($user->ID, "date_paused", date("Y-m-d H:i:s"));
+                }
+            };
+        }
+        */
+>>>>>>> Stashed changes
     }
 
-    public function saveOrUpdateRoles(User $wpUser, ParameterBag $params)
+    public function saveOrUpdateRoles(User $user, ParameterBag $params)
     {
         // support for both single or array or roles
         if(!empty($params->get('role'))) {
-            $wpUser->roles()->sync(array($params->get('role')));
+            $user->roles()->sync(array($params->get('role')));
             return true;
         }
 
@@ -100,20 +136,20 @@ class UserRepository {
             // support if one role is passed in as a string
             if(!is_array($params->get('roles'))) {
                 $roleId = $params->get('roles');
-                $wpUser->roles()->sync(array($roleId));
+                $user->roles()->sync(array($roleId));
             } else {
-                $wpUser->roles()->sync($params->get('roles'));
+                $user->roles()->sync($params->get('roles'));
             }
         } else {
-            $wpUser->roles()->sync([]);
+            $user->roles()->sync([]);
         }
     }
 
-    public function saveOrUpdatePrograms(User $wpUser, ParameterBag $params)
+    public function saveOrUpdatePrograms(User $user, ParameterBag $params)
     {
         // get selected programs
         $userPrograms = array();
-        if($params->get('programs')) { // && ($wpUser->programs->count() > 0)
+        if($params->get('programs')) { // && ($user->programs->count() > 0)
             $userPrograms = $params->get('programs');
         }
         if($params->get('program_id')) {
@@ -136,36 +172,36 @@ class UserRepository {
         }
 
         // first detatch relationship
-        $wpUser->programs()->detach();
+        $user->programs()->detach();
 
         $wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('blog_id');
         foreach($wpBlogs as $wpBlogId) {
             if (!in_array($wpBlogId, $userPrograms)) {
-                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->delete();
-                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->delete();
+                $user->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->delete();
+                $user->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->delete();
             } else {
-                $wpUser->programs()->attach($wpBlogId);
+                $user->programs()->attach($wpBlogId);
                 // user level
-                $userLevel = $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->first();
+                $userLevel = $user->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->first();
                 if($userLevel) {
                     $userLevel->meta_value = "0";
                 } else {
                     $userLevel = new UserMeta;
                     $userLevel->meta_key = "wp_{$wpBlogId}_user_level";
                     $userLevel->meta_value = "0";
-                    $userLevel->user_id = $wpUser->ID;
+                    $userLevel->user_id = $user->ID;
                 }
                 $userLevel->save();
 
                 // capabilities
-                $capabilities = $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->first();
+                $capabilities = $user->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->first();
                 if($capabilities) {
                     $capabilities->meta_value = serialize(array($role->name => '1'));
                 } else {
                     $capabilities = new UserMeta;
                     $capabilities->meta_key = "wp_{$wpBlogId}_capabilities";
                     $capabilities->meta_value = serialize(array($role->name => '1'));
-                    $capabilities->user_id = $wpUser->ID;
+                    $capabilities->user_id = $user->ID;
                 }
                 $capabilities->save();
             }
@@ -173,15 +209,15 @@ class UserRepository {
     }
 
 
-    public function updateUserConfig(User $wpUser, ParameterBag $params)
+    public function updateUserConfig(User $user, ParameterBag $params)
     {
         // meta
-        $userMeta = UserMeta::where('user_id', '=', $wpUser->ID)->lists('meta_value', 'meta_key');
+        $userMeta = UserMeta::where('user_id', '=', $user->ID)->lists('meta_value', 'meta_key');
 
         // config
         $userConfig = (new UserConfigTemplate())->getArray();
-        if (isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
-            $userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
+        if (isset($userMeta['wp_' . $user->program_id . '_user_config'])) {
+            $userConfig = unserialize($userMeta['wp_' . $user->program_id . '_user_config']);
             $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
         }
 
@@ -193,25 +229,25 @@ class UserRepository {
             }
         }
 
-        $setUserConfig = $wpUser->meta()->whereMetaKey("wp_{$params->get('program_id')}_user_config")->first();
+        $setUserConfig = $user->meta()->whereMetaKey("wp_{$params->get('program_id')}_user_config")->first();
         if($setUserConfig) {
             $setUserConfig->meta_value = serialize($userConfig);
         } else {
             $setUserConfig = new UserMeta;
             $setUserConfig->meta_key = "wp_{$params->get('program_id')}_user_config";
             $setUserConfig->meta_value = serialize($userConfig);
-            $setUserConfig->user_id = $wpUser->ID;
+            $setUserConfig->user_id = $user->ID;
         }
         $setUserConfig->save();
     }
 
 
-    public function createDefaultCarePlan($wpUser, $params) {
+    public function createDefaultCarePlan($user, $params) {
         // get providers
-        $sections = CPRulesPCP::where('prov_id', '=' , $wpUser->program_id)->get();
+        $sections = CPRulesPCP::where('prov_id', '=' , $user->program_id)->get();
         if(count($sections) > 0) {
             foreach ($sections as $section) {
-                $sectionData = (new CareplanUIService)->getCareplanSectionData($wpUser->program_id, $section->section_text, $wpUser);
+                $sectionData = (new CareplanUIService)->getCareplanSectionData($user->program_id, $section->section_text, $user);
                 if (empty($sectionData)) {
                     return false;
                 }
@@ -235,7 +271,7 @@ class UserRepository {
                         //echo "Adding to UCP! meta_key = status meta_value = " . $child1Info['status'] . "<br><br>";
                         $newUCP = new CPRulesUCP;
                         $newUCP->items_id = $itemData[$parentItemName][0][$child1Key]['items_id'];
-                        $newUCP->user_id = $wpUser->ID;
+                        $newUCP->user_id = $user->ID;
                         $newUCP->meta_key = 'status';
                         $newUCP->meta_value = $child1Info['status'];
                         $newUCP->save();
@@ -255,7 +291,7 @@ class UserRepository {
                                 //echo "Adding to UCP! meta_key = value meta_value = " . $child2Info['ui_default'];
                                 $newUCP = new CPRulesUCP;
                                 $newUCP->items_id = $child2Info['items_id'];
-                                $newUCP->user_id = $wpUser->ID;
+                                $newUCP->user_id = $user->ID;
                                 $newUCP->meta_key = 'value';
                                 $newUCP->meta_value = $child2Info['ui_default'];
                                 $newUCP->save();
