@@ -247,11 +247,17 @@ class ActivityController extends Controller {
 			$start = $time->startOfMonth()->format('Y-m-d');
 			$end = $time->endOfMonth()->format('Y-m-d');
 			$month_selected = $time->format('m');
+			$month_selected_text = $time->format('F');
+			$year_selected = $time->format('Y');
+
 		} else {
 			$time = Carbon::now();
 			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
 			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
 			$month_selected = $time->format('m');
+			$month_selected_text = $time->format('F');
+			$year_selected = $time->format('Y');
+
 		}
 
 		$acts = DB::table('lv_activities')
@@ -286,11 +292,13 @@ class ActivityController extends Controller {
 		}
 
 		$months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-		debug($reportData);
+		debug($month_selected_text);
 		return view('wpUsers.patient.activity.index',
 			['activity_json' => $reportData,
 				'years' => array_reverse($years),
 				'month_selected' => $month_selected,
+				'month_selected_text' => $month_selected_text,
+				'year_selected' => $year_selected,
 				'months' => $months,
 				'patient' => $patient,
 				'data' => $data,

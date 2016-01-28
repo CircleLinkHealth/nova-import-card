@@ -7,11 +7,9 @@
                     Patient Activity Report
                 </div>
                 @include('partials.userheader')
-                <div class="col-sm-2">
-                    <a href="{{ URL::route('patient.activity.create', array('patient' => $patient->ID)) }}"
-                       class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
-                        OFFLINE ACTIVITY</a><br>
-                </div>
+                    <div class="col-sm-3">
+                        <h4 class="time-report__month">{{$month_selected_text}} {{$year_selected}}</h4>
+                    </div>
                 {!! Form::open(array('url' => URL::route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                 <div class="form-group  pull-right" style="margin-top:10px;">
                     <i class="icon icon--date-time"></i>
@@ -32,7 +30,7 @@
                             <select name="selectYear" id="selectYear" class="selectpicker" data-width="100px"
                                     data-size="10" style="display: none;">
                                 @foreach($years as $year)
-                                    <option value="{{$year}}" selected="selected">{{$year}}</option>
+                                    <option value="{{$year}}" @if($year_selected == $year) {{'selected'}} @endif>{{$year}}</option>
                                 @endforeach
                             </select>
                         </div>
