@@ -308,11 +308,9 @@
                                                 @if (count($userConfig['care_team']) > 0 && is_array($userConfig['care_team']))
                                                     <div class="alert alert-warning">
                                                         <ul>
-                                                            {{--
                                                             @foreach ($userConfig['care_team'] as $id)
                                                                 <li>{!! Form::checkbox('care_team[]', $id, ['checked' => 'checked']) !!}{{ $id }}</li>
                                                             @endforeach
-                                                            --}}
                                                         </ul>
                                                     </div>
                                                 @endif
@@ -328,13 +326,11 @@
                                                 @if (is_array($userConfig['send_alert_to']) && count($userConfig['send_alert_to']) > 0)
                                                     <div class="alert alert-warning">
                                                         <strong>Send alerts to</strong>
-                                                        {{--
                                                         <ul>
                                                             @foreach ($userConfig['send_alert_to'] as $id)
                                                                 <li>{!! Form::checkbox('send_alert_to[]', $id, ['checked' => 'checked']) !!}{{ $id }}</li>
                                                             @endforeach
                                                         </ul>
-                                                        --}}
                                                     </div>
                                                 @endif
                                             @endif
