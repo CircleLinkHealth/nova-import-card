@@ -100,11 +100,13 @@ class ReportsController extends Controller {
 			$start = $time->startOfMonth()->format('Y-m-d');
 			$end = $time->endOfMonth()->format('Y-m-d');
 			$month_selected = $time->format('m');
+			$year_selected = $time->format('Y');
 		} else {
 			$time = Carbon::now();
+			$month_selected = $time->format('m');
+			$year_selected = $time->format('Y');
 			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
 			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
-			$month_selected = $time->format('m');
 		}
 
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
@@ -190,6 +192,7 @@ class ReportsController extends Controller {
 				'activity_json' => $reportData,
 				'years' => array_reverse($years),
 				'month_selected' => $month_selected,
+				'year_selected' => $year_selected,
 				'months' => $months,
 				'patient' => $patient_,
 				'data' => $act_data
@@ -244,7 +247,7 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['ccm_status'] = ucwords($patient->CCMStatus);
 				$u20_patients[$act_count]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
 				$u20_patients[$act_count]['patient_name'] = $patient->fullName;
-				$provider = User::find(intval($patient->leadContactID));
+				$provider = User::find(intval($patient->getBillingProviderIDAttribute()));
 				if($provider){
 					$u20_patients[$act_count]['provider_name'] = $provider->fullName;
 				} else {

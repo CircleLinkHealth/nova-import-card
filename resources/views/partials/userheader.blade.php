@@ -4,13 +4,12 @@
             <p class="text-medium clearfix">
                 <span class="pull-left"><strong>
                         <?php
-                            debug($patient->getLeadContactIDAttribute());
-                        $provider = App\User::find($patient->getLeadContactIDAttribute());
+                        $provider = App\User::find($patient->getBillingProviderIDAttribute());
                         ?>
                         @if($provider)
                             Provider: </strong> {{$provider->getFullNameAttribute()}}<strong>
                         @else
-                            Provider: <em>No Provider</em>
+                            Provider: <em>No Provider  </em>
                         @endif
                         Location:</strong>
                                 <?php (is_null($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>
@@ -19,7 +18,7 @@
                 date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
                  }} Time: {{gmdate("i:s", $patient->monthlyTime)}}</span></a></p>
             <a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}">
-                <span class="person-name text-big text-dark text-serif" title="400">{{$patient->fullName}}</span></a>
+                <span class="person-name text-big text-dark text-serif" title="{{$patient->ID}}">{{$patient->fullName}}</span></a>
             <ul class="person-info-list inline-block text-medium">
                 <li class="inline-block">DOB: {{$patient->birthDate}}</li>
                 <li class="inline-block">{{$patient->gender}}</li>
