@@ -3,6 +3,9 @@ use App\CarePlan;
 use Illuminate\Support\Facades\Request;
 
 
+
+Route::controller('ajax', 'UserController');
+
 Route::get('careplan/{id}', ['uses' => 'Admin\CarePlanController@carePlan', 'as' => 'careplan']);
 Route::get('careplan/{id}/section/{sectionId}', ['uses' => 'Admin\CarePlanController@carePlanSection', 'as' => 'careplan.section']);
 
@@ -171,6 +174,7 @@ Route::group(['middleware' => 'auth'], function ()
 
 		// dashboard
 		Route::get('', ['uses' =>'Admin\DashboardController@index', 'as'=>'admin.dashboard']);
+		Route::get('testplan', ['uses' =>'Admin\DashboardController@testplan', 'as'=>'admin.testplan']);
 
 		// impersonation
 		Route::post('impersonate', ['uses' => 'ImpersonationController@postImpersonate', 'as' => 'post.impersonate']);

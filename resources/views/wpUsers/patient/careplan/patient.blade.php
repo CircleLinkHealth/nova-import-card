@@ -17,7 +17,8 @@ $user_info = array();
             @endif
         </div>
     </div>
-    <div class="row" style="margin-top:60px;">
+    <div class="row" style="margin-top:20px;">
+        {{-- {!! Form::select('patient_id', array($patient), null, ['class' => 'patient2 form-control']) !!} --}}
         @if(!isset($patient->ID) )
             <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
         @endif
@@ -233,9 +234,9 @@ $user_info = array();
                                     <input id="consent_date" name="consent_date" class="form-control" type="input" value="{{ (old('consent_date') ? old('consent_date') : ($userConfig['consent_date'] ? $userConfig['consent_date'] : '')) }}"/><br />
                                     <span class="help-block">{{ $errors->first('consent_date') }}</span>
                                 </div>
-                                <div class="col-sm-12 text-right">
+                                {{--<div class="col-sm-12 text-right">
                                     <span class="btn btn-group  text-right"><a class="btn btn-green btn-sm inline-block" omitsubmit="yes" role="button" target="_Blank" href="https://s3.amazonaws.com/clh-downloads/Circlelink+CCM+Consent+Form.pdf">Download Form</a></span>
-                                </div>
+                                </div>--}}
 
                                 @if(isset($patient->ID) )
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
@@ -254,6 +255,8 @@ $user_info = array();
                                     </div>
                                 @endif
 
+                                <input type=hidden name=status value="{{ (old('status') ? old('status') : ($userConfig['status'])) }}">
+                                {{--
                                 <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('status') ? 'has-error' : '' }}">
                                     <div class="row">
                                         <div class="col-sm-2 col-lg-4">
@@ -272,12 +275,12 @@ $user_info = array();
                                     </div>
                                     <span class="help-block">{{ $errors->first('status') }}</span>
                                 </div>
-
+                                --}}
 
                                 <div class="form-group form-item form-item-spacing col-sm-12">
                                     <div class="row">
                                         <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Status: ') !!}</div>
-                                        <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn'), $userMeta['ccm_status'], ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                        <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $userMeta['ccm_status'], ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                     </div>
                                 </div>
 

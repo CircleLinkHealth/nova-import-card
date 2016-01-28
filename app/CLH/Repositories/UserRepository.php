@@ -68,6 +68,7 @@ class UserRepository {
 
         foreach($userMetaTemplate as $key => $value)
         {
+            // ccm_status use set attribute
             if($key == 'ccm_status') {
                 $wpUser->ccmStatus = $params->get($key);
                 continue 1;
@@ -85,34 +86,6 @@ class UserRepository {
 
             $wpUser->meta()->save($userMeta);
         }
-
-        $ccmStatusAfter = $userMeta = $wpUser->meta()->firstOrNew([
-            'meta_key' => 'ccm_status',
-            'user_id' => $wpUser->ID
-        ]);
-
-        /*
-        if( $ccmStatusBefore !== $ccmStatusAfter ) {
-            if ($ccmStatusAfter == 'enrolled') {
-                if  ($ccmStatusBefore == 'paused' ){
-                    update_user_meta($user->ID, "date_paused", date("Y-m-d H:i:s"));
-                }
-                if  ($ccmStatusBefore == 'withdrawn' ){
-                    update_user_meta($user->ID, "date_withdrawn", date("Y-m-d H:i:s"));
-                }
-            };
-            if ($ccmStatusAfter == 'paused') {
-                if  ($ccmStatusBefore == 'withdrawn' ){
-                    update_user_meta($user->ID, "date_withdrawn", date("Y-m-d H:i:s"));
-                }
-            };
-            if ($ccmStatusAfter == 'withdrawn') {
-                if  ($ccmStatusBefore == 'paused' ){
-                    update_user_meta($user->ID, "date_paused", date("Y-m-d H:i:s"));
-                }
-            };
-        }
-        */
     }
 
     public function saveOrUpdateRoles(User $wpUser, ParameterBag $params)

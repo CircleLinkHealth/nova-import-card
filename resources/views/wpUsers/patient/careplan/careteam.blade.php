@@ -183,7 +183,7 @@ function buildProviderInfoContainers($providers) {
     <input id="save" name="formSubmit" type="hidden" value="Save" tabindex="0">
 
 
-    <div class="row" style="margin-top:60px;">
+    <div class="row" style="margin-top:20px;">
         <div class="main-form-container-last col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title">

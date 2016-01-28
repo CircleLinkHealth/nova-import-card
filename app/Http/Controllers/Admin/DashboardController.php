@@ -73,4 +73,19 @@ class DashboardController extends Controller {
 		return view('home', ['user' => $user]);
 	}
 
+
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $patientId
+	 * @return Response
+	 */
+	public function testplan(Request $request)
+	{
+
+		$patient = User::find('393');
+		return view('admin.testplan', compact(['patient']));
+	}
+
 }

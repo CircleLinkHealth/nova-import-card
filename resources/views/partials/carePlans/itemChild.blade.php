@@ -49,8 +49,10 @@
     }
     $modal_content .= '</div></div></div>';
     ?>
-    {{ $planItemChild->careItem->display_name }}
-    {!! $modal_content !!}
+    @if($planItemChild->careItem->display_name !== 'Contact Days')
+        {{ $planItemChild->careItem->display_name }}
+        {!! $modal_content !!}
+    @endif
 @elseif ($planItemChild->ui_fld_type == 'INPUT')
     {{ $planItemChild->careItem->display_name }}<br>
     <input name="item|{{ $planItemChild->id }}" value="{{ $planItemChild->meta_value }}" placeholder="" type="text">
