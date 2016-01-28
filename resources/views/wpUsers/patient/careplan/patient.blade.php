@@ -18,10 +18,11 @@ $user_info = array();
         </div>
     </div>
     <div class="row" style="margin-top:20px;">
-        {{-- {!! Form::select('patient_id', array($patient), null, ['class' => 'patient2 form-control']) !!} --}}
+        {{-- {!! Form::select('patient_id', array($patient), null, ['class' => 'patient2 form-control']) !!}
         @if(!isset($patient->ID) )
             <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
         @endif
+        --}}
         <div class="main-form-container-last col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title">

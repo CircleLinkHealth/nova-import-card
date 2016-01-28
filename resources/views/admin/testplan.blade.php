@@ -21,6 +21,17 @@
 
 					<div class="panel-body">
 
+						<h2>MISC</h2>
+
+						<br />
+						<h5>Known Issues</h5>
+						<ul>
+							<li>Change "Print Care Plan" to "View Care Plan"</li>
+							<li>Display patient name on top right of page if viewing</li>
+							<li>"Edit Care Plan" link should go to page 1 care plan, not patient demographic page</li>
+							<li>Toggle show/hide of child items when parent item checked/unchecked. </li>
+						</ul>
+
 						{{--
 						<h2>TEST USERS:</h2>
 						kevinprovider - kgalloprovider@circlelinkhealth.com / oyQaJz0x9XRM<br /><br />
@@ -42,6 +53,7 @@
 								<li>Change "Login" to "Log In"</li>
 								<li>Change "Forgot" to "Lost"</li>
 								<li>Responsive - viewing on phone looks bad</li>
+								<li>big* - switch to login with wp_users.user_login column vs. user_email</li>
 							</ul>
 						</div>
 
@@ -52,6 +64,7 @@
 							<h5>Known Issues</h5>
 							<ul>
 								<li>Alert count # is omitted until alerts page is done</li>
+								<li>Import CCD button is omitted</li>
 							</ul>
 						</div>
 
@@ -77,6 +90,25 @@
 							<br />link: <a href="{{ URL::route('patients.alerts', array()) }}">{{ URL::route('patients.alerts', array()) }}</a><br /><br />
 						</div>
 
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 95%</a></h4>
+						<div id="collapseAddPatient" class="panel-collapse collapse">
+							<br />link: <a href="{{ URL::route('patients.demographics.show') }}">{{ URL::route('patients.demographics.show') }}</a><br /><br />
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Choose program - show only allowed programs, use disdplay_name</li>
+								<li>Add contact days</li>
+								<li>Populate locations based on program form.</li>
+								<li>Make Not Required:
+									email<br />
+									street address<br />
+									city<br />
+									zip<br />
+								</li>
+								<li>Default birthdate to 01-01-1960</li>
+							</ul>
+						</div>
+
 
 
 
@@ -92,15 +124,32 @@
 
 							<br />
 							<br />
-							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 95%</a></h4>
-							<div id="collapseAddPatient" class="panel-collapse collapse">
-								<br />link: <a href="{{ URL::route('patients.demographics.show') }}">{{ URL::route('patients.demographics.show') }}</a><br /><br />
-							</div>
-
-							<br />
 							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseCareTeam"><strong><i class="glyphicon glyphicon-list"></i> Care Team Setup</strong> - 100%</a></h4>
 							<div id="collapseCareTeam" class="panel-collapse collapse">
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->ID)) }}</a><br /><br />
+								<h5>Known Issues</h5>
+								<ul>
+									<li>"Are you sure?" confirmation modal missing green submit button</li>
+									<li>New patient did not get care_plan_id set</li>
+								</ul>
+							</div>
+
+
+							<br />
+							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Care Plan</strong> - 100%</a></h4>
+							<div id="collapseCarePlan" class="panel-collapse collapse">
+								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => 1)) }}">{{ empty($patient) ? '' : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => 1)) }}</a><br /><br />
+								<h5>Known Issues</h5>
+								<ul>
+									<li>Remove "Care Plan" heading</li>
+									<li>Hide child items for "Track Care Transitions" parent item</li>
+									<li>Blue seperator bars between care sections</li>
+									<li>Swap the order (reverse order) sections are shown</li>
+									<li>Change "Instructions" to "Details"</li>
+									<li>"Details" should be dark grey color</li>
+									<li>"Details" modal textarea larger, button color green (same ui design as 2.8.8, blue heading ect)</li>
+									<li>Submitting page 3 of careplan should redirect to print cacre plan</li>
+								</ul>
 							</div>
 
 
