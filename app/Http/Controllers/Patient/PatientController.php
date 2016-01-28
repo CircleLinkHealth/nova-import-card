@@ -199,7 +199,7 @@ class PatientController extends Controller {
 				}
 				// lastly format json
 				$observation_json[$section] .= "{ obs_key:'" . $observation->obs_key . "', " .
-					"description:'" . $observation->items_text . '|' . $observation->obs_key . '|'.$observation->id . "', " .
+					"description:'" . $observation->obs_key . "', " .
 					"obs_value:'" . $observation->obs_value . "', " .
 					"dm_alert_level:'" . $observation->alert_level . "', " .
 					"obs_unit:'" . $observation->obs_unit . "', " .

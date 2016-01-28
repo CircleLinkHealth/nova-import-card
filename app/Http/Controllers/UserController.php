@@ -463,6 +463,19 @@ class UserController extends Controller {
 
 
 
+	public function getPatients()
+	{
+		$data = array();
+		$patients = User::all();
+		if($patients) {
+			foreach ($patients as $patient) {
+				$data[] = array();
+			}
+		}
+		return $patients;
+		return response()->json($patients);
+	}
+
 
 	public function showQuickAddAPI()
 	{
