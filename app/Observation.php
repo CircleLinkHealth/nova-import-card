@@ -176,7 +176,7 @@ class Observation extends Model {
             return $starting[0];
         } else {
             $x = Observation::select('obs_value')->where('user_id', $userId)->where('obs_message_id', $message_id)->first();
-            return $x->obs_value;
+            return isset($x->obs_value) ? $x->obs_value : 'N/A';
         }
     }
 

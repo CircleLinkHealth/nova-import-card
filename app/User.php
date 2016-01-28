@@ -386,6 +386,26 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return 0;
 	}
 
+	public function getAgentName() {
+		$userConfig = $this->userConfig();
+		return isset($userConfig['agent_name']) ? $userConfig['agent_name'] : '';
+	}
+
+	public function getAgentPhone() {
+		$userConfig = $this->userConfig();
+		return isset($userConfig['agent_telephone']) ? $userConfig['agent_telephone'] : '';
+	}
+
+	public function getAgentEmail() {
+		$userConfig = $this->userConfig();
+		return isset($userConfig['agent_email']) ? $userConfig['agent_email'] : '';
+	}
+
+	public function getAgentRelationship() {
+		$userConfig = $this->userConfig();
+		return isset($userConfig['agent_relationship']) ? $userConfig['agent_relationship'] : '';
+	}
+
 	public function setCarePlanQAApproverAttribute($value) {
 		$meta = $this->meta->where('meta_key', 'careplan_qa_approver')->first();
 		if(!empty($meta)) {

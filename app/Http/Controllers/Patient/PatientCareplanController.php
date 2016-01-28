@@ -451,36 +451,6 @@ class PatientCareplanController extends Controller {
 		return redirect()->back()->with('messages', ['successfully updated patient care plan']);
 	}
 
-
-
-
-
-	/**
-	 * Display Careplan Print
-	 *
-	 * @param  int  $patientId
-	 * @return Response
-	 */
-	public function showPatientCareplanPrint(Request $request, $patientId = false)
-	{
-		debug('h');
-		$wpUser = array();
-		if($patientId) {
-			$user = User::find($patientId);
-			if (!$user) {
-				return response("User not found", 401);
-			}
-			return view('wpUsers.patient.careplan.print', ['patient' => $user]);
-		}
-
-		// program
-		$program = WpBlog::find($wpUser->program_id);
-
-		return view('wpUsers.patient.careplan.print', ['program' => $program, 'patient' => $wpUser]);
-	}
-
-
-
 	/**
 	 * Display patient careplan
 	 *

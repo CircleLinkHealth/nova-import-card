@@ -13,7 +13,7 @@
                             Provider: <em>No Provider</em>
                         @endif
                         Location:</strong>
-                                {{$patient->getPreferredLocationName()}}
+                                <?php (is_null($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>
                 </span>
                <a href="{{URL::route('patient.summary', array('patient' => $patient->ID))}}"><span class="pull-right">{{
                 date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
@@ -26,6 +26,14 @@
                 <li class="inline-block">{{$patient->age}} yrs</li>
                 <li class="inline-block">{{$patient->phone}}</li>
             </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="person-info-listX inline-block text-medium">
+                <li class="inline-block">Alternate Contact: <span title="{{$patient->getAgentEmail()}}">({{$patient->getAgentRelationship()}}) {{$patient->getAgentName()}}&nbsp;&nbsp;</span></li>
+                <li class="inline-block">{{$patient->getAgentPhone()}}</li>
+            </ul><div style="clear:both"></div><ul class="person-conditions-list inline-block text-medium"></ul>
         </div>
     </div>
 </div>
