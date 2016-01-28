@@ -10,7 +10,7 @@
 
 
                     {!! Form::open(array('url' => URL::route('patient.reports.billing', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
-                    <div class="col-sm-2">
+                    <div class="col-sm-3">
                         <h4 class="time-report__month">{{jdmonthname($month_selected, 1)}} {{$year_selected}}</h4>
                     </div>
                     <div class="form-group  pull-right" style="margin-top:10px;">
