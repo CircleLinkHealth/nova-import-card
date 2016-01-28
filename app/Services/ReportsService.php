@@ -63,7 +63,20 @@ Class ReportsService
             return false;
         }
     }
-
+    public function getBiometricsToMonitor(User $user){
+        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+            ->first();
+        $carePlan->build($user->ID);
+        $itemsToMonitor = array();
+        foreach($carePlan->careSections as $section){
+            if($section->name == 'diagnosis-problems-to-monitor'){
+                foreach($section->carePlanItems as $item){
+                    $itemsToMonitor[] = $item->careItem->display_name;
+                }
+            }
+        }
+        return $itemsToMonitor;
+    }
     public function getProblemsToMonitor(User $user){
         $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
             ->first();
@@ -87,7 +100,9 @@ Class ReportsService
         foreach($carePlan->careSections as $section){
             if($section->name == 'medications-to-monitor'){
                 foreach($section->carePlanItems as $item){
-                    $medications_categories[] = $item->careItem->display_name;
+                    if($item->meta_value == 'Active') {
+                        $medications_categories[] = $item->careItem->display_name;
+                    }
                 }
             }
         }
@@ -193,7 +208,6 @@ Class ReportsService
         return $medications;
 
     }
-
     public function getTargetValueForBiometric($biometric, $user){
         $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
             ->first();
@@ -201,9 +215,9 @@ Class ReportsService
         switch($biometric){
             case "Weight":
                 return $carePlan->getCareItemUserValue($user, 'weight-target-weight'); break;
-            case "Blood_Sugar":
+            case "Blood_Sugar": case "Blood Sugar":
                 return $carePlan->getCareItemUserValue($user, 'blood-sugar-target-bs'); break;
-            case "Blood_Pressure":
+            case "Blood_Pressure": case "Blood Pressure":
                 return $carePlan->getCareItemUserValue($user, 'blood-pressure-target-bp'); break;
             case "Smoking":
                 return $carePlan->getCareItemUserValue($user, 'smoking-per-day-target-count'); break;
@@ -229,11 +243,10 @@ Class ReportsService
             ->get();
         return ($data) ? $data : '';
     }
-    public function biometricsUnitMapping($biometric)
+    public static function biometricsUnitMapping($biometric)
     {
-
         switch ($biometric) {
-            case 'Blood Sugar':
+            case 'Blood Sugar': case 'Blood_Sugar':
                 return ' mg/dL';
                 break;
             case 'Cigarettes':
@@ -242,17 +255,17 @@ Class ReportsService
             case 'Weight':
                 return ' lbs';
                 break;
-            case 'Blood Pressure':
+            case 'Blood Pressure': case 'Blood_Pressure':
                 return ' mm Hg';
                 break;
             default:
                 return '';
         }
     }
-    public function biometricsMessageIdMapping($biometric)
+    public static function biometricsMessageIdMapping($biometric)
     {
         switch ($biometric) {
-            case 'Blood Sugar':
+            case 'Blood Sugar': case 'Blood_Sugar':
                 return 'CF_RPT_30';
                 break;
             case 'Cigarettes':
@@ -261,7 +274,7 @@ Class ReportsService
             case 'Weight':
                 return 'CF_RPT_40';
                 break;
-            case 'Blood Pressure':
+            case 'Blood Pressure': case 'Blood_Pressure':
                 return 'CF_RPT_20';
                 break;
             default:
@@ -390,7 +403,6 @@ Class ReportsService
         }
         return $changes_array;
     }
-
 
     public function progress($id)
     {

@@ -10,7 +10,7 @@
     <div class="container">
         <section class="main-form" >
             <div class="row">
-                <div class="main-form-container col-lg-6 col-lg-offset-3 main-form-container-last" style="border-bottom: 3px solid #50b2e2">
+                <div class="main-form-container col-lg-6 col-lg-offset-3 main-form-container-last" style="border-bottom: 3px solid #50b2e2; padding-bottom: 100px">
                     <div class="row">
                         <div class="main-form-title">
                             Select a Patient
@@ -31,7 +31,7 @@
     </div>
                 <script>
                     jQuery(document).ready(function ($) {
-                        var states = new Bloodhound({
+                        var pat = new Bloodhound({
                             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
                             queryTokenizer: Bloodhound.tokenizers.whitespace,
                             // `states` is an array of state names defined in "The Basics"
@@ -39,7 +39,7 @@
 
                         });
 
-                        states.initialize();
+                        pat.initialize();
 
                         $('#bloodhound .typeahead').typeahead({
                                     hint: true,
@@ -49,7 +49,7 @@
                                 {
                                     name: 'matched-states',
                                     displayKey: 'name',
-                                    source: states,
+                                    source: pat,
                                     templates: {
                                         empty: [
                                             '<div class="empty-message">', 'No Patients Found...', '</div>'
@@ -59,6 +59,9 @@
                                         }
                                     }
                                 });
+                        $('#bloodhound .typeahead').on('typeahead:selected', function (e, datum) {
+                            window.location.href = datum.link
+                        });
                     });
                 </script>
 @stop
