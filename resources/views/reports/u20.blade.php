@@ -9,8 +9,8 @@
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
                     {!! Form::open(array('url' => URL::route('patient.reports.u20', ['patientId' => $patient->ID]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
-                    <div class="col-sm-2">
-                        <h4 class="time-report__month">{{$month_selected}} {{$year_selected}}</h4>
+                    <div class="col-sm-3">
+                        <h4 class="time-report__month">{{jdmonthname($month_selected, 1)}} {{$year_selected}}</h4>
                     </div>
                     <div class="form-group  pull-right" style="margin-top:10px;">
                         <i class="icon icon--date-time"></i>
