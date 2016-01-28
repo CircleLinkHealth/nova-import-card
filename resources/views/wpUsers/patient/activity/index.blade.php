@@ -10,8 +10,8 @@
                     <div class="col-sm-3">
                         <h4 class="time-report__month">{{$month_selected_text}} {{$year_selected}}</h4>
                     </div>
-                {!! Form::open(array('url' => URL::route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
-                <div class="form-group  pull-right" style="margin-top:10px;">
+                {!! Form::open(array('url' => URL::route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
+                <div class="form-group  pull-right" style="margin-top:10px; ">
                     <i class="icon icon--date-time"></i>
 
                     <div class="inline-block">
@@ -39,7 +39,7 @@
                 </div>
                 {!! Form::close() !!}
 
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="border-top: 3px solid #50b2e2">
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
