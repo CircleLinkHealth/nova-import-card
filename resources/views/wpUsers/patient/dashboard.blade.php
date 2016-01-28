@@ -44,7 +44,7 @@
                         <a href="{{ URL::route('patients.demographics.show', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--alerts--big icon--menu">
-                                    <div class="notification btn-warning">-</div>
+                                    {{--<div class="notification btn-warning">-</div>--}}
                                 </i>
                             </div>
                             <div class="icon-container column-centered">
