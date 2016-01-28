@@ -1,9 +1,11 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\CarePlan;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
+use App\Observation;
 use App\Services\CareplanService;
 use App\Services\ReportsService;
 use App\User;
@@ -86,7 +88,6 @@ class ReportsController extends Controller {
 		return view('wpUsers.patient.progress', $data);
 
 	}
-
     public function u20(Request $request, $patientId = false)
 	{
 		debug($patientId);
@@ -99,11 +100,13 @@ class ReportsController extends Controller {
 			$start = $time->startOfMonth()->format('Y-m-d');
 			$end = $time->endOfMonth()->format('Y-m-d');
 			$month_selected = $time->format('m');
+			$year_selected = $time->format('Y');
 		} else {
 			$time = Carbon::now();
+			$month_selected = $time->format('m');
+			$year_selected = $time->format('Y');
 			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
 			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
-			$month_selected = $time->format('m');
 		}
 
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
@@ -189,6 +192,7 @@ class ReportsController extends Controller {
 				'activity_json' => $reportData,
 				'years' => array_reverse($years),
 				'month_selected' => $month_selected,
+				'year_selected' => $year_selected,
 				'months' => $months,
 				'patient' => $patient_,
 				'data' => $act_data
@@ -243,7 +247,7 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['ccm_status'] = ucwords($patient->CCMStatus);
 				$u20_patients[$act_count]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
 				$u20_patients[$act_count]['patient_name'] = $patient->fullName;
-				$provider = User::find(intval($patient->leadContactID));
+				$provider = User::find(intval($patient->getBillingProviderIDAttribute()));
 				if($provider){
 					$u20_patients[$act_count]['provider_name'] = $provider->fullName;
 				} else {
@@ -361,6 +365,44 @@ class ReportsController extends Controller {
 		$feed = $progressReport->careplan($wpUser->ID);
 
 		return response()->json($feed);
+	}
+	public function viewPrintCareplan(Request $request, $patientId = false)
+	{
+		if($patientId) {
+			$user = User::find($patientId);
+			$treating = (new ReportsService())->getProblemsToMonitor($user);
+			$biometrics = ['Weight', 'Blood Sugar', 'Blood Pressure'];
+			$bio_data = array();
+
+			foreach ($biometrics as $metric) {
+					$bio_data[$metric]['target'] = (new ReportsService())->getTargetValueForBiometric($metric, $user) . ReportsService::biometricsUnitMapping($metric);
+					$bio_data[$metric]['starting'] = Observation::getStartingObservation($user->ID,(new ReportsService())->biometricsMessageIdMapping($metric)) . ReportsService::biometricsUnitMapping($metric);;
+			}
+			$medications = (new ReportsService())->getMedicationStatus($user, false);
+
+			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+				->first();
+			$carePlan->build($user->ID);
+			$medications_categories = array();
+			foreach($carePlan->careSections as $section){
+				if($section->name == 'additional-information'){
+					foreach($section->carePlanItems as $item){
+						if($item->meta_value == 'Active') {
+							$temp[] = $item->careItem;
+						}
+					}
+				}
+			}
+			debug($temp);
+			return view('wpUsers.patient.careplan.print',
+				[
+					'patient' => $user,
+					'treating' => $treating,
+					'biometrics' => $bio_data,
+					'medications_monitor' => $medications[0]['name']
+				]);
+		}
+		//return response("User not found", 401);
 	}
 
 }
