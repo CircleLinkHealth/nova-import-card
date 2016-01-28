@@ -32,6 +32,17 @@
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseLogin"><strong><i class="glyphicon glyphicon-list"></i> Login</strong> - 100%</a></h4>
 						<div id="collapseLogin" class="panel-collapse collapse">
 							<br />Link: <a href="{{ URL::route('login', array()) }}">{{ URL::route('login', array()) }}</a><br /><br />
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Add trademark symbol to CarePlanManager</li>
+								<li>Responsive, right/left borders stick out the top on small resoluation</li>
+								<li>Center submit button / all content</li>
+								<li>Remove link from logo</li>
+								<li>Blue login button</li>
+								<li>Change "Login" to "Log In"</li>
+								<li>Change "Forgot" to "Lost"</li>
+								<li>Responsive - viewing on phone looks bad</li>
+							</ul>
 						</div>
 
 						<br />
