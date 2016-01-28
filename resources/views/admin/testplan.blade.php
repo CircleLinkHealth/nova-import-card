@@ -38,22 +38,30 @@
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseDashboard"><strong><i class="glyphicon glyphicon-list"></i> Dashboard</strong> - 100%</a></h4>
 						<div id="collapseDashboard" class="panel-collapse collapse">
 							<br />Link: <a href="{{ URL::route('patients.dashboard', array()) }}">{{ URL::route('patients.dashboard', array()) }}</a><br /><br />
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Alert count # is omitted until alerts page is done</li>
+							</ul>
 						</div>
 
 						<br />
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSearch"><strong><i class="glyphicon glyphicon-list"></i> Patient Search</strong> - 70%</a></h4>
 						<div id="collapsePatientSearch" class="panel-collapse collapse">
-							<br />Link: <a href="{{ URL::route('patients.dashboard', array()) }}">{{ URL::route('patients.dashboard', array()) }}</a><br /><br />
+							<br />Link: <a href="{{ URL::route('patients.search', array()) }}">{{ URL::route('patients.search', array()) }}</a><br /><br />
 						</div>
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientList"><strong><i class="glyphicon glyphicon-list"></i> Patient List</strong> - 100%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientList"><strong><i class="glyphicon glyphicon-list"></i> Patient List</strong> - 95%</a></h4>
 						<div id="collapsePatientList" class="panel-collapse collapse">
 							<br />Link: <a href="{{ URL::route('patients.listing', array()) }}">{{ URL::route('patients.listing', array()) }}</a><br /><br />
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Missing billing provider name</li>
+							</ul>
 						</div>
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAlerts"><strong><i class="glyphicon glyphicon-list"></i> Alerts</strong> - 10%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAlerts"><strong><i class="glyphicon glyphicon-list"></i> Alerts</strong> - 15%</a></h4>
 						<div id="collapseAlerts" class="panel-collapse collapse">
 							<br />link: <a href="{{ URL::route('patients.alerts', array()) }}">{{ URL::route('patients.alerts', array()) }}</a><br /><br />
 						</div>
@@ -73,7 +81,7 @@
 
 							<br />
 							<br />
-							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 100%</a></h4>
+							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 95%</a></h4>
 							<div id="collapseAddPatient" class="panel-collapse collapse">
 								<br />link: <a href="{{ URL::route('patients.demographics.show') }}">{{ URL::route('patients.demographics.show') }}</a><br /><br />
 							</div>
@@ -86,9 +94,13 @@
 
 
 							<br />
-							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddObservation"><strong><i class="glyphicon glyphicon-list"></i> Add Observation</strong> - 100%</a></h4>
+							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddObservation"><strong><i class="glyphicon glyphicon-list"></i> Add Observation</strong> - 95%</a></h4>
 							<div id="collapseAddObservation" class="panel-collapse collapse">
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}</a><br /><br />
+								<h5>Known Issues</h5>
+								<ul>
+									<li>Date input on firefox formats weird</li>
+								</ul>
 							</div>
 
 
@@ -111,11 +123,15 @@
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseProgressReport"><strong><i class="glyphicon glyphicon-list"></i> Progress Report</strong> - 80%</a></h4>
 						<div id="collapseProgressReport" class="panel-collapse collapse">
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}</a><br /><br />
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Charts not perfectly/cleanly aligned</li>
+							</ul>
 						</div>
 
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseNotes"><strong><i class="glyphicon glyphicon-list"></i> Notest</strong> - 90%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseNotes"><strong><i class="glyphicon glyphicon-list"></i> Notes</strong> - 90%</a></h4>
 						<div id="collapseNotes" class="panel-collapse collapse">
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->ID)) }}</a><br /><br />
 						</div>
