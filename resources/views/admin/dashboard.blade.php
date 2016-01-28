@@ -95,10 +95,10 @@
 
 			<div class="col-md-6">
 				<div class="panel panel-default">
-					<div class="panel-heading">3.0 Demo</div>
+					<div class="panel-heading">3.0 Site Map</div>
 					<div class="panel-body">
 						<div class="text-center" style="margin:40px 0px;">
-							<a href="{{ route('admin.testplan') }}" class="btn btn-success">3.0 Test Links</a>
+							<a href="{{ route('admin.testplan') }}" class="btn btn-success">3.0 Site Map / Links</a>
 						</div>
 					</div>
 				</div>

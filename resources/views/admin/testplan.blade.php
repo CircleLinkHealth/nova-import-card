@@ -6,7 +6,7 @@
 
 			<div class="col-md-12">
 				<div class="col-sm-6">
-					<h1>3.0 Demo</h1>
+					<h1>3.0 Site Map</h1>
 				</div>
 				<div class="col-sm-6">
 					<div class="pull-right" style="margin:20px;">
@@ -20,27 +20,42 @@
 					<div class="panel-heading">Statistics</div>
 
 					<div class="panel-body">
-						<h2>USERS:</h2>
+						<h2>TEST USERS:</h2>
 
-						kevinprovider - kgalloprovider@circlelinkhealth.com / oyQaJz0x9XRM<br /><br />
-						kevincc - kgallocc@circlelinkhealth.com / oyQaJz0x9XRM
+						kevinprovider - kgalloprovider@circlelinkhealth.com / {{-- oyQaJz0x9XRM --}}<br /><br />
+						kevincc - kgallocc@circlelinkhealth.com / {{-- oyQaJz0x9XRM --}}
 
 						<h2>GENERAL:</h2>
 
-						<strong>login as provider user - 100%</strong><br />
-						- <a href="https://v3.careplanmanager.com/login">https://v3.careplanmanager.com/login</a><br /><br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseLogin"><strong><i class="glyphicon glyphicon-thumbs-up"></i> Login</strong> - 100%</a></h4>
+						<div id="collapseLogin" class="panel-collapse collapse">
+							<br />Link: <a href="{{ URL::route('login', array()) }}">{{ URL::route('login', array()) }}</a><br /><br />
+						</div>
 
-						<strong>show dashboard - 100% (no alerts count)</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/dashboard">https://v3.careplanmanager.com/manage-patients/dashboard</a><br /><br />
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseDashboard"><strong><i class="glyphicon glyphicon-thumbs-up"></i> Dashboard</strong> - 100%</a></h4>
+						<div id="collapseDashboard" class="panel-collapse collapse">
+							<br />Link: <a href="{{ URL::route('patients.dashboard', array()) }}">{{ URL::route('patients.dashboard', array()) }}</a><br /><br />
+						</div>
 
-						<strong>show patient search ajax - ?TEST</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/search">https://v3.careplanmanager.com/manage-patients/search</a><br /><br />
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSearch"><strong><i class="glyphicon glyphicon-thumbs-up"></i> Patient Search</strong> - 70%</a></h4>
+						<div id="collapsePatientSearch" class="panel-collapse collapse">
+							<br />Link: <a href="{{ URL::route('patients.dashboard', array()) }}">{{ URL::route('patients.dashboard', array()) }}</a><br /><br />
+						</div>
 
-						<strong>patient listing - 100%</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/listing">https://v3.careplanmanager.com/manage-patients/listing</a><br /><br />
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientList"><strong><i class="glyphicon glyphicon-thumbs-up"></i> Patient List</strong> - 100%</a></h4>
+						<div id="collapsePatientList" class="panel-collapse collapse">
+							<br />Link: <a href="{{ URL::route('patients.listing', array()) }}">{{ URL::route('patients.listing', array()) }}</a><br /><br />
+						</div>
 
-						<strong>alerts - 5%</strong><br />
-						- <a href="http://local-api.cpm/manage-patients/alerts">http://local-api.cpm/manage-patients/alerts</a><br /><br />
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAlerts"><strong><i class="glyphicon glyphicon-thumbs-up"></i> Alerts</strong> - 10%</a></h4>
+						<div id="collapseAlerts" class="panel-collapse collapse">
+							<br />link: <a href="{{ URL::route('patients.alerts', array()) }}">{{ URL::route('patients.alerts', array()) }}</a><br /><br />
+						</div>
+
 
 
 						<h2>PATIENT:</h2>
