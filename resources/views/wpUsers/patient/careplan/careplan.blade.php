@@ -18,7 +18,7 @@ $new_user = false;
         </div>
     </div>
 
-    <div class="row" style="margin-top:60px;">
+    <div class="row" style="margin-top:20px;">
         <div class="main-form-container-last col-lg-8 col-lg-offset-2">
             <div class="row">
                 @if(isset($patient) && !$new_user )

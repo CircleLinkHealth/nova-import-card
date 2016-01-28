@@ -17,7 +17,7 @@ $user_info = array();
             @endif
         </div>
     </div>
-    <div class="row" style="margin-top:60px;">
+    <div class="row" style="margin-top:20px;">
         {{-- {!! Form::select('patient_id', array($patient), null, ['class' => 'patient2 form-control']) !!} --}}
         @if(!isset($patient->ID) )
             <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
