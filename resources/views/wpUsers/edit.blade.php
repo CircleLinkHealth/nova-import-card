@@ -305,7 +305,7 @@
                                         <div class="col-xs-2">{!! Form::label('care_team', 'Care Team:') !!}</div>
                                         <div class="col-xs-10">
                                             @if (isset($userConfig['care_team']))
-                                                @if (count($userConfig['care_team']) > 0)
+                                                @if (count($userConfig['care_team']) > 0 && is_array($userConfig['care_team']))
                                                     <div class="alert alert-warning">
                                                         <ul>
                                                             @foreach ($userConfig['care_team'] as $id)
