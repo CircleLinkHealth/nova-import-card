@@ -2,7 +2,7 @@
 
 <?php
 $today = \Carbon\Carbon::now()->toFormattedDateString();
-$provider = App\User::find($patient->getLeadContactIDAttribute());
+$provider = App\User::find($patient->getBillingProviderIDAttribute());
 ?>
 @section('content')
     <div class="container">
