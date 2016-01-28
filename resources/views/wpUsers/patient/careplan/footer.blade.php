@@ -40,20 +40,67 @@
                     @endif
                 @endif
             </div>
-            <ul class="progress-list col-lg-12">
-                <li class="progress-item progress-first progress-active"></li>
-                <li class="progress-item progress-second"></li>
-                <li class="progress-item progress-third"></li>
-                <li class="progress-item progress-fourth"></li>
-                <li class="progress-item progress-fifth"></li>
-            </ul>
-            <div class="progress-status">
                 @if(!$user_info)
-                    @if(Route::is('patient.demographics.show')) <p class="">PROGRESS: 1 of 5</p> @endif
-                    @if(Route::is('patient.careteam.show')) <p class="">PROGRESS: 2 of 5</p> @endif
-                    @if(Route::is('patient.careplan.show') && isset($page) && $page == 1) <p class="">PROGRESS: 3 of 5</p> @endif
-                    @if(Route::is('patient.careplan.show') && isset($page) && $page == 2) <p class="">PROGRESS: 4 of 5</p> @endif
-                    @if(Route::is('patient.careplan.show') && isset($page) && $page == 3) <p class="">PROGRESS: 5 of 5</p> @endif
+                    @if(Route::is('patient.demographics.show')) <p class="">
+                        <ul class="progress-list col-lg-12">
+                            <li class="progress-item progress-first progress-active"></li>
+                            <li class="progress-item progress-second"></li>
+                            <li class="progress-item progress-third"></li>
+                            <li class="progress-item progress-fourth"></li>
+                            <li class="progress-item progress-fifth"></li>
+                        </ul>
+                        <div class="progress-status">
+                            <p class="">PROGRESS: 1 of 5</p>
+                        </div>
+                    @endif
+                    @if(Route::is('patient.careteam.show'))
+                        <ul class="progress-list col-lg-12">
+                            <li class="progress-item progress-first progress-active"></li>
+                            <li class="progress-item progress-second progress-active"></li>
+                            <li class="progress-item progress-third"></li>
+                            <li class="progress-item progress-fourth"></li>
+                            <li class="progress-item progress-fifth"></li>
+                        </ul>
+                        <div class="progress-status">
+                            <p class="">PROGRESS: 2 of 5</p>
+                        </div>
+                    @endif
+                    @if(Route::is('patient.careplan.show') && isset($page) && $page == 1)
+                        <ul class="progress-list col-lg-12">
+                            <li class="progress-item progress-first progress-active"></li>
+                            <li class="progress-item progress-second progress-active"></li>
+                            <li class="progress-item progress-third progress-active"></li>
+                            <li class="progress-item progress-fourth"></li>
+                            <li class="progress-item progress-fifth"></li>
+                        </ul>
+                        <div class="progress-status">
+                            <p class="">PROGRESS: 3 of 5</p>
+                        </div>
+                    @endif
+                    @if(Route::is('patient.careplan.show') && isset($page) && $page == 2)
+                        <ul class="progress-list col-lg-12">
+                            <li class="progress-item progress-first progress-active"></li>
+                            <li class="progress-item progress-second progress-active"></li>
+                            <li class="progress-item progress-third progress-active"></li>
+                            <li class="progress-item progress-fourth progress-active"></li>
+                            <li class="progress-item progress-fifth"></li>
+                        </ul>
+                        <div class="progress-status">
+                            <p class="">PROGRESS: 4 of 5</p>
+                        </div>
+                    @endif
+                    @if(Route::is('patient.careplan.show') && isset($page) && $page == 3)
+                        <ul class="progress-list col-lg-12">
+                            <li class="progress-item progress-first progress-active"></li>
+                            <li class="progress-item progress-second progress-active"></li>
+                            <li class="progress-item progress-third progress-active"></li>
+                            <li class="progress-item progress-fourth progress-active"></li>
+                            <li class="progress-item progress-fifth progress-active"></li>
+                        </ul>
+                        <div class="progress-status">
+                            <p class="">PROGRESS: 5 of 5</p>
+                        </div>
+                    @endif
                 @else
                     <p class="">&nbsp;</p>
                 @endif
