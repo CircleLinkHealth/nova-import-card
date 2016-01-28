@@ -6,7 +6,7 @@
 
 			<div class="col-md-12">
 				<div class="col-sm-6">
-					<h1>3.0 Site Map</h1>
+					<h1>3.0 Provider Site Map</h1>
 				</div>
 				<div class="col-sm-6">
 					<div class="pull-right" style="margin:20px;">
@@ -20,13 +20,15 @@
 					<div class="panel-heading">Statistics</div>
 
 					<div class="panel-body">
-						<h2>TEST USERS:</h2>
 
-						kevinprovider - kgalloprovider@circlelinkhealth.com / {{-- oyQaJz0x9XRM --}}<br /><br />
-						kevincc - kgallocc@circlelinkhealth.com / {{-- oyQaJz0x9XRM --}}
+						{{--
+						<h2>TEST USERS:</h2>
+						kevinprovider - kgalloprovider@circlelinkhealth.com / oyQaJz0x9XRM<br /><br />
+						kevincc - kgallocc@circlelinkhealth.com / oyQaJz0x9XRM --}}
 
 						<h2>GENERAL:</h2>
 
+						<br />
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseLogin"><strong><i class="glyphicon glyphicon-list"></i> Login</strong> - 100%</a></h4>
 						<div id="collapseLogin" class="panel-collapse collapse">
 							<br />Link: <a href="{{ URL::route('login', array()) }}">{{ URL::route('login', array()) }}</a><br /><br />
@@ -64,37 +66,45 @@
 
 
 
-						<h2>PATIENT:</h2>
+						@if(($patient))
+							<h2>PATIENT:</h2>
 
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 100%</a></h4>
-						<div id="collapseAddPatient" class="panel-collapse collapse">
-							<br />link: <a href="{{ URL::route('patients.demographics.show') }}">{{ URL::route('patients.demographics.show') }}</a><br /><br />
-						</div>
+							<strong>Links for patient: {{ $patient->fullNameWithID }}</strong>
 
-						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseCareTeam"><strong><i class="glyphicon glyphicon-list"></i> Care Team Setup</strong> - 100%</a></h4>
-						<div id="collapseCareTeam" class="panel-collapse collapse">
-							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->ID)) }}</a><br /><br />
-						</div>
+							<br />
+							<br />
+							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 100%</a></h4>
+							<div id="collapseAddPatient" class="panel-collapse collapse">
+								<br />link: <a href="{{ URL::route('patients.demographics.show') }}">{{ URL::route('patients.demographics.show') }}</a><br /><br />
+							</div>
 
-
-						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddObservation"><strong><i class="glyphicon glyphicon-list"></i> Add Observation</strong> - 100%</a></h4>
-						<div id="collapseAddObservation" class="panel-collapse collapse">
-							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}</a><br /><br />
-						</div>
+							<br />
+							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseCareTeam"><strong><i class="glyphicon glyphicon-list"></i> Care Team Setup</strong> - 100%</a></h4>
+							<div id="collapseCareTeam" class="panel-collapse collapse">
+								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->ID)) }}</a><br /><br />
+							</div>
 
 
-						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSummary"><strong><i class="glyphicon glyphicon-list"></i> Patient Summary</strong> - 70%</a></h4>
-						<div id="collapsePatientSummary" class="panel-collapse collapse">
-							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}</a><br /><br />
-							<h5>Known Issues</h5>
-							<ul>
-								<li>Observation labels are not correct</li>
-								<li>Missing link to biometric charts + actual biometric charts page.</li>
-							</ul>
-						</div>
+							<br />
+							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddObservation"><strong><i class="glyphicon glyphicon-list"></i> Add Observation</strong> - 100%</a></h4>
+							<div id="collapseAddObservation" class="panel-collapse collapse">
+								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}</a><br /><br />
+							</div>
+
+
+							<br />
+							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSummary"><strong><i class="glyphicon glyphicon-list"></i> Patient Summary</strong> - 70%</a></h4>
+							<div id="collapsePatientSummary" class="panel-collapse collapse">
+								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}</a><br /><br />
+								<h5>Known Issues</h5>
+								<ul>
+									<li>Observation labels are not correct</li>
+									<li>Missing link to biometric charts + actual biometric charts page.</li>
+								</ul>
+							</div>
+						@else
+							No patient found to generate links from
+						@endif
 
 
 						<br />
