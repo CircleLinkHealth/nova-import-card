@@ -84,7 +84,8 @@ class DashboardController extends Controller {
 	public function testplan(Request $request)
 	{
 
-		return view('admin.testplan', compact([]));
+		$patient = User::find('393');
+		return view('admin.testplan', compact(['patient']));
 	}
 
 }

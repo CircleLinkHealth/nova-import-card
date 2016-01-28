@@ -27,65 +27,116 @@
 
 						<h2>GENERAL:</h2>
 
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseLogin"><strong><i class="glyphicon glyphicon-thumbs-up"></i> Login</strong> - 100%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseLogin"><strong><i class="glyphicon glyphicon-list"></i> Login</strong> - 100%</a></h4>
 						<div id="collapseLogin" class="panel-collapse collapse">
 							<br />Link: <a href="{{ URL::route('login', array()) }}">{{ URL::route('login', array()) }}</a><br /><br />
 						</div>
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseDashboard"><strong><i class="glyphicon glyphicon-thumbs-up"></i> Dashboard</strong> - 100%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseDashboard"><strong><i class="glyphicon glyphicon-list"></i> Dashboard</strong> - 100%</a></h4>
 						<div id="collapseDashboard" class="panel-collapse collapse">
 							<br />Link: <a href="{{ URL::route('patients.dashboard', array()) }}">{{ URL::route('patients.dashboard', array()) }}</a><br /><br />
 						</div>
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSearch"><strong><i class="glyphicon glyphicon-thumbs-up"></i> Patient Search</strong> - 70%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSearch"><strong><i class="glyphicon glyphicon-list"></i> Patient Search</strong> - 70%</a></h4>
 						<div id="collapsePatientSearch" class="panel-collapse collapse">
 							<br />Link: <a href="{{ URL::route('patients.dashboard', array()) }}">{{ URL::route('patients.dashboard', array()) }}</a><br /><br />
 						</div>
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientList"><strong><i class="glyphicon glyphicon-thumbs-up"></i> Patient List</strong> - 100%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientList"><strong><i class="glyphicon glyphicon-list"></i> Patient List</strong> - 100%</a></h4>
 						<div id="collapsePatientList" class="panel-collapse collapse">
 							<br />Link: <a href="{{ URL::route('patients.listing', array()) }}">{{ URL::route('patients.listing', array()) }}</a><br /><br />
 						</div>
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAlerts"><strong><i class="glyphicon glyphicon-thumbs-up"></i> Alerts</strong> - 10%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAlerts"><strong><i class="glyphicon glyphicon-list"></i> Alerts</strong> - 10%</a></h4>
 						<div id="collapseAlerts" class="panel-collapse collapse">
 							<br />link: <a href="{{ URL::route('patients.alerts', array()) }}">{{ URL::route('patients.alerts', array()) }}</a><br /><br />
 						</div>
 
 
 
+
+
+
+
+
+
 						<h2>PATIENT:</h2>
 
-						<strong>add patient, draft->provider_approved - 100%</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/careplan/demographics">https://v3.careplanmanager.com/manage-patients/careplan/demographics</a><br /><br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 100%</a></h4>
+						<div id="collapseAddPatient" class="panel-collapse collapse">
+							<br />link: <a href="{{ URL::route('patients.demographics.show') }}">{{ URL::route('patients.demographics.show') }}</a><br /><br />
+						</div>
 
-						<strong>add observations - 100%</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/393/input/observation">https://v3.careplanmanager.com/manage-patients/393/input/observation</a><br /><br />
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseCareTeam"><strong><i class="glyphicon glyphicon-list"></i> Care Team Setup</strong> - 100%</a></h4>
+						<div id="collapseCareTeam" class="panel-collapse collapse">
+							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->ID)) }}</a><br /><br />
+						</div>
 
-						<strong>patient summary - 80% - needs labels</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/393/summary">https://v3.careplanmanager.com/manage-patients/393/summary</a><br /><br />
 
-						<strong>progress report - 80? looks good</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/393/progress">https://v3.careplanmanager.com/manage-patients/393/progress</a><br /><br />
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddObservation"><strong><i class="glyphicon glyphicon-list"></i> Add Observation</strong> - 100%</a></h4>
+						<div id="collapseAddObservation" class="panel-collapse collapse">
+							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}</a><br /><br />
+						</div>
 
-						<strong>notes - 100%?</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/393/notes">https://v3.careplanmanager.com/manage-patients/393/notes</a><br /><br />
 
-						<strong>record activity - 100%?</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/393/activities/create">https://v3.careplanmanager.com/manage-patients/393/activities/create</a><br /><br />
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSummary"><strong><i class="glyphicon glyphicon-list"></i> Patient Summary</strong> - 70%</a></h4>
+						<div id="collapsePatientSummary" class="panel-collapse collapse">
+							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}</a><br /><br />
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Observation labels are not correct</li>
+								<li>Missing link to biometric charts + actual biometric charts page.</li>
+							</ul>
+						</div>
 
-						<strong>billing report - 100%?</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/393/billing">https://v3.careplanmanager.com/manage-patients/393/billing</a><br /><br />
 
-						<strong>activity report - 100%?</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/393/activities">https://v3.careplanmanager.com/manage-patients/393/activities</a><br /><br />
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseProgressReport"><strong><i class="glyphicon glyphicon-list"></i> Progress Report</strong> - 80%</a></h4>
+						<div id="collapseProgressReport" class="panel-collapse collapse">
+							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}</a><br /><br />
+						</div>
 
-						<strong>print care plan - 80%?</strong><br />
-						- <a href="https://v3.careplanmanager.com/manage-patients/393/view-careplan">https://v3.careplanmanager.com/manage-patients/393/view-careplan</a><br /><br />
+
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseNotes"><strong><i class="glyphicon glyphicon-list"></i> Notest</strong> - 90%</a></h4>
+						<div id="collapseNotes" class="panel-collapse collapse">
+							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->ID)) }}</a><br /><br />
+						</div>
+
+
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseRecActivity"><strong><i class="glyphicon glyphicon-list"></i> Record Activity</strong> - 80%</a></h4>
+						<div id="collapseRecActivity" class="panel-collapse collapse">
+							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.activity.create', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.activity.create', array('patient' => $patient->ID)) }}</a><br /><br />
+						</div>
+
+
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseBillingReport"><strong><i class="glyphicon glyphicon-list"></i> Billing Report</strong> - 90%?</a></h4>
+						<div id="collapseBillingReport" class="panel-collapse collapse">
+							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}</a><br /><br />
+						</div>
+
+
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseActivityReport"><strong><i class="glyphicon glyphicon-list"></i> Activity Report</strong> - 90%?</a></h4>
+						<div id="collapseActivityReport" class="panel-collapse collapse">
+							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}</a><br /><br />
+						</div>
+
+
+						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePrintCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Print Care Plan</strong> - 30%?</a></h4>
+						<div id="collapsePrintCarePlan" class="panel-collapse collapse">
+							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}</a><br /><br />
+						</div>
 
 
 						</tbody>
