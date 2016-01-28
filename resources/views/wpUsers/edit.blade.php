@@ -308,9 +308,11 @@
                                                 @if (count($userConfig['care_team']) > 0 && is_array($userConfig['care_team']))
                                                     <div class="alert alert-warning">
                                                         <ul>
+                                                            {{--
                                                             @foreach ($userConfig['care_team'] as $id)
                                                                 <li>{!! Form::checkbox('care_team[]', $id, ['checked' => 'checked']) !!}{{ $id }}</li>
                                                             @endforeach
+                                                            --}}
                                                         </ul>
                                                     </div>
                                                 @endif
