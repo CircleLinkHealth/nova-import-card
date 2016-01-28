@@ -1,8 +1,8 @@
 @extends('partials.providerUI')
 @section('content')
-    <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
-            <div class="row">
+    <div class="row main-form-block" style="margin-top:60px;">
+        <div class="main-form-container  col-lg-8 col-lg-offset-2">
+            <div class="row ">
                 <div class="main-form-title col-lg-12">
                     Under 20 Minute Report
                 </div>
@@ -40,7 +40,7 @@
                     </div>
                     {!! Form::close() !!}
                 </div>
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+                <div class="main-form-horizontal main-form-primary-horizontal col-md-12">
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>

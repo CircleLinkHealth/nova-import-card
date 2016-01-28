@@ -13,7 +13,6 @@
                 {!! Form::open(array('url' => URL::route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
                 <div class="form-group  pull-right" style="margin-top:10px; ">
                     <i class="icon icon--date-time"></i>
-
                     <div class="inline-block">
                         <label for="selectMonth" class="sr-only">Select Month:</label>
                         <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="200px"

@@ -1,20 +1,19 @@
 @extends('partials.providerUI')
 @section('content')
 
-    <div class="row" style="margin-top:60px;">
+    <div class="row main-form-block" style="margin-top:60px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     Notes / Offline Activities
                 </div>
                 @include('partials.userheader')
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    <div class="col-sm-2">
-                        <a href="{{ URL::route('patient.note.create', array('patient' => $patient->ID)) }}"
-                           class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
-                            NOTE</a><br>
-                    </div>
-
+                <div class="col-sm-2" >
+                    <a href="{{ URL::route('patient.note.create', array('patient' => $patient->ID)) }}"
+                       class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
+                        NOTE</a><br>
+                </div>
+                <div class="main-form-horizontal main-form-primary-horizontal col-md-12" style="border-top: 3px solid #50b2e2">
                         @if($data)
                             <div id="obs_alerts_container" class=""></div><br/>
                             <div id="paging_container"></div><br/>
