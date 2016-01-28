@@ -11,7 +11,7 @@
 
                     {!! Form::open(array('url' => URL::route('patient.reports.billing', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                     <div class="col-sm-2">
-                        <h4 class="time-report__month">December 2015</h4>
+                        <h4 class="time-report__month">{{$month_selected}} {{$year_selected}}</h4>
                     </div>
                     <div class="form-group  pull-right" style="margin-top:10px;">
                         <i class="icon icon--date-time"></i>
@@ -32,7 +32,7 @@
                                 <select name="selectYear" id="selectYear" class="selectpicker" data-width="100px"
                                         data-size="10" style="display: none;">
                                     @foreach($years as $year)
-                                        <option value="{{$year}}" selected="selected">{{$year}}</option>
+                                        <option value="{{$year}}" @if($year_selected == $year) {{'selected'}} @endif>{{$year}}</option>
                                     @endforeach
                                 </select>
                             </div>

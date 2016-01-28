@@ -97,10 +97,10 @@ class ReportsController extends Controller {
 
 		if (isset($input['selectMonth'])) {
 			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
-			$start = $time->startOfMonth()->format('Y-m-d');
-			$end = $time->endOfMonth()->format('Y-m-d');
 			$month_selected = $time->format('m');
 			$year_selected = $time->format('Y');
+			$start = $time->startOfMonth()->format('Y-m-d');
+			$end = $time->endOfMonth()->format('Y-m-d');
 		} else {
 			$time = Carbon::now();
 			$month_selected = $time->format('m');
@@ -213,11 +213,14 @@ class ReportsController extends Controller {
 			$start = $time->startOfMonth()->format('Y-m-d');
 			$end = $time->endOfMonth()->format('Y-m-d');
 			$month_selected = $time->format('m');
+			$year_selected = $time->format('Y');
 		} else {
 			$time = Carbon::now();
 			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
 			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
 			$month_selected = $time->format('m');
+			$year_selected = $time->format('Y');
+
 		}
 
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
@@ -314,6 +317,7 @@ class ReportsController extends Controller {
 			'activity_json' => $reportData,
 			'years' => array_reverse($years),
 			'month_selected' => $month_selected,
+			'year_selected' => $year_selected,
 			'months' => $months,
 			'patient' => $patient_,
 			'data' => $act_data
