@@ -72,6 +72,11 @@
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSearch"><strong><i class="glyphicon glyphicon-list"></i> Patient Search</strong> - 70%</a></h4>
 						<div id="collapsePatientSearch" class="panel-collapse collapse">
 							<br />Link: <a href="{{ URL::route('patients.search', array()) }}">{{ URL::route('patients.search', array()) }}</a><br /><br />
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Not searching on all columns, only searching for name</li>
+								<li>CSS formatting of select options doesnt look nice</li>
+							</ul>
 						</div>
 
 						<br />
@@ -194,6 +199,10 @@
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseNotes"><strong><i class="glyphicon glyphicon-list"></i> Notes</strong> - 90%</a></h4>
 						<div id="collapseNotes" class="panel-collapse collapse">
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->ID)) }}</a><br /><br />
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Submit button should be centered underneath centered paragraph text</li>
+							</ul>
 						</div>
 
 
@@ -205,23 +214,33 @@
 
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseBillingReport"><strong><i class="glyphicon glyphicon-list"></i> Billing Report</strong> - 90%?</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseBillingReport"><strong><i class="glyphicon glyphicon-list"></i> Billing Report</strong> - 90%</a></h4>
 						<div id="collapseBillingReport" class="panel-collapse collapse">
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}</a><br /><br />
 						</div>
 
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseActivityReport"><strong><i class="glyphicon glyphicon-list"></i> Activity Report</strong> - 90%?</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseActivityReport"><strong><i class="glyphicon glyphicon-list"></i> Activity Report</strong> - 90%</a></h4>
 						<div id="collapseActivityReport" class="panel-collapse collapse">
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}</a><br /><br />
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Data doesnt match 2.8</li>
+								<li>right margin/padding on top right "Go" button</li>
+								<li>Choosing 'Year' doesnt hold, resets to 2016</li>
+							</ul>
 						</div>
 
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePrintCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Print Care Plan</strong> - 30%?</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePrintCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Print Care Plan</strong> - 30%</a></h4>
 						<div id="collapsePrintCarePlan" class="panel-collapse collapse">
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}">{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}</a><br /><br />
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Not ready for testings</li>
+							</ul>
 						</div>
 
 
