@@ -126,7 +126,7 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('summary', ['uses' => 'Patient\PatientController@showPatientSummary', 'as' => 'patient.summary']);
 		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patient.alerts']);
 		Route::get('input/observation', ['uses' => 'Patient\PatientController@showPatientObservationCreate', 'as' => 'patient.observation.create']);
-		Route::get('view-careplan', ['uses' => 'Patient\PatientCareplanController@showPatientCareplanPrint', 'as' => 'patient.careplan.print']);
+		Route::get('view-careplan', ['uses' => 'ReportsController@viewPrintCareplan', 'as' => 'patient.careplan.print']);
 		Route::post('input/observation/create', ['uses' => 'ObservationController@store', 'as' => 'patient.observation.store']);
 
 		// careplan
