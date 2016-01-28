@@ -36,7 +36,7 @@ class UserRepository {
         $this->createDefaultCarePlan($wpUser, $params);
 
         //Add Email Notification
-        $sendTo =  ['Plawlor@circlelinkhealth.com','rohanm@circlelinkhealth.com','lindaw@circlelinkhealth.com'];
+        $sendTo =  ['Plawlor@circlelinkhealth.com','rohanm@circlelinkhealth.com'];
         $this->adminEmailNotify($wpUser, $sendTo);
 
         $wpUser->push();
