@@ -98,6 +98,7 @@ class ReportsController extends Controller {
 		if (isset($input['selectMonth'])) {
 			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
 			$month_selected = $time->format('m');
+			$month_selected_text = $time->format('F');
 			$year_selected = $time->format('Y');
 			$start = $time->startOfMonth()->format('Y-m-d');
 			$end = $time->endOfMonth()->format('Y-m-d');
@@ -105,6 +106,7 @@ class ReportsController extends Controller {
 			$time = Carbon::now();
 			$month_selected = $time->format('m');
 			$year_selected = $time->format('Y');
+			$month_selected_text = $time->format('F');
 			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
 			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
 		}
@@ -112,6 +114,8 @@ class ReportsController extends Controller {
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
 
 		$u20_patients = array();
+		debug(jdmonthname(1, 1));
+		debug($month_selected);
 
 		// ROLLUP CATEGORIES
 		$CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
@@ -192,6 +196,7 @@ class ReportsController extends Controller {
 				'activity_json' => $reportData,
 				'years' => array_reverse($years),
 				'month_selected' => $month_selected,
+				'month_selected_text' => $month_selected_text,
 				'year_selected' => $year_selected,
 				'months' => $months,
 				'patient' => $patient_,
@@ -212,12 +217,14 @@ class ReportsController extends Controller {
 			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
 			$start = $time->startOfMonth()->format('Y-m-d');
 			$end = $time->endOfMonth()->format('Y-m-d');
+			$month_selected_text = $time->format('F');
 			$month_selected = $time->format('m');
 			$year_selected = $time->format('Y');
 		} else {
 			$time = Carbon::now();
 			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
 			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
+			$month_selected_text = $time->format('F');
 			$month_selected = $time->format('m');
 			$year_selected = $time->format('Y');
 
@@ -318,6 +325,7 @@ class ReportsController extends Controller {
 			'years' => array_reverse($years),
 			'month_selected' => $month_selected,
 			'year_selected' => $year_selected,
+			'month_selected_text' => $month_selected_text,
 			'months' => $months,
 			'patient' => $patient_,
 			'data' => $act_data

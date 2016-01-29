@@ -1,16 +1,16 @@
 @extends('partials.providerUI')
 @section('content')
-    <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
-            <div class="row">
+    <div class="row main-form-block" style="margin-top:60px;">
+        <div class="main-form-container  col-lg-8 col-lg-offset-2">
+            <div class="row ">
                 <div class="main-form-title col-lg-12">
                     Under 20 Minute Report
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
                     {!! Form::open(array('url' => URL::route('patient.reports.u20', ['patientId' => $patient->ID]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
-                    <div class="col-sm-2">
-                        <h4 class="time-report__month">{{$month_selected}} {{$year_selected}}</h4>
+                    <div class="col-sm-3">
+                        <h4 class="time-report__month">{{$month_selected_text}} {{$year_selected}}</h4>
                     </div>
                     <div class="form-group  pull-right" style="margin-top:10px;">
                         <i class="icon icon--date-time"></i>
@@ -40,7 +40,7 @@
                     </div>
                     {!! Form::close() !!}
                 </div>
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+                <div class="main-form-horizontal main-form-primary-horizontal col-md-12">
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
