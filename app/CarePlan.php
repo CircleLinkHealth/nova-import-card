@@ -133,14 +133,16 @@ class CarePlan extends Model {
     }
 
     public function setCareItemUserValue(User $user, $name, $value) {
-        $careItem = $this->careItems()->where('name','=',$name)->withPivot('meta_value')->first();
-        if(!$careItem) {
-            return false;
-        }
-        $userCareItemValue = $user->careItems()->where('name', '=', $careItem->name)->first();
-        if($userCareItemValue) {
-            $userCareItemValue->pivot->value = $value;
-            $userCareItemValue->pivot->save();
+        $careItem = CareItem::where('name', '=', $name)->first();
+        if ($careItem) {
+            $rowData = array('value' => $value);
+            $careItemUserValue = $user->careItems()->find($careItem['id']);
+            if(!$careItemUserValue) {
+                $user->careItems()->attach(array($careItem['id'] => $rowData));
+            } else {
+                $careItemUserValue->pivot->value = $value;
+                $careItemUserValue->pivot->save();
+            }
         }
         return true;
     }

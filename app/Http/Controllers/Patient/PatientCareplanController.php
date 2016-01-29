@@ -437,6 +437,12 @@ class PatientCareplanController extends Controller {
 				}
 				if ($value) {
 					// update user item
+					if($carePlanItem->id == 1) {
+						echo "FOUND!" . $carePlanItem->careItem->name."<br />";
+						echo 'item|' . $carePlanItem->id. '=' . $value;
+						//dd();
+					}
+					echo 'item|' . $carePlanItem->id . "<br />";
 					$carePlanItem->meta_value = $careplan->setCareItemUserValue($user, $carePlanItem->careItem->name, $value);
 					//$carePlanItem->meta_value = $value;
 					//$carePlanItem->save();

@@ -9,6 +9,10 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 		.panel-collapse {
 			border-bottom:1px solid #fff;
 		}
+
+		.complete {
+			text-decoration: line-through;
+		}
 	</style>
 	<div class="container">
 		<div class="row">
@@ -120,6 +124,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 									zip<br />
 								</li>
 								<li>Default birthdate to 01-01-1960 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
+								<li class="complete">New patient did not get care_plan_id set</li>
 							</ul>
 						</div>
 
@@ -144,7 +149,6 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<h5>Known Issues</h5>
 								<ul>
 									<li>"Are you sure?" confirmation modal missing green submit button</li>
-									<li>New patient did not get care_plan_id set</li>
 								</ul>
 							</div>
 
