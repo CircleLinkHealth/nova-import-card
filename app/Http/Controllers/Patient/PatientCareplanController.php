@@ -329,6 +329,13 @@ class PatientCareplanController extends Controller {
 		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
 			->first();
 
+		if(!$carePlan) {
+			$userRepo = new UserRepository();
+			$userRepo->createDefaultCarePlan($user, array());
+			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+				->first();
+		}
+
 		if($carePlan) {
 			$carePlan->build($user->ID);
 		}
