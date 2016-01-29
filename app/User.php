@@ -289,6 +289,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $userConfig['preferred_contact_timezone'];
 	}
 
+	public function getMRN() {
+		$userConfig = $this->userConfig();
+		return isset($userConfig['mrn_number']) ? $userConfig['mrn_number'] : '';
+	}
+
 	public function getSpecialtyAttribute() {
 		$userConfig = $this->userConfig();
 		if(isset($userConfig['specialty'])){

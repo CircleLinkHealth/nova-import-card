@@ -318,10 +318,16 @@ class PatientController extends Controller {
 		$i = 0;
 		foreach($data as $d){
 			$name = (User::find($d)->getFullNameAttribute());
+			$dob = new Carbon((User::find($d)->getBirthDateAttribute()));
+			$dob = $dob->format('m-d-Y');
+			$mrn = (User::find($d)->getMRN());
+			$program = WpBlog::find((User::find($d)->blogId()))->display_name;
+			debug($dob);
+			$search = $name .' | '. $dob .' | ' . $mrn;
 			if($i == count($data) - 1){
-				$patients .=  '{id : "' . $d . '", link: "' . URL::route('patient.summary', array('patient' => $d)). '", name: "'. $name .'"}] ';
+				$patients .=  '{ DOB: "'. $dob .'", program: "'. $program .'", search: "'. $search .'", id : "' . $d . '", link: "' . URL::route('patient.summary', array('patient' => $d)). '", name: "'. $name .'"}] ';
 			} else {
-				$patients .= '{id : "' .  $d . '", link: "'.URL::route('patient.summary', array('patient' => $d)).'", name: "'.$name.'"}, ';
+				$patients .= '{ DOB: "'. $dob .'", program: "'. $program .'", search: "'. $search .'", id : "' .  $d . '", link: "'.URL::route('patient.summary', array('patient' => $d)).'", name: "'.$name.'"}, ';
 			}
 			$i++;
 		}
