@@ -329,6 +329,13 @@ class PatientCareplanController extends Controller {
 		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
 			->first();
 
+		if(!$carePlan) {
+			$userRepo = new UserRepository();
+			$userRepo->createDefaultCarePlan($user, array());
+			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+				->first();
+		}
+
 		if($carePlan) {
 			$carePlan->build($user->ID);
 		}
@@ -437,6 +444,12 @@ class PatientCareplanController extends Controller {
 				}
 				if ($value) {
 					// update user item
+					if($carePlanItem->id == 1) {
+						echo "FOUND!" . $carePlanItem->careItem->name."<br />";
+						echo 'item|' . $carePlanItem->id. '=' . $value;
+						//dd();
+					}
+					echo 'item|' . $carePlanItem->id . "<br />";
 					$carePlanItem->meta_value = $careplan->setCareItemUserValue($user, $carePlanItem->careItem->name, $value);
 					//$carePlanItem->meta_value = $value;
 					//$carePlanItem->save();

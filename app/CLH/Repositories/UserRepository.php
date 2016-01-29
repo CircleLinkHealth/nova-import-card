@@ -6,6 +6,7 @@ use App\User;
 use App\UserMeta;
 use App\WpBlog;
 use App\Role;
+use App\CarePlan;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
 use App\Services\CareplanUIService;
@@ -206,7 +207,24 @@ class UserRepository {
     }
 
 
-    public function createDefaultCarePlan($wpUser, $params) {
+    public function createDefaultCarePlan($user, $params) {
+
+        $program = WpBlog::find($user->program_id);
+        if(!$program) {
+            return false;
+        }
+        // just need to add programs default @todo here should get the programs default one to use from programs config
+        $carePlan = CarePlan::where('name', '=', 'program-' . $program->name . '-default')->first();
+        if(!$carePlan) {
+            return false;
+        }
+
+        $user->care_plan_id = $carePlan->id;
+        $user->save();
+
+
+        /*
+         * OLD RULES_* careplan structure
         // get providers
         $sections = CPRulesPCP::where('prov_id', '=' , $wpUser->program_id)->get();
         if(count($sections) > 0) {
@@ -266,6 +284,7 @@ class UserRepository {
                 }
             }
         }
+        */
     }
 
     public function adminEmailNotify(User $user, $recipients){
