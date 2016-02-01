@@ -48,9 +48,9 @@
 								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'provider')) }}"><i class="icon--home--white"></i> Providers</a></td>
 							</tr>
 							<tr>
-								<td><strong>Total Participant</strong></td>
+								<td><strong>Total Participants</strong></td>
 								<td>{{ $stats['totalParticipants'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'participant')) }}"><i class="icon--home--white"></i> Participant</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'participant')) }}"><i class="icon--home--white"></i> Participants</a></td>
 							</tr>
 
 							</tbody>
