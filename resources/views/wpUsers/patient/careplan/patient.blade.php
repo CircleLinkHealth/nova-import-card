@@ -13,7 +13,9 @@ $user_info = array();
             @if(isset($patient->ID) )
                 @include('wpUsers.patient.careplan.nav')
             @else
+                <div class="col-lg-8 col-lg-offset-2">
                 @include('errors.errors')
+                </div>
             @endif
         </div>
     </div>
