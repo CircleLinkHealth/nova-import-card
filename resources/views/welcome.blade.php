@@ -22,8 +22,9 @@
 
 
 
-
-        Welcome
+			<div class="text-center">
+				<h2>Welcome to <strong>CarePlan</strong>Manager&trade;</h2>
+			</div>
 
 
 
