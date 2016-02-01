@@ -39,9 +39,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<br />
 						<h5>Known Issues</h5>
 						<ul>
-							<li>Change "Print Care Plan" to "View Care Plan"</li>
-							<li>Display patient name on top right of page if viewing</li>
-							<li>"Edit Care Plan" link should go to page 1 care plan, not patient demographic page</li>
+							<li class="complete">Change "Print Care Plan" to "View Care Plan"</li>
+							<li class="complete">"Edit Care Plan" link should go to page 1 care plan, not patient demographic page</li>
 						</ul>
 
 						{{--

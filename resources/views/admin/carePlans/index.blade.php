@@ -9,7 +9,7 @@
                     <div class="col-sm-2">
                         <h1>Care Plans</h1>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-10">
                         <div class="pull-right" style="margin:20px;">
                             <a href="{{ URL::route('admin.careplans.create', array()) }}" class="btn btn-success">New Care Plan</a>
                         </div>
