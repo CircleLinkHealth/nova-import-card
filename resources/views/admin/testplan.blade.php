@@ -158,15 +158,15 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => 1)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => 1)) }}</a><br /><br />
 								<h5>Known Issues</h5>
 								<ul>
-									<li>Remove "Care Plan" heading</li>
-									<li>Hide child items for "Track Care Transitions" parent item</li>
-									<li>Blue seperator bars between care sections</li>
-									<li>Swap the order (reverse order) sections are shown</li>
-									<li>Change "Instructions" to "Details"</li>
-									<li>"Details" should be dark grey color</li>
-									<li>"Details" modal textarea larger, button color green (same ui design as 2.8.8, blue heading ect)</li>
-									<li>Submitting page 3 of careplan should redirect to print cacre plan</li>
-									<li>Toggle show/hide of child items when parent item checked/unchecked. </li>
+									<li>Remove "Care Plan" heading <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
+									<li>Hide child items for "Track Care Transitions" parent item <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
+									<li>Blue seperator bars between care sections <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
+									<li>Swap the order (reverse order) sections are shown <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
+									<li>Submitting page 3 of careplan should redirect to print cacre plan <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
+									<li>Change "Instructions" to "Details" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
+									<li>"Details" should be dark grey color <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
+									<li>"Details" modal textarea larger, button color green (same ui design as 2.8.8, blue heading ect) <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
+									<li>Toggle show/hide of child items when parent item checked/unchecked. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
 								</ul>
 							</div>
 
