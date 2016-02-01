@@ -57,14 +57,14 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<br />Link: <a href="{{ URL::route('login', array()) }}" target="_blank">{{ URL::route('login', array()) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
-								<li>Add trademark symbol to CarePlanManager <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
-								<li>Responsive, right/left borders stick out the top on small resoluation <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
+								<li class="complete">Add trademark symbol to CarePlanManager <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
+								<li class="complete">Responsive, right/left borders stick out the top on small resoluation <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
 								<li>Center submit button / all content <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
-								<li>Remove link from logo <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
+								<li class="complete">Remove link from logo <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
 								<li>Blue login button <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
-								<li>Change "Login" to "Log In" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
-								<li>Change "Forgot" to "Lost" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
-								<li>Responsive - viewing on phone looks bad <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
+								<li class="complete">Change "Login" to "Log In" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
+								<li class="complete">Change "Forgot" to "Lost" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
+								<li class="complete">Responsive - viewing on phone looks bad <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
 								<li>big* - switch to login with wp_users.user_login column vs. user_email <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
 							</ul>
 						</div>
