@@ -1,10 +1,17 @@
 var Vue = require('vue');
+var Vmdl = require('vue-mdl');
+var MDL = require('material-design-lite');
+
+Vmdl.registerAll(Vue);
+
 Vue.use(require('vue-resource'));
 
 var uploader = new Vue({
     el: '#ccd-uploader',
     data: {
-        ccdRecords: new FormData
+        ccdRecords: new FormData,
+        progress: 30,
+        buffer: 100
     },
     ready: function () {
         this.watchForFileInput();
