@@ -17,17 +17,6 @@
 
 			<div class="col-md-12">
 				<div class="panel panel-default">
-					<div class="panel-heading">3.0 Site Map</div>
-					<div class="panel-body">
-						<div class="text-center" style="margin:40px 0px;">
-							<a href="{{ route('admin.testplan') }}" class="btn btn-success">3.0 Site Map / Demo Links</a>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-12">
-				<div class="panel panel-default">
 					<div class="panel-heading">Statistics</div>
 
 					<div class="panel-body">
@@ -100,6 +89,17 @@
 							</div>
 							<input class="btn btn-primary" type="submit" value="Impersonate">
 						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">3.0 Site Map</div>
+					<div class="panel-body">
+						<div class="text-center" style="margin:40px 0px;">
+							<a href="{{ route('admin.testplan') }}" class="btn btn-success">3.0 Site Map / Demo Links</a>
+						</div>
 					</div>
 				</div>
 			</div>
