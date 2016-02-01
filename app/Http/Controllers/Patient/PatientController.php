@@ -262,6 +262,15 @@ class PatientController extends Controller {
 					}
 				}
 
+				// get billing provider name
+				$bpName = '';
+				if(!empty($patient->billingProviderID)) {
+					$bpUser = User::find($patient->billingProviderID);
+					if($bpUser) {
+						$bpName = $bpUser->fullName;
+					}
+				}
+
 				// get date of last observation
 				$lastObservationDate = 'No Readings';
 				$lastObservation = $patient->observations()->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->first();
@@ -285,6 +294,7 @@ class PatientController extends Controller {
 					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
 					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
 					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
+					'provider'=> $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
 				);
 			}
 		}
