@@ -48,6 +48,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						kevinprovider - kgalloprovider@circlelinkhealth.com / oyQaJz0x9XRM<br /><br />
 						kevincc - kgallocc@circlelinkhealth.com / oyQaJz0x9XRM --}}
 
+						<br /><br /><br />
 						<h2>GENERAL:</h2>
 
 						<br />
@@ -136,6 +137,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 
 
 						@if(($patient))
+							<br /><br /><br />
 							<h2>PATIENT:</h2>
 
 							<strong>Links for patient: {{ $patient->fullNameWithID }}</strong>
@@ -147,7 +149,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->ID)) }}</a><br /><br />
 								<h5>Known Issues</h5>
 								<ul>
-									<li>"Are you sure?" confirmation modal missing green submit button <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/102">#102</a></li>
+									<li class="complete">"Are you sure?" confirmation modal missing green submit button <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/102">#102</a></li>
+									<li class="complete">JS issue, navigation buttons disable when js click events are fired.</li>
 								</ul>
 							</div>
 
@@ -215,6 +218,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<h5>Known Issues</h5>
 							<ul>
 								<li>Submit button should be centered underneath centered paragraph text <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/103">#103</a></li>
+								<li>Notes listing is only showing 1 note per day per type <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/111">#111</a></li>
+								<li>Log outgoing email messages in activity meta <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/112">#112</a></li>
 							</ul>
 						</div>
 
