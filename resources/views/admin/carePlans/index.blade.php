@@ -1,17 +1,17 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-2">
                         <h1>Care Plans</h1>
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.careplans.create', array()) }}" class="btn btn-success">New User Care Plan</a>
+                            <a href="{{ URL::route('admin.careplans.create', array()) }}" class="btn btn-success">New Care Plan</a>
                         </div>
                     </div>
                 </div>
@@ -29,7 +29,6 @@
                             <div class="row">
                                 <div class="col-xs-2 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
                                 <div class="col-xs-4">{!! Form::select('filterUser', array('all' => 'All Users', '' => 'No User') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                            </div>
                             </div>
                         </div>
                         <div class="row" style="margin-top:50px;">
@@ -55,11 +54,11 @@
                             <tbody>
                             @foreach( $careplans as $careplan )
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.careplans.show', array('id' => $careplan->id)) }}" class="btn btn-primary">Detail</a></td>
+                                    <td><a href="{{ URL::route('admin.careplans.show', array('id' => $careplan->id)) }}" class="btn btn-primary btn-xs">Detail</a></td>
                                     <td>{{ $careplan->name }}</td>
                                     <td>{{ $careplan->type }}</td>
                                     <td>{{ $careplan->user_id }}</td>
-                                    <td class="pull-right"><a href="{{ URL::route('admin.careplans.edit', array('id' => $careplan->id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.careplans.destroy', array('id' => $careplan->id)) }}" class="btn btn-danger">Remove</a></td>
+                                    <td class="text-right"><a href="{{ URL::route('admin.careplans.edit', array('id' => $careplan->id)) }}" class="btn btn-xs btn-primary">Edit</a> <a href="{{ URL::route('admin.careplans.destroy', array('id' => $careplan->id)) }}" class="btn btn-xs btn-danger">Remove</a></td>
                                 </tr>
                             @endforeach
                             </tbody>
