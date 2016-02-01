@@ -96,7 +96,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<br />Link: <a href="{{ URL::route('patients.listing', array()) }}" target="_blank">{{ URL::route('patients.listing', array()) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
-								<li>Missing billing provider name <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/107">#107</a></li>
+								<li class="complete">Missing billing provider name <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/107">#107</a></li>
 							</ul>
 						</div>
 
@@ -188,8 +188,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}</a><br /><br />
 								<h5>Known Issues</h5>
 								<ul>
-									<li>Observation labels are not correct</li>
-									<li>Missing link to biometric charts + actual biometric charts page.</li>
+									<li>Observation labels are not correct <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/109">#109</a></li>
+									<li>Missing link to biometric charts + actual biometric charts page. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/108">#108</a></li>
 								</ul>
 							</div>
 						@else
