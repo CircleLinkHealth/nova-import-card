@@ -16,7 +16,7 @@ elixir.config.js.browserify.transformers.push({
  */
 
 elixir(function(mix) {
-    mix.less(['/css/app.less', '/css/material.min.css'], 'public/css/stylesheet.css');
+    mix.less(['/css/app.less'], 'public/css/stylesheet.css');
     mix.browserify('/ccd/uploader.js');
 
     mix.scripts([

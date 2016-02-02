@@ -10,8 +10,9 @@ var uploader = new Vue({
     el: '#ccd-uploader',
     data: {
         ccdRecords: new FormData,
-        progress: 30,
-        buffer: 100
+        progress: 0,
+        buffer: 100,
+        message: ''
     },
     ready: function () {
         this.watchForFileInput();
@@ -21,12 +22,15 @@ var uploader = new Vue({
             $('input[type="file"]').change(this.notifyFileInput.bind(this));
         },
         notifyFileInput: function (e) {
+            this.message = 'Preparing CCDs for upload';
             var files = event.target.files;
             var formData =  this.ccdRecords;
 
             for (var i = 0; i < files.length; i++) {
                 formData.append('file[]', files[i]);
             }
+            this.progress += 10;
+            this.message = 'CCDs are ready for upload. Please click Upload CCD Records';
         },
         parseCCDwithBB: function (data) {
             var bb = BlueButton(data);
@@ -53,13 +57,8 @@ var uploader = new Vue({
         },
         onSubmitForm: function (e) {
             e.preventDefault();
-
+            this.message = 'Uploading CCD records and checking for duplicates.';
             this.$http.post('/upload-raw-ccds', this.ccdRecords, function (data, status, request) {
-                notification(
-                    "Uploading and Importing CCD Record(s). This may take a while.",
-                    'info', '#notification'
-                );
-
                 this.ccdRecords = new FormData;
 
                 if (data.uploaded.length > 0) {
@@ -73,7 +72,7 @@ var uploader = new Vue({
             }).error(function (data, status, request) {
                 console.log('Error: ' + data);
             });
-
+            this.progress += 30;
 
         },
         parseAndUploadCCDs: function (uploadedCCDs) {
@@ -92,7 +91,9 @@ var uploader = new Vue({
 
             this.$http.post('/upload-parsed-ccds', json, function (data, status, request) {
                 if (data) {
-                    notification(data, 'success', '#success');
+                    this.message = 'Everything completed successfully.';
+                    this.progress = 100;
+
                 }
             }).error(function (data, status, request) {
                 console.log('Error: ' + data);
