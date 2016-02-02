@@ -3,7 +3,7 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Registrar;
-use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use App\CLH\Traits\Auth\AuthenticatesAndRegistersUsers;
 
 class AuthController extends Controller {
 

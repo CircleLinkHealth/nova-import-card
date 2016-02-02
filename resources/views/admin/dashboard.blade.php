@@ -17,17 +17,6 @@
 
 			<div class="col-md-12">
 				<div class="panel panel-default">
-					<div class="panel-heading">3.0 Site Map</div>
-					<div class="panel-body">
-						<div class="text-center" style="margin:40px 0px;">
-							<a href="{{ route('admin.testplan') }}" class="btn btn-success">3.0 Site Map / Demo Links</a>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-12">
-				<div class="panel panel-default">
 					<div class="panel-heading">Statistics</div>
 
 					<div class="panel-body">
@@ -59,9 +48,9 @@
 								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'provider')) }}"><i class="icon--home--white"></i> Providers</a></td>
 							</tr>
 							<tr>
-								<td><strong>Total Participant</strong></td>
+								<td><strong>Total Participants</strong></td>
 								<td>{{ $stats['totalParticipants'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'participant')) }}"><i class="icon--home--white"></i> Participant</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'participant')) }}"><i class="icon--home--white"></i> Participants</a></td>
 							</tr>
 
 							</tbody>
@@ -100,6 +89,17 @@
 							</div>
 							<input class="btn btn-primary" type="submit" value="Impersonate">
 						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">3.0 Site Map</div>
+					<div class="panel-body">
+						<div class="text-center" style="margin:40px 0px;">
+							<a href="{{ route('admin.testplan') }}" class="btn btn-success">3.0 Site Map / Demo Links</a>
+						</div>
 					</div>
 				</div>
 			</div>

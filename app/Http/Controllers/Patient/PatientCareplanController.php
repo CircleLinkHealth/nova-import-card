@@ -340,9 +340,6 @@ class PatientCareplanController extends Controller {
 			$carePlan->build($user->ID);
 		}
 
-		//$carePlan->setCareItemUserValue($user->ID, 'blood-pressure-target-bp', '115');
-		//$value = $carePlan->getCareItemUserValue($user->ID, 'blood-pressure-target-bp');
-
 		// determine which sections to show
 		if($page == 1) {
 			$careSectionNames = array(

@@ -214,7 +214,7 @@ class UserRepository {
             return false;
         }
         // just need to add programs default @todo here should get the programs default one to use from programs config
-        $carePlan = CarePlan::where('name', '=', 'program-' . $program->name . '-default')->first();
+        $carePlan = CarePlan::where('program_id', '=', $program->id)->where('type', '=', 'Program Default')->first();
         if(!$carePlan) {
             return false;
         }

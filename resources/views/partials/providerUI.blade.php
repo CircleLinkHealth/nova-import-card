@@ -91,7 +91,7 @@
                 <a href="{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}" role="button">Patient Overview</a>
             </li>
             <li class="inline-block">
-                <a href="{{ empty($patient) ? '' : URL::route('patient.demographics.show', array('patient' => $patient->ID)) }}" role="button">Edit Care Plan</a></li>
+                <a href="{{ empty($patient) ? '' : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}" role="button">Edit Care Plan</a></li>
             <li class="inline-block dropdown">
                 <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Input<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
@@ -122,12 +122,12 @@
                         <a href="{{ empty($patient) ? '#' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">Patient Billing Report</a>
                     </li>
                     <li>
-                        <a href="">Patient Care Plan Print List</a>
+                        <a href="{{ URL::route('patients.carePlanPrintList', array()) }}">Patient Care Plan Print List</a>
                     </li>
                 </ul>
             </li>
             <li class="inline-block">
-                <a href="{{ empty($patient) ? '#' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" role="button">Print Care Plan</a>
+                <a href="{{ empty($patient) ? '#' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" role="button">View Care Plan</a>
             </li>
         </ul>
     </div>

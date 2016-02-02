@@ -51,6 +51,10 @@ class CustomUserProvider implements UserProvider {
                 $query->where($key, $value);
             }
         }
+
+        $query = User::query();
+        $query->where('user_login', $credentials['email']);
+        $query->orWhere('user_email', $credentials['email']);
         $user = $query->first();
         return $user;
     }
@@ -66,7 +70,7 @@ class CustomUserProvider implements UserProvider {
             return response('Password not provided', 422);
         }
 
-        if ($user->user_email != $credentials['email']) {
+        if ( ($user->user_email != $credentials['email']) && ($user->user_login != $credentials['email']) ) {
             return false;
         }
 
@@ -87,6 +91,7 @@ class CustomUserProvider implements UserProvider {
         if (\Hash::check($plain_password, $user->password)) {
             return true;
         }
+
         return false;
     }
 

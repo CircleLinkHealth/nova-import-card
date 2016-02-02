@@ -259,6 +259,23 @@ function buildProviderInfoContainers($providers) {
                         </div>
                     </div>
                 </div>
+
+                <div class="modal fade" id="ctConfModal" tabindex="-1" role="dialog" aria-labelledby="ctConfModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                Confirm Care Team
+                            </div>
+                            <div class="modal-body">
+                                <p><span id="ctConfModalError"></span></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="ctConfModalNo" class="btn btn-warning"  data-dismiss="modal">Continue editing</button>
+                                <button type="button" id="ctConfModalYes" class="btn btn-success"  data-dismiss="modal">Confirm and save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

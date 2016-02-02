@@ -633,6 +633,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->program_id;
 	}
 
+	public function primaryProgram() {
+		return $this->belongsTo('App\WpBlog', 'program_id', 'blog_id');
+	}
+
 	public function programs() {
 		return $this->belongsToMany('App\WpBlog', 'lv_program_user', 'user_id', 'program_id');
 	}
