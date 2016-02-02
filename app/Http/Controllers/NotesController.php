@@ -178,6 +178,12 @@ class NotesController extends Controller
             $logger = User::find($input['logger_id']);
             $logger_name = $logger->display_name;
 
+            //Log to Meta Table
+            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_by','meta_value' => $logger->ID]);
+            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_to','meta_value' => implode(", ", $input['careteam'])]);
+            $activity->meta()->saveMany($noteMeta);
+
+
             $result = $activitySer->sendNoteToCareTeam($input['careteam'], $linkToNote, $input['performed_at'], $input['patient_id'], $logger_name, true);
 
             if ($result) {
@@ -269,6 +275,10 @@ class NotesController extends Controller
             $logger = User::find($input['logger_id']);
             $logger_name = $logger->getFullNameAttribute();
             $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId)) . '/' . $activity->id;
+
+            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_by','meta_value' => $logger->ID]);
+            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_to','meta_value' => implode(", ", $input['careteam'])]);
+            $activity->meta()->saveMany($noteMeta);
 
             $result = $activityService->sendNoteToCareTeam($input['careteam'], $linkToNote, $activity->performed_at, $input['patient_id'], $logger_name, false);
 
