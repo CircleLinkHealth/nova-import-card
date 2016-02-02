@@ -3,7 +3,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CPM API</title>
+    <title>CCD Importer</title>
 
     <link rel="stylesheet" href="https://code.getmdl.io/1.1.0/material.teal-blue.min.css" />
     <link href="/css/animate.min.css" rel="stylesheet">
@@ -32,23 +32,23 @@
     <!-- Scripts -->
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 </head>
-<body style="background-color: ">
+<body>
 <nav class="mdl-grid">
     <div class="mdl-cell mdl-cell--12-col">
         <div class="mdl-typography--text-center">
-            <img src="/img/cpm-logo.png" height="40" width="70">
+            <img src="/img/cpm-logo.png" height="50" width="87.5">
         </div>
-        <div class="mdl-typography--text-right mdl-cell mdl-cell--12-col">
-            <h6><b>CCD Importer</b>
-            <br>Drop CCD Records in the box below, or click on it to browse your computer for CCDs.
-            <br><b>It is recommended that you import up to 5 CCDs in one go.</b></h6>
+        <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
+            <h5><b>CCD Importer</b></h5>
         </div>
     </div>
 </nav>
 
 <div id="ccd-uploader" class="mdl-grid">
-    <mdl-progress :progress="progress" :buffer="buffer" class="mdl-cell mdl-cell--12-col"></mdl-progress>
-    <p :message="message">@{{ message }}</p>
+    <div class="mdl-cell mdl-cell--12-col">
+        <mdl-progress :progress="progress" :buffer="buffer" class="mdl-cell mdl-cell--12-col"></mdl-progress>
+        <p :message="message" class="mdl-cell mdl-cell--12-col mdl-typography--text-left">@{{ message }}</p>
+    </div>
 
     <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data" class="mdl-cell mdl-cell--12-col">
 

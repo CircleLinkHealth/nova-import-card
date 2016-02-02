@@ -12,7 +12,7 @@ var uploader = new Vue({
         ccdRecords: new FormData,
         progress: 0,
         buffer: 100,
-        message: ''
+        message: 'Drop CCD Records in the box below, or click on it to browse your computer for CCDs. It is recommended that you import up to 5 CCDs in one go.'
     },
     ready: function () {
         this.watchForFileInput();
@@ -58,6 +58,8 @@ var uploader = new Vue({
         onSubmitForm: function (e) {
             e.preventDefault();
             this.message = 'Uploading CCD records and checking for duplicates.';
+            this.progress += 20;
+
             this.$http.post('/upload-raw-ccds', this.ccdRecords, function (data, status, request) {
                 this.ccdRecords = new FormData;
 
@@ -72,10 +74,10 @@ var uploader = new Vue({
             }).error(function (data, status, request) {
                 console.log('Error: ' + data);
             });
-            this.progress += 30;
-
         },
         parseAndUploadCCDs: function (uploadedCCDs) {
+            this.message = 'Parsing CCDs and generating Care Plans.';
+            this.progress += 20;
             var parsedJsonCCDs = [];
 
             uploadedCCDs.forEach(function(ccd) {
@@ -100,6 +102,8 @@ var uploader = new Vue({
             });
         },
         parseAndUploadDuplicateCCDs: function (duplicates) {
+            this.message = 'Parsing duplicate CCDs and generating Care Plans.';
+            this.progress += 15;
             var importAgain = [];
 
             var numberOfDuplicates = duplicates.length;
@@ -121,6 +125,9 @@ var uploader = new Vue({
             }
 
             if (importAgain.length == numberOfDuplicates) {
+                this.message = 'Uploading duplicate CCDs.';
+                this.progress += 10;
+
                 var json = JSON.stringify(importAgain);
                 this.$http.post('/upload-duplicate-raw-ccds', json, function (data, status, request) {
                     uploader.parseAndUploadCCDs(data.uploaded);
