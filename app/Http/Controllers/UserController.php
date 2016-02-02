@@ -49,6 +49,7 @@ class UserController extends Controller {
 		$users = User::get();
 		foreach($users as $user) {
 			// ensure program relationship is set
+			/*
 			if(!empty($user->program_id) && $user->program_id < 100) {
 				if (!$user->programs->contains($user->program_id)) {
 					$user->programs()->attach($user->program_id);
@@ -57,6 +58,7 @@ class UserController extends Controller {
 				$user->delete();
 				$missingProgramId[] = '';
 			}
+			*/
 		}
 		// END
 
