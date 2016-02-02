@@ -122,7 +122,7 @@
                         <a href="{{ empty($patient) ? '#' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">Patient Billing Report</a>
                     </li>
                     <li>
-                        <a href="">Patient Care Plan Print List</a>
+                        <a href="{{ URL::route('patients.carePlanPrintList', array()) }}">Patient Care Plan Print List</a>
                     </li>
                 </ul>
             </li>

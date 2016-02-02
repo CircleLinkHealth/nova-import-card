@@ -102,6 +102,16 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						</div>
 
 						<br />
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientPrintList"><strong><i class="glyphicon glyphicon-list"></i> Patient Care Plan Print List</strong> - 15%</a></h4>
+						<div id="collapsePatientPrintList" class="panel-collapse collapse in">
+							<br />Link: <a href="{{ URL::route('patients.listing', array()) }}" target="_blank">{{ URL::route('patients.listing', array()) }}</a><br /><br />
+							<h5>Known Issues</h5>
+							<ul>
+								<li class="complete">Build Page <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/113">#113</a></li>
+							</ul>
+						</div>
+
+						<br />
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAlerts"><strong><i class="glyphicon glyphicon-list"></i> Alerts</strong> - 15%</a></h4>
 						<div id="collapseAlerts" class="panel-collapse collapse in">
 							<br />link: <a href="{{ URL::route('patients.alerts', array()) }}" target="_blank">{{ URL::route('patients.alerts', array()) }}</a><br /><br />
