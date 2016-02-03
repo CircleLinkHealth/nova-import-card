@@ -137,17 +137,6 @@ class ProblemsParser extends BaseParser implements Parser
             ) continue;
 
             /*
-             * SNOMED Check
-             */
-            if (in_array($problemCodes->code_system_name, ['SNOMED CT']) || $problemCodes->code_system == '2.16.840.1.113883.6.96')
-            {
-                $potentialICD10List = SnomedToICD10Map::whereSnomedCode($problemCodes->code)->lists('icd_10_code');
-                $problemCodes->code_system_name = 'ICD-10';
-                $problemCodes->code_system = '2.16.840.1.113883.6.3';
-                if (! empty($potentialICD10List[0])) $problemCodes->code = $potentialICD10List[0];
-            }
-
-            /*
              * ICD-9 Check
              */
             if ( in_array( $problemCodes->code_system_name, ['ICD-9', 'ICD9'] ) || $problemCodes->code_system == '2.16.840.1.113883.6.103' ) {
@@ -191,6 +180,17 @@ class ProblemsParser extends BaseParser implements Parser
                             }
                         }
                     }
+                }
+
+            /*
+             * SNOMED Check
+             */
+                if (in_array($problemCodes->code_system_name, ['SNOMED CT']) || $problemCodes->code_system == '2.16.840.1.113883.6.96')
+                {
+                    $potentialICD10List = SnomedToICD10Map::whereSnomedCode($problemCodes->code)->lists('icd_10_code');
+                    $problemCodes->code_system_name = 'ICD-10';
+                    $problemCodes->code_system = '2.16.840.1.113883.6.3';
+                    if (! empty($potentialICD10List[0])) $problemCodes->code = $potentialICD10List[0];
                 }
 
                 foreach ( $cpmProblems as $cpmProblem ) {
