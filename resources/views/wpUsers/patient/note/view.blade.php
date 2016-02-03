@@ -136,11 +136,9 @@
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->ID}}">
                                     <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                 </div>
-                                <div class="new-note-item">
-                                    <div class="form-group">
-                                        <div class="col-sm-6 center-block">
-                                            <div class="form-item form-item-spacing text-center">
-                                                <div>
+                                <div class="form-item form-item-spacing text-center">
+                                    <div>
+                                        <div class="col-sm-12">
                                                     <input type="hidden" value="new_activity"/>
                                                     <button id="update" name="submitAction" type="submit" value="new_activity"
                                                             class="btn btn-primary btn-lg form-item--button form-item-spacing">
@@ -149,7 +147,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
 
                                     <script>

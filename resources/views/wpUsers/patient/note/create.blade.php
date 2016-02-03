@@ -2,12 +2,12 @@
 
 @section('content')
     <?php
-        $userTime = \Carbon\Carbon::now();
-        $userTime->setTimezone($userTimeZone);
-        $userTimeGMT = $userTime;
-        $userTime->setTimezone('GMT');
-        $userTime = $userTime->format('Y-m-d\TH:i');
-        $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
+    $userTime = \Carbon\Carbon::now();
+    $userTime->setTimezone($userTimeZone);
+    $userTimeGMT = $userTime;
+    $userTime->setTimezone('GMT');
+    $userTime = $userTime->format('Y-m-d\TH:i');
+    $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
     ?>
 
     <div class="row" style="margin-top:60px;">
@@ -32,7 +32,8 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <select id="activityKey" name="type" class="selectpicker dropdownValid form-control"
+                                            <select id="activityKey" name="type"
+                                                    class="selectpicker dropdownValid form-control"
                                                     data-size="10" required>
                                                 <option value=""> Select Topic</option>
                                                 @foreach ($note_types as $note_type)
@@ -56,8 +57,10 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <input name="performed_at" type="datetime-local" class="selectpicker form-control"
-                                                   data-width="95px" data-size="10" list max="{{$userTime}}" value="{{$userTime}}"
+                                            <input name="performed_at" type="datetime-local"
+                                                   class="selectpicker form-control"
+                                                   data-width="95px" data-size="10" list max="{{$userTime}}"
+                                                   value="{{$userTime}}"
                                                    required>
                                         </div>
                                     </div>
@@ -77,7 +80,8 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <select id="performedBy" name="provider_id"
-                                                    class="selectpicker dropdown Valid form-control" data-size="10" required>
+                                                    class="selectpicker dropdown Valid form-control" data-size="10"
+                                                    required>
                                                 <option value=""> Select Provider</option>
                                                 @foreach ($provider_info as $id => $name)
                                                     <option value="{{$id}}"> {{$name}} </option>
@@ -96,17 +100,22 @@
                                     <div class="col-sm-12">
                                         <div class="panel-group" id="accordion">
                                             <label data-toggle="collapse" data-target="#collapseOne">
-                                                <div class="radio"><input type="checkbox" name="meta[0][meta_key]" id="phone"
-                                                                          value="phone"/><label for="phone"><span> </span>Phone
+                                                <div class="radio"><input type="checkbox" name="meta[0][meta_key]"
+                                                                          id="phone"
+                                                                          value="phone"/><label
+                                                            for="phone"><span> </span>Phone
                                                         Session</label>
                                                 </div>
                                             </label>
 
                                             <div id="collapseOne" class="panel-collapse collapse in">
-                                                <div class="radio-inline"><input type="checkbox" name="meta[0][meta_value]"
-                                                                                 value="inbound" id="Inbound"/><label for="Inbound"><span> </span>Inbound</label>
+                                                <div class="radio-inline"><input type="checkbox"
+                                                                                 name="meta[0][meta_value]"
+                                                                                 value="inbound" id="Inbound"/><label
+                                                            for="Inbound"><span> </span>Inbound</label>
                                                 </div>
-                                                <div class="radio-inline"><input type="checkbox" name="meta[0][meta_value]"
+                                                <div class="radio-inline"><input type="checkbox"
+                                                                                 name="meta[0][meta_value]"
                                                                                  value="outbound" id="Outbound"/><label
                                                             for="Outbound"><span> </span>Outbound</label></div>
                                             </div>
@@ -139,7 +148,8 @@
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
                                                         <select id=performedBy" name=careteam[]"
-                                                                class="selectpicker dropdown Valid form-control" data-size="10"
+                                                                class="selectpicker dropdown Valid form-control"
+                                                                data-size="10"
                                                                 multiple>
                                                             @foreach ($careteam_info as $id => $name)
                                                                 <option value="{{$id}}"> {{$name}} </option>
@@ -162,50 +172,46 @@
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->ID}}">
                                     <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                 </div>
-                                <div class="new-note-item">
-                                    <div class="form-group">
-                                        <div class="col-sm-6 center-block">
-                                            <div class="form-item form-item-spacing text-center">
-                                                <div>
-                                                    <input type="hidden" value="new_activity"/>
-                                                    <button id="update" name="submitAction" type="submit" value="new_activity"
-                                                            class="btn btn-primary btn-lg form-item--button form-item-spacing">
-                                                        Save/Send Note
-                                                    </button>
-                                                </div>
-                                            </div>
+                                <div class="form-item form-item-spacing text-center">
+                                    <div>
+                                        <div class="col-sm-12">
+                                            <input type="hidden" value="new_activity"/>
+                                            <button id="update" name="submitAction" type="submit"
+                                                    value="new_activity"
+                                                    class="btn btn-primary btn-lg form-item--button form-item-spacing">
+                                                Save/Send Note!
+                                            </button>
                                         </div>
                                     </div>
-
-
-                                    <script>
-                                        $('.collapse').collapse();
-
-                                        $("input:checkbox").on('click', function () {
-                                            // in the handler, 'this' refers to the box clicked on
-                                            var $box = $(this);
-                                            if ($box.is(":checked")) {
-                                                // the name of the box is retrieved using the .attr() method
-                                                // as it is assumed and expected to be immutable
-                                                var group = "input:checkbox[name='" + $box.attr("name") + "']";
-                                                // the checked state of the group/box on the other hand will change
-                                                // and the current value is retrieved using .prop() method
-                                                $(group).prop("checked", false);
-                                                $box.prop("checked", true);
-                                            } else {
-                                                $box.prop("checked", false);
-                                            }
-                                        });
-                                    </script>
-                                    {!! Form::close() !!}
                                 </div>
+                                <script>
+                                    $('.collapse').collapse();
+
+                                    $("input:checkbox").on('click', function () {
+                                        // in the handler, 'this' refers to the box clicked on
+                                        var $box = $(this);
+                                        if ($box.is(":checked")) {
+                                            // the name of the box is retrieved using the .attr() method
+                                            // as it is assumed and expected to be immutable
+                                            var group = "input:checkbox[name='" + $box.attr("name") + "']";
+                                            // the checked state of the group/box on the other hand will change
+                                            // and the current value is retrieved using .prop() method
+                                            $(group).prop("checked", false);
+                                            $box.prop("checked", true);
+                                        } else {
+                                            $box.prop("checked", false);
+                                        }
+                                    });
+                                </script>
+                                {!! Form::close() !!}
                             </div>
                         </div>
                     </div>
-
                 </div>
 
             </div>
+
         </div>
+    </div>
     </div>
 @endsection
