@@ -343,9 +343,9 @@ class PatientCareplanController extends Controller {
 		// determine which sections to show
 		if($page == 1) {
 			$careSectionNames = array(
-				'diagnosis-problems-to-monitor',
-				'lifestyle-to-monitor',
 				'medications-to-monitor',
+				'lifestyle-to-monitor',
+				'diagnosis-problems-to-monitor',
 			);
 		} else if($page == 2) {
 			$careSectionNames = array(
@@ -354,8 +354,8 @@ class PatientCareplanController extends Controller {
 			);
 		} else if($page == 3) {
 			$careSectionNames = array(
-				'additional-information',
 				'symptoms-to-monitor',
+				'additional-information',
 				//'misc',
 			);
 		}

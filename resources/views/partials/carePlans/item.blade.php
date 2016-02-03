@@ -29,7 +29,11 @@
         }
     </style>
 @endif
-
+<style>
+    .cp-section {
+        border-bottom:3px solid #50B2E2;
+    }
+</style>
 
 <div class="col-sm-12 cp-item" style="">
     @if(isset($editMode) && $editMode != false)
