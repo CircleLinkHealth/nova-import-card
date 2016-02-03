@@ -12,6 +12,7 @@ abstract class BaseParser
     protected $ccd;
     protected $meta;
     protected $parsedCcdObj;
+    protected $routine;
     protected $userId;
 
     public function __construct ($blogId, ParsedCCD $ccd, DataTemplate $meta = null)
@@ -21,6 +22,7 @@ abstract class BaseParser
         $this->meta = $meta;
         $this->parsedCcdObj = $ccd;
         $this->userId = $ccd->user_id;
+        $this->routine = self::getRoutine();
     }
 
     /**
@@ -38,5 +40,20 @@ abstract class BaseParser
         return in_array($ehrId, [
             '2.16.840.1.113883.3.929', // STI
         ]);
+    }
+
+    protected function getRoutine()
+    {
+        return self::getRuleSet();
+    }
+
+    protected function getRuleSet()
+    {
+        if ($this->ccd->document->author->name->family == 'Mazhar')
+        {
+            return ['importAllMeds' => true];
+        }
+
+        return false;
     }
 }

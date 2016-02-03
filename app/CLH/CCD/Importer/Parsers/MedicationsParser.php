@@ -22,24 +22,20 @@ class MedicationsParser extends BaseParser implements Parser
         foreach ( $medications as $medication ) {
             $endDate = '';
 
-            if ( !empty($medication->date_range->end) ) {
-                $endDate = Carbon::createFromTimestamp( strtotime( $medication->date_range->end ) );
+            //Bypass the checks if import all meds flag is active
+            if ( !empty($this->routine['importAllMeds']) && !$this->routine['importAllMeds'] ) {
+                if ( !empty($medication->date_range->end) ) {
+                    $endDate = Carbon::createFromTimestamp( strtotime( $medication->date_range->end ) );
+                }
+
+                if ( !empty($endDate) && $endDate->isPast() ) continue;
             }
 
-            if ( !empty($endDate) && $endDate->isPast() ) continue;
-
-            if ( (!empty($medication->date_range->start) && empty($medication->date_range->end))
-                || ($importIfEndDateIsNull && !empty($medication->date_range->start) && empty($medication->date_range->end)) )
-            {
-                empty($medication->product->name)
-                    ? $medsList .= ''
-                    : $medsList .= ucfirst( strtolower( $medication->product->name ) ) . ', ';
-
-                $medsList .= ucfirst( strtolower( StringManipulation::stringDiff( $medication->product->name, $medication->text ) ) )
-                    . "; \n\n";
-            }
-            elseif ( !empty($medication->status)
-                && strtolower( $medication->status ) == 'active'
+            if (
+                (!empty($medication->date_range->start) && empty($medication->date_range->end))
+                || ($importIfEndDateIsNull && !empty($medication->date_range->start) && empty($medication->date_range->end))
+                || (!empty($medication->status) && strtolower( $medication->status ) == 'active')
+                || (!empty($this->routine['importAllMeds']) && $this->routine['importAllMeds'])
             ) {
                 empty($medication->product->name)
                     ? $medsList .= ''
