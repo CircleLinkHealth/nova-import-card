@@ -203,6 +203,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<ul>
 									<li>Observation labels are not correct <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/82">#82</a></li>
 									<li>Missing link to biometric charts + actual biometric charts page. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/108">#108</a></li>
+									<li>.0.0 Patient Overview - Lifestyle observations not displaying properly. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/114">#114</a></li>
 								</ul>
 							</div>
 						@else

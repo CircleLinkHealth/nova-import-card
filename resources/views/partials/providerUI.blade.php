@@ -52,8 +52,8 @@
 <nav class="navbar primary-navbar">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a href="http://www.circlelinkhealth.com" class="navbar-brand"><img src="/img/ui/clh_logo_lt.png" alt="Care Plan Manager" style="position:relative;top:-15px" width="50px" /></a>
-            <a href="" class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
+            <a href="{{ URL::route('patients.dashboard') }}" class="navbar-brand"><img src="/img/ui/clh_logo_lt.png" alt="Care Plan Manager" style="position:relative;top:-15px" width="50px" /></a>
+            <a href="{{ URL::route('patients.dashboard') }}" class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
         </div>
         <div class="navbar-right hidden-xs ">
             <ul class="nav navbar-nav">
