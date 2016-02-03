@@ -13,7 +13,7 @@
 @endif
 
 @if ($planItemChild->ui_fld_type == 'SELECT')
-    <input id="Hypertension" name="CHECK_STATUS|27|39|status" value="Active" checked="checked" class="itemTrigger" data-toggle="collapse" data-target="#39_modal_contentclone" type="checkbox"><label for="Hypertension"><span> </span>{{ $planItemChild->careItem->display_name }}</label><br />
+    <input id="Hypertension" name="CHECK_STATUS|27|39|status" value="Active" checked="checked" class="itemTrigger" data-toggle="collapse" data-target="#{{ $planItem->id }}_modal_contentclone" type="checkbox"><label for="Hypertension"><span> </span>{{ $planItemChild->careItem->display_name }}</label><br />
 @elseif ($planItemChild->ui_fld_type == 'RADIO_MULT')
     <?php
     //$modal_content .= $key . " "; // HIDE CONTACT DAYS
