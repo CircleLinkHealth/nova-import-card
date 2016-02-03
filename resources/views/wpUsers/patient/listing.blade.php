@@ -53,7 +53,7 @@
                             autoheight:true,
                             fixedRowHeight:false,  rowLineHeight:25, rowHeight:25,
                             // leftSplit:2,
-                            scrollX:false,
+                            scrollX:true,
                             resizeColumn:true,
                             //tooltip:true,
                             columns:[
