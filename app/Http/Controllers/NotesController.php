@@ -29,17 +29,15 @@ class NotesController extends Controller
     {
 
         $patient = User::find($patientId);
-        $input = $request->all();
         $messages = \Session::get('messages');
 
         $acts = DB::table('lv_activities')
-            ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration)'))
+            ->select(DB::raw('*,provider_id, type'))
             ->where('patient_id', $patientId)
             ->where(function ($q) {
                 $q->where('logged_from', 'note')
                     ->Orwhere('logged_from', 'manual_input');
             })
-            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
             ->orderBy('performed_at', 'desc')
             ->get();
 
