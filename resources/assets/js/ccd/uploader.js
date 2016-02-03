@@ -12,7 +12,8 @@ var uploader = new Vue({
         ccdRecords: new FormData,
         progress: 0,
         buffer: 100,
-        message: 'Drop CCD Records in the box below, or click on it to browse your computer for CCDs. It is recommended that you import up to 5 CCDs in one go.'
+        message: 'Drop CCD Records in the box below, or click on it to browse your computer for CCDs. It is recommended that you import up to 5 CCDs in one go.',
+        enabled: true
     },
     ready: function () {
         this.watchForFileInput();
@@ -23,6 +24,7 @@ var uploader = new Vue({
         },
         notifyFileInput: function (e) {
             this.message = 'Preparing CCDs for upload';
+            this.progress = 0;
             var files = event.target.files;
             var formData =  this.ccdRecords;
 
@@ -57,6 +59,7 @@ var uploader = new Vue({
         },
         onSubmitForm: function (e) {
             e.preventDefault();
+            this.enabled = false;
             this.message = 'Uploading CCD records and checking for duplicates.';
             this.progress += 20;
 
@@ -95,6 +98,7 @@ var uploader = new Vue({
                 if (data) {
                     this.message = 'Everything completed successfully.';
                     this.progress = 100;
+                    this.enabled = true;
 
                 }
             }).error(function (data, status, request) {

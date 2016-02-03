@@ -55,7 +55,7 @@
         <input type="file" id="ccd" class="dropzone" multiple>
 
         <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
-            <mdl-button primary raised v-mdl-ripple-effect type="submit">
+            <mdl-button primary raised v-mdl-ripple-effect type="submit" :disabled="!enabled">
                 Upload CCD Records
             </mdl-button>
         </div>
