@@ -54,6 +54,9 @@ class CCDUploadController extends Controller {
                     throw new \Exception('Blog id not found,', 400);
                 }
 
+                /**
+                 * Full name and DOB are used as keys to check whether a CCD has already been uploaded
+                 */
                 $parser = new CCDParser($xml);
                 $fullName = $parser->getFullName();
                 $dob = $parser->getDob();
