@@ -433,7 +433,6 @@ class PatientCareplanController extends Controller {
 				if (!$carePlanItem) {
 					continue 1;
 				}
-				//echo 'item|' . $carePlanItem->careItem->name.'<br />';
 				$value = $params->get('item|' . $carePlanItem->id);
 				// if checkbox and unchecked on the ui it doesnt post, so set these to Inactive
 				if (!$value && ($carePlanItem->ui_fld_type == 'SELECT' || $carePlanItem->ui_fld_type == 'CHECK')) {
@@ -441,19 +440,10 @@ class PatientCareplanController extends Controller {
 				}
 				if ($value) {
 					// update user item
-					if($carePlanItem->id == 1) {
-						echo "FOUND!" . $carePlanItem->careItem->name."<br />";
-						echo 'item|' . $carePlanItem->id. '=' . $value;
-						//dd();
-					}
-					echo 'item|' . $carePlanItem->id . "<br />";
 					$carePlanItem->meta_value = $careplan->setCareItemUserValue($user, $carePlanItem->careItem->name, $value);
-					//$carePlanItem->meta_value = $value;
-					//$carePlanItem->save();
 				}
 			}
 		}
-		//dd();
 
 		if($params->get('direction')) {
 			return redirect($params->get('direction'))->with('messages', ['Successfully updated patient care plan.']);

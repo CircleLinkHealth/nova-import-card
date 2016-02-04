@@ -62,20 +62,20 @@
                         <button type="button" class="btn btn-default btn-xs btn-monitor collapse {{ $planItem->meta_value == 'Active' ? 'in' : '' }} text-right" id="collapseItem{{ $planItem->id }}" data-toggle="modal" data-target="#carePlanItem{{ $planItem->careItem->id }}Detail" style="margin-top:10px;">Instructions</button>
 
                         <!-- Modal -->
-                        <div id="carePlanItem{{ $planItem->careItem->id }}Detail" class="modal fade" role="dialog">
+                        <div id="carePlanItem{{ $planItem->careItem->id }}Detail" class="modal fade text-left" role="dialog">
                             <div class="modal-dialog">
 
                                 <!-- Modal content-->
                                 <div class="modal-content">
-                                    <div class="modal-header">
+                                    <div class="modal-header" style="background:#50B2E2;">
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">{{ $planItem->careItem->display_name }} :: Details</h4>
+                                        <h4 class="modal-title" style="color:#fff;">{{ $planItem->careItem->display_name }} :: Details</h4>
                                     </div>
                                     <div class="modal-body">
-                                        <textarea id="item{{ $detailChildItem->id }}modal" name="item|{{ $detailChildItem->id }}">{{ $detailChildItem->meta_value }}</textarea>
+                                        <textarea id="item{{ $detailChildItem->id }}modal" name="item|{{ $detailChildItem->id }}" style="height: 120px;">{{ $detailChildItem->meta_value }}</textarea>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
                                     </div>
                                 </div>
 

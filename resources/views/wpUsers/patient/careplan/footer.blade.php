@@ -36,8 +36,11 @@
                     <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 2)) }}"><span class="glyphicon glyphicon-circle-arrow-left"></span></a>
                     <button type="submit" class="btn btn-green btn-next inline-block">Submit</button>
                     @if( isset($showApprovalButton) && $showApprovalButton )
-                        <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 3)) }}">Approve CarePlan&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
+                        <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.print', array('patientId' => $patient->ID, 'page' => 3)) }}">Approve CarePlan&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
+                    @else
+                        <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.print', array('patientId' => $patient->ID, 'page' => 3)) }}">Print Care Plan&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                     @endif
+
                 @endif
             </div>
                 @if(!$user_info)
