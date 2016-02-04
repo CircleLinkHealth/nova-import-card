@@ -33,24 +33,26 @@ class CCDUploadController extends Controller {
         //CCDs just added to XML_CCDs table
         $uploaded = [];
 
-
         if ($request->hasFile('file')) {
             foreach ($request->file('file') as $file) {
                 if (empty($file)) {
                     Log::error('It seems like this file did not upload. Here is what I have for $file in '
-                        . self::class . '@uploadRawFiles() ==>' . $file);
+                        . __METHOD__ . ' ' . __LINE__ . '==>' . $file);
                     continue;
                 }
 
                 $xml = file_get_contents($file);
 
-                if($request->session()->has('blogId')) {
-                    $blogId = $request->session()->get('blogId');
-                }
-                else {
-                    throw new \Exception('Blog id not found,', 400);
+                $viewableProgramIds = auth()->user()->viewableProgramIds();
+
+                if (empty($viewableProgramIds)) {
+                    abort(404, 'You do not have access to any Programs');
                 }
 
+
+                /**
+                 * Checking for duplicates
+                 */
                 $parser = new CCDParser($xml);
                 $fullName = $parser->getFullName();
                 $dob = $parser->getDob();
@@ -138,7 +140,13 @@ class CCDUploadController extends Controller {
      */
     public function create()
     {
-        return view('CCDUploader.uploader');
+        $viewablePrograms = auth()->user()->programs()->get();
+
+        if ($viewablePrograms->isEmpty()) {
+            abort(404, 'You do not have access to any Programs');
+        }
+
+        return view('CCDUploader.uploader', compact('viewablePrograms'));
     }
 
     /**

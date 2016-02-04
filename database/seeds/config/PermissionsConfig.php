@@ -30,6 +30,7 @@ class PermissionsConfig extends Seeder {
             'admin-access' => array('display_name' => 'Admin Access', 'description' => '',),
             'apikeys-manage' => array('display_name' => 'API Manage', 'description' => '',),
             'apikeys-view' => array('display_name' => 'API View', 'description' => '',),
+            'ccd-import' => array('display_name' => 'Import CCDs', 'description' => '',),
             'locations-manage' => array('display_name' => 'Locations Manage', 'description' => '',),
             'locations-view' => array('display_name' => 'Locations View', 'description' => '',),
             'observations-create' => array('display_name' => 'Observations Create', 'description' => '',),
@@ -57,6 +58,7 @@ class PermissionsConfig extends Seeder {
             'administrator' => array(
                 'display_name' => 'Administrator',
                 'description' => 'Administrator',
+                'ccd-import',
                 'permissions' => array(
                     // administrator will always get all permissions
                 )
@@ -80,6 +82,7 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'CLH Admin',
                 'description' => 'CLH Admin',
                 'permissions' => array(
+                    'ccd-import',
                     'locations-view',
                     'observations-create',
                     'observations-view',
