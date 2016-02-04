@@ -31,7 +31,7 @@
                             if (!empty($detailSection)) {
                                 if ($section['section'] == 'obs_biometrics') {
                                     //echo '<a href="'.get_permalink( get_page_by_title('patient biometric chart') ).'?user='.$wpUser->ID.'"><span class="glyphicon glyphicon-stats"></span></a> &nbsp;&nbsp; ';
-                                    echo '<a href="?user=' . $wpUser->ID . '"><span class="glyphicon glyphicon-stats"></span></a> &nbsp;&nbsp; ';
+                                    echo '<a href="'.URL::route('patient.charts', array('patient' => $wpUser->ID)).'"><span class="glyphicon glyphicon-stats"></span></a> &nbsp;&nbsp;';
                                 }
                                 echo '<a href="?user=' . $wpUser->ID . '"><< Return</a>';
                             } else {

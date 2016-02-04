@@ -92,7 +92,8 @@ Class ReportsService
             }
         }
         return $itemsToMonitor;
-    }public function getProblemsToMonitorWithDetails(User $user){
+    }
+    public function getProblemsToMonitorWithDetails(User $user){
         $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
             ->first();
         $carePlan->build($user->ID);

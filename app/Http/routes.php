@@ -125,6 +125,7 @@ Route::group(['middleware' => 'auth'], function ()
 		// base
 		//Route::get('/', ['uses' => 'Patient\PatientController@showSelectProgram', 'as' => 'patient.selectprogram']);
 		Route::get('summary', ['uses' => 'Patient\PatientController@showPatientSummary', 'as' => 'patient.summary']);
+		Route::get('summary-biochart', ['uses' => 'ReportsController@biometricsCharts', 'as' => 'patient.charts']);
 		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patient.alerts']);
 		Route::get('input/observation', ['uses' => 'Patient\PatientController@showPatientObservationCreate', 'as' => 'patient.observation.create']);
 		Route::get('view-careplan', ['uses' => 'ReportsController@viewPrintCareplan', 'as' => 'patient.careplan.print']);

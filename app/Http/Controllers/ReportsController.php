@@ -63,7 +63,8 @@ class ReportsController extends Controller {
 					if (intval($value->Avg) > $biometrics_array[$bio_name]['max']){
 						$biometrics_array[$bio_name]['max'] = intval($value->Avg);
 					}
-					$biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval($value->Avg).'} ,';
+					$biometrics_array[
+					$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval($value->Avg).'} ,';
 					$count++;
 				}
 			} else {
@@ -468,6 +469,42 @@ class ReportsController extends Controller {
 				]);
 		}
 		return response("User not found", 401);
+	}
+
+	/**
+	 * @param Request $request
+	 * @param bool|false $patientId
+	 * @return \Illuminate\View\View
+     */
+	public function biometricsCharts(Request $request, $patientId = false){
+
+		$patient = User::find($patientId);
+
+		$biometrics = ['Weight','Blood_Sugar','Blood_Pressure'];
+		$biometrics_data = array();
+		$biometrics_array = array();
+
+		foreach($biometrics as $biometric){
+			$biometrics_data[$biometric] = (new ReportsService())->getBiometricsData($biometric, $patient);
+		}			//debug($biometrics_data);
+
+		foreach($biometrics_data as $key => $value){
+			$bio_name = $key;
+			$count = 1;
+			$biometrics_array[$bio_name]['data'] = '';
+			//$first = reset($array);
+			if($value){
+				foreach($value as $key => $value){
+					$biometrics_array[$bio_name]['data'] .= '{ id:'.$count.', Week:\''.$value->day.'\', Reading:'.intval($value->Avg).'} ,';
+					$count++;
+				}
+			} else {
+				//no data
+				$biometrics_array[$bio_name]['data'] = '';
+			}//debug($biometrics_array);
+		}debug($biometrics_array);
+
+		return view('wpUsers.patient.biometric-chart', ['patient' => $patient, 'biometrics_array' => $biometrics_array]);
 	}
 
 }
