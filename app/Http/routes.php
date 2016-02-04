@@ -12,21 +12,7 @@ Route::get('careplan/{id}/section/{sectionId}', ['uses' => 'Admin\CarePlanContro
 /*
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
-//CCD Parser Demo Route
-Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
 Route::post('account/login', 'PatientController@patientAjaxSearch');
-/**
- * UPLOAD CCD ROUTES
- * @todo How do we protect those? auth middleware?
- */
-Route::get('upload-raw-ccds', 'CCDUploadController@create');
-Route::post('upload-raw-ccds', 'CCDUploadController@uploadRawFiles');
-Route::post('upload-duplicate-raw-ccds', 'CCDUploadController@uploadDuplicateRawFiles');
-Route::post('upload-parsed-ccds', 'CCDUploadController@storeParsedFiles');
-
-Route::group(['middleware' => 'auth.ccd.import'], function (){
-	Route::post('{id}/import-ccds', 'CCDUploadController@create');
-});
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
@@ -102,6 +88,22 @@ Route::group(['middleware' => 'auth'], function ()
         //BB Sample
         //	return App\XmlCCD::find(430)->ccd;
     });
+
+	/**
+	 * CCD Importer Routes
+	 */
+
+	Route::group(['middleware' => 'auth.ccd.import'], function (){
+		Route::get('import-ccds', ['uses' => 'CCDUploadController@create', 'as' => 'import.ccd']);
+
+		Route::post('upload-raw-ccds', 'CCDUploadController@uploadRawFiles');
+		Route::post('upload-duplicate-raw-ccds', 'CCDUploadController@uploadDuplicateRawFiles');
+		Route::post('upload-parsed-ccds', 'CCDUploadController@storeParsedFiles');
+	});
+
+	//CCD Parser Demo Route
+	Route::get('ccd-parser-demo', 'CCDParserDemoController@index');
+
 
 	/****************************/
 	// PROVIDER UI (/manage-patients, /reports, ect)
