@@ -62,12 +62,7 @@
                         <div class="col-xs-4 col-sm-4 col-lg-offset-1">
                             <div class="row">
                                 <div class="col-xs-6">
-                                            <span class="text-right"><a
-                                                        class="btn btn-green btn-sm submit-chart-select">Go</a></span>
-                                </div>
-                                <div class="col-xs-6">
-                                            <span class="text-right"><a class="btn btn-green btn-sm submit-chart-select"
-                                                                        href="/manage-patients/patient-summary/?user=308&detail=obs_biometrics"><<
+                                            <span class="text-right"><a class="btn btn-green btn-sm submit-chart-select" href="{{URL::route('patient.summary', array('patient' => $patient->ID))}}"><<
                                                     Return</a></span>
                                 </div>
                             </div>
