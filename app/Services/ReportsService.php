@@ -85,11 +85,61 @@ Class ReportsService
         foreach($carePlan->careSections as $section){
             if($section->name == 'diagnosis-problems-to-monitor'){
                 foreach($section->carePlanItems as $item){
-                    $itemsToMonitor[] = $item->careItem->display_name;
+                    if($item->meta_value == 'Active') {
+                        $itemsToMonitor[] = $item->careItem->display_name;
+                    }
                 }
             }
         }
         return $itemsToMonitor;
+    }public function getProblemsToMonitorWithDetails(User $user){
+        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+            ->first();
+        $carePlan->build($user->ID);
+        $itemsToMonitor = array();
+        foreach($carePlan->careSections as $section){
+            if($section->name == 'diagnosis-problems-to-monitor'){
+                foreach($section->carePlanItems as $item){
+                    if($item->meta_value == 'Active') {
+                        foreach($item->children as $child){
+                            $details = ($child->meta_value == '') ? 'No instructions at this time' : $child->meta_value;
+                            $itemsToMonitor[$item->careItem->display_name] = $details;
+                        }
+                    }
+                }
+            }
+        }
+        return $itemsToMonitor;
+    }
+    public function getSymptomsToMonitor(User $user){
+        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+            ->first();
+        $carePlan->build($user->ID);
+        foreach($carePlan->careSections as $section){
+            if($section->name == 'symptoms-to-monitor'){
+                foreach($section->carePlanItems as $item){
+                    if($item->meta_value == 'Active') {
+                        $temp[] = $item->careItem->display_name;
+                    }
+                }
+            }
+        }
+        return $temp;
+    }
+    public function getLifestyleToMonitor(User $user){
+        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+            ->first();
+        $carePlan->build($user->ID);
+        foreach($carePlan->careSections as $section){
+            if($section->name == 'lifestyle-to-monitor'){
+                foreach($section->carePlanItems as $item){
+                    if($item->meta_value == 'Active') {
+                        $temp[] = $item->careItem->display_name;
+                    }
+                }
+            }
+        }
+        return $temp;
     }
     public function getMedicationStatus(User $user, $fromApp = true){
 
@@ -403,7 +453,6 @@ Class ReportsService
         }
         return $changes_array;
     }
-
     public function progress($id)
     {
 
@@ -553,7 +602,6 @@ Class ReportsService
 
         return $progress;
     }
-
     public function careplan($id)
     {
 

@@ -247,11 +247,17 @@ class ActivityController extends Controller {
 			$start = $time->startOfMonth()->format('Y-m-d');
 			$end = $time->endOfMonth()->format('Y-m-d');
 			$month_selected = $time->format('m');
+			$month_selected_text = $time->format('F');
+			$year_selected = $time->format('Y');
+
 		} else {
 			$time = Carbon::now();
 			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
 			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
 			$month_selected = $time->format('m');
+			$month_selected_text = $time->format('F');
+			$year_selected = $time->format('Y');
+
 		}
 
 		$acts = DB::table('lv_activities')
@@ -262,7 +268,8 @@ class ActivityController extends Controller {
 			->where('patient_id', $patientId)
 			->where(function ($q) {
 				$q->where('logged_from', 'activity')
-					->Orwhere('logged_from', 'manual_input');
+					->Orwhere('logged_from', 'manual_input')
+					->Orwhere('logged_from', 'pagetimer');
 			})
 			->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
 			->orderBy('performed_at', 'desc')
@@ -286,11 +293,13 @@ class ActivityController extends Controller {
 		}
 
 		$months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-		debug($reportData);
+		debug($month_selected_text);
 		return view('wpUsers.patient.activity.index',
 			['activity_json' => $reportData,
 				'years' => array_reverse($years),
 				'month_selected' => $month_selected,
+				'month_selected_text' => $month_selected_text,
+				'year_selected' => $year_selected,
 				'months' => $months,
 				'patient' => $patient,
 				'data' => $data,

@@ -329,19 +329,23 @@ class PatientCareplanController extends Controller {
 		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
 			->first();
 
+		if(!$carePlan) {
+			$userRepo = new UserRepository();
+			$userRepo->createDefaultCarePlan($user, array());
+			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+				->first();
+		}
+
 		if($carePlan) {
 			$carePlan->build($user->ID);
 		}
 
-		//$carePlan->setCareItemUserValue($user->ID, 'blood-pressure-target-bp', '115');
-		//$value = $carePlan->getCareItemUserValue($user->ID, 'blood-pressure-target-bp');
-
 		// determine which sections to show
 		if($page == 1) {
 			$careSectionNames = array(
-				'diagnosis-problems-to-monitor',
-				'lifestyle-to-monitor',
 				'medications-to-monitor',
+				'lifestyle-to-monitor',
+				'diagnosis-problems-to-monitor',
 			);
 		} else if($page == 2) {
 			$careSectionNames = array(
@@ -350,8 +354,8 @@ class PatientCareplanController extends Controller {
 			);
 		} else if($page == 3) {
 			$careSectionNames = array(
-				'additional-information',
 				'symptoms-to-monitor',
+				'additional-information',
 				//'misc',
 			);
 		}
@@ -437,6 +441,12 @@ class PatientCareplanController extends Controller {
 				}
 				if ($value) {
 					// update user item
+					if($carePlanItem->id == 1) {
+						echo "FOUND!" . $carePlanItem->careItem->name."<br />";
+						echo 'item|' . $carePlanItem->id. '=' . $value;
+						//dd();
+					}
+					echo 'item|' . $carePlanItem->id . "<br />";
 					$carePlanItem->meta_value = $careplan->setCareItemUserValue($user, $carePlanItem->careItem->name, $value);
 					//$carePlanItem->meta_value = $value;
 					//$carePlanItem->save();

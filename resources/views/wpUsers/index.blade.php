@@ -69,7 +69,7 @@
                             @if (count($wpUsers) > 0)
                                 @foreach( $wpUsers as $wpUser )
                                     <tr>
-                                        <td>{{ $wpUser->fullNameWithID }}</td>
+                                        <td><a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class=""> {{ $wpUser->fullNameWithID }}</a></td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
                                                 @if($wpUser->hasRole('participant'))
@@ -80,7 +80,11 @@
                                             @endif
                                         </td>
                                         <td>{{ $wpUser->user_email }}</td>
-                                        <td>{{ $wpUser->program_id }}</td>
+                                        <td>
+                                            @if ($wpUser->primaryProgram)
+                                                <a href="{{ URL::route('admin.programs.show', array('id' => $wpUser->primaryProgram->blog_id)) }}" class=""> {{ $wpUser->primaryProgram->display_name }}</a>
+                                            @endif
+                                        </td>
                                         <td class="text-right">
                                             @if(Entrust::can('users-edit-all'))
                                                 <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>

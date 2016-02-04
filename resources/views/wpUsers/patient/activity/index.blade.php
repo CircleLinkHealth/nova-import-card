@@ -7,15 +7,12 @@
                     Patient Activity Report
                 </div>
                 @include('partials.userheader')
-                <div class="col-sm-2">
-                    <a href="{{ URL::route('patient.activity.create', array('patient' => $patient->ID)) }}"
-                       class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
-                        OFFLINE ACTIVITY</a><br>
-                </div>
-                {!! Form::open(array('url' => URL::route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
-                <div class="form-group  pull-right" style="margin-top:10px;">
+                    <div class="col-sm-3">
+                        <h4 class="time-report__month">{{$month_selected_text}} {{$year_selected}}</h4>
+                    </div>
+                {!! Form::open(array('url' => URL::route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
+                <div class="form-group  pull-right" style="margin-top:10px; ">
                     <i class="icon icon--date-time"></i>
-
                     <div class="inline-block">
                         <label for="selectMonth" class="sr-only">Select Month:</label>
                         <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="200px"
@@ -32,7 +29,7 @@
                             <select name="selectYear" id="selectYear" class="selectpicker" data-width="100px"
                                     data-size="10" style="display: none;">
                                 @foreach($years as $year)
-                                    <option value="{{$year}}" selected="selected">{{$year}}</option>
+                                    <option value="{{$year}}" @if($year_selected == $year) {{'selected'}} @endif>{{$year}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -41,7 +38,7 @@
                 </div>
                 {!! Form::close() !!}
 
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="border-top: 3px solid #50b2e2">
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>

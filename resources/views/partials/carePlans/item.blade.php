@@ -29,7 +29,11 @@
         }
     </style>
 @endif
-
+<style>
+    .cp-section {
+        border-bottom:3px solid #50B2E2;
+    }
+</style>
 
 <div class="col-sm-12 cp-item" style="">
     @if(isset($editMode) && $editMode != false)
@@ -43,11 +47,7 @@
             <div class="form-group">
                 <div class="form-item col-sm-12">
                     <div class="checkbox text-medium-big">
-                        <div class="radio-inline"><input id="carePlanItem{{ $planItem->id }}" name="item|{{ $planItem->id }}" value="Active" class="itemTrigger" data-toggle="collapse" data-target="#{{ $planItem->id }}_modal_contentclone" type="checkbox"
-                            @if ($planItem->meta_value == 'Active')
-                                checked="checked"
-                            @endif
-                            >
+                        <div class="radio-inline"><input id="carePlanItem{{ $planItem->id }}" name="item|{{ $planItem->id }}" value="Active" class="itemTrigger" data-toggle="collapse" data-target="#collapseItem{{ $planItem->id }}" type="checkbox" {{ $planItem->meta_value == 'Active' ? 'checked=checked' : '' }}>
                             <label for="carePlanItem{{ $planItem->id }}">
                             <span></span>{{ $planItem->careItem->display_name }}</label>
                         </div>
@@ -57,10 +57,10 @@
     @endif
 
     @if (!is_null($planItem->children))
-        @foreach($planItem->children as $planItemChild)
-
-            @include('partials.carePlans.itemChild')
-
-        @endforeach
+        <div class="collapse {{ $planItem->meta_value == 'Active' ? 'in' : '' }}" id="collapseItem{{ $planItem->id }}">
+            @foreach($planItem->children as $planItemChild)
+                @include('partials.carePlans.itemChild')
+            @endforeach
+        </div>
     @endif
 </div>

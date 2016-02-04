@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    /*
     $('#preferred_contact_time').timepicker( {
         timeFormat: 'hh:mm TT',
         stepMinute: 15
@@ -11,10 +12,12 @@ $(document).ready(function(){
     $('#consent_date').datepicker({
         dateFormat: "yy-mm-dd"
     });
+    */
+    $("#dtBox").DateTimePicker();
 });
 
 $(document).ready(function(){
-    /* $( ".submitFormBtn, a").click(function(e) { */
+    /* $( ".submitFormBtn").click(function(e) { */
     $( ".submitFormBtn").click(function(e) {
         if ($(this).attr('omitsubmit')) {
             if(typeof $(this).attr('dtarget') === 'undefined') {

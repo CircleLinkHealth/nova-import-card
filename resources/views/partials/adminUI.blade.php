@@ -37,6 +37,12 @@
 		<!-- START BOOTSTRAP -->
 		<!-- Latest compiled and minified CSS -->
 		<link href="{{ asset('/css/bootstrap-bootstwatch-superhero.css') }}" rel="stylesheet">
+		<style>
+			.table-striped>tbody>tr:nth-child(odd)>td,
+			.table-striped>tbody>tr:nth-child(odd)>th {
+				background-color: #5c6e7f;
+			}
+		</style>
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 		<!-- END BOOTSTRAP -->

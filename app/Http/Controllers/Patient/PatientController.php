@@ -262,6 +262,15 @@ class PatientController extends Controller {
 					}
 				}
 
+				// get billing provider name
+				$bpName = '';
+				if(!empty($patient->billingProviderID)) {
+					$bpUser = User::find($patient->billingProviderID);
+					if($bpUser) {
+						$bpName = $bpUser->fullName;
+					}
+				}
+
 				// get date of last observation
 				$lastObservationDate = 'No Readings';
 				$lastObservation = $patient->observations()->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->first();
@@ -285,6 +294,7 @@ class PatientController extends Controller {
 					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
 					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
 					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
+					'provider'=> $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
 				);
 			}
 		}
@@ -293,6 +303,97 @@ class PatientController extends Controller {
 
 
 		return view('wpUsers.patient.listing', compact(['pendingApprovals', 'patientJson']));
+	}
+
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @return Response
+	 */
+	public function showPatientCarePlanPrintList(Request $request)
+	{
+		$patientData = array();
+		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+			->with('meta')->whereHas('roles', function($q) {
+				$q->where('name', '=', 'participant');
+			})->get();
+		if($patients->count() > 0) {
+			foreach ($patients as $patient) {
+				// skip if patient has no name
+				if(empty($patient->firstName)) {
+					continue 1;
+				}
+				// careplan status stuff from 2.x
+				$careplanStatus = $patient->carePlanStatus;
+				$careplanStatusLink = '';
+				$approverName = 'NA';
+				if ($patient->carePlanStatus  == 'provider_approved') {
+					$approverId = $patient->carePlanProviderApprover;
+					$approver = User::find($approverId);
+					if($approver) {
+						$approverName = $approver->fullName;
+						$careplanStatus = 'Approved';
+						$careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
+						$tooltip = $approverName . ' ' . $patient->carePlanProviderDate;
+					}
+				} else if ($patient->carePlanStatus == 'qa_approved') {
+					$careplanStatus = 'Approve Now';
+					$tooltip = $careplanStatus;
+					$careplanStatusLink = 'Approve Now';
+					if (Auth::user()->hasRole('provider')) {
+						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
+					}
+				} else if ($patient->carePlanStatus == 'draft') {
+					$careplanStatus = 'CLH Approve';
+					$tooltip = $careplanStatus;
+					$careplanStatusLink = 'CLH Approve';
+					if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
+						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
+					}
+				}
+
+				// get billing provider name
+				$bpName = '';
+				if(!empty($patient->billingProviderID)) {
+					$bpUser = User::find($patient->billingProviderID);
+					if($bpUser) {
+						$bpName = $bpUser->fullName;
+					}
+				}
+
+				// get date of last observation
+				$lastObservationDate = 'No Readings';
+				$lastObservation = $patient->observations()->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->first();
+				if(!empty($lastObservation)) {
+					$lastObservationDate = date("m/d/Y", strtotime($lastObservation->obs_date));
+				}
+
+				$patientData[] = array('key' => $patient->ID, // $part->ID,
+					'patient_name' => $patient->fullName, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
+					'first_name' => $patient->firstName, //$meta[$part->ID]["first_name"][0],
+					'last_name' => $patient->lastName, //$meta[$part->ID]["last_name"][0],
+					'ccm_status' => ucfirst($patient->ccmStatus), //ucfirst($meta[$part->ID]["ccm_status"][0]),
+					'careplan_status' => $careplanStatus, //$careplanStatus,
+					'tooltip' => $tooltip, //$tooltip,
+					'careplan_status_link' => $careplanStatusLink, //$careplanStatusLink,
+					'careplan_provider_approver' => $approverName, //$approverName,
+					'dob' => Carbon::parse($patient->birthDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
+					'phone' => $patient->phone, //$user_config[$part->ID]["study_phone_number"],
+					'age' => $patient->age,
+					'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
+					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
+					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
+					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
+					'provider'=> $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
+				);
+			}
+		}
+		$patientJson = json_encode($patientData);
+
+
+
+		return view('wpUsers.patient.carePlanPrintList', compact(['pendingApprovals', 'patientJson']));
 	}
 
 	/**
@@ -318,10 +419,16 @@ class PatientController extends Controller {
 		$i = 0;
 		foreach($data as $d){
 			$name = (User::find($d)->getFullNameAttribute());
+			$dob = new Carbon((User::find($d)->getBirthDateAttribute()));
+			$dob = $dob->format('m-d-Y');
+			$mrn = (User::find($d)->getMRN());
+			$program = WpBlog::find((User::find($d)->blogId()))->display_name;
+			debug($dob);
+			$search = $name .' | '. $dob .' | ' . $mrn;
 			if($i == count($data) - 1){
-				$patients .=  '{id : "' . $d . '", link: "' . URL::route('patient.summary', array('patient' => $d)). '", name: "'. $name .'"}] ';
+				$patients .=  '{ DOB: "'. $dob .'", program: "'. $program .'", search: "'. $search .'", id : "' . $d . '", link: "' . URL::route('patient.summary', array('patient' => $d)). '", name: "'. $name .'"}] ';
 			} else {
-				$patients .= '{id : "' .  $d . '", link: "'.URL::route('patient.summary', array('patient' => $d)).'", name: "'.$name.'"}, ';
+				$patients .= '{ DOB: "'. $dob .'", program: "'. $program .'", search: "'. $search .'", id : "' .  $d . '", link: "'.URL::route('patient.summary', array('patient' => $d)).'", name: "'.$name.'"}, ';
 			}
 			$i++;
 		}

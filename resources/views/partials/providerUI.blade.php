@@ -24,9 +24,9 @@
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
-    <!-- http://trentrichardson.com/examples/timepicker/ -->
+    <!-- http://trentrichardson.com/examples/timepicker/
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>-->
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
@@ -34,6 +34,9 @@
     <script src="{{ asset('/js/scripts.js') }}"></script>
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
+
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css" />
+    <script type="text/javascript" src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
 
     <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
     <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
@@ -52,8 +55,8 @@
 <nav class="navbar primary-navbar">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a href="http://www.circlelinkhealth.com" class="navbar-brand"><img src="/img/ui/clh_logo_lt.png" alt="Care Plan Manager" style="position:relative;top:-15px" width="50px" /></a>
-            <a href="" class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
+            <a href="{{ URL::route('patients.dashboard') }}" class="navbar-brand"><img src="/img/ui/clh_logo_lt.png" alt="Care Plan Manager" style="position:relative;top:-15px" width="50px" /></a>
+            <a href="{{ URL::route('patients.dashboard') }}" class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
         </div>
         <div class="navbar-right hidden-xs ">
             <ul class="nav navbar-nav">
@@ -91,7 +94,7 @@
                 <a href="{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}" role="button">Patient Overview</a>
             </li>
             <li class="inline-block">
-                <a href="{{ empty($patient) ? '' : URL::route('patient.demographics.show', array('patient' => $patient->ID)) }}" role="button">Edit Care Plan</a></li>
+                <a href="{{ empty($patient) ? '' : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}" role="button">Edit Care Plan</a></li>
             <li class="inline-block dropdown">
                 <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Input<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
@@ -122,12 +125,12 @@
                         <a href="{{ empty($patient) ? '#' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">Patient Billing Report</a>
                     </li>
                     <li>
-                        <a href="">Patient Care Plan Print List</a>
+                        <a href="{{ URL::route('patients.carePlanPrintList', array()) }}">Patient Care Plan Print List</a>
                     </li>
                 </ul>
             </li>
             <li class="inline-block">
-                <a href="{{ empty($patient) ? '#' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" role="button">Print Care Plan</a>
+                <a href="{{ empty($patient) ? '#' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" role="button">View Care Plan</a>
             </li>
         </ul>
     </div>

@@ -5,7 +5,7 @@
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title col-lg-12">
-                    Patient List
+                    Patient Care Plan Print List
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
@@ -53,7 +53,7 @@
                             autoheight:true,
                             fixedRowHeight:false,  rowLineHeight:25, rowHeight:25,
                             // leftSplit:2,
-                            scrollX:true,
+                            scrollX:false,
                             resizeColumn:true,
                             //tooltip:true,
                             columns:[

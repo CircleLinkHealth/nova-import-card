@@ -29,17 +29,15 @@ class NotesController extends Controller
     {
 
         $patient = User::find($patientId);
-        $input = $request->all();
         $messages = \Session::get('messages');
 
         $acts = DB::table('lv_activities')
-            ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration)'))
+            ->select(DB::raw('*,provider_id, type'))
             ->where('patient_id', $patientId)
             ->where(function ($q) {
                 $q->where('logged_from', 'note')
                     ->Orwhere('logged_from', 'manual_input');
             })
-            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
             ->orderBy('performed_at', 'desc')
             ->get();
 
@@ -178,6 +176,12 @@ class NotesController extends Controller
             $logger = User::find($input['logger_id']);
             $logger_name = $logger->display_name;
 
+            //Log to Meta Table
+            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_by','meta_value' => $logger->ID]);
+            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_to','meta_value' => implode(", ", $input['careteam'])]);
+            $activity->meta()->saveMany($noteMeta);
+
+
             $result = $activitySer->sendNoteToCareTeam($input['careteam'], $linkToNote, $input['performed_at'], $input['patient_id'], $logger_name, true);
 
             if ($result) {
@@ -269,6 +273,10 @@ class NotesController extends Controller
             $logger = User::find($input['logger_id']);
             $logger_name = $logger->getFullNameAttribute();
             $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId)) . '/' . $activity->id;
+
+            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_by','meta_value' => $logger->ID]);
+            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_to','meta_value' => implode(", ", $input['careteam'])]);
+            $activity->meta()->saveMany($noteMeta);
 
             $result = $activityService->sendNoteToCareTeam($input['careteam'], $linkToNote, $activity->performed_at, $input['patient_id'], $logger_name, false);
 

@@ -1,7 +1,9 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\CareItem;
 use App\CarePlan;
+use App\CarePlanItem;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
@@ -97,14 +99,16 @@ class ReportsController extends Controller {
 
 		if (isset($input['selectMonth'])) {
 			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+			$month_selected = $time->format('m');
+			$month_selected_text = $time->format('F');
+			$year_selected = $time->format('Y');
 			$start = $time->startOfMonth()->format('Y-m-d');
 			$end = $time->endOfMonth()->format('Y-m-d');
-			$month_selected = $time->format('m');
-			$year_selected = $time->format('Y');
 		} else {
 			$time = Carbon::now();
 			$month_selected = $time->format('m');
 			$year_selected = $time->format('Y');
+			$month_selected_text = $time->format('F');
 			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
 			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
 		}
@@ -112,6 +116,8 @@ class ReportsController extends Controller {
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
 
 		$u20_patients = array();
+		debug(jdmonthname(1, 1));
+		debug($month_selected);
 
 		// ROLLUP CATEGORIES
 		$CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
@@ -192,6 +198,7 @@ class ReportsController extends Controller {
 				'activity_json' => $reportData,
 				'years' => array_reverse($years),
 				'month_selected' => $month_selected,
+				'month_selected_text' => $month_selected_text,
 				'year_selected' => $year_selected,
 				'months' => $months,
 				'patient' => $patient_,
@@ -212,12 +219,17 @@ class ReportsController extends Controller {
 			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
 			$start = $time->startOfMonth()->format('Y-m-d');
 			$end = $time->endOfMonth()->format('Y-m-d');
+			$month_selected_text = $time->format('F');
 			$month_selected = $time->format('m');
+			$year_selected = $time->format('Y');
 		} else {
 			$time = Carbon::now();
 			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
 			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
+			$month_selected_text = $time->format('F');
 			$month_selected = $time->format('m');
+			$year_selected = $time->format('Y');
+
 		}
 
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
@@ -314,6 +326,8 @@ class ReportsController extends Controller {
 			'activity_json' => $reportData,
 			'years' => array_reverse($years),
 			'month_selected' => $month_selected,
+			'year_selected' => $year_selected,
+			'month_selected_text' => $month_selected_text,
 			'months' => $months,
 			'patient' => $patient_,
 			'data' => $act_data
@@ -370,39 +384,90 @@ class ReportsController extends Controller {
 	{
 		if($patientId) {
 			$user = User::find($patientId);
-			$treating = (new ReportsService())->getProblemsToMonitor($user);
+			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)->first();
+			$carePlan->build($user->ID);
+//			debug($carePlan->getCareItemUserValue($user, 'medications-list-details'));
+
+			$symptoms = array();
+			$problems = array();
+			$lifestyle = array();
+			$biometrics = array();
+				foreach($carePlan->careSections as $section) {
+					if ($section->name == 'symptoms-to-monitor') {
+						foreach ($section->carePlanItems as $item) {
+								$symptoms[] = $item->careItem->display_name;
+							}
+						}
+				if($section->name == 'diagnosis-problems-to-monitor'){
+					foreach($section->carePlanItems as $item){
+						if($item->meta_value == 'Active') {
+							$problems[] = $item->careItem->display_name;
+						}
+					}
+				}
+				if($section->name == 'lifestyle-to-monitor'){
+					foreach($section->carePlanItems as $item){
+						if($item->meta_value == 'Active') {
+							$lifestyle[] = $item->careItem->display_name;
+						}
+					}
+				}
+				if($section->name == 'biometrics-to-monitor'){
+					foreach($section->carePlanItems as $item){
+						if($item->meta_value == 'Active') {
+							$biometrics[] = $item->careItem->display_name;
+						}
+					}
+				}
+			}
+			$medications = (new ReportsService())->getMedicationStatus($user, false);
+			$treating = (new ReportsService())->getProblemsToMonitorWithDetails($user);
+			debug($treating);
 			$biometrics = ['Weight', 'Blood Sugar', 'Blood Pressure'];
 			$bio_data = array();
 
 			foreach ($biometrics as $metric) {
 					$bio_data[$metric]['target'] = (new ReportsService())->getTargetValueForBiometric($metric, $user) . ReportsService::biometricsUnitMapping($metric);
-					$bio_data[$metric]['starting'] = Observation::getStartingObservation($user->ID,(new ReportsService())->biometricsMessageIdMapping($metric)) . ReportsService::biometricsUnitMapping($metric);;
+					$bio_data[$metric]['starting'] = Observation::getStartingObservation($user->ID,(new ReportsService())->biometricsMessageIdMapping($metric)) . ReportsService::biometricsUnitMapping($metric);
 			}
-			$medications = (new ReportsService())->getMedicationStatus($user, false);
 
-			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-				->first();
-			$carePlan->build($user->ID);
-			$medications_categories = array();
-			foreach($carePlan->careSections as $section){
-				if($section->name == 'additional-information'){
-					foreach($section->carePlanItems as $item){
-						if($item->meta_value == 'Active') {
-							$temp[] = $item->careItem;
-						}
-					}
-				}
-			}
-			debug($temp);
+			if($carePlan->getCareItemUserValue($user, 'medications-list') == 'Active'){
+				$taking_meds = $carePlan->getCareItemUserValue($user, 'medications-list-details');
+			} else { $taking_meds = ''; }
+
+			if($carePlan->getCareItemUserValue($user, 'allergies') == 'Active'){
+				$allergies = $carePlan->getCareItemUserValue($user, 'allergies-details');
+			} else { $allergies = 'No instructions at this time'; }
+
+			if($carePlan->getCareItemUserValue($user, 'social-services') == 'Active'){
+				$social = $carePlan->getCareItemUserValue($user, 'social-services-details');
+			} else { $social = 'No instructions at this time'; }
+
+			if($carePlan->getCareItemUserValue($user, 'other') == 'Active'){
+				$other = $carePlan->getCareItemUserValue($user, 'other-details');
+			} else { $other = 'No instructions at this time'; }
+
+			if($carePlan->getCareItemUserValue($user, 'appointments') == 'Active'){
+				$appointments = $carePlan->getCareItemUserValue($user, 'appointments-details');
+			} else { $appointments = 'No instructions at this time'; }
+
+
 			return view('wpUsers.patient.careplan.print',
 				[
 					'patient' => $user,
 					'treating' => $treating,
 					'biometrics' => $bio_data,
-					'medications_monitor' => $medications[0]['name']
+					'symptoms' => $symptoms,
+					'lifestyle' => $lifestyle,
+					'medications_monitor' => $medications[0]['name'],
+					'taking_medications' => $taking_meds,
+					'allergies' => $allergies,
+					'social' => $social,
+					'appointments' => $appointments,
+					'other' => $other
 				]);
 		}
-		//return response("User not found", 401);
+		return response("User not found", 401);
 	}
 
 }
