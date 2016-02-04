@@ -44,22 +44,54 @@
     @endif
 
     @if ($planItem->ui_fld_type == 'SELECT')
-            <div class="form-group">
-                <div class="form-item col-sm-12">
-                    <div class="checkbox text-medium-big">
-                        <div class="radio-inline"><input id="carePlanItem{{ $planItem->id }}" name="item|{{ $planItem->id }}" value="Active" class="itemTrigger" data-toggle="collapse" data-target="#collapseItem{{ $planItem->id }}" type="checkbox" {{ $planItem->meta_value == 'Active' ? 'checked=checked' : '' }}>
-                            <label for="carePlanItem{{ $planItem->id }}">
-                            <span></span>{{ $planItem->careItem->display_name }}</label>
-                        </div>
+        {{-- show details button on right if present --}}
+        <?php
+            $detailChildItem = $planItem->children()->where('ui_fld_type', '=', 'TEXTAREA')->first();
+        ?>
+        <div class="form-group">
+            <div class="form-item col-sm-{{ $detailChildItem ? '6' : '12' }}">
+                <div class="checkbox text-medium-big">
+                    <div class="radio-inline"><input id="carePlanItem{{ $planItem->id }}" name="item|{{ $planItem->id }}" value="Active" class="itemTrigger" data-toggle="collapse" data-target="#collapseItem{{ $planItem->id }}" type="checkbox" {{ $planItem->meta_value == 'Active' ? 'checked=checked' : '' }}>
+                        <label for="carePlanItem{{ $planItem->id }}">
+                        <span></span>{{ $planItem->careItem->display_name }}</label>
                     </div>
                 </div>
             </div>
+            @if ($detailChildItem)
+                    <div class="form-item col-sm-6 text-right">
+                        <button type="button" class="btn btn-default btn-xs btn-monitor collapse {{ $planItem->meta_value == 'Active' ? 'in' : '' }} text-right" id="collapseItem{{ $planItem->id }}" data-toggle="modal" data-target="#carePlanItem{{ $planItem->careItem->id }}Detail" style="margin-top:10px;">Instructions</button>
+
+                        <!-- Modal -->
+                        <div id="carePlanItem{{ $planItem->careItem->id }}Detail" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">{{ $planItem->careItem->display_name }} :: Details</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <textarea id="item{{ $detailChildItem->id }}modal" name="item|{{ $detailChildItem->id }}">{{ $detailChildItem->meta_value }}</textarea>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+            @endif
+        </div>
     @endif
 
     @if (!is_null($planItem->children))
         <div class="collapse {{ $planItem->meta_value == 'Active' ? 'in' : '' }}" id="collapseItem{{ $planItem->id }}">
             @foreach($planItem->children as $planItemChild)
-                @include('partials.carePlans.itemChild')
+                @if( $planItemChild->ui_fld_type != 'TEXTAREA')
+                    @include('partials.carePlans.itemChild')
+                @endif
             @endforeach
         </div>
     @endif

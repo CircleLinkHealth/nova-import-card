@@ -179,7 +179,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 									<li>Change "Instructions" to "Details" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
 									<li>"Details" should be dark grey color <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
 									<li>"Details" modal textarea larger, button color green (same ui design as 2.8.8, blue heading ect) <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
-									<li>Toggle show/hide of child items when parent item checked/unchecked. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
+									<li class="complete">Toggle show/hide of child items when parent item checked/unchecked. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
 								</ul>
 							</div>
 
