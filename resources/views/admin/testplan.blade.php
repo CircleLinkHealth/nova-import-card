@@ -193,7 +193,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}</a><br /><br />
 								<h5>Known Issues</h5>
 								<ul>
-									<li>Date input on firefox formats weird</li>
+									<li>Date input on firefox formats weird, switch to timepicker</li>
 								</ul>
 							</div>
 
@@ -205,8 +205,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<h5>Known Issues</h5>
 								<ul>
 									<li>Observation labels are not correct <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/82">#82</a></li>
-									<li>Missing link to biometric charts + actual biometric charts page. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/108">#108</a></li>
-									<li>.0.0 Patient Overview - Lifestyle observations not displaying properly. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/114">#114</a></li>
+									<li class="complete">Missing link to biometric charts + actual biometric charts page. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/108">#108</a></li>
+									<li>Lifestyle observations not displaying properly. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/114">#114</a></li>
 								</ul>
 							</div>
 						@else
@@ -231,9 +231,9 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->ID)) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
-								<li>Submit button should be centered underneath centered paragraph text <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/103">#103</a></li>
-								<li>Notes listing is only showing 1 note per day per type <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/111">#111</a></li>
-								<li>Log outgoing email messages in activity meta <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/112">#112</a></li>
+								<li class="complete">Submit button should be centered underneath centered paragraph text <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/103">#103</a></li>
+								<li class="complete">Notes listing is only showing 1 note per day per type <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/111">#111</a></li>
+								<li class="complete">Log outgoing email messages in activity meta <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/112">#112</a></li>
 							</ul>
 						</div>
 
@@ -253,25 +253,25 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseActivityReport"><strong><i class="glyphicon glyphicon-list"></i> Activity Report</strong> - 80%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseActivityReport"><strong><i class="glyphicon glyphicon-list"></i> Activity Report</strong> - 90%</a></h4>
 						<div id="collapseActivityReport" class="panel-collapse collapse in">
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
-								<li>Data doesnt match 2.8 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
-								<li>right margin/padding on top right "Go" button <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
-								<li>Choosing 'Year' doesnt hold, resets to 2016 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
+								<li class="complete">Data doesnt match 2.8 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
+								<li class="complete">right margin/padding on top right "Go" button <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
+								<li class="complete">Choosing 'Year' doesnt hold, resets to 2016 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
 							</ul>
 						</div>
 
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePrintCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Print Care Plan</strong> - 30%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePrintCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Print Care Plan</strong> - 90%</a></h4>
 						<div id="collapsePrintCarePlan" class="panel-collapse collapse in">
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
-								<li>Not ready for testings</li>
+								<li>Very slow page load</li>
 							</ul>
 						</div>
 
