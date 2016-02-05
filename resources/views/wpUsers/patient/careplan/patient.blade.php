@@ -113,7 +113,7 @@ $user_info = array();
                                 </div>
                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                     <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
-                                    <input id="birth_date" name="birth_date" type="input" class="form-control" value="{{ (old('birth_date') ? old('birth_date') : ($userConfig['birth_date'] ? $userConfig['birth_date'] : '')) }}" data-field="date" data-format="yyyy-MM-dd" readonly /><br />
+                                    <input id="birth_date" name="birth_date" type="input" class="form-control" value="{{ (old('birth_date') ? old('birth_date') : ($userConfig['birth_date'] ? $userConfig['birth_date'] : '01-01-1960')) }}" data-field="date" data-format="yyyy-MM-dd" readonly /><br />
                                     <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                     <div id="dtBox"></div>
                                 </div>
@@ -212,7 +212,11 @@ $user_info = array();
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="radio">
-                                            <input type="radio" name="preferred_contact_method" id="contactMethodSMS" value="SMS" {{ ((old('preferred_contact_method') == 'SMS' || !old('preferred_contact_method')) ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'SMS') ? 'checked="checked"' : '')) }}>
+                                            <input type="radio" name="preferred_contact_method" id="contactMethodCCT" value="CCT" {{ ((old('preferred_contact_method') == 'CCT') ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'CCT') ? 'checked="checked"' : '')) }}>
+                                            <label for="contactMethodCCT"><span> </span>Care Center</label>
+                                        </div>
+                                        <div class="radio radio-v-margin">
+                                            <input type="radio" name="preferred_contact_method" id="contactMethodSMS" value="SMS" {{ ((old('preferred_contact_method') == 'SMS') ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'SMS') ? 'checked="checked"' : '')) }}>
                                             <label for="contactMethodSMS"><span> </span>SMS</label>
                                         </div>
                                         <div class="radio radio-v-margin">
@@ -243,10 +247,11 @@ $user_info = array();
                                 </div>--}}
 
                                 @if(isset($patient->ID) )
-                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
-                                        {!! Form::label('program_id', 'Program:') !!}
-                                        {!! Form::select('program_id', $programs, $patient->program_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;', 'disabled' => 'disabled']) !!}
-                                    </div>
+                                    @if(($patient->primaryProgram) )
+                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
+                                            Program: <strong>{{ $patient->primaryProgram->display_name }}</strong>
+                                        </div>
+                                    @endif
                                     <input type=hidden name=program_id value="{{ $programId }}">
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
                                         {!! Form::label('preferred_contact_location', 'Contact Location:') !!}

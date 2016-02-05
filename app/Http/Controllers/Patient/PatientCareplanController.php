@@ -58,7 +58,7 @@ class PatientCareplanController extends Controller {
 		}
 
 		// get program
-		$programs = WpBlog::lists('name', 'blog_id');
+		$programs = WpBlog::whereIn('blog_id', Auth::user()->viewableProgramIds())->lists('display_name', 'blog_id');
 
 		// roles
 		$patientRoleId = Role::where('name', '=', 'participant')->first();

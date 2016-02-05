@@ -195,7 +195,7 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('preferred_contact_method', 'Contact Method:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::select('preferred_contact_method', array('SMS'), $userConfig['preferred_contact_method'], ['class' => 'form-control select-picker', 'style' => 'width:30%;']) !!}</div>
+                                        <div class="col-xs-10">{!! Form::select('preferred_contact_method', array('CCT'), $userConfig['preferred_contact_method'], ['class' => 'form-control select-picker', 'style' => 'width:30%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">

@@ -127,18 +127,17 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<br />link: <a href="{{ URL::route('patients.demographics.show') }}" target="_blank">{{ URL::route('patients.demographics.show') }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
-								<li>Choose program - show only allowed programs, use disdplay_name <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
+								<li class="complete">Choose program - show only allowed programs, use display_name <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
 								<li>Add contact days <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
-								<li>Populate locations based on program form. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
 								<li>Make Not Required: <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a> <br />
 									email<br />
 									street address<br />
 									city<br />
 									zip<br />
 								</li>
-								<li>Default birthdate to 01-01-1960 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
+								<li class="complete">Default birthdate to 01-01-1960 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
 								<li class="complete">New patient did not get care_plan_id set</li>
-								<li>Change 'SMS' to 'Care Center'.</li>
+								<li class="complete">Change 'SMS' to 'Care Center'.</li>
 							</ul>
 						</div>
 
