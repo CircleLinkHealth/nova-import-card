@@ -112,10 +112,13 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						</div>
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAlerts"><strong><i class="glyphicon glyphicon-list"></i> Alerts</strong> - 15%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAlerts"><strong><i class="glyphicon glyphicon-list"></i> Alerts</strong> - ON HOLD</a></h4>
 						<div id="collapseAlerts" class="panel-collapse collapse in">
 							<br />link: <a href="{{ URL::route('patients.alerts', array()) }}" target="_blank">{{ URL::route('patients.alerts', array()) }}</a><br /><br />
-							<h4>Not Built <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/16">#16</a></h4>
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Build Page - ON HOLD <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/16">#16</a></li>
+							</ul>
 						</div>
 
 						<br />
@@ -135,6 +138,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								</li>
 								<li>Default birthdate to 01-01-1960 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
 								<li class="complete">New patient did not get care_plan_id set</li>
+								<li>Change 'SMS' to 'Care Center'.</li>
 							</ul>
 						</div>
 
@@ -180,8 +184,6 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 									<li class="complete">"Details" should be dark grey color <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
 									<li class="complete">"Details" modal textarea larger, button color green (same ui design as 2.8.8, blue heading ect) <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
 									<li class="complete">Toggle show/hide of child items when parent item checked/unchecked. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
-									<li>Missing contact days field.</li>
-									<li>Change 'SMS' to 'Care Center'.</li>
 								</ul>
 							</div>
 

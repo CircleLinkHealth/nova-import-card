@@ -123,16 +123,23 @@ class UserRepository {
             }
         }
 
+        //dd($userPrograms);
+
         // if still empty at this point, no program_id or program param
         if(empty($userPrograms)) {
             return true;
         }
+
+        // set primary program
+        $wpUser->program_id = $params->get('program_id');
+        $wpUser->save();
 
         // get role
         $roleId = $params->get('role');
         if($roleId) {
             $role = Role::find($roleId);
         } else {
+            // default to participant
             $role = Role::where('name', '=', 'participant')->first();
         }
 
@@ -142,6 +149,7 @@ class UserRepository {
         $wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('blog_id');
         foreach($wpBlogs as $wpBlogId) {
             if (!in_array($wpBlogId, $userPrograms)) {
+                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_config")->delete();
                 $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->delete();
                 $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->delete();
             } else {
@@ -194,12 +202,12 @@ class UserRepository {
             }
         }
 
-        $setUserConfig = $wpUser->meta()->whereMetaKey("wp_{$params->get('program_id')}_user_config")->first();
+        $setUserConfig = $wpUser->meta()->whereMetaKey("wp_".$wpUser->program_id."_user_config")->first();
         if($setUserConfig) {
             $setUserConfig->meta_value = serialize($userConfig);
         } else {
             $setUserConfig = new UserMeta;
-            $setUserConfig->meta_key = "wp_{$params->get('program_id')}_user_config";
+            $setUserConfig->meta_key = "wp_".$wpUser->program_id."_user_config";
             $setUserConfig->meta_value = serialize($userConfig);
             $setUserConfig->user_id = $wpUser->ID;
         }
