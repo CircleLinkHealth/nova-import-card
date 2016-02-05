@@ -161,7 +161,6 @@ function buildProviderInfoContainers($providers) {
         });
     </script>
 
-    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <script>
     </script>
     {!! Form::open(array('url' => URL::route('patient.careteam.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
@@ -186,21 +185,17 @@ function buildProviderInfoContainers($providers) {
     <div class="row" style="margin-top:20px;">
         <div class="main-form-container-last col-lg-8 col-lg-offset-2">
             <div class="row">
-                <div class="main-form-title">
-                    @if(isset($patient) && !$new_user )
-                        <div class="main-form-title col-lg-12">
-                            Edit Patient Care Team
-                        </div>
-                    @else
-                        <div class="main-form-title col-lg-12">
-                            Add Patient Care Team
-                        </div>
-                    @endif
-                </div>
+                @if(isset($patient) && !$new_user )
+                    <div class="main-form-title col-lg-12">
+                        Edit Patient Care Team
+                    </div>
+                    @include('partials.userheader')
+                @else
+                    <div class="main-form-title col-lg-12">
+                        Add Patient Care Team
+                    </div>
+                @endif
 
-                <div class="col-sm-12" id="careTeamMembers">
-                    <h4><span class="person-name text-big text-dark text-serif" title="">Care Team Setup</span></h4>
-                </div>
                 <div class="col-sm-12">
                     @foreach($careTeamUsers as $careTeamUser)
                         {{--

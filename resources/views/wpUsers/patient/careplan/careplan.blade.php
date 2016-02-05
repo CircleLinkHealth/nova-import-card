@@ -8,7 +8,6 @@ $new_user = false;
 @section('content')
 
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
-    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     {!! Form::open(array('url' => URL::route('patient.careplan.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row">
         <div class="icon-container col-lg-12">
@@ -25,6 +24,7 @@ $new_user = false;
                     <div class="main-form-title col-lg-12">
                         Edit Patient Careplan
                     </div>
+                    @include('partials.userheader')
                 @else
                     <div class="main-form-title col-lg-12">
                         Add Patient Careplan

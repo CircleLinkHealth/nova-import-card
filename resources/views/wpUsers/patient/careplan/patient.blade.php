@@ -6,7 +6,6 @@ $user_info = array();
 
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
-    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row">
         <div class="icon-container col-lg-12">
@@ -27,17 +26,16 @@ $user_info = array();
         --}}
         <div class="main-form-container-last col-lg-8 col-lg-offset-2">
             <div class="row">
-                <div class="main-form-title">
-                    @if(isset($patient->ID) )
-                        <div class="main-form-title col-lg-12">
-                            Edit Patient
-                        </div>
-                    @else
-                        <div class="main-form-title col-lg-12">
-                            Add Patient
-                        </div>
-                    @endif
-                </div>
+                @if(isset($patient->ID) )
+                    <div class="main-form-title col-lg-12">
+                        Edit Patient
+                    </div>
+                    @include('partials.userheader')
+                @else
+                    <div class="main-form-title col-lg-12">
+                        Add Patient
+                    </div>
+                @endif
                 <div class="">
                     <div class="row">
                         <div class="main-form-block main-form-primary main-form-primary-vertical col-lg-7">

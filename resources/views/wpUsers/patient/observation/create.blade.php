@@ -9,6 +9,7 @@
                 <div class="main-form-title col-lg-12">
                     New Observation
                 </div>
+                @include('partials.userheader')
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
 

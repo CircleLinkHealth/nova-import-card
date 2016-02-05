@@ -212,7 +212,6 @@ class UserRepository {
             $setUserConfig->user_id = $wpUser->ID;
         }
         $setUserConfig->save();
-        dd($setUserConfig);
     }
 
 
