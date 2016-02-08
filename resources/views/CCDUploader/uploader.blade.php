@@ -66,5 +66,5 @@
 <div id="success" class="alert hide animated" role="alert"></div>
 <div id="notification" class="alert hide animated" role="alert"></div>
 
-<script src="{{ asset('/js/ccd/bluebutton.min.js') }}"></script>
+<script src="{{ asset('/js/scripts.js') }}"></script>
 <script src="/js/uploader.js"></script>
