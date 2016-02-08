@@ -75,7 +75,8 @@ var uploader = new Vue({
                 }
 
             }).error(function (data, status, request) {
-                this.message = 'ERROR! Uploading raw XML CCDs has failed. Try refreshing your browser.';
+                this.message = 'ERROR! Uploading raw XML CCDs has failed. Try refreshing your browser.'
+                    + '<br>Details: ' + data + status + request;
             });
         },
         parseAndUploadCCDs: function (uploadedCCDs) {
@@ -102,7 +103,8 @@ var uploader = new Vue({
 
                 }
             }).error(function (data, status, request) {
-                this.message = 'ERROR! Uploading Parsed CCDs has failed. Try refreshing your browser.';
+                this.message = 'ERROR! Uploading Parsed CCDs has failed. Try refreshing your browser.'
+                    + '<br>Details: ' + data + status + request;
             });
         },
         parseAndUploadDuplicateCCDs: function (duplicates) {
@@ -136,7 +138,8 @@ var uploader = new Vue({
                 this.$http.post('/upload-duplicate-raw-ccds', json, function (data, status, request) {
                     uploader.parseAndUploadCCDs(data.uploaded);
                 }).error(function (data, status, request) {
-                    this.message = 'ERROR! Uploading duplicate raw XML CCDs has failed. Try refreshing your browser.';
+                    this.message = 'ERROR! Uploading duplicate raw XML CCDs has failed. Try refreshing your browser.'
+                        + '\nData: ' + data + status + request;
                 });
             }
         }
