@@ -37,12 +37,26 @@ class MedicationsParser extends BaseParser implements Parser
                 || (!empty($medication->status) && strtolower( $medication->status ) == 'active')
                 || (!empty($this->routine['importAllMeds']) && $this->routine['importAllMeds'])
             ) {
-                empty($medication->product->name)
-                    ? $medsList .= ''
-                    : $medsList .= ucfirst( strtolower( $medication->product->name ) ) . ', ';
+                if ($this->routine['importReferenceMedTitleAndSig'])
+                {
+                    $medsList .= $medication->reference_title;
 
-                $medsList .= ucfirst( strtolower( StringManipulation::stringDiff( $medication->product->name, $medication->text ) ) )
-                    . "; \n\n";
+                    empty($medication->reference_sig)
+                        ? $medsList .= ''
+                        : $medsList .=  ' - ' . $medication->reference_sig;
+
+                    $medsList .= "; \n\n";
+                }
+
+                if ($this->routine['importProductMedNameAndText'])
+                {
+                    empty($medication->product->name)
+                        ? $medsList .= ''
+                        : $medsList .= ucfirst( strtolower( $medication->product->name ) ) . ', ';
+
+                    $medsList .= ucfirst( strtolower( StringManipulation::stringDiff( $medication->product->name, $medication->text ) ) )
+                        . "; \n\n";
+                }
             }
         }
         return $medsList;

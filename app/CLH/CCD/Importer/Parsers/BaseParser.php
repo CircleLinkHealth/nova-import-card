@@ -42,16 +42,40 @@ abstract class BaseParser
         ]);
     }
 
+    /**
+     * Check if there is a special rules set defined for this provider or EHR,
+     * otherwise return the standard ruleset.
+     *
+     * @return array
+     */
     protected function getRoutine()
     {
-        return self::getRuleSet();
+        return self::getRuleSet()
+            ? self::getRuleSet()
+            : [
+                'importAllMeds' => false,
+                'importReferenceMedTitleAndSig' => false,
+                'importProductMedNameAndText' => true
+            ];
     }
 
     protected function getRuleSet()
     {
         if ($this->ccd->document->author->name->family == 'Mazhar')
         {
-            return ['importAllMeds' => true];
+            return [
+                'importAllMeds' => true,
+
+                /**
+                 * Import reference_title and reference_sig from the HTML part of the CCD, using the reference ID.
+                 */
+                'importReferenceMedTitleAndSig' => true,
+                /**
+                 * Import name and text from the json parsed ccd.
+                 * This is the standard way
+                 */
+                'importProductMedNameAndText' => false
+            ];
         }
 
         return false;
