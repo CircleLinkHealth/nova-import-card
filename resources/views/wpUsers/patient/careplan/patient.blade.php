@@ -291,6 +291,13 @@ $user_info = array();
                                     </div>
                                 </div>
 
+                                <div class="form-group form-item form-item-spacing col-sm-12">
+                                    <div class="row">
+                                        <div class="col-lg-4">{!! Form::label('care_plan_id', 'Care Plan: ') !!}</div>
+                                        <div class="col-lg-8">{!! Form::select('care_plan_id', $carePlans, $patient->care_plan_id, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

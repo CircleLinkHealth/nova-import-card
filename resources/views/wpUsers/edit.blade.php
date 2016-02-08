@@ -103,6 +103,16 @@
                                     </div>
                                 </div>
 
+                                <h2>Care Plan:</h2>
+                                <div id="roles">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-2">{!! Form::label('care_plan_id', 'Care Plan: ') !!}</div>
+                                            <div class="col-lg-10">{!! Form::select('care_plan_id', $carePlans, $wpUser->care_plan_id, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <h2>Role:</h2>
                                 <div id="roles">
                                     <div class="form-group">
@@ -124,15 +134,15 @@
                                 <h2>Programs:</h2>
                                 <div id="programs">
                                     @foreach( $wpBlogs as $wpBlogId => $domain )
-                                        <div class="row role" id="program_{{ $wpBlogId }}">
-                                            <div class="col-sm-1">
+                                        <div class="row" id="program_{{ $wpBlogId }}">
+                                            <div class="col-sm-2">
                                                 @if( in_array($wpBlogId, $wpUser->programs()->lists('blog_id')) )
                                                     {!! Form::checkbox('programs[]', $wpBlogId, ['checked' => "checked"], ['style' => '']) !!}
                                                 @else
                                                     {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '']) !!}
                                                 @endif
                                             </div>
-                                            <div class="col-sm-11">{!! Form::label('Value', 'Program: '.$domain, array('class' => '')) !!}</div>
+                                            <div class="col-sm-10">{!! Form::label('Value', 'Program: '.$domain, array('class' => '')) !!}</div>
                                         </div>
                                     @endforeach
                                 </div>
