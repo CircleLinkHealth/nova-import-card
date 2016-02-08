@@ -41,6 +41,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<ul>
 							<li class="complete">Change "Print Care Plan" to "View Care Plan"</li>
 							<li class="complete">"Edit Care Plan" link should go to page 1 care plan, not patient demographic page</li>
+							<li>Add conditions to user header <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/117">#117</a></li>
 						</ul>
 
 						{{--

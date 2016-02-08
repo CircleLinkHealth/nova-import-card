@@ -197,6 +197,7 @@ function buildProviderInfoContainers($providers) {
                 @endif
 
                 <div class="col-sm-12">
+                    <div id="careTeamMembers"></div>
                     @foreach($careTeamUsers as $careTeamUser)
                         {{--
                         <div class="col-md-12" class="careTeamMemberContainer" id="ctm' + ctmCount + '">
