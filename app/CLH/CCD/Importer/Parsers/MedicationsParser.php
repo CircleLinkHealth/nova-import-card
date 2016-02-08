@@ -43,7 +43,7 @@ class MedicationsParser extends BaseParser implements Parser
 
                     empty($medication->reference_sig)
                         ? $medsList .= ''
-                        : $medsList .=  ' - ' . $medication->reference_sig;
+                        : $medsList .=  ', ' . $medication->reference_sig;
 
                     $medsList .= "; \n\n";
                 }
