@@ -198,6 +198,43 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('contact-days', 'Preferred Contact Days:') !!}</div>
+                                        <div class="col-xs-10">
+                                            <div class="radio-inline modal-box-clone label">
+                                                <div class="radio-inline">
+                                                    <input id="contact-days-1" name="contact_days[]" value="1" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-1"><span></span>&nbsp;M</label>
+                                                </div>
+                                                <div class="radio-inline">
+                                                    <input id="contact-days-2" name="contact_days[]" value="2" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '2') ? 'checked="checked"' : (in_array('2', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-2"><span></span>&nbsp;T</label>
+                                                </div>
+                                                <div class="radio-inline">
+                                                    <input id="contact-days-3" name="contact_days[]" value="3" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '3') ? 'checked="checked"' : (in_array('3', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-3"><span></span>&nbsp;W</label>
+                                                </div>
+                                                <div class="radio-inline">
+                                                    <input id="contact-days-4" name="contact_days[]" value="4" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '4') ? 'checked="checked"' : (in_array('4', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-4"><span></span>&nbsp;Th</label>
+                                                </div>
+                                                <div class="radio-inline">
+                                                    <input id="contact-days-5" name="contact_days[]" value="5" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '5') ? 'checked="checked"' : (in_array('5', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-5"><span></span>&nbsp;F</label>
+                                                </div>
+                                                <div class="radio-inline">
+                                                    <input id="contact-days-6" name="contact_days[]" value="6" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '6') ? 'checked="checked"' : (in_array('6', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-6"><span></span>&nbsp;Sa</label>
+                                                </div>
+                                                <div class="radio-inline">
+                                                    <input id="contact-days-7" name="contact_days[]" value="7" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '7') ? 'checked="checked"' : (in_array('7', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-7"><span></span>&nbsp;Su</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
                                         <div class="col-xs-2">{!! Form::label('preferred_contact_timezone', 'Contact Timezone:') !!}</div>
                                         <div class="col-xs-10">{!! Form::select('preferred_contact_timezone', $timezones_arr, $userConfig['preferred_contact_timezone'], ['class' => 'form-control select-picker', 'style' => 'width:60%;']) !!}</div>
                                     </div>

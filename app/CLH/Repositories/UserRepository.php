@@ -196,6 +196,16 @@ class UserRepository {
             $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
         }
 
+        // contact days checkbox formatting
+        if($params->get('contact_days')) {
+            $contactDays = $params->get('contact_days');
+            $contactDaysDelmited = '';
+            for($i=0; $i < count($contactDays); $i++){
+                $contactDaysDelmited .= (count($contactDays) == $i+1) ? $contactDays[$i] : $contactDays[$i] . ', ';
+            }
+            $params->add(array('preferred_cc_contact_days' => $contactDaysDelmited));
+        }
+
         foreach($userConfig as $key => $value)
         {
             if( ! empty($params->get($key)))
