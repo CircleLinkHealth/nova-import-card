@@ -4,6 +4,9 @@ $user_info = array();
 
 @extends('partials.providerUI')
 
+@section('title', 'Patient Demographics')
+@section('activity', 'Edit/Modify Care Plan')
+
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
     {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}

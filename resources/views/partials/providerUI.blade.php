@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CPM API - {!! Route::current()->getName() !!}</title>
+    <title>CarePlanManager - @yield('title')</title>
 
     <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
@@ -157,7 +157,7 @@
     </div>
     --}}
 <!-- PAGE TIMER START -->
-{{-- @include('partials.providerUItimer') --}}
+@include('partials.providerUItimer')
 <!-- PAGE TIMER END -->
 </body>
 </html>

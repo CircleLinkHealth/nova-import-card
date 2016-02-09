@@ -16,12 +16,12 @@
         </div>
     </div>
 </div>
-
+<input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 <?php
 $qs = '';
 $option = 'att_config';
 if(!isset($activity)) {
-    $activity = 'test';
+    $activity = 'Undefined';
 }
 $role = '';
 $title  = Route::currentRouteName(); //get_the_title();
@@ -222,7 +222,7 @@ if ($enableTimeTracking) {
                 "urlFull": '<?php echo $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']; ?>',
                 "urlShort": '<?php echo $urlShort; ?>',
                 "ipAddr": '<?php echo $ipAddr; ?>',
-                "activity": '<?php echo $activity; ?>',
+                "activity": $('#activityName').val(),
                 "title": '<?php echo $title; ?>',
                 "qs": '<?php echo $qs; ?>'
             };

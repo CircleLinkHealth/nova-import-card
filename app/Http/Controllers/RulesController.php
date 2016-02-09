@@ -25,7 +25,7 @@ class RulesController extends Controller {
 	public function index()
 	{
 		// display view
-		$rules = Rules::orderBy('id', 'desc')->paginate(10);
+		$rules = Rules::orderBy('id', 'desc')->paginate(50);
 		return view('rules.index', [ 'rules' => $rules ]);
 	}
 
