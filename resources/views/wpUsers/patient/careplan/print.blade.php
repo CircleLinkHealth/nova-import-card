@@ -12,7 +12,8 @@ $billing = App\User::find($patient->getBillingProviderIDAttribute());
 $lead = App\User::find($patient->getLeadContactIDAttribute());
 
 $today = \Carbon\Carbon::now()->toFormattedDateString();
-$provider = App\User::find($patient->getLeadContactIDAttribute());
+// $provider = App\User::find($patient->getLeadContactIDAttribute());
+
 ?>
 @section('content')
     <div class="container">
@@ -44,15 +45,15 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                 </div>
                 <div class="row gutter">
                     <div class="col-xs-12 col-md-4 print-row text-bold">
-                        @if($provider)
-                            {{$provider->fullName}}
+                        @if($billing)
+                            {{$billing->fullName}}
                         @else
-                            <em>no lead contact</em>
+                            <em>No Billing Provider Selected</em>
                         @endif
                     </div>
                     <div class="col-xs-12 col-md-4 print-row">
-                        @if($provider)
-                            {{$provider->phone}}
+                        @if($billing)
+                            {{$billing->phone}}
                         @endif
                     </div>
                     <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->getPreferredLocationName()}}</div>
