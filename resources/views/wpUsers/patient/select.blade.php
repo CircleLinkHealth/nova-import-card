@@ -61,13 +61,13 @@
                         name: 'matched-states',
                         source: pat,
                         templates: {
-                            empty: [
-                                '<div class="empty-message">', 'No Patients Found...', '</div>'
-                            ].join('\n'),
                             suggestion: function (data) {
                                 //Adam Everyman DOB: 11-25-54 Provider: TESTDRIVE
                                 return '<li><a href="' + data.link + '">' + data.name + ' DOB: ' + data.DOB +' Provider: '+ data.program +'</a></li>';
-                            }
+                            },
+                            empty: [
+                                '<div class="empty-message">', 'No Patients Found...', '</div>'
+                            ].join('\n'),
                         }
                     });
             $('#bloodhound .typeahead').on('typeahead:selected', function (e, datum) {
