@@ -4,7 +4,7 @@
 
 
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container col-lg-4 col-lg-offset-4">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     New Observation
@@ -131,8 +131,8 @@
                                 <input type="hidden" name="patientId" id="patientId" value="{{ $patient->ID }}">
                                 <input type="hidden" name="userId" id="userId" value="{{ $patient->ID }}">
                                 <input type="hidden" name="programId" id="programId" value="{{ $patient->program_id }}">
-                                <a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" class="btn btn-danger">Cancel</a>
-                                {!! Form::submit('Add Observation', array('class' => 'btn btn-success')) !!}
+                                <!-- <a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" class="btn btn-danger">Cancel</a> -->
+                                {!! Form::submit('Save', array('class' => 'btn btn-primary')) !!}
                             </div>
                         </div>
                         {!! Form::close() !!}
