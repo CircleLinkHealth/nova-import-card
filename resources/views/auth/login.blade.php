@@ -19,21 +19,21 @@
 				<div class="row">
 					<div class="main-form-title main-form-title--login">
 						<h4 class="text-sans-serif text-thin">Welcome to</h4>
-						<h2>CarePlan<span class="text-thin">Manager</span></h2>
+						<h2>CarePlan<span class="text-thin">Manager&trade;</span></h2>
 					</div>
 						<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 							<form class="form-horizontal" role="form" method="POST" action="{{ url('/auth/login') }}">
 								<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 								<div class="form-group">
-									<label class="col-md-4 control-label">Username</label>
+									<label class="col-md-4 control-label" for="email">Username</label>
 									<div class="col-md-6">
 										<input type="text" class="form-control" name="email" value="{{ old('email') }}">
 									</div>
 								</div>
 
 								<div class="form-group">
-									<label class="col-md-4 control-label">Password</label>
+									<label class="col-md-4 control-label" for="password">Password</label>
 									<div class="col-md-6">
 										<input type="password" class="form-control" name="password">
 									</div>
@@ -41,7 +41,7 @@
 
 								<div class="form-group" style="margin-top:25px;">
 									<div class="col-md-12 text-center">
-										<button type="submit" class="btn btn-info">Log In</button><br />
+										<button type="submit" class="btn btn-primary">Log In</button><br />
 
 										<a class="btn btn-link" href="{{ url('/password/email') }}">Lost Your Password?</a>
 									</div>
