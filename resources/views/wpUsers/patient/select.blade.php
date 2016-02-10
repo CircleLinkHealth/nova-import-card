@@ -66,8 +66,9 @@
         }
 
         .tt-suggestion {
+          text-align: left;
           padding: 3px 20px;
-          font-size: 18px;
+          font-size: 12px;
           line-height: 24px;
         }
 
