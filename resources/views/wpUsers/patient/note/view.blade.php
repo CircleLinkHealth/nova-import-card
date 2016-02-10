@@ -48,7 +48,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label for="observationDate">
-                                            When:
+                                            When (Patient Local Time):
                                         </label>
                                     </div>
                                     <div class="col-sm-12">

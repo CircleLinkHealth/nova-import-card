@@ -52,7 +52,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label for="observationDate">
-                                            When:
+                                            When (Patient Local Time):
                                         </label>
                                     </div>
                                     <div class="col-sm-12">
@@ -154,6 +154,9 @@
                                                             @foreach ($careteam_info as $id => $name)
                                                                 <option value="{{$id}}"> {{$name}} </option>
                                                             @endforeach
+                                                                <option value="948">
+                                                                    Patient Support
+                                                                </option>
                                                         </select>
                                                     </div>
                                                 </div>
