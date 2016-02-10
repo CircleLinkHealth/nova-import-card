@@ -93,9 +93,7 @@ class ReportsController extends Controller {
 	}
     public function u20(Request $request, $patientId = false)
 	{
-		debug($patientId);
-
-		$patient_ = User::find($patientId);
+		//$patient_ = User::find($patientId);
 		$input = $request->all();
 
 		if (isset($input['selectMonth'])) {
@@ -202,7 +200,7 @@ class ReportsController extends Controller {
 				'month_selected_text' => $month_selected_text,
 				'year_selected' => $year_selected,
 				'months' => $months,
-				'patient' => $patient_,
+				//'patient' => $patient_,
 				'data' => $act_data
 			];
 			//debug($reportData);
@@ -211,9 +209,7 @@ class ReportsController extends Controller {
 		}
 	public function billing(Request $request, $patientId = false)
 	{
-		debug($patientId);
-
-		$patient_ = User::find($patientId);
+		//$patient_ = User::find($patientId);
 		$input = $request->all();
 
 		if (isset($input['selectMonth'])) {
@@ -330,7 +326,7 @@ class ReportsController extends Controller {
 			'year_selected' => $year_selected,
 			'month_selected_text' => $month_selected_text,
 			'months' => $months,
-			'patient' => $patient_,
+			//'patient' => $patient_,
 			'data' => $act_data
 		];
 		//debug($reportData);

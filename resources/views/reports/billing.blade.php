@@ -9,7 +9,7 @@
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12">
 
 
-                    {!! Form::open(array('url' => URL::route('patient.reports.billing', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                    {!! Form::open(array('url' => URL::route('patient.reports.billing'), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                     <div class="col-sm-3">
                         <h4 class="time-report__month">{{$month_selected_text}} {{$year_selected}}</h4>
                     </div>

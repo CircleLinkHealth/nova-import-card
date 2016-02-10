@@ -117,6 +117,9 @@ Route::group(['middleware' => 'auth'], function ()
 		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patients.alerts']);
 		Route::get('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@showPatientDemographics', 'as' => 'patients.demographics.show']);
 		Route::post('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patients.demographics.store']);
+		Route::get('progress', ['uses' => 'ReportsController@index', 'as' => 'patient.reports.progress']);
+		Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
+		Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
 	});
 
 	// **** PATIENTS (/manage-patients/{patientId}/)
@@ -160,10 +163,6 @@ Route::group(['middleware' => 'auth'], function ()
 			Route::get('view/{actId}', ['uses' => 'ActivityController@show', 'as' => 'patient.activity.view']);
 			Route::get('', ['uses' => 'ActivityController@providerUIIndex', 'as' => 'patient.activity.providerUIIndex']);
 		});
-
-		Route::get('progress', ['uses' => 'ReportsController@index', 'as' => 'patient.reports.progress']);
-		Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
-		Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
 	});
 
 	/****************************/
