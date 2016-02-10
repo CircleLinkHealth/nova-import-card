@@ -10,13 +10,30 @@
 	<link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
 	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
 	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
+<style type="text/css">
+	  input[type=text] ,  input[type=password]  {
+		display: inline-block;
+		margin-bottom: 0;
+		font-weight: normal;
+		text-align: center;
+		vertical-align: middle;
+		touch-action: manipulation;
+		background-image: none;
+		border: 1px solid ;
+		white-space: nowrap;
+		padding: 6px 12px;
+		font-size: 14px;
+		line-height: 1.42857;
+		border-radius: 4px;
+	  }
+</style>
 </head>
 <body>
 		<nav class="navbar primary-navbar">
 			<div class="container-fluid">
 				<div class="navbar-header">
-						<a href="#" class="navbar-brand"><img src="http://v3.careplanmanager.com/wp-content/themes/CLH_Provider/img/clh_logo_lt.png" alt="CarePlan Manager" width='50px' style="position:relative;top:-15px"></a>
-				   	<a href="#" class="navbar-title Xcollapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
+						<a href="{{ url('/') }}" class="navbar-brand"><img src="img/cpm-logo.png" alt="CarePlan Manager" width='50px' style="position:relative;top:-15px"></a>
+				   	<a href="{{ url('/') }}" class="navbar-title Xcollapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
 				</div>
 			</div><!-- /container-fluid -->
 
@@ -50,7 +67,7 @@
 
 								<div class="form-group" style="margin-top:25px;">
 									<div class="col-md-12 text-center">
-										<button type="submit" class="button button-primary button-large">Log In</button><br />
+										<button type="submit" class="btn btn-primary btn-large">Log In</button><br />
 
 										<a class="btn btn-link" href="{{ url('/password/email') }}">Lost Your Password?</a>
 									</div>
