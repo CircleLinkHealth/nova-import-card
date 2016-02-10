@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'Dashboard')
+@section('activity', '')
+
 @section('content')
     <div class="container container--menu">
         <div class="row row-centered">
