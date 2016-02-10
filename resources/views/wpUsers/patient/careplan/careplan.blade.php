@@ -5,6 +5,9 @@ $new_user = false;
 
 @extends('partials.providerUI')
 
+@section('title', 'Edit/Modify Care Plan')
+@section('activity', 'Edit/Modify Care Plan')
+
 @section('content')
 
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>

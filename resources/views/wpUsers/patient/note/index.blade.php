@@ -1,4 +1,8 @@
 @extends('partials.providerUI')
+
+@section('title', 'Patient Notes')
+@section('activity', 'Patient Note Index')
+
 @section('content')
 
     <div class="row main-form-block" style="margin-top:60px;">

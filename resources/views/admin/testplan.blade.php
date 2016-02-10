@@ -123,14 +123,14 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						</div>
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 85%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 95%</a></h4>
 						<div id="collapseAddPatient" class="panel-collapse collapse in">
 							<br />link: <a href="{{ URL::route('patients.demographics.show') }}" target="_blank">{{ URL::route('patients.demographics.show') }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
 								<li class="complete">Choose program - show only allowed programs, use display_name <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
-								<li>Add contact days <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
-								<li>Make Not Required: <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a> <br />
+								<li class="complete">Add contact days <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
+								<li class="complete">Make Not Required: <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a> <br />
 									email<br />
 									street address<br />
 									city<br />
@@ -139,6 +139,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<li class="complete">Default birthdate to 01-01-1960 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
 								<li class="complete">New patient did not get care_plan_id set</li>
 								<li class="complete">Change 'SMS' to 'Care Center'.</li>
+								<li class="complete">Add choose careplan</li>
 							</ul>
 						</div>
 
