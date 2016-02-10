@@ -5,8 +5,13 @@ $new_user = false;
 
 @extends('partials.providerUI')
 
-@section('title', 'Edit/Modify Care Plan')
-@section('activity', 'Edit/Modify Care Plan')
+@if($patient->careplanStatus == 'provider_approved')
+    @section('title', 'Edit/Modify Care Plan')
+    @section('activity', 'Edit/Modify Care Plan')
+@else
+    @section('title', 'Initial Care Plan Setup')
+    @section('activity', 'Initial Care Plan Setup')
+@endif
 
 @section('content')
 
