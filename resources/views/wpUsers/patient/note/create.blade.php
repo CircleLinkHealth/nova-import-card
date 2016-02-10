@@ -11,7 +11,7 @@
     ?>
 
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container col-lg-4 col-lg-offset-4">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     Record New Note
@@ -179,7 +179,7 @@
                                             <button id="update" name="submitAction" type="submit"
                                                     value="new_activity"
                                                     class="btn btn-primary btn-lg form-item--button form-item-spacing">
-                                                Save/Send Note!
+                                                Save/Send Note
                                             </button>
                                         </div>
                                     </div>
