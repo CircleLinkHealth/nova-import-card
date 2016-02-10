@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'Patient Summary - Biometrics Chart')
+@section('activity', 'Patient Biometrics Chart Review')
+
 @section('content')
     <div class="row" style="margin-top:60px;">
         <script>

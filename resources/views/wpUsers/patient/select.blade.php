@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'Patient Search')
+@section('activity', '')
+
 @section('content')
     <style>
         #bloodhound{
