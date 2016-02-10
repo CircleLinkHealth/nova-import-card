@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>CPM API - {!! Route::current()->getName() !!}</title>
+	<title>CarePlanManager - Log In</title>
 
 	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
 	<link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
@@ -25,7 +25,8 @@
 				<div class="main-form-container col-lg-8 col-lg-offset-2">
 					<div class="row">
 						<div class="main-form-title col-lg-12">
-							Welcome to <strong>CarePlan</strong>Manager&trade;
+						<h4 class="text-sans-serif text-thin">Welcome to</h4>
+						<h2>CarePlan<span class="text-thin">Manager&trade;</span></h2>
 						</div>
 						<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 							<form class="form-horizontal" role="form" method="POST" action="{{ url('/auth/login') }}">
