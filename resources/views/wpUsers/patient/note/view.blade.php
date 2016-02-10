@@ -14,7 +14,7 @@
     ?>
 
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container col-lg-4 col-lg-offset-4">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     View Note
@@ -51,7 +51,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label for="observationDate">
-                                            When:
+                                            When (Patient Local Time):
                                         </label>
                                     </div>
                                     <div class="col-sm-12">

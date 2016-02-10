@@ -7,9 +7,9 @@
                         $provider = App\User::find($patient->getBillingProviderIDAttribute());
                         ?>
                         @if($provider)
-                            Provider: </strong> {{$provider->getFullNameAttribute()}}<strong>
+                            Provider: </strong> {{$provider->getFullNameAttribute()}} <strong> 
                         @else
-                            Provider: <em>No Provider  </em>
+                            Provider: <em>No Provider Selected </em>
                         @endif
                         Location:</strong>
                                 <?php (is_null($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>

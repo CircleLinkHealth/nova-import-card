@@ -14,7 +14,7 @@
     ?>
 
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container col-lg-4 col-lg-offset-4">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     Record New Note
@@ -55,7 +55,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label for="observationDate">
-                                            When:
+                                            When (Patient Local Time):
                                         </label>
                                     </div>
                                     <div class="col-sm-12">
@@ -157,6 +157,9 @@
                                                             @foreach ($careteam_info as $id => $name)
                                                                 <option value="{{$id}}"> {{$name}} </option>
                                                             @endforeach
+                                                                <option value="948">
+                                                                    Patient Support
+                                                                </option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -182,7 +185,7 @@
                                             <button id="update" name="submitAction" type="submit"
                                                     value="new_activity"
                                                     class="btn btn-primary btn-lg form-item--button form-item-spacing">
-                                                Save/Send Note!
+                                                Save/Send Note
                                             </button>
                                         </div>
                                     </div>
