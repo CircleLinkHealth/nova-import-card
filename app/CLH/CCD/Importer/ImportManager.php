@@ -1,7 +1,13 @@
 <?php
 
-namespace App\CLH\CCD\Importer\Parsers;
+namespace App\CLH\CCD\Importer;
 
+use App\CLH\CCD\Importer\Validators\AllergiesValidator;
+use App\CLH\CCD\Importer\Validators\BaseValidator;
+use App\CLH\CCD\Importer\Validators\MedicationsValidator;
+use App\CLH\CCD\Importer\Validators\ProblemsValidator;
+use App\CLH\CCD\Importer\Validators\UserConfigValidator;
+use App\CLH\CCD\Importer\Validators\UserMetaValidator;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\CPRulesItem;
@@ -9,7 +15,7 @@ use App\CPRulesPCP;
 use App\CPRulesUCP;
 use Illuminate\Support\Facades\Log;
 
-class CCDImporter extends BaseParser
+class ImportManager extends BaseValidator
 {
     public function generateCarePlanFromCCD()
     {
@@ -19,21 +25,21 @@ class CCDImporter extends BaseParser
         /**
          * Import Allergies
          */
-        $allergiesParser = new AllergiesParser($blogId, $parsedCCD);
+        $allergiesParser = new AllergiesValidator($blogId, $parsedCCD);
         $allergiesList = $allergiesParser->parse();
         $allergiesParser->save($allergiesList);
 
         /**
          * Import Medications
          */
-        $medsParser = new MedicationsParser($blogId, $parsedCCD);
+        $medsParser = new MedicationsValidator($blogId, $parsedCCD);
         $medsList = $medsParser->parse();
         $medsParser->save($medsList);
 
         /**
          * Import Problems
          */
-        $problemsParser = new ProblemsParser($blogId, $parsedCCD);
+        $problemsParser = new ProblemsValidator($blogId, $parsedCCD);
         $problemsList = $problemsParser->parse();
         $problemsParser->save($problemsList);
 
@@ -42,14 +48,14 @@ class CCDImporter extends BaseParser
         /**
          * Import User Config
          */
-        $userConfigParser = new UserConfigParser($blogId, $parsedCCD, new UserConfigTemplate());
+        $userConfigParser = new UserConfigValidator($blogId, $parsedCCD, new UserConfigTemplate());
         $userConfig =  $userConfigParser->parse()->getArray();
         $userConfigParser->save($userConfig);
 
         /**
          * Import User Meta
          */
-        $userMetaParser = new UserMetaParser($blogId, $parsedCCD, new UserMetaTemplate());
+        $userMetaParser = new UserMetaValidator($blogId, $parsedCCD, new UserMetaTemplate());
         $userMeta = $userMetaParser->parse()->getArray();
         $userMetaParser->save($userMeta);
 

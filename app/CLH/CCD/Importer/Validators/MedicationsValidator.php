@@ -1,8 +1,9 @@
 <?php
 
-namespace App\CLH\CCD\Importer\Parsers;
+namespace App\CLH\CCD\Importer\Validators;
 
 use App\CLH\CCD\APILookups\Medications\RxNORM;
+use App\CLH\CCD\Importer\Validators\BaseValidator;
 use App\CLH\Contracts\CCD\Parser;
 use App\CLH\Facades\StringManipulation;
 use App\CPRulesItem;
@@ -11,7 +12,7 @@ use App\CPRulesUCP;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
-class MedicationsParser extends BaseParser implements Parser
+class MedicationsValidator extends BaseValidator implements Parser
 {
     public function parse()
     {
@@ -22,34 +23,33 @@ class MedicationsParser extends BaseParser implements Parser
         foreach ( $medications as $medication ) {
             $endDate = '';
 
-            //Bypass the checks if import all meds flag is active
-            if ( !empty($this->routine['importAllMeds']) && !$this->routine['importAllMeds'] ) {
+            //Check if we're supposed to importMedsUsingDates
+            if ( !empty($this->routine[ 'importMedsUsingDates' ]) && $this->routine[ 'importMedsUsingDates' ] ) {
                 if ( !empty($medication->date_range->end) ) {
                     $endDate = Carbon::createFromTimestamp( strtotime( $medication->date_range->end ) );
                 }
 
-                if ( !empty($endDate) && $endDate->isPast() ) continue;
+                if ( (!empty($endDate) && $endDate->isPast()) || empty($endDate) ) continue;
             }
 
             if (
                 (!empty($medication->date_range->start) && empty($medication->date_range->end))
                 || ($importIfEndDateIsNull && !empty($medication->date_range->start) && empty($medication->date_range->end))
                 || (!empty($medication->status) && strtolower( $medication->status ) == 'active')
-                || (!empty($this->routine['importAllMeds']) && $this->routine['importAllMeds'])
+                || (!empty($this->routine[ 'importAllMeds' ]) && $this->routine[ 'importAllMeds' ])
+                || (!empty($endDate) && !$endDate->isPast() && $this->routine[ 'importMedsUsingDates' ])
             ) {
-                if ($this->routine['importReferenceMedTitleAndSig'])
-                {
+                if ( $this->routine[ 'importReferenceMedTitleAndSig' ] ) {
                     $medsList .= $medication->reference_title;
 
                     empty($medication->reference_sig)
                         ? $medsList .= ''
-                        : $medsList .=  ', ' . $medication->reference_sig;
+                        : $medsList .= ', ' . $medication->reference_sig;
 
                     $medsList .= "; \n\n";
                 }
 
-                if ($this->routine['importProductMedNameAndText'])
-                {
+                if ( $this->routine[ 'importProductMedNameAndText' ] ) {
                     empty($medication->product->name)
                         ? $medsList .= ''
                         : $medsList .= ucfirst( strtolower( $medication->product->name ) ) . ', ';

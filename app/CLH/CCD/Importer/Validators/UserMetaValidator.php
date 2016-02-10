@@ -1,13 +1,14 @@
 <?php
 
-namespace App\CLH\CCD\Importer\Parsers;
+namespace App\CLH\CCD\Importer\Validators;
 
+use App\CLH\CCD\Importer\Validators\BaseValidator;
 use App\CLH\Contracts\CCD\Parser;
 use App\CLH\Repositories\WpUserRepository;
 use App\WpUser;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class UserMetaParser extends BaseParser implements Parser
+class UserMetaValidator extends BaseValidator implements Parser
 {
     public function parse()
     {

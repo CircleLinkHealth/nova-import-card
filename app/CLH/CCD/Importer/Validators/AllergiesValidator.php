@@ -1,6 +1,6 @@
 <?php
 
-namespace App\CLH\CCD\Importer\Parsers;
+namespace App\CLH\CCD\Importer\Validators;
 
 use App\CLH\Contracts\CCD\Parser;
 use App\CPRulesItem;
@@ -8,7 +8,7 @@ use App\CPRulesPCP;
 use App\CPRulesUCP;
 use Illuminate\Support\Facades\Log;
 
-class AllergiesParser extends BaseParser implements Parser
+class AllergiesValidator extends BaseValidator implements Parser
 {
     public function parse()
     {

@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\CCD\Importer\Parsers\CCDImporter;
+use App\CLH\CCD\Importer\ImportManager;
 use App\CLH\CCD\Parser\CCDParser;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\CLH\Repositories\WpUserRepository;
@@ -170,9 +170,9 @@ class CCDUploadController extends Controller {
             }
 
             /**
-             * The CCDImporter calls any necessary Parsers
+             * The ImportManager calls any necessary Parsers
              */
-            $importer = new CCDImporter($blogId, $parsedCCD);
+            $importer = new ImportManager($blogId, $parsedCCD);
             $importer->generateCarePlanFromCCD();
         }
 

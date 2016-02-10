@@ -1,8 +1,9 @@
 <?php
 
-namespace App\CLH\CCD\Importer\Parsers;
+namespace App\CLH\CCD\Importer\Validators;
 
 use App\CLH\CCD\Importer\CPMProblem;
+use App\CLH\CCD\Importer\Validators\BaseValidator;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
 use App\CLH\Contracts\CCD\Parser;
 use App\CPRulesItem;
@@ -11,7 +12,7 @@ use App\CPRulesUCP;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
-class ProblemsParser extends BaseParser implements Parser
+class ProblemsValidator extends BaseValidator implements Parser
 {
     public function parse()
     {

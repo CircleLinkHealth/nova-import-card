@@ -1,12 +1,12 @@
 <?php
 
-namespace App\CLH\CCD\Importer\Parsers;
+namespace App\CLH\CCD\Importer\Validators;
 
 use App\CLH\Contracts\CCD\Parser;
 use App\CLH\Contracts\DataTemplate;
 use App\ParsedCCD;
 
-abstract class BaseParser
+abstract class BaseValidator
 {
     protected $blogId;
     protected $ccd;
@@ -53,9 +53,15 @@ abstract class BaseParser
         return self::getRuleSet()
             ? self::getRuleSet()
             : [
-                'importAllMeds' => false,
-                'importReferenceMedTitleAndSig' => false,
-                'importProductMedNameAndText' => true
+                //Medications Import
+                    //How to import?
+                    'importAllMeds' => false,
+                    'importMedsUsingDates' => true,
+                    'importMedsUsingStatus' => false,
+
+                    //What to import?
+                    'importReferenceMedTitleAndSig' => false,
+                    'importProductMedNameAndText' => true
             ];
     }
 
