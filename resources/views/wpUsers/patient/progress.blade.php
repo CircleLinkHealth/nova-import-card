@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'Progress Report Review/Print')
+@section('activity', 'Progress Report Review/Print')
+
 <?php
 $today = \Carbon\Carbon::now()->toFormattedDateString();
 $provider = App\User::find($patient->getBillingProviderIDAttribute());

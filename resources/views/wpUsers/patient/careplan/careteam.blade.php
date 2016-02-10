@@ -40,6 +40,9 @@ function buildProviderInfoContainers($providers) {
 
 @extends('partials.providerUI')
 
+@section('title', 'Edit/Modify Care Team')
+@section('activity', 'Edit/Modify Care Team')
+
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/patient/careteam.js') }}"></script>
     <script>

@@ -15,6 +15,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 // $provider = App\User::find($patient->getLeadContactIDAttribute());
 
 ?>
+
+@section('title', 'Care Plan View/Print')
+@section('activity', 'Care Plan View/Print')
+
 @section('content')
     <div class="container">
         <section class="patient-summary">
