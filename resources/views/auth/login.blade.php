@@ -12,6 +12,15 @@
 	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
 </head>
 <body>
+		<nav class="navbar primary-navbar">
+			<div class="container-fluid">
+				<div class="navbar-header">
+						<a href="#" class="navbar-brand"><img src="http://v3.careplanmanager.com/wp-content/themes/CLH_Provider/img/clh_logo_lt.png" alt="CarePlan Manager" width='50px' style="position:relative;top:-15px"></a>
+				   	<a href="#" class="navbar-title Xcollapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
+				</div>
+			</div><!-- /container-fluid -->
+
+		</nav><!-- /navbar -->
 <div class="container-fluid">
 	<section class="main-form">
 		<div class="row">
@@ -27,15 +36,17 @@
 
 								<p>
 									<label class="col-md-4 control-label" for="email">Username</label></BR>
+									<div class="col-md-6">
 										<input type="text" class="form-control" name="email" value="{{ old('email') }}">
+									</div>
 								</p>
 
-								<div class="form-group">
-									<label class="col-md-4 control-label" for="password">Password</label>
+								<p>
+									<label class="col-md-4 control-label" for="password">Password</label></br>
 									<div class="col-md-6">
 										<input type="password" class="form-control" name="password">
 									</div>
-								</div>
+								</p>
 
 								<div class="form-group" style="margin-top:25px;">
 									<div class="col-md-12 text-center">
