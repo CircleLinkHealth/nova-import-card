@@ -18,10 +18,10 @@
         .tt-query,
         .tt-hint {
           width: 396px;
-          height: 30px;
-          padding: 8px 12px;
-          font-size: 24px;
-          line-height: 30px;
+          /*height: 30px;*/
+          /*padding: 8px 12px;*/
+          /*font-size: 24px;*/
+          /*line-height: 30px;*/
           border: 2px solid #ccc;
           -webkit-border-radius: 8px;
              -moz-border-radius: 8px;
