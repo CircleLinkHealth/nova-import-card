@@ -22,15 +22,13 @@
 						<h2>CarePlan<span class="text-thin">Manager&trade;</span></h2>
 					</div>
 						<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-							<form class="form-horizontal" role="form" method="POST" action="{{ url('/auth/login') }}">
+							<form class="" role="form" method="POST" action="{{ url('/auth/login') }}">
 								<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-								<div class="form-group">
-									<label class="col-md-4 control-label" for="email">Username</label>
-									<div class="col-md-6">
+								<p>
+									<label class="col-md-4 control-label" for="email">Username</label></BR>
 										<input type="text" class="form-control" name="email" value="{{ old('email') }}">
-									</div>
-								</div>
+								</p>
 
 								<div class="form-group">
 									<label class="col-md-4 control-label" for="password">Password</label>
@@ -41,7 +39,7 @@
 
 								<div class="form-group" style="margin-top:25px;">
 									<div class="col-md-12 text-center">
-										<button type="submit" class="btn btn-primary">Log In</button><br />
+										<button type="submit" class="button button-primary button-large">Log In</button><br />
 
 										<a class="btn btn-link" href="{{ url('/password/email') }}">Lost Your Password?</a>
 									</div>
