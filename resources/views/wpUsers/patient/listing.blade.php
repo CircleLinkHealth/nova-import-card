@@ -57,9 +57,9 @@
                             resizeColumn:true,
                             //tooltip:true,
                             columns:[
-                                { id:"first_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#key#')); ?>'>#first_name# #last_name#</a>", width:150, sort:'string'},
-                                { id:"last_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#key#')); ?>'>#last_name#, #first_name#</a>", width:150, sort:'string'},
-                                { id:"provider",   header:["Provider",{content:"selectFilter"}],    width:105, sort:'string'},
+                                { id:"first_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#key#')); ?>'>#first_name# #last_name#</a>", width:200, sort:'string'},
+                                { id:"last_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#key#')); ?>'>#last_name#, #first_name#</a>", width:200, sort:'string'},
+                                { id:"provider",   header:["Provider",{content:"selectFilter"}],    width:200, sort:'string'},
                                 { id:"ccm_status",   header:["CCM Status",{content:"selectFilter"}],    width:105, sort:'string'},
                                 { id:"careplan_status",    header:["CarePlan Status",{content:"selectFilter", placeholder:"Filter"}], tooltip:"#tooltip#" , width:125,
                                     template: function (obj) {
