@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'Care Plan Print List')
+@section('activity', '')
+
 @section('content')
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">

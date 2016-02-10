@@ -1,7 +1,29 @@
 @extends('partials.providerUI')
 
-@section('title', 'Patient Summary Overview')
-@section('activity', 'Patient Overview Review')
+@if (!empty($detailSection))
+    @if ($detailSection == 'obs_biometrics')
+        @section('title', 'Patient Summary - Biometrics Data Review')
+        @section('activity', 'Biometrics Data Review')
+    @endif
+
+    @if ($detailSection == 'obs_medications')
+        @section('title', 'Patient Summary - Medications Data Review')
+        @section('activity', 'Medications Data Review')
+    @endif
+
+    @if ($detailSection == 'obs_symptoms')
+        @section('title', 'Patient Summary - Symptoms Data Review')
+        @section('activity', 'Symptoms Data Review')
+    @endif
+
+    @if ($detailSection == 'obs_lifestyle')
+        @section('title', 'Patient Summary - Lifestyle Data Review')
+        @section('activity', 'Lifestyle Data Review')
+    @endif
+@else
+    @section('title', 'Patient Summary Overview')
+    @section('activity', 'Patient Overview Review')
+@endif
 
 @section('content')
     <div class="row" style="margin-top:60px;">
