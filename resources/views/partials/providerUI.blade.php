@@ -119,10 +119,10 @@
                         <a href="{{ empty($patient) ? '#' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient Activity Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '#' : URL::route('patient.reports.u20', array('patient' => $patient->ID)) }}">Under 20 Minute Report</a>
+                        <a href="{{ empty($patient) ? URL::route('patient.reports.u20', array('patient' => '0')) : URL::route('patient.reports.u20', array('patient' => $patient->ID)) }}">Under 20 Minute Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '#' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">Patient Billing Report</a>
+                        <a href="{{ empty($patient) ? URL::route('patient.reports.u20', array('patient' => '0')) : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">Patient Billing Report</a>
                     </li>
                     <li>
                         <a href="{{ URL::route('patients.carePlanPrintList', array()) }}">Patient Care Plan Print List</a>
