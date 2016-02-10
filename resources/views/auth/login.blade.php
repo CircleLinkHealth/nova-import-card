@@ -34,16 +34,16 @@
 							<form class="" role="form" method="POST" action="{{ url('/auth/login') }}">
 								<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-									<div class="col-md-6">
+									<div class="col-md-12">
 								<p>
-									<label class="col-md-4 control-label text-center" for="email">Username</label></BR>
+									<label class="col-md-12 control-label text-center" for="email">Username</label></BR>
 										<input type="text" class="form-control" name="email" value="{{ old('email') }}">
 								</p>
 									</div>
 
-									<div class="col-md-6">
+									<div class="col-md-12">
 								<p>
-									<label class="col-md-4 control-label text-center" for="password">Password</label></br>
+									<label class="col-md-12 control-label text-center" for="password">Password</label></br>
 										<input type="password" class="form-control" name="password">
 								</p>
 									</div>
