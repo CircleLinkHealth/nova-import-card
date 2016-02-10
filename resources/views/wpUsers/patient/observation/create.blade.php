@@ -127,7 +127,7 @@
                     </div>
                     <div class="row" style="margin:30px 0px;">
                         <div class="col-lg-12">
-                            <div class="pull-right" style="margin-right:20px;">
+                            <div class="text-center" style="margin-right:20px;">
                                 <input type="hidden" name="patientId" id="patientId" value="{{ $patient->ID }}">
                                 <input type="hidden" name="userId" id="userId" value="{{ $patient->ID }}">
                                 <input type="hidden" name="programId" id="programId" value="{{ $patient->program_id }}">

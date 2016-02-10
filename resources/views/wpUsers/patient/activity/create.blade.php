@@ -11,7 +11,7 @@
     ?>
 
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container col-lg-4 col-lg-offset-4">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     Record New activity
@@ -122,12 +122,12 @@
                                                   name="meta[1][meta_value]" required></textarea> <br/>
                                     </div>
                                 </div>
-                                <div class="form-block col-md-6">
+                                <div class="col-lg-8 col-lg-offset-2">
                                     <div class="row">
                                         <strong>Note: Clinical Call time entered manually should not include time spent in the <i>CarePlanManager</i> portal while viewing or inputting/changing patient information and care plans.</strong>
                                     </div>
                                 </div>
-                                <div class="form-group col-sm-4">
+                                <div class="">
                                     <input type="hidden" name="duration_unit" value="seconds">
                                     <input type="hidden" name="perfomred_at_gmt" value="{{ $userTimeGMT }}">
                                     <input type="hidden" name="patient_id" value="{{$patient->ID}}">
@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="new-activity-item">
                                     <div class="form-group">
-                                        <div class="col-sm-6 center-block">
+                                        <div class="center-block">
                                             <div class="form-item form-item-spacing text-center">
                                                 <div>
                                                     <input type="hidden" value="new_activity"/>
