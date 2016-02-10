@@ -13,21 +13,14 @@
 </head>
 <body>
 <div class="container-fluid">
-	<div class="content text-center" style="margin-top:30px;">
-		<img src="img/logo.svg" alt="Logo" class="logo--small" style="width:200px;margin-top:50px;">
-	</div>
-	<div class="row" style="margin-top:30px;">
-		<div class="col-md-6 col-md-offset-3">
-			@include('errors.errors')
-
-
-			<div class="row" style="margin-top:60px;">
-				<div class="main-form-container col-lg-8 col-lg-offset-2">
-					<div class="row">
-						<div class="main-form-title col-lg-12">
+	<section class="main-form">
+		<div class="row">
+			<div class="main-form-container col-lg-4 col-lg-offset-4">
+				<div class="row">
+					<div class="main-form-title main-form-title--login">
 						<h4 class="text-sans-serif text-thin">Welcome to</h4>
-						<h2>CarePlan<span class="text-thin">Manager&trade;</span></h2>
-						</div>
+						<h2>CarePlan<span class="text-thin">Manager</span></h2>
+					</div>
 						<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 							<form class="form-horizontal" role="form" method="POST" action="{{ url('/auth/login') }}">
 								<input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -55,19 +48,11 @@
 								</div>
 							</form>
 						</div>
-					</div>
 				</div>
 			</div>
-
-
-
-
-
-
-
-
 		</div>
-	</div>
+	</section>
 </div>
+
 </body>
 </html>
