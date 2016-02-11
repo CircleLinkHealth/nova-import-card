@@ -417,9 +417,8 @@ class ReportsController extends Controller {
 					}
 				}
 			}
-			$medications = (new ReportsService())->getMedicationStatus($user, false);
+			$medications = (new ReportsService())->medicationsList($user, false);//debug($medications);
 			$treating = (new ReportsService())->getProblemsToMonitorWithDetails($user);
-			debug($treating);
 			$biometrics = ['Weight', 'Blood Sugar', 'Blood Pressure'];
 			$bio_data = array();
 
@@ -431,6 +430,7 @@ class ReportsController extends Controller {
 			if($carePlan->getCareItemUserValue($user, 'medications-list') == 'Active'){
 				$taking_meds = $carePlan->getCareItemUserValue($user, 'medications-list-details');
 			} else { $taking_meds = ''; }
+			debug($taking_meds);
 
 			if($carePlan->getCareItemUserValue($user, 'allergies') == 'Active'){
 				$allergies = $carePlan->getCareItemUserValue($user, 'allergies-details');
@@ -456,7 +456,7 @@ class ReportsController extends Controller {
 					'biometrics' => $bio_data,
 					'symptoms' => $symptoms,
 					'lifestyle' => $lifestyle,
-					'medications_monitor' => $medications[0]['name'],
+					'medications_monitor' => $medications,
 					'taking_medications' => $taking_meds,
 					'allergies' => $allergies,
 					'social' => $social,

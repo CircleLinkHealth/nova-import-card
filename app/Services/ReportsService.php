@@ -142,6 +142,24 @@ Class ReportsService
         }
         return $temp;
     }
+
+    public function medicationsList(User $user){
+        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+            ->first();
+        $carePlan->build($user->ID);
+        $medications_categories = array();
+        foreach($carePlan->careSections as $section){
+            if($section->name == 'medications-to-monitor'){
+                foreach($section->carePlanItems as $item){
+                    if($item->meta_value == 'Active') {
+                        $medications[] = $item->careItem->display_name;
+                    }
+                }
+            }
+        }
+        return $medications;
+    }
+
     public function getMedicationStatus(User $user, $fromApp = true){
 
         $carePlan = CarePlan::where('id', '=', $user->care_plan_id)

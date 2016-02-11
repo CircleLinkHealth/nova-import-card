@@ -1,12 +1,13 @@
 @extends('partials.providerUI')
 
 <?php
-function biometricGoal($starting, $target){
+function biometricGoal($starting, $target)
+{
     $starting = explode('/', $starting);
     $starting = $starting[0];
     $target = explode('/', $target);
     $target = $target[0];
-    return ($starting > $target) ? 'Lower' :  'Raise';
+    return ($starting > $target) ? 'Lower' : 'Raise';
 }
 $billing = App\User::find($patient->getBillingProviderIDAttribute());
 $lead = App\User::find($patient->getLeadContactIDAttribute());
@@ -50,7 +51,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <div class="row gutter">
                     <div class="col-xs-12 col-md-4 print-row text-bold">
                         @if($billing)
-                            {{$billing->fullName}}
+                            {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' :  $billing->getSpecialtyAttribute() }}
                         @else
                             <em>No Billing Provider Selected</em>
                         @endif
@@ -135,8 +136,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <div class="row">
                     <div class="col-xs-12">
                         <ul class="subareas__list">
-                            <li class='subareas__item inline-block  print-row'>{{implode(", ", $symptoms)}}
-                            </li>
+                            @foreach($symptoms as $s)
+                                <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row'>{{$s}}</li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>
@@ -189,7 +191,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 </div>
             </div>
             <?php foreach($treating as $key => $value){ ?>
-            <!-- Hypertension -->
+                    <!-- Hypertension -->
             <div class="patient-info__subareas">
                 <div class="row">
                     <div class="col-xs-12">
@@ -203,7 +205,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             </div>
             <?php } ?>
 
-            <!-- /INSTRUCTIONS -->
+                    <!-- /INSTRUCTIONS -->
 
             <!-- OTHER INFORMATION -->
             <div class="row pb-before">
@@ -252,8 +254,16 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="col-xs-12">
                         <p>
-                            <strong>Billing Provider: </strong> {{$billing->getFullNameAttribute()}} <br>
-                            <strong>Lead Contact: </strong>     {{$lead->getFullNameAttribute()}}
+                            @if($billing)
+                                <strong>Billing
+                                    Provider: </strong> {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' : ' ' .  $provider->getSpecialtyAttribute() }}
+                                <br>
+                            @endif
+                            @if($lead)
+                                <strong>Lead
+                                    Contact: </strong>     {{$lead->getFullNameAttribute()}}{{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
+                                <br>
+                            @endif
                         </p>
                     </div>
                 </div>
