@@ -256,7 +256,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <p>
                             @if($billing)
                                 <strong>Billing
-                                    Provider: </strong> {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' : ' ' .  $provider->getSpecialtyAttribute() }}
+                                    Provider: </strong> {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' : ' ' .  $billing->getSpecialtyAttribute() }}
                                 <br>
                             @endif
                             @if($lead)

@@ -6,7 +6,7 @@
 @section('content')
 
     <div class="row main-form-block" style="margin-top:60px;">
-        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
+        <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     Notes / Offline Activities
@@ -78,7 +78,7 @@
                                                 else if (obj.logged_from == "manual_input") {
                                                     return "Offline Activity";
                                                 }
-                                                return obj.type_namez;
+                                                return obj.type_name;
                                             },
                                             width: 120,
                                             sort: 'string'
@@ -87,7 +87,7 @@
                                             id: "comment",
                                             header: ["Preview"],
                                             fillspace: true,
-                                            width: 200,
+                                            width: 400,
                                             sort: 'string'
                                         },
                                         {
