@@ -32,7 +32,7 @@ class AuthenticateCCDImporter {
 		{
 			if ( Carbon::createFromTimestampUTC($time)->diffInMinutes() > 30 )
 			{
-				throw new \Exception('Access token expired. Please initiate a new CCD Importer session.', 400);
+				throw new \Exception('Access token expired. Please initiate a new CCD CarePlanGenerator session.', 400);
 			}
 		}
 
