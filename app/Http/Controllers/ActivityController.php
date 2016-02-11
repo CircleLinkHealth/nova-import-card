@@ -71,6 +71,8 @@ class ActivityController extends Controller {
 				$provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
 			}
 
+			sort($provider_info);
+
 			$view_data = [
 				'program_id' => $wpUser->blogId(),
 				'patient' => $wpUser,
@@ -170,18 +172,6 @@ class ActivityController extends Controller {
 
 		debug($activity);
 		return view('wpUsers.patient.activity.view', $view_data);
-	}
-
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
 	}
 
     /**

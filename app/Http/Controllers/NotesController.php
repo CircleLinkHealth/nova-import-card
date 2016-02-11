@@ -122,6 +122,9 @@ class NotesController extends Controller
             foreach ($providers as $provider) {
                 $provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
             }
+            sort($provider_info);
+            sort($careteam_info);
+            debug($careteam_info);
 
             $view_data = [
                 'program_id' => $wpUser->blogId(),
@@ -222,6 +225,8 @@ class NotesController extends Controller
         foreach ($careteam_ids as $id) {
             $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
         }
+
+        sort($careteam_info);
 
         $view_data = ['note' => $note, 'userTimeZone' => $patient->timeZone, 'careteam_info' => $careteam_info, 'patient' => $patient, 'program_id' => $patient->blogId()];
 
