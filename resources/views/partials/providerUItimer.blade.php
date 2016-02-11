@@ -191,7 +191,7 @@ if ($enableTimeTracking) {
 
         // this runs when the browser window is closed
         window.onbeforeunload = function () {
-            //alert('Elapsed: ' + $( document ).idleTimer("getElapsedTime"));
+            //alert('Elapsed: ');
             $(document).idleTimer("pause");
             endTime = new Date();
             totalTime = (totalTime + (endTime - startTime));
@@ -254,7 +254,7 @@ if ($enableTimeTracking) {
             return false;
         }
 
-        submitTotalTime();
+        //submitTotalTime();
     })(jQuery);
 </script>
 <?php
