@@ -50,7 +50,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						</li><li>Add Note - "Patient in Hospital/ER" (if selected auto-send note to providers getting alerts when note saved)
 						</li><li>Add note - "Patient Reached"
 						</li><li>Under 20 minutes report - eliminate blank white space on right side
-						</li><li>Under 20 minutes report - time in patient header should link to "patient activity report"
+						</li><li class="complete">Under 20 minutes report - time in patient header should link to "patient activity report"
 						</li><li>Patient Activity Report - missing 5mins vs. time summary/check time calcs</li>
 						<li class="complete">Change "Print Care Plan" to "View Care Plan"</li>
 						<li class="complete">"Edit Care Plan" link should go to page 1 care plan, not patient demographic page</li>
