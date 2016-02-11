@@ -20,8 +20,10 @@ class UserConfigParser implements ParserWithoutValidation
         $this->template = $template;
     }
 
-    public function parse($demographicsSection)
+    public function parse($ccd)
     {
+        $demographicsSection = $ccd->demographics;
+
         $this->template->email = $demographicsSection->email;
         $this->template->mrn_number = $demographicsSection->mrn_number;
 

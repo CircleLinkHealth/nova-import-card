@@ -12,8 +12,10 @@ class ProblemsToMonitorParser implements ParserWithValidation
 {
     use ConsolidatesProblemInfoTrait;
 
-    public function parse($problemsSection, Validator $validator)
+    public function parse($ccd, Validator $validator)
     {
+        $problemsSection = $ccd->problems;
+
         $cpmProblems = CPMProblem::all();
 
         $problemsToActivate = [];

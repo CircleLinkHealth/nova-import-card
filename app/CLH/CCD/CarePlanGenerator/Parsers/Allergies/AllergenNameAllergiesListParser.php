@@ -9,8 +9,9 @@ use App\CLH\Contracts\CCD\Validator;
 class AllergenNameAllergiesListParser implements ParserWithValidation
 {
 
-    public function parse($ccdAllergiesSection, Validator $validator)
+    public function parse($ccd, Validator $validator)
     {
+        $ccdAllergiesSection = $ccd->allergies;
         $allergiesList = '';
 
         foreach ( $ccdAllergiesSection as $ccdAllergy ) {

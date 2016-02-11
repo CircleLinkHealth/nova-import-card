@@ -16,8 +16,10 @@ class UserMetaParser implements ParserWithoutValidation
         $this->template = $template;
     }
 
-    public function parse($demographicsSection)
+    public function parse($ccd)
     {
+        $demographicsSection = $ccd->demographics;
+
         $this->template->first_name = ucwords(strtolower($demographicsSection->name->given[0]));
         $this->template->last_name = ucwords(strtolower($demographicsSection->name->family));
         $this->template->nickname = "";

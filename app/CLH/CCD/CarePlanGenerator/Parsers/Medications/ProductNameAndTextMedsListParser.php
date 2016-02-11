@@ -10,8 +10,10 @@ use App\CLH\Facades\StringManipulation;
 class ProductNameAndTextMedsListParser implements ParserWithValidation
 {
 
-    public function parse($medicationsSection, Validator $validator)
+    public function parse($ccd, Validator $validator)
     {
+        $medicationsSection = $ccd->medications;
+
         $medsList = '';
 
         foreach ( $medicationsSection as $medication ) {
