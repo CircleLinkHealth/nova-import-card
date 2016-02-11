@@ -25,19 +25,7 @@ if(!isset($activity)) {
 }
 $role = '';
 $title  = Route::currentRouteName(); //get_the_title();
-//$activity_assignment = get_option($option,'No Data');
 
-$activity_assignment = 'a:14:{s:23:"Patient Biometric Chart";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:31:"Patient Biometrics Chart Review";}}s:15:"Patient Summary";a:5:{s:6:"user=%";a:1:{s:8:"activity";s:23:"Patient Overview Review";}s:21:"detail=obs_biometrics";a:1:{s:8:"activity";s:22:"Biometrics Data Review";}s:20:"detail=obs_lifestyle";a:1:{s:8:"activity";s:21:"Lifestyle Data Review";}s:22:"detail=obs_medications";a:1:{s:8:"activity";s:23:"Medications Data Review";}s:19:"detail=obs_symptoms";a:1:{s:8:"activity";s:20:"Symptoms Data Review";}}s:11:"Add Patient";a:2:{s:6:"user=%";a:1:{s:8:"activity";s:21:"Edit/Modify Care Plan";}s:0:"";a:1:{s:8:"activity";s:23:"Initial Care Plan Setup";}}s:17:"Patient Care Plan";a:2:{s:6:"user=%";a:1:{s:8:"activity";s:21:"Edit/Modify Care Plan";}s:4:"np=1";a:1:{s:8:"activity";s:23:"Initial Care Plan Setup";}}s:20:"Patient Care Plan II";a:2:{s:6:"user=%";a:1:{s:8:"activity";s:21:"Edit/Modify Care Plan";}s:4:"np=1";a:1:{s:8:"activity";s:23:"Initial Care Plan Setup";}}s:30:"Patient Additional Information";a:2:{s:6:"user=%";a:1:{s:8:"activity";s:21:"Edit/Modify Care Plan";}s:4:"np=1";a:1:{s:8:"activity";s:23:"Initial Care Plan Setup";}}s:18:"Input Observations";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:18:"Input Observations";}}s:20:"Report Patient Notes";a:1:{s:7:"actId=%";a:1:{s:8:"activity";s:17:"Patient Note View";}}s:8:"New Note";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:21:"Patient Note Creation";}}s:19:"Record New Activity";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:14:"Input Activity";}}s:15:"Print Care Plan";a:2:{s:6:"user=%";a:1:{s:8:"activity";s:20:"Care Plan View/Print";}s:4:"np=1";a:1:{s:8:"activity";s:23:"Initial Care Plan Setup";}}s:6:"Alerts";a:2:{s:0:"";a:1:{s:8:"activity";s:13:"Alerts Review";}s:6:"user=%";a:1:{s:8:"activity";s:21:"Patient Alerts Review";}}s:15:"Progress Report";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:28:"Progress Report Review/Print";}}s:23:"Patient Activity Report";a:1:{s:6:"user=%";a:1:{s:8:"activity";s:30:"Patient Activity Report Review";}}}';
-
-
-
-// var_dump($activity_assignment);
-if(!is_array($activity_assignment)) {
-    $activity_assignment = unserialize($activity_assignment);
-}
-
-//dd($activity_assignment);
-//die('yo');
 
 // ip address stuff
 function get_ip_address() {
@@ -88,9 +76,14 @@ $enableTimeTracking = true;
 if (strpos($_SERVER['REQUEST_URI'],'login') !== false) {
     $enableTimeTracking = false;
 }
-// disable if no patient object
-if (empty($patient)) {
-    $enableTimeTracking = false;
+
+// set patient vars
+$patientId = '';
+$patientProgramId = '';
+if (isset($patient)) {
+    //$enableTimeTracking = false;
+    $patientId = $patient->ID;
+    $patientProgramId = $patient->program_id;
 }
 if ($enableTimeTracking) {
 ?>
@@ -214,10 +207,10 @@ if ($enableTimeTracking) {
 
 
             var data = {
-                "patientId": '<?php echo $patient->ID; ?>',
+                "patientId": '<?php echo $patientId; ?>',
                 "providerId": '<?php echo Auth::user()->ID ?>',
                 "totalTime": totalTime,
-                "programId": '<?php echo $patient->program_id; ?>',
+                "programId": '<?php echo $patientProgramId; ?>',
                 "startTime": '<?php echo date('Y-m-d H:i:s'); ?>',
                 "urlFull": '<?php echo $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']; ?>',
                 "urlShort": '<?php echo $urlShort; ?>',
