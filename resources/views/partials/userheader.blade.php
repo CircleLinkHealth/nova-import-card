@@ -14,7 +14,7 @@
                         Location:</strong>
                                 <?php (is_null($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>
                 </span>
-               <a href="{{URL::route('patient.summary', array('patient' => $patient->ID))}}"><span class="pull-right">{{
+               <a href="{{URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID))}}"><span class="pull-right">{{
                 date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
                  }} Time: {{gmdate("i:s", $patient->monthlyTime)}}</span></a></p>
             <a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}">
@@ -36,5 +36,16 @@
             {{--</ul><div style="clear:both"></div><ul class="person-conditions-list inline-block text-medium"></ul>--}}
         </div>
     </div>
+    @endif
+    @if(isset($treating))
+        <div style="clear:both"></div>
+        <ul class="person-conditions-list inline-block text-medium">
+            @foreach($treating as $key => $value)
+                <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
+                                                checked="checked" disabled="disabled">
+                    <label for="condition27"><span> </span>{{$key}}</label>
+                </li>
+            @endforeach
+        </ul>
     @endif
 </div>

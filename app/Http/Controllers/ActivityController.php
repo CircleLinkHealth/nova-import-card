@@ -282,7 +282,7 @@ class ActivityController extends Controller {
 			$acts[$key]['provider_name'] = $provider->getFullNameAttribute();
 			unset($acts[$key]['provider_id']);
 		}
-
+		debug($acts);
 		if ($acts) {$data = true;} else {$data = false;}
 
 		$reportData = "data:" . json_encode($acts) . "";
@@ -293,7 +293,6 @@ class ActivityController extends Controller {
 		}
 
 		$months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-		debug($month_selected_text);
 		return view('wpUsers.patient.activity.index',
 			['activity_json' => $reportData,
 				'years' => array_reverse($years),
