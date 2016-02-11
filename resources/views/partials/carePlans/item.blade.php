@@ -46,7 +46,12 @@
     @if ($planItem->ui_fld_type == 'SELECT')
         {{-- show details button on right if present --}}
         <?php
-            $detailChildItem = $planItem->children()->where('ui_fld_type', '=', 'TEXTAREA')->first();
+        $detailChildItem = null;
+        foreach($planItem->children as $planItemChild) {
+            if( $planItemChild->ui_fld_type == 'TEXTAREA') {
+                $detailChildItem = $planItemChild;
+            }
+        }
         ?>
         <div class="form-group">
             <div class="form-item col-sm-{{ $detailChildItem ? '6' : '12' }}">
