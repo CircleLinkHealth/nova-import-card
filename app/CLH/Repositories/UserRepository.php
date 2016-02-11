@@ -234,13 +234,40 @@ class UserRepository {
             return false;
         }
         // just need to add programs default @todo here should get the programs default one to use from programs config
-        $carePlan = CarePlan::where('program_id', '=', $program->id)->where('type', '=', 'Program Default')->first();
+        $carePlan = CarePlan::where('program_id', '=', $program->blog_id)->where('type', '=', 'Program Default')->first();
         if(!$carePlan) {
             return false;
         }
 
         $user->care_plan_id = $carePlan->id;
         $user->save();
+
+        // populate defaults from careplan
+        $carePlan->build();
+        foreach($carePlan->careSections as $careSection) {
+            // add parent items to each section
+            $careSection->carePlanItems = $carePlan->carePlanItems()
+                ->where('section_id', '=', $careSection->id)
+                ->where('parent_id', '=', 0)
+                ->orderBy('ui_sort', 'asc')
+                ->with(array('children' => function ($query) {
+                    $query->orderBy('ui_sort', 'asc');
+                }))
+                ->get();
+            // user defaults
+            if ($careSection->carePlanItems->count() > 0) {
+                foreach ($careSection->carePlanItems as $carePlanItem) {
+                    // parents
+                    $carePlan->setCareItemUserValue($user, $carePlanItem->careItem->name, $carePlanItem->meta_value);
+                    // children
+                    if ($carePlanItem->children->count() > 0) {
+                        foreach ($carePlanItem->children as $carePlanItemChild) {
+                            $carePlan->setCareItemUserValue($user, $carePlanItemChild->careItem->name, $carePlanItemChild->meta_value);
+                        }
+                    }
+                }
+            }
+        }
 
 
         /*

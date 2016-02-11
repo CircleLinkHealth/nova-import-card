@@ -106,10 +106,10 @@ class S20151215CarePlanMigration3 extends Seeder {
             }
 
             // create new careplan
-            $carePlan = CarePlan::where('program_id', '=', $program->id)->where('type', '=', 'Program Default')->first();
+            $carePlan = CarePlan::where('program_id', '=', $program->blog_id)->where('type', '=', 'Program Default')->first();
             $carePlan->name = 'program-' . $program->name . '-default';
             $carePlan->type = 'Program Default';
-            $carePlan->program_id = $program->id;
+            $carePlan->program_id = $program->blog_id;
             $carePlan->save();
             $s = 0;
 
