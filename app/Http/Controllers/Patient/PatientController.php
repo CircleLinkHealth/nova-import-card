@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\Observation;
+use App\Services\ReportsService;
 use App\WpBlog;
 use App\Location;
 use App\User;
@@ -96,6 +97,9 @@ class PatientController extends Controller {
 
 		// program
 		$program = WpBlog::find($wpUser->program_id);
+
+		//problems for userheader
+		$treating = (new ReportsService())->getProblemsToMonitorWithDetails($wpUser); debug($treating);
 
 		$params = $request->all();
 		$detailSection = '';
@@ -211,7 +215,7 @@ class PatientController extends Controller {
 		}
 
 		//return response()->json($cpFeed);
-		return view('wpUsers.patient.summary', ['program' => $program, 'patient' => $wpUser, 'wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json, 'messages' => $messages]);
+		return view('wpUsers.patient.summary', ['program' => $program, 'patient' => $wpUser, 'wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json, 'messages' => $messages, 'treating' => $treating]);
 	}
 
 
@@ -422,7 +426,10 @@ class PatientController extends Controller {
 			$dob = new Carbon((User::find($d)->getBirthDateAttribute()));
 			$dob = $dob->format('m-d-Y');
 			$mrn = (User::find($d)->getMRN());
-			$program = WpBlog::find((User::find($d)->blogId()))->display_name;
+			$programObj = WpBlog::find((User::find($d)->blogId())) ? WpBlog::find((User::find($d)->blogId())) : "";
+			if($programObj->display_name){
+				$program = $programObj->display_name;
+			} else { $program = '';}
 			debug($dob);
 			$search = $name .' | '. $dob .' | ' . $mrn;
 			if($i == count($data) - 1){
