@@ -1,6 +1,6 @@
 <?php
 
-use App\CLH\CCD\CarePlanGenerator\CPMProblem;
+use App\CLH\CCD\Importer\CPMProblem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
