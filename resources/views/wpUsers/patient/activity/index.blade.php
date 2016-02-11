@@ -1,7 +1,7 @@
 @extends('partials.providerUI')
 @section('content')
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title">
                     Patient Activity Report

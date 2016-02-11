@@ -34,14 +34,34 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 
 					<div class="panel-body">
 
-						<h2>MISC</h2>
 
-						<br />
-						<h5>Known Issues</h5>
-						<ul>
-							<li class="complete">Change "Print Care Plan" to "View Care Plan"</li>
-							<li class="complete">"Edit Care Plan" link should go to page 1 care plan, not patient demographic page</li>
-							<li>Add conditions to user header <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/117">#117</a></li>
+						<h2>2/11 3.0 Walkthrough Raphs Notes</h2>
+
+						<ul><li>Add conditions to user header <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/117">#117</a></li>
+						<li>select patient blue box
+						</li><li>should be shorter
+						</li><li>patient overview
+						</li><li>too wide when zoomed out
+						</li><li>biometrics labels have underscore
+						</li><li>Add patient
+						</li><li>screen too wide, needs same scale as prior version
+						</li><li>location field eventually needs to be visible right away, populated after program selected
+						</li><li>can’t get to step 3 of care plan setup after entering care team
+						</li><li>page 3 of edit care plan
+						</li><li>instructions box “instructions” needs to be “details"
+						</li><li>page 5 of edit care plan
+						</li><li>swap order: have additional instructions be second/ at bottom
+						</li><li>Add note
+						</li><li>add check boxes visible after "phone session" checked
+						</li><li>"Patient in Hospital/ER" (if selected auto-send note to providers getting alerts when note saved)
+						</li><li>"Patient Reached"
+						</li><li>Under 20 minutes report
+						</li><li>eliminate blank white space on right side
+						</li><li>time in patient header should link to "patient activity report"
+						</li><li>patient activity report
+						</li><li>missing 5mins vs. time summary/check time calcs</li>
+						<li class="complete">Change "Print Care Plan" to "View Care Plan"</li>
+						<li class="complete">"Edit Care Plan" link should go to page 1 care plan, not patient demographic page</li>
 						</ul>
 
 						{{--
