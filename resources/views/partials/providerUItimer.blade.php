@@ -254,6 +254,7 @@ if ($enableTimeTracking) {
             return false;
         }
 
+        submitTotalTime();
     })(jQuery);
 </script>
 <?php

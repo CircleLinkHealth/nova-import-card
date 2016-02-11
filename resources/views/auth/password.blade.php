@@ -1,50 +1,68 @@
-@extends('partials.adminUI')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>CarePlanManager - Log In</title>
 
-@section('content')
+	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
+	<link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
+	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
+	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
+	<style type="text/css">
+		input[type=text] ,  input[type=password]  {
+			display: inline-block;
+			margin-bottom: 0;
+			font-weight: normal;
+			text-align: center;
+			vertical-align: middle;
+			touch-action: manipulation;
+			background-image: none;
+			border: 1px solid ;
+			white-space: nowrap;
+			padding: 6px 12px;
+			font-size: 14px;
+			line-height: 1.42857;
+			border-radius: 4px;
+		}
+	</style>
+</head>
+<body>
 <div class="container-fluid">
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
-			<div class="panel panel-default">
-				<div class="panel-heading">Reset Password</div>
-				<div class="panel-body">
-					@if (session('status'))
-						<div class="alert alert-success">
-							{{ session('status') }}
-						</div>
-					@endif
+	<section class="main-form">
+		<div class="row">
+			<div class="main-form-container col-lg-4 col-lg-offset-4">
+				<div class="row">
+					<div class="main-form-title main-form-title--login">
+						<h2>CarePlan<span class="text-thin">Manager&trade;</span></h2>
+						Password Reset
+					</div>
+					<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
-					@if (count($errors) > 0)
-						<div class="alert alert-danger">
-							<strong>Whoops!</strong> There were some problems with your input.<br><br>
-							<ul>
-								@foreach ($errors->all() as $error)
-									<li>{{ $error }}</li>
-								@endforeach
-							</ul>
-						</div>
-					@endif
+						<form class="form-horizontal" role="form" method="POST" action="{{ url('/password/email') }}">
+							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-					<form class="form-horizontal" role="form" method="POST" action="{{ url('/password/email') }}">
-						<input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-						<div class="form-group">
-							<label class="col-md-4 control-label">E-Mail Address</label>
-							<div class="col-md-6">
-								<input type="email" class="form-control" name="email" value="{{ old('email') }}">
+							<div class="form-group">
+								<label class="col-md-4 control-label">E-Mail Address</label>
+								<div class="col-md-6">
+									<input type="email" class="form-control" name="email" value="{{ old('email') }}">
+								</div>
 							</div>
-						</div>
 
-						<div class="form-group">
-							<div class="col-md-6 col-md-offset-4">
-								<button type="submit" class="btn btn-primary">
-									Send Password Reset Link
-								</button>
+							<div class="form-group">
+								<div class="col-md-6 col-md-offset-4">
+									<button type="submit" class="btn btn-primary">
+										Send Password Reset Link
+									</button>
+								</div>
 							</div>
-						</div>
-					</form>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</section>
 </div>
-@endsection
+</body>
+</html>
