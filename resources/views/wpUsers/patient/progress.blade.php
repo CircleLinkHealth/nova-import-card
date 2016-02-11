@@ -33,7 +33,7 @@ $provider = App\User::find($patient->getBillingProviderIDAttribute());
                     <div class="row">
                         <div class="col-xs-12 col-md-4 print-row text-bold">
                             @if($provider)
-                                {{$provider->fullName}}
+                                {{$provider->fullName}}{{($provider->getSpecialtyAttribute() == '')? '' : ', '. $provider->getSpecialtyAttribute() }}
                             @else
                                 <em>no lead contact</em>
                             @endif
