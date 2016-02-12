@@ -30,6 +30,17 @@ class ImportManager
     public function generateCarePlanFromCCD()
     {
         /**
+         * Parse and Import Allergies List, Medications List, Problems List, Problems To Monitor
+         */
+        foreach ( $this->routine as $section => $routine ) {
+            ImporterStrategyFactory::make( $this->ccd, $routine[ 'validator' ], $routine[ 'parser' ], $routine[ 'importer' ], $this->blogId, $this->userId );
+        }
+
+        /**
+         * The following Sections are the same for each CCD
+         */
+
+        /**
          * Parse and Import User Meta
          */
         $userMetaParser = new UserMetaParser( new UserMetaTemplate() );
@@ -42,15 +53,6 @@ class ImportManager
         $userConfigParser = new UserConfigParser( new UserConfigTemplate(), $this->blogId );
         $userConfig = $userConfigParser->parse( $this->ccd );
         ( new UserConfigStorageStrategy( $this->blogId, $this->userId ) )->import( $userConfig );
-
-        /**
-         * Parse and Import Allergies List, Medications List, Problems List, Problems To Monitor
-         */
-        foreach ( $this->routine as $section => $routine ) {
-            $parser = new $routine[ 'parser' ]();
-            $items = $parser->parse( $this->ccd, new $routine[ 'validator' ]() );
-            ( new $routine[ 'importer' ]( $this->blogId, $this->userId ) )->import( $items );
-        }
 
         /**
          * CarePlan Defaults
