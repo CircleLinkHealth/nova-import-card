@@ -3,6 +3,7 @@
 use App\Activity;
 use App\Observation;
 use App\Services\ReportsService;
+use App\CarePlan;
 use App\WpBlog;
 use App\Location;
 use App\User;
@@ -98,8 +99,18 @@ class PatientController extends Controller {
 		// program
 		$program = WpBlog::find($wpUser->program_id);
 
+		$carePlan = CarePlan::where('id', '=', $wpUser->care_plan_id)
+			->first();
+
+		if($carePlan) {
+			$carePlan->build($wpUser->ID);
+		}
+
 		//problems for userheader
-		$treating = (new ReportsService())->getProblemsToMonitorWithDetails($wpUser); debug($treating);
+		$treating = array();
+		if($carePlan) {
+			$treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
+		}
 
 		$params = $request->all();
 		$detailSection = '';
