@@ -33,7 +33,9 @@ class RoutineBuilder
 
         if ( empty($vendors) ) return $this->getDefaultRoutine();
 
-        $routine = $vendors[ 0 ]->routine()->get()[0];
+        $keys = array_keys($vendors);
+
+        $routine = $vendors[ $keys[0] ]->routine()->get()[0];
 
         $strategies = $routine->strategies()->get();
 
