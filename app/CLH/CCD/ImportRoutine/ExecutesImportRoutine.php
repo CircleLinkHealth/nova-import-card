@@ -17,7 +17,7 @@ trait ExecutesImportRoutine
         $storage = null;
         $items = null;
 
-        if (empty($parsingStrategy || $storageStrategy)) abort('400', 'Parsing Strategy and Storage Strategy are required');
+        if (! isset($parsingStrategy) || ! isset($storageStrategy)) abort('400', 'Parsing Strategy and Storage Strategy are required');
 
         if ( class_exists( $validationStrategy ) ) {
             $validator = new $validationStrategy();
