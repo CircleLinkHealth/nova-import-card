@@ -27,7 +27,7 @@
 
 @section('content')
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     Patient Overview
@@ -104,7 +104,7 @@
                                 {
                                     id: "description",
                                     header: ["<?= $section['col_name_question'] ?>" <?= $filter ?>],
-                                    css: {"text-align": "center"},
+                                    css: {"text-align": "left"},
                                     sort: 'string',
                                     width: 300,
                                     adjust: false
@@ -112,7 +112,7 @@
                                 {
                                     id: "obs_value",
                                     header: ["<?= $section['col_name_severity'] ?>" <?= $filter ?>],
-                                    css: {"text-align": "center"},
+                                    css: {"text-align": "left"},
                                     sort: 'string',
                                     width: 300,
                                     adjust: false,
@@ -121,7 +121,7 @@
                                 {
                                     id: "comment_date",
                                     header: ["Date" <?= $filter ?>],
-                                    css: {"text-align": "center"},
+                                    css: {"text-align": "left"},
                                     sort: 'string',
                                     fillspace: true,
                                     adjust: true
