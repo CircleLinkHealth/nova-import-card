@@ -43,12 +43,10 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						</li><li>Patient Overview - biometrics labels have underscore
 						</li><li>Add patient - screen too wide, needs same scale as prior version
 						</li><li>Add patient - location field eventually needs to be visible right away, populated after program selected
-						</li><li>Add patient - can’t get to step 3 of care plan setup after entering care team
+						</li><li>Add patient - can’t get to step 3 of care plan setup after entering care team <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/149">#149</a>
 						</li><li>Edit care plan page 3 - instructions box “instructions” needs to be “details"
 						</li><li class="complete">Edit care plan page 5 - swap order: have additional instructions be second/ at bottom
-						</li><li>Add Note - add check boxes visible after "phone session" checked
-						</li><li>Add Note - "Patient in Hospital/ER" (if selected auto-send note to providers getting alerts when note saved)
-						</li><li>Add note - "Patient Reached"
+						</li><li>Add Note - add check boxes visible after "phone session" checked<br>"Patient in Hospital/ER" (if selected auto-send note to providers getting alerts when note saved)<br>"Patient Reached" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/152">#152</a>
 						</li><li>Under 20 minutes report - eliminate blank white space on right side
 						</li><li class="complete">Under 20 minutes report - time in patient header should link to "patient activity report"
 						</li><li>Patient Activity Report - missing 5mins vs. time summary/check time calcs</li>
@@ -207,7 +205,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}</a><br /><br />
 								<h5>Known Issues</h5>
 								<ul>
-									<li>Date input on firefox formats weird, switch to timepicker <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/146">#146</a></li>
+									<li class="complete">Date input on firefox formats weird, switch to timepicker <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/146">#146</a></li>
 								</ul>
 							</div>
 
