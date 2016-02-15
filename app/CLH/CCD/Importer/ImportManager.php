@@ -8,12 +8,16 @@ use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfigStorageStrateg
 use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserMetaStorageStrategy;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfigParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMetaParser;
+use App\CLH\CCD\ImportRoutine\ExecutesImportRoutine;
+use App\CLH\CCD\ImportRoutine\RoutineBuilder;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\ParsedCCD;
 
 class ImportManager
 {
+    use ExecutesImportRoutine;
+
     private $blogId;
     private $ccd;
     private $userId;
@@ -24,7 +28,7 @@ class ImportManager
         $this->blogId = $blogId;
         $this->ccd = json_decode( $parsedCCD->ccd );
         $this->userId = $userId;
-        $this->routine = ( new RoutineBuilder() )->getDefaultSettings();
+        $this->routine = ( new RoutineBuilder() )->getDefaultRoutine();
     }
 
     public function generateCarePlanFromCCD()
@@ -33,7 +37,7 @@ class ImportManager
          * Parse and Import Allergies List, Medications List, Problems List, Problems To Monitor
          */
         foreach ( $this->routine as $section => $routine ) {
-            ImporterStrategyFactory::make( $this->ccd, $routine[ 'validator' ], $routine[ 'parser' ], $routine[ 'importer' ], $this->blogId, $this->userId );
+            $this->import( $this->ccd, $routine[ 'validator' ], $routine[ 'parser' ], $routine[ 'importer' ], $this->blogId, $this->userId );
         }
 
         /**
