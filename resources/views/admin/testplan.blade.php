@@ -37,7 +37,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 
 						<h2>2/11 3.0 Walkthrough Raphs Notes</h2>
 
-						<ul><li>Add conditions to user header <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/117">#117</a></li>
+						<ul><li class="complete">Add conditions to user header <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/117">#117</a></li>
 						<li>select patient blue box should be shorter
 						</li><li>Patient Overview - too wide when zoomed out
 						</li><li>Patient Overview - biometrics labels have underscore
@@ -45,7 +45,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						</li><li>Add patient - location field eventually needs to be visible right away, populated after program selected
 						</li><li>Add patient - can’t get to step 3 of care plan setup after entering care team
 						</li><li>Edit care plan page 3 - instructions box “instructions” needs to be “details"
-						</li><li>Edit care plan page 5 - swap order: have additional instructions be second/ at bottom
+						</li><li class="complete">Edit care plan page 5 - swap order: have additional instructions be second/ at bottom
 						</li><li>Add Note - add check boxes visible after "phone session" checked
 						</li><li>Add Note - "Patient in Hospital/ER" (if selected auto-send note to providers getting alerts when note saved)
 						</li><li>Add note - "Patient Reached"
@@ -207,20 +207,20 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}</a><br /><br />
 								<h5>Known Issues</h5>
 								<ul>
-									<li>Date input on firefox formats weird, switch to timepicker</li>
+									<li>Date input on firefox formats weird, switch to timepicker <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/146">#146</a></li>
 								</ul>
 							</div>
 
 
 							<br />
-							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSummary"><strong><i class="glyphicon glyphicon-list"></i> Patient Summary</strong> - 70%</a></h4>
+							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSummary"><strong><i class="glyphicon glyphicon-list"></i> Patient Summary</strong> - 90%</a></h4>
 							<div id="collapsePatientSummary" class="panel-collapse collapse in">
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}</a><br /><br />
 								<h5>Known Issues</h5>
 								<ul>
-									<li>Observation labels are not correct <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/82">#82</a></li>
+									<li class="complete">Observation labels are not correct <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/82">#82</a></li>
 									<li class="complete">Missing link to biometric charts + actual biometric charts page. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/108">#108</a></li>
-									<li>Lifestyle observations not displaying properly. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/114">#114</a></li>
+									<li class="complete">Lifestyle observations not displaying properly. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/114">#114</a></li>
 								</ul>
 							</div>
 						@else
@@ -285,7 +285,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
-								<li>Very slow page load</li>
+								<li class="complete">Very slow page load</li>
 							</ul>
 						</div>
 
