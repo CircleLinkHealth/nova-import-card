@@ -39,10 +39,10 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 
 						<ul><li class="complete">Add conditions to user header <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/117">#117</a></li>
 						<li>select patient blue box should be shorter
-						</li><li>Patient Overview - too wide when zoomed out
-						</li><li>Patient Overview - biometrics labels have underscore
-						</li><li>Add patient - screen too wide, needs same scale as prior version
-						</li><li>Add patient - location field eventually needs to be visible right away, populated after program selected
+						</li><li class="complete">Patient Overview - too wide when zoomed out
+						</li><li class="complete">Patient Overview - biometrics labels have underscore
+						</li><li class="complete">Add patient - screen too wide, needs same scale as prior version
+						</li><li>Add patient - location field eventually needs to be visible right away, populated after program selected <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/155">#155</a>
 						</li><li>Add patient - can’t get to step 3 of care plan setup after entering care team <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/149">#149</a>
 						</li><li>Edit care plan page 3 - instructions box “instructions” needs to be “details"
 						</li><li class="complete">Edit care plan page 5 - swap order: have additional instructions be second/ at bottom
@@ -219,6 +219,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 									<li class="complete">Observation labels are not correct <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/82">#82</a></li>
 									<li class="complete">Missing link to biometric charts + actual biometric charts page. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/108">#108</a></li>
 									<li class="complete">Lifestyle observations not displaying properly. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/114">#114</a></li>
+									<li>Missing print and export icons / functionality <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/154">#154</a></li>
 								</ul>
 							</div>
 						@else
