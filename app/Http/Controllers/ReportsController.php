@@ -146,7 +146,7 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['patient_name'] = $patient->fullName;
 				$u20_patients[$act_count]['patient_id'] = $patient->ID;
 				$acts = DB::table('lv_activities')
-					->select(DB::raw('*,DATE(performed_at),provider_id, type'))
+					->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
 					->where('patient_id', $patient->ID)
 					->whereBetween('performed_at', [
 						$start, $end
@@ -269,7 +269,7 @@ class ReportsController extends Controller {
 				}
 				$u20_patients[$act_count]['patient_id'] = $patient->ID;
 				$acts = DB::table('lv_activities')
-					->select(DB::raw('*,DATE(performed_at),provider_id, type'))
+					->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
 					->where('patient_id', $patient->ID)
 					->whereBetween('performed_at', [
 						$start, $end
