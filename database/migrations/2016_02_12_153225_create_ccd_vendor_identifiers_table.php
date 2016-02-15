@@ -15,7 +15,14 @@ class CreateCcdVendorIdentifiersTable extends Migration {
 		Schema::create('ccd_vendor_identifiers', function(Blueprint $table)
 		{
 			$table->increments('id');
+			$table->integer('ccd_vendor_id')->unsigned()->default(null);
+			$table->integer('identifier_id')->unsigned();
+			$table->integer('value')->unsigned();
+			$table->boolean('exactMatch')->default(false);
 			$table->timestamps();
+
+			$table->foreign('ccd_vendor_id')->references('id')->on('ccd_vendors');
+
 		});
 	}
 
