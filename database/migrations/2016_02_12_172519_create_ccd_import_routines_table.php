@@ -15,6 +15,8 @@ class CreateCcdImportRoutinesTable extends Migration {
 		Schema::create('ccd_import_routines', function(Blueprint $table)
 		{
 			$table->increments('id');
+			$table->string('name');
+			$table->string('description');
 			$table->timestamps();
 		});
 	}
