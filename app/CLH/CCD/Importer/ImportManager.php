@@ -28,16 +28,21 @@ class ImportManager
         $this->blogId = $blogId;
         $this->ccd = json_decode( $parsedCCD->ccd );
         $this->userId = $userId;
-        $this->routine = ( new RoutineBuilder() )->getDefaultRoutine();
+        $this->routine = ( new RoutineBuilder( $this->ccd ) )->getRoutine();
     }
 
     public function generateCarePlanFromCCD()
     {
+        $strategies = \Config::get( 'ccdimporterstrategiesmaps' );
         /**
          * Parse and Import Allergies List, Medications List, Problems List, Problems To Monitor
          */
-        foreach ( $this->routine as $section => $routine ) {
-            $this->import( $this->ccd, $routine[ 'validator' ], $routine[ 'parser' ], $routine[ 'importer' ], $this->blogId, $this->userId );
+        foreach ( $this->routine as $routine ) {
+            $this->import( $this->ccd,
+                $strategies[ 'validation' ][ $routine->validator_id ],
+                $strategies[ 'parsing' ][ $routine->parser_id ],
+                $strategies[ 'storage' ][ $routine->storage_id ],
+                $this->blogId, $this->userId );
         }
 
         /**
