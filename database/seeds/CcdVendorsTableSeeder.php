@@ -41,6 +41,30 @@ class CcdVendorsTableSeeder extends Seeder
                 'created_at' => '0000-00-00 00:00:00',
                 'updated_at' => '0000-00-00 00:00:00',
             ),
+            2 => 
+            array (
+                'id' => 3,
+                'ccd_import_routine_id' => 3,
+                'ehr_name' => 'Athena - Mazhar',
+                'ehr_oid' => 564,
+                'doctor_name' => 'Salma Mazhar',
+                'doctor_oid' => 1487690855,
+                'custodian_name' => 'athenahealth',
+                'created_at' => '0000-00-00 00:00:00',
+                'updated_at' => '0000-00-00 00:00:00',
+            ),
+            3 => 
+            array (
+                'id' => 4,
+                'ccd_import_routine_id' => 3,
+                'ehr_name' => 'Athena',
+                'ehr_oid' => 564,
+                'doctor_name' => NULL,
+                'doctor_oid' => NULL,
+                'custodian_name' => 'athenahealth',
+                'created_at' => '0000-00-00 00:00:00',
+                'updated_at' => '0000-00-00 00:00:00',
+            ),
         ));
         
         
