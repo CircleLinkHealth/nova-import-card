@@ -30,6 +30,11 @@ return [
             'description' => 'UPG CCDs have this. eg. 2.16.840.1.113883.3.638 => Aprima,
                                 2.16.840.1.113883.3.638.999 => Aprima with client Id',
         ],
+        [
+            'class' => App\CLH\CCD\Identifier\IdentificationStrategies\NPI::class,
+            'name' => 'NPI',
+            'description' => 'National Provider Identification (NPI)',
+        ]
     ],
 
     'ehr_oid' => [

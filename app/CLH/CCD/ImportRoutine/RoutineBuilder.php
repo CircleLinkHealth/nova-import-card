@@ -33,6 +33,21 @@ class RoutineBuilder
 
         if ( empty($vendors) ) return $this->getDefaultRoutine();
 
+        if ( count( $vendors ) > 1 )
+        {
+            foreach ( $identifiers as $key => $value ) {
+                $vendors = array_filter( $vendors, function ($vendor) use ($key, $value) {
+                    /*
+                     * If there's more than one vendors, iterate again, but check strictly
+                     * by getting rid of this line
+                     */
+//                    if ( empty($vendor->$key) ) return true;
+                    return $vendor->$key == $value;
+                } );
+                if ( count( $vendors ) == 1 ) break;
+            }
+        }
+
         $keys = array_keys($vendors);
 
         $routine = $vendors[ $keys[0] ]->routine()->get()[0];
