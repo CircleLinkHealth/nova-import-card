@@ -4,6 +4,7 @@ namespace App\CLH\CCD\ImportRoutine;
 
 use App\CLH\CCD\Identifier\IdentificationManager;
 use App\CLH\CCD\Vendor\CcdVendor;
+use Illuminate\Support\Facades\Log;
 
 class RoutineBuilder
 {
@@ -28,10 +29,9 @@ class RoutineBuilder
                 if ( empty($vendor->$key) ) return true;
                 return $vendor->$key == $value;
             } );
-            if ( count( $vendors ) == 1 ) break;
+            //@todo: this will not fly because if the last irrelevant rule is left, it will pick it
+//            if ( count( $vendors ) == 1 ) break;
         }
-
-        if ( empty($vendors) ) return $this->getDefaultRoutine();
 
         if ( count( $vendors ) > 1 )
         {
@@ -44,13 +44,16 @@ class RoutineBuilder
 //                    if ( empty($vendor->$key) ) return true;
                     return $vendor->$key == $value;
                 } );
-                if ( count( $vendors ) == 1 ) break;
             }
         }
+
+        if ( empty($vendors) ) return $this->getDefaultRoutine();
 
         $keys = array_keys($vendors);
 
         $routine = $vendors[ $keys[0] ]->routine()->get()[0];
+
+        Log::info('Routine ID: ' . $routine->id . ' ' . $this->ccd->demographics->name->family);
 
         $strategies = $routine->strategies()->get();
 
@@ -61,6 +64,8 @@ class RoutineBuilder
     {
         $routine = CcdImportRoutine::find(1);
         $strategies = $routine->strategies()->get();
+
+        Log::info('Default Routine for ' . $this->ccd->demographics->name->family);
 
         return $strategies;
     }
