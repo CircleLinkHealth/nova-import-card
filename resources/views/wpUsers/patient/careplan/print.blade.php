@@ -1,13 +1,15 @@
 @extends('partials.providerUI')
 
 <?php
-function biometricGoal($starting, $target)
+function biometricGoal($starting, $target, $bp = false)
 {
     $starting = explode('/', $starting);
     $starting = $starting[0];
     $target = explode('/', $target);
     $target = $target[0];
-    return ($starting > $target) ? 'Lower' : 'Raise';
+    if($bp == 'Blood Pressure'){$verb = 'Maintain';} else {$verb = 'Raise';};
+    debug($bp . ' ' . $verb);
+    return ($starting > $target) ? 'Lower' : $verb;
 }
 $billing = App\User::find($patient->getBillingProviderIDAttribute());
 $lead = App\User::find($patient->getLeadContactIDAttribute());
@@ -94,7 +96,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <ul class="subareas__list">
                         <li class="subareas__item subareas__item--wide col-sm-12">
                             @foreach($biometrics as $key => $value)
-                                <div class="col-xs-5 print-row text-bold">{{ biometricGoal($value['starting'], $value['target'])}} {{$key}}</div>
+                                <div class="col-xs-5 print-row text-bold">{{ biometricGoal($value['starting'], $value['target'], $key)}} {{$key}}</div>
                                 <div class="col-xs-4 print-row text-bold">to {{$value['target']}}</div>
                                 <div class="col-xs-3 print-row">from {{$value['starting']}}</div>
                             @endforeach
