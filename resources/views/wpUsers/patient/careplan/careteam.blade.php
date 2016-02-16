@@ -186,7 +186,7 @@ function buildProviderInfoContainers($providers) {
 
 
     <div class="row" style="margin-top:20px;">
-        <div class="main-form-container-last col-lg-8 col-lg-offset-2">
+        <div class="main-form-container-last col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
             <div class="row">
                 @if(isset($patient) && !$new_user )
                     <div class="main-form-title col-lg-12">

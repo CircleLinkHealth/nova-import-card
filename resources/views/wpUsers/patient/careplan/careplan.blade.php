@@ -45,10 +45,12 @@ $new_user = false;
                 @if($carePlan)
                     <input type=hidden name=careplan_id value="{{ $carePlan->id }}">
                     @if($carePlan->careSections)
-                        @foreach($carePlan->careSections as $careSection)
-                            @if(in_array($careSection->name, $careSectionNames))
-                                @include('partials.carePlans.section')
-                            @endif
+                        @foreach($careSectionNames as $careSectionName)
+                            @foreach($carePlan->careSections as $careSection)
+                                @if($careSectionName == $careSection->name)
+                                    @include('partials.carePlans.section')
+                                @endif
+                            @endforeach
                         @endforeach
                     @endif
                 @else

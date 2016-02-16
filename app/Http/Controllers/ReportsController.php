@@ -27,7 +27,12 @@ class ReportsController extends Controller {
 	{
 
 		$user = User::find($patientId);
-		$treating = (new ReportsService())->getProblemsToMonitor($user);
+		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+			->first();
+		if ($carePlan) {
+			$carePlan->build($user->ID);
+		}
+		$treating = (new ReportsService())->getProblemsToMonitor($carePlan);
 
 		$biometrics = ['Blood_Sugar','Blood_Pressure','Weight'];
 		$biometrics_data = array();
@@ -77,7 +82,7 @@ class ReportsController extends Controller {
 		$provider = User::find($user->leadContactID);
 
 		//Medication Tracking:
-		$medications = (new ReportsService())->getMedicationStatus($user, false);
+		$medications = (new ReportsService())->getMedicationStatus($user, $carePlan, false);
 
 		$data = [
 			'treating' => $treating,
@@ -141,7 +146,7 @@ class ReportsController extends Controller {
 				$u20_patients[$act_count]['patient_name'] = $patient->fullName;
 				$u20_patients[$act_count]['patient_id'] = $patient->ID;
 				$acts = DB::table('lv_activities')
-					->select(DB::raw('*,DATE(performed_at),provider_id, type'))
+					->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
 					->where('patient_id', $patient->ID)
 					->whereBetween('performed_at', [
 						$start, $end
@@ -264,7 +269,7 @@ class ReportsController extends Controller {
 				}
 				$u20_patients[$act_count]['patient_id'] = $patient->ID;
 				$acts = DB::table('lv_activities')
-					->select(DB::raw('*,DATE(performed_at),provider_id, type'))
+					->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
 					->where('patient_id', $patient->ID)
 					->whereBetween('performed_at', [
 						$start, $end
@@ -381,20 +386,22 @@ class ReportsController extends Controller {
 	{
 		if($patientId) {
 			$user = User::find($patientId);
-			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)->first();
-			$carePlan->build($user->ID);
-//			debug($carePlan->getCareItemUserValue($user, 'medications-list-details'));
 
-			$symptoms = array();
-			$problems = array();
-			$lifestyle = array();
-			$biometrics = array();
-				foreach($carePlan->careSections as $section) {
-					if ($section->name == 'symptoms-to-monitor') {
-						foreach ($section->carePlanItems as $item) {
-								$symptoms[] = $item->careItem->display_name;
-							}
-						}
+		}
+
+		$symptoms = array();
+		$problems = array();
+		$lifestyle = array();
+		$biometrics = array();
+		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)->first();
+		if($carePlan) {
+			$carePlan->build($user->ID);
+			foreach($carePlan->careSections as $section) {
+				if ($section->name == 'symptoms-to-monitor') {
+					foreach ($section->carePlanItems as $item) {
+						$symptoms[] = $item->careItem->display_name;
+					}
+				}
 				if($section->name == 'diagnosis-problems-to-monitor'){
 					foreach($section->carePlanItems as $item){
 						if($item->meta_value == 'Active') {
@@ -417,53 +424,54 @@ class ReportsController extends Controller {
 					}
 				}
 			}
-			$medications = (new ReportsService())->medicationsList($user, false);//debug($medications);
-			$treating = (new ReportsService())->getProblemsToMonitorWithDetails($user);
-			$biometrics = ['Weight', 'Blood Sugar', 'Blood Pressure'];
-			$bio_data = array();
-
-			foreach ($biometrics as $metric) {
-					$bio_data[$metric]['target'] = (new ReportsService())->getTargetValueForBiometric($metric, $user) . ReportsService::biometricsUnitMapping($metric);
-					$bio_data[$metric]['starting'] = Observation::getStartingObservation($user->ID,(new ReportsService())->biometricsMessageIdMapping($metric)) . ReportsService::biometricsUnitMapping($metric);
-			}
-
-			if($carePlan->getCareItemUserValue($user, 'medications-list') == 'Active'){
-				$taking_meds = $carePlan->getCareItemUserValue($user, 'medications-list-details');
-			} else { $taking_meds = ''; }
-			debug($taking_meds);
-
-			if($carePlan->getCareItemUserValue($user, 'allergies') == 'Active'){
-				$allergies = $carePlan->getCareItemUserValue($user, 'allergies-details');
-			} else { $allergies = 'No instructions at this time'; }
-
-			if($carePlan->getCareItemUserValue($user, 'social-services') == 'Active'){
-				$social = $carePlan->getCareItemUserValue($user, 'social-services-details');
-			} else { $social = 'No instructions at this time'; }
-
-			if($carePlan->getCareItemUserValue($user, 'other') == 'Active'){
-				$other = $carePlan->getCareItemUserValue($user, 'other-details');
-			} else { $other = 'No instructions at this time'; }
-
-			if($carePlan->getCareItemUserValue($user, 'appointments') == 'Active'){
-				$appointments = $carePlan->getCareItemUserValue($user, 'appointments-details');
-			} else { $appointments = 'No instructions at this time'; }
-
-
-			return view('wpUsers.patient.careplan.print',
-				[
-					'patient' => $user,
-					'treating' => $treating,
-					'biometrics' => $bio_data,
-					'symptoms' => $symptoms,
-					'lifestyle' => $lifestyle,
-					'medications_monitor' => $medications,
-					'taking_medications' => $taking_meds,
-					'allergies' => $allergies,
-					'social' => $social,
-					'appointments' => $appointments,
-					'other' => $other
-				]);
 		}
+		$medications = (new ReportsService())->medicationsList($carePlan);//debug($medications);
+		$treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
+		$biometrics = ['Weight', 'Blood Sugar', 'Blood Pressure'];
+		$bio_data = array();
+
+		foreach ($biometrics as $metric) {
+				$bio_data[$metric]['target'] = (new ReportsService())->getTargetValueForBiometric($metric, $user) . ReportsService::biometricsUnitMapping($metric);
+				$bio_data[$metric]['starting'] = Observation::getStartingObservation($user->ID,(new ReportsService())->biometricsMessageIdMapping($metric)) . ReportsService::biometricsUnitMapping($metric);
+		}
+
+		if($carePlan->getCareItemUserValue($user, 'medications-list') == 'Active'){
+			$taking_meds = $carePlan->getCareItemUserValue($user, 'medications-list-details');
+		} else { $taking_meds = ''; }
+		debug($taking_meds);
+
+		if($carePlan->getCareItemUserValue($user, 'allergies') == 'Active'){
+			$allergies = $carePlan->getCareItemUserValue($user, 'allergies-details');
+		} else { $allergies = 'No instructions at this time'; }
+
+		if($carePlan->getCareItemUserValue($user, 'social-services') == 'Active'){
+			$social = $carePlan->getCareItemUserValue($user, 'social-services-details');
+		} else { $social = 'No instructions at this time'; }
+
+		if($carePlan->getCareItemUserValue($user, 'other') == 'Active'){
+			$other = $carePlan->getCareItemUserValue($user, 'other-details');
+		} else { $other = 'No instructions at this time'; }
+
+		if($carePlan->getCareItemUserValue($user, 'appointments') == 'Active'){
+			$appointments = $carePlan->getCareItemUserValue($user, 'appointments-details');
+		} else { $appointments = 'No instructions at this time'; }
+
+
+		return view('wpUsers.patient.careplan.print',
+			[
+				'patient' => $user,
+				'treating' => $treating,
+				'biometrics' => $bio_data,
+				'symptoms' => $symptoms,
+				'lifestyle' => $lifestyle,
+				'medications_monitor' => $medications,
+				'taking_medications' => $taking_meds,
+				'allergies' => $allergies,
+				'social' => $social,
+				'appointments' => $appointments,
+				'other' => $other
+			]);
+
 		return response("User not found", 401);
 	}
 

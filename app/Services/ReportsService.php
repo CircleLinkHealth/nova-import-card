@@ -83,13 +83,10 @@ Class ReportsService
         return $itemsToMonitor;
     }
 
-    public function getProblemsToMonitor(User $user)
+    public function getProblemsToMonitor(CarePlan $carePlan)
     {
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
         $itemsToMonitor = array();
         if ($carePlan) {
-            $carePlan->build($user->ID);
             foreach ($carePlan->careSections as $section) {
                 if ($section->name == 'diagnosis-problems-to-monitor') {
                     foreach ($section->carePlanItems as $item) {
@@ -103,13 +100,10 @@ Class ReportsService
         return $itemsToMonitor;
     }
 
-    public function getProblemsToMonitorWithDetails(User $user)
+    public function getProblemsToMonitorWithDetails(CarePlan $carePlan)
     {
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
         $itemsToMonitor = array();
         if ($carePlan) {
-            $carePlan->build($user->ID);
             foreach ($carePlan->careSections as $section) {
                 if ($section->name == 'diagnosis-problems-to-monitor') {
                     foreach ($section->carePlanItems as $item) {
@@ -126,12 +120,10 @@ Class ReportsService
         return $itemsToMonitor;
     }
 
-    public function getSymptomsToMonitor(User $user)
+    public function getSymptomsToMonitor(CarePlan $carePlan)
     {
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
+        $temp = array();
         if ($carePlan) {
-            $carePlan->build($user->ID);
             foreach ($carePlan->careSections as $section) {
                 if ($section->name == 'symptoms-to-monitor') {
                     foreach ($section->carePlanItems as $item) {
@@ -145,12 +137,10 @@ Class ReportsService
         return $temp;
     }
 
-    public function getLifestyleToMonitor(User $user)
+    public function getLifestyleToMonitor(CarePlan $carePlan)
     {
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
+        $temp = array();
         if ($carePlan) {
-            $carePlan->build($user->ID);
             foreach ($carePlan->careSections as $section) {
                 if ($section->name == 'lifestyle-to-monitor') {
                     foreach ($section->carePlanItems as $item) {
@@ -164,13 +154,10 @@ Class ReportsService
         return $temp;
     }
 
-    public function medicationsList(User $user)
+    public function medicationsList(CarePlan $carePlan)
     {
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
+        $medications = array();
         if ($carePlan) {
-            $carePlan->build($user->ID);
-            $medications_categories = array();
             foreach ($carePlan->careSections as $section) {
                 if ($section->name == 'medications-to-monitor') {
                     foreach ($section->carePlanItems as $item) {
@@ -184,14 +171,10 @@ Class ReportsService
         return $medications;
     }
 
-    public function getMedicationStatus(User $user, $fromApp = true)
+    public function getMedicationStatus(User $user, CarePlan $carePlan, $fromApp = true)
     {
-
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
+        $medications_categories = array();
         if ($carePlan) {
-            $carePlan->build($user->ID);
-            $medications_categories = array();
             foreach ($carePlan->careSections as $section) {
                 if ($section->name == 'medications-to-monitor') {
                     foreach ($section->carePlanItems as $item) {
@@ -203,11 +186,7 @@ Class ReportsService
             }
         }
 
-
-        //dd($medications_categories);
-
         //get all medication observations for the user
-
         $medication_obs = DB::connection('mysql_no_prefix')
             ->table('rules_questions')
             ->select('lv_observations.id', 'rules_items.items_text', 'lv_observations.obs_date', 'lv_observations.obs_value', 'lv_observations.obs_key', 'lv_observations.obs_message_id')

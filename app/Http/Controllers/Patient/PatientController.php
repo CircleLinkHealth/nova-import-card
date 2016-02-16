@@ -1,8 +1,12 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\Activity;
+use App\CPRulesQuestions;
 use App\Observation;
 use App\Services\ReportsService;
+use App\CarePlan;
+use App\CareItem;
+use App\CarePlanItem;
 use App\WpBlog;
 use App\Location;
 use App\User;
@@ -98,8 +102,18 @@ class PatientController extends Controller {
 		// program
 		$program = WpBlog::find($wpUser->program_id);
 
+		$carePlan = CarePlan::where('id', '=', $wpUser->care_plan_id)
+			->first();
+
+		if($carePlan) {
+			$carePlan->build($wpUser->ID);
+		}
+
 		//problems for userheader
-		$treating = (new ReportsService())->getProblemsToMonitorWithDetails($wpUser); debug($treating);
+		$treating = array();
+		if($carePlan) {
+			$treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
+		}
 
 		$params = $request->all();
 		$detailSection = '';
@@ -141,28 +155,49 @@ class PatientController extends Controller {
 				case 'HSP_ER':
 				case 'HSP_HOSP':
 					break;
+				case 'Cigarettes':
+					$observation['description'] = 'Smoking (# per day)';
+					$obs_by_pcp['obs_biometrics'][] = $observation;
+					break;
 				case 'Blood_Pressure':
 				case 'Blood_Sugar':
-				case 'Cigarettes':
 				case 'Weight':
+					$observation['description'] = $observation["obs_key"];
 					$obs_by_pcp['obs_biometrics'][] = $observation;
 					break;
 				case 'Adherence':
+					$question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
+					// find carePlanItem with qid
+					if($question) {
+						$item = CareItem::where('qid', '=', $question->qid)->first();
+						if($item) {
+							$observation['description'] = $item->display_name;
+						}
+					}
 					$obs_by_pcp['obs_medications'][] = $observation;
 					break;
-				//case 'Symptom':
+				case 'Symptom':
 				case 'Severity':
-					//$obs_info = $this->cpm_1_7_datamonitor_library->process_alert_obs_severity($user_data_ucp, $observation, $this->get('blog_id'));
-					if(!empty($obs_info['extra_vars']['symptom'])) {
-						$observation['items_text'] = $obs_info['extra_vars']['symptom'];
-						$observation['description'] = $obs_info['extra_vars']['symptom'];
-						$observation['obs_key'] = $obs_info['extra_vars']['symptom'];
+					// get description
+					$question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
+					if($question) {
+						$observation['items_text'] = $question->description;
+						$observation['description'] = $question->description;
+						$observation['obs_key'] = $question->description;
 					}
 					$obs_by_pcp['obs_symptoms'][] = $observation;
 					break;
 				case 'Other':
 				case 'Call':
 					// only y/n responses, skip anything that is a number as its assumed it is response to a list
+					$question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
+					// find carePlanItem with qid
+					if($question) {
+						$item = CareItem::where('qid', '=', $question->qid)->first();
+						if($item) {
+							$observation['description'] = $item->display_name;
+						}
+					}
 					if( ($observation['obs_key'] == 'Call') || (!is_numeric($observation['obs_value'])) ) {
 						$obs_by_pcp['obs_lifestyle'][] = $observation;
 					}
@@ -176,6 +211,7 @@ class PatientController extends Controller {
 		// get array of lifestyle questions, and only include these in obs_lifestyle (also include Call observations!)
 
 		//$lifestyle_questions = $this->rules_model->getQuestionIdsByPCP(2, 7);
+		/*
 		$lifestyle_questions = array();
 		$lifestyle_msg_ids = array();
 		$filtered_lifestyle_obs = array();
@@ -189,6 +225,7 @@ class PatientController extends Controller {
 			}
 		}
 		$obs_by_pcp['obs_lifestyle'] = $filtered_lifestyle_obs;
+		*/
 
 		$observation_json = array();
 		foreach($obs_by_pcp as $section => $observations) {
@@ -201,19 +238,25 @@ class PatientController extends Controller {
 						continue 1;
 					}
 				}
+				// set default
+				$alertLevel = 'default';
+				if(!empty($observation->alert_level )) {
+					$alertLevel = $observation->alert_level;
+				}
 				// lastly format json
 				$observation_json[$section] .= "{ obs_key:'" . $observation->obs_key . "', " .
-					"description:'" . $observation->obs_key . "', " .
+					"description:'" . $observation->description . "', " .
 					"obs_value:'" . $observation->obs_value . "', " .
-					"dm_alert_level:'" . $observation->alert_level . "', " .
+					"dm_alert_level:'" . $alertLevel . "', " .
 					"obs_unit:'" . $observation->obs_unit . "', " .
 					"obs_message_id:'" . $observation->obs_message_id . "', " .
-					"comment_date:'".$observation->obs_date."', " . "},";
+					"comment_date:'".Carbon::parse($observation->obs_date)->format('m-d-y h:i:s A')."', " . "},";
 				$o++;
 			}
 			$observation_json[$section] .= "],";
 		}
 
+		//dd($observation_json);
 		//return response()->json($cpFeed);
 		return view('wpUsers.patient.summary', ['program' => $program, 'patient' => $wpUser, 'wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json, 'messages' => $messages, 'treating' => $treating]);
 	}

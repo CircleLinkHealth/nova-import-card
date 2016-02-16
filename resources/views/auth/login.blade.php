@@ -38,7 +38,7 @@
 			</div><!-- /container-fluid -->
 
 		</nav><!-- /navbar -->
-<div class="container-fluid">
+<div class="container">
 	<section class="main-form">
 		<div class="row">
 			<div class="main-form-container col-lg-4 col-lg-offset-4">
@@ -67,7 +67,7 @@
 
 								<div class="form-group" style="margin-top:25px;">
 									<div class="col-md-12 text-center">
-										<button type="submit" class="btn btn-primary btn-large">Log In</button><br />
+										<button type="submit" class="btn btn-primary btn-large" style="background-color: #50B2E2;">Log In</button><br />
 
 										<a class="btn btn-link" href="{{ url('/password/email') }}">Lost Your Password?</a>
 									</div>

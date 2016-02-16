@@ -5,8 +5,9 @@
 
 @section('content')
 
-
-    <div class="row" style="margin-top:60px;">
+    <script type="text/javascript" src="{{ asset('/js/patient/observation-create.js') }}"></script>
+    <div id="dtBox"></div>
+    <div class="row" style="margin:60px 0px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
@@ -108,7 +109,7 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <input name="observationDate" type="datetime-local" class="selectpicker form-control" data-width="95px" data-size="10" list max="<?php echo date('Y-m-d\TH:i') ?>" value="{{ (old('observationDate') ? old('observationDate') : date('Y-m-d\TH:i')) }}" required>
+                                                <input name="observationDate" type="text" class="selectpicker form-control" value="{{ (old('observationDate') ? old('observationDate') : date('Y-m-d H:i')) }}" data-field="datetime" data-format="yyyy-MM-dd HH:mm" readonly required>
                                             </div>
                                         </div>
                                     </div>
