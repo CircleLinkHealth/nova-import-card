@@ -268,8 +268,11 @@ class ActivityController extends Controller {
 		$acts = json_decode(json_encode($acts), true);
 
 		foreach ($acts as $key => $value) {
+			$acts[$key]['provider_name'] = 'n/a';
 			$provider = User::find($acts[$key]['provider_id']);
-			$acts[$key]['provider_name'] = $provider->getFullNameAttribute();
+			if($provider) {
+				$acts[$key]['provider_name'] = $provider->getFullNameAttribute();
+			}
 			unset($acts[$key]['provider_id']);
 		}
 		debug($acts);
