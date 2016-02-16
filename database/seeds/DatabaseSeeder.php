@@ -31,7 +31,17 @@ class DatabaseSeeder extends Seeder {
 
 		// ObservationsCommentsSeeder, kg 2015/9/24
 		// S20150929SymItems, kg 2015/9/28
-	    $this->call('SnomedToIcd10MapTableSeeder');
-    }
+//	    $this->call('SnomedToIcd10MapTableSeeder');
+//		$this->command->info('SnomedToIcd10MapTableSeeder success!');
+
+		$this->call('CcdVendorsTableSeeder');
+		$this->command->info('CcdVendorsTableSeeder success!');
+
+		$this->call('CcdImportRoutinesTableSeeder');
+		$this->command->info('CcdImportRoutinesTableSeeder success!');
+
+		$this->call('CcdImportRoutinesStrategiesTableSeeder');
+		$this->command->info('CcdImportRoutinesStrategiesTableSeeder success!');
+	}
 
 }

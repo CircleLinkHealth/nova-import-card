@@ -172,7 +172,7 @@ class CCDUploadController extends Controller {
             /**
              * The ImportManager calls any necessary Parsers
              */
-            $importer = new ImportManager($blogId, $parsedCCD);
+            $importer = new ImportManager($blogId, $parsedCCD, $parsedCCD->user_id);
             $importer->generateCarePlanFromCCD();
         }
 

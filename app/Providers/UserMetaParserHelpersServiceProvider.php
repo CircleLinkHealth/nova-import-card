@@ -1,6 +1,6 @@
 <?php namespace App\Providers;
 
-use App\CLH\CCD\Importer\Parsers\Helpers\UserMetaParserHelpers;
+use App\CLH\CCD\Importer\ParsingStrategies\Helpers\UserMetaParserHelpers;
 use Illuminate\Support\ServiceProvider;
 
 class UserMetaParserHelpersServiceProvider extends ServiceProvider {
