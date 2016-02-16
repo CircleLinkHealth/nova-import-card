@@ -59,9 +59,9 @@ class RoutineBuilder
 
     public function getDefaultRoutine()
     {
-        return [
+        $routine = CcdImportRoutine::find(1);
+        $strategies = $routine->strategies()->get();
 
-        ];
-
+        return $strategies;
     }
 }
