@@ -50,6 +50,11 @@
         foreach($planItem->children as $planItemChild) {
             if( $planItemChild->ui_fld_type == 'TEXTAREA') {
                 $detailChildItem = $planItemChild;
+                $detailChildItemLabel = 'Instructions';
+                if($careSection->name == 'Additional Information') {
+                    $detailChildItemLabel = 'Details';
+                }
+                // change to details for certain section
             }
         }
         ?>
@@ -64,17 +69,17 @@
             </div>
             @if ($detailChildItem)
                     <div class="form-item col-sm-6 text-right">
-                        <button type="button" class="btn btn-default btn-xs btn-monitor collapse {{ $planItem->meta_value == 'Active' ? 'in' : '' }} text-right" id="collapseItem{{ $planItem->id }}" data-toggle="modal" data-target="#carePlanItem{{ $planItem->careItem->id }}Detail" style="margin-top:10px;">Instructions</button>
+                        <button type="button" class="btn btn-default btn-xs btn-monitor collapse {{ $planItem->meta_value == 'Active' ? 'in' : '' }} text-right" id="collapseItem{{ $planItem->id }}" data-toggle="modal" data-target="#carePlanItem{{ $planItem->careItem->id }}Detail" style="margin-top:10px;">{{ $detailChildItemLabel }}</button>
 
                         <!-- Modal -->
                         <div id="carePlanItem{{ $planItem->careItem->id }}Detail" class="modal fade text-left" role="dialog">
-                            <div class="modal-dialog">
+                            <div class="modal-dialog modal-lg">
 
                                 <!-- Modal content-->
                                 <div class="modal-content">
                                     <div class="modal-header" style="background:#50B2E2;">
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title" style="color:#fff;">{{ $planItem->careItem->display_name }} :: Details</h4>
+                                        <h4 class="modal-title" style="color:#fff;">{{ $planItem->careItem->display_name }} : {{ $detailChildItemLabel }}</h4>
                                     </div>
                                     <div class="modal-body">
                                         <textarea id="item{{ $detailChildItem->id }}modal" name="item|{{ $detailChildItem->id }}" style="height: 120px;">{{ $detailChildItem->meta_value }}</textarea>
