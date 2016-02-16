@@ -384,10 +384,9 @@ class ReportsController extends Controller {
 	}
 	public function viewPrintCareplan(Request $request, $patientId = false)
 	{
-		if($patientId) {
-			$user = User::find($patientId);
-
-		}
+		if(!$patientId) {
+			return "Patient Not Found..";
+		} $user = User::find($patientId);
 
 		$symptoms = array();
 		$problems = array();
