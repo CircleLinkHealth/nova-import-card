@@ -165,9 +165,6 @@ return [
 		'Zizaco\Entrust\EntrustServiceProvider',
 		'Fideloper\Proxy\TrustedProxyServiceProvider',
 		'MikeMcLin\WpPassword\WpPasswordProvider',
-
-
-
 	],
 
 	/*

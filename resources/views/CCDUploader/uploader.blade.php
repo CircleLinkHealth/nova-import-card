@@ -3,57 +3,68 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CPM API</title>
+    <title>CCD Importer</title>
 
+    <link rel="stylesheet" href="https://code.getmdl.io/1.1.0/material.teal-blue.min.css" />
     <link href="/css/animate.min.css" rel="stylesheet">
-    <link href="/css/stylesheet.css" rel="stylesheet">
     <link href="/img/favicon.png" rel="icon">
 
+    <style>
+        .dropzone {
+            width: 100%;
+            height: 300px;
+            border: 2px dashed #ccc;
+            color: #ccc;
+            line-height: 300px;
+            text-align: center;
+            background-color: rgba(174, 219, 239, 0.21);
+        }
+
+        .dropzone.dragover {
+            border-color: #000;
+            color:#000;
+        }
+    </style>
+
     <!-- Fonts -->
-    <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
     <!-- Scripts -->
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-
-            <a class="navbar-brand" href="">
-                <img src="/img/cpm-logo.png" height="40" width="70">
-            </a>
+<nav class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col">
+        <div class="mdl-typography--text-center">
+            <img src="/img/cpm-logo.png" height="50" width="87.5">
         </div>
-
-        <div class="collapse navbar-collapse text-right" id="bs-example-navbar-collapse-1">
-            <h1 style="color: cornflowerblue;">CCD Importer</h1>
-            <h5>Drop CCD Records in the box below, or click on it to browse your computer for CCDs.</h5>
-            <h5><b>It is recommended that you import up to 5 CCDs in one go.</b></h5>
+        <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
+            <h5><b>CCD Importer</b></h5>
         </div>
     </div>
 </nav>
 
-<!--[if lt IE 8]>
-<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-<![endif]-->
+<div id="ccd-uploader" class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col">
+        <mdl-progress :progress="progress" :buffer="buffer" class="mdl-cell mdl-cell--12-col"></mdl-progress>
+        <p :message="message" class="mdl-cell mdl-cell--12-col mdl-typography--text-left">@{{ message }}</p>
+    </div>
 
-<div id="ccd-uploader">
-    <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="ccd"></label>
-            <input type="file" id="ccd" class="dropzone" multiple>
+    <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data" class="mdl-cell mdl-cell--12-col">
 
-        </div>
-        <div class="form-group text-center">
-            <button type="submit" class="btn btn-green">
+        <input type="file" id="ccd" class="dropzone" multiple>
+
+        <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
+            <mdl-button primary raised v-mdl-ripple-effect type="submit" :disabled="!enabled">
                 Upload CCD Records
-            </button>
+            </mdl-button>
         </div>
     </form>
 </div>
 
+
 <div id="success" class="alert hide animated" role="alert"></div>
 <div id="notification" class="alert hide animated" role="alert"></div>
 
-<script src="{{ asset('/js/ccd/bluebutton.min.js') }}"></script>
+<script src="{{ asset('/js/scripts.js') }}"></script>
 <script src="/js/uploader.js"></script>

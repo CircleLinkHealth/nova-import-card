@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\CCD\Importer\Parsers\CCDImportParser;
+use App\CLH\CCD\Importer\ImportManager;
 use App\CLH\CCD\Parser\CCDParser;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\CLH\Repositories\WpUserRepository;
@@ -54,6 +54,9 @@ class CCDUploadController extends Controller {
                     throw new \Exception('Blog id not found,', 400);
                 }
 
+                /**
+                 * Full name and DOB are used as keys to check whether a CCD has already been uploaded
+                 */
                 $parser = new CCDParser($xml);
                 $fullName = $parser->getFullName();
                 $dob = $parser->getDob();
@@ -152,12 +155,6 @@ class CCDUploadController extends Controller {
     {
         $receivedFiles = json_decode($request->getContent());
 
-        /**
-         * Returns empty because it's most probably called asynchronously from the uploader,
-         * and we don't really want to trigger any errors.
-         * @todo: there must be a much better way to do this on the JS side
-         */
-//        if (empty($receivedFiles)) return response()->json('Transporting parsed CCDs to the server has failed.', 500);
         if (empty($receivedFiles)) return;
 
         foreach ($receivedFiles as $file) {
@@ -172,15 +169,11 @@ class CCDUploadController extends Controller {
                 throw new \Exception('Blog ID missing.', 400);
             }
 
-            //Parsing and Importing happens in the CCDImportParser
-            $importParser = (new CCDImportParser($blogId, $parsedCCD))->parse();
-
-            $userRepo = new WpUserRepository();
-            $wpUser = WpUser::find($parsedCCD->user_id);
-
-            $userRepo->updateUserConfig($wpUser, new ParameterBag($importParser->userConfig));
-
-            $userRepo->saveOrUpdateUserMeta($wpUser, new ParameterBag($importParser->userMeta));
+            /**
+             * The ImportManager calls any necessary Parsers
+             */
+            $importer = new ImportManager($blogId, $parsedCCD, $parsedCCD->user_id);
+            $importer->generateCarePlanFromCCD();
         }
 
         return response()->json('Files received and processed successfully', 200);

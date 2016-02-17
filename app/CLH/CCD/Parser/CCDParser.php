@@ -21,9 +21,11 @@ class CCDParser
     {
         if (!empty($xmlCCD)) {
             if (!is_object($xmlCCD)) {
-                $xmlCCD = simplexml_load_string($xmlCCD);
+                if (! $ccd = @simplexml_load_string($xmlCCD)) {
+                    $ccd = simplexml_load_string(str_replace('&', '&amp;', $xmlCCD));
+                }
             }
-            $this->xml = $xmlCCD;
+            $this->xml = $ccd;
 //            $this->parse();
         }
     }

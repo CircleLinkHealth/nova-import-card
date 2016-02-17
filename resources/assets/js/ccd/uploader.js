@@ -1,10 +1,19 @@
 var Vue = require('vue');
+var Vmdl = require('vue-mdl');
+var MDL = require('material-design-lite');
+
+Vmdl.registerAll(Vue);
+
 Vue.use(require('vue-resource'));
 
 var uploader = new Vue({
     el: '#ccd-uploader',
     data: {
-        ccdRecords: new FormData
+        ccdRecords: new FormData,
+        progress: 0,
+        buffer: 100,
+        message: 'Drop CCD Records in the box below, or click on it to browse your computer for CCDs. It is recommended that you import up to 5 CCDs in one go.',
+        enabled: true
     },
     ready: function () {
         this.watchForFileInput();
@@ -14,12 +23,16 @@ var uploader = new Vue({
             $('input[type="file"]').change(this.notifyFileInput.bind(this));
         },
         notifyFileInput: function (e) {
+            this.message = 'Preparing CCDs for upload';
+            this.progress = 0;
             var files = event.target.files;
             var formData =  this.ccdRecords;
 
             for (var i = 0; i < files.length; i++) {
                 formData.append('file[]', files[i]);
             }
+            this.progress += 10;
+            this.message = 'CCDs are ready for upload. Please click Upload CCD Records';
         },
         parseCCDwithBB: function (data) {
             var bb = BlueButton(data);
@@ -46,13 +59,11 @@ var uploader = new Vue({
         },
         onSubmitForm: function (e) {
             e.preventDefault();
+            this.enabled = false;
+            this.message = 'Uploading CCD records and checking for duplicates.';
+            this.progress += 20;
 
             this.$http.post('/upload-raw-ccds', this.ccdRecords, function (data, status, request) {
-                notification(
-                    "Uploading and Importing CCD Record(s). This may take a while.",
-                    'info', '#notification'
-                );
-
                 this.ccdRecords = new FormData;
 
                 if (data.uploaded.length > 0) {
@@ -64,12 +75,13 @@ var uploader = new Vue({
                 }
 
             }).error(function (data, status, request) {
-                console.log('Error: ' + data);
+                this.message = 'ERROR! Uploading raw XML CCDs has failed. Try refreshing your browser.'
+                    + '<br>Details: ' + data + status + request;
             });
-
-
         },
         parseAndUploadCCDs: function (uploadedCCDs) {
+            this.message = 'Parsing CCDs and generating Care Plans.';
+            this.progress += 20;
             var parsedJsonCCDs = [];
 
             uploadedCCDs.forEach(function(ccd) {
@@ -85,13 +97,19 @@ var uploader = new Vue({
 
             this.$http.post('/upload-parsed-ccds', json, function (data, status, request) {
                 if (data) {
-                    notification(data, 'success', '#success');
+                    this.message = 'Everything completed successfully.';
+                    this.progress = 100;
+                    this.enabled = true;
+
                 }
             }).error(function (data, status, request) {
-                console.log('Error: ' + data);
+                this.message = 'ERROR! Uploading Parsed CCDs has failed. Try refreshing your browser.'
+                    + '<br>Details: ' + data + status + request;
             });
         },
         parseAndUploadDuplicateCCDs: function (duplicates) {
+            this.message = 'Parsing duplicate CCDs and generating Care Plans.';
+            this.progress += 15;
             var importAgain = [];
 
             var numberOfDuplicates = duplicates.length;
@@ -113,10 +131,15 @@ var uploader = new Vue({
             }
 
             if (importAgain.length == numberOfDuplicates) {
+                this.message = 'Uploading duplicate CCDs.';
+                this.progress += 10;
+
                 var json = JSON.stringify(importAgain);
                 this.$http.post('/upload-duplicate-raw-ccds', json, function (data, status, request) {
                     uploader.parseAndUploadCCDs(data.uploaded);
                 }).error(function (data, status, request) {
+                    this.message = 'ERROR! Uploading duplicate raw XML CCDs has failed. Try refreshing your browser.'
+                        + '\nData: ' + data + status + request;
                 });
             }
         }
