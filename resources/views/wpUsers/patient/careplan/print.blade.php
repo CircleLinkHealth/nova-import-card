@@ -8,6 +8,7 @@ function biometricGoal($starting, $target, $bp = false)
     $target = explode('/', $target);
     $target = $target[0];
     if($bp == 'Blood Pressure'){$verb = 'Maintain';} else {$verb = 'Raise';};
+    if($bp == 'Weight'){$verb = 'Maintain';} else {$verb = 'Raise';};
     debug($bp . ' ' . $verb);
     return ($starting > $target) ? 'Lower' : $verb;
 }
@@ -47,8 +48,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 </div>
                 <div class="row gutter">
                     <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
-                    <div class="col-xs-12 col-md-4 print-row">{{$patient->phone}}</div>
-                    <div class="col-xs-12 col-md-3 print-row">{{$today}}</div>
+                    <div class="col-xs-12 col-md-3 print-row">{{$patient->phone}}</div>
+                    <div class="col-xs-12 col-md-5 print-row text-right">{{$today}}</div>
                 </div>
                 <div class="row gutter">
                     <div class="col-xs-12 col-md-4 print-row text-bold">
@@ -58,12 +59,12 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <em>No Billing Provider Selected</em>
                         @endif
                     </div>
-                    <div class="col-xs-12 col-md-4 print-row">
+                    <div class="col-xs-12 col-md-3 print-row">
                         @if($billing)
                             {{$billing->phone}}
                         @endif
                     </div>
-                    <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->getPreferredLocationName()}}</div>
+                    <div class="col-xs-12 col-md-5 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
                 </div>
             </div>
             <!-- CARE AREAS -->
@@ -97,7 +98,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <li class="subareas__item subareas__item--wide col-sm-12">
                             @foreach($biometrics as $key => $value)
                                 <div class="col-xs-5 print-row text-bold">{{ biometricGoal($value['starting'], $value['target'], $key)}} {{$key}}</div>
-                                <div class="col-xs-4 print-row text-bold">to {{$value['target']}}</div>
+                                <div class="col-xs-4 print-row text-bold">{{(biometricGoal($value['starting'], $value['target'], $key) == 'Maintain')? 'at' :  'to' }} {{$value['target']}}</div>
                                 <div class="col-xs-3 print-row">from {{$value['starting']}}</div>
                             @endforeach
                         </li>
@@ -228,7 +229,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <h2 class="patient-summary__subtitles patient-summary--careplan-background">Allergies:</h2>
                     </div>
                     <div class="col-xs-12">
+                        @if($allergies)
                         <p>{{$allergies}}</p>
+                        @else
+                        <p>No instructions at this time</p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -242,7 +247,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             Services:</h2>
                     </div>
                     <div class="col-xs-12">
+                        @if($social)
                         <p>{{$social}}</p>
+                        @else
+                        <p>No instructions at this time</p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -280,7 +289,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <h2 class="patient-summary__subtitles patient-summary--careplan-background">Appointments:</h2>
                     </div>
                     <div class="col-xs-12">
+                        @if($appointments)
                         <p>{{$appointments}}</p>
+                        @else
+                        <p>No instructions at this time</p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -293,7 +306,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <h2 class="patient-summary__subtitles patient-summary--careplan-background">Other Notes:</h2>
                     </div>
                     <div class="col-xs-12">
+                        @if($other)
                         <p>{{$other}}</p>
+                        @else
+                        <p>No instructions at this time</p>
+                        @endif
                     </div>
                 </div>
             </div>
