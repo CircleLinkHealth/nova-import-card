@@ -97,7 +97,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <div class="row">
                     <ul class="subareas__list">
                         <li class="subareas__item subareas__item--wide col-sm-12">
-                            @foreach($biometrics as $key => $value)
+                            @foreach(array_reverse($biometrics) as $key => $value)
                                 <div class="col-xs-5 print-row text-bold">{{ biometricGoal($value['starting'], $value['target'], $key)}} {{$key}}</div>
                                 <div class="col-xs-4 print-row text-bold">{{(biometricGoal($value['starting'], $value['target'], $key) == 'Maintain')? 'at' :  'to' }} {{$value['target']}}</div>
                                 <div class="col-xs-3 print-row">from {{$value['starting']}}</div>
