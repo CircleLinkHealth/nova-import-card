@@ -1,4 +1,8 @@
 @extends('partials.providerUI')
+
+@section('title', 'Patient Activity')
+@section('activity', 'Patient Activity')
+
 @section('content')
     <?php
     $userTime = \Carbon\Carbon::now();
