@@ -1181,6 +1181,9 @@ class DatamonitorService {
 
 		// get user info
 		$user = WpUser::find($observation['user_id']);
+		if(empty($user->program_id)){
+			return 'ERROR: missing required user program_id';
+		}
 		$user_meta_config = WpUserMeta::where('user_id',$user->ID)->where('meta_key','like','%config%')->first();
 		$user_meta_blog = $user->program_id;
 		$user_data = unserialize($user_meta_config->meta_value);
@@ -1188,10 +1191,13 @@ class DatamonitorService {
 		if(!array_key_exists('send_alert_to',$user_data)) {
 			return 'ERROR: there is no send_alert_to in user_data array';
 		}
+		if(!array_key_exists('preferred_contact_language',$user_data)) {
+			return 'ERROR: there is no preferred_contact_language in user_data array';
+		}
 
 		// get message info
 		$msgCPRules = new MsgCPRules();
-		$message_info = $msgCPRules->getQuestion($message_id, $user->ID, 'EMAIL_'.$user_data['preferred_contact_language'], $user_meta_blog->meta_value, 'SOL');
+		$message_info = $msgCPRules->getQuestion($message_id, $user->ID, 'EMAIL_'.$user_data['preferred_contact_language'], $user->program_id, 'SOL');
 
 		//Breaks down here, suspect the params are not as expected in getQuestion()
 
