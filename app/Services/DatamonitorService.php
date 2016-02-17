@@ -1191,22 +1191,28 @@ class DatamonitorService {
 			$email_sent_list[] = $provider_user->user_email;
 		}
 
-		/*
-		// log to db by adding comment record
 		$comment_content = array(
 			'user_id' => $user->ID,
 			'subject' => $email_subject,
 			'message' => $email_message,
 			'recipients' => $email_sent_list,
 		);
-		$comment_params = array(
-			'comment_content' => serialize($comment_content),
-			'user_id' => $user->ID,
-			'comment_type' => 'dm_alert_email',
-			'comment_parent' => $observation['comment_id']
-		);
-		$comment_id = $this->CI->comments_model->insert_comment($comment_params, $this->int_blog_id);
-		*/
+
+		$comment = new Comment;
+		$comment->comment_post_ID = 0;
+		$comment->comment_author = 'SYSTEM_EMAIL';
+		$comment->comment_author_email = '';
+		$comment->comment_author_url = '';
+		$comment->comment_content = serialize($comment_content);
+		$comment->comment_type = 'alert_email';
+		$comment->comment_parent = 0;
+		$comment->user_id = $user->ID;
+		$comment->comment_author_IP = '127.0.0.1';
+		$comment->comment_agent = 'N/A';
+		$comment->comment_date = date('Y-m-d H:i:s');
+		$comment->comment_date_gmt = date('Y-m-d H:i:s');
+		$comment->comment_approved = 1;
+		$comment->save();
 	}
 
 
