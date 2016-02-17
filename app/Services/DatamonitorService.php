@@ -1186,7 +1186,7 @@ class DatamonitorService {
 		$user_data = unserialize($user_meta_config->meta_value);
 		// get recipients
 		if(!array_key_exists('send_alert_to',$user_data)) {
-			return false;
+			return 'ERROR: there is no send_alert_to in user_data array';
 		}
 
 		// get message info
@@ -1196,7 +1196,7 @@ class DatamonitorService {
 		//Breaks down here, suspect the params are not as expected in getQuestion()
 
 		if(empty($message_info)){
-			return false;
+			return 'ERROR: couldnt get message_info from getQuestion('.$message_id.', '.$user->ID.', EMAIL_'.$user_data['preferred_contact_language'] .', '.$user_meta_blog->meta_value.', SOL)';
 		}
 
 		// set email params
