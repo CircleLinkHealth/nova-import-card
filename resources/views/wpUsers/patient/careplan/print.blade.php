@@ -7,8 +7,9 @@ function biometricGoal($starting, $target, $bp = false)
     $starting = $starting[0];
     $target = explode('/', $target);
     $target = $target[0];
-    if($bp == 'Blood Pressure'){$verb = 'Maintain';} else {$verb = 'Raise';};
-    if($bp == 'Weight'){$verb = 'Maintain';} else {$verb = 'Raise';};
+        $verb = 'Raise';
+    if($bp == 'Blood Pressure'){$verb = 'Maintain';} ;
+    if($bp == 'Weight'){$verb = 'Maintain';} ;
     debug($bp . ' ' . $verb);
     return ($starting > $target) ? 'Lower' : $verb;
 }
