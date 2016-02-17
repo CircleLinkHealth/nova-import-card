@@ -18,7 +18,7 @@
                         @if(isset($editMode) && $editMode != false) START ROW {{ $r }} @endif
                         <div class="row">
                     @endif
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" @if($i % 2 != 0) style="border-left:1px solid #ccc;" @endif>
                         {{ $planItem->ui_row_start > 0 ? '<div class="row">' : '' }}
                         {{ $planItem->ui_col_start > 0 ? '<div class="col-sm-'.$planItem->ui_col_start.'>' : '' }}
                         @include('partials.carePlans.item')
