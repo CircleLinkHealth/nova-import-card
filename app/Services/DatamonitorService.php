@@ -1103,6 +1103,15 @@ class DatamonitorService {
 		$observationMeta->obs_id = $observation->id;
 		$observationMeta->comment_id = $observation->comment_id;
 		$observationMeta->message_id = $message_id;
+		$observationMeta->meta_key = 'alert_status_hist_2';
+		$observationMeta->meta_value = $serial_content . ' TWO';
+		$observationMeta->save();
+		$log_string .= "added new observationmeta alert_status_hist_2 - obsmeta_id = {$observationMeta->id}" . PHP_EOL;
+
+		$observationMeta = new ObservationMeta();
+		$observationMeta->obs_id = $observation->id;
+		$observationMeta->comment_id = $observation->comment_id;
+		$observationMeta->message_id = $message_id;
 		$observationMeta->meta_key = 'alert_status_change';
 		$observationMeta->meta_value = $serial_content;
 		$observationMeta->save();
