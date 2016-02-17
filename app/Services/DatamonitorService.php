@@ -1123,6 +1123,16 @@ class DatamonitorService {
 		} else {
 			$log_string .= 'No email sent' . PHP_EOL;
 		}
+
+		$observationMeta = new ObservationMeta();
+		$observationMeta->obs_id = $observation->id;
+		$observationMeta->comment_id = $observation->comment_id;
+		$observationMeta->message_id = $message_id;
+		$observationMeta->meta_key = 'send_obs_alert_log';
+		$observationMeta->meta_value = $log_string;
+		$observationMeta->save();
+		$log_string .= "added new observationmeta send_obs_alert_log - obsmeta_id = {$observationMeta->id}" . PHP_EOL;
+
 		return $log_string;
 	}
 
