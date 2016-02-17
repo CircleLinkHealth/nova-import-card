@@ -79,7 +79,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="col-xs-12">
                         <ul class="subareas__list">
                             @foreach($treating as $key => $value)
-                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row text-bold'>{{$key}}</li>
+                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -161,7 +161,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="col-xs-12">
                         <ul class="subareas__list">
                             @foreach($lifestyle as $style)
-                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row text-bold'>{{$style}}</li>
+                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$style}}</li>
                             @endforeach
                         </ul>
                     </div>
