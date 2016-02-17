@@ -1117,6 +1117,15 @@ class DatamonitorService {
 		$observationMeta->save();
 		$log_string .= "added new observationmeta alert_sort_weight - obsmeta_id = {$observationMeta->id}" . PHP_EOL;
 
+		$observationMeta = new ObservationMeta();
+		$observationMeta->obs_id = $observation->id;
+		$observationMeta->comment_id = $observation->comment_id;
+		$observationMeta->message_id = $message_id;
+		$observationMeta->meta_key = 'send_obs_alert_log_pre_email';
+		$observationMeta->meta_value = $log_string;
+		$observationMeta->save();
+		$log_string .= "added new observationmeta send_obs_alert_log_pre_email - obsmeta_id = {$observationMeta->id}" . PHP_EOL;
+
 		// send email
 		if($send_email) {
 			$log_string .= $this->send_email($observation, $message_id, $extra_vars, $this->int_blog_id);
