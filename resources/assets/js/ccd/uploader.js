@@ -10,10 +10,11 @@ var uploader = new Vue({
     el: '#ccd-uploader',
     data: {
         ccdRecords: new FormData,
+        ccdVendor: null,
         progress: 0,
         buffer: 100,
         message: 'Drop CCD Records in the box below, or click on it to browse your computer for CCDs. It is recommended that you import up to 5 CCDs in one go.',
-        enabled: true
+        enabled: false
     },
     ready: function () {
         this.watchForFileInput();
@@ -31,8 +32,12 @@ var uploader = new Vue({
             for (var i = 0; i < files.length; i++) {
                 formData.append('file[]', files[i]);
             }
+
+            formData.append('vendor', this.ccdVendor);
+
             this.progress += 10;
             this.message = 'CCDs are ready for upload. Please click Upload CCD Records';
+            this.enabled = true;
         },
         parseCCDwithBB: function (data) {
             var bb = BlueButton(data);
@@ -88,7 +93,8 @@ var uploader = new Vue({
                 var jsonCcd = uploader.parseCCDwithBB(ccd.xml);
                 var parsedCCD = {
                     userId:ccd.userId,
-                    ccd:jsonCcd
+                    ccd:jsonCcd,
+                    vendor: ccd.vendor
                 };
                 parsedJsonCCDs.push(parsedCCD);
             });
@@ -124,7 +130,8 @@ var uploader = new Vue({
                             'xml': duplicate.ccd,
                             'fullName': duplicate.fullName + uniqueSuffix,
                             'dob': duplicate.dob + uniqueSuffix,
-                            'fileName': duplicate.fileName
+                            'fileName': duplicate.fileName,
+                            'vendor': duplicate.vendor
                         });
                     }
                 }
@@ -145,14 +152,3 @@ var uploader = new Vue({
         }
     }
 });
-
-function notification(text, type, element) {
-    var notificationType = (type == 'success') ? 'alert-success' : 'alert-info';
-
-    $(element).html(text)
-        .toggleClass('hide')
-        .toggleClass(notificationType)
-        .toggleClass('fadeInRightBig')
-        .delay(10000)
-        .fadeOut(1000);
-}

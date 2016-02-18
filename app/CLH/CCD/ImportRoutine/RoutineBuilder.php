@@ -18,13 +18,13 @@ class RoutineBuilder
     public function getRoutine()
     {
         $idManager = new IdentificationManager( $this->ccd );
-        $identifiers = $idManager->identify();
+        $matchedIdentifiers = $idManager->identify();
 
-        if ( !$identifiers ) return $this->getDefaultRoutine();
+        if ( !$matchedIdentifiers ) return $this->getDefaultRoutine();
 
         $vendors = CcdVendor::all()->all();
 
-        foreach ( $identifiers as $key => $value ) {
+        foreach ( $matchedIdentifiers as $key => $value ) {
             $vendors = array_filter( $vendors, function ($vendor) use ($key, $value) {
                 if ( empty($vendor->$key) ) return true;
                 return $vendor->$key == $value;
@@ -35,7 +35,7 @@ class RoutineBuilder
 
         if ( count( $vendors ) > 1 )
         {
-            foreach ( $identifiers as $key => $value ) {
+            foreach ( $matchedIdentifiers as $key => $value ) {
                 $vendors = array_filter( $vendors, function ($vendor) use ($key, $value) {
                     /*
                      * If there's more than one vendors, iterate again, but check strictly
@@ -53,8 +53,6 @@ class RoutineBuilder
 
         $routine = $vendors[ $keys[0] ]->routine()->get()[0];
 
-        Log::info('Routine ID: ' . $routine->id . ' ' . $this->ccd->demographics->name->family);
-
         $strategies = $routine->strategies()->get();
 
         return $strategies;
@@ -63,9 +61,8 @@ class RoutineBuilder
     public function getDefaultRoutine()
     {
         $routine = CcdImportRoutine::find(1);
-        $strategies = $routine->strategies()->get();
 
-        Log::info('Default Routine for ' . $this->ccd->demographics->name->family);
+        $strategies = $routine->strategies()->get();
 
         return $strategies;
     }

@@ -2,6 +2,7 @@
 
 use App\CLH\CCD\Importer\ImportManager;
 use App\CLH\CCD\Parser\CCDParser;
+use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\CLH\Repositories\WpUserRepository;
 use App\Http\Requests;
@@ -10,9 +11,11 @@ use App\WpUser;
 use App\XmlCCD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class CCDUploadController extends Controller {
+class CCDUploadController extends Controller
+{
 
     private $repo;
 
@@ -28,7 +31,7 @@ class CCDUploadController extends Controller {
      * @return string
      * @throws \Exception
      */
-	public function uploadRawFiles(Request $request)
+    public function uploadRawFiles(Request $request)
     {
         //CCDs that already exist in XML_CCDs table
         $duplicates = [];
@@ -37,27 +40,29 @@ class CCDUploadController extends Controller {
         $uploaded = [];
 
 
-        if ($request->hasFile('file')) {
-            foreach ($request->file('file') as $file) {
-                if (empty($file)) {
-                    Log::error('It seems like this file did not upload. Here is what I have for $file in '
-                        . self::class . '@uploadRawFiles() ==>' . $file);
+        if ( $request->hasFile( 'file' ) ) {
+            foreach ( $request->file( 'file' ) as $file ) {
+                if ( empty($file) ) {
+                    Log::error( 'It seems like this file did not upload. Here is what I have for $file in '
+                        . self::class . '@uploadRawFiles() ==>' . $file );
                     continue;
                 }
 
-                $xml = file_get_contents($file);
+                $xml = file_get_contents( $file );
 
-                if($request->session()->has('blogId')) {
-                    $blogId = $request->session()->get('blogId');
+                if ( $request->session()->has( 'blogId' ) ) {
+                    $blogId = $request->session()->get( 'blogId' );
                 }
                 else {
-                    throw new \Exception('Blog id not found,', 400);
+                    throw new \Exception( 'Blog id not found,', 400 );
                 }
+
+                $vendor = empty($request->input( 'vendor' )) ?: $request->input( 'vendor' );
 
                 /**
                  * Full name and DOB are used as keys to check whether a CCD has already been uploaded
                  */
-                $parser = new CCDParser($xml);
+                $parser = new CCDParser( $xml );
                 $fullName = $parser->getFullName();
                 $dob = $parser->getDob();
 
@@ -65,78 +70,82 @@ class CCDUploadController extends Controller {
                     ? ''
                     : $parser->getEmail();
 
-                if (XmlCCD::wherePatientName($fullName)->wherePatientDob($dob)->exists()) {
-                    array_push($duplicates, [
+                if ( XmlCCD::wherePatientName( $fullName )->wherePatientDob( $dob )->exists() ) {
+                    array_push( $duplicates, [
                         'blogId' => $blogId,
                         'ccd' => $xml,
                         'fullName' => $fullName,
                         'dob' => $dob,
-                        'fileName' => $file->getClientOriginalName()
-                    ]);
+                        'fileName' => $file->getClientOriginalName(),
+                        'vendor' => $vendor
+                    ] );
                     continue;
                 }
 
-                $user = $this->repo->createRandomUser($blogId, $email, $fullName);
+                $user = $this->repo->createRandomUser( $blogId, $email, $fullName );
 
                 $newCCD = new XmlCCD();
                 $newCCD->ccd = $xml;
                 $newCCD->user_id = $user->ID;
-                $newCCD->patient_name = (string) $fullName;
-                $newCCD->patient_dob = (string) $dob;
+                $newCCD->patient_name = (string)$fullName;
+                $newCCD->patient_dob = (string)$dob;
                 $newCCD->save();
 
-                array_push($uploaded, [
+                array_push( $uploaded, [
                     'userId' => $user->ID,
                     'xml' => $xml,
-                ]);
+                    'vendor' => $vendor
+                ] );
             }
         }
 
-        if (empty($uploaded) && empty($duplicates)) {
-            return response()->json('No CCDs were uploaded.', 400);
+
+        if ( empty($uploaded) && empty($duplicates) ) {
+            return response()->json( 'No CCDs were uploaded.', 400 );
         }
 
-        return response()->json(compact('uploaded', 'duplicates'), 200);
+        return response()->json( compact( 'uploaded', 'duplicates' ), 200 );
     }
 
     public function uploadDuplicateRawFiles(Request $request)
     {
         $uploaded = [];
 
-        $receivedFiles = json_decode($request->getContent());
+        $receivedFiles = json_decode( $request->getContent() );
 
-        if (empty($receivedFiles)) return;
+        if ( empty($receivedFiles) ) return;
 
-        foreach ($receivedFiles as $file) {
+        foreach ( $receivedFiles as $file ) {
 
-            if (empty($file)) {
-                Log::error('It seems like this file did not upload. Here is what I have for $file in '
-                    . self::class . '@uploadDuplicateRawFiles() ==>' . $file);
+            if ( empty($file) ) {
+                Log::error( 'It seems like this file did not upload. Here is what I have for $file in '
+                    . self::class . '@uploadDuplicateRawFiles() ==>' . $file );
                 continue;
             }
 
-            $parser = new CCDParser($file->xml);
+            $parser = new CCDParser( $file->xml );
             $fullName = $parser->getFullName();
             $email = empty($parser->getEmail())
                 ? ''
                 : $parser->getEmail();
 
-            $user = $this->repo->createRandomUser($file->blogId, $email, $fullName);
+            $user = $this->repo->createRandomUser( $file->blogId, $email, $fullName );
 
             $newCCD = new XmlCCD();
             $newCCD->ccd = $file->xml;
             $newCCD->user_id = $user->ID;
-            $newCCD->patient_name = (string) $file->fullName;
-            $newCCD->patient_dob = (string) $file->dob;
+            $newCCD->patient_name = (string)$file->fullName;
+            $newCCD->patient_dob = (string)$file->dob;
             $newCCD->save();
 
-            array_push($uploaded, [
+            array_push( $uploaded, [
                 'userId' => $user->ID,
                 'xml' => $file->xml,
-            ]);
+                'vendor' => $file->vendor
+            ] );
         }
 
-        return response()->json(compact('uploaded'), 200);
+        return response()->json( compact( 'uploaded' ), 200 );
     }
 
     /**
@@ -144,7 +153,9 @@ class CCDUploadController extends Controller {
      */
     public function create()
     {
-        return view('CCDUploader.uploader');
+        $ccdVendors = CcdVendor::all();
+
+        return view( 'CCDUploader.uploader', compact( 'ccdVendors' ) );
     }
 
     /**
@@ -153,30 +164,32 @@ class CCDUploadController extends Controller {
      */
     public function storeParsedFiles(Request $request)
     {
-        $receivedFiles = json_decode($request->getContent());
+        $receivedFiles = json_decode( $request->getContent() );
 
-        if (empty($receivedFiles)) return;
+        if ( empty($receivedFiles) ) return;
 
-        foreach ($receivedFiles as $file) {
+        foreach ( $receivedFiles as $file ) {
             $parsedCCD = new ParsedCCD();
-            $parsedCCD->ccd = json_encode($file->ccd);
+            $parsedCCD->ccd = json_encode( $file->ccd );
             $parsedCCD->user_id = $file->userId;
             $parsedCCD->save();
 
-            if($request->session()->has('blogId')) {
-                $blogId = $request->session()->get('blogId');
-            } else {
-                throw new \Exception('Blog ID missing.', 400);
+            if ( $request->session()->has( 'blogId' ) ) {
+                $blogId = $request->session()->get( 'blogId' );
             }
+            else {
+                throw new \Exception( 'Blog ID missing.', 400 );
+            }
+
 
             /**
              * The ImportManager calls any necessary Parsers
              */
-            $importer = new ImportManager($blogId, $parsedCCD, $parsedCCD->user_id);
+            $importer = new ImportManager( $blogId, $parsedCCD, $parsedCCD->user_id, $file->vendor );
             $importer->generateCarePlanFromCCD();
         }
 
-        return response()->json('Files received and processed successfully', 200);
+        return response()->json( 'Files received and processed successfully', 200 );
     }
 
 }

@@ -10,9 +10,12 @@ use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfigParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMetaParser;
 use App\CLH\CCD\ImportRoutine\ExecutesImportRoutine;
 use App\CLH\CCD\ImportRoutine\RoutineBuilder;
+use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\ParsedCCD;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class ImportManager
 {
@@ -23,12 +26,17 @@ class ImportManager
     private $userId;
     private $routine;
 
-    public function __construct($blogId, ParsedCCD $parsedCCD, $userId)
+    public function __construct($blogId, ParsedCCD $parsedCCD, $userId, $vendor)
     {
         $this->blogId = $blogId;
         $this->ccd = json_decode( $parsedCCD->ccd );
         $this->userId = $userId;
-        $this->routine = ( new RoutineBuilder( $this->ccd ) )->getRoutine();
+
+        $this->routine = empty($vendor)
+            ? ( new RoutineBuilder( $this->ccd ) )->getRoutine()
+            : CcdVendor::find($vendor)->routine()->first()->strategies()->get();
+
+        Log::info('Routine ID: ' . $this->routine[0]->ccd_import_routine_id . ' ' . $this->ccd->demographics->name->family);
     }
 
     public function generateCarePlanFromCCD()
