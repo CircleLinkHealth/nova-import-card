@@ -1,4 +1,5 @@
 <input type=hidden name="careSections[]" value="{{ $careSection->id }}">
+<div class="row">
 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 cp-section"  id="section{{ $careSection->id }}">
     @if(isset($editMode) && $editMode != false)
         @include('partials.carePlans.sectionEdit')
@@ -14,11 +15,27 @@
         <div class="collapse in" id="collapseSection{{ $careSection->id }}">
             @foreach($careSection->carePlanItems as $planItem)
                 @if ($planItem->careItem->display_name != '')
+                    <?php
+                    // column math
+                    $num_items_total = count($careSection->carePlanItems);
+                    $num_items_per_column = round($num_items_total / 2);
+                    ?>
+
+                    <!-- output column containers if needed -->
+                    @if($i == 0)
+                        <div class="form-block form-block--left col-md-6">
+                        <div class="row">';
+                    @elseif($i == $num_items_per_column)
+                        <div class="form-block form-block--right col-md-6">
+                        <div class="row">
+                    @endif
+
+                    <!-- include item -->
                     @if($i % 2 == 0)
                         @if(isset($editMode) && $editMode != false) START ROW {{ $r }} @endif
                         <div class="row">
                     @endif
-                    <div class="col-sm-6" @if($i % 2 != 0) style="border-left:1px solid #ccc;" @endif>
+                    <div class="col-sm-12">
                         {{ $planItem->ui_row_start > 0 ? '<div class="row">' : '' }}
                         {{ $planItem->ui_col_start > 0 ? '<div class="col-sm-'.$planItem->ui_col_start.'>' : '' }}
                         @include('partials.carePlans.item')
@@ -30,10 +47,18 @@
                         <?php $r++; ?>
                     @endif
                     </div>
+
+                    <!-- output column containers if needed -->
+                    @if($i==($num_items_per_column-1))
+                        </div></div>
+                    @elseif($i == ($num_items_total-1))
+                        </div></div>
+                    @endif
                 @endif
                 <?php $i++; ?>
             @endforeach
         </div>
     @endif
 
+</div>
 </div>

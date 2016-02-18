@@ -59,7 +59,7 @@
         }
         ?>
         <div class="form-group">
-            <div class="form-item col-sm-{{ $detailChildItem ? '6' : '12' }}">
+            <div class="form-item col-sm-{{ $detailChildItem ? '7' : '12' }}">
                 <div class="checkbox text-medium-big">
                     <div class="radio-inline"><input id="carePlanItem{{ $planItem->id }}" name="item|{{ $planItem->id }}" value="Active" class="itemTrigger" data-toggle="collapse" data-target="#collapseItem{{ $planItem->id }}" type="checkbox" {{ $planItem->meta_value == 'Active' ? 'checked=checked' : '' }}>
                         <label for="carePlanItem{{ $planItem->id }}">
@@ -68,7 +68,7 @@
                 </div>
             </div>
             @if ($detailChildItem)
-                    <div class="form-item col-sm-6 text-right">
+                    <div class="form-item col-sm-5 text-right">
                         <button type="button" class="btn btn-default btn-xs btn-monitor collapse {{ $planItem->meta_value == 'Active' ? 'in' : '' }} text-right" id="collapseItem{{ $planItem->id }}" data-toggle="modal" data-target="#carePlanItem{{ $planItem->careItem->id }}Detail" style="margin-top:10px;">{{ $detailChildItemLabel }}</button>
 
                         <!-- Modal -->
