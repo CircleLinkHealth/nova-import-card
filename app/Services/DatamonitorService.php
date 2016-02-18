@@ -1247,6 +1247,8 @@ class DatamonitorService {
 		$comment->comment_date_gmt = date('Y-m-d H:i:s');
 		$comment->comment_approved = 1;
 		$comment->save();
+
+		return 'Emails sent and logged';
 	}
 
 
