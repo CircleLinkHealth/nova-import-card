@@ -112,15 +112,27 @@
                                             </label>
 
                                             <div id="collapseOne" class="panel-collapse collapse in">
-                                                <div class="radio-inline"><input type="checkbox"
+                                                <div class="radio-inline"><input type="radio"
                                                                                  name="meta[0][meta_value]"
                                                                                  value="inbound" id="Inbound"/><label
                                                             for="Inbound"><span> </span>Inbound</label>
                                                 </div>
-                                                <div class="radio-inline"><input type="checkbox"
+                                                <div class="radio-inline"><input type="radio"
                                                                                  name="meta[0][meta_value]"
                                                                                  value="outbound" id="Outbound"/><label
                                                             for="Outbound"><span> </span>Outbound</label></div>
+                                                <input type="hidden" name="meta[1][meta_key]" value="call_status">
+                                                <div><div class="radio-inline"><input type="checkbox"
+                                                                                 name="meta[1][meta_value]"
+                                                                                 value="reached" id="reached"/><label
+                                                            for="reached"><span> </span>Patient Reached</label>
+                                                </div></div>
+                                                <input type="hidden" name="meta[2][meta_key]" value="hospital">
+                                                <div><div class="radio-inline"><input type="checkbox"
+                                                                                      name="meta[2][meta_value]"
+                                                                                      value="admitted" id="admitted"/><label
+                                                                for="admitted"><span> </span>Patient in Hospital/ER (now or recently)</label>
+                                                    </div></div>
                                             </div>
                                         </div>
                                     </div>
@@ -134,9 +146,9 @@
                             <div class="new-note-item">
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        <input type="hidden" name="meta[1][meta_key]" value="comment">
-                                        <textarea id="note" class="form-control" rows="10" placeholder="Enter Note..."
-                                                  name="meta[1][meta_value]" required></textarea> <br/>
+                                        <input type="hidden" name="meta[3][meta_key]" value="comment">
+                                        <textarea id="note" class="form-control" rows="10" cols="100" placeholder="Enter Note..."
+                                                  name="meta[3][meta_value]" required></textarea> <br/>
                                     </div>
                                 </div>
                                 <div class="form-block col-md-6">
@@ -154,6 +166,7 @@
                                                                 class="selectpicker dropdown Valid form-control"
                                                                 data-size="10"
                                                                 multiple>
+                                                            {{debug($careteam_info)}}
                                                             @foreach ($careteam_info as $id => $name)
                                                                 <option value="{{$id}}"> {{$name}} </option>
                                                             @endforeach
