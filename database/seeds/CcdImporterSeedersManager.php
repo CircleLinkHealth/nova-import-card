@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
-class DatabaseSeeder extends Seeder {
+class CcdImporterSeedersManager extends Seeder {
 
 	/**
 	 * Run the database seeds.
@@ -33,6 +33,22 @@ class DatabaseSeeder extends Seeder {
 		// S20150929SymItems, kg 2015/9/28
 //	    $this->call('SnomedToIcd10MapTableSeeder');
 //		$this->command->info('SnomedToIcd10MapTableSeeder success!');
-    }
+
+
+		//disable foreign key check for this connection before running seeders
+		DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+		$this->call('CcdVendorsTableSeeder');
+		$this->command->info('CcdVendorsTableSeeder success!');
+
+		$this->call('CcdImportRoutinesTableSeeder');
+		$this->command->info('CcdImportRoutinesTableSeeder success!');
+
+		$this->call('CcdImportRoutinesStrategiesTableSeeder');
+		$this->command->info('CcdImportRoutinesStrategiesTableSeeder success!');
+
+		//enable foreign key checks
+		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+	}
 
 }

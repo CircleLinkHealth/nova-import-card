@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CCD Importer</title>
 
-    <link rel="stylesheet" href="https://code.getmdl.io/1.1.0/material.teal-blue.min.css" />
+    <link rel="stylesheet" href="https://code.getmdl.io/1.1.0/material.teal-blue.min.css"/>
     <link href="/css/animate.min.css" rel="stylesheet">
     <link href="/img/favicon.png" rel="icon">
 
@@ -22,7 +22,7 @@
 
         .dropzone.dragover {
             border-color: #000;
-            color:#000;
+            color: #000;
         }
     </style>
 
@@ -51,6 +51,16 @@
     </div>
 
     <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data" class="mdl-cell mdl-cell--12-col">
+
+        <div class="mdl-cell mdl-cell--12-col">
+            @if(!empty($ccdVendors))
+                <h5>Please choose an Import profile for this CCD.</h5>
+
+                @foreach($ccdVendors as $vendor)
+                    <mdl-radio class="mdl-cell--4-col" :checked.sync="ccdVendor" value="{{ $vendor->id }}" required>{{ $vendor->vendor_name }}</mdl-radio>
+                @endforeach
+            @endif
+        </div>
 
         <input type="file" id="ccd" class="dropzone" multiple>
 
