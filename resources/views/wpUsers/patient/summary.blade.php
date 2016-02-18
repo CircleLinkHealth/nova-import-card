@@ -52,6 +52,11 @@
                     <div class="sub-form-title">
                         <div class="sub-form-title-lh"><?php echo $section['title']; ?></div>
                         <div class="sub-form-title-rh">
+                            <style type="text/css">
+                                i:hover {cursor: pointer; }
+                            </style>
+                            <i class="fa fa-print" onclick="{{ $section['id'] }}.exportToPDF();"></i> &nbsp;
+                            <i class="fa fa-file-excel-o" onclick="{{ $section['id'] }}.exportToExcel();"></i> &nbsp;
                             <?php
                             if (!empty($detailSection)) {
                                 if ($section['section'] == 'obs_biometrics') {
