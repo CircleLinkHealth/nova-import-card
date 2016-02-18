@@ -71,9 +71,10 @@ class ActivityService {
 	 * @param $user_id
 	 * @param $logger_name
 	 * @param $newNoteFlag (checks whether it's a new note or an old one)
+	 * @param bool $admitted_flag
 	 * @return bool
 	 */
-	public function sendNoteToCareTeam(&$careteam, $url, $performed_at, $user_id, $logger_name, $newNoteFlag){
+	public function sendNoteToCareTeam(&$careteam, $url, $performed_at, $user_id, $logger_name, $newNoteFlag, $admitted_flag = false){
 
 		/*
 		 *  New note: "Please see new note for patient [patient name]: [link]"
@@ -83,6 +84,7 @@ class ActivityService {
 		$user = User::find($user_id);
 		for($i = 0; $i < count($careteam); $i++){
 			$provider_user = User::find($careteam[$i]);
+			debug($provider_user);
 			$email = $provider_user->user_email;
 			$performed_at = Carbon::parse($performed_at)->toFormattedDateString();
 			$data = array(
@@ -92,10 +94,10 @@ class ActivityService {
 				'logger' => $logger_name
 			);
 
-			if($newNoteFlag) {
+			if($newNoteFlag || $admitted_flag) {
 				$email_view = 'emails.newnote';
-				$email_subject = 'Please Review New Patient Note from CircleLink Health';
-			}	else {
+				$email_subject = 'Please Review New Important Patient Note from CircleLink Health';
+			} else {
 				$email_view = 'emails.existingnote';
 				$email_subject = 'You have received a new note notification from CarePlan Manager';
 			}

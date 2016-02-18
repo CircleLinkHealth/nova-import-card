@@ -135,7 +135,6 @@
                         source: pat,
                         templates: {
                             suggestion: function (data) {
-                                //Adam Everyman DOB: 11-25-54 Provider: TESTDRIVE
                                 return '<li><a href="' + data.link + '">' + data.name + ' DOB: ' + data.DOB +' Provider: '+ data.program +'</a></li>';
                             },
                             empty: [
@@ -144,7 +143,9 @@
                         }
                     });
             $('#bloodhound .typeahead').on('typeahead:selected', function (e, datum) {
-                window.location.href = datum.link
+                window.location.href = datum.link;
+                datum.val(datum.name);
+
             });
         });
     </script>
