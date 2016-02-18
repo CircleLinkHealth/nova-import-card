@@ -1,3 +1,6 @@
+<?php
+$showApprovalButton = true;
+?>
 <div class="main-form-progress">
     <div class="row row-centered">
         @if(isset($patient->ID) )

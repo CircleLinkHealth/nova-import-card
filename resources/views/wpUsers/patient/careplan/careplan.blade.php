@@ -22,7 +22,7 @@ $new_user = false;
     <div id="content" class="row">
 
             <div class="container">
-                <section class="main-form">
+                <section class="">
                     <div class="row">
                         <div class="icon-container col-lg-12">
                             @if(isset($patient) && !$new_user )
@@ -68,15 +68,15 @@ $new_user = false;
                         <div class="row row-centered">
                         </div>
                     </div><!-- /main-form-progress -->
-                    <br><br>
+
+
+            <!--footer-->
+            @include('wpUsers.patient.careplan.footer')
+            <br /><br />
+
                 </section>
-
             </div>
-        </form>
-
-
-        <!--footer-->
-
 
     </div>
+    </form>
 @stop
