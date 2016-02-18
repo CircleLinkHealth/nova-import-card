@@ -146,7 +146,11 @@ class PatientCareplanController extends Controller {
 
 		if($patientId) {
 			// validate
-			$this->validate($request, $user->patient_rules);
+			$messages = [
+				'required' => 'The :attribute field is required.',
+				'study_phone_number.required' => 'The patient phone number field is required.',
+			];
+			$this->validate($request, $user->patient_rules, $messages);
 			$userRepo->editUser($user, $params);
 			if($params->get('direction')) {
 				return redirect($params->get('direction'))->with('messages', ['Successfully updated patient demographics.']);
@@ -154,7 +158,11 @@ class PatientCareplanController extends Controller {
 			return redirect()->back()->with('messages', ['Successfully updated patient demographics.']);
 		} else {
 			// validate
-			$this->validate($request, $user->patient_rules);
+			$messages = [
+				'required' => 'The :attribute field is required.',
+				'study_phone_number.required' => 'The patient phone number field is required.',
+			];
+			$this->validate($request, $user->patient_rules, $messages);
 			$role = Role::whereName('participant')->first();
 			$newUserId = str_random(15);
 			$params->add(array(

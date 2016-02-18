@@ -84,26 +84,26 @@
                 <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Notes/Offline Activity<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li>
-                        <a href="{{ empty($patient) ? URL::route('patients.search') : URL::route('patient.note.index', array('patient' => $patient->ID)) }}">Notes/Offline Activities</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.note.index', array('patient' => $patient->ID)) }}">Notes/Offline Activities</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? URL::route('patients.search') : URL::route('patient.note.create', array('patient' => $patient->ID)) }}">Add New Note</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.note.create', array('patient' => $patient->ID)) }}">Add New Note</a>
                     </li>
                 </ul>
             </li>
             <li class="inline-block">
-                <a href="{{ empty($patient) ? URL::route('patients.search') : URL::route('patient.summary', array('patient' => $patient->ID)) }}" role="button">Patient Overview</a>
+                <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.summary', array('patient' => $patient->ID)) }}" role="button">Patient Overview</a>
             </li>
             <li class="inline-block">
-                <a href="{{ empty($patient) ? URL::route('patients.search') : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}" role="button">Edit Care Plan</a></li>
+                <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}" role="button">Edit Care Plan</a></li>
             <li class="inline-block dropdown">
                 <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Input<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li>
-                        <a href="{{ empty($patient) ? URL::route('patients.search') : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">Observations</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">Observations</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? URL::route('patients.search') : URL::route('patient.activity.create', array('patient' => $patient->ID)) }}">Offline Activities</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.activity.create', array('patient' => $patient->ID)) }}">Offline Activities</a>
                     </li>
                 </ul>
             </li>
@@ -111,13 +111,13 @@
                 <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Patient Reports <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li>
-                        <a href="{{ empty($patient) ? URL::route('patients.search') : '' }}">Patient Alerts</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : '' }}">Patient Alerts</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? URL::route('patients.search') : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">Progress Report</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">Progress Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient Activity Report</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient Activity Report</a>
                     </li>
                     <li>
                         <a href="{{URL::route('patient.reports.u20')}}">Under 20 Minute Report</a>
@@ -131,7 +131,7 @@
                 </ul>
             </li>
             <li class="inline-block">
-                <a href="{{ empty($patient) ? URL::route('patients.search') : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" role="button">View Care Plan</a>
+                <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" role="button">View Care Plan</a>
             </li>
         </ul>
     </div>

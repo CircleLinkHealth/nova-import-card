@@ -368,7 +368,7 @@ Route::group(['middleware' => 'cors'], function(){
 Route::post('api/v2.1/login', 'AuthorizationController@login');
 
 // JWTauth api routes
-Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'authApiCall'], function()
+Route::group(['before' => 'jwt-auth', 'prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], function()
 {
 	// return token data, initial test
 	Route::post('tokentest', 'AuthorizationController@tokentest');
