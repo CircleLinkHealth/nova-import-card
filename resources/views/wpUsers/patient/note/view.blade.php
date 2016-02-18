@@ -35,9 +35,10 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <select id="activityKey" name="type" class="selectpicker dropdownValid form-control"
+                                            <select id="activityKey" name="type"
+                                                    class="selectpicker dropdownValid form-control"
                                                     data-size="10" disabled>
-                                                    <option value="{{$note['type']}}"> {{$note['type']}} </option>
+                                                <option value="{{$note['type']}}"> {{$note['type']}} </option>
                                             </select>
                                         </div>
                                     </div>
@@ -56,8 +57,10 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <input name="performed_at" type="datetime-local" class="selectpicker form-control"
-                                                   data-width="95px" data-size="10" list max="{{$userTime}}" value="{{$userTime}}"
+                                            <input name="performed_at" type="datetime-local"
+                                                   class="selectpicker form-control"
+                                                   data-width="95px" data-size="10" list max="{{$userTime}}"
+                                                   value="{{$userTime}}"
                                                    disabled>
                                         </div>
                                     </div>
@@ -77,7 +80,8 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <select id="performedBy" name="provider_id"
-                                                    class="selectpicker dropdown Valid form-control" data-size="10" disabled>
+                                                    class="selectpicker dropdown Valid form-control" data-size="10"
+                                                    disabled>
                                                 <option value=""> {{$note['provider_name']}}</option>
                                             </select>
                                         </div>
@@ -86,17 +90,20 @@
                             </div>
                         </div>
                     </div>
-                    @if(isset($note['phone']))
-                    <div class="form-block col-md-6">
-                        <div class="row">
-                            <div class="new-note-item">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <h5>Phone: <span class="label label-info">{{$note['phone']}}</span></h5>                                                                    </div>
+                    @if($meta)
+                        <div class="form-block col-md-6">
+                            <div class="row">
+                                <div class="new-note-item">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            @foreach($meta as $tag)
+                                                <h5><div class="label label-info">{{ucwords($tag)}}</div></h5>
+                                            @endforeach
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     @endif
                     <div class="form-block col-md-12">
                         <div class="row">
@@ -105,7 +112,8 @@
                                     <div class="col-sm-12">
                                         <input type="hidden" name="meta[1][meta_key]" value="comment">
                                         <textarea id="note" class="form-control" rows="10"
-                                                  name="meta[1][meta_value]" disabled>{{trim($note['comment'])}}</textarea> <br/>
+                                                  name="meta[1][meta_value]"
+                                                  disabled>{{trim($note['comment'])}}</textarea> <br/>
                                     </div>
                                 </div>
                                 <div class="form-block col-md-6">
@@ -120,7 +128,8 @@
                                                 <div class="col-sm-12">
                                                     <div class="form-group">
                                                         <select id=performedBy" name=careteam[]"
-                                                                class="selectpicker dropdown Valid form-control" data-size="10"
+                                                                class="selectpicker dropdown Valid form-control"
+                                                                data-size="10"
                                                                 multiple>
                                                             @foreach ($careteam_info as $id => $name)
                                                                 <option value="{{$id}}"> {{$name}} </option>
@@ -142,44 +151,44 @@
                                 <div class="form-item form-item-spacing text-center">
                                     <div>
                                         <div class="col-sm-12">
-                                                    <input type="hidden" value="new_activity"/>
-                                                    <button id="update" name="submitAction" type="submit" value="new_activity"
-                                                            class="btn btn-primary btn-lg form-item--button form-item-spacing">
-                                                        Return / Send
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            <input type="hidden" value="new_activity"/>
+                                            <button id="update" name="submitAction" type="submit" value="new_activity"
+                                                    class="btn btn-primary btn-lg form-item--button form-item-spacing">
+                                                Return / Send
+                                            </button>
                                         </div>
-
-
-                                    <script>
-                                        $('.collapse').collapse();
-
-                                        $("input:checkbox").on('click', function () {
-                                            // in the handler, 'this' refers to the box clicked on
-                                            var $box = $(this);
-                                            if ($box.is(":checked")) {
-                                                // the name of the box is retrieved using the .attr() method
-                                                // as it is assumed and expected to be immutable
-                                                var group = "input:checkbox[name='" + $box.attr("name") + "']";
-                                                // the checked state of the group/box on the other hand will change
-                                                // and the current value is retrieved using .prop() method
-                                                $(group).prop("checked", false);
-                                                $box.prop("checked", true);
-                                            } else {
-                                                $box.prop("checked", false);
-                                            }
-                                        });
-                                    </script>
-                                    {!! Form::close() !!}
+                                    </div>
                                 </div>
+
+
+                                <script>
+                                    $('.collapse').collapse();
+
+                                    $("input:checkbox").on('click', function () {
+                                        // in the handler, 'this' refers to the box clicked on
+                                        var $box = $(this);
+                                        if ($box.is(":checked")) {
+                                            // the name of the box is retrieved using the .attr() method
+                                            // as it is assumed and expected to be immutable
+                                            var group = "input:checkbox[name='" + $box.attr("name") + "']";
+                                            // the checked state of the group/box on the other hand will change
+                                            // and the current value is retrieved using .prop() method
+                                            $(group).prop("checked", false);
+                                            $box.prop("checked", true);
+                                        } else {
+                                            $box.prop("checked", false);
+                                        }
+                                    });
+                                </script>
+                                {!! Form::close() !!}
                             </div>
                         </div>
                     </div>
-
                 </div>
 
             </div>
+
         </div>
+    </div>
     </div>
 @endsection
