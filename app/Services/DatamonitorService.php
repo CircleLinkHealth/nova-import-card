@@ -8,6 +8,7 @@ use App\Observation;
 use App\ObservationMeta;
 use App\UserMeta;
 use App\Comment;
+use App\CarePlan;
 use DateTime;
 use Mail;
 use DB;
@@ -134,6 +135,7 @@ class DatamonitorService {
 							$i=1; // standard loop counter, 1 = most recent obs found
 							$f=0; // the number of found observations (3 should always be found)
 							$dates_processed = array();
+							$dates_processed = array();
 							foreach($item_observations as $item_obs) {
 								//echo "<pre>";var_dump($item_obs);echo "</pre>";//die();
 								$obs_date = $date = date('Y-m-d', strtotime($item_obs['obs_date']));
@@ -244,13 +246,37 @@ class DatamonitorService {
 		// get user data for observation
 		$user = User::find($observation->user_id);
 
-		$userUcpData = $user->getUCP();
-		/*
-		//dd($userUcpData['ucp']->first());
-		dd($userUcpData->where('items_id', '=', '27')->first());
-		dd($userUcpData['ucp']->where('ucp_id', '>', '100')->first());
-		*/
-		//dd($userUcpData);
+		//$userUcpData = $user->getUCP();
+
+		// GET CAREPLAN
+		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+			->first();
+		if(!$carePlan) {
+			// if no careplan, set and build
+			$userRepo = new UserRepository();
+			$userRepo->createDefaultCarePlan($user, array());
+			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+				->first();
+			$carePlan->build($user->ID);
+		}
+		$userUcpData["obs_keys"] = array(
+			"Other" => $carePlan->getCareItemUserValue($user, ''),
+			"Adherence" => $carePlan->getCareItemUserValue($user, ''),
+			"Cigarettes" => $carePlan->getCareItemUserValue($user, 'cf-rpt-50-smoking-per-day'),
+			"Weight" => $carePlan->getCareItemUserValue($user, 'cf-rpt-40-weight'),
+			"Blood_Sugar" => $carePlan->getCareItemUserValue($user, 'cf-rpt-30-blood-sugar'),
+			"Blood_Pressure" => $carePlan->getCareItemUserValue($user, 'cf-rpt-20-blood-pressure'),
+			"A1c" => $carePlan->getCareItemUserValue($user, 'cf-rpt-60-a1c'),
+			"HSP" => $carePlan->getCareItemUserValue($user, ''));
+		$userUcpData["alert_keys"] = array(
+			"Weight" => $carePlan->getCareItemUserValue($user, 'blood-sugar-bs-high-alert'),
+			"Weight_CHF" => $carePlan->getCareItemUserValue($user, 'blood-sugar-bs-high-alert'),
+			"Blood_Sugar" => $carePlan->getCareItemUserValue($user, 'blood-sugar-bs-high-alert'),
+			"Blood_Pressure" => $carePlan->getCareItemUserValue($user, 'blood-pressure-systolic-high-alert'),
+			"Blood_Pressure_Low" => $carePlan->getCareItemUserValue($user, 'blood-pressure-systolic-low-alert'),
+			"Blood_Sugar_Low" => $carePlan->getCareItemUserValue($user, 'blood-sugar-bs-low-alert'),
+			"Cigarettes" => $carePlan->getCareItemUserValue($user, 'smoking-per-day-target-count'));
+
 		$first_name = $user->meta()->where('meta_key', '=', 'last_names')->first();
 		$last_name = $user->meta()->where('meta_key', '=', 'last_name')->first();
 		$extra_vars['patientname'] = $first_name . ' ' . $last_name;
@@ -510,6 +536,9 @@ class DatamonitorService {
 		if(empty($obs_value)) {
 			return false;
 		}
+		//dd($userUcpData);
+		//blood-sugar-bs-high-alert
+		//blood-sugar-bs-low-alert
 		if(!isset($userUcpData['alert_keys']['Blood_Sugar']) || !isset($userUcpData['alert_keys']['Blood_Sugar_Low'])) {
 			$log_string .= 'Missing UCP data for bs and/or bs low';
 			$label = 'success';
@@ -1168,17 +1197,21 @@ class DatamonitorService {
 		$user_data = unserialize($user_meta_config->meta_value);
 		// get recipients
 		if(!array_key_exists('send_alert_to',$user_data)) {
-			return false;
+			return 'ERROR: no send_alert_to in $user_data';
+		}
+
+		if(empty($user_data['send_alert_to'])) {
+			return 'ERROR: $user_data send_alert_to is empty';
 		}
 
 		// get message info
 		$msgCPRules = new MsgCPRules();
-		$message_info = $msgCPRules->getQuestion($message_id, $user->ID, 'EMAIL_'.$user_data['preferred_contact_language'], $user_meta_blog->meta_value, 'SOL');
+		$message_info = $msgCPRules->getQuestion($message_id, $user->ID, 'EMAIL_'.$user_data['preferred_contact_language'], $user_meta_blog, 'SOL');
 
 		//Breaks down here, suspect the params are not as expected in getQuestion()
 
 		if(empty($message_info)){
-			return false;
+			return 'ERROR: $message_info is emptyt';
 		}
 
 		// set email params
@@ -1194,7 +1227,7 @@ class DatamonitorService {
 			$provider_user = User::find($recipient_id);
 			$email = $provider_user->user_email;
 
-			Mail::send('emails/dmalert', $data, function($message) use ($email,$email_subject) {
+			Mail::send('emails.dmalert', $data, function($message) use ($email,$email_subject) {
 				$message->from('Support@CircleLinkHealth.com', 'CircleLink Health');
 				$message->to($email)->subject($email_subject);
 			});
