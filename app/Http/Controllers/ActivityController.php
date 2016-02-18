@@ -152,7 +152,7 @@ class ActivityController extends Controller {
 		$messages = \Session::get('messages');
 		$activity['type'] = $act->type;
 		$activity['performed_at'] = $act->performed_at;
-		$activity['provider_name'] = (User::find($act->provider_id)->getFullNameAttribute());
+		$activity['provider_name'] = User::find($act->provider_id)? (User::find($act->provider_id)->getFullNameAttribute()) : '';
 		$activity['duration'] = intval($act->duration)/60;
 
 		$careteam_info = array();

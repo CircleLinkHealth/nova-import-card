@@ -121,7 +121,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <input type="hidden" name="meta[1][meta_key]" value="comment">
-                                        <textarea id="activity" class="form-control" rows="10" placeholder="Enter Comment..."
+                                        <textarea id="activity" class="form-control" rows="10" cols="100" placeholder="Enter Comment..."
                                                   name="meta[1][meta_value]" required></textarea> <br/>
                                     </div>
                                 </div>
