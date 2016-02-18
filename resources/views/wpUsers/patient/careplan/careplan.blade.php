@@ -30,6 +30,7 @@ $new_user = false;
                             @endif
                         </div>
                     </div>
+                    <br />
                     <div class="row">
                         <div class="main-form-container col-lg-8 col-lg-offset-2">
                             <div class="row">
