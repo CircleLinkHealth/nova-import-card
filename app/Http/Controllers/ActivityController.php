@@ -71,7 +71,7 @@ class ActivityController extends Controller {
 				$provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
 			}
 
-			sort($provider_info);
+			asort($provider_info);
 
 			$view_data = [
 				'program_id' => $wpUser->blogId(),
@@ -102,9 +102,7 @@ class ActivityController extends Controller {
 			$input = $request->input();
 		} else {
 			return response("Unauthorized", 401);
-		}
-
-		debug($request->all());
+		}//debug($request->all());
 
         // convert minutes to seconds.
 		if($input['duration']) {
@@ -170,7 +168,6 @@ class ActivityController extends Controller {
 
 		$view_data = ['activity' => $activity, 'userTimeZone' => $patient->timeZone,'careteam_info' => $careteam_info, 'patient' => $patient,'program_id' => $patient->blogId(), 'messages' => $messages];
 
-		debug($activity);
 		return view('wpUsers.patient.activity.view', $view_data);
 	}
 
@@ -265,17 +262,16 @@ class ActivityController extends Controller {
 			->orderBy('performed_at', 'desc')
 			->get();
 
-		$acts = json_decode(json_encode($acts), true);
+		$acts = json_decode(json_encode($acts), true);			//debug($acts);
+
 
 		foreach ($acts as $key => $value) {
-			$acts[$key]['provider_name'] = 'n/a';
 			$provider = User::find($acts[$key]['provider_id']);
 			if($provider) {
 				$acts[$key]['provider_name'] = $provider->getFullNameAttribute();
 			}
 			unset($acts[$key]['provider_id']);
 		}
-		debug($acts);
 		if ($acts) {$data = true;} else {$data = false;}
 
 		$reportData = "data:" . json_encode($acts) . "";
