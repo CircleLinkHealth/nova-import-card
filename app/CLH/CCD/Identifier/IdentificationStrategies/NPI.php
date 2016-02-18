@@ -3,13 +3,21 @@
 namespace App\CLH\CCD\Identifier\IdentificationStrategies;
 
 
+use App\CLH\CCD\Vendor\CcdVendor;
+
 class NPI extends BaseIdentificationStrategy
 {
 
     public function identify()
     {
-        if (empty($this->ccd->document->documentation_of->npi)) return false;
+        if ( empty($this->ccd->document->documentation_of) ) return false;
 
-        return $this->ccd->document->documentation_of->npi;
+        $providers = (array)$this->ccd->document->documentation_of;
+
+        $vendorNpis = CcdVendor::lists( 'doctor_oid' );
+
+        return array_filter( $vendorNpis, function ($vendorNpi) use ($providers) {
+            return in_array( $vendorNpi, array_column( $providers, 'npi' ) );
+        } );
     }
 }
