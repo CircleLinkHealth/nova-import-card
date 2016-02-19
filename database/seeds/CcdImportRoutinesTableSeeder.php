@@ -49,6 +49,14 @@ class CcdImportRoutinesTableSeeder extends Seeder
                 'created_at' => '0000-00-00 00:00:00',
                 'updated_at' => '0000-00-00 00:00:00',
             ),
+            4 => 
+            array (
+                'id' => 5,
+                'name' => 'Import Everything',
+                'description' => 'Import All Meds, All Problems and all Allergies.',
+                'created_at' => '0000-00-00 00:00:00',
+                'updated_at' => '0000-00-00 00:00:00',
+            ),
         ));
         
         

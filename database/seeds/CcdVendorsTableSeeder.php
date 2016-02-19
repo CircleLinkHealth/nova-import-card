@@ -56,12 +56,12 @@ class CcdVendorsTableSeeder extends Seeder
             3 => 
             array (
                 'id' => 5,
-                'ccd_import_routine_id' => 0,
+                'ccd_import_routine_id' => 4,
                 'vendor_name' => 'WRS - Purser',
                 'ehr_oid' => NULL,
-                'doctor_name' => NULL,
+                'doctor_name' => 'Constance Purser',
                 'doctor_oid' => NULL,
-                'custodian_name' => NULL,
+                'custodian_name' => 'Constance B. Purser, M.D.',
                 'created_at' => '0000-00-00 00:00:00',
                 'updated_at' => '0000-00-00 00:00:00',
             ),
@@ -80,7 +80,7 @@ class CcdVendorsTableSeeder extends Seeder
             5 => 
             array (
                 'id' => 7,
-                'ccd_import_routine_id' => 0,
+                'ccd_import_routine_id' => 2,
                 'vendor_name' => 'STI - Elmwood',
                 'ehr_oid' => NULL,
                 'doctor_name' => NULL,
@@ -91,25 +91,13 @@ class CcdVendorsTableSeeder extends Seeder
             ),
             6 => 
             array (
-                'id' => 8,
-                'ccd_import_routine_id' => 0,
-                'vendor_name' => 'Greenway - Kias',
-                'ehr_oid' => NULL,
-                'doctor_name' => NULL,
-                'doctor_oid' => NULL,
-                'custodian_name' => NULL,
-                'created_at' => '0000-00-00 00:00:00',
-                'updated_at' => '0000-00-00 00:00:00',
-            ),
-            7 => 
-            array (
                 'id' => 9,
-                'ccd_import_routine_id' => 0,
+                'ccd_import_routine_id' => 5,
                 'vendor_name' => 'Prognosis - Middletown',
                 'ehr_oid' => NULL,
-                'doctor_name' => NULL,
+                'doctor_name' => 'Trish Hewston',
                 'doctor_oid' => NULL,
-                'custodian_name' => NULL,
+                'custodian_name' => 'Middletown ',
                 'created_at' => '0000-00-00 00:00:00',
                 'updated_at' => '0000-00-00 00:00:00',
             ),
