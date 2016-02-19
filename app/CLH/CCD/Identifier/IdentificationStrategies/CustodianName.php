@@ -12,6 +12,6 @@ class CustodianName extends BaseIdentificationStrategy
 
         $custodianName = $this->ccd->document->custodian->name;
 
-        return empty($custodianName) ? false : $custodianName;
+        return empty($custodianName) ? false : trim($custodianName);
     }
 }

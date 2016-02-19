@@ -37,7 +37,7 @@ class ProblemsToMonitorParser implements ParsingStrategy
                     if ( $problemCodes->code >= $cpmProblem->icd9from
                         && $problemCodes->code <= $cpmProblem->icd9to
                     ) {
-                        array_push($problemsToActivate, $cpmProblem->name);
+                        array_push( $problemsToActivate, $cpmProblem->name );
                         break;
                     }
                 }
@@ -56,18 +56,10 @@ class ProblemsToMonitorParser implements ParsingStrategy
                      */
                     foreach ( $potentialICD10List as $icd10 ) {
                         foreach ( $cpmProblems as $cpmProblem ) {
-                            /**
-                             * Since we are doing string comparison, I10 != I10.0
-                             * This is is to prevent this
-                             */
-                            if ( !strpos( $icd10, '.' ) ) {
-                                $icd10 .= '.0';
-                            }
-
                             if ( (string)$icd10 >= (string)$cpmProblem->icd10from
                                 && (string)$icd10 <= (string)$cpmProblem->icd10to
                             ) {
-                                array_push($problemsToActivate, $cpmProblem->name);
+                                array_push( $problemsToActivate, $cpmProblem->name );
                                 continue 3;
                             }
                         }
@@ -89,7 +81,7 @@ class ProblemsToMonitorParser implements ParsingStrategy
                     if ( (string)$problemCodes->code >= (string)$cpmProblem->icd10from
                         && (string)$problemCodes->code <= (string)$cpmProblem->icd10to
                     ) {
-                        array_push($problemsToActivate, $cpmProblem->name);
+                        array_push( $problemsToActivate, $cpmProblem->name );
                         break;
                     }
                 }
@@ -107,7 +99,7 @@ class ProblemsToMonitorParser implements ParsingStrategy
                     if ( empty($keyword) ) continue;
 
                     if ( strpos( $problemCodes->name, $keyword ) ) {
-                        array_push($problemsToActivate, $cpmProblem->name);
+                        array_push( $problemsToActivate, $cpmProblem->name );
                         continue;
                     }
                 }
