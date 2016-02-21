@@ -4,23 +4,58 @@ use App\Activity;
 use App\User;
 use App\UserMeta;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Support\Facades\Mail;
 
 class ActivityService {
 
-	public function getTotalActivityTimeForMonth($userId, $month = false) {
+	public function getTotalActivityTimeForMonth($userId, $month = false, $year = false) {
 		// if no month, set to current month
 		if(!$month) {
 			$month =  date('m');
 		}
-		$totalDuration = Activity::where( \DB::raw('MONTH(performed_at)'), '=', $month )->where( 'patient_id', '=', $userId )->sum('duration');
+		if(!$year) {
+			$year =  date('Y');
+		}
+
+		$time = Carbon::createFromDate($year, $month, 15);
+		$start = $time->startOfMonth()->format('Y-m-d');
+		$end = $time->endOfMonth()->format('Y-m-d');
+		$month_selected = $time->format('m');
+		$month_selected_text = $time->format('F');
+		$year_selected = $time->format('Y');
+
+		$acts = DB::table('lv_activities')
+			->select(DB::raw('id,provider_id,logged_from,DATE(performed_at), type, SUM(duration) as duration'))
+			->whereBetween('performed_at', [
+				$start, $end
+			])
+			->where('patient_id', $userId)
+			->where(function ($q) {
+				$q->where('logged_from', 'activity')
+					->Orwhere('logged_from', 'manual_input')
+					->Orwhere('logged_from', 'pagetimer');
+			})
+			->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+			->orderBy('performed_at', 'desc')
+			->get();
+
+		$totalDuration = 0;
+		foreach($acts as $act) {
+			$totalDuration = ($totalDuration + $act->duration);
+		}
+
+		//$totalDuration = Activity::where( \DB::raw('MONTH(performed_at)'), '=', $month )->where( 'patient_id', '=', $userId )->sum('duration');
 		return $totalDuration;
 	}
 
-	public function reprocessMonthlyActivityTime($userIds = false, $month = false) {
+	public function reprocessMonthlyActivityTime($userIds = false, $month = false, $year = false) {
 		// if no month, set to current month
 		if(!$month) {
 			$month =  date('m');
+		}
+		if(!$year) {
+			$year =  date('Y');
 		}
 
 		if($userIds) {
@@ -38,7 +73,7 @@ class ActivityService {
 			// loop through each user
 			foreach($wpUsers as $wpUser) {
 				// get all activities for user for month
-				$totalDuration = $this->getTotalActivityTimeForMonth($wpUser->ID, $month);
+				$totalDuration = $this->getTotalActivityTimeForMonth($wpUser->ID, $month, $year);
 
 				// update user_meta with total
 				$userMeta = UserMeta::where('user_id', '=', $wpUser->ID)
