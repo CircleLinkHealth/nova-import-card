@@ -95,7 +95,7 @@ class ActivityService {
 					$userMeta = UserMeta::where('user_id', '=', $wpUser->ID)
 						->where('meta_key', '=', 'cur_month_activity_time')
 						->update(array('meta_value' => $totalDuration));
-					//echo "<pre>UPDATED";var_dump($totalDuration);echo "</pre>";die();
+					echo "<pre>UPDATED";var_dump($totalDuration);echo "</pre>";die();
 				}
 			}
 		}
