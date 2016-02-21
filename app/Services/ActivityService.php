@@ -42,8 +42,11 @@ class ActivityService {
 
 		$totalDuration = 0;
 		foreach($acts as $act) {
+			echo $act->id . ' - ' . $act->duration . '<br>';
 			$totalDuration = ($totalDuration + $act->duration);
 		}
+		echo ($totalDuration / 60);
+		die();
 
 		//$totalDuration = Activity::where( \DB::raw('MONTH(performed_at)'), '=', $month )->where( 'patient_id', '=', $userId )->sum('duration');
 		return $totalDuration;
