@@ -264,13 +264,13 @@ class DatamonitorService {
 			"Adherence" => $carePlan->getCareItemUserValue($user, ''),
 			"Cigarettes" => $carePlan->getCareItemUserValue($user, 'cf-rpt-50-smoking-per-day'),
 			"Weight" => $carePlan->getCareItemUserValue($user, 'cf-rpt-40-weight'),
+			"Weight_CHF" => $carePlan->getCareItemUserValue($user, 'weight-monitor-weight-changes-for-chf'),
 			"Blood_Sugar" => $carePlan->getCareItemUserValue($user, 'cf-rpt-30-blood-sugar'),
 			"Blood_Pressure" => $carePlan->getCareItemUserValue($user, 'cf-rpt-20-blood-pressure'),
 			"A1c" => $carePlan->getCareItemUserValue($user, 'cf-rpt-60-a1c'),
 			"HSP" => $carePlan->getCareItemUserValue($user, ''));
 		$userUcpData["alert_keys"] = array(
-			"Weight" => $carePlan->getCareItemUserValue($user, 'blood-sugar-bs-high-alert'),
-			"Weight_CHF" => $carePlan->getCareItemUserValue($user, 'blood-sugar-bs-high-alert'),
+			"Weight" => $carePlan->getCareItemUserValue($user, 'weight-target-weight'),
 			"Blood_Sugar" => $carePlan->getCareItemUserValue($user, 'blood-sugar-bs-high-alert'),
 			"Blood_Pressure" => $carePlan->getCareItemUserValue($user, 'blood-pressure-systolic-high-alert'),
 			"Blood_Pressure_Low" => $carePlan->getCareItemUserValue($user, 'blood-pressure-systolic-low-alert'),
