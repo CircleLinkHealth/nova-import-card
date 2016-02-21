@@ -82,7 +82,7 @@
                                         <h4 class="modal-title" style="color:#fff;">{{ $planItem->careItem->display_name }} : {{ $detailChildItemLabel }}</h4>
                                     </div>
                                     <div class="modal-body">
-                                        <textarea id="item{{ $detailChildItem->id }}modal" name="item|{{ $detailChildItem->id }}" style="height: 120px;">{{ $detailChildItem->meta_value }}</textarea>
+                                        <textarea id="item{{ $detailChildItem->id }}modal" name="item|{{ $detailChildItem->id }}" style="height: 220px;">{{ $detailChildItem->meta_value }}</textarea>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
