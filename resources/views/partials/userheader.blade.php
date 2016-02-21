@@ -16,7 +16,7 @@
                 </span>
                <a href="{{URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID))}}"><span class="pull-right">{{
                 date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
-                 }} Time: {{gmdate("i:s", $patient->monthlyTime)}}</span></a></p>
+                 }} Time: {{ $patient->monthlyTime }} - {{gmdate("i:s", $patient->monthlyTime)}}</span></a></p>
             <a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}">
                 <span class="person-name text-big text-dark text-serif" title="{{$patient->ID}}">{{$patient->fullName}}</span></a>
             <ul class="person-info-list inline-block text-medium">

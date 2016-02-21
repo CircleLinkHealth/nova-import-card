@@ -47,6 +47,8 @@ class ActivityService {
 		}
 		echo ($totalDuration / 60);
 
+		echo '<br>' . gmdate("i:s", $totalDuration);
+
 		//$totalDuration = Activity::where( \DB::raw('MONTH(performed_at)'), '=', $month )->where( 'patient_id', '=', $userId )->sum('duration');
 		return $totalDuration;
 	}
