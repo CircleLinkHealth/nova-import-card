@@ -37,6 +37,7 @@ $new_user = false;
                                 <div class="main-form-title col-lg-12">
                                     Edit Patient Care Plan
                                 </div>
+                                @include('partials.userheader')
                             </div>
                         </div>
                     </div>
