@@ -97,7 +97,15 @@
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             @foreach($meta as $tag)
-                                                <h5><div class="label label-info">{{ucwords($tag)}}</div></h5>
+                                                @if($tag == 'Patient Recently in Hospital/ER')
+                                                    <h5>
+                                                        <div class="label label-danger">{{ucwords($tag)}}</div>
+                                                    </h5>
+                                                @else
+                                                    <h5>
+                                                        <div class="label label-info">{{ucwords($tag)}}</div>
+                                                    </h5>
+                                                @endif
                                             @endforeach
                                         </div>
                                     </div>

@@ -96,7 +96,7 @@ class ActivityService {
 
 			if($newNoteFlag || $admitted_flag) {
 				$email_view = 'emails.newnote';
-				$email_subject = 'Please Review New Important Patient Note from CircleLink Health';
+				$email_subject = 'Urgent Patient Note from CircleLink Health';
 			} else {
 				$email_view = 'emails.existingnote';
 				$email_subject = 'You have received a new note notification from CarePlan Manager';
