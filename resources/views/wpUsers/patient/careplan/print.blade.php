@@ -10,7 +10,6 @@ function biometricGoal($starting, $target, $bp = false)
         $verb = 'Raise';
     if($bp == 'Blood Pressure'){$verb = 'Maintain';} ;
     if($bp == 'Weight'){$verb = 'Maintain';} ;
-    debug($bp . ' ' . $verb);
     return ($starting > $target) ? 'Lower' : $verb;
 }
 $billing = App\User::find($patient->getBillingProviderIDAttribute());

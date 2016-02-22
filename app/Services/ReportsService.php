@@ -73,9 +73,11 @@ Class ReportsService
         $itemsToMonitor = array();
         if ($carePlan) {
             foreach ($carePlan->careSections as $section) {
-                if ($section->name == 'diagnosis-problems-to-monitor') {
+                if ($section->name == 'biometrics-to-monitor') {
                     foreach ($section->carePlanItems as $item) {
-                        $itemsToMonitor[] = $item->careItem->display_name;
+                        if ($item->meta_value == 'Active') {
+                            $itemsToMonitor[] = $item->careItem->display_name;
+                        }
                     }
                 }
             }
