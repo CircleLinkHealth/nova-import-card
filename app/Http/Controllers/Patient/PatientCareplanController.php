@@ -13,6 +13,7 @@ use App\User;
 use App\UserMeta;
 use App\CPRulesPCP;
 use App\Role;
+use App\Services\ReportsService;
 use App\Services\CareplanUIService;
 use App\CLH\Repositories\UserRepository;
 use App\Http\Requests;
@@ -85,6 +86,27 @@ class PatientCareplanController extends Controller {
 			}
 		}
 
+		// get careplan
+		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+			->first();
+
+		if(!$carePlan) {
+			$userRepo = new UserRepository();
+			$userRepo->createDefaultCarePlan($user, array());
+			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+				->first();
+		}
+
+		if($carePlan) {
+			$carePlan->build($user->ID);
+		}
+
+		//problems for userheader
+		$treating = array();
+		if($carePlan) {
+			$treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
+		}
+
 		// locations @todo get location id for WpBlog
 		$program = WpBlog::find($programId);
 		$locations = array();
@@ -114,7 +136,7 @@ class PatientCareplanController extends Controller {
 			$showApprovalButton = true;
 		}
 
-		return view('wpUsers.patient.careplan.patient', compact(['patient', 'userMeta', 'userConfig','states', 'locations', 'timezones', 'messages', 'patientRoleId', 'programs', 'programId', 'showApprovalButton', 'carePlans']));
+		return view('wpUsers.patient.careplan.patient', compact(['patient', 'userMeta', 'userConfig','states', 'locations', 'timezones', 'messages', 'patientRoleId', 'programs', 'programId', 'showApprovalButton', 'carePlans', 'treating']));
 	}
 
 
@@ -178,6 +200,7 @@ class PatientCareplanController extends Controller {
 			//$newUser = $userRepo->editUser($newUser, $params);
 			return redirect(\URL::route('patient.demographics.show', array('patientId' => $newUser->ID)))->with('messages', ['Successfully created new patient with demographics.']);
 		}
+
 	}
 
 
@@ -247,7 +270,28 @@ class PatientCareplanController extends Controller {
 			$showApprovalButton = true;
 		}
 
-		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml', 'phtml', 'providers', 'careTeamUsers', 'showApprovalButton']));
+		// get careplan
+		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+			->first();
+
+		if(!$carePlan) {
+			$userRepo = new UserRepository();
+			$userRepo->createDefaultCarePlan($user, array());
+			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+				->first();
+		}
+
+		if($carePlan) {
+			$carePlan->build($user->ID);
+		}
+
+		//problems for userheader
+		$treating = array();
+		if($carePlan) {
+			$treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
+		}
+
+		return view('wpUsers.patient.careplan.careteam', compact(['program','patient', 'userConfig', 'messages', 'sectionHtml', 'phtml', 'providers', 'careTeamUsers', 'showApprovalButton', 'treating']));
 	}
 
 
@@ -382,7 +426,13 @@ class PatientCareplanController extends Controller {
 			$showApprovalButton = true;
 		}
 
-		return view('wpUsers.patient.careplan.careplan', compact(['page', 'careSectionNames', 'patient', 'editMode', 'carePlan', 'messages', 'showApprovalButton']));
+		//problems for userheader
+		$treating = array();
+		if($carePlan) {
+			$treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
+		}
+
+		return view('wpUsers.patient.careplan.careplan', compact(['page', 'careSectionNames', 'patient', 'editMode', 'carePlan', 'messages', 'showApprovalButton', 'treating']));
 	}
 
 	/**

@@ -72,7 +72,7 @@
                         </div>
 
 
-                        <h2>Items:</h2>
+                        <h2>2.8.x Items:</h2>
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -87,7 +87,7 @@
                                 @foreach( $question->rulesItems as $item )
                                     <tr>
                                         <td>{!! Form::checkbox('care_team[]', $item->items_id, ['checked' => 'checked'], ['disabled' => 'disabled']) !!}</td>
-                                        <td><strong>{{ $item->pcp->program->first()->domain }}</strong></td>
+                                        <td><strong>@if(($item->pcp->program->first())){{ $item->pcp->program->first()->domain }}@endif</strong></td>
                                         <td><strong>{{ $item->pcp->section_text }}</strong></td>
                                         <td><a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->items_id }}</a></td>
                                     </tr>
