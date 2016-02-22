@@ -405,7 +405,9 @@ class ReportsController extends Controller
             foreach ($carePlan->careSections as $section) {
                 if ($section->name == 'symptoms-to-monitor') {
                     foreach ($section->carePlanItems as $item) {
-                        $symptoms[] = $item->careItem->display_name;
+                        if ($item->meta_value == 'Active') {
+                            $symptoms[] = $item->careItem->display_name;
+                        }
                     }
                 }
                 if ($section->name == 'diagnosis-problems-to-monitor') {
@@ -439,7 +441,7 @@ class ReportsController extends Controller
         debug($biometrics);
 
         //Remove cigarettes
-        if(($key = array_search('Smoking (# per day)', $biometrics)) !== false) {
+        if (($key = array_search('Smoking (# per day)', $biometrics)) !== false) {
             unset($biometrics[$key]);
         }
         //debug($biometrics);
