@@ -126,7 +126,7 @@
                         <a href="{{URL::route('patient.reports.billing')}}">Patient Billing Report</a>
                     </li>
                     <li>
-                        <a href="{{ URL::route('patients.carePlanPrintList', array()) }}">Patient Care Plan Print List</a>
+                        <a href="{{ URL::route('patients.careplan.printlist', array()) }}">Patient Care Plan Print List</a>
                     </li>
                 </ul>
             </li>
