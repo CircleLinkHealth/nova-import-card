@@ -1,8 +1,30 @@
 <?php
 use App\CarePlan;
-use Illuminate\Support\Facades\Request;
+use App\User;
+use Illuminate\Http\Request;
 
+Route::post('/ehr-api/login', function(){
 
+	$credentials = \Input::only('email', 'user_pass');
+	\JWTAuth::setIdentifier('ID');
+	//$user = \JWTAuth::parseToken()->authenticate();
+	if ( ! $token = \JWTAuth::attempt($credentials) )
+	{
+		return response()->json(['error' => 'invalid_credentials'], 400);
+	}
+	return response()->json(compact('token'));
+});
+
+Route::post('/ehr-api/upload', function(Request $request){
+	$user = \JWTAuth::parseToken()->authenticate();
+
+	if($user->hasRole('ccd-vendor')) {
+		$ccd = base64_decode($request['ccd_base64']);
+		//Save to CCD object or table
+		return response()->json(['message' => $ccd]);
+	}
+	return response()->json($user);
+});
 
 Route::controller('ajax', 'UserController');
 
