@@ -63,8 +63,6 @@
             @endif
         </div>
 
-        <p>@{{ ccdVendor }}</p>
-
         <div style="@{{ formCss }}" class="mdl-cell mdl-cell--12-col">
 
             <input type="file" id="ccd" class="dropzone" multiple>
