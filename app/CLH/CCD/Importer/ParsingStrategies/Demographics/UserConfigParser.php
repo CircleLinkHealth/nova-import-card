@@ -53,7 +53,7 @@ class UserConfigParser implements ParsingStrategy
                 $gender = 'F';
             }
 
-            return empty($gender) ? null : $gender;
+            return empty($gender) ?: $gender;
         } );
         $this->template->address = call_user_func( function () use ($demographicsSection) {
             $street = $demographicsSection->address->street;
