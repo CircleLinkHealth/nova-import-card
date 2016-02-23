@@ -57,17 +57,23 @@
                 <h5>Please choose an Import profile for this CCD.</h5>
 
                 @foreach($ccdVendors as $vendor)
-                    <mdl-radio class="mdl-cell--4-col" :checked.sync="ccdVendor" value="{{ $vendor->id }}" required>{{ $vendor->vendor_name }}</mdl-radio>
+                    <mdl-radio class="mdl-cell--4-col" :checked.sync="ccdVendor" value="{{ $vendor->id }}"
+                               required>{{ $vendor->vendor_name }}</mdl-radio>
                 @endforeach
             @endif
         </div>
 
-        <input type="file" id="ccd" class="dropzone" multiple>
+        <p>@{{ ccdVendor }}</p>
 
-        <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
-            <mdl-button primary raised v-mdl-ripple-effect type="submit" :disabled="!enabled">
-                Upload CCD Records
-            </mdl-button>
+        <div style="@{{ formCss }}" class="mdl-cell mdl-cell--12-col">
+
+            <input type="file" id="ccd" class="dropzone" multiple>
+
+            <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
+                <mdl-button primary raised v-mdl-ripple-effect type="submit" :disabled="!enabled">
+                    Upload CCD Records
+                </mdl-button>
+            </div>
         </div>
     </form>
 </div>
