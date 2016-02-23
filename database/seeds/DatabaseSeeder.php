@@ -33,6 +33,9 @@ class DatabaseSeeder extends Seeder {
 		// S20150929SymItems, kg 2015/9/28
 //	    $this->call('SnomedToIcd10MapTableSeeder');
 //		$this->command->info('SnomedToIcd10MapTableSeeder success!');
+        $this->call('CcdImportRoutinesStrategiesTableSeeder');
+        $this->call('CcdImportRoutinesTableSeeder');
+        $this->call('CcdVendorsTableSeeder');
     }
 
 }

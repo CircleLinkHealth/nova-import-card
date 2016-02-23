@@ -237,6 +237,50 @@ class CcdImportRoutinesStrategiesTableSeeder extends Seeder
                 'created_at' => '0000-00-00 00:00:00',
                 'updated_at' => '0000-00-00 00:00:00',
             ),
+            20 => 
+            array (
+                'id' => 27,
+                'ccd_import_routine_id' => 6,
+                'importer_section_id' => 0,
+                'validator_id' => 4,
+                'parser_id' => 0,
+                'storage_id' => 0,
+                'created_at' => '0000-00-00 00:00:00',
+                'updated_at' => '0000-00-00 00:00:00',
+            ),
+            21 => 
+            array (
+                'id' => 28,
+                'ccd_import_routine_id' => 6,
+                'importer_section_id' => 1,
+                'validator_id' => 4,
+                'parser_id' => 0,
+                'storage_id' => 0,
+                'created_at' => '0000-00-00 00:00:00',
+                'updated_at' => '0000-00-00 00:00:00',
+            ),
+            22 => 
+            array (
+                'id' => 29,
+                'ccd_import_routine_id' => 6,
+                'importer_section_id' => 2,
+                'validator_id' => 4,
+                'parser_id' => 0,
+                'storage_id' => 0,
+                'created_at' => '0000-00-00 00:00:00',
+                'updated_at' => '0000-00-00 00:00:00',
+            ),
+            23 => 
+            array (
+                'id' => 30,
+                'ccd_import_routine_id' => 6,
+                'importer_section_id' => 3,
+                'validator_id' => 4,
+                'parser_id' => 3,
+                'storage_id' => 1,
+                'created_at' => '0000-00-00 00:00:00',
+                'updated_at' => '0000-00-00 00:00:00',
+            ),
         ));
         
         
