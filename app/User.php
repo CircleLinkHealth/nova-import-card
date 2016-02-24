@@ -255,8 +255,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function getRegistrationDateAttribute() {
-		$userConfig = $this->userConfig();
-		return $userConfig['registration_date'];
+		return $this->user_registered;
+//		$userConfig = $this->userConfig();
+//		return $userConfig['registration_date'];
 	}
 
 	public function getBirthDateAttribute() {
