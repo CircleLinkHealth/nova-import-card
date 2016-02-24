@@ -27,13 +27,12 @@ var uploader = new Vue({
             this.message = 'Preparing CCDs for upload';
             this.progress = 0;
             var files = event.target.files;
-            var formData =  this.ccdRecords;
 
             for (var i = 0; i < files.length; i++) {
-                formData.append('file[]', files[i]);
+                this.ccdRecords.append('file[]', files[i]);
             }
 
-            formData.append('vendor', this.ccdVendor);
+            //this.ccdRecords.append('vendor', this.ccdVendor);
 
             this.progress += 10;
             this.message = 'CCDs are ready for upload. Please click Upload CCD Records';
@@ -67,6 +66,8 @@ var uploader = new Vue({
             this.enabled = false;
             this.message = 'Uploading CCD records and checking for duplicates.';
             this.progress += 20;
+
+            this.ccdRecords.append('vendor', this.ccdVendor);
 
             this.$http.post('/upload-raw-ccds', this.ccdRecords, function (data, status, request) {
                 this.ccdRecords = new FormData;
