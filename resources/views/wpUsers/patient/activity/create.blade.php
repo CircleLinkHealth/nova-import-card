@@ -35,7 +35,7 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <select id="activityKey" name="type" class="selectpicker dropdownValid form-control"
+                                            <select id="activityKey" name="type" class="selectpickerX dropdownValid form-control"
                                                     data-size="10" required>
                                                 <option value=""> Select Topic</option>
                                                 @foreach ($activity_types as $activity_type)
@@ -59,7 +59,7 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <input name="performed_at" type="datetime-local" class="selectpicker form-control"
+                                            <input name="performed_at" type="datetime-local" class="selectpickerX form-control"
                                                    data-width="95px" data-size="10" list max="{{$userTime}}" value="{{$userTime}}"
                                                    required>
                                         </div>
@@ -80,7 +80,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <select id="performedBy" name="provider_id"
-                                                    class="selectpicker dropdown Valid form-control" data-size="10" required>
+                                                    class="selectpickerX dropdown Valid form-control" data-size="10" required>
                                                 <option value=""> Select Provider</option>
                                                 @foreach ($provider_info as $id => $name)
                                                     <option value="{{$id}}"> {{$name}} </option>
@@ -103,7 +103,7 @@
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <select id="activityValue" name="duration" class="selectpicker dropdown Valid form-control" data-size="10" required>
+                                            <select id="activityValue" name="duration" class="selectpickerX dropdown Valid form-control" data-size="10" required>
                                                 @for($i = 1; $i < 121 ; $i++)
                                                     <option value="{{$i}}" name="duration"> {{$i}} </option>
                                                 @endfor
