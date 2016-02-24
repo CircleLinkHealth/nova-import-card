@@ -31,9 +31,11 @@ class NameCodeAndCodeSysNameProblemsListParser implements ParsingStrategy
                 && empty($problemCodes->code)
             ) continue;
 
+            $problemsList .= "\n\n";
+
             $problemsList .= ucwords( strtolower( $problemCodes->name ) ) . ', '
                 . strtoupper( $problemCodes->code_system_name ) . ', '
-                . $problemCodes->code . ";\n\n";
+                . $problemCodes->code . ";";
         }
 
         return $problemsList;

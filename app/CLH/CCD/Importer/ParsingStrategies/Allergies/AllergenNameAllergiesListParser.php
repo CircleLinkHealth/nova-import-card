@@ -21,7 +21,8 @@ class AllergenNameAllergiesListParser implements ParsingStrategy
 
             if ( empty($ccdAllergen->name) ) continue;
 
-            $allergiesList .= ucfirst( strtolower( $ccdAllergen->name ) ) . ";\n\n";
+            $allergiesList .= "\n\n";
+            $allergiesList .= ucfirst( strtolower( $ccdAllergen->name ) ) . ";";
         }
 
         return $allergiesList;

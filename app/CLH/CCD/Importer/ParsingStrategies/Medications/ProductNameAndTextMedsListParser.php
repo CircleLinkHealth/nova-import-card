@@ -19,16 +19,16 @@ class ProductNameAndTextMedsListParser implements ParsingStrategy
         foreach ( $medicationsSection as $medication ) {
             if ( !$validator->validate( $medication ) ) continue;
 
+            $medsList .= "\n\n";
             empty($medication->product->name)
-                ? $medsList .= ''
-                : $medsList .= ucfirst( strtolower( $medication->product->name ) ) . ', ';
+                ?: $medsList .= ucfirst( strtolower( $medication->product->name ) ) . ', ';
 
             $medsList .= ucfirst(
                     strtolower(
                         StringManipulation::stringDiff( $medication->product->name, $medication->text )
                     )
                 )
-                . "; \n\n";
+                . ";";
         }
         return $medsList;
     }
