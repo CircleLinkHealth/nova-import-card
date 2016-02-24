@@ -16,8 +16,7 @@ class CreateCcdasTable extends Migration {
 		{
 			$table->increments('id');
 			$table->unsignedInteger('user_id');
-			$table->unsignedInteger('qa_set_id');
-			$table->unsignedInteger('ccd_vendor_id');
+			$table->unsignedInteger('vendor_id');
 			$table->longText('xml');
 			$table->longText('json');
 			$table->timestamps();
@@ -29,7 +28,7 @@ class CreateCcdasTable extends Migration {
 				->onUpdate('cascade')
 				->onDelete('cascade');
 
-			$table->foreign('ccd_vendor_id')
+			$table->foreign('vendor_id')
 				->references('id')
 				->on('lv_ccd_vendors')
 				->onUpdate('cascade')
