@@ -202,7 +202,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <?= $key ?>:</h3>
                     </div>
                     <div class="col-xs-12">
-                        <p><?= $value ?></p>
+                        <p><?= nl2br($value) ?></p>
                     </div>
                 </div>
             </div>
@@ -230,7 +230,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="col-xs-12">
                         @if($allergies)
-                        <p>{{$allergies}}</p>
+                        <p><?= nl2br($allergies) ?></p>
                         @else
                         <p>No instructions at this time</p>
                         @endif
@@ -248,7 +248,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="col-xs-12">
                         @if($social)
-                        <p>{{$social}}</p>
+                        <p><?= nl2br($social) ?></p>
                         @else
                         <p>No instructions at this time</p>
                         @endif
@@ -290,7 +290,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="col-xs-12">
                         @if($appointments)
-                        <p>{{$appointments}}</p>
+                        <p><?= nl2br($appointments) ?></p>
                         @else
                         <p>No instructions at this time</p>
                         @endif
@@ -307,7 +307,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="col-xs-12">
                         @if($other)
-                        <p>{{$other}}</p>
+                        <p><?= nl2br($other) ?></p>
                         @else
                         <p>No instructions at this time</p>
                         @endif
