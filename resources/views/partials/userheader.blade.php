@@ -12,7 +12,7 @@
                             Provider: <em>No Provider Selected </em>
                         @endif
                         Location:</strong>
-                                <?php (is_null($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>
+                                <?= (is_null($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>
                 </span>
                 <?php
                     // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
