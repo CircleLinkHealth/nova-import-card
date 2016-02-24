@@ -41,6 +41,7 @@ return [
         App\CLH\CCD\Importer\ValidationStrategies\ValidEndDate::class,
         App\CLH\CCD\Importer\ValidationStrategies\ValidStartDateNoEndDate::class,
         App\CLH\CCD\Importer\ValidationStrategies\ValidStatus::class,
+        App\CLH\CCD\Importer\ValidationStrategies\Compound\Nestor::class,
     ],
 
 ];

@@ -68,7 +68,7 @@ class CcdVendorsTableSeeder extends Seeder
             4 => 
             array (
                 'id' => 6,
-                'ccd_import_routine_id' => 4,
+                'ccd_import_routine_id' => 6,
                 'vendor_name' => 'WRS - Nestor',
                 'ehr_oid' => NULL,
                 'doctor_name' => 'Gregory Nestor',

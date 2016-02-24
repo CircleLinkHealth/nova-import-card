@@ -57,6 +57,14 @@ class CcdImportRoutinesTableSeeder extends Seeder
                 'created_at' => '0000-00-00 00:00:00',
                 'updated_at' => '0000-00-00 00:00:00',
             ),
+            5 => 
+            array (
+                'id' => 6,
+                'name' => 'Valid End Date Or Valid Start Date, No End Date',
+                'description' => '',
+                'created_at' => '0000-00-00 00:00:00',
+                'updated_at' => '0000-00-00 00:00:00',
+            ),
         ));
         
         
