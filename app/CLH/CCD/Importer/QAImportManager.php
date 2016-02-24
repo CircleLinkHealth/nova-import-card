@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer;
 
 
+use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
 use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfigStorageStrategy;
 use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserMetaStorageStrategy;
@@ -10,6 +11,7 @@ use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfigParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMetaParser;
 use App\CLH\CCD\ImportRoutine\ExecutesImportRoutine;
 use App\CLH\CCD\ImportRoutine\RoutineBuilder;
+use App\CLH\CCD\QAImportOutput;
 use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
@@ -17,7 +19,7 @@ use App\ParsedCCD;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
-class ImportManager
+class QAImportManager
 {
     use ExecutesImportRoutine;
 
@@ -26,31 +28,32 @@ class ImportManager
     private $userId;
     private $routine;
 
-    public function __construct($blogId, ParsedCCD $parsedCCD, $userId, $vendor)
+    public function __construct($blogId, Ccda $ccda)
     {
         $this->blogId = $blogId;
-        $this->ccd = json_decode( $parsedCCD->ccd );
-        $this->userId = $userId;
+        $this->ccda = $ccda;
+        $this->ccd = json_decode( $ccda->json );
 
-        $this->routine = empty($vendor)
+        $this->routine = empty($ccda->vendor_id)
             ? ( new RoutineBuilder( $this->ccd ) )->getRoutine()
-            : CcdVendor::find($vendor)->routine()->first()->strategies()->get();
+            : CcdVendor::find( $ccda->vendor_id )->routine()->first()->strategies()->get();
 
-        Log::info('Routine ID: ' . $this->routine[0]->ccd_import_routine_id . ' ' . $this->ccd->demographics->name->family);
+        Log::info( 'Routine ID: ' . $this->routine[ 0 ]->ccd_import_routine_id . ' ' . $this->ccd->demographics->name->family );
     }
 
     public function generateCarePlanFromCCD()
     {
         $strategies = \Config::get( 'ccdimporterstrategiesmaps' );
+
+        $output = [];
+
         /**
          * Parse and Import Allergies List, Medications List, Problems List, Problems To Monitor
          */
         foreach ( $this->routine as $routine ) {
-            $this->import( $this->ccd,
-                $strategies[ 'validation' ][ $routine->validator_id ],
-                $strategies[ 'parsing' ][ $routine->parser_id ],
-                $strategies[ 'storage' ][ $routine->storage_id ],
-                $this->blogId, $this->userId );
+            $validator = new $strategies[ 'validation' ][ $routine->validator_id ]();
+            $parser = new $strategies[ 'parsing' ][ $routine->parser_id ]();
+            $output[$routine->importer_section_id] = $parser->parse( $this->ccd, $validator );
         }
 
         /**
@@ -61,20 +64,25 @@ class ImportManager
          * Parse and Import User Meta
          */
         $userMetaParser = new UserMetaParser( new UserMetaTemplate() );
-        $userMeta = $userMetaParser->parse( $this->ccd );
-        ( new UserMetaStorageStrategy( $this->blogId, $this->userId ) )->import( $userMeta );
+        $output['userMeta'] = $userMetaParser->parse( $this->ccd );
+//        ( new UserMetaStorageStrategy( $this->blogId, $this->userId ) )->import( $userMeta );
 
         /**
          * Parse and Import User Config
          */
         $userConfigParser = new UserConfigParser( new UserConfigTemplate(), $this->blogId );
-        $userConfig = $userConfigParser->parse( $this->ccd );
-        ( new UserConfigStorageStrategy( $this->blogId, $this->userId ) )->import( $userConfig );
+        $output['userConfig'] = $userConfigParser->parse( $this->ccd );
+//        ( new UserConfigStorageStrategy( $this->blogId, $this->userId ) )->import( $userConfig );
 
         /**
          * CarePlan Defaults
          */
-        $transitionalCare = new TransitionalCare( $this->blogId, $this->userId );
-        $transitionalCare->setDefaults();
+//        $transitionalCare = new TransitionalCare( $this->blogId, $this->userId );
+//        $transitionalCare->setDefaults();
+
+        return QAImportOutput::create([
+            'ccda_id' => $this->ccda->id,
+            'output' => json_encode($output, JSON_FORCE_OBJECT),
+        ]);
     }
 }
