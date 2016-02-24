@@ -6,6 +6,7 @@ namespace App\CLH\Repositories;
 use App\CLH\Repositories\WpUserRepository;
 use App\Role;
 use App\WpUser;
+use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CCDImporterRepository
@@ -50,4 +51,22 @@ class CCDImporterRepository
         return (new WpUserRepository())->createNewUser(new WpUser(), $bag);
     }
 
+    public function toJson($xml)
+    {
+        $client = new Client( [
+            'base_uri' => env('CCD_PARSER_BASE_URI'),
+        ] );
+
+        $response = $client->request( 'POST', '/ccda/parse', [
+            'form_params' => [
+                'ccd' => base64_encode( $xml )
+            ]
+        ] );
+
+        if ( !$response->getStatusCode() == 200 ) {
+            return [$response->getStatusCode(), $response->getReasonPhrase()];
+        }
+
+        return (string) $response->getBody();
+    }
 }

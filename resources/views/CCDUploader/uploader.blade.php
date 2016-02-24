@@ -74,7 +74,10 @@
             </div>
         </div>
     </form>
+    <p>@{{ qaSummary }}</p>
+
 </div>
+
 
 
 <div id="success" class="alert hide animated" role="alert"></div>

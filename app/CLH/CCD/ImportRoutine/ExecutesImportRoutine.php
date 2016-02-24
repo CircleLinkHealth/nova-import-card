@@ -10,7 +10,7 @@ use App\ParsedCCD;
 
 trait ExecutesImportRoutine
 {
-    public static function import($ccd, $validationStrategy, $parsingStrategy, $storageStrategy, $blogId, $userId)
+    public static function import($ccd, $validationStrategy, $parsingStrategy, $storageStrategy = null, $blogId = null, $userId = null)
     {
         $validator = null;
         $parser = null;

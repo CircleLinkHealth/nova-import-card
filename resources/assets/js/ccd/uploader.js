@@ -15,7 +15,8 @@ var uploader = new Vue({
         buffer: 100,
         message: 'Drop CCD Records in the box below, or click on it to browse your computer for CCDs. It is recommended that you import up to 5 CCDs in one go.',
         enabled: false, // submit button enabled
-        formCss: 'display: none'
+        formCss: 'display: none',
+        qaSummary: ''
     },
     ready: function () {
         this.watchForFileInput();
@@ -82,6 +83,10 @@ var uploader = new Vue({
                 if (data.duplicates.length > 0) {
                     uploader.parseAndUploadDuplicateCCDs(data.duplicates);
                 }
+
+                console.log(data);
+
+                this.qaSummary = data;
 
             }).error(function (data, status, request) {
                 this.message = 'ERROR! Uploading raw XML CCDs has failed. Try refreshing your browser.';
