@@ -1,5 +1,6 @@
 <input type=hidden name="careSections[]" value="{{ $careSection->id }}">
-<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 cp-section"  id="section{{ $careSection->id }}">
+<div class="main-form-container col-lg-8 col-lg-offset-2 cp-section" style="border-right: 3px solid #50b2e2;border-left: 3px solid #50b2e2;">
+    <div class="main-form-block main-form-horizontal main-form-primary-horizontalX col-md-12 Xcp-section"  id="section{{ $careSection->id }}">
     @if(isset($editMode) && $editMode != false)
         @include('partials.carePlans.sectionEdit')
     @else
@@ -36,4 +37,5 @@
         </div>
     @endif
 
+    </div>
 </div>

@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Patient;
 
+use App\Services\ReportsService;
 use App\Activity;
 use App\CareSection;
 use App\CLH\DataTemplates\UserConfigTemplate;
@@ -434,8 +435,12 @@ class PatientCareplanController extends Controller
                 ->first();
         }
 
+        $treating = array();
         if ($carePlan) {
             $carePlan->build($user->ID);
+
+        //problems for userheader
+            $treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
         }
 
         // determine which sections to show
@@ -468,7 +473,7 @@ class PatientCareplanController extends Controller
             $showApprovalButton = true;
         }
 
-        return view('wpUsers.patient.careplan.careplan', compact(['page', 'careSectionNames', 'patient', 'editMode', 'carePlan', 'messages', 'showApprovalButton']));
+        return view('wpUsers.patient.careplan.careplan', compact(['page', 'careSectionNames', 'patient', 'editMode', 'carePlan', 'messages', 'showApprovalButton', 'treating']));
     }
 
     /**

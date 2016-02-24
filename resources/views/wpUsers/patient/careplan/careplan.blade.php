@@ -42,7 +42,6 @@ $new_user = false;
                         </div>
                     </div>
                     <div class="row">
-                        <div class="main-form-container col-lg-8 col-lg-offset-2">
                             <input type=hidden name=user_id value="{{ $patient->ID }}">
                             <input type=hidden name=program_id value="{{ $patient->program_id }}">
                             @if($carePlan)
@@ -63,7 +62,6 @@ $new_user = false;
                                     </div>
                                 </div>
                             @endif
-                        </div>
                     </div>
                     <input id="save" name="formSubmit" value="Save" tabindex="0" type="hidden">
                     <div class="main-form-progress">
