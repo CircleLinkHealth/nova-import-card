@@ -11831,14 +11831,6 @@ var uploader = new Vue({
     ready: function ready() {
         this.watchForFileInput();
     },
-    computed: {
-        hideImportChecked: {
-            get: function get() {
-                return this.okToImport.length ? false : true;
-            },
-            set: function set() {}
-        }
-    },
     methods: {
         watchForFileInput: function watchForFileInput() {
             $('input[type="file"]').change(this.notifyFileInput.bind(this));
@@ -11888,9 +11880,13 @@ var uploader = new Vue({
             });
         },
         importCcds: function importCcds() {
+            $('#importCcdsBtn').attr('disabled', true);
             this.$http.post('/ccds/import', { qaImportIds: this.okToImport }, function (data, status, request) {
-                this.tableHide = true;
-                alert('The importer operations completed succesfully. Please refresh your browser to upload more CCDs.');
+                $('#importCcdsBtn').attr('disabled', false);
+
+                for (var i = 0; i < data.imported.length; i++) {
+                    $('#checkbox-' + data.imported[i].qaId).html('<a target="_blank" href="' + document.referrer + 'manage-patients/patient-care-plan/?user=' + data.imported[i].userId + '"><b style="color: #06B106">See Careplan</b></a>');
+                }
             }).error(function (data, status, request) {
                 console.log('Data: \n' + data);
                 console.log('Status: \n' + status);

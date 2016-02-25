@@ -52,7 +52,8 @@
             <img src="/img/cpm-logo.png" height="50" width="87.5">
         </div>
         <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
-            <h5><b>CCD Importer</b></h5>
+            <h5><b>CCD Importer</b> v3.0</h5>
+            <div class="quote">{{ Inspiring::quote() }}</div>
         </div>
     </div>
 </nav>
@@ -103,12 +104,12 @@
         </thead>
         <tbody>
 
-        <tr v-for="qaSummary in qaSummaries">
-            <td>
+        <tr v-for="qaSummary in qaSummaries" id="row-@{{ qaSummary.qa_output_id }}">
+            <td id="checkbox-@{{ qaSummary.qa_output_id }}">
                 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
-                       for="checkbox-@{{ qaSummary.qa_output_id }}">
+                       for="input-@{{ qaSummary.qa_output_id }}">
                     <input v-model="okToImport" value="@{{ qaSummary.qa_output_id }}" type="checkbox"
-                           id="checkbox-@{{ qaSummary.qa_output_id }}" class="mdl-checkbox__input">
+                           id="input-@{{ qaSummary.qa_output_id }}" class="mdl-checkbox__input">
                     <span class="mdl-checkbox__label"></span>
                 </label>
             </td>
@@ -121,7 +122,8 @@
     </table>
 
     <div v-bind:class="{ 'hide': tableHide }" class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
-        <mdl-button primary raised v-mdl-ripple-effect type="submit" v-on:click="importCcds" :disabled="hideImportChecked">
+        <mdl-button primary raised v-mdl-ripple-effect type="submit" v-on:click="importCcds"
+                    :disabled="!okToImport.length" id="importCcdsBtn">
             Import Checked CCDs
         </mdl-button>
     </div>
