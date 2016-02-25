@@ -2,20 +2,12 @@
 
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
-use App\CLH\CCD\Parser\CCDParser;
 use App\CLH\CCD\QAImportSummary;
 use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\Repositories\CCDImporterRepository;
-use App\CLH\Repositories\WpUserRepository;
 use App\Http\Requests;
-use App\ParsedCCD;
-use App\WpUser;
-use App\XmlCCD;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CCDUploadController extends Controller
 {
@@ -25,7 +17,7 @@ class CCDUploadController extends Controller
     public function __construct(CCDImporterRepository $repo)
     {
         $this->repo = $repo;
-        ini_set('memory_limit','-1');
+        ini_set( 'memory_limit', '-1' );
     }
 
     /**
@@ -44,6 +36,7 @@ class CCDUploadController extends Controller
         $uploaded = [];
 
         if ( $request->hasFile( 'file' ) ) {
+
             foreach ( $request->file( 'file' ) as $file ) {
                 if ( empty($file) ) {
                     Log::error( __METHOD__ . ' ' . __LINE__ . 'This CCDA did not upload. Here is what I have for CCDA ==>' . $file );
@@ -65,91 +58,41 @@ class CCDUploadController extends Controller
 
                 $vendorId = empty($request->input( 'vendor' )) ?: $request->input( 'vendor' );
 
-                $ccda = Ccda::create([
+                $ccda = Ccda::create( [
                     'user_id' => 1,
                     'vendor_id' => $vendorId,
                     'xml' => $xml
-                ]);
+                ] );
                 $ccda->json = $json;
                 $ccda->save();
-
-//                $user = $this->repo->createRandomUser( $blogId, '', $parsedCcd->demographics->name->given[0] );
 
                 $importer = new QAImportManager( $blogId, $ccda );
                 $output = $importer->generateCarePlanFromCCD();
 
-                $jsonCcd = json_decode($output->output, true);
+                $jsonCcd = json_decode( $output->output, true );
 
-                $hasName = function () use ($jsonCcd) {
-                    return ! empty($jsonCcd['userMeta']['first_name'] . $jsonCcd['userMeta']['last_name']);
+                $name = function () use ($jsonCcd) {
+                    return empty($name = $jsonCcd[ 'userMeta' ][ 'first_name' ] . ' ' . $jsonCcd[ 'userMeta' ][ 'last_name' ])
+                        ?: $name;
                 };
 
-                $medications = function () use ($jsonCcd) {
-                    return count(explode(';', $jsonCcd[3]));
-                };
-
-                $problems = function () use ($jsonCcd) {
-                    return count(explode(';', $jsonCcd[1]));
-                };
-
-                $allergies = function () use ($jsonCcd) {
-                    return count(explode(';', $jsonCcd[0]));
+                $counter = function ($index) use ($jsonCcd) {
+                    return count( explode( ';', $jsonCcd[ $index ] ) ) - 1;
                 };
 
                 $qaSummary = new QAImportSummary();
                 $qaSummary->qa_output_id = $output->id;
-                $qaSummary->hasName = $hasName();
-                $qaSummary->medications = $medications();
-                $qaSummary->problems = $problems();
+                $qaSummary->name = $name();
+                $qaSummary->medications = $counter( 3 );
+                $qaSummary->problems = $counter( 1 );
+                $qaSummary->allergies = $counter( 0 );
                 $qaSummary->save();
 
-                return response()->json( compact( 'qaSummary' ), 200 );
-
+                $qaSummaries[] = $qaSummary;
             }
         }
 
-        return response()->json( compact( 'uploaded', 'duplicates' ), 200 );
-    }
-
-    public function uploadDuplicateRawFiles(Request $request)
-    {
-        $uploaded = [];
-
-        $receivedFiles = json_decode( $request->getContent() );
-
-        if ( empty($receivedFiles) ) return;
-
-        foreach ( $receivedFiles as $file ) {
-
-            if ( empty($file) ) {
-                Log::error( 'It seems like this file did not upload. Here is what I have for $file in '
-                    . self::class . '@uploadDuplicateRawFiles() ==>' . $file );
-                continue;
-            }
-
-            $parser = new CCDParser( $file->xml );
-            $fullName = $parser->getFullName();
-            $email = empty($parser->getEmail())
-                ? ''
-                : $parser->getEmail();
-
-            $user = $this->repo->createRandomUser( $file->blogId, $email, $fullName );
-
-            $newCCD = new XmlCCD();
-            $newCCD->ccd = $file->xml;
-            $newCCD->user_id = $user->ID;
-            $newCCD->patient_name = (string)$file->fullName;
-            $newCCD->patient_dob = (string)$file->dob;
-            $newCCD->save();
-
-            array_push( $uploaded, [
-                'userId' => $user->ID,
-                'xml' => $file->xml,
-                'vendor' => $file->vendor
-            ] );
-        }
-
-        return response()->json( compact( 'uploaded' ), 200 );
+        return response()->json( $qaSummaries, 200 );
     }
 
     /**
@@ -160,40 +103,6 @@ class CCDUploadController extends Controller
         $ccdVendors = CcdVendor::all();
 
         return view( 'CCDUploader.uploader', compact( 'ccdVendors' ) );
-    }
-
-    /**
-     * @param Request $request
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
-     */
-    public function storeParsedFiles(Request $request)
-    {
-        $receivedFiles = json_decode( $request->getContent() );
-
-        if ( empty($receivedFiles) ) return;
-
-        foreach ( $receivedFiles as $file ) {
-            $parsedCCD = new ParsedCCD();
-            $parsedCCD->ccd = json_encode( $file->ccd );
-            $parsedCCD->user_id = $file->userId;
-            $parsedCCD->save();
-
-            if ( $request->session()->has( 'blogId' ) ) {
-                $blogId = $request->session()->get( 'blogId' );
-            }
-            else {
-                throw new \Exception( 'Blog ID missing.', 400 );
-            }
-
-
-            /**
-             * The QAImportManager calls any necessary Parsers
-             */
-            $importer = new QAImportManager( $blogId, $parsedCCD, $parsedCCD->user_id, $file->vendor );
-            $importer->generateCarePlanFromCCD();
-        }
-
-        return response()->json( 'Files received and processed successfully', 200 );
     }
 
 }
