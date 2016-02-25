@@ -263,7 +263,7 @@ class NotesController extends Controller
             $careteam_info[$id] = User::find($id) ? User::find($id)->getFullNameAttribute() : '';
         }
 
-        sort($careteam_info);
+        asort($careteam_info);
 
         $view_data = ['note' => $note, 'userTimeZone' => $patient->timeZone, 'careteam_info' => $careteam_info, 'patient' => $patient, 'program_id' => $patient->blogId(), 'meta' => $meta_tags];
 
@@ -274,6 +274,7 @@ class NotesController extends Controller
     public function send(Request $input, $patientId, $noteId)
     {
         $input = $input->all();
+        debug($input);
 
         if (isset($input['careteam'])) {
             $activity = Activity::findOrFail($input['noteId']);
@@ -290,7 +291,7 @@ class NotesController extends Controller
 
             return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Note Successfully Sent!']);
         }
-        return redirect()->route('patient.note.index', ['patient' => $patientId]);
+        return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Something went wrong...']);
     }
 }
 
