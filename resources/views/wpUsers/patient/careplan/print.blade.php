@@ -122,7 +122,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="col-xs-10">
                         <ul><strong>Taking these Medications</strong>
-                            <li>{{$taking_medications}}</li>
+                            <li><?= nl2br($taking_medications) ?></li>
                         </ul>
                     </div>
                 </div>

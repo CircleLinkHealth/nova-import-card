@@ -26,37 +26,6 @@
             @endforeach
         </div>
 
-
-
-
-        <div class="hidden collapse in" id="collapseSection{{ $careSection->id }}">
-        <?php $i=0; ?>
-            @foreach($careSection->carePlanItems as $planItem)
-                @if ($planItem->careItem->display_name != '')
-                    @if($i % 2 == 0)
-                        @if(isset($editMode) && $editMode != false) START ROW {{ $r }} @endif
-                        <div class="row">
-                    @endif
-                    <div class="col-sm-6"   @if($i % 2 != 0) 
-                                            style="border-left: 1px solid #ccc;" 
-                                            @else
-                                            style="border-right:1px solid #ccc;" 
-                                            @endif>
-                        {{ $planItem->ui_row_start > 0 ? '<div class="row">' : '' }}
-                        {{ $planItem->ui_col_start > 0 ? '<div class="col-sm-'.$planItem->ui_col_start.'>' : '' }}<!-- " -->
-                        @include('partials.carePlans.item')
-                        {{ $planItem->ui_row_end > 0 ? '</div>' : '' }}
-                        {{ $planItem->ui_col_end > 0 ? '</div>' : '' }}
-                    @if( ($i % 2 != 0) || ($careSection->carePlanItems->count() == ($i+1)) )
-                        @if(isset($editMode) && $editMode != false) END ROW {{ $r }} @endif
-                        </div>
-                        <?php $r++; ?>
-                    @endif
-                    </div>
-                @endif
-                <?php $i++; ?>
-            @endforeach
-        </div>
     @endif
 
     </div>
