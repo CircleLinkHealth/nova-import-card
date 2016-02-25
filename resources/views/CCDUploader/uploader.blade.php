@@ -19,10 +19,16 @@
         .hide {
             display: none;
         }
-    </style>
-    <link href="/img/favicon.png" rel="icon">
 
-    <style>
+        .quote {
+            position: relative;
+            font-size: 16px;
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1.35;
+            letter-spacing: .08em;
+        }
+
         .dropzone {
             width: 100%;
             height: 300px;
@@ -38,6 +44,7 @@
             color: #000;
         }
     </style>
+    <link href="/img/favicon.png" rel="icon">
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -53,7 +60,7 @@
         </div>
         <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
             <h5><b>CCD Importer</b> v3.0</h5>
-            <div class="quote">{{ Inspiring::quote() }}</div>
+            <h6 class="quote">"{{ Inspiring::quote() }}"</h6>
         </div>
     </div>
 </nav>
