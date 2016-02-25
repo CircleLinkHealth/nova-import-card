@@ -37,10 +37,15 @@ class CCDImportController extends Controller
             $importer = new ImportManager($sections, $user);
             $importer->import();
 
+            $imported[] = [
+                'qaId' => $id,
+                'userId' => $user->ID
+            ];
+
             $output->delete();
         }
 
-        return response()->json( $import, 200 );
+        return response()->json( compact('imported'), 200 );
     }
 
 }

@@ -8,16 +8,9 @@ use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfigStorageStrateg
 use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserMetaStorageStrategy;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfigParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMetaParser;
-use App\CLH\CCD\ImportRoutine\ExecutesImportRoutine;
-use App\CLH\CCD\ImportRoutine\RoutineBuilder;
-use App\CLH\CCD\QAImportOutput;
-use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
-use App\ParsedCCD;
 use App\WpUser as User;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
 
 class ImportManager
 {
