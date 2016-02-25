@@ -957,7 +957,7 @@ static function biometricsUnitMapping($biometric)
             }
         }
 
-            return (count($careplanReport) > 1) ? $careplanReport : reset($careplanReport);
+            return $careplanReport;
     }
 
 }

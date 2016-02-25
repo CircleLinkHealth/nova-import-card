@@ -111,6 +111,7 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::group(['prefix' => 'manage-patients/', 'middleware' => ['patientProgramSecurity', 'impersonation.check']], function () {
 		Route::get('dashboard', ['uses' => 'Patient\PatientController@showDashboard', 'as' => 'patients.dashboard']);
 		Route::get('listing', ['uses' => 'Patient\PatientController@showPatientListing', 'as' => 'patients.listing']);
+		Route::get('careplan-print-multi', ['uses' => 'Patient\PatientCareplanController@printMultiCareplan', 'as' => 'patients.careplan.multi']);
 		Route::get('careplan-print-list', ['uses' => 'Patient\PatientCareplanController@index', 'as' => 'patients.careplan.printlist']);
 		Route::post('select', ['uses' => 'Patient\PatientController@processPatientSelect', 'as' => 'patients.select.process']);
 		Route::get('search', ['uses' => 'Patient\PatientController@patientAjaxSearch', 'as' => 'patients.search']);

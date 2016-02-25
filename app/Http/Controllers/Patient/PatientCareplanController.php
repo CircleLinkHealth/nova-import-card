@@ -34,8 +34,8 @@ use Illuminate\Support\Facades\Crypt;
 class PatientCareplanController extends Controller
 {
 
-    //Show Patient Careplan Print List
-    public function index(Request $request, $patientId = false)
+    //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
+    public function index(Request $request)
     {
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
@@ -48,6 +48,8 @@ class PatientCareplanController extends Controller
                 if (empty($patient->firstName)) {
                     continue 1;
                 }
+                $last_printed = UserMeta::select('meta_value')->where('user_id', $patient->ID)->where('meta_key','careplan_last_printed')->first();
+                ($last_printed) ? $printed = $last_printed->meta_value : $printed = 'No';
                 // careplan status stuff from 2.x
                 $careplanStatus = $patient->carePlanStatus;
                 $careplanStatusLink = '';
@@ -93,11 +95,6 @@ class PatientCareplanController extends Controller
                     $lastObservationDate = date("m/d/Y", strtotime($lastObservation->obs_date));
                 }
 
-
-                /*$patientJson = '[{
-","",",""","careplan_printed",,"careplan_last_printed",","careplan_status_link","careplan_provider_approver","dob","phone"","age":"","reg_date":"","last_read":"","ccm_time":,"ccm_seconds":""}]';
-                */
-
                 $patientData[] = array(
                     'key' => $patient->ID,
                     'id' => $patient->ID,
@@ -115,6 +112,7 @@ class PatientCareplanController extends Controller
                     'ccm_time' => $patient->monthlyTime,
                     'ccm_seconds' => $patient->monthlyTime,
                     'provider' => $bpName,
+                    'careplan_last_printed' => $printed
                 );
             }
         }
@@ -122,6 +120,26 @@ class PatientCareplanController extends Controller
         return view('wpUsers.patient.careplan.printlist', compact(['pendingApprovals', 'patientJson']));
     }
 
+    public function printMultiCareplan(Request $request)
+    {
+        if (!$request['users']) {
+            return response()->json("Something went wrong..");
+        }
+        $users = explode(',', $request['users']);
+        $reportService = new ReportsService($users);
+        //Save Printed Careplan as Meta
+        foreach ($users as $user_id) {
+            $user = User::find($user_id);
+            $meta = new UserMeta([
+                'meta_key' => 'careplan_last_printed',
+                'meta_value' => Carbon::now()
+            ]);
+            $user->meta()->save($meta);
+        }
+
+        $careplans = $reportService->carePlanGenerator($users);
+        return view('wpUsers.patient.multiview', ['careplans' => $careplans]);
+    }
 
     /**
      * Display patient add/edit
@@ -439,7 +457,7 @@ class PatientCareplanController extends Controller
         if ($carePlan) {
             $carePlan->build($user->ID);
 
-        //problems for userheader
+            //problems for userheader
             $treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
         }
 

@@ -399,16 +399,16 @@ class ReportsController extends Controller
         return view('wpUsers.patient.careplan.print',
             [
                 'patient' => User::find($patientId),
-                'treating' => $careplan['treating'],
-                'biometrics' => $careplan['bio_data'],
-                'symptoms' => $careplan['symptoms'],
-                'lifestyle' => $careplan['lifestyle'],
-                'medications_monitor' => $careplan['medications'],
-                'taking_medications' => $careplan['taking_meds'],
-                'allergies' => $careplan['allergies'],
-                'social' => $careplan['social'],
-                'appointments' => $careplan['appointments'],
-                'other' => $careplan['other']
+                'treating' => $careplan[$patientId]['treating'],
+                'biometrics' => $careplan[$patientId]['bio_data'],
+                'symptoms' => $careplan[$patientId]['symptoms'],
+                'lifestyle' => $careplan[$patientId]['lifestyle'],
+                'medications_monitor' => $careplan[$patientId]['medications'],
+                'taking_medications' => $careplan[$patientId]['taking_meds'],
+                'allergies' => $careplan[$patientId]['allergies'],
+                'social' => $careplan[$patientId]['social'],
+                'appointments' => $careplan[$patientId]['appointments'],
+                'other' => $careplan[$patientId]['other']
             ]);
 
         return response("User not found", 401);
