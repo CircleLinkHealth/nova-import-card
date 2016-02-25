@@ -857,6 +857,107 @@ static function biometricsUnitMapping($biometric)
     $careplan['CarePlan_Report'][] = $other;
 
     return $careplan;
-
 }
+
+
+    //Generates View Data for Careplans
+    // If only one element is passed, it returns just one array, otherwise it gives an assoc array with
+    // the key as
+    public function carePlanGenerator($patients){
+
+        $careplanReport = array();
+
+        foreach($patients as $user) {
+            $user = User::find($user);
+            $careplanReport[$user->ID]['symptoms'] = array();
+            $careplanReport[$user->ID]['problems'] = array();
+            $careplanReport[$user->ID]['lifestyle'] = array();
+            $careplanReport[$user->ID]['biometrics'] = array();
+
+
+            $carePlan = CarePlan::where('id', '=', $user->care_plan_id)->first();
+            if ($carePlan) {
+                $carePlan->build($user->ID);
+                foreach ($carePlan->careSections as $section) {
+                    if ($section->name == 'symptoms-to-monitor') {
+                        foreach ($section->carePlanItems as $item) {
+                            if ($item->meta_value == 'Active') {
+                                $careplanReport[$user->ID]['symptoms'][] = $item->careItem->display_name;
+                            }
+                        }
+                    }
+                    if ($section->name == 'diagnosis-problems-to-monitor') {
+                        foreach ($section->carePlanItems as $item) {
+                            if ($item->meta_value == 'Active') {
+                                $careplanReport[$user->ID]['problems'][] = $item->careItem->display_name;
+                            }
+                        }
+                    }
+                    if ($section->name == 'lifestyle-to-monitor') {
+                        foreach ($section->carePlanItems as $item) {
+                            if ($item->meta_value == 'Active') {
+                                $careplanReport[$user->ID]['lifestyle'][] = $item->careItem->display_name;
+                            }
+                        }
+                    }
+                    if ($section->name == 'biometrics-to-monitor') {
+                        foreach ($section->carePlanItems as $item) {
+                            if ($item->meta_value == 'Active') {
+                                $careplanReport[$user->ID]['biometrics'][] = $item->careItem->display_name;
+                            }
+                        }
+                    }
+                }
+            }
+            $careplanReport[$user->ID]['medications'] = (new ReportsService())->medicationsList($carePlan);//debug($medications);
+            $careplanReport[$user->ID]['treating'] = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
+            $biometrics = (new ReportsService())->getBiometricsToMonitor($user);
+
+            //Remove cigarettes
+            if (($key = array_search('Smoking (# per day)', $biometrics)) !== false) {
+                unset($biometrics[$key]);
+            }
+            //debug($biometrics);
+
+            $careplanReport[$user->ID]['bio_data'] = array();
+
+            foreach ($biometrics as $metric) {
+                $careplanReport[$user->ID]['bio_data'][$metric]['target'] = (new ReportsService())->getTargetValueForBiometric($metric, $user) . ReportsService::biometricsUnitMapping($metric);
+                $careplanReport[$user->ID]['bio_data'][$metric]['starting'] = Observation::getStartingObservation($user->ID, (new ReportsService())->biometricsMessageIdMapping($metric)) . ReportsService::biometricsUnitMapping($metric);
+            }
+
+            if ($carePlan->getCareItemUserValue($user, 'medications-list') == 'Active') {
+                $careplanReport[$user->ID]['taking_meds'] = $carePlan->getCareItemUserValue($user, 'medications-list-details');
+            } else {
+                $careplanReport[$user->ID]['taking_meds'] = '';
+            }
+
+            if ($carePlan->getCareItemUserValue($user, 'allergies') == 'Active') {
+                $careplanReport[$user->ID]['allergies'] = $carePlan->getCareItemUserValue($user, 'allergies-details');
+            } else {
+                $careplanReport[$user->ID]['allergies'] = 'No instructions at this time';
+            }
+
+            if ($carePlan->getCareItemUserValue($user, 'social-services') == 'Active') {
+                $careplanReport[$user->ID]['social'] = $carePlan->getCareItemUserValue($user, 'social-services-details');
+            } else {
+                $careplanReport[$user->ID]['social'] = 'No instructions at this time';
+            }
+
+            if ($carePlan->getCareItemUserValue($user, 'other') == 'Active') {
+                $careplanReport[$user->ID]['other'] = $carePlan->getCareItemUserValue($user, 'other-details');
+            } else {
+                $careplanReport[$user->ID]['other'] = 'No instructions at this time';
+            }
+
+            if ($carePlan->getCareItemUserValue($user, 'appointments') == 'Active') {
+                $careplanReport[$user->ID]['appointments'] = $carePlan->getCareItemUserValue($user, 'appointments-details');
+            } else {
+                $careplanReport[$user->ID]['appointments'] = 'No instructions at this time';
+            }
+        }
+
+            return (count($careplanReport) > 1) ? $careplanReport : reset($careplanReport);
+    }
+
 }
