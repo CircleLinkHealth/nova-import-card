@@ -15,7 +15,7 @@ class CCDImporterRepository
      * Creates a user with random credentials
      * Used to attach XML CCDs to a Patient
      *
-     * @return WpUser
+     * @return App\WpUser
      */
     public function createRandomUser($blogId, $email = '', $fullName = '')
     {

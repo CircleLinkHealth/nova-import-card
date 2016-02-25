@@ -25,7 +25,6 @@ class QAImportManager
 
     private $blogId;
     private $ccd;
-    private $userId;
     private $routine;
 
     public function __construct($blogId, Ccda $ccda)
@@ -65,20 +64,12 @@ class QAImportManager
          */
         $userMetaParser = new UserMetaParser( new UserMetaTemplate() );
         $output['userMeta'] = $userMetaParser->parse( $this->ccd );
-//        ( new UserMetaStorageStrategy( $this->blogId, $this->userId ) )->import( $userMeta );
 
         /**
          * Parse and Import User Config
          */
         $userConfigParser = new UserConfigParser( new UserConfigTemplate(), $this->blogId );
         $output['userConfig'] = $userConfigParser->parse( $this->ccd );
-//        ( new UserConfigStorageStrategy( $this->blogId, $this->userId ) )->import( $userConfig );
-
-        /**
-         * CarePlan Defaults
-         */
-//        $transitionalCare = new TransitionalCare( $this->blogId, $this->userId );
-//        $transitionalCare->setDefaults();
 
         return QAImportOutput::create([
             'ccda_id' => $this->ccda->id,
