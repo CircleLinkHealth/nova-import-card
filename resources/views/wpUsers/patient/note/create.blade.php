@@ -36,7 +36,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <select id="activityKey" name="type"
-                                                    class="selectpicker dropdownValid form-control"
+                                                    class="selectpickerX dropdownValid form-control"
                                                     data-size="10" required>
                                                 <option value=""> Select Topic</option>
                                                 @foreach ($note_types as $note_type)
@@ -61,7 +61,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <input name="performed_at" type="datetime-local"
-                                                   class="selectpicker form-control"
+                                                   class="selectpickerX form-control"
                                                    data-width="95px" data-size="10" list max="{{$userTime}}"
                                                    value="{{$userTime}}"
                                                    required>
@@ -83,7 +83,7 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <select id="performedBy" name="provider_id"
-                                                    class="selectpicker dropdown Valid form-control" data-size="10"
+                                                    class="selectpickerX dropdown Valid form-control" data-size="10"
                                                     required>
                                                 <option value=""> Select Provider</option>
                                                 @foreach ($provider_info as $id => $name)

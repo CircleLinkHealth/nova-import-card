@@ -31,7 +31,7 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <select id="observationType" name="observationType" class="selectpicker dropdownValid form-control" data-size="10" required>
+                                                <select id="observationType" name="observationType" class="selectpickerX dropdownValid form-control" data-size="10" required>
                                                     <option value=""> Select an Observation </option>
                                                     <optgroup label="Biometrics">
                                                         <option value="RPT/CF_RPT_20">Blood Pressure</option>
@@ -85,7 +85,7 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <select id="observationSource" name="observationSource" class="selectpicker dropdownValid form-control" data-size="10"  required>
+                                                <select id="observationSource" name="observationSource" class="selectpickerX dropdownValid form-control" data-size="10"  required>
                                                     <option value=""> Select Source </option>
                                                     <option value="ov_reading" SELECTED>Office Visit (OV) reading</option>
                                                     <option value="lab">Lab Test</option>
@@ -109,7 +109,7 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <input name="observationDate" type="text" class="selectpicker form-control" value="{{ (old('observationDate') ? old('observationDate') : date('Y-m-d H:i')) }}" data-field="datetime" data-format="yyyy-MM-dd HH:mm" readonly required>
+                                                <input name="observationDate" type="text" class="selectpickerX form-control" value="{{ (old('observationDate') ? old('observationDate') : date('Y-m-d H:i')) }}" data-field="datetime" data-format="yyyy-MM-dd HH:mm" required>
                                             </div>
                                         </div>
                                     </div>

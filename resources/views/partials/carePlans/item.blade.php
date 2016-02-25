@@ -35,7 +35,7 @@
     }
 </style>
 
-<div class="col-sm-12 cp-item" style="">
+<div class="col-sm-12X cp-itemX" style="">
     @if(isset($editMode) && $editMode != false)
         @include('partials.carePlans.itemEdit')
     @else
@@ -59,8 +59,8 @@
         }
         ?>
         <div class="form-group">
-            <div class="form-item col-sm-{{ $detailChildItem ? '7' : '12' }}">
-                <div class="checkbox text-medium-big">
+            <div class="form-item col-sm-{{ $detailChildItem ? '12' : '12' }}">
+                <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
                     <div class="radio-inline"><input id="carePlanItem{{ $planItem->id }}" name="item|{{ $planItem->id }}" value="Active" class="itemTrigger" data-toggle="collapse" data-target="#collapseItem{{ $planItem->id }}" type="checkbox" {{ $planItem->meta_value == 'Active' ? 'checked=checked' : '' }}>
                         <label for="carePlanItem{{ $planItem->id }}">
                         <span></span>{{ $planItem->careItem->display_name }}</label>
@@ -68,8 +68,8 @@
                 </div>
             </div>
             @if ($detailChildItem)
-                    <div class="form-item col-sm-5 text-right">
-                        <button type="button" class="btn btn-default btn-xs btn-monitor collapse {{ $planItem->meta_value == 'Active' ? 'in' : '' }} text-right" id="collapseItem{{ $planItem->id }}" data-toggle="modal" data-target="#carePlanItem{{ $planItem->careItem->id }}Detail" style="margin-top:10px;">{{ $detailChildItemLabel }}</button>
+                    <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
+                        <button type="button" class="btn btn-default btn-xs btn-monitor collapse {{ $planItem->meta_value == 'Active' ? 'in' : '' }} text-right" id="collapseItem{{ $planItem->id }}" data-toggle="modal" data-target="#carePlanItem{{ $planItem->careItem->id }}Detail" style="margin-top:0px;    margin-bottom: 0px;">{{ $detailChildItemLabel }}</button>
 
                         <!-- Modal -->
                         <div id="carePlanItem{{ $planItem->careItem->id }}Detail" class="modal fade text-left" role="dialog">

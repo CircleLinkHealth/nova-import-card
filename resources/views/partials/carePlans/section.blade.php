@@ -12,16 +12,38 @@
     @if(!empty($careSection->carePlanItems))
         <?php $i=0; ?>
         <?php $r=1; ?>
-        <div class="collapse in" id="collapseSection{{ $careSection->id }}">
+        <?php $half=round(count($careSection->carePlanItems )/2); ?>
+
+        <div class="form-block form-block--left col-md-6">
+            @foreach($careSection->carePlanItems as $planItem)
+            <?= ($i == $half ? "</div><div class='form-block form-block--right col-md-6'>" : "" ) ; ?>
+            <div class="row">
+                <div class="form-item col-sm-12" style="padding-left: 0px;">
+                  @include('partials.carePlans.item')
+                </div>
+            </div>
+            <?php $i++; ?>
+            @endforeach
+        </div>
+
+
+
+
+        <div class="hidden collapse in" id="collapseSection{{ $careSection->id }}">
+        <?php $i=0; ?>
             @foreach($careSection->carePlanItems as $planItem)
                 @if ($planItem->careItem->display_name != '')
                     @if($i % 2 == 0)
                         @if(isset($editMode) && $editMode != false) START ROW {{ $r }} @endif
                         <div class="row">
                     @endif
-                    <div class="col-sm-6" @if($i % 2 != 0) style="border-left:1px solid #ccc;" @endif>
+                    <div class="col-sm-6"   @if($i % 2 != 0) 
+                                            style="border-left: 1px solid #ccc;" 
+                                            @else
+                                            style="border-right:1px solid #ccc;" 
+                                            @endif>
                         {{ $planItem->ui_row_start > 0 ? '<div class="row">' : '' }}
-                        {{ $planItem->ui_col_start > 0 ? '<div class="col-sm-'.$planItem->ui_col_start.'>' : '' }}
+                        {{ $planItem->ui_col_start > 0 ? '<div class="col-sm-'.$planItem->ui_col_start.'>' : '' }}<!-- " -->
                         @include('partials.carePlans.item')
                         {{ $planItem->ui_row_end > 0 ? '</div>' : '' }}
                         {{ $planItem->ui_col_end > 0 ? '</div>' : '' }}
