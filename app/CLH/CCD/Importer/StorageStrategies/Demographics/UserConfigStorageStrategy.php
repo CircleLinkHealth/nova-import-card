@@ -15,6 +15,6 @@ class UserConfigStorageStrategy extends BaseStorageStrategy implements StorageSt
     {
         $userRepo = new UserRepository();
         $user = User::find($this->userId);
-        $userRepo->updateUserConfig($user, new ParameterBag($userConfig->getArray()));
+        $userRepo->updateUserConfig($user, new ParameterBag($userConfig));
     }
 }

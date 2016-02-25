@@ -15,6 +15,6 @@ class UserMetaStorageStrategy extends BaseStorageStrategy implements StorageStra
     {
         $userRepo = new UserRepository();
         $user = User::find($this->userId);
-        $userRepo->saveOrUpdateUserMeta($user, new ParameterBag($userMeta->getArray()));
+        $userRepo->saveOrUpdateUserMeta($user, new ParameterBag($userMeta));
     }
 }
