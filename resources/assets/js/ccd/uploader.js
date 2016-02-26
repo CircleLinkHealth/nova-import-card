@@ -84,7 +84,7 @@ var uploader = new Vue({
                         + document.referrer.match(/:\/\/(.[^/]+)/)[1]
                         + '/manage-patients/patient-summary/?user='
                         + data.imported[i].userId
-                        + '"><b style="color: #06B106">See Careplan</b></a>'
+                        + '"><b style="color: #06B106">Go to CarePlan</b></a>'
                     );
                 }
             }).error(function (data, status, request) {

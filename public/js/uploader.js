@@ -11885,7 +11885,7 @@ var uploader = new Vue({
                 $('#importCcdsBtn').attr('disabled', false);
 
                 for (var i = 0; i < data.imported.length; i++) {
-                    $('#checkbox-' + data.imported[i].qaId).html('<a target="_blank" href="https://' + document.referrer.match(/:\/\/(.[^/]+)/)[1] + '/manage-patients/patient-summary/?user=' + data.imported[i].userId + '"><b style="color: #06B106">See Careplan</b></a>');
+                    $('#checkbox-' + data.imported[i].qaId).html('<a target="_blank" href="https://' + document.referrer.match(/:\/\/(.[^/]+)/)[1] + '/manage-patients/patient-summary/?user=' + data.imported[i].userId + '"><b style="color: #06B106">Go to CarePlan</b></a>');
                 }
             }).error(function (data, status, request) {
                 console.log('Data: \n' + data);
