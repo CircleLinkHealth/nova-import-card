@@ -24,7 +24,7 @@ class AuthController extends Controller {
 		$this->middleware('guest', ['except' => 'getLogout']);
 
 		if ( \Auth::check() ) {
-			return redirect()->route('admin.dashboard', [])->send();
+			return redirect()->route('login', [])->send();
 		}
 	}
 
