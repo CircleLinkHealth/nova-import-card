@@ -48,7 +48,14 @@ class PatientCareplanController extends Controller
                 if (empty($patient->firstName)) {
                     continue 1;
                 }
-                $last_printed = UserMeta::select('meta_value')->where('user_id', $patient->ID)->where('meta_key','careplan_last_printed')->first();
+                $last_printed = UserMeta::select('meta_value')->where('user_id', $patient->ID)->where('meta_key', 'careplan_last_printed')->first();
+                if ($last_printed) {
+                    $printed_status = 'Yes';
+                    $printed_date = $last_printed->meta_value;
+                } else {
+                    $printed_status = 'No';
+                    $printed_date = null;
+                }
                 ($last_printed) ? $printed = $last_printed->meta_value : $printed = 'No';
                 // careplan status stuff from 2.x
                 $careplanStatus = $patient->carePlanStatus;
@@ -112,10 +119,13 @@ class PatientCareplanController extends Controller
                     'ccm_time' => $patient->monthlyTime,
                     'ccm_seconds' => $patient->monthlyTime,
                     'provider' => $bpName,
-                    'careplan_last_printed' => $printed
+                    'careplan_last_printed' => $printed_date,
+                    'careplan_printed' => $printed_status
                 );
             }
         }
+        debug($patientData);
+
         $patientJson = json_encode($patientData);
         return view('wpUsers.patient.careplan.printlist', compact(['pendingApprovals', 'patientJson']));
     }
@@ -130,15 +140,16 @@ class PatientCareplanController extends Controller
         //Save Printed Careplan as Meta
         foreach ($users as $user_id) {
             $user = User::find($user_id);
-            $meta = new UserMeta([
-                'meta_key' => 'careplan_last_printed',
-                'meta_value' => Carbon::now()
-            ]);
-            $user->meta()->save($meta);
+            if ($user) {
+                $meta = new UserMeta([
+                    'meta_key' => 'careplan_last_printed',
+                    'meta_value' => Carbon::now()
+                ]);
+                $user->meta()->save($meta);
+            }
         }
-
         $careplans = $reportService->carePlanGenerator($users);
-        return view('wpUsers.patient.multiview', ['careplans' => $careplans]);
+        return view('wpUsers.patient.multiview', compact(['careplans']));
     }
 
     /**

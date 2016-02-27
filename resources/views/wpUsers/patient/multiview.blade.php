@@ -63,12 +63,12 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">{{checkIfExists($config,'address')}}</div>
                                 <div class="col-xs-7 address"> Jonathan Katz MD</div>
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">{{checkIfExists($config,'city')}}, {{checkIfExists($config,'state')}} {{checkIfExists($config,'zip')}}</div>
-                                <div class="col-xs-7 address">Crisfield Clinic</div>
+                                <div class="col-xs-7 address">{{$patient->getPreferredLocationName()}}</div>
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div>
-                                <div class="col-xs-7 address">4384 Crisfield Highway</div>
+                                <div class="col-xs-7 address">290 Harbor Drive</div>
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div>
                                 <!-- <div class="col-xs-12 address"></div> -->
-                                <div class="col-xs-12 address">Crisfield,  02181</div>
+                                <div class="col-xs-12 address">Stamford, CT 06902</div>
                             </div>
                         </div>
 
@@ -88,9 +88,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         <div class="row gutter">
                             <div class="col-xs-12">
-                                <div class="col-xs-9 address">{{ucfirst(strtolower($patient->fullName))}}</div>
-                                <div class="col-xs-9 address">10 Spring knob</div>
-                                <div class="col-xs-9 address">Anywhere, TN 17554</div>
+                                <div class="col-xs-9 address">{{strtolower($patient->fullName)}}</div>
+                                <div class="col-xs-9 address">{{checkIfExists($config,'address')}}</div>
+                                <div class="col-xs-9 address"> {{checkIfExists($config,'city')}}, {{checkIfExists($config,'state')}} {{checkIfExists($config,'zip')}}</div>
                             </div>
                         </div>
                         <div class="row address">
@@ -106,7 +106,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <div class="col-xs-10 welcome-copy">
                                 <div class="row gutter">
                                     <BR><BR><BR>
-                                    Dear {{ucfirst(strtolower($patient->fullName))}},</div>
+                                    Dear {{strtolower($patient->fullName)}},</div>
                                 <div class="row gutter">
                                 </div>
                                 <div class="row gutter" style="line-height: 1.0em;">

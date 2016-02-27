@@ -80,9 +80,9 @@
                                 columns:[
                                     { id:"first_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='{{ URL::route('patient.summary', array('patient' => '#key#'))}}'>#first_name# #last_name#</a>", width:100, sort:'string',adjust:true, fillspace:true},
                                     { id:"last_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='{{ URL::route('patient.summary', array('patient' => '#key#'))}}'>#last_name#, #first_name#</a>", width:120, sort:'string',adjust:true, fillspace:true},
-                                    { id:"careplan_last_printed",   header:["Printed",{content:"selectFilter"}],    width:105, sort:'text',
+                                    { id:"careplan_printed",   header:["Printed",{content:"selectFilter"}],    width:120, sort:'text',
                                         template: function (obj) {
-                                            if (obj.careplan_last_printed != 'No'){
+                                            if (obj.careplan_printed == 'Yes'){
                                                 return "<span style='float:left;' title='Last Printed: "+obj.careplan_last_printed+"'>Yes</span>";
                                             } else {
                                                 return "<span style='float:left; title='No'>Select to Print</span>";
@@ -122,8 +122,8 @@
                                 data: {!! $patientJson !!}
 		});
                             webix.event(window, "resize", function(){ obs_alerts_dtable.adjust(); })
-                                    obs_alerts_dtable.sort("#patient_name#");
-                            obs_alerts_dtable.filter("#careplan_last_printed#",'No');
+                            obs_alerts_dtable.sort("#patient_name#");
+                            obs_alerts_dtable.filter("#careplan_last_printed#");
                             obs_alerts_dtable.hideColumn("last_name");
                         </script>
                         <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("last_name");obs_alerts_dtable.hideColumn("first_name");obs_alerts_dtable.sort("#last_name#");this.style.display = "none";getElementById("firstName_btn").style.display = "inline-block";'>
