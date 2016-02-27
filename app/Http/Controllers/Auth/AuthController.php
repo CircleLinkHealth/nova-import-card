@@ -24,7 +24,10 @@ class AuthController extends Controller {
 		$this->middleware('guest', ['except' => 'getLogout']);
 
 		if ( \Auth::check() ) {
-			return redirect()->route('admin.dashboard', [])->send();
+			\Auth::logout();
+				\Session::flush();
+				return redirect()->route('login', [])->send();
+			
 		}
 	}
 
@@ -78,10 +81,10 @@ class AuthController extends Controller {
 		switch ($role)
 		{
 			case 'administrator': return '/admin';
-			case 'manager': return '/manage-patients';
-			case 'participant': return '/manage-patients';
-			case 'provider': return '/manage-patients';
-			default: return '/manage-patients';
+			case 'manager': return '/manage-patients/dashboard';
+			case 'participant': return '/manage-patients/dashboard';
+			case 'provider': return '/manage-patients/dashboard';
+			default: return '/manage-patients/dashboard';
 		}
 	}
 }

@@ -1,7 +1,7 @@
 @extends('partials.providerUI')
 
 @section('title', 'Patient Notes')
-@section('activity', 'Patient Note Index')
+@section('activity', 'Notes/Offline Activities Review')
 
 @section('content')
 
