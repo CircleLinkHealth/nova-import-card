@@ -23,14 +23,14 @@ class ProblemsToMonitorStorageStrategy extends BaseStorageStrategy implements St
             $pcp = CPRulesPCP::whereProvId( $this->blogId )->whereSectionText( 'Diagnosis / Problems to Monitor' )->first();
             if ( empty($pcp) ) {
                 Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.' );
-                return;
+                continue;
             }
             $pcpId = $pcp->pcp_id;
 
             $rulesItem = CPRulesItem::wherePcpId( $pcpId )->whereItemsText( $cpmProblemName )->first();
             if ( empty($rulesItem) ) {
                 Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.' );
-                return;
+                continue;
             }
             $parentItemId = $rulesItem->items_id;
 
