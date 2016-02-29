@@ -34,13 +34,24 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 
 					<div class="panel-body">
 
-						<h2>MISC</h2>
 
-						<br />
-						<h5>Known Issues</h5>
-						<ul>
-							<li class="complete">Change "Print Care Plan" to "View Care Plan"</li>
-							<li class="complete">"Edit Care Plan" link should go to page 1 care plan, not patient demographic page</li>
+						<h2>2/11 3.0 Walkthrough Raphs Notes</h2>
+
+						<ul><li class="complete">Add conditions to user header <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/117">#117</a></li>
+						<li>select patient blue box should be shorter
+						</li><li class="complete">Patient Overview - too wide when zoomed out
+						</li><li class="complete">Patient Overview - biometrics labels have underscore
+						</li><li class="complete">Add patient - screen too wide, needs same scale as prior version
+						</li><li>Add patient - location field eventually needs to be visible right away, populated after program selected <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/155">#155</a>
+						</li><li>Add patient - can’t get to step 3 of care plan setup after entering care team <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/149">#149</a>
+						</li><li>Edit care plan page 3 - instructions box “instructions” needs to be “details"
+						</li><li class="complete">Edit care plan page 5 - swap order: have additional instructions be second/ at bottom
+						</li><li>Add Note - add check boxes visible after "phone session" checked<br>"Patient in Hospital/ER" (if selected auto-send note to providers getting alerts when note saved)<br>"Patient Reached" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/152">#152</a>
+						</li><li>Under 20 minutes report - eliminate blank white space on right side
+						</li><li class="complete">Under 20 minutes report - time in patient header should link to "patient activity report"
+						</li><li class="complete">Patient Activity Report - missing 5mins vs. time summary/check time calcs <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/153">#153</a></li>
+						<li class="complete">Change "Print Care Plan" to "View Care Plan"</li>
+						<li class="complete">"Edit Care Plan" link should go to page 1 care plan, not patient demographic page</li>
 						</ul>
 
 						{{--
@@ -112,29 +123,33 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						</div>
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAlerts"><strong><i class="glyphicon glyphicon-list"></i> Alerts</strong> - 15%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAlerts"><strong><i class="glyphicon glyphicon-list"></i> Alerts</strong> - ON HOLD</a></h4>
 						<div id="collapseAlerts" class="panel-collapse collapse in">
 							<br />link: <a href="{{ URL::route('patients.alerts', array()) }}" target="_blank">{{ URL::route('patients.alerts', array()) }}</a><br /><br />
-							<h4>Not Built <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/16">#16</a></h4>
+							<h5>Known Issues</h5>
+							<ul>
+								<li>Build Page - ON HOLD <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/16">#16</a></li>
+							</ul>
 						</div>
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 85%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 95%</a></h4>
 						<div id="collapseAddPatient" class="panel-collapse collapse in">
 							<br />link: <a href="{{ URL::route('patients.demographics.show') }}" target="_blank">{{ URL::route('patients.demographics.show') }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
-								<li>Choose program - show only allowed programs, use disdplay_name <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
-								<li>Add contact days <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
-								<li>Populate locations based on program form. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
-								<li>Make Not Required: <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a> <br />
+								<li class="complete">Choose program - show only allowed programs, use display_name <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
+								<li class="complete">Add contact days <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
+								<li class="complete">Make Not Required: <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a> <br />
 									email<br />
 									street address<br />
 									city<br />
 									zip<br />
 								</li>
-								<li>Default birthdate to 01-01-1960 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
+								<li class="complete">Default birthdate to 01-01-1960 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
 								<li class="complete">New patient did not get care_plan_id set</li>
+								<li class="complete">Change 'SMS' to 'Care Center'.</li>
+								<li class="complete">Add choose careplan</li>
 							</ul>
 						</div>
 
@@ -166,20 +181,20 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 
 
 							<br />
-							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Care Plan</strong> - 85%</a></h4>
+							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Care Plan</strong> - 95%</a></h4>
 							<div id="collapseCarePlan" class="panel-collapse collapse in">
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => 1)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => 1)) }}</a><br /><br />
 								<h5>Known Issues</h5>
 								<ul>
 									<li class="complete">Remove "Care Plan" heading <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
-									<li>Hide child items for "Track Care Transitions" parent item <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
+									<li>Hide child items for "Track Care Transitions" parent item</li>
 									<li class="complete">Blue seperator bars between care sections <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
-									<li>Swap the order (reverse order) sections are shown <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
-									<li>Submitting page 3 of careplan should redirect to print cacre plan <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
-									<li>Change "Instructions" to "Details" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
-									<li>"Details" should be dark grey color <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
-									<li>"Details" modal textarea larger, button color green (same ui design as 2.8.8, blue heading ect) <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
-									<li>Toggle show/hide of child items when parent item checked/unchecked. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
+									<li class="complete">Swap the order (reverse order) sections are shown <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
+									<li class="complete">Submitting page 3 of careplan should redirect to print care plan <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
+									<li class="complete">Change "Instructions" to "Details" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
+									<li class="complete">"Details" should be dark grey color <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
+									<li class="complete">"Details" modal textarea larger, button color green (same ui design as 2.8.8, blue heading ect) <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
+									<li class="complete">Toggle show/hide of child items when parent item checked/unchecked. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/105">#105</a></li>
 								</ul>
 							</div>
 
@@ -190,20 +205,21 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}</a><br /><br />
 								<h5>Known Issues</h5>
 								<ul>
-									<li>Date input on firefox formats weird</li>
+									<li class="complete">Date input on firefox formats weird, switch to timepicker <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/146">#146</a></li>
 								</ul>
 							</div>
 
 
 							<br />
-							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSummary"><strong><i class="glyphicon glyphicon-list"></i> Patient Summary</strong> - 70%</a></h4>
+							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSummary"><strong><i class="glyphicon glyphicon-list"></i> Patient Summary</strong> - 90%</a></h4>
 							<div id="collapsePatientSummary" class="panel-collapse collapse in">
 								<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}</a><br /><br />
 								<h5>Known Issues</h5>
 								<ul>
-									<li>Observation labels are not correct <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/82">#82</a></li>
-									<li>Missing link to biometric charts + actual biometric charts page. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/108">#108</a></li>
-									<li>.0.0 Patient Overview - Lifestyle observations not displaying properly. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/114">#114</a></li>
+									<li class="complete">Observation labels are not correct <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/82">#82</a></li>
+									<li class="complete">Missing link to biometric charts + actual biometric charts page. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/108">#108</a></li>
+									<li class="complete">Lifestyle observations not displaying properly. <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/114">#114</a></li>
+									<li>Missing print and export icons / functionality <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/154">#154</a></li>
 								</ul>
 							</div>
 						@else
@@ -228,9 +244,9 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->ID)) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
-								<li>Submit button should be centered underneath centered paragraph text <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/103">#103</a></li>
-								<li>Notes listing is only showing 1 note per day per type <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/111">#111</a></li>
-								<li>Log outgoing email messages in activity meta <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/112">#112</a></li>
+								<li class="complete">Submit button should be centered underneath centered paragraph text <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/103">#103</a></li>
+								<li class="complete">Notes listing is only showing 1 note per day per type <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/111">#111</a></li>
+								<li class="complete">Log outgoing email messages in activity meta <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/112">#112</a></li>
 							</ul>
 						</div>
 
@@ -250,25 +266,25 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseActivityReport"><strong><i class="glyphicon glyphicon-list"></i> Activity Report</strong> - 80%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseActivityReport"><strong><i class="glyphicon glyphicon-list"></i> Activity Report</strong> - 90%</a></h4>
 						<div id="collapseActivityReport" class="panel-collapse collapse in">
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
-								<li>Data doesnt match 2.8 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
-								<li>right margin/padding on top right "Go" button <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
-								<li>Choosing 'Year' doesnt hold, resets to 2016 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
+								<li class="complete">Data doesnt match 2.8 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
+								<li class="complete">right margin/padding on top right "Go" button <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
+								<li class="complete">Choosing 'Year' doesnt hold, resets to 2016 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
 							</ul>
 						</div>
 
 
 						<br />
-						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePrintCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Print Care Plan</strong> - 30%</a></h4>
+						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePrintCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Print Care Plan</strong> - 90%</a></h4>
 						<div id="collapsePrintCarePlan" class="panel-collapse collapse in">
 							<br />link: <a href="{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" target="_blank">{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
-								<li>Not ready for testings</li>
+								<li class="complete">Very slow page load</li>
 							</ul>
 						</div>
 

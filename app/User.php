@@ -87,11 +87,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"mrn_number" => "required",
 		"birth_date" => "required",
 		"study_phone_number" => "required",
-		"email" => "required",
-		"address" => "required",
-		"city" => "required",
-		"state" => "required",
-		"zip" => "required",
+		"email" => "",
+		"address" => "",
+		"city" => "",
+		"state" => "",
+		"zip" => "",
 		"preferred_contact_time" => "required",
 		"timezone" => "required",
 		"consent_date" => "required",
@@ -251,12 +251,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function getPhoneAttribute() {
 		$userConfig = $this->userConfig();
-		return $userConfig['study_phone_number'];
+		return ($userConfig['study_phone_number']) ? $userConfig['study_phone_number'] : '';
 	}
 
 	public function getRegistrationDateAttribute() {
-		$userConfig = $this->userConfig();
-		return $userConfig['registration_date'];
+		return $this->user_registered;
+//		$userConfig = $this->userConfig();
+//		return $userConfig['registration_date'];
 	}
 
 	public function getBirthDateAttribute() {
@@ -266,7 +267,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function getGenderAttribute() {
 		$userConfig = $this->userConfig();
-		return $userConfig['gender'];
+		return ($userConfig['gender']) ? $userConfig['gender'] : '';
 	}
 
 	public function getAgeAttribute() {

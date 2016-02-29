@@ -7,6 +7,13 @@ use Illuminate\Support\Facades\Route;
 
 class ApiLog extends ApiLogRepository {
 
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'lv_api_logs';
+
 	public function logThisRequest(Request $request, $apiKey)
     {
         $logger = new ApiLog();

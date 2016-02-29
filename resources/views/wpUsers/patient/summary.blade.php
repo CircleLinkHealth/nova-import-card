@@ -1,8 +1,33 @@
 @extends('partials.providerUI')
 
+@if (!empty($detailSection))
+    @if ($detailSection == 'obs_biometrics')
+        @section('title', 'Patient Summary - Biometrics Data Review')
+        @section('activity', 'Biometrics Data Review')
+    @endif
+
+    @if ($detailSection == 'obs_medications')
+        @section('title', 'Patient Summary - Medications Data Review')
+        @section('activity', 'Medications Data Review')
+    @endif
+
+    @if ($detailSection == 'obs_symptoms')
+        @section('title', 'Patient Summary - Symptoms Data Review')
+        @section('activity', 'Symptoms Data Review')
+    @endif
+
+    @if ($detailSection == 'obs_lifestyle')
+        @section('title', 'Patient Summary - Lifestyle Data Review')
+        @section('activity', 'Lifestyle Data Review')
+    @endif
+@else
+    @section('title', 'Patient Summary Overview')
+    @section('activity', 'Patient Overview Review')
+@endif
+
 @section('content')
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
+        <div class="main-form-container col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     Patient Overview
@@ -27,11 +52,16 @@
                     <div class="sub-form-title">
                         <div class="sub-form-title-lh"><?php echo $section['title']; ?></div>
                         <div class="sub-form-title-rh">
+                            <style type="text/css">
+                                i:hover {cursor: pointer; }
+                            </style>
+                            <i class="fa fa-print" onclick="{{ $section['id'] }}.exportToPDF();"></i> &nbsp;
+                            <i class="fa fa-file-excel-o" onclick="{{ $section['id'] }}.exportToExcel();"></i> &nbsp;
                             <?php
                             if (!empty($detailSection)) {
                                 if ($section['section'] == 'obs_biometrics') {
                                     //echo '<a href="'.get_permalink( get_page_by_title('patient biometric chart') ).'?user='.$wpUser->ID.'"><span class="glyphicon glyphicon-stats"></span></a> &nbsp;&nbsp; ';
-                                    echo '<a href="?user=' . $wpUser->ID . '"><span class="glyphicon glyphicon-stats"></span></a> &nbsp;&nbsp; ';
+                                    echo '<a href="'.URL::route('patient.charts', array('patient' => $wpUser->ID)).'"><span class="glyphicon glyphicon-stats"></span></a> &nbsp;&nbsp;';
                                 }
                                 echo '<a href="?user=' . $wpUser->ID . '"><< Return</a>';
                             } else {
@@ -79,7 +109,7 @@
                                 {
                                     id: "description",
                                     header: ["<?= $section['col_name_question'] ?>" <?= $filter ?>],
-                                    css: {"text-align": "center"},
+                                    css: {"text-align": "left"},
                                     sort: 'string',
                                     width: 300,
                                     adjust: false
@@ -87,7 +117,7 @@
                                 {
                                     id: "obs_value",
                                     header: ["<?= $section['col_name_severity'] ?>" <?= $filter ?>],
-                                    css: {"text-align": "center"},
+                                    css: {"text-align": "left"},
                                     sort: 'string',
                                     width: 300,
                                     adjust: false,
@@ -96,7 +126,7 @@
                                 {
                                     id: "comment_date",
                                     header: ["Date" <?= $filter ?>],
-                                    css: {"text-align": "center"},
+                                    css: {"text-align": "left"},
                                     sort: 'string',
                                     fillspace: true,
                                     adjust: true

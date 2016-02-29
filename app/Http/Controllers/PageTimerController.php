@@ -65,7 +65,7 @@ class PageTimerController extends Controller {
 		if(!isset($data['totalTime'])
 			|| !isset($data['patientId'])
 			|| !isset($data['providerId'])
-			|| !isset($data['programId'])
+			//|| !isset($data['programId'])
 			|| !isset($data['startTime'])
 			|| !isset($data['urlFull'])
 			|| !isset($data['urlShort'])
@@ -117,11 +117,20 @@ class PageTimerController extends Controller {
 
 				// check params to see if rule exists
 				$params = array();
+
+				//provider
 				$provider = User::find( $pageTime->provider_id );
-				$params['role'] = $provider->role($pageTime->program_id);
-				$providerMeta = $provider->meta;
+
+				// provider role param
+				$params['role'] = '';
+				$role = $provider->roles()->first();
+				if($role) {
+					$params['role'] = $role->name;
+				}
+
+				// activity param
 				$params['activity'] = $pageTime->activity_type;
-				$params['program_id'] = $pageTime->program_id;
+				//$params['program_id'] = $pageTime->program_id;
 				//$params = array('role' => 'Provider', 'activity' => 'Patient Overview');
 
 				// check against rules and add activity if passes

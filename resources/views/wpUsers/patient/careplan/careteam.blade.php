@@ -40,6 +40,9 @@ function buildProviderInfoContainers($providers) {
 
 @extends('partials.providerUI')
 
+@section('title', 'Edit/Modify Care Team')
+@section('activity', 'Edit/Modify Care Team')
+
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/patient/careteam.js') }}"></script>
     <script>
@@ -109,7 +112,7 @@ function buildProviderInfoContainers($providers) {
                 html1 += '';
                 html1 += '</div>';
                 html1 += '<div class="col-sm-3">';
-                html1 += '<button class="btn btn-xs btn-danger removeCtm" ctmId="' + ctmCount + '"><i class="glyphicon glyphicon-minus-sign"></i> Remove Member</button>';
+                html1 += '<button class="btn btn-xs btn-orange removeCtm" ctmId="' + ctmCount + '"><i class="glyphicon glyphicon-minus-sign"></i> Remove Member</button>';
                 html1 += '</div>';
                 html1 += '</div>';
                 // second row
@@ -161,7 +164,6 @@ function buildProviderInfoContainers($providers) {
         });
     </script>
 
-    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <script>
     </script>
     {!! Form::open(array('url' => URL::route('patient.careteam.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
@@ -171,71 +173,67 @@ function buildProviderInfoContainers($providers) {
             border-bottom:1px solid #ccc;
         }
     </style>
-    <div class="row">
-        <div class="icon-container col-lg-12">
-            @if(isset($patient) && !$new_user )
-                @include('wpUsers.patient.careplan.nav')
-            @endif
-        </div>
-    </div>
     <input type=hidden name=user_id value="{{ $patient->ID }}">
     <input type=hidden name=program_id value="{{ $patient->program_id }}">
     <input id="save" name="formSubmit" type="hidden" value="Save" tabindex="0">
 
 
     <div class="row" style="margin-top:20px;">
-        <div class="main-form-container-last col-lg-8 col-lg-offset-2">
-            <div class="row">
-                <div class="main-form-title">
+        <div class="col-lg-10 col-lg-offset-1">
+            <div class="icon-container col-lg-12">
+                @if(isset($patient) && !$new_user )
+                    @include('wpUsers.patient.careplan.nav')
+                @endif
+            </div>
+            <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;">
+                <div class="row">
                     @if(isset($patient) && !$new_user )
                         <div class="main-form-title col-lg-12">
                             Edit Patient Care Team
                         </div>
+                        @include('partials.userheader')
                     @else
                         <div class="main-form-title col-lg-12">
                             Add Patient Care Team
                         </div>
                     @endif
-                </div>
 
-                <div class="col-sm-12" id="careTeamMembers">
-                    <h4><span class="person-name text-big text-dark text-serif" title="">Care Team Setup</span></h4>
-                </div>
-                <div class="col-sm-12">
-                    @foreach($careTeamUsers as $careTeamUser)
-                        {{--
-                        <div class="col-md-12" class="careTeamMemberContainer" id="ctm' + ctmCount + '">
-                            <div class="row">
-                                <input class="ctmCountArr" type="hidden" name="ctmCountArr[]" value="' + ctmCount + '">
-                                <div class="col-sm-4">';
-                                    {!! Form::select('providers', $providersData, (old('providers') ? old('providers') : $careTeamUser->ID ? $careTeamUser->ID : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                    <div class="col-sm-12">
+                        <div id="careTeamMembers"></div>
+                        @foreach($careTeamUsers as $careTeamUser)
+                            {{--
+                            <div class="col-md-12" class="careTeamMemberContainer" id="ctm' + ctmCount + '">
+                                <div class="row">
+                                    <input class="ctmCountArr" type="hidden" name="ctmCountArr[]" value="' + ctmCount + '">
+                                    <div class="col-sm-4">';
+                                        {!! Form::select('providers', $providersData, (old('providers') ? old('providers') : $careTeamUser->ID ? $careTeamUser->ID : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                    </div>
+                                    <div class="col-sm-5" id="ctm' + ctmCount + 'Info">
+                                    </div>
+                                    <div class="col-sm-3">
+                                    <a href="" class="removeCtm" ctmId="' + ctmCount + '"><span class="glyphicon glyphicon-remove-sign"></span> Remove Member</a>
+                                    </div>
                                 </div>
-                                <div class="col-sm-5" id="ctm' + ctmCount + 'Info">
-                                </div>
-                                <div class="col-sm-3">
-                                <a href="" class="removeCtm" ctmId="' + ctmCount + '"><span class="glyphicon glyphicon-remove-sign"></span> Remove Member</a>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-sm-4" style="padding:20px;">
-                                <div class="radio-inline"><input type="checkbox" name="ctmsa[]" id="ctm' + ctmCount + 'sa" /><label for="ctm' + ctmCount + 'sa"><span> </span>Send Alerts</label></div>
-                                </div>
-                                <div class="col-sm-4" style="padding:20px;">
-                                <div class="radio"><input type="radio" name="ctbp" id="ctm' + ctmCount + 'bp" /><label for="ctm' + ctmCount + 'bp"><span> </span>Billing Provider</label></div>
-                                </div>
-                                <div class="col-sm-4" style="padding:20px;">
-                                <div class="radio"><input type="radio" name="ctlc" id="ctm' + ctmCount + 'lc" /><label for="ctm' + ctmCount + 'lc"><span> </span>Lead Contact</label></div>
+                                <div class="row">
+                                    <div class="col-sm-4" style="padding:20px;">
+                                    <div class="radio-inline"><input type="checkbox" name="ctmsa[]" id="ctm' + ctmCount + 'sa" /><label for="ctm' + ctmCount + 'sa"><span> </span>Send Alerts</label></div>
+                                    </div>
+                                    <div class="col-sm-4" style="padding:20px;">
+                                    <div class="radio"><input type="radio" name="ctbp" id="ctm' + ctmCount + 'bp" /><label for="ctm' + ctmCount + 'bp"><span> </span>Billing Provider</label></div>
+                                    </div>
+                                    <div class="col-sm-4" style="padding:20px;">
+                                    <div class="radio"><input type="radio" name="ctlc" id="ctm' + ctmCount + 'lc" /><label for="ctm' + ctmCount + 'lc"><span> </span>Lead Contact</label></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        --}}
-                    @endforeach
-                    {!! $phtml !!}
-                    <a href="" class="addCareTeamMember pull-right btn btn-success" style="margin:20px;"><span class="glyphicon glyphicon-plus-sign"></span> Add Care Team Member</a>
-                    <br />
-                    <br />
-                </div>
+                            --}}
+                        @endforeach
+                        {!! $phtml !!}
+                        <a href="" class="addCareTeamMember pull-right btn btn-primary" style="margin:20px;"><span class="glyphicon glyphicon-plus-sign"></span> Add Care Team Member</a>
+                        <br />
+                        <br />
+                    </div>
 
 
 
@@ -244,34 +242,35 @@ function buildProviderInfoContainers($providers) {
 
 
 
-                <div class="modal fade" id="ctModal" tabindex="-1" role="dialog" aria-labelledby="ctModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                Incomplete Care Team
-                            </div>
-                            <div class="modal-body">
-                                <p><span id="ctModalError"></span></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" id="ctModalYes" class="btn btn-warning"  data-dismiss="modal">Continue editing</button>
+                    <div class="modal fade" id="ctModal" tabindex="-1" role="dialog" aria-labelledby="ctModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    Incomplete Care Team
+                                </div>
+                                <div class="modal-body">
+                                    <p><span id="ctModalError"></span></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="ctModalYes" class="btn btn-warning"  data-dismiss="modal">Continue editing</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="modal fade" id="ctConfModal" tabindex="-1" role="dialog" aria-labelledby="ctConfModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                Confirm Care Team
-                            </div>
-                            <div class="modal-body">
-                                <p><span id="ctConfModalError"></span></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" id="ctConfModalNo" class="btn btn-warning"  data-dismiss="modal">Continue editing</button>
-                                <button type="button" id="ctConfModalYes" class="btn btn-success"  data-dismiss="modal">Confirm and save</button>
+                    <div class="modal fade" id="ctConfModal" tabindex="-1" role="dialog" aria-labelledby="ctConfModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    Confirm Care Team
+                                </div>
+                                <div class="modal-body">
+                                    <p><span id="ctConfModalError"></span></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="ctConfModalNo" class="btn btn-warning"  data-dismiss="modal">Continue editing</button>
+                                    <button type="button" id="ctConfModalYes" class="btn btn-primary"  data-dismiss="modal">Confirm and save</button>
+                                </div>
                             </div>
                         </div>
                     </div>

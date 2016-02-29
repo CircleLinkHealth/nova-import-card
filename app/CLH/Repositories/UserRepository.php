@@ -28,6 +28,7 @@ class UserRepository {
         $wpUser->display_name = $params->get('display_name');
         $wpUser->program_id = $params->get('program_id');
         $wpUser->user_registered = date('Y-m-d H:i:s');
+        $wpUser->care_plan_id = $params->get('care_plan_id');
         $wpUser->save();
 
         $this->saveOrUpdateRoles($wpUser, $params);
@@ -52,6 +53,7 @@ class UserRepository {
         $wpUser->user_status = $params->get('user_status');
         $wpUser->display_name = $params->get('display_name');
         $wpUser->program_id = $params->get('program_id');
+        $wpUser->care_plan_id = $params->get('care_plan_id');
         $wpUser->save();
 
         $this->saveOrUpdateRoles($wpUser, $params);
@@ -123,16 +125,23 @@ class UserRepository {
             }
         }
 
+        //dd($userPrograms);
+
         // if still empty at this point, no program_id or program param
         if(empty($userPrograms)) {
             return true;
         }
+
+        // set primary program
+        $wpUser->program_id = $params->get('program_id');
+        $wpUser->save();
 
         // get role
         $roleId = $params->get('role');
         if($roleId) {
             $role = Role::find($roleId);
         } else {
+            // default to participant
             $role = Role::where('name', '=', 'participant')->first();
         }
 
@@ -142,6 +151,7 @@ class UserRepository {
         $wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('blog_id');
         foreach($wpBlogs as $wpBlogId) {
             if (!in_array($wpBlogId, $userPrograms)) {
+                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_config")->delete();
                 $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->delete();
                 $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->delete();
             } else {
@@ -186,6 +196,16 @@ class UserRepository {
             $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
         }
 
+        // contact days checkbox formatting
+        if($params->get('contact_days')) {
+            $contactDays = $params->get('contact_days');
+            $contactDaysDelmited = '';
+            for($i=0; $i < count($contactDays); $i++){
+                $contactDaysDelmited .= (count($contactDays) == $i+1) ? $contactDays[$i] : $contactDays[$i] . ', ';
+            }
+            $params->add(array('preferred_cc_contact_days' => $contactDaysDelmited));
+        }
+
         foreach($userConfig as $key => $value)
         {
             if( ! empty($params->get($key)))
@@ -194,12 +214,12 @@ class UserRepository {
             }
         }
 
-        $setUserConfig = $wpUser->meta()->whereMetaKey("wp_{$params->get('program_id')}_user_config")->first();
+        $setUserConfig = $wpUser->meta()->whereMetaKey("wp_".$wpUser->program_id."_user_config")->first();
         if($setUserConfig) {
             $setUserConfig->meta_value = serialize($userConfig);
         } else {
             $setUserConfig = new UserMeta;
-            $setUserConfig->meta_key = "wp_{$params->get('program_id')}_user_config";
+            $setUserConfig->meta_key = "wp_".$wpUser->program_id."_user_config";
             $setUserConfig->meta_value = serialize($userConfig);
             $setUserConfig->user_id = $wpUser->ID;
         }
@@ -214,13 +234,40 @@ class UserRepository {
             return false;
         }
         // just need to add programs default @todo here should get the programs default one to use from programs config
-        $carePlan = CarePlan::where('program_id', '=', $program->id)->where('type', '=', 'Program Default')->first();
+        $carePlan = CarePlan::where('program_id', '=', $program->blog_id)->where('type', '=', 'Program Default')->first();
         if(!$carePlan) {
             return false;
         }
 
         $user->care_plan_id = $carePlan->id;
         $user->save();
+
+        // populate defaults from careplan
+        $carePlan->build();
+        foreach($carePlan->careSections as $careSection) {
+            // add parent items to each section
+            $careSection->carePlanItems = $carePlan->carePlanItems()
+                ->where('section_id', '=', $careSection->id)
+                ->where('parent_id', '=', 0)
+                ->orderBy('ui_sort', 'asc')
+                ->with(array('children' => function ($query) {
+                    $query->orderBy('ui_sort', 'asc');
+                }))
+                ->get();
+            // user defaults
+            if ($careSection->carePlanItems->count() > 0) {
+                foreach ($careSection->carePlanItems as $carePlanItem) {
+                    // parents
+                    $carePlan->setCareItemUserValue($user, $carePlanItem->careItem->name, $carePlanItem->meta_value);
+                    // children
+                    if ($carePlanItem->children->count() > 0) {
+                        foreach ($carePlanItem->children as $carePlanItemChild) {
+                            $carePlan->setCareItemUserValue($user, $carePlanItemChild->careItem->name, $carePlanItemChild->meta_value);
+                        }
+                    }
+                }
+            }
+        }
 
 
         /*

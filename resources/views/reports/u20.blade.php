@@ -8,7 +8,7 @@
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
-                    {!! Form::open(array('url' => URL::route('patient.reports.u20', ['patientId' => $patient->ID]), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                    {!! Form::open(array('url' => URL::route('patient.reports.u20'), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                     <div class="col-sm-3">
                         <h4 class="time-report__month">{{$month_selected_text}} {{$year_selected}}</h4>
                     </div>
@@ -93,8 +93,8 @@
                                     {
                                         id: "patient_name",
                                         header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
-                                        fillspace: true,
-                                        width: 100,
+                                        // fillspace: true,
+                                        width: 200,
                                         sort:'string',
                                         template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
 
@@ -272,8 +272,7 @@
                         <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
                                onclick="obs_alerts_dtable.exportToExcel();">
                     @else
-                        <div style="text-align:center;margin:50px;">There are no patient Notes/Offline Activities to
-                            display for this month.
+                        <div style="text-align:center;margin:50px;">There are no patients under 20 minutes this month.
                         </div>
                     @endif
 

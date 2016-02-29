@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CPM API - {!! Route::current()->getName() !!}</title>
+    <title>CarePlanManager - @yield('title')</title>
 
     <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
@@ -35,7 +35,8 @@
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
 
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
+    <!-- http://curioussolutions.github.io/DateTimePicker/ -->
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css" />
     <script type="text/javascript" src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
 
     <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
@@ -43,7 +44,7 @@
 
     <!-- select2 -->
     <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
-    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 </head>
 <body>
@@ -55,150 +56,109 @@
 <nav class="navbar primary-navbar">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a href="{{ URL::route('patients.dashboard') }}" class="navbar-brand"><img src="/img/ui/clh_logo_lt.png"
-                                                                                       alt="Care Plan Manager"
-                                                                                       style="position:relative;top:-15px"
-                                                                                       width="50px"/></a>
-            <a href="{{ URL::route('patients.dashboard') }}"
-               class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span
-                        class="thin">Manager™</span></a>
+            <a href="{{ URL::route('patients.dashboard') }}" class="navbar-brand"><img src="/img/ui/clh_logo_lt.png" alt="Care Plan Manager" style="position:relative;top:-15px" width="50px" /></a>
+            <a href="{{ URL::route('patients.dashboard') }}" class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
         </div>
         <div class="navbar-right hidden-xs ">
             <ul class="nav navbar-nav">
                 {{--URL::route('patients.dashboard', array())--}}
                 <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
-                <li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Select Patient</a>
-                </li>
+                <li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Select Patient</a></li>
                 <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a></li>
-                <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add Patient</a>
-                </li>
+                <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add Patient</a></li>
                 <li><a href="{{ URL::route('patients.alerts') }}"><i class="icon--alert--white"></i> Alerts</a></li>
                 @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
-                    <li><a class="btn btn-primary btn-xs"
-                           href="{{ empty($patient->ID) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->ID)) }}"><i
-                                    class="icon--home--white"></i> Admin</a></li>
+                    <li><a class="btn btn-primary btn-xs" href="{{ empty($patient->ID) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->ID)) }}"><i class="icon--home--white"></i> Admin</a></li>
                 @endif
                 <li><a href="{{ url('/auth/logout') }}"><i class="icon--logout"></i> Logout</a></li>
             </ul>
-        </div>
-        <!-- /navbar-collapse -->
-    </div>
-    <!-- /container-fluid -->
+        </div><!-- /navbar-collapse -->
+    </div><!-- /container-fluid -->
 
-</nav>
-<!-- /navbar -->
+</nav><!-- /navbar -->
 
 <nav class="navbar secondary-navbar hidden-xs">
     <div class="patient__actions text-center">
         <ul class="navbar-nav nav">
             <li class="inline-block dropdown">
-                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"
-                   omitsubmit="yes">Notes/Offline Activity<span class="caret"></span></a>
+                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Notes/Offline Activity<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li>
-                        <a href="{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->ID)) }}">Notes/Offline
-                            Activities</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.note.index', array('patient' => $patient->ID)) }}">Notes/Offline Activities</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '' : URL::route('patient.note.create', array('patient' => $patient->ID)) }}">Add
-                            New Note</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.note.create', array('patient' => $patient->ID)) }}">Add New Note</a>
                     </li>
                 </ul>
             </li>
             <li class="inline-block">
-                <a href="{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->ID)) }}"
-                   role="button">Patient Overview</a>
+                <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.summary', array('patient' => $patient->ID)) }}" role="button">Patient Overview</a>
             </li>
             <li class="inline-block">
-                <a href="{{ empty($patient) ? '' : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}"
-                   role="button">Edit Care Plan</a></li>
+                <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}" role="button">Edit Care Plan</a></li>
             <li class="inline-block dropdown">
-                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"
-                   omitsubmit="yes">Input<span class="caret"></span></a>
+                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Input<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li>
-                        <a href="{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">Observations</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.observation.create', array('patient' => $patient->ID)) }}">Observations</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '' : URL::route('patient.activity.create', array('patient' => $patient->ID)) }}">Offline
-                            Activities</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.activity.create', array('patient' => $patient->ID)) }}">Offline Activities</a>
                     </li>
                 </ul>
             </li>
             <li class="inline-block dropdown">
-                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"
-                   omitsubmit="yes">Patient Reports <span class="caret"></span></a>
+                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" omitsubmit="yes">Patient Reports <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li>
-                        <a href="{{ empty($patient) ? '#' : '' }}">Patient Alerts</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : '' }}">Patient Alerts</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '#' : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">Progress
-                            Report</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">Progress Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '#' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient
-                            Activity Report</a>
+                        <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient Activity Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '#' : URL::route('patient.reports.u20', array('patient' => $patient->ID)) }}">Under
-                            20 Minute Report</a>
+                        <a href="{{URL::route('patient.reports.u20')}}">Under 20 Minute Report</a>
                     </li>
                     <li>
-                        <a href="{{ empty($patient) ? '#' : URL::route('patient.reports.billing', array('patient' => $patient->ID)) }}">Patient
-                            Billing Report</a>
+                        <a href="{{URL::route('patient.reports.billing')}}">Patient Billing Report</a>
                     </li>
                     <li>
-                        <a href="{{ URL::route('patients.carePlanPrintList', array()) }}">Patient Care Plan Print
-                            List</a>
+                        <a href="{{ URL::route('patients.careplan.printlist', array()) }}">Patient Care Plan Print List</a>
                     </li>
                 </ul>
             </li>
             <li class="inline-block">
-                <a href="{{ empty($patient) ? '#' : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}"
-                   role="button">View Care Plan</a>
+                <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.careplan.print', array('patient' => $patient->ID)) }}" role="button">View Care Plan</a>
             </li>
         </ul>
     </div>
-</nav>
-<!-- /navbar -->
+</nav><!-- /navbar -->
 
 
-<!--[if lt IE 8]>
-<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-    your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to
-    improve your experience.</p>
+	<!--[if lt IE 8]>
+<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 <![endif]-->
-@yield('content')
-
-<div class="row row-centered" style="padding-top: 5%;">
-    <div class="col-sm-12">
-        <a href="{{ route('import.ccd') }}" class="btn btn-green btn-next inline-block submitFormBtn" target="_blank">Import
-            CCDs *</a>
-        <br><br>
-
-        <p>* For security purposes, the Importer will open in a new tab.</p>
-    </div>
-</div>
-
-
-{{--
-PROVIDER UI TEMPLATE:
-<div class="row" style="margin-top:60px;">
-    <div class="main-form-container col-lg-8 col-lg-offset-2">
-        <div class="row">
-            <div class="main-form-title col-lg-12">
-                title
-            </div>
-            <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                content text
+    @yield('content')
+    {{--
+    PROVIDER UI TEMPLATE:
+    <div class="row" style="margin-top:60px;">
+        <div class="main-form-container col-lg-8 col-lg-offset-2">
+            <div class="row">
+                <div class="main-form-title col-lg-12">
+                    title
+                </div>
+                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+                    content text
+                </div>
             </div>
         </div>
     </div>
-</div>
---}}
+    --}}
 <!-- PAGE TIMER START -->
-{{-- @include('partials.providerUItimer') --}}
+@include('partials.providerUItimer')
 <!-- PAGE TIMER END -->
 </body>
 </html>

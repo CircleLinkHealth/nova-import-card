@@ -1,4 +1,8 @@
 @extends('partials.providerUI')
+
+@section('title', 'Patient Notes')
+@section('activity', 'Notes/Offline Activities Review')
+
 @section('content')
 
     <div class="row main-form-block" style="margin-top:60px;">
@@ -74,7 +78,7 @@
                                                 else if (obj.logged_from == "manual_input") {
                                                     return "Offline Activity";
                                                 }
-                                                return obj.type_namez;
+                                                return obj.type_name;
                                             },
                                             width: 120,
                                             sort: 'string'
@@ -83,7 +87,7 @@
                                             id: "comment",
                                             header: ["Preview"],
                                             fillspace: true,
-                                            width: 200,
+                                            width: 400,
                                             sort: 'string'
                                         },
                                         {

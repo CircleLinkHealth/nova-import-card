@@ -1,5 +1,8 @@
 @extends('partials.providerUI')
 
+@section('title', 'Progress Report Review/Print')
+@section('activity', 'Progress Report Review/Print')
+
 <?php
 $today = \Carbon\Carbon::now()->toFormattedDateString();
 $provider = App\User::find($patient->getBillingProviderIDAttribute());
@@ -30,7 +33,7 @@ $provider = App\User::find($patient->getBillingProviderIDAttribute());
                     <div class="row">
                         <div class="col-xs-12 col-md-4 print-row text-bold">
                             @if($provider)
-                                {{$provider->fullName}}
+                                {{$provider->fullName}}{{($provider->getSpecialtyAttribute() == '')? '' : ', '. $provider->getSpecialtyAttribute() }}
                             @else
                                 <em>no lead contact</em>
                             @endif

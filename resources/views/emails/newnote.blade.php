@@ -1,3 +1,3 @@
-<p>Please see new note for patient {{ $patient_name }}: <a href="{{ $url }}">Click here</a>
+<p><a href="{{ $url }}">Click here</a> to see new note for patient.
 
-<p>The CircleLinkHealth Team
+<p>Thanks!- CircleLink Team

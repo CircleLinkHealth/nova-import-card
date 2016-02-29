@@ -11,6 +11,7 @@ use App\Location;
 use App\User;
 use App\UserMeta;
 use App\Role;
+use App\CarePlan;
 use App\Services\ActivityService;
 use App\Services\CareplanService;
 use App\Services\ObservationService;
@@ -390,7 +391,12 @@ class UserController extends Controller {
 
 		// locations @todo get location id for WpBlog
 		$wpBlog = WpBlog::find($wpUser->program_id);
-		$locations_arr = (new Location)->getNonRootLocations($wpBlog->locationId());
+		$locations_arr = array();
+		if($wpBlog) {
+			$locations_arr = (new Location)->getNonRootLocations($wpBlog->locationId());
+		}
+
+		$carePlans = CarePlan::where('program_id', '=', $wpUser->program_id)->lists('display_name', 'id');
 
 		// States (for dropdown)
 		$states_arr = array('AL'=>"Alabama",'AK'=>"Alaska",'AZ'=>"Arizona",'AR'=>"Arkansas",'CA'=>"California",'CO'=>"Colorado",'CT'=>"Connecticut",'DE'=>"Delaware",'DC'=>"District Of Columbia",'FL'=>"Florida",'GA'=>"Georgia",'HI'=>"Hawaii",'ID'=>"Idaho",'IL'=>"Illinois", 'IN'=>"Indiana", 'IA'=>"Iowa",  'KS'=>"Kansas",'KY'=>"Kentucky",'LA'=>"Louisiana",'ME'=>"Maine",'MD'=>"Maryland", 'MA'=>"Massachusetts",'MI'=>"Michigan",'MN'=>"Minnesota",'MS'=>"Mississippi",'MO'=>"Missouri",'MT'=>"Montana",'NE'=>"Nebraska",'NV'=>"Nevada",'NH'=>"New Hampshire",'NJ'=>"New Jersey",'NM'=>"New Mexico",'NY'=>"New York",'NC'=>"North Carolina",'ND'=>"North Dakota",'OH'=>"Ohio",'OK'=>"Oklahoma", 'OR'=>"Oregon",'PA'=>"Pennsylvania",'RI'=>"Rhode Island",'SC'=>"South Carolina",'SD'=>"South Dakota",'TN'=>"Tennessee",'TX'=>"Texas",'UT'=>"Utah",'VT'=>"Vermont",'VA'=>"Virginia",'WA'=>"Washington",'WV'=>"West Virginia",'WI'=>"Wisconsin",'WY'=>"Wyoming");
@@ -408,7 +414,7 @@ class UserController extends Controller {
 		$providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
 
 		// display view
-		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $wpUser->program_id, 'providers_arr' => $providers_arr, 'messages' => $messages, 'role' => $role, 'roles' => $roles, 'revisions' => $revisions]);
+		return view('wpUsers.edit', ['wpUser' => $wpUser, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $wpUser->program_id, 'providers_arr' => $providers_arr, 'messages' => $messages, 'role' => $role, 'roles' => $roles, 'revisions' => $revisions, 'carePlans' => $carePlans]);
 	}
 
 	/**

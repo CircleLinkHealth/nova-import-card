@@ -7,16 +7,24 @@
                         $provider = App\User::find($patient->getBillingProviderIDAttribute());
                         ?>
                         @if($provider)
-                            Provider: </strong> {{$provider->getFullNameAttribute()}}<strong>
+                            Provider: </strong> {{$provider->getFullNameAttribute()}} <strong> 
                         @else
-                            Provider: <em>No Provider  </em>
+                            Provider: <em>No Provider Selected </em>
                         @endif
                         Location:</strong>
-                                <?php (is_null($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>
+                                <?= (is_null($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>
                 </span>
-               <a href="{{URL::route('patient.summary', array('patient' => $patient->ID))}}"><span class="pull-right">{{
+                <?php
+                    // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
+                $seconds = $patient->monthlyTime;
+                $H = floor($seconds / 3600);
+                $i = ($seconds / 60) % 60;
+                $s = $seconds % 60;
+                $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+                ?>
+               <a href="{{URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID))}}"><span class="pull-right">{{
                 date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
-                 }} Time: {{gmdate("i:s", $patient->monthlyTime)}}</span></a></p>
+                 }} Time: {{ $monthlyTime }}</span></a></p>
             <a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}">
                 <span class="person-name text-big text-dark text-serif" title="{{$patient->ID}}">{{$patient->fullName}}</span></a>
             <ul class="person-info-list inline-block text-medium">
@@ -36,5 +44,16 @@
             {{--</ul><div style="clear:both"></div><ul class="person-conditions-list inline-block text-medium"></ul>--}}
         </div>
     </div>
+    @endif
+    @if(isset($treating))
+        <div style="clear:both"></div>
+        <ul class="person-conditions-list inline-block text-medium">
+            @foreach($treating as $key => $value)
+                <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
+                                                checked="checked" disabled="disabled">
+                    <label for="condition27"><span> </span>{{$key}}</label>
+                </li>
+            @endforeach
+        </ul>
     @endif
 </div>

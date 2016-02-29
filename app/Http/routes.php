@@ -113,12 +113,15 @@ Route::group(['middleware' => 'auth'], function ()
 	Route::group(['prefix' => 'manage-patients/', 'middleware' => ['patientProgramSecurity', 'impersonation.check']], function () {
 		Route::get('dashboard', ['uses' => 'Patient\PatientController@showDashboard', 'as' => 'patients.dashboard']);
 		Route::get('listing', ['uses' => 'Patient\PatientController@showPatientListing', 'as' => 'patients.listing']);
-		Route::get('carePlanPrintList', ['uses' => 'Patient\PatientController@showPatientCarePlanPrintList', 'as' => 'patients.carePlanPrintList']);
+		Route::get('careplan-print-multi', ['uses' => 'Patient\PatientCareplanController@printMultiCareplan', 'as' => 'patients.careplan.multi']);
+		Route::get('careplan-print-list', ['uses' => 'Patient\PatientCareplanController@index', 'as' => 'patients.careplan.printlist']);
 		Route::post('select', ['uses' => 'Patient\PatientController@processPatientSelect', 'as' => 'patients.select.process']);
 		Route::get('search', ['uses' => 'Patient\PatientController@patientAjaxSearch', 'as' => 'patients.search']);
 		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patients.alerts']);
 		Route::get('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@showPatientDemographics', 'as' => 'patients.demographics.show']);
 		Route::post('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patients.demographics.store']);
+		Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
+		Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
 	});
 
 	// **** PATIENTS (/manage-patients/{patientId}/)
@@ -127,6 +130,7 @@ Route::group(['middleware' => 'auth'], function ()
 		// base
 		//Route::get('/', ['uses' => 'Patient\PatientController@showSelectProgram', 'as' => 'patient.selectprogram']);
 		Route::get('summary', ['uses' => 'Patient\PatientController@showPatientSummary', 'as' => 'patient.summary']);
+		Route::get('summary-biochart', ['uses' => 'ReportsController@biometricsCharts', 'as' => 'patient.charts']);
 		Route::get('alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patient.alerts']);
 		Route::get('input/observation', ['uses' => 'Patient\PatientController@showPatientObservationCreate', 'as' => 'patient.observation.create']);
 		Route::get('view-careplan', ['uses' => 'ReportsController@viewPrintCareplan', 'as' => 'patient.careplan.print']);
@@ -153,6 +157,7 @@ Route::group(['middleware' => 'auth'], function ()
 			Route::get('view/{noteId}', ['uses' => 'NotesController@show', 'as' => 'patient.note.view']);
 			Route::post('send/{noteId}', ['uses' => 'NotesController@send', 'as' => 'patient.note.send']);
 		});
+		Route::get('progress', ['uses' => 'ReportsController@index', 'as' => 'patient.reports.progress']);
 
 		// activities
 		Route::group(['prefix' => 'activities'], function () {
@@ -161,10 +166,6 @@ Route::group(['middleware' => 'auth'], function ()
 			Route::get('view/{actId}', ['uses' => 'ActivityController@show', 'as' => 'patient.activity.view']);
 			Route::get('', ['uses' => 'ActivityController@providerUIIndex', 'as' => 'patient.activity.providerUIIndex']);
 		});
-
-		Route::get('progress', ['uses' => 'ReportsController@index', 'as' => 'patient.reports.progress']);
-		Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
-		Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
 	});
 
 	/****************************/
@@ -370,7 +371,7 @@ Route::group(['middleware' => 'cors'], function(){
 Route::post('api/v2.1/login', 'AuthorizationController@login');
 
 // JWTauth api routes
-Route::group(['before' => 'jwt-auth', 'prefix' => 'api/v2.1', 'middleware' => 'authApiCall'], function()
+Route::group(['before' => 'jwt-auth', 'prefix' => 'wp/api/v2.1', 'middleware' => 'authApiCall'], function()
 {
 	// return token data, initial test
 	Route::post('tokentest', 'AuthorizationController@tokentest');

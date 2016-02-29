@@ -90,6 +90,7 @@ class S20151215CarePlanMigration3 extends Seeder {
 
     // this will create the system default careplan
     public function run() {
+        echo "start";
         $programs = WpBlog::where('blog_id', '>', '6')->get();
         if(empty($programs)) {
             dd('no programs');
@@ -105,12 +106,17 @@ class S20151215CarePlanMigration3 extends Seeder {
                 continue 1;
             }
 
-            // create new careplan
-            $carePlan = CarePlan::where('program_id', '=', $program->id)->where('type', '=', 'Program Default')->first();
-            $carePlan->name = 'program-' . $program->name . '-default';
-            $carePlan->type = 'Program Default';
-            $carePlan->program_id = $program->id;
-            $carePlan->save();
+            // set careplan
+            $carePlan = CarePlan::where('program_id', '=', $program->blog_id)->where('type', '=', 'Program Default')->first();
+            if(!$carePlan) {
+                // create new careplan if doesnt exist
+                $carePlan = new CarePlan;
+                $carePlan->name = 'program-' . $program->name . '-default';
+                $carePlan->display_name = 'Program ' . $program->display_name . ' Default';
+                $carePlan->type = 'Program Default';
+                $carePlan->program_id = $program->blog_id;
+                $carePlan->save();
+            }
             $s = 0;
 
             $pcpSections = CPRulesPCP::where('prov_id', '=', $program->blog_id)->get();

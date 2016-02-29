@@ -71,6 +71,8 @@ class ActivityController extends Controller {
 				$provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
 			}
 
+			asort($provider_info);
+
 			$view_data = [
 				'program_id' => $wpUser->blogId(),
 				'patient' => $wpUser,
@@ -100,9 +102,7 @@ class ActivityController extends Controller {
 			$input = $request->input();
 		} else {
 			return response("Unauthorized", 401);
-		}
-
-		debug($request->all());
+		}//debug($request->all());
 
         // convert minutes to seconds.
 		if($input['duration']) {
@@ -150,7 +150,7 @@ class ActivityController extends Controller {
 		$messages = \Session::get('messages');
 		$activity['type'] = $act->type;
 		$activity['performed_at'] = $act->performed_at;
-		$activity['provider_name'] = (User::find($act->provider_id)->getFullNameAttribute());
+		$activity['provider_name'] = User::find($act->provider_id)? (User::find($act->provider_id)->getFullNameAttribute()) : '';
 		$activity['duration'] = intval($act->duration)/60;
 
 		$careteam_info = array();
@@ -168,20 +168,7 @@ class ActivityController extends Controller {
 
 		$view_data = ['activity' => $activity, 'userTimeZone' => $patient->timeZone,'careteam_info' => $careteam_info, 'patient' => $patient,'program_id' => $patient->blogId(), 'messages' => $messages];
 
-		debug($activity);
 		return view('wpUsers.patient.activity.view', $view_data);
-	}
-
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
 	}
 
     /**
@@ -261,7 +248,7 @@ class ActivityController extends Controller {
 		}
 
 		$acts = DB::table('lv_activities')
-			->select(DB::raw('id,provider_id,logged_from,DATE(performed_at), type, duration'))
+			->select(DB::raw('id,provider_id,logged_from,DATE(performed_at), type, SUM(duration) as duration'))
 			->whereBetween('performed_at', [
 				$start, $end
 			])
@@ -275,14 +262,16 @@ class ActivityController extends Controller {
 			->orderBy('performed_at', 'desc')
 			->get();
 
-		$acts = json_decode(json_encode($acts), true);
+		$acts = json_decode(json_encode($acts), true);			//debug($acts);
+
 
 		foreach ($acts as $key => $value) {
 			$provider = User::find($acts[$key]['provider_id']);
-			$acts[$key]['provider_name'] = $provider->getFullNameAttribute();
+			if($provider) {
+				$acts[$key]['provider_name'] = $provider->getFullNameAttribute();
+			}
 			unset($acts[$key]['provider_id']);
 		}
-
 		if ($acts) {$data = true;} else {$data = false;}
 
 		$reportData = "data:" . json_encode($acts) . "";
@@ -293,7 +282,6 @@ class ActivityController extends Controller {
 		}
 
 		$months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-		debug($month_selected_text);
 		return view('wpUsers.patient.activity.index',
 			['activity_json' => $reportData,
 				'years' => array_reverse($years),

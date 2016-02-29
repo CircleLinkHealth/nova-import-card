@@ -1,19 +1,28 @@
 @extends('partials.providerUI')
 
 <?php
-function biometricGoal($starting, $target){
+function biometricGoal($starting, $target, $bp = false)
+{
     $starting = explode('/', $starting);
     $starting = $starting[0];
     $target = explode('/', $target);
     $target = $target[0];
-    return ($starting > $target) ? 'Lower' :  'Raise';
+        $verb = 'Raise';
+    if($bp == 'Blood Pressure'){$verb = 'Maintain';} ;
+    if($bp == 'Weight'){$verb = 'Maintain';} ;
+    return ($starting > $target) ? 'Lower' : $verb;
 }
 $billing = App\User::find($patient->getBillingProviderIDAttribute());
 $lead = App\User::find($patient->getLeadContactIDAttribute());
 
 $today = \Carbon\Carbon::now()->toFormattedDateString();
-$provider = App\User::find($patient->getLeadContactIDAttribute());
+// $provider = App\User::find($patient->getLeadContactIDAttribute());
+
 ?>
+
+@section('title', 'Care Plan View/Print')
+@section('activity', 'Care Plan View/Print')
+
 @section('content')
     <div class="container">
         <section class="patient-summary">
@@ -39,23 +48,23 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                 </div>
                 <div class="row gutter">
                     <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
-                    <div class="col-xs-12 col-md-4 print-row">{{$patient->phone}}</div>
-                    <div class="col-xs-12 col-md-3 print-row">{{$today}}</div>
+                    <div class="col-xs-12 col-md-3 print-row">{{$patient->phone}}</div>
+                    <div class="col-xs-12 col-md-5 print-row text-right">{{$today}}</div>
                 </div>
                 <div class="row gutter">
                     <div class="col-xs-12 col-md-4 print-row text-bold">
-                        @if($provider)
-                            {{$provider->fullName}}
+                        @if($billing)
+                            {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' :  $billing->getSpecialtyAttribute() }}
                         @else
-                            <em>no lead contact</em>
+                            <em>No Billing Provider Selected</em>
                         @endif
                     </div>
-                    <div class="col-xs-12 col-md-4 print-row">
-                        @if($provider)
-                            {{$provider->phone}}
+                    <div class="col-xs-12 col-md-3 print-row">
+                        @if($billing)
+                            {{$billing->phone}}
                         @endif
                     </div>
-                    <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->getPreferredLocationName()}}</div>
+                    <div class="col-xs-12 col-md-5 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
                 </div>
             </div>
             <!-- CARE AREAS -->
@@ -69,7 +78,7 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                     <div class="col-xs-12">
                         <ul class="subareas__list">
                             @foreach($treating as $key => $value)
-                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row text-bold'>{{$key}}</li>
+                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -87,9 +96,9 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                 <div class="row">
                     <ul class="subareas__list">
                         <li class="subareas__item subareas__item--wide col-sm-12">
-                            @foreach($biometrics as $key => $value)
-                                <div class="col-xs-5 print-row text-bold">{{ biometricGoal($value['starting'], $value['target'])}} {{$key}}</div>
-                                <div class="col-xs-4 print-row text-bold">to {{$value['target']}}</div>
+                            @foreach(array_reverse($biometrics) as $key => $value)
+                                <div class="col-xs-5 print-row text-bold">{{ biometricGoal($value['starting'], $value['target'], $key)}} {{$key}}</div>
+                                <div class="col-xs-4 print-row text-bold">{{(biometricGoal($value['starting'], $value['target'], $key) == 'Maintain')? 'at' :  'to' }} {{$value['target']}}</div>
                                 <div class="col-xs-3 print-row">from {{$value['starting']}}</div>
                             @endforeach
                         </li>
@@ -113,7 +122,7 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                     </div>
                     <div class="col-xs-10">
                         <ul><strong>Taking these Medications</strong>
-                            <li>{{$taking_medications}}</li>
+                            <li><?= nl2br($taking_medications) ?></li>
                         </ul>
                     </div>
                 </div>
@@ -130,8 +139,9 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                 <div class="row">
                     <div class="col-xs-12">
                         <ul class="subareas__list">
-                            <li class='subareas__item inline-block  print-row'>{{implode(", ", $symptoms)}}
-                            </li>
+                            @foreach($symptoms as $s)
+                                <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row'>{{$s}}</li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>
@@ -150,7 +160,7 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                     <div class="col-xs-12">
                         <ul class="subareas__list">
                             @foreach($lifestyle as $style)
-                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row text-bold'>{{$style}}</li>
+                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$style}}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -184,7 +194,7 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                 </div>
             </div>
             <?php foreach($treating as $key => $value){ ?>
-            <!-- Hypertension -->
+                    <!-- Hypertension -->
             <div class="patient-info__subareas">
                 <div class="row">
                     <div class="col-xs-12">
@@ -192,13 +202,13 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                             <?= $key ?>:</h3>
                     </div>
                     <div class="col-xs-12">
-                        <p><?= $value ?></p>
+                        <p><?= nl2br($value) ?></p>
                     </div>
                 </div>
             </div>
             <?php } ?>
 
-            <!-- /INSTRUCTIONS -->
+                    <!-- /INSTRUCTIONS -->
 
             <!-- OTHER INFORMATION -->
             <div class="row pb-before">
@@ -219,7 +229,11 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                         <h2 class="patient-summary__subtitles patient-summary--careplan-background">Allergies:</h2>
                     </div>
                     <div class="col-xs-12">
-                        <p>{{$allergies}}</p>
+                        @if($allergies)
+                        <p><?= nl2br($allergies) ?></p>
+                        @else
+                        <p>No instructions at this time</p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -233,7 +247,11 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                             Services:</h2>
                     </div>
                     <div class="col-xs-12">
-                        <p>{{$social}}</p>
+                        @if($social)
+                        <p><?= nl2br($social) ?></p>
+                        @else
+                        <p>No instructions at this time</p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -247,8 +265,16 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                     </div>
                     <div class="col-xs-12">
                         <p>
-                            <strong>Billing Provider: </strong> {{$billing->getFullNameAttribute()}} <br>
-                            <strong>Lead Contact: </strong>     {{$lead->getFullNameAttribute()}}
+                            @if($billing)
+                                <strong>Billing
+                                    Provider: </strong> {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' : ' ' .  $billing->getSpecialtyAttribute() }}
+                                <br>
+                            @endif
+                            @if($lead)
+                                <strong>Lead
+                                    Contact: </strong>     {{$lead->getFullNameAttribute()}}{{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
+                                <br>
+                            @endif
                         </p>
                     </div>
                 </div>
@@ -263,7 +289,11 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                         <h2 class="patient-summary__subtitles patient-summary--careplan-background">Appointments:</h2>
                     </div>
                     <div class="col-xs-12">
-                        <p>{{$appointments}}</p>
+                        @if($appointments)
+                        <p><?= nl2br($appointments) ?></p>
+                        @else
+                        <p>No instructions at this time</p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -276,7 +306,11 @@ $provider = App\User::find($patient->getLeadContactIDAttribute());
                         <h2 class="patient-summary__subtitles patient-summary--careplan-background">Other Notes:</h2>
                     </div>
                     <div class="col-xs-12">
-                        <p>{{$other}}</p>
+                        @if($other)
+                        <p><?= nl2br($other) ?></p>
+                        @else
+                        <p>No instructions at this time</p>
+                        @endif
                     </div>
                 </div>
             </div>
