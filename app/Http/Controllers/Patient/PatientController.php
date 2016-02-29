@@ -461,7 +461,10 @@ class PatientController extends Controller {
 
 	public function patientAjaxSearch(Request $request){
 
-		$data = User::whereIn('ID', Auth::user()->viewablePatientIds())->lists('ID');
+		$data = User::whereIn('ID', Auth::user()->viewablePatientIds())
+			->with('meta')->whereHas('roles', function($q) {
+				$q->where('name', '=', 'participant');
+			})->get()->lists('ID');;
 		$patients = '[';
 		$i = 0;
 		foreach($data as $d){
