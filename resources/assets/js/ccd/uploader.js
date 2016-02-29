@@ -10,10 +10,16 @@ var uploader = new Vue({
     el: '#ccd-uploader',
     data: {
         ccdRecords: new FormData,
+        ccdVendor: null,
         progress: 0,
         buffer: 100,
         message: 'Drop CCD Records in the box below, or click on it to browse your computer for CCDs. It is recommended that you import up to 5 CCDs in one go.',
-        enabled: true
+        enabled: false, // submit button enabled
+        formCssHide: true,
+        groupHide: false,
+        tableHide: true,
+        qaSummaries: [],
+        okToImport: new Array
     },
     ready: function () {
         this.watchForFileInput();
@@ -21,135 +27,71 @@ var uploader = new Vue({
     methods: {
         watchForFileInput: function () {
             $('input[type="file"]').change(this.notifyFileInput.bind(this));
+            $('input[type="radio"]').change(this.notifyFileInput.bind(this));
         },
         notifyFileInput: function (e) {
+            this.formCssHide = false;
             this.message = 'Preparing CCDs for upload';
             this.progress = 0;
-            var files = event.target.files;
-            var formData =  this.ccdRecords;
+            var files = e.target.files;
 
             for (var i = 0; i < files.length; i++) {
-                formData.append('file[]', files[i]);
+                this.ccdRecords.append('file[]', files[i]);
             }
+
             this.progress += 10;
             this.message = 'CCDs are ready for upload. Please click Upload CCD Records';
-        },
-        parseCCDwithBB: function (data) {
-            var bb = BlueButton(data);
-
-            var ccd = {
-                document : bb.data.document,
-                demographics : bb.data.demographics,
-                allergies : bb.data.allergies,
-                carePlan : bb.data.care_plan,
-                chiefComplaint : bb.data.chief_complaint,
-                encouters : bb.data.encounters,
-                functionalStatuses : bb.data.functional_statuses,
-                immunizations : bb.data.immunizations,
-                immunizationDeclines : bb.data.immunization_declines,
-                instructions : bb.data.instructions,
-                results : bb.data.results,
-                medications : bb.data.medications,
-                problems : bb.data.problems,
-                procedures : bb.data.procedures,
-                smokingStatus : bb.data.smoking_status,
-                vitals : bb.data.vitals,
-            };
-            return ccd;
+            this.enabled = true;
         },
         onSubmitForm: function (e) {
             e.preventDefault();
             this.enabled = false;
-            this.message = 'Uploading CCD records and checking for duplicates.';
+            this.message = 'Uploading CCD records.';
             this.progress += 20;
 
-            this.$http.post('/upload-raw-ccds', this.ccdRecords, function (data, status, request) {
+            this.ccdRecords.append('vendor', this.ccdVendor);
+
+            this.$http.post('/ccds/qaimport', this.ccdRecords, function (data, status, request) {
                 this.ccdRecords = new FormData;
 
-                if (data.uploaded.length > 0) {
-                    uploader.parseAndUploadCCDs(data.uploaded);
-                }
+                this.qaSummaries = data;
 
-                if (data.duplicates.length > 0) {
-                    uploader.parseAndUploadDuplicateCCDs(data.duplicates);
-                }
+                this.groupHide = true;
+                this.tableHide = false;
+
+                setTimeout(function () {
+                    componentHandler.upgradeDom('MaterialCheckbox');
+                }, 0);
+
+                this.message = 'All operations completed successfully.';
+                this.progress = 100;
 
             }).error(function (data, status, request) {
                 this.message = 'ERROR! Uploading raw XML CCDs has failed. Try refreshing your browser.';
+                console.log('Data: \n' + data);
+                console.log('Status: \n' + status);
+                console.log('Request: \n' + request);
             });
         },
-        parseAndUploadCCDs: function (uploadedCCDs) {
-            this.message = 'Parsing CCDs and generating Care Plans.';
-            this.progress += 20;
-            var parsedJsonCCDs = [];
+        importCcds: function () {
+            $('#importCcdsBtn').attr('disabled', true);
+            this.$http.post('/ccds/import', {qaImportIds: this.okToImport}, function (data, status, request) {
+                $('#importCcdsBtn').attr('disabled', false);
 
-            uploadedCCDs.forEach(function(ccd) {
-                var jsonCcd = uploader.parseCCDwithBB(ccd.xml);
-                var parsedCCD = {
-                    userId:ccd.userId,
-                    ccd:jsonCcd
-                };
-                parsedJsonCCDs.push(parsedCCD);
-            });
-
-            var json = JSON.stringify(parsedJsonCCDs);
-
-            this.$http.post('/upload-parsed-ccds', json, function (data, status, request) {
-                if (data) {
-                    this.message = 'Everything completed successfully.';
-                    this.progress = 100;
-                    this.enabled = true;
-
+                for (var i = 0; i < data.imported.length; i++) {
+                    $('#checkbox-' + data.imported[i].qaId).html(
+                        '<a target="_blank" href="https://'
+                        + document.referrer.match(/:\/\/(.[^/]+)/)[1]
+                        + '/manage-patients/patient-summary/?user='
+                        + data.imported[i].userId
+                        + '"><b style="color: #06B106">Go to CarePlan</b></a>'
+                    );
                 }
             }).error(function (data, status, request) {
-                this.message = 'ERROR! Uploading Parsed CCDs has failed. Try refreshing your browser.';
+                console.log('Data: \n' + data);
+                console.log('Status: \n' + status);
+                console.log('Request: \n' + request);
             });
-        },
-        parseAndUploadDuplicateCCDs: function (duplicates) {
-            this.message = 'Parsing duplicate CCDs and generating Care Plans.';
-            this.progress += 15;
-            var importAgain = [];
-
-            var numberOfDuplicates = duplicates.length;
-
-            if (numberOfDuplicates > 0) {
-                for (var i = 0; i < numberOfDuplicates; i++) {
-                    var duplicate = duplicates[i];
-                    if (confirm(duplicate.fileName + " has already been imported. Do you wish to re-import it?")) {
-                        var uniqueSuffix = '_*duplicate*_' + Date.now();
-                        importAgain.push({
-                            'blogId': duplicate.blogId,
-                            'xml': duplicate.ccd,
-                            'fullName': duplicate.fullName + uniqueSuffix,
-                            'dob': duplicate.dob + uniqueSuffix,
-                            'fileName': duplicate.fileName
-                        });
-                    }
-                }
-            }
-
-            if (importAgain.length == numberOfDuplicates) {
-                this.message = 'Uploading duplicate CCDs.';
-                this.progress += 10;
-
-                var json = JSON.stringify(importAgain);
-                this.$http.post('/upload-duplicate-raw-ccds', json, function (data, status, request) {
-                    uploader.parseAndUploadCCDs(data.uploaded);
-                }).error(function (data, status, request) {
-                    this.message = 'ERROR! Uploading duplicate raw XML CCDs has failed. Try refreshing your browser.';
-                });
-            }
         }
     }
 });
-
-function notification(text, type, element) {
-    var notificationType = (type == 'success') ? 'alert-success' : 'alert-info';
-
-    $(element).html(text)
-        .toggleClass('hide')
-        .toggleClass(notificationType)
-        .toggleClass('fadeInRightBig')
-        .delay(10000)
-        .fadeOut(1000);
-}

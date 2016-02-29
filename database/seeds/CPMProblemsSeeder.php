@@ -19,8 +19,8 @@ class CPMProblemsSeeder extends Seeder
 
         CPMProblem::updateOrCreate([
             'name' => 'Diabetes',
-            'icd10from' => 'E08.0',
-            'icd10to' => 'E13.0',
+            'icd10from' => 'E08',
+            'icd10to' => 'E13',
             'icd9from' => '250.00',
             'icd9to' => '259.93',
             'contains' => 'diabetes, diabetes mellitus'
@@ -28,7 +28,7 @@ class CPMProblemsSeeder extends Seeder
 
         CPMProblem::updateOrCreate([
             'name' => 'Hypertension',
-            'icd10from' => 'I10.0',
+            'icd10from' => 'I10',
             'icd10to' => 'I13.11',
             'icd9from' => '401.00',
             'icd9to' => '405.00',
