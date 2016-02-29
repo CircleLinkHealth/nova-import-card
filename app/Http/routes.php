@@ -95,13 +95,12 @@ Route::group( ['middleware' => 'auth'], function () {
      * CCD Importer Routes
      */
 
-//	Route::group(['middleware' => ''], function (){
-    Route::get( 'import-ccds', ['uses' => 'CCDUploadController@create', 'as' => 'import.ccd'] );
+	Route::group(['prefix' => 'ccd-importer'], function (){
+    Route::get( 'create', ['uses' => 'CCDUploadController@create', 'as' => 'import.ccd'] );
 
-    Route::post( 'ccds/qaimport', 'CCDUploadController@uploadRawFiles' );
-    Route::post( 'ccds/import', 'CCDImportController@import' );
-
-//	});
+    Route::post( 'qaimport', 'CCDUploadController@uploadRawFiles' );
+    Route::post( 'import', 'CCDImportController@import' );
+	});
 
     //CCD Parser Demo Route
     Route::get( 'ccd-parser-demo', 'CCDParserDemoController@index' );

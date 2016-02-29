@@ -51,7 +51,7 @@ var uploader = new Vue({
 
             this.ccdRecords.append('vendor', this.ccdVendor);
 
-            this.$http.post('/ccds/qaimport', this.ccdRecords, function (data, status, request) {
+            this.$http.post('/ccd-importer/qaimport', this.ccdRecords, function (data, status, request) {
                 this.ccdRecords = new FormData;
 
                 this.qaSummaries = data;
@@ -75,7 +75,7 @@ var uploader = new Vue({
         },
         importCcds: function () {
             $('#importCcdsBtn').attr('disabled', true);
-            this.$http.post('/ccds/import', {qaImportIds: this.okToImport}, function (data, status, request) {
+            this.$http.post('/ccd-importer/import', {qaImportIds: this.okToImport}, function (data, status, request) {
                 $('#importCcdsBtn').attr('disabled', false);
 
                 for (var i = 0; i < data.imported.length; i++) {
