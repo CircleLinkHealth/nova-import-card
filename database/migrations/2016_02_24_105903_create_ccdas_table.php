@@ -12,7 +12,7 @@ class CreateCcdasTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::connection('mysql_no_prefix')->create('lv_ccdas', function(Blueprint $table)
+		Schema::create('ccdas', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->unsignedInteger('user_id');
@@ -30,7 +30,7 @@ class CreateCcdasTable extends Migration {
 
 			$table->foreign('vendor_id')
 				->references('id')
-				->on('lv_ccd_vendors')
+				->on('ccd_vendors')
 				->onUpdate('cascade')
 				->onDelete('cascade');
 		});
