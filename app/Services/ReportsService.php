@@ -908,10 +908,11 @@ static function biometricsUnitMapping($biometric)
                         }
                     }
                 }
+                $careplanReport[$user->ID]['medications'] = (new ReportsService())->medicationsList($carePlan);//debug($medications);
+                $careplanReport[$user->ID]['treating'] = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
+                $biometrics = (new ReportsService())->getBiometricsToMonitor($user);
             }
-            $careplanReport[$user->ID]['medications'] = (new ReportsService())->medicationsList($carePlan);//debug($medications);
-            $careplanReport[$user->ID]['treating'] = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
-            $biometrics = (new ReportsService())->getBiometricsToMonitor($user);
+
 
             //Remove cigarettes
             if (($key = array_search('Smoking (# per day)', $biometrics)) !== false) {
