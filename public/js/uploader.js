@@ -11840,7 +11840,7 @@ var uploader = new Vue({
             this.formCssHide = false;
             this.message = 'Preparing CCDs for upload';
             this.progress = 0;
-            var files = event.target.files;
+            var files = e.target.files;
 
             for (var i = 0; i < files.length; i++) {
                 this.ccdRecords.append('file[]', files[i]);
