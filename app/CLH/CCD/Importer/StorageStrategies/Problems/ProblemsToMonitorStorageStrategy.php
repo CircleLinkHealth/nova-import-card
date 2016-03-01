@@ -29,7 +29,7 @@ class ProblemsToMonitorStorageStrategy extends BaseStorageStrategy implements St
 
             $rulesItem = CPRulesItem::wherePcpId( $pcpId )->whereItemsText( $cpmProblemName )->first();
             if ( empty($rulesItem) ) {
-                Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.' );
+                Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ', ' . $cpmProblemName . 'has failed.' );
                 continue;
             }
             $parentItemId = $rulesItem->items_id;

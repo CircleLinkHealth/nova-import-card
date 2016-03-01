@@ -2,7 +2,7 @@
 
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
-use App\CLH\CCD\QAImportSummary;
+use App\CLH\CCD\ValidatesQAImportOutput;
 use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class CCDUploadController extends Controller
 {
+    use ValidatesQAImportOutput;
 
     private $repo;
 
@@ -29,14 +30,7 @@ class CCDUploadController extends Controller
      */
     public function uploadRawFiles(Request $request)
     {
-        //CCDs that already exist in XML_CCDs table
-        $duplicates = [];
-
-        //CCDs just added to XML_CCDs table
-        $uploaded = [];
-
         if ( $request->hasFile( 'file' ) ) {
-
             foreach ( $request->file( 'file' ) as $file ) {
                 if ( empty($file) ) {
                     Log::error( __METHOD__ . ' ' . __LINE__ . 'This CCDA did not upload. Here is what I have for CCDA ==>' . $file );
@@ -47,48 +41,22 @@ class CCDUploadController extends Controller
 
                 $json = $this->repo->toJson( $xml );
 
-                $parsedCcd = json_decode( $json );
-
-                if ( $request->session()->has( 'blogId' ) ) {
-                    $blogId = $request->session()->get( 'blogId' );
-                }
-                else {
-                    throw new \Exception( 'Blog id not found,', 400 );
-                }
+                if ( !$request->session()->has( 'blogId' ) ) throw new \Exception( 'Blog id not found,', 400 );
+                $blogId = $request->session()->get( 'blogId' );
 
                 $vendorId = empty($request->input( 'vendor' )) ?: $request->input( 'vendor' );
 
                 $ccda = Ccda::create( [
                     'user_id' => 1,
                     'vendor_id' => $vendorId,
-                    'xml' => $xml
+                    'xml' => $xml,
+                    'json' => $json
                 ] );
-                $ccda->json = $json;
-                $ccda->save();
 
                 $importer = new QAImportManager( $blogId, $ccda );
                 $output = $importer->generateCarePlanFromCCD();
 
-                $jsonCcd = json_decode( $output->output, true );
-
-                $name = function () use ($jsonCcd) {
-                    return empty($name = $jsonCcd[ 'userMeta' ][ 'first_name' ] . ' ' . $jsonCcd[ 'userMeta' ][ 'last_name' ])
-                        ?: $name;
-                };
-
-                $counter = function ($index) use ($jsonCcd) {
-                    return count( explode( ';', $jsonCcd[ $index ] ) ) - 1;
-                };
-
-                $qaSummary = new QAImportSummary();
-                $qaSummary->qa_output_id = $output->id;
-                $qaSummary->name = $name();
-                $qaSummary->medications = $counter( 3 );
-                $qaSummary->problems = $counter( 1 );
-                $qaSummary->allergies = $counter( 0 );
-                $qaSummary->save();
-
-                $qaSummaries[] = $qaSummary;
+                $qaSummaries[] = $this->validateQAImportOutput( $output );
             }
         }
 
