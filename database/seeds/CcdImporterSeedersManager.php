@@ -47,6 +47,9 @@ class CcdImporterSeedersManager extends Seeder {
 		$this->call('CcdImportRoutinesStrategiesTableSeeder');
 		$this->command->info('CcdImportRoutinesStrategiesTableSeeder success!');
 
+		$this->call('CpmProblemsTableSeeder');
+		$this->command->info('CpmProblemsTableSeeder success!');
+
 		//enable foreign key checks
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
