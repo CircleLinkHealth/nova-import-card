@@ -4,6 +4,7 @@ namespace App\CLH\CCD\Importer;
 
 
 use App\CLH\CCD\Ccda;
+use App\CLH\CCD\Importer\ParsingStrategies\Problems\DetectsProblemCodeSystemTrait;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
 use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfigStorageStrategy;
 use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserMetaStorageStrategy;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Session;
 
 class QAImportManager
 {
+    use DetectsProblemCodeSystemTrait;
     use ExecutesImportRoutine;
 
     private $blogId;
@@ -45,6 +47,16 @@ class QAImportManager
         $strategies = \Config::get( 'ccdimporterstrategiesmaps' );
 
         $output = [];
+
+        if ($this->ccda->vendor_id == 9)
+        {
+            foreach ($this->ccd->problems as $problem)
+            {
+                if ($problem->code_system == '2.16.840.1.113883.6.4') {
+                    $problem->code_system = '2.16.840.1.113883.6.103';
+                }
+            }
+        }
 
         /**
          * Parse and Import Allergies List, Medications List, Problems List, Problems To Monitor

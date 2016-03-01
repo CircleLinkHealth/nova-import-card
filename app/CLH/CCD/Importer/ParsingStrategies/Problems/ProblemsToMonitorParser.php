@@ -29,6 +29,8 @@ class ProblemsToMonitorParser implements ParsingStrategy
              */
             $problemCodes = $this->consolidateProblemInfo( $ccdProblem );
 
+            if ( empty($problemCodes->code_system_name) && empty($problemCodes->code_system) ) continue;
+
             /*
              * ICD-9 Check
              */
@@ -38,11 +40,9 @@ class ProblemsToMonitorParser implements ParsingStrategy
                         && $problemCodes->code <= $cpmProblem->icd9to
                     ) {
                         array_push( $problemsToActivate, $cpmProblem->name );
-                        break;
+                        continue 2;
                     }
                 }
-
-                continue;
             }
 
             /*
@@ -50,42 +50,26 @@ class ProblemsToMonitorParser implements ParsingStrategy
                  */
             if ( in_array( $problemCodes->code_system_name, ['SNOMED CT'] ) || $problemCodes->code_system == '2.16.840.1.113883.6.96' ) {
                 $potentialICD10List = SnomedToICD10Map::whereSnomedCode( $problemCodes->code )->lists( 'icd_10_code' );
-                $problemCodes->code_system_name = 'ICD-10';
-                $problemCodes->code_system = '2.16.840.1.113883.6.3';
-                if ( !empty($potentialICD10List[ 0 ]) ) $problemCodes->code = $potentialICD10List[ 0 ];
+
+                if ( !empty($potentialICD10List[ 0 ]) ) {
+                    $problemCodes->code_system_name = 'ICD-10';
+                    $problemCodes->code_system = '2.16.840.1.113883.6.3';
+                    $problemCodes->code = $potentialICD10List[ 0 ];
+                }
             }
 
             /*
              * ICD-10 Check
              */
-            if ( in_array( $problemCodes->code_system_name, ['ICD-10', 'ICD10'] ) || $problemCodes->code_system == '2.16.840.1.113883.6.3' ) {
-                if ( !empty($potentialICD10List) ) {
-                    /**
-                     * This is the same code as a few lines down.
-                     * @todo: refactor soon
-                     */
-                    foreach ( $potentialICD10List as $icd10 ) {
-                        foreach ( $cpmProblems as $cpmProblem ) {
-                            if ( (string)$icd10 >= (string)$cpmProblem->icd10from
-                                && (string)$icd10 <= (string)$cpmProblem->icd10to
-                            ) {
-                                array_push( $problemsToActivate, $cpmProblem->name );
-                                continue 3;
-                            }
-                        }
-                    }
-                }
-
+            if ( in_array( $problemCodes->code_system_name, ['ICD-10', 'ICD10'] ) || in_array( $problemCodes->code_system, ['2.16.840.1.113883.6.3', '2.16.840.1.113883.6.4'] ) ) {
                 foreach ( $cpmProblems as $cpmProblem ) {
                     if ( (string)$problemCodes->code >= (string)$cpmProblem->icd10from
                         && (string)$problemCodes->code <= (string)$cpmProblem->icd10to
                     ) {
                         array_push( $problemsToActivate, $cpmProblem->name );
-                        break;
+                        continue 2;
                     }
                 }
-
-                continue;
             }
 
             /*
@@ -99,7 +83,7 @@ class ProblemsToMonitorParser implements ParsingStrategy
 
                     if ( strpos( $problemCodes->name, $keyword ) ) {
                         array_push( $problemsToActivate, $cpmProblem->name );
-                        continue;
+                        continue 3;
                     }
                 }
             }
