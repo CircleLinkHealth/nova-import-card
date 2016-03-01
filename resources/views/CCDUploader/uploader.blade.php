@@ -59,7 +59,7 @@
             <img src="/img/cpm-logo.png" height="50" width="87.5">
         </div>
         <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
-            <h5><b>CCD Importer</b> v3.1</h5>
+            <h5><b>CCD Importer</b> v3.1 | March 1st</h5>
             <h6 class="quote">"{{ Inspiring::quote() }}"</h6>
         </div>
     </div>
