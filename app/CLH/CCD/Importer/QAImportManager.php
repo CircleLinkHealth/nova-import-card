@@ -54,6 +54,7 @@ class QAImportManager
             {
                 if ($problem->code_system == '2.16.840.1.113883.6.4') {
                     $problem->code_system = '2.16.840.1.113883.6.103';
+                    $problem->code_system_name = 'ICD-9';
                 }
             }
         }

@@ -21,14 +21,15 @@ class ProductNameAndTextMedsListParser implements ParsingStrategy
 
             $medsList .= "\n\n";
             empty($medication->product->name)
-                ?: $medsList .= ucfirst( strtolower( $medication->product->name ) ) . ', ';
+                ?: $medsList .= ucfirst( strtolower( $medication->product->name ) );
 
             $medsList .= ucfirst(
                     strtolower(
-                        StringManipulation::stringDiff( $medication->product->name, $medication->text )
+                        empty( $medText = StringManipulation::stringDiff( $medication->product->name, $medication->text ) )
+                            ? ';'
+                            : ', ' . $medText . ";"
                     )
-                )
-                . ";";
+                );
         }
         return $medsList;
     }
