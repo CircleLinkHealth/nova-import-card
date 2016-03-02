@@ -8,6 +8,12 @@
  */
 class ProblemsToMonitorTest extends TestCase
 {
+    public $icd9hypertension = '{"reference":"#Condition1","reference_title":"\n                    BENIGN HYPERTENSION","date_range":{"start":null,"end":null},"name":null,"status":"Active","age":null,"code":null,"code_system":"2.16.840.1.113883.6.96","code_system_name":null,"translation":{"name":"BENIGN HYPERTENSION","code":"401.1","code_system":"2.16.840.1.113883.6.103","code_system_name":"ICD-9"},"comment":null  }';
+    public $icd10highCholesterol = '{"reference":"#problem1","reference_title":"Mixed hyperlipidemia (E78.2) 10/12/2012","date_range":{"start":"2012-10-12T15:55:47Z","end":null},"name":"Mixed hyperlipidemia","status":null,"age":null,"code":"267434003","code_system":"2.16.840.1.113883.6.96","code_system_name":null,"translation":{"name":"Mixed hyperlipidemia","code":"E78.2","code_system":"2.16.840.1.113883.6.3","code_system_name":"ICD10"},"comment":null  }';
+    public $snomedObesity = '{"reference":"#problem-66984","reference_title":"Body mass index 30+ - obesity","date_range":{"start":null,"end":null},"name":"Body mass index 30+ - obesity","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"162864005","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null  }';
+    public $keywordsDiabetes = '{"reference":"#problem-66989","reference_title":"Disorder due to type 2 diabetes mellitus","date_range":{"start":null,"end":null},"name":"Disorder due to type 2 diabetes mellitus","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"422014003","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null  }';
+    public $emptyProblem = '{"reference":"","reference_title":"","date_range":{"start":null,"end":null},"name":"null","status":"","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"null","code_system":"","code_system_name":""},"comment":null  }';
+
     public function getParser()
     {
         return new \App\CLH\CCD\Importer\ParsingStrategies\Problems\ProblemsToMonitorParser();
@@ -16,32 +22,82 @@ class ProblemsToMonitorTest extends TestCase
     public function mockProblems($problems)
     {
         $problemsJson = new stdClass();
-        $problemsJson->problems = $problems;
+        
+        is_array( $problems )
+            ? $problemsJson->problems = $problems
+            : $problemsJson->problems[] = $problems;
 
         return $problemsJson;
     }
 
 
-    public function test_upg()
+    public function test_icd10_returns_expected()
     {
-        $upgProblems = '[{"reference":"#Condition1","reference_title":"\n                    BENIGN HYPERTENSION","date_range":{"start":null,"end":null},"name":null,"status":"Active","age":null,"code":null,"code_system":"2.16.840.1.113883.6.96","code_system_name":null,"translation":{"name":"BENIGN HYPERTENSION","code":"401.1","code_system":"2.16.840.1.113883.6.103","code_system_name":"ICD-9"},"comment":null},{"reference":"#Condition2","reference_title":"\n                    Essential (primary) hypertension","date_range":{"start":null,"end":null},"name":null,"status":"Active","age":null,"code":null,"code_system":"2.16.840.1.113883.6.96","code_system_name":null,"translation":{"name":"Essential (primary) hypertension","code":"401.9","code_system":"2.16.840.1.113883.6.103","code_system_name":"ICD-9"},"comment":null},{"reference":"#Condition3","reference_title":"\n                    Other lipid storage disorders","date_range":{"start":null,"end":null},"name":null,"status":"Active","age":null,"code":null,"code_system":"2.16.840.1.113883.6.96","code_system_name":null,"translation":{"name":"Other lipid storage disorders","code":"272.2","code_system":"2.16.840.1.113883.6.103","code_system_name":"ICD-9"},"comment":null},{"reference":"#Condition4","reference_title":"\n                    SCREENING FOR DEPRESSION","date_range":{"start":null,"end":null},"name":null,"status":"Active","age":null,"code":null,"code_system":"2.16.840.1.113883.6.96","code_system_name":null,"translation":{"name":"SCREENING FOR DEPRESSION","code":"V79.0","code_system":"2.16.840.1.113883.6.103","code_system_name":"ICD-9"},"comment":null},{"reference":"#Condition5","reference_title":"\n                    Hypercholesterolemia","date_range":{"start":null,"end":null},"name":null,"status":"Active","age":null,"code":null,"code_system":"2.16.840.1.113883.6.96","code_system_name":null,"translation":{"name":null,"code":null,"code_system":null,"code_system_name":null},"comment":null},{"reference":"#Condition6","reference_title":"\n                    Hypertension","date_range":{"start":null,"end":null},"name":null,"status":"Active","age":null,"code":null,"code_system":"2.16.840.1.113883.6.96","code_system_name":null,"translation":{"name":null,"code":null,"code_system":null,"code_system_name":null},"comment":null}]';
-        $upgExpected = '{"0":"Hypertension","1":"Hypertension","2":"High Cholesterol"}';
+        $expected = '{"0":"High Cholesterol"}';
 
-        $problems = $this->mockProblems(json_decode($upgProblems));
+        $problems = $this->mockProblems( json_decode( $this->icd10highCholesterol ) );
         $parser = $this->getParser();
 
-        $this->assertEquals(json_decode($upgExpected, true), $parser->parse($problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems()));
+        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
     }
 
 
-    public function test_mazhar()
+    public function test_icd9_returns_expected()
     {
-        $mazharProblems = '[{"reference":"#problem-13368","reference_title":"Abnormal glucose tolerance test","date_range":{"start":null,"end":null},"name":"Abnormal glucose tolerance test","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"274858002","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13371","reference_title":"Acquired hypothyroidism","date_range":{"start":null,"end":null},"name":"Acquired hypothyroidism","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"111566002","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13362","reference_title":"Acute upper respiratory infection","date_range":{"start":null,"end":null},"name":"Acute upper respiratory infection","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"54398005","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13359","reference_title":"Allergic rhinitis","date_range":{"start":null,"end":null},"name":"Allergic rhinitis","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"61582004","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-51358","reference_title":"Avascular necrosis of bone of hip","date_range":{"start":null,"end":null},"name":"Avascular necrosis of bone of hip","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"444849002","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-66984","reference_title":"Body mass index 30+ - obesity","date_range":{"start":null,"end":null},"name":"Body mass index 30+ - obesity","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"162864005","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13365","reference_title":"Candidiasis of mouth","date_range":{"start":null,"end":null},"name":"Candidiasis of mouth","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"79740000","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-45287","reference_title":"Carotid bruit present","date_range":{"start":null,"end":null},"name":"Carotid bruit present","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"274721007","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13367","reference_title":"Chest pain","date_range":{"start":null,"end":null},"name":"Chest pain","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"29857009","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13355","reference_title":"Chronic renal impairment","date_range":{"start":null,"end":null},"name":"Chronic renal impairment","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"236425005","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-66989","reference_title":"Disorder due to type 2 diabetes mellitus","date_range":{"start":null,"end":null},"name":"Disorder due to type 2 diabetes mellitus","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"422014003","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13360","reference_title":"Disorder of brain","date_range":{"start":null,"end":null},"name":"Disorder of brain","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"81308009","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13364","reference_title":"Disorder of cardiovascular system","date_range":{"start":null,"end":null},"name":"Disorder of cardiovascular system","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"49601007","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-36170","reference_title":"Disorder of vision","date_range":{"start":null,"end":null},"name":"Disorder of vision","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"95677002","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13356","reference_title":"Dyspnea","date_range":{"start":null,"end":null},"name":"Dyspnea","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"267036007","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13369","reference_title":"Edema","date_range":{"start":null,"end":null},"name":"Edema","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"267038008","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13358","reference_title":"Gastroesophageal reflux disease","date_range":{"start":null,"end":null},"name":"Gastroesophageal reflux disease","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"235595009","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13366","reference_title":"Generalized non-convulsive epilepsy","date_range":{"start":null,"end":null},"name":"Generalized non-convulsive epilepsy","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"192979009","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13361","reference_title":"Heart block","date_range":{"start":null,"end":null},"name":"Heart block","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"233916004","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-25791","reference_title":"Hip pain","date_range":{"start":null,"end":null},"name":"Hip pain","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"49218002","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-80995","reference_title":"Hyperlipidemia","date_range":{"start":null,"end":null},"name":"Hyperlipidemia","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"55822004","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-40012","reference_title":"Hypertriglyceridemia","date_range":{"start":null,"end":null},"name":"Hypertriglyceridemia","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"302870006","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-87105","reference_title":"Impacted cerumen","date_range":{"start":null,"end":null},"name":"Impacted cerumen","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"18070006","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-37917","reference_title":"Ingrowing toenail","date_range":{"start":null,"end":null},"name":"Ingrowing toenail","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"400200009","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-38586","reference_title":"Mammography abnormal","date_range":{"start":null,"end":null},"name":"Mammography abnormal","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"168750009","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-66992","reference_title":"Neurologic disorder associated with type 2 diabetes mellitus","date_range":{"start":null,"end":null},"name":"Neurologic disorder associated with type 2 diabetes mellitus","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"421326000","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-66985","reference_title":"Obesity","date_range":{"start":null,"end":null},"name":"Obesity","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"414916001","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-40010","reference_title":"Osteopenia","date_range":{"start":null,"end":null},"name":"Osteopenia","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"312894000","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13357","reference_title":"Sarcoidosis","date_range":{"start":null,"end":null},"name":"Sarcoidosis","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"31541009","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13363","reference_title":"Tachycardia","date_range":{"start":null,"end":null},"name":"Tachycardia","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"3424008","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-40011","reference_title":"Type 2 diabetes mellitus without complication","date_range":{"start":null,"end":null},"name":"Type 2 diabetes mellitus without complication","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"313436004","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-13370","reference_title":"Vitamin B deficiency","date_range":{"start":null,"end":null},"name":"Vitamin B deficiency","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"47903000","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null},{"reference":"#problem-66990","reference_title":"Vitamin D deficiency","date_range":{"start":null,"end":null},"name":"Vitamin D deficiency","status":"Active","age":null,"code":null,"code_system":null,"code_system_name":null,"translation":{"name":null,"code":"34713006","code_system":"2.16.840.1.113883.6.96","code_system_name":"SNOMED CT"},"comment":null}]';
-        $mazharExpected = '{"0":"Obesity","1":"Kidney Disease","2":"Diabetes","3":"High Cholesterol","4":"Diabetes","5":"Diabetes"}';
+        $expected = '{"0":"Hypertension"}';
 
-        $problems = $this->mockProblems(json_decode($mazharProblems));
+        $problems = $this->mockProblems( json_decode( $this->icd9hypertension ) );
         $parser = $this->getParser();
 
-        $this->assertEquals(json_decode($mazharExpected, true), $parser->parse($problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems()));
+        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
+    }
+
+    public function test_keywords_returns_expected()
+    {
+        $expected = '{"0":"Diabetes"}';
+
+        $problems = $this->mockProblems( json_decode( $this->keywordsDiabetes ) );
+        $parser = $this->getParser();
+
+        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
+    }
+
+    public function test_snomed_returns_expected()
+    {
+        $expected = '{"0":"Obesity"}';
+
+        $problems = $this->mockProblems( json_decode( $this->snomedObesity ) );
+        $parser = $this->getParser();
+
+        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
+    }
+
+    public function test_one_of_each_returns_expected()
+    {
+        $expected = '{"0":"Hypertension","1":"High Cholesterol","2":"Obesity", "3":"Diabetes"}';
+
+
+        $problems = $this->mockProblems( [
+            json_decode( $this->icd9hypertension ),
+            json_decode( $this->icd10highCholesterol ),
+            json_decode( $this->emptyProblem ),
+            json_decode( $this->snomedObesity ),
+            json_decode( $this->keywordsDiabetes )
+        ] );
+        $parser = $this->getParser();
+
+        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
+    }
+
+    public function test_empty_problem_returns_nothing()
+    {
+        $expected = '{}';
+
+        $problems = $this->mockProblems( [
+            json_decode( $this->emptyProblem )
+        ] );
+        $parser = $this->getParser();
+
+        $this->assertEquals( json_decode( $expected, true ), $parser->parse( $problems, new \App\CLH\CCD\Importer\ValidationStrategies\ImportAllItems() ) );
     }
 }
