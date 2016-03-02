@@ -14,27 +14,7 @@ class CcdImporterSeedersManager extends Seeder {
 	public function run()
 	{
 		Model::unguard();
-
-		/*
-		$this->call('database\seeds\UserTableSeeder');
-		$this->command->info('User table seeded!');
-
-		$this->call('database\seeds\ActivityTableSeeder');
-		$this->command->info('Activity table seeded!');
-
-		$this->call('database\seeds\LocationTableSeeder');
-		$this->command->info('Location table seeded!');
-
-		$this->call('database\seeds\UserProgramSeeder');
-		$this->command->info('User table program ids seeded!');
-		*/
-
-		// ObservationsCommentsSeeder, kg 2015/9/24
-		// S20150929SymItems, kg 2015/9/28
-//	    $this->call('SnomedToIcd10MapTableSeeder');
-//		$this->command->info('SnomedToIcd10MapTableSeeder success!');
-
-
+		
 		//disable foreign key check for this connection before running seeders
 		DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
