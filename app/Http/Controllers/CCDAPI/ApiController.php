@@ -5,12 +5,14 @@ use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\CLH\CCD\ValidatesQAImportOutput;
 
 use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
 
+    use ValidatesQAImportOutput;
     private $repo;
 
     public function __construct(CCDImporterRepository $repo)
@@ -58,14 +60,14 @@ class ApiController extends Controller
         ]);
 
         $ccdObj->json = $json;
+        // Saves CCD
         $ccdObj->save();
 
         $importer = new QAImportManager($blog, $ccdObj);
         $output = $importer->generateCarePlanFromCCD();
-
-        $jsonCcd = json_decode($output->output, true);
-
-        return response()->json($jsonCcd);
+        $qaSummaries[] = $this->validateQAImportOutput( $output );
+        //$jsonCcd = json_decode($output->output, true);
+        return response()->json(["message" => "CCD Saved"], 200);
     }
 
     /**

@@ -4,9 +4,9 @@ use App\User;
 use Illuminate\Http\Request;
 
 //CPM's CCD Submission API
-Route::group(['prefix' => 'api/ehr/v1/'], function () {
-	Route::post('login',['uses' => 'CCDAPI\ApiController@login', 'as' => 'ccd.api.login']);
+Route::group(['prefix' => 'api/ehr/v1'], function () {
 	Route::post('upload',['uses' => 'CCDAPI\ApiController@create', 'as' => 'ccd.api.upload']);
+	Route::post('login',['uses' => 'CCDAPI\ApiController@login', 'as' => 'ccd.api.login']);
 });
 
 Route::controller( 'ajax', 'UserController' );
