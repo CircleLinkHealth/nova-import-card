@@ -18,9 +18,10 @@ class Nestor implements ValidationStrategy
         ];
 
         foreach ( $strategies as $strategy ) {
-            $validtation = $strategy->validate( $ccdItem );
-            if ( !$validtation ) continue;
-            return $validtation;
+            $isActive = $strategy->validate( $ccdItem );
+            if ( !$isActive ) continue;
+
+            return $isActive;
         }
 
         return false;
