@@ -22,7 +22,7 @@ class ProblemsToMonitorTest extends TestCase
     public function mockProblems($problems)
     {
         $problemsJson = new stdClass();
-        
+
         is_array( $problems )
             ? $problemsJson->problems = $problems
             : $problemsJson->problems[] = $problems;
