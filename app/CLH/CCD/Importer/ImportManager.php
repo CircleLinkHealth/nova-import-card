@@ -33,9 +33,9 @@ class ImportManager
          */
         foreach ( $this->output as $sectionId => $data ) {
 
-            if ( !is_int($sectionId) ) continue;
+            if ( !is_int( $sectionId ) ) continue;
 
-            if (empty($data)) continue;
+            if ( empty($data) ) continue;
 
             //this gets the storage strategy from config/ccdimportersections by sectionId
             $storageStrategy = $strategies[ 'storage' ][ $sections[ $sectionId ][ 'storageIds' ][ 0 ] ];
@@ -54,21 +54,29 @@ class ImportManager
          * Parse and Import User Meta
          */
         $userMetaParser = new UserMetaParser( new UserMetaTemplate() );
-        ( new UserMetaStorageStrategy( $this->user->program_id, $this->user->ID ) )->import( $this->output['userMeta'] );
+        ( new UserMetaStorageStrategy( $this->user->program_id, $this->user->ID ) )->import( $this->output[ 'userMeta' ] );
 
         /**
          * Parse and Import User Config
          */
-        $providerId = !empty($this->output['provider']) ? $this->output['provider'][0]['ID'] : false;
+        $providerId = !empty($this->output[ 'provider' ]) ? $this->output[ 'provider' ][ 0 ][ 'ID' ] : false;
 
-        if( ! $providerId ) {
-            $userConf = $this->output['userConfig'];
-        } else {
-            $userConf = $this->output['userConfig'];
-            $userConf['care_team'][] = $providerId;
-            $userConf['lead_contact'] = $providerId;
-            $userConf['billing_provider'] = $providerId;
+        /**
+         * Add Provider to UserConfigTemplate
+         */
+        if ( !$providerId ) {
+            $userConf = $this->output[ 'userConfig' ];
         }
+        else {
+            $userConf = $this->output[ 'userConfig' ];
+            $userConf[ 'care_team' ][] = $providerId;
+            $userConf[ 'lead_contact' ] = $providerId;
+            $userConf[ 'billing_provider' ] = $providerId;
+        }
+
+        $locationId = !empty($this->output[ 'location' ]) ? $this->output[ 'location' ][ 0 ][ 'id' ] : false;
+
+        if ( $locationId ) $userConf[ 'preferred_contact_location' ] = $locationId;
 
         $userConfigParser = new UserConfigParser( new UserConfigTemplate(), $this->user->program_id );
         ( new UserConfigStorageStrategy( $this->user->program_id, $this->user->ID ) )->import( $userConf );
