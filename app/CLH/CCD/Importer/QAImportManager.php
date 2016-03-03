@@ -5,6 +5,7 @@ namespace App\CLH\CCD\Importer;
 
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\ParsingStrategies\CareTeam\PrimaryProviderParser;
+use App\CLH\CCD\Importer\ParsingStrategies\Location\ProviderLocationParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Problems\DetectsProblemCodeSystemTrait;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
 use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfigStorageStrategy;
@@ -83,10 +84,16 @@ class QAImportManager
 
 
         /**
-         * Find provider
+         * Parse provider (Lead Contact and Billing)
          */
         $primaryProviderParser = new PrimaryProviderParser();
         $output[ 'provider' ] = $primaryProviderParser->parse( $this->ccd->document->documentation_of );
+
+        /**
+         * Parse Provider Location
+         */
+        $locationParser = new ProviderLocationParser();
+        $output[ 'location' ] = $locationParser->parse( $this->ccd->demographics->provider );
 
         /**
          * Parse and Import User Config

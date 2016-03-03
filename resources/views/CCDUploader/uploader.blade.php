@@ -105,6 +105,7 @@
             <th class="mdl-data-table__cell--non-numeric">Import</th>
             <th class="mdl-data-table__cell--non-numeric">Name</th>
             <th class="mdl-data-table__cell--non-numeric">Provider</th>
+            <th class="mdl-data-table__cell--non-numeric">Location</th>
             <th>Allergies</th>
             <th>Medications</th>
             <th>Problems</th>
@@ -124,6 +125,7 @@
             </td>
             <td class="mdl-data-table__cell--non-numeric">@{{ qaSummary.name }}</td>
             <td class="mdl-data-table__cell--non-numeric">@{{ qaSummary.provider }}</td>
+            <td class="mdl-data-table__cell--non-numeric">@{{ qaSummary.location }}</td>
             <td>@{{ qaSummary.allergies }}</td>
             <td>@{{ qaSummary.medications }}</td>
             <td>@{{ qaSummary.problems }}</td>

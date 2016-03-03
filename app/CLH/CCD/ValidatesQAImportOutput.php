@@ -25,6 +25,10 @@ trait ValidatesQAImportOutput
             if (isset($jsonCcd[ 'provider' ][0])) return $jsonCcd[ 'provider' ][0]['display_name'];
         };
 
+        $location = function () use ($jsonCcd) {
+          if (isset($jsonCcd[ 'location' ][0])) return $jsonCcd[ 'location' ][0]['name'];
+        };
+
         $counter = function ($index) use ($jsonCcd) {
             return count( explode( ';', $jsonCcd[ $index ] ) ) - 1;
         };
@@ -36,6 +40,7 @@ trait ValidatesQAImportOutput
         $qaSummary->problems = $counter( 1 );
         $qaSummary->allergies = $counter( 0 );
         $qaSummary->provider = $provider();
+        $qaSummary->location = $location();
         $qaSummary->save();
 
         return $qaSummary;
