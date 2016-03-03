@@ -104,6 +104,7 @@
         <tr>
             <th class="mdl-data-table__cell--non-numeric">Import</th>
             <th class="mdl-data-table__cell--non-numeric">Name</th>
+            <th class="mdl-data-table__cell--non-numeric">Provider</th>
             <th>Allergies</th>
             <th>Medications</th>
             <th>Problems</th>
@@ -112,6 +113,7 @@
         <tbody>
 
         <tr v-for="qaSummary in qaSummaries" id="row-@{{ qaSummary.qa_output_id }}">
+            {{--Checkbox--}}
             <td id="checkbox-@{{ qaSummary.qa_output_id }}">
                 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
                        for="input-@{{ qaSummary.qa_output_id }}">
@@ -121,6 +123,7 @@
                 </label>
             </td>
             <td class="mdl-data-table__cell--non-numeric">@{{ qaSummary.name }}</td>
+            <td class="mdl-data-table__cell--non-numeric">@{{ qaSummary.provider }}</td>
             <td>@{{ qaSummary.allergies }}</td>
             <td>@{{ qaSummary.medications }}</td>
             <td>@{{ qaSummary.problems }}</td>
