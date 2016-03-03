@@ -59,8 +59,19 @@ class ImportManager
         /**
          * Parse and Import User Config
          */
+        $providerId = !empty($this->output['provider']) ? $this->output['provider'][0]['ID'] : false;
+
+        if( ! $providerId ) {
+            $userConf = $this->output['userConfig'];
+        } else {
+            $userConf = $this->output['userConfig'];
+            $userConf['care_team'][] = $providerId;
+            $userConf['lead_contact'] = $providerId;
+            $userConf['billing_provider'] = $providerId;
+        }
+
         $userConfigParser = new UserConfigParser( new UserConfigTemplate(), $this->user->program_id );
-        ( new UserConfigStorageStrategy( $this->user->program_id, $this->user->ID ) )->import( $this->output['userConfig'] );
+        ( new UserConfigStorageStrategy( $this->user->program_id, $this->user->ID ) )->import( $userConf );
 
         /**
          * CarePlan Defaults
