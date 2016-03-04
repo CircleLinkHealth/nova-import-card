@@ -87,13 +87,15 @@ class QAImportManager
          * Parse provider (Lead Contact and Billing)
          */
         $primaryProviderParser = new PrimaryProviderParser();
+        //add the author to the performers
+        array_push($this->ccd->document->documentation_of, $this->ccd->document->author);
         $output[ 'provider' ] = $primaryProviderParser->parse( $this->ccd->document->documentation_of );
 
         /**
          * Parse Provider Location
          */
         $locationParser = new ProviderLocationParser();
-        $output[ 'location' ] = $locationParser->parse( $this->ccd->demographics->provider );
+        $output[ 'location' ] = $locationParser->parse( [$this->ccd->demographics->provider, $this->ccd->document->author] );
 
         /**
          * Parse and Import User Config
