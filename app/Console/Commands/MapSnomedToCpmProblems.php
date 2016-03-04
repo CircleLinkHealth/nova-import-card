@@ -22,7 +22,7 @@ class MapSnomedToCpmProblems extends Command
      *
      * @var string
      */
-    protected $description = 'Command description.';
+    protected $description = 'Picks problems from SnomedToICD10Map that satisfy the ranges specified in CPMProblems and puts them in SnomedToCPMICDMap, so that our snomed problems parser will never hit an ICD10 code that we don not support.';
 
     /**
      * Create a new command instance.
