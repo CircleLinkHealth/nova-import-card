@@ -92,7 +92,7 @@ class CcdVendorsTableSeeder extends Seeder
             6 => 
             array (
                 'id' => 9,
-                'ccd_import_routine_id' => 5,
+                'ccd_import_routine_id' => 6,
                 'vendor_name' => 'Prognosis - Middletown',
                 'ehr_oid' => NULL,
                 'doctor_name' => 'Trish Hewston',
