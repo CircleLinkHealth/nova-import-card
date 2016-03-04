@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 
+use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
 
 trait DetectsProblemCodeSystemTrait
@@ -18,7 +19,7 @@ trait DetectsProblemCodeSystemTrait
         $codeRemainingChars = substr( $code, 1 );
         //Get only alphanumeric chars (omit dots, or other number separators)
         $codeLength = strlen( preg_replace( '/[^a-z_\-0-9]/i', '', $code ) );
-        $icd10Code = SnomedToICD10Map::where( 'icd_10_code', $code )->get();
+        $icd10Code = SnomedToCpmIcdMap::where( 'icd_10_code', $code )->get();
 
         //ICD 10
         if (

@@ -4,6 +4,7 @@ namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 
 use App\CLH\CCD\Importer\CPMProblem;
+use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
@@ -49,7 +50,7 @@ class ProblemsToMonitorParser implements ParsingStrategy
                  * SNOMED Check
                  */
             if ( in_array( $problemCodes->code_system_name, ['SNOMED CT'] ) || $problemCodes->code_system == '2.16.840.1.113883.6.96' ) {
-                $potentialICD10List = SnomedToICD10Map::whereSnomedCode( $problemCodes->code )->lists( 'icd_10_code' );
+                $potentialICD10List = SnomedToCpmIcdMap::whereSnomedCode( $problemCodes->code )->lists( 'icd_10_code' );
 
                 if ( !empty($potentialICD10List[ 0 ]) ) {
                     $problemCodes->code_system_name = 'ICD-10';
