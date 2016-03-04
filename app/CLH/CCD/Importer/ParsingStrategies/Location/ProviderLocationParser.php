@@ -20,7 +20,7 @@ class ProviderLocationParser implements ParsingStrategy
             }
         }, $providers );
 
-        $providerInfo = array_values( array_unique( array_filter( $providerInfo ) ) );
+        $providerInfo = array_values( array_filter( $providerInfo ) );
 
         $locations = Location::where( 'address_line_1', $providerInfo[ 0 ][ 'address' ] )
             ->where( 'phone', $providerInfo[ 0 ][ 'phone' ] )
