@@ -1,5 +1,6 @@
 <?php namespace App\Console;
 
+use App\Console\Commands\FormatLocationPhone;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 
@@ -18,6 +19,7 @@ class Kernel extends ConsoleKernel {
 		'App\Console\Commands\Inspire',
 		NukeItemAndMeta::class,
 		MapSnomedToCpmProblems::class,
+		FormatLocationPhone::class,
 	];
 
 	/**
