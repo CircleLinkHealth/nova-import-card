@@ -58,7 +58,7 @@ class MapSnomedToCpmProblems extends Command
 
         if ( isset($failed) ) {
             foreach ( $failed as $problem ) {
-                $this->info( $problem[ 'problem' ]->name );
+                $this->error( $problem[ 'problem' ]->name . ' failed.');
             }
         }
 
