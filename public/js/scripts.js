@@ -1868,16 +1868,19 @@ Parsers.C32.document = function (c32) {
     for (var i = 0; i < performers.length; i++) {
         el = performers[i].tag('assignedPerson').tag('name');
         var performer_name_dict = parseName(el);
-        var performer_phone = performers[i].tag('telecom').attr('value');
+        var performer_phones = parsePhones(performers[i].tag('assignedEntity').immediateChildrenTags('telecom'));
+
+        console.log('C32');
+        console.log(performers[i].tag('telecom').attr('value'));
+        console.log(performers[i].tag('assignedEntity').immediateChildrenTags('telecom'));
+
         var performer_addr = parseAddress(el.tag('addr'));
         var npi = performers[i].tag('assignedEntity').tag('id').attr('extension');
 
         documentation_of_list.push({
             npi: npi,
             name: performer_name_dict,
-            phone: {
-                work: performer_phone
-            },
+            phones: performer_phones,
             address: performer_addr
         });
     }
@@ -2113,7 +2116,7 @@ Parsers.C32.demographics = function (c32) {
   
   el = patient.tag('providerOrganization');
   var provider_organization = el.tag('name').val(),
-      provider_phone = el.tag('telecom').attr('value'),
+      provider_phones = parsePhones(el.immediateChildrenTags('telecom')),
       provider_address_dict = parseAddress(el.tag('addr')),
       provider_ids = parseIds(el.immediateChildrenTags('id'));
 
@@ -2168,7 +2171,7 @@ Parsers.C32.demographics = function (c32) {
     provider: {
       ids: provider_ids,
       organization: provider_organization,
-      phone: provider_phone,
+      phones: provider_phones,
       address: provider_address_dict
     }
   };
@@ -2993,13 +2996,17 @@ Parsers.CCDA.document = function (ccda) {
     for (var i = 0; i < performers.length; i++) {
         el = performers[i];
         var performer_name_dict = parseName(el);
-        var performer_phone = el.tag('telecom').attr('value');
+        var performer_phones = parsePhones(el.elsByTag('telecom'));
+
+        console.log('CCDA');
+        console.log(el.tag('telecom').attr('value'));
+        console.log(el.elsByTag('telecom'));
+
         var performer_addr = parseAddress(el.tag('addr'));
+
         documentation_of_list.push({
             name: performer_name_dict,
-            phone: {
-                work: performer_phone
-            },
+            phones: performer_phones,
             address: performer_addr
         });
     }
@@ -3306,7 +3313,7 @@ Parsers.CCDA.demographics = function (ccda) {
   
   el = patient.tag('providerOrganization');
   var provider_organization = el.tag('name').val(),
-      provider_phone = el.tag('telecom').attr('value'),
+      provider_phones = parsePhones(el.immediateChildrenTags('telecom')),
       provider_ids = parseIds(el.immediateChildrenTags('id')),
       provider_address_dict = parseAddress(el.tag('addr'));
 
@@ -3360,7 +3367,7 @@ Parsers.CCDA.demographics = function (ccda) {
     provider: {
         ids: provider_ids,
         organization: provider_organization,
-      phone: provider_phone,
+      phones: provider_phones,
       address: provider_address_dict
     }
   };
