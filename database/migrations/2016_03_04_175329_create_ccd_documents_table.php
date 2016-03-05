@@ -31,6 +31,11 @@ class CreateCcdDocumentsTable extends Migration {
 				->onDelete( 'cascade' );
 
 			$table->string('custodian');
+
+			$table->boolean('import');
+			$table->boolean('invalid');
+
+			$table->softDeletes();
 			$table->timestamps();
 		});
 	}

@@ -44,6 +44,9 @@ class CreateCcdDemographicsTable extends Migration {
 			$table->string( 'work_phone', 12 )->nullable()->default( null );
 			$table->string( 'email' )->nullable()->default( null );
 
+			$table->boolean('import');
+			$table->boolean('invalid');
+
 			$table->softDeletes();
 			$table->timestamps();
 		});

@@ -47,6 +47,10 @@ class CreateCcdMedicationsTable extends Migration {
 			$table->string('translation_code')->nullable()->default(null);
 			$table->string('translation_code_system')->nullable()->default(null);
 			$table->string('translation_code_system_name')->nullable()->default(null);
+
+			$table->boolean('import');
+			$table->boolean('invalid');
+
 			$table->softDeletes();
 			$table->timestamps();
 		});

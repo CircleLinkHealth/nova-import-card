@@ -34,6 +34,10 @@ class CreateCcdAllergiesTable extends Migration {
 			$table->string('end')->nullable()->default(null);
 			$table->string('status')->nullable()->default(null);
 			$table->string('allergen_name')->nullable()->default(null);
+
+			$table->boolean('import');
+			$table->boolean('invalid');
+
 			$table->softDeletes();
 			$table->timestamps();
 		});

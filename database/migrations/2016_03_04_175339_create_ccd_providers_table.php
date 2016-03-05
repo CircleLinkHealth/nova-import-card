@@ -42,6 +42,10 @@ class CreateCcdProvidersTable extends Migration
             $table->string( 'cell_phone', 12 )->nullable()->default( null );
             $table->string( 'home_phone', 12 )->nullable()->default( null );
             $table->string( 'work_phone', 12 )->nullable()->default( null );
+
+            $table->boolean('import');
+            $table->boolean('invalid');
+
             $table->softDeletes();
             $table->timestamps();
         } );
