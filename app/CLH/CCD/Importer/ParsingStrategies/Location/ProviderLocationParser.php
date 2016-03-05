@@ -22,6 +22,8 @@ class ProviderLocationParser implements ParsingStrategy
 
         $providerInfo = array_values( array_filter( $providerInfo ) );
 
+        if (!isset($providerInfo[ 0 ])) return false;
+
         $locations = Location::where( 'address_line_1', $providerInfo[ 0 ][ 'address' ] )
             ->where( 'phone', $providerInfo[ 0 ][ 'phone' ] )
             ->whereNotNull( 'parent_id' )
