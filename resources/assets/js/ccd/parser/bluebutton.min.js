@@ -2507,6 +2507,7 @@ Parsers.C32.medications = function (c32) {
   var medications = c32.section('medications');
   
   medications.entries().each(function(entry) {
+    var status = entry.tag('value').attr('displayName');
 
     var reference = entry.tag('reference').attr('value');
     var referenceTitle = entry.tag('text').val();
@@ -2633,6 +2634,7 @@ Parsers.C32.medications = function (c32) {
         start: start_date,
         end: end_date
       },
+      status: status,
       text: text,
       product: {
         name: product_name,
