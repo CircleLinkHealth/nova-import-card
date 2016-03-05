@@ -31,12 +31,17 @@ class CreateCcdProvidersTable extends Migration
                 ->onDelete( 'cascade' );
 
             $table->string( 'npi' )->nullable()->default( null );
-            $table->string( 'name' )->nullable()->default( null );
+            $table->string( 'first_name' )->nullable()->default( null );
+            $table->string( 'last_name' )->nullable()->default( null );
+
             $table->string( 'street' )->nullable()->default( null );
             $table->string( 'city' )->nullable()->default( null );
             $table->string( 'state' )->nullable()->default( null );
             $table->string( 'zip', 5 )->nullable()->default( null );
-            $table->string( 'phone', 12 );
+
+            $table->string( 'cell_phone', 12 )->nullable()->default( null );
+            $table->string( 'home_phone', 12 )->nullable()->default( null );
+            $table->string( 'work_phone', 12 )->nullable()->default( null );
             $table->softDeletes();
             $table->timestamps();
         } );
