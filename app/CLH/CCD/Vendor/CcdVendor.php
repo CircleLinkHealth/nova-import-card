@@ -1,9 +1,12 @@
 <?php namespace App\CLH\CCD\Vendor;
 
+use App\CLH\CCD\ImportedItemsLogger\ModelLogRelationship;
 use App\CLH\CCD\ImportRoutine\CcdImportRoutine;
 use Illuminate\Database\Eloquent\Model;
 
 class CcdVendor extends Model {
+
+    use ModelLogRelationship;
 
     protected $guarded = [];
 
