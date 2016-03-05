@@ -1,6 +1,6 @@
 <?php
 
-namespace App\CLH\CCD\ImportedItemsLogger;
+namespace App\CLH\CCD\ItemLogger;
 
 
 use App\CLH\CCD\Ccda;

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\CLH\CCD\ImportedItemsLogger;
+namespace App\CLH\CCD\ItemLogger;
 
 
-use App\CLH\CCD\ImportedItemsLogger\CcdAllergyLog;
+use App\CLH\CCD\ItemLogger\CcdAllergyLog;
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\ParsingStrategies\Facades\UserMetaParserHelpers;
 use Illuminate\Support\Collection;

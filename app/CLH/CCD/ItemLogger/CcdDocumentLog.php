@@ -1,4 +1,4 @@
-<?php namespace App\CLH\CCD\ImportedItemsLogger;
+<?php namespace App\CLH\CCD\ItemLogger;
 
 use App\CLH\CCD\Ccda;
 use App\CLH\Contracts\CCD\CcdItemLog;

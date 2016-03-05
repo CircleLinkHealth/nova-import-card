@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\CCD\ImportedItemsLogger\CcdItemLogger;
+use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\CCD\ValidatesQAImportOutput;

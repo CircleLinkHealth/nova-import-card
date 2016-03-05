@@ -1,6 +1,6 @@
 <?php namespace App\CLH\CCD\Vendor;
 
-use App\CLH\CCD\ImportedItemsLogger\ModelLogRelationship;
+use App\CLH\CCD\ItemLogger\ModelLogRelationship;
 use App\CLH\CCD\ImportRoutine\CcdImportRoutine;
 use Illuminate\Database\Eloquent\Model;
 
