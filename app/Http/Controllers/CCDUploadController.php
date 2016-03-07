@@ -1,11 +1,13 @@
 <?php namespace App\Http\Controllers;
 
+use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\CCD\ValidatesQAImportOutput;
 use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
+use App\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -53,6 +55,9 @@ class CCDUploadController extends Controller
                     'json' => $json
                 ] );
 
+                $logger = new CcdItemLogger($ccda);
+                $logger->logAll();
+
                 $importer = new QAImportManager( $blogId, $ccda );
                 $output = $importer->generateCarePlanFromCCD();
 
@@ -60,7 +65,9 @@ class CCDUploadController extends Controller
             }
         }
 
-        return response()->json( $qaSummaries, 200 );
+        $locations = Location::whereNotNull( 'parent_id' );
+
+        return response()->json( compact( 'qaSummaries', 'locations' ), 200 );
     }
 
     /**

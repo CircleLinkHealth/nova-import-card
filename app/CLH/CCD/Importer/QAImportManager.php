@@ -4,6 +4,8 @@ namespace App\CLH\CCD\Importer;
 
 
 use App\CLH\CCD\Ccda;
+use App\CLH\CCD\Importer\ParsingStrategies\CareTeam\PrimaryProviderParser;
+use App\CLH\CCD\Importer\ParsingStrategies\Location\ProviderLocationParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Problems\DetectsProblemCodeSystemTrait;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
 use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfigStorageStrategy;
@@ -48,12 +50,15 @@ class QAImportManager
 
         $output = [];
 
-        if ($this->ccda->vendor_id == 9)
-        {
-            foreach ($this->ccd->problems as $problem)
-            {
-                if ($problem->code_system == '2.16.840.1.113883.6.4') {
+        /**
+         * Temporary fix for Middletown CCDs
+         * They say problem codes are ICD-10, but they are ICD-9
+         */
+        if ( $this->ccda->vendor_id == 9 ) {
+            foreach ( $this->ccd->problems as $problem ) {
+                if ( $problem->code_system == '2.16.840.1.113883.6.4' ) {
                     $problem->code_system = '2.16.840.1.113883.6.103';
+                    $problem->code_system_name = 'ICD-9';
                 }
             }
         }
@@ -64,7 +69,7 @@ class QAImportManager
         foreach ( $this->routine as $routine ) {
             $validator = new $strategies[ 'validation' ][ $routine->validator_id ]();
             $parser = new $strategies[ 'parsing' ][ $routine->parser_id ]();
-            $output[$routine->importer_section_id] = $parser->parse( $this->ccd, $validator );
+            $output[ $routine->importer_section_id ] = $parser->parse( $this->ccd, $validator );
         }
 
         /**
@@ -75,17 +80,32 @@ class QAImportManager
          * Parse and Import User Meta
          */
         $userMetaParser = new UserMetaParser( new UserMetaTemplate() );
-        $output['userMeta'] = $userMetaParser->parse( $this->ccd );
+        $output[ 'userMeta' ] = $userMetaParser->parse( $this->ccd );
+
+
+        /**
+         * Parse provider (Lead Contact and Billing)
+         */
+        $primaryProviderParser = new PrimaryProviderParser();
+        //add the author to the performers
+        array_push($this->ccd->document->documentation_of, $this->ccd->document->author);
+        $output[ 'provider' ] = $primaryProviderParser->parse( $this->ccd->document->documentation_of );
+
+        /**
+         * Parse Provider Location
+         */
+        $locationParser = new ProviderLocationParser();
+        $output[ 'location' ] = $locationParser->parse( [$this->ccd->demographics->provider, $this->ccd->document->author] );
 
         /**
          * Parse and Import User Config
          */
         $userConfigParser = new UserConfigParser( new UserConfigTemplate(), $this->blogId );
-        $output['userConfig'] = $userConfigParser->parse( $this->ccd );
+        $output[ 'userConfig' ] = $userConfigParser->parse( $this->ccd );
 
-        return QAImportOutput::create([
+        return QAImportOutput::create( [
             'ccda_id' => $this->ccda->id,
-            'output' => json_encode($output, JSON_FORCE_OBJECT),
-        ]);
+            'output' => json_encode( $output, JSON_FORCE_OBJECT ),
+        ] );
     }
 }

@@ -33,8 +33,16 @@ class NameCodeAndCodeSysNameProblemsListParser implements ParsingStrategy
 
             $problemsList .= "\n\n";
 
+            //quick fix to display snomed ct in middletown
+            $codeSystemName = function() use ($problemCodes) {
+                return empty($problem = $problemCodes->code_system_name)
+                    ? empty($problemCodes->code_system)
+                        ?: ($problemCodes->code_system == '2.16.840.1.113883.6.96') ? 'SNOMED CT' : ''
+                    : $problem;
+            };
+
             $problemsList .= ucwords( strtolower( $problemCodes->name ) ) . ', '
-                . strtoupper( $problemCodes->code_system_name ) . ', '
+                . strtoupper( $codeSystemName() ) . ', '
                 . $problemCodes->code . ";";
         }
 

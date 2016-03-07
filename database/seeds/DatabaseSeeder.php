@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder {
         $this->call('CcdImportRoutinesStrategiesTableSeeder');
         $this->call('CcdImportRoutinesTableSeeder');
         $this->call('CcdVendorsTableSeeder');
+        $this->call('CpmProblemsTableSeeder');
     }
 
 }

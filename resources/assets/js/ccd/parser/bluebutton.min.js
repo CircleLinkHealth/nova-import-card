@@ -1868,16 +1868,19 @@ Parsers.C32.document = function (c32) {
     for (var i = 0; i < performers.length; i++) {
         el = performers[i].tag('assignedPerson').tag('name');
         var performer_name_dict = parseName(el);
-        var performer_phone = performers[i].tag('telecom').attr('value');
+        var performer_phones = parsePhones(performers[i].tag('assignedEntity').immediateChildrenTags('telecom'));
+
+        console.log('C32');
+        console.log(performers[i].tag('telecom').attr('value'));
+        console.log(performers[i].tag('assignedEntity').immediateChildrenTags('telecom'));
+
         var performer_addr = parseAddress(el.tag('addr'));
         var npi = performers[i].tag('assignedEntity').tag('id').attr('extension');
 
         documentation_of_list.push({
             npi: npi,
             name: performer_name_dict,
-            phone: {
-                work: performer_phone
-            },
+            phones: performer_phones,
             address: performer_addr
         });
     }
@@ -2113,7 +2116,7 @@ Parsers.C32.demographics = function (c32) {
   
   el = patient.tag('providerOrganization');
   var provider_organization = el.tag('name').val(),
-      provider_phone = el.tag('telecom').attr('value'),
+      provider_phones = parsePhones(el.immediateChildrenTags('telecom')),
       provider_address_dict = parseAddress(el.tag('addr')),
       provider_ids = parseIds(el.immediateChildrenTags('id'));
 
@@ -2168,7 +2171,7 @@ Parsers.C32.demographics = function (c32) {
     provider: {
       ids: provider_ids,
       organization: provider_organization,
-      phone: provider_phone,
+      phones: provider_phones,
       address: provider_address_dict
     }
   };
@@ -2497,201 +2500,207 @@ Parsers.C32.results = function (c32) {
  */
 
 Parsers.C32.medications = function (c32) {
-  
-  var parseDate = Documents.parseDate;
-  var data = [], el;
-  
-  var medications = c32.section('medications');
-  
-  medications.entries().each(function(entry) {
 
-    var reference = entry.tag('reference').attr('value');
-    var referenceTitle = entry.tag('text').val();
+    var parseDate = Documents.parseDate;
+    var data = [], el;
 
-    if (reference != null) {
-      var referenceSig = c32.content('sig-' + reference.split('-')[1]).val();
-    }
+    var medications = c32.section('medications');
 
-    var text = null;
-    el = entry.tag('substanceAdministration').immediateChildTag('text');
-    if (!el.isEmpty()) {
-      // technically C32s don't use this, but C83s (another CCD) do,
-      // and CCDAs do, so we may see it anyways
-      text = Core.stripWhitespace(el.val());
-    }
+    medications.entries().each(function (entry) {
+        var status = entry.tag('value').attr('displayName');
 
-    var effectiveTimes = entry.elsByTag('effectiveTime');
+        var reference = entry.tag('reference').attr('value');
+        var referenceTitle = entry.tag('text').val();
 
-    el = effectiveTimes[0]; // the first effectiveTime is the med start date
-    var start_date = null, end_date = null;
-    if (el) {
-      start_date = parseDate(el.tag('low').attr('value'));
-      end_date = parseDate(el.tag('high').attr('value'));
-    }
+        var referenceSig = null;
 
-    // the second effectiveTime might the schedule period or it might just
-    // be a random effectiveTime from further in the entry... xsi:type should tell us
-    el = effectiveTimes[1];
-    var schedule_type = null, schedule_period_value = null, schedule_period_unit = null;
-    if (el && el.attr('xsi:type') === 'PIVL_TS') {
-      var institutionSpecified = el.attr('institutionSpecified');
-      if (institutionSpecified === 'true') {
-        schedule_type= 'frequency';
-      } else if (institutionSpecified === 'false') {
-        schedule_type = 'interval';
-      }
-
-      el = el.tag('period');
-      schedule_period_value = el.attr('value');
-      schedule_period_unit = el.attr('unit');
-    }
-    
-    el = entry.tag('manufacturedProduct').tag('code');
-    var product_name = el.attr('displayName'),
-        product_code = el.attr('code'),
-        product_code_system = el.attr('codeSystem');
-
-    var product_original_text = null;
-    el = entry.tag('manufacturedProduct').tag('originalText');
-    if (!el.isEmpty()) {
-      product_original_text = Core.stripWhitespace(el.val());
-    }
-    // if we don't have a product name yet, try the originalText version
-    if (!product_name && product_original_text) {
-      product_name = product_original_text;
-    }
-
-    // irregularity in some c32s
-    if (!product_name) {
-      el = entry.tag('manufacturedProduct').tag('name');
-      if (!el.isEmpty()) {
-        product_name = Core.stripWhitespace(el.val());
-      }
-    }
-    
-    el = entry.tag('manufacturedProduct').tag('translation');
-    var translation_name = el.attr('displayName'),
-        translation_code = el.attr('code'),
-        translation_code_system = el.attr('codeSystem'),
-        translation_code_system_name = el.attr('codeSystemName');
-    
-    el = entry.tag('doseQuantity');
-    var dose_value = el.attr('value'),
-        dose_unit = el.attr('unit');
-    
-    el = entry.tag('rateQuantity');
-    var rate_quantity_value = el.attr('value'),
-        rate_quantity_unit = el.attr('unit');
-    
-    el = entry.tag('precondition').tag('value');
-    var precondition_name = el.attr('displayName'),
-        precondition_code = el.attr('code'),
-        precondition_code_system = el.attr('codeSystem');
-    
-    el = entry.template('2.16.840.1.113883.10.20.1.28').tag('value');
-    var reason_name = el.attr('displayName'),
-        reason_code = el.attr('code'),
-        reason_code_system = el.attr('codeSystem');
-    
-    el = entry.tag('routeCode');
-    var route_name = el.attr('displayName'),
-        route_code = el.attr('code'),
-        route_code_system = el.attr('codeSystem'),
-        route_code_system_name = el.attr('codeSystemName');
-    
-    // participant/playingEntity => vehicle
-    el = entry.tag('participant').tag('playingEntity');
-    var vehicle_name = el.tag('name').val();
-
-    el = el.tag('code');
-    // prefer the code vehicle_name but fall back to the non-coded one
-    // (which for C32s is in fact the primary field for this info)
-    vehicle_name = el.attr('displayName') || vehicle_name;
-    var vehicle_code = el.attr('code'),
-        vehicle_code_system = el.attr('codeSystem'),
-        vehicle_code_system_name = el.attr('codeSystemName');
-    
-    el = entry.tag('administrationUnitCode');
-    var administration_name = el.attr('displayName'),
-        administration_code = el.attr('code'),
-        administration_code_system = el.attr('codeSystem'),
-        administration_code_system_name = el.attr('codeSystemName');
-    
-    // performer => prescriber
-    el = entry.tag('performer');
-    var prescriber_organization = el.tag('name').val(),
-        prescriber_person = null;
-    
-    data.push({
-      reference: reference,
-      reference_title: referenceTitle,
-      reference_sig: referenceSig,
-      date_range: {
-        start: start_date,
-        end: end_date
-      },
-      text: text,
-      product: {
-        name: product_name,
-        text: product_original_text,
-        code: product_code,
-        code_system: product_code_system,
-        translation: {
-          name: translation_name,
-          code: translation_code,
-          code_system: translation_code_system,
-          code_system_name: translation_code_system_name
+        if (reference != null) {
+            if (c32.content('sig-' + reference.split('-')[1]).val()) {
+                referenceSig = c32.content('sig-' + reference.split('-')[1]).val();
+            }
         }
-      },
-      dose_quantity: {
-        value: dose_value,
-        unit: dose_unit
-      },
-      rate_quantity: {
-        value: rate_quantity_value,
-        unit: rate_quantity_unit
-      },
-      precondition: {
-        name: precondition_name,
-        code: precondition_code,
-        code_system: precondition_code_system
-      },
-      reason: {
-        name: reason_name,
-        code: reason_code,
-        code_system: reason_code_system
-      },
-      route: {
-        name: route_name,
-        code: route_code,
-        code_system: route_code_system,
-        code_system_name: route_code_system_name
-      },
-      schedule: {
-        type: schedule_type,
-        period_value: schedule_period_value,
-        period_unit: schedule_period_unit
-      },
-      vehicle: {
-        name: vehicle_name,
-        code: vehicle_code,
-        code_system: vehicle_code_system,
-        code_system_name: vehicle_code_system_name
-      },
-      administration: {
-        name: administration_name,
-        code: administration_code,
-        code_system: administration_code_system,
-        code_system_name: administration_code_system_name
-      },
-      prescriber: {
-        organization: prescriber_organization,
-        person: prescriber_person
-      }
+
+        var text = null;
+        el = entry.tag('substanceAdministration').immediateChildTag('text');
+        if (!el.isEmpty()) {
+            // technically C32s don't use this, but C83s (another CCD) do,
+            // and CCDAs do, so we may see it anyways
+            text = Core.stripWhitespace(el.val());
+        }
+
+        var effectiveTimes = entry.elsByTag('effectiveTime');
+
+        el = effectiveTimes[0]; // the first effectiveTime is the med start date
+        var start_date = null, end_date = null;
+        if (el) {
+            start_date = parseDate(el.tag('low').attr('value'));
+            end_date = parseDate(el.tag('high').attr('value'));
+        }
+
+        // the second effectiveTime might the schedule period or it might just
+        // be a random effectiveTime from further in the entry... xsi:type should tell us
+        el = effectiveTimes[1];
+        var schedule_type = null, schedule_period_value = null, schedule_period_unit = null;
+        if (el && el.attr('xsi:type') === 'PIVL_TS') {
+            var institutionSpecified = el.attr('institutionSpecified');
+            if (institutionSpecified === 'true') {
+                schedule_type = 'frequency';
+            } else if (institutionSpecified === 'false') {
+                schedule_type = 'interval';
+            }
+
+            el = el.tag('period');
+            schedule_period_value = el.attr('value');
+            schedule_period_unit = el.attr('unit');
+        }
+
+        el = entry.tag('manufacturedProduct').tag('code');
+        var product_name = el.attr('displayName'),
+            product_code = el.attr('code'),
+            product_code_system = el.attr('codeSystem');
+
+        var product_original_text = null;
+        el = entry.tag('manufacturedProduct').tag('originalText');
+        if (!el.isEmpty()) {
+            product_original_text = Core.stripWhitespace(el.val());
+        }
+        // if we don't have a product name yet, try the originalText version
+        if (!product_name && product_original_text) {
+            product_name = product_original_text;
+        }
+
+        // irregularity in some c32s
+        if (!product_name) {
+            el = entry.tag('manufacturedProduct').tag('name');
+            if (!el.isEmpty()) {
+                product_name = Core.stripWhitespace(el.val());
+            }
+        }
+
+        el = entry.tag('manufacturedProduct').tag('translation');
+        var translation_name = el.attr('displayName'),
+            translation_code = el.attr('code'),
+            translation_code_system = el.attr('codeSystem'),
+            translation_code_system_name = el.attr('codeSystemName');
+
+        el = entry.tag('doseQuantity');
+        var dose_value = el.attr('value'),
+            dose_unit = el.attr('unit');
+
+        el = entry.tag('rateQuantity');
+        var rate_quantity_value = el.attr('value'),
+            rate_quantity_unit = el.attr('unit');
+
+        el = entry.tag('precondition').tag('value');
+        var precondition_name = el.attr('displayName'),
+            precondition_code = el.attr('code'),
+            precondition_code_system = el.attr('codeSystem');
+
+        el = entry.template('2.16.840.1.113883.10.20.1.28').tag('value');
+        var reason_name = el.attr('displayName'),
+            reason_code = el.attr('code'),
+            reason_code_system = el.attr('codeSystem');
+
+        el = entry.tag('routeCode');
+        var route_name = el.attr('displayName'),
+            route_code = el.attr('code'),
+            route_code_system = el.attr('codeSystem'),
+            route_code_system_name = el.attr('codeSystemName');
+
+        // participant/playingEntity => vehicle
+        el = entry.tag('participant').tag('playingEntity');
+        var vehicle_name = el.tag('name').val();
+
+        el = el.tag('code');
+        // prefer the code vehicle_name but fall back to the non-coded one
+        // (which for C32s is in fact the primary field for this info)
+        vehicle_name = el.attr('displayName') || vehicle_name;
+        var vehicle_code = el.attr('code'),
+            vehicle_code_system = el.attr('codeSystem'),
+            vehicle_code_system_name = el.attr('codeSystemName');
+
+        el = entry.tag('administrationUnitCode');
+        var administration_name = el.attr('displayName'),
+            administration_code = el.attr('code'),
+            administration_code_system = el.attr('codeSystem'),
+            administration_code_system_name = el.attr('codeSystemName');
+
+        // performer => prescriber
+        el = entry.tag('performer');
+        var prescriber_organization = el.tag('name').val(),
+            prescriber_person = null;
+
+        data.push({
+            reference: reference,
+            reference_title: referenceTitle,
+            reference_sig: referenceSig,
+            date_range: {
+                start: start_date,
+                end: end_date
+            },
+            status: status,
+            text: text,
+            product: {
+                name: product_name,
+                text: product_original_text,
+                code: product_code,
+                code_system: product_code_system,
+                translation: {
+                    name: translation_name,
+                    code: translation_code,
+                    code_system: translation_code_system,
+                    code_system_name: translation_code_system_name
+                }
+            },
+            dose_quantity: {
+                value: dose_value,
+                unit: dose_unit
+            },
+            rate_quantity: {
+                value: rate_quantity_value,
+                unit: rate_quantity_unit
+            },
+            precondition: {
+                name: precondition_name,
+                code: precondition_code,
+                code_system: precondition_code_system
+            },
+            reason: {
+                name: reason_name,
+                code: reason_code,
+                code_system: reason_code_system
+            },
+            route: {
+                name: route_name,
+                code: route_code,
+                code_system: route_code_system,
+                code_system_name: route_code_system_name
+            },
+            schedule: {
+                type: schedule_type,
+                period_value: schedule_period_value,
+                period_unit: schedule_period_unit
+            },
+            vehicle: {
+                name: vehicle_name,
+                code: vehicle_code,
+                code_system: vehicle_code_system,
+                code_system_name: vehicle_code_system_name
+            },
+            administration: {
+                name: administration_name,
+                code: administration_code,
+                code_system: administration_code_system,
+                code_system_name: administration_code_system_name
+            },
+            prescriber: {
+                organization: prescriber_organization,
+                person: prescriber_person
+            }
+        });
     });
-  });
-  
-  return data;
+
+    return data;
 };
 ;
 
@@ -2993,13 +3002,17 @@ Parsers.CCDA.document = function (ccda) {
     for (var i = 0; i < performers.length; i++) {
         el = performers[i];
         var performer_name_dict = parseName(el);
-        var performer_phone = el.tag('telecom').attr('value');
+        var performer_phones = parsePhones(el.elsByTag('telecom'));
+
+        console.log('CCDA');
+        console.log(el.tag('telecom').attr('value'));
+        console.log(el.elsByTag('telecom'));
+
         var performer_addr = parseAddress(el.tag('addr'));
+
         documentation_of_list.push({
             name: performer_name_dict,
-            phone: {
-                work: performer_phone
-            },
+            phones: performer_phones,
             address: performer_addr
         });
     }
@@ -3306,7 +3319,7 @@ Parsers.CCDA.demographics = function (ccda) {
   
   el = patient.tag('providerOrganization');
   var provider_organization = el.tag('name').val(),
-      provider_phone = el.tag('telecom').attr('value'),
+      provider_phones = parsePhones(el.immediateChildrenTags('telecom')),
       provider_ids = parseIds(el.immediateChildrenTags('id')),
       provider_address_dict = parseAddress(el.tag('addr'));
 
@@ -3360,7 +3373,7 @@ Parsers.CCDA.demographics = function (ccda) {
     provider: {
         ids: provider_ids,
         organization: provider_organization,
-      phone: provider_phone,
+      phones: provider_phones,
       address: provider_address_dict
     }
   };
@@ -3767,190 +3780,194 @@ Parsers.CCDA.results = function (ccda) {
  */
 
 Parsers.CCDA.medications = function (ccda) {
-  
-  var parseDate = Documents.parseDate;
-  var data = [], el;
-  
-  var medications = ccda.section('medications');
+
+    var parseDate = Documents.parseDate;
+    var data = [], el;
+
+    var medications = ccda.section('medications');
 
 
-  medications.entries().each(function(entry) {
-    var status = entry.tag('value').attr('displayName');
+    medications.entries().each(function (entry) {
+        var status = entry.tag('value').attr('displayName');
 
-    var reference = entry.tag('reference').attr('value');
-    var referenceTitle = entry.tag('text').val();
+        var reference = entry.tag('reference').attr('value');
+        var referenceTitle = entry.tag('text').val();
 
-    if (reference != null) {
-      var referenceSig = ccda.content('sig-' + reference.split('-')[1]).val();
-    }
+        var referenceSig = null;
 
-    el = entry.tag('text');
-    var sig = Core.stripWhitespace(el.val());
-
-    var effectiveTimes = entry.elsByTag('effectiveTime');
-
-    el = effectiveTimes[0]; // the first effectiveTime is the med start date
-    var start_date = null, end_date = null;
-    if (el) {
-      start_date = parseDate(el.tag('low').attr('value'));
-      end_date = parseDate(el.tag('high').attr('value'));
-    }
-
-    // the second effectiveTime might the schedule period or it might just
-    // be a random effectiveTime from further in the entry... xsi:type should tell us
-    el = effectiveTimes[1];
-    var schedule_type = null, schedule_period_value = null, schedule_period_unit = null;
-    if (el && el.attr('xsi:type') === 'PIVL_TS') {
-      var institutionSpecified = el.attr('institutionSpecified');
-      if (institutionSpecified === 'true') {
-        schedule_type= 'frequency';
-      } else if (institutionSpecified === 'false') {
-        schedule_type = 'interval';
-      }
-
-      el = el.tag('period');
-      schedule_period_value = el.attr('value');
-      schedule_period_unit = el.attr('unit');
-    }
-    
-    el = entry.tag('manufacturedProduct').tag('code');
-    var product_name = el.attr('displayName'),
-        product_code = el.attr('code'),
-        product_code_system = el.attr('codeSystem');
-
-    var product_original_text = null;
-    el = entry.tag('manufacturedProduct').tag('originalText');
-    if (!el.isEmpty()) {
-      product_original_text = Core.stripWhitespace(el.val());
-    }
-    // if we don't have a product name yet, try the originalText version
-    if (!product_name && product_original_text) {
-      product_name = product_original_text;
-    }
-    
-    el = entry.tag('manufacturedProduct').tag('translation');
-    var translation_name = el.attr('displayName'),
-        translation_code = el.attr('code'),
-        translation_code_system = el.attr('codeSystem'),
-        translation_code_system_name = el.attr('codeSystemName');
-    
-    el = entry.tag('doseQuantity');
-    var dose_value = el.attr('value'),
-        dose_unit = el.attr('unit');
-    
-    el = entry.tag('rateQuantity');
-    var rate_quantity_value = el.attr('value'),
-        rate_quantity_unit = el.attr('unit');
-    
-    el = entry.tag('precondition').tag('value');
-    var precondition_name = el.attr('displayName'),
-        precondition_code = el.attr('code'),
-        precondition_code_system = el.attr('codeSystem');
-    
-    el = entry.template('2.16.840.1.113883.10.20.22.4.19').tag('value');
-    var reason_name = el.attr('displayName'),
-        reason_code = el.attr('code'),
-        reason_code_system = el.attr('codeSystem');
-    
-    el = entry.tag('routeCode');
-    var route_name = el.attr('displayName'),
-        route_code = el.attr('code'),
-        route_code_system = el.attr('codeSystem'),
-        route_code_system_name = el.attr('codeSystemName');
-    
-    // participant/playingEntity => vehicle
-    el = entry.tag('participant').tag('playingEntity');
-    var vehicle_name = el.tag('name').val();
-
-    el = el.tag('code');
-    // prefer the code vehicle_name but fall back to the non-coded one
-    vehicle_name = el.attr('displayName') || vehicle_name;
-    var vehicle_code = el.attr('code'),
-        vehicle_code_system = el.attr('codeSystem'),
-        vehicle_code_system_name = el.attr('codeSystemName');
-    
-    el = entry.tag('administrationUnitCode');
-    var administration_name = el.attr('displayName'),
-        administration_code = el.attr('code'),
-        administration_code_system = el.attr('codeSystem'),
-        administration_code_system_name = el.attr('codeSystemName');
-    
-    // performer => prescriber
-    el = entry.tag('performer');
-    var prescriber_organization = el.tag('name').val(),
-        prescriber_person = null;
-    
-    data.push({
-      reference: reference,
-      reference_title: referenceTitle,
-      reference_sig: referenceSig,
-      date_range: {
-        start: start_date,
-        end: end_date
-      },
-      status: status,
-      text: sig,
-      product: {
-        name: product_name,
-        code: product_code,
-        code_system: product_code_system,
-        text: product_original_text,
-        translation: {
-          name: translation_name,
-          code: translation_code,
-          code_system: translation_code_system,
-          code_system_name: translation_code_system_name
+        if (reference != null) {
+            if (ccda.content('sig-' + reference.split('-')[1]).val()) {
+                referenceSig = ccda.content('sig-' + reference.split('-')[1]).val();
+            }
         }
-      },
-      dose_quantity: {
-        value: dose_value,
-        unit: dose_unit
-      },
-      rate_quantity: {
-        value: rate_quantity_value,
-        unit: rate_quantity_unit
-      },
-      precondition: {
-        name: precondition_name,
-        code: precondition_code,
-        code_system: precondition_code_system
-      },
-      reason: {
-        name: reason_name,
-        code: reason_code,
-        code_system: reason_code_system
-      },
-      route: {
-        name: route_name,
-        code: route_code,
-        code_system: route_code_system,
-        code_system_name: route_code_system_name
-      },
-      schedule: {
-        type: schedule_type,
-        period_value: schedule_period_value,
-        period_unit: schedule_period_unit
-      },
-      vehicle: {
-        name: vehicle_name,
-        code: vehicle_code,
-        code_system: vehicle_code_system,
-        code_system_name: vehicle_code_system_name
-      },
-      administration: {
-        name: administration_name,
-        code: administration_code,
-        code_system: administration_code_system,
-        code_system_name: administration_code_system_name
-      },
-      prescriber: {
-        organization: prescriber_organization,
-        person: prescriber_person
-      }
+
+        el = entry.tag('text');
+        var sig = Core.stripWhitespace(el.val());
+
+        var effectiveTimes = entry.elsByTag('effectiveTime');
+
+        el = effectiveTimes[0]; // the first effectiveTime is the med start date
+        var start_date = null, end_date = null;
+        if (el) {
+            start_date = parseDate(el.tag('low').attr('value'));
+            end_date = parseDate(el.tag('high').attr('value'));
+        }
+
+        // the second effectiveTime might the schedule period or it might just
+        // be a random effectiveTime from further in the entry... xsi:type should tell us
+        el = effectiveTimes[1];
+        var schedule_type = null, schedule_period_value = null, schedule_period_unit = null;
+        if (el && el.attr('xsi:type') === 'PIVL_TS') {
+            var institutionSpecified = el.attr('institutionSpecified');
+            if (institutionSpecified === 'true') {
+                schedule_type = 'frequency';
+            } else if (institutionSpecified === 'false') {
+                schedule_type = 'interval';
+            }
+
+            el = el.tag('period');
+            schedule_period_value = el.attr('value');
+            schedule_period_unit = el.attr('unit');
+        }
+
+        el = entry.tag('manufacturedProduct').tag('code');
+        var product_name = el.attr('displayName'),
+            product_code = el.attr('code'),
+            product_code_system = el.attr('codeSystem');
+
+        var product_original_text = null;
+        el = entry.tag('manufacturedProduct').tag('originalText');
+        if (!el.isEmpty()) {
+            product_original_text = Core.stripWhitespace(el.val());
+        }
+        // if we don't have a product name yet, try the originalText version
+        if (!product_name && product_original_text) {
+            product_name = product_original_text;
+        }
+
+        el = entry.tag('manufacturedProduct').tag('translation');
+        var translation_name = el.attr('displayName'),
+            translation_code = el.attr('code'),
+            translation_code_system = el.attr('codeSystem'),
+            translation_code_system_name = el.attr('codeSystemName');
+
+        el = entry.tag('doseQuantity');
+        var dose_value = el.attr('value'),
+            dose_unit = el.attr('unit');
+
+        el = entry.tag('rateQuantity');
+        var rate_quantity_value = el.attr('value'),
+            rate_quantity_unit = el.attr('unit');
+
+        el = entry.tag('precondition').tag('value');
+        var precondition_name = el.attr('displayName'),
+            precondition_code = el.attr('code'),
+            precondition_code_system = el.attr('codeSystem');
+
+        el = entry.template('2.16.840.1.113883.10.20.22.4.19').tag('value');
+        var reason_name = el.attr('displayName'),
+            reason_code = el.attr('code'),
+            reason_code_system = el.attr('codeSystem');
+
+        el = entry.tag('routeCode');
+        var route_name = el.attr('displayName'),
+            route_code = el.attr('code'),
+            route_code_system = el.attr('codeSystem'),
+            route_code_system_name = el.attr('codeSystemName');
+
+        // participant/playingEntity => vehicle
+        el = entry.tag('participant').tag('playingEntity');
+        var vehicle_name = el.tag('name').val();
+
+        el = el.tag('code');
+        // prefer the code vehicle_name but fall back to the non-coded one
+        vehicle_name = el.attr('displayName') || vehicle_name;
+        var vehicle_code = el.attr('code'),
+            vehicle_code_system = el.attr('codeSystem'),
+            vehicle_code_system_name = el.attr('codeSystemName');
+
+        el = entry.tag('administrationUnitCode');
+        var administration_name = el.attr('displayName'),
+            administration_code = el.attr('code'),
+            administration_code_system = el.attr('codeSystem'),
+            administration_code_system_name = el.attr('codeSystemName');
+
+        // performer => prescriber
+        el = entry.tag('performer');
+        var prescriber_organization = el.tag('name').val(),
+            prescriber_person = null;
+
+        data.push({
+            reference: reference,
+            reference_title: referenceTitle,
+            reference_sig: referenceSig,
+            date_range: {
+                start: start_date,
+                end: end_date
+            },
+            status: status,
+            text: sig,
+            product: {
+                name: product_name,
+                code: product_code,
+                code_system: product_code_system,
+                text: product_original_text,
+                translation: {
+                    name: translation_name,
+                    code: translation_code,
+                    code_system: translation_code_system,
+                    code_system_name: translation_code_system_name
+                }
+            },
+            dose_quantity: {
+                value: dose_value,
+                unit: dose_unit
+            },
+            rate_quantity: {
+                value: rate_quantity_value,
+                unit: rate_quantity_unit
+            },
+            precondition: {
+                name: precondition_name,
+                code: precondition_code,
+                code_system: precondition_code_system
+            },
+            reason: {
+                name: reason_name,
+                code: reason_code,
+                code_system: reason_code_system
+            },
+            route: {
+                name: route_name,
+                code: route_code,
+                code_system: route_code_system,
+                code_system_name: route_code_system_name
+            },
+            schedule: {
+                type: schedule_type,
+                period_value: schedule_period_value,
+                period_unit: schedule_period_unit
+            },
+            vehicle: {
+                name: vehicle_name,
+                code: vehicle_code,
+                code_system: vehicle_code_system,
+                code_system_name: vehicle_code_system_name
+            },
+            administration: {
+                name: administration_name,
+                code: administration_code,
+                code_system: administration_code_system,
+                code_system_name: administration_code_system_name
+            },
+            prescriber: {
+                organization: prescriber_organization,
+                person: prescriber_person
+            }
+        });
     });
-  });
-  
-  return data;
+
+    return data;
 };
 ;
 

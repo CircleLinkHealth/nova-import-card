@@ -44,8 +44,8 @@ class CcdImportRoutinesTableSeeder extends Seeder
             3 => 
             array (
                 'id' => 4,
-                'name' => 'Valid End Date',
-                'description' => 'Import everything with valid end date',
+                'name' => 'Medications: Status, Everything else: Import all',
+                'description' => 'Import Medications using Status, Import all problems and allergies',
                 'created_at' => '0000-00-00 00:00:00',
                 'updated_at' => '0000-00-00 00:00:00',
             ),

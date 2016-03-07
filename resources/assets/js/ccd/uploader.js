@@ -19,6 +19,8 @@ var uploader = new Vue({
         groupHide: false,
         tableHide: true,
         qaSummaries: [],
+        locations: [],
+        selectedLocations: new Array,
         okToImport: new Array
     },
     ready: function () {
@@ -54,7 +56,8 @@ var uploader = new Vue({
             this.$http.post('/ccd-importer/qaimport', this.ccdRecords, function (data, status, request) {
                 this.ccdRecords = new FormData;
 
-                this.qaSummaries = data;
+                this.qaSummaries = data.qaSummaries;
+                this.locations = data.locations;
 
                 this.groupHide = true;
                 this.tableHide = false;

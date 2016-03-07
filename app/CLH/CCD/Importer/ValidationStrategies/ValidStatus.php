@@ -9,8 +9,8 @@ class ValidStatus implements ValidationStrategy
 {
     public function validate($ccdItem)
     {
-        if (empty($ccdItem->status)) return false;
+        if (! is_object($ccdItem)) return false;
 
-        return in_array( strtolower( $ccdItem->status ), ['active', 'chronic'] );
+        return empty($status = $ccdItem->status) ? false : in_array( strtolower( $status ), ['active', 'chronic'] );
     }
 }
