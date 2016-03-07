@@ -3,10 +3,8 @@
 namespace App\CLH\CCD\ItemLogger;
 
 
-use App\CLH\CCD\ItemLogger\CcdAllergyLog;
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\ParsingStrategies\Facades\UserMetaParserHelpers;
-use Illuminate\Support\Collection;
 
 class CcdItemLogger
 {
@@ -83,6 +81,7 @@ class CcdItemLogger
             'ccda_id' => $this->ccdaId,
             'vendor_id' => $this->vendorId,
             'custodian' => empty($document->custodian->name) ?: trim( $document->custodian->name ),
+            'type' => $this->ccd->type,
         ] );
 
         return true;
