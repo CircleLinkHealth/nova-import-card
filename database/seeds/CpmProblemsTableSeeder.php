@@ -93,7 +93,7 @@ class CpmProblemsTableSeeder extends Seeder
             array (
                 'id' => 7,
                 'name' => 'High Cholesterol',
-                'icd10from' => 'E78.0',
+                'icd10from' => 'E78',
                 'icd10to' => 'E78.9',
                 'icd9from' => 272,
                 'icd9to' => 272.39999999999998,
@@ -105,7 +105,7 @@ class CpmProblemsTableSeeder extends Seeder
             array (
                 'id' => 8,
                 'name' => 'Kidney Disease',
-                'icd10from' => 'N18.0',
+                'icd10from' => 'N18',
                 'icd10to' => 'N18.9',
                 'icd9from' => 585.10000000000002,
                 'icd9to' => 585.89999999999998,
@@ -172,42 +172,6 @@ class CpmProblemsTableSeeder extends Seeder
                 'contains' => 'Obesity',
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-01-27 13:11:24',
-            ),
-            13 => 
-            array (
-                'id' => 14,
-                'name' => 'Diabetes',
-                'icd10from' => 'E08',
-                'icd10to' => 'E13',
-                'icd9from' => 250,
-                'icd9to' => 259.93000000000001,
-                'contains' => 'diabetes, diabetes mellitus',
-                'created_at' => '2016-02-15 16:14:38',
-                'updated_at' => '2016-02-15 16:14:38',
-            ),
-            14 => 
-            array (
-                'id' => 15,
-                'name' => 'Afib',
-                'icd10from' => 'I48.0',
-                'icd10to' => 'I48.99',
-                'icd9from' => 427,
-                'icd9to' => 427.88999999999999,
-                'contains' => 'atrial fibrillation, paroxysmal supraventricular tachycardia, atrial flutter, sinoatrial node dysfunction',
-                'created_at' => '2016-02-15 16:14:38',
-                'updated_at' => '2016-02-15 16:14:38',
-            ),
-            15 => 
-            array (
-                'id' => 16,
-                'name' => 'CAD',
-                'icd10from' => 'I25.1',
-                'icd10to' => 'I25.9',
-                'icd9from' => 414,
-                'icd9to' => 414.89999999999998,
-                'contains' => '',
-                'created_at' => '2016-02-15 16:14:38',
-                'updated_at' => '2016-02-15 16:14:38',
             ),
         ));
         

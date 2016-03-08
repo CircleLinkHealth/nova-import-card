@@ -30,6 +30,9 @@ class CcdImporterSeedersManager extends Seeder {
 		$this->call('CpmProblemsTableSeeder');
 		$this->command->info('CpmProblemsTableSeeder success!');
 
+		Artisan::call('map:snomedtocpm');
+		$this->command->info('SnomedToCpmIcdMap seeded!');
+
 		//enable foreign key checks
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 	}
