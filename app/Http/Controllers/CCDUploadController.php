@@ -10,6 +10,7 @@ use App\Http\Requests;
 use App\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use JavaScript;
 
 class CCDUploadController extends Controller
 {
@@ -43,8 +44,9 @@ class CCDUploadController extends Controller
 
                 $json = $this->repo->toJson( $xml );
 
-                if ( !$request->session()->has( 'blogId' ) ) throw new \Exception( 'Blog id not found,', 400 );
-                $blogId = $request->session()->get( 'blogId' );
+                $blogId = $request->input( 'blogId' );
+
+                if ( empty($blogId) ) throw new \Exception( 'Blog id not found,', 400 );
 
                 $vendorId = empty($request->input( 'vendor' )) ?: $request->input( 'vendor' );
 
@@ -76,6 +78,10 @@ class CCDUploadController extends Controller
     public function create()
     {
         $ccdVendors = CcdVendor::all();
+
+        $userBlogs = auth()->user()->programs;
+
+        JavaScript::put(['userBlogs' => $userBlogs]);
 
         return view( 'CCDUploader.uploader', compact( 'ccdVendors' ) );
     }

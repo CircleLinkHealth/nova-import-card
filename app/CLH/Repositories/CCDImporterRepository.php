@@ -3,9 +3,9 @@
 namespace App\CLH\Repositories;
 
 
-use App\CLH\Repositories\WpUserRepository;
+use App\CLH\Repositories\UserRepository;
 use App\Role;
-use App\WpUser;
+use App\User;
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -15,7 +15,7 @@ class CCDImporterRepository
      * Creates a user with random credentials
      * Used to attach XML CCDs to a Patient
      *
-     * @return App\WpUser
+     * @return \App\User
      */
     public function createRandomUser($blogId, $email = '', $fullName = '')
     {
@@ -48,7 +48,7 @@ class CCDImporterRepository
             'roles' => [$role->id],
         ]);
 
-        return (new WpUserRepository())->createNewUser(new WpUser(), $bag);
+        return (new UserRepository())->createNewUser(new User(), $bag);
     }
 
     public function toJson($xml)
@@ -58,9 +58,8 @@ class CCDImporterRepository
         ] );
 
         $response = $client->request( 'POST', '/ccda/parse', [
-            'form_params' => [
-                'ccd' => base64_encode( $xml )
-            ]
+            'headers' => ['Content-Type' => 'text/xml'],
+            'body' => $xml,
         ] );
 
         if ( !$response->getStatusCode() == 200 ) {

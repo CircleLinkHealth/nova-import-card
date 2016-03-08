@@ -4,10 +4,10 @@ use App\User;
 use Illuminate\Http\Request;
 
 //CPM's CCD Submission API
-Route::group(['prefix' => 'api/ehr/v1'], function () {
-	Route::post('upload',['uses' => 'CCDAPI\ApiController@create', 'as' => 'ccd.api.upload']);
-	Route::post('login',['uses' => 'CCDAPI\ApiController@login', 'as' => 'ccd.api.login']);
-});
+Route::group( ['prefix' => 'api/ehr/v1'], function () {
+    Route::post( 'upload', ['uses' => 'CCDAPI\ApiController@create', 'as' => 'ccd.api.upload'] );
+    Route::post( 'login', ['uses' => 'CCDAPI\ApiController@login', 'as' => 'ccd.api.login'] );
+} );
 
 Route::controller( 'ajax', 'UserController' );
 
@@ -95,12 +95,14 @@ Route::group( ['middleware' => 'auth'], function () {
      * CCD Importer Routes
      */
 
-	Route::group(['prefix' => 'ccd-importer'], function (){
-    Route::get( 'create', ['uses' => 'CCDUploadController@create', 'as' => 'import.ccd'] );
+    Route::group( ['prefix' => 'ccd-importer'], function () {
+        Entrust::routeNeedsPermission('ccd-importer/*', ['ccd-import'], redirect()->back());
 
-    Route::post( 'qaimport', 'CCDUploadController@uploadRawFiles' );
-    Route::post( 'import', 'CCDImportController@import' );
-	});
+        Route::get( 'create', ['uses' => 'CCDUploadController@create', 'as' => 'import.ccd'] );
+
+        Route::post( 'qaimport', 'CCDUploadController@uploadRawFiles' );
+        Route::post( 'import', 'CCDImportController@import' );
+    } );
 
     //CCD Parser Demo Route
     Route::get( 'ccd-parser-demo', 'CCDParserDemoController@index' );

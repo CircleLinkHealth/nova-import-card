@@ -3,6 +3,7 @@
 @section('title', 'Dashboard')
 @section('activity', '')
 
+
 @section('content')
     <div class="container container--menu">
         <div class="row row-centered">
@@ -27,7 +28,9 @@
                                 </i>
                             </div>
                             <div>
-                                <p class="text-medium-big text--menu text-serif">Patient List<br><span style="color:red;font-style:italic;font-size:85%;" class="text-thin">{{ $pendingApprovals }} Pending<br>Approvals</span><br></p>
+                                <p class="text-medium-big text--menu text-serif">Patient List<br><span
+                                            style="color:red;font-style:italic;font-size:85%;" class="text-thin">{{ $pendingApprovals }}
+                                        Pending<br>Approvals</span><br></p>
                             </div>
                         </a>
                     </li>
@@ -51,7 +54,8 @@
                                 </i>
                             </div>
                             <div class="icon-container column-centered">
-                                <p class="text-medium-big text--menu text-serif">My Alerts & &nbsp;&nbsp;<br> Tasks<BR><BR></p>
+                                <p class="text-medium-big text--menu text-serif">My Alerts & &nbsp;&nbsp;<br>
+                                    Tasks<BR><BR></p>
                             </div>
                         </a>
                     </li>
@@ -59,5 +63,14 @@
                 </ul>
             </div>
         </div>
+
+        @if( auth()->user()->can(['ccd-import']) )
+            <div class="col-sm-12 text-center">
+                <a href="{{ route('import.ccd') }}" class="btn btn-green btn-next inline-block submitFormBtn">
+                    Import CCDs
+                </a>
+            </div>
+            @endif
+
     </div>
 @stop

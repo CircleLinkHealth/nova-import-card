@@ -59,7 +59,7 @@
             <img src="/img/cpm-logo.png" height="50" width="87.5">
         </div>
         <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
-            <h5><b>CCD Importer</b> v3.5 | March 5th</h5>
+            <h5><b>CCD Importer</b> v4.0 | March 7th</h5>
             <h6 class="quote">"{{ Inspiring::quote() }}"</h6>
         </div>
     </div>
@@ -74,6 +74,14 @@
         </div>
 
         <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data" class="mdl-cell mdl-cell--12-col">
+
+            <div class="mdl-cell mdl-cell--12-col">
+                <h5>Please choose a program in which you wish to import.</h5>
+
+                <select v-model="selectedBlog">
+                    <option v-for="blog in blogs" value="@{{ blog.blog_id }}">@{{ blog.domain }} - @{{ blog.name }}</option>
+                </select>
+            </div>
 
             <div class="mdl-cell mdl-cell--12-col">
                 @if(!empty($ccdVendors))
@@ -143,5 +151,10 @@
 
 </div>
 
+@include('partials.footer')
+</body>
+
 <script src="{{ asset('/js/scripts.js') }}"></script>
 <script src="/js/uploader.js"></script>
+
+

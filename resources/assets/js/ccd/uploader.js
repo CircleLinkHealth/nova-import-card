@@ -9,6 +9,8 @@ Vue.use(require('vue-resource'));
 var uploader = new Vue({
     el: '#ccd-uploader',
     data: {
+        blogs: new Array,
+        selectedBlog: '',
         ccdRecords: new FormData,
         ccdVendor: null,
         progress: 0,
@@ -25,6 +27,7 @@ var uploader = new Vue({
     },
     ready: function () {
         this.watchForFileInput();
+        this.blogs = window.cpm.userBlogs;
     },
     methods: {
         watchForFileInput: function () {
@@ -52,6 +55,7 @@ var uploader = new Vue({
             this.progress += 20;
 
             this.ccdRecords.append('vendor', this.ccdVendor);
+            this.ccdRecords.append('blogId', this.selectedBlog);
 
             this.$http.post('/ccd-importer/qaimport', this.ccdRecords, function (data, status, request) {
                 this.ccdRecords = new FormData;
@@ -78,6 +82,7 @@ var uploader = new Vue({
         },
         importCcds: function () {
             $('#importCcdsBtn').attr('disabled', true);
+
             this.$http.post('/ccd-importer/import', {qaImportIds: this.okToImport}, function (data, status, request) {
                 $('#importCcdsBtn').attr('disabled', false);
 
