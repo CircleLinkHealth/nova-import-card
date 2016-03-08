@@ -28,6 +28,7 @@ class CcdToLogTranformer
             'gender' => $demographics->gender,
             'mrn_number' => $demographics->mrn_number,
             'street' => array_key_exists( 0, $demographics->address->street ) ? $demographics->address->street[ 0 ] : null,
+            'street2' => array_key_exists( 1, $demographics->address->street ) ? $demographics->address->street[ 1 ] : null,
             'city' => $demographics->address->city,
             'state' => $demographics->address->state,
             'zip' => $demographics->address->zip,
@@ -35,6 +36,7 @@ class CcdToLogTranformer
             'home_phone' => $phones[ 'home' ][ 0 ],
             'work_phone' => $phones[ 'work' ][ 0 ],
             'email' => $demographics->email,
+            'language' => $demographics->language,
         ];
     }
 
