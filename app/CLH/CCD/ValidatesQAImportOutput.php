@@ -22,16 +22,17 @@ trait ValidatesQAImportOutput
         };
 
         $provider = function () use ($jsonCcd) {
-            if (isset($jsonCcd[ 'provider' ][0])) return $jsonCcd[ 'provider' ][0]['display_name'];
+            if ( isset($jsonCcd[ 'provider' ][ 0 ]) ) return $jsonCcd[ 'provider' ][ 0 ][ 'display_name' ];
         };
 
         $location = function () use ($jsonCcd) {
-          if (isset($jsonCcd[ 'location' ][0])) return $jsonCcd[ 'location' ][0]['name'];
+            if ( isset($jsonCcd[ 'location' ][ 0 ]) ) return $jsonCcd[ 'location' ][ 0 ][ 'name' ];
         };
 
         $counter = function ($index) use ($jsonCcd) {
             return count( $jsonCcd[ $index ] );
         };
+
 
         $qaSummary = new QAImportSummary();
         $qaSummary->ccda_id = $ccda->id;
@@ -41,6 +42,12 @@ trait ValidatesQAImportOutput
         $qaSummary->allergies = $counter( 0 );
         $qaSummary->provider = $provider();
         $qaSummary->location = $location();
+
+        $isFlagged = false;
+
+        if ( $qaSummary->medications == 0 || $qaSummary->problems == 0 || empty($qaSummary->location) || empty($qaSummary->provider) || empty($qaSummary->name) ) $isFlagged = true;
+
+        $qaSummary->flag = $isFlagged;
         $qaSummary->save();
 
         return $qaSummary;
