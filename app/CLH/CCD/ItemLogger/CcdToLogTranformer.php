@@ -44,7 +44,7 @@ class CcdToLogTranformer
     {
         return [
             'custodian' => empty($document->custodian->name) ?: trim( $document->custodian->name ),
-            'type' => $document->type,
+            'type' => empty($document->type) ?: $document->type,
         ];
     }
 
