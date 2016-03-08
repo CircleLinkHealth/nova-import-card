@@ -3,6 +3,8 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Location;
 
 
+use App\CLH\CCD\Ccda;
+use App\CLH\CCD\ItemLogger\CcdProviderLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\Facades\StringManipulation;
@@ -10,26 +12,26 @@ use App\Location;
 
 class ProviderLocationParser implements ParsingStrategy
 {
-    public function parse($providers, ValidationStrategy $validator = null)
+    public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
-        $providerInfo = array_map( function ($provider) {
-            if ( isset($provider->address->street[ 0 ]) && isset($provider->phones[ 0 ]->number) ) {
-                $info[ 'address' ] = $provider->address->street[ 0 ];
-                $info[ 'phone' ] = StringManipulation::formatPhoneNumber( $provider->phones[ 0 ]->number );
-                return $info;
+        $providers = CcdProviderLog::whereCcdaId($ccd->id)->get();
+
+        $locations = [];
+        foreach ($providers as $provider)
+        {
+            $loc = Location::where( 'address_line_1', $provider->street )
+                ->whereIn( 'phone', [$provider->cell_phone, $provider->home_phone, $provider->work_phone] )
+                ->whereNotNull( 'parent_id' )
+                ->get();
+
+            if (count($loc) > 0) {
+                foreach ($loc as $l) {
+                    array_push($locations, $l);
+                }
             }
-        }, $providers );
+        }
 
-        $providerInfo = array_values( array_filter( $providerInfo ) );
-
-        if (!isset($providerInfo[ 0 ])) return false;
-
-        $locations = Location::where( 'address_line_1', $providerInfo[ 0 ][ 'address' ] )
-            ->where( 'phone', $providerInfo[ 0 ][ 'phone' ] )
-            ->whereNotNull( 'parent_id' )
-            ->get();
-
-        if ( count( $locations ) > 0 ) return $locations->all();
+        if ( count( $locations ) > 0 ) return $locations;
 
         return false;
     }

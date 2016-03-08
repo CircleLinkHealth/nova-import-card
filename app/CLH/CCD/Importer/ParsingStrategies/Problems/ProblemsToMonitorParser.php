@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 
+use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\CPMProblem;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
@@ -13,9 +14,9 @@ class ProblemsToMonitorParser implements ParsingStrategy
 {
     use ConsolidatesProblemInfoTrait;
 
-    public function parse($ccd, ValidationStrategy $validator = null)
+    public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
-        $problemsSection = $ccd->problems;
+        $problemsSection = json_decode($ccd->json)->problems;
 
         $cpmProblems = CPMProblem::all();
 

@@ -3,6 +3,8 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\CareTeam;
 
 
+use App\CLH\CCD\Ccda;
+use App\CLH\CCD\ItemLogger\CcdProviderLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\User;
@@ -15,15 +17,17 @@ class PrimaryProviderParser implements ParsingStrategy
      * @param ValidationStrategy|null $validator
      * @return array|bool
      */
-    public function parse($documentationOf, ValidationStrategy $validator = null)
+    public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
+        $documentationOf = CcdProviderLog::whereCcdaId($ccd->id)->get();
+
         if ( empty($documentationOf) ) return false;
 
         foreach ( $documentationOf as $doc )
         {
-            if ( isset($doc->name->given[ 0 ]) && isset($doc->name->family) )
+            if ( isset($doc->first_name) && isset($doc->last_name) )
             {
-                $doctorNames[] = $doc->name->given[ 0 ] . ' ' . $doc->name->family;
+                $doctorNames[] = $doc->first_name . ' ' . $doc->last_name;
             }
         }
 
