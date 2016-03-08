@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer\StorageStrategies\DefaultSections;
 
 
+use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\DefaultSectionsImporter;
 use App\CPRulesItem;
@@ -14,45 +15,18 @@ class TransitionalCare extends BaseStorageStrategy implements DefaultSectionsImp
 {
     public function setDefaults()
     {
-        if ( empty($this->blogId) or empty($this->userId) ) throw new \Exception( 'UserID and BlogID are required.' );
 
-        $pcp = CPRulesPCP::whereProvId( $this->blogId )->whereSectionText( 'Transitional Care Management' )->first();
-        if ( empty($pcp) ) {
-            Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.' );
-            return;
+        if (!$this->blogId || !$this->user) {
+            throw new \Exception('Unable to build careplan');
         }
-        $pcpId = $pcp->pcp_id;
 
-        $rulesItem = CPRulesItem::wherePcpId( $pcpId )->whereItemsText( 'Track Care Transitions' )->first();
-        if ( empty($rulesItem) ) {
-            Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.' );
-            return;
+        $carePlan = CarePlan::where('program_id', '=', $this->blogId)->where('type', '=', 'Program Default')->first();
+        if (!$carePlan) {
+            throw new \Exception('Unable to build careplan');
         }
-        $parentItemId = $rulesItem->items_id;
 
-        $details = CPRulesItem::wherePcpId( $pcpId )->whereItemsParent( $parentItemId )->whereItemsText( 'Contact Days' )->first();
-        if ( empty($details) ) {
-            Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.' );
-            return;
-        }
-        $itemId = $details->items_id;
-
-        //Set UI Item to Active
-        CPRulesUCP::updateOrCreate( [
-            'items_id' => $parentItemId,
-            'user_id' => $this->userId,
-            'meta_key' => 'status',
-        ], [
-            'meta_value' => 'Active',
-        ] );
-
-        //Value
-        CPRulesUCP::updateOrCreate( [
-            'items_id' => $itemId,
-            'user_id' => $this->userId,
-            'meta_key' => 'value',
-        ], [
-            'meta_value' => 5,
-        ] );
+        //Make TCC Active, set the days to 5
+        $carePlan->setCareItemUserValue($this->user, 'cf-hsp-10-track-care-transitions', "Inactive");
+        $carePlan->setCareItemUserValue($this->user, 'track-care-transitions-contact-days', "5");
     }
 }
