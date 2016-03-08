@@ -27,6 +27,8 @@ class ProviderLocationParser implements ParsingStrategy
             if (count($loc) > 0) {
                 foreach ($loc as $l) {
                     array_push($locations, $l);
+                    $provider->import = true;
+                    $provider->save();
                 }
             }
         }
