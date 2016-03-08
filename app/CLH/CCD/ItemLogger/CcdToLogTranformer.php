@@ -73,7 +73,7 @@ class CcdToLogTranformer
     {
         return [
             'reference' => $problem->reference,
-            'reference_title' => $problem->reference_title,
+            'reference_title' => trim($problem->reference_title),
             'start' => $problem->date_range->start,
             'end' => $problem->date_range->end,
             'status' => $problem->status,
