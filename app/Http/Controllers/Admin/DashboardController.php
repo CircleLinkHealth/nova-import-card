@@ -41,6 +41,7 @@ class DashboardController extends Controller {
 	 */
 	public function index()
 	{
+
 		$user = $wpUser = User::find(Auth::user()->ID);
 
 		// switch dashboard view based on logged in user
