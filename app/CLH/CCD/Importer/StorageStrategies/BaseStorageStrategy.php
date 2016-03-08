@@ -4,15 +4,16 @@ namespace App\CLH\CCD\Importer\StorageStrategies;
 
 
 use App\CLH\Contracts\DataTemplate;
+use App\User;
 
 abstract class BaseStorageStrategy
 {
     protected $blogId;
-    protected $userId;
+    protected $user;
 
-    public function __construct($blogId, $userId)
+    public function __construct($blogId, User $user)
     {
         $this->blogId = $blogId;
-        $this->userId = $userId;
+        $this->user = $user;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\CLH\CCD\Importer\StorageStrategies\Allergies;
 
-
+use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\StorageStrategy;
 use App\CPRulesItem;
@@ -16,45 +16,17 @@ class AllergiesListStorageStrategy extends BaseStorageStrategy implements Storag
     {
         if (empty($allergiesList)) return;
 
-        if (empty($this->blogId) or empty($this->userId)) throw new \Exception('UserID and BlogID are required.');
+        if (empty($this->blogId) or empty($this->user)) throw new \Exception('UserID and BlogID are required.');
 
-        $pcp = CPRulesPCP::whereProvId($this->blogId)->whereSectionText('Additional Information')->first();
-        if (empty($pcp)) {
-            Log::error(__METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.');
-            return;
+        $carePlan = CarePlan::where('program_id', '=', $this->blogId)->where('type', '=', 'Program Default')->first();
+        if(!$carePlan) {
+            throw new \Exception('Unable to build careplan');
         }
-        $pcpId = $pcp->pcp_id;
 
-        $rulesItem = CPRulesItem::wherePcpId($pcpId)->whereItemsText('Allergies')->first();
-        if (empty($rulesItem)) {
-            Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.');
-            return;
-        }
-        $parentItemId = $rulesItem->items_id;
+        $carePlan->setCareItemUserValue($this->user, 'allergies-details', $allergiesList);
+        $carePlan->setCareItemUserValue($this->user, 'allergies', 'Active');
 
-        $details = CPRulesItem::wherePcpId($pcpId)->whereItemsParent($parentItemId)->whereItemsText('Details')->first();
-        if (empty($details)) {
-            Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.');
-            return;
-        }
-        $itemId = $details->items_id;
-
-        //Set UI Item to Active
-        CPRulesUCP::updateOrCreate([
-            'items_id' => $parentItemId,
-            'user_id' => $this->userId,
-            'meta_key' => 'status',
-        ], [
-            'meta_value' => 'Active',
-        ]);
-
-        //Value
-        CPRulesUCP::updateOrCreate([
-            'items_id' => $itemId,
-            'user_id' => $this->userId,
-            'meta_key' => 'value',
-        ], [
-            'meta_value' => $allergiesList,
-        ]);
+        $this->user->care_plan_id = $carePlan->id;
+        $this->user->save();
     }
 }

@@ -41,7 +41,7 @@ class ImportManager
             $storageStrategy = $strategies[ 'storage' ][ $sections[ $sectionId ][ 'storageIds' ][ 0 ] ];
 
             if ( class_exists( $storageStrategy ) ) {
-                $storage = new $storageStrategy( $this->user->program_id, $this->user->ID );
+                $storage = new $storageStrategy( $this->user->program_id, $this->user );
                 $storage->import( $data );
             }
         }
