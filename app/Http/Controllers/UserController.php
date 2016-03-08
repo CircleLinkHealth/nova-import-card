@@ -469,6 +469,53 @@ class UserController extends Controller {
 	}
 
 
+	/**
+	 * Scramble user(s)
+	 *
+	 * @return Response
+	 *
+	 */
+	public function doAction(Request $request)
+	{
+		if(!Auth::user()->can('users-edit-all')) {
+			abort(403);
+		}
+
+		// input
+		$params = new ParameterBag($request->input());
+
+		if($params->get('action') && $params->get('action') == 'scramble') {
+			if($params->get('users') && !empty($params->get('users'))) {
+				return redirect()->back()->with('messages', ['successfully scrambled users']);
+			}
+		}
+
+		return redirect()->back();
+	}
+
+	/**
+	 * Scramble user(s)
+	 *
+	 * @return Response
+	 *
+	 */
+	public function scrambleUsers($userIds)
+	{
+		if(!Auth::user()->can('users-edit-all')) {
+			abort(403);
+		}
+
+		foreach($userIds as $id) {
+			$user = User::find($id);
+			if (!$user) {
+				return response("User not found", 401);
+			}
+		}
+
+		return true;
+	}
+
+
 
 
 	public function getPatients()

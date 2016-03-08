@@ -27,37 +27,52 @@
                             {!! Form::open(array('url' => URL::route('admin.users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                         </div>
 
-                        <h2>Filter</h2>
-                        <div class="row" style="margin:20px 0px 40px 0px;">
-                            <div class="col-md-8 col-md-offset-2">
-                                <div class="row">
-                                    <div class="col-xs-4 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
-                                    <div class="col-xs-8">{!! Form::select('filterUser', array('all' => 'All Users') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+
+
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFilter"><h1 class="panel-title">Toggle Filters</h1></a><br />
+                        <div id="collapseFilter" class="panel-collapse collapse">
+                            <div class="row" style="margin:20px 0px 40px 0px;">
+                                <div class="col-md-8 col-md-offset-2">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
+                                        <div class="col-xs-8">{!! Form::select('filterUser', array('all' => 'All Users') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-xs-2 text-right">{!! Form::label('filterRole', 'Role:') !!}</div>
-                                <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All Roles') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Program:') !!}</div>
-                                <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-xs-2 text-right">{!! Form::label('filterRole', 'Role:') !!}</div>
+                                    <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All Roles') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                    <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Program:') !!}</div>
+                                    <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row" style="margin-top:50px;">
-                            <div class="col-sm-12">
-                                <div class="" style="text-align:center;">
-                                    {!! Form::hidden('action', 'filter') !!}
-                                    <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
-                                    <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</button>
-                                    </form>
+                            <div class="row" style="margin-top:50px;">
+                                <div class="col-sm-12">
+                                    <div class="" style="text-align:center;">
+                                        {!! Form::hidden('action', 'filter') !!}
+                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
+                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
+
+                        {!! Form::open(array('url' => URL::route('admin.users.doAction', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                        @if(Entrust::can('users-edit-all'))
+                            Selected User Actions:
+                            <select name="action">
+                                <option value="scramble">Scramble</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                            <button type="submit" value="Submit" class="btn btn-primary btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-circle-arrow-right"></i> Perform Action</button>
+                        @endif
                         <table class="table table-striped">
                             <thead>
                             <tr>
+                                <td></td>
                                 <td><strong>Name</strong></td>
                                 <td><strong>Role</strong></td>
                                 <td><strong>Email</strong></td>
@@ -69,6 +84,7 @@
                             @if (count($wpUsers) > 0)
                                 @foreach( $wpUsers as $wpUser )
                                     <tr>
+                                        <td><input type="checkbox" name="users[]" value="{{ $wpUser->ID }}"></td>
                                         <td><a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class=""> {{ $wpUser->fullNameWithID }}</a></td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
@@ -91,7 +107,7 @@
                                             @endif
                                             @if (count($wpUser->roles) > 0)
                                                 @if($wpUser->hasRole('participant'))
-                                                    <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-info btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
+                                                    <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-info btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-eye-open"></i> UI</a>
                                                 @endif
                                             @endif
                                             @if(Entrust::can('users-edit-all'))
@@ -105,6 +121,7 @@
                             @endif
                             </tbody>
                         </table>
+                        </form>
 
                         @if (count($wpUsers) > 0)
                             {!! $wpUsers->appends(['action' => 'filter', 'filterUser' => $filterUser, 'filterRole' => $filterRole, 'filterProgram' => $filterProgram])->render() !!}
