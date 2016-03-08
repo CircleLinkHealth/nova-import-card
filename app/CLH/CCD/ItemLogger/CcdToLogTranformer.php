@@ -94,8 +94,9 @@ class CcdToLogTranformer
 
         return [
             'npi' => isset($provider->npi) ? $provider->npi : null,
-            'first_name' => array_key_exists( 0, $provider->name->given ) ? $provider->name->given[ 0 ] : null,
-            'last_name' => $provider->name->family,
+            'first_name' => isset($provider->name->given) && array_key_exists( 0, $provider->name->given ) ? $provider->name->given[ 0 ] : null,
+            'last_name' => isset($provider->name->family) ? $provider->name->family : null,
+            'organization' => isset($provider->organization) ? $provider->organization : null,
             'street' => array_key_exists( 0, $provider->address->street ) ? $provider->address->street[ 0 ] : null,
             'city' => $provider->address->city,
             'state' => $provider->address->state,

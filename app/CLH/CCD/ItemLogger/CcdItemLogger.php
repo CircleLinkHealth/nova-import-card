@@ -105,6 +105,8 @@ class CcdItemLogger
         //Add them both together
         array_push( $this->ccd->document->documentation_of, $this->ccd->document->author );
 
+        array_push($this->ccd->document->documentation_of, $this->ccd->demographics->provider);
+
         $providers = $this->ccd->document->documentation_of;
 
         foreach ( $providers as $provider ) {
