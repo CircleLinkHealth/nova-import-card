@@ -27,7 +27,7 @@ class AddLocationToQaSummaries extends Migration {
 	{
 		Schema::table('q_a_import_summaries', function(Blueprint $table)
 		{
-			//
+			$table->removeColumn('location');
 		});
 	}
 
