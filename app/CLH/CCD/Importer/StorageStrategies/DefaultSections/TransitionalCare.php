@@ -26,7 +26,7 @@ class TransitionalCare extends BaseStorageStrategy implements DefaultSectionsImp
         }
 
         //Make TCC Active, set the days to 5
-        $carePlan->setCareItemUserValue($this->user, 'cf-hsp-10-track-care-transitions', "Inactive");
+        $carePlan->setCareItemUserValue($this->user, 'cf-hsp-10-track-care-transitions', "Active");
         $carePlan->setCareItemUserValue($this->user, 'track-care-transitions-contact-days', "5");
     }
 }
