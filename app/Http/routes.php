@@ -3,6 +3,9 @@ use App\CarePlan;
 use App\User;
 use Illuminate\Http\Request;
 
+//$u = User::find(400);
+//$test = new \App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsListStorageStrategy($u->blogId(),$u);
+//$test->import("this is the other details...");
 //CPM's CCD Submission API
 Route::group( ['prefix' => 'api/ehr/v1'], function () {
     Route::post( 'upload', ['uses' => 'CCDAPI\ApiController@create', 'as' => 'ccd.api.upload'] );

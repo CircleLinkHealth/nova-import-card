@@ -24,7 +24,7 @@ class AllergiesListStorageStrategy extends BaseStorageStrategy implements Storag
         }
 
         $carePlan->setCareItemUserValue($this->user, 'allergies-details', $allergiesList);
-        $carePlan->setCareItemUserValue($this->user, 'allergies', 'Active');
+        $carePlan->setCareItemUserValue($this->user, 'allergies', 'active');
 
         $this->user->care_plan_id = $carePlan->id;
         $this->user->save();
