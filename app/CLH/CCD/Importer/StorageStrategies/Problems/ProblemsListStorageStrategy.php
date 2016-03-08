@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer\StorageStrategies\Problems;
 
 
+use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\StorageStrategy;
 use App\CPRulesItem;
@@ -16,45 +17,13 @@ class ProblemsListStorageStrategy extends BaseStorageStrategy implements Storage
     {
         if ( empty($problemsList) ) return;
 
-        if ( empty($this->blogId) or empty($this->userId) ) throw new \Exception( 'UserID and BlogID are required.' );
-
-        $pcp = CPRulesPCP::whereProvId( $this->blogId )->whereSectionText( 'Diagnosis / Problems to Monitor' )->first();
-        if ( empty($pcp) ) {
-            Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.' );
-            return;
+        $carePlan = CarePlan::where('program_id', '=', $this->blogId)->where('type', '=', 'Program Default')->first();
+        if(!$carePlan) {
+            return response()->json(["message" => "Careplan Not Found"]);
         }
-        $pcpId = $pcp->pcp_id;
+        $carePlan->setCareItemUserValue($this->user, 'other-conditions-details', $problemsList);
+        $carePlan->setCareItemUserValue($this->user, 'other-conditions',"Active");
 
-        $rulesItem = CPRulesItem::wherePcpId( $pcpId )->whereItemsText( 'Other Conditions' )->first();
-        if ( empty($rulesItem) ) {
-            Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.' );
-            return;
-        }
-        $parentItemId = $rulesItem->items_id;
-
-        $details = CPRulesItem::wherePcpId( $pcpId )->whereItemsParent( $parentItemId )->whereItemsText( 'Details' )->first();
-        if ( empty($details) ) {
-            Log::error( __METHOD__ . ' ' . __LINE__ . ' for userID ' . $this->userId . ', blogId ' . $this->blogId . ' has failed.' );
-            return;
-        }
-        $itemId = $details->items_id;
-
-        //Set UI Item to Active
-        CPRulesUCP::updateOrCreate( [
-            'items_id' => $parentItemId,
-            'user_id' => $this->userId,
-            'meta_key' => 'status',
-        ], [
-            'meta_value' => 'Active',
-        ] );
-
-        //Value
-        CPRulesUCP::updateOrCreate( [
-            'items_id' => $itemId,
-            'user_id' => $this->userId,
-            'meta_key' => 'value',
-        ], [
-            'meta_value' => $problemsList,
-        ] );
+        dd($carePlan->getCareItemUserValue($this->user, 'other-conditions-details'));
     }
 }
