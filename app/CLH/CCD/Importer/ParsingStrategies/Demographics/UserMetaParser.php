@@ -3,6 +3,8 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Demographics;
 
 
+use App\CLH\CCD\Ccda;
+use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\DataTemplates\UserMetaTemplate;
@@ -16,12 +18,12 @@ class UserMetaParser implements ParsingStrategy
         $this->template = $template;
     }
 
-    public function parse($ccd, ValidationStrategy $validator = null)
+    public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
-        $demographicsSection = $ccd->demographics;
+        $demographicsSection = CcdDemographicsLog::whereCcdaId($ccd->id)->first();
 
-        $this->template->first_name = ucwords(strtolower($demographicsSection->name->given[0]));
-        $this->template->last_name = ucwords(strtolower($demographicsSection->name->family));
+        $this->template->first_name = ucwords(strtolower($demographicsSection->first_name));
+        $this->template->last_name = ucwords(strtolower($demographicsSection->last_name));
         $this->template->nickname = "";
 
         return $this->template;

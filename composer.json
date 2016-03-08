@@ -31,7 +31,7 @@
         "guzzlehttp/guzzle": "~5.3|~6.0",
         "rap2hpoutre/laravel-log-viewer": "^0.4.0",
         "jlapp/swaggervel": "master-dev",
-        "zizaco/entrust": "dev-laravel-5",
+        "zizaco/entrust": "dev-laravel-5#be28aa634c44551ae5187894c903094a8ce8baee",
         "fideloper/proxy": "~3.0",
         "mikemclin/laravel-wp-password": "~2.0.0",
         "michalisantoniou6/php-ccd-parser": "dev-master",

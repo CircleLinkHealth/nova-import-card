@@ -28,6 +28,7 @@ class CcdToLogTranformer
             'gender' => $demographics->gender,
             'mrn_number' => $demographics->mrn_number,
             'street' => array_key_exists( 0, $demographics->address->street ) ? $demographics->address->street[ 0 ] : null,
+            'street2' => array_key_exists( 1, $demographics->address->street ) ? $demographics->address->street[ 1 ] : null,
             'city' => $demographics->address->city,
             'state' => $demographics->address->state,
             'zip' => $demographics->address->zip,
@@ -35,6 +36,7 @@ class CcdToLogTranformer
             'home_phone' => $phones[ 'home' ][ 0 ],
             'work_phone' => $phones[ 'work' ][ 0 ],
             'email' => $demographics->email,
+            'language' => $demographics->language,
         ];
     }
 
@@ -42,7 +44,7 @@ class CcdToLogTranformer
     {
         return [
             'custodian' => empty($document->custodian->name) ?: trim( $document->custodian->name ),
-            'type' => $document->type,
+            'type' => empty($document->type) ?: $document->type,
         ];
     }
 
@@ -71,7 +73,7 @@ class CcdToLogTranformer
     {
         return [
             'reference' => $problem->reference,
-            'reference_title' => $problem->reference_title,
+            'reference_title' => trim($problem->reference_title),
             'start' => $problem->date_range->start,
             'end' => $problem->date_range->end,
             'status' => $problem->status,
@@ -92,8 +94,9 @@ class CcdToLogTranformer
 
         return [
             'npi' => isset($provider->npi) ? $provider->npi : null,
-            'first_name' => array_key_exists( 0, $provider->name->given ) ? $provider->name->given[ 0 ] : null,
-            'last_name' => $provider->name->family,
+            'first_name' => isset($provider->name->given) && array_key_exists( 0, $provider->name->given ) ? $provider->name->given[ 0 ] : null,
+            'last_name' => isset($provider->name->family) ? $provider->name->family : null,
+            'organization' => isset($provider->organization) ? $provider->organization : null,
             'street' => array_key_exists( 0, $provider->address->street ) ? $provider->address->street[ 0 ] : null,
             'city' => $provider->address->city,
             'state' => $provider->address->state,

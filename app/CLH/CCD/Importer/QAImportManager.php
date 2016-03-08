@@ -15,6 +15,7 @@ use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMetaParser;
 use App\CLH\CCD\ImportRoutine\ExecutesImportRoutine;
 use App\CLH\CCD\ImportRoutine\RoutineBuilder;
 use App\CLH\CCD\QAImportOutput;
+use App\CLH\CCD\ValidatesQAImportOutput;
 use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
@@ -26,6 +27,7 @@ class QAImportManager
 {
     use DetectsProblemCodeSystemTrait;
     use ExecutesImportRoutine;
+    use ValidatesQAImportOutput;
 
     private $blogId;
     private $ccd;
@@ -69,7 +71,7 @@ class QAImportManager
         foreach ( $this->routine as $routine ) {
             $validator = new $strategies[ 'validation' ][ $routine->validator_id ]();
             $parser = new $strategies[ 'parsing' ][ $routine->parser_id ]();
-            $output[ $routine->importer_section_id ] = $parser->parse( $this->ccd, $validator );
+            $output[ $routine->importer_section_id ] = $parser->parse( $this->ccda, $validator );
         }
 
         /**
@@ -80,32 +82,30 @@ class QAImportManager
          * Parse and Import User Meta
          */
         $userMetaParser = new UserMetaParser( new UserMetaTemplate() );
-        $output[ 'userMeta' ] = $userMetaParser->parse( $this->ccd );
+        $output[ 'userMeta' ] = $userMetaParser->parse( $this->ccda );
 
 
         /**
          * Parse provider (Lead Contact and Billing)
          */
         $primaryProviderParser = new PrimaryProviderParser();
-        //add the author to the performers
-        array_push($this->ccd->document->documentation_of, $this->ccd->document->author);
-        $output[ 'provider' ] = $primaryProviderParser->parse( $this->ccd->document->documentation_of );
+
+        $output[ 'provider' ] = $primaryProviderParser->parse( $this->ccda );
 
         /**
          * Parse Provider Location
          */
         $locationParser = new ProviderLocationParser();
-        $output[ 'location' ] = $locationParser->parse( [$this->ccd->demographics->provider, $this->ccd->document->author] );
+        $output[ 'location' ] = $locationParser->parse( $this->ccda );
 
         /**
          * Parse and Import User Config
          */
         $userConfigParser = new UserConfigParser( new UserConfigTemplate(), $this->blogId );
-        $output[ 'userConfig' ] = $userConfigParser->parse( $this->ccd );
+        $output[ 'userConfig' ] = $userConfigParser->parse( $this->ccda );
 
-        return QAImportOutput::create( [
-            'ccda_id' => $this->ccda->id,
-            'output' => json_encode( $output, JSON_FORCE_OBJECT ),
-        ] );
+        return $this->validateQAImportOutput($output, $this->ccda);
+
+
     }
 }

@@ -3,7 +3,6 @@
 use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
-use App\CLH\CCD\ValidatesQAImportOutput;
 use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
@@ -14,8 +13,6 @@ use JavaScript;
 
 class CCDUploadController extends Controller
 {
-    use ValidatesQAImportOutput;
-
     private $repo;
 
     public function __construct(CCDImporterRepository $repo)
@@ -63,7 +60,7 @@ class CCDUploadController extends Controller
                 $importer = new QAImportManager( $blogId, $ccda );
                 $output = $importer->generateCarePlanFromCCD();
 
-                $qaSummaries[] = $this->validateQAImportOutput( $output );
+                $qaSummaries[] = $output;
             }
         }
 

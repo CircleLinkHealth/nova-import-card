@@ -7,17 +7,17 @@ use App\CLH\CCD\QAImportSummary;
 
 trait ValidatesQAImportOutput
 {
-    public function validateQAImportOutput(QAImportOutput $output)
+    public function validateQAImportOutput($output, Ccda $ccda)
     {
-        $jsonCcd = json_decode( $output->output, true );
+        $jsonCcd = $output;
 
         $removeDuplicateMeds = function () use ($jsonCcd) {
             $medications = explode( ';', $jsonCcd[ 3 ] );
         };
-        $removeDuplicateMeds();
+//        $removeDuplicateMeds();
 
         $name = function () use ($jsonCcd) {
-            return empty($name = $jsonCcd[ 'userMeta' ][ 'first_name' ] . ' ' . $jsonCcd[ 'userMeta' ][ 'last_name' ])
+            return empty($name = $jsonCcd[ 'userMeta' ]->first_name . ' ' . $jsonCcd[ 'userMeta' ]->last_name)
                 ?: $name;
         };
 
@@ -30,11 +30,11 @@ trait ValidatesQAImportOutput
         };
 
         $counter = function ($index) use ($jsonCcd) {
-            return count( explode( ';', $jsonCcd[ $index ] ) ) - 1;
+            return count( $jsonCcd[ $index ] );
         };
 
         $qaSummary = new QAImportSummary();
-        $qaSummary->qa_output_id = $output->id;
+        $qaSummary->ccda_id = $ccda->id;
         $qaSummary->name = $name();
         $qaSummary->medications = $counter( 3 );
         $qaSummary->problems = $counter( 1 );
