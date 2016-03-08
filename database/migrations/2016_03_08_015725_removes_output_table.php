@@ -29,6 +29,8 @@ class RemovesOutputTable extends Migration
                 ->on( 'ccdas' )
                 ->onUpdate( 'cascade' )
                 ->onDelete( 'cascade' );
+
+            $table->boolean('flag')->after('ccda_id');
         } );
     }
 
