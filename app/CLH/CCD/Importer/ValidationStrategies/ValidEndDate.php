@@ -11,8 +11,8 @@ class ValidEndDate implements ValidationStrategy
     {
         $endDate = '';
 
-        if ( !empty($ccdItem->date_range->end) ) {
-            $endDate = Carbon::createFromTimestamp( strtotime( $ccdItem->date_range->end ) );
+        if ( !empty($ccdItem->end) ) {
+            $endDate = Carbon::createFromTimestamp( strtotime( $ccdItem->end ) );
         }
 
         return (!empty($endDate) && !$endDate->isPast());

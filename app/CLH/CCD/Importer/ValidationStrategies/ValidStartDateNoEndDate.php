@@ -10,6 +10,6 @@ class ValidStartDateNoEndDate implements ValidationStrategy
 
     public function validate($ccdItem)
     {
-        return (!empty($ccdItem->date_range->start) && empty($ccdItem->date_range->end));
+        return (!empty($ccdItem->start) && empty($ccdItem->end));
     }
 }
