@@ -104,12 +104,7 @@ class QAImportManager
         $userConfigParser = new UserConfigParser( new UserConfigTemplate(), $this->blogId );
         $output[ 'userConfig' ] = $userConfigParser->parse( $this->ccda );
 
-        $qa = QAImportOutput::create( [
-            'ccda_id' => $this->ccda->id,
-            'output' => json_encode( $output, JSON_FORCE_OBJECT ),
-        ] );
-
-        return $this->validateQAImportOutput($output, $qa);
+        return $this->validateQAImportOutput($output, $this->ccda);
 
 
     }

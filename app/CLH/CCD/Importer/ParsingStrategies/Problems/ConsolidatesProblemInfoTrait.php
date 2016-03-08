@@ -22,9 +22,10 @@ trait ConsolidatesProblemInfoTrait
             $consolidatedProblem->cons_code = $ccdProblem->translation_code;
             $consolidatedProblem->cons_code_system = $ccdProblem->translation_code_system;
             $consolidatedProblem->cons_code_system_name = $ccdProblem->translation_code_system_name;
+            $consolidatedProblem->cons_name = $ccdProblem->name;
         }
 
-        if ( empty($consolidatedProblem->name) && !empty($ccdProblem->translation_name) ) {
+        if ( empty($consolidatedProblem->cons_name) && !empty($ccdProblem->translation_name) ) {
             $consolidatedProblem->cons_name = $ccdProblem->translation_name;
         }
 

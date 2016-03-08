@@ -7,7 +7,7 @@ use App\CLH\CCD\QAImportSummary;
 
 trait ValidatesQAImportOutput
 {
-    public function validateQAImportOutput($output, QAImportOutput $q)
+    public function validateQAImportOutput($output, Ccda $ccda)
     {
         $jsonCcd = $output;
 
@@ -34,7 +34,7 @@ trait ValidatesQAImportOutput
         };
 
         $qaSummary = new QAImportSummary();
-        $qaSummary->qa_output_id = $q->id;
+        $qaSummary->ccda_id = $ccda->id;
         $qaSummary->name = $name();
         $qaSummary->medications = $counter( 3 );
         $qaSummary->problems = $counter( 1 );
