@@ -808,6 +808,46 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->belongsToMany('App\WpBlog', 'lv_program_user', 'user_id', 'program_id');
 	}
 
+	// user data scrambler
+	public function scramble() {
+		// states array
+		$states = array('Alabama' => 'AL', 'Alaska' => 'AK', 'Arizona' => 'AZ', 'Arkansas' => 'AR', 'California' => 'CA', 'Colorado' => 'CO', 'Connecticut' => 'CT', 'Delaware' => 'DE', 'Florida' => 'FL', 'Georgia' => 'GA', 'Hawaii' => 'HI', 'Idaho' => 'ID', 'Illinois' => 'IL', 'Indiana' => 'IN', 'Iowa' => 'IA', 'Kansas' => 'KS', 'Kentucky' => 'KY', 'Louisiana' => 'LA', 'Maine' => 'ME', 'Maryland' => 'MD', 'Massachusetts' => 'MA', 'Michigan' => 'MI', 'Minnesota' => 'MN', 'Mississippi' => 'MS', 'Missouri' => 'MO', 'Montana' => 'MT', 'Nebraska' => 'NE', 'Nevada' => 'NV', 'New Hampshire' => 'NH', 'New Jersey' => 'NJ', 'New Mexico' => 'NM', 'New York' => 'NY', 'North Carolina' => 'NC', 'North Dakota' => 'ND', 'Ohio' => 'OH', 'Oklahoma' => 'OK', 'Oregon' => 'OR', 'Pennsylvania' => 'PA', 'Rhode Island' => 'RI', 'South Carolina' => 'SC', 'South Dakota' => 'SD', 'Tennessee' => 'TN', 'Texas' => 'TX', 'Utah' => 'UT', 'Vermont' => 'VT', 'Virginia' => 'VA', 'Washington' => 'WA', 'West Virginia' => 'WV', 'Wisconsin' => 'WI', 'Wyoming' => 'WY');
+
+		// Some Randomness
+		// https://randomuser.me/api/?nat=us&results=3
+		$json_string = file_get_contents("https://randomuser.me/api/?nat=us&results=1");
+		if(empty($json_string)) {
+			return false;
+		}
+		$randomUserInfo = json_decode($json_string);
+		$randomUserInfo = $randomUserInfo->results[0]->user;
+
+		//dd($randomUserInfo);
+		// set random data
+		$user = $this;
+		$user->firstName = $randomUserInfo->name->first;
+		$user->user_nicename = $randomUserInfo->name->first;
+		$user->lastName = $randomUserInfo->name->last;
+		$user->user_login = $randomUserInfo->username;
+		$user->user_pass = $randomUserInfo->password;
+		$user->user_email = $randomUserInfo->email;
+		$user->user_email = $randomUserInfo->email;
+		$user->display_name = $randomUserInfo->username;
+		$user->MRN = rand();
+		$user->gender = $randomUserInfo->gender;
+		$user->address = $randomUserInfo->location->street;
+		$user->city = $randomUserInfo->location->city;
+		$user->state = $randomUserInfo->location->state;
+		$user->zip = $randomUserInfo->location->zip;
+		$user->phone = $randomUserInfo->email;
+		$user->birthDate = date('Y-m-d', $randomUserInfo->dob);
+		$user->agentName = 'Secret Agent';
+		$user->agentPhone = '111-234-5678';
+		$user->agentEmail = 'secret@agent.net';
+		$user->agentRelationship = 'SA';
+		$user->save();
+	}
+
 	public function createNewUser($user_email, $user_pass) {
 		$this->user_login = $user_email;
 		$this->user_email = $user_email;
