@@ -11,14 +11,6 @@
         "0": {
             "type": "vcs",
             "url": "https://github.com/tralves/Swaggervel"
-        },
-        "1": {
-            "type": "vcs",
-            "url": "https://github.com/michalisantoniou6/php-ccd-parser"
-        },
-        "repo-name": {
-            "type": "git",
-            "url": "git@github.com:jamisonvalenta/Laravel-4-Generators.git"
         }
     },
     "require": {
@@ -34,7 +26,6 @@
         "zizaco/entrust": "dev-laravel-5#be28aa634c44551ae5187894c903094a8ce8baee",
         "fideloper/proxy": "~3.0",
         "mikemclin/laravel-wp-password": "~2.0.0",
-        "michalisantoniou6/php-ccd-parser": "dev-master",
         "barryvdh/laravel-debugbar": "^2.0",
         "laracasts/utilities": "~2.0",
         "venturecraft/revisionable": "1.*",
@@ -44,9 +35,7 @@
         "phpunit/phpunit": "~4.0",
         "phpspec/phpspec": "~2.1",
         "doctrine/dbal": "~2.3",
-        "orangehill/iseed": "dev-master",
-        "xethron/migrations-generator": "dev-l5",
-        "way/generators": "dev-feature/laravel-five-stable"
+        "orangehill/iseed": "dev-master"
     },
     "autoload": {
         "classmap": [
