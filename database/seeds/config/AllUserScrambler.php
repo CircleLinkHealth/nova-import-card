@@ -15,7 +15,15 @@ class AllUserScrambler extends Seeder {
         $allUsers = User::all();
         if(!empty($allUsers)) {
             foreach($allUsers as $user) {
-                $user->scramble();
+                $role = $user->roles()->first();
+                if($role && strtolower($role->name) != 'administrator' && strtolower($role->name) != 'provider') {
+                    echo PHP_EOL;
+                    echo PHP_EOL;
+                    echo PHP_EOL.$role->name;
+                    echo PHP_EOL.$user->ID. '-' . $user->user_email;
+                    $user->scramble();
+                    echo PHP_EOL.$user->ID. '-' . $user->user_email;
+                }
             }
         }
     }
