@@ -517,8 +517,8 @@ class UserController extends Controller {
 			if(empty($json_string)) {
 				continue 1;
 			}
-			$parsed_json = json_decode($json_string);
-			$randomUserInfo = $parsed_json->results[0]->user;
+			$randomUserInfo = json_decode($json_string);
+			$randomUserInfo = $randomUserInfo->results[0]->user;
 
 			//dd($randomUserInfo);
 			// set random data
@@ -528,18 +528,23 @@ class UserController extends Controller {
 			$user->user_login = $randomUserInfo->username;
 			$user->user_pass = $randomUserInfo->password;
 			$user->user_email = $randomUserInfo->email;
-			/*
+			$user->user_email = $randomUserInfo->email;
 			$user->display_name = $randomUserInfo->username;
-			$user->mrn_number = $randomUserInfo->email;
-			$user->gender = $randomUserInfo->email;
-			$user->email = $randomUserInfo->email;
-			$user->address = $randomUserInfo->email;
-			$user->address2 = $randomUserInfo->email;
-			$user->city = $randomUserInfo->email;
-			$user->state = $randomUserInfo->email;
-			$user->zip = $randomUserInfo->email;
-			$user->birth_date = $randomUserInfo->email;
-			$user->study_phone_number = $randomUserInfo->email;
+			$user->MRN = rand();
+			$user->gender = $randomUserInfo->gender;
+			$user->address = $randomUserInfo->location->street;
+			$user->city = $randomUserInfo->location->city;
+			$user->state = $randomUserInfo->location->state;
+			$user->zip = $randomUserInfo->location->zip;
+			$user->phone = $randomUserInfo->email;
+			$user->birthDate = date('Y-m-d', $randomUserInfo->dob);
+			$user->agentName = 'Secret Agent';
+			$user->agentPhone = '111-234-5678';
+			$user->agentEmail = 'secret@agent.net';
+			$user->agentRelationship = 'SA';
+			$user->save();
+			/*
+
 			$user->mobile_phone_number = $randomUserInfo->email;
 			$user->agent_name = $randomUserInfo->email;
 			$user->agent_telephone = $randomUserInfo->email;
