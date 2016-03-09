@@ -5,8 +5,19 @@ namespace App\CLH\CCD\ItemLogger;
 
 use App\CLH\CCD\Importer\ParsingStrategies\Facades\UserMetaParserHelpers;
 
+/**
+ * Takes data from the the json CCD and transforms it so that it can be saved as one of the transformer Models.
+ * There is a method in this class for each model, it is listed using @see above every function
+ * Class CcdToLogTranformer
+ * @package App\CLH\CCD\ItemLogger
+ */
 class CcdToLogTranformer
 {
+    /**
+     * @see App\CLH\CCD\ItemLogger\CcdAllergyLog
+     * @param $allergy
+     * @return array
+     */
     public function allergy($allergy)
     {
         return [
@@ -17,6 +28,11 @@ class CcdToLogTranformer
         ];
     }
 
+    /**
+     * @see App\CLH\CCD\ItemLogger\CcdDemographicsLog
+     * @param $demographics
+     * @return array
+     */
     public function demographics($demographics)
     {
         $phones = UserMetaParserHelpers::getAllPhoneNumbers( $demographics->phones );
@@ -40,6 +56,11 @@ class CcdToLogTranformer
         ];
     }
 
+    /**
+     * @see App\CLH\CCD\ItemLogger\CcdDocumentLog
+     * @param $document
+     * @return array
+     */
     public function document($document)
     {
         return [
@@ -48,6 +69,11 @@ class CcdToLogTranformer
         ];
     }
 
+    /**
+     * @see @see App\CLH\CCD\ItemLogger\CcdMedicationLog
+     * @param $medication
+     * @return array
+     */
     public function medication($medication)
     {
         return [
@@ -69,6 +95,11 @@ class CcdToLogTranformer
         ];
     }
 
+    /**
+     * @see App\CLH\CCD\ItemLogger\CcdProblemLog
+     * @param $problem
+     * @return array
+     */
     public function problem($problem)
     {
         return [
@@ -88,6 +119,11 @@ class CcdToLogTranformer
         ];
     }
 
+    /**
+     * @see App\CLH\CCD\ItemLogger\CcdProviderLog
+     * @param $provider
+     * @return array
+     */
     public function provider($provider)
     {
         $phones = UserMetaParserHelpers::getAllPhoneNumbers( $provider->phones );
