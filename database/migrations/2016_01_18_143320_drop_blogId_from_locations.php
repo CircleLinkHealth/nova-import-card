@@ -12,7 +12,7 @@ class DropBlogIdFromLocations extends Migration {
 	 */
 	public function up()
 	{
-		Schema::table('locations', function(Blueprint $table)
+		Schema::table('lv_locations', function(Blueprint $table)
 		{
 			$table->dropColumn('program_id');
 		});
@@ -25,7 +25,7 @@ class DropBlogIdFromLocations extends Migration {
 	 */
 	public function down()
 	{
-		Schema::table('locations', function(Blueprint $table)
+		Schema::table('lv_locations', function(Blueprint $table)
 		{
 			//
 		});
