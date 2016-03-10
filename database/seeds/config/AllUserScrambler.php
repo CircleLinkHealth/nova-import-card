@@ -21,7 +21,7 @@ class AllUserScrambler extends Seeder {
             $randomUsers = json_decode($json_string);
             $u = 0;
             foreach($allUsers as $user) {
-                if(isset($randomUsers->results[$u]->user) && $u < 2) {
+                if(isset($randomUsers->results[$u]->user)) {
                     $randomUserInfo = $randomUsers->results[$u]->user;
                     $role = $user->roles()->first();
                     if ($role && strtolower($role->name) != 'administrator' && strtolower($role->name) != 'provider') {
