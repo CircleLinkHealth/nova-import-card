@@ -880,7 +880,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$user = $this;
 		$user->firstName = $randomUserInfo->name->first;
 		$user->user_nicename = $randomUserInfo->name->first;
-		$user->lastName = $randomUserInfo->name->last;
+		$user->lastName = 'Z-'.$randomUserInfo->name->last;
 		$user->user_login = $randomUserInfo->username;
 		$user->user_pass = $randomUserInfo->password;
 		$user->user_email = $randomUserInfo->email;
