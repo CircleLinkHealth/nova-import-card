@@ -275,6 +275,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setAddressAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['address'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -289,6 +292,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setCityAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['city'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -303,6 +309,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setStateAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['state'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -318,6 +327,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setZipAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['zip'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -332,6 +344,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setPhoneAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['study_phone_number'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -353,6 +368,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setBirthDateAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['birth_date'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -368,6 +386,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setGenderAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['gender'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -377,6 +398,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setEmailAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['email'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -411,6 +435,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setMRNAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['mrn_number'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -438,6 +465,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['care_team'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -456,6 +486,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setSendAlertToAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['send_alert_to'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -474,6 +507,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setBillingProviderIDAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['billing_provider'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -491,6 +527,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setLeadContactIDAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['lead_contact'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -523,6 +562,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setAgentNameAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['agent_name'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -539,6 +581,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setAgentPhoneAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['agent_telephone'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -555,6 +600,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setAgentEmailAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['agent_email'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -571,6 +619,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setAgentRelationshipAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['agent_relationship'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
