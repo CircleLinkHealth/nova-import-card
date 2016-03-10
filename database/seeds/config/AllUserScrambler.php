@@ -24,7 +24,7 @@ class AllUserScrambler extends Seeder {
                 if(isset($randomUsers->results[$u]->user)) {
                     $randomUserInfo = $randomUsers->results[$u]->user;
                     $role = $user->roles()->first();
-                    if ($role && strtolower($role->name) != 'administrator' && strtolower($role->name) != 'provider') {
+                    if ($role && strtolower($role->name) == 'participant') {
                         echo PHP_EOL.PHP_EOL;
                         echo PHP_EOL . $role->name;
                         echo PHP_EOL . $user->ID . '-' . $user->user_email;
