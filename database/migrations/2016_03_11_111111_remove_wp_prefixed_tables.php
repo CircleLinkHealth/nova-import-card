@@ -18,9 +18,12 @@ class RemoveWpPrefixedTables extends Migration {
 		foreach($programs as $program) {
 			$name = str_replace(".careplanmanager.com","",$program->domain);
 			echo PHP_EOL.'processing program:: '.$name;
-			$program->name = $name;
-			$program->display_name = ucfirst($name);
-			$program->save();
+			$existingProgram = WpBlog::where('name', '=', $name)->first();
+			if(!$existingProgram) {
+				$program->name = $name;
+				$program->display_name = ucfirst($name);
+				$program->save();
+			}
 
 			// remove tables
 			echo PHP_EOL.'removing all wp_'.$program->blog_id.'_* tables';
