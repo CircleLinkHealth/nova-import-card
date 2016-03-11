@@ -36,7 +36,6 @@ class RemoveWpPrefixedTables extends Migration {
 			Schema::dropIfExists('wp_'.$program->blog_id.'_term_taxonomy');
 			Schema::dropIfExists('ma_'.$program->blog_id.'_outbound_log');
 		}
-		Schema::connection('mysql_no_prefix')->drop('care_item_user_values');
 	}
 
 	/**
