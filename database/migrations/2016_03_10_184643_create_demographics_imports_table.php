@@ -51,7 +51,10 @@ class CreateDemographicsImportsTable extends Migration {
 			$table->string( 'work_phone', 12 )->nullable()->default( null );
 			$table->string( 'email' )->nullable()->default( null );
 
-			$table->boolean('edited');
+			$table->unsignedInteger('substitute_id')->nullable()->default(null);
+			$table->foreign( 'substitute_id' )
+				->references( 'id' )
+				->on( 'demographics_imports' );
 
 			$table->softDeletes();
 

@@ -49,7 +49,10 @@ class CreateProviderImportsTable extends Migration {
 
 			$table->string( 'phone', 12 )->nullable()->default( null );
 
-			$table->boolean('edited');
+			$table->unsignedInteger('substitute_id')->nullable()->default(null);
+			$table->foreign( 'substitute_id' )
+				->references( 'id' )
+				->on( 'provider_imports' );
 
 			$table->softDeletes();
 

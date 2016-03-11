@@ -44,8 +44,12 @@ class CreateMedicationImportsTable extends Migration {
 			$table->string('code_system')->nullable()->default(null);
 			$table->string('code_system_name')->nullable()->default(null);
 
-			$table->boolean('edited');
+			$table->unsignedInteger('substitute_id')->nullable()->default(null);
+			$table->foreign( 'substitute_id' )
+				->references( 'id' )
+				->on( 'medication_imports' );
 
+			$table->softDeletes();
 			$table->timestamps();
 		});
 	}
