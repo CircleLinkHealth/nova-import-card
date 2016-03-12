@@ -34,8 +34,6 @@ class AllergenNameAllergiesListParser implements ParsingStrategy
                 'ccd_allergy_log_id' => $ccdAllergyLog->id,
                 'allergen_name' => $ccdAllergyLog->allergen_name
             ]);
-//            $allergiesList .= "\n\n";
-//            $allergiesList .= ucfirst( strtolower( $ccdAllergy->allergen_name ) ) . ";";
         }
 
         return $allergiesList;

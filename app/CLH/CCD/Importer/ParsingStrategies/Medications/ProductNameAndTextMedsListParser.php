@@ -40,18 +40,6 @@ class ProductNameAndTextMedsListParser implements ParsingStrategy
             ]);
 
             $medsList[] = $importedMed;
-
-//            $medsList .= "\n\n";
-//            empty($medication->product->name)
-//                ?: $medsList .= ucfirst( strtolower( $medication->product->name ) );
-//
-//            $medsList .= ucfirst(
-//                    strtolower(
-//                        empty( $medText = StringManipulation::stringDiff( $medication->product->name, $medication->text ) )
-//                            ? ';'
-//                            : ', ' . $medText . ";"
-//                    )
-//                );
         }
         return $medsList;
     }

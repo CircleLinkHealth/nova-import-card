@@ -37,14 +37,6 @@ class ReferenceTitleAndSigMedsListParser implements ParsingStrategy
             ]);
 
             $medsList[] = $importedMed;
-
-//            $medsList .= $medication->reference_title;
-//
-//            empty($medication->reference_sig)
-//                ? $medsList .= ''
-//                : $medsList .= ', ' . $medication->reference_sig;
-//
-//            $medsList .= "; \n\n";
         }
 
         return $medsList;
