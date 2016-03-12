@@ -42,6 +42,14 @@ class CreateProblemImportsTable extends Migration {
 			$table->string('code_system')->nullable()->default(null);
 			$table->string('code_system_name')->nullable()->default(null);
 
+			$table->boolean('activate');
+
+			$table->unsignedInteger('cpm_problem_id')->nullable()->default(null);
+
+			$table->foreign( 'cpm_problem_id' )
+				->references( 'id' )
+				->on( 'cpm_problems' );
+
 			$table->unsignedInteger('substitute_id')->nullable()->default(null);
 			$table->foreign( 'substitute_id' )
 				->references( 'id' )

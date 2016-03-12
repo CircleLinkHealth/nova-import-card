@@ -18,9 +18,7 @@ class AddToProblemsLog extends Migration {
 
 			$table->foreign( 'cpm_problem_id' )
 				->references( 'id' )
-				->on( 'cpm_problems' )
-				->onUpdate( 'cascade' )
-				->onDelete( 'cascade' );
+				->on( 'cpm_problems' );
 		});
 	}
 
