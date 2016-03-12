@@ -15,13 +15,13 @@ class AllergenNameAllergiesListParser implements ParsingStrategy
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
         $ccdAllergiesSection = CcdAllergyLog::whereCcdaId($ccd->id)->get();
-        $allergiesList = '';
+        $allergiesList = [];
 
         foreach ( $ccdAllergiesSection as $ccdAllergyLog )
         {
             if ( !$validator->validate( $ccdAllergyLog ) ) continue;
 
-//            if ( empty($ccdAllergyLog->allergen_name) ) continue;
+            if ( empty($ccdAllergyLog->allergen_name) ) continue;
 
             $ccdAllergyLog->import = true;
             $ccdAllergyLog->save();
