@@ -112,6 +112,7 @@
         <tr>
             <th class="mdl-data-table__cell--non-numeric">Import</th>
             <th class="mdl-data-table__cell--non-numeric">Name</th>
+            <th class="mdl-data-table__cell--non-numeric">CCDA ID</th>
             <th class="mdl-data-table__cell--non-numeric">Provider</th>
             <th class="mdl-data-table__cell--non-numeric">Location</th>
             <th>Allergies</th>
@@ -132,6 +133,7 @@
                 </label>
             </td>
             <td class="mdl-data-table__cell--non-numeric">@{{ qaSummary.name }}</td>
+            <td class="mdl-data-table__cell--non-numeric">@{{ qaSummary.ccda_id }}</td>
             <td class="mdl-data-table__cell--non-numeric">@{{ qaSummary.provider }}</td>
             <td class="mdl-data-table__cell--non-numeric">@{{ qaSummary.location }}</td>
             <td>@{{ qaSummary.allergies }}</td>
