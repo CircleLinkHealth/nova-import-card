@@ -4,6 +4,7 @@ namespace App\CLH\CCD\Importer;
 
 
 use App\CLH\CCD\Ccda;
+use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\ParsingStrategies\CareTeam\PrimaryProviderParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Location\ProviderLocationParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Problems\DetectsProblemCodeSystemTrait;
@@ -78,31 +79,57 @@ class QAImportManager
          * The following Sections are the same for each CCD
          */
 
+        $demographics = DemographicsImport::firstOrNew(['ccda_id' => $this->ccda->id]);
+        $demographics->vendor_id = $this->ccda->vendor_id;
+
         /**
          * Parse and Import User Meta
          */
         $userMetaParser = new UserMetaParser( new UserMetaTemplate() );
-        $output[ 'userMeta' ] = $userMetaParser->parse( $this->ccda );
+        $userMeta = $userMetaParser->parse( $this->ccda );
+        $output[ 'userMeta' ] = $userMeta;
 
+        $demographics->first_name = $userMeta->first_name;
+        $demographics->last_name = $userMeta->last_name;
 
         /**
          * Parse provider (Lead Contact and Billing)
          */
         $primaryProviderParser = new PrimaryProviderParser();
+        //we well get back user objects (providers)
+        $users = $primaryProviderParser->parse( $this->ccda );
+        $output[ 'provider' ] = $users;
 
-        $output[ 'provider' ] = $primaryProviderParser->parse( $this->ccda );
+        $demographics->provider_id = $users[0]->ID;
 
         /**
          * Parse Provider Location
          */
         $locationParser = new ProviderLocationParser();
-        $output[ 'location' ] = $locationParser->parse( $this->ccda );
+        $locations = $locationParser->parse( $this->ccda );
+        $output[ 'location' ] = $locations;
+
+        $demographics->location_id = $locations[0]->id;
 
         /**
          * Parse and Import User Config
          */
         $userConfigParser = new UserConfigParser( new UserConfigTemplate(), $this->blogId );
-        $output[ 'userConfig' ] = $userConfigParser->parse( $this->ccda );
+        $userConfig = $userConfigParser->parse( $this->ccda );
+        $output[ 'userConfig' ] = $userConfig;
+
+        $demographics->dob = $userConfig->birth_date;
+        $demographics->gender = $userConfig->gender;
+        $demographics->mrn_number = $userConfig->mrn_number;
+        $demographics->street = $userConfig->address;
+        $demographics->city = $userConfig->city;
+        $demographics->state = $userConfig->state;
+        $demographics->zip = $userConfig->zip;
+        $demographics->cell_phone = $userConfig->mobile_phone_number;
+        $demographics->home_phone = $userConfig->home_phone_number;
+        $demographics->work_phone = $userConfig->work_phone_number;
+        $demographics->email = $userConfig->email;
+        $demographics->save();
 
         return $this->validateQAImportOutput($output, $this->ccda);
 
