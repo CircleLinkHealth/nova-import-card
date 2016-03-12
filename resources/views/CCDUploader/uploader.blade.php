@@ -122,7 +122,7 @@
         </thead>
         <tbody>
 
-        <tr v-for="qaSummary in qaSummaries" id="row-@{{ qaSummary.qa_output_id }}">
+        <tr v-for="qaSummary in qaSummaries" id="row-@{{ qaSummary.ccda_id }}">
             {{--Checkbox--}}
             <td id="checkbox-@{{ qaSummary.ccda_id }}">
                 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"

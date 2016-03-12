@@ -89,9 +89,10 @@ var uploader = new Vue({
                 for (var i = 0; i < data.imported.length; i++) {
                     $('#checkbox-' + data.imported[i].qaId).html(
                         '<a target="_blank" href="https://'
-                        + document.referrer.match(/:\/\/(.[^/]+)/)[1]
-                        + '/manage-patients/patient-summary/?user='
+                        + window.location.href.match(/:\/\/(.[^/]+)/)[1]
+                        + '/manage-patients/'
                         + data.imported[i].userId
+                        + '/summary'
                         + '"><b style="color: #06B106">Go to CarePlan</b></a>'
                     );
                 }
