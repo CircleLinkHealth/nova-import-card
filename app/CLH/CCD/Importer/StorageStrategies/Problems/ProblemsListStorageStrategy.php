@@ -15,7 +15,7 @@ class ProblemsListStorageStrategy extends BaseStorageStrategy implements Storage
 {
     public function import($problemsList)
     {
-        if ( empty($problemsList) ) return;
+        if ( empty($problemsList) ) return false;
 
         $carePlan = CarePlan::where('program_id', '=', $this->blogId)->where('type', '=', 'Program Default')->first();
         if(!$carePlan) {
@@ -23,7 +23,5 @@ class ProblemsListStorageStrategy extends BaseStorageStrategy implements Storage
         }
         $carePlan->setCareItemUserValue($this->user, 'other-conditions-details', $problemsList);
         $carePlan->setCareItemUserValue($this->user, 'other-conditions',"Active");
-
-        dd($carePlan->getCareItemUserValue($this->user, 'other-conditions-details'));
     }
 }
