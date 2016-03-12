@@ -26,7 +26,7 @@ class CCDImportController extends Controller
 
     public function import(Request $request)
     {
-        $import = $request->input('ccdaIds');
+        $import = $request->input( 'ccdaIds' );
 
         foreach ( $import as $id ) {
             $ccda = Ccda::find( $id );
@@ -35,10 +35,10 @@ class CCDImportController extends Controller
 
             $vendorId = $ccda->vendor_id;
 
-            $allergies = AllergyImport::whereCcdaId($id)->whereSubstituteId(null)->get();
-            $demographics = DemographicsImport::whereCcdaId($id)->whereSubstituteId(null)->first();
-            $medications = MedicationImport::whereCcdaId($id)->whereSubstituteId(null)->get();
-            $problems = ProblemImport::whereCcdaId($id)->whereSubstituteId(null)->get();
+            $allergies = AllergyImport::whereCcdaId( $id )->whereSubstituteId( null )->get();
+            $demographics = DemographicsImport::whereCcdaId( $id )->whereSubstituteId( null )->first();
+            $medications = MedicationImport::whereCcdaId( $id )->whereSubstituteId( null )->get();
+            $problems = ProblemImport::whereCcdaId( $id )->whereSubstituteId( null )->get();
 
             $strategies = empty($ccda->vendor_id)
                 ?: CcdVendor::find( $ccda->vendor_id )->routine()->first()->strategies()->get();
@@ -49,7 +49,7 @@ class CCDImportController extends Controller
                 $demographics->first_name . ' ' . $demographics->last_name
             );
 
-            $importer = new ImportManager($allergies->all(), $demographics, $medications->all(), $problems->all(), $strategies->all(), $user);
+            $importer = new ImportManager( $allergies->all(), $demographics, $medications->all(), $problems->all(), $strategies->all(), $user );
             $importer->import();
 
             $imported[] = [
@@ -57,10 +57,11 @@ class CCDImportController extends Controller
                 'userId' => $user->ID
             ];
 
-            $ccda->delete();
+            $ccda->imported = true;
+            $ccda->save();
         }
 
-        return response()->json( compact('imported'), 200 );
+        return response()->json( compact( 'imported' ), 200 );
     }
 
 }
