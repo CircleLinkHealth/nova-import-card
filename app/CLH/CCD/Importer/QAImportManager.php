@@ -81,6 +81,7 @@ class QAImportManager
 
         $demographics = DemographicsImport::firstOrNew(['ccda_id' => $this->ccda->id]);
         $demographics->vendor_id = $this->ccda->vendor_id;
+        $demographics->program_id = $this->blogId;
 
         /**
          * Parse and Import User Meta
