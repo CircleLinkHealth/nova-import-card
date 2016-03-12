@@ -11,11 +11,6 @@ trait ValidatesQAImportOutput
     {
         $jsonCcd = $output;
 
-        $removeDuplicateMeds = function () use ($jsonCcd) {
-            $medications = explode( ';', $jsonCcd[ 3 ] );
-        };
-//        $removeDuplicateMeds();
-
         $name = function () use ($jsonCcd) {
             return empty($name = $jsonCcd[ 'userMeta' ]->first_name . ' ' . $jsonCcd[ 'userMeta' ]->last_name)
                 ?: $name;
