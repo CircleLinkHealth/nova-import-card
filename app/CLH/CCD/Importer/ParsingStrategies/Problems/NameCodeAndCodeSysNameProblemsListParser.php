@@ -33,7 +33,7 @@ class NameCodeAndCodeSysNameProblemsListParser implements ParsingStrategy
                 'ccda_id' => $ccd->id,
                 'vendor_id' => $ccd->vendor_id,
                 'ccd_problem_log_id' => $ccdProblem->id,
-                'name' => $ccdProblem->name,
+                'name' => $problemCodes->cons_name,
                 'code' => $problemCodes->cons_code,
                 'code_system' => $problemCodes->cons_code_system,
                 'code_system_name' => $problemCodes->cons_code_system_name,

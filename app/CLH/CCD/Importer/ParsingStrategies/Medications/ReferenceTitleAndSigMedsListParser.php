@@ -11,6 +11,8 @@ use App\CLH\Contracts\CCD\ValidationStrategy;
 
 class ReferenceTitleAndSigMedsListParser implements ParsingStrategy
 {
+    use ConsolidatesMedicationInfoTrait;
+
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
         $medicationsSection = CcdMedicationLog::whereCcdaId($ccd->id)->get();;
