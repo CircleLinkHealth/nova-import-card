@@ -1,7 +1,14 @@
 <?php namespace App\Http\Controllers;
 
+use App\CLH\CCD\Ccda;
+use App\CLH\CCD\ImportedItems\AllergyImport;
+use App\CLH\CCD\ImportedItems\DemographicsImport;
+use App\CLH\CCD\ImportedItems\MedicationImport;
+use App\CLH\CCD\ImportedItems\ProblemImport;
 use App\CLH\CCD\Importer\ImportManager;
+use App\CLH\CCD\ImportRoutine\RoutineBuilder;
 use App\CLH\CCD\QAImportOutput;
+use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -19,22 +26,30 @@ class CCDImportController extends Controller
 
     public function import(Request $request)
     {
-        $import = $request->input('qaImportIds');
+        $import = $request->input('ccdaIds');
 
         foreach ( $import as $id ) {
-            $output = QAImportOutput::find( $id );
+            $ccda = Ccda::find( $id );
 
-            if ( empty($output) ) continue;
+            if ( empty($ccda) ) continue;
 
-            $sections = json_decode( $output->output, true );
+            $vendorId = $ccda->vendor_id;
+
+            $allergies = AllergyImport::whereCcdaId($id)->whereSubstituteId(null)->get();
+            $demographics = DemographicsImport::whereCcdaId($id)->whereSubstituteId(null)->first();
+            $medications = MedicationImport::whereCcdaId($id)->whereSubstituteId(null)->get();
+            $problems = ProblemImport::whereCcdaId($id)->whereSubstituteId(null)->get();
+
+            $strategies = empty($ccda->vendor_id)
+                ?: CcdVendor::find( $ccda->vendor_id )->routine()->first()->strategies()->get();
 
             $user = $this->repo->createRandomUser(
-                $sections[ 'userConfig' ][ 'program_id' ],
-                '',
-                $sections[ 'userMeta' ][ 'first_name' ] . ' ' . $sections[ 'userMeta' ][ 'last_name' ]
+                $demographics->program_id,
+                $demographics->email,
+                $demographics->first_name . ' ' . $demographics->last_name
             );
 
-            $importer = new ImportManager($sections, $user);
+            $importer = new ImportManager($allergies->all(), $demographics, $medications->all(), $problems->all(), $strategies->all(), $user);
             $importer->import();
 
             $imported[] = [
@@ -42,7 +57,7 @@ class CCDImportController extends Controller
                 'userId' => $user->ID
             ];
 
-            $output->delete();
+            $ccda->delete();
         }
 
         return response()->json( compact('imported'), 200 );
