@@ -82,11 +82,16 @@ class CustomUserProvider implements UserProvider {
          */
 
         //Get rid of this when we phase WP out.
+        echo PHP_EOL.'<br>plain = ' . $plain_password;
+        echo PHP_EOL.'<br>hashed = ' . $password_hashed;
+        echo PHP_EOL.'<br>check result = '. WpPassword::check($plain_password, $password_hashed);
         if(WpPassword::check($plain_password, $password_hashed)) {
             $user->password = \Hash::make($plain_password);
             $user->save();
+            dd('passed wp check, updated');
             return true;
         }
+        dd('failed wp check, done');
 
         if (\Hash::check($plain_password, $user->password)) {
             return true;
