@@ -20,7 +20,7 @@ class MedicationsListStorageStrategy extends BaseStorageStrategy implements Stor
         if(!$carePlan) {
             throw new \Exception('Unable to build careplan');
         }
-        $carePlan->setCareItemUserValue($this->user, 'medications-list-details', $medsList);
-        $carePlan->setCareItemUserValue($this->user, 'medications-list',"active");
+        $carePlan->setCareItemUserValue($this->user, 'medication-list-details', $medsList);
+        $carePlan->setCareItemUserValue($this->user, 'medication-list',"Active");
     }
 }
