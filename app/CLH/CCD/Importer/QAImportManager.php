@@ -100,7 +100,7 @@ class QAImportManager
         $users = $primaryProviderParser->parse( $this->ccda );
         $output[ 'provider' ] = $users;
 
-        $demographics->provider_id = $users[0]->ID;
+        $demographics->provider_id = isset($users[0]) ?$users[0]->ID : null;
 
         /**
          * Parse Provider Location
