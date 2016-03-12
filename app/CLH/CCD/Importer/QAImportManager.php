@@ -110,7 +110,7 @@ class QAImportManager
         $locations = $locationParser->parse( $this->ccda );
         $output[ 'location' ] = $locations;
 
-        $demographics->location_id = $locations[0]->id;
+        $demographics->location_id = isset($locations[0]) ? $locations[0]->id : null;
 
         /**
          * Parse and Import User Config

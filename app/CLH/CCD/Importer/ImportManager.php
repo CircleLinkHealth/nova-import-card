@@ -158,17 +158,23 @@ class ImportManager
                 $codeSystemName = function ($problem) {
                     return empty($problem->code_system_name)
                         ? empty($problem->code_system)
-                            ?: ($problem->code_system == '2.16.840.1.113883.6.96')
+                            ? null
+                            : ($problem->code_system == '2.16.840.1.113883.6.96')
                                 ? 'SNOMED CT'
-                                : ($problem->code_system == '2.16.840.1.113883.6.4')
+                                : (($problem->code_system == '2.16.840.1.113883.6.4') || ($problem->code_system == '2.16.840.1.113883.6.103'))
                                     ? 'ICD-9'
-                                    : ''
+                                    : ($problem->code_system == '2.16.840.1.113883.6.3')
+                                        ? 'ICD-10'
+                                        : null
                         : $problem->code_system_name;
                 };
 
-                $problemsList .= ucwords( strtolower( $problem->name ) ) . ', '
-                    . strtoupper( $codeSystemName( $problem ) ) . ', '
-                    . $problem->code . ";";
+                $problemsList .= ucwords( strtolower( $problem->name ) );
+
+                $problemsList .= (is_null( $codeSystemName( $problem ) ))
+                    ? '' : ', ' . strtoupper( $codeSystemName( $problem ) );
+
+                $problemsList .= empty($problem->code) ? ';' : ', ' . $problem->code . ';';
             }
 
 
