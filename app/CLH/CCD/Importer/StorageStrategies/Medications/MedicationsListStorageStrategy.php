@@ -17,9 +17,11 @@ class MedicationsListStorageStrategy extends BaseStorageStrategy implements Stor
     public function import($medsList)
     {
         $carePlan = CarePlan::where('program_id', '=', $this->blogId)->where('type', '=', 'Program Default')->first();
+
         if(!$carePlan) {
             throw new \Exception('Unable to build careplan');
         }
+
         $carePlan->setCareItemUserValue($this->user, 'medication-list-details', $medsList);
         $carePlan->setCareItemUserValue($this->user, 'medication-list',"Active");
     }

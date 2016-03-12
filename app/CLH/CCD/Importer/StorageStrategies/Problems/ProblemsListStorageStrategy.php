@@ -18,9 +18,11 @@ class ProblemsListStorageStrategy extends BaseStorageStrategy implements Storage
         if ( empty($problemsList) ) return false;
 
         $carePlan = CarePlan::where('program_id', '=', $this->blogId)->where('type', '=', 'Program Default')->first();
+
         if(!$carePlan) {
-            return response()->json(["message" => "Careplan Not Found"]);
+            throw new \Exception('Unable to build careplan');
         }
+
         $carePlan->setCareItemUserValue($this->user, 'other-conditions-details', $problemsList);
         $carePlan->setCareItemUserValue($this->user, 'other-conditions',"Active");
     }
