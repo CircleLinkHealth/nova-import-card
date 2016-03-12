@@ -19,6 +19,11 @@ class AddToDemographicsImports extends Migration {
 				->references('blog_id')
 				->on('wp_blogs')
 				->onUpdate('cascade');
+
+			$table->string('study_phone_number')->after('email')->nullable();
+			$table->string('preferred_contact_language')->after('email')->nullable();
+			$table->string('consent_date')->after('email')->nullable();
+			$table->string('preferred_contact_timezone')->after('email')->nullable();
 		});
 	}
 
@@ -33,6 +38,10 @@ class AddToDemographicsImports extends Migration {
 		{
 			$table->dropForeign('demographics_imports_program_id_foreign');
 			$table->dropColumn('program_id');
+			$table->dropColumn('study_phone_number');
+			$table->dropColumn('preferred_contact_language');
+			$table->dropColumn('consent_date');
+			$table->dropColumn('preferred_contact_timezone');
 		});
 	}
 
