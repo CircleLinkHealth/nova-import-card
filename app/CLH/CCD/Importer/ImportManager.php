@@ -75,47 +75,49 @@ class ImportManager
         /**
          * Parse and Import User Meta
          */
-        $userMetaParser = new UserMetaParser( new UserMetaTemplate() );
-        ( new UserMetaStorageStrategy( $this->user->program_id, $this->user ) )->import( $this->output[ 'userMeta' ] );
+        $userMetaTemplate = new UserMetaTemplate();
+        $userMetaTemplate->first_name = $this->demographicsImport->first_name;
+        $userMetaTemplate->last_name = $this->demographicsImport->last_name;
+        ( new UserMetaStorageStrategy( $this->user->program_id, $this->user ) )->import( $userMetaTemplate->getArray() );
 
         /**
          * Import User Config
          */
-        $providerId = !empty($this->output[ 'provider' ]) ? $this->output[ 'provider' ][ 0 ][ 'ID' ] : false;
+        $userConfigTemplate = new UserConfigTemplate();
 
-        /**
-         * If a Provider was found, add it to UserConfig before persisting UserConfig
-         */
-        if ( !$providerId ) {
-            $userConf = $this->output[ 'userConfig' ];
-        }
-        else {
-            $userConf = $this->output[ 'userConfig' ];
-            $userConf[ 'care_team' ][] = $providerId;
-            $userConf[ 'lead_contact' ] = $providerId;
-            $userConf[ 'billing_provider' ] = $providerId;
-        }
-
-        /**
-         * Import Location
-         */
-        $locationId = !empty($this->output[ 'location' ]) ? $this->output[ 'location' ][ 0 ][ 'id' ] : false;
-
-        /**
-         * If location was found, add it to UserConfig
-         */
-        if ( $locationId ) $userConf[ 'preferred_contact_location' ] = $locationId;
+        $providerId = empty($this->demographicsImport->provider_id) ? null : $this->demographicsImport->provider_id;
+        $userConfigTemplate->care_team = $providerId;
+        $userConfigTemplate->lead_contact = $providerId;
+        $userConfigTemplate->billing_provider = $providerId;
+        $userConfigTemplate->preferred_contact_location = $this->demographicsImport->location_id;
+        $userConfigTemplate->email = $this->demographicsImport->email;
+        $userConfigTemplate->mrn_number = $this->demographicsImport->mrn_number;
+        $userConfigTemplate->study_phone_number = empty($this->demographicsImport->cell_phone)
+            ? empty($this->demographicsImport->home_phone)
+                ? $this->demographicsImport->work_phone
+                : $this->demographicsImport->home_phone
+            : $this->demographicsImport->cell_phone;
+        $userConfigTemplate->home_phone_number = $this->demographicsImport->home_phone;
+        $userConfigTemplate->mobile_phone_number = $this->demographicsImport->cell_phone;
+        $userConfigTemplate->work_phone_number = $this->demographicsImport->work_phone;
+        $userConfigTemplate->gender = $this->demographicsImport->gender;
+        $userConfigTemplate->address = $this->demographicsImport->street;
+        $userConfigTemplate->city = $this->demographicsImport->city;
+        $userConfigTemplate->state = $this->demographicsImport->state;
+        $userConfigTemplate->zip = $this->demographicsImport->zip;
+        $userConfigTemplate->birth_date = $this->demographicsImport->dob;
+        $userConfigTemplate->consent_date = $this->demographicsImport->consent_date;
 
         /**
          * Persist UserConfig
          */
-        $userConfigParser = new UserConfigParser( new UserConfigTemplate(), $this->user->program_id );
-        ( new UserConfigStorageStrategy( $this->user->program_id, $this->user->ID ) )->import( $userConf );
+        $userConfigParser = new UserConfigParser( $userConfigTemplate, $this->user->program_id );
+        ( new UserConfigStorageStrategy( $this->user->program_id, $this->user ) )->import( $userConfigTemplate->getArray() );
 
         /**
          * CarePlan Defaults
          */
-        $transitionalCare = new TransitionalCare( $this->user->program_id, $this->user->ID );
+        $transitionalCare = new TransitionalCare( $this->user->program_id, $this->user );
         $transitionalCare->setDefaults();
 
         return true;
@@ -123,7 +125,7 @@ class ImportManager
 
     private function storeAllergies($allergiesListStorage)
     {
-        if (empty($this->allergiesImport)) return false;
+        if ( empty($this->allergiesImport) ) return false;
 
         if ( class_exists( $allergiesListStorage ) ) {
             $storage = new $allergiesListStorage( $this->user->program_id, $this->user );
@@ -142,7 +144,7 @@ class ImportManager
 
     private function storeProblemsList($problemsListStorage)
     {
-        if (empty($this->problemsImport)) return false;
+        if ( empty($this->problemsImport) ) return false;
 
         if ( class_exists( $problemsListStorage ) ) {
             $storage = new $problemsListStorage( $this->user->program_id, $this->user );
@@ -176,10 +178,12 @@ class ImportManager
 
     private function storeProblemsToMonitor($problemsToMonitorStorage)
     {
-        if (empty($this->problemsImport)) return false;
+        if ( empty($this->problemsImport) ) return false;
 
         if ( class_exists( $problemsToMonitorStorage ) ) {
             $storage = new $problemsToMonitorStorage( $this->user->program_id, $this->user );
+
+            $problemsToActivate = [];
 
             foreach ( $this->problemsImport as $problem ) {
                 if ( empty($problem->cpm_problem_id) ) continue;
@@ -193,7 +197,7 @@ class ImportManager
 
     private function storeMedications($medicationsListStorage)
     {
-        if (empty($this->medicationsImport)) return false;
+        if ( empty($this->medicationsImport) ) return false;
 
         if ( class_exists( $medicationsListStorage ) ) {
             $storage = new $medicationsListStorage( $this->user->program_id, $this->user );
