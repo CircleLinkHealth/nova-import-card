@@ -83,7 +83,7 @@ var uploader = new Vue({
         importCcds: function () {
             $('#importCcdsBtn').attr('disabled', true);
 
-            this.$http.post('/ccd-importer/import', {qaImportIds: this.okToImport}, function (data, status, request) {
+            this.$http.post('/ccd-importer/import', {ccdaIds: this.okToImport}, function (data, status, request) {
                 $('#importCcdsBtn').attr('disabled', false);
 
                 for (var i = 0; i < data.imported.length; i++) {

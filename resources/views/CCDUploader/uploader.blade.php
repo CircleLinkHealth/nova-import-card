@@ -124,11 +124,11 @@
 
         <tr v-for="qaSummary in qaSummaries" id="row-@{{ qaSummary.qa_output_id }}">
             {{--Checkbox--}}
-            <td id="checkbox-@{{ qaSummary.qa_output_id }}">
+            <td id="checkbox-@{{ qaSummary.ccda_id }}">
                 <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
-                       for="input-@{{ qaSummary.qa_output_id }}">
-                    <input v-model="okToImport" value="@{{ qaSummary.qa_output_id }}" type="checkbox"
-                           id="input-@{{ qaSummary.qa_output_id }}" class="mdl-checkbox__input">
+                       for="input-@{{ qaSummary.ccda_id }}">
+                    <input v-model="okToImport" value="@{{ qaSummary.ccda_id }}" type="checkbox"
+                           id="input-@{{ qaSummary.ccda_id }}" class="mdl-checkbox__input">
                     <span class="mdl-checkbox__label"></span>
                 </label>
             </td>
