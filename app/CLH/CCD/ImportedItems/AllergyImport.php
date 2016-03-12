@@ -7,5 +7,8 @@ class AllergyImport extends Model {
 
 	protected $guarded = [];
 
-	
+	public function ccdLog()
+	{
+		return $this->belongsTo(CcdAllergyLog::class);
+	}
 }
