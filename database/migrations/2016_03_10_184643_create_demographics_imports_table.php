@@ -30,12 +30,12 @@ class CreateDemographicsImportsTable extends Migration {
 				->onUpdate( 'cascade' )
 				->onDelete( 'cascade' );
 
-			$table->unsignedInteger( 'provider_id' );
+			$table->unsignedInteger( 'provider_id' )->nullable()->default( null );
 			$table->foreign( 'provider_id' )
 				->references( 'id' )
 				->on( 'wp_users' );
 
-			$table->unsignedInteger( 'location_id' );
+			$table->unsignedInteger( 'location_id' )->nullable()->default( null );
 			$table->foreign( 'location_id' )
 				->references( 'id' )
 				->on( 'lv_locations' );
