@@ -51,7 +51,7 @@ class AddEditedToCcdLogTables extends Migration {
 		{
 			Schema::table($table, function(Blueprint $table)
 			{
-				$table->removeColumn('edited');
+				$table->dropColumn('edited');
 			});
 		}
 	}
