@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 use App\CLH\CCD\Ccda;
+use App\CLH\CCD\ImportedItems\ProblemImport;
 use App\CLH\CCD\ItemLogger\CcdProblemLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
@@ -23,12 +24,24 @@ class NameCodeAndCodeSysNameProblemsListParser implements ParsingStrategy
             $ccdProblem->import = true;
             $ccdProblem->save();
 
-            $problemsList[] = $ccdProblem;
-
             /**
              * Check if the information is in the Translation Section of BB
              */
-//            $problemCodes = $this->consolidateProblemInfo( $ccdProblem );
+            $problemCodes = $this->consolidateProblemInfo( $ccdProblem );
+
+            $importedProblem = (new ProblemImport())->create([
+                'ccda_id' => $ccd->id,
+                'vendor_id' => $ccd->vendor_id,
+                'ccd_problem_log_id' => $ccdProblem->id,
+                'name' => $ccdProblem->name,
+                'code' => $problemCodes->cons_code,
+                'code_system' => $problemCodes->cons_code_system,
+                'code_system_name' => $problemCodes->cons_code_system_name,
+            ]);
+
+            $problemsList[] = $importedProblem;
+
+
 //
 //            /**
 //             * If all fields are empty, then skip this problem to avoid having ,,; on the problems list

@@ -4,6 +4,7 @@ namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 
 use App\CLH\CCD\Ccda;
+use App\CLH\CCD\ImportedItems\ProblemImport;
 use App\CLH\CCD\Importer\CPMProblem;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
@@ -17,7 +18,7 @@ class ProblemsToMonitorParser implements ParsingStrategy
 
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
-        $problemsSection = CcdProblemLog::whereCcdaId($ccd->id)->get();
+        $problemsSection = ProblemImport::whereCcdaId($ccd->id)->get();
 
         $cpmProblems = CPMProblem::all();
 
@@ -43,6 +44,7 @@ class ProblemsToMonitorParser implements ParsingStrategy
                         && $problemCodes->cons_code <= $cpmProblem->icd9to
                     ) {
                         array_push( $problemsToActivate, $cpmProblem->name );
+                        $ccdProblem->activate = true;
                         $ccdProblem->cpm_problem_id = $cpmProblem->id;
                         $ccdProblem->save();
                         continue 2;
@@ -72,6 +74,7 @@ class ProblemsToMonitorParser implements ParsingStrategy
                         && (string)$problemCodes->cons_code <= (string)$cpmProblem->icd10to
                     ) {
                         array_push( $problemsToActivate, $cpmProblem->name );
+                        $ccdProblem->activate = true;
                         $ccdProblem->cpm_problem_id = $cpmProblem->id;
                         $ccdProblem->save();
                         continue 2;
@@ -90,6 +93,7 @@ class ProblemsToMonitorParser implements ParsingStrategy
 
                     if ( strpos( $problemCodes->cons_name, $keyword ) ) {
                         array_push( $problemsToActivate, $cpmProblem->name );
+                        $ccdProblem->activate = true;
                         $ccdProblem->cpm_problem_id = $cpmProblem->id;
                         $ccdProblem->save();
                         continue 3;
