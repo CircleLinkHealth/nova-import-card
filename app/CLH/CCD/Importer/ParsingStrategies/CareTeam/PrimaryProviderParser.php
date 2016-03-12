@@ -27,7 +27,7 @@ class PrimaryProviderParser implements ParsingStrategy
         {
             if ( isset($doc->first_name) && isset($doc->last_name) )
             {
-                $doctorNames[] = $doc->first_name . ' ' . $doc->last_name;
+                $doctorNames[$doc->id] = $doc->first_name . ' ' . $doc->last_name;
             }
         }
 
@@ -37,8 +37,16 @@ class PrimaryProviderParser implements ParsingStrategy
             $q->where( 'name', '=', 'provider' );
         } )->get();
 
-        foreach ( $providers as $provider ) {
-            if ( in_array( $provider->display_name, $doctorNames ) ) $careTeam[] = $provider;
+        foreach ( $doctorNames as $docId => $docName ) {
+            $matchedProviders = $providers->where('display_name', $docName)->all();
+
+            foreach ($matchedProviders as $provider){
+                $providerLog = CcdProviderLog::find($docId);
+                $providerLog->import = true;
+                $providerLog->save();
+
+                $careTeam[] = $provider;
+            }
         }
 
         return isset($careTeam) ? $careTeam : false;
