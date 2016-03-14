@@ -29,8 +29,10 @@
                                     <tr>
                                         <td><a href="{{ URL::route('admin.programs.show', array('id' => $wpBlog->blog_id)) }}" class=""><strong>{{ $wpBlog->display_name }}</strong></a></td>
                                         <td>
-                                            @if (count($wpBlogs) > 0)
-                                                <a href="{{ URL::route('admin.users.index', array('filterProgram' => $wpBlog->blog_id)) }}" class=""><strong>{{ count($wpBlog->users) }}</strong></a>
+                                            @if (count($wpBlog->users) > 0)
+                                                <a href="{{ URL::route('admin.users.index', array('filterProgram' => $wpBlog->blog_id)) }}" class=""><strong>{{ count($wpBlog->users()->whereHas('roles', function ($q) {
+					$q->where('name', '=', 'participant');
+				})->get()) }}</strong></a>
                                             @endif
                                         </td>
                                         <td>{{ date('F d, Y g:i A', strtotime($wpBlog->created_at)) }}</td>
