@@ -54,7 +54,8 @@ class CustomUserProvider implements UserProvider {
 
         $query = User::query();
         $query->where('user_login', $credentials['email']);
-        $query->orWhere('user_email', $credentials['email']);
+        //$query->orWhere('user_email', $credentials['email']);
+        $query->orWhereRaw('LOWER(user_email) = ?', [$credentials['email']])->get();
         $user = $query->first();
         return $user;
     }
@@ -70,7 +71,7 @@ class CustomUserProvider implements UserProvider {
             return response('Password not provided', 422);
         }
 
-        if ( ($user->user_email != $credentials['email']) && ($user->user_login != $credentials['email']) ) {
+        if ( (strtolower($user->user_email) != strtolower($credentials['email'])) && (strtolower($user->user_login) != strtolower($credentials['email'])) ) {
             return false;
         }
 
@@ -82,11 +83,16 @@ class CustomUserProvider implements UserProvider {
          */
 
         //Get rid of this when we phase WP out.
+        //echo PHP_EOL.'<br>plain = ' . $plain_password;
+        //echo PHP_EOL.'<br>hashed = ' . $password_hashed;
+       // echo PHP_EOL.'<br>check result = '. WpPassword::check($plain_password, $password_hashed);
         if(WpPassword::check($plain_password, $password_hashed)) {
             $user->password = \Hash::make($plain_password);
             $user->save();
+            //dd('passed wp check, updated');
             return true;
         }
+        //dd('failed wp check, done');
 
         if (\Hash::check($plain_password, $user->password)) {
             return true;

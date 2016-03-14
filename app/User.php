@@ -229,6 +229,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $name;
 	}
 
+	public function setFirstNameAttribute($value) {
+		$firstName = $this->meta()->where('meta_key', '=', 'first_name')->first();
+		if( !empty($firstName) ) {
+			$firstName->meta_value = $value;
+			$firstName->save();
+		}
+		return true;
+	}
+
     public function getLastNameAttribute() {
 		$name = '';
 		$lastName = $this->meta()->where('meta_key', '=', 'last_name')->first();
@@ -236,6 +245,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$name = $lastName->meta_value;
 		}
 		return $name;
+	}
+
+	public function setLastNameAttribute($value) {
+		$lastName = $this->meta()->where('meta_key', '=', 'last_name')->first();
+		if( !empty($lastName) ) {
+			$lastName->meta_value = $value;
+			$lastName->save();
+		}
+		return true;
 	}
 
 	public function getFullNameAttribute() {
@@ -249,9 +267,90 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $name . ' ('.$this->ID.')';
 	}
 
+	public function getAddressAttribute() {
+		$userConfig = $this->userConfig();
+		return ($userConfig['address']) ? $userConfig['address'] : '';
+	}
+
+	public function setAddressAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['address'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+	}
+
+	public function getCityAttribute() {
+		$userConfig = $this->userConfig();
+		return ($userConfig['city']) ? $userConfig['city'] : '';
+	}
+
+	public function setCityAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['city'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+	}
+
+	public function getStateAttribute() {
+		$userConfig = $this->userConfig();
+		return ($userConfig['state']) ? $userConfig['state'] : '';
+	}
+
+	public function setStateAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['state'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+	}
+
+	// zip
+	public function getZipAttribute() {
+		$userConfig = $this->userConfig();
+		return ($userConfig['zip']) ? $userConfig['zip'] : '';
+	}
+
+	public function setZipAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['zip'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+	}
+
 	public function getPhoneAttribute() {
 		$userConfig = $this->userConfig();
 		return ($userConfig['study_phone_number']) ? $userConfig['study_phone_number'] : '';
+	}
+
+	public function setPhoneAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['study_phone_number'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
 	}
 
 	public function getRegistrationDateAttribute() {
@@ -260,14 +359,52 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 //		return $userConfig['registration_date'];
 	}
 
+	// birth date
 	public function getBirthDateAttribute() {
 		$userConfig = $this->userConfig();
 		return $userConfig['birth_date'];
 	}
 
+	public function setBirthDateAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['birth_date'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+	}
+
+	// gender
 	public function getGenderAttribute() {
 		$userConfig = $this->userConfig();
 		return ($userConfig['gender']) ? $userConfig['gender'] : '';
+	}
+
+	public function setGenderAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['gender'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+	}
+
+	public function setEmailAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['email'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
 	}
 
 	public function getAgeAttribute() {
@@ -290,9 +427,21 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $userConfig['preferred_contact_timezone'];
 	}
 
-	public function getMRN() {
+	public function getMRNAttribute() {
 		$userConfig = $this->userConfig();
 		return isset($userConfig['mrn_number']) ? $userConfig['mrn_number'] : '';
+	}
+
+	public function setMRNAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['mrn_number'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
 	}
 
 	public function getSpecialtyAttribute() {
@@ -316,6 +465,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['care_team'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -334,6 +486,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setSendAlertToAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['send_alert_to'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -352,6 +507,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setBillingProviderIDAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['billing_provider'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -369,6 +527,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setLeadContactIDAttribute($value) {
 		$key = 'wp_'.$this->blogId().'_user_config';
 		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
 		$metaValue = unserialize($userConfig['meta_value']);
 		$metaValue['lead_contact'] = $value;
 		$userConfig->meta_value = serialize($metaValue);
@@ -392,24 +553,80 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return 0;
 	}
 
-	public function getAgentName() {
+	// agent_name
+	public function getAgentNameAttribute() {
 		$userConfig = $this->userConfig();
 		return isset($userConfig['agent_name']) ? $userConfig['agent_name'] : '';
 	}
 
-	public function getAgentPhone() {
+	public function setAgentNameAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['agent_name'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+		return true;
+	}
+
+	// agent_phone
+	public function getAgentPhoneAttribute() {
 		$userConfig = $this->userConfig();
 		return isset($userConfig['agent_telephone']) ? $userConfig['agent_telephone'] : '';
 	}
 
-	public function getAgentEmail() {
+	public function setAgentPhoneAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['agent_telephone'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+		return true;
+	}
+
+	// agent_email
+	public function getAgentEmailAttribute() {
 		$userConfig = $this->userConfig();
 		return isset($userConfig['agent_email']) ? $userConfig['agent_email'] : '';
 	}
 
-	public function getAgentRelationship() {
+	public function setAgentEmailAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['agent_email'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+		return true;
+	}
+
+	// agent_relationship
+	public function getAgentRelationshipAttribute() {
 		$userConfig = $this->userConfig();
 		return isset($userConfig['agent_relationship']) ? $userConfig['agent_relationship'] : '';
+	}
+
+	public function setAgentRelationshipAttribute($value) {
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
+		if(empty($userConfig)) {
+			return false;
+		}
+		$metaValue = unserialize($userConfig['meta_value']);
+		$metaValue['agent_relationship'] = $value;
+		$userConfig->meta_value = serialize($metaValue);
+		$userConfig->save();
+		return true;
 	}
 
 	public function setCarePlanQAApproverAttribute($value) {
@@ -640,6 +857,48 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function programs() {
 		return $this->belongsToMany('App\WpBlog', 'lv_program_user', 'user_id', 'program_id');
+	}
+
+	// user data scrambler
+	public function scramble($randomUserInfo = false) {
+		// states array
+		$states = array('Alabama' => 'AL', 'Alaska' => 'AK', 'Arizona' => 'AZ', 'Arkansas' => 'AR', 'California' => 'CA', 'Colorado' => 'CO', 'Connecticut' => 'CT', 'Delaware' => 'DE', 'Florida' => 'FL', 'Georgia' => 'GA', 'Hawaii' => 'HI', 'Idaho' => 'ID', 'Illinois' => 'IL', 'Indiana' => 'IN', 'Iowa' => 'IA', 'Kansas' => 'KS', 'Kentucky' => 'KY', 'Louisiana' => 'LA', 'Maine' => 'ME', 'Maryland' => 'MD', 'Massachusetts' => 'MA', 'Michigan' => 'MI', 'Minnesota' => 'MN', 'Mississippi' => 'MS', 'Missouri' => 'MO', 'Montana' => 'MT', 'Nebraska' => 'NE', 'Nevada' => 'NV', 'New Hampshire' => 'NH', 'New Jersey' => 'NJ', 'New Mexico' => 'NM', 'New York' => 'NY', 'North Carolina' => 'NC', 'North Dakota' => 'ND', 'Ohio' => 'OH', 'Oklahoma' => 'OK', 'Oregon' => 'OR', 'Pennsylvania' => 'PA', 'Rhode Island' => 'RI', 'South Carolina' => 'SC', 'South Dakota' => 'SD', 'Tennessee' => 'TN', 'Texas' => 'TX', 'Utah' => 'UT', 'Vermont' => 'VT', 'Virginia' => 'VA', 'Washington' => 'WA', 'West Virginia' => 'WV', 'Wisconsin' => 'WI', 'Wyoming' => 'WY');
+
+		// Some Randomness
+		// https://randomuser.me/api/?nat=us&results=3
+		if(!$randomUserInfo) {
+			$json_string = file_get_contents("https://randomuser.me/api/?nat=us&results=1");
+			if (empty($json_string)) {
+				return false;
+			}
+			$randomUserInfo = json_decode($json_string);
+			$randomUserInfo = $randomUserInfo->results[0]->user;
+		}
+
+		//dd($randomUserInfo);
+		// set random data
+		$user = $this;
+		$user->firstName = $randomUserInfo->name->first;
+		$user->user_nicename = $randomUserInfo->name->first;
+		$user->lastName = 'Z-'.$randomUserInfo->name->last;
+		$user->user_login = $randomUserInfo->username;
+		$user->user_pass = $randomUserInfo->password;
+		$user->user_email = $randomUserInfo->email;
+		$user->user_email = $randomUserInfo->email;
+		$user->display_name = $randomUserInfo->username;
+		$user->MRN = rand();
+		$user->gender = $randomUserInfo->gender;
+		$user->address = $randomUserInfo->location->street;
+		$user->city = $randomUserInfo->location->city;
+		$user->state = $randomUserInfo->location->state;
+		$user->zip = $randomUserInfo->location->zip;
+		$user->phone = $randomUserInfo->email;
+		$user->birthDate = date('Y-m-d', $randomUserInfo->dob);
+		$user->agentName = 'Secret Agent';
+		$user->agentPhone = '111-234-5678';
+		$user->agentEmail = 'secret@agent.net';
+		$user->agentRelationship = 'SA';
+		$user->save();
 	}
 
 	public function createNewUser($user_email, $user_pass) {

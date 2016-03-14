@@ -35,9 +35,9 @@ class CreateLocationsTable extends Migration
 
     public function down()
     {
-        Schema::table('locations', function(Blueprint $table)
+        Schema::table('lv_locations', function(Blueprint $table)
         {
-            Schema::dropIfExists('locations');
+            Schema::dropIfExists('lv_locations');
         });
     }
 }

@@ -35,12 +35,12 @@
             </ul>
         </div>
     </div>
-    @if($patient->getAgentName())
+    @if($patient->agentName)
     <div class="row">
         <div class="col-sm-12">
             <ul class="person-info-listX inline-block text-medium">
-                <li class="inline-block">Alternate Contact: <span title="{{$patient->getAgentEmail()}}">({{$patient->getAgentRelationship()}}) {{$patient->getAgentName()}}&nbsp;&nbsp;</span></li>
-                <li class="inline-block">{{$patient->getAgentPhone()}}</li>
+                <li class="inline-block">Alternate Contact: <span title="{{$patient->agentEmail}}">({{$patient->agentRelationship}}) {{$patient->agentName}}&nbsp;&nbsp;</span></li>
+                <li class="inline-block">{{$patient->agentPhone}}</li>
             {{--</ul><div style="clear:both"></div><ul class="person-conditions-list inline-block text-medium"></ul>--}}
         </div>
     </div>

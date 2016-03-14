@@ -45,7 +45,7 @@ class CreateCarePlanTables3 extends Migration {
 	 */
 	public function down()
 	{
-		Schema::connection('mysql_no_prefix')->drop('care_item_user_values');
+		Schema::connection('mysql_no_prefix')->dropIfExists('care_item_user_values');
 	}
 
 }

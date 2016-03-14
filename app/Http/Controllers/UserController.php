@@ -469,6 +469,100 @@ class UserController extends Controller {
 	}
 
 
+	/**
+	 * Scramble user(s)
+	 *
+	 * @return Response
+	 *
+	 */
+	public function doAction(Request $request)
+	{
+		if(!Auth::user()->can('users-edit-all')) {
+			abort(403);
+		}
+
+		// input
+		$params = new ParameterBag($request->input());
+
+		if($params->get('action') && $params->get('action') == 'scramble') {
+			if($params->get('users') && !empty($params->get('users'))) {
+				$this->scrambleUsers($params->get('users'));
+				return redirect()->back()->with('messages', ['successfully scrambled users']);
+			}
+		}
+
+		return redirect()->back();
+	}
+
+	/**
+	 * Scramble user(s)
+	 *
+	 * @return Response
+	 *
+	 */
+	public function scrambleUsers($userIds)
+	{
+		foreach($userIds as $id) {
+			$user = User::find($id);
+			if (!$user) {
+				return false;
+			}
+
+			$user->scramble();
+			/*
+
+			$user->mobile_phone_number = $randomUserInfo->email;
+			$user->agent_name = $randomUserInfo->email;
+			$user->agent_telephone = $randomUserInfo->email;
+			$user->agent_email = $randomUserInfo->email;
+			$user->agent_relationship = $randomUserInfo->email;
+			$user->agent_relationship = $randomUserInfo->email;
+			*/
+
+			/*
+			// echo "<pre>"; var_export($parsed_json);echo "</pre>";
+			$z = 0;
+			foreach ($scramble_me as $key) {
+				$user_meta = get_user_meta($key);//, 'wp_'.$blog_id.'_capabilities', true);
+				$user_config_meta = get_user_meta($key, 'wp_' . $blog_id . '_user_config', true);
+				$ret = update_user_meta($key, 'first_name', ucfirst($parsed_json->{'results'}[$z]->user->name->first));
+				$ret = update_user_meta($key, 'last_name', ucfirst("z" . $parsed_json->{'results'}[$z]->user->name->last));
+				$user_config_meta['mrn_number'] = uniqid();
+				$user_config_meta['gender'] = ($parsed_json->{'results'}[$z]->user->gender) == 'male' ? 'M' : 'F';
+				$user_config_meta['email'] = $parsed_json->{'results'}[$z]->user->email;
+				$user_config_meta['address'] = $parsed_json->{'results'}[$z]->user->location->street;
+				$user_config_meta['address2'] = "Garage";
+				$user_config_meta['city'] = $parsed_json->{'results'}[$z]->user->location->city;
+
+				$user_config_meta['state'] = $states[ucfirst($parsed_json->{'results'}[$z]->user->location->state)];
+				$user_config_meta['zip'] = "" . $parsed_json->{'results'}[$z]->user->location->zip . "";
+				$user_config_meta['birth_date'] = date("Y-m-d H:i:s 0500", $parsed_json->{'results'}[$z]->user->dob / 1000);
+				$user_config_meta['study_phone_number'] = $parsed_json->{'results'}[$z]->user->phone;
+				$user_config_meta['mobile_phone_number'] = $parsed_json->{'results'}[$z]->user->cell;
+				$user_config_meta['study_phone_number'] = str_replace(array("(", ")"), "", $user_config_meta['study_phone_number']);
+				$user_config_meta['mobile_phone_number'] = str_replace(array("(", ")"), "", $user_config_meta['mobile_phone_number']);
+				$user_config_meta['agent-name'] = "Dad";
+				$user_config_meta['agent-telephone'] = $user_config_meta['study_phone_number'];
+				$user_config_meta['agent-email'] = "Dad@example.com";
+				$user_config_meta['agent-relationship'] = "Father";
+				$ret = wp_update_user(array('ID' => $key,
+					'user_nicename' => uniqid(),
+					'user_email' => $user_config_meta['email'],
+					'display_name' => uniqid(),
+					'user_pass' => uniqid()
+				));
+				// var_dump($user_meta);
+				// var_dump($user_config_meta);
+				$ret = update_user_meta($key, 'wp_' . $blog_id . '_user_config', $user_config_meta);
+
+				$z++;
+			}
+			*/
+		}
+		return true;
+	}
+
+
 
 
 	public function getPatients()
