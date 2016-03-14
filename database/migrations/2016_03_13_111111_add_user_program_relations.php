@@ -67,7 +67,6 @@ class AddUserProgramRelations extends Migration {
 				}
 			}
 		}
-		dd('done');
 	}
 
 	/**
