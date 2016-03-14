@@ -284,6 +284,7 @@ class PatientController extends Controller {
 				$careplanStatus = $patient->carePlanStatus;
 				$careplanStatusLink = '';
 				$approverName = 'NA';
+				$tooltip = 'NA';
 				if ($patient->carePlanStatus  == 'provider_approved') {
 					$approverId = $patient->carePlanProviderApprover;
 					$approver = User::find($approverId);

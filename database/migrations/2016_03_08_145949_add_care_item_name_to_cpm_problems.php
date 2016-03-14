@@ -14,7 +14,7 @@ class AddCareItemNameToCpmProblems extends Migration {
 	{
 		Schema::table('cpm_problems', function(Blueprint $table)
 		{
-			$table->string('care_item_name');
+			$table->string('care_item_name')->nullable();
 			$table->foreign('care_item_name')->references('name')->on('care_items');
 		});
 	}
