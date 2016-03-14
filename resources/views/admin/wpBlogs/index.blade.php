@@ -18,7 +18,7 @@
                             <thead>
                             <tr>
                                 <td><strong>Name</strong></td>
-                                <td><strong>Users</strong></td>
+                                <td><strong>Patients</strong></td>
                                 <td><strong>Created</strong></td>
                                 <td><strong></strong></td>
                             </tr>
