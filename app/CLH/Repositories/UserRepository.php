@@ -39,7 +39,9 @@ class UserRepository {
 
         //Add Email Notification
         $sendTo =  ['Plawlor@circlelinkhealth.com','rohanm@circlelinkhealth.com'];
-        $this->adminEmailNotify($wpUser, $sendTo);
+        if (app()->environment('production')) {
+            $this->adminEmailNotify( $wpUser, $sendTo );
+        }
 
         $wpUser->push();
         return $wpUser;
