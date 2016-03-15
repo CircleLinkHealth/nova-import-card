@@ -1,4 +1,4 @@
-<?php namespace App\Http\Controllers\CCDAPI;
+<?php namespace App\Http\Controllers\CcdApi\Aprima;
 
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
@@ -10,11 +10,9 @@ use App\CLH\CCD\ValidatesQAImportOutput;
 
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
-class AprimaApiController extends Controller
+class CcdApiController extends Controller
 {
 
     use ValidatesQAImportOutput;
@@ -26,57 +24,23 @@ class AprimaApiController extends Controller
         $this->repo = $repo;
     }
 
-    /**
-     * This function will authenticate te user using their username and password and return an access token.
-     *
-     * @param Request $request
-     * @return string access_token
-     */
-    public function getAccessToken(Request $request)
-    {
-        if ( !$request->has( 'username' ) || !$request->has( 'password' ) ) {
-            response()->json( ['error' => 'Username and password need to be included on the request.'], 400 );
-        }
-
-        $credentials = [
-            'email' => $request->input( 'username' ),
-            'user_pass' => $request->input( 'password' ),
-        ];
-
-        \JWTAuth::setIdentifier( 'ID' );
-
-        if ( !$access_token = \JWTAuth::attempt( $credentials ) ) {
-            return response()->json( ['error' => 'Invalid Credentials.'], 400 );
-        }
-
-        return response()->json( compact( 'access_token' ), 200 );
-    }
-
-
     public function uploadCcd(Request $request)
     {
-        if ( !$request->has( 'access_token' ) ) {
-            return response()->json( ['error' => 'Access token not found on the request.'], 400 );
-        }
-
-        if ( !$request->has( 'file' ) ) {
-            response()->json( ['error' => 'No file found on the request.'], 422 );
-        }
-
-        //Adds Authorization to Aprima's request to make their request match our new Auth method
-        $request->headers->set( 'Authorization', "Bearer {$request->input('access_token')}" );
-        
         $user = \JWTAuth::parseToken()->authenticate();
 
         if ( !$user ) {
             return response()->json( ['error' => 'Invalid Token'], 400 );
         }
 
-        $blog = $user->blogId();
-
-        if ( !$user->hasRole( 'ccd-vendor' ) ) {
+        if ( !$user->can( 'post-ccd-to-api' ) ) {
             response()->json( ['error' => 'You are not authorized to submit CCDs to this API.'], 403 );
         }
+
+        if ( !$request->has( 'file' ) ) {
+            response()->json( ['error' => 'No file found on the request.'], 422 );
+        }
+
+        $programId = $user->blogId();
 
         try {
             $xml = base64_decode( $request->input( 'file' ) );
@@ -116,8 +80,9 @@ class AprimaApiController extends Controller
         }
 
         //If Logging fails we let ourselves know, but not Aprima.
+        //Yes. Repetitions. I KNOW!
         try {
-            $importer = new QAImportManager( $blog, $ccdObj );
+            $importer = new QAImportManager( $programId, $ccdObj );
             $output = $importer->generateCarePlanFromCCD();
         } catch ( \Exception $e ) {
             if ( app()->environment( 'production' ) ) {
@@ -166,5 +131,4 @@ class AprimaApiController extends Controller
             $message->to( $recipients )->subject( $subject );
         } );
     }
-
 }

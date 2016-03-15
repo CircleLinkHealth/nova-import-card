@@ -1,8 +1,11 @@
 <?php
 //THIS IS FOR APRIMA ONLY
 Route::group( ['prefix' => 'api/v1.0'], function () {
-    Route::post('/oauth/access_token', 'CCDAPI\AprimaApiController@getAccessToken');
-    Route::post('/ccd', 'CCDAPI\AprimaApiController@uploadCcd');
+    Route::post( '/oauth/access_token', 'CcdApi\Aprima\AuthController@getAccessToken' );
+
+    Route::group( ['middleware' => 'aprima.ccdapi.auth.adapter'], function () {
+        Route::post( '/ccd', 'CcdApi\Aprima\CcdApiController@uploadCcd' );
+    } );
 } );
 
 Route::controller( 'ajax', 'UserController' );
