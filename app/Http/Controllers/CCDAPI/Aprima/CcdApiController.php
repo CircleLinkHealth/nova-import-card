@@ -1,4 +1,4 @@
-<?php namespace App\Http\Controllers\CCDAPI;
+<?php namespace App\Http\Controllers\CcdApi\Aprima;
 
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
@@ -12,7 +12,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
-class AprimaApiController extends Controller
+class CcdApiController extends Controller
 {
 
     use ValidatesQAImportOutput;
@@ -53,28 +53,22 @@ class AprimaApiController extends Controller
 
     public function uploadCcd(Request $request)
     {
-        if ( !$request->has( 'access_token' ) ) {
-            return response()->json( ['error' => 'Access token not found on the request.'], 400 );
+        //adjust Aprima's request to match JWT Auth
+        $user = $this->transformAndValidateRequest($request);
+
+        if ( !$user ) {
+            return response()->json( ['error' => 'Invalid Token'], 400 );
+        }
+
+        if ( !$user->can( 'post-ccd-to-api' ) ) {
+            response()->json( ['error' => 'You are not authorized to submit CCDs to this API.'], 403 );
         }
 
         if ( !$request->has( 'file' ) ) {
             response()->json( ['error' => 'No file found on the request.'], 422 );
         }
 
-        //Adds Authorization Header to make Aprima's request match our JWT Auth
-        $request->headers->set( 'Authorization', "Bearer {$request->input('access_token')}" );
-        
-        $user = \JWTAuth::parseToken()->authenticate();
-
-        if ( !$user ) {
-            return response()->json( ['error' => 'Invalid Token'], 400 );
-        }
-
-        $blog = $user->blogId();
-
-        if ( !$user->can( 'post-ccd-to-api' ) ) {
-            response()->json( ['error' => 'You are not authorized to submit CCDs to this API.'], 403 );
-        }
+        $programId = $user->blogId();
 
         try {
             $xml = base64_decode( $request->input( 'file' ) );
@@ -115,7 +109,7 @@ class AprimaApiController extends Controller
 
         //If Logging fails we let ourselves know, but not Aprima.
         try {
-            $importer = new QAImportManager( $blog, $ccdObj );
+            $importer = new QAImportManager( $programId, $ccdObj );
             $output = $importer->generateCarePlanFromCCD();
         } catch ( \Exception $e ) {
             if ( app()->environment( 'production' ) ) {
@@ -163,6 +157,26 @@ class AprimaApiController extends Controller
             $message->from( 'aprima-api@careplanmanager.com', 'CircleLink Health' );
             $message->to( $recipients )->subject( $subject );
         } );
+    }
+
+
+    /**
+     * This will add an Authorization header to Aprima's request. We do this because we already gave
+     * them documentation for the separate API we had, and we don't wanna have them change their stuff.
+     *
+     * @param Request $request
+     * @return \App\User $user
+     */
+    public function transformAndValidateRequest(Request $request)
+    {
+        if ( !$request->has( 'access_token' ) ) {
+            return response()->json( ['error' => 'Access token not found on the request.'], 400 );
+        }
+
+        //Adds Authorization Header to make Aprima's request match our JWT Auth
+        $request->headers->set( 'Authorization', "Bearer {$request->input('access_token')}" );
+
+        return \JWTAuth::parseToken()->authenticate();
     }
 
 }
