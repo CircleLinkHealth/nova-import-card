@@ -39,6 +39,10 @@ class patientProgramSecurity {
 			//return $next($request);
 		}
 
+		if(!Auth::user()) {
+			return redirect()->guest('login');
+		}
+
 		if($request->route()->patientId) {
 			// viewing a specific patient, get patients program_id
 			$user = User::find($request->route()->patientId);
