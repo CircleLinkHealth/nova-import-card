@@ -10,9 +10,7 @@ use App\CLH\CCD\ValidatesQAImportOutput;
 
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
 class AprimaApiController extends Controller
 {
@@ -63,7 +61,7 @@ class AprimaApiController extends Controller
             response()->json( ['error' => 'No file found on the request.'], 422 );
         }
 
-        //Adds Authorization to Aprima's request to make their request match our new Auth method
+        //Adds Authorization Header to make Aprima's request match our JWT Auth
         $request->headers->set( 'Authorization', "Bearer {$request->input('access_token')}" );
         
         $user = \JWTAuth::parseToken()->authenticate();
@@ -74,7 +72,7 @@ class AprimaApiController extends Controller
 
         $blog = $user->blogId();
 
-        if ( !$user->hasRole( 'ccd-vendor' ) ) {
+        if ( !$user->can( 'post-ccd-to-api' ) ) {
             response()->json( ['error' => 'You are not authorized to submit CCDs to this API.'], 403 );
         }
 

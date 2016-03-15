@@ -30,7 +30,6 @@ class PermissionsConfig extends Seeder {
             'admin-access' => array('display_name' => 'Admin Access', 'description' => '',),
             'apikeys-manage' => array('display_name' => 'API Manage', 'description' => '',),
             'apikeys-view' => array('display_name' => 'API View', 'description' => '',),
-            'ccd-import' => array('display_name' => 'Import CCDs', 'description' => '',),
             'locations-manage' => array('display_name' => 'Locations Manage', 'description' => '',),
             'locations-view' => array('display_name' => 'Locations View', 'description' => '',),
             'observations-create' => array('display_name' => 'Observations Create', 'description' => '',),
@@ -50,6 +49,15 @@ class PermissionsConfig extends Seeder {
             'users-edit-self' => array('display_name' => 'User Edit Self', 'description' => '',),
             'users-view-all' => array('display_name' => 'User View All', 'description' => '',),
             'users-view-self' => array('display_name' => 'User View Self', 'description' => '',),
+
+            //CCD API Permissions
+            'query-api-for-patient-data' => array('display_name' => 'Query API for Patient Data', 'description' => 'Can POST CCDs to our API.',),
+            'post-ccd-to-api' => array('display_name' => 'POST CCDs to API', 'description' => 'Can POST CCDs to our API.',),
+
+            //Importer Permissions
+            'ccd-import' => array('display_name' => 'Import CCDs', 'description' => 'Can use the CCD Importer.',),
+
+
 
         );
 
