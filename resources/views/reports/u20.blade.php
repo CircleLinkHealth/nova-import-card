@@ -271,7 +271,9 @@
                                onclick="obs_alerts_dtable.exportToPDF();">
                         <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
                                onclick="obs_alerts_dtable.exportToExcel();">
-                    @else
+                        <script type="text/javascript">
+                            window.onload=filterText('Enrolled');
+                        </script>                    @else
                         <div style="text-align:center;margin:50px;">There are no patients under 20 minutes this month.
                         </div>
                     @endif
