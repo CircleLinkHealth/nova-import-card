@@ -58,6 +58,7 @@ class CCDImportController extends Controller
             ];
 
             $ccda->imported = true;
+            $ccda->patient_id = $user->ID;
             $ccda->save();
         }
 
