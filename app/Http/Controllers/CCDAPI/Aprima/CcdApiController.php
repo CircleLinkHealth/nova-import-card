@@ -24,37 +24,9 @@ class CcdApiController extends Controller
         $this->repo = $repo;
     }
 
-    /**
-     * This function will authenticate te user using their username and password and return an access token.
-     *
-     * @param Request $request
-     * @return string access_token
-     */
-    public function getAccessToken(Request $request)
-    {
-        if ( !$request->has( 'username' ) || !$request->has( 'password' ) ) {
-            response()->json( ['error' => 'Username and password need to be included on the request.'], 400 );
-        }
-
-        $credentials = [
-            'email' => $request->input( 'username' ),
-            'user_pass' => $request->input( 'password' ),
-        ];
-
-        \JWTAuth::setIdentifier( 'ID' );
-
-        if ( !$access_token = \JWTAuth::attempt( $credentials ) ) {
-            return response()->json( ['error' => 'Invalid Credentials.'], 400 );
-        }
-
-        return response()->json( compact( 'access_token' ), 200 );
-    }
-
-
     public function uploadCcd(Request $request)
     {
-        //adjust Aprima's request to match JWT Auth
-        $user = $this->transformAndValidateRequest($request);
+        $user = \JWTAuth::parseToken()->authenticate();
 
         if ( !$user ) {
             return response()->json( ['error' => 'Invalid Token'], 400 );
@@ -108,6 +80,7 @@ class CcdApiController extends Controller
         }
 
         //If Logging fails we let ourselves know, but not Aprima.
+        //Yes. Repetitions. I KNOW!
         try {
             $importer = new QAImportManager( $programId, $ccdObj );
             $output = $importer->generateCarePlanFromCCD();
@@ -158,25 +131,4 @@ class CcdApiController extends Controller
             $message->to( $recipients )->subject( $subject );
         } );
     }
-
-
-    /**
-     * This will add an Authorization header to Aprima's request. We do this because we already gave
-     * them documentation for the separate API we had, and we don't wanna have them change their stuff.
-     *
-     * @param Request $request
-     * @return \App\User $user
-     */
-    public function transformAndValidateRequest(Request $request)
-    {
-        if ( !$request->has( 'access_token' ) ) {
-            return response()->json( ['error' => 'Access token not found on the request.'], 400 );
-        }
-
-        //Adds Authorization Header to make Aprima's request match our JWT Auth
-        $request->headers->set( 'Authorization', "Bearer {$request->input('access_token')}" );
-
-        return \JWTAuth::parseToken()->authenticate();
-    }
-
 }
