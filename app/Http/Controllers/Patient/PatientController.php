@@ -472,7 +472,7 @@ class PatientController extends Controller {
 			$name = (User::find($d)->getFullNameAttribute());
 			$dob = new Carbon((User::find($d)->getBirthDateAttribute()));
 			$dob = $dob->format('m-d-Y');
-			$mrn = (User::find($d)->MRN());
+			$mrn = (User::find($d)->mRN());
 			$programObj = WpBlog::find((User::find($d)->blogId())) ? WpBlog::find((User::find($d)->blogId())) : "";
 			if($programObj->display_name){
 				$program = $programObj->display_name;
