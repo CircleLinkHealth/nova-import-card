@@ -55,7 +55,7 @@
                                 if (!text) return obs_alerts_dtable.filter();
 
                                 obs_alerts_dtable.filter(function(obj){
-                                    return obj.patient_status_ccm == text;
+                                    return obj.ccm_status == text;
                                 })
                             }
                             function sortByParam(a,b){
@@ -273,7 +273,8 @@
                                onclick="obs_alerts_dtable.exportToExcel();">
                         <script type="text/javascript">
                             window.onload=filterText('Enrolled');
-                        </script>                    @else
+                        </script>                    
+                    @else
                         <div style="text-align:center;margin:50px;">There are no patients under 20 minutes this month.
                         </div>
                     @endif
