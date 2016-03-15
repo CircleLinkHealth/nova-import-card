@@ -227,6 +227,7 @@ class Observation extends Model {
         }
 
         // take programId(blogId) and add to wp_X_observations table
+        /*
         if($updating) {
             DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->where('obs_id', $this->legacy_obs_id)->update($params);
         } else {
@@ -236,6 +237,7 @@ class Observation extends Model {
                 $this->legacy_obs_id = $resultObsId;
             }
         }
+        */
 
         parent::save();
 

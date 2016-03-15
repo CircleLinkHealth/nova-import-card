@@ -80,6 +80,7 @@ class Comment extends Model {
         $this->program_id = $wpUser->blogId();
 
         // updating or inserting?
+        /*
         if($this->id) {
             DB::connection('mysql_no_prefix')->table('wp_' . $wpUser->blogId() . '_comments')->where('comment_ID', $this->legacy_comment_id)->update($params);
         } else {
@@ -89,6 +90,7 @@ class Comment extends Model {
                 $this->legacy_comment_id = $resultCommentId;
             }
         }
+        */
 
         parent::save();
         // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
