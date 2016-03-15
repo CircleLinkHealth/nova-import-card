@@ -48,7 +48,7 @@ class CCDUploadController extends Controller
                 $vendorId = empty($request->input( 'vendor' )) ?: $request->input( 'vendor' );
 
                 $ccda = Ccda::create( [
-                    'user_id' => 1,
+                    'user_id' => auth()->user()->ID,
                     'vendor_id' => $vendorId,
                     'xml' => $xml,
                     'json' => $json
