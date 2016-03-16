@@ -132,6 +132,16 @@
                                 </div>
 
                                 <h2>Programs:</h2>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">Auto attach to new programs</div>
+                                        <div class="col-xs-10">
+                                            <input id="auto_attach_programs" name="auto_attach_programs" value="1" type="checkbox" @if(isset($wpUser->auto_attach_programs)){{ ((old('auto_attach_programs') == '1') ? 'checked="checked"' : ($wpUser->auto_attach_programs == '1') ? 'checked="checked"' : '') }}@endif>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div id="programs">
                                     @foreach( $wpBlogs as $wpBlogId => $domain )
                                         <div class="row" id="program_{{ $wpBlogId }}">
