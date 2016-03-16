@@ -37,7 +37,7 @@
                             </div>
                         </div>
 
-                        <h2>New Program</h2>\
+                        <h2>New Program</h2>
 
                         <div class="form-group">
                             <div class="row">
