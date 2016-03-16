@@ -80,7 +80,7 @@ if (strpos($_SERVER['REQUEST_URI'],'login') !== false) {
 // set patient vars
 $patientId = '';
 $patientProgramId = '';
-if (isset($patient)) {
+if (isset($patient) && !empty($patient)) {
     //$enableTimeTracking = false;
     $patientId = $patient->ID;
     $patientProgramId = $patient->program_id;
