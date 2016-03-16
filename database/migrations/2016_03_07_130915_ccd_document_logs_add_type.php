@@ -27,7 +27,7 @@ class CcdDocumentLogsAddType extends Migration {
 	{
 		Schema::table('ccd_document_logs', function(Blueprint $table)
 		{
-			$table->removeColumn('type');
+			$table->dropColumn('type');
 		});
 	}
 

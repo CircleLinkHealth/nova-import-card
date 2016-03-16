@@ -14,18 +14,18 @@ class RemovesOutputTable extends Migration
     public function up()
     {
         Schema::table( 'q_a_import_summaries', function (Blueprint $table) {
-            $table->dropForeign( 'q_a_import_summaries_qa_output_id_foreign' );
+            $table->dropForeign( ['qa_output_id'] );
             $table->dropColumn( 'qa_output_id' );
             Schema::dropIfExists( 'q_a_import_outputs' );
 
-            $table->unsignedInteger( 'ccda_id' )->after('id')->nullable();
+            $table->unsignedInteger( 'ccda_id' )->after( 'id' )->nullable();
             $table->foreign( 'ccda_id' )
                 ->references( 'id' )
                 ->on( 'ccdas' )
                 ->onUpdate( 'cascade' )
                 ->onDelete( 'cascade' );
 
-            $table->boolean('flag')->after('ccda_id');
+            $table->boolean( 'flag' )->after( 'ccda_id' );
         } );
     }
 
@@ -38,7 +38,7 @@ class RemovesOutputTable extends Migration
     {
         Schema::table( 'q_a_import_summaries', function (Blueprint $table) {
             $table->dropForeign( 'ccdas_ccda_id_foreign' );
-            $table->removeColumn( 'ccda_id' );
+            $table->dropColumn( 'ccda_id' );
         } );
     }
 
