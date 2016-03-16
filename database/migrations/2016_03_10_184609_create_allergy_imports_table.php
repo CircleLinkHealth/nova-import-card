@@ -57,7 +57,7 @@ class CreateAllergyImportsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('allergy_imports');
+		Schema::dropIfExists('allergy_imports');
 	}
 
 }
