@@ -927,7 +927,7 @@ static function biometricsUnitMapping($biometric)
                 $careplanReport[$user->ID]['bio_data'][$metric]['starting'] = Observation::getStartingObservation($user->ID, (new ReportsService())->biometricsMessageIdMapping($metric)) . ReportsService::biometricsUnitMapping($metric);
             }
 
-            if ($carePlan->getCareItemUserValue($user, 'medication-list-details') == 'Active') {
+            if ($carePlan->getCareItemUserValue($user, 'medication-list-details')) {
                 $careplanReport[$user->ID]['taking_meds'] = $carePlan->getCareItemUserValue($user, 'medication-list-details');
             } else {
                 $careplanReport[$user->ID]['taking_meds'] = '';
