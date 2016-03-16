@@ -26,11 +26,11 @@ class CcdApiController extends Controller
 
     public function uploadCcd(Request $request)
     {
-        $user = \JWTAuth::parseToken()->authenticate();
-
-        if ( !$user ) {
-            return response()->json( ['error' => 'Invalid Token'], 400 );
+        if ( !\Session::has( 'apiUser' ) ) {
+            response()->json( ['error' => 'Authentication failed.'], 403 );
         }
+
+        $user = \Session::get( 'apiUser' );
 
         if ( !$user->can( 'post-ccd-to-api' ) ) {
             response()->json( ['error' => 'You are not authorized to submit CCDs to this API.'], 403 );
