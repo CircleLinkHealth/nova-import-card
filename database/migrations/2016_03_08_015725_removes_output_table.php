@@ -16,7 +16,6 @@ class RemovesOutputTable extends Migration
         Schema::table( 'q_a_import_summaries', function (Blueprint $table) {
             $table->dropForeign( ['qa_output_id'] );
             $table->dropColumn( 'qa_output_id' );
-            Schema::dropIfExists( 'q_a_import_outputs' );
 
             $table->unsignedInteger( 'ccda_id' )->after( 'id' )->nullable();
             $table->foreign( 'ccda_id' )
