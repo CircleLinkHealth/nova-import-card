@@ -201,9 +201,9 @@ $user_info = array();
                                     </div>
 
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('contact_days') ? 'has-error' : '' }}">
-                                        <label for="">Preferred Contact Days:</label>
+                                        <label for="">Preferred Contact Days <span class="attention">*</span>:</label>
                                         <div class="row" style="float: right">
-                                            <div class="radio-inline modal-box-clone label">
+                                            <div class="radio-inline modal-box-clone label" style="margin-left: 0px;    margin-right: 0px;">
                                                 <div class="radio-inline">
                                                     <input id="contact-days-1" name="contact_days[]" value="1" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
                                                     <label style="font-size: 120%; margin: -1px;" for="contact-days-1"><span></span>&nbsp;M</label>
@@ -247,14 +247,14 @@ $user_info = array();
                                                 <input type="radio" name="preferred_contact_method" id="contactMethodCCT" value="CCT" {{ ((old('preferred_contact_method') == 'CCT') ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'CCT') ? 'checked="checked"' : '')) }}>
                                                 <label for="contactMethodCCT"><span> </span>Care Center</label>
                                             </div>
-                                            <div class="radio radio-v-margin">
+<!--                                             <div class="radio radio-v-margin">
                                                 <input type="radio" name="preferred_contact_method" id="contactMethodSMS" value="SMS" {{ ((old('preferred_contact_method') == 'SMS') ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'SMS') ? 'checked="checked"' : '')) }}>
                                                 <label for="contactMethodSMS"><span> </span>SMS</label>
                                             </div>
                                             <div class="radio radio-v-margin">
                                                 <input type="radio" name="preferred_contact_method" id="contactMethodApp"  value="APP" {{ (old('preferred_contact_method') == 'APP' ? 'checked="checked"' : (($userConfig['preferred_contact_method'] == 'APP') ? 'checked="checked"' : '')) }}>
                                                 <label for="contactMethodApp"><span> </span>App</label>
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <span class="help-block">{{ $errors->first('preferred_contact_method') }}</span>
                                     </div>
@@ -280,13 +280,14 @@ $user_info = array();
 
                                     @if(isset($patient->ID) )
                                         @if(($patient->primaryProgram) )
-                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
+                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }} hidden">
                                                 Program: <strong>{{ $patient->primaryProgram->display_name }}</strong>
                                             </div>
                                         @endif
                                         <input type=hidden name=program_id value="{{ $programId }}">
                                         <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
-                                            {!! Form::label('preferred_contact_location', 'Contact Location:') !!}
+                                            {!! Form::label('preferred_contact_location', 'Preferred Office Location  *: 
+:') !!}
                                             {!! Form::select('preferred_contact_location', $locations, $userConfig['preferred_contact_location'], ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
                                         </div>
                                     @else
@@ -320,12 +321,12 @@ $user_info = array();
 
                                     <div class="form-group form-item form-item-spacing col-sm-12">
                                         <div class="row">
-                                            <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Status: ') !!}</div>
+                                            <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
                                             <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $userMeta['ccm_status'], ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                         </div>
                                     </div>
 
-                                    <div class="form-group form-item form-item-spacing col-sm-12">
+                                    <div class="form-group form-item form-item-spacing col-sm-12 hidden">
                                         <div class="row">
                                             <div class="col-lg-4">{!! Form::label('care_plan_id', 'Care Plan: ') !!}</div>
                                             <div class="col-lg-8">{!! Form::select('care_plan_id', $carePlans, $patient->care_plan_id, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
