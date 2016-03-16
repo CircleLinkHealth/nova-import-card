@@ -51,7 +51,7 @@ class AddUserProgramRelations extends Migration {
 				echo PHP_EOL.'total = '. $programUsers->count();
 				//continue 1;
 				foreach($programUsers as $programUser) {
-					echo PHP_EOL.$i. '-'.$programUser->user_email . ' linked too program ' . $program->blog_id;
+					echo PHP_EOL.$i. '-'.$programUser->user_email . ' linked to program ' . $program->blog_id;
 					$programUser->program_id = $program->blog_id;
 					$programUser->save();
 					$bag = new ParameterBag([

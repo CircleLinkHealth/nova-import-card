@@ -19,7 +19,11 @@ class AttachCareCenterRoles  extends Migration {
 		// get care-center role
 		$careCenterRole = Role::where('name', '=', 'care-center')->first();
 		if(!$careCenterRole) {
-			dd('no care-center role found, required');
+			$careCenterRole = new Role;
+			$careCenterRole->name = 'care-center';
+			$careCenterRole->display_name = 'Care Center';
+			$careCenterRole->description = 'care center calling center';
+			$careCenterRole->save();
 		}
 		$careCenterRoleId = $careCenterRole->id;
 		echo PHP_EOL.' care-center role found id = '.$careCenterRoleId;
