@@ -884,15 +884,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$user->user_login = $randomUserInfo->username;
 		$user->user_pass = $randomUserInfo->password;
 		$user->user_email = $randomUserInfo->email;
-		$user->user_email = $randomUserInfo->email;
 		$user->display_name = $randomUserInfo->username;
 		$user->MRN = rand();
-		$user->gender = $randomUserInfo->gender;
+		$user->gender = 'M';
 		$user->address = $randomUserInfo->location->street;
 		$user->city = $randomUserInfo->location->city;
 		$user->state = $randomUserInfo->location->state;
 		$user->zip = $randomUserInfo->location->zip;
-		$user->phone = $randomUserInfo->email;
+		$user->phone = '111-234-5678';
 		$user->birthDate = date('Y-m-d', $randomUserInfo->dob);
 		$user->agentName = 'Secret Agent';
 		$user->agentPhone = '111-234-5678';
