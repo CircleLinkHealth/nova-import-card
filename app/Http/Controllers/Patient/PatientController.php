@@ -245,7 +245,7 @@ class PatientController extends Controller {
 				}
 				// lastly format json
 				$observation_json[$section] .= "{ obs_key:'" . $observation->obs_key . "', " .
-					"description:'" . $observation->description . "', " .
+					"description:'" . str_replace('_', " ", $observation->description) . "', " .
 					"obs_value:'" . $observation->obs_value . "', " .
 					"dm_alert_level:'" . $alertLevel . "', " .
 					"obs_unit:'" . $observation->obs_unit . "', " .
