@@ -14,14 +14,9 @@ class RemovesOutputTable extends Migration
     public function up()
     {
         Schema::table( 'q_a_import_summaries', function (Blueprint $table) {
-            DB::statement( 'SET FOREIGN_KEY_CHECKS=0;' );
-
             $table->dropForeign( 'q_a_import_summaries_qa_output_id_foreign' );
-            $table->removeColumn( 'qa_output_id' );
-
+            $table->dropColumn( 'qa_output_id' );
             Schema::dropIfExists( 'q_a_import_outputs' );
-
-            DB::statement( 'SET FOREIGN_KEY_CHECKS=1;' );
 
             $table->unsignedInteger( 'ccda_id' )->after('id')->nullable();
             $table->foreign( 'ccda_id' )
