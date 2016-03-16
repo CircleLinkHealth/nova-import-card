@@ -96,7 +96,7 @@
                                         // fillspace: true,
                                         width: 200,
                                         sort:'string',
-                                        template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
+                                        template:"<a href='<?php echo URL::route('patient.activity.providerUIIndex', array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
 
                                     },
                                     {
