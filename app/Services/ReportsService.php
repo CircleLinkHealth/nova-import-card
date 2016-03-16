@@ -928,7 +928,7 @@ static function biometricsUnitMapping($biometric)
             }
 
             if ($carePlan->getCareItemUserValue($user, 'medications-list') == 'Active') {
-                $careplanReport[$user->ID]['taking_meds'] = $carePlan->getCareItemUserValue($user, 'medications-list-details');
+                $careplanReport[$user->ID]['taking_meds'] = $carePlan->getCareItemUserValue($user, 'medication-list-details');
             } else {
                 $careplanReport[$user->ID]['taking_meds'] = '';
             }
