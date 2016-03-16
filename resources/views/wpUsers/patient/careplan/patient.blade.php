@@ -201,9 +201,9 @@ $user_info = array();
                                     </div>
 
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('contact_days') ? 'has-error' : '' }}">
-                                        <label for="">Preferred Contact Days:</label>
+                                        <label for="">Preferred Contact Days <span class="attention">*</span>:</label>
                                         <div class="row" style="float: right">
-                                            <div class="radio-inline modal-box-clone label">
+                                            <div class="radio-inline modal-box-clone label" style="margin-left: 0px;    margin-right: 0px;">
                                                 <div class="radio-inline">
                                                     <input id="contact-days-1" name="contact_days[]" value="1" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
                                                     <label style="font-size: 120%; margin: -1px;" for="contact-days-1"><span></span>&nbsp;M</label>
@@ -280,13 +280,13 @@ $user_info = array();
 
                                     @if(isset($patient->ID) )
                                         @if(($patient->primaryProgram) )
-                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
+                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }} hidden">
                                                 Program: <strong>{{ $patient->primaryProgram->display_name }}</strong>
                                             </div>
                                         @endif
                                         <input type=hidden name=program_id value="{{ $programId }}">
                                         <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
-                                            {!! Form::label('preferred_contact_location', 'Preferred Office Location *: 11 Ralph 
+                                            {!! Form::label('preferred_contact_location', 'Preferred Office Location  *: 
 :') !!}
                                             {!! Form::select('preferred_contact_location', $locations, $userConfig['preferred_contact_location'], ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
                                         </div>
