@@ -28,8 +28,8 @@ class AddToDemographicsTable extends Migration {
 	{
 		Schema::table('ccd_demographics_logs', function(Blueprint $table)
 		{
-			$table->removeColumn('language');
-			$table->removeColumn('street2');
+			$table->dropColumn('language');
+			$table->dropColumn('street2');
 		});
 	}
 

@@ -26,7 +26,13 @@ class AddCareItemNameToCpmProblems extends Migration {
 	 */
 	public function down()
 	{
-		//
+		Schema::table('cpm_problems', function(Blueprint $table)
+		{
+			$table->dropForeign(['care_item_name']);
+			$table->dropColumn('care_item_name');
+		});
+
+
 	}
 
 }

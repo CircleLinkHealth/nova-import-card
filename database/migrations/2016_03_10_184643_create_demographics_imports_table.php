@@ -72,7 +72,7 @@ class CreateDemographicsImportsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('demographics_imports');
+		Schema::dropIfExists('demographics_imports');
 	}
 
 }
