@@ -29,6 +29,7 @@ class UserRepository {
         $wpUser->program_id = $params->get('program_id');
         $wpUser->user_registered = date('Y-m-d H:i:s');
         $wpUser->care_plan_id = $params->get('care_plan_id');
+        $wpUser->auto_attach_programs = $params->get('auto_attach_programs');
         $wpUser->save();
 
         $this->saveOrUpdateRoles($wpUser, $params);
@@ -56,6 +57,7 @@ class UserRepository {
         $wpUser->display_name = $params->get('display_name');
         $wpUser->program_id = $params->get('program_id');
         $wpUser->care_plan_id = $params->get('care_plan_id');
+        $wpUser->auto_attach_programs = $params->get('auto_attach_programs');
         $wpUser->save();
 
         $this->saveOrUpdateRoles($wpUser, $params);

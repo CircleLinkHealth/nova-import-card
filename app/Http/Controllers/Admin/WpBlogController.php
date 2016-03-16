@@ -1,13 +1,13 @@
 <?php namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests;
+use App\User;
+use App\WpBlog;
 use App\CPRulesPCP;
 use App\Location;
 use App\CPRulesItemMeta;
 use App\CPRulesItem;
 use App\Http\Controllers\Controller;
-
-use App\WpBlog;
 use Illuminate\Http\Request;
 use Auth;
 
@@ -76,6 +76,22 @@ class WpBlogController extends Controller {
 		$program->deleted = 0;
 		$program->lang_id = 0;
 		$program->save();
+
+		// attach to all users who get auto attached
+		$users = User::where('auto_attach_programs', '=', '1')->get();
+		if($users) {
+			foreach ($users as $user) {
+				// attach program
+				if (!$program) {
+					continue 1;
+				}
+				if (!$user->programs->contains($program->blog_id)) {
+					$user->programs()->attach($program->blog_id);
+				}
+				$user->save();
+			}
+		}
+
 		return redirect()->route('admin.programs.edit', ['program' => $program])->with('messages', ['successfully created new program'])->send();
 	}
 
