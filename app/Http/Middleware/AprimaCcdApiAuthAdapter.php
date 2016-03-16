@@ -1,6 +1,7 @@
 <?php namespace App\Http\Middleware;
 
 use Closure;
+use Session;
 
 class AprimaCcdApiAuthAdapter {
 
@@ -23,6 +24,15 @@ class AprimaCcdApiAuthAdapter {
 		 */
 		$request->headers->set( 'Authorization', "Bearer {$request->input('access_token')}" );
 
+		$user = \JWTAuth::parseToken()->authenticate();
+
+		if ( !$user ) {
+			return response()->json( ['error' => 'Invalid Token'], 400 );
+		}
+
+		//We do flash because flash data only lives with every request.
+		//We don't wanna authenticate the Aprima API user for security.
+		Session::flash('apiUser', $user);
 
 		return $next($request);
 	}
