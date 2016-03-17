@@ -14,7 +14,7 @@ class DropQAImportOutputs extends Migration {
 	{
 		Schema::table('q_a_import_outputs', function(Blueprint $table)
 		{
-			$table->drop();
+			$table->dropIfExists('q_a_import_outputs');
 		});
 	}
 
