@@ -1,5 +1,5 @@
 <!-- PAGE TIMER START -->
-<div class="modal fade" id="timerModal" role="dialog">
+<div class="modal fade" id="timerModal" role="dialog" style="height: 757px; opacity: 1;background-color: black">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -93,7 +93,7 @@ if ($enableTimeTracking) {
         var startTime = new Date();
         var noResponse = true; // set to false if user clicks yes/no button
         var totalTime = 0; // total accumulated time on page
-        var modalDelay = 90000; // ms modal waits before force logout (60000 = 1min)
+        var modalDelay = 60000*8; // ms modal waits before force logout (60000 = 1min)
         var isTimerProcessed = false;
         var redirectLocation = false;
         var idleTime = 120000; // ms before modal display (60000 = 1min)

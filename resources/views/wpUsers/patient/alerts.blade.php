@@ -10,7 +10,7 @@
             </div>
             <div class="row">
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    Alerts Webix
+                    No Alerts
                 </div>
             </div>
         </div>
