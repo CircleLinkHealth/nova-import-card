@@ -104,13 +104,14 @@
                                             css: {"color": "black", "text-align": "left"}
                                         },
                                     ],
-                                    ready: function () {
-                                        this.adjustRowHeight("obs_key");
+                                    ready:function(){
+                                    this.adjustRowHeight("comment");
                                     },
                                     /*ready:function(){
                                      this.adjustRowHeight("obs_value");
                                      },*/
-                                    pager: {
+                                    pager:{
+                                        animate:true,
                                         container: "paging_container",// the container where the pager controls will be placed into
                                         template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
                                         size: 10, // the number of records per a page
