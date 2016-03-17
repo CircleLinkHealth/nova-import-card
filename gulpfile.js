@@ -21,7 +21,6 @@ elixir(function(mix) {
     mix.browserify('/ccd/uploader.js');
 
     mix.scripts([
-        'resources/assets/js/ccd/parser/bluebutton.min.js',
         'resources/assets/js/material.min.js'
     ], 'public/js/scripts.js');
 });
