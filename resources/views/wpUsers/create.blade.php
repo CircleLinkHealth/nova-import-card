@@ -113,6 +113,14 @@
                                         </div>
                                     @endforeach
                                 </div>
+
+                                <h2>Location (for API Users)</h2>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('id', 'Location:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::select('location_id', ['default' => 'Attach a location to API users'] + $locations, 'default', ['class' => 'form-control select-picker', '', 'style' => 'width:80%;']) !!}</div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div role="tabpanel" class="tab-pane" id="userconfig">

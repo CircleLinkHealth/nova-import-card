@@ -41,11 +41,11 @@ class CCDUploadController extends Controller
 
                 $json = $this->repo->toJson( $xml );
 
-                $blogId = $request->input( 'blogId' );
+                $blogId = $request->input( 'program_id' );
 
                 if ( empty($blogId) ) throw new \Exception( 'Blog id not found,', 400 );
 
-                $vendorId = empty($request->input( 'vendor' )) ?: $request->input( 'vendor' );
+                $vendorId = empty($request->input( 'ccd_vendor_id' )) ?: $request->input( 'ccd_vendor_id' );
 
                 $ccda = Ccda::create( [
                     'user_id' => auth()->user()->ID,
@@ -54,7 +54,7 @@ class CCDUploadController extends Controller
                     'json' => $json
                 ] );
 
-                $logger = new CcdItemLogger($ccda);
+                $logger = new CcdItemLogger( $ccda );
                 $logger->logAll();
 
                 $importer = new QAImportManager( $blogId, $ccda );
@@ -64,9 +64,15 @@ class CCDUploadController extends Controller
             }
         }
 
-        $locations = Location::whereNotNull( 'parent_id' );
+        $locations = Location::whereNotNull( 'parent_id' )->get();
 
-        return response()->json( compact( 'qaSummaries', 'locations' ), 200 );
+//        return response()->json( compact( 'qaSummaries', 'locations' ), 200 );
+        JavaScript::put( [
+            'qaSummaries' => $qaSummaries,
+            'locations' => $locations,
+        ] );
+
+        return view( 'CCDUploader.uploadedSummary' );
     }
 
     /**
@@ -74,13 +80,12 @@ class CCDUploadController extends Controller
      */
     public function create()
     {
-        $ccdVendors = CcdVendor::all();
+        JavaScript::put( [
+            'userBlogs' => auth()->user()->programs,
+            'ccdVendors' => CcdVendor::all(),
+        ] );
 
-        $userBlogs = auth()->user()->programs;
-
-        JavaScript::put(['userBlogs' => $userBlogs]);
-
-        return view( 'CCDUploader.uploader', compact( 'ccdVendors' ) );
+        return view( 'CCDUploader.uploader' );
     }
 
 }
