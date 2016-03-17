@@ -2,6 +2,27 @@
 
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $("#togglePrograms").click(function (event) {
+                event.preventDefault();
+                $("#programs").toggle();
+                return false;
+            });
+
+            $(function () {
+                $("#programsCheckAll").click(function () {
+                        $(".programs").prop("checked", true);
+                        return false;
+                });
+
+                $("#programsUncheckAll").click(function () {
+                    $(".programs").prop("checked", false);
+                    return false;
+                });
+            });
+        });
+    </script>
     <style>
         .form-group {
             margin:20px;
@@ -123,38 +144,62 @@
                                     </div>
                                 </div>
 
-                                <h2>Primary Program</h2>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('program_id', 'Primary Program:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::select('program_id', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                    </div>
-                                </div>
 
-                                <h2>Programs:</h2>
 
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-xs-2">Auto attach to new programs</div>
-                                        <div class="col-xs-10">
-                                            <input id="auto_attach_programs" name="auto_attach_programs" value="1" type="checkbox" @if(isset($wpUser->auto_attach_programs)){{ ((old('auto_attach_programs') == '1') ? 'checked="checked"' : ($wpUser->auto_attach_programs == '1') ? 'checked="checked"' : '') }}@endif>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div id="programs">
-                                    @foreach( $wpBlogs as $wpBlogId => $domain )
-                                        <div class="row" id="program_{{ $wpBlogId }}">
-                                            <div class="col-sm-2">
-                                                @if( in_array($wpBlogId, $wpUser->programs()->lists('blog_id')) )
-                                                    {!! Form::checkbox('programs[]', $wpBlogId, ['checked' => "checked"], ['style' => '']) !!}
-                                                @else
-                                                    {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '']) !!}
-                                                @endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                <h2><a data-toggle="collapse" data-target="#programCollapse" class="">Programs</a></h2>
+
+                                <div id="programCollapse" class="collapse in">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-2">{!! Form::label('program_id', 'Primary Program:') !!}</div>
+                                            <div class="col-xs-4">{!! Form::select('program_id', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                            <div class="col-xs-2"><strong>Program Config:</strong><br />Auto attach to new programs</div>
+                                            <div class="col-xs-4">
+                                                <br />
+                                                <input id="auto_attach_programs" name="auto_attach_programs" value="1" type="checkbox" @if(isset($wpUser->auto_attach_programs)){{ ((old('auto_attach_programs') == '1') ? 'checked="checked"' : ($wpUser->auto_attach_programs == '1') ? 'checked="checked"' : '') }}@endif>
                                             </div>
-                                            <div class="col-sm-10">{!! Form::label('Value', 'Program: '.$domain, array('class' => '')) !!}</div>
                                         </div>
-                                    @endforeach
+                                    </div>
+
+
+                                    <a href="#" id="togglePrograms"><strong>Toggle Programs list</strong></a><br /><br />
+                                    <div id="programs" style="display:none;">
+                                        <button class="btn-primary btn-xs" id="programsCheckAll">Check All</button> |
+                                        <button class="btn-primary btn-xs" id="programsUncheckAll">Uncheck All</button>
+                                        @foreach( $wpBlogs as $wpBlogId => $domain )
+                                            <div class="row" id="program_{{ $wpBlogId }}" style="border-bottom:1px solid #000;">
+                                                <div class="col-sm-2">
+                                                    <div class="text-right">
+                                                    @if( in_array($wpBlogId, $wpUser->programs()->lists('blog_id')) )
+                                                        {!! Form::checkbox('programs[]', $wpBlogId, ['checked' => "checked"], ['style' => '', 'class' => 'programs']) !!}
+                                                    @else
+                                                        {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '', 'class' => 'programs']) !!}
+                                                    @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-10">{!! Form::label('Value', 'Program: '.$domain, array('class' => '')) !!}</div>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
 
