@@ -6,9 +6,16 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
-                    <div class="col-sm-2">
+                    <div class="col-sm-8">
                         <h1>Programs</h1>
                     </div>
+                    @if(Entrust::can('programs-manage'))
+                        <div class="col-sm-4">
+                            <div class="pull-right" style="margin:20px;">
+                                <a href="{{ URL::route('admin.programs.create', array()) }}" class="btn btn-success">New Program</a>
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">Programs</div>

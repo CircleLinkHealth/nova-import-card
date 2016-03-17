@@ -17,7 +17,7 @@ class RemoveRevisionsPrefixCheck extends Migration {
 	 */
 	public function up()
 	{
-		if (Schema::hasTable('lv_revisions'))
+		if (Schema::hasTable('lv_revisions') && ! Schema::hasTable('revisions'))
 		{
 			Schema::rename('lv_revisions', 'revisions');
 		}

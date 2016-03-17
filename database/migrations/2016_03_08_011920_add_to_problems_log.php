@@ -31,7 +31,7 @@ class AddToProblemsLog extends Migration {
 	{
 		Schema::table('ccd_problem_logs', function(Blueprint $table)
 		{
-			$table->removeColumn('cpm_problem_id');
+			$table->dropColumn('cpm_problem_id');
 		});
 	}
 

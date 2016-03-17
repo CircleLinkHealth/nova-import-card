@@ -49,7 +49,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log', 'user_status', 'display_name', 'spam'];
+	protected $fillable = ['user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log', 'user_status', 'auto_attach_programs', 'display_name', 'spam'];
 
 	protected $hidden = ['user_pass'];
 
@@ -129,6 +129,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 
 	// START RELATIONSHIPS
+
+	public function locations()
+	{
+		return $this->belongsToMany(Location::class);
+	}
 
     public function meta()
 	{

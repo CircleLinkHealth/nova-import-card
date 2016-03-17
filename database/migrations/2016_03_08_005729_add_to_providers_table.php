@@ -27,7 +27,7 @@ class AddToProvidersTable extends Migration {
 	{
 		Schema::table('ccd_provider_logs', function(Blueprint $table)
 		{
-			$table->removeColumn('organization');
+			$table->dropColumn('organization');
 		});
 	}
 

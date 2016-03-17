@@ -33,6 +33,11 @@ class Location extends Entity implements LocationInterface
         return $this->belongsTo('App\WpBlog', 'location_id');
     }
 
+    public function user()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
     public static function getLocationsForBlog($blogId)
     {
         $q =  Location::where('program_id', '=', $blogId)->get();

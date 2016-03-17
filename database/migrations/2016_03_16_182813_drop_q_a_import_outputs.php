@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CcdDocumentLogsAddType extends Migration {
+class DropQAImportOutputs extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,9 +12,9 @@ class CcdDocumentLogsAddType extends Migration {
 	 */
 	public function up()
 	{
-		Schema::table('ccd_document_logs', function(Blueprint $table)
+		Schema::table('q_a_import_outputs', function(Blueprint $table)
 		{
-			$table->string('type')->after('vendor_id');
+			$table->dropIfExists('q_a_import_outputs');
 		});
 	}
 
@@ -25,9 +25,9 @@ class CcdDocumentLogsAddType extends Migration {
 	 */
 	public function down()
 	{
-		Schema::table('ccd_document_logs', function(Blueprint $table)
+		Schema::table('q_a_import_outputs', function(Blueprint $table)
 		{
-			$table->dropColumn('type');
+			//
 		});
 	}
 

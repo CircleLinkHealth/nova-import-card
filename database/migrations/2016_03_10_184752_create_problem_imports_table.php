@@ -68,7 +68,7 @@ class CreateProblemImportsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('problem_imports');
+		Schema::dropIfExists('problem_imports');
 	}
 
 }
