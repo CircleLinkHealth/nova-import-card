@@ -53,6 +53,9 @@ class DashboardController extends Controller {
 			$stats['totalAdministrators'] = User::whereHas('roles', function($q) {
 				$q->where('name', '=', 'administrator');
 			})
+			$stats['totalCareCenter'] = User::whereHas('roles', function($q) {
+				$q->where('name', '=', 'care-center');
+			})
 				->get()->count();
 			$stats['totalParticipants'] = User::whereHas('roles', function($q) {
 					$q->where('name', '=', 'participant');
