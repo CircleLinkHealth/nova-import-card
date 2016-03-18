@@ -226,8 +226,7 @@ class PatientCareplanController extends Controller
             $timezones[$timezone] = $timezone;
         }
 
-        //$showApprovalButton = false;
-        $showApprovalButton = true; // always show
+        $showApprovalButton = false; // default hide
         if (Auth::user()->hasRole('provider')) {
             if ($patient->carePlanStatus != 'provider_approved') {
                 $showApprovalButton = true;
