@@ -43,6 +43,11 @@
 								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'administrator')) }}"><i class="icon--home--white"></i> Administrators</a></td>
 							</tr>
 							<tr>
+								<td><strong>Total Care Center Personnel</strong></td>
+								<td>{{ $stats['totalCareCenter'] }}</td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'care-center')) }}"><i class="icon--home--white"></i> Care Center</a></td>
+							</tr>
+							<tr>
 								<td><strong>Total Providers</strong></td>
 								<td>{{ $stats['totalProviders'] }}</td>
 								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'provider')) }}"><i class="icon--home--white"></i> Providers</a></td>
