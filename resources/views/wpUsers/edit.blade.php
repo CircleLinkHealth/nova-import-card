@@ -463,14 +463,6 @@
                                 @else
                                     <br><br><em>No observations found for this user</em>
                                 @endif
-                                <h3>Observation Seeding</h3>
-                                    Form here<br>
-                                    date range<br>
-                                    checkboxes of what types, that accordian down to ranges<br>
-                                    velocity up/down option<br>
-                                    can get crazy technical with this :)<br>
-                                    <br>Idea: bulk observation adder, add 10 at once<br><br>
-                                <a href="" class="btn btn-info">Seed Random Observations</a>
                             </div>
                         </div>
 
