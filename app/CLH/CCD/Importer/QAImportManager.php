@@ -8,21 +8,15 @@ use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\ParsingStrategies\CareTeam\PrimaryProviderParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Location\ProviderLocationParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Problems\DetectsProblemCodeSystemTrait;
-use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
-use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfigStorageStrategy;
-use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserMetaStorageStrategy;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfigParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMetaParser;
 use App\CLH\CCD\ImportRoutine\ExecutesImportRoutine;
 use App\CLH\CCD\ImportRoutine\RoutineBuilder;
-use App\CLH\CCD\QAImportOutput;
 use App\CLH\CCD\ValidatesQAImportOutput;
 use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
-use App\ParsedCCD;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
 
 class QAImportManager
 {
