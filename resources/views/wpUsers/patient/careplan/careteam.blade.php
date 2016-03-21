@@ -27,7 +27,7 @@ function buildProviderDropDown($providers, $activeId = false) {
 function buildProviderInfoContainers($providers) {
     $html = '<div id="providerInfoContainers" style="display:none;">';
     foreach ($providers as $provider) :
-echo "<pre>"; var_export($provider); echo "</pre>";
+// echo "<pre>"; var_export($provider); echo "</pre>";
         $html .= '<div id="providerInfo'.$provider->ID.'">';
         $html .= '<strong><span id="providerName'.$provider->ID.'" style="display:none;">'.ucwords( $provider->firstName . ' ' . $provider->lastName) . '</span></strong>';
         $html .= '<strong>Specialty:</strong> ' . $provider->specialty;
