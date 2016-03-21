@@ -31,7 +31,7 @@ function buildProviderInfoContainers($providers) {
         $html .= '<div id="providerInfo'.$provider->ID.'">';
         $html .= '<strong><span id="providerName'.$provider->ID.'" style="display:none;">'.ucwords( $provider->firstName . ' ' . $provider->lastName) . '</span></strong>';
         $html .= '<strong>Specialty:</strong> ' . $provider->specialty;
-        $html .= '<BR><strong>Tel:</strong> ' . $provider->study_phone_number;
+        $html .= '<BR><strong>Tel:</strong> ' . $provider->phone;
         $html .= '</div>';
     endforeach;
     $html .= '</div>';
