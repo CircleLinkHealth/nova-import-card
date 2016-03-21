@@ -54,11 +54,14 @@ class Comment extends Model {
         }
         $wpUser = User::find($this->user_id);
 
+        /*
         if(!$wpUser->blogId()) {
             dd($this->user_id . ' is missing a program id');
         }
+        */
 
         // take programId(blogId) and add to ma_X_comments table
+        /*
         $params['comment_post_ID'] = $this->comment_post_ID;
         $params['comment_author'] = $this->comment_author;
         $params['comment_author_email'] = $this->comment_author_email;
@@ -78,6 +81,7 @@ class Comment extends Model {
         }
         $params['comment_karma'] = $this->comment_karma;
         $this->program_id = $wpUser->blogId();
+        */
 
         // updating or inserting?
         /*

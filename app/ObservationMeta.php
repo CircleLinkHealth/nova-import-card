@@ -54,6 +54,9 @@ class ObservationMeta extends Model {
             return false;
         }
 
+        /*
+         * // NO LONGER NEEDED IN 3.0, REMOVING LEGACY MA_* TABLES
+         *
         // take programId(blogId) and add to wp_X_observationmeta table
         $params['obs_id'] = $observation->legacy_obs_id;
         if($comment) {
@@ -77,6 +80,7 @@ class ObservationMeta extends Model {
                 $this->legacy_meta_id = $resultId;
             }
         }
+        */
 
         parent::save();
         // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save
