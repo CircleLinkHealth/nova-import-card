@@ -12,9 +12,9 @@
                     @endif
                 @endif
                 @if(Route::is('patient.careteam.show'))
-                    <a href="#" class="btn btn-primary btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.demographics.show', array('patientId' => $patient->ID)) }}"><span class="glyphicon glyphicon-circle-arrow-left"></span></a>
                     <!-- <button type="submit" class="btn btn-primary btn-next inline-block">Submit</button> -->
                     @if( isset($showApprovalButton) && $showApprovalButton )
+                        <a href="#" class="btn btn-primary btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.demographics.show', array('patientId' => $patient->ID)) }}"><span class="glyphicon glyphicon-circle-arrow-left"></span></a>
                         <a href="#" class="btn btn-primary btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->ID, 'page' => 1)) }}">Approve/Next Page&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                     @endif
                 @endif
