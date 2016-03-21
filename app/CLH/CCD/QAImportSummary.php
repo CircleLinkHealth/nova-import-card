@@ -6,4 +6,9 @@ class QAImportSummary extends Model {
 
     protected $guarded = [];
 
+    public function ccda()
+    {
+        return $this->belongsTo(Ccda::class);
+    }
+
 }
