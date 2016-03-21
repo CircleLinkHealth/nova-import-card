@@ -1036,9 +1036,12 @@ order by qs.qs_type, qs.sort, qs.aid
 	public function import_user_observation_data($user_id, $comment_data, $int_blog_id)
 	{
 		// build tables to use
-		$str_observation_table = 'ma_' . $int_blog_id . '_observations';
-		$str_observationmeta_table = 'ma_' . $int_blog_id . '_observationmeta';
-		$str_comments_table = 'wp_' . $int_blog_id . '_comments';
+		//$str_observation_table = 'ma_' . $int_blog_id . '_observations';
+		$str_observation_table = 'lv_observations';
+		//$str_observationmeta_table = 'ma_' . $int_blog_id . '_observationmeta';
+		$str_observationmeta_table = 'lv_observationmeta';
+		//$str_comments_table = 'wp_' . $int_blog_id . '_comments';
+		$str_comments_table = 'lv_comments';
 
 		// remove all users comment data
 		$this->db->delete("{$str_comments_table}", array('user_id' => $user_id));

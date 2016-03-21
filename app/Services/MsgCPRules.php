@@ -362,7 +362,7 @@ query;
         $query = "select max(obs_id), obs_message_id, obs_value, obs_date, obs_unit, count(*) as count
         from (
           SELECT *
-          FROM ma_{$provid}_observations
+          FROM lv_observations
           ORDER BY obs_id DESC
         ) as orderedobs
         where user_id = {$user_id}
@@ -512,7 +512,7 @@ query;
          */
 
         $sql = "select o.obs_key, o.obs_value
-            from ma_".$provid."_observations o
+            from lv_observations o
             where o.user_id = ".$user_id."
             and date(o.obs_date) = date(now())
             and o.obs_unit = ''
@@ -568,7 +568,7 @@ query;
          */
 
         $query = "select date_format(obs_date, '%Y-%m-%d') as obs_date, obs_value
-            from ma_".$provid."_observations
+            from lv_observations
             where user_id = ".$intID."
             and obs_key = 'Weight'
             and date_format(obs_date, '%Y-%m-%d') < date_format(now(), '%Y-%m-%d')
@@ -718,8 +718,10 @@ query;
         $this->int_blog_id = $int_blog_id;
 
         // build tables to use
-        $str_observation_table = 'ma_' . $this->int_blog_id . '_observations';
-        $str_observationmeta_table  = 'ma_' . $this->int_blog_id . '_observationmeta';
+        //$str_observation_table = 'ma_' . $this->int_blog_id . '_observations';
+        $str_observation_table = 'lv_observations';
+        //$str_observationmeta_table  = 'ma_' . $this->int_blog_id . '_observationmeta';
+        $str_observationmeta_table  = 'lv_observationmeta';
 
         $this->db->select('ri.qid, rip.items_id, rq.msg_id, im.meta_value AS alert_key, im_al.meta_value AS alert_msg_id');
         $this->db->from('rules_itemmeta AS im');
