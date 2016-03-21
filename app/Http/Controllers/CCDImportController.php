@@ -6,12 +6,9 @@ use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\ImportedItems\MedicationImport;
 use App\CLH\CCD\ImportedItems\ProblemImport;
 use App\CLH\CCD\Importer\ImportManager;
-use App\CLH\CCD\ImportRoutine\RoutineBuilder;
-use App\CLH\CCD\QAImportOutput;
 use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
@@ -60,6 +57,8 @@ class CCDImportController extends Controller
             $ccda->imported = true;
             $ccda->patient_id = $user->ID;
             $ccda->save();
+
+            $ccda->qaSummary()->delete();
         }
 
         return response()->json( compact( 'imported' ), 200 );
