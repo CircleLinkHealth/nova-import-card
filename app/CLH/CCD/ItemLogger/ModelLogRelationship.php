@@ -2,7 +2,13 @@
 
 namespace App\CLH\CCD\ItemLogger;
 
-
+/**
+ * This trait defines all the CCD Logger relationships.
+ * We are putting them all together in this trait so that they can be easily re-used in case.
+ *
+ * Class ModelLogRelationship
+ * @package App\CLH\CCD\ItemLogger
+ */
 trait ModelLogRelationship
 {
     public function allergies()
