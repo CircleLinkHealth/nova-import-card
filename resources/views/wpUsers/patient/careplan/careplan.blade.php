@@ -58,7 +58,7 @@ $new_user = false;
                             @else
                                 <div class="row" style="margin:60px 0px;">
                                     <div class="col-lg-8 col-lg-offset-2 text-center">
-                                        No careplan found for this patient<br />Please contact an administrator.
+                                        No careplan found for this patient<br />
                                     </div>
                                 </div>
                             @endif
