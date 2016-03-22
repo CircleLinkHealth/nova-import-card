@@ -16,11 +16,11 @@ elixir.config.js.browserify.transformers.push({
  */
 
 elixir(function(mix) {
-    mix.phpUnit();
-    mix.less(['/css/app.less'], 'public/css/stylesheet.css');
-    mix.browserify('/ccd/uploader.js');
+    //mix.phpUnit();
+    //mix.less(['/css/app.less'], 'public/css/stylesheet.css');
+    mix.browserify('uploader.js');
 
-    mix.scripts([
-        'resources/assets/js/material.min.js'
-    ], 'public/js/scripts.js');
+    //mix.scripts([
+    //    'resources/assets/js/material.min.js'
+    //], 'public/js/scripts.js');
 });

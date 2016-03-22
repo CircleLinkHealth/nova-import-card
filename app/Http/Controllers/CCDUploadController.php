@@ -3,13 +3,13 @@
 use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
+use App\CLH\CCD\QAImportSummary;
 use App\CLH\CCD\Vendor\CcdVendor;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 use App\Location;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use JavaScript;
+use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class CCDUploadController extends Controller
 {
@@ -30,43 +30,39 @@ class CCDUploadController extends Controller
      */
     public function uploadRawFiles(Request $request)
     {
-        if ( $request->hasFile( 'file' ) ) {
-            foreach ( $request->file( 'file' ) as $file ) {
-                if ( empty($file) ) {
-                    Log::error( __METHOD__ . ' ' . __LINE__ . 'This CCDA did not upload. Here is what I have for CCDA ==>' . $file );
-                    continue;
-                }
+        if ( !$request->hasFile( 'file' ) ) {
+            return response()->json( 'No file found', 400 );
+        }
 
-                $xml = file_get_contents( $file );
+        foreach ( $request->file( 'file' ) as $file ) {
+            $xml = file_get_contents( $file );
 
-                $json = $this->repo->toJson( $xml );
+            $json = $this->repo->toJson( $xml );
 
-                $blogId = $request->input( 'program_id' );
+            $blogId = $request->input( 'program_id' );
 
-                if ( empty($blogId) ) throw new \Exception( 'Blog id not found,', 400 );
+            if ( empty($blogId) ) throw new \Exception( 'Blog id not found,', 400 );
 
-                $vendorId = empty($request->input( 'ccd_vendor_id' )) ?: $request->input( 'ccd_vendor_id' );
+            $vendorId = empty($request->input( 'ccd_vendor_id' )) ?: $request->input( 'ccd_vendor_id' );
 
-                $ccda = Ccda::create( [
-                    'user_id' => auth()->user()->ID,
-                    'vendor_id' => $vendorId,
-                    'xml' => $xml,
-                    'json' => $json
-                ] );
+            $ccda = Ccda::create( [
+                'user_id' => auth()->user()->ID,
+                'vendor_id' => $vendorId,
+                'xml' => $xml,
+                'json' => $json
+            ] );
 
-                $logger = new CcdItemLogger( $ccda );
-                $logger->logAll();
+            $logger = new CcdItemLogger( $ccda );
+            $logger->logAll();
 
-                $importer = new QAImportManager( $blogId, $ccda );
-                $output = $importer->generateCarePlanFromCCD();
+            $importer = new QAImportManager( $blogId, $ccda );
+            $output = $importer->generateCarePlanFromCCD();
 
-                $qaSummaries[] = $output;
-            }
+            $qaSummaries[] = $output;
         }
 
         $locations = Location::whereNotNull( 'parent_id' )->get();
 
-//        return response()->json( compact( 'qaSummaries', 'locations' ), 200 );
         JavaScript::put( [
             'qaSummaries' => $qaSummaries,
             'locations' => $locations,
@@ -76,6 +72,8 @@ class CCDUploadController extends Controller
     }
 
     /**
+     * Show the form to upload CCDs.
+     *
      * @return \Illuminate\View\View
      */
     public function create()
@@ -86,6 +84,24 @@ class CCDUploadController extends Controller
         ] );
 
         return view( 'CCDUploader.uploader' );
+    }
+
+    /**
+     * Show all QASummaries that are related to a CCDA
+     *
+     * @painpoints:
+     * 1. What about summaries not related to a CCDA? (Probably just delete them)
+     * 2. Not sure if this should be in this Controller
+     */
+    public function index()
+    {
+        $qaSummaries = QAImportSummary::has( 'ccda' )->get();
+
+        JavaScript::put( [
+            'qaSummaries' => $qaSummaries,
+        ] );
+
+        return view( 'CCDUploader.uploadedSummary' );
     }
 
 }

@@ -18,7 +18,7 @@ function buildProviderDropDown($providers, $activeId = false) {
         if($provider->ID == $activeId) {
             $selected = 'selected="selected"';
         }
-        $html .= '<option value="'.$provider->ID.'" "'.$selected.'">'.ucwords( preg_replace('/[^A-Z0-9$]+/', '', $provider->firstName) . ' ' . preg_replace('/[^A-Z0-9$]+/', '', $provider->lastName) ).'</option>';
+        $html .= '<option value="'.$provider->ID.'" "'.$selected.'">'.ucwords( preg_replace('/[^A-Za-z0-9\-]/', '', $provider->firstName) . ' ' . preg_replace('/[^A-Za-z0-9\-]/', '', $provider->lastName) ).'</option>';
     endforeach;
     $html .= '</select>';
     return $html;
@@ -57,10 +57,12 @@ function buildProviderInfoContainers($providers) {
                 //return false;
             });
 
-            $('body').on('click', '.removeCtm', function(event) {
-                event.preventDefault();
+
+            $('#careTeamMembers').on('click', '.removeCtm', function(event) {
+                alert('you clicked me!');
                 ctmId = $(this).attr('ctmId');
-                $('#ctm' + ctmId).remove();
+                name = '#ctm' + ctmId;
+                $(name).detach();
                 return false;
             });
 
@@ -113,7 +115,7 @@ function buildProviderInfoContainers($providers) {
                 html1 += '';
                 html1 += '</div>';
                 html1 += '<div class="col-sm-3">';
-                html1 += '<button class="btn btn-xs btn-orange removeCtm" ctmId="' + ctmCount + '"><i class="glyphicon glyphicon-minus-sign"></i> Remove Member</button>';
+                html1 += '<button type="button" class="btn btn-xs btn-orange removeCtm" ctmId="' + ctmCount + '"><i class="glyphicon glyphicon-minus-sign"></i> Remove Member</button>';
                 html1 += '</div>';
                 html1 += '</div>';
                 // second row

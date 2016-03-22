@@ -112,6 +112,8 @@ Route::group( ['middleware' => 'auth'], function () {
         Route::get( 'create', ['uses' => 'CCDUploadController@create', 'as' => 'import.ccd'] );
 
         Route::post( 'qaimport', 'CCDUploadController@uploadRawFiles' );
+        Route::get( 'qaimport', 'CCDUploadController@index' );
+
         Route::post( 'import', 'CCDImportController@import' );
     } );
 
