@@ -104,7 +104,7 @@ var UploadedCcdsPanel = Vue.extend({
     }
 });
 
-Vue.component('uploaded-ccdspanel', UploadedCcdsPanel);
+Vue.component('uploaded-ccd-panel', UploadedCcdsPanel);
 
 var vm = new Vue({
     el: 'body'
