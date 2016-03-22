@@ -1,5 +1,5 @@
-@extends('layouts.ccd-importer', ['currentVue' => 'uploaded-ccdspanel'])
+@extends('layouts.ccd-importer', ['currentVue' => 'uploaded-ccd-panel'])
 
 @section('content')
-    <uploaded-ccdspanel></uploaded-ccdspanel>
+    <uploaded-ccd-panel></uploaded-ccd-panel>
 @endsection
