@@ -18,7 +18,7 @@ function buildProviderDropDown($providers, $activeId = false) {
         if($provider->ID == $activeId) {
             $selected = 'selected="selected"';
         }
-        $html .= '<option value="'.$provider->ID.'" "'.$selected.'">'.ucwords( preg_replace('/[^A-Z0-9$]+/', '', $provider->firstName) . ' ' . preg_replace('/[^A-Z0-9$]+/', '', $provider->lastName) ).'</option>';
+        $html .= '<option value="'.$provider->ID.'" "'.$selected.'">'.ucwords( preg_replace('/[^A-Za-z0-9\-]/', '', $provider->firstName) . ' ' . preg_replace('/[^A-Za-z0-9\-]/', '', $provider->lastName) ).'</option>';
     endforeach;
     $html .= '</select>';
     return $html;
