@@ -104,7 +104,7 @@
                         <label for="patients"></label>
 
                         <div id="bloodhound">
-                            <input class="typeahead form-item-spacing form-control" size="50" type="text"
+                            <input class="typeahead form-item-spacing form-control" size="50" type="text" name="users"
                                    autofocus="autofocus" placeholder="Enter MRN, Patient Name or DOB [mm-dd-yyyy]">
                         </div>
                     </div>
@@ -117,10 +117,10 @@
             var pat = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('search'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
-                // `states` is an array of state names defined in "The Basics"
-                local: {!! $data !!}
-
-
+                remote: {
+                    url: 'queryPatient?users=%QUERY',
+                    wildcard: '%QUERY'
+                }
             });
 
             pat.initialize();
@@ -129,23 +129,22 @@
                         hint: true,
                         highlight: true,
                         minLength: 3
-                    },
-                    {
-                        name: 'matched-states',
-                        source: pat,
-                        templates: {
-                            suggestion: function (data) {
-                                return '<li><a href="' + data.link + '">' + data.name + ' DOB: ' + data.DOB +' Provider: '+ data.program +'</a></li>';
-                            },
-                            empty: [
-                                '<div class="empty-message">', 'No Patients Found...', '</div>'
-                            ].join('\n'),
-                        }
-                    });
+                    },{
+                source: pat.ttAdapter(),
+                // This will be appended to "tt-dataset-" to form the class name of the suggestion menu.
+                name: 'User_list',
+                // the key from the array we want to display (name,id,email,etc...)
+                displayKey: 'hint',
+                templates: {
+                    empty: [
+                        '<div class="empty-message">unable to find any</div>'
+                    ]
+                }
+            });
+
             $('#bloodhound .typeahead').on('typeahead:selected', function (e, datum) {
                 window.location.href = datum.link;
                 datum.val(datum.name);
-
             });
         });
     </script>
