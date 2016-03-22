@@ -9,8 +9,7 @@ use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 use App\Location;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use JavaScript;
+use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class CCDUploadController extends Controller
 {
@@ -31,35 +30,35 @@ class CCDUploadController extends Controller
      */
     public function uploadRawFiles(Request $request)
     {
-        if ( $request->hasFile( 'file' ) )
-        {
-            foreach ( $request->file( 'file' ) as $file )
-            {
-                $xml = file_get_contents( $file );
+        if ( !$request->hasFile( 'file' ) ) {
+            return response()->json( 'No file found', 400 );
+        }
 
-                $json = $this->repo->toJson( $xml );
+        foreach ( $request->file( 'file' ) as $file ) {
+            $xml = file_get_contents( $file );
 
-                $blogId = $request->input( 'program_id' );
+            $json = $this->repo->toJson( $xml );
 
-                if ( empty($blogId) ) throw new \Exception( 'Blog id not found,', 400 );
+            $blogId = $request->input( 'program_id' );
 
-                $vendorId = empty($request->input( 'ccd_vendor_id' )) ?: $request->input( 'ccd_vendor_id' );
+            if ( empty($blogId) ) throw new \Exception( 'Blog id not found,', 400 );
 
-                $ccda = Ccda::create( [
-                    'user_id' => auth()->user()->ID,
-                    'vendor_id' => $vendorId,
-                    'xml' => $xml,
-                    'json' => $json
-                ] );
+            $vendorId = empty($request->input( 'ccd_vendor_id' )) ?: $request->input( 'ccd_vendor_id' );
 
-                $logger = new CcdItemLogger( $ccda );
-                $logger->logAll();
+            $ccda = Ccda::create( [
+                'user_id' => auth()->user()->ID,
+                'vendor_id' => $vendorId,
+                'xml' => $xml,
+                'json' => $json
+            ] );
 
-                $importer = new QAImportManager( $blogId, $ccda );
-                $output = $importer->generateCarePlanFromCCD();
+            $logger = new CcdItemLogger( $ccda );
+            $logger->logAll();
 
-                $qaSummaries[] = $output;
-            }
+            $importer = new QAImportManager( $blogId, $ccda );
+            $output = $importer->generateCarePlanFromCCD();
+
+            $qaSummaries[] = $output;
         }
 
         $locations = Location::whereNotNull( 'parent_id' )->get();
@@ -96,7 +95,7 @@ class CCDUploadController extends Controller
      */
     public function index()
     {
-        $qaSummaries = QAImportSummary::has('ccda')->get();
+        $qaSummaries = QAImportSummary::has( 'ccda' )->get();
 
         JavaScript::put( [
             'qaSummaries' => $qaSummaries,
