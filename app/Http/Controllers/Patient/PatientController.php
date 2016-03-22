@@ -273,23 +273,50 @@ class PatientController extends Controller {
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
 				->with('meta')->whereHas('roles', function($q) {
-				$q->where('name', '=', 'participant');
-			})->get();
+					$q->where('name', '=', 'participant');
+				})
+				->with(array('observations' => function($query)
+				{
+					$query->where('obs_key', '!=', 'Outbound');
+					$query->orderBy('obs_date', 'DESC');
+					$query->first();
+				}))
+				->get();
+		$i = 0;
+		// make array of approvers to avoid duplicate db calls
+		$approvers = array();
+		$billingProviders = array();
+
 		if($patients->count() > 0) {
 			foreach ($patients as $patient) {
 				// skip if patient has no name
 				if(empty($patient->firstName)) {
 					continue 1;
 				}
+
+				if($i >= 1) {
+					//continue 1;
+				}
+				$i++;
 				// careplan status stuff from 2.x
 				$careplanStatus = $patient->carePlanStatus;
 				$careplanStatusLink = '';
 				$approverName = 'NA';
 				$tooltip = 'NA';
+
 				if ($patient->carePlanStatus  == 'provider_approved') {
 					$approverId = $patient->carePlanProviderApprover;
-					$approver = User::find($approverId);
+					$approver = false;
+					if(isset($approvers[$approverId])) {
+						$approver = $approvers[$approverId];
+					} else if(!empty($approverId)) {
+						$approver = User::find($approverId);
+						if($approver) {
+							$approvers[$approverId] = $approver;
+						}
+					}
 					if($approver) {
+						$approvers[$approverId] = $approver;
 						$approverName = $approver->fullName;
 						$careplanStatus = 'Approved';
 						$careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
@@ -314,7 +341,15 @@ class PatientController extends Controller {
 				// get billing provider name
 				$bpName = '';
 				if(!empty($patient->billingProviderID)) {
-					$bpUser = User::find($patient->billingProviderID);
+					$bpUser = false;
+					if(isset($billingProviders[$patient->billingProviderID])) {
+						$bpUser = $billingProviders[$patient->billingProviderID];
+					} else if(!empty($patient->billingProviderID)) {
+						$bpUser = User::find($patient->billingProviderID);
+						if($bpUser) {
+							$billingProviders[$patient->billingProviderID] = $bpUser;
+						}
+					}
 					if($bpUser) {
 						$bpName = $bpUser->fullName;
 					}
@@ -322,9 +357,9 @@ class PatientController extends Controller {
 
 				// get date of last observation
 				$lastObservationDate = 'No Readings';
-				$lastObservation = $patient->observations()->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->first();
-				if(!empty($lastObservation)) {
-					$lastObservationDate = date("m/d/Y", strtotime($lastObservation->obs_date));
+				$lastObservation = $patient->observations;
+				if($lastObservation->count() > 0) {
+					$lastObservationDate = date("m/d/Y", strtotime($lastObservation[0]->obs_date));
 				}
 
 				$patientData[] = array('key' => $patient->ID, // $part->ID,
