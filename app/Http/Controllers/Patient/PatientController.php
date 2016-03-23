@@ -526,31 +526,7 @@ class PatientController extends Controller {
 
 		public function patientAjaxSearch(Request $request){
 
-		$data = User::whereIn('ID', Auth::user()->viewablePatientIds())
-			->with('meta')->whereHas('roles', function($q) {
-				$q->where('name', '=', 'participant');
-			})->get()->lists('ID');
-		$patients = '[';
-		$i = 0;
-		foreach($data as $d){
-			$name = (User::find($d)->getFullNameAttribute());
-			$dob = new Carbon((User::find($d)->getBirthDateAttribute()));
-			$dob = $dob->format('m-d-Y');
-			$mrn = (User::find($d)->getMRNAttribute());
-			$programObj = WpBlog::find((User::find($d)->blogId())) ? WpBlog::find((User::find($d)->blogId())) : "";
-			if($programObj->display_name){
-				$program = $programObj->display_name;
-			} else { $program = '';}
-			$search = $name .' | '. $dob .' | ' . $mrn;
-			if($i == count($data) - 1){
-				$patients .=  '{ DOB: "'. $dob .'", program: "'. $program .'", search: "'. $search .'", id : "' . $d . '", link: "' . URL::route('patient.summary', array('patient' => $d)). '", name: "'. $name .'"}] ';
-			} else {
-				$patients .= '{ DOB: "'. $dob .'", program: "'. $program .'", search: "'. $search .'", id : "' .  $d . '", link: "'.URL::route('patient.summary', array('patient' => $d)).'", name: "'.$name.'"}, ';
-			}
-			$i++;
-		}
-
-		return view('wpUsers.patient.select',  ['data' => $patients]);
+		return view('wpUsers.patient.select');
 	}
 	/**
 	 * Process the specified resource.

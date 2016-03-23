@@ -137,7 +137,7 @@
                 displayKey: 'hint',
                 templates: {
                     empty: [
-                        '<div class="empty-message">unable to find any</div>'
+                        '<div class="empty-message">No Patients Found</div>'
                     ]
                 }
             });

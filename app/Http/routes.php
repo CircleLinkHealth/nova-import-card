@@ -135,8 +135,7 @@ Route::group( ['middleware' => 'auth'], function () {
         Route::get( 'careplan-print-multi', ['uses' => 'Patient\PatientCareplanController@printMultiCareplan', 'as' => 'patients.careplan.multi'] );
         Route::get( 'careplan-print-list', ['uses' => 'Patient\PatientCareplanController@index', 'as' => 'patients.careplan.printlist'] );
         Route::post( 'select', ['uses' => 'Patient\PatientController@processPatientSelect', 'as' => 'patients.select.process'] );
-        Route::get( 'search', ['uses' => 'Patient\PatientController@patientAjaxSearch', 'as' => 'patients.search'] );                      Route::get( 'queryPatient', ['uses' => 'Patient\PatientController@queryPatient', 'as' => 'patients.query'] );
-
+        Route::get( 'queryPatient', ['uses' => 'Patient\PatientController@queryPatient', 'as' => 'patients.query'] );
         Route::get( 'alerts', ['uses' => 'Patient\PatientController@showPatientAlerts', 'as' => 'patients.alerts'] );
         Route::get( 'careplan/demographics', ['uses' => 'Patient\PatientCareplanController@showPatientDemographics', 'as' => 'patients.demographics.show'] );
         Route::post( 'careplan/demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patients.demographics.store'] );
