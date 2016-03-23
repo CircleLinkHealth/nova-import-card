@@ -96,8 +96,6 @@ $provider = App\User::find($patient->getBillingProviderIDAttribute());
                         $yaxis_start = 'start:80,';
                         $yaxis_step = 'step: ' . round(($value['max'] - 80) / 4, -1) . ',';
                     }
-                    // set yaxis vars
-
                     ?>
 
                     <div class="row">

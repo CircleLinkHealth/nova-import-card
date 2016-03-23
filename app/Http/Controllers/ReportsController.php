@@ -42,21 +42,21 @@ class ReportsController extends Controller
 
         foreach ($biometrics as $biometric) {
             $biometrics_data[$biometric] = (new ReportsService())->getBiometricsData($biometric, $user);
-        }            //debug($biometrics_data);
+        }//debug($biometrics_data);
 
         foreach ($biometrics_data as $key => $value) {
             $bio_name = $key;
             if ($value != null) {
                 $first = reset($value);
                 $last = end($value);
-                $changes = (new ReportsService())->biometricsIndicators(intval($last->Avg), intval($first->Avg), $biometric, (new ReportsService())->getTargetValueForBiometric($bio_name, $user));
+                $changes = (new ReportsService())->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name, (new ReportsService())->getTargetValueForBiometric($bio_name, $user));
                 //debug($changes);
                 $biometrics_array[$bio_name]['change'] = $changes['change'];
                 $biometrics_array[$bio_name]['progression'] = $changes['progression'];
                 $biometrics_array[$bio_name]['status'] = (isset($changes['status'])) ? $changes['status'] : 'Unchanged';
 //				//$changes['bio']= $bio_name;debug($changes);
                 $biometrics_array[$bio_name]['lastWeekAvg'] = intval($last->Avg);
-            } //debug($biometrics_array);
+            }
 
             $count = 1;
             $biometrics_array[$bio_name]['data'] = '';
@@ -76,8 +76,8 @@ class ReportsController extends Controller
             } else {
                 //no data
                 unset($biometrics_array[$bio_name]);
-            }//debug($biometrics_array);
-        }
+            }
+        }//dd($biometrics_array);
 
         // get provider
         $provider = User::find($user->leadContactID);
