@@ -28,7 +28,7 @@ Route::get( 'careplan/{id}/section/{sectionId}', ['uses' => 'Admin\CarePlanContr
 /*
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
-Route::post( 'account/login', 'PatientController@patientAjaxSearch' );
+Route::post( 'account/login', 'Patient\PatientController@patientAjaxSearch' );
 
 Route::get( 'logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index' );
 
@@ -105,7 +105,6 @@ Route::group( ['middleware' => 'auth'], function () {
     /**
      * CCD Importer Routes
      */
-
     Route::group( ['prefix' => 'ccd-importer'], function () {
         Entrust::routeNeedsPermission( 'ccd-importer/*', ['ccd-import'], redirect()->back() );
 
@@ -115,6 +114,8 @@ Route::group( ['middleware' => 'auth'], function () {
         Route::get( 'qaimport', 'CCDUploadController@index' );
 
         Route::post( 'import', 'CCDImportController@import' );
+
+        Route::get( 'uploaded-ccd-items/{ccdaId}/edit', 'QAImportedController@edit' );
     } );
 
     //CCD Parser Demo Route
