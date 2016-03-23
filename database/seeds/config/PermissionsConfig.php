@@ -51,8 +51,8 @@ class PermissionsConfig extends Seeder {
             'users-view-self' => array('display_name' => 'User View Self', 'description' => '',),
 
             //CCD API Permissions
-            'query-api-for-patient-data' => array('display_name' => 'Query API for Patient Data', 'description' => 'Can POST CCDs to our API.',),
             'post-ccd-to-api' => array('display_name' => 'POST CCDs to API', 'description' => 'Can POST CCDs to our API.',),
+            'query-api-for-patient-data' => array('display_name' => 'Query API for Patient Data', 'description' => 'Can POST CCDs to our API.',),
 
             //Importer Permissions
             'ccd-import' => array('display_name' => 'Import CCDs', 'description' => 'Can use the CCD Importer.',),
@@ -66,9 +66,22 @@ class PermissionsConfig extends Seeder {
             'administrator' => array(
                 'display_name' => 'Administrator',
                 'description' => 'Administrator',
-                'ccd-import',
                 'permissions' => array(
                     // administrator will always get all permissions
+                )
+            ),
+            'api-ccd-vendor' => array(
+                'display_name' => 'API CCD Vendor',
+                'description' => 'Is able to post CCDs to our API',
+                'permissions' => array(
+                    'post-ccd-to-api'
+                )
+            ),
+            'api-data-consumer' => array(
+                'display_name' => 'API Data Consumer',
+                'description' => 'Is able to receive PDF Reports and CCM Time from our API',
+                'permissions' => array(
+                    'query-api-for-patient-data'
                 )
             ),
             'care-center' => array(
