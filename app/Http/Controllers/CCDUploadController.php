@@ -61,11 +61,8 @@ class CCDUploadController extends Controller
             $qaSummaries[] = $output;
         }
 
-        $locations = Location::whereNotNull( 'parent_id' )->get();
-
         JavaScript::put( [
             'qaSummaries' => $qaSummaries,
-            'locations' => $locations,
         ] );
 
         return view( 'CCDUploader.uploadedSummary' );
@@ -95,7 +92,7 @@ class CCDUploadController extends Controller
      */
     public function index()
     {
-        $qaSummaries = QAImportSummary::has( 'ccda' )->get();
+        $qaSummaries = QAImportSummary::has( 'ccda' )->get()->toArray();
 
         JavaScript::put( [
             'qaSummaries' => $qaSummaries,
