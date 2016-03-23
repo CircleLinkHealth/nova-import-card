@@ -62,7 +62,6 @@ function buildProviderInfoContainers($providers) {
 
 
             $('#careTeamMembers').on('click', '.removeCtm', function(event) {
-                alert('you clicked me!');
                 ctmId = $(this).attr('ctmId');
                 name = '#ctm' + ctmId;
                 $(name).detach();
