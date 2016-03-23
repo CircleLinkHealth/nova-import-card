@@ -174,7 +174,7 @@
             </div>
 
             <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
-                <mdl-button primary raised v-mdl-ripple-effect type="submit" @click="submitForm">
+                <mdl-button primary raised v-mdl-ripple-effect @click="submitForm" :disabled="!enableButton">
                     Save Demographics
                 </mdl-button>
             </div>

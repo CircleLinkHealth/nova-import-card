@@ -116,6 +116,8 @@ Route::group( ['middleware' => 'auth'], function () {
         Route::post( 'import', 'CCDImportController@import' );
 
         Route::get( 'uploaded-ccd-items/{ccdaId}/edit', 'QAImportedController@edit' );
+
+        Route::post('demographics', 'Importer\DemographicsImportsController@store');
     } );
 
     //CCD Parser Demo Route

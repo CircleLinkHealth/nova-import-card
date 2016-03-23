@@ -135,7 +135,9 @@ var Demographics = Vue.extend({
             //allergies: null,
             //medications: null,
             locations: '',
-            providers: ''
+            providers: '',
+
+            enableButton: true
         }
     },
 
@@ -150,7 +152,24 @@ var Demographics = Vue.extend({
 
     methods: {
         submitForm: function () {
-            alert('Save!');
+            this.enableButton = false;
+
+            var substitutedId = this.demographics.id;
+
+            delete this.demographics.id;
+
+            var payload = {
+                substitutedId: substitutedId,
+                demographics: this.demographics
+            };
+
+            this.$http.post('/ccd-importer/demographics', payload).then(function (response) {
+
+            }, function (response) {
+                console.log(response);
+            });
+
+            this.enableButton = true;
         }
     }
 });
