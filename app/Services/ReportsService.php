@@ -403,6 +403,8 @@ Class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
+            }else {
+                $progression = '';
             }
         } else if ($weeklyReading1 <= 100) {
             $color = "yellow";
@@ -411,6 +413,8 @@ Class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
+            }else {
+                $progression = '';
             }
         }
 
@@ -448,6 +452,8 @@ Class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
+            }else {
+                $progression = '';
             }
         } else if ($weeklyReading1 <= 70 && $weeklyReading1 > 60) {
             $color = "yellow";
@@ -456,6 +462,8 @@ Class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
+            }else {
+                $progression = '';
             }
         } else if ($weeklyReading1 <= 60) {
             $color = "red";
@@ -464,6 +472,8 @@ Class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
+            } else {
+                $progression = '';
             }
         }
 
