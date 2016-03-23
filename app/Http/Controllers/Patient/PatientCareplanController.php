@@ -333,6 +333,9 @@ class PatientCareplanController extends Controller
         $careTeamUserIds = $userConfig['care_team'];
         $ctmsa = array();
         if (!empty($userConfig['send_alert_to'])) {
+            if((@unserialize($userConfig['send_alert_to']) !== false)) {
+                $userConfig['send_alert_to'] = unserialize($userConfig['send_alert_to']);
+            }
             $ctmsa = $userConfig['send_alert_to'];
         }
         $ctbp = $userConfig['billing_provider'];
@@ -341,8 +344,13 @@ class PatientCareplanController extends Controller
         //dd($userConfig);
 
         $careTeamUsers = array();
-        foreach ($careTeamUserIds as $id) {
-            $careTeamUsers[] = User::find($id);
+        if(!empty($careTeamUserIds)) {
+            if((@unserialize($careTeamUserIds) !== false)) {
+                $careTeamUserIds = unserialize($careTeamUserIds);
+            }
+            foreach ($careTeamUserIds as $id) {
+                $careTeamUsers[] = User::find($id);
+            }
         }
 
         // get providers

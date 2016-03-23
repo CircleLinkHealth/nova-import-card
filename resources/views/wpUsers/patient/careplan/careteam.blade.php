@@ -6,6 +6,9 @@ $careTeamUserIds = $patient->careTeam;
 $ctmsa = array();
 if(!empty($patient->sendAlertTo)) {
     $ctmsa = $patient->sendAlertTo;
+    if((unserialize($ctmsa) !== false)) {
+        $ctmsa = unserialize($ctmsa);
+    }
 }
 $ctbp = $patient->billingProviderID;
 $ctlc = $patient->leadContactID;

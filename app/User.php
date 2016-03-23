@@ -293,6 +293,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$attribute = 'billingProviderID';
 		} else if($attribute == 'leadContact') {
 			$attribute = 'leadContactID';
+		} else if($attribute == 'programId') {
+			return false;
 		}
 
 		// serialize any arrays
