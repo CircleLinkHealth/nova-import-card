@@ -466,6 +466,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->setUserConfigByKey('address', $value);
 	}
 
+	// address2
+	public function getAddress2Attribute() {
+		return $this->getUserConfigByKey('address2');
+	}
+	public function setAddress2Attribute($value) {
+		return $this->setUserConfigByKey('address2', $value);
+	}
+
 	// city
 	public function getCityAttribute() {
 		return $this->getUserConfigByKey('city');
