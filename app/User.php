@@ -203,7 +203,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function userConfig(){
 		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key',$key)->first();
+		$userConfig = $this->meta->where('meta_key', $key)->first();
 		if(!$userConfig) {
 			return false;
 		} else {
@@ -227,7 +227,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     // basic attributes
     public function getFirstNameAttribute() {
 		$name = '';
-		$firstName = $this->meta()->where('meta_key', '=', 'first_name')->first();
+		$firstName = $this->meta->where('meta_key', 'first_name')->first();
 		if( !empty($firstName) && $firstName->meta_value != '' ) {
 			$name = $firstName->meta_value;
 		}
@@ -245,7 +245,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getLastNameAttribute() {
 		$name = '';
-		$lastName = $this->meta()->where('meta_key', '=', 'last_name')->first();
+		$lastName = $this->meta->where('meta_key', 'last_name')->first();
 		if(!empty($lastName && $lastName->meta_value != '' ) ) {
 			$name = $lastName->meta_value;
 		}
