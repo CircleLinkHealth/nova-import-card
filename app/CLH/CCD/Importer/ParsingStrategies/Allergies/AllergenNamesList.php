@@ -9,7 +9,7 @@ use App\CLH\CCD\ItemLogger\CcdAllergyLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 
-class AllergenNameAllergiesListParser implements ParsingStrategy
+class AllergenNamesList implements ParsingStrategy
 {
 
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)

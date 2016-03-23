@@ -11,7 +11,7 @@ use App\CPRulesPCP;
 use App\CPRulesUCP;
 use Illuminate\Support\Facades\Log;
 
-class MedicationsListStorageStrategy extends BaseStorageStrategy implements StorageStrategy
+class MedicationsList extends BaseStorageStrategy implements StorageStrategy
 {
 
     public function import($medsList)

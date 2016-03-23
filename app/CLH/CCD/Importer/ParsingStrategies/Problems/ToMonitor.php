@@ -10,9 +10,9 @@ use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 
-class ProblemsToMonitorParser implements ParsingStrategy
+class ToMonitor implements ParsingStrategy
 {
-    use ConsolidatesProblemInfoTrait;
+    use ConsolidatesProblemInfo;
 
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {

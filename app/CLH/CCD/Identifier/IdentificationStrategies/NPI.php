@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Identifier\IdentificationStrategies;
 
 
-use App\CLH\CCD\Vendor\CcdVendor;
+use App\CLH\CCD\CcdVendor;
 
 class NPI extends BaseIdentificationStrategy
 {

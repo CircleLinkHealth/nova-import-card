@@ -8,9 +8,9 @@ use App\CLH\CCD\ItemLogger\CcdProblemLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 
-class NameCodeAndCodeSysNameProblemsListParser implements ParsingStrategy
+class NameCodeCodeSysNameList implements ParsingStrategy
 {
-    use ConsolidatesProblemInfoTrait;
+    use ConsolidatesProblemInfo;
 
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {

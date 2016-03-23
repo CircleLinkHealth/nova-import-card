@@ -9,7 +9,7 @@ use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\DataTemplates\UserMetaTemplate;
 
-class UserMetaParser implements ParsingStrategy
+class UserMeta implements ParsingStrategy
 {
     private $template;
 

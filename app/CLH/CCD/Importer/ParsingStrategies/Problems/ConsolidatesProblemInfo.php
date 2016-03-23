@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 
-trait ConsolidatesProblemInfoTrait
+trait ConsolidatesProblemInfo
 {
     /**
      * Consolidate Problem info from BB Problem and BB Problem Translation sections.

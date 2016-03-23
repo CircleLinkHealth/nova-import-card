@@ -8,7 +8,7 @@ use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\StorageStrategy;
 
 
-class ProblemsToMonitorStorageStrategy extends BaseStorageStrategy implements StorageStrategy
+class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
 {
     public function import($cpmProblemNames = [])
     {

@@ -5,15 +5,15 @@ namespace App\CLH\CCD\Importer;
 
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
-use App\CLH\CCD\Importer\ParsingStrategies\CareTeam\PrimaryProviderParser;
-use App\CLH\CCD\Importer\ParsingStrategies\Location\ProviderLocationParser;
+use App\CLH\CCD\Importer\ParsingStrategies\CareTeam\PrimaryProviders as PrimaryProvidersParser;
+use App\CLH\CCD\Importer\ParsingStrategies\Location\ProviderLocation as ProviderLocationParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Problems\DetectsProblemCodeSystemTrait;
-use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfigParser;
-use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMetaParser;
+use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfig as UserConfigParser;
+use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMeta as UserMetaParser;
 use App\CLH\CCD\ImportRoutine\ExecutesImportRoutine;
 use App\CLH\CCD\ImportRoutine\RoutineBuilder;
 use App\CLH\CCD\ValidatesQAImportOutput;
-use App\CLH\CCD\Vendor\CcdVendor;
+use App\CLH\CCD\CcdVendor;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use Illuminate\Support\Facades\Log;
@@ -90,7 +90,7 @@ class QAImportManager
         /**
          * Parse provider (Lead Contact and Billing)
          */
-        $primaryProviderParser = new PrimaryProviderParser();
+        $primaryProviderParser = new PrimaryProvidersParser();
         //we well get back user objects (providers)
         $users = $primaryProviderParser->parse( $this->ccda );
         $output[ 'provider' ] = $users;

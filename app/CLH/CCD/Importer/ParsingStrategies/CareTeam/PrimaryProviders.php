@@ -9,7 +9,7 @@ use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\User;
 
-class PrimaryProviderParser implements ParsingStrategy
+class PrimaryProviders implements ParsingStrategy
 {
 
     /**

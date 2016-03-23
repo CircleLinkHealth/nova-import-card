@@ -5,10 +5,10 @@ namespace App\CLH\CCD\Importer;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
-use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfigStorageStrategy;
-use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserMetaStorageStrategy;
-use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfigParser;
-use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMetaParser;
+use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfig as UserConfigStorage;
+use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserMeta as UserMetaStorage;
+use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfig as UserConfigParser;
+use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMeta as UserMetaParser;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\User;
@@ -78,7 +78,7 @@ class ImportManager
         $userMetaTemplate = new UserMetaTemplate();
         $userMetaTemplate->first_name = $this->demographicsImport->first_name;
         $userMetaTemplate->last_name = $this->demographicsImport->last_name;
-        ( new UserMetaStorageStrategy( $this->user->program_id, $this->user ) )->import( $userMetaTemplate->getArray() );
+        ( new UserMetaStorage( $this->user->program_id, $this->user ) )->import( $userMetaTemplate->getArray() );
 
         /**
          * Import User Config
@@ -112,7 +112,7 @@ class ImportManager
          * Persist UserConfig
          */
         $userConfigParser = new UserConfigParser( $userConfigTemplate, $this->user->program_id );
-        ( new UserConfigStorageStrategy( $this->user->program_id, $this->user ) )->import( $userConfigTemplate->getArray() );
+        ( new UserConfigStorage( $this->user->program_id, $this->user ) )->import( $userConfigTemplate->getArray() );
 
         /**
          * CarePlan Defaults
