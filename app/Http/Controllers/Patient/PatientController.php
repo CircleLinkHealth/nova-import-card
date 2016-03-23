@@ -23,6 +23,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
 use EllipseSynergie\ApiResponse\Laravel\Response;
+use Illuminate\Support\Facades\Input;
 use PasswordHash;
 use Auth;
 use DB;
@@ -272,23 +273,50 @@ class PatientController extends Controller {
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
 				->with('meta')->whereHas('roles', function($q) {
-				$q->where('name', '=', 'participant');
-			})->get();
+					$q->where('name', '=', 'participant');
+				})
+				->with(array('observations' => function($query)
+				{
+					$query->where('obs_key', '!=', 'Outbound');
+					$query->orderBy('obs_date', 'DESC');
+					$query->first();
+				}))
+				->get();
+		$i = 0;
+		// make array of approvers to avoid duplicate db calls
+		$approvers = array();
+		$billingProviders = array();
+
 		if($patients->count() > 0) {
 			foreach ($patients as $patient) {
 				// skip if patient has no name
 				if(empty($patient->firstName)) {
 					continue 1;
 				}
+
+				if($i >= 1) {
+					//continue 1;
+				}
+				$i++;
 				// careplan status stuff from 2.x
 				$careplanStatus = $patient->carePlanStatus;
 				$careplanStatusLink = '';
 				$approverName = 'NA';
 				$tooltip = 'NA';
+
 				if ($patient->carePlanStatus  == 'provider_approved') {
 					$approverId = $patient->carePlanProviderApprover;
-					$approver = User::find($approverId);
+					$approver = false;
+					if(isset($approvers[$approverId])) {
+						$approver = $approvers[$approverId];
+					} else if(!empty($approverId)) {
+						$approver = User::find($approverId);
+						if($approver) {
+							$approvers[$approverId] = $approver;
+						}
+					}
 					if($approver) {
+						$approvers[$approverId] = $approver;
 						$approverName = $approver->fullName;
 						$careplanStatus = 'Approved';
 						$careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
@@ -313,7 +341,15 @@ class PatientController extends Controller {
 				// get billing provider name
 				$bpName = '';
 				if(!empty($patient->billingProviderID)) {
-					$bpUser = User::find($patient->billingProviderID);
+					$bpUser = false;
+					if(isset($billingProviders[$patient->billingProviderID])) {
+						$bpUser = $billingProviders[$patient->billingProviderID];
+					} else if(!empty($patient->billingProviderID)) {
+						$bpUser = User::find($patient->billingProviderID);
+						if($bpUser) {
+							$billingProviders[$patient->billingProviderID] = $bpUser;
+						}
+					}
 					if($bpUser) {
 						$bpName = $bpUser->fullName;
 					}
@@ -321,9 +357,9 @@ class PatientController extends Controller {
 
 				// get date of last observation
 				$lastObservationDate = 'No Readings';
-				$lastObservation = $patient->observations()->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->first();
-				if(!empty($lastObservation)) {
-					$lastObservationDate = date("m/d/Y", strtotime($lastObservation->obs_date));
+				$lastObservation = $patient->observations;
+				if($lastObservation->count() > 0) {
+					$lastObservationDate = date("m/d/Y", strtotime($lastObservation[0]->obs_date));
 				}
 
 				$patientData[] = array('key' => $patient->ID, // $part->ID,
@@ -460,12 +496,40 @@ class PatientController extends Controller {
 		return view('wpUsers.patient.select', compact(['patients']));
 	}
 
-	public function patientAjaxSearch(Request $request){
+	public function queryPatient(Request $request){
+		$input = $request->all();
+		$query = $input['users'];
+		$data = User::whereIn('ID', Auth::user()->viewablePatientIds())
+			->with('meta')->whereHas('roles', function($q) use ($query) {
+				$q->where('name', '=', 'participant');
+			})
+			->where('display_name', 'LIKE', "%$query%")
+			->get()->lists('ID');
+		$patients = array();
+		$i = 0;
+		foreach($data as $d){
+			$patients[$i]['name'] = (User::find($d)->display_name);
+			$patients[$i]['name'] = (User::find($d)->display_name);
+			$dob = new Carbon((User::find($d)->getBirthDateAttribute()));
+			$patients[$i]['dob'] = $dob->format('m-d-Y');
+			$patients[$i]['mrn'] = (User::find($d)->getMRNAttribute());
+			$patients[$i]['link'] = URL::route('patient.summary', array('patient' => $d));
+			$programObj = WpBlog::find((User::find($d)->blogId())) ? WpBlog::find((User::find($d)->blogId())) : "";
+			if($programObj->display_name){
+				$patients[$i]['program'] = $programObj->display_name;
+			} else { $patients[$i]['program'] = '';}
+			$patients[$i]['hint'] = $patients[$i]['name'] . " " . $patients[$i]['program'] . " " . $patients[$i]['dob'];
+			$i++;
+		}$patients = (object) $patients;
+		return response()->json($patients);
+	}
+
+		public function patientAjaxSearch(Request $request){
 
 		$data = User::whereIn('ID', Auth::user()->viewablePatientIds())
 			->with('meta')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
-			})->get()->lists('ID');;
+			})->get()->lists('ID');
 		$patients = '[';
 		$i = 0;
 		foreach($data as $d){
@@ -477,7 +541,6 @@ class PatientController extends Controller {
 			if($programObj->display_name){
 				$program = $programObj->display_name;
 			} else { $program = '';}
-			debug($dob);
 			$search = $name .' | '. $dob .' | ' . $mrn;
 			if($i == count($data) - 1){
 				$patients .=  '{ DOB: "'. $dob .'", program: "'. $program .'", search: "'. $search .'", id : "' . $d . '", link: "' . URL::route('patient.summary', array('patient' => $d)). '", name: "'. $name .'"}] ';
