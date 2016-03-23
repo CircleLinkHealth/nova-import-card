@@ -272,7 +272,10 @@ class PatientController extends Controller {
 	{
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-				->with('meta')->whereHas('roles', function($q) {
+				->with('meta')
+				->select(DB::raw('wp_users.*'))
+				//->join('wp_users AS approver', 'THIS JOIN', '=', 'WONT WORK')
+				->whereHas('roles', function($q) {
 					$q->where('name', '=', 'participant');
 				})
 				->with(array('observations' => function($query)
@@ -283,9 +286,45 @@ class PatientController extends Controller {
 				}))
 				->get();
 		$i = 0;
-		// make array of approvers to avoid duplicate db calls
-		$approvers = array();
-		$billingProviders = array();
+
+		// get approvers before
+		$approvers = null;
+		$approverIds = array();
+		if($patients->count() > 0) {
+			foreach ($patients as $patient) {
+				if ($patient->carePlanStatus  == 'provider_approved') {
+					$approverId = $patient->carePlanProviderApprover;
+					if(!empty($approverId) && !in_array($approverId, $approverIds)) {
+						$approverIds[] = $approverId;
+					}
+				}
+			}
+			$approvers = User::whereIn('ID', $approverIds)
+				->with('meta')->get();
+		}
+
+
+
+		// get billing Providers before
+		$billingProviders = null;
+		$billingProviderIds = array();
+		if($patients->count() > 0) {
+			foreach ($patients as $patient) {
+				$billingProviderId = $patient->billingProviderID;
+				if(!empty($billingProviderId) && !in_array($billingProviderId, $billingProviderIds)) {
+					$billingProviderIds[] = $billingProviderId;
+				}
+			}
+			$bpUser = false;
+			if($billingProviders) {
+				$bpUser = $billingProviders->where('ID', $patient->billingProviderID)->first();
+			}
+			if(!$bpUser) {
+				$billingProviders = User::whereIn('ID', $billingProviderIds)
+					->with('meta')->get();
+			}
+		}
+
 
 		if($patients->count() > 0) {
 			foreach ($patients as $patient) {
@@ -306,17 +345,16 @@ class PatientController extends Controller {
 
 				if ($patient->carePlanStatus  == 'provider_approved') {
 					$approverId = $patient->carePlanProviderApprover;
-					$approver = false;
-					if(isset($approvers[$approverId])) {
-						$approver = $approvers[$approverId];
-					} else if(!empty($approverId)) {
-						$approver = User::find($approverId);
-						if($approver) {
-							$approvers[$approverId] = $approver;
+					if($approverId == 5) {
+						//dd($approvers->where('ID', $approverId)->first());
+					}
+					$approver = $approvers->where('ID', $approverId)->first();
+					if(!$approver) {
+						if(!empty($approverId)) {
+							$approver = User::find($approverId);
 						}
 					}
 					if($approver) {
-						$approvers[$approverId] = $approver;
 						$approverName = $approver->fullName;
 						$careplanStatus = 'Approved';
 						$careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
@@ -340,14 +378,13 @@ class PatientController extends Controller {
 
 				// get billing provider name
 				$bpName = '';
-				if(!empty($patient->billingProviderID)) {
+				$bpID = strval($patient->billingProviderID);
+				if(!empty($bpID)) {
 					$bpUser = false;
-					if(isset($billingProviders[$patient->billingProviderID])) {
-						$bpUser = $billingProviders[$patient->billingProviderID];
-					} else if(!empty($patient->billingProviderID)) {
-						$bpUser = User::find($patient->billingProviderID);
-						if($bpUser) {
-							$billingProviders[$patient->billingProviderID] = $bpUser;
+					$bpUser = $billingProviders->where('ID', $bpID)->first();
+					if(!$bpUser) {
+						if(!empty($bpID) && is_int($bpID)) {
+							$bpUser = User::find($patient->billingProviderID);
 						}
 					}
 					if($bpUser) {
