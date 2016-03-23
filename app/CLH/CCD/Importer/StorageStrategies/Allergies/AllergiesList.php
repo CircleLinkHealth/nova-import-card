@@ -10,7 +10,7 @@ use App\CPRulesPCP;
 use App\CPRulesUCP;
 use Illuminate\Support\Facades\Log;
 
-class AllergiesListStorageStrategy extends BaseStorageStrategy implements StorageStrategy
+class AllergiesList extends BaseStorageStrategy implements StorageStrategy
 {
     public function import($allergiesList)
     {

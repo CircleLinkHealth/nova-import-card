@@ -14,7 +14,7 @@ class PrimaryProviderTest extends TestCase
 
     public function getParser()
     {
-        return new \App\CLH\CCD\Importer\ParsingStrategies\CareTeam\PrimaryProviderParser;
+        return new \App\CLH\CCD\Importer\ParsingStrategies\CareTeam\PrimaryProviders;
     }
 
     public function test_jim_provider_returns_expected()

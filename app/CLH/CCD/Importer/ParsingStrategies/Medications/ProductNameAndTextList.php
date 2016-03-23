@@ -8,14 +8,15 @@ use App\CLH\CCD\ImportedItems\MedicationImport;
 use App\CLH\CCD\ItemLogger\CcdMedicationLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
+use App\CLH\Facades\StringManipulation;
 
-class ReferenceTitleAndSigMedsListParser implements ParsingStrategy
+class ProductNameAndTextList implements ParsingStrategy
 {
-    use ConsolidatesMedicationInfoTrait;
+    use ConsolidatesMedicationInfo;
 
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {
-        $medicationsSection = CcdMedicationLog::whereCcdaId($ccd->id)->get();;
+        $medicationsSection = CcdMedicationLog::whereCcdaId($ccd->id)->get();
 
         $medsList = '';
 
@@ -31,8 +32,8 @@ class ReferenceTitleAndSigMedsListParser implements ParsingStrategy
                 'ccda_id' => $ccd->id,
                 'vendor_id' => $ccd->vendor_id,
                 'ccd_medication_log_id' => $medication->id,
-                'name' => $medication->reference_title,
-                'sig' => $medication->reference_sig,
+                'name' => $consMed->cons_name,
+                'sig' => StringManipulation::stringDiff( $medication->cons_name, $medication->text ),
                 'code' => $consMed->cons_code,
                 'code_system' => $consMed->cons_code_system,
                 'code_system_name' => $consMed->cons_code_system_name,
@@ -40,7 +41,6 @@ class ReferenceTitleAndSigMedsListParser implements ParsingStrategy
 
             $medsList[] = $importedMed;
         }
-
         return $medsList;
     }
 }
