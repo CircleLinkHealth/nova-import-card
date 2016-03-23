@@ -8,6 +8,11 @@ Vmdl.registerAll(Vue);
 
 Vue.use(require('vue-resource'));
 
+/**
+ *
+ * CCD UPLOADER COMPONENT
+ *
+ */
 var CcdUploader = Vue.extend({
     template: require('./components/ccd-uploader.template.html'),
 
@@ -49,21 +54,22 @@ var CcdUploader = Vue.extend({
     }
 });
 
-Vue.component('ccd-uploader', CcdUploader);
-
+/**
+ *
+ * UPLOADED CCD PANEL COMPONENT
+ *
+ */
 var UploadedCcdsPanel = Vue.extend({
     template: require('./components/ccd-uploaded-summary.template.html'),
 
     data: function () {
         return {
-            locations: [],
             qaSummaries: [],
             okToImport: new Array
         }
     },
 
     ready: function () {
-        this.locations = window.cpm.locations;
         this.qaSummaries = window.cpm.qaSummaries;
     },
 
@@ -104,10 +110,114 @@ var UploadedCcdsPanel = Vue.extend({
     }
 });
 
+
+/**
+ *
+ * EDIT UPLOADED ITEMS COMPONENT
+ *
+ */
+var EditUploadedItems = Vue.extend({
+    template: require('./components/edit-uploaded-ccd-items.template.html')
+});
+
+
+/**
+ *
+ * DEMOGRAPHICS COMPONENT
+ *
+ */
+var Demographics = Vue.extend({
+    template: require('./components/edit-demographics.template.html'),
+
+    data: function () {
+        return {
+            demographics: '',
+            //allergies: null,
+            //medications: null,
+            locations: '',
+            providers: '',
+
+            enableButton: true
+        }
+    },
+
+    ready: function () {
+        this.demographics = window.cpm.demographics;
+        //this.allergies = window.cpm.allergies;
+        //this.medications = window.cpm.medications;
+        //this.problems = window.cpm.problems;
+        this.locations = window.cpm.locations;
+        this.providers = window.cpm.providers;
+    },
+
+    methods: {
+        submitForm: function () {
+            this.enableButton = false;
+
+            var substitutedId = this.demographics.id;
+
+            delete this.demographics.id;
+
+            var payload = {
+                substitutedId: substitutedId,
+                demographics: this.demographics
+            };
+
+            this.$http.post('/ccd-importer/demographics', payload).then(function (response) {
+
+            }, function (response) {
+                console.log(response);
+            });
+
+            this.enableButton = true;
+        }
+    }
+});
+
+/**
+ *
+ * TEXT WITH FLOATING LABEL COMPONENT
+ *
+ */
+var TextWithFloatingLabel = Vue.extend({
+    props: {
+        label: {},
+        model: {}
+    },
+
+    template: require('./components/UI/text-with-floating-label.template.html')
+});
+
+/**
+ *
+ * FILTERS
+ *
+ */
+Vue.filter('snakeToNormal', function (value) {
+    return value ? value.split('_').join(' ') : value;
+});
+
+/**
+ *
+ * REGISTER GLOBAL COMPONENTS
+ *
+ */
+Vue.component('ccd-uploader', CcdUploader);
+Vue.component('edit-demographics', Demographics);
+Vue.component('edit-uploaded-ccd-items', EditUploadedItems);
+Vue.component('text-with-floating-label', TextWithFloatingLabel);
 Vue.component('uploaded-ccd-panel', UploadedCcdsPanel);
 
+
+/**
+ *
+ * VUE INSTANCE
+ *
+ */
 var vm = new Vue({
     el: 'body'
 });
+
+
 
 

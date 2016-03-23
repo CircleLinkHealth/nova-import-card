@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Medications;
 
 
-trait ConsolidatesMedicationInfoTrait
+trait ConsolidatesMedicationInfo
 {
     /**
      * Consolidate Medication info from BB Medication Product and BB Medication Product Translation sections.

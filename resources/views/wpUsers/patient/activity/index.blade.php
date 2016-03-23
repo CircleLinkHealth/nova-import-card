@@ -140,8 +140,7 @@
                         <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
                                onclick="obs_alerts_dtable.exportToExcel();">
                     @else
-                        <div style="text-align:center;margin:50px;">There are no patient Notes/Offline Activities to
-                            display for this month.
+                        <div style="text-align:center;margin:50px;">There are no patient activities to display for this month.
                         </div>
                     @endif
                 </div>

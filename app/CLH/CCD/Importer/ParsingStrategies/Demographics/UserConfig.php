@@ -11,7 +11,7 @@ use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use Carbon\Carbon;
 
-class UserConfigParser implements ParsingStrategy
+class UserConfig implements ParsingStrategy
 {
     private $blogId;
     private $template;

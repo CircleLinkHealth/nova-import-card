@@ -10,7 +10,7 @@ use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\Facades\StringManipulation;
 use App\Location;
 
-class ProviderLocationParser implements ParsingStrategy
+class ProviderLocation implements ParsingStrategy
 {
     public function parse(Ccda $ccd, ValidationStrategy $validator = null)
     {

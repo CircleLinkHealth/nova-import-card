@@ -11,7 +11,7 @@ use App\CPRulesPCP;
 use App\CPRulesUCP;
 use Illuminate\Support\Facades\Log;
 
-class ProblemsListStorageStrategy extends BaseStorageStrategy implements StorageStrategy
+class ProblemsList extends BaseStorageStrategy implements StorageStrategy
 {
     public function import($problemsList)
     {

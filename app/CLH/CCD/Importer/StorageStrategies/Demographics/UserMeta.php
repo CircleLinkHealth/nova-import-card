@@ -9,11 +9,12 @@ use App\CLH\Repositories\UserRepository;
 use App\User;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class UserConfigStorageStrategy extends BaseStorageStrategy implements StorageStrategy
+class UserMeta extends BaseStorageStrategy implements StorageStrategy
 {
-    public function import($userConfig)
+    public function import($userMeta)
     {
         $userRepo = new UserRepository();
-        $userRepo->updateUserConfig($this->user, new ParameterBag($userConfig));
+        $user = User::find( $this->user->ID );
+        $userRepo->saveOrUpdateUserMeta( $user, new ParameterBag( $userMeta ) );
     }
 }

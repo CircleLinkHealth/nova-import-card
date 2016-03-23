@@ -13,7 +13,7 @@ class ProviderLocationParserTest extends TestCase
 
     public function getParser()
     {
-        return new \App\CLH\CCD\Importer\ParsingStrategies\Location\ProviderLocationParser();
+        return new \App\CLH\CCD\Importer\ParsingStrategies\Location\ProviderLocation();
     }
 
     public function test_existing_location_is_matched()

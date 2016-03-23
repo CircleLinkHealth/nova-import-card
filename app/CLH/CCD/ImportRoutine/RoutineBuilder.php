@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\ImportRoutine;
 
 use App\CLH\CCD\Identifier\IdentificationManager;
-use App\CLH\CCD\Vendor\CcdVendor;
+use App\CLH\CCD\CcdVendor;
 use Illuminate\Support\Facades\Log;
 
 class RoutineBuilder

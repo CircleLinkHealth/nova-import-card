@@ -1,6 +1,6 @@
 <?php namespace App\CLH\CCD\ImportRoutine;
 
-use App\CLH\CCD\Vendor\CcdVendor;
+use App\CLH\CCD\CcdVendor;
 use Illuminate\Database\Eloquent\Model;
 
 class CcdImportRoutine extends Model {

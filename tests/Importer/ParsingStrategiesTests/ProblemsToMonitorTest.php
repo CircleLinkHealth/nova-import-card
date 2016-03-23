@@ -16,7 +16,7 @@ class ProblemsToMonitorTest extends TestCase
 
     public function getParser()
     {
-        return new \App\CLH\CCD\Importer\ParsingStrategies\Problems\ProblemsToMonitorParser();
+        return new \App\CLH\CCD\Importer\ParsingStrategies\Problems\ToMonitor();
     }
 
     public function mockProblems($problems)

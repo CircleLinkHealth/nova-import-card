@@ -55,7 +55,7 @@
     @endif
 @elseif ($planItemChild->ui_fld_type == 'INPUT')
     {{ $planItemChild->careItem->display_name }}<br>
-    <input name="item|{{ $planItemChild->id }}" value="{{ $planItemChild->meta_value }}" placeholder="" type="text">
+    <input class="form-control" name="item|{{ $planItemChild->id }}" value="{{ $planItemChild->meta_value }}" placeholder="" type="text">
 @elseif ($planItemChild->ui_fld_type == 'CHECK')
     <div class="row">
         <div class="form-group">

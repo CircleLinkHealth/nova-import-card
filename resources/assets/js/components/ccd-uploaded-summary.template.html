@@ -35,7 +35,9 @@
             <td>{{ qaSummary.medications }}</td>
             <td>{{ qaSummary.problems }}</td>
 
-            <td v-on:click="fetchImportedInfo($event)" id="record-{{ qaSummary.ccda_id }}">Edit</td>
+            <td id="record-{{ qaSummary.ccda_id }}">
+                <a href="/ccd-importer/uploaded-ccd-items/{{qaSummary.ccda_id}}/edit">Edit</a>
+            </td>
         </tr>
         </tbody>
     </table>
