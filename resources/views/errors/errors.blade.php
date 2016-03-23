@@ -12,7 +12,7 @@
 @endif
 
 @if (isset($messages))
-    @if (count($messages) > 0)
+    @if (count($messages) > 10000)
         <div class="alert alert-success success">
             <strong>Messages:</strong><br><br>
             <ul>
