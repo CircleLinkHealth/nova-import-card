@@ -25,7 +25,6 @@ class UserRepository {
         $wpUser->user_nicename = $params->get('user_nicename');
         $wpUser->user_login = $params->get('user_login');
         $wpUser->user_status = $params->get('user_status');
-        $wpUser->display_name = $params->get('display_name');
         $wpUser->program_id = $params->get('program_id');
         $wpUser->user_registered = date('Y-m-d H:i:s');
         $wpUser->care_plan_id = $params->get('care_plan_id');
@@ -54,7 +53,6 @@ class UserRepository {
         $wpUser->user_nicename = '';
         $wpUser->user_login = $params->get('user_login');
         $wpUser->user_status = $params->get('user_status');
-        $wpUser->display_name = $params->get('display_name');
         $wpUser->program_id = $params->get('program_id');
         $wpUser->care_plan_id = $params->get('care_plan_id');
         $wpUser->auto_attach_programs = $params->get('auto_attach_programs');
@@ -75,23 +73,20 @@ class UserRepository {
 
         foreach($userMetaTemplate as $key => $value)
         {
-            // ccm_status use set attribute
-            if($key == 'ccm_status') {
-                $wpUser->ccmStatus = $params->get($key);
-                continue 1;
+            $paramValue = $params->get($key);
+
+            //serialize arrays
+            if($paramValue && is_array($paramValue)) {
+                $paramValue = serialize($paramValue);
+            } else if($value && is_array($value)) {
+                $value = serialize($value);
             }
-            $userMeta = $wpUser->meta()->firstOrNew([
-                'meta_key' => $key,
-                'user_id' => $wpUser->ID
-            ]);
 
             if(($params->get($key))) {
-                $userMeta->meta_value = $params->get($key);
+                $wpUser->setUserAttributeByKey($key, $paramValue);
             } else {
-                $userMeta->meta_value = $value;
+                $wpUser->setUserAttributeByKey($key, $value);
             }
-
-            $wpUser->meta()->save($userMeta);
         }
     }
 
@@ -212,22 +207,21 @@ class UserRepository {
 
         foreach($userConfig as $key => $value)
         {
-            if( ! empty($params->get($key)))
-            {
-                $userConfig[$key] = $params->get($key);
+            $paramValue = $params->get($key);
+
+            //serialize arrays
+            if($paramValue && is_array($paramValue)) {
+                $paramValue = serialize($paramValue);
+            } else if($value && is_array($value)) {
+                $value = serialize($value);
+            }
+
+            if(($paramValue)) {
+                $wpUser->setUserAttributeByKey($key, $paramValue);
+            } else {
+                $wpUser->setUserAttributeByKey($key, $value);
             }
         }
-
-        $setUserConfig = $wpUser->meta()->whereMetaKey("wp_".$wpUser->program_id."_user_config")->first();
-        if($setUserConfig) {
-            $setUserConfig->meta_value = serialize($userConfig);
-        } else {
-            $setUserConfig = new UserMeta;
-            $setUserConfig->meta_key = "wp_".$wpUser->program_id."_user_config";
-            $setUserConfig->meta_value = serialize($userConfig);
-            $setUserConfig->user_id = $wpUser->ID;
-        }
-        $setUserConfig->save();
     }
 
 

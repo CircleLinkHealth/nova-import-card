@@ -67,7 +67,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		'user_pass_confirm' => 'required|same:user_pass',           // required and has to match the password field
 		//'user_nicename'         => 'required',
 		//'user_status'         => 'required',
-		'display_name'         => 'required',
+		//'display_name'         => 'required',
 	);
 
 	public $patient_rules = array(
@@ -221,195 +221,328 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 	}
 
+	public function getUserMetaByKey($key)
+	{
+		$value = '';
+		$meta = $this->meta->where('meta_key', $key)->first();
+		if(!empty($meta && $meta->meta_value != '' ) ) {
+			$value = $meta->meta_value;
+		}
+		return $value;
+	}
+
+	public function setUserMetaByKey($key, $value)
+	{
+		$meta = $this->meta->where('meta_key', $key)->first();
+		if( !empty($meta) ) {
+			$meta->meta_value = $value;
+		} else {
+			$meta = new UserMeta;
+			$meta->meta_key = $key;
+			$meta->meta_value = $value;
+			$meta->user_id = $this->ID;
+		}
+		$meta->save();
+		return true;
+	}
+
+	public function getUserConfigByKey($key)
+	{
+		$userConfig = $this->userConfig();
+		return (isset($userConfig[$key])) ? $userConfig[$key] : '';
+	}
+
+	public function setUserConfigByKey($key, $value)
+	{
+		$configKey = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$configKey)->first();
+		if(empty($userConfig)) {
+			$userConfig = new UserMeta;
+			$userConfig->meta_key = $configKey;
+			$userConfig->meta_value = serialize(array());
+			$userConfig->user_id = $this->ID;
+			$userConfig->save();
+			$userConfigArray = array();
+		} else {
+			$userConfigArray = unserialize($userConfig['meta_value']);
+		}
+
+		// unserialize value if needed
+		if(is_array($value)) {
+			$value = serialize($value);
+		}
+		$userConfigArray[$key] = $value;
+		$userConfig->meta_value = serialize($userConfigArray);
+		$userConfig->save();
+		return true;
+	}
 
     // START ATTRIBUTES
+	public function setUserAttributeByKey($key, $value)
+	{
+		$func = create_function('$c', 'return strtoupper($c[1]);');
+		$attribute = preg_replace_callback('/_([a-z])/', $func, $key);
+		// hack overrides and depreciated keys, @todo fix these
+		if($attribute == 'careplanProviderDate') {
+			$attribute = 'careplanProviderApproverDate';
+		} else if($attribute == 'mrnNumber') {
+			$attribute = 'mrn';
+		} else if($attribute == 'studyPhoneNumber') {
+			$attribute = 'phone';
+		} else if($attribute == 'billingProvider') {
+			$attribute = 'billingProviderID';
+		} else if($attribute == 'leadContact') {
+			$attribute = 'leadContactID';
+		}
+
+		// serialize any arrays
+		if(is_array($value)) {
+			$value = serialize($value);
+		}
+
+		// get before for debug
+		$before = $this->$attribute;
+		if(is_array($before)) {
+			$before = serialize($before);
+		}
+
+		// call save attribute
+		$this->$attribute = $value;
+		$this->save();
+
+		// get after for debug
+		$after = $this->$attribute;
+		if(is_array($after)) {
+			$after = serialize($after);
+		}
+		//echo $attribute .' -- Before: ' . $before . '<br />';
+		//echo $attribute .' -- Value: ' . $value . '<br />';
+		//echo $attribute .' -- After: ' . $after . '<br />';
+		return true;
+	}
 
     // basic attributes
+
+	// first_name
     public function getFirstNameAttribute() {
-		$name = '';
-		$firstName = $this->meta->where('meta_key', 'first_name')->first();
-		if( !empty($firstName) && $firstName->meta_value != '' ) {
-			$name = $firstName->meta_value;
-		}
-		return $name;
+		return $this->getUserMetaByKey('first_name');
 	}
-
 	public function setFirstNameAttribute($value) {
-		$firstName = $this->meta()->where('meta_key', '=', 'first_name')->first();
-		if( !empty($firstName) ) {
-			$firstName->meta_value = $value;
-			$firstName->save();
-		}
-		return true;
+		return $this->setUserMetaByKey('first_name', $value);
 	}
 
+	// last_name
     public function getLastNameAttribute() {
-		$name = '';
-		$lastName = $this->meta->where('meta_key', 'last_name')->first();
-		if(!empty($lastName && $lastName->meta_value != '' ) ) {
-			$name = $lastName->meta_value;
-		}
-		return $name;
+		return $this->getUserMetaByKey('last_name');
 	}
-
 	public function setLastNameAttribute($value) {
-		$lastName = $this->meta()->where('meta_key', '=', 'last_name')->first();
-		if( !empty($lastName) ) {
-			$lastName->meta_value = $value;
-			$lastName->save();
-		}
-		return true;
+		return $this->setUserMetaByKey('last_name', $value);
 	}
 
+	// full name
 	public function getFullNameAttribute() {
 		$firstName = $this->firstName;
 		$lastName = $this->lastName;
 		return $firstName . ' ' . $lastName;
 	}
 
+	// full name w/ id
 	public function getFullNameWithIdAttribute() {
 		$name = $this->fullName;
 		return $name . ' ('.$this->ID.')';
 	}
 
+	// preferred_cc_contact_days
+	public function getPreferredCcContactDaysAttribute() {
+		return $this->getUserConfigByKey('preferred_cc_contact_days');
+	}
+	public function setPreferredCcContactDaysAttribute($value) {
+		return $this->setUserConfigByKey('preferred_cc_contact_days', $value);
+	}
+
+	// active_date
+	public function getActiveDateAttribute() {
+		return $this->getUserConfigByKey('active_date');
+	}
+	public function setActiveDateAttribute($value) {
+		return $this->setUserConfigByKey('active_date', $value);
+	}
+
+	// registration_date
+	public function getRegistrationDateAttribute() {
+		return $this->getUserConfigByKey('registration_date');
+	}
+	public function setRegistrationDateAttribute($value) {
+		return $this->setUserConfigByKey('registration_date', $value);
+	}
+
+	// specialty
+	public function getSpecialtyAttribute() {
+		return $this->getUserConfigByKey('specialty');
+	}
+	public function setSpecialtyAttribute($value) {
+		return $this->setUserConfigByKey('specialty', $value);
+	}
+
+	// npi_number
+	public function getNpiNumberAttribute() {
+		return $this->getUserConfigByKey('npi_number');
+	}
+	public function setNpiNumberAttribute($value) {
+		return $this->setUserConfigByKey('npi_number', $value);
+	}
+
+	// qualification
+	public function getQualificationAttribute() {
+		return $this->getUserConfigByKey('qualification');
+	}
+	public function setQualificationAttribute($value) {
+		return $this->setUserConfigByKey('qualification', $value);
+	}
+
+	// status
+	public function getStatusAttribute() {
+		return $this->getUserConfigByKey('status');
+	}
+	public function setStatusAttribute($value) {
+		return $this->setUserConfigByKey('status', $value);
+	}
+
+	// daily_reminder_optin
+	public function getDailyReminderOptinAttribute() {
+		return $this->getUserConfigByKey('daily_reminder_optin');
+	}
+	public function setDailyReminderOptinAttribute($value) {
+		return $this->setUserConfigByKey('daily_reminder_optin', $value);
+	}
+
+	// daily_reminder_time
+	public function getDailyReminderTimeAttribute() {
+		return $this->getUserConfigByKey('daily_reminder_time');
+	}
+	public function setDailyReminderTimeAttribute($value) {
+		return $this->setUserConfigByKey('daily_reminder_time', $value);
+	}
+
+	// daily_reminder_areas
+	public function getDailyReminderAreasAttribute() {
+		return $this->getUserConfigByKey('daily_reminder_areas');
+	}
+	public function setDailyReminderAreasAttribute($value) {
+		return $this->setUserConfigByKey('daily_reminder_areas', $value);
+	}
+
+	// hospital_reminder_optin
+	public function getHospitalReminderOptinAttribute() {
+		return $this->getUserConfigByKey('hospital_reminder_optin');
+	}
+	public function setHospitalReminderOptinAttribute($value) {
+		return $this->setUserConfigByKey('hospital_reminder_optin', $value);
+	}
+
+	// hospital_reminder_time
+	public function getHospitalReminderTimeAttribute() {
+		return $this->getUserConfigByKey('hospital_reminder_time');
+	}
+	public function setHospitalReminderTimeAttribute($value) {
+		return $this->setUserConfigByKey('hospital_reminder_time', $value);
+	}
+
+	// hospital_reminder_areas
+	public function getHospitalReminderAreasAttribute() {
+		return $this->getUserConfigByKey('hospital_reminder_areas');
+	}
+	public function setHospitalReminderAreasAttribute($value) {
+		return $this->setUserConfigByKey('hospital_reminder_areas', $value);
+	}
+
+	// address
 	public function getAddressAttribute() {
-		$userConfig = $this->userConfig();
-		return ($userConfig['address']) ? $userConfig['address'] : '';
+		return $this->getUserConfigByKey('address');
 	}
-
 	public function setAddressAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['address'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
+		return $this->setUserConfigByKey('address', $value);
 	}
 
+	// city
 	public function getCityAttribute() {
-		$userConfig = $this->userConfig();
-		return ($userConfig['city']) ? $userConfig['city'] : '';
+		return $this->getUserConfigByKey('city');
 	}
-
 	public function setCityAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['city'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
+		return $this->setUserConfigByKey('city', $value);
 	}
 
+	// state
 	public function getStateAttribute() {
-		$userConfig = $this->userConfig();
-		return ($userConfig['state']) ? $userConfig['state'] : '';
+		return $this->getUserConfigByKey('state');
 	}
-
 	public function setStateAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['state'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
+		return $this->setUserConfigByKey('state', $value);
 	}
 
 	// zip
 	public function getZipAttribute() {
-		$userConfig = $this->userConfig();
-		return ($userConfig['zip']) ? $userConfig['zip'] : '';
+		return $this->getUserConfigByKey('zip');
 	}
-
 	public function setZipAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['zip'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
+		return $this->setUserConfigByKey('zip', $value);
 	}
 
+	// phone (study_phone_nmber)
 	public function getPhoneAttribute() {
-		$userConfig = $this->userConfig();
-		return ($userConfig['study_phone_number']) ? $userConfig['study_phone_number'] : '';
+		return $this->getUserConfigByKey('study_phone_number');
 	}
-
 	public function setPhoneAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['study_phone_number'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
+		return $this->setUserConfigByKey('study_phone_number', $value);
 	}
 
-	public function getRegistrationDateAttribute() {
-		return $this->user_registered;
-//		$userConfig = $this->userConfig();
-//		return $userConfig['registration_date'];
+	// home_phone_number
+	public function getHomePhoneNumberAttribute() {
+		return $this->getUserConfigByKey('home_phone_number');
 	}
+
+	public function setHomePhoneNumberAttribute($value) {
+		return $this->setUserConfigByKey('home_phone_number', $value);
+	}
+
+	// work_phone_number
+	public function getWorkPhoneNumberAttribute() {
+		return $this->getUserConfigByKey('work_phone_number');
+	}
+
+	public function setWorkPhoneNumberAttribute($value) {
+		return $this->setUserConfigByKey('work_phone_number', $value);
+	}
+
+	// mobile_phone_number
+	public function getMobilePhoneNumberAttribute() {
+		return $this->getUserConfigByKey('mobile_phone_number');
+	}
+
+	public function setMobilePhoneNumberAttribute($value) {
+		return $this->setUserConfigByKey('mobile_phone_number', $value);
+	}
+
 
 	// birth date
 	public function getBirthDateAttribute() {
-		$userConfig = $this->userConfig();
-		return $userConfig['birth_date'];
+		return $this->getUserConfigByKey('birth_date');
 	}
-
 	public function setBirthDateAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['birth_date'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
+		return $this->setUserConfigByKey('birth_date', $value);
 	}
 
 	// gender
 	public function getGenderAttribute() {
-		$userConfig = $this->userConfig();
-		return ($userConfig['gender']) ? $userConfig['gender'] : '';
+		return $this->getUserConfigByKey('gender');
 	}
-
 	public function setGenderAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['gender'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
+		return $this->setUserConfigByKey('gender', $value);
 	}
 
+	// email
 	public function setEmailAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['email'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
+		return $this->setUserConfigByKey('email', $value);
 	}
 
 	public function getAgeAttribute() {
@@ -418,6 +551,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $from->diff($to)->y;
 	}
 
+	// cur_month_activity_time
+	public function getCurMonthActivityTimeAttribute() {
+		return $this->monthlyTime;
+	}
 	public function getMonthlyTimeAttribute() {
 		$time = $this->meta->where('meta_key', 'cur_month_activity_time')->lists('meta_value');
 		if(!empty($time)) {
@@ -426,128 +563,120 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			return 0;
 		}
 	}
+	public function setCurMonthActivityTimeAttribute($value) {
+		return $this->setUserConfigByKey('cur_month_activity_time', $value);
+	}
 
+	// timezone
+	public function getPreferredContactTimeZoneAttribute() {
+		return $this->getTimeZoneAttribute();
+	}
 	public function getTimeZoneAttribute() {
-		$userConfig = $this->userConfig();
-		return $userConfig['preferred_contact_timezone'];
+		return $this->getUserConfigByKey('preferred_contact_timezone');
+	}
+	public function setPreferredContactTimeZoneAttribute($value){
+		return $this->setTimeZoneAttribute($value);
+	}
+	public function setTimeZoneAttribute($value) {
+		return $this->setUserConfigByKey('preferred_contact_timezone', $value);
 	}
 
+	// preferred_contact_time
+	public function getPreferredContactTimeAttribute() {
+		return $this->getUserConfigByKey('preferred_contact_time');
+	}
+	public function setPreferredContactTimeAttribute($value) {
+		return $this->setUserConfigByKey('preferred_contact_time', $value);
+	}
+
+	// preferred_contact_method
+	public function getPreferredContactMethodAttribute() {
+		return $this->getUserConfigByKey('preferred_contact_method');
+	}
+	public function setPreferredContactMethodAttribute($value) {
+		return $this->setUserConfigByKey('preferred_contact_method', $value);
+	}
+
+	// preferred_contact_language
+	public function getPreferredContactLanguageAttribute() {
+		return $this->getUserConfigByKey('preferred_contact_language');
+	}
+	public function setPreferredContactLanguageAttribute($value) {
+		return $this->setUserConfigByKey('preferred_contact_language', $value);
+	}
+
+	// mrn_number
 	public function getMRNAttribute() {
-		$userConfig = $this->userConfig();
-		return isset($userConfig['mrn_number']) ? $userConfig['mrn_number'] : '';
+		return $this->getUserConfigByKey('mrn_number');
 	}
-
 	public function setMRNAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['mrn_number'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
+		return $this->setUserConfigByKey('mrn_number', $value);
 	}
 
-	public function getSpecialtyAttribute() {
-		$userConfig = $this->userConfig();
-		if(isset($userConfig['specialty'])){
-			return $userConfig['specialty'];
-		} else return '';
-	}
-
+	// care_team
 	public function getCareTeamAttribute() {
-		$userConfig = $this->userConfig();
-		if(!isset($userConfig['care_team'])) {
-			return array();
-		}
-		return $userConfig['care_team'];
+		return $this->getUserConfigByKey('care_team');
 	}
-
 	public function setCareTeamAttribute($value) {
-		if(empty($value)) {
-			return false;
-		}
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['care_team'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
-		return true;
+		return $this->setUserConfigByKey('care_team', $value);
 	}
 
+	// send_alert_to
 	public function getSendAlertToAttribute() {
-		$userConfig = $this->userConfig();
-		if(!isset($userConfig['send_alert_to'])) {
-			return array();
-		}
-		return $userConfig['send_alert_to'];
+		return $this->getUserConfigByKey('send_alert_to');
 	}
-
 	public function setSendAlertToAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['send_alert_to'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
-		return true;
+		return $this->setUserConfigByKey('send_alert_to', $value);
 	}
 
+	// billing_provider
 	public function getBillingProviderIDAttribute() {
-		$userConfig = $this->userConfig();
-		if(!isset($userConfig['billing_provider'])) {
-			return '';
-		}
-		return $userConfig['billing_provider'];
+		return $this->getUserConfigByKey('billing_provider');
 	}
-
 	public function setBillingProviderIDAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['billing_provider'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
-		return true;
+		return $this->setUserConfigByKey('billing_provider', $value);
 	}
 
+	// lead_contact
 	public function getLeadContactIDAttribute() {
-		$userConfig = $this->userConfig();
-		if(isset($userConfig['lead_contact'])){
-			return $userConfig['lead_contact'];
-		} else return '';
+		return $this->getUserConfigByKey('lead_contact');
+	}
+	public function setLeadContactIDAttribute($value) {
+		return $this->setUserConfigByKey('lead_contact', $value);
 	}
 
-	public function setLeadContactIDAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
+	// preferred_contact_location
+	public function getPreferredLocationName() {
+		$locationId = $this->getUserConfigByKey('preferred_contact_location');
+		if(empty($locationId)) {
 			return false;
 		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['lead_contact'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
-		return true;
-	}
-
-	public function getPreferredLocationName() {
-			$userConfig = $this->userConfig();
-		$location = Location::find($userConfig['preferred_contact_location']);
+		$location = Location::find($locationId);
 		return (isset($location->name)) ?
 			$location->name :
 			'';
+	}
+	public function getpreferredContactLocationAttribute() {
+		return $this->getUserConfigByKey('preferred_contact_location');
+	}
+	public function setpreferredContactLocationAttribute($value) {
+		return $this->setUserConfigByKey('preferred_contact_location', $value);
+	}
+
+	// prefix
+	public function getPrefixAttribute() {
+		return $this->getUserConfigByKey('prefix');
+	}
+	public function setPrefixAttribute($value) {
+		return $this->setUserConfigByKey('prefix', $value);
+	}
+
+	// consent_date
+	public function getConsentDateAttribute() {
+		return $this->getUserConfigByKey('consent_date');
+	}
+	public function setConsentDateAttribute($value) {
+		return $this->setUserConfigByKey('consent_date', $value);
 	}
 
 	public function getCarePlanQAApproverAttribute() {
@@ -560,78 +689,40 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// agent_name
 	public function getAgentNameAttribute() {
-		$userConfig = $this->userConfig();
-		return isset($userConfig['agent_name']) ? $userConfig['agent_name'] : '';
+		return $this->getUserConfigByKey('agent_name');
 	}
-
 	public function setAgentNameAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['agent_name'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
-		return true;
+		return $this->setUserConfigByKey('agent_name', $value);
 	}
 
 	// agent_phone
-	public function getAgentPhoneAttribute() {
-		$userConfig = $this->userConfig();
-		return isset($userConfig['agent_telephone']) ? $userConfig['agent_telephone'] : '';
+	public function getAgentTelephoneAttribute() {
+		return $this->getAgentPhoneAttribute();
 	}
-
+	public function getAgentPhoneAttribute() {
+		return $this->getUserConfigByKey('agent_telephone');
+	}
+	public function setAgentTelephoneAttribute($value) {
+		return $this->setAgentPhoneAttribute($value);
+	}
 	public function setAgentPhoneAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['agent_telephone'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
-		return true;
+		return $this->setUserConfigByKey('agent_telephone', $value);
 	}
 
 	// agent_email
 	public function getAgentEmailAttribute() {
-		$userConfig = $this->userConfig();
-		return isset($userConfig['agent_email']) ? $userConfig['agent_email'] : '';
+		return $this->getUserConfigByKey('agent_email');
 	}
-
 	public function setAgentEmailAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['agent_email'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
-		return true;
+		return $this->setUserConfigByKey('agent_email', $value);
 	}
 
 	// agent_relationship
 	public function getAgentRelationshipAttribute() {
-		$userConfig = $this->userConfig();
-		return isset($userConfig['agent_relationship']) ? $userConfig['agent_relationship'] : '';
+		return $this->getUserConfigByKey('agent_relationship');
 	}
-
 	public function setAgentRelationshipAttribute($value) {
-		$key = 'wp_'.$this->blogId().'_user_config';
-		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$key)->first();
-		if(empty($userConfig)) {
-			return false;
-		}
-		$metaValue = unserialize($userConfig['meta_value']);
-		$metaValue['agent_relationship'] = $value;
-		$userConfig->meta_value = serialize($metaValue);
-		$userConfig->save();
-		return true;
+		return $this->setUserConfigByKey('agent_relationship', $value);
 	}
 
 	public function setCarePlanQAApproverAttribute($value) {
@@ -746,7 +837,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return true;
 	}
 
-	public function getCCMStatusAttribute() {
+	public function getCcmStatusAttribute() {
 		$meta = $this->meta->where('meta_key', 'ccm_status')->lists('meta_value');
 		if(!empty($meta)) {
 			return $meta[0];
@@ -754,7 +845,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return '';
 	}
 
-	public function setCCMStatusAttribute($status) {
+	public function setCcmStatusAttribute($status) {
 		$meta = $this->meta()->where('meta_key', 'ccm_status')->first();
 		if(empty($meta)) {
 			$meta = new UserMeta;
@@ -889,7 +980,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$user->user_login = $randomUserInfo->username;
 		$user->user_pass = $randomUserInfo->password;
 		$user->user_email = $randomUserInfo->email;
-		$user->display_name = $randomUserInfo->username;
+		//$user->display_name = $randomUserInfo->username;
 		$user->MRN = rand();
 		$user->gender = 'M';
 		$user->address = $randomUserInfo->location->street;
