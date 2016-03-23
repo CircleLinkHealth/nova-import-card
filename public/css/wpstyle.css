@@ -8095,6 +8095,14 @@ a:hover .icon--menu {
   height: 22px;
   width: 8px;
 }
+
+.icon--good {
+  background-image: url('../img/ui/icon--better.png');
+  background-repeat: no-repeat;
+  height: 22px;
+  width: 8px;
+}
+
 @media screen and (min-width: 480px) {
   .icon--better {
     height: 28px;
