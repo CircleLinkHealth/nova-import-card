@@ -128,10 +128,6 @@ $provider = App\User::find($patient->getBillingProviderIDAttribute());
                                     <div class="col-xs-3  text-center" style="Zoom:75%">
                                         <div class="patient-summary__info">
                                             {{$value['target']}}
-                                            @if(str_replace('_',' ',$key) != 'Blood Pressure')
-                                            <span class="patient-summary__metrics">
-                                                {{trim($value['unit'])}}</span>
-                                            @endif
                                         </div>
                                         <div class="patient-summary__info__legend">
                                             Goal
