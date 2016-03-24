@@ -21,7 +21,7 @@ $provider = App\User::find($patient->getBillingProviderIDAttribute());
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
-                            <h1 class="patient-summary__title patient-summary__title_7 patient-summary--careplan patient-summary--progress-report">
+                            <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">
                                 Progress Report:</h1>
                         </div>
                     </div>
