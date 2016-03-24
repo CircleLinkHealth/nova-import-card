@@ -8103,6 +8103,13 @@ a:hover .icon--menu {
   width: 8px;
 }
 
+.icon--unchanged {
+  background-image: url('../img/ui/icon--unchanged.png');
+  background-repeat: no-repeat;
+  height: 30px;
+  width: 12px;
+}
+
 @media screen and (min-width: 480px) {
   .icon--better {
     height: 28px;
