@@ -145,7 +145,7 @@ return [
 		 */
 		Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
 		Barryvdh\Debugbar\ServiceProvider::class,
-		Barryvdh\DomPDF\ServiceProvider::class,
+		Barryvdh\Snappy\ServiceProvider::class,
 
 
 		'App\Providers\AppServiceProvider',
@@ -204,7 +204,6 @@ return [
 		'Log'       => 'Illuminate\Support\Facades\Log',
 		'Mail'      => 'Illuminate\Support\Facades\Mail',
 		'Password'  => 'Illuminate\Support\Facades\Password',
-		'PDF' => Barryvdh\DomPDF\Facade::class,
 		'Queue'     => 'Illuminate\Support\Facades\Queue',
 		'Redirect'  => 'Illuminate\Support\Facades\Redirect',
 		'Redis'     => 'Illuminate\Support\Facades\Redis',
@@ -221,7 +220,9 @@ return [
 		'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
 		'Form' => 'Collective\Html\FormFacade',
 		'Html' => 'Collective\Html\HtmlFacade',
-		'Entrust' => 'Zizaco\Entrust\EntrustFacade'
+		'Entrust' => 'Zizaco\Entrust\EntrustFacade',
+		'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
+		'Image' => Barryvdh\Snappy\Facades\SnappyImage::class,
 
 	],
 

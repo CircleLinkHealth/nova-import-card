@@ -57,24 +57,24 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                 </div>
                 <div class="row gutter">
-                    <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
-                    <div class="col-xs-12 col-md-3 print-row">{{$patient->phone}}</div>
-                    <div class="col-xs-12 col-md-5 print-row text-right">{{$today}}</div>
+                    <div class="col-xs-4 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
+                    <div class="col-xs-4 col-md-4 print-row">{{$patient->phone}}</div>
+                    <div class="col-xs-4 col-md-4 print-row text-right">{{$today}}</div>
                 </div>
                 <div class="row gutter">
-                    <div class="col-xs-12 col-md-4 print-row text-bold">
+                    <div class="col-xs-4 col-md-4 print-row text-bold">
                         @if($billing)
                             {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' :  $billing->getSpecialtyAttribute() }}
                         @else
                             <em>No Billing Provider Selected</em>
                         @endif
                     </div>
-                    <div class="col-xs-12 col-md-3 print-row">
+                    <div class="col-xs-4 col-md-4 print-row">
                         @if($billing)
                             {{$billing->phone}}
                         @endif
                     </div>
-                    <div class="col-xs-12 col-md-5 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
+                    <div class="col-xs-4 col-md-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
                 </div>
             </div>
             <!-- CARE AREAS -->
