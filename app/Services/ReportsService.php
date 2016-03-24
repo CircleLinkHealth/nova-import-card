@@ -349,7 +349,7 @@ Class ReportsService
                 break;
             case 'Blood Pressure':
             case 'Blood_Pressure':
-                return ' mm Hg';
+                return ' sbp';
                 break;
             default:
                 return '';
