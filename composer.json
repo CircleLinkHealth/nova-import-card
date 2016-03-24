@@ -35,7 +35,8 @@
     "laracasts/utilities": "~2.0",
     "venturecraft/revisionable": "1.*",
     "rigor789/airbrake-laravel": "^1.2",
-    "arcturial/clickatell": "*"
+    "arcturial/clickatell": "*",
+    "barryvdh/laravel-dompdf": "0.6.*"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.0",
