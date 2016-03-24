@@ -6,7 +6,7 @@ $careTeamUserIds = $patient->careTeam;
 $ctmsa = array();
 if(!empty($patient->sendAlertTo)) {
     $ctmsa = $patient->sendAlertTo;
-    if((unserialize($ctmsa) !== false)) {
+    if(!is_array($ctmsa) && (unserialize($ctmsa) !== false)) {
         $ctmsa = unserialize($ctmsa);
     }
 }
