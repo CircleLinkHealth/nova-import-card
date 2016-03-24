@@ -65,7 +65,7 @@
 
                                                     <optgroup label="Lifestyle? Y or N">
                                                         <option value="SOL/CF_SOL_LFS_10">Exercise 20 minutes</option>
-                                                        <option value="SOL/CF_LFS_40">Eating Nutrient-rich Food</option>
+                                                        <option value="SOL/CF_LFS_40">Following Healthy Diet</option>
                                                         <option value="SOL/CF_LFS_80">Low salt diet</option>
                                                         <option value="SOL/CF_SOL_LFS_90">Diabetes diet</option>
                                                     </optgroup>
