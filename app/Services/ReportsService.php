@@ -163,12 +163,14 @@ Class ReportsService
                 if ($section->name == 'medications-to-monitor') {
                     foreach ($section->carePlanItems as $item) {
                         if ($item->meta_value == 'Active') {
-                            $medications[] = $item->careItem->display_name;
+                            //if($item->careItem->display_name != "Other Meds"){
+                                $medications[] = $item->careItem->display_name;
+                            //}
                         }
                     }
                 }
             }
-        }
+        }//debug($medications);
         return $medications;
     }
 
@@ -179,8 +181,9 @@ Class ReportsService
             foreach ($carePlan->careSections as $section) {
                 if ($section->name == 'medications-to-monitor') {
                     foreach ($section->carePlanItems as $item) {
-                        if ($item->meta_value == 'Active') {
+                        if ($item->meta_value == 'Active' && $item->careItem->display_name != 'Medication List') {
                             $medications_categories[] = $item->careItem->display_name;
+                            debug($item->careItem->display_name);
                         }
                     }
                 }

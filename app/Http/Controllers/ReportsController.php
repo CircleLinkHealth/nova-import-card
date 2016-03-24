@@ -334,7 +334,6 @@ class ReportsController extends Controller
             'year_selected' => $year_selected,
             'month_selected_text' => $month_selected_text,
             'months' => $months,
-            //'patient' => $patient_,
             'data' => $act_data
         ];
         //debug($reportData);
@@ -436,7 +435,6 @@ class ReportsController extends Controller
             $bio_name = $key;
             $count = 1;
             $biometrics_array[$bio_name]['data'] = '';
-            //$first = reset($array);
             if ($value) {
                 foreach ($value as $key => $value) {
                     $biometrics_array[$bio_name]['data'] .= '{ id:' . $count . ', Week:\'' . $value->day . '\', Reading:' . intval($value->Avg) . '} ,';
