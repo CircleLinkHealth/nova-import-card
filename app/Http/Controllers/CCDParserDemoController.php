@@ -2,26 +2,38 @@
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Services\ReportsService;
+use App\User;
+use Illuminate\Support\Facades\App;
+use Knp\Snappy\Pdf;
 
-use App\XmlCCD;
-use Illuminate\Http\Request;
-use michalisantoniou6\PhpCCDParser\CCDParser;
+class CCDParserDemoController extends Controller
+{
 
-class CCDParserDemoController extends Controller {
-
-	public function index()
+    public function index()
     {
-        $xml = XmlCCD::find(424);
+        $patientId = 740;
+        $reportService = new ReportsService();
+        $careplan = $reportService->carePlanGenerator( [$patientId] );
 
-        debug($xml->ccd);
+        $pdf = App::make( 'snappy.pdf.wrapper' );
 
-        $patient = new CCDParser($xml->ccd);
+        $pdf->loadView( 'wpUsers.patient.careplan.print', [
+            'patient' => User::find( $patientId ),
+            'treating' => $careplan[ $patientId ][ 'treating' ],
+            'biometrics' => $careplan[ $patientId ][ 'bio_data' ],
+            'symptoms' => $careplan[ $patientId ][ 'symptoms' ],
+            'lifestyle' => $careplan[ $patientId ][ 'lifestyle' ],
+            'medications_monitor' => $careplan[ $patientId ][ 'medications' ],
+            'taking_medications' => $careplan[ $patientId ][ 'taking_meds' ],
+            'allergies' => $careplan[ $patientId ][ 'allergies' ],
+            'social' => $careplan[ $patientId ][ 'social' ],
+            'appointments' => $careplan[ $patientId ][ 'appointments' ],
+            'other' => $careplan[ $patientId ][ 'other' ],
+            'isPdf' => true,
+        ] );
 
-        echo '<pre>';
-
-            echo $patient->getParsedCCD('json');
-
-        echo '</pre>';
+        return $pdf->inline();
     }
 
 }
