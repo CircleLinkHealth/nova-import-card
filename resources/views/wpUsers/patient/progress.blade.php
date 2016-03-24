@@ -127,11 +127,15 @@ $provider = App\User::find($patient->getBillingProviderIDAttribute());
 
                                     <div class="col-xs-3  text-center" style="Zoom:75%">
                                         <div class="patient-summary__info">
-                                            {{$value['target']}}
+                                            @if($value['target'] != '')
+                                                {{$value['target']}}
+                                            @else
+                                                N/A
+                                            @endif
                                         </div>
-                                        <div class="patient-summary__info__legend">
-                                            Goal
-                                        </div>
+                                            <div class="patient-summary__info__legend">
+                                                Goal
+                                            </div>
                                     </div>
                                 </div>
                             </div>
