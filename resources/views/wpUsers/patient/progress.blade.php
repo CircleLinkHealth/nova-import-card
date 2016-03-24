@@ -21,7 +21,7 @@ $provider = App\User::find($patient->getBillingProviderIDAttribute());
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
-                            <h1 class="patient-summary__title patient-summary__title_7 patient-summary--careplan patient-summary--progress-report">
+                            <h1 class="patient-summary__title patient-summary__title_16 patient-summary--careplan patient-summary--progress-report">
                                 Progress Report:</h1>
                         </div>
                     </div>
@@ -96,8 +96,6 @@ $provider = App\User::find($patient->getBillingProviderIDAttribute());
                         $yaxis_start = 'start:80,';
                         $yaxis_step = 'step: ' . round(($value['max'] - 80) / 4, -1) . ',';
                     }
-                    // set yaxis vars
-
                     ?>
 
                     <div class="row">
@@ -129,12 +127,15 @@ $provider = App\User::find($patient->getBillingProviderIDAttribute());
 
                                     <div class="col-xs-3  text-center" style="Zoom:75%">
                                         <div class="patient-summary__info">
-                                            {{$value['target']}} <span
-                                                    class="patient-summary__metrics">{{trim($value['unit'])}}</span>
+                                            @if($value['target'] != '')
+                                                {{$value['target']}}
+                                            @else
+                                                N/A
+                                            @endif
                                         </div>
-                                        <div class="patient-summary__info__legend">
-                                            Goal
-                                        </div>
+                                            <div class="patient-summary__info__legend">
+                                                Goal
+                                            </div>
                                     </div>
                                 </div>
                             </div>

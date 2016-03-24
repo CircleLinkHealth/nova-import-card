@@ -67,11 +67,62 @@ class UserRepository {
     }
 
 
-    public function saveOrUpdateUserMeta(User $wpUser, ParameterBag $params)
+    public function saveOrUpdateUserMeta(User $user, ParameterBag $params)
     {
         $userMetaTemplate = (new UserMetaTemplate())->getArray();
 
-        foreach($userMetaTemplate as $key => $value)
+        foreach($userMetaTemplate as $key => $defaultValue)
+        {
+            $paramValue = $params->get($key);
+
+            //serialize arrays
+            if($paramValue && is_array($paramValue)) {
+                $paramValue = serialize($paramValue);
+            } else if($defaultValue && is_array($defaultValue)) {
+                $defaultValue = serialize($defaultValue);
+            }
+
+            // use existing value if form input wasnt passed in (only updating partial data)
+            if(!$params->get($key)) {
+                $meta = $user->meta->where('meta_key', $key)->first();
+                if (!empty($meta)) {
+                    $paramValue = $meta->meta_value;
+                    $params->add(array($key => $paramValue));
+                }
+            }
+
+            if($params->get($key)) {
+                $user->setUserAttributeByKey($key, $paramValue);
+            } else {
+                $user->setUserAttributeByKey($key, $defaultValue);
+            }
+        }
+    }
+
+
+    public function updateUserConfig(User $wpUser, ParameterBag $params)
+    {
+        // meta
+        $userMeta = UserMeta::where('user_id', '=', $wpUser->ID)->lists('meta_value', 'meta_key');
+
+        // config
+        $userConfig = (new UserConfigTemplate())->getArray();
+        if (isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
+            $userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
+            $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
+        }
+
+        // contact days checkbox formatting
+        if($params->get('contact_days')) {
+            $contactDays = $params->get('contact_days');
+            $contactDaysDelmited = '';
+            for($i=0; $i < count($contactDays); $i++){
+                $contactDaysDelmited .= (count($contactDays) == $i+1) ? $contactDays[$i] : $contactDays[$i] . ', ';
+            }
+            $params->add(array('preferred_cc_contact_days' => $contactDaysDelmited));
+        }
+
+        foreach($userConfig as $key => $value)
         {
             $paramValue = $params->get($key);
 
@@ -82,13 +133,14 @@ class UserRepository {
                 $value = serialize($value);
             }
 
-            if(($params->get($key))) {
+            if(($paramValue)) {
                 $wpUser->setUserAttributeByKey($key, $paramValue);
             } else {
                 $wpUser->setUserAttributeByKey($key, $value);
             }
         }
     }
+
 
     public function saveOrUpdateRoles(User $wpUser, ParameterBag $params)
     {
@@ -110,6 +162,7 @@ class UserRepository {
             $wpUser->roles()->sync([]);
         }
     }
+
 
     public function saveOrUpdatePrograms(User $wpUser, ParameterBag $params)
     {
@@ -182,47 +235,6 @@ class UserRepository {
         }
     }
 
-
-    public function updateUserConfig(User $wpUser, ParameterBag $params)
-    {
-        // meta
-        $userMeta = UserMeta::where('user_id', '=', $wpUser->ID)->lists('meta_value', 'meta_key');
-
-        // config
-        $userConfig = (new UserConfigTemplate())->getArray();
-        if (isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
-            $userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
-            $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
-        }
-
-        // contact days checkbox formatting
-        if($params->get('contact_days')) {
-            $contactDays = $params->get('contact_days');
-            $contactDaysDelmited = '';
-            for($i=0; $i < count($contactDays); $i++){
-                $contactDaysDelmited .= (count($contactDays) == $i+1) ? $contactDays[$i] : $contactDays[$i] . ', ';
-            }
-            $params->add(array('preferred_cc_contact_days' => $contactDaysDelmited));
-        }
-
-        foreach($userConfig as $key => $value)
-        {
-            $paramValue = $params->get($key);
-
-            //serialize arrays
-            if($paramValue && is_array($paramValue)) {
-                $paramValue = serialize($paramValue);
-            } else if($value && is_array($value)) {
-                $value = serialize($value);
-            }
-
-            if(($paramValue)) {
-                $wpUser->setUserAttributeByKey($key, $paramValue);
-            } else {
-                $wpUser->setUserAttributeByKey($key, $value);
-            }
-        }
-    }
 
 
     public function createDefaultCarePlan($user, $params) {
