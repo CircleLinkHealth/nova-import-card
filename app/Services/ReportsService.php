@@ -203,7 +203,7 @@ Class ReportsService
             ->get();
 
         //group observation readings by medicine
-
+        $temp_meds = array();
         foreach ($medications_categories as $cat) {
             $temp_meds[$cat]['total'] = 0;
             $temp_meds[$cat]['yes'] = 0;
