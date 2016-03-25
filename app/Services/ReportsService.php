@@ -289,11 +289,13 @@ Class ReportsService
     }
 
     public
-    function getTargetValueForBiometric($biometric, $user)
+    function getTargetValueForBiometric($carePlan = false, $biometric, $user)
     {
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
-        $carePlan->build($user->ID);
+        if(!$carePlan) {
+            $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+                ->first();
+            $carePlan->build($user->ID);
+        }
         switch ($biometric) {
             case "Weight":
                 return $carePlan->getCareItemUserValue($user, 'weight-target-weight');
@@ -940,7 +942,7 @@ Class ReportsService
             $careplanReport[$user->ID]['bio_data'] = array();
 
             foreach ($biometrics as $metric) {
-                $careplanReport[$user->ID]['bio_data'][$metric]['target'] = (new ReportsService())->getTargetValueForBiometric($metric, $user) . ReportsService::biometricsUnitMapping($metric);
+                $careplanReport[$user->ID]['bio_data'][$metric]['target'] = (new ReportsService())->getTargetValueForBiometric($carePlan, $metric, $user) . ReportsService::biometricsUnitMapping($metric);
                 $careplanReport[$user->ID]['bio_data'][$metric]['starting'] = Observation::getStartingObservation($user->ID, (new ReportsService())->biometricsMessageIdMapping($metric)) . ReportsService::biometricsUnitMapping($metric);
             }
 
