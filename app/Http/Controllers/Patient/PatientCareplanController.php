@@ -604,7 +604,7 @@ class PatientCareplanController extends Controller
                         // validate answer
                         $answerResponse =  $msgCPRules->getValidAnswer($user->program_id, $qsType, $obsMessageId, $value, false);
                         if(!$answerResponse) {
-                            return redirect()->back()->with('error', ['invalid observation']);
+                            return redirect()->back()->withErrors(['You entered an invalid value for ' . $carePlanItem->careItem->display_name . ', please review and resubmit.'])->withInput();
                         }
 
                         // update/store observation
