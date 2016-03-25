@@ -33,7 +33,8 @@ class CCDParserDemoController extends Controller
             'isPdf' => true,
         ] );
 
-        return $pdf->inline();
+        //
+        return $pdf->output();
     }
 
 }
