@@ -28,6 +28,9 @@ class S20151215CarePlanMigration extends Seeder {
         DB::connection('mysql_no_prefix')->table('care_sections')->truncate();
         DB::connection('mysql_no_prefix')->statement('SET FOREIGN_KEY_CHECKS=1;');
 
+        // hack fix for bad data, missing qid for 5 programs on prod
+        DB::raw("UPDATE rules_items SET qid = 25 WHERE items_text = 'Smoking'");
+
         $this->call('database\seeds\S20151215CarePlanMigration1');
         $this->command->info('Part 1 Completed Successfully');
 
