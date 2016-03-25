@@ -172,7 +172,8 @@ class Observation extends Model {
               ->where('message_id', $message_id);
 
         })->where('user_id', $userId)->lists('obs_value');
-         */
+        */
+
         $starting = Observation::where('user_id', $userId)
             ->whereHas('meta', function($q) use ($message_id)
             {
@@ -182,7 +183,7 @@ class Observation extends Model {
             })->first();
 
         if($starting){
-            return $starting;
+            return $starting->obs_value;
         } else {
             $x = Observation::where('user_id', '=', $userId)->where('obs_message_id', '=', $message_id)->first();
             return isset($x->obs_value) ? $x->obs_value : 'N/A';
