@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "af6cd1f9c4b9afc65ab09a95e3521c01",
-    "content-hash": "ec668d9a2f2a07f82fdceb3c3cb3f626",
+    "hash": "fda48eae793f9ec3d05a435a903005a9",
+    "content-hash": "6b5610feaa07543c693fb11a8d65edc2",
     "packages": [
         {
             "name": "arcturial/clickatell",
-            "version": "2.1.5",
+            "version": "2.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/arcturial/clickatell.git",
-                "reference": "3c268cb22e3a6ad83bae2b38ed3ec53b525a05be"
+                "reference": "d348e41a4052547d60d17737bf1993dd794b5ca1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/arcturial/clickatell/zipball/3c268cb22e3a6ad83bae2b38ed3ec53b525a05be",
-                "reference": "3c268cb22e3a6ad83bae2b38ed3ec53b525a05be",
+                "url": "https://api.github.com/repos/arcturial/clickatell/zipball/d348e41a4052547d60d17737bf1993dd794b5ca1",
+                "reference": "d348e41a4052547d60d17737bf1993dd794b5ca1",
                 "shasum": ""
             },
             "require": {
@@ -53,7 +53,7 @@
             ],
             "description": "Standalone PHP library to integrate with the Clickatell SMS gateway",
             "homepage": "http://www.cainsvault.com",
-            "time": "2016-02-14 09:41:19"
+            "time": "2016-03-19 21:20:59"
         },
         {
             "name": "asm89/stack-cors",
@@ -200,6 +200,58 @@
                 "webprofiler"
             ],
             "time": "2016-02-17 08:43:00"
+        },
+        {
+            "name": "barryvdh/laravel-snappy",
+            "version": "v0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/barryvdh/laravel-snappy.git",
+                "reference": "cf1e1f82554ca5fe5f2aa2dae29dec1e6888ff2a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/barryvdh/laravel-snappy/zipball/cf1e1f82554ca5fe5f2aa2dae29dec1e6888ff2a",
+                "reference": "cf1e1f82554ca5fe5f2aa2dae29dec1e6888ff2a",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/filesystem": "5.0.x|5.1.x|5.2.x",
+                "illuminate/support": "5.0.x|5.1.x|5.2.x",
+                "knplabs/knp-snappy": "*",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Barryvdh\\Snappy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Barry vd. Heuvel",
+                    "email": "barryvdh@gmail.com"
+                }
+            ],
+            "description": "Snappy PDF/Image for Laravel 4",
+            "keywords": [
+                "image",
+                "laravel",
+                "pdf",
+                "snappy",
+                "wkhtmltoimage",
+                "wkhtmltopdf"
+            ],
+            "time": "2016-02-25 12:03:44"
         },
         {
             "name": "chrisbjr/api-guard",
@@ -802,16 +854,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.1.1",
+            "version": "6.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "c6851d6e48f63b69357cbfa55bca116448140e0c"
+                "reference": "d094e337976dff9d8e2424e8485872194e768662"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/c6851d6e48f63b69357cbfa55bca116448140e0c",
-                "reference": "c6851d6e48f63b69357cbfa55bca116448140e0c",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/d094e337976dff9d8e2424e8485872194e768662",
+                "reference": "d094e337976dff9d8e2424e8485872194e768662",
                 "shasum": ""
             },
             "require": {
@@ -827,7 +879,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "6.1-dev"
+                    "dev-master": "6.2-dev"
                 }
             },
             "autoload": {
@@ -860,7 +912,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2015-11-23 00:47:50"
+            "time": "2016-03-21 20:02:09"
         },
         {
             "name": "guzzlehttp/promises",
@@ -970,6 +1022,86 @@
                 "uri"
             ],
             "time": "2016-02-18 21:54:00"
+        },
+        {
+            "name": "h4cc/wkhtmltoimage-amd64",
+            "version": "0.12.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/h4cc/wkhtmltoimage-amd64.git",
+                "reference": "f5d85706fbb41dbfbe62ace2edf0e380fff084ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/h4cc/wkhtmltoimage-amd64/zipball/f5d85706fbb41dbfbe62ace2edf0e380fff084ad",
+                "reference": "f5d85706fbb41dbfbe62ace2edf0e380fff084ad",
+                "shasum": ""
+            },
+            "bin": [
+                "bin/wkhtmltoimage-amd64"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL Version 3"
+            ],
+            "authors": [
+                {
+                    "name": "Julius Beckmann",
+                    "email": "github@h4cc.de"
+                }
+            ],
+            "description": "Convert html to image using webkit (qtwebkit). Static linked linux binary for amd64 systems.",
+            "homepage": "http://wkhtmltopdf.org/",
+            "keywords": [
+                "binary",
+                "convert",
+                "image",
+                "snapshot",
+                "thumbnail",
+                "wkhtmltoimage"
+            ],
+            "time": "2016-02-02 19:39:01"
+        },
+        {
+            "name": "h4cc/wkhtmltopdf-amd64",
+            "version": "0.12.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/h4cc/wkhtmltopdf-amd64.git",
+                "reference": "b80ce6720349e98cebac7e8a19426455805fa7e1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/h4cc/wkhtmltopdf-amd64/zipball/b80ce6720349e98cebac7e8a19426455805fa7e1",
+                "reference": "b80ce6720349e98cebac7e8a19426455805fa7e1",
+                "shasum": ""
+            },
+            "bin": [
+                "bin/wkhtmltopdf-amd64"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL Version 3"
+            ],
+            "authors": [
+                {
+                    "name": "Julius Beckmann",
+                    "email": "github@h4cc.de"
+                }
+            ],
+            "description": "Convert html to pdf using webkit (qtwebkit). Static linked linux binary for amd64 systems.",
+            "homepage": "http://wkhtmltopdf.org/",
+            "keywords": [
+                "binary",
+                "convert",
+                "pdf",
+                "snapshot",
+                "thumbnail",
+                "wkhtmltopdf"
+            ],
+            "time": "2016-02-02 19:38:55"
         },
         {
             "name": "hautelook/phpass",
@@ -1250,6 +1382,71 @@
             "time": "2016-01-29 20:25:32"
         },
         {
+            "name": "knplabs/knp-snappy",
+            "version": "0.4.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/KnpLabs/snappy.git",
+                "reference": "44f7a9b37d5686fd7db4c1e9569a802a5d16923f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/KnpLabs/snappy/zipball/44f7a9b37d5686fd7db4c1e9569a802a5d16923f",
+                "reference": "44f7a9b37d5686fd7db4c1e9569a802a5d16923f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "symfony/process": "~2.3|~3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.7"
+            },
+            "suggest": {
+                "h4cc/wkhtmltoimage-amd64": "Provides wkhtmltoimage-amd64 binary for Linux-compatible machines, use version `~0.12` as dependency",
+                "h4cc/wkhtmltoimage-i386": "Provides wkhtmltoimage-i386 binary for Linux-compatible machines, use version `~0.12` as dependency",
+                "h4cc/wkhtmltopdf-amd64": "Provides wkhtmltopdf-amd64 binary for Linux-compatible machines, use version `~0.12` as dependency",
+                "h4cc/wkhtmltopdf-i386": "Provides wkhtmltopdf-i386 binary for Linux-compatible machines, use version `~0.12` as dependency",
+                "wemersonjanuario/wkhtmltopdf-windows": "Provides wkhtmltopdf executable for Windows, use version `~0.12` as dependency"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.5.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Knp\\Snappy": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "KnpLabs Team",
+                    "homepage": "http://knplabs.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://github.com/KnpLabs/snappy/contributors"
+                }
+            ],
+            "description": "PHP5 library allowing thumbnail, snapshot or PDF generation from a url or a html page. Wrapper for wkhtmltopdf/wkhtmltoimage.",
+            "homepage": "http://github.com/KnpLabs/snappy",
+            "keywords": [
+                "knp",
+                "knplabs",
+                "pdf",
+                "snapshot",
+                "thumbnail",
+                "wkhtmltopdf"
+            ],
+            "time": "2015-11-17 13:16:27"
+        },
+        {
             "name": "laracasts/utilities",
             "version": "2.1",
             "source": {
@@ -1471,16 +1668,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.19",
+            "version": "1.0.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "635ee279a522233a567984756bf9da1db243d9bf"
+                "reference": "e87a786e3ae12a25cf78a71bb07b4b384bfaa83a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/635ee279a522233a567984756bf9da1db243d9bf",
-                "reference": "635ee279a522233a567984756bf9da1db243d9bf",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/e87a786e3ae12a25cf78a71bb07b4b384bfaa83a",
+                "reference": "e87a786e3ae12a25cf78a71bb07b4b384bfaa83a",
                 "shasum": ""
             },
             "require": {
@@ -1550,7 +1747,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2016-03-12 19:04:33"
+            "time": "2016-03-14 21:54:11"
         },
         {
             "name": "league/fractal",
@@ -2032,16 +2229,16 @@
         },
         {
             "name": "paragonie/random_compat",
-            "version": "v1.2.2",
+            "version": "v1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "b3313b618f4edd76523572531d5d7e22fe747430"
+                "reference": "c7e26a21ba357863de030f0b9e701c7d04593774"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/b3313b618f4edd76523572531d5d7e22fe747430",
-                "reference": "b3313b618f4edd76523572531d5d7e22fe747430",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/c7e26a21ba357863de030f0b9e701c7d04593774",
+                "reference": "c7e26a21ba357863de030f0b9e701c7d04593774",
                 "shasum": ""
             },
             "require": {
@@ -2076,7 +2273,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2016-03-11 19:54:08"
+            "time": "2016-03-18 20:34:03"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -3590,6 +3787,54 @@
     ],
     "packages-dev": [
         {
+            "name": "barryvdh/laravel-dompdf",
+            "version": "v0.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/barryvdh/laravel-dompdf.git",
+                "reference": "b606788108833f7765801dca35455fb23ce9f869"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/barryvdh/laravel-dompdf/zipball/b606788108833f7765801dca35455fb23ce9f869",
+                "reference": "b606788108833f7765801dca35455fb23ce9f869",
+                "shasum": ""
+            },
+            "require": {
+                "dompdf/dompdf": "0.6.*",
+                "illuminate/support": "5.0.x|5.1.x|5.2.x",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.6-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Barryvdh\\DomPDF\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Barry vd. Heuvel",
+                    "email": "barryvdh@gmail.com"
+                }
+            ],
+            "description": "A DOMPDF Wrapper for Laravel",
+            "keywords": [
+                "dompdf",
+                "laravel",
+                "pdf"
+            ],
+            "time": "2015-12-21 19:51:22"
+        },
+        {
             "name": "doctrine/cache",
             "version": "v1.6.0",
             "source": {
@@ -3924,6 +4169,47 @@
             "time": "2015-06-14 21:17:01"
         },
         {
+            "name": "dompdf/dompdf",
+            "version": "v0.6.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dompdf/dompdf.git",
+                "reference": "cc06008f75262510ee135b8cbb14e333a309f651"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/cc06008f75262510ee135b8cbb14e333a309f651",
+                "reference": "cc06008f75262510ee135b8cbb14e333a309f651",
+                "shasum": ""
+            },
+            "require": {
+                "phenx/php-font-lib": "0.2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "include/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Ménager",
+                    "email": "fabien.menager@gmail.com"
+                },
+                {
+                    "name": "Brian Sweeney",
+                    "email": "eclecticgeek@gmail.com"
+                }
+            ],
+            "description": "DOMPDF is a CSS 2.1 compliant HTML to PDF converter",
+            "homepage": "https://github.com/dompdf/dompdf",
+            "time": "2015-12-07 04:07:13"
+        },
+        {
             "name": "orangehill/iseed",
             "version": "dev-master",
             "source": {
@@ -3971,6 +4257,40 @@
                 "seed"
             ],
             "time": "2016-02-02 11:28:06"
+        },
+        {
+            "name": "phenx/php-font-lib",
+            "version": "0.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PhenX/php-font-lib.git",
+                "reference": "c30c7fc00a6b0d863e9bb4c5d5dd015298b2dc82"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PhenX/php-font-lib/zipball/c30c7fc00a6b0d863e9bb4c5d5dd015298b2dc82",
+                "reference": "c30c7fc00a6b0d863e9bb4c5d5dd015298b2dc82",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "classes/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Ménager",
+                    "email": "fabien.menager@gmail.com"
+                }
+            ],
+            "description": "A library to read, parse, export and make subsets of different types of font files.",
+            "homepage": "https://github.com/PhenX/php-font-lib",
+            "time": "2014-02-01 15:22:28"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -4057,16 +4377,16 @@
         },
         {
             "name": "phpspec/phpspec",
-            "version": "2.4.1",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/phpspec.git",
-                "reference": "5528ce1e93a1efa090c9404aba3395c329b4e6ed"
+                "reference": "385ecb015e97c13818074f1517928b24d4a26067"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/phpspec/zipball/5528ce1e93a1efa090c9404aba3395c329b4e6ed",
-                "reference": "5528ce1e93a1efa090c9404aba3395c329b4e6ed",
+                "url": "https://api.github.com/repos/phpspec/phpspec/zipball/385ecb015e97c13818074f1517928b24d4a26067",
+                "reference": "385ecb015e97c13818074f1517928b24d4a26067",
                 "shasum": ""
             },
             "require": {
@@ -4131,7 +4451,7 @@
                 "testing",
                 "tests"
             ],
-            "time": "2016-01-01 10:17:54"
+            "time": "2016-03-20 20:34:32"
         },
         {
             "name": "phpspec/prophecy",

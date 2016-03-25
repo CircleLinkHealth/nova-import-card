@@ -145,6 +145,7 @@ return [
 		 */
 		Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
 		Barryvdh\Debugbar\ServiceProvider::class,
+		Barryvdh\Snappy\ServiceProvider::class,
 
 
 		'App\Providers\AppServiceProvider',
@@ -219,7 +220,9 @@ return [
 		'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
 		'Form' => 'Collective\Html\FormFacade',
 		'Html' => 'Collective\Html\HtmlFacade',
-		'Entrust' => 'Zizaco\Entrust\EntrustFacade'
+		'Entrust' => 'Zizaco\Entrust\EntrustFacade',
+		'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
+		'Image' => Barryvdh\Snappy\Facades\SnappyImage::class,
 
 	],
 
