@@ -59,8 +59,10 @@ class ActivityController extends Controller {
 			//careteam
 			$careteam_info = array();
 			$careteam_ids = $wpUser->careTeam;
-			foreach ($careteam_ids as $id) {
-				$careteam_info[$id] = User::find($id)->getFullNameAttribute();;
+			if(!empty($careteam_ids)) {
+				foreach ($careteam_ids as $id) {
+					$careteam_info[$id] = User::find($id)->getFullNameAttribute();;
+				}
 			}
 
 			//providers
