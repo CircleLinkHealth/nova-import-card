@@ -113,6 +113,7 @@
             </div>
         @else
             <div class="progress-buttons col-sm-12 col-centered text-center">
+                <a href="{{ URL::route('patients.dashboard', array()) }}" omitsubmit="yes" class="btn btn-danger btn-next inline-block omitsubmit">Cancel</a>
                 <button type="submit" class="btn btn-primary btn-next inline-block">Add Patient</button>
             </div>
         @endif

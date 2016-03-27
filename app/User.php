@@ -236,13 +236,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$meta = $this->meta->where('meta_key', $key)->first();
 		if( !empty($meta) ) {
 			$meta->meta_value = $value;
+			$meta->save();
 		} else {
 			$meta = new UserMeta;
 			$meta->meta_key = $key;
 			$meta->meta_value = $value;
 			$meta->user_id = $this->ID;
+			$this->meta()->save($meta);
+			$this->load('meta');
 		}
-		$meta->save();
 		return true;
 	}
 
@@ -332,7 +334,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->getUserMetaByKey('first_name');
 	}
 	public function setFirstNameAttribute($value) {
-		return $this->setUserMetaByKey('first_name', $value);
+		$this->setUserMetaByKey('first_name', $value);
+		$this->display_name = $this->fullName;
+		$this->save();
+		return true;
 	}
 
 	// last_name
@@ -340,7 +345,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->getUserMetaByKey('last_name');
 	}
 	public function setLastNameAttribute($value) {
-		return $this->setUserMetaByKey('last_name', $value);
+		$this->setUserMetaByKey('last_name', $value);
+		$this->display_name = $this->fullName;
+		$this->save();
+		return true;
 	}
 
 	// full name

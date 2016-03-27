@@ -294,12 +294,12 @@ class PatientCareplanController extends Controller
                 'user_email' => $newUserId . '@careplanmanager.com',
                 'user_pass' => $newUserId,
                 'user_status' => '1',
-                'user_nicename' => 'Happy Gilmore',
+                'user_nicename' => '',
                 'program_id' => $params->get('program_id'),
+                'display_name' => $params->get('first_name') . ' ' . $params->get('last_name'),
                 'roles' => [$role->id],
             ));
             $newUser = $userRepo->createNewUser($user, $params);
-            //$newUser = $userRepo->editUser($newUser, $params);
             return redirect(\URL::route('patient.demographics.show', array('patientId' => $newUser->ID)))->with('messages', ['Successfully created new patient with demographics.']);
         }
     }

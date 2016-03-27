@@ -5,8 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 class UserMeta extends Model {
 
     // for revisionable
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionCreationsEnabled = true;
+    //use \Venturecraft\Revisionable\RevisionableTrait;
+    //protected $revisionCreationsEnabled = true;
 
     /**
      * The connection name for the model.
@@ -46,7 +46,7 @@ class UserMeta extends Model {
     // for revisionable
     public static function boot()
     {
-        parent::boot();
+        //parent::boot();
     }
 
 }
