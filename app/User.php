@@ -267,10 +267,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$userConfigArray = unserialize($userConfig['meta_value']);
 		}
 
-		// unserialize value if needed
+		// serialize value if needed
+		/*
 		if(is_array($value)) {
 			$value = serialize($value);
 		}
+		*/
 		$userConfigArray[$key] = $value;
 		$userConfig->meta_value = serialize($userConfigArray);
 		$userConfig->save();

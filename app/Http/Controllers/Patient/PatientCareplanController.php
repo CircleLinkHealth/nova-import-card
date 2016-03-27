@@ -358,8 +358,10 @@ class PatientCareplanController extends Controller
 
         // get providers
         $providers = array();
-        $providers = User::whereIn('ID', Auth::user()->viewableUserIds())
-            ->with('meta')
+        $providers = User::with('meta')
+            ->whereHas('programs', function ($q) use ($patient) {
+                $q->whereIn('program_id', $patient->viewableProgramIds());
+            })
             ->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'provider');
             })->get();
