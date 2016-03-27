@@ -306,6 +306,7 @@ class PatientController extends Controller {
 
 
 		// get billing Providers before
+		/*
 		$billingProviders = null;
 		$billingProviderIds = array();
 		if($patients->count() > 0) {
@@ -323,8 +324,7 @@ class PatientController extends Controller {
 				$billingProviders = User::whereIn('ID', $billingProviderIds)
 					->with('meta')->get();
 			}
-		}
-
+		}*/
 
 		if($patients->count() > 0) {
 			foreach ($patients as $patient) {
@@ -377,16 +377,10 @@ class PatientController extends Controller {
 				}
 
 				// get billing provider name
-				$bpName = '';
-				$bpID = strval($patient->billingProviderID);
+				$bpName = $patient->billingProviderID;
+				$bpID = $patient->billingProviderID;
 				if(!empty($bpID)) {
-					$bpUser = false;
-					$bpUser = $billingProviders->where('ID', $bpID)->first();
-					if(!$bpUser) {
-						if(!empty($bpID) && is_int($bpID)) {
-							$bpUser = User::find($patient->billingProviderID);
-						}
-					}
+					$bpUser = User::find($patient->billingProviderID);
 					if($bpUser) {
 						$bpName = $bpUser->fullName;
 					}
