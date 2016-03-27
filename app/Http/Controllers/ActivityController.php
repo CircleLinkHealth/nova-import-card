@@ -59,10 +59,10 @@ class ActivityController extends Controller {
 			//careteam
 			$careteam_info = array();
 			$careteam_ids = $wpUser->careTeam;
-			if(!empty($careteam_ids)) {
-				if((@unserialize($careteam_ids) !== false)) {
-					$careteam_ids = unserialize($careteam_ids);
-				}
+			if((@unserialize($careteam_ids) !== false)) {
+				$careteam_ids = unserialize($careteam_ids);
+			}
+			if(!empty($careteam_ids) && is_array($careteam_ids)) {
 				foreach ($careteam_ids as $id) {
 					$careteam_info[$id] = User::find($id)->getFullNameAttribute();;
 				}
@@ -160,11 +160,11 @@ class ActivityController extends Controller {
 
 		$careteam_info = array();
 		$careteam_ids = $patient->careTeam;
-		if(!empty($careteam_ids)) {
+		if ((@unserialize($careteam_ids) !== false)) {
+			$careteam_ids = unserialize($careteam_ids);
+		}
+		if(!empty($careteam_ids) && is_array($careteam_ids)) {
 			foreach ($careteam_ids as $id) {
-				if ((@unserialize($careteam_ids) !== false)) {
-					$careteam_ids = unserialize($careteam_ids);
-				}
 				$careteam_info[$id] = User::find($id)->getFullNameAttribute();;
 			}
 		}
