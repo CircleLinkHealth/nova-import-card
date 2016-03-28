@@ -364,7 +364,10 @@ class PatientCareplanController extends Controller
             })
             ->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'provider');
-            })->get();
+            })
+            ->orderby('display_name')
+            ->get();
+
         $phtml = '';
 
         $showApprovalButton = false;
