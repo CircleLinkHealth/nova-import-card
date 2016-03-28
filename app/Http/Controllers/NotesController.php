@@ -110,9 +110,14 @@ class NotesController extends Controller
             //careteam
             $careteam_info = array();
             $careteam_ids = $wpUser->careTeam;
-            foreach ($careteam_ids as $id) {
-                $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
-            }//debug($careteam_info);
+            if ((@unserialize($careteam_ids) !== false)) {
+                $careteam_ids = unserialize($careteam_ids);
+            }
+            if(!empty($careteam_ids) && is_array($careteam_ids)) {
+                foreach ($careteam_ids as $id) {
+                    $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
+                }//debug($careteam_info);
+            }
 
             //providers
             $providers = WpBlog::getProviders($wpUser->blogId());
@@ -259,8 +264,13 @@ class NotesController extends Controller
 
         $careteam_info = array();
         $careteam_ids = $patient->careTeam;
-        foreach ($careteam_ids as $id) {
-            $careteam_info[$id] = User::find($id) ? User::find($id)->getFullNameAttribute() : '';
+        if ((@unserialize($careteam_ids) !== false)) {
+            $careteam_ids = unserialize($careteam_ids);
+        }
+        if(!empty($careteam_ids) && is_array($careteam_ids)) {
+            foreach ($careteam_ids as $id) {
+                $careteam_info[$id] = User::find($id) ? User::find($id)->getFullNameAttribute() : '';
+            }
         }
 
         asort($careteam_info);

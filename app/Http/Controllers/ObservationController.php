@@ -210,7 +210,7 @@ class ObservationController extends Controller {
 		$qsType  = $msgCPRules->getQsType($obsMessageId, $wpUser->program_id);
 		$answerResponse =  $msgCPRules->getValidAnswer($wpUser->program_id, $qsType, $obsMessageId, $params['obs_value'], false);
 		if(!$answerResponse) {
-			return response()->json(['response' => 'Error - Invalid reading'], 500);
+			return redirect()->back()->withErrors(['You entered an invalid value, please review and resubmit.'])->withInput();
 		}
 
 		// validate timezone

@@ -41,6 +41,11 @@ class CPRulesQuestions extends Model {
         return $this->hasMany('App\CPRulesItem', 'qid', 'qid');
     }
 
+    public function careItems()
+    {
+        return $this->hasMany('App\CareItem', 'qid', 'qid');
+    }
+
     public function questionSets()
     {
         return $this->hasMany('App\CPRulesQuestionSets', 'qid', 'qid');

@@ -49,7 +49,7 @@ class ReportsController extends Controller
             if ($value != null) {
                 $first = reset($value);
                 $last = end($value);
-                $changes = (new ReportsService())->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name, (new ReportsService())->getTargetValueForBiometric($bio_name, $user));
+                $changes = (new ReportsService())->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name, (new ReportsService())->getTargetValueForBiometric($carePlan, $bio_name, $user));
                 //debug($changes);
                 $biometrics_array[$bio_name]['change'] = $changes['change'];
                 $biometrics_array[$bio_name]['progression'] = $changes['progression'];
@@ -65,7 +65,7 @@ class ReportsController extends Controller
             if ($value) {
                 foreach ($value as $key => $value) {
                     $biometrics_array[$bio_name]['unit'] = (new ReportsService())->biometricsUnitMapping(str_replace('_', ' ', $bio_name));
-                    $biometrics_array[$bio_name]['target'] = (new ReportsService())->getTargetValueForBiometric($bio_name, $user);
+                    $biometrics_array[$bio_name]['target'] = (new ReportsService())->getTargetValueForBiometric($carePlan, $bio_name, $user);
                     $biometrics_array[$bio_name]['reading'] = intval($value->Avg);
                     if (intval($value->Avg) > $biometrics_array[$bio_name]['max']) {
                         $biometrics_array[$bio_name]['max'] = intval($value->Avg);

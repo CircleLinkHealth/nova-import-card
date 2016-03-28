@@ -23,7 +23,14 @@ $(document).ready(function(){
             if(typeof $(this).attr('dtarget') === 'undefined') {
                 return true; // no redirect dtarget
             } else {
-                window.location.href = $(this).attr('dtarget');
+                if ($(this).attr('dtarget')) {
+                    var dtarget = $(this).attr('dtarget');
+                } else if ($(this).attr('href')) {
+                    var dtarget = $(this).attr('href');
+                }
+                if(dtarget) {
+                    window.location.href = dtarget;
+                }
                 return true;
             }
         }

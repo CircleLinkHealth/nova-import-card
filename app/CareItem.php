@@ -41,6 +41,11 @@ class CareItem extends Model {
         return $this->hasMany('App\CareItemUserValue', 'care_item_id', 'id');
     }
 
+    public function question() // rules prefix because ->items is a protect class var on parent
+    {
+        return $this->belongsTo('App\CPRulesQuestions', 'qid', 'qid');
+    }
+
     public function parents()
     {
         return $this->belongsTo('App\CareItem', 'parent_id');

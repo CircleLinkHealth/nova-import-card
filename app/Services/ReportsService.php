@@ -289,11 +289,13 @@ Class ReportsService
     }
 
     public
-    function getTargetValueForBiometric($biometric, $user)
+    function getTargetValueForBiometric($carePlan = false, $biometric, $user)
     {
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
-        $carePlan->build($user->ID);
+        if(!$carePlan) {
+            $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
+                ->first();
+            $carePlan->build($user->ID);
+        }
         switch ($biometric) {
             case "Weight":
                 return $carePlan->getCareItemUserValue($user, 'weight-target-weight');
@@ -439,11 +441,11 @@ Class ReportsService
                 $color = 'red';
                 $progression = 'up';
                 $copy = 'Worse';
-            } else if ($change < 0) {
+            } else if ($change < 0) { //The weekly average has decreased
                 $color = 'green';
                 $progression = 'down';
                 $copy = 'Better';
-            } else {
+            } else { //The weekly average is unchanged
                 $color = 'yellow';
                 $copy = 'Unchanged';
                 $progression = '';
@@ -516,7 +518,7 @@ Class ReportsService
         return $changes_array;
     }
     public function biometricsIndicators($weeklyReading1, $weeklyReading2, $biometric, $target)
-    {debug($biometric);
+    {//debug($biometric);
 
         if ($biometric == 'Blood_Sugar') {
 //            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
@@ -677,7 +679,6 @@ Class ReportsService
 
         return $progress;
     }
-
     public function careplan($id)
     {
 
@@ -885,7 +886,6 @@ Class ReportsService
     // the key as
     public function carePlanGenerator($patients)
     {
-
         $careplanReport = array();
 
         foreach ($patients as $user) {
@@ -933,8 +933,6 @@ Class ReportsService
                 $careplanReport[$user->ID]['treating'] = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
                 $biometrics = (new ReportsService())->getBiometricsToMonitor($user);
             }
-
-
             //Remove cigarettes
             if (($key = array_search('Smoking (# per day)', $biometrics)) !== false) {
                 unset($biometrics[$key]);
@@ -944,7 +942,7 @@ Class ReportsService
             $careplanReport[$user->ID]['bio_data'] = array();
 
             foreach ($biometrics as $metric) {
-                $careplanReport[$user->ID]['bio_data'][$metric]['target'] = (new ReportsService())->getTargetValueForBiometric($metric, $user) . ReportsService::biometricsUnitMapping($metric);
+                $careplanReport[$user->ID]['bio_data'][$metric]['target'] = (new ReportsService())->getTargetValueForBiometric($carePlan, $metric, $user) . ReportsService::biometricsUnitMapping($metric);
                 $careplanReport[$user->ID]['bio_data'][$metric]['starting'] = Observation::getStartingObservation($user->ID, (new ReportsService())->biometricsMessageIdMapping($metric)) . ReportsService::biometricsUnitMapping($metric);
             }
 
@@ -978,7 +976,6 @@ Class ReportsService
                 $careplanReport[$user->ID]['appointments'] = 'No instructions at this time';
             }
         }
-
         return $careplanReport;
     }
 
