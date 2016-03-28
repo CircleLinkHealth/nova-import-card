@@ -358,10 +358,12 @@ class UserController extends Controller
         $userMetas = UserMeta::where( 'user_id', '=', $id )->get();
         if ( $userMetas->count() > 0 ) {
             foreach ( $userMetas as $userMeta ) {
-                $metaItemHistory = $userMeta->revisionHistory->sortByDesc( 'updated_at' )->take( 10 );
-                if ( $metaItemHistory->count() > 0 ) {
-                    foreach ( $metaItemHistory as $history ) {
-                        $userHistory->push( $history );
+                if ($userMeta->revisionHistory->count() > 0) {
+                    $metaItemHistory = $userMeta->revisionHistory->sortByDesc('updated_at')->take(10);
+                    if ($metaItemHistory->count() > 0) {
+                        foreach ($metaItemHistory as $history) {
+                            $userHistory->push($history);
+                        }
                     }
                 }
             }

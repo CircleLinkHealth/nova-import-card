@@ -117,11 +117,13 @@ class CarePlan extends Model {
     }
 
     public function getCareItemUserValue(User $user, $name) {
+        /*
         $careItem = $this->careItems()->where('name','=',$name)->withPivot('id','meta_value')->first();
         if(!$careItem) {
             return false;
         }
-        $userCareItemValue = $user->careItems()->where('name', '=', $careItem->name)->first();
+        */
+        $userCareItemValue = $user->careItems->where('name', $name)->first();
         if($userCareItemValue) {
             return $userCareItemValue->pivot->value;
         }

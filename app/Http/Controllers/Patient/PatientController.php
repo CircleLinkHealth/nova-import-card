@@ -306,6 +306,7 @@ class PatientController extends Controller {
 
 
 		// get billing Providers before
+		/*
 		$billingProviders = null;
 		$billingProviderIds = array();
 		if($patients->count() > 0) {
@@ -323,8 +324,7 @@ class PatientController extends Controller {
 				$billingProviders = User::whereIn('ID', $billingProviderIds)
 					->with('meta')->get();
 			}
-		}
-
+		}*/
 
 		if($patients->count() > 0) {
 			foreach ($patients as $patient) {
@@ -377,16 +377,10 @@ class PatientController extends Controller {
 				}
 
 				// get billing provider name
-				$bpName = '';
-				$bpID = strval($patient->billingProviderID);
+				$bpName = $patient->billingProviderID;
+				$bpID = $patient->billingProviderID;
 				if(!empty($bpID)) {
-					$bpUser = false;
-					$bpUser = $billingProviders->where('ID', $bpID)->first();
-					if(!$bpUser) {
-						if(!empty($bpID) && is_int($bpID)) {
-							$bpUser = User::find($patient->billingProviderID);
-						}
-					}
+					$bpUser = User::find($patient->billingProviderID);
 					if($bpUser) {
 						$bpName = $bpUser->fullName;
 					}
@@ -534,28 +528,42 @@ class PatientController extends Controller {
 	}
 
 	public function queryPatient(Request $request){
+
 		$input = $request->all();
 		$query = $input['users'];
-		$data = User::whereIn('ID', Auth::user()->viewablePatientIds())
-			->with('meta')->whereHas('roles', function($q) use ($query) {
-				$q->where('name', '=', 'participant');
-			})
-			->where('display_name', 'LIKE', "%$query%")
-			->get()->lists('ID');
+
+		$userIds = $commaList = implode(', ', Auth::user()->viewablePatientIds());
+
+		$sql="select distinct
+        concat(umf.meta_value , ' ', uml.meta_value) label, um.user_id id, umd.meta_value config,
+        u.program_id, b.domain, ucase(b.domain) as site
+         from wp_usermeta um
+            left join wp_users u on u.ID = um.user_id
+            left join wp_usermeta umf on umf.user_id = um.user_id AND umf.meta_key = 'first_name'
+            left join wp_usermeta uml on uml.user_id = um.user_id AND uml.meta_key = 'last_name'
+            left join wp_usermeta umd on umd.user_id = um.user_id AND umd.meta_key like CONCAT('wp_', u.program_id, '_user_config')
+            left join wp_blogs b on b.blog_id = u.program_id
+            where um.user_id in (SELECT user_id from wp_usermeta where meta_key like CONCAT('wp_', u.program_id, '_user_config'))
+AND concat(umf.meta_value , ' ', uml.meta_value, ' ', um.user_id, '', umd.meta_value ) like '%" . $query . "%'
+             AND u.program_id > 6 AND u.program_id <> ''
+             AND ID IN (".$userIds.")
+             order by 1
+            ;";
+
+		$results = DB::select(DB::raw($sql));
 		$patients = array();
 		$i = 0;
-		foreach($data as $d){
-			$patients[$i]['name'] = (User::find($d)->display_name);
-			$patients[$i]['name'] = (User::find($d)->display_name);
-			$dob = new Carbon((User::find($d)->getBirthDateAttribute()));
+		foreach($results as $d){
+			$patients[$i]['name'] = (User::find($d->id)->display_name);
+			$dob = new Carbon((User::find($d->id)->getBirthDateAttribute()));
 			$patients[$i]['dob'] = $dob->format('m-d-Y');
-			$patients[$i]['mrn'] = (User::find($d)->getMRNAttribute());
-			$patients[$i]['link'] = URL::route('patient.summary', array('patient' => $d));
-			$programObj = WpBlog::find((User::find($d)->blogId())) ? WpBlog::find((User::find($d)->blogId())) : "";
+			$patients[$i]['mrn'] = (User::find($d->id)->getMRNAttribute());
+			$patients[$i]['link'] = URL::route('patient.summary', array('patient' => $d->id));
+			$programObj = WpBlog::find((User::find($d->id)->blogId())) ? WpBlog::find((User::find($d->id)->blogId())) : "";
 			if($programObj->display_name){
 				$patients[$i]['program'] = $programObj->display_name;
 			} else { $patients[$i]['program'] = '';}
-			$patients[$i]['hint'] = $patients[$i]['name'] . " " . $patients[$i]['program'] . " " . $patients[$i]['dob'];
+			$patients[$i]['hint'] = $patients[$i]['name'] . " " . $patients[$i]['program'] . " " . $patients[$i]['dob'] . " MRN: " . $patients[$i]['mrn'];
 			$i++;
 		}$patients = (object) $patients;
 		return response()->json($patients);

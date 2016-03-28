@@ -2,7 +2,6 @@
     @extends('partials.providerUI')
 @endif
 
-
 <?php
 function biometricGoal($starting, $target, $bp = false)
 {
@@ -108,8 +107,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <li class="subareas__item subareas__item--wide col-sm-12">
                             @foreach(array_reverse($biometrics) as $key => $value)
                                 <div class="col-xs-5 print-row text-bold">{{ biometricGoal($value['starting'], $value['target'], $key)}} {{$key}}</div>
-                                <div class="col-xs-4 print-row text-bold">{{(biometricGoal($value['starting'], $value['target'], $key) == 'Maintain')? 'at' :  'to' }} {{$value['target']}}</div>
-                                <div class="col-xs-3 print-row">from {{$value['starting']}}</div>
+                                <div class="col-xs-4 print-row text-bold">{{(biometricGoal($value['starting'], $value['target'], $key) == 'Maintain')? 'at' :  'to' }} {{str_replace('sbp','mm Hg', $value['target'])}}</div>
+                                <div class="col-xs-3 print-row">from {{str_replace('sbp','mm Hg', $value['starting'])}}</div>
                             @endforeach
                         </li>
                     </ul>

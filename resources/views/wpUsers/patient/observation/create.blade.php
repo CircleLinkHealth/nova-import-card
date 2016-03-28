@@ -8,6 +8,9 @@
     <script type="text/javascript" src="{{ asset('/js/patient/observation-create.js') }}"></script>
     <div id="dtBox"></div>
     <div class="row" style="margin:60px 0px;">
+        <div class="col-lg-10 col-lg-offset-1">
+            @include('errors.errors')
+        </div>
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12">
@@ -65,7 +68,7 @@
 
                                                     <optgroup label="Lifestyle? Y or N">
                                                         <option value="SOL/CF_SOL_LFS_10">Exercise 20 minutes</option>
-                                                        <option value="SOL/CF_LFS_40">Eating Nutrient-rich Food</option>
+                                                        <option value="SOL/CF_LFS_40">Following Healthy Diet</option>
                                                         <option value="SOL/CF_LFS_80">Low salt diet</option>
                                                         <option value="SOL/CF_SOL_LFS_90">Diabetes diet</option>
                                                     </optgroup>

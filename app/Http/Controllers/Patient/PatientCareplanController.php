@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Patient;
 
+use App\CareItem;
 use App\Services\ReportsService;
 use App\Activity;
 use App\CareSection;
@@ -15,6 +16,8 @@ use App\UserMeta;
 use App\CPRulesPCP;
 use App\Role;
 use App\Services\CareplanUIService;
+use App\Services\MsgCPRules;
+use App\Services\ObservationService;
 use App\CLH\Repositories\UserRepository;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -291,12 +294,12 @@ class PatientCareplanController extends Controller
                 'user_email' => $newUserId . '@careplanmanager.com',
                 'user_pass' => $newUserId,
                 'user_status' => '1',
-                'user_nicename' => 'Happy Gilmore',
+                'user_nicename' => '',
                 'program_id' => $params->get('program_id'),
+                'display_name' => $params->get('first_name') . ' ' . $params->get('last_name'),
                 'roles' => [$role->id],
             ));
             $newUser = $userRepo->createNewUser($user, $params);
-            //$newUser = $userRepo->editUser($newUser, $params);
             return redirect(\URL::route('patient.demographics.show', array('patientId' => $newUser->ID)))->with('messages', ['Successfully created new patient with demographics.']);
         }
     }
@@ -355,11 +358,16 @@ class PatientCareplanController extends Controller
 
         // get providers
         $providers = array();
-        $providers = User::whereIn('ID', Auth::user()->viewableUserIds())
-            ->with('meta')
+        $providers = User::with('meta')
+            ->whereHas('programs', function ($q) use ($patient) {
+                $q->whereIn('program_id', $patient->viewableProgramIds());
+            })
             ->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'provider');
-            })->get();
+            })
+            ->orderby('display_name')
+            ->get();
+
         $phtml = '';
 
         $showApprovalButton = false;
@@ -521,6 +529,9 @@ class PatientCareplanController extends Controller
     public function storePatientCareplan(Request $request)
     {
 
+        $observationService = new ObservationService;
+        $msgCPRules = new MsgCPRules;
+
         // input
         $params = new ParameterBag($request->input());
 
@@ -577,8 +588,36 @@ class PatientCareplanController extends Controller
                 if (!$value && ($carePlanItem->ui_fld_type == 'SELECT' || $carePlanItem->ui_fld_type == 'CHECK')) {
                     $value = 'Inactive';
                 }
+                // update user item
                 if ($value) {
-                    // update user item
+                    // process starting observations
+                    if($carePlanItem->ui_track_as_observation == 'starting') {
+                        if(empty($carePlanItem->careItem->parent_id)) {
+                            continue 1;
+                        }
+                        // get parent item
+                        $parentCareItem = CareItem::where('id', '=', $carePlanItem->careItem->parent_id)->first();
+                        if(empty($parentCareItem)) {
+                            continue 1;
+                        }
+
+                        // set vars
+                        $obsMessageId = $parentCareItem->question->msg_id;
+                        $qsType  = $msgCPRules->getQsType($obsMessageId, $user->program_id);
+                        $obsKey = $parentCareItem->obs_key;
+
+                        // validate answer
+                        $answerResponse =  $msgCPRules->getValidAnswer($user->program_id, $qsType, $obsMessageId, $value, false);
+                        if(!$answerResponse) {
+                            return redirect()->back()->withErrors(['You entered an invalid value for ' . $carePlanItem->careItem->display_name . ', please review and resubmit.'])->withInput();
+                        }
+
+                        // update/store observation
+                        $observationService->storeObservationFromApp($user->ID, 0, $value, date("Y-m-d H:i:s"), $obsMessageId, $obsKey, 'America/New_York', 'ov_reading', 'Y');
+
+                    }
+
+                    // update user value
                     $carePlanItem->meta_value = $careplan->setCareItemUserValue($user, $carePlanItem->careItem->name, $value);
                 }
             }

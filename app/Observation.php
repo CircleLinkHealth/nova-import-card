@@ -165,17 +165,27 @@ class Observation extends Model {
 
     public static function getStartingObservation($userId, $message_id)
     {
+        /*
         $starting = Observation::whereHas('meta', function($q) use ($message_id)
         {
             $q->where('meta_key', 'starting_observation')
               ->where('message_id', $message_id);
 
         })->where('user_id', $userId)->lists('obs_value');
+        */
+
+        $starting = Observation::where('user_id', $userId)
+            ->whereHas('meta', function($q) use ($message_id)
+            {
+                $q->where('meta_key', 'starting_observation')
+                  ->where('message_id', $message_id);
+
+            })->first();
 
         if($starting){
-            return $starting[0];
+            return $starting->obs_value;
         } else {
-            $x = Observation::select('obs_value')->where('user_id', $userId)->where('obs_message_id', $message_id)->first();
+            $x = Observation::where('user_id', '=', $userId)->where('obs_message_id', '=', $message_id)->first();
             return isset($x->obs_value) ? $x->obs_value : 'N/A';
         }
     }

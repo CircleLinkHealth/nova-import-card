@@ -50,7 +50,7 @@ class UserRepository {
     public function editUser(User $wpUser, ParameterBag $params)
     {
         // the basics
-        $wpUser->user_nicename = '';
+        $wpUser->user_nicename = $params->get('user_nicename');
         $wpUser->user_login = $params->get('user_login');
         $wpUser->user_status = $params->get('user_status');
         $wpUser->program_id = $params->get('program_id');
