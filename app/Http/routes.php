@@ -8,7 +8,7 @@ Route::group( ['prefix' => 'api/v1.0'], function () {
     Route::group( ['middleware' => 'aprima.ccdapi.auth.adapter'], function () {
         //Should make this plural
         Route::post( 'ccd', 'CcdApi\Aprima\CcdApiController@uploadCcd' );
-        Route::post( 'reports', 'CcdApi\Aprima\CcdApiController@reports' );
+        Route::get( 'reports', 'CcdApi\Aprima\CcdApiController@reports' );
 
         //Let's make things RESTful from here onwards
         Route::get( 'ccm-times', 'CcdApi\Aprima\CCMTimeController@getCcmTime' );
