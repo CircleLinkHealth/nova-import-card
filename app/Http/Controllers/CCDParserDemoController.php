@@ -5,14 +5,13 @@ use App\Http\Controllers\Controller;
 use App\Services\ReportsService;
 use App\User;
 use Illuminate\Support\Facades\App;
-use Knp\Snappy\Pdf;
 
 class CCDParserDemoController extends Controller
 {
 
     public function index()
     {
-        $patientId = 740;
+        $patientId = 746;
         $reportService = new ReportsService();
         $careplan = $reportService->carePlanGenerator( [$patientId] );
 
@@ -33,8 +32,7 @@ class CCDParserDemoController extends Controller
             'isPdf' => true,
         ] );
 
-        //
-        return $pdf->output();
+        $pdf->save( base_path( 'storage/pdfs/hello.pdf' ), true );
     }
 
 }

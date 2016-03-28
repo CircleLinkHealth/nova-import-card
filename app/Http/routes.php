@@ -1,11 +1,5 @@
 <?php
 
-//$reports[] = ( new \App\Services\ActivityService() )
-//    ->getTotalActivityTimeForRange( 316, \Carbon\Carbon::yesterday(), \Carbon\Carbon::today() );
-//echo \Carbon\Carbon::yesterday();
-//echo  \Carbon\Carbon::today();
-//dd( $reports );
-
 //THIS IS FOR APRIMA ONLY
 Route::group( ['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
@@ -14,6 +8,7 @@ Route::group( ['prefix' => 'api/v1.0'], function () {
     Route::group( ['middleware' => 'aprima.ccdapi.auth.adapter'], function () {
         //Should make this plural
         Route::post( 'ccd', 'CcdApi\Aprima\CcdApiController@uploadCcd' );
+        Route::get( 'reports', 'CcdApi\Aprima\CcdApiController@reports' );
 
         //Let's make things RESTful from here onwards
         Route::get( 'ccm-times', 'CcdApi\Aprima\CCMTimeController@getCcmTime' );
@@ -122,6 +117,7 @@ Route::group( ['middleware' => 'auth'], function () {
 
     //CCD Parser Demo Route
     Route::get( 'ccd-parser-demo', 'CCDParserDemoController@index' );
+
 
 
     /****************************/
