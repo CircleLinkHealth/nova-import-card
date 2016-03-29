@@ -29,10 +29,10 @@ class CcdApiController extends Controller
 
         $sample = array();
         $sample[0] = [
-            'file_type' => 'careplan',
-            'providerId' => '100',
             'patientId' => '103',
-            'file' => base64_encode(file_get_contents(base_path('storage/pdfs/careplans/sample-careplan.pdf')))
+            'providerId' => '100',
+            'file' => base64_encode(file_get_contents(base_path('storage/pdfs/careplans/sample-careplan.pdf'))),
+            'fileType' => 'careplan',
         ];
 
         return response()->json($sample);
