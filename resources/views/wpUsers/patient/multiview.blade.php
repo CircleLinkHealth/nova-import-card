@@ -39,7 +39,12 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
         $config = $patient->userConfig();
         $billing = App\User::find($patient->getBillingProviderIDAttribute());
         $lead = App\User::find($patient->getLeadContactIDAttribute());
-        ?>
+       ?>
+<style type="text/css">
+    div.address { line-height: 1.1em; 
+        font-family: 'Roboto', sans-serif;
+    }
+</style>
         <div class="container">
             <section class="patient-summary">
                 <div class="patient-info__main">
@@ -60,15 +65,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <div class="col-xs-12" style="background-image: url(http://testcrisfield.careplanmanager.com/wp-content/themes/CLH_Provider/templates/images/clh_logo_sm.png); height: 70px; background-repeat: no-repeat;background-position: 50%;">
                                 <div class="col-xs-1 col-xs-offset-5"><!-- img src="http://testcrisfield.careplanmanager.com/wp-content/themes/CLH_Provider/templates/images/clh_logo.png" --></div>
                                 <div class="col-xs-7 address"><strong>On Behalf of</strong></div>
-                                <div class="col-xs-4 col-xs-offset-1 print-row text-right">{{checkIfExists($config,'address')}}</div>
-                                <div class="col-xs-7 address"> Jonathan Katz MD</div>
-                                <div class="col-xs-4 col-xs-offset-1 print-row text-right">{{checkIfExists($config,'city')}}, {{checkIfExists($config,'state')}} {{checkIfExists($config,'zip')}}</div>
+                                <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
+                                <div class="col-xs-7 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
+                                <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>
                                 <div class="col-xs-7 address">{{$patient->getPreferredLocationName()}}</div>
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div>
-                                <div class="col-xs-7 address">290 Harbor Drive</div>
+                                <div class="col-xs-7 address">{{$patient->getPreferredLocationAddress()->city}}, {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div>
                                 <!-- <div class="col-xs-12 address"></div> -->
-                                <div class="col-xs-12 address">Stamford, CT 06902</div>
                             </div>
                         </div>
 
@@ -88,9 +92,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         <div class="row gutter">
                             <div class="col-xs-12">
-                                <div class="col-xs-9 address">{{strtolower($patient->fullName)}}</div>
-                                <div class="col-xs-9 address">{{checkIfExists($config,'address')}}</div>
-                                <div class="col-xs-9 address"> {{checkIfExists($config,'city')}}, {{checkIfExists($config,'state')}} {{checkIfExists($config,'zip')}}</div>
+                                <div class="col-xs-9 address">{{strtoupper($patient->fullName)}}</div>
+                                <div class="col-xs-9 address">{{strtoupper($patient->address)}}</div>
+                                <div class="col-xs-9 address"> {{strtoupper($patient->city)}}, {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
                             </div>
                         </div>
                         <div class="row address">
@@ -100,13 +104,13 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <div class="row gutter">
                         </div>
                         <div class="row gutter">
-                            <div class="col-xs-10 text-right"><?= date("M d, Y") ?></div>
+                            <div class="col-xs-10 text-right"><?= date("F d, Y") ?></div>
                         </div>
                         <div class="row gutter">
                             <div class="col-xs-10 welcome-copy">
                                 <div class="row gutter">
                                     <BR><BR><BR>
-                                    Dear {{strtolower($patient->fullName)}},</div>
+                                    Dear {{ucfirst(strtolower($patient->first_name))}} {{ucfirst(strtolower($patient->last_name))}},</div>
                                 <div class="row gutter">
                                 </div>
                                 <div class="row gutter" style="line-height: 1.0em;">
@@ -440,5 +444,6 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <!-- /OTHER INFORMATION -->
             </section>
         </div>
+        <div class="row pb-before"></div>
     @endforeach
 @stop
