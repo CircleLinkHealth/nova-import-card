@@ -7,6 +7,7 @@ use App\CLH\CCD\Ccda;
 use App\CLH\CCD\ItemLogger\CcdProviderLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
+use App\ForeignId;
 use App\User;
 
 class PrimaryProviders implements ParsingStrategy
@@ -44,6 +45,20 @@ class PrimaryProviders implements ParsingStrategy
                 $providerLog = CcdProviderLog::find($docId);
                 $providerLog->import = true;
                 $providerLog->save();
+
+                /**
+                 * BAD!
+                 * @todo: make EHR models after done with Aprima API
+                 */
+                if (isset($providerLog->provider_id)) {
+                    $attributes = [
+                        'user_id' => $provider->ID,
+                        'foreign_id' => $providerLog->provider_id,
+                        'system' => ForeignId::APRIMA
+                    ];
+                    
+                    $foreignId = ForeignId::updateOrCreate($attributes, $attributes);
+                }
 
                 $careTeam[] = $provider;
             }

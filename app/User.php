@@ -130,6 +130,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// START RELATIONSHIPS
 
+	public function foreignId()
+	{
+		return $this->hasMany(ForeignId::class);
+	}
+
 	public function locations()
 	{
 		return $this->belongsToMany(Location::class);

@@ -129,6 +129,7 @@ class CcdToLogTranformer
         $phones = UserMetaParserHelpers::getAllPhoneNumbers( $provider->phones );
 
         return [
+            'provider_id' => isset($provider->provider_id) ? $provider->provider_id : null,
             'npi' => isset($provider->npi) ? $provider->npi : null,
             'first_name' => isset($provider->name->given) && array_key_exists( 0, $provider->name->given ) ? $provider->name->given[ 0 ] : null,
             'last_name' => isset($provider->name->family) ? $provider->name->family : null,
