@@ -89,14 +89,12 @@
                                             }
                                         }
                                     },
-                                    { id:"careplan_status",    header:["CP Status",{content:"selectFilter", placeholder:"Filter"}] , width:125,
+                                    { id:"careplan_status",    header:["CP Status",{content:"selectFilter", placeholder:"Filter"}] , width:115,
                                         template: function (obj) {
                                             return ""+obj.careplan_status_link+"";}},
-                                    { id:"dob",   header:["DOB",{content:"dateFilter", placeholder:"Filter"}],    width:100, sort:'string'},
+                                    { id:"program_name",   header:["Program",{content:"selectFilter", placeholder:"Filter"}],    width:175, sort:'string'},
+                                    { id:"provider",   header:["Provider",{content:"selectFilter", placeholder:"Filter"}],    width:150, sort:'string'},
                                     { id:"phone",   header:["Phone",{content:"textFilter", placeholder:"Filter"}],    width:120},
-                                    { id:"age",    header:["Age",{content:"numberFilter", placeholder:"Filter"}] , width:50,
-                                        template: function (obj) {
-                                            return "<span style='float:right;'>"+obj.age+"</span>";}},
                                     { id:"reg_date",    header:["Registered On",{content:"dateFilter", placeholder:"Filter"}] , width:120, sort:'string',
                                         template: function (obj) {
                                             return "<span style='float:right;'>"+obj.reg_date+"</span>";}},
@@ -125,6 +123,7 @@
                             obs_alerts_dtable.sort("#patient_name#");
                             obs_alerts_dtable.filter("#careplan_printed#", "No");
                             obs_alerts_dtable.hideColumn("last_name");
+                            obs_alerts_dtable.hideColumn("phone");
                         </script>
                         <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("last_name");obs_alerts_dtable.hideColumn("first_name");obs_alerts_dtable.sort("#last_name#");this.style.display = "none";getElementById("firstName_btn").style.display = "inline-block";'>
                         <input id='firstName_btn' type='button' class='btn btn-primary' value='Show by First Name' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("last_name");obs_alerts_dtable.showColumn("first_name");obs_alerts_dtable.sort("#first_name#");this.style.display = "none";getElementById("lastName_btn").style.display = "inline-block";'>
