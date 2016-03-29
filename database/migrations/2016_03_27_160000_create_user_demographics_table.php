@@ -43,9 +43,9 @@ class CreateUserDemographicsTable extends Migration {
 				$table->timestamps();
 			});
 		}
-
 		// seed data
 		$users = User::with('meta', 'patientInfo')->get();
+		echo 'Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
 			echo 'Processing user '.$user->ID.PHP_EOL;
 			echo 'Build User'.PHP_EOL;
