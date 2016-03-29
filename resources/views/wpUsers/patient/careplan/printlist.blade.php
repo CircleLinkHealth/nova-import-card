@@ -23,7 +23,7 @@
             <div class="main-form-container col-lg-10 col-lg-offset-1">
                 <div class="row">
                     <div class="col-sm-2">
-                        <h4 class="time-report__month">February 2016</h4>
+                        <h4 class="time-report__month"><?= date("F Y") ?></h4>
                     </div>
                     <div class="col-sm-10">
                     </div>
@@ -121,9 +121,9 @@
                                 },
                                 data: {!! $patientJson !!}
 		});
-                            webix.event(window, "resize", function(){ obs_alerts_dtable.adjust(); })
+                            webix.event(window, "resize", function(){ obs_alerts_dtable.adjust(); }),
                             obs_alerts_dtable.sort("#patient_name#");
-                            obs_alerts_dtable.filter("#careplan_last_printed#");
+                            obs_alerts_dtable.filter("#careplan_printed#", "No");
                             obs_alerts_dtable.hideColumn("last_name");
                         </script>
                         <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("last_name");obs_alerts_dtable.hideColumn("first_name");obs_alerts_dtable.sort("#last_name#");this.style.display = "none";getElementById("firstName_btn").style.display = "inline-block";'>
@@ -136,7 +136,7 @@
                             // obs_alerts_dtable.hideColumn("status_ccm");
                         </script>
                     <script type="text/javascript">
-                        window.onload=filterText('');
+                        // window.onload=filterText('');
                         // obs_alerts_dtable.hideColumn("ccm_status");
                     </script>
                     @else
