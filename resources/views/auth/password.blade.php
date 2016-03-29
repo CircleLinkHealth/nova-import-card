@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>CarePlanManager - Log In</title>
+	<title>CarePlanManager - Password Reset</title>
 
 	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
 	<link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
@@ -41,6 +41,10 @@
 <div class="container-fluid">
 	<section class="main-form">
 		<div class="row">
+			<div class="col-lg-8 col-lg-offset-2">
+				@include('errors.errors')
+				@include('errors.messages')
+			</div>
 			<div class="main-form-container col-lg-4 col-lg-offset-4">
 				<div class="row">
 					<div class="main-form-title main-form-title--login">
