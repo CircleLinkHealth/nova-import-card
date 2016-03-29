@@ -47,7 +47,7 @@ trait ResetsPasswords {
         if ($validation->fails())
         {
             //return response()->json(['message' => $validation->errors()->first('email')], 400);
-            redirect()->back()->withErrors(['email' => $validation->errors()->first('email')]);
+            return redirect()->back()->withErrors($validation)->withInput();
         }
 
         $response = $this->passwords->sendResetLink($request->only('email'), function($m)
