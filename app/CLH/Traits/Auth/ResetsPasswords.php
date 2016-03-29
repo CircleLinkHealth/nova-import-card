@@ -46,7 +46,8 @@ trait ResetsPasswords {
 
         if ($validation->fails())
         {
-            return response()->json(['message' => $validation->errors()->first('email')], 400);
+            //return response()->json(['message' => $validation->errors()->first('email')], 400);
+            redirect()->back()->withErrors(['email' => $validation->errors()->first('email')]);
         }
 
         $response = $this->passwords->sendResetLink($request->only('email'), function($m)
@@ -58,7 +59,7 @@ trait ResetsPasswords {
         {
             case PasswordBroker::RESET_LINK_SENT:
                 return $request->header('client') == 'mobi' ? response()->json(['message' => trans($response)], 200)
-                    : redirect()->back()->with('status', trans($response));
+                    : redirect(\URL::route('login', array()))->with('messages', [trans($response)]);
 
             case PasswordBroker::INVALID_USER:
                 return $request->header('client') == 'mobi' ? response()->json(['message' => trans($response)], 404)

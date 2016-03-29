@@ -41,6 +41,10 @@
 <div class="container-fluid">
 	<section class="main-form">
 		<div class="row">
+			<div class="col-lg-8 col-lg-offset-2">
+				@include('errors.errors')
+				@include('errors.messages')
+			</div>
 			<div class="main-form-container col-lg-4 col-lg-offset-4">
 				<div class="row">
 					<div class="main-form-title main-form-title--login">
