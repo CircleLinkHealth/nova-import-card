@@ -32,17 +32,19 @@
 <nav class="navbar primary-navbar">
 	<div class="container-fluid">
 		<div class="navbar-header">
-			<a href="{{ url('/') }}" class="navbar-brand"><img src="../img/clh_logo_lt.png" alt="CarePlan Manager" width='50px' style="position:relative;top:-15px"></a>
+			<a href="{{ url('/') }}" class="navbar-brand"><img src="../../img/clh_logo_lt.png" alt="CarePlan Manager" width='50px' style="position:relative;top:-15px"></a>
 			<a href="{{ url('/') }}" class="navbar-title Xcollapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>
 		</div>
 	</div><!-- /container-fluid -->
 
 </nav><!-- /navbar -->
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
-			<div class="panel panel-default">
-				<div class="panel-heading">Reset Password</div>
+<div class="container">
+	<section class="main-form">
+		<div class="row">
+			<div class="main-form-container col-lg-4 col-lg-offset-4">
+				<div class="row">
+					<div class="main-form-title main-form-title--login">
+					<h2>Reset Password</h2></div>
 				<div class="panel-body">
 					@if (count($errors) > 0)
 						<div class="alert alert-danger">
