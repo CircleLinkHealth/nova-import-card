@@ -1,8 +1,11 @@
 <?php namespace App\Http\Controllers\CcdApi\Aprima;
 
+use App\Activity;
 use App\CLH\CCD\Ccda;
+use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\CCD\ItemLogger\CcdItemLogger;
+use App\CLH\Contracts\Repositories\UserRepository;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\ForeignId;
 use App\Http\Requests;
@@ -12,6 +15,7 @@ use App\CLH\CCD\ValidatesQAImportOutput;
 use App\PatientReports;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class CcdApiController extends Controller
@@ -20,10 +24,128 @@ class CcdApiController extends Controller
     use ValidatesQAImportOutput;
 
     private $repo;
+    private $users;
 
-    public function __construct(CCDImporterRepository $repo)
+    public function __construct(CCDImporterRepository $repo, UserRepository $users)
     {
         $this->repo = $repo;
+        $this->users = $users;
+    }
+
+    public function getCcmTime()
+    {
+        $demo = [
+            [
+                'patientId' => 103,
+                'providerId' => 100,
+                'careEvents' => [
+                    [
+                        'servicePerson' => 'Bob',
+                        'startingDateTime' => '2015-05-26 18:32:00',
+                        'length' => '10',
+                        'lengthUnit' => 'seconds',
+                        'commentString' => 'Call Center Contact'
+                    ],
+                    [
+                        'servicePerson' => 'Marie',
+                        'startingDateTime' => '2015-05-26 18:12:00',
+                        'length' => '8',
+                        'lengthUnit' => 'seconds',
+                        'commentString' => 'Blood Pressure Monitor'
+                    ]
+                ]
+            ],
+            [
+                'patientId' => 105,
+                'providerId' => 101,
+                'careEvents' => [
+                    [
+                        'servicePerson' => 'Mario',
+                        'startingDateTime' => '2015-05-26 18:32:00',
+                        'length' => '5',
+                        'commentString' => 'Measure Weigh'
+                    ],
+                    [
+                        'servicePerson' => 'John',
+                        'startingDateTime' => '2015-05-26 18:12:00',
+                        'length' => '2',
+                        'commentString' => 'Call Center Contact'
+                    ]
+                ]
+            ]
+        ];
+
+		return json_encode($demo);
+
+        if ( !\Session::has( 'apiUser' ) ) {
+            response()->json( ['error' => 'Authentication failed.'], 403 );
+        }
+
+        $user = \Session::get( 'apiUser' );
+
+        $apiUserLocation = $user->locations;
+
+        try {
+            $locationId = $apiUserLocation[ 0 ]->pivot->location_id;
+        } catch ( \Exception $e ) {
+            return response()->json( 'Could not resolve a Location from your User.', 400 );
+        }
+
+        $activitiesTable = ( new Activity() )->getTable();
+        $ccdaTable = ( new Ccda() )->getTable();
+        $patientTable = ( new DemographicsImport() )->getTable();
+        $foreignIdTable = ( new ForeignId() )->getTable();
+        $userTable = ( new User() )->getTable();
+
+        $patientAndProviderIds = DemographicsImport::select( DB::raw( "$patientTable.mrn_number as patientId,
+                $ccdaTable.patient_id as clhPatientUserId,
+                $foreignIdTable.foreign_id as providerId,
+                $patientTable.provider_id as clhProviderUserId"
+        ) )
+            ->join( $ccdaTable, "$ccdaTable.id", '=', "$patientTable.ccda_id" )
+            ->whereNotNull( "$ccdaTable.patient_id" )
+            ->join( $foreignIdTable, "$foreignIdTable.user_id", '=', "$patientTable.provider_id" )
+            ->where( "$foreignIdTable.system", '=', ForeignId::APRIMA )
+            ->whereNotNull( "$foreignIdTable.foreign_id" )
+            ->whereLocationId( $locationId )
+            ->get();
+
+        foreach ( $patientAndProviderIds as $ids ) {
+            $activities = Activity::select( DB::raw( "
+                type as commentString,
+                duration as length,
+                duration_unit as lengthUnit,
+                $userTable.display_name as servicePerson
+                " ) )
+                ->whereProviderId( $ids->clhProviderUserId )
+                ->wherePatientId( $ids->clhPatientUserId )
+                ->join( $userTable, "$userTable.ID", '=', "$activitiesTable.provider_id" )
+                ->get();
+
+            if ($activities->isEmpty()) continue;
+
+            $careEvents = $activities->map( function ($careEvent) {
+                return [
+                    'servicePerson' => $careEvent->servicePerson,
+                    'startingDateTime' => $careEvent->startingDateTime,
+                    'length' => $careEvent->length,
+                    'lengthUnit' => $careEvent->lengthUnit,
+                    'commentString' => $careEvent->commentString,
+                ];
+            } );
+
+            $results[] = [
+                'patientId' => $ids->patientId,
+                'providerId' => $ids->providerId,
+                'careEvents' => [
+                    $careEvents
+                ]
+            ];
+        }
+
+        return isset($results)
+            ? response()->json($results, 200)
+            : response()->json(["message" => "No Pending Reports"], 404);
     }
 
     public function reports(Request $request)
@@ -51,7 +173,6 @@ class CcdApiController extends Controller
                 'patientId' => $report->patient_mrn,
                 'providerId' => ForeignId::APRIMA,
                 'file' => base64_encode(file_get_contents(base_path('/storage/pdfs/careplans/sample-careplan.pdf'))),
-                //'file' => base64_encode(file_get_contents(base_path($report->file_path))),
                 'fileType' => $report->file_type
             ];
             $i++;

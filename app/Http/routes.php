@@ -1,5 +1,4 @@
 <?php
-
 //THIS IS FOR APRIMA ONLY
 Route::group( ['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
@@ -11,7 +10,7 @@ Route::group( ['prefix' => 'api/v1.0'], function () {
         Route::get( 'reports', 'CcdApi\Aprima\CcdApiController@reports' );
 
         //Let's make things RESTful from here onwards
-        Route::get( 'ccm-times', 'CcdApi\Aprima\CCMTimeController@getCcmTime' );
+        Route::get( 'ccm-times', 'CcdApi\Aprima\CcdApiController@getCcmTime' );
     } );
 } );
 
