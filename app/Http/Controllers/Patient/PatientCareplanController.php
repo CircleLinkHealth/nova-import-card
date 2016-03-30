@@ -554,6 +554,7 @@ class PatientCareplanController extends Controller
                 if (Auth::user()->hasRole('provider')) {
                     $user->carePlanStatus = 'provider_approved'; // careplan_status
                     $user->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver
+
                     $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
                 } else {
                     $user->carePlanStatus = 'qa_approved'; // careplan_status
