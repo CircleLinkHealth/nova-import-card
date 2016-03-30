@@ -17,6 +17,7 @@
         #bloodhound li.active{
             background-color: #eee;
         }
+
         .typeahead,
         .tt-query,
         .tt-hint {
@@ -51,7 +52,9 @@
         }
 
         .tt-menu {
-          width: 422px;
+          max-height: 250px;
+          overflow-y: auto;
+          width: 600px;
           margin: 12px 0;
           padding: 8px 0;
           background-color: #fff;
@@ -68,8 +71,8 @@
         .tt-suggestion {
           text-align: left;
           padding: 3px 20px;
-          font-size: 12px;
-          line-height: 24px;
+          font-size: 16px;
+          line-height: 28px;
         }
 
         .tt-suggestion:hover {
@@ -135,6 +138,7 @@
                 name: 'User_list',
                 // the key from the array we want to display (name,id,email,etc...)
                 displayKey: 'hint',
+                limit: 50,
                 templates: {
                     empty: [
                         '<div class="empty-message">No Patients Found</div>'

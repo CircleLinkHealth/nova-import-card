@@ -23,7 +23,7 @@
             <div class="main-form-container col-lg-10 col-lg-offset-1">
                 <div class="row">
                     <div class="col-sm-2">
-                        <h4 class="time-report__month">February 2016</h4>
+                        <h4 class="time-report__month"><?= date("F Y") ?></h4>
                     </div>
                     <div class="col-sm-10">
                     </div>
@@ -89,14 +89,12 @@
                                             }
                                         }
                                     },
-                                    { id:"careplan_status",    header:["CP Status",{content:"selectFilter", placeholder:"Filter"}] , width:125,
+                                    { id:"careplan_status",    header:["CP Status",{content:"selectFilter", placeholder:"Filter"}] , width:115,
                                         template: function (obj) {
                                             return ""+obj.careplan_status_link+"";}},
-                                    { id:"dob",   header:["DOB",{content:"dateFilter", placeholder:"Filter"}],    width:100, sort:'string'},
+                                    { id:"program_name",   header:["Program",{content:"selectFilter", placeholder:"Filter"}],    width:175, sort:'string'},
+                                    { id:"provider",   header:["Provider",{content:"selectFilter", placeholder:"Filter"}],    width:150, sort:'string'},
                                     { id:"phone",   header:["Phone",{content:"textFilter", placeholder:"Filter"}],    width:120},
-                                    { id:"age",    header:["Age",{content:"numberFilter", placeholder:"Filter"}] , width:50,
-                                        template: function (obj) {
-                                            return "<span style='float:right;'>"+obj.age+"</span>";}},
                                     { id:"reg_date",    header:["Registered On",{content:"dateFilter", placeholder:"Filter"}] , width:120, sort:'string',
                                         template: function (obj) {
                                             return "<span style='float:right;'>"+obj.reg_date+"</span>";}},
@@ -121,10 +119,11 @@
                                 },
                                 data: {!! $patientJson !!}
 		});
-                            webix.event(window, "resize", function(){ obs_alerts_dtable.adjust(); })
+                            webix.event(window, "resize", function(){ obs_alerts_dtable.adjust(); }),
                             obs_alerts_dtable.sort("#patient_name#");
-                            obs_alerts_dtable.filter("#careplan_last_printed#");
+                            obs_alerts_dtable.filter("#careplan_printed#", "No");
                             obs_alerts_dtable.hideColumn("last_name");
+                            obs_alerts_dtable.hideColumn("phone");
                         </script>
                         <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("last_name");obs_alerts_dtable.hideColumn("first_name");obs_alerts_dtable.sort("#last_name#");this.style.display = "none";getElementById("firstName_btn").style.display = "inline-block";'>
                         <input id='firstName_btn' type='button' class='btn btn-primary' value='Show by First Name' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("last_name");obs_alerts_dtable.showColumn("first_name");obs_alerts_dtable.sort("#first_name#");this.style.display = "none";getElementById("lastName_btn").style.display = "inline-block";'>
@@ -136,7 +135,7 @@
                             // obs_alerts_dtable.hideColumn("status_ccm");
                         </script>
                     <script type="text/javascript">
-                        window.onload=filterText('');
+                        // window.onload=filterText('');
                         // obs_alerts_dtable.hideColumn("ccm_status");
                     </script>
                     @else

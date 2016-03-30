@@ -10,24 +10,3 @@
         </div>
     @endif
 @endif
-
-@if (isset($messages))
-    @if (count($messages) > 10000)
-        <div class="alert alert-success success">
-            <strong>Messages:</strong><br><br>
-            <ul>
-                @foreach ($messages as $message)
-                    <li>{{ $message }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-@endif
-
-<script>
-    $(".success").slideDown(function() {
-        setTimeout(function() {
-            $(".success").slideUp();
-        }, 3000);
-    });
-</script>

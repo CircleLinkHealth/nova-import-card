@@ -122,6 +122,7 @@ class PatientCareplanController extends Controller
                     'ccm_time' => $patient->monthlyTime,
                     'ccm_seconds' => $patient->monthlyTime,
                     'provider' => $bpName,
+                    'program_name' => $patient->primaryProgram->display_name,
                     'careplan_last_printed' => $printed_date,
                     'careplan_printed' => $printed_status
                 );
