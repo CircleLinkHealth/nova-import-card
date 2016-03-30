@@ -62,8 +62,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="patient-info__main">
                         <div class="row gutter">
-                            <div class="col-xs-12" style="background-image: url(http://testcrisfield.careplanmanager.com/wp-content/themes/CLH_Provider/templates/images/clh_logo_sm.png); height: 70px; background-repeat: no-repeat;background-position: 50%;">
-                                <div class="col-xs-1 col-xs-offset-5"><!-- img src="http://testcrisfield.careplanmanager.com/wp-content/themes/CLH_Provider/templates/images/clh_logo.png" --></div>
+                            <div class="col-xs-12" style="background-image: url('../img/clh_logo_sm.png'); height: 70px; background-repeat: no-repeat;background-position: 50%;">
+                                <div class="col-xs-1 col-xs-offset-5"></div>
                                 <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
                                 <div class="col-xs-7 address">{{$billing->fullName}} {{$billing->qualification}}</div>
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
