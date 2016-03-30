@@ -16,6 +16,7 @@ use App\CLH\CCD\ValidatesQAImportOutput;
 use App\CLH\CCD\CcdVendor;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
+use App\CLH\Repositories\UserRepository;
 use Illuminate\Support\Facades\Log;
 
 class QAImportManager
@@ -73,7 +74,7 @@ class QAImportManager
          * The following Sections are the same for each CCD
          */
 
-        $demographics = DemographicsImport::firstOrNew(['ccda_id' => $this->ccda->id]);
+        $demographics = DemographicsImport::firstOrNew( ['ccda_id' => $this->ccda->id] );
         $demographics->vendor_id = $this->ccda->vendor_id;
         $demographics->program_id = $this->blogId;
 
@@ -90,12 +91,12 @@ class QAImportManager
         /**
          * Parse provider (Lead Contact and Billing)
          */
-        $primaryProviderParser = new PrimaryProvidersParser();
+        $primaryProviderParser = new PrimaryProvidersParser( new UserRepository() );
         //we well get back user objects (providers)
         $users = $primaryProviderParser->parse( $this->ccda );
         $output[ 'provider' ] = $users;
 
-        $demographics->provider_id = isset($users[0]) ?$users[0]->ID : null;
+        $demographics->provider_id = isset($users[ 0 ]) ? $users[ 0 ]->ID : null;
 
         /**
          * Parse Provider Location
@@ -104,7 +105,7 @@ class QAImportManager
         $locations = $locationParser->parse( $this->ccda );
         $output[ 'location' ] = $locations;
 
-        $demographics->location_id = isset($locations[0]) ? $locations[0]->id : null;
+        $demographics->location_id = isset($locations[ 0 ]) ? $locations[ 0 ]->id : null;
 
         /**
          * Parse and Import User Config
@@ -130,8 +131,6 @@ class QAImportManager
         $demographics->preferred_contact_timezone = $userConfig->preferred_contact_timezone;
         $demographics->save();
 
-        return $this->validateQAImportOutput($output, $this->ccda);
-
-
+        return $this->validateQAImportOutput( $output, $this->ccda );
     }
 }

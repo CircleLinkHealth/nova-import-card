@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\CLH\CCD\ImportedItems\DemographicsImport;
 use DateTime;
 use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\Authenticatable;
@@ -143,6 +144,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function meta()
 	{
 		return $this->hasMany('App\UserMeta', 'user_id', 'ID');
+	}
+
+	public function patientDemographics()
+	{
+		return $this->hasMany(DemographicsImport::class, 'provider_id');
 	}
 
     public function comment()
