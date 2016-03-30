@@ -5,6 +5,8 @@ use Franzose\ClosureTable\Models\Entity;
 
 class Location extends Entity implements LocationInterface
 {
+    //Aprima's constant location ID.
+    const APRIMA_ID = 26;
     /**
      * The table associated with the model.
      *
