@@ -75,7 +75,7 @@ class CcdApiController extends Controller
             ]
         ];
 
-		return json_encode($demo);
+//		return json_encode($demo);
 
         if ( !\Session::has( 'apiUser' ) ) {
             response()->json( ['error' => 'Authentication failed.'], 403 );
@@ -83,13 +83,9 @@ class CcdApiController extends Controller
 
         $user = \Session::get( 'apiUser' );
 
-        $apiUserLocation = $user->locations;
+//        $user = User::find( 747 );
 
-        try {
-            $locationId = $apiUserLocation[ 0 ]->pivot->location_id;
-        } catch ( \Exception $e ) {
-            return response()->json( 'Could not resolve a Location from your User.', 400 );
-        }
+        $locationId = $this->getApiUserLocation( $user );
 
         $activitiesTable = ( new Activity() )->getTable();
         $ccdaTable = ( new Ccda() )->getTable();
@@ -122,7 +118,7 @@ class CcdApiController extends Controller
                 ->join( $userTable, "$userTable.ID", '=', "$activitiesTable.provider_id" )
                 ->get();
 
-            if ($activities->isEmpty()) continue;
+            if ( $activities->isEmpty() ) continue;
 
             $careEvents = $activities->map( function ($careEvent) {
                 return [
@@ -144,115 +140,115 @@ class CcdApiController extends Controller
         }
 
         return isset($results)
-            ? response()->json($results, 200)
-            : response()->json(["message" => "No Pending Reports"], 404);
+            ? response()->json( $results, 200 )
+            : response()->json( ["message" => "No Pending Reports"], 404 );
     }
 
     public function reports(Request $request)
     {
 
-        if ( ! \Session::has( 'apiUser' ) ) {
+        if ( !\Session::has( 'apiUser' ) ) {
             response()->json( ['error' => 'Authentication failed.'], 403 );
         }
 
         $user = \Session::get( 'apiUser' );
 
-        $providerLocations = $user->locations;
-        $locationId = $providerLocations[ 0 ]->pivot->location_id;
+        $locationId = $this->getApiUserLocation( $user );
+
         //$pendingReports = PatientReports::where('location_id',$locationId);
-        $pendingReports = PatientReports::where('location_id',$locationId)->get();
-        PatientReports::where('location_id',$locationId)->delete();
-        if($pendingReports->isEmpty()){
-            return response()->json(["message" => "No Pending Reports"], 404);
+        $pendingReports = PatientReports::where( 'location_id', $locationId )->get();
+        PatientReports::where( 'location_id', $locationId )->delete();
+        if ( $pendingReports->isEmpty() ) {
+            return response()->json( ["message" => "No Pending Reports"], 404 );
         }
 
         $json = array();
         $i = 0;
-        foreach($pendingReports as $report){
-            $json[$i] = [
+        foreach ( $pendingReports as $report ) {
+            $json[ $i ] = [
                 'patientId' => $report->patient_mrn,
                 'providerId' => ForeignId::APRIMA,
-                'file' => base64_encode(file_get_contents(base_path('/storage/pdfs/careplans/sample-careplan.pdf'))),
+                'file' => base64_encode( file_get_contents( base_path( '/storage/pdfs/careplans/sample-careplan.pdf' ) ) ),
                 'fileType' => $report->file_type
             ];
             $i++;
         }
 
-        return response()->json($json,200,['fileCount'=> count($json)]);
+        return response()->json( $json, 200, ['fileCount' => count( $json )] );
     }
 
     public function uploadCcd(Request $request)
     {
-        if (!\Session::has('apiUser')) {
-            response()->json(['error' => 'Authentication failed.'], 403);
+        if ( !\Session::has( 'apiUser' ) ) {
+            response()->json( ['error' => 'Authentication failed.'], 403 );
         }
 
-        $user = \Session::get('apiUser');
+        $user = \Session::get( 'apiUser' );
 
-        if (!$user->can('post-ccd-to-api')) {
-            response()->json(['error' => 'You are not authorized to submit CCDs to this API.'], 403);
+        if ( !$user->can( 'post-ccd-to-api' ) ) {
+            response()->json( ['error' => 'You are not authorized to submit CCDs to this API.'], 403 );
         }
 
-        if (!$request->has('file')) {
-            response()->json(['error' => 'No file found on the request.'], 422);
+        if ( !$request->has( 'file' ) ) {
+            response()->json( ['error' => 'No file found on the request.'], 422 );
         }
 
         $programId = $user->blogId();
 
         try {
-            $xml = base64_decode($request->input('file'));
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to base64_decode CCD.'], 400);
+            $xml = base64_decode( $request->input( 'file' ) );
+        } catch ( \Exception $e ) {
+            return response()->json( ['error' => 'Failed to base64_decode CCD.'], 400 );
         }
 
-        $ccdObj = Ccda::create([
+        $ccdObj = Ccda::create( [
             'user_id' => $user->ID,
             'vendor_id' => 1,
             'xml' => $xml,
-        ]);
+        ] );
 
         //We are saving the JSON CCD after we save the XML, just in case Parsing fails
         //If Parsing fails we let ourselves know, but not Aprima.
         try {
-            $json = $this->repo->toJson($xml);
+            $json = $this->repo->toJson( $xml );
             $ccdObj->json = $json;
             $ccdObj->save();
-        } catch (\Exception $e) {
-            if (app()->environment('production')) {
-                $this->notifyAdmins($user, $ccdObj, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
+        } catch ( \Exception $e ) {
+            if ( app()->environment( 'production' ) ) {
+                $this->notifyAdmins( $user, $ccdObj, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage() );
             }
-            return response()->json(['message' => 'CCD uploaded successfully.'], 201);
+            return response()->json( ['message' => 'CCD uploaded successfully.'], 201 );
         }
 
 
         //If Logging fails we let ourselves know, but not Aprima.
         try {
-            $logger = new CcdItemLogger($ccdObj);
+            $logger = new CcdItemLogger( $ccdObj );
             $logger->logAll();
-        } catch (\Exception $e) {
-            if (app()->environment('production')) {
-                $this->notifyAdmins($user, $ccdObj, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
+        } catch ( \Exception $e ) {
+            if ( app()->environment( 'production' ) ) {
+                $this->notifyAdmins( $user, $ccdObj, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage() );
             }
-            return response()->json(['message' => 'CCD uploaded successfully.'], 201);
+            return response()->json( ['message' => 'CCD uploaded successfully.'], 201 );
         }
 
         //If Logging fails we let ourselves know, but not Aprima.
         //Yes. Repetitions. I KNOW!
         try {
-            $importer = new QAImportManager($programId, $ccdObj);
+            $importer = new QAImportManager( $programId, $ccdObj );
             $output = $importer->generateCarePlanFromCCD();
-        } catch (\Exception $e) {
-            if (app()->environment('production')) {
-                $this->notifyAdmins($user, $ccdObj, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
+        } catch ( \Exception $e ) {
+            if ( app()->environment( 'production' ) ) {
+                $this->notifyAdmins( $user, $ccdObj, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage() );
             }
-            return response()->json(['message' => 'CCD uploaded successfully.'], 201);
+            return response()->json( ['message' => 'CCD uploaded successfully.'], 201 );
         }
 
-        if (app()->environment('production')) {
-            $this->notifyAdmins($user, $ccdObj, 'well');
+        if ( app()->environment( 'production' ) ) {
+            $this->notifyAdmins( $user, $ccdObj, 'well' );
         }
 
-        return response()->json(['message' => 'CCD uploaded successfully.'], 201);
+        return response()->json( ['message' => 'CCD uploaded successfully.'], 201 );
     }
 
     /**
@@ -283,9 +279,22 @@ class CcdApiController extends Controller
             'line' => $line,
         ];
 
-        Mail::send($view, $data, function ($message) use ($recipients, $subject) {
-            $message->from('aprima-api@careplanmanager.com', 'CircleLink Health');
-            $message->to($recipients)->subject($subject);
-        });
+        Mail::send( $view, $data, function ($message) use ($recipients, $subject) {
+            $message->from( 'aprima-api@careplanmanager.com', 'CircleLink Health' );
+            $message->to( $recipients )->subject( $subject );
+        } );
+    }
+
+    public function getApiUserLocation($user)
+    {
+        $apiUserLocation = $user->locations;
+
+        try {
+            $locationId = $apiUserLocation[ 0 ]->pivot->location_id;
+        } catch ( \Exception $e ) {
+            return response()->json( 'Could not resolve a Location from your User.', 400 );
+        }
+
+        return $locationId;
     }
 }
