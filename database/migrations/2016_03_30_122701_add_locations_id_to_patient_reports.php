@@ -14,8 +14,10 @@ class AddLocationsIdToPatientReports extends Migration {
 	{
 		Schema::table('patient_reports', function(Blueprint $table)
 		{
-			$table->unsignedInteger('location_id');
-			$table->foreign('location_id')->references('id')->on('lv_locations')
+			$table->unsignedInteger('location_id')->after('file_path');
+			$table->foreign('location_id')
+				->references('id')
+				->on('lv_locations')
 				->onDelete('cascade')
 				->onUpdate('cascade');
 		});

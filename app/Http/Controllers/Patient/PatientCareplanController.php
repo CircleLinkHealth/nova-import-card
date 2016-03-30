@@ -561,10 +561,12 @@ class PatientCareplanController extends Controller
                     //      Since there isn't a way to get the provider's location,
                     //      we assume the patient's location and check it that
                     //      is a child of Aprima's Location.
-                    $location = $user->locations;
-                    $locationId = $location[ 0 ]->pivot->location_id;
-                    if($location[ 0 ]->parent_id == Location::APRIMA_ID){
-                        (new ReportsService())->createPatientReport($user, $locationId);
+                    $locationId = $user->getpreferredContactLocationAttribute();
+
+                    $locationObj = Location::find($locationId);
+
+                    if($locationObj->parent_id == Location::APRIMA_ID){
+                        (new ReportsService())->createPatientReport($user, $user->getCarePlanProviderApproverAttribute());
                     }
 
 

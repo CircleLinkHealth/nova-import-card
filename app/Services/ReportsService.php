@@ -8,6 +8,7 @@ use App\CPRulesUCP;
 use App\ForeignId;
 use App\Location;
 use App\Observation;
+use App\PatientReports;
 use App\Services\CareplanUIService;
 use App\User;
 use App\UserMeta;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use PhpSpec\Exception\Exception;
 
-Class ReportsService
+class ReportsService
 {
     //Progress Report API
 
@@ -891,7 +892,6 @@ Class ReportsService
         $careplanReport = array();
 
         foreach ($patients as $user) {
-            $user = User::find($user);
             $careplanReport[$user->ID]['symptoms'] = array();
             $careplanReport[$user->ID]['problems'] = array();
             $careplanReport[$user->ID]['lifestyle'] = array();
@@ -981,23 +981,23 @@ Class ReportsService
         return $careplanReport;
     }
 
-    public function createPatientReport(User $user, $provider_id){
+    public function createPatientReport($user, $provider_id){
 
         $careplan = $this->carePlanGenerator( [$user] );
 
         $pdf = App::make( 'snappy.pdf.wrapper' );
         $pdf->loadView( 'wpUsers.patient.careplan.print', [
-            'patient' => User::find( $patientId ),
-            'treating' => $careplan[ $patientId ][ 'treating' ],
-            'biometrics' => $careplan[ $patientId ][ 'bio_data' ],
-            'symptoms' => $careplan[ $patientId ][ 'symptoms' ],
-            'lifestyle' => $careplan[ $patientId ][ 'lifestyle' ],
-            'medications_monitor' => $careplan[ $patientId ][ 'medications' ],
-            'taking_medications' => $careplan[ $patientId ][ 'taking_meds' ],
-            'allergies' => $careplan[ $patientId ][ 'allergies' ],
-            'social' => $careplan[ $patientId ][ 'social' ],
-            'appointments' => $careplan[ $patientId ][ 'appointments' ],
-            'other' => $careplan[ $patientId ][ 'other' ],
+            'patient' => $user,
+            'treating' => $careplan[ $user->ID ][ 'treating' ],
+            'biometrics' => $careplan[ $user->ID ][ 'bio_data' ],
+            'symptoms' => $careplan[ $user->ID ][ 'symptoms' ],
+            'lifestyle' => $careplan[ $user->ID ][ 'lifestyle' ],
+            'medications_monitor' => $careplan[ $user->ID ][ 'medications' ],
+            'taking_medications' => $careplan[ $user->ID ][ 'taking_meds' ],
+            'allergies' => $careplan[ $user->ID ][ 'allergies' ],
+            'social' => $careplan[ $user->ID ][ 'social' ],
+            'appointments' => $careplan[ $user->ID ][ 'appointments' ],
+            'other' => $careplan[ $user->ID ][ 'other' ],
             'isPdf' => true,
         ] );
 
@@ -1006,14 +1006,15 @@ Class ReportsService
         $pdf->save($file_name,true);
 
         //get foriegn provider id
-        $foreign_id = ForeignId::where('user_id',$provider_id)->where('system',ForeignId::APRIMA)->get();
+        $foreign_id = ForeignId::where('user_id', $provider_id)->where('system', ForeignId::APRIMA)->first();
 
         $patientReport = PatientReports::create([
             'patient_id' => $user->ID,
             'patient_mrn' => $user->getMRNAttribute(),
             'provider_id' => $foreign_id->foreign_id,
             'file_type' => 'careplan',
-            'file_path' => $file_name
+            'file_path' => $file_name,
+            'location_id' => $user->getpreferredContactLocationAttribute(),
         ]);
 
         $patientReport->save();

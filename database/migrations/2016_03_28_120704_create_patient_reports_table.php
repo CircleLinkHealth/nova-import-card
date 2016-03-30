@@ -17,16 +17,17 @@ class CreatePatientReportsTable extends Migration {
 			$table->increments('id');
 			$table->unsignedInteger('patient_id');
 			$table->unsignedInteger('patient_mrn');
-			$table->text('provider_id');
-			$table->text('file_type');
-			$table->text('file_path');
-			$table->softDeletes();
+			$table->string('provider_id');
+			$table->string('file_type');
+			$table->string('file_path');
+
 			$table->foreign('patient_id')
 				->references('ID')
 				->on('wp_users')
 				->onDelete('cascade')
 				->onUpdate('cascade');
 
+			$table->softDeletes();
 			$table->timestamps();
 		});
 	}
