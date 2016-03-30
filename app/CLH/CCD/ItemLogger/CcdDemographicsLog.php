@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 class CcdDemographicsLog extends Model implements CcdItemLog {
 
-    use LogCcdaRelationship, LogVendorRelationship;
+    use BelongsToCcda, LogVendorRelationship;
 
     protected $guarded = [];
 

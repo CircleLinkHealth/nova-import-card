@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CcdProviderLog extends Model implements CcdItemLog
 {
 
-    use LogCcdaRelationship, LogVendorRelationship;
+    use BelongsToCcda, LogVendorRelationship;
 
     protected $guarded = [];
 
