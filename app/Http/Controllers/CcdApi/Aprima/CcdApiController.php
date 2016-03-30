@@ -4,10 +4,12 @@ use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Repositories\CCDImporterRepository;
+use App\ForeignId;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\CLH\CCD\ValidatesQAImportOutput;
 
+use App\PatientReports;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -27,15 +29,35 @@ class CcdApiController extends Controller
     public function reports(Request $request)
     {
 
-        $sample = array();
-        $sample[0] = [
-            'patientId' => '103',
-            'providerId' => '100',
-            'file' => base64_encode(file_get_contents(base_path('storage/pdfs/careplans/sample-careplan.pdf'))),
-            'fileType' => 'careplan',
-        ];
+        if ( ! \Session::has( 'apiUser' ) ) {
+            response()->json( ['error' => 'Authentication failed.'], 403 );
+        }
 
-        return response()->json($sample);
+        $user = \Session::get( 'apiUser' );
+
+        $providerLocations = $user->locations;
+        $locationId = $providerLocations[ 0 ]->pivot->location_id;
+        //$pendingReports = PatientReports::where('location_id',$locationId);
+        $pendingReports = PatientReports::where('location_id',$locationId)->get();
+        PatientReports::where('location_id',$locationId)->delete();
+        if($pendingReports->isEmpty()){
+            return response()->json(["message" => "No Pending Reports"], 404);
+        }
+
+        $json = array();
+        $i = 0;
+        foreach($pendingReports as $report){
+            $json[$i] = [
+                'patientId' => $report->patient_mrn,
+                'providerId' => ForeignId::APRIMA,
+                'file' => base64_encode(file_get_contents(base_path('/storage/pdfs/careplans/sample-careplan.pdf'))),
+                //'file' => base64_encode(file_get_contents(base_path($report->file_path))),
+                'fileType' => $report->file_type
+            ];
+            $i++;
+        }
+
+        return response()->json($json,200,['fileCount'=> count($json)]);
     }
 
     public function uploadCcd(Request $request)
