@@ -5,12 +5,14 @@ use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesQuestions;
 use App\CPRulesUCP;
+use App\ForeignId;
 use App\Location;
 use App\Observation;
 use App\Services\CareplanUIService;
 use App\User;
 use App\UserMeta;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use PhpSpec\Exception\Exception;
 
@@ -977,6 +979,45 @@ Class ReportsService
             }
         }
         return $careplanReport;
+    }
+
+    public function createPatientReport(User $user, $provider_id){
+
+        $careplan = $this->carePlanGenerator( [$user] );
+
+        $pdf = App::make( 'snappy.pdf.wrapper' );
+        $pdf->loadView( 'wpUsers.patient.careplan.print', [
+            'patient' => User::find( $patientId ),
+            'treating' => $careplan[ $patientId ][ 'treating' ],
+            'biometrics' => $careplan[ $patientId ][ 'bio_data' ],
+            'symptoms' => $careplan[ $patientId ][ 'symptoms' ],
+            'lifestyle' => $careplan[ $patientId ][ 'lifestyle' ],
+            'medications_monitor' => $careplan[ $patientId ][ 'medications' ],
+            'taking_medications' => $careplan[ $patientId ][ 'taking_meds' ],
+            'allergies' => $careplan[ $patientId ][ 'allergies' ],
+            'social' => $careplan[ $patientId ][ 'social' ],
+            'appointments' => $careplan[ $patientId ][ 'appointments' ],
+            'other' => $careplan[ $patientId ][ 'other' ],
+            'isPdf' => true,
+        ] );
+
+       $file_name  = base_path('storage/pdfs/careplans/' . str_random(40) . '.pdf');
+
+        $pdf->save($file_name,true);
+
+        //get foriegn provider id
+        $foreign_id = ForeignId::where('user_id',$provider_id)->where('system',ForeignId::APRIMA)->get();
+
+        $patientReport = PatientReports::create([
+            'patient_id' => $user->ID,
+            'patient_mrn' => $user->getMRNAttribute(),
+            'provider_id' => $foreign_id->foreign_id,
+            'file_type' => 'careplan',
+            'file_path' => $file_name
+        ]);
+
+        $patientReport->save();
+
     }
 
 }

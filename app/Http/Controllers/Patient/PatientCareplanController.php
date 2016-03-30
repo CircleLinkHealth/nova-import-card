@@ -555,6 +555,18 @@ class PatientCareplanController extends Controller
                     $user->carePlanStatus = 'provider_approved'; // careplan_status
                     $user->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver
                     $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
+
+                    //Creating Reports for Aprima API
+                    //      Since there isn't a way to get the provider's location,
+                    //      we assume the patient's location and check it that
+                    //      is a child of Aprima's Location.
+                    $location = $user->locations;
+                    $locationId = $location[ 0 ]->pivot->location_id;
+                    if($location[ 0 ]->parent_id == Location::APRIMA_ID){
+                        (new ReportsService())->createPatientReport($user, $locationId);
+                    }
+
+
                 } else {
                     $user->carePlanStatus = 'qa_approved'; // careplan_status
                     $user->carePlanQaApprover = Auth::user()->ID; // careplan_qa_approver
