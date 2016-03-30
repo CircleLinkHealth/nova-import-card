@@ -34,56 +34,11 @@ class CcdApiController extends Controller
 
     public function getCcmTime()
     {
-        $demo = [
-            [
-                'patientId' => 103,
-                'providerId' => 100,
-                'careEvents' => [
-                    [
-                        'servicePerson' => 'Bob',
-                        'startingDateTime' => '2015-05-26 18:32:00',
-                        'length' => '10',
-                        'lengthUnit' => 'seconds',
-                        'commentString' => 'Call Center Contact'
-                    ],
-                    [
-                        'servicePerson' => 'Marie',
-                        'startingDateTime' => '2015-05-26 18:12:00',
-                        'length' => '8',
-                        'lengthUnit' => 'seconds',
-                        'commentString' => 'Blood Pressure Monitor'
-                    ]
-                ]
-            ],
-            [
-                'patientId' => 105,
-                'providerId' => 101,
-                'careEvents' => [
-                    [
-                        'servicePerson' => 'Mario',
-                        'startingDateTime' => '2015-05-26 18:32:00',
-                        'length' => '5',
-                        'commentString' => 'Measure Weigh'
-                    ],
-                    [
-                        'servicePerson' => 'John',
-                        'startingDateTime' => '2015-05-26 18:12:00',
-                        'length' => '2',
-                        'commentString' => 'Call Center Contact'
-                    ]
-                ]
-            ]
-        ];
-
-//		return json_encode($demo);
-
         if ( !\Session::has( 'apiUser' ) ) {
-            response()->json( ['error' => 'Authentication failed.'], 403 );
+            return response()->json( ['error' => 'Authentication failed.'], 403 );
         }
 
         $user = \Session::get( 'apiUser' );
-
-//        $user = User::find( 747 );
 
         $locationId = $this->getApiUserLocation( $user );
 
@@ -148,7 +103,7 @@ class CcdApiController extends Controller
     {
 
         if ( !\Session::has( 'apiUser' ) ) {
-            response()->json( ['error' => 'Authentication failed.'], 403 );
+            return response()->json( ['error' => 'Authentication failed.'], 403 );
         }
 
         $user = \Session::get( 'apiUser' );
