@@ -84,6 +84,14 @@ class PermissionsConfig extends Seeder {
                     'query-api-for-patient-data'
                 )
             ),
+            'aprima-api-location' => array(
+                'display_name' => 'API Data Consumer and CCD Vendor.',
+                'description' => 'This role is JUST FOR APRIMA! Is able to receive PDF Reports and CCM Time from our API. Is able to post CCDs to our API.',
+                'permissions' => array(
+                    'post-ccd-to-api',
+                    'query-api-for-patient-data'
+                )
+            ),
             'care-center' => array(
                 'display_name' => 'Care Center',
                 'description' => 'Care Center',
