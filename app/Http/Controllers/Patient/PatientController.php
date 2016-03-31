@@ -563,7 +563,7 @@ AND concat(umf.meta_value , ' ', uml.meta_value, ' ', um.user_id, '', umd.meta_v
 			if($programObj->display_name){
 				$patients[$i]['program'] = $programObj->display_name;
 			} else { $patients[$i]['program'] = '';}
-			$patients[$i]['hint'] = $patients[$i]['name'] . " " . $patients[$i]['program'] . " " . $patients[$i]['dob'] . " MRN: " . $patients[$i]['mrn'];
+			$patients[$i]['hint'] = $patients[$i]['name'] . " DOB:" . $patients[$i]['dob'] . " [" . $patients[$i]['program'] . "] MRN: " . $patients[$i]['mrn'];
 			$i++;
 		}$patients = (object) $patients;
 		return response()->json($patients);
