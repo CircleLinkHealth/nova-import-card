@@ -892,6 +892,9 @@ class ReportsService
         $careplanReport = array();
 
         foreach ($patients as $user) {
+            if (! is_object($user)) {
+                $user = User::find($user);
+            }
             $careplanReport[$user->ID]['symptoms'] = array();
             $careplanReport[$user->ID]['problems'] = array();
             $careplanReport[$user->ID]['lifestyle'] = array();
