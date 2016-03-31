@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\CcdApi\Aprima;
 
 use App\Activity;
+use App\CcmTimeApiLog;
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\QAImportManager;
@@ -41,19 +42,26 @@ class CcdApiController extends Controller
 
         $user = \Session::get( 'apiUser' );
 
+        //If there is no start date, set a really old date to include all activities
         $startDate = empty($from = $request->input( 'start_date' ))
-            //if empty, put a really old date as starting date
             ? Carbon::createFromDate( '1990', '01', '01' )
             : Carbon::parse( $from );
 
-        $endDate = empty($to = $request->input('end_date'))
+        //If there is no end date, set tomorrow's date to include all activities
+        $endDate = empty($to = $request->input( 'end_date' ))
             ? Carbon::tomorrow()
-            : Carbon::parse($to);
+            : Carbon::parse( $to );
+
+        $sendAll = $request->input( 'send_all' )
+            ? true
+            : false;
 
         $locationId = $this->getApiUserLocation( $user );
 
+        //Dynamically get all the tables' names since we'll probably change them soon
         $activitiesTable = ( new Activity() )->getTable();
         $ccdaTable = ( new Ccda() )->getTable();
+        $ccmApiLogTable = ( new CcmTimeApiLog() )->getTable();
         $patientTable = ( new DemographicsImport() )->getTable();
         $foreignIdTable = ( new ForeignId() )->getTable();
         $userTable = ( new User() )->getTable();
@@ -73,6 +81,7 @@ class CcdApiController extends Controller
 
         foreach ( $patientAndProviderIds as $ids ) {
             $activities = Activity::select( DB::raw( "
+                $activitiesTable.id as id,
                 type as commentString,
                 duration as length,
                 duration_unit as lengthUnit,
@@ -84,12 +93,18 @@ class CcdApiController extends Controller
                 ->join( $userTable, "$userTable.ID", '=', "$activitiesTable.provider_id" )
                 ->whereBetween( "$activitiesTable.performed_at", [
                     $startDate, $endDate
-                ] )
-                ->get();
+                ] );
+            if ( !$sendAll ) {
+                $activities->whereNotIn( "$activitiesTable.id", CcmTimeApiLog::lists( 'activity_id' ) );
+            }
+            $activities = $activities->get();
 
             if ( $activities->isEmpty() ) continue;
 
             $careEvents = $activities->map( function ($careEvent) {
+
+                CcmTimeApiLog::updateOrCreate( ['activity_id' => $careEvent->id] );
+
                 return [
                     'servicePerson' => $careEvent->servicePerson,
                     'startingDateTime' => $careEvent->startingDateTime,

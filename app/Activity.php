@@ -70,6 +70,11 @@ class Activity extends Model {
         return $this->belongsTo('App\PageTimer');
     }
 
+    public function ccmApiTimeSentLog()
+    {
+        return $this->hasOne(CcmTimeApiLog::class);
+    }
+
     /**
      * Create a new activity and return its id
      *
