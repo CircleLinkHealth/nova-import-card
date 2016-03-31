@@ -88,13 +88,19 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'Care Center',
                 'description' => 'Care Center',
                 'permissions' => array(
+                    'activities-pagetimer-view',
+                    'activities-view',
+                    'apikeys-view',
                     'admin-access',
                     'locations-view',
                     'observations-create',
+                    'observations-edit',
                     'observations-view',
                     'programs-view',
                     'roles-view',
                     'roles-permissions-view',
+                    'rules-engine-view',
+                    'users-create',
                     'users-view-all',
                     'users-view-self'
                 )
