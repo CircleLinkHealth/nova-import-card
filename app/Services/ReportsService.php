@@ -1005,8 +1005,13 @@ class ReportsService
 
         $pdf->save($file_name,true);
 
-        //get foriegn provider id
-        $foreign_id = ForeignId::where('user_id', $provider_id)->where('system', ForeignId::APRIMA)->first();
+        try {
+            //get foreign provider id
+            $foreign_id = ForeignId::where('user_id', $provider_id)->where('system', ForeignId::APRIMA)->first();
+        } catch (\Exception $e) {
+            \Log::error("No foreign Id found when creating report. Message: $e->getMessage(). Code: $e->getCode()");
+            return;
+        }
 
         $patientReport = PatientReports::create([
             'patient_id' => $user->ID,
