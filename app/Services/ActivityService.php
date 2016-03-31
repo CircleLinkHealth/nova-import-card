@@ -53,7 +53,7 @@ class ActivityService
 
         $time = Carbon::createFromDate( $year, $month, 15 );
         $start = $time->startOfMonth()->format( 'Y-m-d' ) . ' 00:00:00';
-        $end = $time->endOfMonth()->format( 'Y-m-d' ) . ' 12:59:59';
+        $end = $time->endOfMonth()->format( 'Y-m-d' ) . ' 23:59:59';
         $month_selected = $time->format( 'm' );
         $month_selected_text = $time->format( 'F' );
         $year_selected = $time->format( 'Y' );
