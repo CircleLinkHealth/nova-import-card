@@ -14,6 +14,7 @@ use App\CLH\CCD\ValidatesQAImportOutput;
 
 use App\PatientReports;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -32,13 +33,22 @@ class CcdApiController extends Controller
         $this->users = $users;
     }
 
-    public function getCcmTime()
+    public function getCcmTime(Request $request)
     {
         if ( !\Session::has( 'apiUser' ) ) {
             return response()->json( ['error' => 'Authentication failed.'], 403 );
         }
 
         $user = \Session::get( 'apiUser' );
+
+        $startDate = empty($from = $request->input( 'start_date' ))
+            //if empty, put a really old date as starting date
+            ? Carbon::createFromDate( '1990', '01', '01' )
+            : Carbon::parse( $from );
+
+        $endDate = empty($to = $request->input('end_date'))
+            ? Carbon::tomorrow()
+            : Carbon::parse($to);
 
         $locationId = $this->getApiUserLocation( $user );
 
@@ -66,11 +76,15 @@ class CcdApiController extends Controller
                 type as commentString,
                 duration as length,
                 duration_unit as lengthUnit,
-                $userTable.display_name as servicePerson
+                $userTable.display_name as servicePerson,
+                $activitiesTable.performed_at as startingDateTime
                 " ) )
                 ->whereProviderId( $ids->clhProviderUserId )
                 ->wherePatientId( $ids->clhPatientUserId )
                 ->join( $userTable, "$userTable.ID", '=', "$activitiesTable.provider_id" )
+                ->whereBetween( "$activitiesTable.performed_at", [
+                    $startDate, $endDate
+                ] )
                 ->get();
 
             if ( $activities->isEmpty() ) continue;
