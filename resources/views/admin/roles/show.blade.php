@@ -39,15 +39,17 @@
                             </tbody>
                         </table>
 
-                        <h3>Permissions:</h3>
-                        <div id="permissions">
-                            @foreach( $role->perms as $permission )
-                                <div class="col-sm-12">
-                                    {!! $permission->display_name !!}
-                                </div>
-                            @endforeach
+                        <div class="row" style="margin:20px 0px;">
+                            <h3>Permissions:</h3>
+                            <div id="permissions">
+                                @foreach( $role->perms as $permission )
+                                    <div class="col-sm-12">
+                                        <strong>{!! $permission->display_name !!}</strong> [{!! $permission->name !!}]
+                                    </div>
+                                @endforeach
+                                    <br /><br />
+                            </div>
                         </div>
-                        <br><br>
 
                         <div class="row" style="margin:20px 0px;">
                             <strong>Role Name:</strong><br>
