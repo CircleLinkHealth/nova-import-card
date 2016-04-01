@@ -31,8 +31,14 @@ class QAImportedController extends Controller
 
         //get program's location
         $locations = Location::whereNotNull( 'parent_id' )->whereId( $programObj->location_id )->first();
-        //get all locations from the same parent
-        $locations = Location::whereParentId( $locations->parent_id )->get();
+
+        if (empty($locations)){
+            //means it's a parent loc
+            $locations = Location::whereParentId( $programObj->location_id )->get();
+        } else {
+            //get all locations from the same parent
+            $locations = Location::whereParentId( $locations->parent_id )->get();
+        }
 
         $vendor = CcdVendor::find($demographics->vendor_id);
 
