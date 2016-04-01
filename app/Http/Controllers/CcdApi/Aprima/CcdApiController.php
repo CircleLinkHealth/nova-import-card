@@ -145,19 +145,22 @@ class CcdApiController extends Controller
         if ( $pendingReports->isEmpty() ) {
             return response()->json( ["message" => "No Pending Reports"], 404 );
         }
-        $foreign_id = ForeignId::where('system',ForeignId::APRIMA)->where('user_id', $user->ID)->select('foreign_id')->get();
         $json = array();
         $i = 0;
         foreach ( $pendingReports as $report ) {
+
             //Get patient's lead provider
             $patient_provider = User::find($report->patient_id)->getLeadContactIDAttribute();
+            if(!$patient_provider) { continue; }
+
             //Get lead provider's foreign_id
-            $foreign_id = ForeignId::where('system',ForeignId::APRIMA)->where('user_id', $patient_provider)->get();
-            if($foreign_id->first()) {
+            $foreignId_obj = ForeignId::where('system', ForeignId::APRIMA)->where('user_id', $patient_provider)->first();
+
+            if($foreignId_obj->foreign_id) {
                 $json[$i] = [
                     'patientId' => $report->patient_mrn,
-                    'providerId' => $foreign_id->foreign_id,
-                    'file' => base64_encode(file_get_contents(base_path('/storage/pdfs/careplans/sample-careplan.pdf'))),
+                    'providerId' => $foreignId_obj->foreign_id,
+                    'file' => base64_encode(file_get_contents($report->file_path)),
                     'fileType' => $report->file_type
                 ];
             }
