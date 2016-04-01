@@ -1,4 +1,4 @@
-<?php namespace App\Http\Controllers\Importer;
+<?php namespace App\Http\Controllers\EditImportedCcda;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\QAImportSummary;
@@ -16,17 +16,10 @@ class DemographicsImportsController extends Controller {
 	 */
 	public function store(Request $request)
 	{
-		$substitutedId = $request->input('substitutedId');
         $demographics = $request->input('demographics');
 
         //create a new row
-        $newDemographics = DemographicsImport::create($demographics);
-
-        //delete the old row and mark it as substituted
-        $oldRecord = DemographicsImport::find($substitutedId);
-        $oldRecord->substitute_id = $newDemographics->id;
-        $oldRecord->save();
-        $oldRecord->delete();
+        $newDemographics = DemographicsImport::whereId($demographics['id'])->update($demographics);
 
 		return response()->json('OK', 201);
 	}

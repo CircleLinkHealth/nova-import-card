@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 
+use App\CLH\CCD\CcdVendor;
 use App\CLH\CCD\ImportedItems\AllergyImport;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\ImportedItems\MedicationImport;
@@ -10,6 +11,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Location;
 use App\User;
+use App\WpBlog;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 use Illuminate\Http\Request;
@@ -21,12 +23,23 @@ class QAImportedController extends Controller
     {
         $demographics = DemographicsImport::whereCcdaId( $ccdaId )->first();
         $allergies = AllergyImport::whereCcdaId( $ccdaId )->get();
-        $locations = Location::whereNotNull( 'parent_id' )->get();
         $medications = MedicationImport::whereCcdaId( $ccdaId )->get();
         $problems = ProblemImport::whereCcdaId( $ccdaId )->get();
+
+        $programId = $demographics->program_id;
+        $programObj = WpBlog::whereBlogId( $programId )->first();
+
+        //get program's location
+        $locations = Location::whereNotNull( 'parent_id' )->whereId( $programObj->location_id )->first();
+        //get all locations from the same parent
+        $locations = Location::whereParentId( $locations->parent_id )->get();
+
+        $vendor = CcdVendor::find($demographics->vendor_id);
+
         $providers = User::whereHas( 'roles', function ($q) {
             $q->where( 'name', '=', 'provider' );
-        } )->get();
+        } )->whereProgramId( $programId )
+            ->get();
 
         $providers = $providers->map( function ($provider) {
             return [
@@ -35,12 +48,18 @@ class QAImportedController extends Controller
             ];
         } );
 
-        $locations = $locations->map(function ($loc){
+        $locations = $locations->map( function ($loc) {
             return [
                 'id' => $loc->id,
                 'name' => $loc->name
             ];
-        });
+        } );
+
+        $program = [
+            'id' => $programId,
+            'name' => $programObj->display_name,
+            'domain' => $programObj->domain,
+        ];
 
         JavaScript::put( [
             'demographics' => $demographics,
@@ -48,7 +67,9 @@ class QAImportedController extends Controller
             'locations' => $locations,
             'medications' => $medications,
             'problems' => $problems,
+            'program' => $program,
             'providers' => $providers,
+            'vendor' => $vendor->vendor_name,
         ] );
 
         return view( 'CCDUploader.editUploadedItems' );

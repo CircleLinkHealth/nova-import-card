@@ -135,7 +135,9 @@ var Demographics = Vue.extend({
             //allergies: null,
             //medications: null,
             locations: '',
+            program: '',
             providers: '',
+            vendor: '',
 
             enableButton: true
         }
@@ -147,25 +149,22 @@ var Demographics = Vue.extend({
         //this.medications = window.cpm.medications;
         //this.problems = window.cpm.problems;
         this.locations = window.cpm.locations;
+        this.program = window.cpm.program;
         this.providers = window.cpm.providers;
+        this.vendor = window.cpm.vendor;
     },
 
     methods: {
         submitForm: function () {
             this.enableButton = false;
 
-            var substitutedId = this.demographics.id;
-
-            delete this.demographics.id;
-
             var payload = {
-                substitutedId: substitutedId,
                 demographics: this.demographics
             };
 
             this.$http.post('/ccd-importer/demographics', payload).then(function (response) {
-                alert('It seems like it went well. Click back and import this CCD. You will not see the changes you made ' +
-                    'reflected on the summary screen yet (because Apri..*cough**cough*). Your changes will be seen in the careplan.' +
+                alert('It seems like it went well. Click back and import this CCD. You will NOT see the changes you made ' +
+                    'reflected on the summary screen. Your changes will be seen in the careplan.' +
                     'Expect more progress soon.');
 
             }, function (response) {
