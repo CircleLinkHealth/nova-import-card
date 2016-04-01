@@ -163,9 +163,8 @@ var Demographics = Vue.extend({
             };
 
             this.$http.post('/ccd-importer/demographics', payload).then(function (response) {
-                alert('It seems like it went well. Click back and import this CCD. You will NOT see the changes you made ' +
-                    'reflected on the summary screen. Your changes will be seen in the careplan.' +
-                    'Expect more progress soon.');
+                alert('It seems like it went well. Click Back to Summary Page (top right of this window), ' +
+                    'to return to the summary page and import the CCD.');
 
             }, function (response) {
                 console.log(response);
