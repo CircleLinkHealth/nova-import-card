@@ -144,7 +144,6 @@ class CcdApiController extends Controller
         if ( $pendingReports->isEmpty() ) {
             return response()->json( ["message" => "No Pending Reports"], 404 );
         }
-        PatientReports::where( 'location_id', $locationId )->delete();
 
         $json = array();
         $i = 0;
@@ -167,6 +166,8 @@ class CcdApiController extends Controller
             }
             $i++;
         }
+
+        PatientReports::where( 'location_id', $locationId )->delete();
 
         return response()->json( $json, 200, ['fileCount' => count( $json )] );
     }
