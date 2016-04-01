@@ -141,10 +141,11 @@ class CcdApiController extends Controller
 
         //$pendingReports = PatientReports::where('location_id',$locationId);
         $pendingReports = PatientReports::where( 'location_id', $locationId )->get();
-        PatientReports::where( 'location_id', $locationId )->delete();
         if ( $pendingReports->isEmpty() ) {
             return response()->json( ["message" => "No Pending Reports"], 404 );
         }
+        PatientReports::where( 'location_id', $locationId )->delete();
+
         $json = array();
         $i = 0;
         foreach ( $pendingReports as $report ) {
