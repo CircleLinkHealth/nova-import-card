@@ -31,10 +31,11 @@ class AprimaUsers extends Seeder
             ], [
                 'password' => \Hash::make( $password ),
             ] );
-
+            
             $user->locations()->attach( $loc->id );
 
-            $user->attachRole( $role );
+            //attach role if it's not there
+            if (! $user->hasRole('aprima-api-location')) $user->attachRole( $role );
 
             $i++;
 
