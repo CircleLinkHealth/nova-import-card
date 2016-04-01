@@ -125,7 +125,7 @@ class CcdApiController extends Controller
 
         return isset($results)
             ? response()->json( $results, 200 )
-            : response()->json( ["message" => "No Pending Reports"], 404 );
+            : response()->json( ["message" => "No pending care events."], 404 );
     }
 
     public function reports(Request $request)
