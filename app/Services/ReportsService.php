@@ -1004,9 +1004,9 @@ class ReportsService
             'isPdf' => true,
         ] );
 
-       $file_name  = base_path('storage/pdfs/careplans/' . str_random(40) . '.pdf');
-
+        $file_name  = base_path('storage/pdfs/careplans/' . str_random(40) . '.pdf');
         $pdf->save($file_name,true);
+        $base_64_report = base64_encode(file_get_contents($file_name));
 
         try {
             //get foreign provider id
@@ -1021,7 +1021,7 @@ class ReportsService
             'patient_mrn' => $user->getMRNAttribute(),
             'provider_id' => $foreign_id->foreign_id,
             'file_type' => 'careplan',
-            'file_path' => $file_name,
+            'file_base64' => $base_64_report,
             'location_id' => $user->getpreferredContactLocationAttribute(),
         ]);
 

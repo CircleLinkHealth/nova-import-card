@@ -156,15 +156,14 @@ class CcdApiController extends Controller
             //Get lead provider's foreign_id
             $foreignId_obj = ForeignId::where('system', ForeignId::APRIMA)->where('user_id', $patient_provider)->first();
 
-            //Check if file exists
-            $file = file_get_contents($report->file_path);
-            if($file == FALSE){continue;}
+            //Check if field exists
+            if(!$report->file_base64){continue;}
 
             if($foreignId_obj->foreign_id) {
                 $json[$i] = [
                     'patientId' => $report->patient_mrn,
                     'providerId' => $foreignId_obj->foreign_id,
-                    'file' => base64_encode(file_get_contents($report->file_path)),
+                    'file' => $report->file_base64,
                     'fileType' => $report->file_type
                 ];
             }
