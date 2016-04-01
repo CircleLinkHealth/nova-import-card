@@ -33,7 +33,7 @@ class AuthController extends Controller {
         //Transform the credentials to match our JWT Auth. They were using EHR API, remember?
         $credentials = [
             'email' => $request->input( 'username' ),
-            'user_pass' => $request->input( 'password' ),
+            'password' => $request->input( 'password' ),
         ];
 
         \JWTAuth::setIdentifier( 'ID' );
