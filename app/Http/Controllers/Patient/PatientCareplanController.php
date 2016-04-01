@@ -565,7 +565,7 @@ class PatientCareplanController extends Controller
 
                     $locationObj = Location::find($locationId);
 
-                    if($locationObj->parent_id == Location::APRIMA_ID){
+                    if(!empty($locationObj) && $locationObj->parent_id == Location::APRIMA_ID){
                         (new ReportsService())->createPatientReport($user, $user->getCarePlanProviderApproverAttribute());
                     }
 
