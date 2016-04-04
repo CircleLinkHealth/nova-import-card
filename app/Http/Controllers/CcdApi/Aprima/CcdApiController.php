@@ -117,9 +117,7 @@ class CcdApiController extends Controller
             $results[] = [
                 'patientId' => $ids->patientId,
                 'providerId' => $ids->providerId,
-                'careEvents' => [
-                    $careEvents
-                ]
+                'careEvents' => $careEvents
             ];
         }
 
