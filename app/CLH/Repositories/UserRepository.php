@@ -10,10 +10,12 @@ use App\CarePlan;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
 use App\Services\CareplanUIService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class UserRepository {
+class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
+{
 
     public function createNewUser(User $wpUser, ParameterBag $params)
     {
@@ -370,5 +372,13 @@ class UserRepository {
             $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
             $message->to($recipients)->subject($email_subject);
         });
+    }
+
+    public function findByRole($role, $select = '*')
+    {
+        return User::select(DB::raw($select))
+            ->whereHas( 'roles', function ($q) use ($role) {
+            $q->where( 'name', '=', $role );
+        } )->get();
     }
 }

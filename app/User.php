@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\CLH\CCD\ImportedItems\DemographicsImport;
 use DateTime;
 use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\Authenticatable;
@@ -49,7 +50,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log', 'user_status', 'auto_attach_programs', 'display_name', 'spam'];
+	protected $fillable = ['user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log', 'user_status', 'auto_attach_programs', 'display_name', 'spam', 'password'];
 
 	protected $hidden = ['user_pass'];
 
@@ -130,6 +131,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// START RELATIONSHIPS
 
+	public function foreignId()
+	{
+		return $this->hasMany(ForeignId::class);
+	}
+
 	public function locations()
 	{
 		return $this->belongsToMany(Location::class);
@@ -138,6 +144,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function meta()
 	{
 		return $this->hasMany('App\UserMeta', 'user_id', 'ID');
+	}
+
+	public function patientDemographics()
+	{
+		return $this->hasMany(DemographicsImport::class, 'provider_id');
 	}
 
     public function comment()

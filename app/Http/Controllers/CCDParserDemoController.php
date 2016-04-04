@@ -12,7 +12,7 @@ class CCDParserDemoController extends Controller
 
     public function index()
     {
-        $patientId = 740;
+        $patientId = 308;
         $reportService = new ReportsService();
         $careplan = $reportService->carePlanGenerator( [$patientId] );
 
@@ -33,7 +33,10 @@ class CCDParserDemoController extends Controller
             'isPdf' => true,
         ] );
 
-        return $pdf->inline();
+        $pdf->save( base_path( 'storage/pdfs/hello.pdf' ), true );
+
+
+
     }
 
 }

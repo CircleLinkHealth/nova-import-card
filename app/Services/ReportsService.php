@@ -5,16 +5,19 @@ use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesQuestions;
 use App\CPRulesUCP;
+use App\ForeignId;
 use App\Location;
 use App\Observation;
+use App\PatientReports;
 use App\Services\CareplanUIService;
 use App\User;
 use App\UserMeta;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use PhpSpec\Exception\Exception;
 
-Class ReportsService
+class ReportsService
 {
     //Progress Report API
 
@@ -889,7 +892,9 @@ Class ReportsService
         $careplanReport = array();
 
         foreach ($patients as $user) {
-            $user = User::find($user);
+            if (! is_object($user)) {
+                $user = User::find($user);
+            }
             $careplanReport[$user->ID]['symptoms'] = array();
             $careplanReport[$user->ID]['problems'] = array();
             $careplanReport[$user->ID]['lifestyle'] = array();
@@ -977,6 +982,51 @@ Class ReportsService
             }
         }
         return $careplanReport;
+    }
+
+    public function createPatientReport($user, $provider_id){
+
+        $careplan = $this->carePlanGenerator( [$user] );
+
+        $pdf = App::make( 'snappy.pdf.wrapper' );
+        $pdf->loadView( 'wpUsers.patient.careplan.print', [
+            'patient' => $user,
+            'treating' => $careplan[ $user->ID ][ 'treating' ],
+            'biometrics' => $careplan[ $user->ID ][ 'bio_data' ],
+            'symptoms' => $careplan[ $user->ID ][ 'symptoms' ],
+            'lifestyle' => $careplan[ $user->ID ][ 'lifestyle' ],
+            'medications_monitor' => $careplan[ $user->ID ][ 'medications' ],
+            'taking_medications' => $careplan[ $user->ID ][ 'taking_meds' ],
+            'allergies' => $careplan[ $user->ID ][ 'allergies' ],
+            'social' => $careplan[ $user->ID ][ 'social' ],
+            'appointments' => $careplan[ $user->ID ][ 'appointments' ],
+            'other' => $careplan[ $user->ID ][ 'other' ],
+            'isPdf' => true,
+        ] );
+
+        $file_name  = base_path('storage/pdfs/careplans/' . str_random(40) . '.pdf');
+        $pdf->save($file_name,true);
+        $base_64_report = base64_encode(file_get_contents($file_name));
+
+        try {
+            //get foreign provider id
+            $foreign_id = ForeignId::where('user_id', $provider_id)->where('system', ForeignId::APRIMA)->first();
+        } catch (\Exception $e) {
+            \Log::error("No foreign Id found when creating report. Message: $e->getMessage(). Code: $e->getCode()");
+            return;
+        }
+
+        $patientReport = PatientReports::create([
+            'patient_id' => $user->ID,
+            'patient_mrn' => $user->getMRNAttribute(),
+            'provider_id' => $foreign_id->foreign_id,
+            'file_type' => 'careplan',
+            'file_base64' => $base_64_report,
+            'location_id' => $user->getpreferredContactLocationAttribute(),
+        ]);
+
+        $patientReport->save();
+
     }
 
 }

@@ -52,14 +52,14 @@ class ActivityService
         }
 
         $time = Carbon::createFromDate( $year, $month, 15 );
-        $start = $time->startOfMonth()->format( 'Y-m-d' );
-        $end = $time->endOfMonth()->format( 'Y-m-d' );
+        $start = $time->startOfMonth()->format( 'Y-m-d' ) . ' 00:00:00';
+        $end = $time->endOfMonth()->format( 'Y-m-d' ) . ' 23:59:59';
         $month_selected = $time->format( 'm' );
         $month_selected_text = $time->format( 'F' );
         $year_selected = $time->format( 'Y' );
 
         $acts = DB::table( 'lv_activities' )
-            ->select( DB::raw( 'id,provider_id,logged_from,DATE(performed_at), type, SUM(duration) as duration' ) )
+            ->select( DB::raw( 'id,provider_id,logged_from, performed_at, type, SUM(duration) as duration' ) )
             ->whereBetween( 'performed_at', [
                 $start, $end
             ] )
@@ -69,7 +69,7 @@ class ActivityService
                     ->Orwhere( 'logged_from', 'manual_input' )
                     ->Orwhere( 'logged_from', 'pagetimer' );
             } )
-            ->groupBy( DB::raw( 'provider_id, DATE(performed_at),type' ) )
+            ->groupBy( DB::raw( 'provider_id, performed_at,type' ) )
             ->orderBy( 'performed_at', 'desc' )
             ->get();
 
@@ -78,7 +78,9 @@ class ActivityService
             $totalDuration = ($totalDuration + $act->duration);
         }
 
-        //$totalDuration = Activity::where( \DB::raw('MONTH(performed_at)'), '=', $month )->where( 'patient_id', '=', $userId )->sum('duration');
+        /*
+        $totalDuration = Activity::where( \DB::raw('MONTH(performed_at)'), '=', $month )->where( \DB::raw('YEAR(performed_at)'), '=', $year )->where( 'patient_id', '=', $userId )->sum('duration');
+        */
         return $totalDuration;
     }
 

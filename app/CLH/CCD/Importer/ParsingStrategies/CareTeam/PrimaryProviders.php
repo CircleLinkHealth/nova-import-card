@@ -7,10 +7,18 @@ use App\CLH\CCD\Ccda;
 use App\CLH\CCD\ItemLogger\CcdProviderLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
+use App\CLH\Contracts\Repositories\UserRepository;
+use App\ForeignId;
 use App\User;
 
 class PrimaryProviders implements ParsingStrategy
 {
+    private $users;
+
+    public function __construct(UserRepository $users)
+    {
+        $this->users = $users;
+    }
 
     /**
      * @param $documentationOf
@@ -33,9 +41,7 @@ class PrimaryProviders implements ParsingStrategy
 
         if ( !isset($doctorNames) ) return false;
 
-        $providers = User::whereHas( 'roles', function ($q) {
-            $q->where( 'name', '=', 'provider' );
-        } )->get();
+        $providers = $this->users->findByRole('provider');
 
         foreach ( $doctorNames as $docId => $docName ) {
             $matchedProviders = $providers->where('display_name', $docName)->all();
@@ -44,6 +50,20 @@ class PrimaryProviders implements ParsingStrategy
                 $providerLog = CcdProviderLog::find($docId);
                 $providerLog->import = true;
                 $providerLog->save();
+
+                /**
+                 * BAD!
+                 * @todo: make EHR models after done with Aprima API
+                 */
+                if (isset($providerLog->provider_id)) {
+                    $attributes = [
+                        'user_id' => $provider->ID,
+                        'foreign_id' => $providerLog->provider_id,
+                        'system' => ForeignId::APRIMA
+                    ];
+                    
+                    $foreignId = ForeignId::updateOrCreate($attributes, $attributes);
+                }
 
                 $careTeam[] = $provider;
             }

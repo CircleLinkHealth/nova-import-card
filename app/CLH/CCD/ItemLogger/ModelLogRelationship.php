@@ -1,6 +1,7 @@
 <?php
 
 namespace App\CLH\CCD\ItemLogger;
+use App\CLH\CCD\ImportedItems\DemographicsImport;
 
 /**
  * This trait defines all the CCD Logger relationships.
@@ -39,6 +40,11 @@ trait ModelLogRelationship
     public function providers()
     {
         return $this->hasMany( CcdProviderLog::class );
+    }
+
+    public function demographicsImports()
+    {
+        return $this->hasOne( DemographicsImport::class );
     }
 
 }

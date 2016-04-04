@@ -18,11 +18,6 @@ return array(
             'page-size' => 'letter',
             'page-width' => '5mm',
             'zoom' => 0.6,
-
-
-//            'extended-help'                => true,
-
-
         ],
         'env' => [],
     ),

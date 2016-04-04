@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CcdDocumentLog extends Model implements CcdItemLog {
 
-    use LogCcdaRelationship, LogVendorRelationship;
+    use BelongsToCcda, LogVendorRelationship;
 
 	protected $guarded = [];
 

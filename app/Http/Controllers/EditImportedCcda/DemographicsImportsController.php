@@ -1,33 +1,39 @@
-<?php namespace App\Http\Controllers\Importer;
+<?php namespace App\Http\Controllers\EditImportedCcda;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\QAImportSummary;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\Location;
+use App\User;
 use Illuminate\Http\Request;
 
-class DemographicsImportsController extends Controller {
+class DemographicsImportsController extends Controller
+{
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store(Request $request)
-	{
-		$substitutedId = $request->input('substitutedId');
-        $demographics = $request->input('demographics');
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $demographics = $request->input( 'demographics' );
 
-        //create a new row
-        $newDemographics = DemographicsImport::create($demographics);
+        $newDemographics = DemographicsImport::whereId( $demographics[ 'id' ] )->update( $demographics );
 
-        //delete the old row and mark it as substituted
-        $oldRecord = DemographicsImport::find($substitutedId);
-        $oldRecord->substitute_id = $newDemographics->id;
-        $oldRecord->save();
-        $oldRecord->delete();
+        $provider = User::find($demographics['provider_id']);
+        $location = Location::find($demographics['location_id']);
 
-		return response()->json('OK', 201);
-	}
+        $summary = QAImportSummary::whereCcdaId( $demographics['ccda_id'] )->first();
+        $summary->flag = 0;
+        $summary->name = $demographics['first_name'] . ' ' . $demographics['last_name'];
+        $summary->provider = $provider->display_name;
+        $summary->location = $location->name;
+        $summary->save();
+
+
+        return response()->json( 'OK', 201 );
+    }
 }
