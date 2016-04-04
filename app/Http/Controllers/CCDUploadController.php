@@ -49,7 +49,8 @@ class CCDUploadController extends Controller
                 'user_id' => auth()->user()->ID,
                 'vendor_id' => $vendorId,
                 'xml' => $xml,
-                'json' => $json
+                'json' => $json,
+                'source' => Ccda::IMPORTER,
             ] );
 
             $logger = new CcdItemLogger( $ccda );

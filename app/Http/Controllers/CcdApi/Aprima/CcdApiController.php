@@ -229,6 +229,7 @@ class CcdApiController extends Controller
             'user_id' => $user->ID,
             'vendor_id' => 1,
             'xml' => $xml,
+            'source' => Ccda::API,
         ] );
 
         //We are saving the JSON CCD after we save the XML, just in case Parsing fails
@@ -290,7 +291,8 @@ class CcdApiController extends Controller
         $recipients = [
             'Plawlor@circlelinkhealth.com',
             'rohanm@circlelinkhealth.com',
-            'mantoniou@circlelinkhealth.com'
+            'mantoniou@circlelinkhealth.com',
+            'jkatz@circlelinkhealth.com',
         ];
 
         $view = 'emails.aprimaSentCCDs';
