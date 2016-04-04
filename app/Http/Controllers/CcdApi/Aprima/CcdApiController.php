@@ -293,10 +293,11 @@ class CcdApiController extends Controller
             'rohanm@circlelinkhealth.com',
             'mantoniou@circlelinkhealth.com',
             'jkatz@circlelinkhealth.com',
+            'Raph@circlelinkhealth.com',
         ];
 
         $view = 'emails.aprimaSentCCDs';
-        $subject = "Aprima sent a CCD. It went {$status}";
+        $subject = "Aprima sent a CCD. It went {$status}.";
 
         $data = [
             'ccdId' => $ccda->id,
