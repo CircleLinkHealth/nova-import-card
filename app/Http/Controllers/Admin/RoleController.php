@@ -25,7 +25,7 @@ class RoleController extends Controller {
 			abort(403);
 		}
 		// display view
-		$roles = Role::paginate(10);
+		$roles = Role::OrderBy('name', 'asc')->paginate(10);
 		return view('admin.roles.index', [ 'roles' => $roles ]);
 	}
 
@@ -95,7 +95,7 @@ class RoleController extends Controller {
 			abort(403);
 		}
 		$role = Role::find($id);
-		$permissions = Permission::all();
+		$permissions = Permission::OrderBy('name', 'asc')->get();
 		return view('admin.roles.edit', [ 'role' => $role, 'permissions' => $permissions, 'messages' => \Session::get('messages') ]);
 	}
 

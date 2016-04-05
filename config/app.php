@@ -168,6 +168,7 @@ return [
 		'Zizaco\Entrust\EntrustServiceProvider',
 		'Fideloper\Proxy\TrustedProxyServiceProvider',
 		'MikeMcLin\WpPassword\WpPasswordProvider',
+		'Maatwebsite\Excel\ExcelServiceProvider',
         \rigor789\AirbrakeLaravel\AirbrakeServiceProvider::class,
 	],
 
@@ -223,6 +224,7 @@ return [
 		'Entrust' => 'Zizaco\Entrust\EntrustFacade',
 		'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
 		'Image' => Barryvdh\Snappy\Facades\SnappyImage::class,
+		'Excel' => 'Maatwebsite\Excel\Facades\Excel',
 
 	],
 

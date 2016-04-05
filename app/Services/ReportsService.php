@@ -1016,6 +1016,11 @@ class ReportsService
             return;
         }
 
+        if (empty($foreign_id)) {
+            \Log::error("Patient with UserId $user->ID has no Aprima ProviderId");
+            return;
+        }
+
         $patientReport = PatientReports::create([
             'patient_id' => $user->ID,
             'patient_mrn' => $user->getMRNAttribute(),

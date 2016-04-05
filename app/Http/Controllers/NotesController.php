@@ -121,10 +121,18 @@ class NotesController extends Controller
 
             //providers
             $providers = WpBlog::getProviders($wpUser->blogId());
+            $nonCCMCareCenterUsers = WpBlog::getNonCCMCareCenterUsers($wpUser->blogId());
             $provider_info = array();
 
-            foreach ($providers as $provider) {
-                $provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
+            if(!empty($providers)) {
+                foreach ($providers as $provider) {
+                    $provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
+                }
+            }
+            if(!empty($nonCCMCareCenterUsers)) {
+                foreach ($nonCCMCareCenterUsers as $nonCCMCareCenterUser) {
+                    $provider_info[$nonCCMCareCenterUser->ID] = User::find($nonCCMCareCenterUser->ID)->getFullNameAttribute();
+                }
             }
             asort($provider_info);
             asort($careteam_info);

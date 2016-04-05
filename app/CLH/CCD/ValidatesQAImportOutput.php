@@ -44,6 +44,8 @@ trait ValidatesQAImportOutput
 
         $qaSummary->flag = $isFlagged;
         $qaSummary->save();
+        $qaSummary['ccda']['source'] = $ccda->source;
+        $qaSummary['ccda']['created_at'] = $ccda->created_at;
 
         return $qaSummary;
     }
