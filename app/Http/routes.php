@@ -192,6 +192,9 @@ Route::group( ['middleware' => 'auth'], function () {
     /****************************/
     Route::group( ['prefix' => 'admin'], function () {
 
+        // excel reports
+        Route::get( 'excelReportT1', ['uses' => 'ReportsController@excelReportT1', 'as' => 'excel.report.t1'] );
+
         $prefix = 'admin/'; // admin prefix
         Entrust::routeNeedsPermission( $prefix . '*', 'admin-access', Redirect::to( URL::route( 'login' ) ) );
 
