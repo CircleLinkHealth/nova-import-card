@@ -45,12 +45,12 @@ class CcdApiController extends Controller
         //If there is no start date, set a really old date to include all activities
         $startDate = empty($from = $request->input( 'start_date' ))
             ? Carbon::createFromDate( '1990', '01', '01' )
-            : Carbon::parse( $from );
+            : Carbon::parse( $from )->startOfDay();
 
         //If there is no end date, set tomorrow's date to include all activities
         $endDate = empty($to = $request->input( 'end_date' ))
             ? Carbon::tomorrow()
-            : Carbon::parse( $to );
+            : Carbon::parse( $to )->endOfDay();
 
         $sendAll = $request->input( 'send_all' )
             ? true
@@ -135,10 +135,33 @@ class CcdApiController extends Controller
 
         $user = \Session::get( 'apiUser' );
 
+        //If there is no start date, set a really old date to include all activities
+        $startDate = empty($from = $request->input( 'start_date' ))
+            ? Carbon::createFromDate( '1990', '01', '01' )
+            : Carbon::parse( $from )->startOfDay();
+
+        //If there is no end date, set tomorrow's date to include all activities
+        $endDate = empty($to = $request->input( 'end_date' ))
+            ? Carbon::tomorrow()
+            : Carbon::parse( $to )->endOfDay();
+
+        $sendAll = $request->input( 'send_all' )
+            ? true
+            : false;
+
         $locationId = $this->getApiUserLocation( $user );
 
         //$pendingReports = PatientReports::where('location_id',$locationId);
-        $pendingReports = PatientReports::where( 'location_id', $locationId )->get();
+        $pendingReports = PatientReports::where( 'location_id', $locationId )
+            ->whereBetween( 'created_at', [
+                $startDate, $endDate
+            ] );
+        if ( $sendAll ) {
+            $pendingReports->withTrashed();
+        }
+
+        $pendingReports = $pendingReports->get();
+
         if ( $pendingReports->isEmpty() ) {
             return response()->json( ["message" => "No Pending Reports"], 404 );
         }
@@ -148,21 +171,26 @@ class CcdApiController extends Controller
         foreach ( $pendingReports as $report ) {
 
             //Get patient's lead provider
-            $patient_provider = User::find($report->patient_id)->getLeadContactIDAttribute();
-            if(!$patient_provider) { continue; }
+            $patient_provider = User::find( $report->patient_id )->getLeadContactIDAttribute();
+            if ( !$patient_provider ) {
+                continue;
+            }
 
             //Get lead provider's foreign_id
-            $foreignId_obj = ForeignId::where('system', ForeignId::APRIMA)->where('user_id', $patient_provider)->first();
+            $foreignId_obj = ForeignId::where( 'system', ForeignId::APRIMA )->where( 'user_id', $patient_provider )->first();
 
             //Check if field exists
-            if(!$report->file_base64){continue;}
+            if ( !$report->file_base64 ) {
+                continue;
+            }
 
-            if($foreignId_obj->foreign_id) {
-                $json[$i] = [
+            if ( $foreignId_obj->foreign_id ) {
+                $json[ $i ] = [
                     'patientId' => $report->patient_mrn,
                     'providerId' => $foreignId_obj->foreign_id,
                     'file' => $report->file_base64,
-                    'fileType' => $report->file_type
+                    'fileType' => $report->file_type,
+                    'created_at' => $report->created_at->toDateTimeString(),
                 ];
             }
             $i++;
@@ -201,6 +229,7 @@ class CcdApiController extends Controller
             'user_id' => $user->ID,
             'vendor_id' => 1,
             'xml' => $xml,
+            'source' => Ccda::API,
         ] );
 
         //We are saving the JSON CCD after we save the XML, just in case Parsing fails
@@ -262,11 +291,13 @@ class CcdApiController extends Controller
         $recipients = [
             'Plawlor@circlelinkhealth.com',
             'rohanm@circlelinkhealth.com',
-            'mantoniou@circlelinkhealth.com'
+            'mantoniou@circlelinkhealth.com',
+            'jkatz@circlelinkhealth.com',
+            'Raph@circlelinkhealth.com',
         ];
 
         $view = 'emails.aprimaSentCCDs';
-        $subject = "Aprima sent a CCD. It went {$status}";
+        $subject = "Aprima sent a CCD. It went {$status}.";
 
         $data = [
             'ccdId' => $ccda->id,

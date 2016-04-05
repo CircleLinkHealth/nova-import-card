@@ -8,6 +8,10 @@ class Ccda extends Model
 
     use ModelLogRelationship;
 
+    //define sources here
+    const API = 'api';
+    const IMPORTER = 'importer';
+
     protected $guarded = [];
 
     public function qaSummary()

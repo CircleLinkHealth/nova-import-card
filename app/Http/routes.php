@@ -102,21 +102,26 @@ Route::group( ['middleware' => 'auth'], function () {
     Route::group( ['prefix' => 'ccd-importer'], function () {
         Entrust::routeNeedsPermission( 'ccd-importer/*', ['ccd-import'], redirect()->back() );
 
-        Route::get( 'create', ['uses' => 'CCDUploadController@create', 'as' => 'import.ccd'] );
+        Route::get( 'create', [
+            'uses' => 'CCDUploadController@create',
+            'as' => 'import.ccd',
+        ] );
 
         Route::post( 'qaimport', 'CCDUploadController@uploadRawFiles' );
-        Route::get( 'qaimport', 'CCDUploadController@index' );
+        Route::get( 'qaimport', [
+            'uses' => 'CCDUploadController@index',
+            'as' => 'view.files.ready.to.import',
+        ] );
 
         Route::post( 'import', 'CCDImportController@import' );
 
         Route::get( 'uploaded-ccd-items/{ccdaId}/edit', 'QAImportedController@edit' );
 
-        Route::post('demographics', 'EditImportedCcda\DemographicsImportsController@store');
+        Route::post( 'demographics', 'EditImportedCcda\DemographicsImportsController@store' );
     } );
 
     //CCD Parser Demo Route
     Route::get( 'ccd-parser-demo', 'CCDParserDemoController@index' );
-
 
 
     /****************************/
