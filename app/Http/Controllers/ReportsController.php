@@ -477,20 +477,20 @@ class ReportsController extends Controller
         $date = date('Y-m-d H:i:s');
         $users = User::all();
 
-        Excel::create('Filename'.$date, function($excel) use($date, $users, $usersCondition) {
+        Excel::create('CLH-Report-'.$date, function($excel) use($date, $users, $usersCondition) {
 
             // Set the title
-            $excel->setTitle('Our new awesome title');
+            $excel->setTitle('CLH Report T1');
 
             // Chain the setters
-            $excel->setCreator('Maatwebsite')
-                ->setCompany('Maatwebsite');
+            $excel->setCreator('CLH System')
+                ->setCompany('CircleLink Health');
 
             // Call them separately
-            $excel->setDescription('A demonstration to change the file properties');
+            $excel->setDescription('CLH Report T1');
 
             // Our first sheet
-            $excel->sheet('First sheet', function($sheet) use($users, $usersCondition) {
+            $excel->sheet('Sheet 1', function($sheet) use($users, $usersCondition) {
                 $sheet->protect('clhpa$$word', function(\PHPExcel_Worksheet_Protection $protection) {
                     $protection->setSort(true);
                 });
@@ -514,7 +514,7 @@ class ReportsController extends Controller
                         $programName = $program->display_name;
                     }
                     $sheet->appendRow(array(
-                        $user->ID, $user->firstName, $condition, $programName
+                        $user->ID, $user->fullName, $condition, $programName
                     ));
                     $i++;
                 }
