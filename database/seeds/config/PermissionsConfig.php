@@ -113,6 +113,14 @@ class PermissionsConfig extends Seeder {
                     'users-view-self'
                 )
             ),
+            'clh_administrator' => array(
+                'display_name' => 'CLH Administrator',
+                'description' => 'Non IT Admins, CLH Employees',
+                'permissions' => array(
+                    'users-view-all',
+                    'users-view-self'
+                )
+            ),
             'clh-admin' => array(
                 'display_name' => 'CLH Admin',
                 'description' => 'CLH Admin',
@@ -143,6 +151,51 @@ class PermissionsConfig extends Seeder {
                 'permissions' => array(
                     'observations-view',
                     'observations-create',
+                    'users-view-all',
+                    'users-view-self'
+                )
+            ),
+            'no-ccm-care-center' => array(
+                'display_name' => 'Care Center',
+                'description' => 'Care Center',
+                'permissions' => array(
+                    'activities-pagetimer-view',
+                    'activities-view',
+                    'apikeys-view',
+                    'admin-access',
+                    'locations-view',
+                    'observations-create',
+                    'observations-edit',
+                    'observations-view',
+                    'programs-view',
+                    'roles-view',
+                    'roles-permissions-view',
+                    'rules-engine-view',
+                    'users-create',
+                    'users-view-all',
+                    'users-view-self'
+                )
+            ),
+            'office_admin' => array(
+                'display_name' => 'Office Admin',
+                'description' => '',
+                'permissions' => array(
+                    'users-view-all',
+                    'users-view-self'
+                )
+            ),
+            'viewer' => array(
+                'display_name' => 'Viewer',
+                'description' => '',
+                'permissions' => array(
+                    'users-view-all',
+                    'users-view-self'
+                )
+            ),
+            'med_assistant' => array(
+                'display_name' => 'Medical Assistant',
+                'description' => '',
+                'permissions' => array(
                     'users-view-all',
                     'users-view-self'
                 )
