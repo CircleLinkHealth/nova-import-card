@@ -294,6 +294,7 @@ class CcdApiController extends Controller
             'mantoniou@circlelinkhealth.com',
             'jkatz@circlelinkhealth.com',
             'Raph@circlelinkhealth.com',
+            'kgallo@circlelinkhealth.com',
         ];
 
         $view = 'emails.aprimaSentCCDs';
