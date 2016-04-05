@@ -93,7 +93,12 @@ class CCDUploadController extends Controller
      */
     public function index()
     {
-        $qaSummaries = QAImportSummary::has( 'ccda' )->get()->toArray();
+        $qaSummaries = QAImportSummary::with(['ccda' => function ($query) {
+                $query->select('id', 'source', 'created_at')
+                    ->whereNull('patient_id');
+            }])
+            ->get()
+            ->toArray();
 
         JavaScript::put( [
             'qaSummaries' => $qaSummaries,

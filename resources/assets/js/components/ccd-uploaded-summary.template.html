@@ -11,6 +11,8 @@
             <th>Allergies</th>
             <th>Medications</th>
             <th>Problems</th>
+            <th class="mdl-data-table__cell--non-numeric">Source</th>
+            <th class="mdl-data-table__cell--non-numeric">Created At</th>
             <th>Edit</th>
         </tr>
         </thead>
@@ -34,7 +36,8 @@
             <td>{{ qaSummary.allergies }}</td>
             <td>{{ qaSummary.medications }}</td>
             <td>{{ qaSummary.problems }}</td>
-
+            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.ccda.source }}</td>
+            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.ccda.created_at }}</td>
             <td id="record-{{ qaSummary.ccda_id }}">
                 <a href="/ccd-importer/uploaded-ccd-items/{{qaSummary.ccda_id}}/edit">Edit</a>
             </td>
