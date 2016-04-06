@@ -4,7 +4,7 @@ use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Auth;
 
-class UserPatientInfo extends Model {
+class Patient extends Model {
 
 	// for revisionable
 	use \Venturecraft\Revisionable\RevisionableTrait;
@@ -22,7 +22,7 @@ class UserPatientInfo extends Model {
 	 *
 	 * @var string
 	 */
-	protected $table = 'user_patient_info';
+	protected $table = 'patients';
 
 	/**
 	 * The primary key for the model.

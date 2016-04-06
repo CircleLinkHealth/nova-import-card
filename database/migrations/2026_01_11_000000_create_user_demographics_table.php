@@ -1,7 +1,8 @@
 <?php
 
 use App\User;
-use App\UserPatientInfo;
+use App\Patient;
+use App\Provider;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -28,8 +29,8 @@ class CreateUserDemographicsTable extends Migration {
 			}
 		});
 
-		if (!Schema::hasTable('user_patient_info')) {
-			Schema::create('user_patient_info', function (Blueprint $table) {
+		if (!Schema::hasTable('patients')) {
+			Schema::create('patients', function (Blueprint $table) {
 				$table->increments('id');
 				$table->unsignedInteger('user_id');
 				$table->foreign('user_id')
@@ -44,7 +45,7 @@ class CreateUserDemographicsTable extends Migration {
 			});
 		}
 		// seed data
-		$users = User::with('meta', 'patientInfo')->get();
+		$users = User::with('meta', 'patient')->get();
 		echo 'Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
 			echo 'Processing user '.$user->ID.PHP_EOL;
@@ -58,20 +59,19 @@ class CreateUserDemographicsTable extends Migration {
 
 			echo 'Build UserDemographics'.PHP_EOL;
 			// check if has demographics
-			$patientInfo = UserPatientInfo::where('user_id', $user->ID)->first();
-			if(!$patientInfo) {
+			$patientInfo = Patient::where('user_id', $user->ID)->first();
+			if(!$user->patient) {
 				// create new
-				$patientInfo = new UserPatientInfo();
+				$patientInfo = new Patient;
 				$patientInfo->user_id = $user->ID;
-				$user->patientInfo()->save($patientInfo);
-				$user->load('patientInfo');
+				$user->patient()->save($patientInfo);
+				$user->load('patient');
 			}
 
 			// set values
-			$user->patientInfo->first_name = $user->firstName;
-			$user->patientInfo->last_name = $user->lastName;
-			$user->patientInfo->save();
-			dd($user->patientInfo);
+			$user->patient->first_name = $user->firstName;
+			$user->patient->last_name = $user->lastName;
+			$user->patient->save();
 		}
 	}
 
@@ -96,7 +96,9 @@ class CreateUserDemographicsTable extends Migration {
 			}
 		});
 
-		Schema::drop('user_patient_info');
+		if (Schema::hasTable('patients')) {
+			Schema::drop('patients');
+		}
 	}
 
 }
