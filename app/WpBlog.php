@@ -51,6 +51,15 @@ class WpBlog extends Model {
         return $providers;
     }
 
+    public static function getNonCCMCareCenterUsers($blogId){
+        $providers = User::whereHas('programs', function ($q) use ($blogId) {
+            $q->where('blog_id', '=', $blogId);
+        })->whereHas('roles', function ($q) {
+            $q->where('name', '=', 'non-ccm-care-center');
+        })->get();
+        return $providers;
+    }
+
     public function locationId() {
         /*
         $location = \DB::select("select * from wp_".$this->blog_id."_options where option_name = 'location_id'", []);

@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel {
 		NukeItemAndMeta::class,
 		MapSnomedToCpmProblems::class,
 		FormatLocationPhone::class,
+		'App\Console\Commands\GeneratePatientReports'
 	];
 
 	/**

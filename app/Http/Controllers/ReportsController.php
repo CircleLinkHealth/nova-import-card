@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\CareItemUserValue;
 use App\CareItem;
 use App\CarePlan;
 use App\CarePlanItem;
@@ -11,12 +12,14 @@ use App\Observation;
 use App\Services\CareplanService;
 use App\Services\ReportsService;
 use App\User;
+use App\WpBlog;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use App\CLH\CCD\Importer\CPMProblem;
+use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
@@ -448,6 +451,82 @@ class ReportsController extends Controller
         debug($biometrics_array);
 
         return view('wpUsers.patient.biometric-chart', ['patient' => $patient, 'biometrics_array' => $biometrics_array]);
+    }
+
+
+    public function excelReportT1()
+    {
+        // get all users with 1 condition
+        $usersCondition = array();
+        $problems = array();
+        $cpmProblems = CPMProblem::all();
+        if($cpmProblems->count() > 0) {
+            foreach ($cpmProblems as $cpmProblem) {
+                $problems[$cpmProblem->id] = $cpmProblem->name;
+                $problemNames[] = $cpmProblem->name;
+            }
+        }
+        $careItemNames = CareItem::whereIn('display_name', $problemNames)->lists('display_name', 'id');
+        $careItems = CareItem::whereIn('display_name', $problemNames)->lists('id');
+        $careItemUserValues = CareItemUserValue::whereIn('care_item_id', $careItems)->where('value', 'Active')->get();
+        if($careItemUserValues->count() > 0) {
+            foreach ($careItemUserValues as $careItemUserValue) {
+                $usersCondition[$careItemUserValue->user_id] = $careItemNames[$careItemUserValue->care_item_id];
+            }
+        }
+        $date = date('Y-m-d H:i:s');
+        $users = User::all();
+
+        Excel::create('CLH-Report-'.$date, function($excel) use($date, $users, $usersCondition) {
+
+            // Set the title
+            $excel->setTitle('CLH Report T1');
+
+            // Chain the setters
+            $excel->setCreator('CLH System')
+                ->setCompany('CircleLink Health');
+
+            // Call them separately
+            $excel->setDescription('CLH Report T1');
+
+            // Our first sheet
+            $excel->sheet('Sheet 1', function($sheet) use($users, $usersCondition) {
+                $sheet->protect('clhpa$$word', function(\PHPExcel_Worksheet_Protection $protection) {
+                    $protection->setSort(true);
+                });
+                $i = 0;
+                // header
+                $sheet->appendRow(array(
+                    'id', 'name', 'condition', 'program'
+                ));
+                foreach($users as $user) {
+                    if($i > 2000000) {
+                        continue 1;
+                    }
+
+                    $condition = 'N/A';
+                    if(isset($usersCondition[$user->ID])) {
+                        $condition = $usersCondition[$user->ID];
+                    }
+                    $programName = 'N/A';
+                    $program = WpBlog::find($user->program_id);
+                    if($program) {
+                        $programName = $program->display_name;
+                    }
+                    $sheet->appendRow(array(
+                        $user->ID, $user->fullName, $condition, $programName
+                    ));
+                    $i++;
+                }
+            });
+
+            /*
+            // Our second sheet
+            $excel->sheet('Second sheet', function($sheet) {
+
+            });
+            */
+        })->export('xls');
     }
 
 }
