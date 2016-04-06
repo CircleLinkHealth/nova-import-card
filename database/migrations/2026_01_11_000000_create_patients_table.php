@@ -6,7 +6,7 @@ use App\Provider;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserDemographicsTable extends Migration {
+class CreatePatientsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -57,21 +57,29 @@ class CreateUserDemographicsTable extends Migration {
 			$user->state = $user->state;
 			$user->zip = $user->zip;
 
-			echo 'Build UserDemographics'.PHP_EOL;
+			echo 'Build User->Patient'.PHP_EOL;
 			// check if has demographics
 			$patientInfo = Patient::where('user_id', $user->ID)->first();
-			if(!$user->patient) {
-				// create new
-				$patientInfo = new Patient;
-				$patientInfo->user_id = $user->ID;
-				$user->patient()->save($patientInfo);
-				$user->load('patient');
+
+			// delete existing to reprocess
+			if($user->patient) {
+				echo 'Removing existing patient'.PHP_EOL;
+				$user->patient->delete();
 			}
+
+			// create new
+			echo 'creating new patient'.PHP_EOL;
+			$patientInfo = new Patient;
+			$patientInfo->user_id = $user->ID;
+			$user->patient()->save($patientInfo);
+			$user->load('patient');
 
 			// set values
 			$user->patient->first_name = $user->firstName;
 			$user->patient->last_name = $user->lastName;
 			$user->patient->save();
+
+			echo PHP_EOL;
 		}
 	}
 
