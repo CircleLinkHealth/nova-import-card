@@ -6,16 +6,12 @@ use Auth;
 
 class Patient extends Model {
 
-	// for revisionable
-	use \Venturecraft\Revisionable\RevisionableTrait;
-	protected $revisionCreationsEnabled = true;
-
 	/**
 	 * The connection name for the model.
 	 *
 	 * @var string
 	 */
-	protected $connection = 'mysql_no_prefix';
+	protected $connection = 'mysql';
 
 	/**
 	 * The database table used by the model.
@@ -36,13 +32,30 @@ class Patient extends Model {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log', 'user_status', 'auto_attach_programs', 'display_name', 'spam'];
-
-	// for revisionable
-	public static function boot()
-	{
-		parent::boot();
-	}
+	protected $fillable = [
+		'user_id',
+		'ccda_id',
+		'agent_name',
+		'agent_telephone',
+		'agent_email',
+		'agent_relationship',
+		'ccm_status',
+		'consent_date',
+		'cur_month_activity_time',
+		'daily_reminder_optin',
+		'daily_reminder_time',
+		'daily_reminder_areas',
+		'hospital_reminder_optin',
+		'hospital_reminder_time',
+		'hospital_reminder_areas',
+		'preferred_cc_contact_days',
+		'preferred_contact_time',
+		'preferred_contact_timezone',
+		'preferred_contact_method',
+		'preferred_contact_language',
+		'preferred_contact_location',
+		'mrn_number',
+		'registration_date'];
 
 	// START RELATIONSHIPS
 	public function user()

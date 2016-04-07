@@ -16,6 +16,9 @@ class CreatePatientsTable extends Migration {
 	public function up()
 	{
 
+		// first run this down, clean slate each run
+		$this->down();
+
 		Schema::table('wp_users', function(Blueprint $table)
 		{
 			if ( ! Schema::hasColumn('wp_users', 'first_name')) {
@@ -29,6 +32,33 @@ class CreatePatientsTable extends Migration {
 			}
 		});
 
+		if (!Schema::hasTable('phone_numbers')) {
+			Schema::create('phone_numbers', function (Blueprint $table) {
+				$table->increments('id');
+				$table->unsignedInteger('user_id');
+				$table->unsignedInteger('location_id');
+				$table->string('number')->nullable();
+				$table->string('type')->nullable();
+				$table->boolean('is_primary');
+			});
+		}
+
+		if (!Schema::hasTable('providers')) {
+			Schema::create('providers', function (Blueprint $table) {
+				$table->increments('id');
+				$table->unsignedInteger('user_id');
+				$table->foreign('user_id')
+					->references('ID')
+					->on('wp_users')
+					->onDelete('cascade')
+					->onUpdate('cascade');
+				$table->string('qualification')->nullable();
+				$table->string('npi_number')->nullable();
+				$table->string('specialty')->nullable();
+				$table->timestamps();
+			});
+		}
+
 		if (!Schema::hasTable('patients')) {
 			Schema::create('patients', function (Blueprint $table) {
 				$table->increments('id');
@@ -38,6 +68,7 @@ class CreatePatientsTable extends Migration {
 					->on('wp_users')
 					->onDelete('cascade')
 					->onUpdate('cascade');
+				$table->unsignedInteger('ccda_id');
 				$table->string('first_name')->nullable();
 				$table->string('last_name')->nullable();
 				$table->string('preferred_contact_time')->nullable();
@@ -49,7 +80,7 @@ class CreatePatientsTable extends Migration {
 		echo 'Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
 			echo 'Processing user '.$user->ID.PHP_EOL;
-			echo 'Build User'.PHP_EOL;
+			echo 'Rebuild User'.PHP_EOL;
 			$user->first_name = $user->firstName;
 			$user->last_name = $user->lastName;
 			$user->address = $user->address;
@@ -57,7 +88,7 @@ class CreatePatientsTable extends Migration {
 			$user->state = $user->state;
 			$user->zip = $user->zip;
 
-			echo 'Build User->Patient'.PHP_EOL;
+			echo 'Rebuild User->Patient'.PHP_EOL;
 			// check if has demographics
 			$patientInfo = Patient::where('user_id', $user->ID)->first();
 
@@ -106,6 +137,14 @@ class CreatePatientsTable extends Migration {
 
 		if (Schema::hasTable('patients')) {
 			Schema::drop('patients');
+		}
+
+		if (Schema::hasTable('providers')) {
+			Schema::drop('providers');
+		}
+
+		if (Schema::hasTable('phone_numbers')) {
+			Schema::drop('phone_numbers');
 		}
 	}
 
