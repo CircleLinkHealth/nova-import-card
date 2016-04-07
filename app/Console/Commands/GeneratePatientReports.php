@@ -40,7 +40,7 @@ class GeneratePatientReports extends Command {
 	 */
 	public function fire()
 	{
-		$patient_ids = explode(',',$this->argument('example'));
+		$patient_ids = explode(',',$this->argument('patientIds'));
 		foreach($patient_ids as $patient_id){
 			//Check if user exists
 			$patient = User::find($patient_id);
@@ -98,7 +98,7 @@ class GeneratePatientReports extends Command {
 	protected function getArguments()
 	{
 		return [
-			['example', InputArgument::REQUIRED, 'List of patients to create reports for...'],
+			['patientIds', InputArgument::REQUIRED, 'List of patients to create reports for...'],
 		];
 	}
 }

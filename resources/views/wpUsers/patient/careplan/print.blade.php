@@ -3,20 +3,22 @@
 @endif
 
 <?php
-function biometricGoal($starting, $target, $bp = false)
-{
-    $starting = explode( '/', $starting );
-    $starting = $starting[ 0 ];
-    $target = explode( '/', $target );
-    $target = $target[ 0 ];
-    $verb = 'Raise';
-    if ( $bp == 'Blood Pressure' ) {
-        $verb = 'Maintain';
-    };
-    if ( $bp == 'Weight' ) {
-        $verb = 'Maintain';
-    };
-    return ($starting > $target) ? 'Lower' : $verb;
+if ( !function_exists( 'biometricGoal' ) ) {
+    function biometricGoal($starting, $target, $bp = false)
+    {
+        $starting = explode( '/', $starting );
+        $starting = $starting[ 0 ];
+        $target = explode( '/', $target );
+        $target = $target[ 0 ];
+        $verb = 'Raise';
+        if ( $bp == 'Blood Pressure' ) {
+            $verb = 'Maintain';
+        };
+        if ( $bp == 'Weight' ) {
+            $verb = 'Maintain';
+        };
+        return ($starting > $target) ? 'Lower' : $verb;
+    }
 }
 $billing = App\User::find( $patient->getBillingProviderIDAttribute() );
 $lead = App\User::find( $patient->getLeadContactIDAttribute() );
@@ -27,7 +29,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 ?>
 @if(!isset($isPdf))
     @section('title', 'Care Plan View/Print')
-    @section('activity', 'Care Plan View/Print')
+@section('activity', 'Care Plan View/Print')
 @endif
 
 @section('content')
@@ -108,7 +110,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             @foreach(array_reverse($biometrics) as $key => $value)
                                 <div class="col-xs-5 print-row text-bold">{{ biometricGoal($value['starting'], $value['target'], $key)}} {{$key}}</div>
                                 <div class="col-xs-4 print-row text-bold">{{(biometricGoal($value['starting'], $value['target'], $key) == 'Maintain')? 'at' :  'to' }} {{str_replace('sbp','mm Hg', $value['target'])}}</div>
-                                <div class="col-xs-3 print-row">from {{str_replace('sbp','mm Hg', $value['starting'])}}</div>
+                                <div class="col-xs-3 print-row">
+                                    from {{str_replace('sbp','mm Hg', $value['starting'])}}</div>
                             @endforeach
                         </li>
                     </ul>
