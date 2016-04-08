@@ -18,7 +18,7 @@ class Provider extends Model {
 	 *
 	 * @var string
 	 */
-	protected $table = 'patients';
+	protected $table = 'providers';
 
 	/**
 	 * The primary key for the model.

@@ -17,8 +17,10 @@ class CreatePatientsTable extends Migration {
 	{
 
 		// first run this down, clean slate each run
+		echo 'Running down()'.PHP_EOL;
 		$this->down();
 
+		echo 'Schema::wp_users updates'.PHP_EOL;
 		Schema::table('wp_users', function(Blueprint $table)
 		{
 			if ( ! Schema::hasColumn('wp_users', 'first_name')) {
@@ -32,6 +34,7 @@ class CreatePatientsTable extends Migration {
 			}
 		});
 
+		echo 'Schema::add phone_numbers'.PHP_EOL;
 		if (!Schema::hasTable('phone_numbers')) {
 			Schema::create('phone_numbers', function (Blueprint $table) {
 				$table->increments('id');
@@ -43,6 +46,7 @@ class CreatePatientsTable extends Migration {
 			});
 		}
 
+		echo 'Schema::add providers'.PHP_EOL;
 		if (!Schema::hasTable('providers')) {
 			Schema::create('providers', function (Blueprint $table) {
 				$table->increments('id');
@@ -59,6 +63,7 @@ class CreatePatientsTable extends Migration {
 			});
 		}
 
+		echo 'Schema::add patients'.PHP_EOL;
 		if (!Schema::hasTable('patients')) {
 			Schema::create('patients', function (Blueprint $table) {
 				$table->increments('id');
@@ -69,13 +74,13 @@ class CreatePatientsTable extends Migration {
 					->onDelete('cascade')
 					->onUpdate('cascade');
 				$table->unsignedInteger('ccda_id');
-				$table->string('first_name')->nullable();
-				$table->string('last_name')->nullable();
+				$table->string('mrn_number')->nullable();
 				$table->string('preferred_contact_time')->nullable();
 				$table->timestamps();
 			});
 		}
 
+		echo 'Schema::add patient_care_team_providers'.PHP_EOL;
 		if (!Schema::hasTable('patient_care_team_providers')) {
 			Schema::create('patient_care_team_providers', function (Blueprint $table) {
 				$table->increments('id');
@@ -91,19 +96,29 @@ class CreatePatientsTable extends Migration {
 			});
 		}
 
-		// seed data
-		$users = User::with('meta', 'patient')->get();
-		echo 'Users found: '.$users->count().PHP_EOL;
+		// seed data user demographics
+		$users = User::with('meta')->get();
+		echo 'Process all role users demographics - Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
 			echo 'Processing user '.$user->ID.PHP_EOL;
 			echo 'Rebuild User'.PHP_EOL;
-			$user->first_name = $user->firstName;
-			$user->last_name = $user->lastName;
-			$user->address = $user->address;
-			$user->city = $user->city;
-			$user->state = $user->state;
-			$user->zip = $user->zip;
+			$user->first_name = $user->getUserMetaByKey('first_name');
+			$user->last_name = $user->getUserMetaByKey('last_name');
+			$user->address = $user->getUserConfigByKey('address');
+			$user->city = $user->getUserConfigByKey('city');
+			$user->state = $user->getUserConfigByKey('state');
+			$user->zip = $user->getUserConfigByKey('zip');
+			$user->save();
+			echo 'Saved '.PHP_EOL;
+		}
 
+		// seed data patients
+		$users = User::whereHas('roles', function ($q) {
+			$q->where('name', '=', 'participant');
+		})->with('meta', 'patient')->get();
+		echo 'Process role patient users - Users found: '.$users->count().PHP_EOL;
+		foreach($users as $user) {
+			echo 'Processing user '.$user->ID.PHP_EOL;
 			echo 'Rebuild User->Patient'.PHP_EOL;
 			// check if has demographics
 			$patientInfo = Patient::where('user_id', $user->ID)->first();
@@ -122,9 +137,43 @@ class CreatePatientsTable extends Migration {
 			$user->load('patient');
 
 			// set values
-			$user->patient->first_name = $user->firstName;
-			$user->patient->last_name = $user->lastName;
+			$user->patient->preferred_contact_time = $user->getUserConfigByKey('preferred_contact_time');
+			$user->patient->mrn_number = $user->getUserConfigByKey('mrn_number');
 			$user->patient->save();
+
+			echo PHP_EOL;
+		}
+
+
+
+		// seed data providers
+		$users = User::whereHas('roles', function ($q) {
+			$q->where('name', '=', 'provider');
+		})->with('meta', 'provider')->get();
+		echo 'Process role provider users - Users found: '.$users->count().PHP_EOL;
+		foreach($users as $user) {
+			echo 'Processing user '.$user->ID.PHP_EOL;
+			echo 'Rebuild User->Provider'.PHP_EOL;
+			// check if has demographics
+			$providerInfo = Provider::where('user_id', $user->ID)->first();
+
+			// delete existing to reprocess
+			if($user->provider) {
+				echo 'Removing existing provider'.PHP_EOL;
+				$user->provider->delete();
+			}
+
+			// create new
+			echo 'creating new provider'.PHP_EOL;
+			$providerInfo = new Provider;
+			$providerInfo->user_id = $user->ID;
+			$user->provider()->save($providerInfo);
+			$user->load('provider');
+
+			// set values
+			$user->provider->qualification = $user->qualification;
+			$user->provider->npi_number = $user->npiNumber;
+			$user->provider->save();
 
 			echo PHP_EOL;
 		}

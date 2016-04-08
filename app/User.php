@@ -50,7 +50,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log', 'user_status', 'auto_attach_programs', 'display_name', 'spam', 'password'];
+	protected $fillable = ['user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log', 'user_status', 'auto_attach_programs', 'display_name', 'spam', 'password',
+	'first_name',
+	'last_name',
+	'address',
+	'city',
+	'state',
+	'zip',
+	'is_auto_generated'];
 
 	protected $hidden = ['user_pass'];
 
@@ -179,6 +186,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function patient()
 	{
 		return $this->hasOne('App\Patient', 'user_id', 'ID');
+	}
+
+	public function provider()
+	{
+		return $this->hasOne('App\Provider', 'user_id', 'ID');
 	}
 
 
@@ -347,26 +359,34 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     // basic attributes
 
 	// first_name
+	/*
     public function getFirstNameAttribute() {
-		return $this->getUserMetaByKey('first_name');
+		//return $this->getUserMetaByKey('first_name');
+		return $this->first_name;
 	}
 	public function setFirstNameAttribute($value) {
-		$this->setUserMetaByKey('first_name', $value);
-		$this->display_name = $this->fullName;
-		$this->save();
+		//$this->setUserMetaByKey('first_name', $value);
+		//$this->display_name = $this->fullName;
+		//$this->save();
+		$this->first_name = $value;
 		return true;
 	}
+	*/
 
+	/*
 	// last_name
     public function getLastNameAttribute() {
-		return $this->getUserMetaByKey('last_name');
+		//return $this->getUserMetaByKey('last_name');
+		return $this->last_name;
 	}
 	public function setLastNameAttribute($value) {
-		$this->setUserMetaByKey('last_name', $value);
-		$this->display_name = $this->fullName;
-		$this->save();
+		//$this->setUserMetaByKey('last_name', $value);
+		//$this->display_name = $this->fullName;
+		//$this->save();
+		$this->last_name = $value;
 		return true;
 	}
+	*/
 
 	// full name
 	public function getFullNameAttribute() {
@@ -485,6 +505,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->setUserConfigByKey('hospital_reminder_areas', $value);
 	}
 
+	/*
 	// address
 	public function getAddressAttribute() {
 		return $this->getUserConfigByKey('address');
@@ -492,6 +513,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setAddressAttribute($value) {
 		return $this->setUserConfigByKey('address', $value);
 	}
+	*/
 
 	// address2
 	public function getAddress2Attribute() {
@@ -501,6 +523,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->setUserConfigByKey('address2', $value);
 	}
 
+	/*
 	// city
 	public function getCityAttribute() {
 		return $this->getUserConfigByKey('city');
@@ -524,6 +547,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setZipAttribute($value) {
 		return $this->setUserConfigByKey('zip', $value);
 	}
+	*/
 
 	// phone (study_phone_nmber)
 	public function getPhoneAttribute() {
