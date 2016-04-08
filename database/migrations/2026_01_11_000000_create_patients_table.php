@@ -75,6 +75,22 @@ class CreatePatientsTable extends Migration {
 				$table->timestamps();
 			});
 		}
+
+		if (!Schema::hasTable('patient_care_team_providers')) {
+			Schema::create('patient_care_team_providers', function (Blueprint $table) {
+				$table->increments('id');
+				$table->unsignedInteger('user_id');
+				$table->unsignedInteger('provider_id');
+				$table->foreign('user_id')
+					->references('ID')
+					->on('wp_users')
+					->onDelete('cascade')
+					->onUpdate('cascade');
+				$table->string('type');
+				$table->timestamps();
+			});
+		}
+
 		// seed data
 		$users = User::with('meta', 'patient')->get();
 		echo 'Users found: '.$users->count().PHP_EOL;
@@ -137,6 +153,10 @@ class CreatePatientsTable extends Migration {
 
 		if (Schema::hasTable('patients')) {
 			Schema::drop('patients');
+		}
+
+		if (Schema::hasTable('patient_care_team_providers')) {
+			Schema::drop('patient_care_team_providers');
 		}
 
 		if (Schema::hasTable('providers')) {
