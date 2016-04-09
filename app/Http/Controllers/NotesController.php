@@ -104,9 +104,6 @@ class NotesController extends Controller
 
             //Gather details to generate form
 
-            //timezone
-
-
             //careteam
             $careteam_info = array();
             $careteam_ids = $wpUser->careTeam;
@@ -117,6 +114,12 @@ class NotesController extends Controller
                 foreach ($careteam_ids as $id) {
                     $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
                 }//debug($careteam_info);
+            }
+
+            if($wpUser->timeZone == ''){
+                $userTimeZone = 'America/New_York';
+            } else {
+                $userTimeZone = $wpUser->timeZone;
             }
 
             //providers
@@ -134,6 +137,13 @@ class NotesController extends Controller
                     $provider_info[$nonCCMCareCenterUser->ID] = User::find($nonCCMCareCenterUser->ID)->getFullNameAttribute();
                 }
             }
+
+            //Add Careteam to Performed By
+            if(!empty($careteam_info)){
+                foreach ($careteam_info as $careteam_member) {
+                    array_push($provider_info, $careteam_member);
+                }
+            }
             asort($provider_info);
             asort($careteam_info);
 
@@ -144,7 +154,7 @@ class NotesController extends Controller
                 'note_types' => Activity::input_activity_types(),
                 'provider_info' => $provider_info,
                 'careteam_info' => $careteam_info,
-                'userTimeZone' => $wpUser->timeZone
+                'userTimeZone' => $userTimeZone
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
