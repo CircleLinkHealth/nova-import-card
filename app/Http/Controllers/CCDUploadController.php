@@ -93,6 +93,9 @@ class CCDUploadController extends Controller
      */
     public function index()
     {
+        //get rid of orphans
+        $delete = QAImportSummary::whereNull('ccda_id')->delete();
+
         $qaSummaries = QAImportSummary::with(['ccda' => function ($query) {
                 $query->select('id', 'source', 'created_at')
                     ->whereNull('patient_id');
