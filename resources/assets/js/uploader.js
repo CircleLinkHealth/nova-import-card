@@ -64,8 +64,9 @@ var UploadedCcdsPanel = Vue.extend({
 
     data: function () {
         return {
-            qaSummaries: [],
-            okToImport: new Array
+            qaSummaries: new Array,
+            okToImport: new Array,
+            okToDelete: new Array
         }
     },
 
@@ -74,38 +75,66 @@ var UploadedCcdsPanel = Vue.extend({
     },
 
     methods: {
-        importCcds: function () {
-            $('#importCcdsBtn').attr('disabled', true);
+        syncCcds: function () {
+            $('#syncCcdsBtn').attr('disabled', true);
 
-            this.$http.post('/ccd-importer/import', {ccdaIds: this.okToImport}, function (data, status, request) {
-                $('#importCcdsBtn').attr('disabled', false);
-
-                for (var i = 0; i < data.imported.length; i++) {
-                    $('#checkbox-' + data.imported[i].qaId).html(
-                        '<a target="_blank" href="https://'
-                        + window.location.href.match(/:\/\/(.[^/]+)/)[1]
-                        + '/manage-patients/'
-                        + data.imported[i].userId
-                        + '/summary'
-                        + '"><b style="color: #06B106">Go to CarePlan</b></a>'
-                    );
+            this.$http.post('/ccd-importer/import', {
+                ccdsToImport: this.okToImport,
+                ccdsToDelete: this.okToDelete
+            }, function (data, status, request) {
+                if (data.imported) {
+                    for (var i = 0; i < data.imported.length; i++) {
+                        $('#import-row-' + data.imported[i].ccdaId).html(
+                            '<a target="_blank" href="https://'
+                            + window.location.href.match(/:\/\/(.[^/]+)/)[1]
+                            + '/manage-patients/'
+                            + data.imported[i].userId
+                            + '/summary'
+                            + '"><b style="color: #06B106">Go to CarePlan</b></a>'
+                        );
+                        $('#delete-row-' + data.imported[i].ccdaId).html('N/A');
+                        $('#edit-row-' + data.imported[i].ccdaId).html('N/A');
+                    }
+                    this.okToImport = [];
                 }
+
+                if (data.deleted) {
+                    for (var i = 0; i < data.deleted.length; i++) {
+                        var target = $('#row-' + data.deleted[i]);
+                        target.hide('slow', function () {
+                            target.remove();
+                        });
+                        this.okToDelete = [];
+                    }
+                }
+
             }).error(function (data, status, request) {
                 console.log('Data: \n' + data);
                 console.log('Status: \n' + status);
                 console.log('Request: \n' + request);
             });
         },
-        fetchImportedInfo: function (event) {
+        toggleCheckboxes: function (event) {
+            //get id of clicked element
             var ccdaId = event.target.id.split('-')[1];
+            var itemClicked = event.target.id.split('-')[0];
 
-            this.$http.post('/ccd-importer/qa-imported', {ccdaId: ccdaId}, function (data, status, request) {
-                console.log(data);
-            }).error(function (data, status, request) {
-                console.log('Data: \n' + data);
-                console.log('Status: \n' + status);
-                console.log('Request: \n' + request);
-            });
+            var importLabel = $('#import-label-' + ccdaId);
+            var deleteLabel = $('#delete-label-' + ccdaId);
+
+            if (itemClicked == 'delete' && this.okToDelete.indexOf(ccdaId) == -1 && importLabel.hasClass('is-checked')) {
+                if (this.okToImport.indexOf(ccdaId) !== -1) {
+                    this.okToImport.$remove(ccdaId);
+                    importLabel.toggleClass('is-checked');
+                }
+            }
+
+            if (itemClicked == 'import' && this.okToImport.indexOf(ccdaId) == -1 && deleteLabel.hasClass('is-checked')) {
+                if (this.okToDelete.indexOf(ccdaId) !== -1) {
+                    this.okToDelete.$remove(ccdaId);
+                    deleteLabel.toggleClass('is-checked');
+                }
+            }
         }
     }
 });
