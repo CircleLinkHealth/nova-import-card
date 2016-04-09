@@ -1029,9 +1029,6 @@ class ReportsService
             'file_base64' => $base_64_report,
             'location_id' => $user->getpreferredContactLocationAttribute(),
         ]);
-
-        $patientReport->save();
-
     }
 
 }
