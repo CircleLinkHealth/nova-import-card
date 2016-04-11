@@ -11,14 +11,14 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Support\Facades\App;
 use MikeMcLin\WpPassword\Facades\WpPassword;
+use Prettus\Repository\Contracts\Transformable;
+use Prettus\Repository\Traits\TransformableTrait;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Auth;
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Transformable {
 
-	use SoftDeletes;
-
-	use Authenticatable, CanResetPassword, EntrustUserTrait;
+	use Authenticatable, CanResetPassword, EntrustUserTrait, SoftDeletes, TransformableTrait;
 
 	// for revisionable
 	use \Venturecraft\Revisionable\RevisionableTrait;

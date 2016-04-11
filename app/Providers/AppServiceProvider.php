@@ -1,5 +1,7 @@
 <?php namespace App\Providers;
 
+use App\Contracts\Repositories\UserRepository;
+use App\Repositories\UserRepositoryEloquent;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -34,6 +36,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             '\App\CLH\Contracts\Repositories\UserRepository',
             '\App\CLH\Repositories\UserRepository'
+        );
+
+        $this->app->bind(
+            UserRepository::class,
+            UserRepositoryEloquent::class
         );
 
         if ( $this->app->environment( 'local' ) ) {
