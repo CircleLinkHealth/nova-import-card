@@ -352,9 +352,15 @@ class PatientCareplanController extends Controller
             if((@unserialize($careTeamUserIds) !== false)) {
                 $careTeamUserIds = unserialize($careTeamUserIds);
             }
-            foreach ($careTeamUserIds as $id) {
-                $careTeamUsers[] = User::find($id);
+            if (is_array($careTeamUserIds)) {
+                foreach ($careTeamUserIds as $id) {
+                    $careTeamUsers[] = User::find($id);
+                }
             }
+            if (is_int($careTeamUserIds)) {
+                $careTeamUsers[] = User::find($careTeamUserIds);
+            }
+
         }
 
         // get providers

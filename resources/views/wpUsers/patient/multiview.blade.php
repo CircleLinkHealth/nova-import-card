@@ -65,7 +65,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <div class="col-xs-12" style="background-image: url('../img/clh_logo_sm.png'); height: 70px; background-repeat: no-repeat;background-position: 50%;">
                                 <div class="col-xs-1 col-xs-offset-5"></div>
                                 <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
-                                <div class="col-xs-7 address">{{$billing->fullName}} {{$billing->qualification}}</div>
+                                <div class="col-xs-7 address">
+                                    @if($billing->fullName){{$billing->fullName}}@endif @if($billing->qualification){{$billing->qualification}}@endif</div>
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
                                 <div class="col-xs-7 address">{{$patient->primaryProgram->display_name}}</div>
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>

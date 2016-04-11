@@ -7,6 +7,7 @@ use App\CLH\CCD\ImportedItems\MedicationImport;
 use App\CLH\CCD\ImportedItems\ProblemImport;
 use App\CLH\CCD\Importer\ImportManager;
 use App\CLH\CCD\CcdVendor;
+use App\CLH\CCD\QAImportSummary;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 
@@ -23,9 +24,10 @@ class CCDImportController extends Controller
 
     public function import(Request $request)
     {
-        $import = $request->input( 'ccdaIds' );
+        $ccdsToImport = $request->input( 'ccdsToImport' );
+        $ccdsToDelete = $request->input( 'ccdsToDelete' );
 
-        foreach ( $import as $id ) {
+        foreach ( $ccdsToImport as $id ) {
             $ccda = Ccda::find( $id );
 
             if ( empty($ccda) ) continue;
@@ -50,7 +52,7 @@ class CCDImportController extends Controller
             $importer->import();
 
             $imported[] = [
-                'qaId' => $id,
+                'ccdaId' => $id,
                 'userId' => $user->ID
             ];
 
@@ -61,7 +63,16 @@ class CCDImportController extends Controller
             $ccda->qaSummary()->delete();
         }
 
-        return response()->json( compact( 'imported' ), 200 );
+        foreach ( $ccdsToDelete as $id ) {
+            if ( empty($id) ) continue;
+            Ccda::destroy( $id );
+            $summary = QAImportSummary::whereCcdaId( $id )->first();
+            if ( !empty($summary) ) $summary->delete();
+
+            $deleted[] = $id;
+        }
+
+        return response()->json( compact( 'imported', 'deleted' ), 200 );
     }
 
 }

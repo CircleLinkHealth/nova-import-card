@@ -55,7 +55,16 @@ class WpBlog extends Model {
         $providers = User::whereHas('programs', function ($q) use ($blogId) {
             $q->where('blog_id', '=', $blogId);
         })->whereHas('roles', function ($q) {
-            $q->where('name', '=', 'non-ccm-care-center');
+            $q->where('name', '=', 'no-ccm-care-center');
+        })->get();
+        return $providers;
+    }
+
+    public static function getCareCenterUsers($blogId){
+        $providers = User::whereHas('programs', function ($q) use ($blogId) {
+            $q->where('blog_id', '=', $blogId);
+        })->whereHas('roles', function ($q) {
+            $q->where('name', '=', 'care-center');
         })->get();
         return $providers;
     }
