@@ -170,6 +170,7 @@ return [
 		'MikeMcLin\WpPassword\WpPasswordProvider',
 		'Maatwebsite\Excel\ExcelServiceProvider',
         \rigor789\AirbrakeLaravel\AirbrakeServiceProvider::class,
+		Prettus\Repository\Providers\RepositoryServiceProvider::class,
 	],
 
 	/*
