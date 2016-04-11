@@ -143,6 +143,7 @@ class NotesController extends Controller
                     $provider_info[$nonCCMCareCenterUser->ID] = User::find($nonCCMCareCenterUser->ID)->getFullNameAttribute();
                 }
             }
+            debug($careCenterUsers);
             if(!empty($careCenterUsers)) {
                 foreach ($careCenterUsers as $careCenterUser) {
                     $provider_info[$careCenterUser->ID] = User::find($careCenterUser->ID)->getFullNameAttribute();
