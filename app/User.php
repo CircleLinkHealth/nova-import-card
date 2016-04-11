@@ -61,7 +61,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	protected $hidden = ['user_pass'];
 
-	protected $dates = ['deleted','user_registered'];
+	protected $dates = ['user_registered'];
 
 	/**
 	 * @todo: make timestamps work
@@ -118,9 +118,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public static function boot()
 	{
 		parent::boot();
+
+		static::deleting(function($user) {
+			$user->providerInfo()->delete();
+			$user->patientInfo()->delete();
+			$user->patientCarePlans()->delete();
+			$user->patientCareTeamMembers()->delete();
+		});
+
+		self::restoring(function ($user) {
+			$user->providerInfo()->restore();
+			$user->patientInfo()->restore();
+			$user->patientCarePlans()->restore();
+			$user->patientCareTeamMembers()->restore();
+		});
 	}
 
-    public function getAuthIdentifier()
+
+	public function getAuthIdentifier()
 	{
 		return $this->getKey();
 	}
@@ -183,14 +198,29 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
 	}
 
-	public function patient()
+	public function providerInfo()
 	{
-		return $this->hasOne('App\Patient', 'user_id', 'ID');
+		return $this->hasOne('App\ProviderInfo', 'user_id', 'ID');
 	}
 
-	public function provider()
+	public function patientInfo()
 	{
-		return $this->hasOne('App\Provider', 'user_id', 'ID');
+		return $this->hasOne('App\PatientInfo', 'user_id', 'ID');
+	}
+
+	public function phoneNumbers()
+	{
+		return $this->hasOne('App\PhoneNumber', 'user_id', 'ID');
+	}
+
+	public function patientCarePlans()
+	{
+		return $this->hasOne('App\PatientCarePlan', 'user_id', 'ID');
+	}
+
+	public function patientCareTeamMembers()
+	{
+		return $this->hasOne('App\PatientCareTeamMember', 'user_id', 'ID');
 	}
 
 
@@ -313,8 +343,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     // START ATTRIBUTES
 	public function setUserAttributeByKey($key, $value)
 	{
+
 		$func = create_function('$c', 'return strtoupper($c[1]);');
 		$attribute = preg_replace_callback('/_([a-z])/', $func, $key);
+
+		// these are now on User model, no longer remote attributes:
+		if( $key === 'firstName' || $key == 'lastName' ) {
+			return true;
+		}
+
 		// hack overrides and depreciated keys, @todo fix these
 		if($attribute == 'careplanProviderDate') {
 			$attribute = 'careplanProviderApproverDate';
@@ -342,6 +379,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 
 		// call save attribute
+		echo '----'.$attribute .'<br />';
 		$this->$attribute = $value;
 		$this->save();
 
@@ -362,6 +400,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	/*
     public function getFirstNameAttribute() {
 		//return $this->getUserMetaByKey('first_name');
+		dd($this->city);
 		return $this->first_name;
 	}
 	public function setFirstNameAttribute($value) {
@@ -403,10 +442,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// preferred_cc_contact_days
 	public function getPreferredCcContactDaysAttribute() {
-		return $this->getUserConfigByKey('preferred_cc_contact_days');
+		return $this->patientInfo->preferred_cc_contact_days;
 	}
 	public function setPreferredCcContactDaysAttribute($value) {
-		return $this->setUserConfigByKey('preferred_cc_contact_days', $value);
+		$this->patientInfo->preferred_cc_contact_days = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// active_date
@@ -633,21 +674,25 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->getTimeZoneAttribute();
 	}
 	public function getTimeZoneAttribute() {
-		return $this->getUserConfigByKey('preferred_contact_timezone');
+		return $this->patientInfo->preferred_contact_timezone;
 	}
 	public function setPreferredContactTimeZoneAttribute($value){
 		return $this->setTimeZoneAttribute($value);
 	}
 	public function setTimeZoneAttribute($value) {
-		return $this->setUserConfigByKey('preferred_contact_timezone', $value);
+		$this->patientInfo->preferred_contact_timezone = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// preferred_contact_time
 	public function getPreferredContactTimeAttribute() {
-		return $this->getUserConfigByKey('preferred_contact_time');
+		return $this->patientInfo->preferred_contact_time;
 	}
 	public function setPreferredContactTimeAttribute($value) {
-		return $this->setUserConfigByKey('preferred_contact_time', $value);
+		$this->patientInfo->preferred_contact_time = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// preferred_contact_method
@@ -667,11 +712,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	// mrn_number
+	public function getMrnNumberAttribute() {
+		return $this->getMRNAttribute();
+	}
 	public function getMRNAttribute() {
-		return $this->getUserConfigByKey('mrn_number');
+		return $this->patientInfo->mrn_number;
+	}
+	public function setMrnNumberAttribute($value) {
+		return $this->setMRNAttribute($value);
 	}
 	public function setMRNAttribute($value) {
-		return $this->setUserConfigByKey('mrn_number', $value);
+		$this->patientInfo->mrn_number = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// care_team

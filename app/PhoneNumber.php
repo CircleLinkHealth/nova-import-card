@@ -6,6 +6,8 @@ use Auth;
 
 class PhoneNumber extends Model {
 
+	use SoftDeletes;
+
 	/**
 	 * The connection name for the model.
 	 *
@@ -33,6 +35,8 @@ class PhoneNumber extends Model {
 	 * @var array
 	 */
 	protected $fillable = ['user_id', 'location_id', 'number', 'type', 'is_primary'];
+
+	public $timestamps = false;
 
 	// START RELATIONSHIPS
 	public function user()

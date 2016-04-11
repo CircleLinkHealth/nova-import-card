@@ -2,9 +2,12 @@
 
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Auth;
 
-class PatientCareTeamProvider extends Model {
+class PatientCareTeamMember extends Model {
+
+	use SoftDeletes;
 
 	/**
 	 * The connection name for the model.
@@ -18,7 +21,7 @@ class PatientCareTeamProvider extends Model {
 	 *
 	 * @var string
 	 */
-	protected $table = 'patient_care_team_providers';
+	protected $table = 'patient_care_team_members';
 
 	/**
 	 * The primary key for the model.

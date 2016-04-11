@@ -104,7 +104,7 @@ $user_info = array();
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 col-lg-5 {{ $errors->first('mrn_number') ? 'has-error' : '' }}">
                                                 <label class="sr-only" for="mrn_number">MRN</label>
-                                                <input type="text" class="form-control" name="mrn_number" id="mrn_number" placeholder="MRN *" value="{{ (old('mrn_number') ? old('mrn_number') : ($userConfig['mrn_number'] ? $userConfig['mrn_number'] : '')) }}">
+                                                <input type="text" class="form-control" name="mrn_number" id="mrn_number" placeholder="MRN *" value="{{ (old('mrn_number') ? old('mrn_number') : ($patient->mrn_number ? $patient->mrn_number : '')) }}">
                                                 <span class="help-block">{{ $errors->first('mrn_number') }}</span>
                                             </div>
                                         </div>
@@ -140,21 +140,21 @@ $user_info = array();
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('address') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="address">Street Address</label>
-                                        <input type="text" class="form-control" name="address" id="address" placeholder="Street Address" value="{{ (old('address') ? old('address') : ($userConfig['address'] ? $userConfig['address'] : '')) }}">
+                                        <input type="text" class="form-control" name="address" id="address" placeholder="Street Address" value="{{ (old('address') ? old('address') : ($patient->address ? $patient->address : '')) }}">
                                         <span class="help-block">{{ $errors->first('address') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-6 city-input {{ $errors->first('city') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="city">City Name</label>
-                                        <input type="text" class="form-control" name="city" id="city" placeholder="City Name" value="{{ (old('city') ? old('city') : ($userConfig['city'] ? $userConfig['city'] : '')) }}">
+                                        <input type="text" class="form-control" name="city" id="city" placeholder="City Name" value="{{ (old('city') ? old('city') : ($patient->city ? $patient->city : '')) }}">
                                         <span class="help-block">{{ $errors->first('city') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-2 state-selector {{ $errors->first('state') ? 'has-error' : '' }}">
-                                        {!! Form::select('state', $states, (old('state') ? old('state') : $userConfig['state'] ? $userConfig['state'] : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                        {!! Form::select('state', $states, (old('state') ? old('state') : $patient->state ? $patient->state : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                         <span class="help-block">{{ $errors->first('state') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-4 {{ $errors->first('zip') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="zip">Zip Code</label>
-                                        <input type="text" class="form-control" name="zip" id="zip" placeholder="Zip Code" value="{{ (old('zip') ? old('zip') : ($userConfig['zip'] ? $userConfig['zip'] : '')) }}">
+                                        <input type="text" class="form-control" name="zip" id="zip" placeholder="Zip Code" value="{{ (old('zip') ? old('zip') : ($patient->zip ? $patient->zip : '')) }}">
                                         <span class="help-block">{{ $errors->first('zip') }}</span>
                                     </div>
                                     <div class="form-item col-sm-12">
@@ -207,31 +207,31 @@ $user_info = array();
                                         <div class="row" style="float: right">
                                             <div class="radio-inline modal-box-clone label" style="margin-left: 0px;    margin-right: 0px;">
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-1" name="contact_days[]" value="1" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <input id="contact-days-1" name="contact_days[]" value="1" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
                                                     <label style="font-size: 120%; margin: -1px;" for="contact-days-1"><span></span>&nbsp;M</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-2" name="contact_days[]" value="2" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '2') ? 'checked="checked"' : (in_array('2', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <input id="contact-days-2" name="contact_days[]" value="2" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '2') ? 'checked="checked"' : (in_array('2', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
                                                     <label style="font-size: 120%; margin: -1px;" for="contact-days-2"><span></span>&nbsp;T</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-3" name="contact_days[]" value="3" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '3') ? 'checked="checked"' : (in_array('3', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <input id="contact-days-3" name="contact_days[]" value="3" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '3') ? 'checked="checked"' : (in_array('3', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
                                                     <label style="font-size: 120%; margin: -1px;" for="contact-days-3"><span></span>&nbsp;W</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-4" name="contact_days[]" value="4" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '4') ? 'checked="checked"' : (in_array('4', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <input id="contact-days-4" name="contact_days[]" value="4" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '4') ? 'checked="checked"' : (in_array('4', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
                                                     <label style="font-size: 120%; margin: -1px;" for="contact-days-4"><span></span>&nbsp;Th</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-5" name="contact_days[]" value="5" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '5') ? 'checked="checked"' : (in_array('5', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <input id="contact-days-5" name="contact_days[]" value="5" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '5') ? 'checked="checked"' : (in_array('5', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
                                                     <label style="font-size: 120%; margin: -1px;" for="contact-days-5"><span></span>&nbsp;F</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-6" name="contact_days[]" value="6" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '6') ? 'checked="checked"' : (in_array('6', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <input id="contact-days-6" name="contact_days[]" value="6" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '6') ? 'checked="checked"' : (in_array('6', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
                                                     <label style="font-size: 120%; margin: -1px;" for="contact-days-6"><span></span>&nbsp;Sa</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-7" name="contact_days[]" value="7" type="checkbox" @if(isset($userConfig['preferred_cc_contact_days'])){{ ((old('contact_days') == '7') ? 'checked="checked"' : (in_array('7', explode(', ', $userConfig['preferred_cc_contact_days'])) ? 'checked="checked"' : '')) }}@endif>
+                                                    <input id="contact-days-7" name="contact_days[]" value="7" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '7') ? 'checked="checked"' : (in_array('7', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
                                                     <label style="font-size: 120%; margin: -1px;" for="contact-days-7"><span></span>&nbsp;Su</label>
                                                 </div>
                                             </div>
@@ -288,7 +288,7 @@ $user_info = array();
                                         @endif
                                         <input type=hidden name=program_id value="{{ $programId }}">
                                         <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
-                                            {!! Form::label('preferred_contact_location', 'Preferred Office Location  *: 
+                                            {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:
 :') !!}
                                             {!! Form::select('preferred_contact_location', $locations, $userConfig['preferred_contact_location'], ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
                                         </div>
