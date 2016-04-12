@@ -1,8 +1,12 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Prettus\Repository\Contracts\Transformable;
+use Prettus\Repository\Traits\TransformableTrait;
 
-class CcmTimeApiLog extends Model {
+class CcmTimeApiLog extends Model implements Transformable{
+
+    use TransformableTrait;
 
 	protected $guarded = [];
 
