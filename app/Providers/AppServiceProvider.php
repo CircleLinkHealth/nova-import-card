@@ -1,10 +1,12 @@
 <?php namespace App\Providers;
 
 use App\Contracts\Repositories\ActivityRepository;
+use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\DemographicsImportRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Repositories\ActivityRepositoryEloquent;
+use App\Repositories\CcdaRepositoryEloquent;
 use App\Repositories\CcmTimeApiLogRepositoryEloquent;
 use App\Repositories\DemographicsImportRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
@@ -43,6 +45,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ActivityRepository::class,
             ActivityRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            CcdaRepository::class,
+            CcdaRepositoryEloquent::class
         );
 
         $this->app->bind(
