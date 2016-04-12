@@ -2,6 +2,7 @@
 
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Auth;
 
 class PhoneNumber extends Model {

@@ -636,10 +636,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// gender
 	public function getGenderAttribute() {
-		return $this->getUserConfigByKey('gender');
+		return $this->patientInfo->gender;
 	}
 	public function setGenderAttribute($value) {
-		return $this->setUserConfigByKey('gender', $value);
+		$this->patientInfo->gender = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// email
@@ -697,18 +699,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// preferred_contact_method
 	public function getPreferredContactMethodAttribute() {
-		return $this->getUserConfigByKey('preferred_contact_method');
+		return $this->patientInfo->preferred_contact_method;
 	}
 	public function setPreferredContactMethodAttribute($value) {
-		return $this->setUserConfigByKey('preferred_contact_method', $value);
+		$this->patientInfo->preferred_contact_method = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// preferred_contact_language
 	public function getPreferredContactLanguageAttribute() {
-		return $this->getUserConfigByKey('preferred_contact_language');
+		return $this->patientInfo->preferred_contact_language;
 	}
 	public function setPreferredContactLanguageAttribute($value) {
-		return $this->setUserConfigByKey('preferred_contact_language', $value);
+		$this->patientInfo->preferred_contact_language = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// mrn_number
@@ -779,10 +785,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			'';
 	}
 	public function getpreferredContactLocationAttribute() {
-		return $this->getUserConfigByKey('preferred_contact_location');
+		return $this->patientInfo->preferred_contact_location;
 	}
 	public function setpreferredContactLocationAttribute($value) {
-		return $this->setUserConfigByKey('preferred_contact_location', $value);
+		$this->patientInfo->preferred_contact_location = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// prefix
@@ -795,10 +803,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// consent_date
 	public function getConsentDateAttribute() {
-		return $this->getUserConfigByKey('consent_date');
+		return $this->patientInfo->consent_date;
 	}
 	public function setConsentDateAttribute($value) {
-		return $this->setUserConfigByKey('consent_date', $value);
+		$this->patientInfo->consent_date = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	public function getCarePlanQAApproverAttribute() {
@@ -811,10 +821,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// agent_name
 	public function getAgentNameAttribute() {
-		return $this->getUserConfigByKey('agent_name');
+		return $this->patientInfo->agent_name;
 	}
 	public function setAgentNameAttribute($value) {
-		return $this->setUserConfigByKey('agent_name', $value);
+		$this->patientInfo->agent_name = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// agent_phone
@@ -822,29 +834,35 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->getAgentPhoneAttribute();
 	}
 	public function getAgentPhoneAttribute() {
-		return $this->getUserConfigByKey('agent_telephone');
+		return $this->patientInfo->agent_telephone;
 	}
 	public function setAgentTelephoneAttribute($value) {
 		return $this->setAgentPhoneAttribute($value);
 	}
 	public function setAgentPhoneAttribute($value) {
-		return $this->setUserConfigByKey('agent_telephone', $value);
+		$this->patientInfo->agent_telephone = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// agent_email
 	public function getAgentEmailAttribute() {
-		return $this->getUserConfigByKey('agent_email');
+		return $this->patientInfo->agent_email;
 	}
 	public function setAgentEmailAttribute($value) {
-		return $this->setUserConfigByKey('agent_email', $value);
+		$this->patientInfo->agent_email = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// agent_relationship
 	public function getAgentRelationshipAttribute() {
-		return $this->getUserConfigByKey('agent_relationship');
+		return $this->patientInfo->agent_relationship;
 	}
 	public function setAgentRelationshipAttribute($value) {
-		return $this->setUserConfigByKey('agent_relationship', $value);
+		$this->patientInfo->agent_relationship = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	public function setCarePlanQAApproverAttribute($value) {

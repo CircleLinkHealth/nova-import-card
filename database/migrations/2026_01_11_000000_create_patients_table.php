@@ -3,6 +3,9 @@
 use App\User;
 use App\PatientInfo;
 use App\ProviderInfo;
+use App\PhoneNumber;
+use App\PatientCarePlan;
+use App\PatientCareTeamMember;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -91,8 +94,17 @@ class CreatePatientsTable extends Migration {
 					->onDelete('cascade')
 					->onUpdate('cascade');
 				$table->unsignedInteger('ccda_id');
+				$table->string('agent_name')->nullable();
+				$table->string('agent_telephone')->nullable();
+				$table->string('agent_email')->nullable();
+				$table->string('agent_relationship')->nullable();
+				$table->string('consent_date')->nullable();
+				$table->string('gender')->nullable();
 				$table->string('mrn_number')->nullable();
 				$table->string('preferred_cc_contact_days')->nullable();
+				$table->string('preferred_contact_language')->nullable();
+				$table->string('preferred_contact_location')->nullable();
+				$table->string('preferred_contact_method')->nullable();
 				$table->string('preferred_contact_time')->nullable();
 				$table->string('preferred_contact_timezone')->nullable();
 				$table->timestamps();
@@ -252,12 +264,28 @@ class CreatePatientsTable extends Migration {
 			$user->load('patientInfo');
 
 			// set values
+			$user->patientInfo->agent_name = $user->getUserConfigByKey('agent_name');
+			$user->patientInfo->agent_telephone = $user->getUserConfigByKey('agent_telephone');
+			$user->patientInfo->agent_email = $user->getUserConfigByKey('agent_email');
+			$user->patientInfo->agent_relationship = $user->getUserConfigByKey('agent_relationship');
+			$user->patientInfo->consent_date = $user->getUserConfigByKey('consent_date');
+			$user->patientInfo->gender = $user->getUserConfigByKey('gender');
+			$user->patientInfo->preferred_contact_method = $user->getUserConfigByKey('preferred_contact_method');
+			$user->patientInfo->preferred_contact_location = $user->getUserConfigByKey('preferred_contact_location');
+			$user->patientInfo->preferred_contact_language = $user->getUserConfigByKey('preferred_contact_language');
 			$user->patientInfo->mrn_number = $user->getUserConfigByKey('mrn_number');
 			$user->patientInfo->preferred_cc_contact_days = $user->getUserConfigByKey('preferred_cc_contact_days');
 			$user->patientInfo->preferred_contact_time = $user->getUserConfigByKey('preferred_contact_time');
 			$user->patientInfo->preferred_contact_timezone = $user->getUserConfigByKey('preferred_contact_timezone');
 			$user->patientInfo->save();
 
+
+			// phone numbers
+			$phoneNumber = new PhoneNumber;
+			$phoneNumber->is_primary = 1;
+			$phoneNumber->user_id = $user->ID;
+			$phoneNumber->number = $user->getUserConfigByKey('study_phone_number');
+			$phoneNumber->save();
 			echo PHP_EOL;
 		}
 	}
