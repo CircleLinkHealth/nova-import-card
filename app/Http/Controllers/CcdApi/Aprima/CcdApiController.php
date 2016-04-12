@@ -7,6 +7,7 @@ use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Contracts\Repositories\UserRepository;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\ActivityRepository;
+use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\DemographicsImportRepository;
 use App\ForeignId;
@@ -29,16 +30,19 @@ class CcdApiController extends Controller
     protected $demographicsImport;
     protected $activities;
     protected $ccmTime;
+    protected $ccda;
     private $importer;
     private $users;
 
     public function __construct(ActivityRepository $activityRepository,
                                 CCDImporterRepository $repo,
+                                CcdaRepository $ccdaRepository,
                                 CcmTimeApiLogRepository $ccmTime,
                                 DemographicsImportRepository $demographicsImportRepository,
                                 UserRepository $users)
     {
         $this->activities = $activityRepository;
+        $this->ccda = $ccdaRepository;
         $this->ccmTime = $ccmTime;
         $this->demographicsImport = $demographicsImportRepository;
         $this->importer = $repo;
@@ -73,7 +77,7 @@ class CcdApiController extends Controller
             ->getPatientAndProviderIdsByLocationAndForeignSystem($locationId, ForeignId::APRIMA);
 
         foreach ($patientAndProviderIds as $ids) {
-            $activities = $this->activities->getCcmActivities($ids->clhPatientUserId, $ids->clhProviderUserId, 
+            $activities = $this->activities->getCcmActivities($ids->clhPatientUserId, $ids->clhProviderUserId,
                 $startDate, $endDate, $sendAll);
 
             if ($activities->isEmpty()) continue;
@@ -88,6 +92,8 @@ class CcdApiController extends Controller
                     'length' => $careEvent->length,
                     'lengthUnit' => $careEvent->lengthUnit,
                     'commentString' => $careEvent->commentString,
+                    'comment' => $careEvent->comment,
+                    'alertProvider' => false,
                 ];
             });
 
@@ -191,7 +197,7 @@ class CcdApiController extends Controller
         }
 
         if (!$request->has('file')) {
-            response()->json(['error' => 'No file found on the request.'], 422);
+            response()->json(['error' => 'file is a required field.'], 422);
         }
 
         $programId = $user->blogId();
@@ -202,7 +208,7 @@ class CcdApiController extends Controller
             return response()->json(['error' => 'Failed to base64_decode CCD.'], 400);
         }
 
-        $ccdObj = Ccda::create([
+        $ccdObj = $this->ccda->create([
             'user_id' => $user->ID,
             'vendor_id' => 1,
             'xml' => $xml,
