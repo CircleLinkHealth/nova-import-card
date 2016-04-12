@@ -35,6 +35,7 @@ class CcmTimeApiLogRepositoryEloquent extends BaseRepository implements CcmTimeA
 
 
     /**
+     * Log Activities already sent to Aprima so that we'll know not to send them again.
      * @param array $attributes
      * @param array $values
      * @return mixed

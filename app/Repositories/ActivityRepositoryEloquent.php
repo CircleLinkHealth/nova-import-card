@@ -37,6 +37,18 @@ class ActivityRepositoryEloquent extends BaseRepository implements ActivityRepos
     }
 
 
+    /**
+     * Get all CCM Activities
+     * Query by ProviderId, PatientId and Dates
+     * Set sendAll to true to return all activities regardless of dates.
+     *
+     * @param $patientId
+     * @param $providerId
+     * @param $startDate
+     * @param $endDate
+     * @param bool $sendAll
+     * @return mixed
+     */
     public function getCcmActivities($patientId, $providerId, $startDate, $endDate, $sendAll = false)
     {
         //Dynamically get all the tables' names since we'll probably change them soon
@@ -63,10 +75,5 @@ class ActivityRepositoryEloquent extends BaseRepository implements ActivityRepos
         $activities = $activities->get();
 
         return $activities;
-    }
-
-    public function logSentActivity(array $attributes, array $values = array())
-    {
-        // TODO: Implement logSentActivity() method.
     }
 }

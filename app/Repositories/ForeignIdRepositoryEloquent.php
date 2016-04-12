@@ -33,9 +33,4 @@ class ForeignIdRepositoryEloquent extends BaseRepository implements ForeignIdRep
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
-
-    public function logSentActivity(array $attributes, array $values = array())
-    {
-        // TODO: Implement logSentActivity() method.
-    }
 }

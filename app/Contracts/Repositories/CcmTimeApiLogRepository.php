@@ -10,5 +10,11 @@ use Prettus\Repository\Contracts\RepositoryInterface;
  */
 interface CcmTimeApiLogRepository extends RepositoryInterface
 {
+    /**
+     * Log Activities already sent to Aprima so that we'll know not to send them again.
+     * @param array $attributes
+     * @param array $values
+     * @return mixed
+     */
     public function logSentActivity(array $attributes, array $values = array());
 }
