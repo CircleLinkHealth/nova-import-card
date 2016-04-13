@@ -226,9 +226,10 @@ class CcdApiController extends Controller
             ]);
         }
 
+        $locationId = $this->getApiUserLocation($user);
+
         if (isset($provider[0])) {
             $provider = \GuzzleHttp\json_decode($provider[0], true);
-            $locationId = $this->getApiUserLocation($user);
 
             try {
                 ForeignId::updateOrCreate([

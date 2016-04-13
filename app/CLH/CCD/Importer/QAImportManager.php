@@ -17,6 +17,8 @@ use App\CLH\CCD\CcdVendor;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\CLH\Repositories\UserRepository;
+use App\Location;
+use App\User;
 use Illuminate\Support\Facades\Log;
 
 class QAImportManager
@@ -107,10 +109,11 @@ class QAImportManager
             $demographics->provider_id = isset($users[ 0 ]) ? $users[ 0 ]->ID : null;
         }
 
+        //If a providerId was passed in (case of Aprima Api)
         if ($this->providerId)
         {
             //Kinda hacky. Refactor here soon
-            $output[ 'provider' ][0] = $this->providerId;
+            $output[ 'provider' ][0] = User::find($this->providerId);
             $demographics->provider_id = $this->providerId;
         }
 
@@ -127,10 +130,11 @@ class QAImportManager
             $demographics->location_id = isset($locations[ 0 ]) ? $locations[ 0 ]->id : null;
         }
 
+        //If a locationId was passed in (case of Aprima Api)
         if ($this->locationId)
         {
             //Kinda hacky. Refactor here soon
-            $output[ 'location' ][0] = $this->locationId;
+            $output[ 'location' ][0] = Location::find($this->locationId);
             $demographics->location_id = $this->locationId;
         }
 
