@@ -4,12 +4,12 @@ use App\CcmTimeApiLog;
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\CCD\ItemLogger\CcdItemLogger;
-use App\CLH\Contracts\Repositories\UserRepository;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\DemographicsImportRepository;
+use App\Contracts\Repositories\UserRepository;
 use App\ForeignId;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -20,6 +20,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class CcdApiController extends Controller
@@ -187,17 +188,52 @@ class CcdApiController extends Controller
     public function uploadCcd(Request $request)
     {
         if (!\Session::has('apiUser')) {
-            response()->json(['error' => 'Authentication failed.'], 403);
+            return response()->json(['error' => 'Authentication failed.'], 403);
         }
 
         $user = \Session::get('apiUser');
 
         if (!$user->can('post-ccd-to-api')) {
-            response()->json(['error' => 'You are not authorized to submit CCDs to this API.'], 403);
+            return response()->json(['error' => 'You are not authorized to submit CCDs to this API.'], 403);
         }
 
         if (!$request->has('file')) {
-            response()->json(['error' => 'file is a required field.'], 422);
+            return response()->json(['error' => 'file is a required field.'], 422);
+        }
+
+        if (!$request->has('provider')) {
+            return response()->json(['error' => 'provider is a required field.'], 422);
+        }
+
+        try {
+            $providerInput = \GuzzleHttp\json_decode($request->input('provider'), true);
+            $providerJsonStr = $request->input('provider');
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid json in provider field.'], 400);
+        }
+
+        if (!empty($providerInput['firstName']) && !empty($providerInput['lastName'])) {
+            //Check if the provider exists
+            $provider = $this->users->findWhere([
+                'display_name' => $providerInput['firstName'] . ' ' . $providerInput['lastName'],
+            ]);
+        }
+
+        if (isset($provider[0])) {
+            $provider = \GuzzleHttp\json_decode($provider[0], true);
+            $locationId = $this->getApiUserLocation($user);
+
+            try {
+                ForeignId::updateOrCreate([
+                    'user_id' => $provider['ID'],
+                    'system' => ForeignId::APRIMA,
+                    'location_id' => $locationId,
+                ], [
+                    'foreign_id' => $providerInput['providerId'],
+                ]);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'providerId is already associated with another clinic.'], 400);
+            }
         }
 
         $programId = $user->blogId();
@@ -223,7 +259,7 @@ class CcdApiController extends Controller
             $ccdObj->save();
         } catch (\Exception $e) {
             if (app()->environment('production')) {
-                $this->notifyAdmins($user, $ccdObj, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
+                $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
             }
             return response()->json(['message' => 'CCD uploaded successfully.'], 201);
         }
@@ -235,7 +271,7 @@ class CcdApiController extends Controller
             $logger->logAll();
         } catch (\Exception $e) {
             if (app()->environment('production')) {
-                $this->notifyAdmins($user, $ccdObj, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
+                $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
             }
             return response()->json(['message' => 'CCD uploaded successfully.'], 201);
         }
@@ -247,13 +283,13 @@ class CcdApiController extends Controller
             $output = $importer->generateCarePlanFromCCD();
         } catch (\Exception $e) {
             if (app()->environment('production')) {
-                $this->notifyAdmins($user, $ccdObj, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
+                $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
             }
             return response()->json(['message' => 'CCD uploaded successfully.'], 201);
         }
 
         if (app()->environment('production')) {
-            $this->notifyAdmins($user, $ccdObj, 'well');
+            $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'well');
         }
 
         return response()->json(['message' => 'CCD uploaded successfully.'], 201);
@@ -269,7 +305,7 @@ class CcdApiController extends Controller
      * @param null $line
      * @param null $errorMessage
      */
-    public function notifyAdmins(User $user, Ccda $ccda, $status, $line = null, $errorMessage = null)
+    public function notifyAdmins(User $user, Ccda $ccda, $providerInfo = null, $status, $line = null, $errorMessage = null)
     {
         $recipients = [
             'Plawlor@circlelinkhealth.com',
@@ -288,6 +324,7 @@ class CcdApiController extends Controller
             'errorMessage' => $errorMessage,
             'userId' => $user->ID,
             'line' => $line,
+            'providerInfo' => $providerInfo
         ];
 
         Mail::send($view, $data, function ($message) use ($recipients, $subject) {
