@@ -612,13 +612,30 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	*/
 
 	// phone (study_phone_nmber)
-	public function getPhoneAttribute() {
-		return $this->getUserConfigByKey('study_phone_number');
-	}
-	public function setPhoneAttribute($value) {
-		return $this->setUserConfigByKey('study_phone_number', $value);
+	public function getPrimaryPhoneAttribute() {
+		$phoneNumber = $this->phoneNumbers()->where('is_primary', 1)->first();
+		dd($phoneNumber);
 	}
 
+	public function getPhoneAttribute() {
+		$phoneNumber = $this->phoneNumbers()->where('type', 'home')->first();
+		if($phoneNumber) {
+			return $phoneNumber->number;
+		} else {
+			return '';
+		}
+	}
+	public function setPhoneAttribute($value) {
+		$phoneNumber = $this->phoneNumbers()->where('type', 'home')->first();
+		if($phoneNumber) {
+			$phoneNumber->number = $value;
+			$phoneNumber->save();
+		} else {
+			return '';
+		}
+	}
+
+	/*
 	// home_phone_number
 	public function getHomePhoneNumberAttribute() {
 		return $this->getUserConfigByKey('home_phone_number');
@@ -627,23 +644,46 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setHomePhoneNumberAttribute($value) {
 		return $this->setUserConfigByKey('home_phone_number', $value);
 	}
+	*/
 
 	// work_phone_number
 	public function getWorkPhoneNumberAttribute() {
-		return $this->getUserConfigByKey('work_phone_number');
+		$phoneNumber = $this->phoneNumbers()->where('type', 'work')->first();
+		if($phoneNumber) {
+			return $phoneNumber->number;
+		} else {
+			return '';
+		}
 	}
 
 	public function setWorkPhoneNumberAttribute($value) {
-		return $this->setUserConfigByKey('work_phone_number', $value);
+		$phoneNumber = $this->phoneNumbers()->where('type', 'work')->first();
+		if($phoneNumber) {
+			$phoneNumber->number = $value;
+			$phoneNumber->save();
+		} else {
+			return '';
+		}
 	}
 
 	// mobile_phone_number
 	public function getMobilePhoneNumberAttribute() {
-		return $this->getUserConfigByKey('mobile_phone_number');
+		$phoneNumber = $this->phoneNumbers()->where('type', 'mobile')->first();
+		if($phoneNumber) {
+			return $phoneNumber->number;
+		} else {
+			return '';
+		}
 	}
 
 	public function setMobilePhoneNumberAttribute($value) {
-		return $this->setUserConfigByKey('mobile_phone_number', $value);
+		$phoneNumber = $this->phoneNumbers()->where('type', 'mobile')->first();
+		if($phoneNumber) {
+			$phoneNumber->number = $value;
+			$phoneNumber->save();
+		} else {
+			return '';
+		}
 	}
 
 

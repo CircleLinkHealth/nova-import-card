@@ -251,6 +251,34 @@ class CreatePatientsTable extends Migration {
 			$user->zip = $user->getUserConfigByKey('zip');
 			$user->zip = $user->getUserConfigByKey('status');
 			$user->save();
+
+			// phone numbers
+			if(!empty($user->getUserConfigByKey('study_phone_number'))) {
+				$phoneNumber = new PhoneNumber;
+				$phoneNumber->is_primary = 1;
+				$phoneNumber->user_id = $user->ID;
+				$phoneNumber->number = $user->getUserConfigByKey('study_phone_number');
+				$phoneNumber->type = 'home';
+				$phoneNumber->save();
+				echo 'Added home study_phone_number'.PHP_EOL;
+			}
+			if(!empty($user->getUserConfigByKey('work_phone_number'))) {
+				$phoneNumber = new PhoneNumber;
+				$phoneNumber->user_id = $user->ID;
+				$phoneNumber->number = $user->getUserConfigByKey('work_phone_number');
+				$phoneNumber->type = 'work';
+				$phoneNumber->save();
+				echo 'Added work work_phone_number'.PHP_EOL;
+			}
+			if(!empty($user->getUserConfigByKey('mobile_phone_number'))) {
+				$phoneNumber = new PhoneNumber;
+				$phoneNumber->user_id = $user->ID;
+				$phoneNumber->number = $user->getUserConfigByKey('mobile_phone_number');
+				$phoneNumber->type = 'mobile';
+				$phoneNumber->save();
+				echo 'Added mobile mobile_phone_number'.PHP_EOL;
+			}
+
 			echo 'Saved '.PHP_EOL;
 		}
 	}
@@ -312,15 +340,6 @@ class CreatePatientsTable extends Migration {
 			$user->patientInfo->hospital_reminder_areas = $user->getUserConfigByKey('hospital_reminder_areas');
 
 			$user->patientInfo->save();
-
-
-			// phone numbers
-			$phoneNumber = new PhoneNumber;
-			$phoneNumber->is_primary = 1;
-			$phoneNumber->user_id = $user->ID;
-			$phoneNumber->number = $user->getUserConfigByKey('study_phone_number');
-			$phoneNumber->save();
-			echo PHP_EOL;
 		}
 	}
 
