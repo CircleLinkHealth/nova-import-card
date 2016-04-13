@@ -161,7 +161,14 @@ class CcdApiController extends Controller
             }
 
             //Get lead provider's foreign_id
-            $foreignId_obj = ForeignId::where('system', ForeignId::APRIMA)->where('user_id', $patient_provider)->first();
+            $foreignId_obj = ForeignId::where('system', ForeignId::APRIMA)
+                ->where('user_id', $patient_provider)
+                ->where('location_id', $locationId)
+                ->first();
+
+            if (empty($foreignId_obj)) {
+                continue;
+            }
 
             //Check if field exists
             if (!$report->file_base64) {

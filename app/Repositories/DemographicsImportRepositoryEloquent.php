@@ -54,12 +54,13 @@ class DemographicsImportRepositoryEloquent extends BaseRepository implements Dem
                 $foreignIdTable.foreign_id as providerId,
                 $patientTable.provider_id as clhProviderUserId"
         ) )
+            ->where( "$patientTable.location_id", $locationId )
             ->join( $ccdaTable, "$ccdaTable.id", '=', "$patientTable.ccda_id" )
             ->whereNotNull( "$ccdaTable.patient_id" )
             ->join( $foreignIdTable, "$foreignIdTable.user_id", '=', "$patientTable.provider_id" )
             ->where( "$foreignIdTable.system", '=', $foreignSystem )
+            ->where( "$foreignIdTable.location_id", '=', $locationId )
             ->whereNotNull( "$foreignIdTable.foreign_id" )
-            ->whereLocationId( $locationId )
             ->get();
 
         return $patientAndProviderIds;
