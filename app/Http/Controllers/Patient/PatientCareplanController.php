@@ -170,7 +170,7 @@ class PatientCareplanController extends Controller
         $user = new User;
         $programId = false;
         if ($patientId) {
-            $user = User::find($patientId);
+            $user = User::with('patientInfo')->find($patientId);
             if (!$user) {
                 return response("User not found", 401);
             }

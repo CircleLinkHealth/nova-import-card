@@ -42,10 +42,12 @@ class CreatePatientsTable extends Migration {
 				$table->string('first_name')->after('display_name');
 				$table->string('last_name')->after('first_name');
 				$table->string('address')->after('last_name');
-				$table->string('city')->after('address');
+				$table->string('address2')->after('address');
+				$table->string('city')->after('address2');
 				$table->string('state')->after('city');
 				$table->string('zip')->after('state');
-				$table->string('is_auto_generated')->after('zip');
+				$table->string('status')->after('zip');
+				$table->string('is_auto_generated')->after('status');
 				$table->dropColumn('deleted');
 			}
 		});
@@ -94,12 +96,18 @@ class CreatePatientsTable extends Migration {
 					->onDelete('cascade')
 					->onUpdate('cascade');
 				$table->unsignedInteger('ccda_id');
+				$table->string('active_date')->nullable();
 				$table->string('agent_name')->nullable();
 				$table->string('agent_telephone')->nullable();
 				$table->string('agent_email')->nullable();
 				$table->string('agent_relationship')->nullable();
+				$table->string('birth_date')->nullable();
+				$table->string('ccm_status')->nullable();
 				$table->string('consent_date')->nullable();
+				$table->string('cur_month_activity_time')->nullable();
 				$table->string('gender')->nullable();
+				$table->string('date_paused')->nullable();
+				$table->string('date_withdrawn')->nullable();
 				$table->string('mrn_number')->nullable();
 				$table->string('preferred_cc_contact_days')->nullable();
 				$table->string('preferred_contact_language')->nullable();
@@ -107,6 +115,14 @@ class CreatePatientsTable extends Migration {
 				$table->string('preferred_contact_method')->nullable();
 				$table->string('preferred_contact_time')->nullable();
 				$table->string('preferred_contact_timezone')->nullable();
+				$table->string('registration_date')->nullable();
+				$table->string('daily_reminder_optin')->nullable();
+				$table->string('daily_reminder_time')->nullable();
+				$table->string('daily_reminder_areas')->nullable();
+				$table->string('hospital_reminder_optin')->nullable();
+				$table->string('hospital_reminder_time')->nullable();
+				$table->string('hospital_reminder_areas')->nullable();
+
 				$table->timestamps();
 				$table->softDeletes();
 			});
@@ -183,10 +199,12 @@ class CreatePatientsTable extends Migration {
 				$table->dropColumn('first_name');
 				$table->dropColumn('last_name');
 				$table->dropColumn('address');
+				$table->dropColumn('address2');
 				$table->dropColumn('city');
 				$table->dropColumn('state');
 				$table->dropColumn('zip');
 				$table->dropColumn('is_auto_generated');
+				$table->dropColumn('status');
 				$table->boolean('deleted');
 			}
 		});
@@ -227,9 +245,11 @@ class CreatePatientsTable extends Migration {
 			$user->first_name = $user->getUserMetaByKey('first_name');
 			$user->last_name = $user->getUserMetaByKey('last_name');
 			$user->address = $user->getUserConfigByKey('address');
+			$user->address = $user->getUserConfigByKey('address2');
 			$user->city = $user->getUserConfigByKey('city');
 			$user->state = $user->getUserConfigByKey('state');
 			$user->zip = $user->getUserConfigByKey('zip');
+			$user->zip = $user->getUserConfigByKey('status');
 			$user->save();
 			echo 'Saved '.PHP_EOL;
 		}
@@ -264,11 +284,17 @@ class CreatePatientsTable extends Migration {
 			$user->load('patientInfo');
 
 			// set values
+			$user->patientInfo->active_date = $user->getUserConfigByKey('active_date');
 			$user->patientInfo->agent_name = $user->getUserConfigByKey('agent_name');
 			$user->patientInfo->agent_telephone = $user->getUserConfigByKey('agent_telephone');
 			$user->patientInfo->agent_email = $user->getUserConfigByKey('agent_email');
 			$user->patientInfo->agent_relationship = $user->getUserConfigByKey('agent_relationship');
+			$user->patientInfo->birth_date = $user->getUserConfigByKey('birth_date');
+			$user->patientInfo->ccm_status = $user->getUserConfigByKey('ccm_status');
 			$user->patientInfo->consent_date = $user->getUserConfigByKey('consent_date');
+			$user->patientInfo->cur_month_activity_time = $user->getUserConfigByKey('cur_month_activity_time');
+			$user->patientInfo->date_paused = $user->getUserConfigByKey('date_paused');
+			$user->patientInfo->date_withdrawn = $user->getUserConfigByKey('date_withdrawn');
 			$user->patientInfo->gender = $user->getUserConfigByKey('gender');
 			$user->patientInfo->preferred_contact_method = $user->getUserConfigByKey('preferred_contact_method');
 			$user->patientInfo->preferred_contact_location = $user->getUserConfigByKey('preferred_contact_location');
@@ -277,6 +303,14 @@ class CreatePatientsTable extends Migration {
 			$user->patientInfo->preferred_cc_contact_days = $user->getUserConfigByKey('preferred_cc_contact_days');
 			$user->patientInfo->preferred_contact_time = $user->getUserConfigByKey('preferred_contact_time');
 			$user->patientInfo->preferred_contact_timezone = $user->getUserConfigByKey('preferred_contact_timezone');
+			$user->patientInfo->registration_date = $user->getUserConfigByKey('registration_date');
+			$user->patientInfo->daily_reminder_optin = $user->getUserConfigByKey('daily_reminder_optin');
+			$user->patientInfo->daily_reminder_time = $user->getUserConfigByKey('daily_reminder_time');
+			$user->patientInfo->daily_reminder_areas = $user->getUserConfigByKey('daily_reminder_areas');
+			$user->patientInfo->hospital_reminder_optin = $user->getUserConfigByKey('hospital_reminder_optin');
+			$user->patientInfo->hospital_reminder_time = $user->getUserConfigByKey('hospital_reminder_time');
+			$user->patientInfo->hospital_reminder_areas = $user->getUserConfigByKey('hospital_reminder_areas');
+
 			$user->patientInfo->save();
 
 
@@ -317,9 +351,10 @@ class CreatePatientsTable extends Migration {
 			$user->load('providerInfo');
 
 			// set values
-			$user->providerInfo->prefix = $user->getUserConfigByKey('prefix');
-			$user->providerInfo->qualification = $user->getUserConfigByKey('qualification');
 			$user->providerInfo->npi_number = $user->getUserConfigByKey('npi_number');
+			$user->providerInfo->prefix = $user->getUserConfigByKey('prefix');
+			$user->providerInfo->specialty = $user->getUserConfigByKey('specialty');
+			$user->providerInfo->qualification = $user->getUserConfigByKey('qualification');
 			$user->providerInfo->save();
 
 			echo PHP_EOL;
