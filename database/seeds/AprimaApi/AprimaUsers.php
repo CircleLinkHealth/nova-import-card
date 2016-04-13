@@ -25,11 +25,13 @@ class AprimaUsers extends Seeder
             }
 
             $password = str_random( 16 );
+            $programId = 16;
 
             $user = \App\User::updateOrCreate( [
                 'user_email' => "upg$i@clh.com",
             ], [
                 'password' => \Hash::make( $password ),
+                'program_id' => $programId,
             ] );
 
             $relationships = DB::table('location_user')->where('user_id', '=', $user->ID)->where('location_id', '=', $loc->id)->count();
