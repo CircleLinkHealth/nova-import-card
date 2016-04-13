@@ -683,16 +683,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			return false;
 		}
 		$location = Location::find($locationId);
-		if(isset($location->name)) $location->name ;
-		if(isset($location->address_line_1)) $location->address_line_1 ;
-		if(isset($location->address_line_2)) $location->address_line_2 ;
-		if(isset($location->city)) $location->city ;
-		if(isset($location->state)) $location->state ;
-		if(isset($location->postal_code)) $location->postal_code ;
-		if(isset($location->billing_code)) $location->billing_code ;
-		if(isset($location->location_code)) $location->location_code ;
-		if(isset($location->phone)) $location->phone ;
-
 		return $location;
 	}
 	public function getPreferredLocationName() {

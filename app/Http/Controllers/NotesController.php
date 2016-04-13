@@ -95,18 +95,18 @@ class NotesController extends Controller
 
         if ($patientId) {
             // patient view
-            $wpUser = User::find($patientId);
-            if (!$wpUser) {
+            $user = User::find($patientId);
+            if (!$user) {
                 return response("User not found", 401);
             }
 
-            $patient_name = $wpUser->getFullNameAttribute();
+            $patient_name = $user->getFullNameAttribute();
 
             //Gather details to generate form
 
             //careteam
             $careteam_info = array();
-            $careteam_ids = $wpUser->careTeam;
+            $careteam_ids = $user->careTeam;
             if ((@unserialize($careteam_ids) !== false)) {
                 $careteam_ids = unserialize($careteam_ids);
             }
@@ -116,15 +116,21 @@ class NotesController extends Controller
                 }//debug($careteam_info);
             }
 
-            if($wpUser->timeZone == ''){
+            if($user->timeZone == ''){
                 $userTimeZone = 'America/New_York';
             } else {
-                $userTimeZone = $wpUser->timeZone;
+                $userTimeZone = $user->timeZone;
+            }
+
+            //Check for User's blog
+            if(empty($user->blogId())){
+                return response("User's Program not found", 401);
             }
 
             //providers
-            $providers = WpBlog::getProviders($wpUser->blogId());
-            $nonCCMCareCenterUsers = WpBlog::getNonCCMCareCenterUsers($wpUser->blogId());
+            $providers = WpBlog::getProviders($user->blogId());
+            $nonCCMCareCenterUsers = WpBlog::getNonCCMCareCenterUsers($user->blogId());
+            $careCenterUsers = WpBlog::getCareCenterUsers($user->blogId());
             $provider_info = array();
 
             if(!empty($providers)) {
@@ -137,8 +143,14 @@ class NotesController extends Controller
                     $provider_info[$nonCCMCareCenterUser->ID] = User::find($nonCCMCareCenterUser->ID)->getFullNameAttribute();
                 }
             }
+            debug($careCenterUsers);
+            if(!empty($careCenterUsers)) {
+                foreach ($careCenterUsers as $careCenterUser) {
+                    $provider_info[$careCenterUser->ID] = User::find($careCenterUser->ID)->getFullNameAttribute();
+                }
+            }
 
-            //Add Careteam to Performed By
+            //Add care center users to Performed By Drop Down
             if(!empty($careteam_info)){
                 foreach ($careteam_info as $careteam_member) {
                     array_push($provider_info, $careteam_member);
@@ -148,8 +160,8 @@ class NotesController extends Controller
             asort($careteam_info);
 
             $view_data = [
-                'program_id' => $wpUser->blogId(),
-                'patient' => $wpUser,
+                'program_id' => $user->blogId(),
+                'patient' => $user,
                 'patient_name' => $patient_name,
                 'note_types' => Activity::input_activity_types(),
                 'provider_info' => $provider_info,
