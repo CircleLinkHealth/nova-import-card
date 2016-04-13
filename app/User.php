@@ -751,7 +751,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// email
 	public function setEmailAttribute($value) {
-		return $this->setUserConfigByKey('email', $value);
+		return $this->user_email = $value;
 	}
 
 	public function getAgeAttribute() {

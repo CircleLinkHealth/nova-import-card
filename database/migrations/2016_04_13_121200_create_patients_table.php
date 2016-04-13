@@ -340,6 +340,68 @@ class CreatePatientsTable extends Migration {
 			$user->patientInfo->hospital_reminder_areas = $user->getUserConfigByKey('hospital_reminder_areas');
 
 			$user->patientInfo->save();
+
+			// care team
+			$careTeam = $user->getUserConfigByKey('care_team');
+			if(!empty($careTeam)) {
+				if(is_array($careTeam)) {
+				  // do nothing, these will fall under bp, lc, or sa
+				}
+			}
+
+			// care team billing provider
+			$careTeamBP = $user->getUserConfigByKey('billing_provider');
+			if(!empty($careTeamBP) && is_numeric($careTeamBP)) {
+				$careTeamMember = new PatientCareTeamMember;
+				$careTeamMember->user_id = $user->ID;
+				$careTeamMember->member_user_id = $careTeamBP;
+				$careTeamMember->type = 'billing_provider';
+				$careTeamMember->save();
+				echo 'added billing_provider' . PHP_EOL;
+			} else {
+				echo 'billing_provider not int = '.$careTeamBP.''. PHP_EOL;
+			}
+
+			// care team lead contacts
+			$careTeamLC = $user->getUserConfigByKey('lead_contact');
+			if(!empty($careTeamLC) && is_numeric($careTeamLC)) {
+				$careTeamMember = new PatientCareTeamMember;
+				$careTeamMember->user_id = $user->ID;
+				$careTeamMember->member_user_id = $careTeamLC;
+				$careTeamMember->type = 'lead_contact';
+				$careTeamMember->save();
+				echo 'added lead_contact'.PHP_EOL;
+			} else {
+				echo 'lead_contact not int = '.$careTeamLC.''. PHP_EOL;
+			}
+
+			// care team send alerts
+			$careTeamSA = $user->getUserConfigByKey('send_alerts');
+			if(!empty($careTeamSA)) {
+				if(is_array($careTeamSA)) {
+					foreach($careTeamSA as $sa) {
+						if(is_numeric($sa)) {
+							$careTeamMember = new PatientCareTeamMember;
+							$careTeamMember->user_id = $user->ID;
+							$careTeamMember->member_user_id = $sa;
+							$careTeamMember->type = 'send_alerts';
+							$careTeamMember->save();
+							echo 'added send_alerts' . PHP_EOL;
+						} else {
+							echo 'send_alerts not int = '.$sa.''. PHP_EOL;
+						}
+					}
+				} else {
+					if(is_numeric($careTeamSA)) {
+						$careTeamMember = new PatientCareTeamMember;
+						$careTeamMember->user_id = $user->ID;
+						$careTeamMember->member_user_id = $careTeamSA;
+						$careTeamMember->type = 'send_alerts';
+						$careTeamMember->save();
+						echo 'added send_alerts' . PHP_EOL;
+					}
+				}
+			}
 		}
 	}
 

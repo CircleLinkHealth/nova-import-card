@@ -334,13 +334,19 @@ class PatientCareplanController extends Controller
         $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
 
         // care team vars
-        $careTeamUserIds = $userConfig['care_team'];
-        $ctmsa = array();
-        if (!empty($userConfig['send_alert_to'])) {
-            if((@unserialize($userConfig['send_alert_to']) !== false)) {
-                $userConfig['send_alert_to'] = unserialize($userConfig['send_alert_to']);
+        $careTeamUserIds = array();
+        $careTeamMembers = $user->careTeamMembers()->get();
+        if ($careTeamMembers->count() > 0) {
+            foreach($careTeamMembers as $careTeamMember) {
+                $careTeamUserIds[] = $careTeamMember->member_user_id;
             }
-            $ctmsa = $userConfig['send_alert_to'];
+        }
+        $ctmsa = array();
+        $careTeamMembersSendAlerts = $user->careTeamMembers()->where('type', 'send_alert_to')->get();
+        if ($careTeamMembersSendAlerts->count() > 0) {
+            foreach($careTeamMembersSendAlerts as $careTeamMember) {
+                $ctmsa[] = $careTeamMember->member_user_id;
+            }
         }
         $ctbp = $userConfig['billing_provider'];
         $ctlc = $userConfig['lead_contact'];
@@ -386,7 +392,7 @@ class PatientCareplanController extends Controller
             $showApprovalButton = true;
         }
 
-        return view('wpUsers.patient.careplan.careteam', compact(['program', 'patient', 'userConfig', 'messages', 'sectionHtml', 'phtml', 'providers', 'careTeamUsers', 'showApprovalButton']));
+        return view('wpUsers.patient.careplan.careteam', compact(['program', 'patient', 'messages', 'sectionHtml', 'phtml', 'providers', 'careTeamUsers', 'showApprovalButton']));
     }
 
 
