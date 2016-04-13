@@ -375,20 +375,21 @@ class CreatePatientsTable extends Migration {
 				echo 'lead_contact not int = '.$careTeamLC.''. PHP_EOL;
 			}
 
-			// care team send alerts
-			$careTeamSA = $user->getUserConfigByKey('send_alerts');
+			// care team send alert to
+			$careTeamSA = $user->getUserConfigByKey('send_alert_to');
 			if(!empty($careTeamSA)) {
+				dd($careTeamSA);
 				if(is_array($careTeamSA)) {
 					foreach($careTeamSA as $sa) {
 						if(is_numeric($sa)) {
 							$careTeamMember = new PatientCareTeamMember;
 							$careTeamMember->user_id = $user->ID;
 							$careTeamMember->member_user_id = $sa;
-							$careTeamMember->type = 'send_alerts';
+							$careTeamMember->type = 'send_alert_to';
 							$careTeamMember->save();
-							echo 'added send_alerts' . PHP_EOL;
+							echo 'added send_alert_to' . PHP_EOL;
 						} else {
-							echo 'send_alerts not int = '.$sa.''. PHP_EOL;
+							echo 'send_alert_to not int = '.$sa.''. PHP_EOL;
 						}
 					}
 				} else {
@@ -396,9 +397,9 @@ class CreatePatientsTable extends Migration {
 						$careTeamMember = new PatientCareTeamMember;
 						$careTeamMember->user_id = $user->ID;
 						$careTeamMember->member_user_id = $careTeamSA;
-						$careTeamMember->type = 'send_alerts';
+						$careTeamMember->type = 'send_alert_to';
 						$careTeamMember->save();
-						echo 'added send_alerts' . PHP_EOL;
+						echo 'added send_alert_to' . PHP_EOL;
 					}
 				}
 			}
