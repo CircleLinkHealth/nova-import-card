@@ -28,12 +28,18 @@ class QAImportManager
     private $blogId;
     private $ccd;
     private $routine;
+    //If the CCD came from the API (ie. Aprima), we have the location already
+    private $locationId;
+    //If the CCD came from the API (ie. Aprima), they sent us the provider already
+    private $providerId;
 
-    public function __construct($blogId, Ccda $ccda)
+    public function __construct($blogId, Ccda $ccda, $providerId = false, $locationId = false)
     {
         $this->blogId = $blogId;
         $this->ccda = $ccda;
         $this->ccd = json_decode( $ccda->json );
+        $this->locationId = $locationId;
+        $this->providerId = $providerId;
 
         $this->routine = empty($ccda->vendor_id)
             ? ( new RoutineBuilder( $this->ccd ) )->getRoutine()
@@ -91,21 +97,38 @@ class QAImportManager
         /**
          * Parse provider (Lead Contact and Billing)
          */
-        $primaryProviderParser = new PrimaryProvidersParser( new UserRepository() );
-        //we well get back user objects (providers)
-        $users = $primaryProviderParser->parse( $this->ccda );
-        $output[ 'provider' ] = $users;
+        if (!$this->providerId)
+        {
+            $primaryProviderParser = new PrimaryProvidersParser( new UserRepository() );
+            //we well get back user objects (providers)
+            $users = $primaryProviderParser->parse( $this->ccda );
+            $output[ 'provider' ] = $users;
 
-        $demographics->provider_id = isset($users[ 0 ]) ? $users[ 0 ]->ID : null;
+            $demographics->provider_id = isset($users[ 0 ]) ? $users[ 0 ]->ID : null;
+        }
+
+        if ($this->providerId)
+        {
+            $demographics->provider_id = $this->providerId;
+        }
+
 
         /**
          * Parse Provider Location
          */
-        $locationParser = new ProviderLocationParser();
-        $locations = $locationParser->parse( $this->ccda );
-        $output[ 'location' ] = $locations;
+        if (!$this->locationId)
+        {
+            $locationParser = new ProviderLocationParser();
+            $locations = $locationParser->parse( $this->ccda );
+            $output[ 'location' ] = $locations;
 
-        $demographics->location_id = isset($locations[ 0 ]) ? $locations[ 0 ]->id : null;
+            $demographics->location_id = isset($locations[ 0 ]) ? $locations[ 0 ]->id : null;
+        }
+
+        if ($this->locationId)
+        {
+            $demographics->location_id = $this->locationId;
+        }
 
         /**
          * Parse and Import User Config

@@ -286,7 +286,7 @@ class CcdApiController extends Controller
         //If Logging fails we let ourselves know, but not Aprima.
         //Yes. Repetitions. I KNOW!
         try {
-            $importer = new QAImportManager($programId, $ccdObj);
+            $importer = new QAImportManager($programId, $ccdObj, $provider['ID'], $locationId);
             $output = $importer->generateCarePlanFromCCD();
         } catch (\Exception $e) {
             if (app()->environment('production')) {
