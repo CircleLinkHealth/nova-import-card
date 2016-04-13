@@ -94,7 +94,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"gender" => "required",
 		"mrn_number" => "required",
 		"birth_date" => "required",
-		"study_phone_number" => "required",
+		"home_phone_number" => "required",
 		"email" => "",
 		"address" => "",
 		"city" => "",
@@ -358,7 +358,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		} else if($attribute == 'mrnNumber') {
 			$attribute = 'mrn';
 		} else if($attribute == 'studyPhoneNumber') {
-			$attribute = 'phone';
+			return false;
 		} else if($attribute == 'billingProvider') {
 			$attribute = 'billingProviderID';
 		} else if($attribute == 'leadContact') {
@@ -472,27 +472,45 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// specialty
 	public function getSpecialtyAttribute() {
+		if(!$this->providerInfo) {
+			return '';
+		}
 		return $this->providerInfo->specialty;
 	}
 	public function setSpecialtyAttribute($value) {
+		if(!$this->providerInfo) {
+			return '';
+		}
 		$this->providerInfo->specialty = $value;
 		$this->providerInfo->save();
 	}
 
 	// npi_number
 	public function getNpiNumberAttribute() {
+		if(!$this->providerInfo) {
+			return '';
+		}
 		return $this->providerInfo->npi_number;
 	}
 	public function setNpiNumberAttribute($value) {
+		if(!$this->providerInfo) {
+			return '';
+		}
 		$this->providerInfo->npi_number = $value;
 		$this->providerInfo->save();
 	}
 
 	// qualification
 	public function getQualificationAttribute() {
+		if(!$this->providerInfo) {
+			return '';
+		}
 		return $this->providerInfo->qualification;
 	}
 	public function setQualificationAttribute($value) {
+		if(!$this->providerInfo) {
+			return '';
+		}
 		$this->providerInfo->qualification = $value;
 		$this->providerInfo->save();
 	}
@@ -614,9 +632,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	// phone (study_phone_nmber)
 	public function getPrimaryPhoneAttribute() {
 		$phoneNumber = $this->phoneNumbers()->where('is_primary', 1)->first();
-		dd($phoneNumber);
+		if($phoneNumber) {
+			return $phoneNumber->number;
+		} else {
+			return '';
+		}
 	}
 
+	public function getHomePhoneNumberAttribute() {
+		return $this->getPhoneAttribute();
+	}
 	public function getPhoneAttribute() {
 		$phoneNumber = $this->phoneNumbers()->where('type', 'home')->first();
 		if($phoneNumber) {
@@ -625,14 +650,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			return '';
 		}
 	}
+	public function setHomePhoneNumberAttribute($value) {
+		return $this->setPhoneAttribute($value);
+	}
 	public function setPhoneAttribute($value) {
 		$phoneNumber = $this->phoneNumbers()->where('type', 'home')->first();
 		if($phoneNumber) {
 			$phoneNumber->number = $value;
-			$phoneNumber->save();
 		} else {
-			return '';
+			$phoneNumber = new PhoneNumber();
+			$phoneNumber->user_id = $this->ID;
+			$phoneNumber->is_primary = 1;
+			$phoneNumber->number = $value;
+			$phoneNumber->type = 'home';
 		}
+		$phoneNumber->save();
+		return true;
 	}
 
 	/*
@@ -660,10 +693,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$phoneNumber = $this->phoneNumbers()->where('type', 'work')->first();
 		if($phoneNumber) {
 			$phoneNumber->number = $value;
-			$phoneNumber->save();
 		} else {
-			return '';
+			$phoneNumber = new PhoneNumber();
+			$phoneNumber->user_id = $this->ID;
+			$phoneNumber->number = $value;
+			$phoneNumber->type = 'work';
 		}
+		$phoneNumber->save();
+		return true;
 	}
 
 	// mobile_phone_number
@@ -680,10 +717,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$phoneNumber = $this->phoneNumbers()->where('type', 'mobile')->first();
 		if($phoneNumber) {
 			$phoneNumber->number = $value;
-			$phoneNumber->save();
 		} else {
-			return '';
+			$phoneNumber = new PhoneNumber();
+			$phoneNumber->user_id = $this->ID;
+			$phoneNumber->number = $value;
+			$phoneNumber->type = 'mobile';
 		}
+		$phoneNumber->save();
+		return true;
 	}
 
 
@@ -855,9 +896,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// prefix
 	public function getPrefixAttribute() {
+		if(!$this->providerInfo) {
+			return '';
+		}
 		return $this->providerInfo->prefix;
 	}
 	public function setPrefixAttribute($value) {
+		if(!$this->providerInfo) {
+			return '';
+		}
 		$this->providerInfo->prefix = $value;
 		$this->providerInfo->save();
 	}

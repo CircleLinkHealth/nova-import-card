@@ -273,7 +273,7 @@ class PatientCareplanController extends Controller
             // validate
             $messages = [
                 'required' => 'The :attribute field is required.',
-                'study_phone_number.required' => 'The patient phone number field is required.',
+                'home_phone_number.required' => 'The patient phone number field is required.',
             ];
             $this->validate($request, $user->patient_rules, $messages);
             $userRepo->editUser($user, $params);
@@ -285,7 +285,7 @@ class PatientCareplanController extends Controller
             // validate
             $messages = [
                 'required' => 'The :attribute field is required.',
-                'study_phone_number.required' => 'The patient phone number field is required.',
+                'home_phone_number.required' => 'The patient phone number field is required.',
             ];
             $this->validate($request, $user->patient_rules, $messages);
             $role = Role::whereName('participant')->first();

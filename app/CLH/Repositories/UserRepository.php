@@ -106,6 +106,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                 $key == 'city' ||
                 $key == 'state' ||
                 $key == 'address' ||
+                $key == 'address2' ||
                 $key == 'zip') {
                 $user->$key = $newValue;
                 $user->save();

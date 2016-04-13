@@ -118,10 +118,10 @@ $user_info = array();
                                     <div class="form-item col-sm-12">
                                         <div class="row">
                                             <div class="col-sm-6">
-                                                <div class="form-group {{ $errors->first('study_phone_number') ? 'has-error' : '' }}">
+                                                <div class="form-group {{ $errors->first('home_phone_number') ? 'has-error' : '' }}">
                                                     <label class="sr-only" for="telephone">Phone</label>
-                                                    <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}' class="form-control" name="study_phone_number" id="study_phone_number" placeholder="Telephone *" value="{{ (old('study_phone_number') ? old('study_phone_number') : ($patient->study_phone_number ? $patient->study_phone_number : '')) }}">
-                                                    <span class="help-block">{{ $errors->first('study_phone_number') }}</span>
+                                                    <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}' class="form-control" name="home_phone_number" id="home_phone_number" placeholder="Telephone *" value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->home_phone_number ? $patient->home_phone_number : '')) }}">
+                                                    <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
