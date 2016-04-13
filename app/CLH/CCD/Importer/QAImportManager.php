@@ -109,6 +109,8 @@ class QAImportManager
 
         if ($this->providerId)
         {
+            //Kinda hacky. Refactor here soon
+            $output[ 'provider' ][0] = $this->providerId;
             $demographics->provider_id = $this->providerId;
         }
 
@@ -127,6 +129,8 @@ class QAImportManager
 
         if ($this->locationId)
         {
+            //Kinda hacky. Refactor here soon
+            $output[ 'location' ][0] = $this->locationId;
             $demographics->location_id = $this->locationId;
         }
 
