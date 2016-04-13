@@ -378,7 +378,6 @@ class CreatePatientsTable extends Migration {
 			// care team send alert to
 			$careTeamSA = $user->getUserConfigByKey('send_alert_to');
 			if(!empty($careTeamSA)) {
-				dd($careTeamSA);
 				if(is_array($careTeamSA)) {
 					foreach($careTeamSA as $sa) {
 						if(is_numeric($sa)) {
