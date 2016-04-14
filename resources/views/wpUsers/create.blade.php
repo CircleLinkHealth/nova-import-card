@@ -119,7 +119,7 @@
 
                                 <h2><a data-toggle="collapse" data-target="#programCollapse" class="">Programs</a></h2>
 
-                                <div id="programCollapse" class="collapse in">
+                                <div id="programCollapse" class="collapse in" style="background:#888;padding:20px;">
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('program_id', 'Primary Program:') !!}</div>
@@ -133,7 +133,7 @@
                                     </div>
 
 
-                                    <a href="#" id="togglePrograms"><strong>Toggle Programs list</strong></a><br /><br />
+                                    <a class="btn btn-info panel-title" href="#" id="togglePrograms"><strong>Toggle Programs list</strong></a><br /><br />
                                     <div id="programs" style="display:none;">
                                         <button class="btn-primary btn-xs" id="programsCheckAll">Check All</button> |
                                         <button class="btn-primary btn-xs" id="programsUncheckAll">Uncheck All</button>
