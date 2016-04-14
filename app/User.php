@@ -396,32 +396,21 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     // basic attributes
 
-	// first_name
 	/*
+	// first_name
     public function getFirstNameAttribute() {
-		//return $this->getUserMetaByKey('first_name');
-		dd($this->city);
 		return $this->first_name;
 	}
 	public function setFirstNameAttribute($value) {
-		//$this->setUserMetaByKey('first_name', $value);
-		//$this->display_name = $this->fullName;
-		//$this->save();
 		$this->first_name = $value;
 		return true;
 	}
-	*/
 
-	/*
 	// last_name
     public function getLastNameAttribute() {
-		//return $this->getUserMetaByKey('last_name');
 		return $this->last_name;
 	}
 	public function setLastNameAttribute($value) {
-		//$this->setUserMetaByKey('last_name', $value);
-		//$this->display_name = $this->fullName;
-		//$this->save();
 		$this->last_name = $value;
 		return true;
 	}
@@ -429,8 +418,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// full name
 	public function getFullNameAttribute() {
-		$firstName = $this->firstName;
-		$lastName = $this->lastName;
+		$firstName = $this->first_name;
+		$lastName = $this->last_name;
 		return $firstName . ' ' . $lastName;
 	}
 
@@ -836,34 +825,130 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// care_team
 	public function getCareTeamAttribute() {
-		return $this->getUserConfigByKey('care_team');
+		$ct = array();
+		$careTeamMembers = $this->patientCareTeamMembers()->groupBy('member_user_id')->get();
+		if ($careTeamMembers->count() > 0) {
+			foreach($careTeamMembers as $careTeamMember) {
+				$ct[] = $careTeamMember->member_user_id;
+			}
+		}
+		return $ct;
 	}
-	public function setCareTeamAttribute($value) {
-		return $this->setUserConfigByKey('care_team', $value);
+	public function setCareTeamAttribute($memberUserIds) {
+		if(!is_array($memberUserIds)) {
+			$this->patientCareTeamMembers()->where('type', 'member')->delete();
+			return false; // must be array
+		}
+		$this->patientCareTeamMembers()->where('type', 'member')->whereNotIn('member_user_id', $memberUserIds)->delete();
+		foreach($memberUserIds as $memberUserId) {
+			$careTeamMember = $this->patientCareTeamMembers()->where('type', 'member')->where('member_user_id', $memberUserId)->first();
+			if($careTeamMember) {
+				$careTeamMember->member_user_id = $memberUserId;
+			} else {
+				$careTeamMember = new PatientCareTeamMember();
+				$careTeamMember->user_id = $this->ID;
+				$careTeamMember->member_user_id = $memberUserId;
+				$careTeamMember->type = 'member';
+			}
+			$careTeamMember->save();
+		}
+		return true;
 	}
 
 	// send_alert_to
 	public function getSendAlertToAttribute() {
-		return $this->getUserConfigByKey('send_alert_to');
+		$ctmsa = array();
+		$careTeamMembers = $this->patientCareTeamMembers()->get();
+		if ($careTeamMembers->count() > 0) {
+			foreach($careTeamMembers as $careTeamMember) {
+				if($careTeamMember->type == 'send_alert_to') {
+					$ctmsa[] = $careTeamMember->member_user_id;
+				}
+			}
+		}
+		return $ctmsa;
 	}
-	public function setSendAlertToAttribute($value) {
-		return $this->setUserConfigByKey('send_alert_to', $value);
+	public function setSendAlertToAttribute($memberUserIds) {
+		if(!is_array($memberUserIds)) {
+			$this->patientCareTeamMembers()->where('type', 'send_alert_to')->delete();
+			return false; // must be array
+		}
+		$this->patientCareTeamMembers()->where('type', 'send_alert_to')->whereNotIn('member_user_id', $memberUserIds)->delete();
+		foreach($memberUserIds as $memberUserId) {
+			$careTeamMember = $this->patientCareTeamMembers()->where('type', 'send_alert_to')->where('member_user_id', $memberUserId)->first();
+			if($careTeamMember) {
+				$careTeamMember->member_user_id = $memberUserId;
+			} else {
+				$careTeamMember = new PatientCareTeamMember();
+				$careTeamMember->user_id = $this->ID;
+				$careTeamMember->member_user_id = $memberUserId;
+				$careTeamMember->type = 'send_alert_to';
+			}
+			$careTeamMember->save();
+		}
+		return true;
 	}
 
 	// billing_provider
 	public function getBillingProviderIDAttribute() {
-		return $this->getUserConfigByKey('billing_provider');
+		$bp = '';
+		$careTeamMembers = $this->patientCareTeamMembers()->get();
+		if ($careTeamMembers->count() > 0) {
+			foreach($careTeamMembers as $careTeamMember) {
+				if($careTeamMember->type == 'billing_provider') {
+					$bp = $careTeamMember->member_user_id;
+				}
+			}
+		}
+		return $bp;
 	}
 	public function setBillingProviderIDAttribute($value) {
-		return $this->setUserConfigByKey('billing_provider', $value);
+		if(empty($value)) {
+			$this->patientCareTeamMembers()->where('type', 'billing_provider')->delete();
+			return true;
+		}
+		$careTeamMember = $this->patientCareTeamMembers()->where('type', 'billing_provider')->first();
+		if($careTeamMember) {
+			$careTeamMember->member_user_id = $value;
+		} else {
+			$careTeamMember = new PatientCareTeamMember();
+			$careTeamMember->user_id = $this->ID;
+			$careTeamMember->member_user_id = $value;
+			$careTeamMember->type = 'billing_provider';
+		}
+		$careTeamMember->save();
+		return true;
 	}
 
 	// lead_contact
 	public function getLeadContactIDAttribute() {
-		return $this->getUserConfigByKey('lead_contact');
+		$lc = array();
+		$careTeamMembers = $this->patientCareTeamMembers()->get();
+		if ($careTeamMembers->count() > 0) {
+			foreach($careTeamMembers as $careTeamMember) {
+				if($careTeamMember->type == 'lead_contact') {
+					$lc = $careTeamMember->member_user_id;
+				}
+			}
+		}
+		return $lc;
 	}
 	public function setLeadContactIDAttribute($value) {
-		return $this->setUserConfigByKey('lead_contact', $value);
+		if(empty($value)) {
+			$this->patientCareTeamMembers()->where('type', 'lead_contact')->delete();
+			return true;
+		}
+		$careTeamMember = $this->patientCareTeamMembers()->where('type', 'lead_contact')->first();
+		if($careTeamMember) {
+			$careTeamMember->member_user_id = $value;
+		} else {
+			$careTeamMember = new PatientCareTeamMember();
+			$careTeamMember->user_id = $this->ID;
+			$careTeamMember->member_user_id = $value;
+			$careTeamMember->type = 'lead_contact';
+		}
+		$careTeamMember->save();
+		return true;
 	}
 
 	// preferred_contact_location
@@ -919,14 +1004,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return true;
 	}
 
-	public function getCarePlanQAApproverAttribute() {
-		$meta = $this->meta->where('meta_key', 'careplan_qa_approver')->lists('meta_value');
-		if(!empty($meta)) {
-			return $meta[0];
-		}
-		return 0;
-	}
-
 	// agent_name
 	public function getAgentNameAttribute() {
 		return $this->patientInfo->agent_name;
@@ -971,6 +1048,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$this->patientInfo->agent_relationship = $value;
 		$this->patientInfo->save();
 		return true;
+	}
+
+	public function getCarePlanQAApproverAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_qa_approver')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return 0;
 	}
 
 	public function setCarePlanQAApproverAttribute($value) {
@@ -1184,9 +1269,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		//dd($randomUserInfo);
 		// set random data
 		$user = $this;
-		$user->firstName = $randomUserInfo->name->first;
+		$user->first_name = $randomUserInfo->name->first;
 		$user->user_nicename = $randomUserInfo->name->first;
-		$user->lastName = 'Z-'.$randomUserInfo->name->last;
+		$user->last_name = 'Z-'.$randomUserInfo->name->last;
 		$user->user_login = $randomUserInfo->login->username;
 		$user->user_pass = $randomUserInfo->login->password;
 		$user->user_email = $randomUserInfo->email;

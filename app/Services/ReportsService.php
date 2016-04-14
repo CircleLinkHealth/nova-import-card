@@ -29,7 +29,7 @@ class ReportsService
         $userHeader['Patient_Name'] = $user_meta['first_name'] . ' ' . $user_meta['last_name'];
         $userConfig = $user->userConfig();
         $userHeader['Patient_Phone'] = $userConfig['study_phone_number'];
-        $provider = User::findOrFail($userConfig['billing_provider']);
+        $provider = User::findOrFail($user->billingProviderID);
         $providerConfig = $provider->userConfig();
         $provider_meta = UserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
         $userHeader['Provider_Name'] = trim($providerConfig['prefix'] . ' ' . $provider_meta['first_name'] . ' ' . $provider_meta['last_name'] . ' ' . $providerConfig['qualification']);

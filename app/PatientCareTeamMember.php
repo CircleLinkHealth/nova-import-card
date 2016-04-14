@@ -7,7 +7,6 @@ use Auth;
 
 class PatientCareTeamMember extends Model {
 
-	use SoftDeletes;
 
 	/**
 	 * The connection name for the model.
