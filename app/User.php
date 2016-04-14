@@ -50,11 +50,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log', 'user_status', 'auto_attach_programs', 'display_name', 'spam', 'password'];
+	protected $fillable = ['user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log', 'user_status', 'auto_attach_programs', 'display_name', 'spam', 'password',
+	'first_name',
+	'last_name',
+	'address',
+	'city',
+	'state',
+	'zip',
+	'is_auto_generated'];
 
 	protected $hidden = ['user_pass'];
 
-	protected $dates = ['deleted','user_registered'];
+	protected $dates = ['user_registered'];
 
 	/**
 	 * @todo: make timestamps work
@@ -87,7 +94,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"gender" => "required",
 		"mrn_number" => "required",
 		"birth_date" => "required",
-		"study_phone_number" => "required",
+		"home_phone_number" => "required",
 		"email" => "",
 		"address" => "",
 		"city" => "",
@@ -111,9 +118,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public static function boot()
 	{
 		parent::boot();
+
+		static::deleting(function($user) {
+			$user->providerInfo()->delete();
+			$user->patientInfo()->delete();
+			$user->patientCarePlans()->delete();
+			$user->patientCareTeamMembers()->delete();
+		});
+
+		self::restoring(function ($user) {
+			$user->providerInfo()->restore();
+			$user->patientInfo()->restore();
+			$user->patientCarePlans()->restore();
+			$user->patientCareTeamMembers()->restore();
+		});
 	}
 
-    public function getAuthIdentifier()
+
+	public function getAuthIdentifier()
 	{
 		return $this->getKey();
 	}
@@ -175,6 +197,32 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	{
 		return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
 	}
+
+	public function providerInfo()
+	{
+		return $this->hasOne('App\ProviderInfo', 'user_id', 'ID');
+	}
+
+	public function patientInfo()
+	{
+		return $this->hasOne('App\PatientInfo', 'user_id', 'ID');
+	}
+
+	public function phoneNumbers()
+	{
+		return $this->hasOne('App\PhoneNumber', 'user_id', 'ID');
+	}
+
+	public function patientCarePlans()
+	{
+		return $this->hasOne('App\PatientCarePlan', 'user_id', 'ID');
+	}
+
+	public function patientCareTeamMembers()
+	{
+		return $this->hasOne('App\PatientCareTeamMember', 'user_id', 'ID');
+	}
+
 
 	// END RELATIONSHIPS
 
@@ -295,15 +343,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     // START ATTRIBUTES
 	public function setUserAttributeByKey($key, $value)
 	{
+
 		$func = create_function('$c', 'return strtoupper($c[1]);');
 		$attribute = preg_replace_callback('/_([a-z])/', $func, $key);
+
+		// these are now on User model, no longer remote attributes:
+		if( $key === 'firstName' || $key == 'lastName' ) {
+			return true;
+		}
+
 		// hack overrides and depreciated keys, @todo fix these
 		if($attribute == 'careplanProviderDate') {
 			$attribute = 'careplanProviderApproverDate';
 		} else if($attribute == 'mrnNumber') {
 			$attribute = 'mrn';
 		} else if($attribute == 'studyPhoneNumber') {
-			$attribute = 'phone';
+			return false;
 		} else if($attribute == 'billingProvider') {
 			$attribute = 'billingProviderID';
 		} else if($attribute == 'leadContact') {
@@ -324,6 +379,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 
 		// call save attribute
+		echo '----'.$attribute .'<br />';
 		$this->$attribute = $value;
 		$this->save();
 
@@ -340,32 +396,30 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     // basic attributes
 
+	/*
 	// first_name
     public function getFirstNameAttribute() {
-		return $this->getUserMetaByKey('first_name');
+		return $this->first_name;
 	}
 	public function setFirstNameAttribute($value) {
-		$this->setUserMetaByKey('first_name', $value);
-		$this->display_name = $this->fullName;
-		$this->save();
+		$this->first_name = $value;
 		return true;
 	}
 
 	// last_name
     public function getLastNameAttribute() {
-		return $this->getUserMetaByKey('last_name');
+		return $this->last_name;
 	}
 	public function setLastNameAttribute($value) {
-		$this->setUserMetaByKey('last_name', $value);
-		$this->display_name = $this->fullName;
-		$this->save();
+		$this->last_name = $value;
 		return true;
 	}
+	*/
 
 	// full name
 	public function getFullNameAttribute() {
-		$firstName = $this->firstName;
-		$lastName = $this->lastName;
+		$firstName = $this->first_name;
+		$lastName = $this->last_name;
 		return $firstName . ' ' . $lastName;
 	}
 
@@ -377,52 +431,80 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// preferred_cc_contact_days
 	public function getPreferredCcContactDaysAttribute() {
-		return $this->getUserConfigByKey('preferred_cc_contact_days');
+		return $this->patientInfo->preferred_cc_contact_days;
 	}
 	public function setPreferredCcContactDaysAttribute($value) {
-		return $this->setUserConfigByKey('preferred_cc_contact_days', $value);
+		$this->patientInfo->preferred_cc_contact_days = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// active_date
 	public function getActiveDateAttribute() {
-		return $this->getUserConfigByKey('active_date');
+		return $this->patientInfo->active_date;
 	}
 	public function setActiveDateAttribute($value) {
-		return $this->setUserConfigByKey('active_date', $value);
+		$this->patientInfo->active_date = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// registration_date
 	public function getRegistrationDateAttribute() {
-		return $this->getUserConfigByKey('registration_date');
+		return $this->patientInfo->registration_date;
 	}
 	public function setRegistrationDateAttribute($value) {
-		return $this->setUserConfigByKey('registration_date', $value);
+		$this->patientInfo->registration_date = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// specialty
 	public function getSpecialtyAttribute() {
-		return $this->getUserConfigByKey('specialty');
+		if(!$this->providerInfo) {
+			return '';
+		}
+		return $this->providerInfo->specialty;
 	}
 	public function setSpecialtyAttribute($value) {
-		return $this->setUserConfigByKey('specialty', $value);
+		if(!$this->providerInfo) {
+			return '';
+		}
+		$this->providerInfo->specialty = $value;
+		$this->providerInfo->save();
 	}
 
 	// npi_number
 	public function getNpiNumberAttribute() {
-		return $this->getUserConfigByKey('npi_number');
+		if(!$this->providerInfo) {
+			return '';
+		}
+		return $this->providerInfo->npi_number;
 	}
 	public function setNpiNumberAttribute($value) {
-		return $this->setUserConfigByKey('npi_number', $value);
+		if(!$this->providerInfo) {
+			return '';
+		}
+		$this->providerInfo->npi_number = $value;
+		$this->providerInfo->save();
 	}
 
 	// qualification
 	public function getQualificationAttribute() {
-		return $this->getUserConfigByKey('qualification');
+		if(!$this->providerInfo) {
+			return '';
+		}
+		return $this->providerInfo->qualification;
 	}
 	public function setQualificationAttribute($value) {
-		return $this->setUserConfigByKey('qualification', $value);
+		if(!$this->providerInfo) {
+			return '';
+		}
+		$this->providerInfo->qualification = $value;
+		$this->providerInfo->save();
 	}
 
+	/*
 	// status
 	public function getStatusAttribute() {
 		return $this->getUserConfigByKey('status');
@@ -430,55 +512,69 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setStatusAttribute($value) {
 		return $this->setUserConfigByKey('status', $value);
 	}
+	*/
 
 	// daily_reminder_optin
 	public function getDailyReminderOptinAttribute() {
-		return $this->getUserConfigByKey('daily_reminder_optin');
+		return $this->patientInfo->daily_reminder_optin;
 	}
 	public function setDailyReminderOptinAttribute($value) {
-		return $this->setUserConfigByKey('daily_reminder_optin', $value);
+		$this->patientInfo->daily_reminder_optin = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// daily_reminder_time
 	public function getDailyReminderTimeAttribute() {
-		return $this->getUserConfigByKey('daily_reminder_time');
+		return $this->patientInfo->daily_reminder_time;
 	}
 	public function setDailyReminderTimeAttribute($value) {
-		return $this->setUserConfigByKey('daily_reminder_time', $value);
+		$this->patientInfo->daily_reminder_time = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// daily_reminder_areas
 	public function getDailyReminderAreasAttribute() {
-		return $this->getUserConfigByKey('daily_reminder_areas');
+		return $this->patientInfo->daily_reminder_areas;
 	}
 	public function setDailyReminderAreasAttribute($value) {
-		return $this->setUserConfigByKey('daily_reminder_areas', $value);
+		$this->patientInfo->daily_reminder_areas = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// hospital_reminder_optin
 	public function getHospitalReminderOptinAttribute() {
-		return $this->getUserConfigByKey('hospital_reminder_optin');
+		return $this->patientInfo->hospital_reminder_optin;
 	}
 	public function setHospitalReminderOptinAttribute($value) {
-		return $this->setUserConfigByKey('hospital_reminder_optin', $value);
+		$this->patientInfo->hospital_reminder_optin = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// hospital_reminder_time
 	public function getHospitalReminderTimeAttribute() {
-		return $this->getUserConfigByKey('hospital_reminder_time');
+		return $this->patientInfo->hospital_reminder_time;
 	}
 	public function setHospitalReminderTimeAttribute($value) {
-		return $this->setUserConfigByKey('hospital_reminder_time', $value);
+		$this->patientInfo->hospital_reminder_time = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// hospital_reminder_areas
 	public function getHospitalReminderAreasAttribute() {
-		return $this->getUserConfigByKey('hospital_reminder_areas');
+		return $this->patientInfo->hospital_reminder_areas;
 	}
 	public function setHospitalReminderAreasAttribute($value) {
-		return $this->setUserConfigByKey('hospital_reminder_areas', $value);
+		$this->patientInfo->hospital_reminder_areas = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
+	/*
 	// address
 	public function getAddressAttribute() {
 		return $this->getUserConfigByKey('address');
@@ -494,7 +590,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setAddress2Attribute($value) {
 		return $this->setUserConfigByKey('address2', $value);
 	}
+	*/
 
+	/*
 	// city
 	public function getCityAttribute() {
 		return $this->getUserConfigByKey('city');
@@ -518,15 +616,48 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setZipAttribute($value) {
 		return $this->setUserConfigByKey('zip', $value);
 	}
+	*/
 
 	// phone (study_phone_nmber)
-	public function getPhoneAttribute() {
-		return $this->getUserConfigByKey('study_phone_number');
-	}
-	public function setPhoneAttribute($value) {
-		return $this->setUserConfigByKey('study_phone_number', $value);
+	public function getPrimaryPhoneAttribute() {
+		$phoneNumber = $this->phoneNumbers()->where('is_primary', 1)->first();
+		if($phoneNumber) {
+			return $phoneNumber->number;
+		} else {
+			return '';
+		}
 	}
 
+	public function getHomePhoneNumberAttribute() {
+		return $this->getPhoneAttribute();
+	}
+	public function getPhoneAttribute() {
+		$phoneNumber = $this->phoneNumbers()->where('type', 'home')->first();
+		if($phoneNumber) {
+			return $phoneNumber->number;
+		} else {
+			return '';
+		}
+	}
+	public function setHomePhoneNumberAttribute($value) {
+		return $this->setPhoneAttribute($value);
+	}
+	public function setPhoneAttribute($value) {
+		$phoneNumber = $this->phoneNumbers()->where('type', 'home')->first();
+		if($phoneNumber) {
+			$phoneNumber->number = $value;
+		} else {
+			$phoneNumber = new PhoneNumber();
+			$phoneNumber->user_id = $this->ID;
+			$phoneNumber->is_primary = 1;
+			$phoneNumber->number = $value;
+			$phoneNumber->type = 'home';
+		}
+		$phoneNumber->save();
+		return true;
+	}
+
+	/*
 	// home_phone_number
 	public function getHomePhoneNumberAttribute() {
 		return $this->getUserConfigByKey('home_phone_number');
@@ -535,45 +666,81 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setHomePhoneNumberAttribute($value) {
 		return $this->setUserConfigByKey('home_phone_number', $value);
 	}
+	*/
 
 	// work_phone_number
 	public function getWorkPhoneNumberAttribute() {
-		return $this->getUserConfigByKey('work_phone_number');
+		$phoneNumber = $this->phoneNumbers()->where('type', 'work')->first();
+		if($phoneNumber) {
+			return $phoneNumber->number;
+		} else {
+			return '';
+		}
 	}
 
 	public function setWorkPhoneNumberAttribute($value) {
-		return $this->setUserConfigByKey('work_phone_number', $value);
+		$phoneNumber = $this->phoneNumbers()->where('type', 'work')->first();
+		if($phoneNumber) {
+			$phoneNumber->number = $value;
+		} else {
+			$phoneNumber = new PhoneNumber();
+			$phoneNumber->user_id = $this->ID;
+			$phoneNumber->number = $value;
+			$phoneNumber->type = 'work';
+		}
+		$phoneNumber->save();
+		return true;
 	}
 
 	// mobile_phone_number
 	public function getMobilePhoneNumberAttribute() {
-		return $this->getUserConfigByKey('mobile_phone_number');
+		$phoneNumber = $this->phoneNumbers()->where('type', 'mobile')->first();
+		if($phoneNumber) {
+			return $phoneNumber->number;
+		} else {
+			return '';
+		}
 	}
 
 	public function setMobilePhoneNumberAttribute($value) {
-		return $this->setUserConfigByKey('mobile_phone_number', $value);
+		$phoneNumber = $this->phoneNumbers()->where('type', 'mobile')->first();
+		if($phoneNumber) {
+			$phoneNumber->number = $value;
+		} else {
+			$phoneNumber = new PhoneNumber();
+			$phoneNumber->user_id = $this->ID;
+			$phoneNumber->number = $value;
+			$phoneNumber->type = 'mobile';
+		}
+		$phoneNumber->save();
+		return true;
 	}
 
 
 	// birth date
 	public function getBirthDateAttribute() {
-		return $this->getUserConfigByKey('birth_date');
+		return $this->patientInfo->birth_date;
 	}
+
 	public function setBirthDateAttribute($value) {
-		return $this->setUserConfigByKey('birth_date', $value);
+		$this->patientInfo->birth_date = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// gender
 	public function getGenderAttribute() {
-		return $this->getUserConfigByKey('gender');
+		return $this->patientInfo->gender;
 	}
 	public function setGenderAttribute($value) {
-		return $this->setUserConfigByKey('gender', $value);
+		$this->patientInfo->gender = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// email
 	public function setEmailAttribute($value) {
-		return $this->setUserConfigByKey('email', $value);
+		return $this->user_email = $value;
 	}
 
 	public function getAgeAttribute() {
@@ -587,15 +754,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->monthlyTime;
 	}
 	public function getMonthlyTimeAttribute() {
-		$time = $this->meta->where('meta_key', 'cur_month_activity_time')->lists('meta_value');
-		if(!empty($time)) {
-			return $time[0];
-		} else {
-			return 0;
-		}
+		return $this->patientInfo->cur_month_activity_time;
 	}
 	public function setCurMonthActivityTimeAttribute($value) {
-		return $this->setUserConfigByKey('cur_month_activity_time', $value);
+		$this->patientInfo->cur_month_activity_time = $value;
+		$this->patientInfo->save();
 	}
 
 	// timezone
@@ -603,82 +766,194 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->getTimeZoneAttribute();
 	}
 	public function getTimeZoneAttribute() {
-		return $this->getUserConfigByKey('preferred_contact_timezone');
+		return $this->patientInfo->preferred_contact_timezone;
 	}
 	public function setPreferredContactTimeZoneAttribute($value){
 		return $this->setTimeZoneAttribute($value);
 	}
 	public function setTimeZoneAttribute($value) {
-		return $this->setUserConfigByKey('preferred_contact_timezone', $value);
+		$this->patientInfo->preferred_contact_timezone = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// preferred_contact_time
 	public function getPreferredContactTimeAttribute() {
-		return $this->getUserConfigByKey('preferred_contact_time');
+		return $this->patientInfo->preferred_contact_time;
 	}
 	public function setPreferredContactTimeAttribute($value) {
-		return $this->setUserConfigByKey('preferred_contact_time', $value);
+		$this->patientInfo->preferred_contact_time = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// preferred_contact_method
 	public function getPreferredContactMethodAttribute() {
-		return $this->getUserConfigByKey('preferred_contact_method');
+		return $this->patientInfo->preferred_contact_method;
 	}
 	public function setPreferredContactMethodAttribute($value) {
-		return $this->setUserConfigByKey('preferred_contact_method', $value);
+		$this->patientInfo->preferred_contact_method = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// preferred_contact_language
 	public function getPreferredContactLanguageAttribute() {
-		return $this->getUserConfigByKey('preferred_contact_language');
+		return $this->patientInfo->preferred_contact_language;
 	}
 	public function setPreferredContactLanguageAttribute($value) {
-		return $this->setUserConfigByKey('preferred_contact_language', $value);
+		$this->patientInfo->preferred_contact_language = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// mrn_number
+	public function getMrnNumberAttribute() {
+		return $this->getMRNAttribute();
+	}
 	public function getMRNAttribute() {
-		return $this->getUserConfigByKey('mrn_number');
+		return $this->patientInfo->mrn_number;
+	}
+	public function setMrnNumberAttribute($value) {
+		return $this->setMRNAttribute($value);
 	}
 	public function setMRNAttribute($value) {
-		return $this->setUserConfigByKey('mrn_number', $value);
+		$this->patientInfo->mrn_number = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// care_team
 	public function getCareTeamAttribute() {
-		return $this->getUserConfigByKey('care_team');
+		$ct = array();
+		$careTeamMembers = $this->patientCareTeamMembers()->groupBy('member_user_id')->get();
+		if ($careTeamMembers->count() > 0) {
+			foreach($careTeamMembers as $careTeamMember) {
+				$ct[] = $careTeamMember->member_user_id;
+			}
+		}
+		return $ct;
 	}
-	public function setCareTeamAttribute($value) {
-		return $this->setUserConfigByKey('care_team', $value);
+	public function setCareTeamAttribute($memberUserIds) {
+		if(!is_array($memberUserIds)) {
+			$this->patientCareTeamMembers()->where('type', 'member')->delete();
+			return false; // must be array
+		}
+		$this->patientCareTeamMembers()->where('type', 'member')->whereNotIn('member_user_id', $memberUserIds)->delete();
+		foreach($memberUserIds as $memberUserId) {
+			$careTeamMember = $this->patientCareTeamMembers()->where('type', 'member')->where('member_user_id', $memberUserId)->first();
+			if($careTeamMember) {
+				$careTeamMember->member_user_id = $memberUserId;
+			} else {
+				$careTeamMember = new PatientCareTeamMember();
+				$careTeamMember->user_id = $this->ID;
+				$careTeamMember->member_user_id = $memberUserId;
+				$careTeamMember->type = 'member';
+			}
+			$careTeamMember->save();
+		}
+		return true;
 	}
 
 	// send_alert_to
 	public function getSendAlertToAttribute() {
-		return $this->getUserConfigByKey('send_alert_to');
+		$ctmsa = array();
+		$careTeamMembers = $this->patientCareTeamMembers()->get();
+		if ($careTeamMembers->count() > 0) {
+			foreach($careTeamMembers as $careTeamMember) {
+				if($careTeamMember->type == 'send_alert_to') {
+					$ctmsa[] = $careTeamMember->member_user_id;
+				}
+			}
+		}
+		return $ctmsa;
 	}
-	public function setSendAlertToAttribute($value) {
-		return $this->setUserConfigByKey('send_alert_to', $value);
+	public function setSendAlertToAttribute($memberUserIds) {
+		if(!is_array($memberUserIds)) {
+			$this->patientCareTeamMembers()->where('type', 'send_alert_to')->delete();
+			return false; // must be array
+		}
+		$this->patientCareTeamMembers()->where('type', 'send_alert_to')->whereNotIn('member_user_id', $memberUserIds)->delete();
+		foreach($memberUserIds as $memberUserId) {
+			$careTeamMember = $this->patientCareTeamMembers()->where('type', 'send_alert_to')->where('member_user_id', $memberUserId)->first();
+			if($careTeamMember) {
+				$careTeamMember->member_user_id = $memberUserId;
+			} else {
+				$careTeamMember = new PatientCareTeamMember();
+				$careTeamMember->user_id = $this->ID;
+				$careTeamMember->member_user_id = $memberUserId;
+				$careTeamMember->type = 'send_alert_to';
+			}
+			$careTeamMember->save();
+		}
+		return true;
 	}
 
 	// billing_provider
 	public function getBillingProviderIDAttribute() {
-		return $this->getUserConfigByKey('billing_provider');
+		$bp = '';
+		$careTeamMembers = $this->patientCareTeamMembers()->get();
+		if ($careTeamMembers->count() > 0) {
+			foreach($careTeamMembers as $careTeamMember) {
+				if($careTeamMember->type == 'billing_provider') {
+					$bp = $careTeamMember->member_user_id;
+				}
+			}
+		}
+		return $bp;
 	}
 	public function setBillingProviderIDAttribute($value) {
-		return $this->setUserConfigByKey('billing_provider', $value);
+		if(empty($value)) {
+			$this->patientCareTeamMembers()->where('type', 'billing_provider')->delete();
+			return true;
+		}
+		$careTeamMember = $this->patientCareTeamMembers()->where('type', 'billing_provider')->first();
+		if($careTeamMember) {
+			$careTeamMember->member_user_id = $value;
+		} else {
+			$careTeamMember = new PatientCareTeamMember();
+			$careTeamMember->user_id = $this->ID;
+			$careTeamMember->member_user_id = $value;
+			$careTeamMember->type = 'billing_provider';
+		}
+		$careTeamMember->save();
+		return true;
 	}
 
 	// lead_contact
 	public function getLeadContactIDAttribute() {
-		return $this->getUserConfigByKey('lead_contact');
+		$lc = array();
+		$careTeamMembers = $this->patientCareTeamMembers()->get();
+		if ($careTeamMembers->count() > 0) {
+			foreach($careTeamMembers as $careTeamMember) {
+				if($careTeamMember->type == 'lead_contact') {
+					$lc = $careTeamMember->member_user_id;
+				}
+			}
+		}
+		return $lc;
 	}
 	public function setLeadContactIDAttribute($value) {
-		return $this->setUserConfigByKey('lead_contact', $value);
+		if(empty($value)) {
+			$this->patientCareTeamMembers()->where('type', 'lead_contact')->delete();
+			return true;
+		}
+		$careTeamMember = $this->patientCareTeamMembers()->where('type', 'lead_contact')->first();
+		if($careTeamMember) {
+			$careTeamMember->member_user_id = $value;
+		} else {
+			$careTeamMember = new PatientCareTeamMember();
+			$careTeamMember->user_id = $this->ID;
+			$careTeamMember->member_user_id = $value;
+			$careTeamMember->type = 'lead_contact';
+		}
+		$careTeamMember->save();
+		return true;
 	}
 
 	// preferred_contact_location
 	public function getPreferredLocationAddress() {
-		$locationId = $this->getUserConfigByKey('preferred_contact_location');
+		$locationId = $this->patientInfo->preferred_contact_location;
 		if(empty($locationId)) {
 			return false;
 		}
@@ -686,7 +961,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $location;
 	}
 	public function getPreferredLocationName() {
-		$locationId = $this->getUserConfigByKey('preferred_contact_location');
+		$locationId = $this->patientInfo->preferred_contact_location;
 		if(empty($locationId)) {
 			return false;
 		}
@@ -695,27 +970,84 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$location->name :
 			'';
 	}
-	public function getpreferredContactLocationAttribute() {
-		return $this->getUserConfigByKey('preferred_contact_location');
+	public function getPreferredContactLocationAttribute() {
+		return $this->patientInfo->preferred_contact_location;
 	}
-	public function setpreferredContactLocationAttribute($value) {
-		return $this->setUserConfigByKey('preferred_contact_location', $value);
+	public function setPreferredContactLocationAttribute($value) {
+		$this->patientInfo->preferred_contact_location = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	// prefix
 	public function getPrefixAttribute() {
-		return $this->getUserConfigByKey('prefix');
+		if(!$this->providerInfo) {
+			return '';
+		}
+		return $this->providerInfo->prefix;
 	}
 	public function setPrefixAttribute($value) {
-		return $this->setUserConfigByKey('prefix', $value);
+		if(!$this->providerInfo) {
+			return '';
+		}
+		$this->providerInfo->prefix = $value;
+		$this->providerInfo->save();
 	}
 
 	// consent_date
 	public function getConsentDateAttribute() {
-		return $this->getUserConfigByKey('consent_date');
+		return $this->patientInfo->consent_date;
 	}
 	public function setConsentDateAttribute($value) {
-		return $this->setUserConfigByKey('consent_date', $value);
+		$this->patientInfo->consent_date = $value;
+		$this->patientInfo->save();
+		return true;
+	}
+
+	// agent_name
+	public function getAgentNameAttribute() {
+		return $this->patientInfo->agent_name;
+	}
+	public function setAgentNameAttribute($value) {
+		$this->patientInfo->agent_name = $value;
+		$this->patientInfo->save();
+		return true;
+	}
+
+	// agent_phone
+	public function getAgentTelephoneAttribute() {
+		return $this->getAgentPhoneAttribute();
+	}
+	public function getAgentPhoneAttribute() {
+		return $this->patientInfo->agent_telephone;
+	}
+	public function setAgentTelephoneAttribute($value) {
+		return $this->setAgentPhoneAttribute($value);
+	}
+	public function setAgentPhoneAttribute($value) {
+		$this->patientInfo->agent_telephone = $value;
+		$this->patientInfo->save();
+		return true;
+	}
+
+	// agent_email
+	public function getAgentEmailAttribute() {
+		return $this->patientInfo->agent_email;
+	}
+	public function setAgentEmailAttribute($value) {
+		$this->patientInfo->agent_email = $value;
+		$this->patientInfo->save();
+		return true;
+	}
+
+	// agent_relationship
+	public function getAgentRelationshipAttribute() {
+		return $this->patientInfo->agent_relationship;
+	}
+	public function setAgentRelationshipAttribute($value) {
+		$this->patientInfo->agent_relationship = $value;
+		$this->patientInfo->save();
+		return true;
 	}
 
 	public function getCarePlanQAApproverAttribute() {
@@ -724,44 +1056,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			return $meta[0];
 		}
 		return 0;
-	}
-
-	// agent_name
-	public function getAgentNameAttribute() {
-		return $this->getUserConfigByKey('agent_name');
-	}
-	public function setAgentNameAttribute($value) {
-		return $this->setUserConfigByKey('agent_name', $value);
-	}
-
-	// agent_phone
-	public function getAgentTelephoneAttribute() {
-		return $this->getAgentPhoneAttribute();
-	}
-	public function getAgentPhoneAttribute() {
-		return $this->getUserConfigByKey('agent_telephone');
-	}
-	public function setAgentTelephoneAttribute($value) {
-		return $this->setAgentPhoneAttribute($value);
-	}
-	public function setAgentPhoneAttribute($value) {
-		return $this->setUserConfigByKey('agent_telephone', $value);
-	}
-
-	// agent_email
-	public function getAgentEmailAttribute() {
-		return $this->getUserConfigByKey('agent_email');
-	}
-	public function setAgentEmailAttribute($value) {
-		return $this->setUserConfigByKey('agent_email', $value);
-	}
-
-	// agent_relationship
-	public function getAgentRelationshipAttribute() {
-		return $this->getUserConfigByKey('agent_relationship');
-	}
-	public function setAgentRelationshipAttribute($value) {
-		return $this->setUserConfigByKey('agent_relationship', $value);
 	}
 
 	public function setCarePlanQAApproverAttribute($value) {
@@ -877,29 +1171,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function getCcmStatusAttribute() {
-		$meta = $this->meta->where('meta_key', 'ccm_status')->lists('meta_value');
-		if(!empty($meta)) {
-			return $meta[0];
-		}
-		return '';
+		return $this->patientInfo->ccm_status;
 	}
 
-	public function setCcmStatusAttribute($status) {
-		$meta = $this->meta()->where('meta_key', 'ccm_status')->first();
-		if(empty($meta)) {
-			$meta = new UserMeta;
-			$meta->meta_key = 'ccm_status';
-			$meta->user_id = $this->ID;
-		}
-		$statusBefore = $meta->meta_value;
-		$meta->meta_value = $status;
-		$meta->save();
+	public function setCcmStatusAttribute($value) {
+		$statusBefore = $this->patientInfo->ccm_status;
+		$this->patientInfo->ccm_status = $value;
+		$this->patientInfo->save();
 		// update date tracking
-		if( $statusBefore !== $status ) {
-			if ($status == 'paused') {
+		if( $statusBefore !== $value ) {
+			if ($value == 'paused') {
 				$this->datePaused = date("Y-m-d H:i:s");
 			};
-			if ($status == 'withdrawn') {
+			if ($value == 'withdrawn') {
 				$this->dateWithdrawn = date("Y-m-d H:i:s");
 			};
 		}
@@ -907,50 +1191,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function getDatePausedAttribute() {
-		$meta = $this->meta->where('meta_key', 'date_paused')->lists('meta_value');
-		if(!empty($meta)) {
-			return $meta[0];
-		}
-		return '';
+		return $this->patientInfo->date_paused;
 	}
 
 	public function setDatePausedAttribute($value) {
-		$meta = $this->meta->where('meta_key', 'date_paused')->first();
-		if(!empty($meta)) {
-			$meta->meta_value = $value;
-			$meta->save();
-		} else {
-			$userMeta = $this->meta()->firstOrNew([
-				'meta_key' => 'date_paused',
-				'meta_value' => $value,
-				'user_id' => $this->ID
-			]);
-			$this->meta()->save($userMeta);
-		}
+		$this->patientInfo->date_paused = $value;
+		$this->patientInfo->save();
 		return true;
 	}
 
 	public function getDateWithdrawnAttribute() {
-		$meta = $this->meta->where('meta_key', 'date_withdrawn')->lists('meta_value');
-		if(!empty($meta)) {
-			return $meta[0];
-		}
-		return '';
+		return $this->patientInfo->date_withdrawn;
 	}
 
 	public function setDateWithdrawnAttribute($value) {
-		$meta = $this->meta->where('meta_key', 'date_withdrawn')->first();
-		if(!empty($meta)) {
-			$meta->meta_value = $value;
-			$meta->save();
-		} else {
-			$userMeta = $this->meta()->firstOrNew([
-				'meta_key' => 'date_withdrawn',
-				'meta_value' => $value,
-				'user_id' => $this->ID
-			]);
-			$this->meta()->save($userMeta);
-		}
+		$this->patientInfo->date_withdrawn = $value;
+		$this->patientInfo->save();
 		return true;
 	}
 
@@ -1013,9 +1269,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		//dd($randomUserInfo);
 		// set random data
 		$user = $this;
-		$user->firstName = $randomUserInfo->name->first;
+		$user->first_name = $randomUserInfo->name->first;
 		$user->user_nicename = $randomUserInfo->name->first;
-		$user->lastName = 'Z-'.$randomUserInfo->name->last;
+		$user->last_name = 'Z-'.$randomUserInfo->name->last;
 		$user->user_login = $randomUserInfo->login->username;
 		$user->user_pass = $randomUserInfo->login->password;
 		$user->user_email = $randomUserInfo->email;

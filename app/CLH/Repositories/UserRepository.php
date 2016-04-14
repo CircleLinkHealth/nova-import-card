@@ -93,10 +93,29 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                 }
             }
 
+
+            // set new value
+            $newValue = $defaultValue;
             if($params->get($key)) {
-                $user->setUserAttributeByKey($key, $paramValue);
-            } else {
-                $user->setUserAttributeByKey($key, $defaultValue);
+                $newValue = $paramValue;
+            }
+
+            // since first/last name are now on user model
+            if($key == 'first_name' ||
+                $key == 'last_name' ||
+                $key == 'city' ||
+                $key == 'state' ||
+                $key == 'address' ||
+                $key == 'address2' ||
+                $key == 'zip') {
+                $user->$key = $newValue;
+                $user->save();
+                continue 1;
+            }
+
+            // the rest of the attributes
+            if($params->get($key)) {
+                $user->setUserAttributeByKey($key, $newValue);
             }
         }
     }
@@ -135,11 +154,13 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                 $value = serialize($value);
             }
 
-            if(($paramValue)) {
-                $wpUser->setUserAttributeByKey($key, $paramValue);
-            } else {
-                $wpUser->setUserAttributeByKey($key, $value);
+            // set new value
+            $newValue = $value;
+            if($params->get($key)) {
+                $newValue = $paramValue;
             }
+
+            $wpUser->setUserAttributeByKey($key, $newValue);
         }
     }
 

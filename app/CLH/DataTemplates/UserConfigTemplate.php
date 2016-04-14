@@ -10,7 +10,7 @@ class UserConfigTemplate extends BaseDataTemplate implements DataTemplate
     public $status = 'Inactive';
     public $email;
     public $mrn_number;
-    public $study_phone_number;
+    //public $study_phone_number;
     public $home_phone_number;
     public $mobile_phone_number;
     public $work_phone_number;

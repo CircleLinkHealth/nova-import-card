@@ -329,7 +329,7 @@ class PatientController extends Controller {
 		if($patients->count() > 0) {
 			foreach ($patients as $patient) {
 				// skip if patient has no name
-				if(empty($patient->firstName)) {
+				if(empty($patient->first_name)) {
 					continue 1;
 				}
 
@@ -398,8 +398,8 @@ class PatientController extends Controller {
 
 				$patientData[] = array('key' => $patient->ID, // $part->ID,
 					'patient_name' => $patient->fullName, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
-					'first_name' => $patient->firstName, //$meta[$part->ID]["first_name"][0],
-					'last_name' => $patient->lastName, //$meta[$part->ID]["last_name"][0],
+					'first_name' => $patient->first_name, //$meta[$part->ID]["first_name"][0],
+					'last_name' => $patient->last_name, //$meta[$part->ID]["last_name"][0],
 					'ccm_status' => ucfirst($patient->ccmStatus), //ucfirst($meta[$part->ID]["ccm_status"][0]),
 					'careplan_status' => $careplanStatus, //$careplanStatus,
 					'tooltip' => $tooltip, //$tooltip,
@@ -441,7 +441,7 @@ class PatientController extends Controller {
 		if($patients->count() > 0) {
 			foreach ($patients as $patient) {
 				// skip if patient has no name
-				if(empty($patient->firstName)) {
+				if(empty($patient->first_name)) {
 					continue 1;
 				}
 				// careplan status stuff from 2.x
@@ -491,8 +491,8 @@ class PatientController extends Controller {
 
 				$patientData[] = array('key' => $patient->ID, // $part->ID,
 					'patient_name' => $patient->fullName, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
-					'first_name' => $patient->firstName, //$meta[$part->ID]["first_name"][0],
-					'last_name' => $patient->lastName, //$meta[$part->ID]["last_name"][0],
+					'first_name' => $patient->first_name, //$meta[$part->ID]["first_name"][0],
+					'last_name' => $patient->last_name, //$meta[$part->ID]["last_name"][0],
 					'ccm_status' => ucfirst($patient->ccmStatus), //ucfirst($meta[$part->ID]["ccm_status"][0]),
 					'careplan_status' => $careplanStatus, //$careplanStatus,
 					'tooltip' => $tooltip, //$tooltip,

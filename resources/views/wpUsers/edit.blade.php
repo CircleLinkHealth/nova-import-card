@@ -31,31 +31,31 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
-                <h1>{{ $wpUser->fullName }}</h1>
+                <h1>{{ $patient->fullName }}</h1>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Edit {{ $wpUser->fullNameWithID }}
+                        Edit {{ $patient->fullNameWithID }}
                     </div>
                     <div class="panel-body">
 
                         @include('errors.errors')
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $wpUser->ID)), 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $patient->ID)), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <div class="row" style="">
                             <div class="col-sm-12">
-                                @if($wpUser->hasRole('participant'))
+                                @if($patient->hasRole('participant'))
                                     <div class="pull-left">
-                                        <a href="{{ URL::route('admin.users.msgCenter', array('patientId' => $wpUser->ID)) }}" class="btn btn-primary">App Simulator</a>
+                                        <a href="{{ URL::route('admin.users.msgCenter', array('patientId' => $patient->ID)) }}" class="btn btn-primary">App Simulator</a>
                                     </div>
                                     <div class="pull-left" style="margin-left:10px;">
-                                        <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-info">Go To Provider UI</a>
+                                        <a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" class="btn btn-info">Go To Provider UI</a>
                                     </div>
                                 @endif
                                 <div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ URL::route('admin.users.careplan', array('patientId' => $wpUser->ID)) }}" class="btn btn-primary">View Care Plan Feed JSON</a>
+                                    <a href="{{ URL::route('admin.users.careplan', array('patientId' => $patient->ID)) }}" class="btn btn-primary">View Care Plan Feed JSON</a>
                                 </div>
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
@@ -80,27 +80,27 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('user_login', 'Login:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('user_login', $wpUser->user_login, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('user_login', $patient->user_login, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('user_email', 'user_email:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('user_email', $wpUser->user_email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('user_email', $patient->user_email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('first_name', 'First Name:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::text('first_name', $userMeta['first_name'], ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('first_name', $patient->first_name, ['class' => 'form-control']) !!}</div>
                                         <div class="col-xs-2">{!! Form::label('last_name', 'Last Name:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::text('last_name', $userMeta['last_name'], ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('last_name', $patient->last_name, ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('user_status', 'User Status:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::select('user_status', array('0' => '0', '1' => '1'), $wpUser->user_status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('user_status', array('0' => '0', '1' => '1'), $patient->user_status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                         <div class="col-xs-2"></div>
                                         <div class="col-xs-4"></div>
                                     </div>
@@ -109,7 +109,7 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('ccm_status', 'CCM Status:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::select('ccm_status', array('paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn'), $wpUser->ccmStatus, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('ccm_status', array('paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn'), $patient->ccmStatus, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                         <div class="col-xs-2">{!! Form::label('careplan_status', 'Careplan Status:') !!}</div>
                                         <div class="col-xs-4">{!! Form::select('careplan_status', array('draft' => 'draft', 'qa_approved' => 'qa_approved', 'provider_approved' => 'provider_approved'), $userMeta['careplan_status'], ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                     </div>
@@ -118,9 +118,9 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('date_paused', 'Date Paused:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::text('date_paused', $wpUser->date_paused, ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('date_paused', $patient->date_paused, ['class' => 'form-control']) !!}</div>
                                         <div class="col-xs-2">{!! Form::label('date_withdrawn', 'Date Withdrawn:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::text('date_withdrawn', $wpUser->date_withdrawn, ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('date_withdrawn', $patient->date_withdrawn, ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
 
@@ -129,7 +129,7 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-lg-2">{!! Form::label('care_plan_id', 'Care Plan: ') !!}</div>
-                                            <div class="col-lg-10">{!! Form::select('care_plan_id', $carePlans, $wpUser->care_plan_id, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                            <div class="col-lg-10">{!! Form::select('care_plan_id', $carePlans, $patient->care_plan_id, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -157,7 +157,7 @@
                                             <div class="col-xs-2"><strong>Program Config:</strong><br />Auto attach to new programs</div>
                                             <div class="col-xs-4">
                                                 <br />
-                                                <input id="auto_attach_programs" name="auto_attach_programs" value="1" type="checkbox" @if(isset($wpUser->auto_attach_programs)){{ ((old('auto_attach_programs') == '1') ? 'checked="checked"' : ($wpUser->auto_attach_programs == '1') ? 'checked="checked"' : '') }}@endif>
+                                                <input id="auto_attach_programs" name="auto_attach_programs" value="1" type="checkbox" @if(isset($patient->auto_attach_programs)){{ ((old('auto_attach_programs') == '1') ? 'checked="checked"' : ($patient->auto_attach_programs == '1') ? 'checked="checked"' : '') }}@endif>
                                             </div>
                                         </div>
                                     </div>
@@ -171,7 +171,7 @@
                                             <div class="row" id="program_{{ $wpBlogId }}" style="border-bottom:1px solid #000;">
                                                 <div class="col-sm-2">
                                                     <div class="text-right">
-                                                    @if( in_array($wpBlogId, $wpUser->programs()->lists('blog_id')) )
+                                                    @if( in_array($wpBlogId, $patient->programs()->lists('blog_id')) )
                                                         {!! Form::checkbox('programs[]', $wpBlogId, ['checked' => "checked"], ['style' => '', 'class' => 'programs']) !!}
                                                     @else
                                                         {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '', 'class' => 'programs']) !!}
@@ -198,7 +198,7 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('mrn_number', 'MRN Number:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::text('mrn_number', $userConfig['mrn_number'], ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::text('mrn_number', $patient->mrn_number, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                         <div class="col-xs-2">{!! Form::label('npi_number', 'NPI Number:') !!}</div>
                                         <div class="col-xs-4">{!! Form::text('npi_number', $userConfig['npi_number'], ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                     </div>
@@ -315,15 +315,15 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('city', 'City:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('city', $userConfig['city'], ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('city', $patient->city, ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('state', 'State:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::select('state', $states_arr, $userConfig['state'], ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('state', $states_arr, $patient->state, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                                         <div class="col-xs-1">{!! Form::label('zip', 'Zip:') !!}</div>
-                                        <div class="col-xs-5">{!! Form::text('zip', $userConfig['zip'], ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-5">{!! Form::text('zip', $patient->zip, ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -440,8 +440,8 @@
                             </div>
 
                             <div role="tabpanel" class="tab-pane" id="observations">
-                                @if ($wpUser->observations()->count() > 0)
-                                    found {{ $wpUser->observations()->count() }}
+                                @if ($patient->observations()->count() > 0)
+                                    found {{ $patient->observations()->count() }}
                                 @else
                                     <br><br><em>No observations found for this user</em>
                                 @endif
@@ -454,7 +454,7 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::previous() }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::hidden('user_id', $wpUser->ID) !!}
+                                    {!! Form::hidden('user_id', $patient->ID) !!}
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
                                     </form>
                                 </div>

@@ -48,7 +48,7 @@ class PatientCareplanController extends Controller
         if ($patients->count() > 0) {
             foreach ($patients as $patient) {
                 // skip if patient has no name
-                if (empty($patient->firstName)) {
+                if (empty($patient->first_name)) {
                     continue 1;
                 }
                 $last_printed = UserMeta::select('meta_value')->where('user_id', $patient->ID)->where('meta_key', 'careplan_last_printed')->first();
@@ -109,8 +109,8 @@ class PatientCareplanController extends Controller
                     'key' => $patient->ID,
                     'id' => $patient->ID,
                     'patient_name' => $patient->fullName,
-                    'first_name' => $patient->firstName,
-                    'last_name' => $patient->lastName,
+                    'first_name' => $patient->first_name,
+                    'last_name' => $patient->last_name,
                     'careplan_status' => $careplanStatus,
                     'careplan_status_link' => $careplanStatusLink,
                     'careplan_provider_approver' => $approverName,
@@ -170,7 +170,7 @@ class PatientCareplanController extends Controller
         $user = new User;
         $programId = false;
         if ($patientId) {
-            $user = User::find($patientId);
+            $user = User::with('patientInfo')->find($patientId);
             if (!$user) {
                 return response("User not found", 401);
             }
@@ -273,7 +273,7 @@ class PatientCareplanController extends Controller
             // validate
             $messages = [
                 'required' => 'The :attribute field is required.',
-                'study_phone_number.required' => 'The patient phone number field is required.',
+                'home_phone_number.required' => 'The patient phone number field is required.',
             ];
             $this->validate($request, $user->patient_rules, $messages);
             $userRepo->editUser($user, $params);
@@ -285,7 +285,7 @@ class PatientCareplanController extends Controller
             // validate
             $messages = [
                 'required' => 'The :attribute field is required.',
-                'study_phone_number.required' => 'The patient phone number field is required.',
+                'home_phone_number.required' => 'The patient phone number field is required.',
             ];
             $this->validate($request, $user->patient_rules, $messages);
             $role = Role::whereName('participant')->first();
@@ -334,16 +334,10 @@ class PatientCareplanController extends Controller
         $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
 
         // care team vars
-        $careTeamUserIds = $userConfig['care_team'];
-        $ctmsa = array();
-        if (!empty($userConfig['send_alert_to'])) {
-            if((@unserialize($userConfig['send_alert_to']) !== false)) {
-                $userConfig['send_alert_to'] = unserialize($userConfig['send_alert_to']);
-            }
-            $ctmsa = $userConfig['send_alert_to'];
-        }
-        $ctbp = $userConfig['billing_provider'];
-        $ctlc = $userConfig['lead_contact'];
+        $careTeamUserIds = $user->careTeam;
+        $ctmsa = $user->sendAlertTo;
+        $ctbp = $user->billingProviderID;
+        $ctlc = $user->leadContactID;
 
         //dd($userConfig);
 
@@ -386,7 +380,7 @@ class PatientCareplanController extends Controller
             $showApprovalButton = true;
         }
 
-        return view('wpUsers.patient.careplan.careteam', compact(['program', 'patient', 'userConfig', 'messages', 'sectionHtml', 'phtml', 'providers', 'careTeamUsers', 'showApprovalButton']));
+        return view('wpUsers.patient.careplan.careteam', compact(['program', 'patient', 'messages', 'sectionHtml', 'phtml', 'providers', 'careTeamUsers', 'showApprovalButton']));
     }
 
 
@@ -421,29 +415,25 @@ class PatientCareplanController extends Controller
                             $careTeamUserIds[] = $params->get('ctm' . $ctmCount . 'provider');
                         }
                     }
-                    $user_config['care_team'] = $careTeamUserIds;
-                    $patient->careTeam = $user_config['care_team'];
+                    $patient->careTeam = $careTeamUserIds;
 
-                    // get send alerts
+                    // set send alerts
                     if ($params->get('ctmsa') && !empty($params->get('ctmsa'))) {
-                        $user_config['send_alert_to'] = $params->get('ctmsa');
-                        $patient->sendAlertTo = $user_config['send_alert_to'];
+                        $patient->sendAlertTo = $params->get('ctmsa');
                     } else {
                         $patient->sendAlertTo = '';
                     }
 
-                    // get billing provider
+                    // set billing provider
                     if ($params->get('ctbp') && !empty($params->get('ctbp'))) {
-                        $user_config['billing_provider'] = $params->get('ctbp');
-                        $patient->billingProviderID = $user_config['billing_provider'];
+                        $patient->billingProviderID = $params->get('ctbp');
                     } else {
                         $patient->billingProviderID = '';
                     }
 
-                    // get lead contact
+                    // set lead contact
                     if ($params->get('ctlc') && !empty($params->get('ctlc'))) {
-                        $user_config['lead_contact'] = $params->get('ctlc');
-                        $patient->leadContactID = $user_config['lead_contact'];
+                        $patient->leadContactID = $params->get('ctlc');
                     } else {
                         $patient->leadContactID = '';
                     }
