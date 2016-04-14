@@ -98,7 +98,7 @@
                                             title: "Week",
                                         },
                                         yAxis: {
-                                            start: 50, end: 350, step: 50,                                                // title: "Reading",
+                                            start: 50, end: 400, step: 50,                                                // title: "Reading",
                                             template: function (obj) {
                                                 return (obj % 10 ? "" : obj)
                                             }

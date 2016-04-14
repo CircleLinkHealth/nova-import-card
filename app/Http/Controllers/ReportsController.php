@@ -138,7 +138,12 @@ class ReportsController extends Controller
         $act_count = 0;
         foreach ($patients as $patient) {
             $monthly_time = intval($patient->getMonthlyTimeAttribute());
+            $program = WpBlog::find($patient->program_id);
+            if ($program) $programName = $program->display_name;
+
             if ($patient->hasRole('participant')) {
+                $u20_patients[$act_count]['site'] = $programName;
+
                 $u20_patients[$act_count]['colsum_careplan'] = 0;
                 $u20_patients[$act_count]['colsum_changes'] = 0;
                 $u20_patients[$act_count]['colsum_progress'] = 0;
@@ -256,7 +261,10 @@ class ReportsController extends Controller
 
         foreach ($patients as $patient) {
             $monthly_time = intval($patient->getMonthlyTimeAttribute());
+            $program = WpBlog::find($patient->program_id);
+            if ($program) $programName = $program->display_name;
             if ($patient->hasRole('participant')) {
+                $u20_patients[$act_count]['site'] = $programName;
                 $u20_patients[$act_count]['colsum_careplan'] = 0;
                 $u20_patients[$act_count]['colsum_changes'] = 0;
                 $u20_patients[$act_count]['colsum_progress'] = 0;
