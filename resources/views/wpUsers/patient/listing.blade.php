@@ -4,6 +4,7 @@
 @section('activity', '')
 
 @section('content')
+
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
@@ -11,11 +12,6 @@
                     Patient List
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-
-
-
-
-
 
                     <?php if(strlen($patientJson) > 20) { ?>
                     <div id="obs_alerts_container" class=""></div><br/>
@@ -63,6 +59,7 @@
                                 { id:"first_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#key#')); ?>'>#first_name# #last_name#</a>", width:200, sort:'string'},
                                 { id:"last_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='<?php echo URL::route('patient.summary', array('patient' => '#key#')); ?>'>#last_name#, #first_name#</a>", width:200, sort:'string'},
                                 { id:"provider",   header:["Provider",{content:"selectFilter"}],    width:200, sort:'string'},
+                                { id:"site",   header:["Program",{content:"selectFilter"}],    width:150, sort:'string'},
                                 { id:"ccm_status",   header:["CCM Status",{content:"selectFilter"}],    width:105, sort:'string'},
                                 { id:"careplan_status",    header:["CarePlan Status",{content:"selectFilter", placeholder:"Filter"}], tooltip:"#tooltip#" , width:125,
                                     template: function (obj) {
@@ -108,11 +105,16 @@
                         webix.event(window, "resize", function(){ obs_alerts_dtable.adjust(); }),
                                 obs_alerts_dtable.sort("#patient_name#");
                         obs_alerts_dtable.hideColumn("last_name");
+                        obs_alerts_dtable.hideColumn("site");
                     </script>
                     <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("last_name");obs_alerts_dtable.hideColumn("first_name");obs_alerts_dtable.sort("#last_name#");this.style.display = "none";getElementById("firstName_btn").style.display = "inline-block";'>
                     <input id='firstName_btn' type='button' class='btn btn-primary' value='Show by First Name' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("last_name");obs_alerts_dtable.showColumn("first_name");obs_alerts_dtable.sort("#first_name#");this.style.display = "none";getElementById("lastName_btn").style.display = "inline-block";'>
                     <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;' onclick="obs_alerts_dtable.exportToPDF();">
                     <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;' onclick="obs_alerts_dtable.exportToExcel();">
+ @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+                     <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
+                    <input id='site_hide_btn' type='button' class='btn btn-primary' value='Hide Program' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("site");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
+@endif 
                     <script type="text/javascript">
                         window.onload=filterText('');
                         // obs_alerts_dtable.hideColumn("ccm_status");
