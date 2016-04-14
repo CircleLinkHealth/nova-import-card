@@ -379,6 +379,9 @@ class PatientController extends Controller {
 				// get billing provider name
 				$bpName = $patient->billingProviderID;
 				$bpID = $patient->billingProviderID;
+				$program = WpBlog::find($patient->program_id);
+				$programName = $program->display_name;
+
 				if(!empty($bpID)) {
 					$bpUser = User::find($patient->billingProviderID);
 					if($bpUser) {
@@ -410,6 +413,8 @@ class PatientController extends Controller {
 					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
 					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
 					'provider'=> $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
+					'site'=> $programName,
+
 				);
 			}
 		}
