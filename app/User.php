@@ -1178,7 +1178,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 				return false;
 			}
 			$randomUserInfo = json_decode($json_string);
-			$randomUserInfo = $randomUserInfo->results[0]->user;
+			$randomUserInfo = $randomUserInfo->results[0];
 		}
 
 		//dd($randomUserInfo);
@@ -1187,8 +1187,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$user->firstName = $randomUserInfo->name->first;
 		$user->user_nicename = $randomUserInfo->name->first;
 		$user->lastName = 'Z-'.$randomUserInfo->name->last;
-		$user->user_login = $randomUserInfo->username;
-		$user->user_pass = $randomUserInfo->password;
+		$user->user_login = $randomUserInfo->login->username;
+		$user->user_pass = $randomUserInfo->login->password;
 		$user->user_email = $randomUserInfo->email;
 		//$user->display_name = $randomUserInfo->username;
 		$user->MRN = rand();
@@ -1196,7 +1196,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$user->address = $randomUserInfo->location->street;
 		$user->city = $randomUserInfo->location->city;
 		$user->state = $randomUserInfo->location->state;
-		$user->zip = $randomUserInfo->location->zip;
+		$user->zip = $randomUserInfo->location->postcode;
 		$user->phone = '111-234-5678';
 		$user->birthDate = date('Y-m-d', $randomUserInfo->dob);
 		$user->agentName = 'Secret Agent';

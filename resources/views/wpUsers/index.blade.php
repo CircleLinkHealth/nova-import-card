@@ -29,7 +29,7 @@
 
 
 
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFilter"><h1 class="panel-title">Toggle Filters</h1></a><br />
+                        <a class="btn btn-info panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseFilter">Toggle Filters</a><br /><br />
                         <div id="collapseFilter" class="panel-collapse collapse">
                             <div class="row" style="margin:20px 0px 40px 0px;">
                                 <div class="col-md-8 col-md-offset-2">
