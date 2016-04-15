@@ -62,7 +62,7 @@ class NotesController extends Controller
             $reportData[] = collect($patientAct)->groupBy('performed_at_year_month');
         }
 
-        for ($i = 0; $i < count($patientAct) - 1; $i++) {
+        for ($i = 0; $i < count($patientAct) ; $i++) {
             $logger_user = User::find($patientAct[$i]['logger_id']);
             if ($logger_user) {
                 $patientAct[$i]['logger_name'] = $logger_user->getFullNameAttribute();
@@ -70,6 +70,7 @@ class NotesController extends Controller
                 $patientAct[$i]['logger_name'] = 'N/A';
             }
         }
+        
         $data = true;
         $reportData = "data:" . json_encode($patientAct) . "";
         if ($patientAct == null) {
