@@ -1283,6 +1283,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$user->state = $randomUserInfo->location->state;
 		$user->zip = $randomUserInfo->location->postcode;
 		$user->phone = '111-234-5678';
+		$user->workPhoneNumber = '222-234-5678';
+		$user->mobilePhoneNumber = '333-234-5678';
 		$user->birthDate = date('Y-m-d', $randomUserInfo->dob);
 		$user->agentName = 'Secret Agent';
 		$user->agentPhone = '111-234-5678';
