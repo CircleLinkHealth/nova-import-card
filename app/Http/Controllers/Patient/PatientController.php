@@ -303,29 +303,6 @@ class PatientController extends Controller {
 				->with('meta')->get();
 		}
 
-
-
-		// get billing Providers before
-		/*
-		$billingProviders = null;
-		$billingProviderIds = array();
-		if($patients->count() > 0) {
-			foreach ($patients as $patient) {
-				$billingProviderId = $patient->billingProviderID;
-				if(!empty($billingProviderId) && !in_array($billingProviderId, $billingProviderIds)) {
-					$billingProviderIds[] = $billingProviderId;
-				}
-			}
-			$bpUser = false;
-			if($billingProviders) {
-				$bpUser = $billingProviders->where('ID', $patient->billingProviderID)->first();
-			}
-			if(!$bpUser) {
-				$billingProviders = User::whereIn('ID', $billingProviderIds)
-					->with('meta')->get();
-			}
-		}*/
-
 		if($patients->count() > 0) {
 			foreach ($patients as $patient) {
 				// skip if patient has no name

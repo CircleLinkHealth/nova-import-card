@@ -146,7 +146,6 @@ class CreatePatientsTable extends Migration {
 					->onUpdate('cascade');
 				$table->string('type');
 				$table->timestamps();
-				$table->softDeletes();
 			});
 		}
 
