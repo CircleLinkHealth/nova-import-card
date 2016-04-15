@@ -17,55 +17,103 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 {
 
-    public function createNewUser(User $wpUser, ParameterBag $params)
+    public function createNewUser(User $user, ParameterBag $params)
     {
-        $wpUser = $wpUser->createNewUser($params->get('user_email'), $params->get('user_pass'));
+        $user = $user->createNewUser($params->get('user_email'), $params->get('user_pass'));
 
-        $wpUser->load('meta');
+        $user->load('meta');
 
         // the basics
-        $wpUser->user_nicename = $params->get('user_nicename');
-        $wpUser->user_login = $params->get('user_login');
-        $wpUser->user_status = $params->get('user_status');
-        $wpUser->program_id = $params->get('program_id');
-        $wpUser->user_registered = date('Y-m-d H:i:s');
-        $wpUser->care_plan_id = $params->get('care_plan_id');
-        $wpUser->auto_attach_programs = $params->get('auto_attach_programs');
-        $wpUser->save();
+        $user->user_nicename = $params->get('user_nicename');
+        $user->user_login = $params->get('user_login');
+        $user->user_status = $params->get('user_status');
+        $user->program_id = $params->get('program_id');
+        $user->user_registered = date('Y-m-d H:i:s');
+        $user->care_plan_id = $params->get('care_plan_id');
+        $user->auto_attach_programs = $params->get('auto_attach_programs');
+        if($params->get('first_name')) {
+            $user->first_name = $params->get('first_name');
+        }
+        if($params->get('last_name')) {
+            $user->last_name = $params->get('last_name');
+        }
+        if($params->get('address')) {
+            $user->address = $params->get('address');
+        }
+        if($params->get('address2')) {
+            $user->address2 = $params->get('address2');
+        }
+        if($params->get('city')) {
+            $user->city = $params->get('city');
+        }
+        if($params->get('state')) {
+            $user->state = $params->get('state');
+        }
+        if($params->get('zip')) {
+            $user->zip = $params->get('zip');
+        }
+        $user->save();
 
-        $this->saveOrUpdateRoles($wpUser, $params);
-        $this->saveOrUpdateUserMeta($wpUser, $params);
-        $this->updateUserConfig($wpUser, $params);
-        $this->saveOrUpdatePrograms($wpUser, $params);
-        $this->createDefaultCarePlan($wpUser, $params);
+        $this->saveOrUpdateRoles($user, $params);
+        if($user->hasRole('participant')) {
+            $this->saveOrUpdateUserMeta($user, $params);
+            $this->updateUserConfig($user, $params);
+        }
+        $this->saveOrUpdatePrograms($user, $params);
+        if($user->hasRole('participant')) {
+            $this->createDefaultCarePlan($user, $params);
+        }
 
         //Add Email Notification
         $sendTo =  ['Plawlor@circlelinkhealth.com','rohanm@circlelinkhealth.com'];
         if (app()->environment('production')) {
-            $this->adminEmailNotify( $wpUser, $sendTo );
+            $this->adminEmailNotify( $user, $sendTo );
         }
 
-        $wpUser->push();
-        return $wpUser;
+        $user->push();
+        return $user;
     }
 
-    public function editUser(User $wpUser, ParameterBag $params)
+    public function editUser(User $user, ParameterBag $params)
     {
         // the basics
-        $wpUser->user_nicename = $params->get('user_nicename');
-        $wpUser->user_login = $params->get('user_login');
-        $wpUser->user_status = $params->get('user_status');
-        $wpUser->program_id = $params->get('program_id');
-        $wpUser->care_plan_id = $params->get('care_plan_id');
-        $wpUser->auto_attach_programs = $params->get('auto_attach_programs');
-        $wpUser->save();
+        $user->user_nicename = $params->get('user_nicename');
+        $user->user_login = $params->get('user_login');
+        $user->user_status = $params->get('user_status');
+        $user->program_id = $params->get('program_id');
+        $user->care_plan_id = $params->get('care_plan_id');
+        $user->auto_attach_programs = $params->get('auto_attach_programs');
+        if($params->get('first_name')) {
+            $user->first_name = $params->get('first_name');
+        }
+        if($params->get('last_name')) {
+            $user->last_name = $params->get('last_name');
+        }
+        if($params->get('address')) {
+            $user->address = $params->get('address');
+        }
+        if($params->get('address2')) {
+            $user->address2 = $params->get('address2');
+        }
+        if($params->get('city')) {
+            $user->city = $params->get('city');
+        }
+        if($params->get('state')) {
+            $user->state = $params->get('state');
+        }
+        if($params->get('zip')) {
+            $user->zip = $params->get('zip');
+        }
+        $user->save();
 
-        $this->saveOrUpdateRoles($wpUser, $params);
-        $this->saveOrUpdateUserMeta($wpUser, $params);
-        $this->updateUserConfig($wpUser, $params);
-        $this->saveOrUpdatePrograms($wpUser, $params);
+        $this->saveOrUpdateRoles($user, $params);
+        if($user->hasRole('participant')) {
+            $this->saveOrUpdateUserMeta($user, $params);
+            $this->updateUserConfig($user, $params);
+        }
+        $this->saveOrUpdatePrograms($user, $params);
 
-        return $wpUser;
+        return $user;
     }
 
 
