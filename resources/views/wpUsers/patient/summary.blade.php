@@ -55,8 +55,8 @@
                             <style type="text/css">
                                 i:hover {cursor: pointer; }
                             </style>
-                            <i class="fa fa-print" onclick="{{ $section['id'] }}.exportToPDF();"></i> &nbsp;
-                            <i class="fa fa-file-excel-o" onclick="{{ $section['id'] }}.exportToExcel();"></i> &nbsp;
+                            <i class="fa fa-print" onclick="webix.toPDF({{ $section['id'] }});"></i> &nbsp;
+                            <i class="fa fa-file-excel-o" onclick="webix.toExcel({{ $section['id'] }});"></i> &nbsp;
                             <?php
                             if (!empty($detailSection)) {
                                 if ($section['section'] == 'obs_biometrics') {

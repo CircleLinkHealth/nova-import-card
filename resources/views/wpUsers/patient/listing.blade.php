@@ -109,8 +109,10 @@
                     </script>
                     <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("last_name");obs_alerts_dtable.hideColumn("first_name");obs_alerts_dtable.sort("#last_name#");this.style.display = "none";getElementById("firstName_btn").style.display = "inline-block";'>
                     <input id='firstName_btn' type='button' class='btn btn-primary' value='Show by First Name' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("last_name");obs_alerts_dtable.showColumn("first_name");obs_alerts_dtable.sort("#first_name#");this.style.display = "none";getElementById("lastName_btn").style.display = "inline-block";'>
-                    <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;' onclick="obs_alerts_dtable.exportToPDF();">
-                    <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;' onclick="obs_alerts_dtable.exportToExcel();">
+                        <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
+                               onclick="webix.toPDF(obs_alerts_dtable);">
+                        <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
+                               onclick="webix.toExcel(obs_alerts_dtable);">
  @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
                      <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
                     <input id='site_hide_btn' type='button' class='btn btn-primary' value='Hide Program' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("site");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
