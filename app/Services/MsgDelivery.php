@@ -3,6 +3,7 @@
 use App\Comment;
 use App\User;
 use App\UserMeta;
+use App\WpBlog;
 use DB;
 use DateTime;
 use DateTimeZone;
@@ -274,7 +275,7 @@ class MsgDelivery {
                     $serverName = 'beta';
                     break;
             }
-            $urlObsLink = 'https://'. $serverName . '.careplanmanager.com/report/progress-report/?user=' . $intUserId;
+            $urlObsLink = 'https://'. $wpBlog->domain . '/manage-patients/' . $intUserId .'/progress';
             $this->load->library('tinyurl');
             $urlObsLink = $this->tinyurl->shorten($urlObsLink);
             $strMessage = preg_replace('/#BETAlinkPR#/', $urlObsLink, $strMessage);

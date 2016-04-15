@@ -1273,7 +1273,8 @@ class DatamonitorService {
 		$wpBlog = WpBlog::where('blog_id', '=', $blog_id)->first();
 		$alerts_url = '';
 		if($wpBlog) {
-			$alerts_url = 'https://'. $wpBlog->domain . '/alerts/?user=' . $user_id;
+			// $alerts_url = 'https://'. $wpBlog->domain . '/alerts/?user=' . $user_id;
+			$alerts_url = 'https://'. $wpBlog->domain . '/manage-patients/' . $user_id .'/summary';
 			$alerts_url = file_get_contents('http://tinyurl.com/api-create.php?url='.$alerts_url);
 		}
 		return $alerts_url;
