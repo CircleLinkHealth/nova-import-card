@@ -259,6 +259,13 @@ class CcdApiController extends Controller
             'source' => Ccda::API,
         ]);
 
+        try {
+            \Log::info("CCDA id: $ccdObj->id");
+            \Log::info("From: Aprima");
+            \Log::info("Provider: $providerJsonStr");
+        } catch (\Exception $e) {}
+
+
         //We are saving the JSON CCD after we save the XML, just in case Parsing fails
         //If Parsing fails we let ourselves know, but not Aprima.
         try {
