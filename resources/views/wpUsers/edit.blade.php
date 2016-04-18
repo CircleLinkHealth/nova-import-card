@@ -68,8 +68,11 @@
                         <ul class="nav nav-tabs" role="tablist" style="margin-top:20px;">
                             <li role="presentation" class="active"><a href="#program" aria-controls="program" role="tab" data-toggle="tab">User Info</a></li>
                             @if($patient->hasRole('participant'))
-                                <li role="presentation"><a href="#userconfig" aria-controls="userconfig" role="tab" data-toggle="tab">User Config</a></li>
+                                <li role="presentation"><a href="#patientinfo" aria-controls="patientinfo" role="tab" data-toggle="tab">Patient Info</a></li>
                                 <li role="presentation"><a href="#usercareteam" aria-controls="usercareteam" role="tab" data-toggle="tab">Care Team</a></li>
+                            @endif
+                            @if($patient->hasRole('provider'))
+                                <li role="presentation"><a href="#providerinfo" aria-controls="providerinfo" role="tab" data-toggle="tab">Provider Info</a></li>
                             @endif
                             <li role="presentation"><a href="#revisions" aria-controls="revisions" role="tab" data-toggle="tab">History</a></li>
                             <li role="presentation"><a href="#observations" aria-controls="observations" role="tab" data-toggle="tab">Observations</a></li>
@@ -105,6 +108,26 @@
                                         <div class="col-xs-4">{!! Form::select('user_status', array('0' => '0', '1' => '1'), $patient->user_status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                         <div class="col-xs-2"></div>
                                         <div class="col-xs-4"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('address', 'Address:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('address', $patient->address, ['class' => 'form-control']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('city', 'City:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('city', $patient->city, ['class' => 'form-control']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('state', 'State:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('state', $states_arr, $patient->state, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                        <div class="col-xs-1">{!! Form::label('zip', 'Zip:') !!}</div>
+                                        <div class="col-xs-5">{!! Form::text('zip', $patient->zip, ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
 
@@ -162,8 +185,8 @@
                             </div>
 
                             @if($patient->hasRole('participant'))
-                                <div role="tabpanel" class="tab-pane" id="userconfig">
-                                    <h2>User Config</h2>
+                                <div role="tabpanel" class="tab-pane" id="patientinfo">
+                                    <h2>Patient Info</h2>
 
                                     <div class="form-group">
                                         <div class="row">
@@ -205,20 +228,6 @@
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('mrn_number', 'MRN Number:') !!}</div>
                                             <div class="col-xs-4">{!! Form::text('mrn_number', $patient->mrn_number, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                                            <div class="col-xs-2">{!! Form::label('npi_number', 'NPI Number:') !!}</div>
-                                            <div class="col-xs-4">{!! Form::text('npi_number', $patient->npi_number, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('qualification', 'Qualification:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('qualification', $patient->qualification, ['class' => 'form-control', 'style' => 'width:20%;']) !!}</div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('specialty', 'Specialty:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('specialty', $patient->specialty, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -302,34 +311,8 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('prefix', 'Prefix(DEPR?):') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('prefix', $patient->prefix, ['class' => 'form-control']) !!}</div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
                                             <div class="col-xs-2">{!! Form::label('gender', 'Gender:') !!}</div>
                                             <div class="col-xs-10">{!! Form::select('gender', array('M', 'F'), $patient->gender, ['class' => 'form-control select-picker', 'style' => 'width:20%;']) !!}</div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('address', 'Address:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('address', $patient->address, ['class' => 'form-control']) !!}</div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('city', 'City:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('city', $patient->city, ['class' => 'form-control']) !!}</div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('state', 'State:') !!}</div>
-                                            <div class="col-xs-4">{!! Form::select('state', $states_arr, $patient->state, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
-                                            <div class="col-xs-1">{!! Form::label('zip', 'Zip:') !!}</div>
-                                            <div class="col-xs-5">{!! Form::text('zip', $patient->zip, ['class' => 'form-control']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -437,6 +420,37 @@
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('lead_contact', 'Lead Contact:') !!}</div>
                                             <div class="col-xs-10">{!! Form::text('lead_contact', $patient->lead_contact, ['class' => 'form-control']) !!}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+
+                            @if($patient->hasRole('provider'))
+                                <div role="tabpanel" class="tab-pane" id="providerinfo">
+                                    <h2>Provider Info</h2>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-2">{!! Form::label('npi_number', 'NPI Number:') !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('npi_number', $patient->npi_number, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-2">{!! Form::label('qualification', 'Qualification:') !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('qualification', $patient->qualification, ['class' => 'form-control', 'style' => 'width:20%;']) !!}</div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-2">{!! Form::label('specialty', 'Specialty:') !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('specialty', $patient->specialty, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-2">{!! Form::label('prefix', 'Prefix(DEPR?):') !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('prefix', $patient->prefix, ['class' => 'form-control']) !!}</div>
                                         </div>
                                     </div>
                                 </div>

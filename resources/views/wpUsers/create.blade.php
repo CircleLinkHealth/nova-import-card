@@ -54,8 +54,6 @@
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist" style="margin-top:20px;">
                             <li role="presentation" class="active"><a href="#program" aria-controls="program" role="tab" data-toggle="tab">Program</a></li>
-                            <li role="presentation"><a href="#userconfig" aria-controls="userconfig" role="tab" data-toggle="tab">User Config</a></li>
-                            <li role="presentation"><a href="#usercareteam" aria-controls="usercareteam" role="tab" data-toggle="tab">Care Team</a></li>
                         </ul>
 
                         <div class="tab-content">
@@ -157,16 +155,6 @@
                                         <div class="col-xs-10">{!! Form::select('location_id', ['default' => 'Attach a location to API users'] + $locations, 'default', ['class' => 'form-control select-picker', '', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div role="tabpanel" class="tab-pane" id="userconfig">
-                                <h2>User Config</h2>
-                                Create user first
-                            </div>
-
-                            <div role="tabpanel" class="tab-pane" id="usercareteam">
-                                <h2>Care Team</h2>
-                                Create user first
                             </div>
                         </div>
 
