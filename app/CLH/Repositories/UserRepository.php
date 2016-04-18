@@ -7,6 +7,7 @@ use App\UserMeta;
 use App\WpBlog;
 use App\Role;
 use App\CarePlan;
+use App\PatientInfo;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
 use App\Services\CareplanUIService;
@@ -218,7 +219,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // support for both single or array or roles
         if(!empty($params->get('role'))) {
             $wpUser->roles()->sync(array($params->get('role')));
-            return true;
+            $wpUser->load('roles');
         }
 
         if(!empty($params->get('roles'))) {
@@ -231,6 +232,14 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             }
         } else {
             $wpUser->roles()->sync([]);
+        }
+
+        // add patient info
+        if($wpUser->hasRole('participant') && !$wpUser->patientInfo) {
+            $patientInfo = new PatientInfo;
+            $patientInfo->user_id = $wpUser->ID;
+            $patientInfo->save();
+            $wpUser->load('patientInfo');
         }
     }
 
