@@ -1025,7 +1025,7 @@ class ReportsService
             'patient_id' => $user->ID,
             'patient_mrn' => $user->getMRNAttribute(),
             'provider_id' => $foreign_id->foreign_id,
-            'file_type' => 'careplan',
+            'file_type' => PatientReports::CAREPLAN,
             'file_base64' => $base_64_report,
             'location_id' => $user->getpreferredContactLocationAttribute(),
         ]);
