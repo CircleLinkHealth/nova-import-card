@@ -1,8 +1,8 @@
-<?php namespace App\CLH\CCD\Importer;
+<?php namespace App\App\CarePlanManager;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPMProblem extends Model {
+class CpmProblem extends Model {
 
     protected $table = 'cpm_problems';
 
