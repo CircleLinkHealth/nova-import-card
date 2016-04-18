@@ -431,9 +431,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// preferred_cc_contact_days
 	public function getPreferredCcContactDaysAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->preferred_cc_contact_days;
 	}
 	public function setPreferredCcContactDaysAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->preferred_cc_contact_days = $value;
 		$this->patientInfo->save();
 		return true;
@@ -441,9 +443,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// active_date
 	public function getActiveDateAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->active_date;
 	}
 	public function setActiveDateAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->active_date = $value;
 		$this->patientInfo->save();
 		return true;
@@ -451,9 +455,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// registration_date
 	public function getRegistrationDateAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->registration_date;
 	}
 	public function setRegistrationDateAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->registration_date = $value;
 		$this->patientInfo->save();
 		return true;
@@ -516,9 +522,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// daily_reminder_optin
 	public function getDailyReminderOptinAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->daily_reminder_optin;
 	}
 	public function setDailyReminderOptinAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->daily_reminder_optin = $value;
 		$this->patientInfo->save();
 		return true;
@@ -526,9 +534,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// daily_reminder_time
 	public function getDailyReminderTimeAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->daily_reminder_time;
 	}
 	public function setDailyReminderTimeAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->daily_reminder_time = $value;
 		$this->patientInfo->save();
 		return true;
@@ -536,9 +546,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// daily_reminder_areas
 	public function getDailyReminderAreasAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->daily_reminder_areas;
 	}
 	public function setDailyReminderAreasAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->daily_reminder_areas = $value;
 		$this->patientInfo->save();
 		return true;
@@ -546,9 +558,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// hospital_reminder_optin
 	public function getHospitalReminderOptinAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->hospital_reminder_optin;
 	}
 	public function setHospitalReminderOptinAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->hospital_reminder_optin = $value;
 		$this->patientInfo->save();
 		return true;
@@ -556,9 +570,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// hospital_reminder_time
 	public function getHospitalReminderTimeAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->hospital_reminder_time;
 	}
 	public function setHospitalReminderTimeAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->hospital_reminder_time = $value;
 		$this->patientInfo->save();
 		return true;
@@ -566,9 +582,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// hospital_reminder_areas
 	public function getHospitalReminderAreasAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->hospital_reminder_areas;
 	}
 	public function setHospitalReminderAreasAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->hospital_reminder_areas = $value;
 		$this->patientInfo->save();
 		return true;
@@ -719,10 +737,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// birth date
 	public function getBirthDateAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->birth_date;
 	}
 
 	public function setBirthDateAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->birth_date = $value;
 		$this->patientInfo->save();
 		return true;
@@ -730,9 +750,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// gender
 	public function getGenderAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->gender;
 	}
 	public function setGenderAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->gender = $value;
 		$this->patientInfo->save();
 		return true;
@@ -754,9 +776,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->monthlyTime;
 	}
 	public function getMonthlyTimeAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->cur_month_activity_time;
 	}
 	public function setCurMonthActivityTimeAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->cur_month_activity_time = $value;
 		$this->patientInfo->save();
 	}
@@ -766,12 +790,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->getTimeZoneAttribute();
 	}
 	public function getTimeZoneAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->preferred_contact_timezone;
 	}
 	public function setPreferredContactTimeZoneAttribute($value){
 		return $this->setTimeZoneAttribute($value);
 	}
 	public function setTimeZoneAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->preferred_contact_timezone = $value;
 		$this->patientInfo->save();
 		return true;
@@ -779,9 +805,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// preferred_contact_time
 	public function getPreferredContactTimeAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->preferred_contact_time;
 	}
 	public function setPreferredContactTimeAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->preferred_contact_time = $value;
 		$this->patientInfo->save();
 		return true;
@@ -789,9 +817,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// preferred_contact_method
 	public function getPreferredContactMethodAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->preferred_contact_method;
 	}
 	public function setPreferredContactMethodAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->preferred_contact_method = $value;
 		$this->patientInfo->save();
 		return true;
@@ -799,9 +829,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// preferred_contact_language
 	public function getPreferredContactLanguageAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->preferred_contact_language;
 	}
 	public function setPreferredContactLanguageAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->preferred_contact_language = $value;
 		$this->patientInfo->save();
 		return true;
@@ -812,12 +844,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->getMRNAttribute();
 	}
 	public function getMRNAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->mrn_number;
 	}
 	public function setMrnNumberAttribute($value) {
 		return $this->setMRNAttribute($value);
 	}
 	public function setMRNAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->mrn_number = $value;
 		$this->patientInfo->save();
 		return true;
@@ -953,6 +987,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// preferred_contact_location
 	public function getPreferredLocationAddress() {
+		if(!$this->patientInfo) return '';
 		$locationId = $this->patientInfo->preferred_contact_location;
 		if(empty($locationId)) {
 			return false;
@@ -961,6 +996,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $location;
 	}
 	public function getPreferredLocationName() {
+		if(!$this->patientInfo) return '';
 		$locationId = $this->patientInfo->preferred_contact_location;
 		if(empty($locationId)) {
 			return false;
@@ -971,9 +1007,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			'';
 	}
 	public function getPreferredContactLocationAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->preferred_contact_location;
 	}
 	public function setPreferredContactLocationAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->preferred_contact_location = $value;
 		$this->patientInfo->save();
 		return true;
@@ -996,9 +1034,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// consent_date
 	public function getConsentDateAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->consent_date;
 	}
 	public function setConsentDateAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->consent_date = $value;
 		$this->patientInfo->save();
 		return true;
@@ -1006,9 +1046,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// agent_name
 	public function getAgentNameAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->agent_name;
 	}
 	public function setAgentNameAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->agent_name = $value;
 		$this->patientInfo->save();
 		return true;
@@ -1019,12 +1061,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->getAgentPhoneAttribute();
 	}
 	public function getAgentPhoneAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->agent_telephone;
 	}
 	public function setAgentTelephoneAttribute($value) {
 		return $this->setAgentPhoneAttribute($value);
 	}
 	public function setAgentPhoneAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->agent_telephone = $value;
 		$this->patientInfo->save();
 		return true;
@@ -1032,9 +1076,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// agent_email
 	public function getAgentEmailAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->agent_email;
 	}
 	public function setAgentEmailAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->agent_email = $value;
 		$this->patientInfo->save();
 		return true;
@@ -1042,9 +1088,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// agent_relationship
 	public function getAgentRelationshipAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->agent_relationship;
 	}
 	public function setAgentRelationshipAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->agent_relationship = $value;
 		$this->patientInfo->save();
 		return true;
@@ -1171,10 +1219,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function getCcmStatusAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->ccm_status;
 	}
 
 	public function setCcmStatusAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$statusBefore = $this->patientInfo->ccm_status;
 		$this->patientInfo->ccm_status = $value;
 		$this->patientInfo->save();
@@ -1191,20 +1241,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function getDatePausedAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->date_paused;
 	}
 
 	public function setDatePausedAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->date_paused = $value;
 		$this->patientInfo->save();
 		return true;
 	}
 
 	public function getDateWithdrawnAttribute() {
+		if(!$this->patientInfo) return '';
 		return $this->patientInfo->date_withdrawn;
 	}
 
 	public function setDateWithdrawnAttribute($value) {
+		if(!$this->patientInfo) return '';
 		$this->patientInfo->date_withdrawn = $value;
 		$this->patientInfo->save();
 		return true;

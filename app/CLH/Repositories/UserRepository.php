@@ -7,6 +7,8 @@ use App\UserMeta;
 use App\WpBlog;
 use App\Role;
 use App\CarePlan;
+use App\ProviderInfo;
+use App\PatientInfo;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
 use App\Services\CareplanUIService;
@@ -17,60 +19,133 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 {
 
-    public function createNewUser(User $wpUser, ParameterBag $params)
+    public function createNewUser(User $user, ParameterBag $params)
     {
-        $wpUser = $wpUser->createNewUser($params->get('user_email'), $params->get('user_pass'));
+        $user = $user->createNewUser($params->get('user_email'), $params->get('user_pass'));
 
-        $wpUser->load('meta');
+        $user->load('meta');
 
         // the basics
-        $wpUser->user_nicename = $params->get('user_nicename');
-        $wpUser->user_login = $params->get('user_login');
-        $wpUser->user_status = $params->get('user_status');
-        $wpUser->program_id = $params->get('program_id');
-        $wpUser->user_registered = date('Y-m-d H:i:s');
-        $wpUser->care_plan_id = $params->get('care_plan_id');
-        $wpUser->auto_attach_programs = $params->get('auto_attach_programs');
-        $wpUser->save();
+        $this->saveOrUpdateUserInfo($user, $params);
 
-        $this->saveOrUpdateRoles($wpUser, $params);
-        $this->saveOrUpdateUserMeta($wpUser, $params);
-        $this->updateUserConfig($wpUser, $params);
-        $this->saveOrUpdatePrograms($wpUser, $params);
-        $this->createDefaultCarePlan($wpUser, $params);
+        // roles
+        $this->saveOrUpdateRoles($user, $params);
+
+        // programs
+        $this->saveOrUpdatePrograms($user, $params);
+
+        // participant info
+        if($user->hasRole('participant')) {
+            $this->saveOrUpdatePatientInfo($user, $params);
+            $this->createDefaultCarePlan($user, $params);
+        }
+
+        // provider info
+        if($user->hasRole('provider')) {
+            $this->saveOrUpdateProviderInfo($user, $params);
+        }
 
         //Add Email Notification
         $sendTo =  ['Plawlor@circlelinkhealth.com','rohanm@circlelinkhealth.com'];
         if (app()->environment('production')) {
-            $this->adminEmailNotify( $wpUser, $sendTo );
+            $this->adminEmailNotify( $user, $sendTo );
         }
-
-        $wpUser->push();
-        return $wpUser;
+        $user->push();
+        return $user;
     }
 
-    public function editUser(User $wpUser, ParameterBag $params)
+    public function editUser(User $user, ParameterBag $params)
     {
         // the basics
-        $wpUser->user_nicename = $params->get('user_nicename');
-        $wpUser->user_login = $params->get('user_login');
-        $wpUser->user_status = $params->get('user_status');
-        $wpUser->program_id = $params->get('program_id');
-        $wpUser->care_plan_id = $params->get('care_plan_id');
-        $wpUser->auto_attach_programs = $params->get('auto_attach_programs');
-        $wpUser->save();
+        $this->saveOrUpdateUserInfo($user, $params);
 
-        $this->saveOrUpdateRoles($wpUser, $params);
-        $this->saveOrUpdateUserMeta($wpUser, $params);
-        $this->updateUserConfig($wpUser, $params);
-        $this->saveOrUpdatePrograms($wpUser, $params);
+        // roles
+        $this->saveOrUpdateRoles($user, $params);
 
-        return $wpUser;
+        // programs
+        $this->saveOrUpdatePrograms($user, $params);
+
+        // participant info
+        if($user->hasRole('participant')) {
+            $this->saveOrUpdatePatientInfo($user, $params);
+        }
+
+        // provider info
+        if($user->hasRole('provider')) {
+            $this->saveOrUpdateProviderInfo($user, $params);
+        }
+
+        return $user;
     }
 
+
+    public function saveOrUpdateUserInfo(User $user, ParameterBag $params)
+    {
+        $user->user_nicename = $params->get('user_nicename');
+        $user->user_login = $params->get('user_login');
+        $user->user_status = $params->get('user_status');
+        $user->program_id = $params->get('program_id');
+        $user->care_plan_id = $params->get('care_plan_id');
+        $user->auto_attach_programs = $params->get('auto_attach_programs');
+        if($params->get('first_name')) {
+            $user->first_name = $params->get('first_name');
+        }
+        if($params->get('last_name')) {
+            $user->last_name = $params->get('last_name');
+        }
+        if($params->get('address')) {
+            $user->address = $params->get('address');
+        }
+        if($params->get('address2')) {
+            $user->address2 = $params->get('address2');
+        }
+        if($params->get('city')) {
+            $user->city = $params->get('city');
+        }
+        if($params->get('state')) {
+            $user->state = $params->get('state');
+        }
+        if($params->get('zip')) {
+            $user->zip = $params->get('zip');
+        }
+        $user->save();
+    }
+
+    public function saveOrUpdatePatientInfo(User $user, ParameterBag $params) {
+        $patientInfo = $user->patientInfo->toArray();
+
+        // contact days checkbox formatting, @todo this is not normalized properly?
+        if(is_array($params->get('contact_days'))) {
+            $contactDays = $params->get('contact_days');
+            $contactDaysDelmited = '';
+            for($i=0; $i < count($contactDays); $i++){
+                $contactDaysDelmited .= (count($contactDays) == $i+1) ? $contactDays[$i] : $contactDays[$i] . ', ';
+            }
+            $params->add(array('preferred_cc_contact_days' => $contactDaysDelmited));
+        }
+
+        foreach($patientInfo as $key => $value) {
+            if($params->get($key)) {
+                $user->patientInfo->$key = $params->get($key);
+            }
+        }
+        $user->patientInfo->save();
+    }
+
+    public function saveOrUpdateProviderInfo(User $user, ParameterBag $params) {
+        $providerInfo = $user->providerInfo->toArray();
+
+        foreach($providerInfo as $key => $value) {
+            if($params->get($key)) {
+                $user->providerInfo->$key = $params->get($key);
+            }
+        }
+        $user->providerInfo->save();
+    }
 
     public function saveOrUpdateUserMeta(User $user, ParameterBag $params)
     {
+        /*
         $userMetaTemplate = (new UserMetaTemplate())->getArray();
 
         foreach($userMetaTemplate as $key => $defaultValue)
@@ -118,11 +193,13 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                 $user->setUserAttributeByKey($key, $newValue);
             }
         }
+        */
     }
 
 
     public function updateUserConfig(User $wpUser, ParameterBag $params)
     {
+        /*
         // meta
         $userMeta = UserMeta::where('user_id', '=', $wpUser->ID)->lists('meta_value', 'meta_key');
 
@@ -162,27 +239,42 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
             $wpUser->setUserAttributeByKey($key, $newValue);
         }
+        */
     }
 
-
-    public function saveOrUpdateRoles(User $wpUser, ParameterBag $params)
+    public function saveOrUpdateRoles(User $user, ParameterBag $params)
     {
         // support for both single or array or roles
         if(!empty($params->get('role'))) {
-            $wpUser->roles()->sync(array($params->get('role')));
-            return true;
+            $user->roles()->sync(array($params->get('role')));
+            $user->save();
+            $user->load('roles');
         }
 
         if(!empty($params->get('roles'))) {
             // support if one role is passed in as a string
             if(!is_array($params->get('roles'))) {
                 $roleId = $params->get('roles');
-                $wpUser->roles()->sync(array($roleId));
+                $user->roles()->sync(array($roleId));
             } else {
-                $wpUser->roles()->sync($params->get('roles'));
+                $user->roles()->sync($params->get('roles'));
             }
-        } else {
-            $wpUser->roles()->sync([]);
+        }
+
+        // add patient info
+        if($user->hasRole('participant') && !$user->patientInfo) {
+            $patientInfo = new PatientInfo;
+            $patientInfo->user_id = $user->ID;
+            $patientInfo->save();
+            $user->load('patientInfo');
+        }
+
+        // add provider info
+        if($user->hasRole('provider') && !$user->providerInfo) {
+            $providerInfo = new ProviderInfo;
+            $providerInfo->user_id = $user->ID;
+            $providerInfo->save();
+            $user->load('providerInfo');
         }
     }
 
