@@ -46,7 +46,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
 
         //Add Email Notification
-        $sendTo =  ['Plawlor@circlelinkhealth.com','rohanm@circlelinkhealth.com'];
+        $sendTo =  ['patientsupport@circlelinkhealth.com'];
         if (app()->environment('production')) {
             $this->adminEmailNotify( $user, $sendTo );
         }
