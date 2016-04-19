@@ -210,17 +210,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function phoneNumbers()
 	{
-		return $this->hasOne('App\PhoneNumber', 'user_id', 'ID');
+		return $this->hasMany('App\PhoneNumber', 'user_id', 'ID');
 	}
 
 	public function patientCarePlans()
 	{
-		return $this->hasOne('App\PatientCarePlan', 'user_id', 'ID');
+		return $this->hasMany('App\PatientCarePlan', 'user_id', 'ID');
 	}
 
 	public function patientCareTeamMembers()
 	{
-		return $this->hasOne('App\PatientCareTeamMember', 'user_id', 'ID');
+		return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'ID');
 	}
 
 
@@ -638,7 +638,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// phone (study_phone_nmber)
 	public function getPrimaryPhoneAttribute() {
-		$phoneNumber = $this->phoneNumbers()->where('is_primary', 1)->first();
+		if (!$this->phoneNumbers) {
+			return '';
+		}
+		$phoneNumber = $this->phoneNumbers->where('is_primary', 1)->first();
 		if($phoneNumber) {
 			return $phoneNumber->number;
 		} else {
@@ -650,7 +653,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->getPhoneAttribute();
 	}
 	public function getPhoneAttribute() {
-		$phoneNumber = $this->phoneNumbers()->where('type', 'home')->first();
+		if (!$this->phoneNumbers) {
+			return '';
+		}
+		$phoneNumber = $this->phoneNumbers->where('type', 'home')->first();
+		return '12';
 		if($phoneNumber) {
 			return $phoneNumber->number;
 		} else {
@@ -661,7 +668,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->setPhoneAttribute($value);
 	}
 	public function setPhoneAttribute($value) {
-		$phoneNumber = $this->phoneNumbers()->where('type', 'home')->first();
+		if (!$this->phoneNumbers) {
+			return '';
+		}
+		$phoneNumber = $this->phoneNumbers->where('type', 'home')->first();
 		if($phoneNumber) {
 			$phoneNumber->number = $value;
 		} else {
@@ -688,7 +698,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// work_phone_number
 	public function getWorkPhoneNumberAttribute() {
-		$phoneNumber = $this->phoneNumbers()->where('type', 'work')->first();
+		if (!$this->phoneNumbers) {
+			return '';
+		}
+		$phoneNumber = $this->phoneNumbers->where('type', 'work')->first();
 		if($phoneNumber) {
 			return $phoneNumber->number;
 		} else {
@@ -697,7 +710,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function setWorkPhoneNumberAttribute($value) {
-		$phoneNumber = $this->phoneNumbers()->where('type', 'work')->first();
+		if (!$this->phoneNumbers) {
+			return '';
+		}
+		$phoneNumber = $this->phoneNumbers->where('type', 'work')->first();
 		if($phoneNumber) {
 			$phoneNumber->number = $value;
 		} else {
@@ -712,7 +728,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// mobile_phone_number
 	public function getMobilePhoneNumberAttribute() {
-		$phoneNumber = $this->phoneNumbers()->where('type', 'mobile')->first();
+		if (!$this->phoneNumbers) {
+			return '';
+		}
+		$phoneNumber = $this->phoneNumbers->where('type', 'mobile')->first();
 		if($phoneNumber) {
 			return $phoneNumber->number;
 		} else {
@@ -721,7 +740,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function setMobilePhoneNumberAttribute($value) {
-		$phoneNumber = $this->phoneNumbers()->where('type', 'mobile')->first();
+		if (!$this->phoneNumbers) {
+			return '';
+		}
+		$phoneNumber = $this->phoneNumbers->where('type', 'mobile')->first();
 		if($phoneNumber) {
 			$phoneNumber->number = $value;
 		} else {
@@ -926,9 +948,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	// billing_provider
 	public function getBillingProviderIDAttribute() {
 		$bp = '';
-		$careTeamMembers = $this->patientCareTeamMembers()->get();
-		if ($careTeamMembers->count() > 0) {
-			foreach($careTeamMembers as $careTeamMember) {
+		if (!$this->patientCareTeamMembers) {
+			return '';
+		}
+		if ($this->patientCareTeamMembers->count() > 0) {
+			foreach($this->patientCareTeamMembers as $careTeamMember) {
 				if($careTeamMember->type == 'billing_provider') {
 					$bp = $careTeamMember->member_user_id;
 				}
@@ -957,9 +981,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	// lead_contact
 	public function getLeadContactIDAttribute() {
 		$lc = array();
-		$careTeamMembers = $this->patientCareTeamMembers()->get();
-		if ($careTeamMembers->count() > 0) {
-			foreach($careTeamMembers as $careTeamMember) {
+		if (!$this->patientCareTeamMembers) {
+			return '';
+		}
+		if ($this->patientCareTeamMembers->count() > 0) {
+			foreach($this->patientCareTeamMembers as $careTeamMember) {
 				if($careTeamMember->type == 'lead_contact') {
 					$lc = $careTeamMember->member_user_id;
 				}

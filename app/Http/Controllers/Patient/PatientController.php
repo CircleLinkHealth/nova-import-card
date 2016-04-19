@@ -272,7 +272,7 @@ class PatientController extends Controller {
 	{
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-				->with('meta')
+				->with('meta', 'phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
 				->select(DB::raw('wp_users.*'))
 				//->join('wp_users AS approver', 'THIS JOIN', '=', 'WONT WORK')
 				->whereHas('roles', function($q) {
@@ -299,11 +299,12 @@ class PatientController extends Controller {
 					}
 				}
 			}
-			$approvers = User::whereIn('ID', $approverIds)
-				->with('meta')->get();
+			$approvers = User::whereIn('ID', $approverIds)->get();
 		}
 
-		if($patients->count() > 0) {
+		if($patients && $patients->count() > 0) {
+			$foundUsers = array(); // save resources, no duplicate db calls
+			$foundPrograms = array(); // save resources, no duplicate db calls
 			foreach ($patients as $patient) {
 				// skip if patient has no name
 				if(empty($patient->first_name)) {
@@ -328,7 +329,12 @@ class PatientController extends Controller {
 					$approver = $approvers->where('ID', $approverId)->first();
 					if(!$approver) {
 						if(!empty($approverId)) {
-							$approver = User::find($approverId);
+							if(!isset($foundUsers[$approverId])) {
+								$approver = User::find($approverId);
+								$foundUsers[$approverId] = $approver;
+							} else {
+								$approver = $foundUsers[$approverId];
+							}
 						}
 					}
 					if($approver) {
@@ -354,14 +360,25 @@ class PatientController extends Controller {
 				}
 
 				// get billing provider name
-				$bpName = $patient->billingProviderID;
+				$bpName = '';
 				$bpID = $patient->billingProviderID;
-				$program = WpBlog::find($patient->program_id);
+				if(!isset($foundPrograms[$patient->program_id])) {
+					$program = WpBlog::find($patient->program_id);
+					$foundPrograms[$patient->program_id] = $program;
+				} else {
+					$program = $foundPrograms[$patient->program_id];
+				}
 				$programName = $program->display_name;
 
 				if(!empty($bpID)) {
-					$bpUser = User::find($patient->billingProviderID);
-					if($bpUser) {
+					if(!isset($foundUsers[$bpID])) {
+						$bpUser = User::find($bpID);
+						if($bpUser) {
+							$bpName = $bpUser->fullName;
+							$foundUsers[$bpID] = $bpUser;
+						}
+					} else {
+						$bpUser = $foundUsers[$bpID];
 						$bpName = $bpUser->fullName;
 					}
 				}
