@@ -101,7 +101,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"state" => "",
 		"zip" => "",
 		"preferred_contact_time" => "required",
-		"timezone" => "required",
+		"preferred_contact_timezone" => "required",
 		"consent_date" => "required",
 		"ccm_status" => "required",
 		"program_id" => "required"

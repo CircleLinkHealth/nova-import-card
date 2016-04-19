@@ -9,6 +9,7 @@ use App\Role;
 use App\CarePlan;
 use App\ProviderInfo;
 use App\PatientInfo;
+use App\PhoneNumber;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
 use App\Services\CareplanUIService;
@@ -33,6 +34,9 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // programs
         $this->saveOrUpdatePrograms($user, $params);
+
+        // phone numbers
+        $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
         if($user->hasRole('participant')) {
@@ -64,6 +68,9 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // programs
         $this->saveOrUpdatePrograms($user, $params);
+
+        // phone numbers
+        $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
         if($user->hasRole('participant')) {
@@ -240,6 +247,56 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $wpUser->setUserAttributeByKey($key, $newValue);
         }
         */
+    }
+
+    public function saveOrUpdatePhoneNumbers(User $user, ParameterBag $params) {
+        // phone numbers
+        if(!empty($params->get('study_phone_number'))) { // add study as home
+            $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
+            if(!$phoneNumber) {
+                $phoneNumber = new PhoneNumber;
+            }
+            $phoneNumber->is_primary = 1;
+            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->number = $params->get('study_phone_number');
+            $phoneNumber->type = 'home';
+            $phoneNumber->save();
+            echo 'Added home study_phone_number'.PHP_EOL;
+        }
+        if(!empty($params->get('home_phone_number'))) {
+            $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
+            if(!$phoneNumber) {
+                $phoneNumber = new PhoneNumber;
+            }
+            $phoneNumber->is_primary = 1;
+            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->number = $params->get('home_phone_number');
+            $phoneNumber->type = 'home';
+            $phoneNumber->save();
+            echo 'Added home home_phone_number'.PHP_EOL;
+        }
+        if(!empty($params->get('work_phone_number'))) {
+            $phoneNumber = $user->phoneNumbers()->where('type', 'work')->first();
+            if(!$phoneNumber) {
+                $phoneNumber = new PhoneNumber;
+            }
+            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->number = $params->get('work_phone_number');
+            $phoneNumber->type = 'work';
+            $phoneNumber->save();
+            echo 'Added work work_phone_number'.PHP_EOL;
+        }
+        if(!empty($params->get('mobile_phone_number'))) {
+            $phoneNumber = $user->phoneNumbers()->where('type', 'mobile')->first();
+            if(!$phoneNumber) {
+                $phoneNumber = new PhoneNumber;
+            }
+            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->number = $params->get('mobile_phone_number');
+            $phoneNumber->type = 'mobile';
+            $phoneNumber->save();
+            echo 'Added mobile mobile_phone_number'.PHP_EOL;
+        }
     }
 
     public function saveOrUpdateRoles(User $user, ParameterBag $params)

@@ -263,10 +263,10 @@ $user_info = array();
                                     <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('timezone') ? 'has-error' : '' }}">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <label for="timezone">Time Zone <span class="attention">*</span>:</label>
+                                                <label for="preferred_contact_timezone">Timer Zone <span class="attention">*</span>:</label>
                                             </div>
                                             <div class="col-sm-12">
-                                                {!! Form::select('timezone', $timezones, (old('timezone') ? old('timezone') : $patient->preferred_contact_timezone ? $patient->preferred_contact_timezone : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                                {!! Form::select('preferred_contact_timezone', $timezones, (old('preferred_contact_timezone') ? old('preferred_contact_timezone') : $patient->preferred_contact_timezone ? $patient->preferred_contact_timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                             </div>
                                         </div>
                                         <span class="help-block">{{ $errors->first('timezone') }}</span>

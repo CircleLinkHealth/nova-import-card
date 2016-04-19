@@ -432,6 +432,7 @@ class PatientCareplanController extends Controller
                     } else {
                         $patient->leadContactID = '';
                     }
+                    $patient->save();
                 }
             }
         }
