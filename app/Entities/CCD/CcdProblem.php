@@ -1,4 +1,4 @@
-<?php namespace App\App\Ccd;
+<?php namespace App\Entities\CCD;
 
 use App\CLH\CCD\ItemLogger\CcdProblemLog;
 use Illuminate\Database\Eloquent\Model;
