@@ -1,6 +1,8 @@
 <?php namespace App;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
+use App\Entities\CCD\CcdAllergy;
+use App\Entities\CCD\CcdMedication;
 use App\Entities\CCD\CcdProblem;
 use App\Entities\CPM\CpmLifestyle;
 use App\Entities\CPM\CpmMedicationGroup;
@@ -167,9 +169,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
+    public function ccdAllergies()
+    {
+        return $this->belongsToMany(CcdAllergy::class, 'ccd_allergies_patients', 'patient_id', 'ccd_allergy_id');
+    }
+
+    public function ccdMedications()
+    {
+        return $this->belongsToMany(CcdMedication::class, 'ccd_medications_patients', 'patient_id', 'ccd_medication_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function ccdProblems()
     {
-        return $this->belongsToMany(CcdProblem::class);
+        return $this->belongsToMany(CcdProblem::class, 'ccd_problems_patients', 'patient_id', 'ccd_problem_id');
     }
     
     /*****/
