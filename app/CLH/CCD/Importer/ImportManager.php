@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer;
 
 
-use App\App\CarePlanManager\CpmProblem;
+use App\Entities\CPM\CpmProblem;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
 use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfig as UserConfigStorage;

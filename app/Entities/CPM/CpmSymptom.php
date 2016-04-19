@@ -1,4 +1,4 @@
-<?php namespace App\App\CarePlanManager;
+<?php namespace App\Entities\CPM;
 
 use Illuminate\Database\Eloquent\Model;
 
