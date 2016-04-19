@@ -1304,6 +1304,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->belongsToMany('App\WpBlog', 'lv_program_user', 'user_id', 'program_id');
 	}
 
+	public function careplan() {
+		return $this->hasMany('App\PatientCarePlan');
+	}
+
 	// user data scrambler
 	public function scramble($randomUserInfo = false) {
 		// states array
