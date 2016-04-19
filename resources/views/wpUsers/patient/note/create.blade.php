@@ -7,11 +7,11 @@
     <?php
     $userTime = \Carbon\Carbon::now();
     $userTime->setTimezone($userTimeZone);
-    $userTimeGMT = $userTime;
-    $userTime->setTimezone('GMT');
+    $userTimeGMT = \Carbon\Carbon::now()->setTimezone('GMT');
     $userTime = $userTime->format('Y-m-d\TH:i');
     $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
     ?>
+
 
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
