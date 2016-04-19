@@ -328,11 +328,6 @@ class PatientCareplanController extends Controller
         // get program
         $programId = $user->program_id;
 
-        // get user config
-        $userMeta = UserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
-        $userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
-        $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
-
         // care team vars
         $careTeamUserIds = $user->careTeam;
         $ctmsa = $user->sendAlertTo;
