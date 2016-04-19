@@ -13,7 +13,18 @@
         <testsuite name="Application Test Suite">
             <directory>./tests/</directory>
         </testsuite>
+        <testsuite name="Aprima_Api">
+            <directory>./tests/AprimaApi/</directory>
+        </testsuite>
+        <testsuite name="Care_Plan">
+            <directory>./tests/CarePlan/</directory>
+        </testsuite>
     </testsuites>
+    <listeners>
+        <listener class="\Mockery\Adapter\Phpunit\TestListener"
+                  file="vendor/mockery/mockery/library/Mockery/Adapter/Phpunit/TestListener.php">
+        </listener>
+    </listeners>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="CACHE_DRIVER" value="array"/>
