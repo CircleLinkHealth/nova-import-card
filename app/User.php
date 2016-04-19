@@ -1,6 +1,10 @@
 <?php namespace App;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
+use App\Entities\CPM\CpmLifestyle;
+use App\Entities\CPM\CpmMedicationGroup;
+use App\Entities\CPM\CpmProblem;
+use App\Entities\CPM\CpmSymptom;
 use DateTime;
 use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\Authenticatable;
@@ -152,6 +156,41 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 
 	// START RELATIONSHIPS
+
+	/*
+     *
+     * CPM Entities
+     *
+     */
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function cpmLifestyles()
+	{
+		return $this->belongsToMany(CpmLifestyle::class);
+	}
+
+	public function cpmMedicationGroups()
+	{
+		return $this->belongsToMany(CpmMedicationGroup::class);
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function cpmProblems()
+	{
+		return $this->belongsToMany(CpmProblem::class);
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function cpmSymptoms()
+	{
+		return $this->belongsToMany(CpmSymptom::class);
+	}
 
 	public function foreignId()
 	{
