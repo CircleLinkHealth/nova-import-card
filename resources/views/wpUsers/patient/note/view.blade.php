@@ -5,12 +5,8 @@
 
 @section('content')
     <?php
-    $userTime = \Carbon\Carbon::now();
-    $userTime->setTimezone($userTimeZone);
-    $userTimeGMT = $userTime;
-    $userTime->setTimezone('GMT');
+    $userTime = \Carbon\Carbon::parse($note['performed_at']);
     $userTime = $userTime->format('Y-m-d\TH:i');
-    $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
     ?>
 
     <div class="row" style="margin-top:60px;">
