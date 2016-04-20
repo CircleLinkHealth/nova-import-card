@@ -45,20 +45,26 @@ class ActivityController extends Controller {
 
 		if ($patientId) {
 			// patient view
-			$wpUser = User::find($patientId);
-			if (!$wpUser) {
+			$user = User::find($patientId);
+			if (!$user) {
 				return response("User not found", 401);
 			}
 
-			$patient_name = $wpUser->getFullNameAttribute();
+			$patient_name = $user->getFullNameAttribute();
 
 			//Gather details to generate form
 
 			//timezone
 
+			if($user->timeZone == ''){
+				$userTimeZone = 'America/New_York';
+			} else {
+				$userTimeZone = $user->timeZone;
+			}
+
 			//careteam
 			$careteam_info = array();
-			$careteam_ids = $wpUser->careTeam;
+			$careteam_ids = $user->careTeam;
 			if((@unserialize($careteam_ids) !== false)) {
 				$careteam_ids = unserialize($careteam_ids);
 			}
@@ -69,7 +75,7 @@ class ActivityController extends Controller {
 			}
 
 			//providers
-			$providers = WpBlog::getProviders($wpUser->blogId());
+			$providers = WpBlog::getProviders($user->blogId());
 			$provider_info = array();
 
 			foreach ($providers as $provider) {
@@ -79,13 +85,13 @@ class ActivityController extends Controller {
 			asort($provider_info);
 
 			$view_data = [
-				'program_id' => $wpUser->blogId(),
-				'patient' => $wpUser,
+				'program_id' => $user->blogId(),
+				'patient' => $user,
 				'patient_name' => $patient_name,
 				'activity_types' => Activity::input_activity_types(),
 				'provider_info' => $provider_info,
 				'careteam_info' => $careteam_info,
-				'userTimeZone' => $wpUser->timeZone
+				'userTimeZone' => $userTimeZone
 			];
 
 			return view('wpUsers.patient.activity.create', $view_data);
