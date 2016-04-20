@@ -55,8 +55,25 @@
                             <style type="text/css">
                                 i:hover {cursor: pointer; }
                             </style>
-                            <i class="fa fa-print" onclick="webix.toPDF({{ $section['id'] }});"></i> &nbsp;
-                            <i class="fa fa-file-excel-o" onclick="webix.toExcel({{ $section['id'] }});"></i> &nbsp;
+                            <i class="fa fa-print" onclick="webix.toPDF($$({{ $section['id'] }}), {
+                                header:'CarePlanManager.com - Patient <?php echo $section['title']; ?> Report <?= date('M d,Y') ?>',
+                                orientation:'landscape',
+                                autowidth:true,
+                                        columns:{
+                                'description':       { header:'<?= $filter ?>', width: 200, template: webix.template('#description#') },
+                                'obs_value':             { header:'<?= $section['col_name_severity'] ?>',    width:150, sort:'string', template: webix.template('#obs_value#')},
+                                'comment_date':    { header:'Date',    width:200, sort:'string', template: webix.template('#comment_date#') }
+                                        }
+                                    }
+                                    );"></i> &nbsp;
+                            <i class="fa fa-file-excel-o" onclick="webix.toExcel($$({{ $section['id'] }}), {
+                                        columns:{
+                                'description':       { header:'<?= $filter ?>', width: 200, template: webix.template('#description#') },
+                                'obs_value':             { header:'<?= $section['col_name_severity'] ?>',    width:150, sort:'string', template: webix.template('#obs_value#')},
+                                'comment_date':    { header:'Date',    width:200, sort:'string', template: webix.template('#comment_date#') }
+                                        }
+                                    }
+                                    );"></i> &nbsp;
                             <?php
                             if (!empty($detailSection)) {
                                 if ($section['section'] == 'obs_biometrics') {
