@@ -657,7 +657,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			return '';
 		}
 		$phoneNumber = $this->phoneNumbers->where('type', 'home')->first();
-		return '12';
 		if($phoneNumber) {
 			return $phoneNumber->number;
 		} else {
@@ -882,7 +881,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	// care_team
 	public function getCareTeamAttribute() {
 		$ct = array();
-		$careTeamMembers = $this->patientCareTeamMembers()->groupBy('member_user_id')->get();
+		$careTeamMembers = $this->patientCareTeamMembers->groupBy('member_user_id')->get();
 		if ($careTeamMembers->count() > 0) {
 			foreach($careTeamMembers as $careTeamMember) {
 				$ct[] = $careTeamMember->member_user_id;
@@ -914,9 +913,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	// send_alert_to
 	public function getSendAlertToAttribute() {
 		$ctmsa = array();
-		$careTeamMembers = $this->patientCareTeamMembers()->get();
-		if ($careTeamMembers->count() > 0) {
-			foreach($careTeamMembers as $careTeamMember) {
+		if (!$this->patientCareTeamMembers) {
+			return '';
+		}
+		if ($this->patientCareTeamMembers->count() > 0) {
+			foreach($this->patientCareTeamMembers as $careTeamMember) {
 				if($careTeamMember->type == 'send_alert_to') {
 					$ctmsa[] = $careTeamMember->member_user_id;
 				}
@@ -1125,122 +1126,62 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
 	public function getCarePlanQAApproverAttribute() {
-		$meta = $this->meta->where('meta_key', 'careplan_qa_approver')->lists('meta_value');
-		if(!empty($meta)) {
-			return $meta[0];
-		}
-		return 0;
+		if(!$this->patientInfo) return '';
+		return $this->patientInfo->careplan_qa_approver;
 	}
 
 	public function setCarePlanQAApproverAttribute($value) {
-		$meta = $this->meta->where('meta_key', 'careplan_qa_approver')->first();
-		if(!empty($meta)) {
-			$meta->meta_value = $value;
-			$meta->save();
-		} else {
-			$userMeta = $this->meta()->firstOrNew([
-				'meta_key' => 'careplan_qa_approver',
-				'meta_value' => $value,
-				'user_id' => $this->ID
-			]);
-			$this->meta()->save($userMeta);
-		}
+		if(!$this->patientInfo) return '';
+		$this->patientInfo->careplan_qa_approver = $value;
+		$this->patientInfo->save();
 		return true;
 	}
 
 	public function getCarePlanQADateAttribute() {
-		$meta = $this->meta->where('meta_key', 'careplan_qa_date')->lists('meta_value');
-		if(!empty($meta)) {
-			return $meta[0];
-		}
-		return '';
+		if(!$this->patientInfo) return '';
+		return $this->patientInfo->careplan_qa_date;
 	}
 
 	public function setCarePlanQADateAttribute($value) {
-		$meta = $this->meta->where('meta_key', 'careplan_qa_date')->first();
-		if(!empty($meta)) {
-			$meta->meta_value = $value;
-			$meta->save();
-		} else {
-			$userMeta = $this->meta()->firstOrNew([
-				'meta_key' => 'careplan_qa_date',
-				'meta_value' => $value,
-				'user_id' => $this->ID
-			]);
-			$this->meta()->save($userMeta);
-		}
+		if(!$this->patientInfo) return '';
+		$this->patientInfo->careplan_qa_date = $value;
+		$this->patientInfo->save();
 		return true;
 	}
 
 	public function getCarePlanProviderApproverAttribute() {
-		$meta = $this->meta->where('meta_key', 'careplan_provider_approver')->lists('meta_value');
-		if(!empty($meta)) {
-			return $meta[0];
-		}
-		return '';
+		if(!$this->patientInfo) return '';
+		return $this->patientInfo->careplan_provider_approver;
 	}
 
 	public function setCarePlanProviderApproverAttribute($value) {
-		$meta = $this->meta->where('meta_key', 'careplan_provider_approver')->first();
-		if(!empty($meta)) {
-			$meta->meta_value = $value;
-			$meta->save();
-		} else {
-			$userMeta = $this->meta()->firstOrNew([
-				'meta_key' => 'careplan_provider_approver',
-				'meta_value' => $value,
-				'user_id' => $this->ID
-			]);
-			$this->meta()->save($userMeta);
-		}
+		if(!$this->patientInfo) return '';
+		$this->patientInfo->careplan_provider_approver = $value;
+		$this->patientInfo->save();
 		return true;
 	}
 
 	public function getCarePlanProviderApproverDateAttribute() {
-		$meta = $this->meta->where('meta_key', 'careplan_provider_date')->lists('meta_value');
-		if(!empty($meta)) {
-			return $meta[0];
-		}
-		return '';
+		if(!$this->patientInfo) return '';
+		return $this->patientInfo->careplan_provider_date;
 	}
 
 	public function setCarePlanProviderApproverDateAttribute($value) {
-		$meta = $this->meta->where('meta_key', 'careplan_provider_date')->first();
-		if(!empty($meta)) {
-			$meta->meta_value = $value;
-			$meta->save();
-		} else {
-			$userMeta = $this->meta()->firstOrNew([
-				'meta_key' => 'careplan_provider_date',
-				'meta_value' => $value,
-				'user_id' => $this->ID
-			]);
-			$this->meta()->save($userMeta);
-		}
+		if(!$this->patientInfo) return '';
+		$this->patientInfo->careplan_provider_date = $value;
+		$this->patientInfo->save();
 		return true;
 	}
 
 	public function getCarePlanStatusAttribute() {
-		$meta = $this->meta->where('meta_key', 'careplan_status')->lists('meta_value');
-		if(!empty($meta)) {
-			return $meta[0];
-		}
-		return '';
+		if(!$this->patientInfo) return '';
+		return $this->patientInfo->careplan_status;
 	}
 
 	public function setCarePlanStatusAttribute($value) {
-		$meta = $this->meta->where('meta_key', 'careplan_status')->first();
-		if(!empty($meta)) {
-			$meta->meta_value = $value;
-			$meta->save();
-		} else {
-			$meta = $this->meta()->firstOrNew([
-				'meta_key' => 'careplan_status',
-				'meta_value' => $value,
-				'user_id' => $this->ID
-			]);
-			$this->meta()->save($meta);
-		}
+		if(!$this->patientInfo) return '';
+		$this->patientInfo->careplan_status = $value;
+		$this->patientInfo->save();
 		return true;
 	}
 
