@@ -98,7 +98,7 @@
                                             title: "Week",
                                         },
                                         yAxis: {
-                                            start: 40, end: 170, step: 20,                                                // title: "Reading",
+                                            start: 50, end: 400, step: 50,                                                // title: "Reading",
                                             template: function (obj) {
                                                 return (obj % 10 ? "" : obj)
                                             }
@@ -141,7 +141,7 @@
                                         title: "Week",
                                     },
                                     yAxis: {
-                                        start: 80, end: 160, step: 10,                                                // title: "Reading",
+                                        start: 60, end: 220, step: 20,                                                // title: "Reading",
                                         template: function (obj) {
                                             return (obj % 10 ? "" : obj)
                                         }
@@ -184,7 +184,7 @@
                                     title: "Week",
                                 },
                                 yAxis: {
-                                    start: 80, end: 220, step: 30,                                                // title: "Reading",
+                                    start: 75, end: 350, step: 25,                                                // title: "Reading",
                                     template: function (obj) {
                                         return (obj % 10 ? "" : obj)
                                     }

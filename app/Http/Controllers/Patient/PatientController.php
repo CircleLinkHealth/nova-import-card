@@ -272,7 +272,7 @@ class PatientController extends Controller {
 	{
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-				->with('meta')
+				->with('meta', 'phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
 				->select(DB::raw('wp_users.*'))
 				//->join('wp_users AS approver', 'THIS JOIN', '=', 'WONT WORK')
 				->whereHas('roles', function($q) {
@@ -299,37 +299,15 @@ class PatientController extends Controller {
 					}
 				}
 			}
-			$approvers = User::whereIn('ID', $approverIds)
-				->with('meta')->get();
+			$approvers = User::whereIn('ID', $approverIds)->get();
 		}
 
-
-
-		// get billing Providers before
-		/*
-		$billingProviders = null;
-		$billingProviderIds = array();
-		if($patients->count() > 0) {
-			foreach ($patients as $patient) {
-				$billingProviderId = $patient->billingProviderID;
-				if(!empty($billingProviderId) && !in_array($billingProviderId, $billingProviderIds)) {
-					$billingProviderIds[] = $billingProviderId;
-				}
-			}
-			$bpUser = false;
-			if($billingProviders) {
-				$bpUser = $billingProviders->where('ID', $patient->billingProviderID)->first();
-			}
-			if(!$bpUser) {
-				$billingProviders = User::whereIn('ID', $billingProviderIds)
-					->with('meta')->get();
-			}
-		}*/
-
-		if($patients->count() > 0) {
+		if($patients && $patients->count() > 0) {
+			$foundUsers = array(); // save resources, no duplicate db calls
+			$foundPrograms = array(); // save resources, no duplicate db calls
 			foreach ($patients as $patient) {
 				// skip if patient has no name
-				if(empty($patient->firstName)) {
+				if(empty($patient->first_name)) {
 					continue 1;
 				}
 
@@ -351,7 +329,12 @@ class PatientController extends Controller {
 					$approver = $approvers->where('ID', $approverId)->first();
 					if(!$approver) {
 						if(!empty($approverId)) {
-							$approver = User::find($approverId);
+							if(!isset($foundUsers[$approverId])) {
+								$approver = User::find($approverId);
+								$foundUsers[$approverId] = $approver;
+							} else {
+								$approver = $foundUsers[$approverId];
+							}
 						}
 					}
 					if($approver) {
@@ -377,11 +360,25 @@ class PatientController extends Controller {
 				}
 
 				// get billing provider name
-				$bpName = $patient->billingProviderID;
+				$bpName = '';
 				$bpID = $patient->billingProviderID;
+				if(!isset($foundPrograms[$patient->program_id])) {
+					$program = WpBlog::find($patient->program_id);
+					$foundPrograms[$patient->program_id] = $program;
+				} else {
+					$program = $foundPrograms[$patient->program_id];
+				}
+				$programName = $program->display_name;
+
 				if(!empty($bpID)) {
-					$bpUser = User::find($patient->billingProviderID);
-					if($bpUser) {
+					if(!isset($foundUsers[$bpID])) {
+						$bpUser = User::find($bpID);
+						if($bpUser) {
+							$bpName = $bpUser->fullName;
+							$foundUsers[$bpID] = $bpUser;
+						}
+					} else {
+						$bpUser = $foundUsers[$bpID];
 						$bpName = $bpUser->fullName;
 					}
 				}
@@ -395,8 +392,8 @@ class PatientController extends Controller {
 
 				$patientData[] = array('key' => $patient->ID, // $part->ID,
 					'patient_name' => $patient->fullName, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
-					'first_name' => $patient->firstName, //$meta[$part->ID]["first_name"][0],
-					'last_name' => $patient->lastName, //$meta[$part->ID]["last_name"][0],
+					'first_name' => $patient->first_name, //$meta[$part->ID]["first_name"][0],
+					'last_name' => $patient->last_name, //$meta[$part->ID]["last_name"][0],
 					'ccm_status' => ucfirst($patient->ccmStatus), //ucfirst($meta[$part->ID]["ccm_status"][0]),
 					'careplan_status' => $careplanStatus, //$careplanStatus,
 					'tooltip' => $tooltip, //$tooltip,
@@ -410,6 +407,8 @@ class PatientController extends Controller {
 					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
 					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
 					'provider'=> $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
+					'site'=> $programName,
+
 				);
 			}
 		}
@@ -436,7 +435,7 @@ class PatientController extends Controller {
 		if($patients->count() > 0) {
 			foreach ($patients as $patient) {
 				// skip if patient has no name
-				if(empty($patient->firstName)) {
+				if(empty($patient->first_name)) {
 					continue 1;
 				}
 				// careplan status stuff from 2.x
@@ -486,8 +485,8 @@ class PatientController extends Controller {
 
 				$patientData[] = array('key' => $patient->ID, // $part->ID,
 					'patient_name' => $patient->fullName, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
-					'first_name' => $patient->firstName, //$meta[$part->ID]["first_name"][0],
-					'last_name' => $patient->lastName, //$meta[$part->ID]["last_name"][0],
+					'first_name' => $patient->first_name, //$meta[$part->ID]["first_name"][0],
+					'last_name' => $patient->last_name, //$meta[$part->ID]["last_name"][0],
 					'ccm_status' => ucfirst($patient->ccmStatus), //ucfirst($meta[$part->ID]["ccm_status"][0]),
 					'careplan_status' => $careplanStatus, //$careplanStatus,
 					'tooltip' => $tooltip, //$tooltip,

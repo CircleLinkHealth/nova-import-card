@@ -234,7 +234,7 @@ class NotesController extends Controller
 
         } else if($admitted_flag){
             $u = User::find($patientId);
-            $user_care_team = $u->careTeam;
+            $user_care_team = $u->sendAlertTo;
             $result = $activitySer->sendNoteToCareTeam($user_care_team, $linkToNote, $input['performed_at'], $input['patient_id'], $logger_name, true, $admitted_flag);
         }
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);

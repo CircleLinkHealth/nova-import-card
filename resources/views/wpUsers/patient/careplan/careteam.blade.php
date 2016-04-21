@@ -6,9 +6,6 @@ $careTeamUserIds = $patient->careTeam;
 $ctmsa = array();
 if(!empty($patient->sendAlertTo)) {
     $ctmsa = $patient->sendAlertTo;
-    if(!is_array($ctmsa) && (unserialize($ctmsa) !== false)) {
-        $ctmsa = unserialize($ctmsa);
-    }
 }
 $ctbp = $patient->billingProviderID;
 $ctlc = $patient->leadContactID;
@@ -21,7 +18,7 @@ function buildProviderDropDown($providers, $activeId = false) {
         if($provider->ID == $activeId) {
             $selected = 'selected="selected"';
         }
-        $html .= '<option value="'.$provider->ID.'" "'.$selected.'">'.ucwords( preg_replace('/[^A-Za-z0-9\-]/', '', $provider->firstName) . ' ' . preg_replace('/[^A-Za-z0-9\-]/', '', $provider->lastName) ).'</option>';
+        $html .= '<option value="'.$provider->ID.'" "'.$selected.'">'.ucwords( preg_replace('/[^A-Za-z0-9\-]/', '', $provider->first_name) . ' ' . preg_replace('/[^A-Za-z0-9\-]/', '', $provider->last_name) ).'</option>';
     endforeach;
     $html .= '</select>';
     return $html;
@@ -32,7 +29,7 @@ function buildProviderInfoContainers($providers) {
     foreach ($providers as $provider) :
 // echo "<pre>"; var_export($provider); echo "</pre>";
         $html .= '<div id="providerInfo'.$provider->ID.'">';
-        $html .= '<strong><span id="providerName'.$provider->ID.'" style="display:none;">'.ucwords( $provider->firstName . ' ' . $provider->lastName) . '</span></strong>';
+        $html .= '<strong><span id="providerName'.$provider->ID.'" style="display:none;">'.ucwords( $provider->first_name . ' ' . $provider->last_name) . '</span></strong>';
         $html .= '<strong>Specialty:</strong> ' . $provider->specialty;
         $html .= '<BR><strong>Tel:</strong> ' . $provider->phone;
         $html .= '</div>';

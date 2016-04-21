@@ -23,3 +23,12 @@
   background:#E5692F;
   color:#fff;
 }
+
+select {
+  background:#E5692F;
+}
+
+a {
+  color:#fff;
+  text-decoration:underline;
+}

@@ -54,8 +54,6 @@
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist" style="margin-top:20px;">
                             <li role="presentation" class="active"><a href="#program" aria-controls="program" role="tab" data-toggle="tab">Program</a></li>
-                            <li role="presentation"><a href="#userconfig" aria-controls="userconfig" role="tab" data-toggle="tab">User Config</a></li>
-                            <li role="presentation"><a href="#usercareteam" aria-controls="usercareteam" role="tab" data-toggle="tab">Care Team</a></li>
                         </ul>
 
                         <div class="tab-content">
@@ -119,7 +117,7 @@
 
                                 <h2><a data-toggle="collapse" data-target="#programCollapse" class="">Programs</a></h2>
 
-                                <div id="programCollapse" class="collapse in">
+                                <div id="programCollapse" class="collapse in" style="background:#888;padding:20px;">
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('program_id', 'Primary Program:') !!}</div>
@@ -133,7 +131,7 @@
                                     </div>
 
 
-                                    <a href="#" id="togglePrograms"><strong>Toggle Programs list</strong></a><br /><br />
+                                    <a class="btn btn-info panel-title" href="#" id="togglePrograms"><strong>Toggle Programs list</strong></a><br /><br />
                                     <div id="programs" style="display:none;">
                                         <button class="btn-primary btn-xs" id="programsCheckAll">Check All</button> |
                                         <button class="btn-primary btn-xs" id="programsUncheckAll">Uncheck All</button>
@@ -157,16 +155,6 @@
                                         <div class="col-xs-10">{!! Form::select('location_id', ['default' => 'Attach a location to API users'] + $locations, 'default', ['class' => 'form-control select-picker', '', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div role="tabpanel" class="tab-pane" id="userconfig">
-                                <h2>User Config</h2>
-                                Create user first
-                            </div>
-
-                            <div role="tabpanel" class="tab-pane" id="usercareteam">
-                                <h2>Care Team</h2>
-                                Create user first
                             </div>
                         </div>
 
