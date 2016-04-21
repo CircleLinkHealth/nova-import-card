@@ -375,11 +375,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('blog_id');
         foreach($wpBlogs as $wpBlogId) {
             if (!in_array($wpBlogId, $userPrograms)) {
-                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_config")->delete();
-                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->delete();
-                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->delete();
+                //$wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_config")->delete();
+                //$wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->delete();
+                //$wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->delete();
             } else {
                 $wpUser->programs()->attach($wpBlogId);
+                /*
                 // user level
                 $userLevel = $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->first();
                 if($userLevel) {
@@ -403,6 +404,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                     $capabilities->user_id = $wpUser->ID;
                 }
                 $capabilities->save();
+                */
             }
         }
     }

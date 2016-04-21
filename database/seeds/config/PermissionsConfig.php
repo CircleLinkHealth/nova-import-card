@@ -30,6 +30,10 @@ class PermissionsConfig extends Seeder {
             'admin-access' => array('display_name' => 'Admin Access', 'description' => '',),
             'apikeys-manage' => array('display_name' => 'API Manage', 'description' => '',),
             'apikeys-view' => array('display_name' => 'API View', 'description' => '',),
+            'is-administrator' => array('display_name' => 'Is Administrator', 'description' => '',),
+            'is-participant' => array('display_name' => 'Is Participant', 'description' => '',),
+            'is-provider' => array('display_name' => 'Is Provider', 'description' => '',),
+            'is-care-center' => array('display_name' => 'Is Care Center', 'description' => '',),
             'locations-manage' => array('display_name' => 'Locations Manage', 'description' => '',),
             'locations-view' => array('display_name' => 'Locations View', 'description' => '',),
             'observations-create' => array('display_name' => 'Observations Create', 'description' => '',),
@@ -62,6 +66,8 @@ class PermissionsConfig extends Seeder {
         );
 
         // roles
+        $this->roles = array();
+        /*
         $this->roles = array(
             'administrator' => array(
                 'display_name' => 'Administrator',
@@ -201,7 +207,7 @@ class PermissionsConfig extends Seeder {
                 )
             ),
         );
-
+        */
 
         // -------------------------------------------------------
 
@@ -249,6 +255,7 @@ class PermissionsConfig extends Seeder {
         }
 
         // next make sure all roles are in the database
+        /*
         echo PHP_EOL.PHP_EOL . 'ROLES' . PHP_EOL.PHP_EOL;
         foreach($roles as $roleName => $roleInfo) {
             echo PHP_EOL . $roleName . PHP_EOL;
@@ -303,7 +310,7 @@ class PermissionsConfig extends Seeder {
                 }
             }
         }
-
+        */
         // end
         echo PHP_EOL.PHP_EOL.'End role/permissions sync.' .$this->msg. PHP_EOL.PHP_EOL;
     }

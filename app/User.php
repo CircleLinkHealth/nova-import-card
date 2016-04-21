@@ -239,11 +239,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$q->whereIn('program_id', $programIds);
 		});
 
-		if(!Auth::user()->can('admin-access')) {
+		//if(!Auth::user()->can('is-administrator')) {
 			$patientIds->whereHas('roles', function ($q) {
-				$q->where('name', '=', 'participant');
+				$q->whereHas('perms', function ($q2) {
+					$q2->where('name', '=', 'is-participant');
+				});
 			});
-		}
+		//}
 
 		$patientIds = $patientIds->lists('ID');
 		return $patientIds;
@@ -881,10 +883,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	// care_team
 	public function getCareTeamAttribute() {
 		$ct = array();
-		$careTeamMembers = $this->patientCareTeamMembers->groupBy('member_user_id')->get();
+		if(!$this->patientCareTeamMembers) {
+			return $ct;
+		}
+		$careTeamMembers = $this->patientCareTeamMembers;
 		if ($careTeamMembers->count() > 0) {
 			foreach($careTeamMembers as $careTeamMember) {
-				$ct[] = $careTeamMember->member_user_id;
+				if(!in_array($careTeamMember->member_user_id, $ct)) {
+					$ct[] = $careTeamMember->member_user_id;
+				}
 			}
 		}
 		return $ct;

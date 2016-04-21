@@ -35,7 +35,7 @@ class patientProgramSecurity {
 	public function handle($request, Closure $next)
 	{
 		// admins can see and do all
-		if ( !Auth::guest() && Auth::user()->hasRole(['administrator'])) {
+		if ( !Auth::guest() && Auth::user()->can(['is-administrator'])) {
 			//return $next($request);
 		}
 

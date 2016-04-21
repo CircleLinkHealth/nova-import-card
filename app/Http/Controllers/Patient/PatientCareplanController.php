@@ -77,14 +77,14 @@ class PatientCareplanController extends Controller
                     $careplanStatus = 'Approve Now';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
-                    if (Auth::user()->hasRole('provider')) {
+                    if (Auth::user()->can(['is-provider'])) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
                     }
                 } else if ($patient->carePlanStatus == 'draft') {
                     $careplanStatus = 'CLH Approve';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'CLH Approve';
-                    if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
+                    if (Auth::user()->can(['is-care-center']) || Auth::user()->can(['is-administrator'])) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
                     }
                 }
@@ -190,27 +190,6 @@ class PatientCareplanController extends Controller
         $patientRoleId = Role::where('name', '=', 'participant')->first();
         $patientRoleId = $patientRoleId->id;
 
-        // user meta
-        $userMeta = (new UserMetaTemplate())->getArray();
-        if ($patientId) {
-            $userMeta = UserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
-        }
-
-        // user config
-        $userConfig = (new UserConfigTemplate())->getArray();
-        if ($patientId) {
-            if (isset($userMeta['wp_' . $programId . '_user_config'])) {
-                $userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
-                $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
-            }
-            // set role
-            $capabilities = array();
-            if (isset($userMeta['wp_' . $programId . '_capabilities'])) {
-                $capabilities = unserialize($userMeta['wp_' . $programId . '_capabilities']);
-                $wpRole = key($capabilities);
-            }
-        }
-
         // locations @todo get location id for WpBlog
         $program = WpBlog::find($programId);
         $locations = array();
@@ -231,7 +210,7 @@ class PatientCareplanController extends Controller
         }
 
         $showApprovalButton = false; // default hide
-        if (Auth::user()->hasRole('provider')) {
+        if (Auth::user()->can(['is-provider'])) {
             if ($patient->carePlanStatus != 'provider_approved') {
                 $showApprovalButton = true;
             }
@@ -502,7 +481,7 @@ class PatientCareplanController extends Controller
         $editMode = false;
 
         $showApprovalButton = false;
-        if (Auth::user()->hasRole('provider')) {
+        if (Auth::user()->can(['is-provider'])) {
             if ($patient->carePlanStatus != 'provider_approved') {
                 $showApprovalButton = true;
             }
@@ -544,7 +523,7 @@ class PatientCareplanController extends Controller
             // check for approval here
             // should we update careplan_status?
             if ($user->carePlanStatus != 'provider_approved') {
-                if (Auth::user()->hasRole('provider')) {
+                if (Auth::user()->can(['is-provider'])) {
                     $user->carePlanStatus = 'provider_approved'; // careplan_status
                     $user->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver
                     $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
