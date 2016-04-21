@@ -113,7 +113,7 @@ class NotesController extends Controller
             }
             if(!empty($careteam_ids) && is_array($careteam_ids)) {
                 foreach ($careteam_ids as $id) {
-                    if(User::find($id)->fullName) {
+                    if(User::find($id)) {
                         $careteam_info[$id] = User::find($id)->fullName;
                     }
                 }
