@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\CLH\CCD\Importer\CPMProblem;
+use App\Entities\CPM\CpmProblem;
 use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -467,7 +467,7 @@ class ReportsController extends Controller
         // get all users with 1 condition
         $usersCondition = array();
         $problems = array();
-        $cpmProblems = CPMProblem::all();
+        $cpmProblems = CpmProblem::all();
         if($cpmProblems->count() > 0) {
             foreach ($cpmProblems as $cpmProblem) {
                 $problems[$cpmProblem->id] = $cpmProblem->name;

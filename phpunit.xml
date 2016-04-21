@@ -16,6 +16,9 @@
         <testsuite name="Aprima_Api">
             <directory>./tests/AprimaApi/</directory>
         </testsuite>
+        <testsuite name="Care_Plan">
+            <directory>./tests/CarePlan/</directory>
+        </testsuite>
     </testsuites>
     <listeners>
         <listener class="\Mockery\Adapter\Phpunit\TestListener"

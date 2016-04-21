@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer;
 
 
+use App\Entities\CPM\CpmProblem;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
 use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfig as UserConfigStorage;
@@ -194,7 +195,7 @@ class ImportManager
             foreach ( $this->problemsImport as $problem ) {
                 if ( empty($problem->cpm_problem_id) ) continue;
 
-                $problemsToActivate[] = CPMProblem::find( $problem->cpm_problem_id )->care_item_name;
+                $problemsToActivate[] = CpmProblem::find( $problem->cpm_problem_id )->care_item_name;
             }
 
             $storage->import( $problemsToActivate );
