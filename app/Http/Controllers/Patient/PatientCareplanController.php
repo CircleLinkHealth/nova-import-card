@@ -42,7 +42,7 @@ class PatientCareplanController extends Controller
     {
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('meta')->whereHas('roles', function ($q) {
+            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get();
         if ($patients->count() > 0) {
@@ -261,7 +261,7 @@ class PatientCareplanController extends Controller
         // instantiate user
         $user = new User;
         if ($patientId) {
-            $user = User::with('meta')->find($patientId);
+            $user = User::with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->find($patientId);
             if (!$user) {
                 return response("User not found", 401);
             }
@@ -354,7 +354,7 @@ class PatientCareplanController extends Controller
 
         // get providers
         $providers = array();
-        $providers = User::with('meta')
+        $providers = User::with('phoneNumbers', 'providerInfo')
             ->whereHas('programs', function ($q) use ($patient) {
                 $q->whereIn('program_id', $patient->viewableProgramIds());
             })
@@ -394,7 +394,7 @@ class PatientCareplanController extends Controller
         }
 
         // instantiate user
-        $patient = User::with('meta')->find($patientId);
+        $patient = User::with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->find($patientId);
         if (!$patient) {
             return response("Patient user not found", 401);
         }
@@ -533,7 +533,7 @@ class PatientCareplanController extends Controller
         }
 
         // instantiate user
-        $user = User::with('meta')->find($patientId);
+        $user = User::with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->find($patientId);
         if (!$user) {
             return response("User not found", 401);
         }

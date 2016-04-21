@@ -44,26 +44,24 @@ class PatientController extends Controller {
 	{
 		// get number of approvals
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-			->with('meta')->whereHas('roles', function($q) {
+			->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get();
 		$p=0;
 		if($patients->count() > 0) {
 			foreach ($patients as $user) {
-				$userMeta = $user->userMeta();
-				if(!isset($userMeta['careplan_status'])) {
+				if(!isset($user->patientInfo->careplan_status)) {
 					continue 1;
 				}
-				$careplan_status = $userMeta['careplan_status'];
 				// patient approval counts
 				if(Auth::user()->hasRole(['administrator', 'care-center'])) {
 					// care-center and administrator counts number of drafts
-					if ($careplan_status == 'draft') {
+					if ($user->patientInfo->careplan_status == 'draft') {
 						$p++;
 					}
 				} else if(Auth::user()->hasRole(['provider'])) {
 					// provider counts number of drafts
-					if ($careplan_status == 'qa_approved') {
+					if ($user->patientInfo->careplan_status == 'qa_approved') {
 						$p++;
 					}
 
@@ -272,7 +270,7 @@ class PatientController extends Controller {
 	{
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-				->with('meta', 'phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
+				->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
 				->select(DB::raw('users.*'))
 				//->join('wp_users AS approver', 'THIS JOIN', '=', 'WONT WORK')
 				->whereHas('roles', function($q) {
@@ -429,7 +427,7 @@ class PatientController extends Controller {
 	{
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-			->with('meta')->whereHas('roles', function($q) {
+			->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get();
 		if($patients->count() > 0) {
@@ -519,7 +517,7 @@ class PatientController extends Controller {
 	{
 		// get number of approvals
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-			->with('meta')->whereHas('roles', function($q) {
+			->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get()->lists('fullNameWithId', 'ID');
 
