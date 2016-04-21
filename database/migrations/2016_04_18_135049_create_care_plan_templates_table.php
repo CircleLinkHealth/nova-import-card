@@ -16,7 +16,8 @@ class CreateCarePlanTemplatesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->string('display_name');
-			$table->integer('program_id')->unsigned();;
+			$table->integer('program_id')->unsigned();
+			$table->string('type');
 			$table->timestamps();
 
 			$table->foreign('program_id')->references('blog_id')->on('wp_blogs')

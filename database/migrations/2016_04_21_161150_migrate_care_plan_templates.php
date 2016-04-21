@@ -19,6 +19,7 @@ class MigrateCarePlanTemplates extends Migration {
 			foreach($existing_templates as $existing_template){
 				$care_plan_template = new App\CarePlanTemplate();
 				$care_plan_template->display_name = $existing_template->display_name;
+				$care_plan_template->type = $existing_template->type;
 				$care_plan_template->program_id = $existing_template->program_id;
 				$care_plan_template->save();
 			}
