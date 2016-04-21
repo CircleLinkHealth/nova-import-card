@@ -246,17 +246,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function phoneNumbers()
     {
-        return $this->hasOne('App\PhoneNumber', 'user_id', 'ID');
+        return $this->hasMany('App\PhoneNumber', 'user_id', 'ID');
     }
 
     public function patientCarePlans()
     {
-        return $this->hasOne('App\PatientCarePlan', 'user_id', 'ID');
+        return $this->hasMany('App\PatientCarePlan', 'user_id', 'ID');
     }
 
     public function patientCareTeamMembers()
     {
-        return $this->hasOne('App\PatientCareTeamMember', 'user_id', 'ID');
+        return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'ID');
     }
 
 
@@ -1008,7 +1008,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getCareTeamAttribute()
     {
         $ct = array();
-        $careTeamMembers = $this->patientCareTeamMembers->groupBy('member_user_id')->get();
+        $careTeamMembers = $this->patientCareTeamMembers->where('type', 'member');
         if ($careTeamMembers->count() > 0) {
             foreach ($careTeamMembers as $careTeamMember) {
                 $ct[] = $careTeamMember->member_user_id;

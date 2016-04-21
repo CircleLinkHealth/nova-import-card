@@ -12,6 +12,8 @@ class CreatePatientCarePlansTable extends Migration {
 	 */
 	public function up()
 	{
+		// drop just in case
+		Schema::dropIfExists('patient_care_plans');
 		Schema::create('patient_care_plans', function(Blueprint $table)
 		{
 			$table->increments('id');
