@@ -36,7 +36,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 *
 	 * @var string
 	 */
-	protected $table = 'wp_users';
+	protected $table = 'users';
 
 	/**
 	 * The primary key for the model.

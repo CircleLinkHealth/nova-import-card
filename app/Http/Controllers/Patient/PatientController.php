@@ -273,7 +273,7 @@ class PatientController extends Controller {
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
 				->with('meta', 'phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
-				->select(DB::raw('wp_users.*'))
+				->select(DB::raw('users.*'))
 				//->join('wp_users AS approver', 'THIS JOIN', '=', 'WONT WORK')
 				->whereHas('roles', function($q) {
 					$q->where('name', '=', 'participant');
@@ -535,7 +535,7 @@ class PatientController extends Controller {
 
 		$sql="select distinct
 			*
-        	FROM wp_users u
+        	FROM users u
         	JOIN patient_info pi ON pi.user_id = u.ID
              AND u.ID IN (".$userIds.")
              AND concat(u.first_name , ' ', u.last_name, ' ', pi.user_id, ' ', pi.mrn_number, ' ', pi.birth_date ) like '%" . $query . "%'
