@@ -271,9 +271,75 @@
                             })
                         </script>
                         <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
-                               onclick="obs_alerts_dtable.exportToPDF();">
+                               onclick="webix.toPDF($$(obs_alerts_dtable), {
+                                header:'CarePlanManager.com - Patients Under 20 Minutes CCM Time <?= date('M d,Y') ?>',
+                                orientation:'landscape',
+                                autowidth:true,
+                                        columns:{
+                                // 'provider_name':    { header:'Provider',    width:200, sort:'string', template: webix.template('#provider_name#') },
+                                'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
+                                'site':             { header:'Program',    width:150, sort:'string', template: webix.template('#site#')},
+                                'dob':              { header:'DOB',    width:100, sort:'string', template: webix.template('#dob#')},
+
+                                'colsum_careplan':  { header: 'CarePlan (Min:Sec)', width: 70, sort: 'int',
+                                        template:function (obj) {
+                                            var seconds = obj.colsum_careplan;
+                                            var date = new Date(seconds * 1000);
+                                            var mm = Math.floor(seconds/60);
+                                            var ss = date.getSeconds();
+                                            return mm + ':' + zeroPad(ss,10);
+                                        }
+                                    },
+                                'colsum_progress':  { header: 'Progress (Min:Sec)', width: 70, sort: 'int',
+                                        template:function (obj) {
+                                            var seconds = obj.colsum_progress;
+                                            var date = new Date(seconds * 1000);
+                                            var mm = Math.floor(seconds/60);
+                                            var ss = date.getSeconds();
+                                            return mm + ':' + zeroPad(ss,10);
+                                        }
+                                    },
+                                'colsum_rpm':  { header: 'RPM (Min:Sec)', width: 70, sort: 'int',
+                                        template:function (obj) {
+                                            var seconds = obj.colsum_rpm;
+                                            var date = new Date(seconds * 1000);
+                                            var mm = Math.floor(seconds/60);
+                                            var ss = date.getSeconds();
+                                            return mm + ':' + zeroPad(ss,10);
+                                        }
+                                    },
+                                'colsum_tcc':  { header: 'CC (Min:Sec)', width: 50, sort: 'int',
+                                        format: webix.numberFormat,
+                                        template:function (obj) {
+                                            var seconds = obj.colsum_tcc;
+                                            var date = new Date(seconds * 1000);
+                                            var mm = Math.floor(seconds/60);
+                                            var ss = date.getSeconds();
+                                            return mm + ':' + zeroPad(ss,10);
+                                        }
+                                    },
+                                'colsum_other':  { header: 'Other (Min:Sec)', width: 70, sort: 'int',
+                                        template:function (obj) {
+                                        var seconds = obj.colsum_other;
+                                        var date = new Date(seconds * 1000);
+                                        var mm = Math.floor(seconds/60);
+                                        var ss = date.getSeconds();
+                                        return mm + ':' + zeroPad(ss,10);
+                                    }
+                                    },
+                                'colsum_total':  { header: 'Total (Min:Sec)', width: 70, sort: 'int',
+                                        format: webix.numberFormat,
+                                        template: function (obj, common) {
+                                            var seconds = obj.colsum_total;
+                                            var date = new Date(seconds * 1000);
+                                            var mm = Math.floor(seconds/60);
+                                            var ss = date.getSeconds();
+                                            return mm + ':' + zeroPad(ss,10);
+                                        }
+                                    }}
+                                                                              });">
                         <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
-                               onclick="obs_alerts_dtable.exportToExcel();">
+                               onclick="webix.toExcel(obs_alerts_dtable);">
  @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
                      <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
                     <input id='site_hide_btn' type='button' class='btn btn-primary' value='Hide Program' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("site");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>

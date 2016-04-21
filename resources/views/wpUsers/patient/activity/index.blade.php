@@ -93,7 +93,7 @@
 
 
 
-                                    {id:"DATE(performed_at)",   header:["Date",{content:"textFilter", placeholder:"Filter"}], footer:{text:"Total Time for the Month (Min:Sec):", colspan:3},    width:180, sort:'string'},
+                                    {id:"performed_at",   header:["Date",{content:"textFilter", placeholder:"Filter"}], footer:{text:"Total Time for the Month (Min:Sec):", colspan:3},    width:180, sort:'string'},
                                     {id:"type",    header:["Activity",{content:"textFilter", placeholder:"Filter"}],
 
                                         template:function(obj){
@@ -106,7 +106,7 @@
                                         fillspace:true ,    width:200, sort:'string' , css:{ "color":"black","text-align":"left" }},
 
                                     {id:"provider_name",    header:["Provider",{content:"textFilter", placeholder:"Filter"}],    width:200, sort:'string' , css:{ "color":"black","text-align":"right" }},
-                                    {id:"Sum(duration)",    header:["Total", "(Min:Sec)"],    width:100, sort:'string' , css:{ "color":"black","text-align":"right"},
+                                    {id:"duration",    header:["Total", "(Min:Sec)"],    width:100, sort:'string' , css:{ "color":"black","text-align":"right"},
                                         footer:{ content:"mySummColumn" },
                                         template:function (obj) {
                                             var seconds = obj.duration;
@@ -136,9 +136,29 @@
                             webix.event(window, "resize", function(){ obs_alerts_dtable.adjust(); })
                         </script>
                         <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
-                               onclick="obs_alerts_dtable.exportToPDF();">
+                               onclick="webix.toPDF($$(obs_alerts_dtable), {
+                                header:'CarePlanManager.com - Patient Activity Report <?= date('M d,Y') ?>',
+                                orientation:'landscape',
+                                autowidth:true,
+                                        columns:{
+                                'performed_at':       { header:'Date', width: 200, template: webix.template('#performed_at#') },
+                                'type':             { header:'Activity',    width:150, sort:'string', template: webix.template('#type#')},
+                                'provider_name':    { header:'Provider',    width:200, sort:'string', template: webix.template('#provider_name#') },
+                                'duration':  { header: 'Total (Min:Sec)', width: 70, sort: 'string',
+                                        template: function (obj) {
+                                            var seconds = obj.duration;
+                                            var date = new Date(seconds * 1000);
+                                            var mm = Math.floor(seconds/60);
+                                            var ss = date.getSeconds();
+                                            if (ss < 10) {ss = '0'+ss;}
+                                            var time = mm+':'+ss;
+                                            return mm+':'+ss;
+                                            }
+                                        }
+                                    }
+                                    });">
                         <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
-                               onclick="obs_alerts_dtable.exportToExcel();">
+                               onclick="webix.toExcel(obs_alerts_dtable);">
                     @else
                         <div style="text-align:center;margin:50px;">There are no patient activities to display for this month.
                         </div>

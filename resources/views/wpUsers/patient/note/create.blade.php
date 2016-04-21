@@ -7,8 +7,7 @@
     <?php
     $userTime = \Carbon\Carbon::now();
     $userTime->setTimezone($userTimeZone);
-    $userTimeGMT = $userTime;
-    $userTime->setTimezone('GMT');
+    $userTimeGMT = \Carbon\Carbon::now()->setTimezone('GMT');
     $userTime = $userTime->format('Y-m-d\TH:i');
     $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
     ?>

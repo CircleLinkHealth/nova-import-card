@@ -78,7 +78,10 @@
 							<span class="icon-bar"></span>
 						</button>
 						<a class="navbar-brand" href="{{ URL::route('admin.dashboard', array()) }}">
-							<img src="{{ asset('/img/cpm-logo.png') }}" height="30" width="50">
+							<img src="/img/ui/clh_logo_lt.png"
+	                               alt="Care Plan Manager"
+	                               style="position:relative;top:-15px"
+	                               width="50px"/>
 						</a>
 					</div>
 
@@ -190,6 +193,11 @@
 								{{--<li><a href="{{ url('/auth/login') }}">Login</a></li>--}}
 								{{--<li><a href="{{ url('/auth/register') }}">Register</a></li>--}}
 							@else
+				<div class="col-sm-6">
+					<div class="pull-right">
+						<a href="{{ URL::route('patients.dashboard', array()) }}" class="btn" style="margin-left:10px;"><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
+					</div>
+				</div>
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->ID }}]<span class="caret"></span></a>
 									<ul class="dropdown-menu" role="menu">

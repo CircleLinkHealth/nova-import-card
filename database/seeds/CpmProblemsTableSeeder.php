@@ -116,7 +116,7 @@ class CpmProblemsTableSeeder extends Seeder
                 'icd10to' => 'N18.9',
                 'icd9from' => 585.10000000000002,
                 'icd9to' => 585.89999999999998,
-                'contains' => '',
+                'contains' => 'Chronic Kidney Disease, Kidney Disease',
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-01-27 13:11:24',
                 'care_item_name' => 'kidney-disease',
@@ -158,7 +158,7 @@ class CpmProblemsTableSeeder extends Seeder
                 'contains' => 'COPD, Chronic obstructive pulmonary disease, Asthma',
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-01-27 13:11:24',
-                'care_item_name' => 'copd',
+                'care_item_name' => 'asthmacopd',
             ),
             11 => 
             array (

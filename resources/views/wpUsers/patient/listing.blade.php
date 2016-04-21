@@ -109,8 +109,48 @@
                     </script>
                     <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("last_name");obs_alerts_dtable.hideColumn("first_name");obs_alerts_dtable.sort("#last_name#");this.style.display = "none";getElementById("firstName_btn").style.display = "inline-block";'>
                     <input id='firstName_btn' type='button' class='btn btn-primary' value='Show by First Name' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("last_name");obs_alerts_dtable.showColumn("first_name");obs_alerts_dtable.sort("#first_name#");this.style.display = "none";getElementById("lastName_btn").style.display = "inline-block";'>
-                    <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;' onclick="obs_alerts_dtable.exportToPDF();">
-                    <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;' onclick="obs_alerts_dtable.exportToExcel();">
+                        <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
+                               onclick="webix.toPDF($$(obs_alerts_dtable), {
+                                header:'CarePlanManager.com - Patient List',
+                                orientation:'landscape',
+                                autowidth:true,
+                                        columns:{
+                                'first_name':       { header:'Patient Name', width: 200, template: webix.template('#first_name# #last_name#') },
+                                'provider':         { header:'Provider',    width:200, sort:'string', template: webix.template('#provider#') },
+                                'site':             { header:'Program',    width:150, sort:'string', template: webix.template('#site#')},
+                                'ccm_status':       { header:'CCM Status',    width:105, sort:'string', template: webix.template('#ccm_status#')},
+                                'careplan_status':  { header:'CarePlan Status', tooltip:'#tooltip#' , width:125, template: webix.template('#careplan_status#')},
+                                'dob':              { header:'DOB',    width:100, sort:'string', template: webix.template('#dob#')},
+                                'phone':            { header:'Phone',    width:120, template: webix.template('#phone#')},
+                                'age':              { header:'Age', width:50, template: webix.template('#age#')},
+                                'reg_date':         { header:'Registered On', width:120, sort:'string', template: webix.template('#reg_date#')},
+                                'last_read':        { header:'Last Reading', width:120, sort:'string', template: webix.template('#last_read#')},
+                                'ccm_seconds':      { header:'CCM', width:80, template:function(obj, common) {
+                                        var seconds = obj.ccm_seconds;
+                                        var date = new Date(seconds * 1000);
+                                        var mm = Math.floor(seconds/60);
+                                        var ss = date.getSeconds();
+                                        return mm + ':' + zeroPad(ss,10);}}}
+                                                                              });">
+                        <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
+                               onclick="webix.toExcel($$(obs_alerts_dtable), {
+                                        columns:{
+                                'first_name':       { header:'Patient Name', width: 200, template: webix.template('#first_name# #last_name#') },
+                                'provider':         { header:'Provider',    width:200, sort:'string', template: webix.template('#provider#') },
+                                'site':             { header:'Program',    width:150, sort:'string', template: webix.template('#site#')},
+                                'ccm_status':       { header:'CCM Status',    width:105, sort:'string', template: webix.template('#ccm_status#')},
+                                'careplan_status':  { header:'CarePlan Status', tooltip:'#tooltip#' , width:125, template: webix.template('#careplan_status#')},
+                                'dob':              { header:'DOB',    width:100, sort:'string', template: webix.template('#dob#')},
+                                'phone':            { header:'Phone',    width:120, template: webix.template('#phone#')},
+                                'age':              { header:'Age', width:50, template: webix.template('#age#')},
+                                'reg_date':         { header:'Registered On', width:120, sort:'string', template: webix.template('#reg_date#')},
+                                'last_read':        { header:'Last Reading', width:120, sort:'string', template: webix.template('#last_read#')},
+                                'ccm_seconds':      { header:'CCM', width:80, template:function(obj, common) {
+                                        var seconds = obj.ccm_seconds;
+                                        var date = new Date(seconds * 1000);
+                                        var mm = Math.floor(seconds/60);
+                                        var ss = date.getSeconds();
+                                        return mm + ':' + zeroPad(ss,10);}}}});">
  @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
                      <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
                     <input id='site_hide_btn' type='button' class='btn btn-primary' value='Hide Program' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("site");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
