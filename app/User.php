@@ -881,7 +881,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	// care_team
 	public function getCareTeamAttribute() {
 		$ct = array();
-		$careTeamMembers = $this->patientCareTeamMembers->groupBy('member_user_id')->get();
+		$careTeamMembers = $this->patientCareTeamMembers->where('type', 'member');
 		if ($careTeamMembers->count() > 0) {
 			foreach($careTeamMembers as $careTeamMember) {
 				$ct[] = $careTeamMember->member_user_id;
