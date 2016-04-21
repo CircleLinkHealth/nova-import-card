@@ -534,18 +534,11 @@ class PatientController extends Controller {
 		$userIds = $commaList = implode(', ', Auth::user()->viewablePatientIds());
 
 		$sql="select distinct
-        concat(umf.meta_value , ' ', uml.meta_value) label, um.user_id id, umd.meta_value config,
-        u.program_id, b.domain, ucase(b.domain) as site
-         from wp_usermeta um
-            left join wp_users u on u.ID = um.user_id
-            left join wp_usermeta umf on umf.user_id = um.user_id AND umf.meta_key = 'first_name'
-            left join wp_usermeta uml on uml.user_id = um.user_id AND uml.meta_key = 'last_name'
-            left join wp_usermeta umd on umd.user_id = um.user_id AND umd.meta_key like CONCAT('wp_', u.program_id, '_user_config')
-            left join wp_blogs b on b.blog_id = u.program_id
-            where um.user_id in (SELECT user_id from wp_usermeta where meta_key like CONCAT('wp_', u.program_id, '_user_config'))
-AND concat(umf.meta_value , ' ', uml.meta_value, ' ', um.user_id, '', umd.meta_value ) like '%" . $query . "%'
-             AND u.program_id > 6 AND u.program_id <> ''
-             AND ID IN (".$userIds.")
+			*
+        	FROM wp_users u
+        	JOIN patient_info pi ON pi.user_id = u.ID
+             AND u.ID IN (".$userIds.")
+             AND concat(u.first_name , ' ', u.last_name, ' ', pi.user_id, ' ', pi.mrn_number, ' ', pi.birth_date ) like '%" . $query . "%'
              order by 1
             ;";
 
@@ -553,18 +546,25 @@ AND concat(umf.meta_value , ' ', uml.meta_value, ' ', um.user_id, '', umd.meta_v
 		$patients = array();
 		$i = 0;
 		foreach($results as $d){
-			$patients[$i]['name'] = (User::find($d->id)->display_name);
-			$dob = new Carbon((User::find($d->id)->getBirthDateAttribute()));
+			$user = User::find($d->user_id);
+			if(!$user) {
+				continue 1;
+			}
+			$patients[$i]['name'] = ($user->display_name);
+			$dob = new Carbon(($user->birth_date));
 			$patients[$i]['dob'] = $dob->format('m-d-Y');
-			$patients[$i]['mrn'] = (User::find($d->id)->getMRNAttribute());
+			$patients[$i]['mrn'] = $user->mrn_number;
 			$patients[$i]['link'] = URL::route('patient.summary', array('patient' => $d->id));
-			$programObj = WpBlog::find((User::find($d->id)->blogId())) ? WpBlog::find((User::find($d->id)->blogId())) : "";
+			$programObj = WpBlog::find(($user->program_id)) ? WpBlog::find(($user->program_id)) : "";
 			if($programObj->display_name){
 				$patients[$i]['program'] = $programObj->display_name;
-			} else { $patients[$i]['program'] = '';}
+			} else {
+				$patients[$i]['program'] = '';
+			}
 			$patients[$i]['hint'] = $patients[$i]['name'] . " DOB:" . $patients[$i]['dob'] . " [" . $patients[$i]['program'] . "] MRN: " . $patients[$i]['mrn'];
 			$i++;
-		}$patients = (object) $patients;
+		}
+		$patients = (object) $patients;
 		return response()->json($patients);
 	}
 
