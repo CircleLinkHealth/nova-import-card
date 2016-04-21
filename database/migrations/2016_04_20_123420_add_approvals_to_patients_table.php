@@ -63,8 +63,6 @@ class AddApprovalsToPatientsTable extends Migration {
 			$user->patientInfo->save();
 		}
 
-		dd();
-
 
 
 	}
