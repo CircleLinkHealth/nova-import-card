@@ -149,6 +149,12 @@ function buildProviderInfoContainers($providers) {
             <?php
             if(!empty($careTeamUsers)) {
                 foreach ($careTeamUsers as $careTeamUser) {
+                    if(is_integer($careTeamUser)) {
+                        $careTeamUser = User::find($careTeamUser);
+                        if(!$careTeamUser) {
+                            continue 1;
+                        }
+                    }
                     ?>
                     addCareTeamMember();
                     $('#ctm' + ctmCount + 'provider').val(<?php echo $careTeamUser->ID; ?>);
