@@ -42,11 +42,7 @@ class CCDImportController extends Controller
             $strategies = empty($ccda->vendor_id)
                 ?: CcdVendor::find( $ccda->vendor_id )->routine()->first()->strategies()->get();
 
-            $user = $this->repo->createRandomUser(
-                $demographics->program_id,
-                $demographics->email,
-                $demographics->first_name . ' ' . $demographics->last_name
-            );
+            $user = $this->repo->createRandomUser($demographics);
 
             $importer = new ImportManager( $allergies->all(), $demographics, $medications->all(), $problems->all(), $strategies->all(), $user );
             $importer->import();
