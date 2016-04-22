@@ -1,6 +1,7 @@
 <?php namespace App\Entities\CCD;
 
 use App\CLH\CCD\ItemLogger\CcdProblemLog;
+use App\Entities\CPM\CpmProblem;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,9 +11,20 @@ class CcdProblem extends Model {
 
     protected $table = 'ccd_problems';
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function ccdLog()
     {
         return $this->belongsTo(CcdProblemLog::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cpmProblem()
+    {
+        return $this->belongsTo(CpmProblem::class);
     }
 
     /**
