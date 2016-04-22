@@ -3,6 +3,7 @@
 namespace App\CLH\Repositories;
 
 
+use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\Repositories\UserRepository;
 use App\Role;
 use App\User;
@@ -17,7 +18,7 @@ class CCDImporterRepository
      *
      * @return \App\User
      */
-    public function createRandomUser($blogId, $email = '', $fullName = '')
+    public function createRandomUser(DemographicsImport $demographics)
     {
         $role = Role::whereName('participant')->first();
 
@@ -25,7 +26,7 @@ class CCDImporterRepository
 
         $newUserId = str_random(20);
 
-        $user_email = empty($email)
+        $user_email = empty($email = $demographics->email)
             ? $newUserId . '@careplanmanager.com'
             : $email;
 
@@ -34,21 +35,51 @@ class CCDImporterRepository
             : $email;
 
         //user_nicename, display_name
-        $user_nicename = empty($fullName)
+        $user_nicename = empty($fullName = $demographics->first_name . ' ' . $demographics->last_name)
             ? ''
             : ucwords(strtolower($fullName));
 
-        $bag = new ParameterBag([
+        $user = User::create([
             'user_email' => $user_email,
-            'user_pass' => 'whatToPutHere',
+            'user_pass' => str_random(),
             'user_nicename' => $user_nicename,
             'display_name' => $user_nicename,
+            'first_name' => $demographics->first_name,
+            'last_name' => $demographics->last_name,
             'user_login' => $user_login,
-            'program_id' => $blogId,
-            'roles' => [$role->id],
+            'program_id' => $demographics->program_id,
+            'address' => $demographics->street,
+            'address2' => $demographics->street2,
+            'city' => $demographics->city,
+            'state' => $demographics->state,
+            'zip' => $demographics->zip,
+            'is_auto_generated' => true,
         ]);
 
-        return (new UserRepository())->createNewUser(new User(), $bag);
+        $user->attachRole($role->id);
+
+        (new UserRepository())->createDefaultCarePlan($user, null);
+
+
+//        $bag = new ParameterBag([
+//            'user_email' => $user_email,
+//            'user_pass' => str_random(),
+//            'user_nicename' => $user_nicename,
+//            'display_name' => $user_nicename,
+//            'first_name' => $demographics->first_name,
+//            'last_name' => $demographics->last_name,
+//            'user_login' => $user_login,
+//            'program_id' => $demographics->program_id,
+//            'address' => $demographics->street,
+//            'address2' => $demographics->street2,
+//            'city' => $demographics->city,
+//            'state' => $demographics->state,
+//            'zip' => $demographics->zip,
+//            'is_auto_generated' => true,
+//            'roles' => [$role->id],
+//        ]);
+        return $user;
+//        return (new UserRepository())->createNewUser(new User(), $bag);
     }
 
     public function toJson($xml)
