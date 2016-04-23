@@ -74,23 +74,9 @@ class ImportManager
         /**
          * The following Sections are the same for each CCD
          */
-
-        /**
-         * @todo: trash this
-         * Parse and Import User Meta
-         */
-//        $userMetaTemplate = new UserMetaTemplate();
-//        $userMetaTemplate->first_name = $this->demographicsImport->first_name;
-//        $userMetaTemplate->last_name = $this->demographicsImport->last_name;
-//        ( new UserMetaStorage( $this->user->program_id, $this->user ) )->import( $userMetaTemplate->getArray() );
-
-        /**
-         * Import User Config
-         */
-        $userConfigTemplate = new UserConfigTemplate();
-
         $providerId = empty($this->demographicsImport->provider_id) ? null : $this->demographicsImport->provider_id;
 
+        //care team
         $member = PatientCareTeamMember::create([
             'user_id' => $this->user->ID,
             'member_user_id' => $providerId,
@@ -109,9 +95,11 @@ class ImportManager
             'type' => PatientCareTeamMember::LEAD_CONTACT,
         ]);
 
-
+        //patient info
         $patientInfo = PatientInfo::create([
             'birth_date' => $this->demographicsImport->dob,
+            'careplan_status' => 'draft',
+            'ccm_status' => 'enrolled',
             'consent_date' => $this->demographicsImport->consent_date,
             'gender' => $this->demographicsImport->gender,
             'mrn_number' => $this->demographicsImport->mrn_number,
@@ -126,7 +114,7 @@ class ImportManager
 
         if (!empty($homeNumber = $this->demographicsImport->home_phone)) {
             $homePhone = PhoneNumber::create([
-                'user_id' => $this->user,
+                'user_id' => $this->user->ID,
                 'number' => $homeNumber,
                 'type' => PhoneNumber::HOME,
             ]);
@@ -134,7 +122,7 @@ class ImportManager
 
         if (!empty($mobileNumber = $this->demographicsImport->cell_phone)) {
             $mobilePhone = PhoneNumber::create([
-                'user_id' => $this->user,
+                'user_id' => $this->user->ID,
                 'number' => $mobileNumber,
                 'type' => PhoneNumber::MOBILE,
             ]);
@@ -142,7 +130,7 @@ class ImportManager
 
         if (!empty($workNumber = $this->demographicsImport->work_phone)) {
             $workPhone = PhoneNumber::create([
-                'user_id' => $this->user,
+                'user_id' => $this->user->ID,
                 'number' => $workNumber,
                 'type' => PhoneNumber::WORK,
             ]);
@@ -160,36 +148,6 @@ class ImportManager
             $primaryPhone->setAttribute('is_primary', true);
             $primaryPhone->save();
         }
-
-
-//        $userConfigTemplate->preferred_contact_location = $this->demographicsImport->location_id;
-//        $userConfigTemplate->mrn_number = $this->demographicsImport->mrn_number;
-//        $userConfigTemplate->study_phone_number = empty($this->demographicsImport->cell_phone)
-//            ? empty($this->demographicsImport->home_phone)
-//                ? $this->demographicsImport->work_phone
-//                : $this->demographicsImport->home_phone
-//            : $this->demographicsImport->cell_phone;
-//        $userConfigTemplate->home_phone_number = $this->demographicsImport->home_phone;
-//        $userConfigTemplate->mobile_phone_number = $this->demographicsImport->cell_phone;
-//        $userConfigTemplate->work_phone_number = $this->demographicsImport->work_phone;
-//        $userConfigTemplate->birth_date = $this->demographicsImport->dob;
-//        $userConfigTemplate->consent_date = $this->demographicsImport->consent_date;
-
-//        $userConfigTemplate->care_team = $providerId;
-//        $userConfigTemplate->email = $this->demographicsImport->email;
-//        $userConfigTemplate->lead_contact = $providerId;
-//        $userConfigTemplate->billing_provider = $providerId;
-//        $userConfigTemplate->gender = $this->demographicsImport->gender;
-//        $userConfigTemplate->address = $this->demographicsImport->street;
-//        $userConfigTemplate->city = $this->demographicsImport->city;
-//        $userConfigTemplate->state = $this->demographicsImport->state;
-//        $userConfigTemplate->zip = $this->demographicsImport->zip;
-
-        /**
-         * Persist UserConfig
-         */
-        $userConfigParser = new UserConfigParser($userConfigTemplate, $this->user->program_id);
-        (new UserConfigStorage($this->user->program_id, $this->user))->import($userConfigTemplate->getArray());
 
         /**
          * CarePlan Defaults
