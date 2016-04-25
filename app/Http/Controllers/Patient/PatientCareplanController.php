@@ -354,11 +354,16 @@ class PatientCareplanController extends Controller
             }
             if (is_array($careTeamUserIds)) {
                 foreach ($careTeamUserIds as $id) {
-                    $careTeamUsers[] = User::find($id);
+                    $user = User::find($id);
+                    if($user) {
+                        $careTeamUsers[] = User::find($id);
+                    }
                 }
             }
             if (is_int($careTeamUserIds)) {
-                $careTeamUsers[] = User::find($careTeamUserIds);
+                if($user) {
+                    $careTeamUsers[] = User::find($careTeamUserIds);
+                }
             }
 
         }
