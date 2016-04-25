@@ -32,6 +32,6 @@ class CcdMedication extends Model {
      */
     public function patient()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'patient_id');
     }
 }
