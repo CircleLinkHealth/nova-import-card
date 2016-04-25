@@ -93,7 +93,7 @@ class CcdApiController extends Controller
                     'length' => $careEvent->length,
                     'lengthUnit' => $careEvent->lengthUnit,
                     'commentString' => $careEvent->commentString,
-                    'comment' => $careEvent->comment,
+//                    'comment' => $careEvent->comment,
                     'alertProvider' => false,
                 ];
             });
@@ -179,6 +179,7 @@ class CcdApiController extends Controller
                 $json[$i] = [
                     'patientId' => $report->patient_mrn,
                     'providerId' => $foreignId_obj->foreign_id,
+                    'comment' => null,
                     'file' => $report->file_base64,
                     'fileType' => $report->file_type,
                     'created_at' => $report->created_at->toDateTimeString(),
