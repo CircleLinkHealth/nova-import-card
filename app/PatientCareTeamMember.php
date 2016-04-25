@@ -7,6 +7,10 @@ use Auth;
 
 class PatientCareTeamMember extends Model {
 
+	const BILLING_PROVIDER = 'billing_provider';
+	const LEAD_CONTACT = 'lead_contact';
+	const MEMBER = 'member';
+	const SEND_ALERT_TO = 'send_alert_to';
 
 	/**
 	 * The connection name for the model.
@@ -36,8 +40,9 @@ class PatientCareTeamMember extends Model {
 	 */
 	protected $fillable = [
 		'user_id',
-		'provider_id',
-		'type'];
+		'member_user_id',
+		'type'
+	];
 
 	// START RELATIONSHIPS
 	public function user()
