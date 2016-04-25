@@ -22,7 +22,7 @@ class CcdMedication extends Model {
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function medicationGroup()
+    public function cpmMedicationGroup()
     {
         return $this->belongsTo(CpmMedicationGroup::class);
     }
@@ -30,8 +30,8 @@ class CcdMedication extends Model {
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function patients()
+    public function patient()
     {
-        return $this->belongsToMany(User::class, 'ccd_medications_patients', 'ccd_medication_id', 'patient_id');
+        return $this->belongsTo(User::class);
     }
 }
