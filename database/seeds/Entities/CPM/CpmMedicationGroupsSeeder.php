@@ -48,7 +48,9 @@ class CpmMedicationGroupsSeeder extends \Illuminate\Database\Seeder
         );
 
         foreach ($medications as $medication) {
-            \App\Entities\CPM\CpmMedicationGroup::updateOrCreate($medication);
+            \App\Entities\CPM\CpmMedicationGroup::updateOrCreate($medication, [
+                'care_item_id' => \App\CareItem::whereDisplayName($medication['name'])->first()->id,
+            ]);
         }
     }
 }

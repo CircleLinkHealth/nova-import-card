@@ -27,7 +27,9 @@ class CpmLifestyleSeeder extends \Illuminate\Database\Seeder
         ];
 
         foreach ($entities as $entity) {
-            \App\Entities\CPM\CpmLifestyle::updateOrCreate($entity);
+            \App\Entities\CPM\CpmLifestyle::updateOrCreate($entity, [
+                'care_item_id' => \App\CareItem::whereDisplayName($entity['name'])->first()->id,
+            ]);
         }
     }
 

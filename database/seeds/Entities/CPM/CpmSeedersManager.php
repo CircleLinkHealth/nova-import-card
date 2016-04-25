@@ -23,6 +23,17 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
 
         $this->call(CpmSymptomsSeeder::class);
         $this->command->info(CpmSymptomsSeeder::class . ' ran.');
+        
+        $this->call(CcdImporterSeedersManager::class);
+        $this->command->info(CcdImporterSeedersManager::class . ' ran.');
+
+        //Add care_item_id to problems
+        foreach (\App\Entities\CPM\CpmProblem::all() as $problem)
+        {
+            \App\Entities\CPM\CpmProblem::updateOrCreate(['care_item_name' => $problem->care_item_name], [
+                'care_item_id' => \App\CareItem::whereName($problem->care_item_name)->first()->id,
+            ]);
+        }
 
     }
 

@@ -4,31 +4,31 @@ class CpmSymptomsSeeder extends \Illuminate\Database\Seeder
 {
     public function run()
     {
-        $symptoms = array (
-            0 => 
-            array (
-                'name' => 'Shortness of breath',
-            ),
+        $symptoms = array(
+            0 =>
+                array(
+                    'name' => 'Shortness of breath',
+                ),
             1 =>
-            array (
-                'name' => 'Coughing/wheezing',
-            ),
+                array(
+                    'name' => 'Coughing/wheezing',
+                ),
             2 =>
-            array (
-                'name' => 'Chest pain/tightness',
-            ),
+                array(
+                    'name' => 'Chest pain/tightness',
+                ),
             3 =>
-            array (
-                'name' => 'Fatigue',
-            ),
+                array(
+                    'name' => 'Fatigue',
+                ),
             4 =>
-            array (
-                'name' => 'Weakness/dizziness',
-            ),
+                array(
+                    'name' => 'Weakness/dizziness',
+                ),
             5 =>
-            array (
-                'name' => 'Hyperglycemia(high blood sugar) thirsty, headaches, fatigue',
-            ),
+                array(
+                    'name' => 'Hyperglycemia(high blood sugar) thirsty, headaches, fatigue',
+                ),
             6 =>
                 array(
                     'name' => 'Swelling in legs/feet',
@@ -56,7 +56,9 @@ class CpmSymptomsSeeder extends \Illuminate\Database\Seeder
         );
 
         foreach ($symptoms as $symptom) {
-            \App\Entities\CPM\CpmSymptom::updateOrCreate($symptom);
+            \App\Entities\CPM\CpmSymptom::updateOrCreate($symptom, [
+                'care_item_id' => \App\CareItem::whereDisplayName($symptom['name'])->first()->id,
+            ]);
         }
     }
 }
