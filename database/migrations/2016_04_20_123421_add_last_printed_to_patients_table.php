@@ -51,8 +51,10 @@ class AddLastPrintedToPatientsTable extends Migration {
 			}
 
 			// set values
-			$user->patientInfo->careplan_last_printed = $user->getUserMetaByKey('careplan_last_printed') . ' 12:00:00';
-			$user->patientInfo->save();
+			if(!empty($user->getUserMetaByKey('careplan_last_printed'))) {
+				$user->patientInfo->careplan_last_printed = $user->getUserMetaByKey('careplan_last_printed') . ' 12:00:00';
+				$user->patientInfo->save();
+			}
 		}
 
 
