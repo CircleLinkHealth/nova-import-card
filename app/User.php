@@ -1065,14 +1065,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return true;
 	}
 
-	public function getCarePlanQAApproverAttribute() {
-		$meta = $this->meta->where('meta_key', 'careplan_qa_approver')->lists('meta_value');
-		if(!empty($meta)) {
-			return $meta[0];
-		}
-		return 0;
-	}
-
 	// agent_name
 	public function getAgentNameAttribute() {
 		if(!$this->patientInfo) return '';
