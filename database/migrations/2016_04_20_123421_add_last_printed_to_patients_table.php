@@ -35,7 +35,7 @@ class AddLastPrintedToPatientsTable extends Migration {
 		// add approval meta to patient info
 		$users = User::whereHas('roles', function ($q) {
 			$q->where('name', '=', 'participant');
-		})->with('meta', 'patientInfo')->get();
+		})->with('patientInfo')->get();
 		echo 'Process role patient users - Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
 			echo 'Processing user '.$user->ID.PHP_EOL;
