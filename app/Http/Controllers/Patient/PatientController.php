@@ -272,7 +272,7 @@ class PatientController extends Controller {
 	{
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-				->with('meta', 'phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
+				->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
 				->select(DB::raw('wp_users.*'))
 				//->join('wp_users AS approver', 'THIS JOIN', '=', 'WONT WORK')
 				->whereHas('roles', function($q) {

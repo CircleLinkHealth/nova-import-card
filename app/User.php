@@ -239,11 +239,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$q->whereIn('program_id', $programIds);
 		});
 
-		if(!Auth::user()->can('admin-access')) {
+		//if(!Auth::user()->can('admin-access')) {
 			$patientIds->whereHas('roles', function ($q) {
 				$q->where('name', '=', 'participant');
 			});
-		}
+		//}
 
 		$patientIds = $patientIds->lists('ID');
 		return $patientIds;
@@ -1169,6 +1169,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setCarePlanProviderApproverDateAttribute($value) {
 		if(!$this->patientInfo) return '';
 		$this->patientInfo->careplan_provider_date = $value;
+		$this->patientInfo->save();
+		return true;
+	}
+
+	public function getCarePlanLastPrintedAttribute() {
+		if(!$this->patientInfo) return '';
+		return $this->patientInfo->careplan_last_printed;
+	}
+
+	public function setCarePlanLastPrintedAttribute($value) {
+		if(!$this->patientInfo) return '';
+		$this->patientInfo->careplan_last_printed = $value;
 		$this->patientInfo->save();
 		return true;
 	}
