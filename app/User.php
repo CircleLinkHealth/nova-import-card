@@ -171,12 +171,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function ccdAllergies()
     {
-        return $this->belongsToMany(CcdAllergy::class, 'ccd_allergies_patients', 'patient_id', 'ccd_allergy_id');
+        return $this->hasMany(CcdAllergy::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function ccdMedications()
     {
-        return $this->belongsToMany(CcdMedication::class, 'ccd_medications_patients', 'patient_id', 'ccd_medication_id');
+        return $this->hasMany(CcdMedication::class);
     }
 
     /**
@@ -184,7 +187,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function ccdProblems()
     {
-        return $this->belongsToMany(CcdProblem::class, 'ccd_problems_patients', 'patient_id', 'ccd_problem_id');
+        return $this->hasMany(CcdProblem::class);
     }
 
     /*****/
@@ -202,11 +205,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function meta()
     {
         return $this->hasMany('App\UserMeta', 'user_id', 'ID');
-    }
-
-    public function patientDemographics()
-    {
-        return $this->hasMany(DemographicsImport::class, 'provider_id');
     }
 
     public function comment()

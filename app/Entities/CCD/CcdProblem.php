@@ -30,8 +30,8 @@ class CcdProblem extends Model {
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function patients()
+    public function patient()
     {
-        return $this->belongsToMany(User::class, 'ccd_problems_patients', 'ccd_problem_id', 'patient_id');
+        return $this->belongsTo(User::class);
     }
 }
