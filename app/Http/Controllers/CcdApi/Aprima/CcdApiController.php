@@ -6,9 +6,9 @@ use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Repositories\ActivityRepository;
+use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcmTimeApiLogRepository;
-use App\Contracts\Repositories\DemographicsImportRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\ForeignId;
 use App\Http\Requests;
@@ -28,7 +28,7 @@ class CcdApiController extends Controller
 
     use ValidatesQAImportOutput;
 
-    protected $demographicsImport;
+    protected $api;
     protected $activities;
     protected $ccmTime;
     protected $ccda;
@@ -39,13 +39,13 @@ class CcdApiController extends Controller
                                 CCDImporterRepository $repo,
                                 CcdaRepository $ccdaRepository,
                                 CcmTimeApiLogRepository $ccmTime,
-                                DemographicsImportRepository $demographicsImportRepository,
+                                AprimaCcdApiRepository $aprimaCcdApiRepository,
                                 UserRepository $users)
     {
         $this->activities = $activityRepository;
         $this->ccda = $ccdaRepository;
         $this->ccmTime = $ccmTime;
-        $this->demographicsImport = $demographicsImportRepository;
+        $this->api = $aprimaCcdApiRepository;
         $this->importer = $repo;
         $this->users = $users;
     }
@@ -74,7 +74,7 @@ class CcdApiController extends Controller
 
         $locationId = $this->getApiUserLocation($user);
 
-        $patientAndProviderIds = $this->demographicsImport
+        $patientAndProviderIds = $this->api
             ->getPatientAndProviderIdsByLocationAndForeignSystem($locationId, ForeignId::APRIMA);
 
         foreach ($patientAndProviderIds as $ids) {

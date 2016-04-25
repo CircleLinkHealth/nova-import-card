@@ -1668,16 +1668,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.20",
+            "version": "1.0.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "e87a786e3ae12a25cf78a71bb07b4b384bfaa83a"
+                "reference": "35a83cf67d80d7040f306c77b0a84b9fbcc4fbfb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/e87a786e3ae12a25cf78a71bb07b4b384bfaa83a",
-                "reference": "e87a786e3ae12a25cf78a71bb07b4b384bfaa83a",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/35a83cf67d80d7040f306c77b0a84b9fbcc4fbfb",
+                "reference": "35a83cf67d80d7040f306c77b0a84b9fbcc4fbfb",
                 "shasum": ""
             },
             "require": {
@@ -1747,7 +1747,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2016-03-14 21:54:11"
+            "time": "2016-04-22 10:56:25"
         },
         {
             "name": "league/fractal",
@@ -2500,16 +2500,16 @@
         },
         {
             "name": "prettus/l5-repository",
-            "version": "2.3.0",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/andersao/l5-repository.git",
-                "reference": "e4cfef3de00f0ad039a4bcdb8e9772ad4c11879c"
+                "reference": "4f34bd3e38b29c9cbb562ab5ea545a6d4aae1f34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/andersao/l5-repository/zipball/e4cfef3de00f0ad039a4bcdb8e9772ad4c11879c",
-                "reference": "e4cfef3de00f0ad039a4bcdb8e9772ad4c11879c",
+                "url": "https://api.github.com/repos/andersao/l5-repository/zipball/4f34bd3e38b29c9cbb562ab5ea545a6d4aae1f34",
+                "reference": "4f34bd3e38b29c9cbb562ab5ea545a6d4aae1f34",
                 "shasum": ""
             },
             "require": {
@@ -2556,7 +2556,7 @@
                 "model",
                 "repository"
             ],
-            "time": "2016-04-15 19:54:15"
+            "time": "2016-04-21 08:53:47"
         },
         {
             "name": "prettus/laravel-validation",
