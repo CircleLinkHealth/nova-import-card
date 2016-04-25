@@ -1,6 +1,19 @@
 <?php namespace App\Providers;
 
+use App\Contracts\Repositories\ActivityRepository;
+use App\Contracts\Repositories\AprimaCcdApiRepository;
+use App\Contracts\Repositories\CcdaRepository;
+use App\Contracts\Repositories\CcmTimeApiLogRepository;
+use App\Contracts\Repositories\DemographicsImportRepository;
+use App\Contracts\Repositories\UserRepository;
+use App\Repositories\ActivityRepositoryEloquent;
+use App\Repositories\AprimaCcdApiRepositoryEloquent;
+use App\Repositories\CcdaRepositoryEloquent;
+use App\Repositories\CcmTimeApiLogRepositoryEloquent;
+use App\Repositories\DemographicsImportRepositoryEloquent;
+use App\Repositories\UserRepositoryEloquent;
 use Illuminate\Support\ServiceProvider;
+use Prettus\Repository\Contracts\RepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,8 +45,33 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            ActivityRepository::class,
+            ActivityRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            CcdaRepository::class,
+            CcdaRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            CcmTimeApiLogRepository::class,
+            CcmTimeApiLogRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            AprimaCcdApiRepository::class,
+            AprimaCcdApiRepositoryEloquent::class
+        );
+
+        $this->app->bind(
             '\App\CLH\Contracts\Repositories\UserRepository',
             '\App\CLH\Repositories\UserRepository'
+        );
+
+        $this->app->bind(
+            UserRepository::class,
+            UserRepositoryEloquent::class
         );
 
         if ( $this->app->environment( 'local' ) ) {

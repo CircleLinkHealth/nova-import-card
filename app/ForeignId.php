@@ -1,6 +1,8 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Prettus\Repository\Contracts\Transformable;
+use Prettus\Repository\Traits\TransformableTrait;
 
 /**
  * These are IDs from third party systems.
@@ -12,7 +14,9 @@ use Illuminate\Database\Eloquent\Model;
  * Class ForeignId
  * @package App
  */
-class ForeignId extends Model {
+class ForeignId extends Model implements Transformable{
+
+    use TransformableTrait;
 
 	protected $guarded = [];
 
