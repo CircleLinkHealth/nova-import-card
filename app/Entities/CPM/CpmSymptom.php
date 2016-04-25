@@ -1,5 +1,7 @@
 <?php namespace App\Entities\CPM;
 
+use App\CareItem;
+use App\CarePlanItem;
 use App\CarePlanTemplate;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
@@ -14,5 +16,10 @@ class CpmSymptom extends Model {
     public function carePlanTemplates()
     {
         return $this->belongsToMany(CarePlanTemplate::class, 'care_plan_templates_cpm_symptoms');
+    }
+
+    public function carePlanItemIdDeprecated()
+    {
+        return $this->belongsTo(CareItem::class);
     }
 }

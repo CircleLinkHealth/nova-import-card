@@ -1,5 +1,7 @@
 <?php namespace App\Entities\CPM;
 
+use App\CareItem;
+use App\CarePlanItem;
 use App\CarePlanTemplate;
 use App\Entities\CCD\CcdMedication;
 use App\User;
@@ -23,5 +25,10 @@ class CpmMedicationGroup extends Model {
     public function medications()
     {
         return $this->hasMany(CcdMedication::class);
+    }
+
+    public function carePlanItemIdDeprecated()
+    {
+        return $this->belongsTo(CareItem::class);
     }
 }
