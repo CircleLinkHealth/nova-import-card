@@ -3,7 +3,6 @@
 namespace App\CLH\CCD\Importer;
 
 
-use App\Entities\CPM\CpmProblem;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
 use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfig as UserConfigStorage;
@@ -12,6 +11,9 @@ use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfig as UserConfig
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMeta as UserMetaParser;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
+use App\PatientCareTeamMember;
+use App\PatientInfo;
+use App\PhoneNumber;
 use App\User;
 
 class ImportManager
@@ -40,85 +42,117 @@ class ImportManager
 
     public function import()
     {
-        $strategies = \Config::get( 'ccdimporterstrategiesmaps' );
+        $strategies = \Config::get('ccdimporterstrategiesmaps');
 
         /**
          * Allergies List
          */
-        $this->storeAllergies( $strategies[ 'storage' ][ 0 ] );
+        $this->storeAllergies($strategies['storage'][0]);
 
 
         /**
          * Problems List
          */
         //this gets the storage strategy from config/ccdimportersections by sectionId
-        $this->storeProblemsList( $strategies[ 'storage' ][ 2 ] );
+        $this->storeProblemsList($strategies['storage'][2]);
 
 
         /**
          * Problems To Monitor
          */
         //this gets the storage strategy from config/ccdimportersections by sectionId
-        $this->storeProblemsToMonitor( $strategies[ 'storage' ][ 3 ] );
+        $this->storeProblemsToMonitor($strategies['storage'][3]);
 
 
         /**
          * Medications List
          */
         //this gets the storage strategy from config/ccdimportersections by sectionId
-        $this->storeMedications( $strategies[ 'storage' ][ 1 ] );
+        $this->storeMedications($strategies['storage'][1]);
 
 
         /**
          * The following Sections are the same for each CCD
          */
-
-        /**
-         * Parse and Import User Meta
-         */
-        $userMetaTemplate = new UserMetaTemplate();
-        $userMetaTemplate->first_name = $this->demographicsImport->first_name;
-        $userMetaTemplate->last_name = $this->demographicsImport->last_name;
-        ( new UserMetaStorage( $this->user->program_id, $this->user ) )->import( $userMetaTemplate->getArray() );
-
-        /**
-         * Import User Config
-         */
-        $userConfigTemplate = new UserConfigTemplate();
-
         $providerId = empty($this->demographicsImport->provider_id) ? null : $this->demographicsImport->provider_id;
-        $userConfigTemplate->care_team = $providerId;
-        $userConfigTemplate->lead_contact = $providerId;
-        $userConfigTemplate->billing_provider = $providerId;
-        $userConfigTemplate->preferred_contact_location = $this->demographicsImport->location_id;
-        $userConfigTemplate->email = $this->demographicsImport->email;
-        $userConfigTemplate->mrn_number = $this->demographicsImport->mrn_number;
-        $userConfigTemplate->study_phone_number = empty($this->demographicsImport->cell_phone)
-            ? empty($this->demographicsImport->home_phone)
-                ? $this->demographicsImport->work_phone
-                : $this->demographicsImport->home_phone
-            : $this->demographicsImport->cell_phone;
-        $userConfigTemplate->home_phone_number = $this->demographicsImport->home_phone;
-        $userConfigTemplate->mobile_phone_number = $this->demographicsImport->cell_phone;
-        $userConfigTemplate->work_phone_number = $this->demographicsImport->work_phone;
-        $userConfigTemplate->gender = $this->demographicsImport->gender;
-        $userConfigTemplate->address = $this->demographicsImport->street;
-        $userConfigTemplate->city = $this->demographicsImport->city;
-        $userConfigTemplate->state = $this->demographicsImport->state;
-        $userConfigTemplate->zip = $this->demographicsImport->zip;
-        $userConfigTemplate->birth_date = $this->demographicsImport->dob;
-        $userConfigTemplate->consent_date = $this->demographicsImport->consent_date;
 
-        /**
-         * Persist UserConfig
-         */
-        $userConfigParser = new UserConfigParser( $userConfigTemplate, $this->user->program_id );
-        ( new UserConfigStorage( $this->user->program_id, $this->user ) )->import( $userConfigTemplate->getArray() );
+        //care team
+        $member = PatientCareTeamMember::create([
+            'user_id' => $this->user->ID,
+            'member_user_id' => $providerId,
+            'type' => PatientCareTeamMember::MEMBER,
+        ]);
+
+        $billing = PatientCareTeamMember::create([
+            'user_id' => $this->user->ID,
+            'member_user_id' => $providerId,
+            'type' => PatientCareTeamMember::BILLING_PROVIDER,
+        ]);
+
+        $lead = PatientCareTeamMember::create([
+            'user_id' => $this->user->ID,
+            'member_user_id' => $providerId,
+            'type' => PatientCareTeamMember::LEAD_CONTACT,
+        ]);
+
+        //patient info
+        $patientInfo = PatientInfo::create([
+            'birth_date' => $this->demographicsImport->dob,
+            'careplan_status' => 'draft',
+            'ccm_status' => 'enrolled',
+            'consent_date' => $this->demographicsImport->consent_date,
+            'gender' => $this->demographicsImport->gender,
+            'mrn_number' => $this->demographicsImport->mrn_number,
+            'preferred_cc_contact_days' => '2', //tuesday
+            'preferred_contact_language' => $this->demographicsImport->preferred_contact_language,
+            'preferred_contact_location' => $this->demographicsImport->location_id,
+            'preferred_contact_method' => 'CCT',
+            'preferred_contact_time' => '11:00 AM',
+            'preferred_contact_timezone' => $this->demographicsImport->preferred_contact_timezone,
+            'user_id' => $this->user->ID,
+        ]);
+
+        if (!empty($homeNumber = $this->demographicsImport->home_phone)) {
+            $homePhone = PhoneNumber::create([
+                'user_id' => $this->user->ID,
+                'number' => $homeNumber,
+                'type' => PhoneNumber::HOME,
+            ]);
+        }
+
+        if (!empty($mobileNumber = $this->demographicsImport->cell_phone)) {
+            $mobilePhone = PhoneNumber::create([
+                'user_id' => $this->user->ID,
+                'number' => $mobileNumber,
+                'type' => PhoneNumber::MOBILE,
+            ]);
+        }
+
+        if (!empty($workNumber = $this->demographicsImport->work_phone)) {
+            $workPhone = PhoneNumber::create([
+                'user_id' => $this->user->ID,
+                'number' => $workNumber,
+                'type' => PhoneNumber::WORK,
+            ]);
+        }
+
+        $primaryPhone = empty($mobileNumber)
+            ? empty($homeNumber)
+                ? empty($workNumber)
+                    ? false
+                    : $workPhone
+                : $homePhone
+            : $mobilePhone;
+
+        if ($primaryPhone) {
+            $primaryPhone->setAttribute('is_primary', true);
+            $primaryPhone->save();
+        }
 
         /**
          * CarePlan Defaults
          */
-        $transitionalCare = new TransitionalCare( $this->user->program_id, $this->user );
+        $transitionalCare = new TransitionalCare($this->user->program_id, $this->user);
         $transitionalCare->setDefaults();
 
         return true;
@@ -126,33 +160,33 @@ class ImportManager
 
     private function storeAllergies($allergiesListStorage)
     {
-        if ( empty($this->allergiesImport) ) return false;
+        if (empty($this->allergiesImport)) return false;
 
-        if ( class_exists( $allergiesListStorage ) ) {
-            $storage = new $allergiesListStorage( $this->user->program_id, $this->user );
+        if (class_exists($allergiesListStorage)) {
+            $storage = new $allergiesListStorage($this->user->program_id, $this->user);
 
             $allergiesList = '';
 
-            foreach ( $this->allergiesImport as $allergy ) {
-                if ( !isset($allergy->allergen_name) ) continue;
+            foreach ($this->allergiesImport as $allergy) {
+                if (!isset($allergy->allergen_name)) continue;
                 $allergiesList .= "\n\n";
-                $allergiesList .= ucfirst( strtolower( $allergy->allergen_name ) ) . ";";
+                $allergiesList .= ucfirst(strtolower($allergy->allergen_name)) . ";";
             }
 
-            $storage->import( $allergiesList );
+            $storage->import($allergiesList);
         }
     }
 
     private function storeProblemsList($problemsListStorage)
     {
-        if ( empty($this->problemsImport) ) return false;
+        if (empty($this->problemsImport)) return false;
 
-        if ( class_exists( $problemsListStorage ) ) {
-            $storage = new $problemsListStorage( $this->user->program_id, $this->user );
+        if (class_exists($problemsListStorage)) {
+            $storage = new $problemsListStorage($this->user->program_id, $this->user);
 
             $problemsList = '';
 
-            foreach ( $this->problemsImport as $problem ) {
+            foreach ($this->problemsImport as $problem) {
                 $problemsList .= "\n\n";
 
                 //quick fix to display snomed ct in middletown
@@ -170,51 +204,51 @@ class ImportManager
                         : $problem->code_system_name;
                 };
 
-                $problemsList .= ucwords( strtolower( $problem->name ) );
+                $problemsList .= ucwords(strtolower($problem->name));
 
-                $problemsList .= (is_null( $codeSystemName( $problem ) ))
-                    ? '' : ', ' . strtoupper( $codeSystemName( $problem ) );
+                $problemsList .= (is_null($codeSystemName($problem)))
+                    ? '' : ', ' . strtoupper($codeSystemName($problem));
 
                 $problemsList .= empty($problem->code) ? ';' : ', ' . $problem->code . ';';
             }
 
 
-            $storage->import( $problemsList );
+            $storage->import($problemsList);
         }
     }
 
     private function storeProblemsToMonitor($problemsToMonitorStorage)
     {
-        if ( empty($this->problemsImport) ) return false;
+        if (empty($this->problemsImport)) return false;
 
-        if ( class_exists( $problemsToMonitorStorage ) ) {
-            $storage = new $problemsToMonitorStorage( $this->user->program_id, $this->user );
+        if (class_exists($problemsToMonitorStorage)) {
+            $storage = new $problemsToMonitorStorage($this->user->program_id, $this->user);
 
             $problemsToActivate = [];
 
-            foreach ( $this->problemsImport as $problem ) {
-                if ( empty($problem->cpm_problem_id) ) continue;
+            foreach ($this->problemsImport as $problem) {
+                if (empty($problem->cpm_problem_id)) continue;
 
-                $problemsToActivate[] = CpmProblem::find( $problem->cpm_problem_id )->care_item_name;
+                $problemsToActivate[] = CPMProblem::find($problem->cpm_problem_id)->care_item_name;
             }
 
-            $storage->import( $problemsToActivate );
+            $storage->import($problemsToActivate);
         }
     }
 
     private function storeMedications($medicationsListStorage)
     {
-        if ( empty($this->medicationsImport) ) return false;
+        if (empty($this->medicationsImport)) return false;
 
-        if ( class_exists( $medicationsListStorage ) ) {
-            $storage = new $medicationsListStorage( $this->user->program_id, $this->user );
+        if (class_exists($medicationsListStorage)) {
+            $storage = new $medicationsListStorage($this->user->program_id, $this->user);
 
             $medicationsList = '';
 
-            foreach ( $this->medicationsImport as $medication ) {
+            foreach ($this->medicationsImport as $medication) {
                 $medicationsList .= "\n\n";
                 empty($medication->name)
-                    ?: $medicationsList .= ucfirst( strtolower( $medication->name ) );
+                    ?: $medicationsList .= ucfirst(strtolower($medication->name));
 
                 $medicationsList .= ucfirst(
                     strtolower(
@@ -227,7 +261,7 @@ class ImportManager
             }
 
 
-            $storage->import( $medicationsList );
+            $storage->import($medicationsList);
         }
     }
 }

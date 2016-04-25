@@ -42,32 +42,66 @@ class PatientCareplanController extends Controller
     {
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })->get();
+            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
+            ->select(DB::raw('wp_users.*'))
+            ->get();
+
+        // get approvers before
+        $approvers = null;
+        $approverIds = array();
+        if($patients->count() > 0) {
+            foreach ($patients as $patient) {
+                if ($patient->carePlanStatus  == 'provider_approved') {
+                    $approverId = $patient->carePlanProviderApprover;
+                    if(!empty($approverId) && !in_array($approverId, $approverIds)) {
+                        $approverIds[] = $approverId;
+                    }
+                }
+            }
+            $approvers = User::whereIn('ID', $approverIds)->get();
+        }
+
         if ($patients->count() > 0) {
+            $foundUsers = array(); // save resources, no duplicate db calls
+            $foundPrograms = array(); // save resources, no duplicate db calls
             foreach ($patients as $patient) {
                 // skip if patient has no name
                 if (empty($patient->first_name)) {
                     continue 1;
                 }
-                $last_printed = UserMeta::select('meta_value')->where('user_id', $patient->ID)->where('meta_key', 'careplan_last_printed')->first();
+                $last_printed = $patient->careplan_last_printed;
                 if ($last_printed) {
                     $printed_status = 'Yes';
-                    $printed_date = $last_printed->meta_value;
+                    $printed_date = $last_printed;
                 } else {
                     $printed_status = 'No';
                     $printed_date = null;
                 }
-                ($last_printed) ? $printed = $last_printed->meta_value : $printed = 'No';
+                ($last_printed) ? $printed = $last_printed : $printed = 'No';
+
                 // careplan status stuff from 2.x
                 $careplanStatus = $patient->carePlanStatus;
                 $careplanStatusLink = '';
                 $approverName = 'NA';
-                if ($patient->carePlanStatus == 'provider_approved') {
+                $tooltip = 'NA';
+
+                if ($patient->carePlanStatus  == 'provider_approved') {
                     $approverId = $patient->carePlanProviderApprover;
-                    $approver = User::find($approverId);
-                    if ($approver) {
+                    if($approverId == 5) {
+                        //dd($approvers->where('ID', $approverId)->first());
+                    }
+                    $approver = $approvers->where('ID', $approverId)->first();
+                    if(!$approver) {
+                        if(!empty($approverId)) {
+                            if(!isset($foundUsers[$approverId])) {
+                                $approver = User::find($approverId);
+                                $foundUsers[$approverId] = $approver;
+                            } else {
+                                $approver = $foundUsers[$approverId];
+                            }
+                        }
+                    }
+                    if($approver) {
                         $approverName = $approver->fullName;
                         $careplanStatus = 'Approved';
                         $careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
@@ -90,19 +124,31 @@ class PatientCareplanController extends Controller
                 }
 
                 // get billing provider name
+                $programName = '';
                 $bpName = '';
-                if (!empty($patient->billingProviderID)) {
-                    $bpUser = User::find($patient->billingProviderID);
-                    if ($bpUser) {
-                        $bpName = $bpUser->fullName;
+                $bpID = $patient->billingProviderID;
+                if(!isset($foundPrograms[$patient->program_id])) {
+                    $program = WpBlog::find($patient->program_id);
+                    if($program) {
+                        $foundPrograms[$patient->program_id] = $program;
+                        $programName = $program->display_name;
                     }
+                } else {
+                    $program = $foundPrograms[$patient->program_id];
+                    $programName = $program->display_name;
                 }
 
-                // get date of last observation
-                $lastObservationDate = 'No Readings';
-                $lastObservation = $patient->observations()->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->first();
-                if (!empty($lastObservation)) {
-                    $lastObservationDate = date("m/d/Y", strtotime($lastObservation->obs_date));
+                if(!empty($bpID)) {
+                    if(!isset($foundUsers[$bpID])) {
+                        $bpUser = User::find($bpID);
+                        if($bpUser) {
+                            $bpName = $bpUser->fullName;
+                            $foundUsers[$bpID] = $bpUser;
+                        }
+                    } else {
+                        $bpUser = $foundUsers[$bpID];
+                        $bpName = $bpUser->fullName;
+                    }
                 }
 
                 $patientData[] = array(
@@ -118,11 +164,11 @@ class PatientCareplanController extends Controller
                     'phone' => $patient->phone,
                     'age' => $patient->age,
                     'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
-                    'last_read' => $lastObservationDate,
+                    'last_read' => '',
                     'ccm_time' => $patient->monthlyTime,
                     'ccm_seconds' => $patient->monthlyTime,
                     'provider' => $bpName,
-                    'program_name' => $patient->primaryProgram->display_name,
+                    'program_name' => $programName,
                     'careplan_last_printed' => $printed_date,
                     'careplan_printed' => $printed_status
                 );
@@ -145,11 +191,8 @@ class PatientCareplanController extends Controller
         foreach ($users as $user_id) {
             $user = User::find($user_id);
             if ($user) {
-                $meta = new UserMeta([
-                    'meta_key' => 'careplan_last_printed',
-                    'meta_value' => Carbon::now()
-                ]);
-                $user->meta()->save($meta);
+                $user->careplan_last_printed = Carbon::now();
+                $user->save();
             }
         }
         $careplans = $reportService->carePlanGenerator($users);

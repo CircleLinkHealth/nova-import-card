@@ -30,35 +30,7 @@ class PatientInfo extends Model {
 	 */
 	protected $primaryKey = 'id';
 
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = [
-		'user_id',
-		'ccda_id',
-		'agent_name',
-		'agent_telephone',
-		'agent_email',
-		'agent_relationship',
-		'ccm_status',
-		'consent_date',
-		'cur_month_activity_time',
-		'daily_reminder_optin',
-		'daily_reminder_time',
-		'daily_reminder_areas',
-		'hospital_reminder_optin',
-		'hospital_reminder_time',
-		'hospital_reminder_areas',
-		'preferred_cc_contact_days',
-		'preferred_contact_time',
-		'preferred_contact_timezone',
-		'preferred_contact_method',
-		'preferred_contact_language',
-		'preferred_contact_location',
-		'mrn_number',
-		'registration_date'];
+	protected $guarded = [];
 
 	public $timestamps = false;
 
