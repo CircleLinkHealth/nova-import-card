@@ -58,26 +58,30 @@ class CCDImporterRepository
 
         $user->attachRole($role->id);
 
-        (new UserRepository())->createDefaultCarePlan($user, null);
+        $userRepo = new UserRepository();
+        $userRepo->createDefaultCarePlan($user, null);
 
 
-//        $bag = new ParameterBag([
-//            'user_email' => $user_email,
-//            'user_pass' => str_random(),
-//            'user_nicename' => $user_nicename,
-//            'display_name' => $user_nicename,
-//            'first_name' => $demographics->first_name,
-//            'last_name' => $demographics->last_name,
-//            'user_login' => $user_login,
-//            'program_id' => $demographics->program_id,
-//            'address' => $demographics->street,
-//            'address2' => $demographics->street2,
-//            'city' => $demographics->city,
-//            'state' => $demographics->state,
-//            'zip' => $demographics->zip,
-//            'is_auto_generated' => true,
-//            'roles' => [$role->id],
-//        ]);
+        $bag = new ParameterBag([
+            'user_email' => $user_email,
+            'user_pass' => str_random(),
+            'user_nicename' => $user_nicename,
+            'display_name' => $user_nicename,
+            'first_name' => $demographics->first_name,
+            'last_name' => $demographics->last_name,
+            'user_login' => $user_login,
+            'program_id' => $demographics->program_id,
+            'address' => $demographics->street,
+            'address2' => $demographics->street2,
+            'city' => $demographics->city,
+            'state' => $demographics->state,
+            'zip' => $demographics->zip,
+            'is_auto_generated' => true,
+            'roles' => [$role->id],
+        ]);
+
+        $userRepo->saveOrUpdatePrograms($user, $bag);
+
         return $user;
 //        return (new UserRepository())->createNewUser(new User(), $bag);
     }
