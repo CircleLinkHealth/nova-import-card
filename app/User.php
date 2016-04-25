@@ -1362,6 +1362,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return true;
     }
 
+    public function getCarePlanLastPrintedAttribute() {
+        if(!$this->patientInfo) return '';
+        return $this->patientInfo->careplan_last_printed;
+    }
+
+    public function setCarePlanLastPrintedAttribute($value) {
+        if(!$this->patientInfo) return '';
+        $this->patientInfo->careplan_last_printed = $value;
+        $this->patientInfo->save();
+        return true;
+    }
+
     public function getCcmStatusAttribute()
     {
         if (!$this->patientInfo) return '';

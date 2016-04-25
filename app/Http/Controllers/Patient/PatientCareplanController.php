@@ -43,7 +43,7 @@ class PatientCareplanController extends Controller
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
-            ->select(DB::raw('wp_users.*'))
+            ->select(DB::raw('users.*'))
             ->get();
 
         // get approvers before
@@ -232,27 +232,6 @@ class PatientCareplanController extends Controller
         // roles
         $patientRoleId = Role::where('name', '=', 'participant')->first();
         $patientRoleId = $patientRoleId->id;
-
-        // user meta
-        $userMeta = (new UserMetaTemplate())->getArray();
-        if ($patientId) {
-            $userMeta = UserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
-        }
-
-        // user config
-        $userConfig = (new UserConfigTemplate())->getArray();
-        if ($patientId) {
-            if (isset($userMeta['wp_' . $programId . '_user_config'])) {
-                $userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
-                $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
-            }
-            // set role
-            $capabilities = array();
-            if (isset($userMeta['wp_' . $programId . '_capabilities'])) {
-                $capabilities = unserialize($userMeta['wp_' . $programId . '_capabilities']);
-                $wpRole = key($capabilities);
-            }
-        }
 
         // locations @todo get location id for WpBlog
         $program = WpBlog::find($programId);
