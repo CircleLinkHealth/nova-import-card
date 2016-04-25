@@ -1,34 +1,34 @@
 <?php
 
-class CpmMedicationsSeeder extends \Illuminate\Database\Seeder
+class CpmMedicationGroupsSeeder extends \Illuminate\Database\Seeder
 {
     public function run()
     {
-        $medications = array (
-            0 => 
-            array (
-                'name' => 'Blood Pressure Meds',
-            ),
+        $medications = array(
+            0 =>
+                array(
+                    'name' => 'Blood Pressure Meds',
+                ),
             1 =>
-            array (
-                'name' => 'Cholesterol Meds',
-            ),
+                array(
+                    'name' => 'Cholesterol Meds',
+                ),
             2 =>
-            array (
-                'name' => 'Blood Thinners (Plavix, Aspirin)',
-            ),
+                array(
+                    'name' => 'Blood Thinners (Plavix, Aspirin)',
+                ),
             3 =>
-            array (
-                'name' => 'Water Pills/Diuretics',
-            ),
+                array(
+                    'name' => 'Water Pills/Diuretics',
+                ),
             4 =>
-            array (
-                'name' => 'Oral Diabetes Meds',
-            ),
+                array(
+                    'name' => 'Oral Diabetes Meds',
+                ),
             5 =>
-            array (
-                'name' => 'Insulin or other Injectable',
-            ),
+                array(
+                    'name' => 'Insulin or other Injectable',
+                ),
             6 =>
                 array(
                     'name' => 'Medication List',

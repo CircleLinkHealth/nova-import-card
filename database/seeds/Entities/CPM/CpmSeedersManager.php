@@ -11,16 +11,15 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
 {
     public function run()
     {
+        //Problems seeder already exists
+        
         Model::unguard();
 
         $this->call(CpmLifestyleSeeder::class);
         $this->command->info(CpmLifestyleSeeder::class . ' ran.');
 
-        $this->call(CpmMedicationsSeeder::class);
-        $this->command->info(CpmMedicationsSeeder::class . ' ran.');
-
-        $this->call(CpmProblemsSeeder::class);
-        $this->command->info(CpmProblemsSeeder::class . ' ran.');
+        $this->call(CpmMedicationGroupsSeeder::class);
+        $this->command->info(CpmMedicationGroupsSeeder::class . ' ran.');
 
         $this->call(CpmSymptomsSeeder::class);
         $this->command->info(CpmSymptomsSeeder::class . ' ran.');
