@@ -1,5 +1,7 @@
 <?php namespace App;
 
+use Prettus\Repository\Contracts\Transformable;
+use Prettus\Repository\Traits\TransformableTrait;
 use SoftDeletingTrait;
 use App\User;
 use App\Services\ActivityService;
@@ -7,7 +9,9 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Activity extends Model {
+class Activity extends Model implements Transformable{
+
+    use TransformableTrait;
 
     // for revisionable
     use \Venturecraft\Revisionable\RevisionableTrait;

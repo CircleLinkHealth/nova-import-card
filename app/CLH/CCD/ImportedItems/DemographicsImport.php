@@ -5,10 +5,12 @@ use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Prettus\Repository\Contracts\Transformable;
+use Prettus\Repository\Traits\TransformableTrait;
 
-class DemographicsImport extends Model {
+class DemographicsImport extends Model implements Transformable{
 
-    use BelongsToCcda, SoftDeletes;
+    use BelongsToCcda, SoftDeletes, TransformableTrait;
 
     /**
      * The attributes that should be mutated to dates.

@@ -2,11 +2,12 @@
 
 use App\CLH\CCD\ItemLogger\ModelLogRelationship;
 use Illuminate\Database\Eloquent\Model;
+use Prettus\Repository\Contracts\Transformable;
+use Prettus\Repository\Traits\TransformableTrait;
 
-class Ccda extends Model
-{
+class Ccda extends Model implements Transformable{
 
-    use ModelLogRelationship;
+    use ModelLogRelationship, TransformableTrait;
 
     //define sources here
     const API = 'api';
