@@ -21,8 +21,8 @@ class AllUserScrambler extends Seeder {
             $randomUsers = json_decode($json_string);
             $u = 0;
             foreach($allUsers as $user) {
-                if(isset($randomUsers->results[$u]->user)) {
-                    $randomUserInfo = $randomUsers->results[$u]->user;
+                if(isset($randomUsers->results[$u])) {
+                    $randomUserInfo = $randomUsers->results[$u];
                     $role = $user->roles()->first();
                     if ($role && strtolower($role->name) == 'participant') {
                         echo PHP_EOL.PHP_EOL;

@@ -339,7 +339,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     // START ATTRIBUTES
 	public function setUserAttributeByKey($key, $value)
 	{
-
 		$func = create_function('$c', 'return strtoupper($c[1]);');
 		$attribute = preg_replace_callback('/_([a-z])/', $func, $key);
 
@@ -354,7 +353,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		} else if($attribute == 'mrnNumber') {
 			$attribute = 'mrn';
 		} else if($attribute == 'studyPhoneNumber') {
-			return false;
+			$attribute = 'phone';
 		} else if($attribute == 'billingProvider') {
 			$attribute = 'billingProviderID';
 		} else if($attribute == 'leadContact') {
@@ -375,7 +374,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 
 		// call save attribute
-		echo '----'.$attribute .'<br />';
 		$this->$attribute = $value;
 		$this->save();
 
@@ -1065,6 +1063,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$this->patientInfo->consent_date = $value;
 		$this->patientInfo->save();
 		return true;
+	}
+
+	public function getCarePlanQAApproverAttribute() {
+		$meta = $this->meta->where('meta_key', 'careplan_qa_approver')->lists('meta_value');
+		if(!empty($meta)) {
+			return $meta[0];
+		}
+		return 0;
 	}
 
 	// agent_name
