@@ -103,7 +103,7 @@ class UserController extends Controller
             $params = $request->all();
 
             // filter user
-            $users = User::whereIn( 'ID', Auth::user()->viewablePatientIds() )->OrderBy( 'id', 'desc' )->get()->lists( 'fullNameWithId', 'ID' );
+            $users = User::whereIn( 'ID', Auth::user()->viewableUserIds() )->OrderBy( 'id', 'desc' )->get()->lists( 'fullNameWithId', 'ID' );
             $filterUser = 'all';
             if ( !empty($params[ 'filterUser' ]) ) {
                 $filterUser = $params[ 'filterUser' ];
@@ -153,7 +153,7 @@ class UserController extends Controller
             $queryString = $request->query();
 
             // patient restriction
-            $wpUsers->whereIn( 'ID', Auth::user()->viewablePatientIds() );
+            $wpUsers->whereIn( 'ID', Auth::user()->viewableUserIds() );
             $wpUsers = $wpUsers->paginate( 20 );
             $invalidUsers = array();
 

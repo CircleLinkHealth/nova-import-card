@@ -88,11 +88,9 @@
                                         <td><a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class=""> {{ $wpUser->fullNameWithID }}</a></td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
-                                                @if($wpUser->hasRole('participant'))
-                                                    @foreach($wpUser->roles as $role)
-                                                        {{ $role->display_name }}
-                                                    @endforeach
-                                                @endif
+                                                @foreach($wpUser->roles as $role)
+                                                    {{ $role->display_name }}
+                                                @endforeach
                                             @endif
                                         </td>
                                         <td>{{ $wpUser->user_email }}</td>
