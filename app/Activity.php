@@ -174,6 +174,7 @@ class Activity extends Model implements Transformable{
     public static function input_activity_types(){
         return array(
             'CCM Welcome Call' => 'CCM Welcome Call',
+            'Reengaged' => 'Reengaged',
             'General (Clinical)' => 'General (Clinical)',
             'Medication Reconciliation' => 'Medication Reconciliation',
             'Appointments' => 'Appointments',
