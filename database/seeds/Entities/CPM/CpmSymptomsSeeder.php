@@ -56,9 +56,15 @@ class CpmSymptomsSeeder extends \Illuminate\Database\Seeder
         );
 
         foreach ($symptoms as $symptom) {
-            \App\Entities\CPM\CpmSymptom::updateOrCreate($symptom, [
-                'care_item_id' => \App\CareItem::whereDisplayName($symptom['name'])->first()->id,
+            $careItem = \App\CareItem::whereDisplayName($symptom['name'])->first();
+
+            $cpmSymptom = \App\Entities\CPM\CpmSymptom::updateOrCreate($symptom, [
+                'care_item_id' => $careItem->id,
             ]);
+
+            $careItem->type = \App\Entities\CPM\CpmSymptom::class;
+            $careItem->type_id = $cpmSymptom->id;
+            $careItem->save();
         }
     }
 }

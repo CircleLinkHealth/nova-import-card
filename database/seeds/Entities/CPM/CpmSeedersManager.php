@@ -30,9 +30,15 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
         //Add care_item_id to problems
         foreach (\App\Entities\CPM\CpmProblem::all() as $problem)
         {
-            \App\Entities\CPM\CpmProblem::updateOrCreate(['care_item_name' => $problem->care_item_name], [
-                'care_item_id' => \App\CareItem::whereName($problem->care_item_name)->first()->id,
+            $careItem = \App\CareItem::whereName($problem->care_item_name)->first();
+
+            $cpmProblem = \App\Entities\CPM\CpmProblem::updateOrCreate(['care_item_name' => $problem->care_item_name], [
+                'care_item_id' => $careItem->id,
             ]);
+
+            $careItem->type = \App\Entities\CPM\CpmProblem::class;
+            $careItem->type_id = $cpmProblem->id;
+            $careItem->save();
         }
 
     }
