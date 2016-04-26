@@ -36,12 +36,12 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
     @foreach($careplans as $id => $careplan)
         <?php
         $patient = App\User::find($id);
-        $config = $patient->userConfig();
+        //$config = $patient->userConfig();
         $billing = App\User::find($patient->getBillingProviderIDAttribute());
         $lead = App\User::find($patient->getLeadContactIDAttribute());
        ?>
 <style type="text/css">
-    div.address { line-height: 1.1em; 
+    div.address { line-height: 1.1em;
         font-family: 'Roboto', sans-serif;
     }
 </style>

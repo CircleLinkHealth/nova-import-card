@@ -113,16 +113,13 @@ class ChangeUsersTableAndRemoveMaPrefixTables extends Migration {
 	public function down()
 	{
 
-		Schema::table('users', function(Blueprint $table)
-		{
-			if ( Schema::hasTable('users')) {
-				Schema::rename('users', 'wp_users');
-			}
+        if ( Schema::hasTable('users')) {
+            Schema::rename('users', 'wp_users');
+        }
 
-			if ( Schema::hasTable('usermeta')) {
-				Schema::rename('usermeta', 'wp_usermeta');
-			}
-		});
+        if ( Schema::hasTable('usermeta')) {
+            Schema::rename('usermeta', 'wp_usermeta');
+        }
 
 	}
 

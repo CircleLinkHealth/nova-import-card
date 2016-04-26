@@ -23,6 +23,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DateTimeZone;
 use EllipseSynergie\ApiResponse\Laravel\Response;
+use Illuminate\Support\Collection;
 use PasswordHash;
 use Auth;
 use DB;
@@ -103,7 +104,7 @@ class UserController extends Controller
             $params = $request->all();
 
             // filter user
-            $users = User::whereIn( 'ID', Auth::user()->viewablePatientIds() )->OrderBy( 'id', 'desc' )->get()->lists( 'fullNameWithId', 'ID' );
+            $users = User::whereIn( 'ID', Auth::user()->viewableUserIds() )->OrderBy( 'id', 'desc' )->get()->lists( 'fullNameWithId', 'ID' );
             $filterUser = 'all';
             if ( !empty($params[ 'filterUser' ]) ) {
                 $filterUser = $params[ 'filterUser' ];
@@ -155,7 +156,7 @@ class UserController extends Controller
             $queryString = $request->query();
 
             // patient restriction
-            $wpUsers->whereIn( 'ID', Auth::user()->viewablePatientIds() );
+            $wpUsers->whereIn( 'ID', Auth::user()->viewableUserIds() );
             $wpUsers = $wpUsers->paginate( 20 );
             $invalidUsers = array();
 
@@ -356,6 +357,7 @@ class UserController extends Controller
             $userHistory->push( $history );
         }
 
+        /*
         // than for usermeta
         $userMetas = UserMeta::where( 'user_id', '=', $id )->get();
         if ( $userMetas->count() > 0 ) {
@@ -371,11 +373,8 @@ class UserController extends Controller
             }
         }
         $revisions = $userHistory->sortByDesc( 'updated_at' );
-
-        // primary_blog
-        $userMetaTemplate = ( new UserConfigTemplate() )->getArray();
-        $userMeta = UserMeta::where( 'user_id', '=', $id )->lists( 'meta_value', 'meta_key' );
-        $userMeta = array_merge( $userMeta, $userMetaTemplate );
+        */
+        $revisions = new Collection();
 
         $params = $request->all();
         if ( !empty($params) ) {
@@ -385,20 +384,6 @@ class UserController extends Controller
                     return redirect()->route( '/', [] )->with( 'messages', ['Logged in as user ' . $id] );
                 }
             }
-        }
-
-        // user config
-        $userConfig = ( new UserConfigTemplate() )->getArray();
-        if ( isset($userMeta[ 'wp_' . $patient->program_id . '_user_config' ]) ) {
-            $userConfig = unserialize( $userMeta[ 'wp_' . $patient->program_id . '_user_config' ] );
-            $userConfig = array_merge( ( new UserConfigTemplate() )->getArray(), $userConfig );
-        }
-
-        // set role
-        $capabilities = array();
-        if ( isset($userMeta[ 'wp_' . $patient->program_id . '_capabilities' ]) ) {
-            $capabilities = unserialize( $userMeta[ 'wp_' . $patient->program_id . '_capabilities' ] );
-            $wpRole = key( $capabilities );
         }
 
         // locations @todo get location id for WpBlog
@@ -426,7 +411,7 @@ class UserController extends Controller
         $providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
 
         // display view
-        return view( 'wpUsers.edit', ['patient' => $patient, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'userConfig' => $userConfig, 'userMeta' => $userMeta, 'primaryBlog' => $patient->program_id, 'providers_arr' => $providers_arr, 'messages' => $messages, 'role' => $role, 'roles' => $roles, 'revisions' => $revisions, 'carePlans' => $carePlans] );
+        return view( 'wpUsers.edit', ['patient' => $patient, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'primaryBlog' => $patient->program_id, 'providers_arr' => $providers_arr, 'messages' => $messages, 'role' => $role, 'roles' => $roles, 'revisions' => $revisions, 'carePlans' => $carePlans] );
     }
 
     /**

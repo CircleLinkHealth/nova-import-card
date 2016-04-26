@@ -47,7 +47,7 @@ class CreatePatientsTable extends Migration {
 				$table->string('state')->after('city');
 				$table->string('zip')->after('state');
 				$table->string('status')->after('zip');
-				$table->string('is_auto_generated')->after('status');
+				$table->boolean('is_auto_generated')->after('status');
 				$table->dropColumn('deleted');
 			}
 		});

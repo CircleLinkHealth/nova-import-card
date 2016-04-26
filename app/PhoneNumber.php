@@ -7,6 +7,11 @@ use Auth;
 
 class PhoneNumber extends Model {
 
+	//types
+	const HOME = 'home';
+	const MOBILE = 'mobile';
+	const WORK = 'work';
+
 	use SoftDeletes;
 
 	/**

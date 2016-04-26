@@ -28,7 +28,8 @@ class ChangeFilePathToFileBase64 extends Migration {
 	{
 		Schema::table('patient_reports', function(Blueprint $table)
 		{
-			//
+			$table->dropColumn('file_base64');
+			$table->mediumText('file_path')->after('location_id');
 		});
 	}
 

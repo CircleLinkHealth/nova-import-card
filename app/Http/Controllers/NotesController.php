@@ -101,7 +101,7 @@ class NotesController extends Controller
                 return response("User not found", 401);
             }
 
-            $patient_name = $user->getFullNameAttribute();
+            $patient_name = $user->fullName;
 
             //Gather details to generate form
 
@@ -113,8 +113,10 @@ class NotesController extends Controller
             }
             if(!empty($careteam_ids) && is_array($careteam_ids)) {
                 foreach ($careteam_ids as $id) {
-                    $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
-                }//debug($careteam_info);
+                    if(User::find($id)) {
+                        $careteam_info[$id] = User::find($id)->fullName;
+                    }
+                }
             }
 
             if($user->timeZone == ''){
@@ -136,18 +138,24 @@ class NotesController extends Controller
 
             if(!empty($providers)) {
                 foreach ($providers as $provider) {
-                    $provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
+                    if($provider->fullName) {
+                        $provider_info[$provider->ID] = $provider->fullName;
+                    }
                 }
             }
             if(!empty($nonCCMCareCenterUsers)) {
                 foreach ($nonCCMCareCenterUsers as $nonCCMCareCenterUser) {
-                    $provider_info[$nonCCMCareCenterUser->ID] = User::find($nonCCMCareCenterUser->ID)->getFullNameAttribute();
+                    if($nonCCMCareCenterUser->fullName) {
+                        $provider_info[$nonCCMCareCenterUser->ID] = $nonCCMCareCenterUser->fullName;
+                    }
                 }
             }
             debug($careCenterUsers);
             if(!empty($careCenterUsers)) {
                 foreach ($careCenterUsers as $careCenterUser) {
-                    $provider_info[$careCenterUser->ID] = User::find($careCenterUser->ID)->getFullNameAttribute();
+                    if($careCenterUser->fullName) {
+                        $provider_info[$careCenterUser->ID] = $careCenterUser->fullName;
+                    }
                 }
             }
 

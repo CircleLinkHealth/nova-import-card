@@ -1,6 +1,6 @@
 <?php namespace App\Console\Commands;
 
-use App\CLH\CCD\Importer\CPMProblem;
+use App\Entities\CPM\CpmProblem;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
 use Illuminate\Console\Command;
@@ -41,7 +41,7 @@ class MapSnomedToCpmProblems extends Command
      */
     public function fire()
     {
-        $cpmProblems = CPMProblem::all();
+        $cpmProblems = CpmProblem::all();
         SnomedToCpmIcdMap::truncate();
         foreach ( $cpmProblems as $cpmProblem ) {
             $maps = SnomedToICD10Map::whereBetween( 'icd_10_code', [$cpmProblem->icd10from, $cpmProblem->icd10to] )->get()->toArray();
