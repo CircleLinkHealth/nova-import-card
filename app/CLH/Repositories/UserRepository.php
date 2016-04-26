@@ -444,7 +444,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                     // children
                     if ($carePlanItem->children->count() > 0) {
                         foreach ($carePlanItem->children as $carePlanItemChild) {
-                            $carePlan->setCareItemUserValue($user, $carePlanItemChild->careItem->name, $carePlanItemChild->meta_value);
+                            echo '  ' . $carePlanItemChild->id;
+                            echo '  ' . $carePlanItemChild->meta_value;
+                            $carePlan->setCareItemUserValue($user,
+                                $carePlanItemChild->careItem->name,
+                                $carePlanItemChild->meta_value);
                         }
                     }
                 }
