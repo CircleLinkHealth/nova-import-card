@@ -5,7 +5,7 @@ namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\ProblemImport;
-use App\Entities\CPM\CpmProblem;
+use App\Models\CPM\CpmProblem;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;

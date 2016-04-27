@@ -1,9 +1,9 @@
 <?php namespace App;
 
-use App\Entities\CPM\CpmLifestyle;
-use App\Entities\CPM\CpmMedicationGroup;
-use App\Entities\CPM\CpmProblem;
-use App\Entities\CPM\CpmSymptom;
+use App\Models\CPM\CpmLifestyle;
+use App\Models\CPM\CpmMedicationGroup;
+use App\Models\CPM\CpmProblem;
+use App\Models\CPM\CpmSymptom;
 use Illuminate\Database\Eloquent\Model;
 
 class CarePlanTemplate extends Model {
