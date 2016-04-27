@@ -56,7 +56,7 @@ class CpmSymptomsSeeder extends \Illuminate\Database\Seeder
         );
 
         foreach ($symptoms as $symptom) {
-            \App\Entities\CPM\CpmSymptom::updateOrCreate($symptom);
+            \App\Models\CPM\CpmSymptom::updateOrCreate($symptom);
         }
     }
 }

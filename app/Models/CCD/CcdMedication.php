@@ -1,7 +1,7 @@
-<?php namespace App\Entities\CCD;
+<?php namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\CcdMedicationLog;
-use App\Entities\CPM\CpmMedicationGroup;
+use App\Models\CPM\CpmMedicationGroup;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 

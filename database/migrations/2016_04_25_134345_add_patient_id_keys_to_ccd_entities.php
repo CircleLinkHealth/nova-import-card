@@ -14,9 +14,9 @@ class AddPatientIdKeysToCcdEntities extends Migration
     public function up()
     {
         $tables = [
-            (new \App\Entities\CCD\CcdAllergy())->getTable(),
-            (new \App\Entities\CCD\CcdMedication())->getTable(),
-            (new \App\Entities\CCD\CcdProblem())->getTable(),
+            (new \App\Models\CCD\CcdAllergy())->getTable(),
+            (new \App\Models\CCD\CcdMedication())->getTable(),
+            (new \App\Models\CCD\CcdProblem())->getTable(),
         ];
 
         foreach ($tables as $tableName) {
@@ -41,9 +41,9 @@ class AddPatientIdKeysToCcdEntities extends Migration
     public function down()
     {
         $tables = [
-            (new \App\Entities\CCD\CcdAllergy())->getTable(),
-            (new \App\Entities\CCD\CcdMedication())->getTable(),
-            (new \App\Entities\CCD\CcdProblem())->getTable(),
+            (new \App\Models\CCD\CcdAllergy())->getTable(),
+            (new \App\Models\CCD\CcdMedication())->getTable(),
+            (new \App\Models\CCD\CcdProblem())->getTable(),
         ];
 
         foreach ($tables as $tableName) {
