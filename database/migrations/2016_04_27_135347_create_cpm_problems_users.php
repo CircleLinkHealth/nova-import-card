@@ -31,6 +31,8 @@ class CreateCpmProblemsUsers extends Migration {
 				->onDelete('cascade');
 
 			$table->timestamps();
+
+			$table->index(['patient_id', 'cpm_problem_id']);
 		});
 	}
 

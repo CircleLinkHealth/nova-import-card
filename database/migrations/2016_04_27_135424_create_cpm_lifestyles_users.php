@@ -31,6 +31,8 @@ class CreateCpmLifestylesUsers extends Migration {
 				->onDelete('cascade');
 			
 			$table->timestamps();
+
+			$table->index(['patient_id', 'cpm_lifestyle_id']);
 		});
 	}
 
