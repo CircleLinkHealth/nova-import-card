@@ -424,7 +424,7 @@ class UserController extends Controller
             abort( 403 );
         }
         // instantiate user
-        $wpUser = User::with( 'meta' )->find( $id );
+        $wpUser = User::find( $id );
         if ( !$wpUser ) {
             return response( "User not found", 401 );
         }
