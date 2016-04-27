@@ -48,7 +48,7 @@ class CpmMedicationGroupsSeeder extends \Illuminate\Database\Seeder
         );
 
         foreach ($medications as $medication) {
-            \App\Entities\CPM\CpmMedicationGroup::updateOrCreate($medication);
+            \App\Models\CPM\CpmMedicationGroup::updateOrCreate($medication);
         }
     }
 }

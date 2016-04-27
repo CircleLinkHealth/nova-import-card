@@ -1,6 +1,6 @@
 <?php namespace App\Console\Commands;
 
-use App\Entities\CPM\CpmProblem;
+use App\Models\CPM\CpmProblem;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
 use Illuminate\Console\Command;

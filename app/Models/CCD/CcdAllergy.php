@@ -1,4 +1,4 @@
-<?php namespace App\Entities\CCD;
+<?php namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\CcdAllergyLog;
 use App\User;
