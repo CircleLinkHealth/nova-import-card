@@ -10,7 +10,7 @@ class CarePlanTemplateRelationshipsTest extends TestCase
 {
     public function testRelateProblem()
     {
-        $cpmProblem = \App\Entities\CPM\CpmProblem::create([
+        $cpmProblem = \App\Models\CPM\CpmProblem::create([
             'name' => 'test',
             'icd10from' => 'test',
             'icd10to' => 'test',

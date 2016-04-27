@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Entities\CPM\CpmProblem;
+use App\Models\CPM\CpmProblem;
 use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

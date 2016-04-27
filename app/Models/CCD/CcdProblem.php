@@ -1,7 +1,7 @@
-<?php namespace App\Entities\CCD;
+<?php namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\CcdProblemLog;
-use App\Entities\CPM\CpmProblem;
+use App\Models\CPM\CpmProblem;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 

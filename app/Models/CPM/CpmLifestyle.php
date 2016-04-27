@@ -1,4 +1,4 @@
-<?php namespace App\Entities\CPM;
+<?php namespace App\Models\CPM;
 
 use App\CareItem;
 use App\CarePlanItem;
@@ -22,5 +22,13 @@ class CpmLifestyle extends Model
     public function carePlanItemIdDeprecated()
     {
         return $this->belongsTo(CareItem::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function patient()
+    {
+        return $this->belongsToMany(User::class, 'cpm_lifestyles_users');
     }
 }
