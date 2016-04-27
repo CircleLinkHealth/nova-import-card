@@ -195,8 +195,9 @@ Route::group( ['middleware' => 'auth'], function () {
         // excel reports
         Route::get( 'excelReportT1', ['uses' => 'ReportsController@excelReportT1', 'as' => 'excel.report.t1'] );
 
-        $prefix = 'admin/'; // admin prefix
-        Entrust::routeNeedsPermission( $prefix . '*', 'admin-access', Redirect::to( URL::route( 'login' ) ) );
+        $prefix = 'admin'; // admin prefix
+        Entrust::routeNeedsPermission( $prefix, ['admin-access', 'is-administrator'], Redirect::to( URL::route( 'login' ) ) );
+        Entrust::routeNeedsPermission( $prefix . '/*', ['admin-access', 'is-administrator'], Redirect::to( URL::route( 'login' ) ) );
 
         // dashboard
         Route::get( '', ['uses' => 'Admin\DashboardController@index', 'as' => 'admin.dashboard'] );

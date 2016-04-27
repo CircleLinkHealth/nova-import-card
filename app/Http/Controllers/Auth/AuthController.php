@@ -76,6 +76,18 @@ class AuthController extends Controller {
 
 	public function redirectPath()
 	{
+		if($this->auth->user()) {
+			if($this->auth->user()->can('is-administrator')) {
+				return '/admin';
+			} else if($this->auth->user()->can('is-provider')) {
+				return '/manage-patients/dashboard';
+			} else if($this->auth->user()->can('is-care-center')) {
+				return '/manage-patients/dashboard';
+			} else {
+				return '/manage-patients/dashboard';
+			}
+		}
+		/*
 		$role = $this->auth->user()->roles[0]->name;
 
 		switch ($role)
@@ -86,5 +98,6 @@ class AuthController extends Controller {
 			case 'provider': return '/manage-patients/dashboard';
 			default: return '/manage-patients/dashboard';
 		}
+		*/
 	}
 }

@@ -54,12 +54,12 @@ class PatientController extends Controller {
 					continue 1;
 				}
 				// patient approval counts
-				if(Auth::user()->hasRole(['administrator', 'care-center'])) {
+				if(Auth::user()->can(['is-administrator', 'is-care-center'])) {
 					// care-center and administrator counts number of drafts
 					if ($user->patientInfo->careplan_status == 'draft') {
 						$p++;
 					}
-				} else if(Auth::user()->hasRole(['provider'])) {
+				} else if(Auth::user()->can(['is-provider'])) {
 					// provider counts number of drafts
 					if ($user->patientInfo->careplan_status == 'qa_approved') {
 						$p++;
@@ -402,8 +402,8 @@ class PatientController extends Controller {
 					'age' => $patient->age,
 					'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
 					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
-					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
-					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
+					'ccm_time' => $patient->patientInfo->cur_month_activity_time, //$ccm_time[0],
+					'ccm_seconds' => $patient->patientInfo->cur_month_activity_time, //$meta[$part->ID]['cur_month_activity_time'][0]
 					'provider'=> $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
 					'site'=> $programName,
 
@@ -453,14 +453,14 @@ class PatientController extends Controller {
 					$careplanStatus = 'Approve Now';
 					$tooltip = $careplanStatus;
 					$careplanStatusLink = 'Approve Now';
-					if (Auth::user()->hasRole('provider')) {
+					if (Auth::user()->can('is-provider')) {
 						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
 					}
 				} else if ($patient->carePlanStatus == 'draft') {
 					$careplanStatus = 'CLH Approve';
 					$tooltip = $careplanStatus;
 					$careplanStatusLink = 'CLH Approve';
-					if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
+					if (Auth::user()->can('is-care-center') || Auth::user()->can('is-administrator')) {
 						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
 					}
 				}
@@ -495,8 +495,8 @@ class PatientController extends Controller {
 					'age' => $patient->age,
 					'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
 					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
-					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
-					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
+					'ccm_time' => $patient->patientInfo->cur_month_activity_time, //$ccm_time[0],
+					'ccm_seconds' => $patient->patientInfo->cur_month_activity_time, //$meta[$part->ID]['cur_month_activity_time'][0]
 					'provider'=> $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
 				);
 			}

@@ -99,39 +99,22 @@ class ActivityService
             if ( !is_array( $userIds ) ) {
                 $userIds = array($userIds);
             }
-            $wpUsers = User::whereIn( 'id', $userIds )->orderBy( 'ID', 'desc' )->get();
+            $users = User::whereIn( 'id', $userIds )->orderBy( 'ID', 'desc' )->get();
         }
         else {
             // get all users
-            $wpUsers = User::orderBy( 'ID', 'desc' )->get();
+            $users = User::orderBy( 'ID', 'desc' )->get();
         }
 
-        if ( !empty($wpUsers) ) {
+        if ( !empty($users) ) {
             // loop through each user
-            foreach ( $wpUsers as $wpUser ) {
+            foreach ( $users as $user ) {
                 // get all activities for user for month
-                $totalDuration = $this->getTotalActivityTimeForMonth( $wpUser->ID, $month, $year );
+                $totalDuration = $this->getTotalActivityTimeForMonth( $user->ID, $month, $year );
 
-                // update user_meta with total
-                $userMeta = UserMeta::where( 'user_id', '=', $wpUser->ID )
-                    ->where( 'meta_key', '=', 'cur_month_activity_time' )->first();
-                if ( !$userMeta ) {
-                    // add in initial user meta: cur_month_activity_time
-                    $newUserMetaAttr = array(
-                        'user_id' => $wpUser->ID,
-                        'meta_key' => 'cur_month_activity_time',
-                        'meta_value' => $totalDuration,
-                    );
-                    $newUserMeta = UserMeta::create( $newUserMetaAttr );
-                    //echo "<pre>CREATED";var_dump($newUserMeta);echo "</pre>";die();
-                }
-                else {
-                    // update existing user meta: cur_month_activity_time
-                    $userMeta = UserMeta::where( 'user_id', '=', $wpUser->ID )
-                        ->where( 'meta_key', '=', 'cur_month_activity_time' )
-                        ->update( array('meta_value' => $totalDuration) );
-                    //echo "<pre>UPDATED";var_dump($totalDuration);echo "</pre>";die();
-                }
+                // update cur_month_activity_time with total
+                $user->patientInfo->cur_month_activity_time = $totalDuration;
+                $user->patientInfo->save();
             }
         }
         return true;

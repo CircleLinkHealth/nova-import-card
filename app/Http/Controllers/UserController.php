@@ -138,15 +138,17 @@ class UserController extends Controller
             }
 
             // only let owners see owners
-            if ( !Auth::user()->hasRole( ['administrator'] ) ) {
+            if ( !Auth::user()->can(['is-administrator']) ) {
                 $wpUsers = $wpUsers->whereHas( 'roles', function ($q) {
                     $q->where( 'name', '!=', 'administrator' );
                 } );
                 // providers can only see their participants
-                if ( Auth::user()->hasRole( ['provider'] ) ) {
-                    $wpUsers->whereHas( 'roles', function ($q) {
-                        $q->where( 'name', '=', 'participant' );
-                    } );
+                if ( Auth::user()->can(['is-provider']) ) {
+                    $wpUsers->whereHas('roles', function ($q) {
+                        $q->whereHas('perms', function ($q2) {
+                            $q2->where('name', '=', 'is-participant');
+                        });
+                    });
                     $wpUsers->where( 'program_id', '=', Auth::user()->program_id );
                 }
             }
@@ -424,7 +426,7 @@ class UserController extends Controller
             abort( 403 );
         }
         // instantiate user
-        $wpUser = User::with( 'meta' )->find( $id );
+        $wpUser = User::find( $id );
         if ( !$wpUser ) {
             return response( "User not found", 401 );
         }
