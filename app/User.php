@@ -931,7 +931,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 // cur_month_activity_time
     public function getCurMonthActivityTimeAttribute()
     {
-        return $this->monthlyTime;
+        return $this->patientInfo->cur_month_activity_time;
     }
 
     public function getMonthlyTimeAttribute()
