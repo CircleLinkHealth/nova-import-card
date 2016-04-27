@@ -14,28 +14,28 @@ class AddDefaultInstructionsForCareplanTemplate extends Migration
     public function up()
     {
         Schema::table('care_plan_templates_cpm_lifestyles', function (Blueprint $table) {
-            $table->text('default_instruction')
+            $table->text('default_instructions')
                 ->nullable()
                 ->default(null)
                 ->after('ui_sort');
         });
 
         Schema::table('care_plan_templates_cpm_symptoms', function (Blueprint $table) {
-            $table->text('default_instruction')
+            $table->text('default_instructions')
                 ->nullable()
                 ->default(null)
                 ->after('ui_sort');
         });
 
         Schema::table('care_plan_templates_cpm_medication_groups', function (Blueprint $table) {
-            $table->text('default_instruction')
+            $table->text('default_instructions')
                 ->nullable()
                 ->default(null)
                 ->after('ui_sort');
         });
 
         Schema::table('care_plan_templates_cpm_problems', function (Blueprint $table) {
-            $table->text('default_instruction')
+            $table->text('default_instructions')
                 ->nullable()
                 ->default(null)
                 ->after('ui_sort');
@@ -51,22 +51,22 @@ class AddDefaultInstructionsForCareplanTemplate extends Migration
     {
         Schema::table('care_plan_templates_cpm_lifestyles', function(Blueprint $table)
         {
-            $table->dropColumn('default_instruction');
+            $table->dropColumn('default_instructions');
         });
 
         Schema::table('care_plan_templates_cpm_symptoms', function(Blueprint $table)
         {
-            $table->dropColumn('default_instruction');
+            $table->dropColumn('default_instructions');
         });
 
         Schema::table('care_plan_templates_cpm_medication_groups', function(Blueprint $table)
         {
-            $table->dropColumn('default_instruction');
+            $table->dropColumn('default_instructions');
         });
 
         Schema::table('care_plan_templates_cpm_problems', function(Blueprint $table)
         {
-            $table->dropColumn('default_instruction');
+            $table->dropColumn('default_instructions');
         });
     }
 
