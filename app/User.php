@@ -6,6 +6,7 @@ use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmLifestyle;
 use App\Models\CPM\CpmMedicationGroup;
+use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use DateTime;
@@ -212,6 +213,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmMedicationGroups()
     {
         return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_medication_groups_users');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmMiscs()
+    {
+        return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users');
     }
 
     /**
