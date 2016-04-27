@@ -402,8 +402,8 @@ class PatientController extends Controller {
 					'age' => $patient->age,
 					'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
 					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
-					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
-					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
+					'ccm_time' => $patient->patientInfo->cur_month_activity_time, //$ccm_time[0],
+					'ccm_seconds' => $patient->patientInfo->cur_month_activity_time, //$meta[$part->ID]['cur_month_activity_time'][0]
 					'provider'=> $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
 					'site'=> $programName,
 
@@ -495,8 +495,8 @@ class PatientController extends Controller {
 					'age' => $patient->age,
 					'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
 					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
-					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
-					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
+					'ccm_time' => $patient->patientInfo->cur_month_activity_time, //$ccm_time[0],
+					'ccm_seconds' => $patient->patientInfo->cur_month_activity_time, //$meta[$part->ID]['cur_month_activity_time'][0]
 					'provider'=> $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
 				);
 			}
