@@ -16,4 +16,12 @@ class CpmLifestyle extends Model
     {
         return $this->belongsToMany(CarePlanTemplate::class, 'care_plan_templates_cpm_lifestyles');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function patient()
+    {
+        return $this->belongsToMany(User::class, 'cpm_lifestyles_users');
+    }
 }

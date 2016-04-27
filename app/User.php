@@ -162,7 +162,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     /*
      *
-     * CCD Entities
+     * CCD Models
      *
      */
 
@@ -188,6 +188,46 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function ccdProblems()
     {
         return $this->hasMany(CcdProblem::class);
+    }
+
+    /*****/
+
+    /*
+     *
+     * CPM Models
+     *
+     */
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmLifestyles()
+    {
+        return $this->belongsToMany(CpmLifestyle::class, 'cpm_lifestyles_users');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmMedicationGroups()
+    {
+        return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_medication_groups_users');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmProblems()
+    {
+        return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmSymptoms()
+    {
+        return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users');
     }
 
     /*****/

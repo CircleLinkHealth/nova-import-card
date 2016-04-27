@@ -24,4 +24,12 @@ class CpmMedicationGroup extends Model {
     {
         return $this->hasMany(CcdMedication::class);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function patient()
+    {
+        return $this->belongsToMany(User::class, 'cpm_medication_groups_users');
+    }
 }
