@@ -51,11 +51,11 @@ class CpmMedicationGroupsSeeder extends \Illuminate\Database\Seeder
             
             $careItem = \App\CareItem::whereDisplayName($medication['name'])->first();
             
-            $medGroup = \App\Entities\CPM\CpmMedicationGroup::updateOrCreate($medication, [
+            $medGroup = \App\Models\CPM\CpmMedicationGroup::updateOrCreate($medication, [
                 'care_item_id' => $careItem->id,
             ]);
 
-            $careItem->type = \App\Entities\CPM\CpmMedicationGroup::class;
+            $careItem->type = \App\Models\CPM\CpmMedicationGroup::class;
             $careItem->type_id = $medGroup->id;
             $careItem->save();
         }

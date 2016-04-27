@@ -13,10 +13,10 @@ class AddDeprCareplanItemId extends Migration {
 	public function up()
 	{
 		$tables = [
-			(new \App\Entities\CPM\CpmLifestyle())->getTable(),
-			(new \App\Entities\CPM\CpmMedicationGroup())->getTable(),
-			(new \App\Entities\CPM\CpmProblem())->getTable(),
-			(new \App\Entities\CPM\CpmSymptom())->getTable(),
+			(new \App\Models\CPM\CpmLifestyle())->getTable(),
+			(new \App\Models\CPM\CpmMedicationGroup())->getTable(),
+			(new \App\Models\CPM\CpmProblem())->getTable(),
+			(new \App\Models\CPM\CpmSymptom())->getTable(),
 		];
 
 		foreach ($tables as $tableName)
@@ -42,10 +42,10 @@ class AddDeprCareplanItemId extends Migration {
 	public function down()
 	{
 		$tables = [
-			(new \App\Entities\CPM\CpmLifestyle())->getTable(),
-			(new \App\Entities\CPM\CpmMedicationGroup())->getTable(),
-			(new \App\Entities\CPM\CpmProblem())->getTable(),
-			(new \App\Entities\CPM\CpmSymptom())->getTable(),
+			(new \App\Models\CPM\CpmLifestyle())->getTable(),
+			(new \App\Models\CPM\CpmMedicationGroup())->getTable(),
+			(new \App\Models\CPM\CpmProblem())->getTable(),
+			(new \App\Models\CPM\CpmSymptom())->getTable(),
 		];
 
 		foreach ($tables as $tableName)

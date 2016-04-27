@@ -31,12 +31,12 @@ class CpmLifestyleSeeder extends \Illuminate\Database\Seeder
             $careItem = \App\CareItem::whereDisplayName($entity['name'])->first();
 
             //relate lifestyle to care item
-            $lifestyle = \App\Entities\CPM\CpmLifestyle::updateOrCreate($entity, [
+            $lifestyle = \App\Models\CPM\CpmLifestyle::updateOrCreate($entity, [
                 'care_item_id' => $careItem->id,
             ]);
 
             //relate care item to lifestyle
-            $careItem->type = \App\Entities\CPM\CpmLifestyle::class;
+            $careItem->type = \App\Models\CPM\CpmLifestyle::class;
             $careItem->type_id = $lifestyle->id;
             $careItem->save();
 
@@ -44,7 +44,7 @@ class CpmLifestyleSeeder extends \Illuminate\Database\Seeder
 
             foreach ($careItemCarePlan as $val)
             {
-                $val->type = \App\Entities\CPM\CpmLifestyle::class;
+                $val->type = \App\Models\CPM\CpmLifestyle::class;
                 $val->type_id = $lifestyle->id;
                 $val->save();
             }
