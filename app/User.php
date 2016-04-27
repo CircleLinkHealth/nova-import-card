@@ -1,13 +1,13 @@
 <?php namespace App;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
-use App\Entities\CCD\CcdAllergy;
-use App\Entities\CCD\CcdMedication;
-use App\Entities\CCD\CcdProblem;
-use App\Entities\CPM\CpmLifestyle;
-use App\Entities\CPM\CpmMedicationGroup;
-use App\Entities\CPM\CpmProblem;
-use App\Entities\CPM\CpmSymptom;
+use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\CcdMedication;
+use App\Models\CCD\CcdProblem;
+use App\Models\CPM\CpmLifestyle;
+use App\Models\CPM\CpmMedicationGroup;
+use App\Models\CPM\CpmProblem;
+use App\Models\CPM\CpmSymptom;
 use DateTime;
 use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\Authenticatable;

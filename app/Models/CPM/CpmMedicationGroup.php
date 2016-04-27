@@ -1,7 +1,7 @@
-<?php namespace App\Entities\CPM;
+<?php namespace App\Models\CPM;
 
 use App\CarePlanTemplate;
-use App\Entities\CCD\CcdMedication;
+use App\Models\CCD\CcdMedication;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
