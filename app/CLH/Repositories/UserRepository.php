@@ -24,8 +24,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     {
         $user = $user->createNewUser($params->get('user_email'), $params->get('user_pass'));
 
-        $user->load('meta');
-
         // the basics
         $this->saveOrUpdateUserInfo($user, $params);
 
