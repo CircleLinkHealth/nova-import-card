@@ -51,41 +51,36 @@
         @endif
 
         {{-- show details button on right if present --}}
-        @if(!empty($item->default_instructions))
+        @if(isset($item->cpmInstructions[0]))
             <?php
             $buttonLabel = 'Instructions';
-            //        if ($careSection->name == 'Additional Information') {
-            //            $buttonLabel = 'Details';
-            //        }
             ?>
         @endif
-
-<?php             $buttonLabel = 'Instructions';
-?>
 
             <div class="form-group">
             <div class="form-item col-sm-12">
                 <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
-                    <div class="radio-inline"><input id="carePlanItem{{ $item->id }}"
-                                                     name="item|{{ $item->id }}"
+                    <div class="radio-inline"><input id="carePlanItem-{{ $itemType }}-{{ $item->id }}"
+                                                     name="item|-{{ $itemType }}-{{ $item->id }}"
                                                      value="Active" class="itemTrigger" data-toggle="collapse"
-                                                     data-target="#collapseItem{{ $item->id }}"
+                                                     data-target="#collapseItem-{{ $itemType }}-{{ $item->id }}"
                                                      type="checkbox" {{ $item->patient_id == 'Active' ? 'checked=checked' : '' }}>
-                        <label for="carePlanItem{{ $item->id }}">
+                        <label for="carePlanItem-{{ $itemType }}-{{ $item->id }}">
                             <span></span>{{ $item->name }}</label>
                     </div>
                 </div>
             </div>
-            @if ($buttonLabel)
+
+            @if (isset($buttonLabel))
                 <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
                     <button type="button"
                             class="btn btn-default btn-xs btn-monitor collapse {{ $item->patient_id == 'Active' ? 'in' : '' }} text-right"
-                            id="collapseItem{{ $item->id }}" data-toggle="modal"
-                            data-target="#carePlanItem{{ $item->id }}Detail"
+                            id="collapseItem-{{ $itemType }}-{{ $item->id }}" data-toggle="modal"
+                            data-target="#carePlanItem-{{ $itemType }}-{{ $item->id }}Detail"
                             style="margin-top:0px;    margin-bottom: 0px;">{{ $buttonLabel }}</button>
 
                     <!-- Modal -->
-                    <div id="carePlanItem{{ $item->id }}Detail" class="modal fade text-left"
+                    <div id="carePlanItem-{{ $itemType }}-{{ $item->id }}Detail" class="modal fade text-left"
                          role="dialog">
                         <div class="modal-dialog modal-lg">
 
@@ -97,8 +92,8 @@
                                         : {{ $buttonLabel }}</h4>
                                 </div>
                                 <div class="modal-body">
-                                <textarea id="item{{ $item->id }}modal"
-                                          name="item|{{ $item->id }}"
+                                <textarea id="item-{{ $itemType }}-{{ $item->id }}modal"
+                                          name="item|-{{ $itemType }}-{{ $item->id }}"
                                           style="height: 400px;">{{ $item->cpmInstructions[0]->name }}</textarea>
                                 </div>
                                 <div class="modal-footer">

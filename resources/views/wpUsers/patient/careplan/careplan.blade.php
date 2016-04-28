@@ -49,8 +49,16 @@ $new_user = false;
                     @if($carePlan)
                         <input type=hidden name=careplan_id value="{{ $carePlan->id }}">
 
+
+
+
+                    {{-- Call CPM Partials Here --}}
                         @if(!empty($cptProblems))
                             @include('partials.cpm-models.problems')
+                        @endif
+
+                        @if(!empty($cptLifestyles))
+                            @include('partials.cpm-models.lifestyles')
                         @endif
 
                         {{--@if($carePlan->careSections)--}}

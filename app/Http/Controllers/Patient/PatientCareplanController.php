@@ -492,29 +492,30 @@ class PatientCareplanController extends Controller
         }
         $patient = $user;
 
-        $carePlan = $user->patientCarePlans()->first();
+        //getUserCarePlanOrClhDefault
+        $carePlan = $user->patientCarePlans()->firstOrCreate([
+            'patient_id' => $user->ID,
+            'care_plan_template_id' => CarePlanTemplate::whereType(CarePlanTemplate::CLH_DEFAULT)->first()->id
+        ]);
 
-        if (!$carePlan) {
-            $carePlan = PatientCarePlan::create([
-                'patient_id' => $user->ID,
-                'care_plan_template_id' => CarePlanTemplate::whereType(CarePlanTemplate::CLH_DEFAULT)->first()->id
-            ]);
-
-            $user->patientCarePlans()
-                ->save($carePlan);
-        }
-
+        //getCarePlanTemplateCpmDefaultsWithInstructions
         $cptId = $carePlan->care_plan_template_id;
         $cpt = CarePlanTemplate::find($cptId)
             ->load([
+                'cpmLifestyles' => function ($query) {
+                    $query->with('cpmInstructions');
+                    $query->orderBy('pivot_ui_sort');
+                },
                 'cpmProblems' => function ($query) {
                     $query->with('cpmInstructions');
                     $query->orderBy('pivot_ui_sort');
-                }
+                },
             ]);
 
         $cptProblems = $cpt->cpmProblems;
 
+        $cptLifestyles = $cpt->cpmLifestyles;
+//dd($cptLifestyles[0]->cpmInstructions);
         $treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
 
         // determine which sections to show
@@ -556,7 +557,9 @@ class PatientCareplanController extends Controller
             'messages',
             'showApprovalButton',
             'treating',
-            'cptProblems'
+
+            'cptProblems',
+            'cptLifestyles'
         ]));
     }
 
