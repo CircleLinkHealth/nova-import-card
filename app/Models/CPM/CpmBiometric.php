@@ -5,6 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CpmBiometric extends Model {
 
+	use Instructable;
+
 	protected $table = 'cpm_biometrics';
 
 	protected $guarded = [];

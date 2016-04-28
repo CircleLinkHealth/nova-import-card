@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmLifestyle;
 use App\Models\CPM\CpmMedicationGroup;
 use App\Models\CPM\CpmMisc;
@@ -18,6 +19,16 @@ class CarePlanTemplate extends Model {
      * CPM Entities
      *
      */
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmBiometrics()
+    {
+        return $this->belongsToMany(CpmBiometric::class, 'care_plan_templates_cpm_biometrics')
+            ->withPivot('ui_sort')
+            ->withTimestamps();
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
