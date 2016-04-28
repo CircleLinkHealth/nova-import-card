@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CpmBiometrics extends Model {
+class CpmBiometric extends Model {
 
-	//
+	protected $table = 'cpm_biometrics';
 
 }

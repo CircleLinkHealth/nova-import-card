@@ -6,7 +6,7 @@
  * Date: 4/27/16
  * Time: 5:16 PM
  */
-class CpmBiometrics
+class CpmBiometricsSeeder
 {
     public function run()
     {
