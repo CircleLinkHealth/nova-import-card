@@ -2,6 +2,7 @@
 
 use App\Models\CPM\CpmLifestyle;
 use App\Models\CPM\CpmMedicationGroup;
+use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +35,16 @@ class CarePlanTemplate extends Model {
     public function cpmMedicationGroups()
     {
         return $this->belongsToMany(CpmMedicationGroup::class, 'care_plan_templates_cpm_medication_groups')
+            ->withPivot('ui_sort')
+            ->withTimestamps();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmMiscs()
+    {
+        return $this->belongsToMany(CpmMisc::class, 'care_plan_templates_cpm_miscs')
             ->withPivot('ui_sort')
             ->withTimestamps();
     }

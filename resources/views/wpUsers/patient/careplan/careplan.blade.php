@@ -53,12 +53,28 @@ $new_user = false;
 
 
                     {{-- Call CPM Partials Here --}}
+                    {{--Problems--}}
                         @if(!empty($cptProblems))
-                            @include('partials.cpm-models.problems')
+                            <?php $itemType = 'problem'; ?>
+                            <?php $title = 'Diagnosis / Problems to Monitor'; ?>
+                            <?php $cpmCollection = $cptProblems; ?>
+                            @include('partials.cpm-models.section')
                         @endif
 
+                    {{--Lifestyles--}}
                         @if(!empty($cptLifestyles))
-                            @include('partials.cpm-models.lifestyles')
+                            <?php $itemType = 'lifestyle'; ?>
+                            <?php $title = 'Lifestyle to Monitor'; ?>
+                            <?php $cpmCollection = $cptLifestyles; ?>
+                            @include('partials.cpm-models.section')
+                        @endif
+
+                    {{--Medications--}}
+                        @if(!empty($cptMedicationGroups))
+                            <?php $itemType = 'medication-group'; ?>
+                            <?php $title = 'Medications to Monitor'; ?>
+                            <?php $cpmCollection = $cptMedicationGroups; ?>
+                            @include('partials.cpm-models.section')
                         @endif
 
                         {{--@if($carePlan->careSections)--}}
