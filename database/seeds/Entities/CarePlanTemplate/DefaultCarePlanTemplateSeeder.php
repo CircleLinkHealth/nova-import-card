@@ -15,6 +15,18 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
             'type' => \App\CarePlanTemplate::CLH_DEFAULT,
         ]);
 
+        /*
+         * Relate all CpmBiometrics and get their ui_sort from CarePlanItem
+         */
+        $cpmBiometrics = \App\Models\CPM\CpmBiometric::all();
+        $cpt->cpmBiometrics()
+            ->sync($cpmBiometrics);
+
+        foreach ($cpmBiometrics as $biometric) {
+            $cpi = \App\CarePlanItem::whereItemId($biometric->care_item_id)->first();
+            $cpt->cpmBiometrics()
+                ->updateExistingPivot($biometric->id, ['ui_sort' => $cpi->ui_sort]);
+        }
 
         /*
          * Relate all CpmLifestyles and get their ui_sort from CarePlanItem
