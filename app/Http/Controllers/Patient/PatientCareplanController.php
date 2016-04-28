@@ -458,6 +458,8 @@ class PatientCareplanController extends Controller
                     foreach ($_POST['ctmCountArr'] as $ctmCount) {
                         if ($params->get('ctm' . $ctmCount . 'provider') && !empty($params->get('ctm' . $ctmCount . 'provider'))) {
                             $careTeamUserIds[] = $params->get('ctm' . $ctmCount . 'provider');
+                        } else {
+                            return redirect()->back()->withErrors(['No provider selected for member.']);
                         }
                     }
                     $patient->careTeam = $careTeamUserIds;
