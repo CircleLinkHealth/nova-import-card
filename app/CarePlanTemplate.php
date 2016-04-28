@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CarePlanTemplate extends Model {
 
+    const CLH_DEFAULT = 'CLH Default';
+
     protected $fillable = ['program_id', 'display_name'];
 
     /*
@@ -21,7 +23,9 @@ class CarePlanTemplate extends Model {
      */
     public function cpmLifestyles()
     {
-        return $this->belongsToMany(CpmLifestyle::class, 'care_plan_templates_cpm_lifestyles');
+        return $this->belongsToMany(CpmLifestyle::class, 'care_plan_templates_cpm_lifestyles')
+            ->withPivot('ui_sort')
+            ->withTimestamps();
     }
 
     /**
@@ -29,7 +33,9 @@ class CarePlanTemplate extends Model {
      */
     public function cpmMedicationGroups()
     {
-        return $this->belongsToMany(CpmMedicationGroup::class, 'care_plan_templates_cpm_medication_groups');
+        return $this->belongsToMany(CpmMedicationGroup::class, 'care_plan_templates_cpm_medication_groups')
+            ->withPivot('ui_sort')
+            ->withTimestamps();
     }
 
     /**
@@ -37,7 +43,9 @@ class CarePlanTemplate extends Model {
      */
     public function cpmProblems()
     {
-        return $this->belongsToMany(CpmProblem::class, 'care_plan_templates_cpm_problems');
+        return $this->belongsToMany(CpmProblem::class, 'care_plan_templates_cpm_problems')
+            ->withPivot('ui_sort')
+            ->withTimestamps();
     }
 
     /**
@@ -45,7 +53,9 @@ class CarePlanTemplate extends Model {
      */
     public function cpmSymptoms()
     {
-        return $this->belongsToMany(CpmSymptom::class, 'care_plan_templates_cpm_symptoms');
+        return $this->belongsToMany(CpmSymptom::class, 'care_plan_templates_cpm_symptoms')
+            ->withPivot('ui_sort')
+            ->withTimestamps();
     }
 
     /**
