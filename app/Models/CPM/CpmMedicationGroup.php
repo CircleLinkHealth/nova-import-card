@@ -6,6 +6,8 @@ use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class CpmMedicationGroup extends Model {
+    
+    use Instructable;
 
     protected $guarded = [];
 

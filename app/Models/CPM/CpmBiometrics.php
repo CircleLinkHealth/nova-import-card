@@ -4,6 +4,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CpmBiometrics extends Model {
 
-	//
+	use Instructable;
+
+    protected $guarded = [];
 
 }
