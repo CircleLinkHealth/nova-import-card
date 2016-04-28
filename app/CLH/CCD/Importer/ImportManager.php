@@ -91,7 +91,9 @@ class ImportManager
         ]);
 
         //patient info
-        $patientInfo = PatientInfo::create([
+        $patientInfo = PatientInfo::updateOrCreate([
+            'user_id' => $this->user->ID,
+        ], [
             'birth_date' => $this->demographicsImport->dob,
             'careplan_status' => 'draft',
             'ccm_status' => 'enrolled',
@@ -106,6 +108,10 @@ class ImportManager
             'preferred_contact_timezone' => $this->demographicsImport->preferred_contact_timezone,
             'user_id' => $this->user->ID,
         ]);
+
+        if (empty($patientInfo)) {
+            throw new \Exception('Unable to create patient info');
+        }
 
         if (!empty($homeNumber = $this->demographicsImport->home_phone)) {
             $homePhone = PhoneNumber::create([
