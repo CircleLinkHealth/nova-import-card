@@ -49,11 +49,10 @@ $new_user = false;
                     @if($carePlan)
                         <input type=hidden name=careplan_id value="{{ $carePlan->id }}">
 
+                        {{-- Call CPM Partials Here --}}
 
-
-
-                    {{-- Call CPM Partials Here --}}
-                    {{--Problems--}}
+                        {{--Page 1--}}
+                        {{--Problems--}}
                         @if(!empty($cptProblems))
                             <?php $itemType = 'problem'; ?>
                             <?php $title = 'Diagnosis / Problems to Monitor'; ?>
@@ -61,7 +60,7 @@ $new_user = false;
                             @include('partials.cpm-models.section')
                         @endif
 
-                    {{--Lifestyles--}}
+                        {{--Lifestyles--}}
                         @if(!empty($cptLifestyles))
                             <?php $itemType = 'lifestyle'; ?>
                             <?php $title = 'Lifestyle to Monitor'; ?>
@@ -69,7 +68,7 @@ $new_user = false;
                             @include('partials.cpm-models.section')
                         @endif
 
-                    {{--Medications--}}
+                        {{--Medications--}}
                         @if(!empty($cptMedicationGroups))
                             <?php $itemType = 'medication-group'; ?>
                             <?php $title = 'Medications to Monitor'; ?>
@@ -77,16 +76,23 @@ $new_user = false;
                             @include('partials.cpm-models.section')
                         @endif
 
-                        {{--@if($carePlan->careSections)--}}
-                        {{--@foreach($careSectionNames as $careSectionName)--}}
-                        {{--@foreach($carePlan->careSections as $careSection)--}}
-                        {{--@if($careSectionName == $careSection->name)--}}
-                        {{--@include('partials.carePlans.section')--}}
-                        {{--@endif--}}
-                        {{--@endforeach--}}
-                        {{--@endforeach--}}
-                        {{--@endif--}}
 
+                        {{--Page 3--}}
+                        {{--Symptoms--}}
+                        @if(!empty($cptSymptoms))
+                            <?php $itemType = 'symptom'; ?>
+                            <?php $title = 'Symptoms to Monitor'; ?>
+                            <?php $cpmCollection = $cptSymptoms; ?>
+                            @include('partials.cpm-models.section')
+                        @endif
+
+                        {{--Miscellaneous--}}
+                        @if(!empty($cptMiscs))
+                            <?php $itemType = 'misc'; ?>
+                            <?php $title = 'Additional Information'; ?>
+                            <?php $cpmCollection = $cptMiscs; ?>
+                            @include('partials.cpm-models.section')
+                        @endif
                     @else
                         <div class="row" style="margin:60px 0px;">
                             <div class="col-lg-8 col-lg-offset-2 text-center">

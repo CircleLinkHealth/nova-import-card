@@ -8,6 +8,15 @@ class CpmMisc extends Model {
     
     use Instructable;
 
+    const ALLERGIES = 'Allergies';
+    const APPOINTMENTS = 'Appointments';
+    const MEDICATION_LIST = 'Medication List';
+    const OLD_MEDS_LIST = 'Old Meds List';
+    const OTHER = 'Other';
+    const OTHER_CONDITIONS = 'Other Conditions';
+    const SOCIAL_SERVICES = 'Social Services';
+    const TRACK_CARE_TRANSITIONS = 'Track Care Transitions';
+
     protected $guarded = [];
 
     /**

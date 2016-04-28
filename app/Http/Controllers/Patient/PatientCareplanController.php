@@ -489,6 +489,8 @@ class PatientCareplanController extends Controller
     {
         $messages = \Session::get('messages');
 
+        $viewVars = [];
+
         if (empty($patientId)) return response("User not found", 401);
 
         $patient = User::find($patientId);
@@ -500,36 +502,30 @@ class PatientCareplanController extends Controller
             $cpt = $carePlanService->carePlanFirstPage($carePlan);
 
             $cptProblems = $cpt->cpmProblems;
-
             $cptLifestyles = $cpt->cpmLifestyles;
-
             $cptMedicationGroups = $cpt->cpmMedicationGroups;
 
-            return view('wpUsers.patient.careplan.careplan', compact([
-                'page',
-                'patient',
-                'editMode',
-                'carePlan',
-                'messages',
-                'showApprovalButton',
-                'treating',
-
+            $viewVars = [
                 'cptProblems',
                 'cptLifestyles',
                 'cptMedicationGroups',
-            ]));
-
+            ];
         } else if ($page == 2) {
 //            $careSectionNames = array(
 //                'biometrics-to-monitor',
 //                'transitional-care-management',
 //            );
         } else if ($page == 3) {
-//            $careSectionNames = array(
-//                'symptoms-to-monitor',
-//                'additional-information',
-//                //'misc',
-//            );
+            $cpt = $carePlanService->carePlanThirdPage($carePlan);
+
+            $cptSymptoms = $cpt->cpmSymptoms;
+            $cptMiscs = $cpt->cpmMiscs;
+
+            $viewVars = [
+                'cptSymptoms',
+                'cptMiscs',
+            ];
+
         }
         $editMode = false;
 
@@ -542,6 +538,20 @@ class PatientCareplanController extends Controller
             $showApprovalButton = true;
         }
 
+        $defaultViewVars = [
+            'page',
+            'patient',
+            'editMode',
+            'carePlan',
+            'messages',
+            'showApprovalButton',
+            'treating',
+        ];
+
+//        dd(array_merge($defaultViewVars, $viewVars));
+//        dd(compact(array_merge($defaultViewVars, $viewVars)));
+
+        return view('wpUsers.patient.careplan.careplan', compact(array_merge($defaultViewVars, $viewVars)));
 
     }
 

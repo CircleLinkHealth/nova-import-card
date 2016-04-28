@@ -62,5 +62,17 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
             $cpi = \App\CarePlanItem::whereItemId($problem->care_item_id)->first();
             $cpt->cpmProblems()->updateExistingPivot($problem->id, ['ui_sort' => $cpi->ui_sort]);
         }
+
+
+        /*
+         * Relate all CpmSymptoms and get their ui_sort from CarePlanItem
+         */
+        $cpmSymptoms = \App\Models\CPM\CpmSymptom::all();
+        $cpt->cpmSymptoms()->sync($cpmSymptoms);
+
+        foreach ($cpmSymptoms as $problem) {
+            $cpi = \App\CarePlanItem::whereItemId($problem->care_item_id)->first();
+            $cpt->cpmSymptoms()->updateExistingPivot($problem->id, ['ui_sort' => $cpi->ui_sort]);
+        }
     }
 }
