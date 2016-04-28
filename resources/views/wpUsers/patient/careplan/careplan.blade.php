@@ -77,6 +77,24 @@ $new_user = false;
                         @endif
 
 
+                        {{--Page 2--}}
+                        {{--Symptoms--}}
+                        @if(!empty($cptBiometrics))
+                            <?php $itemType = 'biometric'; ?>
+                            <?php $title = 'Biometrics to Monitor'; ?>
+                            <?php $cpmCollection = $cptBiometrics; ?>
+                            @include('partials.cpm-models.section')
+                        @endif
+
+                        {{--Miscellaneous--}}
+                        @if(!empty($cptTransitionalCareManagement))
+                            <?php $itemType = 'transitional-care'; ?>
+                            <?php $title = 'Transitional Care Management'; ?>
+                            <?php $cpmCollection = $cptTransitionalCareManagement; ?>
+                            @include('partials.cpm-models.section')
+                        @endif
+
+
                         {{--Page 3--}}
                         {{--Symptoms--}}
                         @if(!empty($cptSymptoms))
@@ -87,10 +105,10 @@ $new_user = false;
                         @endif
 
                         {{--Miscellaneous--}}
-                        @if(!empty($cptMiscs))
-                            <?php $itemType = 'misc'; ?>
+                        @if(!empty($cptAdditionalInfo))
+                            <?php $itemType = 'additional-info'; ?>
                             <?php $title = 'Additional Information'; ?>
-                            <?php $cpmCollection = $cptMiscs; ?>
+                            <?php $cpmCollection = $cptAdditionalInfo; ?>
                             @include('partials.cpm-models.section')
                         @endif
                     @else

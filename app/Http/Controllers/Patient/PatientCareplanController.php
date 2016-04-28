@@ -2,6 +2,7 @@
 
 use App\CareItem;
 use App\CarePlanTemplate;
+use App\Models\CPM\CpmMisc;
 use App\PatientCarePlan;
 use App\Services\CPM\CarePlanViewService;
 use App\Services\CPM\UserService;
@@ -498,34 +499,50 @@ class PatientCareplanController extends Controller
         $treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
 
         // determine which sections to show
-        if ($page == 1) {
+        if ($page == 1)
+        {
             $cpt = $carePlanService->carePlanFirstPage($carePlan);
 
-            $cptProblems = $cpt->cpmProblems;
+            $cptProblems = array_merge(
+                $cpt->cpmProblems->all(),
+                $cpt->cpmMiscs()->where('name', CpmMisc::OTHER_CONDITIONS)->get()->all()
+            );
+
             $cptLifestyles = $cpt->cpmLifestyles;
-            $cptMedicationGroups = $cpt->cpmMedicationGroups;
+            $cptMedicationGroups = array_merge(
+                $cpt->cpmMedicationGroups->all(),
+                $cpt->cpmMiscs()->where('name', CpmMisc::MEDICATION_LIST)->get()->all()
+            );
 
             $viewVars = [
                 'cptProblems',
                 'cptLifestyles',
                 'cptMedicationGroups',
             ];
-        } else if ($page == 2) {
-//            $careSectionNames = array(
-//                'biometrics-to-monitor',
-//                'transitional-care-management',
-//            );
-        } else if ($page == 3) {
+        }
+        else if ($page == 2)
+        {
+            $cpt = $carePlanService->carePlanSecondPage($carePlan);
+
+            $cptBiometrics = $cpt->cpmBiometrics;
+            $cptTransitionalCareManagement = $cpt->cpmMiscs;
+
+            $viewVars = [
+                'cptBiometrics',
+                'cptTransitionalCareManagement',
+            ];
+        }
+        else if ($page == 3)
+        {
             $cpt = $carePlanService->carePlanThirdPage($carePlan);
 
             $cptSymptoms = $cpt->cpmSymptoms;
-            $cptMiscs = $cpt->cpmMiscs;
+            $cptAdditionalInfo = $cpt->cpmMiscs;
 
             $viewVars = [
                 'cptSymptoms',
-                'cptMiscs',
+                'cptAdditionalInfo',
             ];
-
         }
         $editMode = false;
 

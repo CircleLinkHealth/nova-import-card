@@ -24,20 +24,45 @@ class CarePlanViewService
         return CarePlanTemplate::find($cptId)
             ->load([
                 'cpmLifestyles' => function ($query) {
-                    $query->with('cpmInstructions');
-                    $query->orderBy('pivot_ui_sort');
+                    $query->with('cpmInstructions')
+                        ->orderBy('pivot_ui_sort');
                 },
                 'cpmMedicationGroups' => function ($query) {
-                    $query->with('cpmInstructions');
-                    $query->orderBy('pivot_ui_sort');
+                    $query->with('cpmInstructions')
+                        ->orderBy('pivot_ui_sort');
                 },
                 'cpmProblems' => function ($query) {
-                    $query->with('cpmInstructions');
-                    $query->orderBy('pivot_ui_sort');
-                },
+                    $query->with('cpmInstructions')
+                        ->orderBy('pivot_ui_sort');
+                }
             ]);
     }
 
+
+
+    public function carePlanSecondPage(CarePlan $carePlan)
+    {
+        if (empty($carePlan)) return false;
+
+        $cptId = $carePlan->care_plan_template_id;
+
+        return CarePlanTemplate::find($cptId)
+            ->load([
+                'cpmBiometrics' => function ($query) {
+                    $query->with('cpmInstructions')
+                        ->orderBy('pivot_ui_sort');
+                },
+                'cpmMiscs' => function ($query) {
+                    $query->with('cpmInstructions')
+                        ->whereIn('name', [
+                            CpmMisc::TRACK_CARE_TRANSITIONS,
+                        ])
+                        ->orderBy('pivot_ui_sort');
+                },
+            ]);
+    }
+    
+    
 
     public function carePlanThirdPage(CarePlan $carePlan)
     {
@@ -48,8 +73,8 @@ class CarePlanViewService
         return CarePlanTemplate::find($cptId)
             ->load([
                 'cpmSymptoms' => function ($query) {
-                    $query->with('cpmInstructions');
-                    $query->orderBy('pivot_ui_sort');
+                    $query->with('cpmInstructions')
+                        ->orderBy('pivot_ui_sort');
                 },
                 'cpmMiscs' => function ($query) {
                     $query->with('cpmInstructions')
