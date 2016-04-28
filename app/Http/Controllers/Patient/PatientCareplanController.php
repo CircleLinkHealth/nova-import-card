@@ -3,6 +3,8 @@
 use App\CareItem;
 use App\CarePlanTemplate;
 use App\PatientCarePlan;
+use App\Services\CPM\CarePlanViewService;
+use App\Services\CPM\UserService;
 use App\Services\ReportsService;
 use App\Activity;
 use App\CareSection;
@@ -479,63 +481,55 @@ class PatientCareplanController extends Controller
      * @param  int $patientId
      * @return Response
      */
-    public function showPatientCareplan(Request $request, $patientId = false, $page)
+    public function showPatientCareplan(Request $request,
+                                        $patientId = false,
+                                        $page,
+                                        CarePlanViewService $carePlanService,
+                                        UserService $userService)
     {
         $messages = \Session::get('messages');
 
-        $user = false;
-        if ($patientId) {
-            $user = User::find($patientId);
-            if (!$user) {
-                return response("User not found", 401);
-            }
-        }
-        $patient = $user;
+        if (empty($patientId)) return response("User not found", 401);
 
-        //getUserCarePlanOrClhDefault
-        $carePlan = $user->patientCarePlans()->firstOrCreate([
-            'patient_id' => $user->ID,
-            'care_plan_template_id' => CarePlanTemplate::whereType(CarePlanTemplate::CLH_DEFAULT)->first()->id
-        ]);
-
-        //getCarePlanTemplateCpmDefaultsWithInstructions
-        $cptId = $carePlan->care_plan_template_id;
-        $cpt = CarePlanTemplate::find($cptId)
-            ->load([
-                'cpmLifestyles' => function ($query) {
-                    $query->with('cpmInstructions');
-                    $query->orderBy('pivot_ui_sort');
-                },
-                'cpmProblems' => function ($query) {
-                    $query->with('cpmInstructions');
-                    $query->orderBy('pivot_ui_sort');
-                },
-            ]);
-
-        $cptProblems = $cpt->cpmProblems;
-
-        $cptLifestyles = $cpt->cpmLifestyles;
-//dd($cptLifestyles[0]->cpmInstructions);
+        $patient = User::find($patientId);
+        $carePlan = $userService->firstOrDefaultCarePlan($patient);
         $treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
 
         // determine which sections to show
         if ($page == 1) {
-            $careSectionNames = array(
-                'diagnosis-problems-to-monitor',
-                'lifestyle-to-monitor',
-                'medications-to-monitor',
-            );
+            $cpt = $carePlanService->carePlanFirstPage($carePlan);
+
+            $cptProblems = $cpt->cpmProblems;
+
+            $cptLifestyles = $cpt->cpmLifestyles;
+
+            $cptMedicationGroups = $cpt->cpmMedicationGroups;
+
+            return view('wpUsers.patient.careplan.careplan', compact([
+                'page',
+                'patient',
+                'editMode',
+                'carePlan',
+                'messages',
+                'showApprovalButton',
+                'treating',
+
+                'cptProblems',
+                'cptLifestyles',
+                'cptMedicationGroups',
+            ]));
+
         } else if ($page == 2) {
-            $careSectionNames = array(
-                'biometrics-to-monitor',
-                'transitional-care-management',
-            );
+//            $careSectionNames = array(
+//                'biometrics-to-monitor',
+//                'transitional-care-management',
+//            );
         } else if ($page == 3) {
-            $careSectionNames = array(
-                'symptoms-to-monitor',
-                'additional-information',
-                //'misc',
-            );
+//            $careSectionNames = array(
+//                'symptoms-to-monitor',
+//                'additional-information',
+//                //'misc',
+//            );
         }
         $editMode = false;
 
@@ -548,19 +542,7 @@ class PatientCareplanController extends Controller
             $showApprovalButton = true;
         }
 
-        return view('wpUsers.patient.careplan.careplan', compact([
-            'page',
-            'careSectionNames',
-            'patient',
-            'editMode',
-            'carePlan',
-            'messages',
-            'showApprovalButton',
-            'treating',
 
-            'cptProblems',
-            'cptLifestyles'
-        ]));
     }
 
     /**
