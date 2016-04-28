@@ -119,7 +119,7 @@ class ReportsService
         $patient = User::find($carePlan->patient_id);
         $patientProblems = $patient->cpmProblems()->get();
 
-        $intersection = $patientProblems->intersect($cptProblems);
+        $intersection = $patientProblems->intersect($cptProblems)->all();
 
         return $intersection;
 //        $itemsToMonitor = array();
