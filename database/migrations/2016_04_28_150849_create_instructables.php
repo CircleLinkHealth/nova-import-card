@@ -15,7 +15,7 @@ class CreateInstructables extends Migration {
 		Schema::create('instructables', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->unsignedInteger('instruction_id');
+			$table->unsignedInteger('cpm_instruction_id');
 			$table->unsignedInteger('instructable_id');
 			$table->string('instructable_type');
 			$table->timestamps();
