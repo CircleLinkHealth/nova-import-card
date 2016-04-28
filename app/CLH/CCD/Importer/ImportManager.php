@@ -5,12 +5,7 @@ namespace App\CLH\CCD\Importer;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
-use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfig as UserConfigStorage;
-use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserMeta as UserMetaStorage;
-use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfig as UserConfigParser;
-use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMeta as UserMetaParser;
-use App\CLH\DataTemplates\UserConfigTemplate;
-use App\CLH\DataTemplates\UserMetaTemplate;
+use App\Models\CPM\CpmProblem;
 use App\PatientCareTeamMember;
 use App\PatientInfo;
 use App\PhoneNumber;

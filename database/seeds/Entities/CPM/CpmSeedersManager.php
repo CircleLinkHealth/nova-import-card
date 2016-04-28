@@ -23,6 +23,17 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
 
         $this->call(CpmSymptomsSeeder::class);
         $this->command->info(CpmSymptomsSeeder::class . ' ran.');
+
+        $this->call(CpmBiometricsSeeder::class);
+        $this->command->info(CpmBiometricsSeeder::class . ' ran.');
+        
+        $this->call(CpmMiscSeeder::class);
+        $this->command->info(CpmMiscSeeder::class . ' ran.');
+
+        $this->call(DefaultCarePlanTemplateSeeder::class);
+        $this->command->info(DefaultCarePlanTemplateSeeder::class . ' ran.');
+
+        /********/
         
         $this->call(CcdImporterSeedersManager::class);
         $this->command->info(CcdImporterSeedersManager::class . ' ran.');
@@ -40,6 +51,8 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
             $careItem->type_id = $cpmProblem->id;
             $careItem->save();
         }
+
+
 
     }
 
