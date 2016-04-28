@@ -7,6 +7,8 @@ use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class CpmSymptom extends Model {
+    
+    use Instructable;
 
     protected $guarded = [];
 
