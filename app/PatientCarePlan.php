@@ -4,6 +4,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PatientCarePlan extends Model {
 
+    protected $guarded = [];
+
     public function careplantemplate()
     {
         return $this->belongsTo('App\CarePlanTemplate');

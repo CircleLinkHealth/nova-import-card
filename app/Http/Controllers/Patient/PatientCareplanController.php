@@ -1,6 +1,8 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\CareItem;
+use App\CarePlanTemplate;
+use App\PatientCarePlan;
 use App\Services\ReportsService;
 use App\Activity;
 use App\CareSection;
@@ -489,25 +491,31 @@ class PatientCareplanController extends Controller
             }
         }
         $patient = $user;
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
+
+        $carePlan = $user->patientCarePlans()->first();
 
         if (!$carePlan) {
-            $userRepo = new UserRepository();
-            $userRepo->createDefaultCarePlan($user, array());
-            $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-                ->first();
+            $carePlan = PatientCarePlan::create([
+                'patient_id' => $user->ID,
+                'care_plan_template_id' => CarePlanTemplate::whereType(CarePlanTemplate::CLH_DEFAULT)->first()->id
+            ]);
+
+            $user->patientCarePlans()
+                ->save($carePlan);
         }
 
-        $treating = array();
-        if ($carePlan) {
-            $carePlan->build($user->ID);
+        $cptId = $carePlan->care_plan_template_id;
+        $cpt = CarePlanTemplate::find($cptId)
+            ->load([
+                'cpmProblems' => function ($query) {
+                    $query->with('cpmInstructions');
+                    $query->orderBy('pivot_ui_sort');
+                }
+            ]);
 
-            $cp = $user->patientCarePlans()->first();
+        $cptProblems = $cpt->cpmProblems;
 
-            //problems for userheader
-            $treating = (new ReportsService())->getProblemsToMonitorWithDetails($cp);
-        }
+        $treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
 
         // determine which sections to show
         if ($page == 1) {
@@ -547,7 +555,8 @@ class PatientCareplanController extends Controller
             'carePlan',
             'messages',
             'showApprovalButton',
-            'treating'
+            'treating',
+            'cptProblems'
         ]));
     }
 
