@@ -1,6 +1,7 @@
 <?php namespace App\Services;
 
 use App\CarePlan;
+use App\CarePlanTemplate;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesQuestions;
@@ -8,6 +9,7 @@ use App\CPRulesUCP;
 use App\ForeignId;
 use App\Location;
 use App\Observation;
+use App\PatientCarePlan;
 use App\PatientReports;
 use App\Services\CareplanUIService;
 use App\User;
@@ -104,24 +106,38 @@ class ReportsService
         return $itemsToMonitor;
     }
 
-    public function getProblemsToMonitorWithDetails(CarePlan $carePlan)
+    public function getProblemsToMonitorWithDetails(PatientCarePlan $carePlan)
     {
-        $itemsToMonitor = array();
-        if ($carePlan) {
-            foreach ($carePlan->careSections as $section) {
-                if ($section->name == 'diagnosis-problems-to-monitor') {
-                    foreach ($section->carePlanItems as $item) {
-                        if ($item->meta_value == 'Active') {
-                            foreach ($item->children as $child) {
-                                $details = ($child->meta_value == '') ? 'No instructions at this time' : $child->meta_value;
-                                $itemsToMonitor[$item->careItem->display_name] = $details;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $itemsToMonitor;
+        if (!$carePlan) return false;
+
+        $cptId = $carePlan->care_plan_template_id;
+
+        $cpt = CarePlanTemplate::find($cptId);
+
+        $cptProblems = $cpt->cpmProblems()->get();
+
+        $patient = User::find($carePlan->patient_id);
+        $patientProblems = $patient->cpmProblems()->get();
+
+        $intersection = $patientProblems->intersect($cptProblems);
+
+        return $intersection;
+//        $itemsToMonitor = array();
+//        if ($carePlan) {
+//            foreach ($carePlan->careSections as $section) {
+//                if ($section->name == 'diagnosis-problems-to-monitor') {
+//                    foreach ($section->carePlanItems as $item) {
+//                        if ($item->meta_value == 'Active') {
+//                            foreach ($item->children as $child) {
+//                                $details = ($child->meta_value == '') ? 'No instructions at this time' : $child->meta_value;
+//                                $itemsToMonitor[$item->careItem->display_name] = $details;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return $itemsToMonitor;
     }
 
     public function getSymptomsToMonitor(CarePlan $carePlan)
@@ -167,7 +183,7 @@ class ReportsService
                     foreach ($section->carePlanItems as $item) {
                         if ($item->meta_value == 'Active') {
                             //if($item->careItem->display_name != "Other Meds"){
-                                $medications[] = $item->careItem->display_name;
+                            $medications[] = $item->careItem->display_name;
                             //}
                         }
                     }
@@ -294,7 +310,7 @@ class ReportsService
     public
     function getTargetValueForBiometric($carePlan = false, $biometric, $user)
     {
-        if(!$carePlan) {
+        if (!$carePlan) {
             $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
                 ->first();
             $carePlan->build($user->ID);
@@ -411,7 +427,7 @@ class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
-            }else {
+            } else {
                 $progression = '';
             }
         } else if ($weeklyReading1 <= 100) {
@@ -421,7 +437,7 @@ class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
-            }else {
+            } else {
                 $progression = '';
             }
         }
@@ -435,6 +451,7 @@ class ReportsService
 
         return $changes_array;
     }
+
     public function analyzeBloodSugar($weeklyReading1, $weeklyReading2)
     {
         $change = $weeklyReading1 - $weeklyReading2;
@@ -460,7 +477,7 @@ class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
-            }else {
+            } else {
                 $progression = '';
             }
         } else if ($weeklyReading1 <= 70 && $weeklyReading1 > 60) {
@@ -470,7 +487,7 @@ class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
-            }else {
+            } else {
                 $progression = '';
             }
         } else if ($weeklyReading1 <= 60) {
@@ -494,14 +511,15 @@ class ReportsService
 
         return $changes_array;
     }
+
     public function analyzeWeight($weeklyReading1, $weeklyReading2)
     {
         $change = $weeklyReading1 - $weeklyReading2;
-        if($change > 0){
+        if ($change > 0) {
             $color = 'grey';
             $progression = 'up';
             $copy = 'Increased';
-        } else if ($change < 0){
+        } else if ($change < 0) {
             $color = 'grey';
             $progression = 'down';
             $copy = 'Decreased';
@@ -520,6 +538,7 @@ class ReportsService
 
         return $changes_array;
     }
+
     public function biometricsIndicators($weeklyReading1, $weeklyReading2, $biometric, $target)
     {//debug($biometric);
 
@@ -529,7 +548,7 @@ class ReportsService
         } else if ($biometric == 'Blood_Pressure') {
 //            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
             return $this->analyzeBloodPressure($weeklyReading1, $weeklyReading2);
-        } else if($biometric == 'Weight'){
+        } else if ($biometric == 'Weight') {
 //            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
             return $this->analyzeWeight($weeklyReading1, $weeklyReading2);
         }
@@ -682,6 +701,7 @@ class ReportsService
 
         return $progress;
     }
+
     public function careplan($id)
     {
 
@@ -892,7 +912,7 @@ class ReportsService
         $careplanReport = array();
 
         foreach ($patients as $user) {
-            if (! is_object($user)) {
+            if (!is_object($user)) {
                 $user = User::find($user);
             }
             $careplanReport[$user->ID]['symptoms'] = array();
@@ -984,28 +1004,29 @@ class ReportsService
         return $careplanReport;
     }
 
-    public function createPatientReport($user, $provider_id){
+    public function createPatientReport($user, $provider_id)
+    {
 
-        $careplan = $this->carePlanGenerator( [$user] );
+        $careplan = $this->carePlanGenerator([$user]);
 
-        $pdf = App::make( 'snappy.pdf.wrapper' );
-        $pdf->loadView( 'wpUsers.patient.careplan.print', [
+        $pdf = App::make('snappy.pdf.wrapper');
+        $pdf->loadView('wpUsers.patient.careplan.print', [
             'patient' => $user,
-            'treating' => $careplan[ $user->ID ][ 'treating' ],
-            'biometrics' => $careplan[ $user->ID ][ 'bio_data' ],
-            'symptoms' => $careplan[ $user->ID ][ 'symptoms' ],
-            'lifestyle' => $careplan[ $user->ID ][ 'lifestyle' ],
-            'medications_monitor' => $careplan[ $user->ID ][ 'medications' ],
-            'taking_medications' => $careplan[ $user->ID ][ 'taking_meds' ],
-            'allergies' => $careplan[ $user->ID ][ 'allergies' ],
-            'social' => $careplan[ $user->ID ][ 'social' ],
-            'appointments' => $careplan[ $user->ID ][ 'appointments' ],
-            'other' => $careplan[ $user->ID ][ 'other' ],
+            'treating' => $careplan[$user->ID]['treating'],
+            'biometrics' => $careplan[$user->ID]['bio_data'],
+            'symptoms' => $careplan[$user->ID]['symptoms'],
+            'lifestyle' => $careplan[$user->ID]['lifestyle'],
+            'medications_monitor' => $careplan[$user->ID]['medications'],
+            'taking_medications' => $careplan[$user->ID]['taking_meds'],
+            'allergies' => $careplan[$user->ID]['allergies'],
+            'social' => $careplan[$user->ID]['social'],
+            'appointments' => $careplan[$user->ID]['appointments'],
+            'other' => $careplan[$user->ID]['other'],
             'isPdf' => true,
-        ] );
+        ]);
 
-        $file_name  = base_path('storage/pdfs/careplans/' . str_random(40) . '.pdf');
-        $pdf->save($file_name,true);
+        $file_name = base_path('storage/pdfs/careplans/' . str_random(40) . '.pdf');
+        $pdf->save($file_name, true);
         $base_64_report = base64_encode(file_get_contents($file_name));
 
         try {

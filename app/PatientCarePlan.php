@@ -11,9 +11,13 @@ class PatientCarePlan extends Model {
 
     public function patient()
     {
-        return $this->belongsTo('App\User','patient_id');
+        return $this->belongsTo(User::class,'patient_id');
     }
 
+    public function getCarePlanTemplateIdAttribute($value)
+    {
+        return $value;
+    }
     //To add functions to get user values
 
 }

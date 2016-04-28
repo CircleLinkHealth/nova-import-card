@@ -48,10 +48,10 @@
     @if(isset($treating))
         <div style="clear:both"></div>
         <ul class="person-conditions-list inline-block text-medium">
-            @foreach($treating as $key => $value)
+            @foreach($treating as $problem)
                 <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
                                                 checked="checked" disabled="disabled">
-                    <label for="condition27"><span> </span>{{$key}}</label>
+                    <label for="condition27"><span> </span>{{$problem->name}}</label>
                 </li>
             @endforeach
         </ul>

@@ -49,11 +49,11 @@ class PatientCareplanController extends Controller
         // get approvers before
         $approvers = null;
         $approverIds = array();
-        if($patients->count() > 0) {
+        if ($patients->count() > 0) {
             foreach ($patients as $patient) {
-                if ($patient->carePlanStatus  == 'provider_approved') {
+                if ($patient->carePlanStatus == 'provider_approved') {
                     $approverId = $patient->carePlanProviderApprover;
-                    if(!empty($approverId) && !in_array($approverId, $approverIds)) {
+                    if (!empty($approverId) && !in_array($approverId, $approverIds)) {
                         $approverIds[] = $approverId;
                     }
                 }
@@ -85,15 +85,15 @@ class PatientCareplanController extends Controller
                 $approverName = 'NA';
                 $tooltip = 'NA';
 
-                if ($patient->carePlanStatus  == 'provider_approved') {
+                if ($patient->carePlanStatus == 'provider_approved') {
                     $approverId = $patient->carePlanProviderApprover;
-                    if($approverId == 5) {
+                    if ($approverId == 5) {
                         //dd($approvers->where('ID', $approverId)->first());
                     }
                     $approver = $approvers->where('ID', $approverId)->first();
-                    if(!$approver) {
-                        if(!empty($approverId)) {
-                            if(!isset($foundUsers[$approverId])) {
+                    if (!$approver) {
+                        if (!empty($approverId)) {
+                            if (!isset($foundUsers[$approverId])) {
                                 $approver = User::find($approverId);
                                 $foundUsers[$approverId] = $approver;
                             } else {
@@ -101,7 +101,7 @@ class PatientCareplanController extends Controller
                             }
                         }
                     }
-                    if($approver) {
+                    if ($approver) {
                         $approverName = $approver->fullName;
                         $careplanStatus = 'Approved';
                         $careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
@@ -127,9 +127,9 @@ class PatientCareplanController extends Controller
                 $programName = '';
                 $bpName = '';
                 $bpID = $patient->billingProviderID;
-                if(!isset($foundPrograms[$patient->program_id])) {
+                if (!isset($foundPrograms[$patient->program_id])) {
                     $program = WpBlog::find($patient->program_id);
-                    if($program) {
+                    if ($program) {
                         $foundPrograms[$patient->program_id] = $program;
                         $programName = $program->display_name;
                     }
@@ -138,10 +138,10 @@ class PatientCareplanController extends Controller
                     $programName = $program->display_name;
                 }
 
-                if(!empty($bpID)) {
-                    if(!isset($foundUsers[$bpID])) {
+                if (!empty($bpID)) {
+                    if (!isset($foundUsers[$bpID])) {
                         $bpUser = User::find($bpID);
-                        if($bpUser) {
+                        if ($bpUser) {
                             $bpName = $bpUser->fullName;
                             $foundUsers[$bpID] = $bpUser;
                         }
@@ -359,20 +359,20 @@ class PatientCareplanController extends Controller
         //dd($userConfig);
 
         $careTeamUsers = array();
-        if(!empty($careTeamUserIds)) {
-            if((@unserialize($careTeamUserIds) !== false)) {
+        if (!empty($careTeamUserIds)) {
+            if ((@unserialize($careTeamUserIds) !== false)) {
                 $careTeamUserIds = unserialize($careTeamUserIds);
             }
             if (is_array($careTeamUserIds)) {
                 foreach ($careTeamUserIds as $id) {
                     $user = User::find($id);
-                    if($user) {
+                    if ($user) {
                         $careTeamUsers[] = User::find($id);
                     }
                 }
             }
             if (is_int($careTeamUserIds)) {
-                if($user) {
+                if ($user) {
                     $careTeamUsers[] = User::find($careTeamUserIds);
                 }
             }
@@ -503,8 +503,10 @@ class PatientCareplanController extends Controller
         if ($carePlan) {
             $carePlan->build($user->ID);
 
+            $cp = $user->patientCarePlans()->first();
+
             //problems for userheader
-            $treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
+            $treating = (new ReportsService())->getProblemsToMonitorWithDetails($cp);
         }
 
         // determine which sections to show
@@ -537,7 +539,16 @@ class PatientCareplanController extends Controller
             $showApprovalButton = true;
         }
 
-        return view('wpUsers.patient.careplan.careplan', compact(['page', 'careSectionNames', 'patient', 'editMode', 'carePlan', 'messages', 'showApprovalButton', 'treating']));
+        return view('wpUsers.patient.careplan.careplan', compact([
+            'page',
+            'careSectionNames',
+            'patient',
+            'editMode',
+            'carePlan',
+            'messages',
+            'showApprovalButton',
+            'treating'
+        ]));
     }
 
     /**
@@ -584,7 +595,7 @@ class PatientCareplanController extends Controller
 
                     $locationObj = Location::find($locationId);
 
-                    if(!empty($locationObj) && $locationObj->parent_id == Location::APRIMA_ID){
+                    if (!empty($locationObj) && $locationObj->parent_id == Location::APRIMA_ID) {
                         (new ReportsService())->createPatientReport($user, $user->getCarePlanProviderApproverAttribute());
                     }
 
@@ -625,24 +636,24 @@ class PatientCareplanController extends Controller
                 // update user item
                 if ($value) {
                     // process starting observations
-                    if($carePlanItem->ui_track_as_observation == 'starting') {
-                        if(empty($carePlanItem->careItem->parent_id)) {
+                    if ($carePlanItem->ui_track_as_observation == 'starting') {
+                        if (empty($carePlanItem->careItem->parent_id)) {
                             continue 1;
                         }
                         // get parent item
                         $parentCareItem = CareItem::where('id', '=', $carePlanItem->careItem->parent_id)->first();
-                        if(empty($parentCareItem)) {
+                        if (empty($parentCareItem)) {
                             continue 1;
                         }
 
                         // set vars
                         $obsMessageId = $parentCareItem->question->msg_id;
-                        $qsType  = $msgCPRules->getQsType($obsMessageId, $user->program_id);
+                        $qsType = $msgCPRules->getQsType($obsMessageId, $user->program_id);
                         $obsKey = $parentCareItem->obs_key;
 
                         // validate answer
-                        $answerResponse =  $msgCPRules->getValidAnswer($user->program_id, $qsType, $obsMessageId, $value, false);
-                        if(!$answerResponse) {
+                        $answerResponse = $msgCPRules->getValidAnswer($user->program_id, $qsType, $obsMessageId, $value, false);
+                        if (!$answerResponse) {
                             return redirect()->back()->withErrors(['You entered an invalid value for ' . $carePlanItem->careItem->display_name . ', please review and resubmit.'])->withInput();
                         }
 
