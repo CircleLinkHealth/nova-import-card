@@ -225,7 +225,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmProblems()
     {
-        return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users');
+        return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id');
     }
 
     /**
@@ -300,7 +300,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function patientCarePlans()
 	{
-		return $this->hasMany('App\PatientCarePlan', 'user_id', 'ID');
+		return $this->hasOne(PatientCarePlan::class, 'patient_id', 'ID');
 	}
 
 	public function patientCareTeamMembers()
