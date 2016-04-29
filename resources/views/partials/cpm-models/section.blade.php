@@ -12,12 +12,11 @@
             <h4>{{ $section->title }}</h4>
         @endif
 
-
         <div class="form-block form-block--left col-md-6">
+
+            <?php $half = round((count($section->items) + count($section->miscs)) / 2); ?>
+
             {{--Do this once for the items--}}
-
-            <?php $half = round(count($section->items) / 2); ?>
-
             @for($i = 0; $i < count($section->items); $i++)
                 @if($i == $half)
         </div>
@@ -34,9 +33,15 @@
             @endfor
 
             {{--And once for the miscs--}}
-            <?php $half = round(count($section->miscs) / 2); ?>
 
-            @for($i = 0; $i < count($section->miscs); $i++)
+            {{--
+            This is a hack to help name HTML attributes name and id.
+            We want to be able to map them to models.
+            So a CpmMisc showing up in problems, should be have name="miscs[]" and not name="problems[]"
+            --}}
+            <?php $section->name = 'miscs'; ?>
+
+        @for($i = 0; $i < count($section->miscs); $i++)
                 @if($i == $half)
         </div>
         <div class='form-block form-block--right col-md-6'>
