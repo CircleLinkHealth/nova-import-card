@@ -42,70 +42,72 @@
 </style>
 
 {{--@if (1 < 0)--}}
-    <div class="col-sm-12X cp-itemX" style="">
-        @if(isset($editMode) && $editMode != false)
-            @include('partials.carePlans.itemEdit')
-        @else
-            {{-- VIEW ONLY:
-            <strong>{{ $item->meta_key . ' = ' . $item->patient_id }}</strong><br /> --}}
-        @endif
+<div class="col-sm-12X cp-itemX" style="">
+    @if(isset($editMode) && $editMode != false)
+        @include('partials.carePlans.itemEdit')
+    @else
+        {{-- VIEW ONLY:
+        <strong>{{ $item->meta_key . ' = ' . $item->patient_id }}</strong><br /> --}}
+    @endif
 
-        {{-- show details button on right if present --}}
-        @if(isset($item->cpmInstructions[0]))
-            <?php
-            $buttonLabel = 'Instructions';
-            ?>
-        @endif
+    {{-- show details button on right if present --}}
+    @if(isset($item->cpmInstructions[0]))
+        <?php
+        $buttonLabel = 'Instructions';
+        ?>
+    @endif
 
-            <div class="form-group">
-            <div class="form-item col-sm-12">
-                <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
-                    <div class="radio-inline"><input id="carePlanItem-{{ $itemType }}-{{ $item->id }}"
-                                                     name="item|-{{ $itemType }}-{{ $item->id }}"
-                                                     value="Active" class="itemTrigger" data-toggle="collapse"
-                                                     data-target="#collapseItem-{{ $itemType }}-{{ $item->id }}"
-                                                     type="checkbox" {{ $item->patient_id == 'Active' ? 'checked=checked' : '' }}>
-                        <label for="carePlanItem-{{ $itemType }}-{{ $item->id }}">
-                            <span></span>{{ $item->name }}</label>
+    <div class="form-group">
+        <div class="form-item col-sm-12">
+            <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
+                <div class="radio-inline">
+                    <input id="carePlanItem-{{ $itemType }}-{{$i}}"
+                           name="{{ $itemType }}[]"
+                           value="{{ $item->id }}" class="itemTrigger" data-toggle="collapse"
+                           data-target="#collapseItem-{{ $itemType }}-{{$i}}"
+                           type="checkbox" {{ $item->patient_id == 'Active' ? 'checked=checked' : '' }}>
+                    <label for="carePlanItem-{{ $itemType }}-{{$i}}">
+                        <span></span>{{ $item->name }}</label>
+                </div>
+            </div>
+        </div>
+
+        @if (isset($buttonLabel))
+            <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
+                <button type="button"
+                        class="btn btn-default btn-xs btn-monitor collapse {{ $item->patient_id == 'Active' ? 'in' : '' }} text-right"
+                        id="collapseItem-{{ $itemType }}-{{$i}}" data-toggle="modal"
+                        data-target="#carePlanItem-{{ $itemType }}-{{$i}}Detail"
+                        style="margin-top:0px;    margin-bottom: 0px;">{{ $buttonLabel }}</button>
+
+                <!-- Modal -->
+                <div id="carePlanItem-{{ $itemType }}-{{$i}}Detail" class="modal fade text-left"
+                     role="dialog">
+                    <div class="modal-dialog modal-lg">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header" style="background:#50B2E2;">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title" style="color:#fff;">{{ $item->name }}
+                                    : {{ $buttonLabel }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <textarea id="item-{{ $itemType }}-{{$i}}-modal"
+                                          {{--For the time being we don't wanna post those--}}
+                                          {{--name="instructions-{{ $itemType }}[]"--}}
+                                          style="height: 400px;">{{ $item->cpmInstructions[0]->name }}</textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close
+                                </button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
-
-            @if (isset($buttonLabel))
-                <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
-                    <button type="button"
-                            class="btn btn-default btn-xs btn-monitor collapse {{ $item->patient_id == 'Active' ? 'in' : '' }} text-right"
-                            id="collapseItem-{{ $itemType }}-{{ $item->id }}" data-toggle="modal"
-                            data-target="#carePlanItem-{{ $itemType }}-{{ $item->id }}Detail"
-                            style="margin-top:0px;    margin-bottom: 0px;">{{ $buttonLabel }}</button>
-
-                    <!-- Modal -->
-                    <div id="carePlanItem-{{ $itemType }}-{{ $item->id }}Detail" class="modal fade text-left"
-                         role="dialog">
-                        <div class="modal-dialog modal-lg">
-
-                            <!-- Modal content-->
-                            <div class="modal-content">
-                                <div class="modal-header" style="background:#50B2E2;">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title" style="color:#fff;">{{ $item->name }}
-                                        : {{ $buttonLabel }}</h4>
-                                </div>
-                                <div class="modal-body">
-                                <textarea id="item-{{ $itemType }}-{{ $item->id }}modal"
-                                          name="item|-{{ $itemType }}-{{ $item->id }}"
-                                          style="height: 400px;">{{ $item->cpmInstructions[0]->name }}</textarea>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close
-                                    </button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            @endif
-        </div>
+        @endif
     </div>
+</div>
 {{--@endif--}}

@@ -54,7 +54,7 @@ $new_user = false;
                         {{--Page 1--}}
                         {{--Problems--}}
                         @if(!empty($cptProblems))
-                            <?php $itemType = 'problem'; ?>
+                            <?php $itemType = 'problems'; ?>
                             <?php $title = 'Diagnosis / Problems to Monitor'; ?>
                             <?php $cpmCollection = $cptProblems; ?>
                             @include('partials.cpm-models.section')
@@ -62,7 +62,7 @@ $new_user = false;
 
                         {{--Lifestyles--}}
                         @if(!empty($cptLifestyles))
-                            <?php $itemType = 'lifestyle'; ?>
+                            <?php $itemType = 'lifestyles'; ?>
                             <?php $title = 'Lifestyle to Monitor'; ?>
                             <?php $cpmCollection = $cptLifestyles; ?>
                             @include('partials.cpm-models.section')
@@ -70,7 +70,7 @@ $new_user = false;
 
                         {{--Medications--}}
                         @if(!empty($cptMedicationGroups))
-                            <?php $itemType = 'medication-group'; ?>
+                            <?php $itemType = 'medication-groups'; ?>
                             <?php $title = 'Medications to Monitor'; ?>
                             <?php $cpmCollection = $cptMedicationGroups; ?>
                             @include('partials.cpm-models.section')
@@ -80,7 +80,7 @@ $new_user = false;
                         {{--Page 2--}}
                         {{--Symptoms--}}
                         @if(!empty($cptBiometrics))
-                            <?php $itemType = 'biometric'; ?>
+                            <?php $itemType = 'biometrics'; ?>
                             <?php $title = 'Biometrics to Monitor'; ?>
                             <?php $cpmCollection = $cptBiometrics; ?>
                             @include('partials.cpm-models.section')
@@ -88,7 +88,7 @@ $new_user = false;
 
                         {{--Miscellaneous--}}
                         @if(!empty($cptTransitionalCareManagement))
-                            <?php $itemType = 'transitional-care'; ?>
+                            <?php $itemType = 'transitional-cares'; ?>
                             <?php $title = 'Transitional Care Management'; ?>
                             <?php $cpmCollection = $cptTransitionalCareManagement; ?>
                             @include('partials.cpm-models.section')
@@ -98,7 +98,7 @@ $new_user = false;
                         {{--Page 3--}}
                         {{--Symptoms--}}
                         @if(!empty($cptSymptoms))
-                            <?php $itemType = 'symptom'; ?>
+                            <?php $itemType = 'symptoms'; ?>
                             <?php $title = 'Symptoms to Monitor'; ?>
                             <?php $cpmCollection = $cptSymptoms; ?>
                             @include('partials.cpm-models.section')
@@ -106,7 +106,7 @@ $new_user = false;
 
                         {{--Miscellaneous--}}
                         @if(!empty($cptAdditionalInfo))
-                            <?php $itemType = 'additional-info'; ?>
+                            <?php $itemType = 'additional-infos'; ?>
                             <?php $title = 'Additional Information'; ?>
                             <?php $cpmCollection = $cptAdditionalInfo; ?>
                             @include('partials.cpm-models.section')
