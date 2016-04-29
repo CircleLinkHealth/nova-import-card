@@ -35,11 +35,14 @@
             {{--And once for the miscs--}}
 
             {{--
+            @todo: refactor the following hacks
+
             This is a hack to help name HTML attributes name and id.
             We want to be able to map them to models.
             So a CpmMisc showing up in problems, should be have name="miscs[]" and not name="problems[]"
             --}}
             <?php $section->name = 'miscs'; ?>
+            <?php $section->patientItemIds = $section->patientMiscsIds; ?>
 
         @for($i = 0; $i < count($section->miscs); $i++)
                 @if($i == $half)

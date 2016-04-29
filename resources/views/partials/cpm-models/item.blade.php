@@ -65,7 +65,7 @@
                            name="{{ $section->name }}[]"
                            value="{{ $item->id }}" class="itemTrigger" data-toggle="collapse"
                            data-target="#collapseItem-{{ $section->name }}-{{$i}}{{$item->id}}"
-                           type="checkbox" {{ $item->patient_id == 'Active' ? 'checked=checked' : '' }}>
+                           type="checkbox" {{ in_array($item->id, $section->patientItemIds) ? 'checked=checked' : '' }}>
                     <label for="{{ $section->name }}-{{$i}}{{$item->id}}">
                         <span></span>{{ $item->name }}</label>
                 </div>
@@ -75,7 +75,7 @@
         @if (isset($buttonLabel))
             <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
                 <button type="button"
-                        class="btn btn-default btn-xs btn-monitor collapse {{ $item->patient_id == 'Active' ? 'in' : '' }} text-right"
+                        class="btn btn-default btn-xs btn-monitor collapse {{ in_array($item->id, $section->patientItemIds) ? 'in' : '' }} text-right"
                         id="collapseItem-{{ $section->name }}-{{$i}}{{$item->id}}" data-toggle="modal"
                         data-target="#{{ $section->name }}-{{$i}}{{$item->id}}-Detail"
                         style="margin-top:0px;    margin-bottom: 0px;">{{ $buttonLabel }}</button>

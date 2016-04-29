@@ -13,6 +13,7 @@ use App\Models\CPM\CpmMisc;
 use App\Models\UI\Section;
 use App\PatientCarePlan as CarePlan;
 use App\CarePlanTemplate;
+use App\User;
 
 /**
  * This Class does the needful to get the data needed for CarePlan Views and feed it to them.
@@ -35,6 +36,10 @@ class CarePlanViewService
         //
         // if (empty($template)) abort(404, 'Care Plan Template not found.');
 
+        //get the User's cpmProblems
+        $patient = User::find($carePlan->patient_id);
+        $patientProblems = $patient->cpmProblems()->get()->lists('id');
+
         $template = $template->loadWithInstructionsAndSort([
             'cpmLifestyles',
             'cpmMedicationGroups',
@@ -45,6 +50,7 @@ class CarePlanViewService
         $problems->name = 'problems';
         $problems->title = 'Diagnosis / Problems to Monitor';
         $problems->items = $template->cpmProblems;
+        $problems->patientItemIds = $patientProblems;
         $problems->miscs = $template->cpmMiscs()->where('name', CpmMisc::OTHER_CONDITIONS)->get();
 
         $lifestyles = new Section();
