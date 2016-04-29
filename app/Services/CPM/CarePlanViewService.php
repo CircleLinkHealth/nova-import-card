@@ -39,6 +39,8 @@ class CarePlanViewService
         //get the User's cpmProblems
         $patient = User::find($carePlan->patient_id);
         $patientProblems = $patient->cpmProblems()->get()->lists('id');
+        $patientLifestyles = $patient->cpmLifestyles()->get()->lists('id');
+        $patientMedicationGroups = $patient->cpmMedicationGroups()->get()->lists('id');
 
         $template = $template->loadWithInstructionsAndSort([
             'cpmLifestyles',
@@ -57,11 +59,13 @@ class CarePlanViewService
         $lifestyles->name = 'lifestyles';
         $lifestyles->title = 'Lifestyle to Monitor';
         $lifestyles->items = $template->cpmLifestyles;
+        $lifestyles->patientItemIds = $patientLifestyles;
 
         $medications = new Section();
         $medications->name = 'medications';
         $medications->title = 'Medications to Monitor';
         $medications->items = $template->cpmMedicationGroups;
+        $medications->patientItemIds = $patientMedicationGroups;
         $medications->miscs = $template->cpmMiscs()->where('name', CpmMisc::MEDICATION_LIST)->get();
 
         $sections = [

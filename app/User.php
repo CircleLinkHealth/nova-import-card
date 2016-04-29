@@ -201,7 +201,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmLifestyles()
     {
-        return $this->belongsToMany(CpmLifestyle::class, 'cpm_lifestyles_users');
+        return $this->belongsToMany(CpmLifestyle::class, 'cpm_lifestyles_users', 'patient_id');
     }
 
     /**
@@ -209,7 +209,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmMedicationGroups()
     {
-        return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_medication_groups_users');
+        return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_medication_groups_users', 'patient_id');
     }
 
     /**
@@ -217,7 +217,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmMiscs()
     {
-        return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users');
+        return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users', 'patient_id');
     }
 
     /**
@@ -233,7 +233,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmSymptoms()
     {
-        return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users');
+        return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users', 'patient_id');
     }
 
     /*****/
