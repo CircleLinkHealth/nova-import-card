@@ -490,7 +490,8 @@ class PatientCareplanController extends Controller
     {
         $messages = \Session::get('messages');
 
-        $viewVars = [];
+        //variable names to be passed to compact()
+        $pageViewVars = [];
 
         if (empty($patientId)) return response("User not found", 401);
 
@@ -501,48 +502,15 @@ class PatientCareplanController extends Controller
         // determine which sections to show
         if ($page == 1)
         {
-            $cpt = $carePlanService->carePlanFirstPage($carePlan);
-
-            $cptProblems = array_merge(
-                $cpt->cpmProblems->all(),
-                $cpt->cpmMiscs()->where('name', CpmMisc::OTHER_CONDITIONS)->get()->all()
-            );
-
-            $cptLifestyles = $cpt->cpmLifestyles;
-            $cptMedicationGroups = array_merge(
-                $cpt->cpmMedicationGroups->all(),
-                $cpt->cpmMiscs()->where('name', CpmMisc::MEDICATION_LIST)->get()->all()
-            );
-
-            $viewVars = [
-                'cptProblems',
-                'cptLifestyles',
-                'cptMedicationGroups',
-            ];
+            $pageViewVars = $carePlanService->carePlanFirstPage($carePlan);
         }
         else if ($page == 2)
         {
-            $cpt = $carePlanService->carePlanSecondPage($carePlan);
-
-            $cptBiometrics = $cpt->cpmBiometrics;
-            $cptTransitionalCareManagement = $cpt->cpmMiscs;
-
-            $viewVars = [
-                'cptBiometrics',
-                'cptTransitionalCareManagement',
-            ];
+            $pageViewVars = $carePlanService->carePlanSecondPage($carePlan);
         }
         else if ($page == 3)
         {
-            $cpt = $carePlanService->carePlanThirdPage($carePlan);
-
-            $cptSymptoms = $cpt->cpmSymptoms;
-            $cptAdditionalInfo = $cpt->cpmMiscs;
-
-            $viewVars = [
-                'cptSymptoms',
-                'cptAdditionalInfo',
-            ];
+            $pageViewVars = $carePlanService->carePlanThirdPage($carePlan);
         }
         $editMode = false;
 
@@ -555,7 +523,7 @@ class PatientCareplanController extends Controller
             $showApprovalButton = true;
         }
 
-        $defaultViewVars = [
+        $defaultViewVars = compact([
             'page',
             'patient',
             'editMode',
@@ -563,12 +531,9 @@ class PatientCareplanController extends Controller
             'messages',
             'showApprovalButton',
             'treating',
-        ];
+        ]);
 
-//        dd(array_merge($defaultViewVars, $viewVars));
-//        dd(compact(array_merge($defaultViewVars, $viewVars)));
-
-        return view('wpUsers.patient.careplan.careplan', compact(array_merge($defaultViewVars, $viewVars)));
+        return view('wpUsers.patient.careplan.careplan', array_merge($defaultViewVars, $pageViewVars));
 
     }
 
@@ -580,7 +545,7 @@ class PatientCareplanController extends Controller
      */
     public function storePatientCareplan(Request $request)
     {
-
+//dd($request->input());
         $observationService = new ObservationService;
         $msgCPRules = new MsgCPRules;
 

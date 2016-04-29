@@ -8,7 +8,8 @@ use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use Illuminate\Database\Eloquent\Model;
 
-class CarePlanTemplate extends Model {
+class CarePlanTemplate extends Model
+{
 
     const CLH_DEFAULT = 'CLH Default';
 
@@ -59,7 +60,7 @@ class CarePlanTemplate extends Model {
             ->withPivot('ui_sort')
             ->withTimestamps();
     }
-
+    
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -93,7 +94,30 @@ class CarePlanTemplate extends Model {
      */
     public function careplan()
     {
-        return $this->hasOne('App\PatientCarePlan','care_plan_template_id');
+        return $this->hasOne('App\PatientCarePlan', 'care_plan_template_id');
     }
 
+
+    /**
+     * Get a cpm***** relationship with it's related instructions, ordered using db field ui_config
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
+    public function loadWithInstructionsAndSort($relationship)
+    {
+        if (empty($relationship)) return false;
+        if (!is_array($relationship)) $relationship = (array)$relationship;
+
+        foreach ($relationship as $rel) {
+
+            if (!method_exists($this, $rel)) throw new \Exception("Relationship `$rel` does not exist.");
+
+            $attributes[$rel] = function ($query) {
+                $query->with('cpmInstructions')
+                    ->orderBy('pivot_ui_sort');
+            };
+        }
+
+        return $this->load($attributes);
+    }
 }

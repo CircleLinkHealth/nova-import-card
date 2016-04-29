@@ -61,12 +61,12 @@
         <div class="form-item col-sm-12">
             <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
                 <div class="radio-inline">
-                    <input id="carePlanItem-{{ $itemType }}-{{$i}}"
-                           name="{{ $itemType }}[]"
+                    <input id="carePlanItem-{{ $section->name }}-{{$i}}"
+                           name="{{ $section->name }}[]"
                            value="{{ $item->id }}" class="itemTrigger" data-toggle="collapse"
-                           data-target="#collapseItem-{{ $itemType }}-{{$i}}"
+                           data-target="#collapseItem-{{ $section->name }}-{{$i}}"
                            type="checkbox" {{ $item->patient_id == 'Active' ? 'checked=checked' : '' }}>
-                    <label for="carePlanItem-{{ $itemType }}-{{$i}}">
+                    <label for="carePlanItem-{{ $section->name }}-{{$i}}">
                         <span></span>{{ $item->name }}</label>
                 </div>
             </div>
@@ -76,12 +76,12 @@
             <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
                 <button type="button"
                         class="btn btn-default btn-xs btn-monitor collapse {{ $item->patient_id == 'Active' ? 'in' : '' }} text-right"
-                        id="collapseItem-{{ $itemType }}-{{$i}}" data-toggle="modal"
-                        data-target="#carePlanItem-{{ $itemType }}-{{$i}}Detail"
+                        id="collapseItem-{{ $section->name }}-{{$i}}" data-toggle="modal"
+                        data-target="#carePlanItem-{{ $section->name }}-{{$i}}-Detail"
                         style="margin-top:0px;    margin-bottom: 0px;">{{ $buttonLabel }}</button>
 
                 <!-- Modal -->
-                <div id="carePlanItem-{{ $itemType }}-{{$i}}Detail" class="modal fade text-left"
+                <div id="carePlanItem-{{ $section->name }}-{{$i}}-Detail" class="modal fade text-left"
                      role="dialog">
                     <div class="modal-dialog modal-lg">
 
@@ -93,9 +93,9 @@
                                     : {{ $buttonLabel }}</h4>
                             </div>
                             <div class="modal-body">
-                                <textarea id="item-{{ $itemType }}-{{$i}}-modal"
+                                <textarea id="item-{{ $section->name }}-{{$i}}-modal"
                                           {{--For the time being we don't wanna post those--}}
-                                          {{--name="instructions-{{ $itemType }}[]"--}}
+                                          {{--name="instructions-{{ $section->name }}[]"--}}
                                           style="height: 400px;">{{ $item->cpmInstructions[0]->name }}</textarea>
                             </div>
                             <div class="modal-footer">

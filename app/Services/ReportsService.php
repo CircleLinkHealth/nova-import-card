@@ -106,16 +106,22 @@ class ReportsService
         return $itemsToMonitor;
     }
 
+    /**
+     * @param PatientCarePlan $carePlan
+     * @return array|false
+     */
     public function getProblemsToMonitorWithDetails(PatientCarePlan $carePlan)
     {
         if (!$carePlan) return false;
 
+        //get the template
         $cptId = $carePlan->care_plan_template_id;
-
         $cpt = CarePlanTemplate::find($cptId);
 
+        //get template's cpmProblems
         $cptProblems = $cpt->cpmProblems()->get();
 
+        //get the User's cpmProblems
         $patient = User::find($carePlan->patient_id);
         $patientProblems = $patient->cpmProblems()->get();
 

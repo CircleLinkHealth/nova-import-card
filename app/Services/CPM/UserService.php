@@ -10,6 +10,12 @@ use App\User;
  */
 class UserService
 {
+    /**
+     * Get the User's first CarePlan, or relate the User to CLH's default CarePlan.
+     *
+     * @param User|null $user
+     * @return \App\PatientCarePlan
+     */
     public function firstOrDefaultCarePlan(User $user = null)
     {
         return $user->patientCarePlans()->firstOrCreate([

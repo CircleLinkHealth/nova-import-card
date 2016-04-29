@@ -9,21 +9,42 @@
         @if(isset($editMode) && $editMode != false)
             @include('partials.carePlans.sectionEdit')
         @else
-            <h4>{{ $title }}</h4>
+            <h4>{{ $section->title }}</h4>
         @endif
 
 
         <div class="form-block form-block--left col-md-6">
-            <?php $half = round(count($cpmCollection) / 2); ?>
+            {{--Do this once for the items--}}
 
-            @for($i = 0; $i < count($cpmCollection); $i++)
+            <?php $half = round(count($section->items) / 2); ?>
+
+            @for($i = 0; $i < count($section->items); $i++)
                 @if($i == $half)
-                </div><div class='form-block form-block--right col-md-6'>
-                @endif
+        </div>
+        <div class='form-block form-block--right col-md-6'>
+            @endif
             <div class="row">
                 <div class="form-item col-sm-12" style="padding-left: 0px;">
                     <?php
-                        $item = $cpmCollection[$i];
+                    $item = $section->items[$i];
+                    ?>
+                    @include('partials.cpm-models.item')
+                </div>
+            </div>
+            @endfor
+
+            {{--And once for the miscs--}}
+            <?php $half = round(count($section->miscs) / 2); ?>
+
+            @for($i = 0; $i < count($section->miscs); $i++)
+                @if($i == $half)
+        </div>
+        <div class='form-block form-block--right col-md-6'>
+            @endif
+            <div class="row">
+                <div class="form-item col-sm-12" style="padding-left: 0px;">
+                    <?php
+                    $item = $section->miscs[$i];
                     ?>
                     @include('partials.cpm-models.item')
                 </div>

@@ -51,66 +51,11 @@ $new_user = false;
 
                         {{-- Call CPM Partials Here --}}
 
-                        {{--Page 1--}}
-                        {{--Problems--}}
-                        @if(!empty($cptProblems))
-                            <?php $itemType = 'problems'; ?>
-                            <?php $title = 'Diagnosis / Problems to Monitor'; ?>
-                            <?php $cpmCollection = $cptProblems; ?>
+                        {{--This will render each section--}}
+                        @foreach($sections as $section)
                             @include('partials.cpm-models.section')
-                        @endif
+                        @endforeach
 
-                        {{--Lifestyles--}}
-                        @if(!empty($cptLifestyles))
-                            <?php $itemType = 'lifestyles'; ?>
-                            <?php $title = 'Lifestyle to Monitor'; ?>
-                            <?php $cpmCollection = $cptLifestyles; ?>
-                            @include('partials.cpm-models.section')
-                        @endif
-
-                        {{--Medications--}}
-                        @if(!empty($cptMedicationGroups))
-                            <?php $itemType = 'medication-groups'; ?>
-                            <?php $title = 'Medications to Monitor'; ?>
-                            <?php $cpmCollection = $cptMedicationGroups; ?>
-                            @include('partials.cpm-models.section')
-                        @endif
-
-
-                        {{--Page 2--}}
-                        {{--Symptoms--}}
-                        @if(!empty($cptBiometrics))
-                            <?php $itemType = 'biometrics'; ?>
-                            <?php $title = 'Biometrics to Monitor'; ?>
-                            <?php $cpmCollection = $cptBiometrics; ?>
-                            @include('partials.cpm-models.section')
-                        @endif
-
-                        {{--Miscellaneous--}}
-                        @if(!empty($cptTransitionalCareManagement))
-                            <?php $itemType = 'transitional-cares'; ?>
-                            <?php $title = 'Transitional Care Management'; ?>
-                            <?php $cpmCollection = $cptTransitionalCareManagement; ?>
-                            @include('partials.cpm-models.section')
-                        @endif
-
-
-                        {{--Page 3--}}
-                        {{--Symptoms--}}
-                        @if(!empty($cptSymptoms))
-                            <?php $itemType = 'symptoms'; ?>
-                            <?php $title = 'Symptoms to Monitor'; ?>
-                            <?php $cpmCollection = $cptSymptoms; ?>
-                            @include('partials.cpm-models.section')
-                        @endif
-
-                        {{--Miscellaneous--}}
-                        @if(!empty($cptAdditionalInfo))
-                            <?php $itemType = 'additional-infos'; ?>
-                            <?php $title = 'Additional Information'; ?>
-                            <?php $cpmCollection = $cptAdditionalInfo; ?>
-                            @include('partials.cpm-models.section')
-                        @endif
                     @else
                         <div class="row" style="margin:60px 0px;">
                             <div class="col-lg-8 col-lg-offset-2 text-center">
