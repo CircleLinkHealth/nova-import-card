@@ -326,6 +326,8 @@ class PatientCareplanController extends Controller
                 'program_id' => $params->get('program_id'),
                 'display_name' => $params->get('first_name') . ' ' . $params->get('last_name'),
                 'roles' => [$role->id],
+                'ccm_status' => 'enrolled',
+                'careplan_status' => 'draft',
             ));
             $newUser = $userRepo->createNewUser($user, $params);
             return redirect(\URL::route('patient.demographics.show', array('patientId' => $newUser->ID)))->with('messages', ['Successfully created new patient with demographics.']);
@@ -440,6 +442,8 @@ class PatientCareplanController extends Controller
                     foreach ($_POST['ctmCountArr'] as $ctmCount) {
                         if ($params->get('ctm' . $ctmCount . 'provider') && !empty($params->get('ctm' . $ctmCount . 'provider'))) {
                             $careTeamUserIds[] = $params->get('ctm' . $ctmCount . 'provider');
+                        } else {
+                            return redirect()->back()->withErrors(['No provider selected for member.']);
                         }
                     }
                     $patient->careTeam = $careTeamUserIds;
