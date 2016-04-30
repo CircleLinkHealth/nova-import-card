@@ -4,6 +4,7 @@ use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
+use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmLifestyle;
 use App\Models\CPM\CpmMedicationGroup;
 use App\Models\CPM\CpmMisc;
@@ -195,6 +196,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * CPM Models
      *
      */
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function cpmBiometrics()
+	{
+		return $this->belongsToMany(CpmBiometric::class, 'cpm_biometrics_users', 'patient_id');
+	}
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

@@ -89,17 +89,25 @@ class CarePlanViewService
             'cpmBiometrics',
         ]);
 
+        //get the User's cpmProblems
+        $patient = User::find($carePlan->patient_id);
+        $patientMiscs = $patient->cpmMiscs()->get()->lists('id');
+//        $patientBiometrics = $patient->cpmBiometrics()->get()->lists('id');
+
         $transCare = new Section();
         $transCare->name = 'trans-care';
         $transCare->title = 'Transitional Care Management';
         $transCare->miscs = $template->cpmMiscs()->whereIn('name', [
             CpmMisc::TRACK_CARE_TRANSITIONS,
         ])->orderBy('pivot_ui_sort')->get();
+        $transCare->patientMiscsIds = $patientMiscs;
 
         $biometrics = new Section();
         $biometrics->name = 'biometrics';
         $biometrics->title = 'Transitional Care Management';
         $biometrics->items = $template->cpmBiometrics;
+//        $transCare->patientBiometricsIds = $patientBiometrics;
+
 
         //Add sections here in order
         $sections = [
@@ -122,10 +130,17 @@ class CarePlanViewService
                 'cpmSymptoms',
             ]);
 
+        //get the User's cpmProblems
+        $patient = User::find($carePlan->patient_id);
+        $patientSymptoms = $patient->cpmSymptoms()->get()->lists('id');
+        $patientMiscs = $patient->cpmMiscs()->get()->lists('id');
+
         $symptoms = new Section();
         $symptoms->name = 'symptoms';
         $symptoms->title = 'Symptoms to Monitor';
         $symptoms->items = $template->cpmSymptoms;
+        $symptoms->patientItemIds = $patientSymptoms;
+
 
         $additionalInfo = new Section();
         $additionalInfo->name = 'additional-infos';
@@ -137,6 +152,8 @@ class CarePlanViewService
                 CpmMisc::OTHER,
             ])
             ->orderBy('pivot_ui_sort')->get();
+        $additionalInfo->patientMiscsIds = $patientMiscs;
+
 
         //Add sections here in order
         $sections = [
