@@ -97,7 +97,7 @@ class S20151215CarePlanMigration3 extends Seeder {
         }
         foreach($programs as $program) {
             // get pcp sections
-            $pcps = CPRulesPCP::where('prov_id', '=', $program->blog_id)->lists('pcp_id');
+            $pcps = CPRulesPCP::where('prov_id', '=', $program->blog_id)->lists('pcp_id')->all();
 
             // get items for these sections
             $items = CPRulesItem::whereIn('pcp_id', $pcps)->get();

@@ -322,7 +322,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 
 	public function viewableProgramIds() {
-		$programIds = $this->programs()->lists('blog_id');
+		$programIds = $this->programs()->lists('blog_id')->all();
 		return $programIds;
 	}
 
@@ -339,7 +339,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			});
 		//}
 
-		$patientIds = $patientIds->lists('ID');
+		$patientIds = $patientIds->lists('ID')->all();
 		return $patientIds;
 	}
 
@@ -350,7 +350,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$q->whereIn('program_id', $programIds);
 		});
 
-		$patientIds = $patientIds->lists('ID');
+		$patientIds = $patientIds->lists('ID')->all();
 		return $patientIds;
 	}
 
@@ -365,7 +365,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	}
 
     public function userMeta($key=null){
-		$userMeta = $this->meta->lists('meta_value', 'meta_key');
+		$userMeta = $this->meta->lists('meta_value', 'meta_key')->all();
 		$userMeta['user_config'] = $this->userConfig();
 		if(!$userMeta) {
 			return false;

@@ -104,7 +104,7 @@ class UserController extends Controller
             $params = $request->all();
 
             // filter user
-            $users = User::whereIn( 'ID', Auth::user()->viewableUserIds() )->OrderBy( 'id', 'desc' )->get()->lists( 'fullNameWithId', 'ID' );
+            $users = User::whereIn( 'ID', Auth::user()->viewableUserIds() )->OrderBy( 'id', 'desc' )->get()->lists( 'fullNameWithId', 'ID' )->all();
             $filterUser = 'all';
             if ( !empty($params[ 'filterUser' ]) ) {
                 $filterUser = $params[ 'filterUser' ];
@@ -114,7 +114,7 @@ class UserController extends Controller
             }
 
             // role filter
-            $roles = Role::all()->lists( 'display_name', 'name' );
+            $roles = Role::all()->lists( 'display_name', 'name' )->all();
             $filterRole = 'all';
             if ( !empty($params[ 'filterRole' ]) ) {
                 $filterRole = $params[ 'filterRole' ];
@@ -128,7 +128,7 @@ class UserController extends Controller
             // program filter
             $programs = WpBlog::orderBy( 'blog_id', 'desc' )
                 ->whereIn( 'blog_id', Auth::user()->viewableProgramIds() )
-                ->get()->lists( 'domain', 'blog_id' );
+                ->get()->lists( 'domain', 'blog_id' )->all();
             $filterProgram = 'all';
             if ( !empty($params[ 'filterProgram' ]) ) {
                 $filterProgram = $params[ 'filterProgram' ];
@@ -242,7 +242,7 @@ class UserController extends Controller
 
         $wpUser = new User;
 
-        $roles = Role::lists( 'name', 'id' );
+        $roles = Role::lists( 'name', 'id' )->all();
 
         // user config
         $userConfig = ( new UserConfigTemplate() )->getArray();
@@ -254,9 +254,9 @@ class UserController extends Controller
         $states_arr = array('AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming");
 
         // programs for dd
-        $wpBlogs = WpBlog::orderBy( 'blog_id', 'desc' )->lists( 'domain', 'blog_id' );
+        $wpBlogs = WpBlog::orderBy( 'blog_id', 'desc' )->lists( 'domain', 'blog_id' )->all();
 
-        $locations = Location::whereNotNull( 'parent_id' )->lists( 'name', 'id' );
+        $locations = Location::whereNotNull( 'parent_id' )->lists( 'name', 'id' )->all();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers( DateTimeZone::ALL );
@@ -343,7 +343,7 @@ class UserController extends Controller
             return response( "User not found", 401 );
         }
 
-        $roles = Role::lists( 'name', 'id' );
+        $roles = Role::lists( 'name', 'id' )->all();
         $role = $patient->roles()->first();
         if ( !$role ) {
             $role = Role::first();
@@ -393,13 +393,13 @@ class UserController extends Controller
             $locations_arr = ( new Location )->getNonRootLocations( $wpBlog->locationId() );
         }
 
-        $carePlans = CarePlan::where( 'program_id', '=', $patient->program_id )->lists( 'display_name', 'id' );
+        $carePlans = CarePlan::where( 'program_id', '=', $patient->program_id )->lists( 'display_name', 'id' )->all();
 
         // States (for dropdown)
         $states_arr = array('AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming");
 
         // programs for dd
-        $wpBlogs = WpBlog::orderBy( 'blog_id', 'desc' )->lists( 'domain', 'blog_id' );
+        $wpBlogs = WpBlog::orderBy( 'blog_id', 'desc' )->lists( 'domain', 'blog_id' )->all();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers( DateTimeZone::ALL );

@@ -75,7 +75,7 @@ class ActivityRepositoryEloquent extends BaseRepository implements ActivityRepos
                 $startDate, $endDate
             ]);
         if (!$sendAll) {
-            $activities->whereNotIn("$activitiesTable.id", CcmTimeApiLog::lists('activity_id'));
+            $activities->whereNotIn("$activitiesTable.id", CcmTimeApiLog::lists('activity_id')->all());
         }
         $activities = $activities->get();
 

@@ -39,9 +39,9 @@ class RulesController extends Controller {
 		//$rules = new Rules;
 		//dd($rules->getActions(array('Activity' => 'Patient Overview', 'Role' => 'Provider')) );
 		return view('rules.create', [
-			'operators' => RulesOperators::lists('operator', 'id'),
-			'conditions' => RulesConditions::lists('condition', 'id'),
-			'actions' => RulesActions::lists('action', 'id'),
+			'operators' => RulesOperators::lists('operator', 'id')->all(),
+			'conditions' => RulesConditions::lists('condition', 'id')->all(),
+			'actions' => RulesActions::lists('action', 'id')->all(),
 			'messages' => \Session::get('messages')
 		]);
 	}
@@ -128,15 +128,15 @@ class RulesController extends Controller {
 			}
 		}
 		//dd('nope');
-		$operators = RulesOperators::lists('operator', 'id');
-		//$conditions = RulesConditions::lists('conditions', 'id');
+		$operators = RulesOperators::lists('operator', 'id')->all();
+		//$conditions = RulesConditions::lists('conditions', 'id')->all();
 
 		if($rule) {
 			return view('rules.edit', [
 				'rule' => $rule,
-				'operators' => RulesOperators::lists('operator', 'id'),
-				'conditions' => RulesConditions::lists('condition', 'id'),
-				'actions' => RulesActions::lists('action', 'id'),
+				'operators' => RulesOperators::lists('operator', 'id')->all(),
+				'conditions' => RulesConditions::lists('condition', 'id')->all(),
+				'actions' => RulesActions::lists('action', 'id')->all(),
 				'messages' => \Session::get('messages')
 			]);
 		} else {

@@ -519,7 +519,7 @@ class PatientController extends Controller {
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
 			->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
-			})->get()->lists('fullNameWithId', 'ID');
+			})->get()->lists('fullNameWithId', 'ID')->all();
 
 		return view('wpUsers.patient.select', compact(['patients']));
 	}

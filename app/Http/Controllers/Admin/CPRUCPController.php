@@ -29,7 +29,7 @@ class CPRUCPController extends Controller {
 		$params = $request->all();
 
 		// filter user
-		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID')->all();
 		$filterUser = 'all';
 		if(!empty($params['filterUser'])) {
 			$filterUser = $params['filterUser'];
@@ -39,7 +39,7 @@ class CPRUCPController extends Controller {
 		}
 
 		// filter pcp
-		$pcps = CPRulesPCP::select('section_text')->groupBy('section_text')->get()->lists('section_text', 'section_text');
+		$pcps = CPRulesPCP::select('section_text')->groupBy('section_text')->get()->lists('section_text', 'section_text')->all();
 		$filterPCP = 'all';
 		if(!empty($params['filterPCP'])) {
 			$filterPCP = $params['filterPCP'];

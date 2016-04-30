@@ -40,7 +40,7 @@ class CPRQuestionSetController extends Controller
 		}
 
 		// filter question
-		$questions = CPRulesQuestions::orderBy('qid', 'desc')->get()->lists('msgIdAndObsKey', 'qid');
+		$questions = CPRulesQuestions::orderBy('qid', 'desc')->get()->lists('msgIdAndObsKey', 'qid')->all();
 		$filterQuestion = 'all';
 		if(!empty($params['filterQuestion'])) {
 			$filterQuestion = $params['filterQuestion'];
@@ -52,7 +52,7 @@ class CPRQuestionSetController extends Controller
 		}
 
 		// filter program
-		$programs = WpBlog::orderBy('blog_id', 'desc')->get()->lists('domain', 'blog_id');
+		$programs = WpBlog::orderBy('blog_id', 'desc')->get()->lists('domain', 'blog_id')->all();
 		$filterProgram = 'all';
 		if(!empty($params['filterProgram'])) {
 			$filterProgram = $params['filterProgram'];

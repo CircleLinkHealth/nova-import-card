@@ -88,7 +88,7 @@ class WpBlog extends Model {
         $pcp = CPRulesPCP::where('prov_id', '=', $blogId)->where('status', '=', 'Active')->where('section_text', $item)->first();
         //Get all the items for each section
         if ($pcp) {
-            $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
+            $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id')->all();
             for ($i = 0; $i < count($items); $i++) {
                 //get id's of all lifestyle items that are active for the given user
                 $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value', 'Active')->where('user_id', $blogId)->first();

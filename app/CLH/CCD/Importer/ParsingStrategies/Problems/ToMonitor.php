@@ -47,7 +47,7 @@ class ToMonitor implements ParsingStrategy
                  * SNOMED Check
                  */
             if ( in_array( $ccdProblem->code_system_name, ['SNOMED CT'] ) || $ccdProblem->code_system == '2.16.840.1.113883.6.96' ) {
-                $potentialICD10List = SnomedToCpmIcdMap::whereSnomedCode( $ccdProblem->code )->lists( 'icd_10_code' );
+                $potentialICD10List = SnomedToCpmIcdMap::whereSnomedCode( $ccdProblem->code )->lists( 'icd_10_code' )->all();
 
                 if ( !empty($potentialICD10List[ 0 ]) ) {
                     $ccdProblem->code_system_name = 'ICD-10';

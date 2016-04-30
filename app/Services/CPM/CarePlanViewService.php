@@ -38,9 +38,9 @@ class CarePlanViewService
 
         //get the User's cpmProblems
         $patient = User::find($carePlan->patient_id);
-        $patientProblems = $patient->cpmProblems()->get()->lists('id');
-        $patientLifestyles = $patient->cpmLifestyles()->get()->lists('id');
-        $patientMedicationGroups = $patient->cpmMedicationGroups()->get()->lists('id');
+        $patientProblems = $patient->cpmProblems()->get()->lists('id')->all();
+        $patientLifestyles = $patient->cpmLifestyles()->get()->lists('id')->all();
+        $patientMedicationGroups = $patient->cpmMedicationGroups()->get()->lists('id')->all();
 
         $template = $template->loadWithInstructionsAndSort([
             'cpmLifestyles',
@@ -91,8 +91,8 @@ class CarePlanViewService
 
         //get the User's cpmProblems
         $patient = User::find($carePlan->patient_id);
-        $patientMiscs = $patient->cpmMiscs()->get()->lists('id');
-//        $patientBiometrics = $patient->cpmBiometrics()->get()->lists('id');
+        $patientMiscs = $patient->cpmMiscs()->get()->lists('id')->all();
+//        $patientBiometrics = $patient->cpmBiometrics()->get()->lists('id')->all();
 
         $transCare = new Section();
         $transCare->name = 'trans-care';
@@ -132,8 +132,8 @@ class CarePlanViewService
 
         //get the User's cpmProblems
         $patient = User::find($carePlan->patient_id);
-        $patientSymptoms = $patient->cpmSymptoms()->get()->lists('id');
-        $patientMiscs = $patient->cpmMiscs()->get()->lists('id');
+        $patientSymptoms = $patient->cpmSymptoms()->get()->lists('id')->all();
+        $patientMiscs = $patient->cpmMiscs()->get()->lists('id')->all();
 
         $symptoms = new Section();
         $symptoms->name = 'symptoms';

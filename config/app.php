@@ -118,6 +118,7 @@ return [
 //		'Illuminate\Auth\AuthServiceProvider',
 		App\Providers\CustomAuthServiceProvider::class,
 		'Illuminate\Bus\BusServiceProvider',
+		'Illuminate\Broadcasting\BroadcastServiceProvider',
 		'Illuminate\Cache\CacheServiceProvider',
 		'Illuminate\Foundation\Providers\ConsoleSupportServiceProvider',
 		'Illuminate\Routing\ControllerServiceProvider',

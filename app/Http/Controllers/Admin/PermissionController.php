@@ -96,7 +96,7 @@ class PermissionController extends Controller {
 		}
 		$permission = Permission::find($id);
 		$roles = Role::all();
-		$permissionRoles = $permission->roles()->lists('id');
+		$permissionRoles = $permission->roles()->lists('id')->all();
 		return view('admin.permissions.edit', [ 'permission' => $permission, 'roles' => $roles, 'permissionRoles' => $permissionRoles, 'messages' => \Session::get('messages') ]);
 	}
 
