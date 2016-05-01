@@ -124,7 +124,7 @@
 									<ul class="dropdown-menu" role="menu">
 										<li><a href="{{ URL::route('admin.programs.index', array()) }}">Programs</a></li>
 										@if(Entrust::can('locations-view'))
-											<li><a href="{{ URL::route('admin.locations.index', array()) }}">Locations</a></li>
+											<li><a href="{{ URL::route('locations.index', array()) }}">Locations</a></li>
 										@endif
 										@if(Entrust::can('programs-manage'))
 											<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>
