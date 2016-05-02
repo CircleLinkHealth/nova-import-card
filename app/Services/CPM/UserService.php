@@ -18,7 +18,7 @@ class UserService
      */
     public function firstOrDefaultCarePlan(User $user = null)
     {
-        return $user->patientCarePlans()->firstOrCreate([
+        return $user->carePlan()->firstOrCreate([
             'patient_id' => $user->ID,
             'care_plan_template_id' => CarePlanTemplate::whereType(CarePlanTemplate::CLH_DEFAULT)->first()->id
         ]);

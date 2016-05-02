@@ -125,18 +125,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		static::deleting(function($user) {
 			$user->providerInfo()->delete();
 			$user->patientInfo()->delete();
-			$user->patientCarePlans()->delete();
+			$user->carePlan()->delete();
 			$user->patientCareTeamMembers()->delete();
 		});
 
 		self::restoring(function ($user) {
 			$user->providerInfo()->restore();
 			$user->patientInfo()->restore();
-			$user->patientCarePlans()->restore();
+			$user->carePlan()->restore();
 			$user->patientCareTeamMembers()->restore();
 		});
 	}
-
 
 	public function getAuthIdentifier()
 	{
@@ -199,7 +198,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 */
 	public function cpmBiometrics()
 	{
-		return $this->belongsToMany(CpmBiometric::class, 'cpm_biometrics_users', 'patient_id');
+		return $this->belongsToMany(CpmBiometric::class, 'cpm_biometrics_users', 'patient_id')
+			->withTimestamps('created_at', 'updated_at');
 	}
 
     /**
@@ -207,7 +207,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmLifestyles()
     {
-        return $this->belongsToMany(CpmLifestyle::class, 'cpm_lifestyles_users', 'patient_id');
+        return $this->belongsToMany(CpmLifestyle::class, 'cpm_lifestyles_users', 'patient_id')
+			->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -215,7 +216,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmMedicationGroups()
     {
-        return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_medication_groups_users', 'patient_id');
+        return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_medication_groups_users', 'patient_id')
+			->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -223,7 +225,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmMiscs()
     {
-        return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users', 'patient_id');
+        return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users', 'patient_id', 'cpm_misc_id')
+			->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -231,7 +234,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmProblems()
     {
-        return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id');
+        return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id')
+			->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -239,7 +243,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmSymptoms()
     {
-        return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users', 'patient_id');
+        return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users', 'patient_id')
+			->withTimestamps('created_at', 'updated_at');
     }
 
     /*****/
@@ -304,7 +309,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('App\PhoneNumber', 'user_id', 'ID');
 	}
 
-	public function patientCarePlans()
+	public function carePlan()
 	{
 		return $this->hasOne(PatientCarePlan::class, 'patient_id', 'ID');
 	}

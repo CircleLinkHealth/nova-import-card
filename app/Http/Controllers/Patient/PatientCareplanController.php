@@ -527,10 +527,6 @@ class PatientCareplanController extends Controller
      */
     public function storePatientCareplan(Request $request)
     {
-//        dd($request->input());
-        $observationService = new ObservationService;
-        $msgCPRules = new MsgCPRules;
-
         // input
         $params = new ParameterBag($request->input());
 
