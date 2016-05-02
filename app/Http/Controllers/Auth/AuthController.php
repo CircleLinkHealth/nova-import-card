@@ -87,7 +87,7 @@ class AuthController extends Controller {
 		$curMonthCcmTimeLastReset = $appConfigs->where('config_key', 'cur_month_ccm_time_last_reset')->first();
 		if($curMonthCcmTimeLastReset) {
 			$curMonthStartDate = (new DateTime('first day of this month'))->format('Y-m-d');
-			$curMonthStartDate = $curMonthStartDate . ' 12:00:01';
+			$curMonthStartDate = $curMonthStartDate . ' 00:00:01';
 			if($curMonthCcmTimeLastReset->config_value < $curMonthStartDate) {
 				// reset all users time
 				$users = User::whereHas('patientInfo', function ($q) {
