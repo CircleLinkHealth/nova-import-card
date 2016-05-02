@@ -8,7 +8,7 @@ class CpmInstruction extends Model {
 
 	public function cpmBiometrics()
 	{
-		return $this->morphedByMany(CpmBiometrics::class, 'instructables');
+		return $this->morphedByMany(CpmBiometric::class, 'instructables');
 	}
 
 	public function cpmLifestyles()

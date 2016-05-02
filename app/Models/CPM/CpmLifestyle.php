@@ -31,6 +31,6 @@ class CpmLifestyle extends Model
      */
     public function patient()
     {
-        return $this->belongsToMany(User::class, 'cpm_lifestyles_users');
+        return $this->belongsToMany(User::class, 'cpm_lifestyles_users', 'patient_id');
     }
 }

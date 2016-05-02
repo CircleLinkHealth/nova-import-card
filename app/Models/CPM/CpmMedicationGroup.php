@@ -39,6 +39,6 @@ class CpmMedicationGroup extends Model {
      */
     public function patient()
     {
-        return $this->belongsToMany(User::class, 'cpm_medication_groups_users');
+        return $this->belongsToMany(User::class, 'cpm_medication_groups_users', 'patient_id');
     }
 }

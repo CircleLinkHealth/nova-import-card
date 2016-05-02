@@ -32,7 +32,7 @@ class CpmMisc extends Model {
      */
     public function patient()
     {
-        return $this->belongsToMany(User::class, 'cpm_miscs_users');
+        return $this->belongsToMany(User::class, 'cpm_miscs_users', 'patient_id');
     }
 
 }

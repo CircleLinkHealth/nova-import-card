@@ -30,6 +30,6 @@ class CpmSymptom extends Model {
      */
     public function patient()
     {
-        return $this->belongsToMany(User::class, 'cpm_symptoms_users');
+        return $this->belongsToMany(User::class, 'cpm_symptoms_users', 'patient_id');
     }
 }
