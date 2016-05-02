@@ -43,11 +43,11 @@ $new_user = false;
                 </div>
 
                 <div class="row">
-                    <input type=hidden name=user_id value="{{ $patient->ID }}">
-                    <input type=hidden name=program_id value="{{ $patient->program_id }}">
+                    <input type="hidden" name="user_id" value="{{ $patient->ID }}">
+                    <input type="hidden" name="program_id" value="{{ $patient->program_id }}">
 
                     @if($carePlan)
-                        <input type=hidden name=careplan_id value="{{ $carePlan->id }}">
+                        <input type="hidden" name="careplan_id" value="{{ $carePlan->id }}">
 
                         {{-- Call CPM Partials Here --}}
 
@@ -81,5 +81,5 @@ $new_user = false;
         </div>
 
     </div>
-    </form>
+    {!! Form::close() !!}
 @stop

@@ -538,15 +538,42 @@ class PatientCareplanController extends Controller
         $page = $params->get('page');
         $patientId = $params->get('user_id');
 
-        //cpm entities
-        $lifestyles = $params->get('lifestyles');
-        $medicationGroups = $params->get('medications');
-        $miscs = $params->get('miscs');
-        $problems = $params->get('problems');
 
         if (empty($patientId)) return response("User not found", 401);
 
         $user = User::find($patientId);
+
+        if ($page == 1) {
+            //get cpm entities or empty array
+            $cpmLifestyles = $params->get('cpmLifestyles', []);
+            $cpmMedicationGroups = $params->get('cpmMedicationGroups', []);
+            $cpmMiscs = $params->get('cpmMiscs', []);
+            $cpmProblems = $params->get('cpmProblems', []);
+
+            $user->cpmLifestyles()->sync($cpmLifestyles);
+            $user->cpmMedicationGroups()->sync($cpmMedicationGroups);
+            $user->cpmMiscs()->sync($cpmMiscs);
+            $user->cpmProblems()->sync($cpmProblems);
+        }
+
+        if ($page == 2) {
+            //get cpm entities or empty array
+//            $cpmBiometrics = $params->get('cpmBiometrics', []);
+            $cpmMiscs = $params->get('cpmMiscs', []);
+
+//            $user->cpmBiometrics()->sync($cpmBiometrics);
+            $user->cpmMiscs()->sync($cpmMiscs);
+
+        }
+
+        if ($page == 3) {
+            //get cpm entities or empty array
+            $cpmMiscs = $params->get('cpmMiscs', []);
+            $cpmSymptoms = $params->get('cpmSymptoms', []);
+
+            $user->cpmMiscs()->sync($cpmMiscs);
+            $user->cpmSymptoms()->sync($cpmSymptoms);
+        }
 
         if ($page == 3) {
             // check for approval here
@@ -577,26 +604,6 @@ class PatientCareplanController extends Controller
                 }
                 $user->save();
             }
-        }
-
-        if (!empty($lifestyles))
-        {
-            $user->cpmLifestyles()->sync($lifestyles);
-        }
-
-        if (!empty($medicationGroups))
-        {
-            $user->cpmMedicationGroups()->sync($medicationGroups);
-        }
-
-        if (!empty($miscs))
-        {
-            $user->cpmMiscs()->sync($miscs);
-        }
-
-        if (!empty($problems))
-        {
-            $user->cpmProblems()->sync($problems);
         }
 
 //        return redirect($direction)->with('messages', ['No care plan found to update.']);

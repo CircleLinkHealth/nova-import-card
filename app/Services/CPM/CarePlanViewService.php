@@ -49,20 +49,20 @@ class CarePlanViewService
         ]);
 
         $problems = new Section();
-        $problems->name = 'problems';
+        $problems->name = 'cpmProblems';
         $problems->title = 'Diagnosis / Problems to Monitor';
         $problems->items = $template->cpmProblems;
         $problems->patientItemIds = $patientProblems;
         $problems->miscs = $template->cpmMiscs()->where('name', CpmMisc::OTHER_CONDITIONS)->get();
 
         $lifestyles = new Section();
-        $lifestyles->name = 'lifestyles';
+        $lifestyles->name = 'cpmLifestyles';
         $lifestyles->title = 'Lifestyle to Monitor';
         $lifestyles->items = $template->cpmLifestyles;
         $lifestyles->patientItemIds = $patientLifestyles;
 
         $medications = new Section();
-        $medications->name = 'medications';
+        $medications->name = 'cpmMedicationGroups';
         $medications->title = 'Medications to Monitor';
         $medications->items = $template->cpmMedicationGroups;
         $medications->patientItemIds = $patientMedicationGroups;
@@ -95,7 +95,7 @@ class CarePlanViewService
 //        $patientBiometrics = $patient->cpmBiometrics()->get()->lists('id')->all();
 
         $transCare = new Section();
-        $transCare->name = 'trans-care';
+        $transCare->name = 'cpmMiscs';
         $transCare->title = 'Transitional Care Management';
         $transCare->miscs = $template->cpmMiscs()->whereIn('name', [
             CpmMisc::TRACK_CARE_TRANSITIONS,
@@ -103,7 +103,7 @@ class CarePlanViewService
         $transCare->patientMiscsIds = $patientMiscs;
 
         $biometrics = new Section();
-        $biometrics->name = 'biometrics';
+        $biometrics->name = 'cpmBiometrics';
         $biometrics->title = 'Transitional Care Management';
         $biometrics->items = $template->cpmBiometrics;
 //        $transCare->patientBiometricsIds = $patientBiometrics;
@@ -136,14 +136,14 @@ class CarePlanViewService
         $patientMiscs = $patient->cpmMiscs()->get()->lists('id')->all();
 
         $symptoms = new Section();
-        $symptoms->name = 'symptoms';
+        $symptoms->name = 'cpmSymptoms';
         $symptoms->title = 'Symptoms to Monitor';
         $symptoms->items = $template->cpmSymptoms;
         $symptoms->patientItemIds = $patientSymptoms;
 
 
         $additionalInfo = new Section();
-        $additionalInfo->name = 'additional-infos';
+        $additionalInfo->name = 'cpmMiscs';
         $additionalInfo->title = 'Additional Information';
         $additionalInfo->miscs = $template->cpmMiscs()->whereIn('name', [
                 CpmMisc::ALLERGIES,
