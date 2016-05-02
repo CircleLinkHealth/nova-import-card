@@ -41,6 +41,7 @@ class CarePlanViewService
         $patientProblems = $patient->cpmProblems()->get()->lists('id')->all();
         $patientLifestyles = $patient->cpmLifestyles()->get()->lists('id')->all();
         $patientMedicationGroups = $patient->cpmMedicationGroups()->get()->lists('id')->all();
+        $patientMiscs = $patient->cpmMiscs()->get()->lists('id')->all();
 
         $template = $template->loadWithInstructionsAndSort([
             'cpmLifestyles',
@@ -54,6 +55,7 @@ class CarePlanViewService
         $problems->items = $template->cpmProblems;
         $problems->patientItemIds = $patientProblems;
         $problems->miscs = $template->cpmMiscs()->where('name', CpmMisc::OTHER_CONDITIONS)->get();
+        $problems->patientMiscsIds = $patientMiscs;
 
         $lifestyles = new Section();
         $lifestyles->name = 'cpmLifestyles';
@@ -67,6 +69,7 @@ class CarePlanViewService
         $medications->items = $template->cpmMedicationGroups;
         $medications->patientItemIds = $patientMedicationGroups;
         $medications->miscs = $template->cpmMiscs()->where('name', CpmMisc::MEDICATION_LIST)->get();
+        $medications->patientMiscsIds = $patientMiscs;
 
         $sections = [
             $problems,

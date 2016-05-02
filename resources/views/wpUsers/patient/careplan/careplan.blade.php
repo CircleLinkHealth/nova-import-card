@@ -17,10 +17,7 @@ $new_user = false;
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
     {!! Form::open(array('url' => URL::route('patient.careplan.store', array('patientId' => $patient->ID)), 'class' => '', 'id' => 'ucpForm')) !!}
 
-
-
     <div id="content" class="row">
-
         <div class="container">
             <section class="">
                 <div class="row">
@@ -52,7 +49,7 @@ $new_user = false;
                         {{-- Call CPM Partials Here --}}
 
                         {{--This will render each section--}}
-                        @foreach($sections as $section)
+                        @foreach($sections as $sectionKey => $section)
                             @include('partials.cpm-models.section')
                         @endforeach
 
@@ -79,7 +76,6 @@ $new_user = false;
 
             </section>
         </div>
-
     </div>
     {!! Form::close() !!}
 @stop

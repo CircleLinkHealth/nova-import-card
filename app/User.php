@@ -225,7 +225,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmMiscs()
     {
-        return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users', 'patient_id', 'cpm_misc_id')
+        return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users', 'patient_id')
 			->withTimestamps('created_at', 'updated_at');
     }
 
