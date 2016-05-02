@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CpmLifestyle extends Model
 {
+    
+    use Instructable;
 
     protected $guarded = [];
 

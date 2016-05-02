@@ -5,6 +5,8 @@ use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class CpmProblem extends Model {
+    
+    use Instructable;
 
     protected $table = 'cpm_problems';
 
