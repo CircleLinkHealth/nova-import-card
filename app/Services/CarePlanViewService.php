@@ -91,9 +91,8 @@ class CarePlanViewService
             'cpmBiometrics',
         ]);
 
-        //get the User's cpmProblems
         $patientMiscs = $patient->cpmMiscs()->get()->lists('id')->all();
-//        $patientBiometrics = $patient->cpmBiometrics()->get()->lists('id')->all();
+        $patientBiometrics = $patient->cpmBiometrics()->get()->lists('id')->all();
 
         $transCare = new Section();
         $transCare->name = 'cpmMiscs';
@@ -105,9 +104,9 @@ class CarePlanViewService
 
         $biometrics = new Section();
         $biometrics->name = 'cpmBiometrics';
-        $biometrics->title = 'Transitional Care Management';
+        $biometrics->title = 'Biometrics to Monitor';
         $biometrics->items = $template->cpmBiometrics;
-//        $transCare->patientBiometricsIds = $patientBiometrics;
+        $biometrics->patientItemIds = $patientBiometrics;
 
 
         //Add sections here in order

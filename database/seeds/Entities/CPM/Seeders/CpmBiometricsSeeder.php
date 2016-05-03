@@ -12,34 +12,37 @@ class CpmBiometricsSeeder extends \Illuminate\Database\Seeder
     {
         $entities[] = [
             'name' => 'Weight',
-            'type' => \App\Models\CPM\Biometrics\CpmWeight::class,
+            'type' => 0,
         ];
 
         $entities[] = [
             'name' => 'Blood Pressure',
-            'type' => \App\Models\CPM\Biometrics\CpmBloodPressure::class,
+            'type' => 1,
         ];
 
         $entities[] = [
             'name' => 'Blood Sugar',
-            'type' => \App\Models\CPM\Biometrics\CpmBloodSugar::class,
+            'type' => 2,
         ];
 
         $entities[] = [
             'name' => 'Smoking (# per day)',
-            'type' => \App\Models\CPM\Biometrics\CpmSmoking::class,
+            'type' => 3,
         ];
 
         foreach ($entities as $entity) {
 
             $careItem = \App\CareItem::whereDisplayName($entity['name'])->first();
 
-            //relate lifestyle to care item
-            $biometric = \App\Models\CPM\CpmBiometric::updateOrCreate($entity, [
+            //relate biometric to care item
+            $biometric = \App\Models\CPM\CpmBiometric::updateOrCreate([
+                'name' => $entity['name']
+            ], [
                 'care_item_id' => $careItem->id,
+                'type' => $entity['type']
             ]);
 
-            //relate care item to lifestyle
+            //relate care item to biometric
             $careItem->type = \App\Models\CPM\CpmBiometric::class;
             $careItem->type_id = $biometric->id;
             $careItem->save();

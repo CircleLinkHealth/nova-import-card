@@ -569,10 +569,10 @@ class PatientCareplanController extends Controller
 
         if ($page == 2) {
             //get cpm entities or empty array
-//            $cpmBiometrics = $params->get('cpmBiometrics', []);
+            $cpmBiometrics = $params->get('cpmBiometrics', []);
             $cpmMiscs = $params->get('cpmMiscs', []);
 
-//            $user->cpmBiometrics()->sync($cpmBiometrics);
+            $biometricService->syncWithUser($user, $cpmBiometrics);
             $miscService->syncWithUser($user, $cpmMiscs, $page);
 
         }
