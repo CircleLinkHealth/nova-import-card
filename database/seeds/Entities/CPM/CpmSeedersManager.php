@@ -30,9 +30,6 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
         $this->call(CpmMiscSeeder::class);
         $this->command->info(CpmMiscSeeder::class . ' ran.');
 
-        $this->call(DefaultCarePlanTemplateSeeder::class);
-        $this->command->info(DefaultCarePlanTemplateSeeder::class . ' ran.');
-
         /********/
         
         $this->call(CcdImporterSeedersManager::class);
@@ -52,7 +49,9 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
             $careItem->save();
         }
 
-
+        $this->call(DefaultCarePlanTemplateSeeder::class);
+        $this->command->info(DefaultCarePlanTemplateSeeder::class . ' ran.');
+        
 
     }
 
