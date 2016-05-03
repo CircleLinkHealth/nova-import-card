@@ -484,25 +484,29 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 // basic attributes
 
-    /*
-    // first_name
+	// first_name
+	/*
     public function getFirstNameAttribute() {
-        return $this->first_name;
-    }
-    public function setFirstNameAttribute($value) {
-        $this->first_name = $value;
-        return true;
-    }
-    
-    // last_name
+		return $this->first_name;
+	}
+	*/
+	public function setFirstNameAttribute($value) {
+		$this->attributes['first_name'] = $value;
+		$this->display_name = $this->fullName;
+		return true;
+	}
+
+	// last_name
+	/*
     public function getLastNameAttribute() {
-        return $this->last_name;
-    }
-    public function setLastNameAttribute($value) {
-        $this->last_name = $value;
-        return true;
-    }
-    */
+		return $this->last_name;
+	}
+	*/
+	public function setLastNameAttribute($value) {
+		$this->attributes['last_name'] = $value;
+		$this->display_name = $this->fullName;
+		return true;
+	}
 
 // full name
     public function getFullNameAttribute()
