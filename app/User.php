@@ -10,6 +10,7 @@ use App\Models\CPM\CpmMedicationGroup;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
+use App\Services\UserService;
 use DateTime;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -1595,4 +1596,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
         return $userUcpData;
     }
+	
+	//Get this model's serice
+	public function service()
+	{
+		return new UserService();
+	}
 }

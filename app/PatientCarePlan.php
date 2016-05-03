@@ -16,9 +16,10 @@ class PatientCarePlan extends Model {
         return $this->belongsTo(User::class,'patient_id');
     }
 
-    public function getCarePlanTemplateIdAttribute($value)
+    public function getCarePlanTemplateIdAttribute()
     {
-        return $value;
+        //@todo: pretty sure that's not the way it's done. come back here later
+        return $this->attributes['care_plan_template_id'];
     }
     //To add functions to get user values
 

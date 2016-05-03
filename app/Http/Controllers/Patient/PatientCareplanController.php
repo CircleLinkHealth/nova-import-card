@@ -5,9 +5,16 @@ use App\CLH\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Location;
+use App\Models\CPM\CpmProblem;
 use App\Role;
-use App\Services\CPM\CarePlanViewService;
-use App\Services\CPM\UserService;
+use App\Services\CarePlanViewService;
+use App\Services\CPM\CpmBiometricService;
+use App\Services\CPM\CpmLifestyleService;
+use App\Services\CPM\CpmMedicationGroupService;
+use App\Services\CPM\CpmMiscService;
+use App\Services\CPM\CpmProblemService;
+use App\Services\CPM\CpmSymptomService;
+use App\Services\UserService;
 use App\Services\MsgCPRules;
 use App\Services\ObservationService;
 use App\Services\ReportsService;
@@ -525,17 +532,25 @@ class PatientCareplanController extends Controller
      * @param  int $patientId
      * @return Response
      */
-    public function storePatientCareplan(Request $request)
+    public function storePatientCareplan(Request $request,
+                                         CpmBiometricService $biometricService,
+                                         CpmLifestyleService $lifestyleService,
+                                         CpmMedicationGroupService $medicationGroupService,
+                                         CpmMiscService $miscService,
+                                         CpmProblemService $problemService,
+                                         CpmSymptomService $symptomService
+    )
     {
         // input
         $params = new ParameterBag($request->input());
 
         $direction = $params->get('direction');
-        $page = $params->get('page');
+        $page = (int) $params->get('page');
         $patientId = $params->get('user_id');
 
 
         if (empty($patientId)) return response("User not found", 401);
+        if (empty($page)) return response("Page not found", 401);
 
         $user = User::find($patientId);
 
@@ -546,10 +561,10 @@ class PatientCareplanController extends Controller
             $cpmMiscs = $params->get('cpmMiscs', []);
             $cpmProblems = $params->get('cpmProblems', []);
 
-            $user->cpmLifestyles()->sync($cpmLifestyles);
-            $user->cpmMedicationGroups()->sync($cpmMedicationGroups);
-            $user->cpmMiscs()->sync($cpmMiscs);
-            $user->cpmProblems()->sync($cpmProblems);
+            $lifestyleService->syncWithUser($user, $cpmLifestyles);
+            $medicationGroupService->syncWithUser($user, $cpmMedicationGroups);
+            $miscService->syncWithUser($user, $cpmMiscs, $page);
+            $problemService->syncWithUser($user, $cpmProblems);
         }
 
         if ($page == 2) {
@@ -558,7 +573,7 @@ class PatientCareplanController extends Controller
             $cpmMiscs = $params->get('cpmMiscs', []);
 
 //            $user->cpmBiometrics()->sync($cpmBiometrics);
-            $user->cpmMiscs()->sync($cpmMiscs);
+            $miscService->syncWithUser($user, $cpmMiscs, $page);
 
         }
 
@@ -567,8 +582,8 @@ class PatientCareplanController extends Controller
             $cpmMiscs = $params->get('cpmMiscs', []);
             $cpmSymptoms = $params->get('cpmSymptoms', []);
 
-            $user->cpmMiscs()->sync($cpmMiscs);
-            $user->cpmSymptoms()->sync($cpmSymptoms);
+            $miscService->syncWithUser($user, $cpmMiscs, $page);
+            $symptomService->syncWithUser($user, $cpmSymptoms);
         }
 
         if ($page == 3) {
