@@ -39,8 +39,8 @@ class AllUserScrambler extends Seeder {
             }
             
             // empty ccda table
-            DB::table('ccdas')->delete();
-            echo PHP_EOL . 'Empties ccdas table';
+            //DB::table('ccdas')->delete();
+            //echo PHP_EOL . 'Empties ccdas table';
         }
     }
 
