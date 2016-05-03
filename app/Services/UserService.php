@@ -1,4 +1,4 @@
-<?php namespace App\Services\CPM;
+<?php namespace App\Services;
 use App\CarePlanTemplate;
 use App\User;
 
