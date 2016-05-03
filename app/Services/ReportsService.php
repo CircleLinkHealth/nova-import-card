@@ -110,7 +110,7 @@ class ReportsService
      * @param PatientCarePlan $carePlan
      * @return array|false
      */
-    public function getProblemsToMonitorWithDetails(PatientCarePlan $carePlan)
+    public function getProblemsToMonitorWithDetails(PatientCarePlan $carePlan, User $patient)
     {
         if (!$carePlan) return false;
 
@@ -122,7 +122,6 @@ class ReportsService
         $cptProblems = $cpt->cpmProblems()->get();
 
         //get the User's cpmProblems
-        $patient = User::find($carePlan->patient_id);
         $patientProblems = $patient->cpmProblems()->get();
 
         $intersection = $patientProblems->intersect($cptProblems)->all();

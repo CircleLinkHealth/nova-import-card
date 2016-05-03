@@ -23,7 +23,7 @@ use App\User;
  */
 class CarePlanViewService
 {
-    public function carePlanFirstPage(CarePlan $carePlan)
+    public function carePlanFirstPage(CarePlan $carePlan, User $patient)
     {
         if (empty($carePlan)) return false;
 
@@ -37,7 +37,6 @@ class CarePlanViewService
         // if (empty($template)) abort(404, 'Care Plan Template not found.');
 
         //get the User's cpmProblems
-        $patient = User::find($carePlan->patient_id);
         $patientProblems = $patient->cpmProblems()->get()->lists('id')->all();
         $patientLifestyles = $patient->cpmLifestyles()->get()->lists('id')->all();
         $patientMedicationGroups = $patient->cpmMedicationGroups()->get()->lists('id')->all();
@@ -81,7 +80,7 @@ class CarePlanViewService
 
     }
 
-    public function carePlanSecondPage(CarePlan $carePlan)
+    public function carePlanSecondPage(CarePlan $carePlan, User $patient)
     {
         if (empty($carePlan)) return false;
 
@@ -93,7 +92,6 @@ class CarePlanViewService
         ]);
 
         //get the User's cpmProblems
-        $patient = User::find($carePlan->patient_id);
         $patientMiscs = $patient->cpmMiscs()->get()->lists('id')->all();
 //        $patientBiometrics = $patient->cpmBiometrics()->get()->lists('id')->all();
 
@@ -122,7 +120,7 @@ class CarePlanViewService
     }
 
 
-    public function carePlanThirdPage(CarePlan $carePlan)
+    public function carePlanThirdPage(CarePlan $carePlan, User $patient)
     {
         if (empty($carePlan)) return false;
 
@@ -134,7 +132,6 @@ class CarePlanViewService
             ]);
 
         //get the User's cpmProblems
-        $patient = User::find($carePlan->patient_id);
         $patientSymptoms = $patient->cpmSymptoms()->get()->lists('id')->all();
         $patientMiscs = $patient->cpmMiscs()->get()->lists('id')->all();
 

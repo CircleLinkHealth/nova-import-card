@@ -491,20 +491,20 @@ class PatientCareplanController extends Controller
 
         $patient = User::find($patientId);
         $carePlan = $userService->firstOrDefaultCarePlan($patient);
-        $treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
+        $treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan, $patient);
 
         // determine which sections to show
         if ($page == 1) {
-            $pageViewVars = $carePlanService->carePlanFirstPage($carePlan);
+            $pageViewVars = $carePlanService->carePlanFirstPage($carePlan, $patient);
         } else if ($page == 2) {
-            $pageViewVars = $carePlanService->carePlanSecondPage($carePlan);
+            $pageViewVars = $carePlanService->carePlanSecondPage($carePlan, $patient);
         } else if ($page == 3) {
-            $pageViewVars = $carePlanService->carePlanThirdPage($carePlan);
+            $pageViewVars = $carePlanService->carePlanThirdPage($carePlan, $patient);
         }
         $editMode = false;
 
         $showApprovalButton = false;
-        if (Auth::user()->can(['is-provider'])) {
+        if (auth()->user()->can(['is-provider'])) {
             if ($patient->carePlanStatus != 'provider_approved') {
                 $showApprovalButton = true;
             }
