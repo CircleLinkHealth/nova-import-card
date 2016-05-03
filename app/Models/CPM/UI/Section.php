@@ -1,4 +1,4 @@
-<?php namespace App\Models\UI;
+<?php namespace App\Models\CPM\UI;
 
 /**
  * Created by PhpStorm.

@@ -10,7 +10,7 @@ namespace App\Services\CPM;
 
 
 use App\Models\CPM\CpmMisc;
-use App\Models\UI\Section;
+use App\Models\CPM\UI\Section;
 use App\PatientCarePlan as CarePlan;
 use App\CarePlanTemplate;
 use App\User;
