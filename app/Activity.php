@@ -114,7 +114,7 @@ class Activity extends Model implements Transformable{
         $comment = DB::table('lv_activitymeta')->where('activity_id',$id)->where('meta_key','comment')->pluck('meta_value');
 
         if($comment){
-        return $comment;
+            return $comment;
         } else {
             return false;
         }
@@ -187,5 +187,26 @@ class Activity extends Model implements Transformable{
         );
     }
 
+    public static function rollup_category_care_plan(){
+        return array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
+    }
+
+    public static function rollup_category_progress()
+    {
+        return array('Review Patient Progress', 'Progress Report Review/Print');
+    }
+
+    public static function rollup_category_rpm()
+    {
+        return array('Patient Alerts Review', 'Patient Overview Review', 'Biometrics Data Review', 'Lifestyle Data Review', 'Symptoms Data Review', 'Assessments Scores Review', 'Medications Data Review', 'Input Observation');
+    }
+    public static function rollup_category_tcm()
+    {
+        return array('Test (Scheduling, Communications, etc)', 'Transitional Care Management Activities', 'Call to Other Care Team Member', 'Appointments');
+    }
+    public static function rollup_category_other()
+    {
+        return array('other', 'Medication Reconciliation','CCM Welcome Call','Reengaged');
+    }
 
 }

@@ -103,7 +103,7 @@ class ReportsController extends Controller
 
     public function u20(Request $request, $patientId = false)
     {
-        //$patient_ = User::find($patientId);
+
         $input = $request->all();
 
         if (isset($input['selectMonth'])) {
@@ -111,33 +111,24 @@ class ReportsController extends Controller
             $month_selected = $time->format('m');
             $month_selected_text = $time->format('F');
             $year_selected = $time->format('Y');
-            $start = $time->startOfMonth()->format('Y-m-d');
-            $end = $time->endOfMonth()->format('Y-m-d');
+            $start = $time->startOfMonth()->toDateTimeString();
+            $end = $time->endOfMonth()->toDateTimeString();
         } else {
             $time = Carbon::now();
             $month_selected = $time->format('m');
             $year_selected = $time->format('Y');
             $month_selected_text = $time->format('F');
-            $start = Carbon::now()->startOfMonth()->format('Y-m-d');
-            $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+            $start = Carbon::now()->startOfMonth()->toDateTimeString();
+            $end = Carbon::now()->endOfMonth()->toDateTimeString();
         }
 
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
 
         $u20_patients = array();
-        debug(jdmonthname(1, 1));
-        debug($month_selected);
 
-        // ROLLUP CATEGORIES
-        $CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
-        $Progress = array('Review Patient Progress (offline)', 'Progress Report Review/Print');
-        $RPM = array('Patient Alerts Review', 'Patient Overview Review', 'Biometrics Data Review', 'Lifestyle Data Review', 'Symptoms Data Review', 'Assessments Scores Review',
-            'Medications Data Review', 'Input Observation');
-        $TCM = array('Test (Scheduling, Communications, etc)', 'Transitional Care Management Activities', 'Call to Other Care Team Member', 'Appointments');
-        $Other = array('other', 'Medication Reconciliation');
         $act_count = 0;
         foreach ($patients as $patient) {
-            $monthly_time = intval($patient->getMonthlyTimeAttribute());
+            $monthly_time = intval($patient->MonthlyTime);
             $program = WpBlog::find($patient->program_id);
             if ($program) $programName = $program->display_name;
 
@@ -170,13 +161,13 @@ class ReportsController extends Controller
 //				}
 
                 foreach ($acts as $activity) {
-                    if (in_array($activity->type, $CarePlan)) {
+                    if (in_array($activity->type, Activity::rollup_category_care_plan())) {
                         $u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $Progress)) {
+                    } else if (in_array($activity->type, Activity::rollup_category_progress())) {
                         $u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $RPM)) {
+                    } else if (in_array($activity->type, Activity::rollup_category_rpm())) {
                         $u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $TCM)) {
+                    } else if (in_array($activity->type, Activity::rollup_category_tcm())) {
                         $u20_patients[$act_count]['colsum_tcc'] += intval($activity->duration);
                     } else {
                         $u20_patients[$act_count]['colsum_other'] += intval($activity->duration);
@@ -230,37 +221,27 @@ class ReportsController extends Controller
 
         if (isset($input['selectMonth'])) {
             $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
-            $start = $time->startOfMonth()->format('Y-m-d');
-            $end = $time->endOfMonth()->format('Y-m-d');
+            $start = $time->startOfMonth()->toDateTimeString();
+            $end = $time->endOfMonth()->toDateTimeString();
             $month_selected_text = $time->format('F');
             $month_selected = $time->format('m');
             $year_selected = $time->format('Y');
         } else {
             $time = Carbon::now();
-            $start = Carbon::now()->startOfMonth()->format('Y-m-d');
-            $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+            $start = Carbon::now()->startOfMonth()->toDateTimeString();
+            $end = Carbon::now()->endOfMonth()->toDateTimeString();
             $month_selected_text = $time->format('F');
             $month_selected = $time->format('m');
             $year_selected = $time->format('Y');
-
         }
 
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
 
         $u20_patients = array();
-        $billable_patients = array();
-
-        // ROLLUP CATEGORIES
-        $CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
-        $Progress = array('Review Patient Progress (offline)', 'Progress Report Review/Print');
-        $RPM = array('Patient Alerts Review', 'Patient Overview Review', 'Biometrics Data Review', 'Lifestyle Data Review', 'Symptoms Data Review', 'Assessments Scores Review',
-            'Medications Data Review', 'Input Observation');
-        $TCM = array('Test (Scheduling, Communications, etc)', 'Transitional Care Management Activities', 'Call to Other Care Team Member', 'Appointments');
-        $Other = array('other', 'Medication Reconciliation');
         $act_count = 0;
 
         foreach ($patients as $patient) {
-            $monthly_time = intval($patient->getMonthlyTimeAttribute());
+            $monthly_time = intval($patient->MonthlyTime);
             $program = WpBlog::find($patient->program_id);
             if ($program) $programName = $program->display_name;
             if ($patient->hasRole('participant')) {
@@ -292,40 +273,34 @@ class ReportsController extends Controller
                     ->orderBy('performed_at', 'desc')
                     ->get();
 
-//				foreach ($acts as $key => $value) {
-//					$acts[$key]['patient'] = User::find($patient->ID);
-//				}
-
                 foreach ($acts as $activity) {
-                    //$u20_patients[$act_count]['provider'] = User::find($activity->provider_id)->getFullNameAttribute();
-                    if (in_array($activity->type, $CarePlan)) {
-                        $u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $Progress)) {
-                        $u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $RPM)) {
-                        $u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $TCM)) {
-                        $u20_patients[$act_count]['colsum_tcc'] += intval($activity->duration);
-                    } else {
-                        $u20_patients[$act_count]['colsum_other'] += intval($activity->duration);
+                    if($activity) {
+
+                        if (in_array($activity->type, Activity::rollup_category_care_plan())) {
+                            $u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
+                        } else if (in_array($activity->type, Activity::rollup_category_progress())) {
+                            $u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
+                        } else if (in_array($activity->type, Activity::rollup_category_rpm())) {
+                            $u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
+                        } else if (in_array($activity->type, Activity::rollup_category_tcm())) {
+                            $u20_patients[$act_count]['colsum_tcc'] += intval($activity->duration);
+                        } else {
+                            $u20_patients[$act_count]['colsum_other'] += intval($activity->duration);
+                        }
+                        $u20_patients[$act_count]['colsum_total'] += intval($activity->duration);
                     }
-                    $u20_patients[$act_count]['colsum_total'] += intval($activity->duration);
-
-                }
-                $act_count++;
+                } $act_count++;
             }
-
         }
 
-        debug($u20_patients);
         foreach ($u20_patients as $key => $value) {
             if ($value['colsum_total'] < 1200) {
                 unset($u20_patients[$key]);
             }
         }
 
+
         $reportData = "data:" . json_encode(array_values($u20_patients)) . "";
-        debug(json_encode($u20_patients));
 
         $years = array();
         for ($i = 0; $i < 3; $i++) {
@@ -333,6 +308,7 @@ class ReportsController extends Controller
         }
 
         $months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+
         $act_data = true;
         if ($u20_patients == null) {
             $act_data = false;
