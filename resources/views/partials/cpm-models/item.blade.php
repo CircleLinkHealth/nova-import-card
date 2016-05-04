@@ -115,19 +115,19 @@
     <div class="collapse {{ in_array($item->id, $section->patientItemIds) ? 'in' : '' }}"
          id="collapseItem-{{ $section->name }}-{{$i}}{{$item->id}}">
 
-        @if($item->name == \App\Models\CPM\CpmBiometric::BLOOD_PRESSURE && !empty($biometrics->bloodPressure))
+        @if($item->name == \App\Models\CPM\CpmBiometric::BLOOD_PRESSURE)
             @include('partials.cpm-models.biometrics.bloodPressure')
         @endif
 
-        @if($item->name == \App\Models\CPM\CpmBiometric::BLOOD_SUGAR && !empty($biometrics->bloodSugar))
+        @if($item->name == \App\Models\CPM\CpmBiometric::BLOOD_SUGAR)
             @include('partials.cpm-models.biometrics.bloodSugar')
         @endif
 
-        @if($item->name == \App\Models\CPM\CpmBiometric::SMOKING && !empty($biometrics->smoking))
+        @if($item->name == \App\Models\CPM\CpmBiometric::SMOKING)
             @include('partials.cpm-models.biometrics.smoking')
         @endif
 
-        @if($item->name == \App\Models\CPM\CpmBiometric::WEIGHT && !empty($biometrics->weight))
+        @if($item->name == \App\Models\CPM\CpmBiometric::WEIGHT)
             @include('partials.cpm-models.biometrics.weight')
         @endif
     </div>

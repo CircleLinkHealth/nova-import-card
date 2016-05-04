@@ -104,10 +104,10 @@ class CarePlanViewService
         $transCare->patientMiscsIds = $patientMiscs;
 
 
-        $bloodPressure = $patient->cpmBloodPressure()->first();
-        $bloodSugar = $patient->cpmBloodSugar()->first();
-        $smoking = $patient->cpmSmoking()->first();
-        $weight = $patient->cpmWeight()->first();
+        $bloodPressure = $patient->cpmBloodPressure()->firstOrNew([]);
+        $bloodSugar = $patient->cpmBloodSugar()->firstOrNew([]);
+        $smoking = $patient->cpmSmoking()->firstOrNew([]);
+        $weight = $patient->cpmWeight()->firstOrNew([]);
         
         $patientBiometrics = $patient->cpmBiometrics()->get();
 
