@@ -124,6 +124,12 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('home_phone_number', 'Home Phone Number:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('home_phone_number', $patient->home_phone_number, ['class' => 'form-control', 'style' => 'width:40%;']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
                                         <div class="col-xs-2">{!! Form::label('state', 'State:') !!}</div>
                                         <div class="col-xs-4">{!! Form::select('state', $states_arr, $patient->state, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                                         <div class="col-xs-1">{!! Form::label('zip', 'Zip:') !!}</div>
@@ -228,12 +234,6 @@
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('mrn_number', 'MRN Number:') !!}</div>
                                             <div class="col-xs-4">{!! Form::text('mrn_number', $patient->mrn_number, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('home_phone_number', 'Home Phone Number:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('home_phone_number', $patient->home_phone_number, ['class' => 'form-control', 'style' => 'width:40%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
