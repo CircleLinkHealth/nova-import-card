@@ -4,27 +4,33 @@ use App\CarePlanTemplate;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmBiometric extends Model {
+class CpmBiometric extends Model
+{
 
-	use Instructable;
+    use Instructable;
 
-	protected $table = 'cpm_biometrics';
+    const BLOOD_PRESSURE = 'Blood Pressure';
+    const BLOOD_SUGAR = 'Blood Sugar';
+    const SMOKING = 'Smoking (# per day)';
+    const WEIGHT = 'Weight';
 
-	protected $guarded = [];
+    protected $table = 'cpm_biometrics';
 
-	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-	 */
-	public function carePlanTemplates()
-	{
-		return $this->belongsToMany(CarePlanTemplate::class, 'care_plan_templates_cpm_biometrics');
-	}
+    protected $guarded = [];
 
-	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-	 */
-	public function patient()
-	{
-		return $this->belongsToMany(User::class, 'cpm_biometrics_users', 'patient_id');
-	}
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function carePlanTemplates()
+    {
+        return $this->belongsToMany(CarePlanTemplate::class, 'care_plan_templates_cpm_biometrics');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function patient()
+    {
+        return $this->belongsToMany(User::class, 'cpm_biometrics_users', 'patient_id');
+    }
 }

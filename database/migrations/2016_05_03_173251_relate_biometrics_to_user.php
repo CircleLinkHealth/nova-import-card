@@ -24,7 +24,7 @@ class RelateBiometricsToUser extends Migration
             if (Schema::hasColumn($t, 'patient_id')) continue;
             
             Schema::table($t, function(Blueprint $table){
-                $table->unsignedInteger('patient_id');
+                $table->unsignedInteger('patient_id')->after('id');
                 $table->foreign('patient_id')
                     ->references('id')
                     ->on((new \App\User())->getTable())

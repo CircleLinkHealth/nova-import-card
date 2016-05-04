@@ -4,6 +4,10 @@ use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
+use App\Models\CPM\Biometrics\CpmBloodPressure;
+use App\Models\CPM\Biometrics\CpmBloodSugar;
+use App\Models\CPM\Biometrics\CpmSmoking;
+use App\Models\CPM\Biometrics\CpmWeight;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmLifestyle;
 use App\Models\CPM\CpmMedicationGroup;
@@ -247,6 +251,45 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users', 'patient_id')
 			->withTimestamps('created_at', 'updated_at');
     }
+
+
+	/*
+	 *
+	 * CPM Biometrics
+	 *
+	 */
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function cpmBloodPressure()
+	{
+		return $this->hasOne(CpmBloodPressure::class, 'patient_id');
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function cpmBloodSugar()
+	{
+		return $this->hasOne(CpmBloodSugar::class, 'patient_id');
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function cpmSmoking()
+	{
+		return $this->hasOne(CpmSmoking::class, 'patient_id');
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function cpmWeight()
+	{
+		return $this->hasOne(CpmWeight::class, 'patient_id');
+	}
 
     /*****/
 

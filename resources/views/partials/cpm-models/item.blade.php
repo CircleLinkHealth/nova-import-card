@@ -72,7 +72,7 @@
             </div>
         </div>
 
-        @if (isset($buttonLabel))
+        @if(isset($buttonLabel))
             <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
                 <button type="button"
                         class="btn btn-default btn-xs btn-monitor collapse {{ in_array($item->id, $section->patientItemIds) ? 'in' : '' }} text-right"
@@ -110,4 +110,25 @@
         @endif
     </div>
 </div>
-{{--@endif--}}
+
+@if($section->name == 'cpmBiometrics')
+    <div class="collapse {{ in_array($item->id, $section->patientItemIds) ? 'in' : '' }}"
+         id="collapseItem-{{ $section->name }}-{{$i}}{{$item->id}}">
+
+        @if($item->name == \App\Models\CPM\CpmBiometric::BLOOD_PRESSURE && !empty($biometrics->bloodPressure))
+            @include('partials.cpm-models.biometrics.bloodPressure')
+        @endif
+
+        @if($item->name == \App\Models\CPM\CpmBiometric::BLOOD_SUGAR && !empty($biometrics->bloodSugar))
+            @include('partials.cpm-models.biometrics.bloodSugar')
+        @endif
+
+        @if($item->name == \App\Models\CPM\CpmBiometric::SMOKING && !empty($biometrics->smoking))
+            @include('partials.cpm-models.biometrics.smoking')
+        @endif
+
+        @if($item->name == \App\Models\CPM\CpmBiometric::WEIGHT && !empty($biometrics->weight))
+            @include('partials.cpm-models.biometrics.weight')
+        @endif
+    </div>
+@endif

@@ -10,6 +10,7 @@ namespace App\Services;
 
 
 use App\Models\CPM\CpmMisc;
+use App\Models\CPM\UI\Biometrics;
 use App\Models\CPM\UI\Section;
 use App\PatientCarePlan as CarePlan;
 use App\CarePlanTemplate;
@@ -91,8 +92,8 @@ class CarePlanViewService
             'cpmBiometrics',
         ]);
 
+
         $patientMiscs = $patient->cpmMiscs()->get()->lists('id')->all();
-        $patientBiometrics = $patient->cpmBiometrics()->get()->lists('id')->all();
 
         $transCare = new Section();
         $transCare->name = 'cpmMiscs';
@@ -102,20 +103,34 @@ class CarePlanViewService
         ])->orderBy('pivot_ui_sort')->get();
         $transCare->patientMiscsIds = $patientMiscs;
 
+
+        $bloodPressure = $patient->cpmBloodPressure()->first();
+        $bloodSugar = $patient->cpmBloodSugar()->first();
+        $smoking = $patient->cpmSmoking()->first();
+        $weight = $patient->cpmWeight()->first();
+        
+        $patientBiometrics = $patient->cpmBiometrics()->get();
+
         $biometrics = new Section();
         $biometrics->name = 'cpmBiometrics';
         $biometrics->title = 'Biometrics to Monitor';
         $biometrics->items = $template->cpmBiometrics;
-        $biometrics->patientItemIds = $patientBiometrics;
+        $biometrics->patientItemIds = $patientBiometrics->lists('id')->all();
 
 
         //Add sections here in order
         $sections = [
             $biometrics,
-            $transCare
+            $transCare,
         ];
+        
+        $biometrics = new Biometrics();
+        $biometrics->bloodPressure = $bloodPressure;
+        $biometrics->bloodSugar = $bloodSugar;
+        $biometrics->smoking = $smoking;
+        $biometrics->weight = $weight;
 
-        return compact('sections');
+        return compact('sections', 'biometrics');
     }
 
 
