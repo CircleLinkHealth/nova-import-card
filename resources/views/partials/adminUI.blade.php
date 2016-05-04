@@ -36,7 +36,7 @@
 
 		<!-- START BOOTSTRAP -->
 		<!-- Latest compiled and minified CSS -->
-		<link href="{{ asset('/css/bootstrap-bootstwatch-superhero.css') }}" rel="stylesheet">
+		<link href="{{ asset('/css/bootswatch-v3.3.6.css') }}" rel="stylesheet">
 		<style>
 			.table-striped>tbody>tr:nth-child(odd)>td,
 			.table-striped>tbody>tr:nth-child(odd)>th {
