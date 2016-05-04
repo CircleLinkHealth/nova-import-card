@@ -22,9 +22,9 @@
                 <div class="checkbox text-medium-big">
                     <div class="radio-inline">
                         <input id="monitor_changes_for_chf" name="biometrics[weight][monitor_changes_for_chf]"
-                               value="{{$biometrics->weight->monitor_changes_for_chf}}"
+                               value="1"
                                class="itemTrigger"
-                               data-toggle="collapse" data-target="#" type="checkbox"
+                               type="checkbox"
                         @if($biometrics->weight->monitor_changes_for_chf){{ 'checked=checked'}}@endif>
                         <label for="monitor_changes_for_chf">
                             <span></span>Monitor Weight Changes for CHF

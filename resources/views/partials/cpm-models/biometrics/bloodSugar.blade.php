@@ -20,7 +20,7 @@
 
         <div class="col-sm-6 cp-item-child" style="">
             Target BS<br>
-            <input class="form-control" name="biometrics[bloodSugar][systolic_high_alert]"
+            <input class="form-control" name="biometrics[bloodSugar][starting_a1c]"
                    value="{{$biometrics->bloodSugar->starting_a1c}}"
                    placeholder="" type="text">
         </div>
@@ -32,14 +32,14 @@
 
         <div class="col-sm-6 cp-item-child" style="">
             BS Low Alert<br>
-            <input class="form-control" name="biometrics[bloodSugar][systolic_low_alert]"
+            <input class="form-control" name="biometrics[bloodSugar][high_alert]"
                    value="{{$biometrics->bloodSugar->high_alert}}"
                    placeholder="" type="text">
         </div>
 
         <div class="col-sm-6 cp-item-child" style="">
             BS High Alert<br>
-            <input class="form-control" name="biometrics[bloodSugar][diastolic_high_alert]"
+            <input class="form-control" name="biometrics[bloodSugar][low_alert]"
                    value="{{$biometrics->bloodSugar->low_alert}}"
                    placeholder="" type="text">
         </div>

@@ -5,6 +5,10 @@ use App\CLH\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Location;
+use App\Models\CPM\Biometrics\CpmBloodPressure;
+use App\Models\CPM\Biometrics\CpmBloodSugar;
+use App\Models\CPM\Biometrics\CpmSmoking;
+use App\Models\CPM\Biometrics\CpmWeight;
 use App\Models\CPM\CpmProblem;
 use App\Role;
 use App\Services\CarePlanViewService;
@@ -545,7 +549,7 @@ class PatientCareplanController extends Controller
         $params = new ParameterBag($request->input());
 
         $direction = $params->get('direction');
-        $page = (int) $params->get('page');
+        $page = (int)$params->get('page');
         $patientId = $params->get('user_id');
 
 
@@ -575,6 +579,28 @@ class PatientCareplanController extends Controller
             $biometricService->syncWithUser($user, $cpmBiometrics);
             $miscService->syncWithUser($user, $cpmMiscs, $page);
 
+            $biometricsValues = $params->get('biometrics', []);
+
+            //weight
+            if (!isset($biometricsValues['weight']['monitor_changes_for_chf'])) $biometricsValues['weight']['monitor_changes_for_chf'] = 0;
+            if (isset($biometricsValues['weight'])) CpmWeight::updateOrCreate([
+                'patient_id' => $user->ID
+            ], $biometricsValues['weight']);
+
+            //blood sugar
+            if (isset($biometricsValues['bloodSugar'])) CpmBloodSugar::updateOrCreate([
+                'patient_id' => $user->ID
+            ], $biometricsValues['bloodSugar']);
+
+            //blood pressure
+            if (isset($biometricsValues['bloodPressure'])) CpmBloodPressure::updateOrCreate([
+                'patient_id' => $user->ID
+            ], $biometricsValues['bloodPressure']);
+
+            //smoking
+            if (isset($biometricsValues['smoking'])) CpmSmoking::updateOrCreate([
+                'patient_id' => $user->ID
+            ], $biometricsValues['smoking']);
         }
 
         if ($page == 3) {
