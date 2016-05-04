@@ -24,6 +24,11 @@ class S20160503UserMetaMigration extends Seeder {
 
     public function run()
     {
+        DB::table('patient_info')->delete();
+        DB::table('provider_info')->delete();
+        DB::table('patient_care_team_members')->delete();
+        DB::table('phone_numbers')->delete();
+
         $this->migrateUserInfo();
         $this->migratePatientInfo();
         $this->migrateProviderInfo();
