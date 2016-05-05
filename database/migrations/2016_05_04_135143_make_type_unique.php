@@ -25,7 +25,7 @@ class MakeTypeUnique extends Migration
     public function down()
     {
         Schema::table('care_plan_templates', function (Blueprint $table) {
-            $table->string('type')->change();
+            $table->dropUnique(['type']);
         });
     }
 }
