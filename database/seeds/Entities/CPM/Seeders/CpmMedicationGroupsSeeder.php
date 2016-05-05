@@ -49,14 +49,6 @@ class CpmMedicationGroupsSeeder extends \Illuminate\Database\Seeder
             $careItem->type_id = $medGroup->id;
             $careItem->save();
 
-            $userValues = \App\CareItemUserValue::whereCareItemId($careItem->id)->get();
-
-            foreach ($userValues as $v) {
-                $v->type = \App\Models\CPM\CpmMedicationGroup::class;
-                $v->type_id = $medGroup->id;
-                $v->save();
-            }
-
             $this->command->info("\tAdded " . $medication['name']);
         }
     }
