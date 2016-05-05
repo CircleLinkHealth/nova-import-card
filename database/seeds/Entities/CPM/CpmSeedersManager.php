@@ -99,6 +99,13 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
             $this->command->info(TruncateCpmRelationshipTables::class . ' ran.');
         }
 
+        if ($this->command->confirm('Do you want to migrate your care_item_user_values table over to cpm_****_users tables?
+         This may take a while depending on how many users your DB has [y|N]')
+        ) {
+            $this->call(MigrateCarePlanDataMay16::class);
+            $this->command->info(MigrateCarePlanDataMay16::class . ' ran.');
+        }
+
         Log::notice('Seeder ' . self::class . ' was ran successfully.');
     }
 
