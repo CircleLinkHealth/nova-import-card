@@ -40,23 +40,6 @@ class CpmLifestyleSeeder extends \Illuminate\Database\Seeder
             $careItem->type_id = $lifestyle->id;
             $careItem->save();
 
-            $careItemCarePlan = \App\CarePlanItem::whereItemId($careItem->id)->get();
-
-            foreach ($careItemCarePlan as $val)
-            {
-                $val->type = \App\Models\CPM\CpmLifestyle::class;
-                $val->type_id = $lifestyle->id;
-                $val->save();
-            }
-
-            $userValues = \App\CareItemUserValue::whereCareItemId($careItem->id)->get();
-
-            foreach ($userValues as $v) {
-                $v->type = \App\Models\CPM\CpmLifestyle::class;
-                $v->type_id = $lifestyle->id;
-                $v->save();
-            }
-
             $this->command->info("\tAdded " . $entity['name']);
 
         }

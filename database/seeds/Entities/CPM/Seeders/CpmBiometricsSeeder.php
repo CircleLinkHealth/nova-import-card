@@ -46,23 +46,6 @@ class CpmBiometricsSeeder extends \Illuminate\Database\Seeder
             $careItem->type = \App\Models\CPM\CpmBiometric::class;
             $careItem->type_id = $biometric->id;
             $careItem->save();
-
-            $careItemCarePlan = \App\CarePlanItem::whereItemId($careItem->id)->get();
-
-            foreach ($careItemCarePlan as $val)
-            {
-                $val->type = \App\Models\CPM\CpmBiometric::class;
-                $val->type_id = $biometric->id;
-                $val->save();
-            }
-
-            $userValues = \App\CareItemUserValue::whereCareItemId($careItem->id)->get();
-
-            foreach ($userValues as $v) {
-                $v->type = \App\Models\CPM\CpmBiometric::class;
-                $v->type_id = $biometric->id;
-                $v->save();
-            }
             
             $this->command->info("\tAdded " . $entity['name']);
         }
