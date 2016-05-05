@@ -14,7 +14,8 @@ class DataMigrationHelperFieldsSeeder extends \Illuminate\Database\Seeder
         $models[] = ['name' => \App\Models\CPM\CpmLifestyle::class, 'relationship_fn_name' => 'cpmLifestyles'];
         $models[] = ['name' => \App\Models\CPM\CpmMedicationGroup::class, 'relationship_fn_name' => 'cpmMedicationGroups'];
         $models[] = ['name' => \App\Models\CPM\CpmMisc::class, 'relationship_fn_name' => 'cpmMiscs'];
-        $models[] = ['name' => \App\Models\CPM\CpmSymptom::class, 'relationship_fn_name' => 'cpmSymptom'];
+        $models[] = ['name' => \App\Models\CPM\CpmSymptom::class, 'relationship_fn_name' => 'cpmSymptoms'];
+        $models[] = ['name' => \App\Models\CPM\CpmProblem::class, 'relationship_fn_name' => 'cpmProblems'];
 
         foreach ($models as $model) {
             $instance = app($model['name']);
