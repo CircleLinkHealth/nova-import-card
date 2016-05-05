@@ -73,7 +73,10 @@ class CpmMiscSeeder extends \Illuminate\Database\Seeder
                 $v->type_id = $misc->id;
                 $v->save();
             }
-            
+
+            $this->command->info("\tAdded " . $entity['name']);
+
+
         }
     }
 

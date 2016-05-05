@@ -56,6 +56,8 @@ class CpmMedicationGroupsSeeder extends \Illuminate\Database\Seeder
                 $v->type_id = $medGroup->id;
                 $v->save();
             }
+
+            $this->command->info("\tAdded " . $medication['name']);
         }
     }
 }

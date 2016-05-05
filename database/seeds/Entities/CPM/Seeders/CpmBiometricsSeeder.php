@@ -63,6 +63,8 @@ class CpmBiometricsSeeder extends \Illuminate\Database\Seeder
                 $v->type_id = $biometric->id;
                 $v->save();
             }
+            
+            $this->command->info("\tAdded " . $entity['name']);
         }
     }
 }

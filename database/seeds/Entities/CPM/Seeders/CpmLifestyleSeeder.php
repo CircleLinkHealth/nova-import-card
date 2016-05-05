@@ -56,6 +56,9 @@ class CpmLifestyleSeeder extends \Illuminate\Database\Seeder
                 $v->type_id = $lifestyle->id;
                 $v->save();
             }
+
+            $this->command->info("\tAdded " . $entity['name']);
+
         }
     }
 

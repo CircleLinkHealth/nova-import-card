@@ -58,6 +58,8 @@ class CpmSymptomsSeeder extends \Illuminate\Database\Seeder
                 $v->type_id = $cpmSymptom->id;
                 $v->save();
             }
+
+            $this->command->info("\tAdded " . $symptom['name']);
         }
     }
 }
