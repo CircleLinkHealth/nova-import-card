@@ -1,10 +1,12 @@
 <?php namespace App\Models\CPM;
 
 use App\CarePlanTemplate;
+use App\Contracts\Serviceable;
+use App\Services\CPM\CpmBiometricService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmBiometric extends Model
+class CpmBiometric extends Model implements Serviceable
 {
 
     use Instructable;
@@ -32,5 +34,15 @@ class CpmBiometric extends Model
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_biometrics_users', 'patient_id');
+    }
+
+    /**
+     * Get this Model's Service Class
+     *
+     * @return Serviceable
+     */
+    public function service()
+    {
+        return new CpmBiometricService();
     }
 }

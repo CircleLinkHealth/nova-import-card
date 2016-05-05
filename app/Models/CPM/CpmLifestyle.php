@@ -3,10 +3,12 @@
 use App\CareItem;
 use App\CarePlanItem;
 use App\CarePlanTemplate;
+use App\Contracts\Serviceable;
+use App\Services\CPM\CpmLifestyleService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmLifestyle extends Model
+class CpmLifestyle extends Model implements Serviceable
 {
     
     use Instructable;
@@ -32,5 +34,15 @@ class CpmLifestyle extends Model
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_lifestyles_users', 'patient_id');
+    }
+
+    /**
+     * Get this Model's Service Class
+     *
+     * @return Serviceable
+     */
+    public function service()
+    {
+        return new CpmLifestyleService();
     }
 }

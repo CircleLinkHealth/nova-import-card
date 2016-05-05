@@ -1,10 +1,12 @@
 <?php namespace App\Models\CPM;
 
 use App\CarePlanTemplate;
+use App\Contracts\Serviceable;
+use App\Services\CPM\CpmMiscService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmMisc extends Model {
+class CpmMisc extends Model implements Serviceable{
     
     use Instructable;
 
@@ -35,4 +37,13 @@ class CpmMisc extends Model {
         return $this->belongsToMany(User::class, 'cpm_miscs_users', 'patient_id');
     }
 
+    /**
+     * Get this Model's Service Class
+     *
+     * @return Serviceable
+     */
+    public function service()
+    {
+        return new CpmMiscService();
+    }
 }

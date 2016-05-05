@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
+use App\Contracts\Serviceable;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
@@ -26,7 +27,7 @@ use MikeMcLin\WpPassword\Facades\WpPassword;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable {
 
 	use SoftDeletes;
 

@@ -3,11 +3,13 @@
 use App\CareItem;
 use App\CarePlanItem;
 use App\CarePlanTemplate;
+use App\Contracts\Serviceable;
 use App\Models\CCD\CcdMedication;
+use App\Services\CPM\CpmMedicationGroupService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmMedicationGroup extends Model {
+class CpmMedicationGroup extends Model implements Serviceable{
     
     use Instructable;
 
@@ -40,5 +42,15 @@ class CpmMedicationGroup extends Model {
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_medication_groups_users', 'patient_id');
+    }
+
+    /**
+     * Get this Model's Service Class
+     *
+     * @return Serviceable
+     */
+    public function service()
+    {
+        return new CpmMedicationGroupService();
     }
 }
