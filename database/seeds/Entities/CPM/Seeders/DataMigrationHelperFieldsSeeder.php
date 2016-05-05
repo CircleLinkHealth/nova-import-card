@@ -10,14 +10,14 @@ class DataMigrationHelperFieldsSeeder extends \Illuminate\Database\Seeder
 {
     public function run()
     {
-        $models[] = \App\Models\CPM\CpmBiometric::class;
-        $models[] = \App\Models\CPM\CpmLifestyle::class;
-        $models[] = \App\Models\CPM\CpmMedicationGroup::class;
-        $models[] = \App\Models\CPM\CpmMisc::class;
-        $models[] = \App\Models\CPM\CpmSymptom::class;
+        $models[] = ['name' => \App\Models\CPM\CpmBiometric::class, 'relationship_fn_name' => 'cpmBiometrics'];
+        $models[] = ['name' => \App\Models\CPM\CpmLifestyle::class, 'relationship_fn_name' => 'cpmLifestyles'];
+        $models[] = ['name' => \App\Models\CPM\CpmMedicationGroup::class, 'relationship_fn_name' => 'cpmMedicationGroups'];
+        $models[] = ['name' => \App\Models\CPM\CpmMisc::class, 'relationship_fn_name' => 'cpmMiscs'];
+        $models[] = ['name' => \App\Models\CPM\CpmSymptom::class, 'relationship_fn_name' => 'cpmSymptom'];
 
         foreach ($models as $model) {
-            $instance = app($model);
+            $instance = app($model['name']);
 
             $all = $instance->all();
 
@@ -28,8 +28,9 @@ class DataMigrationHelperFieldsSeeder extends \Illuminate\Database\Seeder
 
                 DB::transaction(function () use ($userValues, $model, $row) {
                     foreach ($userValues as $v) {
-                        $v->type = $model;
+                        $v->type = $model['name'];
                         $v->type_id = $row->id;
+                        $v->relationship_fn_name = $model['relationship_fn_name'];
                         $v->save();
                     }
                 });
@@ -40,8 +41,9 @@ class DataMigrationHelperFieldsSeeder extends \Illuminate\Database\Seeder
 
                 DB::transaction(function () use ($careItemCarePlan, $model, $row) {
                     foreach ($careItemCarePlan as $val) {
-                        $val->type = $model;
+                        $val->type = $model['name'];
                         $val->type_id = $row->id;
+                        $val->relationship_fn_name = $model['relationship_fn_name'];
                         $val->save();
                     }
                 });
