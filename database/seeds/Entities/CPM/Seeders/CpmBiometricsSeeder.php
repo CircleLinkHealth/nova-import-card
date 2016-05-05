@@ -55,6 +55,14 @@ class CpmBiometricsSeeder extends \Illuminate\Database\Seeder
                 $val->type_id = $biometric->id;
                 $val->save();
             }
+
+            $userValues = \App\CareItemUserValue::whereCareItemId($careItem->id)->get();
+
+            foreach ($userValues as $v) {
+                $v->type = \App\Models\CPM\CpmBiometric::class;
+                $v->type_id = $biometric->id;
+                $v->save();
+            }
         }
     }
 }

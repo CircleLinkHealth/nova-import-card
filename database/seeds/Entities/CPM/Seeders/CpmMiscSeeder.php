@@ -65,7 +65,15 @@ class CpmMiscSeeder extends \Illuminate\Database\Seeder
                 $val->save();
             }
 
+            
+            $userValues = \App\CareItemUserValue::whereCareItemId($careItem->id)->get();
 
+            foreach ($userValues as $v) {
+                $v->type = \App\Models\CPM\CpmMisc::class;
+                $v->type_id = $misc->id;
+                $v->save();
+            }
+            
         }
     }
 

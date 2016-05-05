@@ -50,6 +50,14 @@ class CpmSymptomsSeeder extends \Illuminate\Database\Seeder
             $careItem->type = \App\Models\CPM\CpmSymptom::class;
             $careItem->type_id = $cpmSymptom->id;
             $careItem->save();
+
+            $userValues = \App\CareItemUserValue::whereCareItemId($careItem->id)->get();
+
+            foreach ($userValues as $v) {
+                $v->type = \App\Models\CPM\CpmSymptom::class;
+                $v->type_id = $cpmSymptom->id;
+                $v->save();
+            }
         }
     }
 }

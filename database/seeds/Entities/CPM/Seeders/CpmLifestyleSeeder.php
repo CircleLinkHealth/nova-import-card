@@ -49,7 +49,13 @@ class CpmLifestyleSeeder extends \Illuminate\Database\Seeder
                 $val->save();
             }
 
+            $userValues = \App\CareItemUserValue::whereCareItemId($careItem->id)->get();
 
+            foreach ($userValues as $v) {
+                $v->type = \App\Models\CPM\CpmLifestyle::class;
+                $v->type_id = $lifestyle->id;
+                $v->save();
+            }
         }
     }
 
