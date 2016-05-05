@@ -86,10 +86,17 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
         }
 
         if ($this->command->confirm('Do you wanna add Data Migration Helper fields to care_items, care_item_care_plan, and care_item_user_values? 
-         You should only do this if you want to migrate existing patient data. [y|N]')
+         Do this if you want to migrate existing patient data. [y|N]')
         ) {
             $this->call(DataMigrationHelperFieldsSeeder::class);
             $this->command->info(DataMigrationHelperFieldsSeeder::class . ' ran.');
+        }
+
+        if ($this->command->confirm('Do you want to truncate all cpm_****_users tables?
+         Do this to get a fresh user values migration. [y|N]')
+        ) {
+            $this->call(TruncateCpmRelationshipTables::class);
+            $this->command->info(TruncateCpmRelationshipTables::class . ' ran.');
         }
 
         Log::notice('Seeder ' . self::class . ' was ran successfully.');
