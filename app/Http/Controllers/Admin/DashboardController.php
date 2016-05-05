@@ -44,30 +44,43 @@ class DashboardController extends Controller {
 
 		$user = $wpUser = User::find(Auth::user()->ID);
 
+		$roles = Role::all();
+
 		// switch dashboard view based on logged in user
 		if($user->can('admin-access')) {
 
 			$stats = array();
+			$roleStats = array();
 			$stats['totalPrograms'] = WpBlog::all()->count();
 			$stats['totalUsers'] = User::all()->count();
-			$stats['totalAdministrators'] = User::whereHas('roles', function($q) {
-				$q->where('name', '=', 'administrator');
-			})
-				->get()->count();
-			$stats['totalCareCenter'] = User::whereHas('roles', function($q) {
-				$q->where('name', '=', 'care-center');
-			})
-				->get()->count();
-			$stats['totalParticipants'] = User::whereHas('roles', function($q) {
+			foreach($roles as $role) {
+				$roleStats[$role->name] = User::whereHas('roles', function($q) use($role) {
+					$q->where('name', '=', $role->name);
+				})
+					->get()->count();
+			}
+			/*
+			foreach($roles as $role) {
+				$stats['totalAdministrators'] = User::whereHas('roles', function ($q) {
+					$q->where('name', '=', 'administrator');
+				})
+					->get()->count();
+				$stats['totalCareCenter'] = User::whereHas('roles', function ($q) {
+					$q->where('name', '=', 'care-center');
+				})
+					->get()->count();
+				$stats['totalParticipants'] = User::whereHas('roles', function ($q) {
 					$q->where('name', '=', 'participant');
 				})
-				->get()->count();
-			$stats['totalProviders'] = User::whereHas('roles', function($q) {
-				$q->where('name', '=', 'provider');
-			})
-				->get()->count();
+					->get()->count();
+				$stats['totalProviders'] = User::whereHas('roles', function ($q) {
+					$q->where('name', '=', 'provider');
+				})
+					->get()->count();
+			}
+			*/
 
-			return view('admin/dashboard', compact(['user', 'stats']));
+			return view('admin/dashboard', compact(['user', 'stats', 'roleStats']));
 
 		} else {
 

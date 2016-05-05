@@ -17,7 +17,7 @@
 
 			<div class="col-md-12">
 				<div class="panel panel-default">
-					<div class="panel-heading">Statistics</div>
+					<div class="panel-heading">Stats:</div>
 
 					<div class="panel-body">
 						<table class="table table-striped">
@@ -30,33 +30,39 @@
 							<tr>
 								<td><strong>Total Programs</strong></td>
 								<td>{{ $stats['totalPrograms'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.programs.index', array()) }}"><i class="icon--home--white"></i> Programs</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.programs.index', array()) }}"><i class="icon--home--white"></i> View All Programs</a></td>
 							</tr>
 							<tr>
 								<td><strong>Total Users</strong></td>
 								<td>{{ $stats['totalUsers'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array()) }}"><i class="icon--home--white"></i> All Users</a></td>
+								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array()) }}"><i class="icon--home--white"></i> view All Users</a></td>
 							</tr>
-							<tr>
-								<td><strong>Total Administrators</strong></td>
-								<td>{{ $stats['totalAdministrators'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'administrator')) }}"><i class="icon--home--white"></i> Administrators</a></td>
-							</tr>
-							<tr>
-								<td><strong>Total Care Center Personnel</strong></td>
-								<td>{{ $stats['totalCareCenter'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'care-center')) }}"><i class="icon--home--white"></i> Care Center</a></td>
-							</tr>
-							<tr>
-								<td><strong>Total Providers</strong></td>
-								<td>{{ $stats['totalProviders'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'provider')) }}"><i class="icon--home--white"></i> Providers</a></td>
-							</tr>
-							<tr>
-								<td><strong>Total Participants</strong></td>
-								<td>{{ $stats['totalParticipants'] }}</td>
-								<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => 'participant')) }}"><i class="icon--home--white"></i> Participants</a></td>
-							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">Roles:</div>
+
+					<div class="panel-body">
+						<table class="table table-striped">
+							<thead>
+							<td></td>
+							<td></td>
+							<td></td>
+							</thead>
+							<tbody>
+							@foreach($roleStats as $statName => $statCount)
+								<tr>
+									<td><strong>Total {{ $statName }}</strong></td>
+									<td>{{ $statCount }}</td>
+									<td><a class="btn btn-primary btn pull-right" href="{{ URL::route('admin.users.index', array('filterRole' => $statName)) }}"><i class="icon--home--white"></i> {{ $statName }}</a></td>
+								</tr>
+							@endforeach
 
 							</tbody>
 						</table>
