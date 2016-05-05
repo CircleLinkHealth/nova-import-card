@@ -1,12 +1,10 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests;
 use App\AppConfig;
 use App\Http\Controllers\Controller;
-
-use App\WpBlog;
-use Illuminate\Http\Request;
+use App\Http\Requests;
 use Auth;
+use Illuminate\Http\Request;
 
 class AppConfigController extends Controller {
 
