@@ -206,6 +206,13 @@ Route::group( ['middleware' => 'auth'], function () {
         // impersonation
         Route::post( 'impersonate', ['uses' => 'ImpersonationController@postImpersonate', 'as' => 'post.impersonate'] );
 
+        // appConfig
+        Entrust::routeNeedsPermission( $prefix . 'appConfig*', 'app-config-view' );
+        Entrust::routeNeedsPermission( $prefix . 'appConfig/*/*', 'app-config-manage' );
+        Route::resource( 'appConfig', 'Admin\AppConfigController' );
+        Route::post( 'appConfig/{id}/edit', ['uses' => 'Admin\AppConfigController@update', 'as' => 'admin.appConfig.update'] );
+        Route::get( 'appConfig/{id}/destroy', ['uses' => 'Admin\AppConfigController@destroy', 'as' => 'admin.appConfig.destroy'] );
+
         // activities
         Entrust::routeNeedsPermission( $prefix . 'activities*', 'activities-view' );
         Route::resource( 'activities', 'ActivityController' );

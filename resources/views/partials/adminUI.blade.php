@@ -102,6 +102,17 @@
 								</li>
 							@endif
 
+							@if(Entrust::can('app-config-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Settings<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.appConfig.index', array()) }}">App Config</a></li>
+									</ul>
+								</li>
+							@endif
+
 							@if(Entrust::can('roles-view'))
 								<li role="presentation" class="dropdown">
 									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">

@@ -28,6 +28,8 @@ class PermissionsConfig extends Seeder {
             'activities-pagetimer-manage' => array('display_name' => 'Time Tracking Manage', 'description' => '',),
             'activities-pagetimer-view' => array('display_name' => 'Time Tracking View', 'description' => '',),
             'admin-access' => array('display_name' => 'Admin Access', 'description' => '',),
+            'app-config-manage' => array('display_name' => 'App Config Manage', 'description' => '',),
+            'app-config-view' => array('display_name' => 'App Config View', 'description' => '',),
             'apikeys-manage' => array('display_name' => 'API Manage', 'description' => '',),
             'apikeys-view' => array('display_name' => 'API View', 'description' => '',),
             'is-administrator' => array('display_name' => 'Is Administrator', 'description' => '',),
