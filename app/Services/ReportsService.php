@@ -11,13 +11,11 @@ use App\Location;
 use App\Observation;
 use App\PatientCarePlan;
 use App\PatientReports;
-use App\Services\CareplanUIService;
 use App\User;
 use App\UserMeta;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
-use PhpSpec\Exception\Exception;
 
 class ReportsService
 {

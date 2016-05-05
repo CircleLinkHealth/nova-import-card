@@ -11,6 +11,8 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
 {
     public function run()
     {
+        define('DEFAULT_LEGACY_CARE_PLAN_ID', 10);
+
         Model::unguard();
 
         DB::transaction(function () {
@@ -46,6 +48,18 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
                     'care_item_id' => $careItem->id,
                 ]);
 
+                //get the details
+                $detailsId = \App\CareItem::whereParentId($careItem->id)->whereDisplayName('Details')->first()->id;
+                $instruction = \App\CarePlanItem::whereItemId($detailsId)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->whereNotNull('meta_value')->first();
+
+                if (!empty($instruction)) {
+                    $instruction = \App\Models\CPM\CpmInstruction::create([
+                        'name' => $instruction->meta_value
+                    ]);
+                    
+                    $cpmProblem->cpmInstructions()->attach($instruction);
+                }
+
                 $careItem->type = \App\Models\CPM\CpmProblem::class;
                 $careItem->type_id = $cpmProblem->id;
                 $careItem->save();
@@ -54,10 +68,14 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
         });
 
 
-        DB::transaction(function () {
-            $this->call(DefaultCarePlanTemplateSeeder::class);
-            $this->command->info(DefaultCarePlanTemplateSeeder::class . ' ran.');
-        });
+        try {
+            DB::transaction(function () {
+                $this->call(DefaultCarePlanTemplateSeeder::class);
+                $this->command->info(DefaultCarePlanTemplateSeeder::class . ' ran.');
+            });
+        } catch (\Exception $e) {
+            $this->command->error($e);
+        }
 
         Log::notice('Seeder ' . self::class . ' was ran successfully.');
     }

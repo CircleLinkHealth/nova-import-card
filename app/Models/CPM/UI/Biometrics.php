@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/3/16
- * Time: 8:17 PM
- */
 
 namespace App\Models\CPM\UI;
 

@@ -24,7 +24,8 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
             ->sync($cpmBiometrics);
 
         foreach ($cpmBiometrics as $biometric) {
-            $cpi = \App\CarePlanItem::whereItemId($biometric->care_item_id)->first();
+            $cpi = \App\CarePlanItem::whereItemId($biometric->care_item_id)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->first();
+
             $cpt->cpmBiometrics()
                 ->updateExistingPivot($biometric->id, [
                     'ui_sort' => $cpi->ui_sort,
@@ -39,7 +40,10 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
         $cpt->cpmLifestyles()->sync($cpmLifestyles);
 
         foreach ($cpmLifestyles as $lifestyle) {
-            $cpi = \App\CarePlanItem::whereItemId($lifestyle->care_item_id)->first();
+            $cpi = \App\CarePlanItem::whereItemId($lifestyle->care_item_id)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->first();
+
+            if (empty($cpi)) dd($lifestyle);
+
             $cpt->cpmLifestyles()->updateExistingPivot($lifestyle->id, [
                 'ui_sort' => $cpi->ui_sort,
                 'page' => 1,
@@ -54,7 +58,10 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
         $cpt->cpmMedicationGroups()->sync($cpmMedGroup);
 
         foreach ($cpmMedGroup as $medGroup) {
-            $cpi = \App\CarePlanItem::whereItemId($medGroup->care_item_id)->first();
+            $cpi = \App\CarePlanItem::whereItemId($medGroup->care_item_id)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->first();
+
+            if (empty($cpi)) dd($medGroup);
+
             $cpt->cpmMedicationGroups()->updateExistingPivot($medGroup->id, [
                 'ui_sort' => $cpi->ui_sort,
                 'page' => 1,
@@ -69,8 +76,10 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
         $cpt->cpmMiscs()->sync($cpmMisc);
 
         foreach ($cpmMisc as $misc) {
-            $cpi = \App\CarePlanItem::whereItemId($misc->care_item_id)->first();
-            
+            $cpi = \App\CarePlanItem::whereItemId($misc->care_item_id)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->first();
+
+            if (empty($cpi)) dd($misc);
+
             if ($misc->name == \App\Models\CPM\CpmMisc::OTHER_CONDITIONS
                 || $misc->name == \App\Models\CPM\CpmMisc::MEDICATION_LIST)
             {
@@ -104,7 +113,10 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
         $cpt->cpmProblems()->sync($cpmProblems);
 
         foreach ($cpmProblems as $problem) {
-            $cpi = \App\CarePlanItem::whereItemId($problem->care_item_id)->first();
+            $cpi = \App\CarePlanItem::whereItemId($problem->care_item_id)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->first();
+
+            if (empty($cpi)) dd($problem);
+
             $cpt->cpmProblems()->updateExistingPivot($problem->id, [
                 'ui_sort' => $cpi->ui_sort,
                 'page' => 1,
@@ -119,7 +131,10 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
         $cpt->cpmSymptoms()->sync($cpmSymptoms);
 
         foreach ($cpmSymptoms as $problem) {
-            $cpi = \App\CarePlanItem::whereItemId($problem->care_item_id)->first();
+            $cpi = \App\CarePlanItem::whereItemId($problem->care_item_id)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->first();
+
+            if (empty($cpi)) dd($problem);
+
             $cpt->cpmSymptoms()->updateExistingPivot($problem->id, [
                 'ui_sort' => $cpi->ui_sort,
                 'page' => 3,
