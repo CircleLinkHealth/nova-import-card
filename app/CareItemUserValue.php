@@ -32,6 +32,8 @@ class CareItemUserValue extends Model {
      */
     protected $fillable = ['user_id', 'item_id', 'value'];
 
+    public $timestamps = false;
+
 
     public function careItem()
     {
