@@ -44,7 +44,7 @@ class CreateUniqueKeys extends Migration
             DB::table('lv_migrations')
                 ->insert([
                     'migration' => '2016_05_05_221043_create_unique_keys',
-                    'batch' => 0
+                    'batch' => 1
                 ]);
 
             Artisan::call('migrate');
