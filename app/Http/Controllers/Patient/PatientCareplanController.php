@@ -9,7 +9,6 @@ use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
-use App\Models\CPM\CpmProblem;
 use App\Role;
 use App\Services\CarePlanViewService;
 use App\Services\CPM\CpmBiometricService;
@@ -18,20 +17,21 @@ use App\Services\CPM\CpmMedicationGroupService;
 use App\Services\CPM\CpmMiscService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\CPM\CpmSymptomService;
-use App\Services\UserService;
-use App\Services\MsgCPRules;
-use App\Services\ObservationService;
 use App\Services\ReportsService;
+use App\Services\UserService;
 use App\User;
 use App\WpBlog;
 use Auth;
 use Carbon\Carbon;
 use DateTimeZone;
 use DB;
-use EllipseSynergie\ApiResponse\Laravel\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
+use Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
+
+//use EllipseSynergie\ApiResponse\Laravel\Response;
 
 class PatientCareplanController extends Controller
 {
@@ -150,27 +150,29 @@ class PatientCareplanController extends Controller
                     }
                 }
 
-                $patientData[] = array(
-                    'key' => $patient->ID,
-                    'id' => $patient->ID,
-                    'patient_name' => $patient->fullName,
-                    'first_name' => $patient->first_name,
-                    'last_name' => $patient->last_name,
-                    'careplan_status' => $careplanStatus,
-                    'careplan_status_link' => $careplanStatusLink,
-                    'careplan_provider_approver' => $approverName,
-                    'dob' => Carbon::parse($patient->birthDate)->format('m/d/Y'),
-                    'phone' => $patient->phone,
-                    'age' => $patient->age,
-                    'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
-                    'last_read' => '',
-                    'ccm_time' => $patient->patientInfo->cur_month_activity_time,
-                    'ccm_seconds' => $patient->patientInfo->cur_month_activity_time,
-                    'provider' => $bpName,
-                    'program_name' => $programName,
-                    'careplan_last_printed' => $printed_date,
-                    'careplan_printed' => $printed_status
-                );
+                if($patient->patientInfo) {
+                    $patientData[] = array(
+                        'key' => $patient->ID,
+                        'id' => $patient->ID,
+                        'patient_name' => $patient->fullName,
+                        'first_name' => $patient->first_name,
+                        'last_name' => $patient->last_name,
+                        'careplan_status' => $careplanStatus,
+                        'careplan_status_link' => $careplanStatusLink,
+                        'careplan_provider_approver' => $approverName,
+                        'dob' => Carbon::parse($patient->birthDate)->format('m/d/Y'),
+                        'phone' => $patient->phone,
+                        'age' => $patient->age,
+                        'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
+                        'last_read' => '',
+                        'ccm_time' => $patient->patientInfo->cur_month_activity_time,
+                        'ccm_seconds' => $patient->patientInfo->cur_month_activity_time,
+                        'provider' => $bpName,
+                        'program_name' => $programName,
+                        'careplan_last_printed' => $printed_date,
+                        'careplan_printed' => $printed_status
+                    );
+                }
             }
         }
         debug($patientData);
@@ -194,8 +196,95 @@ class PatientCareplanController extends Controller
                 $user->save();
             }
         }
-        $careplans = $reportService->carePlanGenerator($users);
-        return view('wpUsers.patient.multiview', compact(['careplans']));
+
+        // vars
+        $storageDirectory = 'storage/pdfs/careplans/';
+        $datetimePrefix = date('Y-m-dH:i:s');
+        $pageFileNames = array();
+
+        // first create blank page
+        $pdf = App::make('snappy.pdf.wrapper');
+        $pdf->loadView('wpUsers.patient.careplan.print', [
+            'patient' => false,
+            'isPdf' => true,
+        ]);
+        $fileNameBlankPage = $storageDirectory.$datetimePrefix.'-0-PDFblank.pdf';
+        $fileNameWithPathBlankPage = base_path($fileNameBlankPage);
+        $pdf->save($fileNameWithPathBlankPage, true);
+
+        // create pdf for each user
+        $p = 1;
+        foreach($users as $user_id) {
+            // add p to datetime prefix
+            $prefix = $datetimePrefix . '-' . $p;
+            $user = User::find($user_id);
+            $careplan = $reportService->carePlanGenerator(array($user));
+            $careplan = $careplan[$user_id];
+            if(empty($careplan)) {
+                return false;
+            }
+            // build pdf
+            $pdf = App::make('snappy.pdf.wrapper');
+            $pdf->loadView('wpUsers.patient.multiview', [
+                'careplans' => array($user_id => $careplan),
+                'isPdf' => true,
+            ]);
+            $pdf->setOption('footer-center', 'Page [page]');
+
+            $fileName = $storageDirectory.$prefix.'-PDF_' . str_random(40) . '.pdf';
+            $fileNameWithPath = base_path($fileName);
+            $pdf->save($fileNameWithPath, true);
+            $pageCount = $this->count_pages($fileNameWithPath);
+            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $pageCount;
+
+            // append blank page if needed
+            if ($pageCount % 2 != 0) {
+                echo PHP_EOL . '<br /><br />Add blank page...';
+                echo PHP_EOL . '<br /><br />'.$fileName;
+                echo PHP_EOL . '<br /><br />'.$fileNameBlankPage;
+                $fileName = $storageDirectory.$this->merge_pages(array($fileName, $fileNameBlankPage), $prefix, $storageDirectory);
+                $fileNameWithPath = base_path($fileName);
+                echo PHP_EOL . '<br /><br />Merge complete..';
+            }
+
+            // add to array
+            $pageFileNames[] = $fileName;
+
+            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $this->count_pages($fileNameWithPath);
+            $p++;
+        }
+
+        // merge to final file
+        $mergedFileName = $this->merge_pages($pageFileNames, $datetimePrefix, $storageDirectory);
+        $mergedFileNameWithPath = $storageDirectory.$this->merge_pages($pageFileNames, $datetimePrefix, $storageDirectory);
+        //dd($mergedFileName . ' - PAGE COUNT: '.$this->count_pages(base_path($mergedFileNameWithPath)));
+
+        return Response::make(file_get_contents(base_path($mergedFileNameWithPath)), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$mergedFileName.'"'
+        ]);
+        //return view('wpUsers.patient.multiview', compact(['careplans']));
+    }
+
+    public function count_pages($pdfname) {
+        $pdftext = file_get_contents($pdfname);
+        $num = preg_match_all("/\/Page\W/", $pdftext, $dummy);
+        return $num;
+    }
+
+    public function merge_pages($fileArray, $prefix = '', $storageDirectory = '') {
+        //$fileArray= array("name1.pdf","name2.pdf","name3.pdf","name4.pdf");
+
+        $outputFileName = $prefix."-merged.pdf";
+        $outputName = base_path($storageDirectory.$prefix."-merged.pdf");
+
+        $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$outputName ";
+//Add each pdf file to the end of the command
+        foreach($fileArray as $file) {
+            $cmd .= base_path($file)." ";
+        }
+        $result = shell_exec($cmd);
+        return $outputFileName;
     }
 
     /**

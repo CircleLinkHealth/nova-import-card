@@ -1,28 +1,32 @@
 @extends('partials.providerUI')
 
 <?php
-function biometricGoal($starting, $target, $bp = false)
-{
-    $starting = explode('/', $starting);
-    $starting = $starting[0];
-    $target = explode('/', $target);
-    $target = $target[0];
-    $verb = 'Raise';
-    if ($bp == 'Blood Pressure') {
-        $verb = 'Maintain';
-    };
-    if ($bp == 'Weight') {
-        $verb = 'Maintain';
-    };
-    return ($starting > $target) ? 'Lower' : $verb;
+if ( !function_exists( 'biometricGoalValue' ) ) {
+    function biometricGoalValue($starting, $target, $bp = false)
+    {
+        $starting = explode('/', $starting);
+        $starting = $starting[0];
+        $target = explode('/', $target);
+        $target = $target[0];
+        $verb = 'Raise';
+        if ($bp == 'Blood Pressure') {
+            $verb = 'Maintain';
+        };
+        if ($bp == 'Weight') {
+            $verb = 'Maintain';
+        };
+        return ($starting > $target) ? 'Lower' : $verb;
+    }
 }
 
-        //check if exists
- function checkIfExists($arr,$val){
-    if(isset($arr[$val])){
-        return $arr[$val];
+if ( !function_exists( 'checkIfExists' ) ) {
+    //check if exists
+    function checkIfExists($arr,$val){
+        if(isset($arr[$val])){
+            return $arr[$val];
+        }
+            return '';
     }
-     return '';
 }
 
 $today = \Carbon\Carbon::now()->toFormattedDateString();
@@ -225,8 +229,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <ul class="subareas__list">
                             <li class="subareas__item subareas__item--wide col-sm-12">
                                 @foreach(array_reverse($careplan['bio_data']) as $key => $value)
-                                    <div class="col-xs-5 print-row text-bold">{{ biometricGoal($value['starting'], $value['target'], $key)}} {{$key}}</div>
-                                    <div class="col-xs-4 print-row text-bold">{{(biometricGoal($value['starting'], $value['target'], $key) == 'Maintain')? 'at' :  'to' }} {{$value['target']}}</div>
+                                    <div class="col-xs-5 print-row text-bold">{{ biometricGoalValue($value['starting'], $value['target'], $key)}} {{$key}}</div>
+                                    <div class="col-xs-4 print-row text-bold">{{(biometricGoalValue($value['starting'], $value['target'], $key) == 'Maintain')? 'at' :  'to' }} {{$value['target']}}</div>
                                     <div class="col-xs-3 print-row">from {{$value['starting']}}</div>
                                 @endforeach
                             </li>

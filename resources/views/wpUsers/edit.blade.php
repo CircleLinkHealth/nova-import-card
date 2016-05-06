@@ -47,16 +47,16 @@
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 @if($patient->hasRole('participant'))
-                                    <div class="pull-left">
+                                    {{--<div class="pull-left">
                                         <a href="{{ URL::route('admin.users.msgCenter', array('patientId' => $patient->ID)) }}" class="btn btn-primary">App Simulator</a>
-                                    </div>
+                                    </div>--}}
                                     <div class="pull-left" style="margin-left:10px;">
                                         <a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" class="btn btn-info">Go To Provider UI</a>
                                     </div>
                                 @endif
-                                <div class="pull-left" style="margin-left:10px;">
+                                {{--<div class="pull-left" style="margin-left:10px;">
                                     <a href="{{ URL::route('admin.users.careplan', array('patientId' => $patient->ID)) }}" class="btn btn-primary">View Care Plan Feed JSON</a>
-                                </div>
+                                </div>--}}
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
@@ -120,6 +120,12 @@
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('city', 'City:') !!}</div>
                                         <div class="col-xs-10">{!! Form::text('city', $patient->city, ['class' => 'form-control']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('home_phone_number', 'Home Phone Number:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('home_phone_number', $patient->home_phone_number, ['class' => 'form-control', 'style' => 'width:40%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -228,12 +234,6 @@
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('mrn_number', 'MRN Number:') !!}</div>
                                             <div class="col-xs-4">{!! Form::text('mrn_number', $patient->mrn_number, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('home_phone_number', 'Home Phone Number:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('home_phone_number', $patient->home_phone_number, ['class' => 'form-control', 'style' => 'width:40%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">

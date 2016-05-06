@@ -28,6 +28,23 @@ $(document).ready(function(){
             $('#ctModal').modal();
             return false;
         }
+        // DOM ELEMENTS
+        errorfound = false;
+        $('.ctselectpicker').each(function (index, value) {
+            ctmCount = (index + 1);
+            provider =  $('#ctm' + ctmCount + 'provider').val();
+            if(!provider) {
+                // error modal
+                errorfound = true;
+                $('#ctModalError').html('Please select a provider from the dropdown.');
+                $('#ctModal').modal();
+                return false;
+            }
+        });
+
+        if(errorfound) {
+            return false;
+        }
 
         // validation end
         if ($(this).attr('omitsubmit')) {
