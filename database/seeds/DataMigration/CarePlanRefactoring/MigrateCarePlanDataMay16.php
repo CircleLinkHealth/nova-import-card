@@ -27,11 +27,8 @@ class MigrateCarePlanDataMay16 extends \Illuminate\Database\Seeder
                     ->whereNotNull('relationship_fn_name')
                     ->whereValue('Active')
                     ->whereUserId($userId)
-                    ->orderBy('relationship_fn_name')
                     ->get()
-                    ->groupBy(function ($item, $key) {
-                        return $item['relationship_fn_name'];
-                    })
+                    ->groupBy('relationship_fn_name')
                     ->toArray();
 
                 foreach ($userValues as $relationship => $v)
