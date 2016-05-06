@@ -10,37 +10,48 @@ class MigrateCarePlanDataMay16 extends \Illuminate\Database\Seeder
 {
     public function run()
     {
-        $userValues = \App\CareItemUserValue::whereNotNull('type')
-            ->whereNotNull('type_id')
-            ->whereNotNull('relationship_fn_name')
-            ->whereNotNull('user_id')
-            ->get();
+        $users = \App\CareItemUserValue::distinct()->lists('user_id');
 
-        DB::transaction(function () use ($userValues) {
-            foreach ($userValues as $v) {
-                $user = \App\User::find($v->user_id);
+        DB::transaction(function () use ($users) {
+            foreach ($users as $userId) {
+
+                $user = \App\User::find($userId);
 
                 if (empty($user)) {
-                    $this->command->error("\tUser with id $v->user_id does not exist");
+                    $this->command->error("\tUser with id $userId does not exist");
                     continue;
                 }
 
-                if (!method_exists($user, $v->relationship_fn_name)) {
-                    $this->command->error("\tRelationship $v->relationship_fn_name does not exist on User");
-                    continue;
-                }
+                $userValues = \App\CareItemUserValue::whereNotNull('type')
+                    ->whereNotNull('type_id')
+                    ->whereNotNull('relationship_fn_name')
+                    ->whereValue('Active')
+                    ->whereUserId($userId)
+                    ->orderBy('relationship_fn_name')
+                    ->get()
+                    ->groupBy(function ($item, $key) {
+                        return $item['relationship_fn_name'];
+                    })
+                    ->toArray();
 
-                if ($v->value == 'Active') {
+                foreach ($userValues as $relationship => $v)
+                {
+                    if (!method_exists($user, $relationship)) {
+                        $this->command->error("\tRelationship $relationship does not exist on User");
+                        continue;
+                    }
+
+                    $ids = array_column($userValues[$relationship], 'type_id');
+
                     try {
-                        $user->{$v->relationship_fn_name}()->attach($v->type_id);
-                        $this->command->info("\tMigrated $v->type with id $v->type_id");
+                        $user->{$relationship}()->sync($ids);
+                        $this->command->info("\tMigrated type $relationship for user with id $userId");
                     } catch (Illuminate\Database\QueryException $e) {
                         $errorCode = $e->errorInfo[1];
                         if ($errorCode == 1062) {
-                            $this->command->error('Duplicate entry.');
+                            $this->command->error("Duplicate entry. Can't do that brah...");
                         }
                     }
-
                 }
             }
         });
