@@ -32,7 +32,7 @@ class CreateCpmMedicationGroupsUsers extends Migration {
 			
 			$table->timestamps();
 
-			$table->index(['patient_id', 'cpm_medication_group_id'], 'cpm_med_grps_usrs_ptnt_id_cpm_med_grp_id_index');
+			$table->unique(['patient_id', 'cpm_medication_group_id'], 'cpm_med_grps_usrs_ptnt_id_cpm_med_grp_id_unique');
 		});
 	}
 

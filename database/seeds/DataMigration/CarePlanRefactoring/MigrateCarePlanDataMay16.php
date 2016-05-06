@@ -30,10 +30,17 @@ class MigrateCarePlanDataMay16 extends \Illuminate\Database\Seeder
                     continue;
                 }
 
-                if ($v->value == 'Active')
-                {
-                    $user->{$v->relationship_fn_name}()->attach($v->type_id);
-                    $this->command->info("\tMigrated $v->type with id $v->type_id");
+                if ($v->value == 'Active') {
+                    try {
+                        $user->{$v->relationship_fn_name}()->attach($v->type_id);
+                        $this->command->info("\tMigrated $v->type with id $v->type_id");
+                    } catch (Illuminate\Database\QueryException $e) {
+                        $errorCode = $e->errorInfo[1];
+                        if ($errorCode == 1062) {
+                            $this->command->error('Duplicate entry.');
+                        }
+                    }
+
                 }
             }
         });

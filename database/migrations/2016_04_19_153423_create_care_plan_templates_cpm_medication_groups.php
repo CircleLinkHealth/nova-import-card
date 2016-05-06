@@ -31,6 +31,9 @@ class CreateCarePlanTemplatesCpmMedicationGroups extends Migration {
 				->onDelete('cascade');
 
 			$table->timestamps();
+
+			$table->unique(['cpm_medication_group_id', 'care_plan_template_id']);
+
 		});
 	}
 

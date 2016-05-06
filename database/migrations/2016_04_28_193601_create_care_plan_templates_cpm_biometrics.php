@@ -36,7 +36,7 @@ class CreateCarePlanTemplatesCpmBiometrics extends Migration {
 
 			$table->timestamps();
 
-			$table->index(['care_plan_template_id', 'cpm_biometric_id'], 'cpt_id_cpm_biometric_id_index');
+			$table->unique(['care_plan_template_id', 'cpm_biometric_id'], 'cpt_id_cpm_bmtrc_id_unique');
 		});
 	}
 

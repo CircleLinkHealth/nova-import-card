@@ -32,7 +32,7 @@ class CreateCpmSymptomsUsers extends Migration {
 			
 			$table->timestamps();
 			
-			$table->index(['patient_id', 'cpm_symptom_id']);
+			$table->unique(['patient_id', 'cpm_symptom_id']);
 		});
 	}
 

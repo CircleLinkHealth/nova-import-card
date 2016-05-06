@@ -30,6 +30,8 @@ class CreateCpmBiometricsUsers extends Migration
                 ->onDelete('cascade');
 
             $table->timestamps();
+            
+            $table->unique(['cpm_biometric_id', 'patient_id']);
         });
     }
 
