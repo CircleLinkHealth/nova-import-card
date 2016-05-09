@@ -71,12 +71,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
-        if($user->can('is-participant')) {
+        if($user->hasRole('participant')) {
             $this->saveOrUpdatePatientInfo($user, $params);
         }
 
         // provider info
-        if($user->can('is-provider')) {
+        if($user->hasRole('provider')) {
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
@@ -117,6 +117,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     }
 
     public function saveOrUpdatePatientInfo(User $user, ParameterBag $params) {
+        // make sure user has patientInfo
+        if(!$user->patientInfo) {
+            $user->patientInfo = new PatientInfo();
+            $user->patientInfo->save();
+        }
         $patientInfo = $user->patientInfo->toArray();
 
         // contact days checkbox formatting, @todo this is not normalized properly?
@@ -138,6 +143,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     }
 
     public function saveOrUpdateProviderInfo(User $user, ParameterBag $params) {
+        // make sure user has providerInfo
+        if(!$user->providerInfo) {
+            $user->providerInfo = new ProviderInfo();
+            $user->providerInfo->save();
+        }
         $providerInfo = $user->providerInfo->toArray();
 
         foreach($providerInfo as $key => $value) {

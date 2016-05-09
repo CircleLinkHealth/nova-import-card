@@ -106,11 +106,11 @@ class AuthController extends Controller {
 
 		// switch destination based on role
 		if($this->auth->user()) {
-			if($this->auth->user()->can('is-administrator')) {
+			if($this->auth->user()->hasRole('administrator')) {
 				return '/admin';
-			} else if($this->auth->user()->can('is-provider')) {
+			} else if($this->auth->user()->hasRole('provider')) {
 				return '/manage-patients/dashboard';
-			} else if($this->auth->user()->can('is-care-center')) {
+			} else if($this->auth->user()->hasRole('care-center')) {
 				return '/manage-patients/dashboard';
 			} else {
 				return '/manage-patients/dashboard';

@@ -54,12 +54,12 @@ class PatientController extends Controller {
 					continue 1;
 				}
 				// patient approval counts
-				if(Auth::user()->can(['is-administrator', 'is-care-center'])) {
+				if(Auth::user()->hasRole(['administrator', 'care-center'])) {
 					// care-center and administrator counts number of drafts
 					if ($user->patientInfo->careplan_status == 'draft') {
 						$p++;
 					}
-				} else if(Auth::user()->can(['is-provider'])) {
+				} else if(Auth::user()->hasRole(['provider'])) {
 					// provider counts number of drafts
 					if ($user->patientInfo->careplan_status == 'qa_approved') {
 						$p++;
@@ -453,14 +453,14 @@ class PatientController extends Controller {
 					$careplanStatus = 'Approve Now';
 					$tooltip = $careplanStatus;
 					$careplanStatusLink = 'Approve Now';
-					if (Auth::user()->can('is-provider')) {
+					if (Auth::user()->hasRole('provider')) {
 						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
 					}
 				} else if ($patient->carePlanStatus == 'draft') {
 					$careplanStatus = 'CLH Approve';
 					$tooltip = $careplanStatus;
 					$careplanStatusLink = 'CLH Approve';
-					if (Auth::user()->can('is-care-center') || Auth::user()->can('is-administrator')) {
+					if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
 						$careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
 					}
 				}

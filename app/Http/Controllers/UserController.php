@@ -138,12 +138,12 @@ class UserController extends Controller
             }
 
             // only let owners see owners
-            if ( !Auth::user()->can(['is-administrator']) ) {
+            if ( !Auth::user()->hasRole(['administrator']) ) {
                 $wpUsers = $wpUsers->whereHas( 'roles', function ($q) {
                     $q->where( 'name', '!=', 'administrator' );
                 } );
                 // providers can only see their participants
-                if ( Auth::user()->can(['is-provider']) ) {
+                if ( Auth::user()->hasRole(['provider']) ) {
                     $wpUsers->whereHas('roles', function ($q) {
                         $q->whereHas('perms', function ($q2) {
                             $q2->where('name', '=', 'is-participant');
