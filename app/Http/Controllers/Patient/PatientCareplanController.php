@@ -583,6 +583,9 @@ class PatientCareplanController extends Controller
         if (empty($patientId)) return response("User not found", 401);
 
         $patient = User::find($patientId);
+
+        if (empty($patient)) abort(404, 'Patient not found');
+
         $carePlan = $userService->firstOrDefaultCarePlan($patient);
         $treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan, $patient);
 
@@ -646,6 +649,8 @@ class PatientCareplanController extends Controller
         if (empty($page)) return response("Page not found", 401);
 
         $user = User::find($patientId);
+
+        if (empty($user)) abort(404, 'Patient not found');
 
         if ($page == 1) {
             //get cpm entities or empty array
