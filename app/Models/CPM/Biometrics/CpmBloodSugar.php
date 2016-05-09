@@ -3,9 +3,17 @@
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmBloodSugar extends Model {
+class CpmBloodSugar extends Model
+{
 
-    protected $guarded = [];
+    protected $fillable = [
+        'high_alert',
+        'low_alert',
+        'patient_id',
+        'starting',
+        'starting_a1c',
+        'target',
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

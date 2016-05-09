@@ -3,9 +3,14 @@
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmSmoking extends Model {
+class CpmSmoking extends Model
+{
 
-    protected $guarded = [];
+    protected $fillable = [
+        'patient_id',
+        'starting',
+        'target',
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

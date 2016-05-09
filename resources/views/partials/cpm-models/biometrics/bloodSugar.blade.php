@@ -2,8 +2,8 @@
     <div class="row item-row" style="">
         <div class="col-sm-6 cp-item-child" style="">
             Starting A1c<br>
-            <input class="form-control" name="biometrics[bloodSugar][starting]"
-                   value="{{$biometrics->bloodSugar->starting}}"
+            <input class="form-control" name="biometrics[bloodSugar][starting_a1c]"
+                   value="{{$biometrics->bloodSugar->starting_a1c}}"
                    placeholder="" type="text">
         </div>
     </div>
@@ -12,17 +12,17 @@
     <div class="row item-row" style="">
         <div class="col-sm-6 cp-item-child" style="">
             Starting BS<br>
-            <input class="form-control" name="biometrics[bloodSugar][target]"
-                   value="{{$biometrics->bloodSugar->target}}"
-                   placeholder=""
-                   type="text">
+            <input class="form-control" name="biometrics[bloodSugar][starting]"
+                   value="{{$biometrics->bloodSugar->starting}}"
+                   placeholder="" type="text">
         </div>
 
         <div class="col-sm-6 cp-item-child" style="">
             Target BS<br>
-            <input class="form-control" name="biometrics[bloodSugar][starting_a1c]"
-                   value="{{$biometrics->bloodSugar->starting_a1c}}"
-                   placeholder="" type="text">
+            <input class="form-control" name="biometrics[bloodSugar][target]"
+                   value="{{$biometrics->bloodSugar->target}}"
+                   placeholder=""
+                   type="text">
         </div>
 
 
