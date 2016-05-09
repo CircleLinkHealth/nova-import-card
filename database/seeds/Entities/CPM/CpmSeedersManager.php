@@ -85,11 +85,16 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
             $this->command->error($e);
         }
 
-        if ($this->command->confirm('Do you wanna add Data Migration Helper fields to care_items, care_item_care_plan, and care_item_user_values? 
+        if ($this->command->confirm('Do you want to add Data Migration Helper fields to care_items, care_item_care_plan, and care_item_user_values? 
          Do this if you want to migrate existing patient data. [y|N]')
         ) {
             $this->call(DataMigrationHelperFieldsSeeder::class);
             $this->command->info(DataMigrationHelperFieldsSeeder::class . ' ran.');
+
+            DB::transaction(function () {
+                $this->call(UserBiometricsSeeder::class);
+                $this->command->info(UserBiometricsSeeder::class . ' ran.');
+            });
         }
 
         if ($this->command->confirm('Do you want to truncate all cpm_****_users tables?
