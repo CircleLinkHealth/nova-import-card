@@ -573,6 +573,7 @@ class PatientCareplanController extends Controller
                                         $patientId = false,
                                         $page,
                                         CarePlanViewService $carePlanService,
+                                        CpmProblemService $problemService,
                                         UserService $userService)
     {
         $messages = \Session::get('messages');
@@ -587,7 +588,7 @@ class PatientCareplanController extends Controller
         if (empty($patient)) abort(404, 'Patient not found');
 
         $carePlan = $userService->firstOrDefaultCarePlan($patient);
-        $treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan, $patient);
+        $treating = $problemService->getProblemsToMonitorWithDetails($patient);
 
         // determine which sections to show
         if ($page == 1) {

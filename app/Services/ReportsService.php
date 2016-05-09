@@ -104,45 +104,6 @@ class ReportsService
         return $itemsToMonitor;
     }
 
-    /**
-     * @param PatientCarePlan $carePlan
-     * @return array|false
-     */
-    public function getProblemsToMonitorWithDetails(PatientCarePlan $carePlan, User $patient)
-    {
-        if (!$carePlan) return false;
-
-        //get the template
-        $cptId = $carePlan->care_plan_template_id;
-        $cpt = CarePlanTemplate::find($cptId);
-
-        //get template's cpmProblems
-        $cptProblems = $cpt->cpmProblems()->get();
-
-        //get the User's cpmProblems
-        $patientProblems = $patient->cpmProblems()->get();
-
-        $intersection = $patientProblems->intersect($cptProblems)->all();
-
-        return $intersection;
-//        $itemsToMonitor = array();
-//        if ($carePlan) {
-//            foreach ($carePlan->careSections as $section) {
-//                if ($section->name == 'diagnosis-problems-to-monitor') {
-//                    foreach ($section->carePlanItems as $item) {
-//                        if ($item->meta_value == 'Active') {
-//                            foreach ($item->children as $child) {
-//                                $details = ($child->meta_value == '') ? 'No instructions at this time' : $child->meta_value;
-//                                $itemsToMonitor[$item->careItem->display_name] = $details;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return $itemsToMonitor;
-    }
-
     public function getSymptomsToMonitor(CarePlan $carePlan)
     {
         $temp = array();

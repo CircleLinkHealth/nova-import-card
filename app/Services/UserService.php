@@ -16,7 +16,7 @@ class UserService
      * @param User|null $user
      * @return \App\PatientCarePlan
      */
-    public function firstOrDefaultCarePlan(User $user = null)
+    public function firstOrDefaultCarePlan(User $user)
     {
         return $user->carePlan()->firstOrCreate([
             'patient_id' => $user->ID,

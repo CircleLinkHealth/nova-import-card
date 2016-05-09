@@ -94,8 +94,7 @@
                             </div>
                             <div class="modal-body">
                                 <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
-                                          {{--For the time being we don't wanna post those--}}
-                                          {{--name="instructions-{{ $section->name }}[]"--}}
+                                          name="instructions[]"
                                           style="height: 400px;">{{ $item->cpmInstructions[0]->name }}</textarea>
                             </div>
                             <div class="modal-footer">
