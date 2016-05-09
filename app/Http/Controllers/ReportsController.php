@@ -137,7 +137,7 @@ class ReportsController extends Controller
         $Other = array('other', 'Medication Reconciliation');
         $act_count = 0;
         foreach ($patients as $patient) {
-            $monthly_time = intval($patient->getMonthlyTimeAttribute());
+            //$monthly_time = intval($patient->getMonthlyTimeAttribute());
             $program = WpBlog::find($patient->program_id);
             if ($program) $programName = $program->display_name;
 
@@ -260,7 +260,7 @@ class ReportsController extends Controller
         $act_count = 0;
 
         foreach ($patients as $patient) {
-            $monthly_time = intval($patient->getMonthlyTimeAttribute());
+            //$monthly_time = intval($patient->getMonthlyTimeAttribute());
             $program = WpBlog::find($patient->program_id);
             if ($program) $programName = $program->display_name;
             if ($patient->hasRole('participant')) {
