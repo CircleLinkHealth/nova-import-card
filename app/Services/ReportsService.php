@@ -8,6 +8,7 @@ use App\CPRulesQuestions;
 use App\CPRulesUCP;
 use App\ForeignId;
 use App\Location;
+use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Observation;
 use App\PatientCarePlan;
@@ -914,7 +915,6 @@ class ReportsService
     // the key as
     public function carePlanGenerator($patients)
     {
-
         $careplanReport = array();
 
         foreach ($patients as $user) {
@@ -925,10 +925,17 @@ class ReportsService
             $careplanReport[$user->ID]['problems'] = $user->cpmProblems()->get()->lists('name')->all();
             $careplanReport[$user->ID]['lifestyle'] = $user->cpmLifestyles()->get()->lists('name')->all();
             $careplanReport[$user->ID]['biometrics'] = $user->cpmBiometrics()->get()->lists('name')->all();
+            $careplanReport[$user->ID]['treating'] = $user->cpmProblems()->get()->lists('name')->all();
+            $careplanReport[$user->ID]['medications'] = $user->cpmMedicationGroups()->get()->lists('name')->all();
         }
         //return $careplanReport;
 
         $careplanReport[$user->ID]['bio_data'] = array();
+
+        //Ignore Smoking - Untracked Biometric
+        if(($key = array_search(CpmBiometric::SMOKING, $careplanReport[$user->ID]['biometrics'])) !== false) {
+            unset($careplanReport[$user->ID]['biometrics'][$key]);
+        }
 
         foreach ($careplanReport[$user->ID]['biometrics'] as $metric) {
             $biometric = $user->cpmBiometrics->where('name', $metric)->first();
