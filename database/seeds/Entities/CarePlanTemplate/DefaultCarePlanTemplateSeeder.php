@@ -26,10 +26,16 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
         foreach ($cpmBiometrics as $biometric) {
             $cpi = \App\CarePlanItem::whereItemId($biometric->care_item_id)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->first();
 
+            if (empty($cpi)) dd($biometric);
+
+            $instruction = $biometric->cpmInstructions()->first();
+            
             $cpt->cpmBiometrics()
                 ->updateExistingPivot($biometric->id, [
                     'ui_sort' => $cpi->ui_sort,
                     'page' => 2,
+                    'cpm_instruction_id' => $instruction ? $instruction->id : null,
+                    'has_instruction' => $instruction ? true : false,
                 ]);
         }
 
@@ -44,9 +50,13 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
 
             if (empty($cpi)) dd($lifestyle);
 
+            $instruction = $lifestyle->cpmInstructions()->first();
+
             $cpt->cpmLifestyles()->updateExistingPivot($lifestyle->id, [
                 'ui_sort' => $cpi->ui_sort,
                 'page' => 1,
+                'cpm_instruction_id' => $instruction ? $instruction->id : null,
+                'has_instruction' => $instruction ? true : false,
             ]);
         }
 
@@ -62,9 +72,13 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
 
             if (empty($cpi)) dd($medGroup);
 
+            $instruction = $medGroup->cpmInstructions()->first();
+
             $cpt->cpmMedicationGroups()->updateExistingPivot($medGroup->id, [
                 'ui_sort' => $cpi->ui_sort,
                 'page' => 1,
+                'cpm_instruction_id' => $instruction ? $instruction->id : null,
+                'has_instruction' => $instruction ? true : false,
             ]);
         }
 
@@ -80,12 +94,16 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
 
             if (empty($cpi)) dd($misc);
 
+            $instruction = $misc->cpmInstructions()->first();
+
             if ($misc->name == \App\Models\CPM\CpmMisc::OTHER_CONDITIONS
                 || $misc->name == \App\Models\CPM\CpmMisc::MEDICATION_LIST)
             {
                 $cpt->cpmMiscs()->updateExistingPivot($misc->id, [
                     'ui_sort' => $cpi->ui_sort,
                     'page' => 1,
+                    'cpm_instruction_id' => $instruction ? $instruction->id : null,
+                    'has_instruction' => true,
                 ]);
             }
             elseif ($misc->name == \App\Models\CPM\CpmMisc::TRACK_CARE_TRANSITIONS)
@@ -93,6 +111,8 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
                 $cpt->cpmMiscs()->updateExistingPivot($misc->id, [
                     'ui_sort' => $cpi->ui_sort,
                     'page' => 2,
+                    'cpm_instruction_id' => $instruction ? $instruction->id : null,
+                    'has_instruction' => $instruction ? true : false,
                 ]);
             } 
             else 
@@ -100,6 +120,8 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
                 $cpt->cpmMiscs()->updateExistingPivot($misc->id, [
                     'ui_sort' => $cpi->ui_sort,
                     'page' => 3,
+                    'cpm_instruction_id' => $instruction ? $instruction->id : null,
+                    'has_instruction' => true,
                 ]);
             }
             
@@ -116,10 +138,15 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
             $cpi = \App\CarePlanItem::whereItemId($problem->care_item_id)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->first();
 
             if (empty($cpi)) dd($problem);
+            
+            $instruction = $problem->cpmInstructions()->first();
+
 
             $cpt->cpmProblems()->updateExistingPivot($problem->id, [
                 'ui_sort' => $cpi->ui_sort,
                 'page' => 1,
+                'cpm_instruction_id' => $instruction ? $instruction->id : null,
+                'has_instruction' => $instruction ? true : false,
             ]);
         }
 
@@ -130,14 +157,18 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
         $cpmSymptoms = \App\Models\CPM\CpmSymptom::all();
         $cpt->cpmSymptoms()->sync($cpmSymptoms);
 
-        foreach ($cpmSymptoms as $problem) {
-            $cpi = \App\CarePlanItem::whereItemId($problem->care_item_id)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->first();
+        foreach ($cpmSymptoms as $symptop) {
+            $cpi = \App\CarePlanItem::whereItemId($symptop->care_item_id)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->first();
 
-            if (empty($cpi)) dd($problem);
+            if (empty($cpi)) dd($symptop);
 
-            $cpt->cpmSymptoms()->updateExistingPivot($problem->id, [
+            $instruction = $symptop->cpmInstructions()->first();
+
+            $cpt->cpmSymptoms()->updateExistingPivot($symptop->id, [
                 'ui_sort' => $cpi->ui_sort,
                 'page' => 3,
+                'cpm_instruction_id' => $instruction ? $instruction->id : null,
+                'has_instruction' => $instruction ? true : false,
             ]);
         }
     }

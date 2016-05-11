@@ -49,31 +49,7 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
             });
 
             DB::transaction(function () {
-                //Add care_item_id to problems
-                foreach (\App\Models\CPM\CpmProblem::all() as $problem) {
-                    $careItem = \App\CareItem::whereName($problem->care_item_name)->first();
-
-                    $cpmProblem = \App\Models\CPM\CpmProblem::updateOrCreate(['care_item_name' => $problem->care_item_name], [
-                        'care_item_id' => $careItem->id,
-                    ]);
-
-                    //get the details
-                    $detailsId = \App\CareItem::whereParentId($careItem->id)->whereDisplayName('Details')->first()->id;
-                    $instruction = \App\CarePlanItem::whereItemId($detailsId)->wherePlanId(DEFAULT_LEGACY_CARE_PLAN_ID)->whereNotNull('meta_value')->first();
-
-                    if (!empty($instruction)) {
-                        $instruction = \App\Models\CPM\CpmInstruction::create([
-                            'name' => $instruction->meta_value
-                        ]);
-
-                        $cpmProblem->cpmInstructions()->attach($instruction);
-                    }
-
-                    $careItem->type = \App\Models\CPM\CpmProblem::class;
-                    $careItem->type_id = $cpmProblem->id;
-                    $careItem->save();
-                }
-                $this->command->info('Added care_item_id to problems');
+                $this->call(CpmProblemsSeeder::class);
             });
 
 

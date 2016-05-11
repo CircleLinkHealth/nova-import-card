@@ -50,8 +50,9 @@
         <strong>{{ $item->meta_key . ' = ' . $item->patient_id }}</strong><br /> --}}
     @endif
 
-    {{-- show details button on right if present --}}
-    @if(isset($item->cpmInstructions[0]))
+    {{-- show an instructions button, only if the cpm item has a default instruction --}}
+    {{-- this way we will not render an instruction box for cpm items that do not have it (such as lifestyles) --}}
+    @if($item->pivot->has_instruction)
         <?php
         $buttonLabel = 'Instructions';
         ?>
@@ -95,7 +96,11 @@
                             <div class="modal-body">
                                 <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
                                           name="instructions[{{ $section->name }}][{{ $item->id }}]"
-                                          style="height: 400px;">{{ $item->cpmInstructions[0]->name }}</textarea>
+                                          style="height: 400px;">
+                                    @if(!empty($instruction = \App\Models\CPM\CpmInstruction::find($item->pivot->cpm_instruction_id)))
+                                        {{ $instruction->name }}
+                                    @endif
+                                </textarea>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close
