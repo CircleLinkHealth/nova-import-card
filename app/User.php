@@ -205,6 +205,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function cpmBiometrics()
 	{
 		return $this->belongsToMany(CpmBiometric::class, 'cpm_biometrics_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
 			->withTimestamps('created_at', 'updated_at');
 	}
 
@@ -214,6 +215,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmLifestyles()
     {
         return $this->belongsToMany(CpmLifestyle::class, 'cpm_lifestyles_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
 			->withTimestamps('created_at', 'updated_at');
     }
 
@@ -223,6 +225,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmMedicationGroups()
     {
         return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_medication_groups_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
 			->withTimestamps('created_at', 'updated_at');
     }
 
@@ -232,6 +235,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmMiscs()
     {
         return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
 			->withTimestamps('created_at', 'updated_at');
     }
 
@@ -241,6 +245,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmProblems()
     {
         return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
 			->withTimestamps('created_at', 'updated_at');
     }
 
@@ -250,6 +255,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function cpmSymptoms()
     {
         return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
 			->withTimestamps('created_at', 'updated_at');
     }
 
