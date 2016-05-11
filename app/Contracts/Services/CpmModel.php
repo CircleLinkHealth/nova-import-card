@@ -17,5 +17,5 @@ interface CpmModel
      * @param int $page
      * @return mixed
      */
-    public function syncWithUser(User $user, array $ids, $page = null);
+    public function syncWithUser(User $user, array $ids, $page);
 }

@@ -62,7 +62,7 @@
             <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
                 <div class="radio-inline">
                     <input id="{{ $section->name }}-{{$i}}{{$item->id}}"
-                           name="{{ $section->name }}[]"
+                           name="{{ $section->name }}[{{ $item->id }}]"
                            value="{{ $item->id }}" class="itemTrigger" data-toggle="collapse"
                            data-target="#collapseItem-{{ $section->name }}-{{$i}}{{$item->id}}"
                            type="checkbox" {{ in_array($item->id, $section->patientItemIds) ? 'checked=checked' : '' }}>
@@ -94,7 +94,7 @@
                             </div>
                             <div class="modal-body">
                                 <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
-                                          name="instructions[]"
+                                          name="instructions[{{ $section->name }}][{{ $item->id }}]"
                                           style="height: 400px;">{{ $item->cpmInstructions[0]->name }}</textarea>
                             </div>
                             <div class="modal-footer">

@@ -588,6 +588,7 @@ class PatientCareplanController extends Controller
         if (empty($patient)) abort(404, 'Patient not found');
 
         $carePlan = $userService->firstOrDefaultCarePlan($patient);
+        
         $treating = $problemService->getProblemsToMonitorWithDetails($patient);
 
         // determine which sections to show
@@ -638,6 +639,7 @@ class PatientCareplanController extends Controller
                                          CpmSymptomService $symptomService
     )
     {
+//        dd($request->input());
         // input
         $params = new ParameterBag($request->input());
 
@@ -660,10 +662,10 @@ class PatientCareplanController extends Controller
             $cpmMiscs = $params->get('cpmMiscs', []);
             $cpmProblems = $params->get('cpmProblems', []);
 
-            $lifestyleService->syncWithUser($user, $cpmLifestyles);
-            $medicationGroupService->syncWithUser($user, $cpmMedicationGroups);
+            $lifestyleService->syncWithUser($user, $cpmLifestyles, $page);
+            $medicationGroupService->syncWithUser($user, $cpmMedicationGroups, $page);
             $miscService->syncWithUser($user, $cpmMiscs, $page);
-            $problemService->syncWithUser($user, $cpmProblems);
+            $problemService->syncWithUser($user, $cpmProblems, $page);
         }
 
         if ($page == 2) {
@@ -671,7 +673,7 @@ class PatientCareplanController extends Controller
             $cpmBiometrics = $params->get('cpmBiometrics', []);
             $cpmMiscs = $params->get('cpmMiscs', []);
 
-            $biometricService->syncWithUser($user, $cpmBiometrics);
+            $biometricService->syncWithUser($user, $cpmBiometrics, $page);
             $miscService->syncWithUser($user, $cpmMiscs, $page);
 
             $biometricsValues = $params->get('biometrics', []);
@@ -704,7 +706,7 @@ class PatientCareplanController extends Controller
             $cpmSymptoms = $params->get('cpmSymptoms', []);
 
             $miscService->syncWithUser($user, $cpmMiscs, $page);
-            $symptomService->syncWithUser($user, $cpmSymptoms);
+            $symptomService->syncWithUser($user, $cpmSymptoms, $page);
         }
 
         if ($page == 3) {
