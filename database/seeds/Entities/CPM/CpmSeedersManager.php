@@ -26,47 +26,47 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             \App\Models\CPM\CpmInstruction::truncate();
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-            
-            DB::transaction(function () {
+
+            //DB::transaction(function () {
                 $this->call(CpmLifestyleSeeder::class);
                 $this->command->info(CpmLifestyleSeeder::class . ' ran.');
-            });
+            //});
 
-            DB::transaction(function () {
+            //DB::transaction(function () {
                 $this->call(CpmMedicationGroupsSeeder::class);
                 $this->command->info(CpmMedicationGroupsSeeder::class . ' ran.');
-            });
+            //});
 
-            DB::transaction(function () {
+            //DB::transaction(function () {
                 $this->call(CpmSymptomsSeeder::class);
                 $this->command->info(CpmSymptomsSeeder::class . ' ran.');
-            });
+            //});
 
-            DB::transaction(function () {
+            //DB::transaction(function () {
                 $this->call(CpmBiometricsSeeder::class);
                 $this->command->info(CpmBiometricsSeeder::class . ' ran.');
-            });
+            //});
 
-            DB::transaction(function () {
+            //DB::transaction(function () {
                 $this->call(CpmMiscSeeder::class);
                 $this->command->info(CpmMiscSeeder::class . ' ran.');
-            });
+            //});
 
             /********/
-            DB::transaction(function () {
+            //DB::transaction(function () {
                 $this->call(CcdImporterSeedersManager::class);
                 $this->command->info(CcdImporterSeedersManager::class . ' ran.');
-            });
+            //});
 
-            DB::transaction(function () {
+            //DB::transaction(function () {
                 $this->call(CpmProblemsSeeder::class);
-            });
+            //});
 
 
-            DB::transaction(function () {
+            //DB::transaction(function () {
                 $this->call(DefaultCarePlanTemplateSeeder::class);
                 $this->command->info(DefaultCarePlanTemplateSeeder::class . ' ran.');
-            });
+            //});
         } catch (\Exception $e) {
             $this->command->error($e);
         }
@@ -77,10 +77,10 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
             $this->call(DataMigrationHelperFieldsSeeder::class);
             $this->command->info(DataMigrationHelperFieldsSeeder::class . ' ran.');
 
-            DB::transaction(function () {
+            //DB::transaction(function () {
                 $this->call(UserBiometricsSeeder::class);
                 $this->command->info(UserBiometricsSeeder::class . ' ran.');
-            });
+            //});
         }
 
         if ($this->command->confirm('Do you want to truncate all cpm_****_users tables?
