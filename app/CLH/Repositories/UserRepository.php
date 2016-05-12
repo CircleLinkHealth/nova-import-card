@@ -71,12 +71,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
-        if($user->can('is-participant')) {
+        if($user->hasRole('participant')) {
             $this->saveOrUpdatePatientInfo($user, $params);
         }
 
         // provider info
-        if($user->can('is-provider')) {
+        if($user->hasRole('provider')) {
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
