@@ -84,7 +84,9 @@ class CpmMiscService implements CpmModel
         //For the CPM Misc Item, extract the instruction and
         //store in a key value pair
             $instruction = \App\Models\CPM\CpmInstruction::find($misc->pivot->cpm_instruction_id);
-        return $instruction->name;
+
+        if($instruction) return $instruction->name;
+        else return '';
     }
 
 }
