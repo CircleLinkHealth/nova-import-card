@@ -704,8 +704,8 @@ class PatientCareplanController extends Controller
             $cpmMiscs = $params->get('cpmMiscs', []);
             $cpmSymptoms = $params->get('cpmSymptoms', []);
 
-            $miscService->syncWithUser($user, $cpmMiscs, $page);
-            $symptomService->syncWithUser($user, $cpmSymptoms);
+            $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
+            $symptomService->syncWithUser($user, $cpmSymptoms, $page, $instructions);
         }
 
         if ($page == 3) {
