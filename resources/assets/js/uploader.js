@@ -21,6 +21,7 @@ var CcdUploader = Vue.extend({
             blogs: new Array,
             ccdVendors: new Array,
             selectedVendor: null,
+            selectedProgram: null,
             progress: 0,
             buffer: 100,
             message: 'Drop CCD Records in the box below, or click on it to browse your computer for CCDs. It is recommended that you import up to 5 CCDs in one go.',
