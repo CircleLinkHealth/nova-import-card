@@ -644,6 +644,8 @@ class PatientCareplanController extends Controller
         $page = (int)$params->get('page');
         $patientId = $params->get('user_id');
 
+        $instructions = $params->get('instructions', []);
+
 
         if (empty($patientId)) return response("User not found", 401);
         if (empty($page)) return response("Page not found", 401);
@@ -659,10 +661,10 @@ class PatientCareplanController extends Controller
             $cpmMiscs = $params->get('cpmMiscs', []);
             $cpmProblems = $params->get('cpmProblems', []);
 
-            $lifestyleService->syncWithUser($user, $cpmLifestyles);
-            $medicationGroupService->syncWithUser($user, $cpmMedicationGroups);
-            $miscService->syncWithUser($user, $cpmMiscs, $page);
-            $problemService->syncWithUser($user, $cpmProblems);
+            $lifestyleService->syncWithUser($user, $cpmLifestyles, $page, $instructions);
+            $medicationGroupService->syncWithUser($user, $cpmMedicationGroups, $page, $instructions);
+		    $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
+		    $problemService->syncWithUser($user, $cpmProblems, $page, $instructions);
         }
 
         if ($page == 2) {
@@ -670,8 +672,8 @@ class PatientCareplanController extends Controller
             $cpmBiometrics = $params->get('cpmBiometrics', []);
             $cpmMiscs = $params->get('cpmMiscs', []);
 
-            $biometricService->syncWithUser($user, $cpmBiometrics);
-            $miscService->syncWithUser($user, $cpmMiscs, $page);
+            $biometricService->syncWithUser($user, $cpmBiometrics, $page, $instructions);
+            $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
 
             $biometricsValues = $params->get('biometrics', []);
 
