@@ -76,11 +76,11 @@ class AuthController extends Controller
     public function redirectPath()
     {
         if (auth()->user()) {
-            if (auth()->user()->can('is-administrator')) {
+            if (auth()->user()->hasRole('administrator')) {
                 return '/admin';
-            } else if (auth()->user()->can('is-provider')) {
+            } else if (auth()->user()->hasRole('provider')) {
                 return '/manage-patients/dashboard';
-            } else if (auth()->user()->can('is-care-center')) {
+            } else if (auth()->user()->hasRole('care-center')) {
                 return '/manage-patients/dashboard';
             } else {
                 return '/manage-patients/dashboard';

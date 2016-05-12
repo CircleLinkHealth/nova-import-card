@@ -117,7 +117,7 @@ class PatientCareplanController extends Controller
                     $careplanStatus = 'CLH Approve';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'CLH Approve';
-                    if (Auth::user()->can(['is-care-center']) || Auth::user()->can(['is-administrator'])) {
+                    if (Auth::user()->hasRole(['care-center']) || Auth::user()->hasRole(['administrator'])) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
                     }
                 }
