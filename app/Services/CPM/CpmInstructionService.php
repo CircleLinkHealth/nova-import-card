@@ -16,6 +16,10 @@ class CpmInstructionService
 {
     public function syncWithUser(User $user, $relationship, $entityForeign, $entityId, $instructionInput)
     {
+        if (!method_exists($user, $relationship)) throw new \Exception('Relationship does not exist', 500);
+        
+        $pivotTableName = snake_case($relationship).'_users';
+
         $userRel = $user->{$relationship}()
             ->where($entityForeign, '=', $entityId)
             ->whereNotNull('cpm_instruction_id')
@@ -28,7 +32,11 @@ class CpmInstructionService
 
             if (preg_replace("/\r|\n/", "", trim($oldInstruction->name)) == preg_replace("/\r|\n/", "", trim($instructionInput))) return;
 
-            if ($oldInstruction->is_default) {
+            $userWithSameInstr = \DB::table($pivotTableName)
+                ->where('cpm_instruction_id', '=', 1025)
+                ->count();
+
+            if ($oldInstruction->is_default || $userWithSameInstr > 1) {
                 $newInstruction = CpmInstruction::create([
                     'name' => $instructionInput,
                 ]);
@@ -40,13 +48,11 @@ class CpmInstructionService
                 return;
             }
 
-            if (!$oldInstruction->is_default) {
-                $oldInstruction->update([
-                    'name' => $instructionInput,
-                ]);
+            $oldInstruction->update([
+                'name' => $instructionInput,
+            ]);
 
-                return;
-            }
+            return;
         }
 
 
@@ -88,8 +94,7 @@ class CpmInstructionService
             }
         }
 
-        if (! empty(trim($instructionInput)))
-        {
+        if (!empty(trim($instructionInput))) {
             $newInstruction = CpmInstruction::create([
                 'name' => $instructionInput,
             ]);

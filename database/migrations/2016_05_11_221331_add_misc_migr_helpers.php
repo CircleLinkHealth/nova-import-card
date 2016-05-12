@@ -13,7 +13,7 @@ class AddMiscMigrHelpers extends Migration
     public function up()
     {
         Schema::table('cpm_miscs', function (Blueprint $table) {
-            $table->unsignedInteger('details_care_item_id')->after('id');
+            $table->unsignedInteger('details_care_item_id')->after('id')->nullable();
         });
     }
 
