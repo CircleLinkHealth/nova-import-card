@@ -76,7 +76,7 @@
         @if(isset($buttonLabel))
 
             {{--Figure out which instruction to show--}}
-            <?php $instructionName = ''; ?>
+            <?php $instructionName = ' '; ?>
 
             @if(in_array($item->id, $section->patientItemIds)
                 && isset($section->patientItems[$item->id])
@@ -84,11 +84,11 @@
                 && !empty($instructionId = $section->patientItems[$item->id]->pivot->cpm_instruction_id)
                 && !empty($instruction = \App\Models\CPM\CpmInstruction::find($instructionId)))
 
-                <?php $instructionName = trim($instruction->name); ?>
+                <?php $instructionName = $instruction->name; ?>
 
             @elseif(!empty($instruction = \App\Models\CPM\CpmInstruction::find($item->pivot->cpm_instruction_id)))
 
-                <?php $instructionName = trim($instruction->name); ?>
+                <?php $instructionName = $instruction->name; ?>
 
             @endif
 
@@ -114,8 +114,7 @@
                             <div class="modal-body">
                                 <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
                                           name="instructions[{{ $section->name }}][{{ $item->id }}]"
-                                          style="height: 400px;">{!! $instructionName !!}
-                                </textarea>
+                                          style="height: 400px;">{{ trim($instructionName) }}</textarea>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close

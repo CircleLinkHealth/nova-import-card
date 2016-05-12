@@ -22,18 +22,17 @@ class CpmMiscService implements CpmModel
         if (!is_int($page)) throw new \Exception('The page number needs to be an integer.');
 
         //get careplan templateMiscs id
-        $cptId = $user->service()
+        $templateMiscs = $user->service()
             ->firstOrDefaultCarePlan($user)
-            ->getCarePlanTemplateIdAttribute();
-        
-        $templateMiscs = CarePlanTemplate::find($cptId)
+            ->carePlanTemplate()
+            ->first()
             ->cpmMiscs()
             ->wherePage($page)
             ->get();
 
         //get cpmMiscs on cptMiscsIds with this page
         $cptMiscsIds = $templateMiscs
-            ->lists('cpm_misc_id')
+            ->lists('id')
             ->all();
 
         //get the user's miscs
@@ -46,6 +45,8 @@ class CpmMiscService implements CpmModel
             }
             return true;
         }
+
+        $instructionService = new CpmInstructionService();
 
         //otherwise attach/detach each one
         foreach ($cptMiscsIds as $cptMiscId) {
@@ -61,11 +62,16 @@ class CpmMiscService implements CpmModel
                     $user->cpmMiscs()->attach($cptMiscId);
                 }
 
-//                $relationship = 'cpmMiscs';
-//                $entityId = $cptMiscId;
-//                $entityForeign = 'cpm_misc_id';
-            } else
-            {
+                $relationship = 'cpmMiscs';
+                $entityId = $cptMiscId;
+                $entityForeign = 'cpm_misc_id';
+
+                if (isset($instructions[$relationship][$entityId])) {
+                    $instructionInput = $instructions[$relationship][$entityId];
+
+                    $instructionService->syncWithUser($user, $relationship, $entityForeign, $entityId, $instructionInput);
+                }
+            } else {
                 $user->cpmMiscs()->detach($cptMiscId);
             }
         }

@@ -19,87 +19,19 @@ class CpmProblemService implements CpmModel
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         $user->cpmProblems()->sync($ids);
+        
+        $instructionService = new CpmInstructionService();
 
         foreach ($ids as $problemId) {
             $relationship = 'cpmProblems';
             $entityId = $problemId;
             $entityForeign = 'cpm_problem_id';
 
-            if (isset($instructions[$relationship][$entityId])) {
+            if (isset($instructions[$relationship][$entityId]))
+            {
                 $instructionInput = $instructions[$relationship][$entityId];
 
-
-                $userRel = $user->{$relationship}()
-                    ->where($entityForeign, '=', $entityId)
-                    ->whereNotNull('cpm_instruction_id')
-                    ->first();
-
-                if (!empty($userRel)) {
-                    $oldInstructionId = $userRel->pivot->cpm_instruction_id;
-
-                    $oldInstruction = CpmInstruction::find($oldInstructionId);
-
-                    if (preg_replace("/\r|\n/", "", trim($oldInstruction->name)) == preg_replace("/\r|\n/", "", trim($instructionInput))) continue;
-
-                    if ($oldInstruction->is_default) {
-                        $newInstruction = CpmInstruction::create([
-                            'name' => $instructionInput,
-                        ]);
-
-                        $user->{$relationship}()->updateExistingPivot($entityId, [
-                            'cpm_instruction_id' => $newInstruction->id,
-                        ]);
-
-                        continue;
-                    }
-
-                    if (!$oldInstruction->is_default) {
-                        $oldInstruction->update([
-                            'name' => $instructionInput,
-                        ]);
-
-                        continue;
-                    }
-                }
-
-
-                $template = $user->service()
-                    ->firstOrDefaultCarePlan($user)
-                    ->carePlanTemplate()
-                    ->first();
-
-                $templateRel = $template->{$relationship}()
-                    ->where($entityForeign, '=', $entityId)
-                    ->whereNotNull('cpm_instruction_id')
-                    ->first();
-
-                if (!empty($templateRel)) {
-                    $oldInstructionId = $templateRel->pivot->cpm_instruction_id;
-
-                    $oldInstruction = CpmInstruction::find($oldInstructionId);
-
-                    //If the user does not have that instruction id,
-                    //but the care plan does, and they are the same
-                    //then just attach the instr_id to the user-cpmentity relationship
-                    if (preg_replace("/\r|\n/", "", trim($oldInstruction->name)) == preg_replace("/\r|\n/", "", trim($instructionInput))) {
-                        $user->{$relationship}()->updateExistingPivot($entityId, [
-                            'cpm_instruction_id' => $oldInstruction->id,
-                        ]);
-                        continue;
-                    }
-
-                    if ($oldInstruction->is_default) {
-                        $newInstruction = CpmInstruction::create([
-                            'name' => $instructionInput,
-                        ]);
-
-                        $user->{$relationship}()->updateExistingPivot($entityId, [
-                            'cpm_instruction_id' => $newInstruction->id,
-                        ]);
-
-                        continue;
-                    }
-                }
+                $instructionService->syncWithUser($user, $relationship, $entityForeign, $entityId, $instructionInput);
             }
         }
 

@@ -639,7 +639,6 @@ class PatientCareplanController extends Controller
                                          CpmSymptomService $symptomService
     )
     {
-//        dd($request->input());
         // input
         $params = new ParameterBag($request->input());
 
