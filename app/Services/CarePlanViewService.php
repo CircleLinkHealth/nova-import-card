@@ -38,10 +38,17 @@ class CarePlanViewService
         // if (empty($template)) abort(404, 'Care Plan Template not found.');
 
         //get the User's cpmProblems
-        $patientProblems = $patient->cpmProblems()->get()->lists('id')->all();
-        $patientLifestyles = $patient->cpmLifestyles()->get()->lists('id')->all();
-        $patientMedicationGroups = $patient->cpmMedicationGroups()->get()->lists('id')->all();
-        $patientMiscs = $patient->cpmMiscs()->get()->lists('id')->all();
+        $patientProblems = $patient->cpmProblems()->get();
+        $patientProblemsIds = $patientProblems->lists('id')->all();
+
+        $patientLifestyles = $patient->cpmLifestyles()->get();
+        $patientLifestylesIds = $patientLifestyles->lists('id')->all();
+
+        $patientMedicationGroups = $patient->cpmMedicationGroups()->get();
+        $patientMedicationGroupsIds = $patientMedicationGroups->lists('id')->all();
+        
+        $patientMiscs = $patient->cpmMiscs()->get();
+        $patientMiscsIds = $patientMiscs->lists('id')->all();
 
         $template = $template->loadWithInstructionsAndSort([
             'cpmLifestyles',
@@ -53,23 +60,28 @@ class CarePlanViewService
         $problems->name = 'cpmProblems';
         $problems->title = 'Diagnosis / Problems to Monitor';
         $problems->items = $template->cpmProblems;
-        $problems->patientItemIds = $patientProblems;
+        $problems->patientItemIds = $patientProblemsIds;
+        $problems->patientItems = $patientProblems->keyBy('id');
         $problems->miscs = $template->cpmMiscs()->where('name', CpmMisc::OTHER_CONDITIONS)->get();
-        $problems->patientMiscsIds = $patientMiscs;
+        $problems->patientMiscsIds = $patientMiscsIds;
+        $problems->patientMiscs = $patientMiscs->keyBy('id');
 
         $lifestyles = new Section();
         $lifestyles->name = 'cpmLifestyles';
         $lifestyles->title = 'Lifestyle to Monitor';
         $lifestyles->items = $template->cpmLifestyles;
-        $lifestyles->patientItemIds = $patientLifestyles;
+        $lifestyles->patientItemIds = $patientLifestylesIds;
+        $lifestyles->patientItems = $patientLifestyles->keyBy('id');
 
         $medications = new Section();
         $medications->name = 'cpmMedicationGroups';
         $medications->title = 'Medications to Monitor';
         $medications->items = $template->cpmMedicationGroups;
-        $medications->patientItemIds = $patientMedicationGroups;
+        $medications->patientItemIds = $patientMedicationGroupsIds;
+        $medications->patientItems = $patientMedicationGroups->keyBy('id');
         $medications->miscs = $template->cpmMiscs()->where('name', CpmMisc::MEDICATION_LIST)->get();
-        $medications->patientMiscsIds = $patientMiscs;
+        $medications->patientMiscsIds = $patientMiscsIds;
+        $medications->patientMiscs = $patientMiscs->keyBy('id');
 
         $sections = [
             $problems,
@@ -93,7 +105,8 @@ class CarePlanViewService
         ]);
 
 
-        $patientMiscs = $patient->cpmMiscs()->get()->lists('id')->all();
+        $patientMiscs = $patient->cpmMiscs()->get();
+        $patientMiscsIds = $patientMiscs->lists('id')->all();
 
         $transCare = new Section();
         $transCare->name = 'cpmMiscs';
@@ -101,7 +114,8 @@ class CarePlanViewService
         $transCare->miscs = $template->cpmMiscs()->whereIn('name', [
             CpmMisc::TRACK_CARE_TRANSITIONS,
         ])->orderBy('pivot_ui_sort')->get();
-        $transCare->patientMiscsIds = $patientMiscs;
+        $transCare->patientMiscsIds = $patientMiscsIds;
+        $transCare->patientMiscs = $patientMiscs->keyBy('id');
 
 
         $bloodPressure = $patient->cpmBloodPressure()->firstOrNew([]);
@@ -116,6 +130,7 @@ class CarePlanViewService
         $biometrics->title = 'Biometrics to Monitor';
         $biometrics->items = $template->cpmBiometrics;
         $biometrics->patientItemIds = $patientBiometrics->lists('id')->all();
+        $biometrics->patientItems = $patientBiometrics->keyBy('id');
 
 
         //Add sections here in order
@@ -146,14 +161,18 @@ class CarePlanViewService
             ]);
 
         //get the User's cpmProblems
-        $patientSymptoms = $patient->cpmSymptoms()->get()->lists('id')->all();
-        $patientMiscs = $patient->cpmMiscs()->get()->lists('id')->all();
+        $patientSymptoms = $patient->cpmSymptoms()->get();
+        $patientSymptomsIds = $patientSymptoms->lists('id')->all();
+        
+        $patientMiscs = $patient->cpmMiscs()->get();
+        $patientMiscsIds = $patientMiscs->lists('id')->all();
 
         $symptoms = new Section();
         $symptoms->name = 'cpmSymptoms';
         $symptoms->title = 'Symptoms to Monitor';
         $symptoms->items = $template->cpmSymptoms;
-        $symptoms->patientItemIds = $patientSymptoms;
+        $symptoms->patientItemIds = $patientSymptomsIds;
+        $symptoms->patientItems = $patientSymptoms->keyBy('id');
 
 
         $additionalInfo = new Section();
@@ -166,7 +185,8 @@ class CarePlanViewService
                 CpmMisc::OTHER,
             ])
             ->orderBy('pivot_ui_sort')->get();
-        $additionalInfo->patientMiscsIds = $patientMiscs;
+        $additionalInfo->patientMiscsIds = $patientMiscsIds;
+        $additionalInfo->patientMiscs = $patientMiscs->keyBy('id');
 
 
         //Add sections here in order

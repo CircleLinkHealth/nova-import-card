@@ -43,6 +43,7 @@
             --}}
             <?php $section->name = 'cpmMiscs'; ?>
             <?php $section->patientItemIds = $section->patientMiscsIds; ?>
+            <?php $section->patientItems = $section->patientMiscs; ?>
 
             @for($i = 0; $i < count($section->miscs); $i++)
                 @if($i == $half)

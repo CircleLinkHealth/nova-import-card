@@ -74,6 +74,24 @@
         </div>
 
         @if(isset($buttonLabel))
+
+            {{--Figure out which instruction to show--}}
+            <?php $instructionName = ''; ?>
+
+            @if(in_array($item->id, $section->patientItemIds)
+                && isset($section->patientItems[$item->id])
+                && !empty($section->patientItems[$item->id])
+                && !empty($instructionId = $section->patientItems[$item->id]->pivot->cpm_instruction_id)
+                && !empty($instruction = \App\Models\CPM\CpmInstruction::find($instructionId)))
+
+                    <?php $instructionName = trim($instruction->name); ?>
+
+            @elseif(!empty($instruction = \App\Models\CPM\CpmInstruction::find($item->pivot->cpm_instruction_id)))
+
+                <?php $instructionName = trim($instruction->name); ?>
+
+            @endif
+
             <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
                 <button type="button"
                         class="btn btn-default btn-xs btn-monitor collapse {{ in_array($item->id, $section->patientItemIds) ? 'in' : '' }} text-right"
@@ -96,10 +114,7 @@
                             <div class="modal-body">
                                 <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
                                           name="instructions[{{ $section->name }}][{{ $item->id }}]"
-                                          style="height: 400px;">
-                                    @if(!empty($instruction = \App\Models\CPM\CpmInstruction::find($item->pivot->cpm_instruction_id)))
-                                        {{ $instruction->name }}
-                                    @endif
+                                          style="height: 400px;">{{ $instructionName }}
                                 </textarea>
                             </div>
                             <div class="modal-footer">

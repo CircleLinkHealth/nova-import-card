@@ -12,16 +12,20 @@ class Section
     public $title = null;
     public $items = [];
     public $patientItemIds = [];
+    public $patientItems = [];
     public $miscs = [];
     public $patientMiscsIds = [];
+    public $patientMiscs = [];
 
-    public function __construct($name = null, $title = null, $items = [], $misc = [], $patientItemIds = [], $patientMiscsIds = [])
+    public function __construct($name = null, $title = null, $items = [], $misc = [], $patientItemIds = [], $patientMiscsIds = [], $patientItems = [], $patientMiscs = [])
     {
         $this->items = $items;
         $this->patientItemIds = $patientItemIds;
+        $this->patientItems = $patientItems;
         $this->name = $name;
         $this->title = $title;
         $this->miscs = $misc;
         $this->patientMiscsIds = $patientMiscsIds;
+        $this->patientMiscs = $patientMiscs;
     }
 }

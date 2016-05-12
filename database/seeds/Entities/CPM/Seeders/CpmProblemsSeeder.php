@@ -22,7 +22,7 @@ class CpmProblemsSeeder extends \Illuminate\Database\Seeder
             $detailsId = \App\CareItem::whereParentId($careItem->id)->whereDisplayName('Details')->first()->id;
 
             $instruction = \App\Models\CPM\CpmInstruction::create([
-                'name' => $this->instructions[$problem->care_item_name],
+                'name' => $this->getInstructions()[$problem->care_item_name],
             ]);
 
             $cpmProblem->cpmInstructions()->attach($instruction);
@@ -34,8 +34,10 @@ class CpmProblemsSeeder extends \Illuminate\Database\Seeder
         $this->command->info('Added care_item_id to problems');
     }
 
-    public $instructions = [
-        'diabetes' => '- Measure your Blood Sugar daily as agreed 
+    public function getInstructions()
+    {
+        return [
+            'diabetes' => trim('- Measure your Blood Sugar daily as agreed 
 
 - Take your medications 
 
@@ -45,10 +47,10 @@ class CpmProblemsSeeder extends \Illuminate\Database\Seeder
 
 - Keep all your appointments 
 
-- Get all tests as recommended',
+- Get all tests as recommended'),
 
 
-        'hypertension' => '- Learn to take your own blood pressure.
+            'hypertension' => trim('- Learn to take your own blood pressure.
 
 - Take your blood pressure medication exactly as directed. Do not skip doses. Missing doses can cause your blood pressure to get out of control.
 
@@ -60,44 +62,44 @@ class CpmProblemsSeeder extends \Illuminate\Database\Seeder
 
 - Follow the DASH (Dietary Approaches to Stop Hypertension) eating plan. This plan recommends vegetables, fruits, whole gains, and other heart healthy foods.
 
-- Begin an exercise program. Ask your provider how to get started. The American Heart Association recommends aerobic exercise 3 to 4 times a week for an average of 40 minutes at a time, with provider approval.',
+- Begin an exercise program. Ask your provider how to get started. The American Heart Association recommends aerobic exercise 3 to 4 times a week for an average of 40 minutes at a time, with provider approval.'),
 
 
-        'afib' => '- Tell your care team about any changes in the medication you take, including prescription and over-the-counter as well as any supplements. They interfere with some medications given for atrial fibrillation. 
+            'afib' => trim('- Tell your care team about any changes in the medication you take, including prescription and over-the-counter as well as any supplements. They interfere with some medications given for atrial fibrillation. 
 
 - Limit the consumption of alcohol. Sometimes alcohol needs to be avoided to better treat atrial fibrillation. If you are taking blood-thinner medications, alcohol may interfere with them by increasing their effect. 
 
-- Never take stimulants such as amphetamines or cocaine. These drugs can speed up your heart rate and trigger atrial fibrillation.',
+- Never take stimulants such as amphetamines or cocaine. These drugs can speed up your heart rate and trigger atrial fibrillation.'),
 
 
-        'cad' => '- Do not start or stop any medicines unless your provider tells you to. Many medicines cannot be used with blood thinners. 
+            'cad' => trim('- Do not start or stop any medicines unless your provider tells you to. Many medicines cannot be used with blood thinners. 
 
 - Tell your provider right away if you forget to take the medicine, or if you take too much. 
 
-- Do not get a flu vaccine before speaking to your care team.',
+- Do not get a flu vaccine before speaking to your care team.'),
 
-        'depression' => '- Take your medication as prescribed. 
+            'depression' => trim('- Take your medication as prescribed. 
 
-- Contact your care team if anything changes.',
+- Contact your care team if anything changes.'),
 
-        'chf' => '- Weigh yourself every day at the same time.   
+            'chf' => trim('- Weigh yourself every day at the same time.   
 
 - Call the care team if you have a sudden, unexpected increase in your weight. 
 
-- Take your medicines exactly as prescribed. Do not skip doses. If you miss a dose of your medicine, take it as soon as you remember -- unless it is almost time for your next dose. In that case, just wait and take your next dose at the normal time. Do not take a double dose. If you are unsure, call your care team.',
+- Take your medicines exactly as prescribed. Do not skip doses. If you miss a dose of your medicine, take it as soon as you remember -- unless it is almost time for your next dose. In that case, just wait and take your next dose at the normal time. Do not take a double dose. If you are unsure, call your care team.'),
 
-        'high-cholesterol' => '- Take your cholesterol meds as directed.',
+            'high-cholesterol' => trim('- Take your cholesterol meds as directed.'),
 
-        'kidney-disease' => '- Eat 1500 mg or less of sodium daily 
+            'kidney-disease' => trim('- Eat 1500 mg or less of sodium daily 
 
 - Eat less than 1500 milligrams to 2700 milligrams of potassium daily. 
 
 - As instructed, limit protein in your diet. 
 
-- Move around and bend your legs to avoid getting blood clots when you rest for a long period of time.',
+- Move around and bend your legs to avoid getting blood clots when you rest for a long period of time.'),
 
 
-        'dementia' => '- Keeping a list of important phone numbers next to every phone. 
+            'dementia' => trim('- Keeping a list of important phone numbers next to every phone. 
 
 - Having clocks and calendars around the house so you stay aware of the date and what time it is. 
 
@@ -107,10 +109,10 @@ class CpmProblemsSeeder extends \Illuminate\Database\Seeder
 
 - Plan activities that improve your thinking, such as puzzles, games, baking, or indoor gardening.  
 
-- Have someone nearby for any tasks that may have a risk of injury.',
+- Have someone nearby for any tasks that may have a risk of injury.'),
 
 
-        'asthmacopd' => '- Tobacco smoke -- including secondhand smoke -- is unhealthy for everyone, especially people with asthma and/or COPD. 
+            'asthmacopd' => trim('- Tobacco smoke -- including secondhand smoke -- is unhealthy for everyone, especially people with asthma and/or COPD. 
 
 - Keep active to build up strength: 
 
@@ -124,9 +126,9 @@ class CpmProblemsSeeder extends \Illuminate\Database\Seeder
 
 - Eat smaller meals more often -- 6 smaller meals a day. It might be easier to breathe when your stomach is not full. Do not drink a lot of liquid before eating, or with your meals. 
 
-- Get a flu shot every year but check with your provider first. Ask your provider if you should get a pneumococcal (pneumonia) vaccine.',
+- Get a flu shot every year but check with your provider first. Ask your provider if you should get a pneumococcal (pneumonia) vaccine.'),
 
-        'cf-sol-smo-10-smoking' => '- Do not smoke any cigarettes. Each cigarette you smoke damages your lungs, your blood vessels, and cells throughout your body. Even occasional smoking is harmful.
+            'cf-sol-smo-10-smoking' => trim('- Do not smoke any cigarettes. Each cigarette you smoke damages your lungs, your blood vessels, and cells throughout your body. Even occasional smoking is harmful.
 
 - Quitting is hard.  It takes commitment and effort to quit smoking. Nearly all smokers have some withdrawal symptoms, such as bad moods and wanting to smoke.
 
@@ -138,6 +140,6 @@ class CpmProblemsSeeder extends \Illuminate\Database\Seeder
 
 - Ask friends and family members who are smokers not to smoke around you, and try to avoid situations that remind you of smoking. 
 
-- Let people help you quit!  Call 1-877-44U-QUIT (1-877-448-7848).  The National Cancer Institute has trained counselors available to provide information and help with quitting in English or Spanish, Monday through Friday, 8:00 a.m. to 8:00 p.m. Eastern Time.  You can also call your state quitline: 1-800-QUIT-NOW (1-800-784-8669) (hours vary).',
-    ];
+- Let people help you quit!  Call 1-877-44U-QUIT (1-877-448-7848).  The National Cancer Institute has trained counselors available to provide information and help with quitting in English or Spanish, Monday through Friday, 8:00 a.m. to 8:00 p.m. Eastern Time.  You can also call your state quitline: 1-800-QUIT-NOW (1-800-784-8669) (hours vary).'),];
+    }
 }
