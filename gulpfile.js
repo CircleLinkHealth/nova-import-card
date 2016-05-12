@@ -20,7 +20,7 @@ elixir(function(mix) {
     //     'tests/AprimaApi/*'
     // ]);
     //mix.less(['/css/app.less'], 'public/css/stylesheet.css');
-    // mix.browserify('uploader.js');
+    mix.browserify('uploader.js');
 
     //mix.scripts([
     //    'resources/assets/js/material.min.js'
