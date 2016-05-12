@@ -45,13 +45,14 @@
         </div>
     </div>
     @endif
-    @if(isset($treating))
+    <?php $problems = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($patient); ?>
+    @if(isset($problems))
         <div style="clear:both"></div>
         <ul class="person-conditions-list inline-block text-medium">
-            @foreach($treating as $problem)
+            @foreach($problems as $key => $value)
                 <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
                                                 checked="checked" disabled="disabled">
-                    <label for="condition27"><span> </span>{{$problem->name}}</label>
+                    <label for="condition27"><span> </span>{{$key}}</label>
                 </li>
             @endforeach
         </ul>
