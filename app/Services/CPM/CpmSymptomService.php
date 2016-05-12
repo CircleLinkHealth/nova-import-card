@@ -15,7 +15,7 @@ use App\User;
 class CpmSymptomService implements CpmModel
 {
 
-    public function syncWithUser(User $user, array $ids = [], $page = null)
+    public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         return $user->cpmSymptoms()->sync($ids);
     }

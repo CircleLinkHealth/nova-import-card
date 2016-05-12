@@ -84,7 +84,7 @@
                 && !empty($instructionId = $section->patientItems[$item->id]->pivot->cpm_instruction_id)
                 && !empty($instruction = \App\Models\CPM\CpmInstruction::find($instructionId)))
 
-                    <?php $instructionName = trim($instruction->name); ?>
+                <?php $instructionName = trim($instruction->name); ?>
 
             @elseif(!empty($instruction = \App\Models\CPM\CpmInstruction::find($item->pivot->cpm_instruction_id)))
 
@@ -114,7 +114,7 @@
                             <div class="modal-body">
                                 <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
                                           name="instructions[{{ $section->name }}][{{ $item->id }}]"
-                                          style="height: 400px;">{{ $instructionName }}
+                                          style="height: 400px;">{!! $instructionName !!}
                                 </textarea>
                             </div>
                             <div class="modal-footer">

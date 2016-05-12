@@ -15,7 +15,7 @@ use App\User;
 class CpmBiometricService implements CpmModel
 {
 
-    public function syncWithUser(User $user, array $ids = [], $page = null)
+    public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         return $user->cpmBiometrics()->sync($ids);
     }

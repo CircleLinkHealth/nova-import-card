@@ -646,6 +646,7 @@ class PatientCareplanController extends Controller
         $direction = $params->get('direction');
         $page = (int)$params->get('page');
         $patientId = $params->get('user_id');
+        $instructions = $params->get('instructions', []);
 
 
         if (empty($patientId)) return response("User not found", 401);
@@ -662,10 +663,10 @@ class PatientCareplanController extends Controller
             $cpmMiscs = $params->get('cpmMiscs', []);
             $cpmProblems = $params->get('cpmProblems', []);
 
-            $lifestyleService->syncWithUser($user, $cpmLifestyles, $page);
-            $medicationGroupService->syncWithUser($user, $cpmMedicationGroups, $page);
-            $miscService->syncWithUser($user, $cpmMiscs, $page);
-            $problemService->syncWithUser($user, $cpmProblems, $page);
+            $lifestyleService->syncWithUser($user, $cpmLifestyles, $page, $instructions);
+            $medicationGroupService->syncWithUser($user, $cpmMedicationGroups, $page, $instructions);
+            $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
+            $problemService->syncWithUser($user, $cpmProblems, $page, $instructions);
         }
 
         if ($page == 2) {
@@ -673,8 +674,8 @@ class PatientCareplanController extends Controller
             $cpmBiometrics = $params->get('cpmBiometrics', []);
             $cpmMiscs = $params->get('cpmMiscs', []);
 
-            $biometricService->syncWithUser($user, $cpmBiometrics, $page);
-            $miscService->syncWithUser($user, $cpmMiscs, $page);
+            $biometricService->syncWithUser($user, $cpmBiometrics, $page, $instructions);
+            $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
 
             $biometricsValues = $params->get('biometrics', []);
 
@@ -705,8 +706,8 @@ class PatientCareplanController extends Controller
             $cpmMiscs = $params->get('cpmMiscs', []);
             $cpmSymptoms = $params->get('cpmSymptoms', []);
 
-            $miscService->syncWithUser($user, $cpmMiscs, $page);
-            $symptomService->syncWithUser($user, $cpmSymptoms, $page);
+            $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
+            $symptomService->syncWithUser($user, $cpmSymptoms, $page, $instructions);
         }
 
         if ($page == 3) {

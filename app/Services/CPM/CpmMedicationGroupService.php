@@ -15,7 +15,7 @@ use App\User;
 class CpmMedicationGroupService implements CpmModel
 {
 
-    public function syncWithUser(User $user, array $ids = [], $page = null)
+    public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         return $user->cpmMedicationGroups()->sync($ids);
     }

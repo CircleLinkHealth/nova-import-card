@@ -15,7 +15,7 @@ use App\User;
 class CpmLifestyleService implements CpmModel
 {
 
-    public function syncWithUser(User $user, array $ids = [], $page = null)
+    public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         return $user->cpmLifestyles()->sync($ids);
     }
