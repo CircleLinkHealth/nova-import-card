@@ -54,12 +54,12 @@ class PatientController extends Controller {
 					continue 1;
 				}
 				// patient approval counts
-				if(Auth::user()->can(['is-administrator', 'is-care-center'])) {
+				if(Auth::user()->hasRole(['administrator', 'care-center'])) {
 					// care-center and administrator counts number of drafts
 					if ($user->patientInfo->careplan_status == 'draft') {
 						$p++;
 					}
-				} else if(Auth::user()->can(['is-provider'])) {
+				} else if(Auth::user()->hasRole(['provider'])) {
 					// provider counts number of drafts
 					if ($user->patientInfo->careplan_status == 'qa_approved') {
 						$p++;

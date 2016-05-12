@@ -21,7 +21,7 @@ class PermissionsConfig extends Seeder {
         $this->msg = 'This should always stay in sync with git branch, and all permissions arrays ALWAYS LISTING IN ALPHABETICAL ORDER!important! for organization' . PHP_EOL.PHP_EOL;
         echo 'Start role/permissions sync.' .$this->msg. PHP_EOL.PHP_EOL;
 
-        // permissions ALPHABETICAL
+        // permissions KEEP EVERYTHING ALPHABETICAL!!
         $this->permissions = array(
             'activities-manage' => array('display_name' => 'Activities Manage', 'description' => '',),
             'activities-view' => array('display_name' => 'Activities View', 'description' => '',),
@@ -32,10 +32,6 @@ class PermissionsConfig extends Seeder {
             'app-config-view' => array('display_name' => 'App Config View', 'description' => '',),
             'apikeys-manage' => array('display_name' => 'API Manage', 'description' => '',),
             'apikeys-view' => array('display_name' => 'API View', 'description' => '',),
-            'is-administrator' => array('display_name' => 'Is Administrator', 'description' => '',),
-            'is-participant' => array('display_name' => 'Is Participant', 'description' => '',),
-            'is-provider' => array('display_name' => 'Is Provider', 'description' => '',),
-            'is-care-center' => array('display_name' => 'Is Care Center', 'description' => '',),
             'locations-manage' => array('display_name' => 'Locations Manage', 'description' => '',),
             'locations-view' => array('display_name' => 'Locations View', 'description' => '',),
             'observations-create' => array('display_name' => 'Observations Create', 'description' => '',),
@@ -67,9 +63,8 @@ class PermissionsConfig extends Seeder {
 
         );
 
-        // roles
-        $this->roles = array();
-        /*
+        // roles KEEP EVERYTHING ALPHABETICAL!!
+        //$this->roles = array();
         $this->roles = array(
             'administrator' => array(
                 'display_name' => 'Administrator',
@@ -107,7 +102,6 @@ class PermissionsConfig extends Seeder {
                     'activities-pagetimer-view',
                     'activities-view',
                     'apikeys-view',
-                    'admin-access',
                     'locations-view',
                     'observations-create',
                     'observations-edit',
@@ -117,29 +111,6 @@ class PermissionsConfig extends Seeder {
                     'roles-permissions-view',
                     'rules-engine-view',
                     'users-create',
-                    'users-view-all',
-                    'users-view-self'
-                )
-            ),
-            'clh_administrator' => array(
-                'display_name' => 'CLH Administrator',
-                'description' => 'Non IT Admins, CLH Employees',
-                'permissions' => array(
-                    'users-view-all',
-                    'users-view-self'
-                )
-            ),
-            'clh-admin' => array(
-                'display_name' => 'CLH Admin',
-                'description' => 'CLH Admin',
-                'permissions' => array(
-                    'ccd-import',
-                    'locations-view',
-                    'observations-create',
-                    'observations-view',
-                    'programs-view',
-                    'roles-view',
-                    'roles-permissions-view',
                     'users-view-all',
                     'users-view-self'
                 )
@@ -167,21 +138,51 @@ class PermissionsConfig extends Seeder {
                 'display_name' => 'Care Center',
                 'description' => 'Care Center',
                 'permissions' => array(
-                    'activities-pagetimer-view',
+                    'activities-manage',
                     'activities-view',
+                    'activities-pagetimer-manage',
+                    'activities-pagetimer-view',
+                    //'admin-access',
+                    'app-config-manage',
+                    'app-config-view',
+                    'apikeys-manage',
                     'apikeys-view',
-                    'admin-access',
+                    'locations-manage',
                     'locations-view',
                     'observations-create',
+                    'observations-destroy',
                     'observations-edit',
                     'observations-view',
+                    'programs-manage',
                     'programs-view',
+                    'roles-manage',
                     'roles-view',
+                    'roles-permissions-manage',
                     'roles-permissions-view',
+                    'rules-engine-manage',
                     'rules-engine-view',
                     'users-create',
+                    'users-edit-all',
+                    'users-edit-self',
+                    'users-view-all',
+                    'users-view-self',
+                    'post-ccd-to-api',
+                    'query-api-for-patient-data',
+                    'ccd-import'
+                )
+            ),
+            'med_assistant' => array(
+                'display_name' => 'Medical Assistant',
+                'description' => '',
+                'permissions' => array(
                     'users-view-all',
                     'users-view-self'
+                )
+            ),
+            'no-access' => array(
+                'display_name' => 'No Access',
+                'description' => '',
+                'permissions' => array(
                 )
             ),
             'office_admin' => array(
@@ -200,16 +201,7 @@ class PermissionsConfig extends Seeder {
                     'users-view-self'
                 )
             ),
-            'med_assistant' => array(
-                'display_name' => 'Medical Assistant',
-                'description' => '',
-                'permissions' => array(
-                    'users-view-all',
-                    'users-view-self'
-                )
-            ),
         );
-        */
 
         // -------------------------------------------------------
 
@@ -257,7 +249,6 @@ class PermissionsConfig extends Seeder {
         }
 
         // next make sure all roles are in the database
-        /*
         echo PHP_EOL.PHP_EOL . 'ROLES' . PHP_EOL.PHP_EOL;
         foreach($roles as $roleName => $roleInfo) {
             echo PHP_EOL . $roleName . PHP_EOL;
@@ -312,7 +303,6 @@ class PermissionsConfig extends Seeder {
                 }
             }
         }
-        */
         // end
         echo PHP_EOL.PHP_EOL.'End role/permissions sync.' .$this->msg. PHP_EOL.PHP_EOL;
     }
