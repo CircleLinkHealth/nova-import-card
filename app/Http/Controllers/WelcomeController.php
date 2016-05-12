@@ -52,11 +52,11 @@ class WelcomeController extends Controller {
 		}
 		*/
 		if(Auth::user()) {
-			if(Auth::user()->can('is-administrator')) {
+			if(Auth::user()->hasRole('administrator')) {
 				return redirect()->route('admin.dashboard', [])->send();
-			} else if(Auth::user()->can('is-provider')) {
+			} else if(Auth::user()->hasRole('provider')) {
 				return redirect()->route('patients.dashboard', [])->send();
-			} else if(Auth::user()->can('is-care-center')) {
+			} else if(Auth::user()->hasRole('care-center')) {
 				return redirect()->route('patients.dashboard', [])->send();
 			} else {
 				return redirect()->route('patients.dashboard', [])->send();
