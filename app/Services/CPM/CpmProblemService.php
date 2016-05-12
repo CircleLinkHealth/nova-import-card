@@ -38,11 +38,25 @@ class CpmProblemService implements CpmModel
         return true;
     }
 
+    public function getProblemsWithInstructionsForUser(User $user){
+
+        //Get all the User's Problems
+        $problems =  $user->cpmProblems()->get()->all();
+        if(!$problems) return '';
+        //For each problem, extract the instructions and
+        //store in a key value pair
+        foreach($problems as $problem){
+            $instruction = \App\Models\CPM\CpmInstruction::find($problem->pivot->cpm_instruction_id);
+            $instructions[$problem->name] = $instruction->name;
+        }
+        return $instructions;
+    }
+
     /**
      * @param User $patient
      * @return array|bool
      */
-    public function getProblemsToMonitorWithDetails(User $patient)
+    public function getDetails(User $patient)
     {
         $carePlan = $patient->service()->firstOrDefaultCarePlan($patient);
 
@@ -56,7 +70,7 @@ class CpmProblemService implements CpmModel
         //get the User's cpmProblems
         $patientProblems = $patient->cpmProblems()->get();
 
-        $intersection = $patientProblems->intersect($cptProblems)->all();
+        $intersection = $patientProblems->intersect($cptProblems)->lists('name');
 
         return $intersection;
     }

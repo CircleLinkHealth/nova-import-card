@@ -588,8 +588,6 @@ class PatientCareplanController extends Controller
         if (empty($patient)) abort(404, 'Patient not found');
 
         $carePlan = $userService->firstOrDefaultCarePlan($patient);
-        
-        $treating = $problemService->getProblemsToMonitorWithDetails($patient);
 
         // determine which sections to show
         if ($page == 1) {
@@ -645,7 +643,6 @@ class PatientCareplanController extends Controller
         $direction = $params->get('direction');
         $page = (int)$params->get('page');
         $patientId = $params->get('user_id');
-        $instructions = $params->get('instructions', []);
 
 
         if (empty($patientId)) return response("User not found", 401);
@@ -662,10 +659,10 @@ class PatientCareplanController extends Controller
             $cpmMiscs = $params->get('cpmMiscs', []);
             $cpmProblems = $params->get('cpmProblems', []);
 
-            $lifestyleService->syncWithUser($user, $cpmLifestyles, $page, $instructions);
-            $medicationGroupService->syncWithUser($user, $cpmMedicationGroups, $page, $instructions);
-            $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
-            $problemService->syncWithUser($user, $cpmProblems, $page, $instructions);
+            $lifestyleService->syncWithUser($user, $cpmLifestyles);
+            $medicationGroupService->syncWithUser($user, $cpmMedicationGroups);
+            $miscService->syncWithUser($user, $cpmMiscs, $page);
+            $problemService->syncWithUser($user, $cpmProblems);
         }
 
         if ($page == 2) {
@@ -673,8 +670,8 @@ class PatientCareplanController extends Controller
             $cpmBiometrics = $params->get('cpmBiometrics', []);
             $cpmMiscs = $params->get('cpmMiscs', []);
 
-            $biometricService->syncWithUser($user, $cpmBiometrics, $page, $instructions);
-            $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
+            $biometricService->syncWithUser($user, $cpmBiometrics);
+            $miscService->syncWithUser($user, $cpmMiscs, $page);
 
             $biometricsValues = $params->get('biometrics', []);
 
@@ -705,8 +702,8 @@ class PatientCareplanController extends Controller
             $cpmMiscs = $params->get('cpmMiscs', []);
             $cpmSymptoms = $params->get('cpmSymptoms', []);
 
-            $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
-            $symptomService->syncWithUser($user, $cpmSymptoms, $page, $instructions);
+            $miscService->syncWithUser($user, $cpmMiscs, $page);
+            $symptomService->syncWithUser($user, $cpmSymptoms);
         }
 
         if ($page == 3) {

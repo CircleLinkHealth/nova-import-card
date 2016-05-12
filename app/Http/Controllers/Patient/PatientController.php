@@ -108,12 +108,6 @@ class PatientController extends Controller {
 			$carePlan->build($wpUser->ID);
 		}
 
-		//problems for userheader
-		$treating = array();
-		if($carePlan) {
-			$treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
-		}
-
 		$params = $request->all();
 		$detailSection = '';
 		if(isset($params['detail'])) {
@@ -257,7 +251,7 @@ class PatientController extends Controller {
 
 		//dd($observation_json);
 		//return response()->json($cpFeed);
-		return view('wpUsers.patient.summary', ['program' => $program, 'patient' => $wpUser, 'wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json, 'messages' => $messages, 'treating' => $treating]);
+		return view('wpUsers.patient.summary', ['program' => $program, 'patient' => $wpUser, 'wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json, 'messages' => $messages]);
 	}
 
 

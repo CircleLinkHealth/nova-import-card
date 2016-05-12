@@ -90,7 +90,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <div class="row gutter">
                     <div class="col-xs-12">
                         <ul class="subareas__list">
-                            @foreach($treating as $key => $value)
+                            @foreach($problems as $key => $value)
                                 <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
                             @endforeach
                         </ul>
@@ -207,7 +207,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                 </div>
             </div>
-            <?php foreach($treating as $key => $value){ ?>
+            <?php foreach($problems as $key => $value){ ?>
                     <!-- Hypertension -->
             <div class="patient-info__subareas">
                 <div class="row">
@@ -284,9 +284,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     Provider: </strong> {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' : ' ' .  $billing->getSpecialtyAttribute() }}
                                 <br>
                             @endif
-                            @if($lead)
+
+                            @if(!empty($lead))
                                 <strong>Lead
-                                    Contact: </strong>     {{$lead->getFullNameAttribute()}}{{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
+                                    Contact: </strong>     {{$lead->display_name}}{{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
                                 <br>
                             @endif
                         </p>
