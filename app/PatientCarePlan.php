@@ -6,9 +6,9 @@ class PatientCarePlan extends Model {
 
     protected $guarded = [];
 
-    public function careplantemplate()
+    public function carePlanTemplate()
     {
-        return $this->belongsTo('App\CarePlanTemplate');
+        return $this->belongsTo(CarePlanTemplate::class);
     }
 
     public function patient()

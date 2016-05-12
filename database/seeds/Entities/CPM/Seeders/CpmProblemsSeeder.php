@@ -21,7 +21,7 @@ class CpmProblemsSeeder extends \Illuminate\Database\Seeder
             //get the details
             $detailsId = \App\CareItem::whereParentId($careItem->id)->whereDisplayName('Details')->first()->id;
 
-            $instruction = \App\Models\CPM\CpmInstruction::create([
+            $instruction = \App\Models\CPM\CpmInstruction::updateOrCreate([
                 'name' => $this->getInstructions()[$problem->care_item_name],
             ]);
 

@@ -62,6 +62,27 @@ class MigrateCarePlanDataMay16 extends \Illuminate\Database\Seeder
                     $this->command->error("Duplicate entry. Can't do that brah...");
                 }
             }
+
+            $cpt = $user->service()->firstOrDefaultCarePlan($user)->carePlanTemplate()->first();
+
+            $cptRelated = $cpt->{$relationship}()->get()->keyBy('id');
+            $userRelated = $user->{$relationship}()->get()->keyBy('id');
+
+            if (!empty($userRelatedIds)) {
+                foreach ($cptRelated as $templateRel) {
+                    if (! isset($userRelatedIds[$templateRel->id])) continue;
+                    if (empty($templateRel->pivot->cpm_instruction_id)) continue;
+
+                    try {
+                        \App\User::find($userRelated[$templateRel->id]->pivot->patient_id)->{$relationship}()->updateExistingPivot($templateRel->id, [
+                            'cpm_instruction_id' => $templateRel->pivot->cpm_instruction_id,
+                        ]);
+                    } catch (\Exception $e) {
+                        dd($e);
+                    }
+                }
+            }
+
         }
     }
 
