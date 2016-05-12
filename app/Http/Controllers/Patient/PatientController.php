@@ -108,12 +108,6 @@ class PatientController extends Controller {
 			$carePlan->build($wpUser->ID);
 		}
 
-		//problems for userheader
-		$treating = array();
-		if($carePlan) {
-			$treating = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
-		}
-
 		$params = $request->all();
 		$detailSection = '';
 		if(isset($params['detail'])) {
