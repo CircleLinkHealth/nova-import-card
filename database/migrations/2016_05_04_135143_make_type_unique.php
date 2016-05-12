@@ -12,6 +12,10 @@ class MakeTypeUnique extends Migration
      */
     public function up()
     {
+        DB::statement('SET foreign_key_checks = 0');
+            \App\CarePlanTemplate::truncate();
+        DB::statement('SET foreign_key_checks = 1');
+
         Schema::table('care_plan_templates', function (Blueprint $table) {
             $table->string('type')->unique()->change();
         });
