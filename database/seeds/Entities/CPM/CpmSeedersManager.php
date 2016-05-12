@@ -16,6 +16,17 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
         Model::unguard();
 
         try {
+            //delete all instructions
+            $instructions = \App\Models\CPM\CpmInstruction::all();
+            
+            foreach ($instructions as $i) {
+                $i->delete();
+            }
+
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            \App\Models\CPM\CpmInstruction::truncate();
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            
             DB::transaction(function () {
                 $this->call(CpmLifestyleSeeder::class);
                 $this->command->info(CpmLifestyleSeeder::class . ' ran.');
@@ -85,6 +96,9 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
             try {
                 $this->call(MigrateCarePlanDataMay16::class);
                 $this->command->info(MigrateCarePlanDataMay16::class . ' ran.');
+
+                $this->call(MigrateUserCpmProblemsInstructions::class);
+                $this->command->info(MigrateUserCpmProblemsInstructions::class . ' ran.');
             } catch (\Exception $e) {
                 Log::critical($e);
                 $this->command->error($e);
