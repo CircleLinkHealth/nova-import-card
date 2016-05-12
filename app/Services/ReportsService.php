@@ -76,22 +76,7 @@ class ReportsService
 
     public function getBiometricsToMonitor(User $user)
     {
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
-        $carePlan->build($user->ID);
-        $itemsToMonitor = array();
-        if ($carePlan) {
-            foreach ($carePlan->careSections as $section) {
-                if ($section->name == 'biometrics-to-monitor') {
-                    foreach ($section->carePlanItems as $item) {
-                        if ($item->meta_value == 'Active') {
-                            $itemsToMonitor[] = $item->careItem->display_name;
-                        }
-                    }
-                }
-            }
-        }
-        return $itemsToMonitor;
+       return $user->cpmBiometrics()->get()->lists('name')->all();
     }
 
     public function getProblemsToMonitor(User $user)
@@ -145,7 +130,7 @@ class ReportsService
     public function getMedicationStatus(User $user, $fromApp = true)
     {
         $medications_categories = $user->cpmMedicationGroups()->get()->lists('name')->all();
-
+        debug($medications_categories);
         //get all medication observations for the user
         $medication_obs = DB::connection('mysql_no_prefix')
             ->table('rules_questions')

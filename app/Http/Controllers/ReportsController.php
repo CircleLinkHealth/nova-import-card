@@ -35,13 +35,13 @@ class ReportsController extends Controller
 
         $user = User::find($patientId);
         $treating = (new CpmProblemService())->getDetails($user);
-        $biometrics  = (new CpmBiometricService())->getDetails($user);
+        $biometrics  = (new ReportsService())->getBiometricsToMonitor($user);
         $biometrics_data = array();
         $biometrics_array = array();
 
         foreach ($biometrics as $biometric) {
             $biometrics_data[$biometric] = (new ReportsService())->getBiometricsData(str_replace('_', ' ', $biometric), $user);
-        } debug($biometrics);
+        }
 
         foreach ($biometrics_data as $key => $value) {
             $bio_name = $key;
