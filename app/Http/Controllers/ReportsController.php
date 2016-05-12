@@ -10,6 +10,8 @@ use App\CPRulesPCP;
 use App\CPRulesUCP;
 use App\Observation;
 use App\Services\CareplanService;
+use App\Services\CPM\CpmBiometricService;
+use App\Services\CPM\CpmProblemService;
 use App\Services\ReportsService;
 use App\User;
 use App\WpBlog;
@@ -32,27 +34,21 @@ class ReportsController extends Controller
     {
 
         $user = User::find($patientId);
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
-        if ($carePlan) {
-            $carePlan->build($user->ID);
-        }
-        $treating = (new ReportsService())->getProblemsToMonitor($carePlan);
-
-        $biometrics = ['Blood_Sugar', 'Blood_Pressure', 'Weight'];
+        $treating = (new CpmProblemService())->getDetails($user);
+        $biometrics  = (new CpmBiometricService())->getDetails($user);
         $biometrics_data = array();
         $biometrics_array = array();
 
         foreach ($biometrics as $biometric) {
-            $biometrics_data[$biometric] = (new ReportsService())->getBiometricsData($biometric, $user);
-        }//debug($biometrics_data);
+            $biometrics_data[$biometric] = (new ReportsService())->getBiometricsData(str_replace('_', ' ', $biometric), $user);
+        } debug($biometrics);
 
         foreach ($biometrics_data as $key => $value) {
             $bio_name = $key;
             if ($value != null) {
                 $first = reset($value);
                 $last = end($value);
-                $changes = (new ReportsService())->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name, (new ReportsService())->getTargetValueForBiometric($carePlan, $bio_name, $user));
+                $changes = (new ReportsService())->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name, (new ReportsService())->getTargetValueForBiometric($bio_name, $user));
                 //debug($changes);
                 $biometrics_array[$bio_name]['change'] = $changes['change'];
                 $biometrics_array[$bio_name]['progression'] = $changes['progression'];
@@ -68,7 +64,7 @@ class ReportsController extends Controller
             if ($value) {
                 foreach ($value as $key => $value) {
                     $biometrics_array[$bio_name]['unit'] = (new ReportsService())->biometricsUnitMapping(str_replace('_', ' ', $bio_name));
-                    $biometrics_array[$bio_name]['target'] = (new ReportsService())->getTargetValueForBiometric($carePlan, $bio_name, $user);
+                    $biometrics_array[$bio_name]['target'] = (new ReportsService())->getTargetValueForBiometric($bio_name, $user);
                     $biometrics_array[$bio_name]['reading'] = intval($value->Avg);
                     if (intval($value->Avg) > $biometrics_array[$bio_name]['max']) {
                         $biometrics_array[$bio_name]['max'] = intval($value->Avg);
@@ -86,7 +82,7 @@ class ReportsController extends Controller
         $provider = User::find($user->leadContactID);
 
         //Medication Tracking:
-        $medications = (new ReportsService())->getMedicationStatus($user, $carePlan, false);
+        $medications = (new ReportsService())->getMedicationStatus($user, false);
 
         $data = [
             'treating' => $treating,
@@ -406,10 +402,14 @@ class ReportsController extends Controller
         $reportService = new ReportsService();
         $careplan = $reportService->carePlanGenerator([$patientId]);
 
+        if(!$careplan){
+            return 'Careplan not found...';
+        }
+
         return view('wpUsers.patient.careplan.print',
             [
                 'patient' => User::find($patientId),
-                'treating' => $careplan[$patientId]['treating'],
+                'problems' => $careplan[$patientId]['problems'],
                 'biometrics' => $careplan[$patientId]['bio_data'],
                 'symptoms' => $careplan[$patientId]['symptoms'],
                 'lifestyle' => $careplan[$patientId]['lifestyle'],
