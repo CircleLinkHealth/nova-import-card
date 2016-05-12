@@ -46,8 +46,13 @@ class CpmProblemService implements CpmModel
         //For each problem, extract the instructions and
         //store in a key value pair
         foreach($problems as $problem){
+            if(!$problem){continue;}
             $instruction = \App\Models\CPM\CpmInstruction::find($problem->pivot->cpm_instruction_id);
-            $instructions[$problem->name] = $instruction->name;
+            if($instruction) {
+                $instructions[$problem->name] = $instruction->name;
+            } else {
+                return '';
+            }
         }
         return $instructions;
     }
