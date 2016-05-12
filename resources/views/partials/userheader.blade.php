@@ -46,7 +46,7 @@
     </div>
     @endif
     <?php $problems = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($patient); ?>
-    @if(isset($problems))
+    @if(!empty($problems))
         <div style="clear:both"></div>
         <ul class="person-conditions-list inline-block text-medium">
             @foreach($problems as $key => $value)
