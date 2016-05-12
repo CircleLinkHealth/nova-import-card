@@ -40,8 +40,7 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
                 $this->call(CpmMiscSeeder::class);
                 $this->command->info(CpmMiscSeeder::class . ' ran.');
             });
-
-
+            
             /********/
             DB::transaction(function () {
                 $this->call(CcdImporterSeedersManager::class);

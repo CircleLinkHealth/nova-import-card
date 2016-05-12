@@ -23,6 +23,7 @@ class CpmProblemsSeeder extends \Illuminate\Database\Seeder
 
             $instruction = \App\Models\CPM\CpmInstruction::updateOrCreate([
                 'name' => $this->getInstructions()[$problem->care_item_name],
+                'is_default' => true,
             ]);
 
             $cpmProblem->cpmInstructions()->attach($instruction);

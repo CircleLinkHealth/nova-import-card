@@ -12,43 +12,49 @@ class CpmMiscSeeder extends \Illuminate\Database\Seeder
     {
         $entities[] = [
             'name' => 'Other Conditions',
+            'detailsCareItemName' => 'other-conditions-details',
         ];
 
         $entities[] = [
             'name' => 'Medication List',
+            'detailsCareItemName' => 'medication-list-details',
         ];
 
         $entities[] = [
             'name' => 'Track Care Transitions',
-        ];
-
-        $entities[] = [
-            'name' => 'Old Meds List',
+            'detailsCareItemName' => '',
         ];
 
         $entities[] = [
             'name' => 'Allergies',
+            'detailsCareItemName' => 'allergies-details',
         ];
 
         $entities[] = [
             'name' => 'Social Services',
+            'detailsCareItemName' => 'social-services-details',
         ];
 
         $entities[] = [
             'name' => 'Appointments',
+            'detailsCareItemName' => 'appointments-details',
         ];
 
         $entities[] = [
             'name' => 'Other',
+            'detailsCareItemName' => 'other-details',
         ];
 
         foreach ($entities as $entity) {
 
-            $careItem = \App\CareItem::whereDisplayName($entity['name'])->first();
+            $careItem = (new \App\CareItem)->whereDisplayName($entity['name'])->first();
+            
+            $details = (new \App\CareItem)->whereName($entity['detailsCareItemName'])->first();
 
             //relate lifestyle to care item
-            $misc = \App\Models\CPM\CpmMisc::updateOrCreate($entity, [
+            $misc = \App\Models\CPM\CpmMisc::updateOrCreate([ 'name' => $entity['name'] ], [
                 'care_item_id' => $careItem->id,
+                'details_care_item_id' => $details ? $details->id : null,
             ]);
 
             //relate care item to lifestyle

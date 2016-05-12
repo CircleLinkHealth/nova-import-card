@@ -26,6 +26,8 @@ class MigrateCarePlanDataMay16 extends \Illuminate\Database\Seeder
                     $this->migrateCpmEntities($user, $userId);
 
                     $this->migrateUserBiometrics($user, $userId);
+
+                    $this->migrateCpmMiscsDetails($user, $userId);
                 } catch (Illuminate\Database\QueryException $e) {
                     Log::alert($e);
                 }
@@ -70,7 +72,7 @@ class MigrateCarePlanDataMay16 extends \Illuminate\Database\Seeder
 
             if (!empty($userRelatedIds)) {
                 foreach ($cptRelated as $templateRel) {
-                    if (! isset($userRelatedIds[$templateRel->id])) continue;
+                    if (!isset($userRelatedIds[$templateRel->id])) continue;
                     if (empty($templateRel->pivot->cpm_instruction_id)) continue;
 
                     try {
@@ -114,6 +116,35 @@ class MigrateCarePlanDataMay16 extends \Illuminate\Database\Seeder
             $user->{$relationship}()->create($args);
             $this->command->info("\tMigrated type $relationship for user with id $userId");
 
+        }
+    }
+
+    public function migrateCpmMiscsDetails($user, $userId)
+    {
+        $cpmMiscs = \App\Models\CPM\CpmMisc::where('details_care_item_id', '!=', 0)->get();
+
+        foreach ($cpmMiscs as $misc) {
+            $details = \App\CareItemUserValue::whereCareItemId($misc->details_care_item_id)
+                ->whereNotNull('value')
+                ->where('value', '!=', '')
+                ->whereUserId($userId)
+                ->first();
+
+            if (empty($details)) continue;
+
+            $instruction = \App\Models\CPM\CpmInstruction::where('name', 'like', "%{$details->value}%")->first();
+            
+            if (empty($instruction)) {
+                $instruction = \App\Models\CPM\CpmInstruction::create([
+                    'name' => $details->value
+                ]);
+            }
+
+            $user->cpmMiscs()->updateExistingPivot($misc->id, [
+                'cpm_instruction_id' => $instruction->id,
+            ]);
+
+            $this->command->info("\tMigrated misc $misc->name for user with id $userId");
         }
     }
 

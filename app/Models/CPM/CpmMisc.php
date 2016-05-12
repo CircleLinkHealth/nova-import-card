@@ -19,7 +19,11 @@ class CpmMisc extends Model implements Serviceable{
     const SOCIAL_SERVICES = 'Social Services';
     const TRACK_CARE_TRANSITIONS = 'Track Care Transitions';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'details_care_item_id',
+        'care_item_id',
+        'name'
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
