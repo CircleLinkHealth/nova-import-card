@@ -24,27 +24,27 @@ class CCDImportController extends Controller
 
     public function import(Request $request)
     {
-        $ccdsToImport = $request->input( 'ccdsToImport' );
-        $ccdsToDelete = $request->input( 'ccdsToDelete' );
+        $ccdsToImport = $request->input('ccdsToImport');
+        $ccdsToDelete = $request->input('ccdsToDelete');
 
-        foreach ( $ccdsToImport as $id ) {
-            $ccda = Ccda::find( $id );
+        foreach ($ccdsToImport as $id) {
+            $ccda = Ccda::find($id);
 
-            if ( empty($ccda) ) continue;
+            if (empty($ccda)) continue;
 
             $vendorId = $ccda->vendor_id;
 
-            $allergies = AllergyImport::whereCcdaId( $id )->whereSubstituteId( null )->get();
-            $demographics = DemographicsImport::whereCcdaId( $id )->whereSubstituteId( null )->first();
-            $medications = MedicationImport::whereCcdaId( $id )->whereSubstituteId( null )->get();
-            $problems = ProblemImport::whereCcdaId( $id )->whereSubstituteId( null )->get();
+            $allergies = AllergyImport::whereCcdaId($id)->whereSubstituteId(null)->get();
+            $demographics = DemographicsImport::whereCcdaId($id)->whereSubstituteId(null)->first();
+            $medications = MedicationImport::whereCcdaId($id)->whereSubstituteId(null)->get();
+            $problems = ProblemImport::whereCcdaId($id)->whereSubstituteId(null)->get();
 
             $strategies = empty($ccda->vendor_id)
-                ?: CcdVendor::find( $ccda->vendor_id )->routine()->first()->strategies()->get();
+                ?: CcdVendor::find($ccda->vendor_id)->routine()->first()->strategies()->get();
 
             $user = $this->repo->createRandomUser($demographics);
 
-            $importer = new ImportManager( $allergies->all(), $demographics, $medications->all(), $problems->all(), $strategies->all(), $user );
+            $importer = new ImportManager($allergies->all(), $demographics, $medications->all(), $problems->all(), $strategies->all(), $user);
             $importer->import();
 
             $imported[] = [
@@ -56,19 +56,24 @@ class CCDImportController extends Controller
             $ccda->patient_id = $user->ID;
             $ccda->save();
 
+            $allergiesDelete = AllergyImport::whereCcdaId($id)->delete();
+            $demographicsDelete = $demographics->delete();
+            $medicationsDelete = MedicationImport::whereCcdaId($id)->delete();
+            $problemsDelete = ProblemImport::whereCcdaId($id)->delete();
+
             $ccda->qaSummary()->delete();
         }
 
-        foreach ( $ccdsToDelete as $id ) {
-            if ( empty($id) ) continue;
-            Ccda::destroy( $id );
-            $summary = QAImportSummary::whereCcdaId( $id )->first();
-            if ( !empty($summary) ) $summary->delete();
+        foreach ($ccdsToDelete as $id) {
+            if (empty($id)) continue;
+            Ccda::destroy($id);
+            $summary = QAImportSummary::whereCcdaId($id)->first();
+            if (!empty($summary)) $summary->delete();
 
             $deleted[] = $id;
         }
 
-        return response()->json( compact( 'imported', 'deleted' ), 200 );
+        return response()->json(compact('imported', 'deleted'), 200);
     }
 
 }
