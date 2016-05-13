@@ -22,7 +22,7 @@ class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
             $instructions = $cpmProblem->cpmInstructions()->get();
 
             $this->user->cpmProblems()->attach($cpmProblem->id, [
-                'cpm_instruction_id' => $instructions ? $instructions[0]->id : null,
+                'cpm_instruction_id' => $instructions->isEmpty() ?: $instructions[0]->id,
             ]);
         }
         

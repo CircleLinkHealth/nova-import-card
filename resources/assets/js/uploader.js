@@ -85,9 +85,6 @@ var UploadedCcdsPanel = Vue.extend({
             };
 
             this.$http.post('/ccd-importer/import', payload, function (data, status, request) {
-                var index = data.indexOf('{');
-                data = JSON.parse(data.substring(index - 1));
-
                 if (data.imported) {
                     for (var i = 0; i < data.imported.length; i++) {
                         $('#import-row-' + data.imported[i].ccdaId).html(
