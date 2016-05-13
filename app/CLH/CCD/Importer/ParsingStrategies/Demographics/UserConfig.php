@@ -68,10 +68,10 @@ class UserConfig implements ParsingStrategy
 
             $default = 'EN';
 
-            if ( in_array( strtolower( $demographicsSection->language ), $englishVariations ) ) {
+            if ( in_array( strtolower( $demographicsSection->preferred_contact_language ), $englishVariations ) ) {
                 $language = 'EN';
             }
-            else if ( in_array( strtolower( $demographicsSection->language ), $spanishVariations ) ) {
+            else if ( in_array( strtolower( $demographicsSection->preferred_contact_language ), $spanishVariations ) ) {
                 $language = 'ES';
             }
 
