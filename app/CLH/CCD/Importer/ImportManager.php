@@ -256,10 +256,10 @@ class ImportManager
             foreach ($this->problemsImport as $problem) {
                 if (empty($problem->cpm_problem_id)) continue;
 
-                $problemsToActivate[] = CPMProblem::find($problem->cpm_problem_id)->care_item_name;
+                $problemsToActivate[] = $problem->cpm_problem_id;
             }
 
-            $storage->import($problemsToActivate);
+            $storage->import(array_unique($problemsToActivate));
         }
     }
 
