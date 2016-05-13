@@ -3,13 +3,10 @@
 namespace App\CLH\CCD\Importer\StorageStrategies\Problems;
 
 
-use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\StorageStrategy;
-use App\CPRulesItem;
-use App\CPRulesPCP;
-use App\CPRulesUCP;
-use Illuminate\Support\Facades\Log;
+use App\Models\CPM\CpmInstruction;
+use App\Models\CPM\CpmMisc;
 
 class ProblemsList extends BaseStorageStrategy implements StorageStrategy
 {
@@ -17,13 +14,15 @@ class ProblemsList extends BaseStorageStrategy implements StorageStrategy
     {
         if ( empty($problemsList) ) return false;
 
-        $carePlan = CarePlan::where('program_id', '=', $this->blogId)->where('type', '=', 'Program Default')->first();
+        $instruction = CpmInstruction::create([
+            'name' => $problemsList
+        ]);
 
-        if(!$carePlan) {
-            throw new \Exception('Unable to build careplan');
-        }
+        $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
+            ->first();
 
-        $carePlan->setCareItemUserValue($this->user, 'other-conditions-details', $problemsList);
-        $carePlan->setCareItemUserValue($this->user, 'other-conditions',"Active");
+        $this->user->cpmMiscs()->attach($misc->id, [
+            'cpm_instruction_id' => $instruction->id
+        ]);
     }
 }

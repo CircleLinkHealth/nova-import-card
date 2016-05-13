@@ -6,6 +6,7 @@ namespace App\CLH\CCD\Importer;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
 use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\PatientCareTeamMember;
@@ -223,6 +224,19 @@ class ImportManager
                     ? '' : ', ' . strtoupper($codeSystemName($problem));
 
                 $problemsList .= empty($problem->code) ? ';' : ', ' . $problem->code . ';';
+
+                $ccdProblem = CcdProblem::create([
+                    'ccda_id' => $problem->ccda_id,
+                    'vendor_id' => $problem->vendor_id,
+                    'ccd_problem_log_id' => $problem->ccd_problem_log_id,
+                    'name' => $problem->name,
+                    'code' => $problem->code,
+                    'code_system' => $problem->code_system,
+                    'code_system_name' => $problem->code_system_name,
+                    'activate' => $problem->activate,
+                    'cpm_problem_id' => $problem->cpm_problem_id,
+                    'patient_id' => $this->user->ID,
+                ]);
             }
 
 

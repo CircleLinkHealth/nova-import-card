@@ -5,9 +5,21 @@ use App\Models\CPM\CpmProblem;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CcdProblem extends Model {
+class CcdProblem extends Model
+{
 
-    protected $guarded = [];
+    protected $fillable = [
+        'ccda_id',
+        'vendor_id',
+        'ccd_problem_log_id',
+        'name',
+        'code',
+        'code_system',
+        'code_system_name',
+        'activate',
+        'cpm_problem_id',
+        'patient_id',
+    ];
 
     protected $table = 'ccd_problems';
 
