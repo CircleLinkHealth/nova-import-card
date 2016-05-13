@@ -5,6 +5,8 @@ namespace App\CLH\CCD\Importer;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
+use App\Models\CCD\CcdAllergy;
+use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\PatientCareTeamMember;
 use App\PatientInfo;
@@ -153,8 +155,9 @@ class ImportManager
         /**
          * CarePlan Defaults
          */
-        $transitionalCare = new TransitionalCare($this->user->program_id, $this->user);
-        $transitionalCare->setDefaults();
+        $miscId = CpmMisc::whereName(CpmMisc::TRACK_CARE_TRANSITIONS)->first();
+
+        $this->user->cpmMiscs()->attach($miscId->id);
 
         return true;
     }
@@ -169,6 +172,15 @@ class ImportManager
             $allergiesList = '';
 
             foreach ($this->allergiesImport as $allergy) {
+
+                $ccdAllergy = CcdAllergy::create([
+                    'ccda_id' => $allergy->ccda_id,
+                    'vendor_id' => $allergy->vendor_id,
+                    'patient_id' => $this->user->ID,
+                    'ccd_allergy_log_id' => $allergy->ccd_allergy_log_id,
+                    'allergen_name' => $allergy->allergen_name,
+                ]);
+
                 if (!isset($allergy->allergen_name)) continue;
                 $allergiesList .= "\n\n";
                 $allergiesList .= ucfirst(strtolower($allergy->allergen_name)) . ";";

@@ -4,10 +4,17 @@ use App\CLH\CCD\ItemLogger\CcdAllergyLog;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CcdAllergy extends Model {
+class CcdAllergy extends Model
+{
 
-    protected $guarded = [];
-    
+    protected $fillable = [
+        'ccda_id',
+        'vendor_id',
+        'patient_id',
+        'ccd_allergy_log_id',
+        'allergen_name',
+    ];
+
     protected $table = 'ccd_allergies';
 
     /**
