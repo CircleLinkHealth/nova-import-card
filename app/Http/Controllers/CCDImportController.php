@@ -64,6 +64,8 @@ class CCDImportController extends Controller
             $ccda->qaSummary()->delete();
         }
 
+        $deleted = [];
+
         foreach ($ccdsToDelete as $id) {
             if (empty($id)) continue;
             Ccda::destroy($id);

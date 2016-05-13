@@ -93,8 +93,8 @@ class QAImportManager
         $userMeta = $userMetaParser->parse($this->ccda);
         $output['userMeta'] = $userMeta;
 
-        $demographics->first_name = $userMeta->first_name;
-        $demographics->last_name = $userMeta->last_name;
+        $demographics->first_name = ucwords(strtolower($userMeta->first_name));
+        $demographics->last_name = ucwords(strtolower($userMeta->last_name));
 
         /**
          * Parse Provider Location

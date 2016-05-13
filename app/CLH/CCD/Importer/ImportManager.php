@@ -6,6 +6,7 @@ namespace App\CLH\CCD\Importer;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
 use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
@@ -239,7 +240,6 @@ class ImportManager
                 ]);
             }
 
-
             $storage->import($problemsList);
         }
     }
@@ -285,6 +285,18 @@ class ImportManager
                     )
                 );
 
+                $ccdMedication = CcdMedication::create([
+                    'ccda_id' => $medication->ccda_id,
+                    'vendor_id' => $medication->vendor_id,
+                    'ccd_medication_log_id' => $medication->ccd_medication_log_id,
+                    'medication_group_id' => $medication->medication_group_id,
+                    'name' => $medication->name,
+                    'sig' => $medication->sig,
+                    'code' => $medication->code,
+                    'code_system' => $medication->code_system,
+                    'code_system_name' => $medication->code_system_name,
+                    'patient_id' => $this->user->ID,
+                ]);
             }
 
 
