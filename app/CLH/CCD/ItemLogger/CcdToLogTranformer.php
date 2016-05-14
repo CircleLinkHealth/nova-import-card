@@ -52,7 +52,7 @@ class CcdToLogTranformer
             'home_phone' => $phones[ 'home' ][ 0 ],
             'work_phone' => $phones[ 'work' ][ 0 ],
             'email' => $demographics->email,
-            'preferred_contact_language' => $demographics->language,
+            'language' => $demographics->language,
         ];
     }
 

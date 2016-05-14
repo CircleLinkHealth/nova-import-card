@@ -39,7 +39,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // participant info
         if($user->hasRole('participant')) {
             $this->saveOrUpdatePatientInfo($user, $params);
-            $this->createDefaultCarePlan($user, $params);
+//            $this->createDefaultCarePlan($user, $params);
         }
 
         // provider info
