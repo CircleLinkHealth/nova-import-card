@@ -905,9 +905,21 @@ class ReportsService
         $pdf->save($file_name, true);
         $base_64_report = base64_encode(file_get_contents($file_name));
 
+        $locationId = $user->getpreferredContactLocationAttribute();
+
+        if (empty($locationId)) return false;
+
         try {
             //get foreign provider id
             $foreign_id = ForeignId::where('user_id', $provider_id)->where('system', ForeignId::APRIMA)->first();
+
+            //update the foreign id to include a location as well
+            if (empty($foreign_id->location_id))
+            {
+                $foreign_id->location_id = $locationId;
+                $foreign_id->save();
+            }
+
         } catch (\Exception $e) {
             \Log::error("No foreign Id found when creating report. Message: $e->getMessage(). Code: $e->getCode()");
             return;
@@ -918,13 +930,15 @@ class ReportsService
             return;
         }
 
+
+
         $patientReport = PatientReports::create([
             'patient_id' => $user->ID,
             'patient_mrn' => $user->getMRNAttribute(),
             'provider_id' => $foreign_id->foreign_id,
             'file_type' => PatientReports::CAREPLAN,
             'file_base64' => $base_64_report,
-            'location_id' => $user->getpreferredContactLocationAttribute(),
+            'location_id' => $locationId,
         ]);
     }
 
