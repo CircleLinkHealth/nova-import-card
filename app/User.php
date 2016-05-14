@@ -38,13 +38,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	protected $revisionCreationsEnabled = true;
 
 	/**
-	 * The connection name for the model.
-	 *
-	 * @var string
-	 */
-	protected $connection = 'mysql_no_prefix';
-
-	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
@@ -68,7 +61,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		'user_status', 'auto_attach_programs', 'display_name', 'spam', 'password', 'first_name', 'last_name', 'address',
 		'city', 'state', 'zip', 'is_auto_generated', 'program_id'];
 
-	protected $hidden = ['user_pass'];
+	protected $hidden = ['user_pass', 'password'];
 
 	protected $dates = ['user_registered'];
 
