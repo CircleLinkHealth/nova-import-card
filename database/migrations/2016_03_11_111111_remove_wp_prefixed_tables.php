@@ -1,7 +1,7 @@
 <?php
 
 use App\User;
-use App\WpBlog;
+use App\Program;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -14,11 +14,11 @@ class RemoveWpPrefixedTables extends Migration {
 	 */
 	public function up()
 	{
-		$programs = WpBlog::all();
+		$programs = Program::all();
 		foreach($programs as $program) {
 			$name = str_replace(".careplanmanager.com","",$program->domain);
 			echo PHP_EOL.'processing program:: '.$name. '('.$program->blog_id.')';
-			$existingProgram = WpBlog::where('name', '=', $name)->first();
+			$existingProgram = Program::where('name', '=', $name)->first();
 			if(!$existingProgram) {
 				$program->name = $name;
 				$program->display_name = ucfirst($name);

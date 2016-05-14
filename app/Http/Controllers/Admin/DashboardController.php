@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers\Admin;
 
 use App\User;
-use App\WpBlog;
+use App\Program;
 use App\Observation;
 use App\Role;
 use App\Http\Requests;
@@ -51,7 +51,7 @@ class DashboardController extends Controller {
 
 			$stats = array();
 			$roleStats = array();
-			$stats['totalPrograms'] = WpBlog::all()->count();
+			$stats['totalPrograms'] = Program::all()->count();
 			$stats['totalUsers'] = User::all()->count();
 			foreach($roles as $role) {
 				$roleStats[$role->name] = User::whereHas('roles', function($q) use($role) {

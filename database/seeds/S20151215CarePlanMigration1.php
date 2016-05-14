@@ -1,6 +1,6 @@
 <?php namespace database\seeds;
 
-use App\WpBlog;
+use App\Program;
 use App\CarePlan;
 use App\CareSection;
 use App\CareItem;
@@ -20,7 +20,7 @@ class S20151215CarePlanMigration1 extends Seeder {
     public function run()
     {
 
-        $programs = WpBlog::where('blog_id', '>', '6')->get();
+        $programs = Program::where('blog_id', '>', '6')->get();
         if(empty($programs)) {
             dd('no programs');
         }

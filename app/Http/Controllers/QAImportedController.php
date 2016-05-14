@@ -11,7 +11,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Location;
 use App\User;
-use App\WpBlog;
+use App\Program;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 use Illuminate\Http\Request;
@@ -27,7 +27,7 @@ class QAImportedController extends Controller
         $problems = ProblemImport::whereCcdaId( $ccdaId )->get();
 
         $programId = $demographics->program_id;
-        $programObj = WpBlog::whereBlogId( $programId )->first();
+        $programObj = Program::whereBlogId( $programId )->first();
 
         //get program's location
         $locations = Location::whereNotNull( 'parent_id' )->whereId( $programObj->location_id )->first();

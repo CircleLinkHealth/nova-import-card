@@ -7,7 +7,7 @@ use App\Services\ReportsService;
 use App\CarePlan;
 use App\CareItem;
 use App\CarePlanItem;
-use App\WpBlog;
+use App\Program;
 use App\Location;
 use App\User;
 use App\UserMeta;
@@ -99,7 +99,7 @@ class PatientController extends Controller
         }
 
         // program
-        $program = WpBlog::find($wpUser->program_id);
+        $program = Program::find($wpUser->program_id);
 
         $carePlan = CarePlan::where('id', '=', $wpUser->care_plan_id)
             ->first();
@@ -354,7 +354,7 @@ class PatientController extends Controller
                 $bpName = '';
                 $bpID = $patient->billingProviderID;
                 if (!isset($foundPrograms[$patient->program_id])) {
-                    $program = WpBlog::find($patient->program_id);
+                    $program = Program::find($patient->program_id);
                     $foundPrograms[$patient->program_id] = $program;
                 } else {
                     $program = $foundPrograms[$patient->program_id];
@@ -549,7 +549,7 @@ class PatientController extends Controller
             $patients[$i]['dob'] = $dob->format('m-d-Y');
             $patients[$i]['mrn'] = $user->mrn_number;
             $patients[$i]['link'] = URL::route('patient.summary', array('patient' => $d->id));
-            $programObj = WpBlog::find(($user->program_id)) ? WpBlog::find(($user->program_id)) : "";
+            $programObj = Program::find(($user->program_id)) ? Program::find(($user->program_id)) : "";
             if ($programObj->display_name) {
                 $patients[$i]['program'] = $programObj->display_name;
             } else {
@@ -604,7 +604,7 @@ class PatientController extends Controller
         }
 
         // program
-        $program = WpBlog::find($wpUser->program_id);
+        $program = Program::find($wpUser->program_id);
 
         return view('wpUsers.patient.alerts', ['program' => $program, 'patient' => $wpUser]);
     }
@@ -646,7 +646,7 @@ class PatientController extends Controller
                 return response("User not found", 401);
             }
             // program
-            $program = WpBlog::find($wpUser->program_id);
+            $program = Program::find($wpUser->program_id);
         } else {
             // program view
         }

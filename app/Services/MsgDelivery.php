@@ -3,7 +3,7 @@
 use App\Comment;
 use App\User;
 use App\UserMeta;
-use App\WpBlog;
+use App\Program;
 use DB;
 use DateTime;
 use DateTimeZone;

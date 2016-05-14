@@ -1,6 +1,6 @@
 <?php
 
-use App\WpBlog;
+use App\Program;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -9,7 +9,7 @@ class S20160102ProgramColumnMigration extends Seeder
 
     public function run()
     {
-        $programs = WpBlog::all();
+        $programs = Program::all();
         echo PHP_EOL.PHP_EOL . 'START' . PHP_EOL.PHP_EOL;
         foreach($programs as $program) {
             echo PHP_EOL.'--Found program ' .$program->blog_id.PHP_EOL.PHP_EOL;

@@ -4,7 +4,7 @@ use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\User;
 use App\UserMeta;
-use App\WpBlog;
+use App\Program;
 use App\Role;
 use App\CarePlan;
 use App\ProviderInfo;
@@ -370,7 +370,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // first detatch relationship
         $wpUser->programs()->detach();
 
-        $wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('blog_id')->all();
+        $wpBlogs = Program::orderBy('blog_id', 'desc')->lists('blog_id')->all();
         foreach($wpBlogs as $wpBlogId) {
             if (in_array($wpBlogId, $userPrograms)) {
                 $wpUser->programs()->attach($wpBlogId);
@@ -382,7 +382,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
     public function createDefaultCarePlan($user, $params) {
 
-        $program = WpBlog::find($user->program_id);
+        $program = Program::find($user->program_id);
         if(!$program) {
             return false;
         }
@@ -503,7 +503,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 //New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
 
         $email_view = 'emails.newpatientnotify';
-        $program = WpBlog::find($user->blogId());
+        $program = Program::find($user->blogId());
         $program_name = $program->display_name;
         $email_subject = '[' . $program_name . '] New '. ucwords($user->role()) .' Registration!';
         $data = array(

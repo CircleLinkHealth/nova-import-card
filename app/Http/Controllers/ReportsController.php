@@ -14,7 +14,7 @@ use App\Services\CPM\CpmBiometricService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\ReportsService;
 use App\User;
-use App\WpBlog;
+use App\Program;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -134,7 +134,7 @@ class ReportsController extends Controller
         $act_count = 0;
         foreach ($patients as $patient) {
             //$monthly_time = intval($patient->getMonthlyTimeAttribute());
-            $program = WpBlog::find($patient->program_id);
+            $program = Program::find($patient->program_id);
             if ($program) $programName = $program->display_name;
 
             if ($patient->hasRole('participant')) {
@@ -257,7 +257,7 @@ class ReportsController extends Controller
 
         foreach ($patients as $patient) {
 //            $monthly_time = intval($patient->getMonthlyTimeAttribute());
-            $program = WpBlog::find($patient->program_id);
+            $program = Program::find($patient->program_id);
             if ($program) $programName = $program->display_name;
             if ($patient->hasRole('participant')) {
                 $u20_patients[$act_count]['site'] = $programName;
@@ -517,7 +517,7 @@ class ReportsController extends Controller
                         $condition = $usersCondition[$user->ID];
                     }
                     $programName = 'N/A';
-                    $program = WpBlog::find($user->program_id);
+                    $program = Program::find($user->program_id);
                     if($program) {
                         $programName = $program->display_name;
                     }

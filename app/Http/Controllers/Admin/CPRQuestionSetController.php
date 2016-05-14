@@ -2,7 +2,7 @@
 
 use App\CPRulesQuestions;
 use App\CPRulesQuestionSets;
-use App\WpBlog;
+use App\Program;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -52,7 +52,7 @@ class CPRQuestionSetController extends Controller
 		}
 
 		// filter program
-		$programs = WpBlog::orderBy('blog_id', 'desc')->get()->lists('domain', 'blog_id')->all();
+		$programs = Program::orderBy('blog_id', 'desc')->get()->lists('domain', 'blog_id')->all();
 		$filterProgram = 'all';
 		if(!empty($params['filterProgram'])) {
 			$filterProgram = $params['filterProgram'];
@@ -142,7 +142,7 @@ class CPRQuestionSetController extends Controller
 			abort(403);
 		}
 		$questionSet = CPRulesQuestionSets::find($id);
-		$programs = WpBlog::get();
+		$programs = Program::get();
 		if (!empty($questionSet->rulesItems)) {
 			foreach ($questionSet->rulesItems as $item) {
 				if (isset($item->pcp->program->first()->domain)) {

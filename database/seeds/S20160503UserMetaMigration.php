@@ -1,6 +1,6 @@
 <?php
 
-use App\WpBlog;
+use App\Program;
 use App\CarePlan;
 use App\CareSection;
 use App\CareItem;

@@ -2,7 +2,7 @@
 
 use App\CPRulesQuestions;
 use App\Http\Requests;
-use App\WpBlog;
+use App\Program;
 use App\User;
 use App\Observation;
 use App\ObservationMeta;
@@ -1266,7 +1266,7 @@ class DatamonitorService {
 	 * @return string
 	 */
 	function get_alerts_url($user_id, $blog_id) {
-		$wpBlog = WpBlog::where('blog_id', '=', $blog_id)->first();
+		$wpBlog = Program::where('blog_id', '=', $blog_id)->first();
 		$alerts_url = '';
 		if($wpBlog) {
 			// $alerts_url = 'https://'. $wpBlog->domain . '/alerts/?user=' . $user_id;

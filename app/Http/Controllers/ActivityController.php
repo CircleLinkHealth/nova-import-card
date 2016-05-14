@@ -2,7 +2,7 @@
 
 use App\Activity;
 use App\ActivityMeta;
-use App\WpBlog;
+use App\Program;
 use App\User;
 use App\UserMeta;
 use App\Services\ActivityService;
@@ -75,7 +75,7 @@ class ActivityController extends Controller {
 			}
 
 			//providers
-			$providers = WpBlog::getProviders($user->blogId());
+			$providers = Program::getProviders($user->blogId());
 			$provider_info = array();
 
 			foreach ($providers as $provider) {

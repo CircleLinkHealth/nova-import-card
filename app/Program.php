@@ -3,7 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class WpBlog extends Model {
+class Program extends Model {
 
     use SoftDeletes;
 

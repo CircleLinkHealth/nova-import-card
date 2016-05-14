@@ -3,7 +3,7 @@
 use App\User;
 use App\PatientInfo;
 use App\ProviderInfo;
-use App\WpBlog;
+use App\Program;
 use App\PhoneNumber;
 use App\PatientCarePlan;
 use App\PatientCareTeamMember;
@@ -31,7 +31,7 @@ class ChangeUsersTableAndRemoveMaPrefixTables extends Migration {
 			}
 		});
 
-		$programs = WpBlog::all();
+		$programs = Program::all();
 		foreach($programs as $program) {
 			// remove tables
 			Schema::dropIfExists('ma_'.$program->blog_id.'_observations');

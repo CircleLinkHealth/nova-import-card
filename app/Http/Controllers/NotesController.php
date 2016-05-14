@@ -6,7 +6,7 @@ use App\CLH\Facades\StringManipulation;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
-use App\WpBlog;
+use App\Program;
 use App\User;
 use Carbon\Carbon;
 use DateTime;
@@ -131,9 +131,9 @@ class NotesController extends Controller
             }
 
             //providers
-            $providers = WpBlog::getProviders($user->blogId());
-            $nonCCMCareCenterUsers = WpBlog::getNonCCMCareCenterUsers($user->blogId());
-            $careCenterUsers = WpBlog::getCareCenterUsers($user->blogId());
+            $providers = Program::getProviders($user->blogId());
+            $nonCCMCareCenterUsers = Program::getNonCCMCareCenterUsers($user->blogId());
+            $careCenterUsers = Program::getCareCenterUsers($user->blogId());
             $provider_info = array();
 
             if(!empty($providers)) {

@@ -8,7 +8,7 @@ use App\CareItem;
 use App\CareSection;
 use App\User;
 use App\UserMeta;
-use App\WpBlog;
+use App\Program;
 use App\Role;
 use App\Services\CareplanUIService;
 use Illuminate\Support\Facades\Mail;
@@ -132,7 +132,7 @@ class CarePlanRepository {
 //New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
 
         $email_view = 'emails.newpatientnotify';
-        $program = WpBlog::find($user->blogId());
+        $program = Program::find($user->blogId());
         $program_name = $program->display_name;
         $email_subject = '[' . $program_name . '] New '. ucwords($user->role()) .' Registration!';
         $data = array(

@@ -9,7 +9,7 @@ use App\CPRulesItem;
 use App\Http\Controllers\Controller;
 use Auth;
 
-use App\WpBlog;
+use App\Program;
 use Illuminate\Http\Request;
 
 class PermissionController extends Controller {

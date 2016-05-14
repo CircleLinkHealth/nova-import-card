@@ -20,7 +20,7 @@ use App\Services\CPM\CpmSymptomService;
 use App\Services\ReportsService;
 use App\Services\UserService;
 use App\User;
-use App\WpBlog;
+use App\Program;
 use Auth;
 use Carbon\Carbon;
 use DateTimeZone;
@@ -127,7 +127,7 @@ class PatientCareplanController extends Controller
                 $bpName = '';
                 $bpID = $patient->billingProviderID;
                 if (!isset($foundPrograms[$patient->program_id])) {
-                    $program = WpBlog::find($patient->program_id);
+                    $program = Program::find($patient->program_id);
                     if ($program) {
                         $foundPrograms[$patient->program_id] = $program;
                         $programName = $program->display_name;
@@ -315,14 +315,14 @@ class PatientCareplanController extends Controller
         }
 
         // get program
-        $programs = WpBlog::whereIn('blog_id', Auth::user()->viewableProgramIds())->lists('display_name', 'blog_id')->all();
+        $programs = Program::whereIn('blog_id', Auth::user()->viewableProgramIds())->lists('display_name', 'blog_id')->all();
 
         // roles
         $patientRoleId = Role::where('name', '=', 'participant')->first();
         $patientRoleId = $patientRoleId->id;
 
-        // locations @todo get location id for WpBlog
-        $program = WpBlog::find($programId);
+        // locations @todo get location id for Program
+        $program = Program::find($programId);
         $locations = array();
         if ($program) {
             $locations = Location::where('parent_id', '=', $program->location_id)->lists('name', 'id')->all();
