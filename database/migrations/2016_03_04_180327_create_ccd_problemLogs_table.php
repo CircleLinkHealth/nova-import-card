@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCcdProblemsTable extends Migration {
+class CreateCcdProblemLogsTable extends Migration {
 
 	/**
 	 * Run the migrations.
