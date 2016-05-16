@@ -13,6 +13,8 @@
                         @endif
                         Location:</strong>
                                 <?= (empty($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>
+                                <strong>Status:</strong>
+                    <span class="{{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ?  'N/A' : ucwords($patient->ccm_status);  ?></span>
                 </span>
                 <?php
                     // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
@@ -20,7 +22,7 @@
                 $H = floor($seconds / 3600);
                 $i = ($seconds / 60) % 60;
                 $s = $seconds % 60;
-                $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+                $monthlyTime = sprintf("%03d:%02d", $i, $s);
                 ?>
                <a href="{{URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID))}}"><span class="pull-right">{{
                 date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
