@@ -140,6 +140,8 @@ class CcdApiController extends Controller
 
         if ($pendingReports->isEmpty()) return response()->json(["message" => "No Pending Reports"], 404);
 
+        $json = [];
+
         foreach ($pendingReports as $report) {
 
             //Get patient's lead provider

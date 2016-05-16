@@ -28,18 +28,22 @@ class AlterImportsTables extends Migration
                 });
             } catch (\Exception $e) {
                 echo $e->getMessage() . PHP_EOL;
+
+
+                try {
+                    Schema::table($t, function (Blueprint $table) {
+                        $table->foreign('ccda_id')
+                            ->references('id')
+                            ->on('ccdas')
+                            ->onUpdate('cascade')
+                            ->onDelete('cascade');
+                    });
+                } catch (\Exception $e) {
+                    echo $e->getMessage() . PHP_EOL;
+                }
+
+                DB::statement('set foreign_key_checks = 1');
             }
-
-                Schema::table($t, function (Blueprint $table) {
-                    $table->foreign('ccda_id')
-                        ->references('id')
-                        ->on('ccdas')
-                        ->onUpdate('cascade')
-                        ->onDelete('cascade');
-                });
-            
-
-            DB::statement('set foreign_key_checks = 1');
         }
     }
 
@@ -48,7 +52,8 @@ class AlterImportsTables extends Migration
      *
      * @return void
      */
-    public function down()
+    public
+    function down()
     {
         foreach ($this->tables as $t) {
 
