@@ -32,6 +32,7 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
         $this->command->comment(PHP_EOL . 'ALLERGIES MIGRATED' . PHP_EOL);
 
         //MEDICATIONS
+        $this->command->comment(PHP_EOL . 'Begin Migrating Medications...' . PHP_EOL);
         $medications_imports = \App\CLH\CCD\ImportedItems\MedicationImport::all();
 
         foreach($medications_imports as $medications_import){
@@ -63,12 +64,13 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
         //PROBLEMS [https://www.youtube.com/watch?v=LloIp0HMJjc]
 
         $problems_imports = \App\CLH\CCD\ImportedItems\ProblemImport::all();
+        $this->command->comment(PHP_EOL . 'Begin Migrating Problems...' . PHP_EOL);
 
         foreach($problems_imports as $problems_import){
             $patient_id = \App\CLH\CCD\Ccda::where('id',$problems_import->ccda_id)->lists('patient_id')->first();
 
             if(is_null($patient_id)){
-                $this->command->info("No user associated to CCDA for MedicationsImport ID: " . $problems_import->id);
+                $this->command->info("No user associated to CCDA for ProblemsImport ID: " . $problems_import->id);
                 continue;
             }
 
