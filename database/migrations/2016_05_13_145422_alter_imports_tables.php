@@ -45,33 +45,34 @@ class AlterImportsTables extends Migration
                 DB::statement('set foreign_key_checks = 1');
             }
         }
+    }
 
-        /**
-         * Reverse the migrations.
-         *
-         * @return void
-         */
-        public
-        function down()
-        {
-            foreach ($this->tables as $t) {
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public
+    function down()
+    {
+        foreach ($this->tables as $t) {
 
-                DB::statement('set foreign_key_checks = 0');
+            DB::statement('set foreign_key_checks = 0');
 
-                try {
-                    Schema::table($t, function (Blueprint $table) {
-                        $table->unsignedInteger('ccda_id')->change();
-                        $table->dropIndex(['ccda_id']);
-                    });
+            try {
+                Schema::table($t, function (Blueprint $table) {
+                    $table->unsignedInteger('ccda_id')->change();
+                    $table->dropIndex(['ccda_id']);
+                });
 
-                    Schema::table($t, function (Blueprint $table) {
-                        $table->dropForeign(['ccda_id']);
-                    });
-                } catch (\Exception $e) {
-                    echo $e->getMessage() . PHP_EOL;
-                }
-
-                DB::statement('set foreign_key_checks = 1');
+                Schema::table($t, function (Blueprint $table) {
+                    $table->dropForeign(['ccda_id']);
+                });
+            } catch (\Exception $e) {
+                echo $e->getMessage() . PHP_EOL;
             }
+
+            DB::statement('set foreign_key_checks = 1');
         }
     }
+}
