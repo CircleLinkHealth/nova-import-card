@@ -106,8 +106,7 @@
                                                 <div class="radio"><input type="checkbox" name="meta[0][meta_key]"
                                                                           id="phone"
                                                                           value="phone"/><label
-                                                            for="phone"><span> </span>Phone
-                                                        Session</label>
+                                                            for="phone"><span> </span>Patient Phone Session</label>
                                                 </div>
                                             </label>
 
@@ -125,7 +124,7 @@
                                                 <div><div class="radio-inline"><input type="checkbox"
                                                                                  name="meta[1][meta_value]"
                                                                                  value="reached" id="reached"/><label
-                                                            for="reached"><span> </span>Patient Reached</label>
+                                                            for="reached"><span> </span>Successful Clinical Call</label>
                                                 </div></div>
                                                 <input type="hidden" name="meta[2][meta_key]" value="hospital">
                                                 <div><div class="radio-inline"><input type="checkbox"

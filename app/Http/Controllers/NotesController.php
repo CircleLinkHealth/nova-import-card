@@ -150,7 +150,7 @@ class NotesController extends Controller
                     }
                 }
             }
-            debug($careCenterUsers);
+
             if(!empty($careCenterUsers)) {
                 foreach ($careCenterUsers as $careCenterUser) {
                     if($careCenterUser->fullName) {
@@ -279,7 +279,7 @@ class NotesController extends Controller
                         $meta_tags[] = 'Outbound Call';
                         break;
                     case('reached'):
-                        $meta_tags[] = 'Patient Reached';
+                        $meta_tags[] = 'Successful Clinical Call';
                         break;
                     case('admitted'):
                         $meta_tags[] = 'Patient Recently in Hospital/ER';
