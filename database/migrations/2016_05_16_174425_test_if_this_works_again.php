@@ -13,7 +13,7 @@ class TestIfThisWorksAgain extends Migration
     public function up()
     {
         Schema::table('a_test_me', function (Blueprint $table) {
-            //
+            $table->dropIfExists();
         });
     }
 
