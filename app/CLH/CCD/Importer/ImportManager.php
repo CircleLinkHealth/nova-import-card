@@ -155,6 +155,12 @@ class ImportManager
         }
 
         /**
+         * Populate display_name on User
+         */
+        $this->user->display_name = "{$this->user->first_name} {$this->user->last_name}";
+        $this->user->save();
+
+        /**
          * CarePlan Defaults
          */
         $miscId = CpmMisc::whereName(CpmMisc::TRACK_CARE_TRANSITIONS)->first();
