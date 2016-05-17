@@ -3,6 +3,7 @@
 use App\Activity;
 use App\CPRulesQuestions;
 use App\Observation;
+use App\Services\CarePlanViewService;
 use App\Services\ReportsService;
 use App\CarePlan;
 use App\CareItem;
@@ -84,7 +85,9 @@ class PatientController extends Controller
      * @param  int $patientId
      * @return Response
      */
-    public function showPatientSummary(Request $request, $patientId)
+    public function showPatientSummary(Request $request,
+                                       $patientId,
+                                       CarePlanViewService $carePlanViewService)
     {
         $messages = \Session::get('messages');
 
@@ -101,12 +104,14 @@ class PatientController extends Controller
         // program
         $program = Program::find($wpUser->program_id);
 
-        $carePlan = CarePlan::where('id', '=', $wpUser->care_plan_id)
-            ->first();
+        $problems = $carePlanViewService->getProblemsToMonitor($wpUser);
 
-        if ($carePlan) {
-            $carePlan->build($wpUser->ID);
-        }
+//        $carePlan = CarePlan::where('id', '=', $wpUser->care_plan_id)
+//            ->first();
+
+//        if ($carePlan) {
+//            $carePlan->build($wpUser->ID);
+//        }
 
         $params = $request->all();
         $detailSection = '';
@@ -251,7 +256,16 @@ class PatientController extends Controller
 
         //dd($observation_json);
         //return response()->json($cpFeed);
-        return view('wpUsers.patient.summary', ['program' => $program, 'patient' => $wpUser, 'wpUser' => $wpUser, 'sections' => $sections, 'detailSection' => $detailSection, 'observation_data' => $observation_json, 'messages' => $messages]);
+        return view('wpUsers.patient.summary', [
+            'program' => $program,
+            'patient' => $wpUser,
+            'wpUser' => $wpUser,
+            'sections' => $sections,
+            'detailSection' => $detailSection,
+            'observation_data' => $observation_json,
+            'messages' => $messages,
+            'problems' => $problems,
+        ]);
     }
 
 

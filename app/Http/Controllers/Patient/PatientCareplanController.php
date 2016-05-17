@@ -589,6 +589,8 @@ class PatientCareplanController extends Controller
 
         $carePlan = $userService->firstOrDefaultCarePlan($patient);
 
+        $problems = $carePlanService->getProblemsToMonitor($patient);
+
         // determine which sections to show
         if ($page == 1) {
             $pageViewVars = $carePlanService->carePlanFirstPage($carePlan, $patient);
@@ -615,7 +617,7 @@ class PatientCareplanController extends Controller
             'carePlan',
             'messages',
             'showApprovalButton',
-            'treating',
+            'problems'
         ]);
 
         return view('wpUsers.patient.careplan.careplan', array_merge($defaultViewVars, $pageViewVars));
