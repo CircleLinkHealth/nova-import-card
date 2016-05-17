@@ -3,6 +3,7 @@
 use App\Activity;
 use App\CareItemUserValue;
 use App\CareItem;
+use App\Location;
 use App\CarePlan;
 use App\CarePlanItem;
 use App\CPRulesItem;
@@ -523,6 +524,141 @@ class ReportsController extends Controller
                     }
                     $sheet->appendRow(array(
                         $user->ID, $user->fullName, $condition, $programName
+                    ));
+                    $i++;
+                }
+            });
+
+            /*
+            // Our second sheet
+            $excel->sheet('Second sheet', function($sheet) {
+
+            });
+            */
+        })->export('xls');
+    }
+
+
+    public function excelReportT2()
+    {
+        // get all users with paused ccm_status
+        $users = User::with('meta')
+            ->whereHas('meta', function($q) {
+                $q->where('meta_key', '=', 'ccm_status');
+                $q->where('meta_value', '=', 'paused');
+            })
+            ->get();
+
+        $date = date('Y-m-d H:i:s');
+
+        Excel::create('CLH-Report-'.$date, function($excel) use($date, $users) {
+
+            // Set the title
+            $excel->setTitle('CLH Report T2');
+
+            // Chain the setters
+            $excel->setCreator('CLH System')
+                ->setCompany('CircleLink Health');
+
+            // Call them separately
+            $excel->setDescription('CLH Report T2');
+
+            // Our first sheet
+            $excel->sheet('Sheet 1', function($sheet) use($users) {
+                $sheet->protect('clhpa$$word', function(\PHPExcel_Worksheet_Protection $protection) {
+                    $protection->setSort(true);
+                });
+                $i = 0;
+                // header
+                $sheet->appendRow(array(
+                    'Patient ID',
+                    'First Name',
+                    'Last Name',
+                    'Billing Provider',
+                    'Phone',
+                    'DOB',
+                    'CCM Status',
+                    'Gender',
+                    'Address',
+                    'City',
+                    'State',
+                    'Zip',
+                    'CCM Time',
+                    'Date Start',
+                    'Date Paused',
+                    'Date Withdrawn',
+                    'Site',
+                    'Caller ID',
+                    'Location ID',
+                    'Location Name',
+                    'Location Phone',
+                    'Location Address',
+                    'Location City',
+                    'Location State',
+                    'Location Zip'
+                ));
+                foreach($users as $user) {
+                    if($i > 2000000) {
+                        continue 1;
+                    }
+                    $userConfig = $user->meta->where('meta_key', 'wp_' . $user->program_id . '_user_config')->first();
+                    if(!$userConfig) {
+                        continue 1;
+                    }
+                    $userConfig = unserialize($userConfig->meta_value);
+
+                    $billingProvider = User::find($user->billingProviderID);
+                    if(!$billingProvider) {
+                        $billingProvider = '';
+                        $billingProviderPhone = '';
+                    } else {
+                        $billingProviderName = $billingProvider->display_name;
+                        $billingProviderPhone = $billingProvider->phone;
+                    }
+
+                    $location = Location::find($userConfig['preferred_contact_location']);
+                    if(!$location) {
+                        $locationName = '';
+                        $locationPhone = '';
+                        $locationAddress = '';
+                        $locationCity = '';
+                        $locationState = '';
+                        $locationZip = '';
+                    } else {
+                        $locationName = $location->name;
+                        $locationPhone = $location->phone;
+                        $locationAddress = $location->address_line_1;
+                        $locationCity = $location->city;
+                        $locationState = $location->state;
+                        $locationZip = $location->postal_code;
+                    }
+
+                    $sheet->appendRow(array(
+                        $user->ID,
+                        $user->first_name,
+                        $user->last_name,
+                        $billingProviderName,
+                        $user->phone,
+                        $user->dob,
+                        $user->ccm_status,
+                        $user->gender,
+                        $user->address,
+                        $user->city,
+                        $user->state,
+                        $user->zip,
+                        $user->monthlyTime,
+                        'Date Start',
+                        $user->date_paused,
+                        'Date Withdrawn',
+                        $user->program_id,
+                        'Caller ID', // provider_phone
+                        $userConfig['preferred_contact_location'],
+                        $locationName,
+                        $locationPhone,
+                        $locationAddress,
+                        $locationCity,
+                        $locationState,
+                        $locationZip,
                     ));
                     $i++;
                 }
