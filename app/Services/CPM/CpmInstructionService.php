@@ -30,6 +30,8 @@ class CpmInstructionService
 
             $oldInstruction = CpmInstruction::find($oldInstructionId);
 
+            if (empty($oldInstruction)) return;
+
             if (preg_replace("/\r|\n/", "", trim($oldInstruction->name)) == preg_replace("/\r|\n/", "", trim($instructionInput))) return;
 
             $userWithSameInstr = \DB::table($pivotTableName)
