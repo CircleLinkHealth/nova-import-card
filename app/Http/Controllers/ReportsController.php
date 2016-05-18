@@ -420,8 +420,6 @@ class ReportsController extends Controller
                 'appointments' => $careplan[$patientId]['appointments'],
                 'other' => $careplan[$patientId]['other']
             ]);
-
-        return response("User not found", 401);
     }
 
     /**
