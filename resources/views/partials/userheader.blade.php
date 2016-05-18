@@ -47,14 +47,14 @@
         </div>
     </div>
     @endif
-    <?php $problems = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($patient); ?>
+
     @if(!empty($problems))
         <div style="clear:both"></div>
         <ul class="person-conditions-list inline-block text-medium">
-            @foreach($problems as $key => $value)
+            @foreach($problems as $problem)
                 <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
                                                 checked="checked" disabled="disabled">
-                    <label for="condition27"><span> </span>{{$key}}</label>
+                    <label for="condition27"><span> </span>{{$problem}}</label>
                 </li>
             @endforeach
         </ul>
