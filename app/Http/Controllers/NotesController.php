@@ -86,6 +86,28 @@ class NotesController extends Controller
 
     }
 
+    public function listing(Request $request)
+    {
+
+        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
+                $q->where('name', '=', 'participant');
+            })->get()->lists('ID')->all();
+
+        $acts = DB::table('lv_activities')
+            ->select(DB::raw('*,provider_id, type'))
+            ->whereIn('patient_id', $patients)
+            ->where(function ($q) {
+                $q->where('logged_from', 'note')
+                    ->Orwhere('logged_from', 'manual_input');
+            })
+            ->orderBy('performed_at', 'desc')
+            ->get();
+
+        return $acts;
+
+    }
+
     /**
      * Show the form for creating a new resource.
      *

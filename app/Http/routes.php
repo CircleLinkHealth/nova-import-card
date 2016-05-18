@@ -1,4 +1,5 @@
 <?php
+
 //THIS IS FOR APRIMA ONLY
 Route::group( ['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
@@ -170,6 +171,7 @@ Route::group( ['middleware' => 'auth'], function () {
 
         // notes
         Route::group( ['prefix' => 'notes'], function () {
+            Route::get( 'list', ['uses' => 'NotesController@listing', 'as' => 'patient.note.listing'] );
             Route::get( 'create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create'] );
             Route::post( 'store', ['uses' => 'NotesController@store', 'as' => 'patient.note.store'] );
             Route::get( '', ['uses' => 'NotesController@index', 'as' => 'patient.note.index'] );
