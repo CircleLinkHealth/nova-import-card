@@ -13,12 +13,10 @@
                         @endif
                         Location:</strong>
                                 <?= (empty($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>
-                                <strong>Status:</strong>
-                    <span class="{{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ?  'N/A' : ucwords($patient->ccm_status);  ?></span>
                 </span>
                 <?php
                     // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
-                $seconds = $patient->patientInfo->cur_month_activity_time;
+                $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
                 $H = floor($seconds / 3600);
                 $i = ($seconds / 60) % 60;
                 $s = $seconds % 60;
@@ -34,6 +32,7 @@
                 <li class="inline-block">{{$patient->gender}}</li>
                 <li class="inline-block">{{$patient->age}} yrs</li>
                 <li class="inline-block">{{$patient->phone}}</li>
+                <li class=" inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ?  'N/A' : ucwords($patient->ccm_status);  ?></li>
             </ul>
         </div>
     </div>
