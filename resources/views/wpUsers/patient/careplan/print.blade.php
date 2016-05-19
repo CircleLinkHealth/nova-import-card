@@ -101,6 +101,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             </div>
             <!-- /CARE AREAS -->
             <!-- BIOMETRICS -->
+            @if($biometrics)
             <div class="patient-info__subareas">
                 <div class="row">
                     <div class="col-xs-12">
@@ -121,6 +122,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </ul>
                 </div>
             </div>
+            @endif
             <!-- /BIOMETRICS -->
 
             <!-- MEDICATIONS -->
