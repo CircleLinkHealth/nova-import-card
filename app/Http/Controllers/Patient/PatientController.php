@@ -562,7 +562,7 @@ class PatientController extends Controller
             $dob = new Carbon(($user->birth_date));
             $patients[$i]['dob'] = $dob->format('m-d-Y');
             $patients[$i]['mrn'] = $user->mrn_number;
-            $patients[$i]['link'] = URL::route('patient.summary', array('patient' => $d->id));
+            $patients[$i]['link'] = URL::route('patient.summary', array('patient' => $d->ID));
             $programObj = Program::find(($user->program_id)) ? Program::find(($user->program_id)) : "";
             if ($programObj->display_name) {
                 $patients[$i]['program'] = $programObj->display_name;
