@@ -6,7 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class CpmBloodPressure extends Model implements Biometric{
 
-	protected $guarded = [];
+	protected $fillable = [
+        'patient_id',
+        'starting',
+        'target',
+        'systolic_high_alert',
+        'systolic_low_alert',
+        'diastolic_high_alert',
+        'diastolic_low_alert',
+    ];
+
+    protected $attributes = [
+        'systolic_high_alert' => 181,
+        'systolic_low_alert' => 80,
+        'diastolic_high_alert' => 90,
+        'diastolic_low_alert' => 40,
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
