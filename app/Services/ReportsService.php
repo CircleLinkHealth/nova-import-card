@@ -834,9 +834,12 @@ class ReportsService
         foreach ($careplanReport[$user->ID]['biometrics'] as $metric) {
             $biometric = $user->cpmBiometrics->where('name', $metric)->first();
             $biometric_values = app(config('cpmmodelsmap.biometrics')[$biometric->type])->getUserValues($user);
+
             //TARGET
+            if($biometric_values['target'] == ''){$biometric_values['target'] = 'TBD';}
             $careplanReport[$user->ID]['bio_data'][$metric]['target'] = $biometric_values['target'] . ReportsService::biometricsUnitMapping($metric);
             //STARTING
+            if($biometric_values['starting'] == ''){$biometric_values['starting'] = 'TBD';}
             $careplanReport[$user->ID]['bio_data'][$metric]['starting'] = $biometric_values['starting'] . ReportsService::biometricsUnitMapping($metric);
         }
 
