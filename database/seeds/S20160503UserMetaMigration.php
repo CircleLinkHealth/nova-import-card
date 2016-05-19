@@ -120,7 +120,14 @@ class S20160503UserMetaMigration extends Seeder {
             $user->patientInfo->agent_email = $user->getUserConfigByKey('agent_email');
             $user->patientInfo->agent_relationship = $user->getUserConfigByKey('agent_relationship');
             $user->patientInfo->birth_date = $user->getUserConfigByKey('birth_date');
-            $user->patientInfo->ccm_status = $user->getUserConfigByKey('ccm_status');
+
+            $user->patientInfo->ccm_status = $user->getUserMetaByKey('ccm_status');
+            $user->patientInfo->careplan_status = $user->getUserMetaByKey('careplan_status');
+            $user->patientInfo->careplan_provider_date = $user->getUserMetaByKey('careplan_provider_date');
+            $user->patientInfo->careplan_provider_approver = $user->getUserMetaByKey('careplan_provider_approver');
+            $user->patientInfo->careplan_qa_date = $user->getUserMetaByKey('careplan_qa_date');
+            $user->patientInfo->careplan_qa_approver = $user->getUserMetaByKey('careplan_qa_approver');
+
             $user->patientInfo->consent_date = $user->getUserConfigByKey('consent_date');
             $user->patientInfo->cur_month_activity_time = $user->getUserConfigByKey('cur_month_activity_time');
             $user->patientInfo->date_paused = $user->getUserConfigByKey('date_paused');

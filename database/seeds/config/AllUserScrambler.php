@@ -13,6 +13,7 @@ class AllUserScrambler extends Seeder {
     public function run()
     {
         $allUsers = User::all();
+
         if(!empty($allUsers)) {
             $json_string = file_get_contents("https://randomuser.me/api/?nat=us&results=".$allUsers->count());
             if (empty($json_string)) {
@@ -35,6 +36,10 @@ class AllUserScrambler extends Seeder {
                 }
             }
         }
+
+        echo PHP_EOL .'Truncating ccdas table..';
+        DB::table('ccdas')->delete();
+        echo PHP_EOL .'Truncated';
     }
 
 }
