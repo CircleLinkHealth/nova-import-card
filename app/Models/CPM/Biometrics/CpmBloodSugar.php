@@ -4,9 +4,23 @@ use App\Contracts\Models\CPM\Biometric;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmBloodSugar extends Model implements Biometric{
+class CpmBloodSugar extends Model implements Biometric
+{
 
-    protected $guarded = [];
+    protected $fillable = [
+        'patient_id',
+        'starting',
+        'target',
+        'starting_a1c',
+        'high_alert',
+        'low_alert',
+    ];
+
+    protected $attributes = [
+        'target' => 120,
+        'high_alert' => 351,
+        'low_alert' => 60,
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -19,9 +33,12 @@ class CpmBloodSugar extends Model implements Biometric{
     public function getUserValues(User $user)
     {
         $biometric = $this->wherePatientId($user->ID)->first();
-        return [
-            'starting' => $biometric->starting,
-            'target' => $biometric->target
-        ];
+
+        return $biometric
+            ? [
+                'starting' => $biometric->starting,
+                'target' => $biometric->target
+            ]
+            : false;
     }
 }
