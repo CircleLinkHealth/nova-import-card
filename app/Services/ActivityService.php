@@ -20,61 +20,61 @@ class ActivityService
      */
     public function getTotalActivityTimeForRange($userId, Carbon $from, Carbon $to)
     {
-        $acts = new Collection( DB::table( 'lv_activities' )
-            ->select( DB::raw( 'id,provider_id,logged_from,DATE(performed_at), type, SUM(duration) as duration' ) )
-            ->whereBetween( 'performed_at', [
+        $acts = new Collection(DB::table('lv_activities')
+            ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at), type, SUM(duration) as duration'))
+            ->whereBetween('performed_at', [
                 $from, $to
-            ] )
-            ->where( 'patient_id', $userId )
-            ->where( function ($q) {
-                $q->where( 'logged_from', 'activity' )
-                    ->Orwhere( 'logged_from', 'manual_input' )
-                    ->Orwhere( 'logged_from', 'pagetimer' );
-            } )
-            ->groupBy( DB::raw( 'provider_id, DATE(performed_at),type' ) )
-            ->orderBy( 'performed_at', 'desc' )
+            ])
+            ->where('patient_id', $userId)
+            ->where(function ($q) {
+                $q->where('logged_from', 'activity')
+                    ->Orwhere('logged_from', 'manual_input')
+                    ->Orwhere('logged_from', 'pagetimer');
+            })
+            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+            ->orderBy('performed_at', 'desc')
             ->get()
         );
 
-        return $acts->map( function ($act) {
+        return $acts->map(function ($act) {
             return $act->duration;
-        } )->sum();
+        })->sum();
     }
 
     public function getTotalActivityTimeForMonth($userId, $month = false, $year = false)
     {
         // if no month, set to current month
-        if ( !$month ) {
-            $month = date( 'm' );
+        if (!$month) {
+            $month = date('m');
         }
-        if ( !$year ) {
-            $year = date( 'Y' );
+        if (!$year) {
+            $year = date('Y');
         }
 
-        $time = Carbon::createFromDate( $year, $month, 15 );
-        $start = $time->startOfMonth()->format( 'Y-m-d' ) . ' 00:00:00';
-        $end = $time->endOfMonth()->format( 'Y-m-d' ) . ' 23:59:59';
-        $month_selected = $time->format( 'm' );
-        $month_selected_text = $time->format( 'F' );
-        $year_selected = $time->format( 'Y' );
+        $time = Carbon::createFromDate($year, $month, 15);
+        $start = $time->startOfMonth()->format('Y-m-d') . ' 00:00:00';
+        $end = $time->endOfMonth()->format('Y-m-d') . ' 23:59:59';
+        $month_selected = $time->format('m');
+        $month_selected_text = $time->format('F');
+        $year_selected = $time->format('Y');
 
-        $acts = DB::table( 'lv_activities' )
-            ->select( DB::raw( 'id,provider_id,logged_from, performed_at, type, SUM(duration) as duration' ) )
-            ->whereBetween( 'performed_at', [
+        $acts = DB::table('lv_activities')
+            ->select(DB::raw('id,provider_id,logged_from, performed_at, type, SUM(duration) as duration'))
+            ->whereBetween('performed_at', [
                 $start, $end
-            ] )
-            ->where( 'patient_id', $userId )
-            ->where( function ($q) {
-                $q->where( 'logged_from', 'activity' )
-                    ->Orwhere( 'logged_from', 'manual_input' )
-                    ->Orwhere( 'logged_from', 'pagetimer' );
-            } )
-            ->groupBy( DB::raw( 'provider_id, performed_at,type' ) )
-            ->orderBy( 'performed_at', 'desc' )
+            ])
+            ->where('patient_id', $userId)
+            ->where(function ($q) {
+                $q->where('logged_from', 'activity')
+                    ->Orwhere('logged_from', 'manual_input')
+                    ->Orwhere('logged_from', 'pagetimer');
+            })
+            ->groupBy(DB::raw('provider_id, performed_at,type'))
+            ->orderBy('performed_at', 'desc')
             ->get();
 
         $totalDuration = 0;
-        foreach ( $acts as $act ) {
+        foreach ($acts as $act) {
             $totalDuration = ($totalDuration + $act->duration);
         }
 
@@ -87,34 +87,39 @@ class ActivityService
     public function reprocessMonthlyActivityTime($userIds = false, $month = false, $year = false)
     {
         // if no month, set to current month
-        if ( !$month ) {
-            $month = date( 'm' );
+        if (!$month) {
+            $month = date('m');
         }
-        if ( !$year ) {
-            $year = date( 'Y' );
+        if (!$year) {
+            $year = date('Y');
         }
 
-        if ( $userIds ) {
+        if ($userIds) {
             // cast userIds to array if string
-            if ( !is_array( $userIds ) ) {
+            if (!is_array($userIds)) {
                 $userIds = array($userIds);
             }
-            $users = User::whereIn( 'id', $userIds )->orderBy( 'ID', 'desc' )->get();
-        }
-        else {
+            $users = User::whereIn('id', $userIds)->orderBy('ID', 'desc')->get();
+        } else {
             // get all users
-            $users = User::orderBy( 'ID', 'desc' )->get();
+            $users = User::orderBy('ID', 'desc')->get();
         }
 
-        if ( !empty($users) ) {
+        if (!empty($users)) {
             // loop through each user
-            foreach ( $users as $user ) {
+            foreach ($users as $user) {
                 // get all activities for user for month
-                $totalDuration = $this->getTotalActivityTimeForMonth( $user->ID, $month, $year );
+                $totalDuration = $this->getTotalActivityTimeForMonth($user->ID, $month, $year);
+
 
                 // update cur_month_activity_time with total
-                $user->patientInfo->cur_month_activity_time = $totalDuration;
-                $user->patientInfo->save();
+                $patientInfo = $user->patientInfo()->first();
+
+                if (!empty($patientInfo)) {
+                    $patientInfo->cur_month_activity_time = $totalDuration;
+                    $patientInfo->save();
+                }
+
             }
         }
         return true;
@@ -138,12 +143,12 @@ class ActivityService
          *  Old/Fw'd note: "Please see forwarded note for patient [patient  name], created on [creation date] by [note creator]: [link]
          */
 
-        $user = User::find( $user_id );
-        for ( $i = 0; $i < count( $careteam ); $i++ ) {
-            $provider_user = User::find( $careteam[ $i ] );
-            debug( $provider_user );
+        $user = User::find($user_id);
+        for ($i = 0; $i < count($careteam); $i++) {
+            $provider_user = User::find($careteam[$i]);
+            debug($provider_user);
             $email = $provider_user->user_email;
-            $performed_at = Carbon::parse( $performed_at )->toFormattedDateString();
+            $performed_at = Carbon::parse($performed_at)->toFormattedDateString();
             $data = array(
                 'patient_name' => $user->display_name,
                 'url' => $url,
@@ -151,18 +156,17 @@ class ActivityService
                 'logger' => $logger_name
             );
 
-            if ( $newNoteFlag || $admitted_flag ) {
+            if ($newNoteFlag || $admitted_flag) {
                 $email_view = 'emails.newnote';
                 $email_subject = 'Urgent Patient Note from CircleLink Health';
-            }
-            else {
+            } else {
                 $email_view = 'emails.existingnote';
                 $email_subject = 'You have received a new note notification from CarePlan Manager';
             }
-            Mail::send( $email_view, $data, function ($message) use ($email, $email_subject) {
-                $message->from( 'no-reply@careplanmanager.com', 'CircleLink Health' );
-                $message->to( $email )->subject( $email_subject );
-            } );
+            Mail::send($email_view, $data, function ($message) use ($email, $email_subject) {
+                $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
+                $message->to($email)->subject($email_subject);
+            });
         }
         return true;
 //		dd(count(Mail::failures()));
