@@ -19,8 +19,8 @@ elixir(function(mix) {
     // mix.phpUnit([
     //     'tests/AprimaApi/*'
     // ]);
-    //mix.less(['/css/app.less'], 'public/css/stylesheet.css');
-    mix.browserify('uploader.js');
+    mix.less(['/css/app.less'], 'public/css/stylesheet.css');
+    //mix.browserify('uploader.js');
 
     //mix.scripts([
     //    'resources/assets/js/material.min.js'

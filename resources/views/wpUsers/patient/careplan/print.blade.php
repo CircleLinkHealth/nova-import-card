@@ -90,9 +90,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <div class="row gutter">
                     <div class="col-xs-12">
                         <ul class="subareas__list">
-                            @foreach($problems as $key => $value)
-                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
-                            @endforeach
+                            @if($problems)
+                                @foreach($problems as $key => $value)
+                                    <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
+                                @endforeach
+                            @endif
                         </ul>
                     </div>
                 </div>
@@ -129,14 +131,18 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="col-xs-10">
                         <ul><strong>Monitoring these Medications</strong><BR>
-                            @foreach($medications_monitor as $medi)
-                                <li>{{$medi}}</li>
-                            @endforeach
+                            @if($medications_monitor)
+                                @foreach($medications_monitor as $medi)
+                                    <li>{{$medi}}</li>
+                                @endforeach
+                            @endif
                         </ul>
                     </div>
                     <div class="col-xs-10">
                         <ul><strong>Taking these Medications</strong>
-                            <li><?= nl2br( $taking_medications ) ?></li>
+                            @if($taking_medications)
+                                <li><?= nl2br( $taking_medications ) ?></li>
+                            @endif
                         </ul>
                     </div>
                 </div>
@@ -154,7 +160,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="col-xs-12">
                         <ul class="subareas__list">
                             @foreach($symptoms as $s)
-                                <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row'>{{$s}}</li>
+                                @if($symptoms)
+                                    <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row'>{{$s}}</li>end
+                                @endif
                             @endforeach
                         </ul>
                     </div>
@@ -173,9 +181,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <div class="row">
                     <div class="col-xs-12">
                         <ul class="subareas__list">
-                            @foreach($lifestyle as $style)
-                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$style}}</li>
-                            @endforeach
+                            @if($lifestyle)
+                                @foreach($lifestyle as $style)
+                                    <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$style}}</li>
+                                @endforeach
+                            @endif
                         </ul>
                     </div>
                 </div>
@@ -207,6 +217,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                 </div>
             </div>
+            @if($problems)
             <?php foreach($problems as $key => $value){ ?>
                     <!-- Hypertension -->
             <div class="patient-info__subareas">
@@ -221,7 +232,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 </div>
             </div>
             <?php } ?>
-
+            @endif
                     <!-- /INSTRUCTIONS -->
 
             <!-- OTHER INFORMATION -->
