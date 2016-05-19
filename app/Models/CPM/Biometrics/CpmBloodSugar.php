@@ -8,6 +8,7 @@ class CpmBloodSugar extends Model implements Biometric
 {
 
     protected $fillable = [
+        'patient_id',
         'starting',
         'target',
         'starting_a1c',
