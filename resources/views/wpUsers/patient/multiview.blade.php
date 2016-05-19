@@ -209,9 +209,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="row gutter">
                         <div class="col-xs-12">
                             <ul class="subareas__list">
-                                @foreach($careplan['treating'] as $key => $value)
-                                    <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
-                                @endforeach
+                                @if(isset($careplan['treating']) && !empty($careplan['treating']))
+                                    @foreach($careplan['treating'] as $key => $value)
+                                        <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
+                                    @endforeach
+                                @endif
                             </ul>
                         </div>
                     </div>
@@ -325,7 +327,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                     </div>
                 </div>
-                <?php foreach($careplan['treating'] as $key => $value){ ?>
+                <?php
+                if(isset($careplan['treating']) && !empty($careplan['treating'])) {
+                foreach($careplan['treating'] as $key => $value){ ?>
                         <!-- Hypertension -->
                 <div class="patient-info__subareas">
                     <div class="row">
@@ -338,7 +342,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                     </div>
                 </div>
-                <?php } ?>
+                <?php
+                }
+                }
+                ?>
 
                         <!-- /INSTRUCTIONS -->
 
