@@ -244,7 +244,7 @@ class PatientCareplanController extends Controller
 //                echo PHP_EOL . '<br /><br />'.$fileNameBlankPage;
                 $fileName = $storageDirectory.$this->merge_pages(array($fileName, $fileNameBlankPage), $prefix, $storageDirectory);
                 $fileNameWithPath = base_path($fileName);
-                echo PHP_EOL . '<br /><br />Merge complete..';
+//                echo PHP_EOL . '<br /><br />Merge complete..';
             }
 
             // add to array
