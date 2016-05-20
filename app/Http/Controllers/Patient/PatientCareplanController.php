@@ -235,13 +235,13 @@ class PatientCareplanController extends Controller
             $fileNameWithPath = base_path($fileName);
             $pdf->save($fileNameWithPath, true);
             $pageCount = $this->count_pages($fileNameWithPath);
-            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $pageCount;
+//            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $pageCount;
 
             // append blank page if needed
             if ($pageCount % 2 != 0) {
-                echo PHP_EOL . '<br /><br />Add blank page...';
-                echo PHP_EOL . '<br /><br />'.$fileName;
-                echo PHP_EOL . '<br /><br />'.$fileNameBlankPage;
+//                echo PHP_EOL . '<br /><br />Add blank page...';
+//                echo PHP_EOL . '<br /><br />'.$fileName;
+//                echo PHP_EOL . '<br /><br />'.$fileNameBlankPage;
                 $fileName = $storageDirectory.$this->merge_pages(array($fileName, $fileNameBlankPage), $prefix, $storageDirectory);
                 $fileNameWithPath = base_path($fileName);
                 echo PHP_EOL . '<br /><br />Merge complete..';
@@ -250,7 +250,7 @@ class PatientCareplanController extends Controller
             // add to array
             $pageFileNames[] = $fileName;
 
-            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $this->count_pages($fileNameWithPath);
+//            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $this->count_pages($fileNameWithPath);
             $p++;
         }
 
