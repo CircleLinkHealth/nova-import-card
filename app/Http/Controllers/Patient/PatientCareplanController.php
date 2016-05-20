@@ -110,7 +110,7 @@ class PatientCareplanController extends Controller
                     $careplanStatus = 'Approve Now';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
-                    if (Auth::user()->can(['is-provider'])) {
+                    if (Auth::user()->hasRole(['provider'])) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
                     }
                 } else if ($patient->carePlanStatus == 'draft') {
@@ -341,7 +341,7 @@ class PatientCareplanController extends Controller
         }
 
         $showApprovalButton = false; // default hide
-        if (Auth::user()->can(['is-provider'])) {
+        if (Auth::user()->hasRole(['provider'])) {
             if ($patient->carePlanStatus != 'provider_approved') {
                 $showApprovalButton = true;
             }
@@ -602,7 +602,7 @@ class PatientCareplanController extends Controller
         $editMode = false;
 
         $showApprovalButton = false;
-        if (auth()->user()->can(['is-provider'])) {
+        if (auth()->user()->hasRole(['provider'])) {
             if ($patient->carePlanStatus != 'provider_approved') {
                 $showApprovalButton = true;
             }
@@ -714,7 +714,7 @@ class PatientCareplanController extends Controller
             // check for approval here
             // should we update careplan_status?
             if ($user->carePlanStatus != 'provider_approved') {
-                if (Auth::user()->can(['is-provider'])) {
+                if (Auth::user()->hasRole(['provider'])) {
                     $user->carePlanStatus = 'provider_approved'; // careplan_status
                     $user->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver
                     $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
