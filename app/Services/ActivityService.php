@@ -163,10 +163,12 @@ class ActivityService
                 $email_view = 'emails.existingnote';
                 $email_subject = 'You have received a new note notification from CarePlan Manager';
             }
-            Mail::send( $email_view, $data, function ($message) use ($email, $email_subject) {
-                $message->from( 'no-reply@careplanmanager.com', 'CircleLink Health' );
-                $message->to( $email )->subject( $email_subject );
-            } );
+            if(app()->environment('production')) {
+                Mail::send($email_view, $data, function ($message) use ($email, $email_subject) {
+                    $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
+                    $message->to($email)->subject($email_subject);
+                });
+            }
         }
         return true;
 //		dd(count(Mail::failures()));
