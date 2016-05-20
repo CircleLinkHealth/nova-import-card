@@ -300,7 +300,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
                             @if(!empty($lead))
                                 <strong>Lead
-                                    Contact: </strong>     {{$lead->display_name}}{{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
+                                    Contact: </strong> {{$lead->fullName}}{{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
                                 <br>
                             @endif
                         </p>
