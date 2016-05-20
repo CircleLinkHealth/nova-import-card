@@ -42,8 +42,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
         <?php
         $patient = App\User::find($id);
         //$config = $patient->userConfig();
-        $billing = App\User::find($patient->getBillingProviderIDAttribute());
-        $lead = App\User::find($patient->getLeadContactIDAttribute());
+        $billing = null;
+        $lead = null;
+        if (!empty($patient->getBillingProviderIDAttribute())) $billing = App\User::find($patient->getBillingProviderIDAttribute());
+        if (!empty($patient->getLeadContactIDAttribute())) $lead = App\User::find($patient->getLeadContactIDAttribute());
         ?>
         <style type="text/css">
             div.address {
