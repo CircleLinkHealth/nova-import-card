@@ -898,9 +898,9 @@ class DatamonitorService {
 		$log_string = "OBSERVATION[{$observation['id']}]  Patient[{$observation['user_id']}] obs_value = " . $obs_value . PHP_EOL;
 
 		// start
-		if(strtoupper($obs_value) == 'Y') {
+		if(strtoupper($obs_value) == 'Y' || strtoupper($obs_value) == 'YES') {
 			$label = 'success';
-		} else if(strtoupper($obs_value) == 'N') {
+		} else if(strtoupper($obs_value) == 'N' || strtoupper($obs_value) == 'NO') {
 			$label = 'danger';
 		} else {
 			// this is where we can pick up missed meds, if the obs is NR and from previous day we can close it out here
@@ -937,16 +937,16 @@ class DatamonitorService {
 		$message_id = '';
 		$send_alert = false;
 		$send_email = false;
-		$obs_value = $observation['obs_value'];
+		$obs_value = $observation['obs_value'][0];
 		if(empty($obs_value) || (strtoupper($obs_value) != 'Y' && strtoupper($obs_value) != 'N')) {
 			return false;
 		}
 		$log_string = "OBSERVATION[{$observation['id']}] obs_value = " . $obs_value . PHP_EOL;
 
 		// start
-		if(strtoupper($obs_value) == 'Y') {
+		if(strtoupper($obs_value) == 'Y' || strtoupper($obs_value) == 'YES') {
 			$label = 'success';
-		} else if(strtoupper($obs_value) == 'N') {
+		} else if(strtoupper($obs_value) == 'N' || strtoupper($obs_value) == 'NO') {
 			$label = 'danger';
 		}
 		$result_array = array(
