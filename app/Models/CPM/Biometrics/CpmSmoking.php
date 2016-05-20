@@ -4,7 +4,8 @@ use App\Contracts\Models\CPM\Biometric;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmSmoking extends Model implements Biometric {
+class CpmSmoking extends Model implements Biometric
+{
 
     protected $guarded = [];
 
@@ -20,9 +21,11 @@ class CpmSmoking extends Model implements Biometric {
     public function getUserValues(User $user)
     {
         $biometric = $this->wherePatientId($user->ID)->first();
-        return [
-            'starting' => $biometric->starting,
-            'target' => $biometric->target
-        ];
+        return $biometric
+            ? [
+                'starting' => $biometric->starting,
+                'target' => $biometric->target
+            ]
+            : false;
     }
 }
