@@ -404,12 +404,12 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         <div class="col-xs-12">
                             <p>
-                                @if($billing)
+                                @if(!empty($billing))
                                     <strong>Billing
                                         Provider: </strong> {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' : ' ' .  $billing->getSpecialtyAttribute() }}
                                     <br>
                                 @endif
-                                @if($lead)
+                                @if(!empty($lead))
                                     <strong>Lead
                                         Contact: </strong>     {{$lead->getFullNameAttribute()}}{{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
                                     <br>
