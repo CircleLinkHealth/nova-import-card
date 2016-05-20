@@ -87,15 +87,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('vue', function () {
         return view('CCDViewer.new-vuer');
     });
-    Route::get('getVueVar/{ccdId}', function ($ccdId) {
-        //Amazing Charts Sample
-//        return App\XmlCCD::find(434)->ccd;
-//        return response('123', 400);
-        return App\XmlCCD::find($ccdId)->ccd;
-
-        //BB Sample
-        //	return App\XmlCCD::find(430)->ccd;
-    });
+    
 
     /**
      * CCD Importer Routes

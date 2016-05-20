@@ -3,11 +3,6 @@
 namespace App\CLH\CCD\ImportRoutine;
 
 
-use App\CLH\Contracts\CCD\ParsingStrategy;
-use App\CLH\Contracts\CCD\StorageStrategy;
-use App\CLH\Contracts\CCD\ValidationStrategy;
-use App\ParsedCCD;
-
 trait ExecutesImportRoutine
 {
     public static function import($ccd, $validationStrategy, $parsingStrategy, $storageStrategy = null, $blogId = null, $userId = null)

@@ -259,7 +259,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $phoneNumber->number = $params->get('study_phone_number');
             $phoneNumber->type = 'home';
             $phoneNumber->save();
-            echo 'Added home study_phone_number'.PHP_EOL;
         }
         if(!empty($params->get('home_phone_number'))) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
@@ -271,7 +270,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $phoneNumber->number = $params->get('home_phone_number');
             $phoneNumber->type = 'home';
             $phoneNumber->save();
-            echo 'Added home home_phone_number'.PHP_EOL;
         }
         if(!empty($params->get('work_phone_number'))) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'work')->first();
@@ -282,7 +280,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $phoneNumber->number = $params->get('work_phone_number');
             $phoneNumber->type = 'work';
             $phoneNumber->save();
-            echo 'Added work work_phone_number'.PHP_EOL;
         }
         if(!empty($params->get('mobile_phone_number'))) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'mobile')->first();
@@ -293,7 +290,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $phoneNumber->number = $params->get('mobile_phone_number');
             $phoneNumber->type = 'mobile';
             $phoneNumber->save();
-            echo 'Added mobile mobile_phone_number'.PHP_EOL;
         }
     }
 
