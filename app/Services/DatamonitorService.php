@@ -246,36 +246,30 @@ class DatamonitorService {
 		// get user data for observation
 		$user = User::find($observation->user_id);
 
-		//$userUcpData = $user->getUCP();
+		$weight = $user->cpmWeight()->first();
+		$bloodSugar = $user->cpmBloodSugar()->first();
+		$bloodPressure = $user->cpmBloodPressure()->first();
+		$smoking = $user->cpmSmoking()->first();
 
-		// GET CAREPLAN
-		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-			->first();
-		if(!$carePlan) {
-			// if no careplan, set and build
-			$userRepo = new UserRepository();
-			$userRepo->createDefaultCarePlan($user, array());
-			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-				->first();
-			$carePlan->build($user->ID);
-		}
-		$userUcpData["obs_keys"] = array(
-			"Other" => $carePlan->getCareItemUserValue($user, ''),
-			"Adherence" => $carePlan->getCareItemUserValue($user, ''),
-			"Cigarettes" => $carePlan->getCareItemUserValue($user, 'cf-rpt-50-smoking-per-day'),
-			"Weight" => $carePlan->getCareItemUserValue($user, 'cf-rpt-40-weight'),
-			"Weight_CHF" => $carePlan->getCareItemUserValue($user, 'weight-monitor-weight-changes-for-chf'),
-			"Blood_Sugar" => $carePlan->getCareItemUserValue($user, 'cf-rpt-30-blood-sugar'),
-			"Blood_Pressure" => $carePlan->getCareItemUserValue($user, 'cf-rpt-20-blood-pressure'),
-			"A1c" => $carePlan->getCareItemUserValue($user, 'cf-rpt-60-a1c'),
-			"HSP" => $carePlan->getCareItemUserValue($user, ''));
-		$userUcpData["alert_keys"] = array(
-			"Weight" => $carePlan->getCareItemUserValue($user, 'weight-target-weight'),
-			"Blood_Sugar" => $carePlan->getCareItemUserValue($user, 'blood-sugar-bs-high-alert'),
-			"Blood_Pressure" => $carePlan->getCareItemUserValue($user, 'blood-pressure-systolic-high-alert'),
-			"Blood_Pressure_Low" => $carePlan->getCareItemUserValue($user, 'blood-pressure-systolic-low-alert'),
-			"Blood_Sugar_Low" => $carePlan->getCareItemUserValue($user, 'blood-sugar-bs-low-alert'),
-			"Cigarettes" => $carePlan->getCareItemUserValue($user, 'smoking-per-day-target-count'));
+		$userUcpData["obs_keys"] = [
+			"Other" => '',
+			"Adherence" => '',
+			"Cigarettes" => '',
+			"Weight" => '',
+			"Weight_CHF" => '',
+			"Blood_Sugar" => empty($bloodSugar) ?: $bloodSugar->high_alert,
+			"Blood_Pressure" => '',
+			"A1c" => empty($bloodSugar) ?: $bloodSugar->high_alert,
+			"HSP" => '',
+		];
+		$userUcpData["alert_keys"] = [
+			"Weight" => empty($weight) ?: $weight->target,
+			"Blood_Sugar" => empty($bloodSugar) ?: $bloodSugar->high_alert,
+			"Blood_Pressure" => empty($bloodPressure) ?: $bloodPressure->systolic_high_alert,
+			"Blood_Pressure_Low" => empty($bloodPressure) ?: $bloodPressure->systolic_low_alert,
+			"Blood_Sugar_Low" => empty($bloodSugar) ?: $bloodSugar->low_alert,
+			"Cigarettes" => empty($smoking) ?: $smoking->target,
+		];
 
 		$first_name = $user->meta()->where('meta_key', '=', 'last_names')->first();
 		$last_name = $user->meta()->where('meta_key', '=', 'last_name')->first();
