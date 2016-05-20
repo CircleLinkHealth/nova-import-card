@@ -4,9 +4,10 @@ use App\Contracts\Models\CPM\Biometric;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmBloodPressure extends Model implements Biometric{
+class CpmBloodPressure extends Model implements Biometric
+{
 
-	protected $fillable = [
+    protected $fillable = [
         'patient_id',
         'starting',
         'target',
@@ -34,10 +35,12 @@ class CpmBloodPressure extends Model implements Biometric{
     public function getUserValues(User $user)
     {
         $biometric = $this->wherePatientId($user->ID)->first();
-        return [
-            'starting' => $biometric->starting,
-            'target' => $biometric->target
-        ];
+        return $biometric
+            ? [
+                'starting' => $biometric->starting,
+                'target' => $biometric->target
+            ]
+            : false;
     }
 
 }

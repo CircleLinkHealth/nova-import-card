@@ -1,10 +1,9 @@
 <?php namespace App\Http\Controllers\CCDViewer;
 
+use App\CLH\CCD\Ccda;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use App\XmlCCD;
 use Illuminate\Http\Request;
 use JavaScript;
 
@@ -26,7 +25,7 @@ class CCDViewerController extends Controller
 
     public function showByUserId($userId)
     {
-        $ccd = XmlCCD::whereUserId( $userId )->first()->ccd;
+        $ccd = Ccda::wherePatientId( $userId )->first()->ccd;
 
         $template = view( 'CCDViewer.bb-ccd-viewer', compact( 'ccd' ) )->render();
 
