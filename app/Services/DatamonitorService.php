@@ -1217,10 +1217,14 @@ class DatamonitorService {
 			$provider_user = User::find($recipient_id);
 			$email = $provider_user->user_email;
 
-			Mail::send('emails.dmalert', $data, function($message) use ($email,$email_subject) {
-				$message->from('Support@CircleLinkHealth.com', 'CircleLink Health');
-				$message->to($email)->subject($email_subject);
-			});
+			if (app()->environment('production'))
+			{
+				Mail::send('emails.dmalert', $data, function($message) use ($email,$email_subject) {
+					$message->from('Support@CircleLinkHealth.com', 'CircleLink Health');
+					$message->to($email)->subject($email_subject);
+				});	
+			}
+			
 			$email_sent_list[] = $provider_user->user_email;
 		}
 
