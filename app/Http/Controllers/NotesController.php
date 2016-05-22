@@ -94,7 +94,7 @@ class NotesController extends Controller
                 $q->where('name', '=', 'participant');
             })->get()->lists('ID')->all();
 
-        $acts = DB::table('lv_activities')
+        $notes = DB::table('lv_activities')
             ->select(DB::raw('*,provider_id, type'))
             ->whereIn('patient_id', $patients)
             ->where(function ($q) {
@@ -104,7 +104,67 @@ class NotesController extends Controller
             ->orderBy('performed_at', 'desc')
             ->get();
 
-        return $acts;
+        $notes = Activity::find(42715)->get();
+
+        $formatted_notes = array();
+        $count = 0;
+        foreach($notes as $note){
+            $patient = User::find($note->patient_id);
+            //Display Name
+            $formatted_notes[$count]['patient_name'] = $patient->display_name;
+            //Program Name
+            $program = Program::find($patient->program_id);
+            if ($program) $formatted_notes[$count]['program_name'] = $program->display_name;
+            //Provider Name
+            $provider = User::find(intval($patient->billingProviderID));
+            if ($provider) {
+                $formatted_notes[$count]['provider_name'] = $provider->fullName;
+            } else {
+                $formatted_notes[$count]['provider_name'] = '';
+            }
+            //Author
+            $author_name = User::find(intval($note->logger_id));
+            if (is_object($author_name)) {
+                $formatted_notes[$count]['author_name'] = 'fuck';
+            } else {
+                $formatted_notes[$count]['author_name'] = '';
+            }
+            //Status
+
+            $meta = ActivityMeta::where('activity_id',$note->id)
+                ->where(function($query){
+                  $query->where('meta_key', 'call_status')
+                        ->orWhere('meta_key', 'email_sent_to')
+                        ->orWhere('meta_key', 'hospital');
+                })
+                ->get();
+
+            $formatted_notes[$count]['tags'] = '';
+
+            foreach ($meta as $m) {
+                    switch ($m->meta_value) {
+                        case('reached'):
+                            $formatted_notes[$count]['tags'] .= '<div class="label label-info">reached</div>';
+                            break;
+                        case('hospital'):
+                            $formatted_notes[$count]['tags'] .= '<div class="label label-danger">ER</div>';
+                            break;
+                        case('email_sent_to'):
+                            $formatted_notes[$count]['tags'] .= '<div class="label label-info">Email</div>';
+                            break;
+                }
+            }
+
+            //Topic / Offline Act Name
+            //Preview
+            //Date
+
+            $count++;
+        }
+dd($formatted_notes);
+        $acts = json_encode($formatted_notes);
+
+        return view('wpUsers.patient.note.list', compact(['acts']));
 
     }
 
@@ -282,9 +342,7 @@ class NotesController extends Controller
         $patient = User::find($patientId);
         $note_act = Activity::find($noteId);
         $metaComment = $note_act->getActivityCommentFromMeta($noteId);
-        //$meta = DB::table('lv_activitymeta')->where('activity_id', $noteId)->where('meta_key', 'phone')->pluck('meta_value');
         $meta = $note_act->meta()->get();
-        //dd($meta);
 
         //Set up note packet for view
         $note = array();
