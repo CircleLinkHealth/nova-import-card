@@ -186,6 +186,14 @@ class PatientCareplanController extends Controller
         if (!$request['users']) {
             return response()->json("Something went wrong..");
         }
+
+        //Welcome Letter Check
+        $letter = false;
+
+        if (isset($request['letter'])) {
+            $letter = true;
+        }
+
         $users = explode(',', $request['users']);
         $reportService = new ReportsService($users);
         //Save Printed Careplan as Meta
@@ -208,6 +216,7 @@ class PatientCareplanController extends Controller
             'patient' => false,
             'isPdf' => true,
         ]);
+
         $fileNameBlankPage = $storageDirectory.$datetimePrefix.'-0-PDFblank.pdf';
         $fileNameWithPathBlankPage = base_path($fileNameBlankPage);
         $pdf->save($fileNameWithPathBlankPage, true);
@@ -228,6 +237,7 @@ class PatientCareplanController extends Controller
             $pdf->loadView('wpUsers.patient.multiview', [
                 'careplans' => array($user_id => $careplan),
                 'isPdf' => true,
+                'letter' => $letter
             ]);
             $pdf->setOption('footer-center', 'Page [page]');
 
