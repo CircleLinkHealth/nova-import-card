@@ -105,7 +105,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-8 col-lg-offset-2"><BR><strong>Note: Clinical Call time entered manually should not include time spent in the <i>CarePlanManager</i> portal while viewing or inputting/changing patient information and care plans.</strong></div>
+                <div class="col-lg-8 col-lg-offset-2"><BR><strong>Note: Clinical Call time entered manually should not include time spent in the CarePlanManager portal working on a unique patient.</strong></div>
             </div>
             <div class="form-item form-item-spacing text-center">
                 <input type="hidden" value="update_activity" />
