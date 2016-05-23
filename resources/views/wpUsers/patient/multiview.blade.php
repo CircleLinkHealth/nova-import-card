@@ -73,6 +73,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="patient-info__main">
                     </div>
+                    @if($letter)
                     <div class="patient-info__main">
                         <div class="row gutter">
                             <div class="col-xs-12"
@@ -198,10 +199,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             </div>
                         </div>
                     </div><div class="breakhere"></div>
-
                     <!-- <div class="row pb-before" style="color:white;">This page left intentionally blank</div> -->
-
-                    <div class="row pb-before"></div>
+                @endif
                     <div class="row gutter">
                         <div class="col-xs-12">
                             <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
@@ -209,24 +208,24 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                     </div>
                     <div class="row gutter">
-                        <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
-                        <div class="col-xs-12 col-md-3 print-row">{{$patient->phone}}</div>
-                        <div class="col-xs-12 col-md-5 print-row text-right">{{$today}}</div>
+                        <div class="col-xs-4 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
+                        <div class="col-xs-4 col-md-4 print-row">{{$patient->phone}}</div>
+                        <div class="col-xs-4 col-md-4 print-row text-right">{{$today}}</div>
                     </div>
                     <div class="row gutter">
-                        <div class="col-xs-12 col-md-4 print-row text-bold">
+                        <div class="col-xs-4 col-md-4 print-row text-bold">
                             @if($billing)
                                 {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' :  $billing->getSpecialtyAttribute() }}
                             @else
                                 <em>No Billing Provider Selected</em>
                             @endif
                         </div>
-                        <div class="col-xs-12 col-md-3 print-row">
+                        <div class="col-xs-4 col-md-4 print-row">
                             @if($billing)
                                 {{$billing->phone}}
                             @endif
                         </div>
-                        <div class="col-xs-12 col-md-5 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
+                        <div class="col-xs-4 col-md-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
                     </div>
                 </div>
                 <!-- CARE AREAS -->
