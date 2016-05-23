@@ -1614,7 +1614,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         $this->user_login = $user_email;
         $this->user_email = $user_email;
-        $this->user_pass = $user_pass;
+        $this->password = $user_pass;
         $this->save();
 
         return $this;
