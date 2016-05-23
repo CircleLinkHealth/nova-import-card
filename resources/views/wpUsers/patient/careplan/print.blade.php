@@ -168,7 +168,6 @@ if (isset($patient) && !empty($patient)) {
                                 @foreach($symptoms as $s)
                                     @if($symptoms)
                                         <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row'>{{$s}}</li>
-                                        end
                                     @endif
                                 @endforeach
                             </ul>
