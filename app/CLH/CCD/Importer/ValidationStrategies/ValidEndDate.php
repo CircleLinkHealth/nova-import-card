@@ -7,6 +7,11 @@ use Carbon\Carbon;
 
 class ValidEndDate implements ValidationStrategy
 {
+    /**
+     * Make sure an end date exists, and that it is in the future
+     * @param $ccdItem
+     * @return bool
+     */
     public function validate($ccdItem)
     {
         $endDate = '';
