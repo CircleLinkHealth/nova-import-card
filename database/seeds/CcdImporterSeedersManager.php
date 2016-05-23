@@ -18,19 +18,19 @@ class CcdImporterSeedersManager extends Seeder {
 		//disable foreign key check for this connection before running seeders
 		DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-		$this->call('SnomedToIcd10MapTableSeeder');
+		$this->call(SnomedToIcd10MapTableSeeder::class);
 		$this->command->info('SnomedToIcd10MapTableSeeder success!');
 
-		$this->call('CcdVendorsTableSeeder');
+		$this->call(CcdVendorsTableSeeder::class);
 		$this->command->info('CcdVendorsTableSeeder success!');
 
-		$this->call('CcdImportRoutinesTableSeeder');
+		$this->call(CcdImportRoutinesTableSeeder::class);
 		$this->command->info('CcdImportRoutinesTableSeeder success!');
 
-		$this->call('CcdImportRoutinesStrategiesTableSeeder');
+		$this->call(CcdImportRoutinesStrategiesTableSeeder::class);
 		$this->command->info('CcdImportRoutinesStrategiesTableSeeder success!');
 
-		$this->call('CpmProblemsTableSeeder');
+		$this->call(CpmProblemsTableSeeder::class);
 		$this->command->info('CpmProblemsTableSeeder success!');
 
 		Artisan::call('map:snomedtocpm');
