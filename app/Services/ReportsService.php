@@ -836,15 +836,15 @@ class ReportsService
             $biometric_values = app(config('cpmmodelsmap.biometrics')[$biometric->type])->getUserValues($user);
 
 
-                if(($biometric_values['starting'] == ''))
-                    {
-                        $biometric_values['starting'] = 'TBD';
-                    }
+            if(($biometric_values)){
+                if (($biometric_values['starting'] == '')) {
+                    $biometric_values['starting'] = 'TBD';
+                }
 
-                if(($biometric_values['target'] == ''))
-                    {
-                        $biometric_values['target'] = 'TBD';
-                    }
+                if (($biometric_values['target'] == '')) {
+                    $biometric_values['target'] = 'TBD';
+                }
+            }
 
 
             $careplanReport[$user->ID]['bio_data'][$metric]['target'] = $biometric_values['target'] . ReportsService::biometricsUnitMapping($metric);
