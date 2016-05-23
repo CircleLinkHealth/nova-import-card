@@ -17,24 +17,6 @@ use Validator;
 class DatamonitorService {
 
 	public function __construct() {
-		/*
-		$this->CI =& get_instance();
-		$this->CI->load->database();
-		$this->CI->load->model('cpm_1_7_datamonitor_model','datamonitor_model');
-		$this->CI->load->model('cpm_1_7_users_model','users_model');
-		$this->CI->load->model('cpm_1_7_smsdelivery_model','mailman');
-		$this->CI->load->model('cpm_1_7_observation_model','observation_model');
-		$this->CI->load->model('cpm_1_7_observationmeta_model','observationmeta_model');
-		$this->CI->load->model('cpm_1_7_comments_model','comments_model');
-		$this->CI->load->model('cpm_1_7_rules_model','rules_model');
-		$this->CI->load->model('cpm_1_7_alerts_model','alerts_model');
-		$this->CI->load->library('cpm_1_7_obsprocessor_library');
-		$this->CI->load->library('email');
-		$this->CI->load->library('session');
-		$this->CI->load->library('curl');
-		$this->CI->load->library('tinyurl');
-		*/
-
 		$this->time_start = 0;
 		$this->time_end = 0;
 		$this->int_blog_id = 0;
@@ -252,15 +234,15 @@ class DatamonitorService {
 		$smoking = $user->cpmSmoking()->first();
 
 		$userUcpData["obs_keys"] = [
-			"Other" => '',
-			"Adherence" => '',
-			"Cigarettes" => '',
-			"Weight" => '',
+			"Other" => '', //empty
+			"Adherence" => '', //empty
+			"Cigarettes" => '', //empty
+			"Weight" => '', //empty
 			"Weight_CHF" => empty($weight) ?: $weight->monitor_changes_for_chf, //bool
-			"Blood_Sugar" => empty($bloodSugar) ?: $bloodSugar->high_alert,
-			"Blood_Pressure" => '',
-			"A1c" => empty($bloodSugar) ?: $bloodSugar->high_alert,
-			"HSP" => '',
+			"Blood_Sugar" => '', //empty
+			"Blood_Pressure" => '', //empty
+			"A1c" => '', //empty
+			"HSP" => '', //empty
 		];
 		$userUcpData["alert_keys"] = [
 			"Weight" => empty($weight) ?: $weight->target,
