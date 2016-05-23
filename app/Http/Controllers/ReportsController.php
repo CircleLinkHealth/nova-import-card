@@ -839,7 +839,7 @@ class ReportsController extends Controller
                         ->whereHas('meta', function($q) {
                             $q->where('meta_key', 'comment');
                         })
-                        ->orderBy('performed_at', 'ASC')
+                        ->orderBy('performed_at', 'DESC')
                         ->limit(3)
                         ->get();
                     if($activities->count() > 0) {
