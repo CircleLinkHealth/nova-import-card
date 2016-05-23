@@ -14,8 +14,8 @@
                 <h5>Please choose a program in which you wish to import.</h5>
 
                 <label v-for="blog in blogs" class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-cell--2-col"
-                       for="{{ blog.blog_id }}">
-                    <input type="radio" id="{{ blog.blog_id }}" class="mdl-radio__button" name="program_id"
+                       for="blog-{{ blog.blog_id }}">
+                    <input type="radio" id="blog-{{ blog.blog_id }}" class="mdl-radio__button" name="program_id"
                            value="{{ blog.blog_id }}" v-model="selectedProgram" required>
                     <span class="mdl-radio__label">{{ blog.name | capitalize}}</span>
                 </label>
@@ -26,8 +26,8 @@
                 <h5>Please choose an Import profile for this CCD.</h5>
 
                 <label v-for="vendor in ccdVendors" class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-cell--4-col"
-                       for="{{ vendor.id }}">
-                    <input type="radio" id="{{ vendor.id }}" class="mdl-radio__button" name="ccd_vendor_id"
+                       for="vendor-{{ vendor.id }}">
+                    <input type="radio" id="vendor-{{ vendor.id }}" class="mdl-radio__button" name="ccd_vendor_id"
                            value="{{ vendor.id }}" v-model="selectedVendor" required>
                     <span class="mdl-radio__label">{{ vendor.vendor_name }}</span>
                 </label>
