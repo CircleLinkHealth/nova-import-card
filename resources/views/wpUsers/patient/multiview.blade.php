@@ -52,6 +52,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 line-height: 1.1em;
                 font-family: 'Roboto', sans-serif;
             }
+
+            div.breakhere {
+                page-break-after: always;
+            }
         </style>
         <div class="container">
             <section class="patient-summary">
@@ -193,7 +197,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div><div class="breakhere"></div>
 
                     <!-- <div class="row pb-before" style="color:white;">This page left intentionally blank</div> -->
 
