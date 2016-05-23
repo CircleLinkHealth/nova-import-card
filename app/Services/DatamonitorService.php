@@ -256,7 +256,7 @@ class DatamonitorService {
 			"Adherence" => '',
 			"Cigarettes" => '',
 			"Weight" => '',
-			"Weight_CHF" => '',
+			"Weight_CHF" => empty($weight) ?: $weight->monitor_changes_for_chf, //bool
 			"Blood_Sugar" => empty($bloodSugar) ?: $bloodSugar->high_alert,
 			"Blood_Pressure" => '',
 			"A1c" => empty($bloodSugar) ?: $bloodSugar->high_alert,
@@ -598,7 +598,7 @@ class DatamonitorService {
 			return false;
 		}
 		// WEIGHT PREVIOUS MATCH COMPARISON ALERT
-		if(isset($userUcpData['obs_keys']['Weight_CHF']) && $userUcpData['obs_keys']['Weight_CHF'] == 'CHECKED') {
+		if($userUcpData['obs_keys']['Weight_CHF']) {
 			// get previous weight observation
 			$prev_obs = $user->observations()
 				->whereRaw("obs_date < DATE_FORMAT('{$observation['obs_date']}', '%Y-%m-%d')")
@@ -1217,10 +1217,14 @@ class DatamonitorService {
 			$provider_user = User::find($recipient_id);
 			$email = $provider_user->user_email;
 
-			Mail::send('emails.dmalert', $data, function($message) use ($email,$email_subject) {
-				$message->from('Support@CircleLinkHealth.com', 'CircleLink Health');
-				$message->to($email)->subject($email_subject);
-			});
+			if (app()->environment('production'))
+			{
+				Mail::send('emails.dmalert', $data, function($message) use ($email,$email_subject) {
+					$message->from('Support@CircleLinkHealth.com', 'CircleLink Health');
+					$message->to($email)->subject($email_subject);
+				});	
+			}
+			
 			$email_sent_list[] = $provider_user->user_email;
 		}
 

@@ -765,4 +765,127 @@ class ReportsController extends Controller
             */
         })->export('xls');
     }
+
+    public function excelReportT4()
+    {
+        // get all patients
+        $users = User::with('roles')
+            ->whereHas('roles', function($q) {
+                $q->where('name', 'participant');
+            })
+            ->get();
+
+        $date = date('Y-m-d H:i:s');
+
+        Excel::create('CLH-Report-'.$date, function($excel) use($date, $users) {
+
+            // Set the title
+            $excel->setTitle('CLH Report T4');
+
+            // Chain the setters
+            $excel->setCreator('CLH System')
+                ->setCompany('CircleLink Health');
+
+            // Call them separately
+            $excel->setDescription('CLH Report T4');
+
+            // Our first sheet
+            $excel->sheet('Sheet 1', function($sheet) use($users) {
+                $sheet->protect('clhpa$$word', function(\PHPExcel_Worksheet_Protection $protection) {
+                    $protection->setSort(true);
+                });
+                $i = 0;
+                // header
+                $sheet->appendRow(array(
+                    'id', 'Provider', 'Program', 'CCM Status', 'DOB', 'Phone', 'Registered On', 'CCM', 'Patient Reached', 'Last Entered Note', 'Note Content', '2nd to last Entered Note', 'Note Content'
+                ));
+
+                foreach($users as $user) {
+                    if($i > 2000000) {
+                        continue 1;
+                    }
+
+                    // provider
+                    $billingProvider = User::find($user->billingProviderID);
+                    $billingProviderName = '';
+                    if($billingProvider) {
+                        $billingProviderName = $billingProvider->display_name;
+                    }
+
+                    // program
+                    $programName = 'N/A';
+                    $program = Program::find($user->program_id);
+                    if($program) {
+                        $programName = $program->display_name;
+                    }
+
+                    // monthly time
+                    $seconds = $user->curMonthActivityTime;
+                    if($seconds < 600) {
+                        //continue 1;
+                    }
+                    $H = floor($seconds / 3600);
+                    $i = ($seconds / 60) % 60;
+                    $s = $seconds % 60;
+                    $monthlyTime = sprintf("%03d:%02d", $i, $s);
+
+                    $activity1comment = '';
+                    $activity1status = '';
+                    $activity1date = '';
+                    $activity2comment = '';
+                    $activity2status = '';
+                    $activity2date = '';
+                    $activities = $user->patientActivities()
+                        ->whereHas('meta', function($q) {
+                            $q->where('meta_key', 'comment');
+                        })
+                        ->orderBy('performed_at', 'ASC')
+                        ->limit(3)
+                        ->get();
+                    if($activities->count() > 0) {
+                        $a = 0;
+                        foreach($activities as $activity) {
+                            $commentMeta = $activity->meta->where('meta_key', 'comment')->first();
+                            $comment = '';
+                            if($commentMeta) {
+                                $comment = $commentMeta->meta_value;
+                            }
+                            $callStatusMeta = $activity->meta->where('meta_key', 'call_status')->first();
+                            $callStatus = '';
+                            if($callStatusMeta) {
+                                $callStatus = $callStatusMeta->meta_value;
+                            }
+                            if($a == 0) {
+                                $activity1comment = $activity->id . ' ' . $comment;
+                                $activity1status = $callStatus;
+                                $activity1date = $activity->performed_at;
+                            }
+                            if($a == 1) {
+                                $activity2comment = $activity->id . ' ' . $comment;
+                                $activity2status = $callStatus;
+                                $activity2date = $activity->performed_at;
+                            }
+                            $a++;
+                        }
+                    }
+                    $sheet->appendRow(array(
+                        $user->fullName,
+                        $billingProviderName,
+                        $programName,
+                        $user->ccmStatus,
+                        $user->birthDate,
+                        $user->phone,
+                        $user->registrationDate,
+                        $monthlyTime,
+                        $activity1status,
+                        $activity1date,
+                        $activity1comment,
+                        $activity2date,
+                        $activity2comment
+                    ));
+                    $i++;
+                }
+            });
+        })->export('xls');
+    }
 }

@@ -20,7 +20,7 @@
                 $H = floor($seconds / 3600);
                 $i = ($seconds / 60) % 60;
                 $s = $seconds % 60;
-                $monthlyTime = sprintf("%03d:%02d", $i, $s);
+                $monthlyTime = sprintf("%02d:%02d:%02d",$H, $i, $s);
                 ?>
                <a href="{{URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID))}}"><span class="pull-right">{{
                 date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
