@@ -246,36 +246,30 @@ class DatamonitorService {
 		// get user data for observation
 		$user = User::find($observation->user_id);
 
-		//$userUcpData = $user->getUCP();
+		$weight = $user->cpmWeight()->first();
+		$bloodSugar = $user->cpmBloodSugar()->first();
+		$bloodPressure = $user->cpmBloodPressure()->first();
+		$smoking = $user->cpmSmoking()->first();
 
-		// GET CAREPLAN
-		$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-			->first();
-		if(!$carePlan) {
-			// if no careplan, set and build
-			$userRepo = new UserRepository();
-			$userRepo->createDefaultCarePlan($user, array());
-			$carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-				->first();
-			$carePlan->build($user->ID);
-		}
-		$userUcpData["obs_keys"] = array(
-			"Other" => $carePlan->getCareItemUserValue($user, ''),
-			"Adherence" => $carePlan->getCareItemUserValue($user, ''),
-			"Cigarettes" => $carePlan->getCareItemUserValue($user, 'cf-rpt-50-smoking-per-day'),
-			"Weight" => $carePlan->getCareItemUserValue($user, 'cf-rpt-40-weight'),
-			"Weight_CHF" => $carePlan->getCareItemUserValue($user, 'weight-monitor-weight-changes-for-chf'),
-			"Blood_Sugar" => $carePlan->getCareItemUserValue($user, 'cf-rpt-30-blood-sugar'),
-			"Blood_Pressure" => $carePlan->getCareItemUserValue($user, 'cf-rpt-20-blood-pressure'),
-			"A1c" => $carePlan->getCareItemUserValue($user, 'cf-rpt-60-a1c'),
-			"HSP" => $carePlan->getCareItemUserValue($user, ''));
-		$userUcpData["alert_keys"] = array(
-			"Weight" => $carePlan->getCareItemUserValue($user, 'weight-target-weight'),
-			"Blood_Sugar" => $carePlan->getCareItemUserValue($user, 'blood-sugar-bs-high-alert'),
-			"Blood_Pressure" => $carePlan->getCareItemUserValue($user, 'blood-pressure-systolic-high-alert'),
-			"Blood_Pressure_Low" => $carePlan->getCareItemUserValue($user, 'blood-pressure-systolic-low-alert'),
-			"Blood_Sugar_Low" => $carePlan->getCareItemUserValue($user, 'blood-sugar-bs-low-alert'),
-			"Cigarettes" => $carePlan->getCareItemUserValue($user, 'smoking-per-day-target-count'));
+		$userUcpData["obs_keys"] = [
+			"Other" => '',
+			"Adherence" => '',
+			"Cigarettes" => '',
+			"Weight" => '',
+			"Weight_CHF" => empty($weight) ?: $weight->monitor_changes_for_chf, //bool
+			"Blood_Sugar" => empty($bloodSugar) ?: $bloodSugar->high_alert,
+			"Blood_Pressure" => '',
+			"A1c" => empty($bloodSugar) ?: $bloodSugar->high_alert,
+			"HSP" => '',
+		];
+		$userUcpData["alert_keys"] = [
+			"Weight" => empty($weight) ?: $weight->target,
+			"Blood_Sugar" => empty($bloodSugar) ?: $bloodSugar->high_alert,
+			"Blood_Pressure" => empty($bloodPressure) ?: $bloodPressure->systolic_high_alert,
+			"Blood_Pressure_Low" => empty($bloodPressure) ?: $bloodPressure->systolic_low_alert,
+			"Blood_Sugar_Low" => empty($bloodSugar) ?: $bloodSugar->low_alert,
+			"Cigarettes" => empty($smoking) ?: $smoking->target,
+		];
 
 		$first_name = $user->meta()->where('meta_key', '=', 'last_names')->first();
 		$last_name = $user->meta()->where('meta_key', '=', 'last_name')->first();
@@ -604,7 +598,7 @@ class DatamonitorService {
 			return false;
 		}
 		// WEIGHT PREVIOUS MATCH COMPARISON ALERT
-		if(isset($userUcpData['obs_keys']['Weight_CHF']) && $userUcpData['obs_keys']['Weight_CHF'] == 'CHECKED') {
+		if($userUcpData['obs_keys']['Weight_CHF']) {
 			// get previous weight observation
 			$prev_obs = $user->observations()
 				->whereRaw("obs_date < DATE_FORMAT('{$observation['obs_date']}', '%Y-%m-%d')")
@@ -898,9 +892,9 @@ class DatamonitorService {
 		$log_string = "OBSERVATION[{$observation['id']}]  Patient[{$observation['user_id']}] obs_value = " . $obs_value . PHP_EOL;
 
 		// start
-		if(strtoupper($obs_value) == 'Y') {
+		if(strtoupper($obs_value) == 'Y' || strtoupper($obs_value) == 'YES') {
 			$label = 'success';
-		} else if(strtoupper($obs_value) == 'N') {
+		} else if(strtoupper($obs_value) == 'N' || strtoupper($obs_value) == 'NO') {
 			$label = 'danger';
 		} else {
 			// this is where we can pick up missed meds, if the obs is NR and from previous day we can close it out here
@@ -937,16 +931,16 @@ class DatamonitorService {
 		$message_id = '';
 		$send_alert = false;
 		$send_email = false;
-		$obs_value = $observation['obs_value'];
+		$obs_value = $observation['obs_value'][0];
 		if(empty($obs_value) || (strtoupper($obs_value) != 'Y' && strtoupper($obs_value) != 'N')) {
 			return false;
 		}
 		$log_string = "OBSERVATION[{$observation['id']}] obs_value = " . $obs_value . PHP_EOL;
 
 		// start
-		if(strtoupper($obs_value) == 'Y') {
+		if(strtoupper($obs_value) == 'Y' || strtoupper($obs_value) == 'YES') {
 			$label = 'success';
-		} else if(strtoupper($obs_value) == 'N') {
+		} else if(strtoupper($obs_value) == 'N' || strtoupper($obs_value) == 'NO') {
 			$label = 'danger';
 		}
 		$result_array = array(
@@ -1223,10 +1217,14 @@ class DatamonitorService {
 			$provider_user = User::find($recipient_id);
 			$email = $provider_user->user_email;
 
-			Mail::send('emails.dmalert', $data, function($message) use ($email,$email_subject) {
-				$message->from('Support@CircleLinkHealth.com', 'CircleLink Health');
-				$message->to($email)->subject($email_subject);
-			});
+			if (app()->environment('production'))
+			{
+				Mail::send('emails.dmalert', $data, function($message) use ($email,$email_subject) {
+					$message->from('Support@CircleLinkHealth.com', 'CircleLink Health');
+					$message->to($email)->subject($email_subject);
+				});	
+			}
+			
 			$email_sent_list[] = $provider_user->user_email;
 		}
 

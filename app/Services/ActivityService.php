@@ -1,6 +1,7 @@
 <?php namespace App\Services;
 
 use App\Activity;
+use App\PatientInfo;
 use App\User;
 use App\UserMeta;
 use Carbon\Carbon;
@@ -113,8 +114,11 @@ class ActivityService
                 $totalDuration = $this->getTotalActivityTimeForMonth( $user->ID, $month, $year );
 
                 // update cur_month_activity_time with total
-                $user->patientInfo->cur_month_activity_time = $totalDuration;
-                $user->patientInfo->save();
+                PatientInfo::updateOrCreate([
+                    'user_id' => $user->ID
+                ], [
+                    'cur_month_activity_time' => $totalDuration
+                ]);
             }
         }
         return true;

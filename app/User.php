@@ -333,6 +333,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\Activity');
     }
 
+	public function patientActivities()
+	{
+		return $this->hasMany('App\Activity', 'patient_id', 'ID');
+	}
+
     public function ucp()
 	{
 		return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
@@ -534,27 +539,31 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     // basic attributes
 
-	/*
 	// first_name
+	/*
     public function getFirstNameAttribute() {
-        return $this->first_name;
-    }
-    public function setFirstNameAttribute($value) {
-        $this->first_name = $value;
-        return true;
-    }
-    
-    // last_name
-    public function getLastNameAttribute() {
-        return $this->last_name;
-    }
-    public function setLastNameAttribute($value) {
-        $this->last_name = $value;
-        return true;
-    }
-    */
+		return $this->first_name;
+	}
+	*/
+	public function setFirstNameAttribute($value) {
+		$this->attributes['first_name'] = $value;
+		$this->display_name = $this->fullName;
+		return true;
+	}
 
-// full name
+	// last_name
+	/*
+    public function getLastNameAttribute() {
+		return $this->last_name;
+	}
+	*/
+	public function setLastNameAttribute($value) {
+		$this->attributes['last_name'] = $value;
+		$this->display_name = $this->fullName;
+		return true;
+	}
+
+	// full name
     public function getFullNameAttribute()
     {
         $firstName = $this->first_name;
