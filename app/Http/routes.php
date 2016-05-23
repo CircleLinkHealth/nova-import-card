@@ -135,6 +135,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patients.demographics.store']);
         Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
         Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
+        Route::get('notes-list', ['uses' => 'NotesController@listing', 'as' => 'patient.note.listing']);
     });
 
     // **** PATIENTS (/manage-patients/{patientId}/)
@@ -164,7 +165,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         // notes
         Route::group(['prefix' => 'notes'], function () {
-            Route::get('list', ['uses' => 'NotesController@listing', 'as' => 'patient.note.listing']);
             Route::get('create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create']);
             Route::post('store', ['uses' => 'NotesController@store', 'as' => 'patient.note.store']);
             Route::get('', ['uses' => 'NotesController@index', 'as' => 'patient.note.index']);
@@ -418,6 +418,7 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'wp/api/v2.1', 'middleware' =>
     Route::get('careplan', 'CareplanController@show');
     Route::get('reports/progress', 'ReportsController@progress');
     Route::get('reports/careplan', 'ReportsController@careplan');
+
 
     // locations
     Route::get('locations', 'LocationController@index');

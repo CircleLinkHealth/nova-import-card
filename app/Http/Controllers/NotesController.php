@@ -2,15 +2,13 @@
 
 use App\Activity;
 use App\ActivityMeta;
-use App\CLH\Facades\StringManipulation;
+use App\Formatters\WebixFormatter;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Services\ActivityService;
 use App\Program;
+use App\Services\ActivityService;
+use App\Services\NoteService;
 use App\User;
-use Carbon\Carbon;
-use DateTime;
-use DateTimeZone;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,11 +17,17 @@ use Laracasts\Flash\Flash;
 
 class NotesController extends Controller
 {
-    /**
-     * Display a listing of the notes for a user.
-     *
-     * @return Response
-     */
+
+    private $service;
+    private $formatter;
+
+    public function __construct(NoteService $noteService, WebixFormatter $formatter)
+    {
+        $this->service = $noteService;
+        $this->formatter = $formatter;
+    }
+
+
     public function index(Request $request, $patientId)
     {
 
@@ -89,82 +93,24 @@ class NotesController extends Controller
     public function listing(Request $request)
     {
 
+        //Get Viewable Patients
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get()->lists('ID')->all();
 
-        $notes = DB::table('lv_activities')
-            ->select(DB::raw('*,provider_id, type'))
-            ->whereIn('patient_id', $patients)
-            ->where(function ($q) {
-                $q->where('logged_from', 'note')
-                    ->Orwhere('logged_from', 'manual_input');
-            })
-            ->orderBy('performed_at', 'desc')
-            ->get();
 
-        $notes = Activity::find(42715)->get();
+        $notes = $this->service->getNotesForPatients($patients);
 
-        $formatted_notes = array();
-        $count = 0;
-        foreach($notes as $note){
-            $patient = User::find($note->patient_id);
-            //Display Name
-            $formatted_notes[$count]['patient_name'] = $patient->display_name;
-            //Program Name
-            $program = Program::find($patient->program_id);
-            if ($program) $formatted_notes[$count]['program_name'] = $program->display_name;
-            //Provider Name
-            $provider = User::find(intval($patient->billingProviderID));
-            if ($provider) {
-                $formatted_notes[$count]['provider_name'] = $provider->fullName;
-            } else {
-                $formatted_notes[$count]['provider_name'] = '';
-            }
-            //Author
-            $author_name = User::find(intval($note->logger_id));
-            if (is_object($author_name)) {
-                $formatted_notes[$count]['author_name'] = 'fuck';
-            } else {
-                $formatted_notes[$count]['author_name'] = '';
-            }
-            //Status
+        if(!empty($notes)) {
 
-            $meta = ActivityMeta::where('activity_id',$note->id)
-                ->where(function($query){
-                  $query->where('meta_key', 'call_status')
-                        ->orWhere('meta_key', 'email_sent_to')
-                        ->orWhere('meta_key', 'hospital');
-                })
-                ->get();
-
-            $formatted_notes[$count]['tags'] = '';
-
-            foreach ($meta as $m) {
-                    switch ($m->meta_value) {
-                        case('reached'):
-                            $formatted_notes[$count]['tags'] .= '<div class="label label-info">reached</div>';
-                            break;
-                        case('hospital'):
-                            $formatted_notes[$count]['tags'] .= '<div class="label label-danger">ER</div>';
-                            break;
-                        case('email_sent_to'):
-                            $formatted_notes[$count]['tags'] .= '<div class="label label-info">Email</div>';
-                            break;
-                }
-            }
-
-            //Topic / Offline Act Name
-            //Preview
-            //Date
-
-            $count++;
+            $notes = $this->formatter->formatDataForNotesListingReport($notes);
+            
+        } else {
+        throw new Exception('No Notes Found.');
         }
-dd($formatted_notes);
-        $acts = json_encode($formatted_notes);
 
-        return view('wpUsers.patient.note.list', compact(['acts']));
+        return view('wpUsers.patient.note.list', compact(['notes']));
 
     }
 
@@ -310,7 +256,7 @@ dd($formatted_notes);
         $logger_name = $logger->display_name;
 
         //if emails are to be sent
-        debug($input);
+
         if (array_key_exists('careteam', $input)) {
             //Log to Meta Table
             $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_by', 'meta_value' => $logger->ID]);
