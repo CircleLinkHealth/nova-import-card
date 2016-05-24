@@ -19,7 +19,7 @@ class NurseTimeReportController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index(Request $request)
 	{
 		//dd('yo');
 		if(!Auth::user()->can('report-nurse-time-view')) {
@@ -37,8 +37,8 @@ class NurseTimeReportController extends Controller {
 			})
 			->get();
 
+		// get date
 		$date = date('Y-m-d H:i:s');
-
 
 		$i = 0;
 
@@ -49,13 +49,21 @@ class NurseTimeReportController extends Controller {
 		}
 
 		// get array of dates
-		$a = new DateTime('2016-03-30');
-		$b = new DateTime(date('Y-m-d'));
+		$startDate = new DateTime('first day of this month');
+		$endDate = new DateTime(date('Y-m-d'));
+
+		// if form submitted dates, override here
+		if($request->input('start_date')) {
+			$startDate = new DateTime($request->input('start_date') . ' 00:00:01');
+		}
+		if($request->input('end_date')) {
+			$endDate = new DateTime($request->input('end_date') . ' 23:59:59');
+		}
 
 		// to exclude the end date (so you just get dates between start and end date):
 		// $b->modify('-1 day');
 
-		$period = new DatePeriod($a, new DateInterval('P1D'), $b, DatePeriod::EXCLUDE_START_DATE);
+		$period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
 
 		$sheetRows = array(); // so we can reverse after
 
@@ -95,7 +103,7 @@ class NurseTimeReportController extends Controller {
 		$reportRows[] = $userTotals;
 
 		// display view
-		return view('admin.reports.nurseTimeReport.index', [ 'reportColumns' => $reportColumns, 'reportRows' => $reportRows ]);
+		return view('admin.reports.nurseTimeReport.index', [ 'reportColumns' => $reportColumns, 'reportRows' => $reportRows, 'startDate' => $startDate, 'endDate' => $endDate ]);
 	}
 
 	/**
