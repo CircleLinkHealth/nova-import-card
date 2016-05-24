@@ -187,6 +187,28 @@ Route::group(['middleware' => 'auth'], function () {
     /****************************/
     Route::group(['prefix' => 'admin'], function () {
 
+        Route::get('dupes', function () {
+            $results = DB::select( DB::raw("
+                SELECT *
+                FROM lv_activities
+                WHERE performed_at != '0000-00-00 00:00:00'
+                AND performed_at > '2016-04-30'
+                /*AND duration != '0'*/
+                AND provider_id != '1877'
+                /*group by concat(performed_at, provider_id)
+                having count(*) >= 2 */") );
+            $a = 0;
+            foreach($results as $result) {
+                echo $result->id .
+                    ' - ' . $result->provider_id .
+                    ' - ' . $result->performed_at .
+                    '<br /><br />';
+                $a++;
+            }
+            echo "TOTAL:" .$a;
+            dd('done');
+        });
+
         // excel reports
         Route::get('excelReportT1', ['uses' => 'ReportsController@excelReportT1', 'as' => 'excel.report.t1']);
         Route::get('excelReportT2', ['uses' => 'ReportsController@excelReportT2', 'as' => 'excel.report.t2']);
@@ -261,6 +283,12 @@ Route::group(['middleware' => 'auth'], function () {
         Entrust::routeNeedsPermission($prefix . 'permissions/*/*', 'roles-permissions-manage');
         Route::resource('permissions', 'Admin\PermissionController');
         Route::post('permissions/{id}/edit', ['uses' => 'Admin\PermissionController@update', 'as' => 'admin.permissions.update']);
+
+        // report - nurse time report
+        //Entrust::routeNeedsPermission($prefix . '/reports/nurseTime*', 'report-nurse-time-view');
+        //Entrust::routeNeedsPermission($prefix . '/reports/nurseTime/*/*', 'report-nurse-time-manage');
+        Route::resource('reports/nurseTime', 'Admin\Reports\NurseTimeReportController');
+        Route::post('reports/nurseTime/{id}/edit', ['uses' => 'Admin\Reports\NurseTimeReportController@update', 'as' => 'admin.permissions.update']);
 
         // questions
         Entrust::routeNeedsPermission($prefix . 'questions*', 'programs-manage');
