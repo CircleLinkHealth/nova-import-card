@@ -113,7 +113,7 @@
                                 on:{
                                     onSelectChange:function(){
                                         var text = obs_alerts_dtable.getSelectedId(true).join();
-                                        var textmsg = "<a href='{!! URL::route('patients.careplan.multi')!!}?users="+text+"' class='btn btn-primary'>Print Selected</a>";
+                                        var textmsg = "<a href='{!! URL::route('patients.careplan.multi')!!}?users="+text+"&letter' class='btn btn-primary'>Print Selected</a>";
                                         document.getElementById('print_list').innerHTML = textmsg+'\n<BR>';
                                     }
                                 },

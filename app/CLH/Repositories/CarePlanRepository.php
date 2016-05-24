@@ -14,7 +14,8 @@ use App\Services\CareplanUIService;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class CarePlanRepository {
+class CarePlanRepository
+{
 
     public function createCarePlan(CarePlan $carePlan, ParameterBag $params)
     {
@@ -36,7 +37,8 @@ class CarePlanRepository {
         return $carePlan;
     }
 
-    public function attachCareItemToCarePlan(CareSection $careSection, CarePlan $carePlan, CarePlanItem $careItemCarePlan) {
+    public function attachCareItemToCarePlan(CareSection $careSection, CarePlan $carePlan, CarePlanItem $careItemCarePlan)
+    {
         $rowData = array(
             'section_id' => $careSection->id,
             "meta_key" => $careItemCarePlan->meta_key,
@@ -70,10 +72,10 @@ class CarePlanRepository {
         $carePlan->build();
 
         // copy each item
-        foreach($carePlan->careSections as $careSection) {
+        foreach ($carePlan->careSections as $careSection) {
             // attach to dupe if doesnt already exist
             $carePlanSection = $carePlanDupe->careSections()->where('section_id', '=', $careSection['id'])->first();
-            if(empty($carePlanSection)) {
+            if (empty($carePlanSection)) {
                 $carePlanDupe->careSections()->attach(array($careSection['id'] => array('status' => 'active')));
             }
             $carePlanItems = CarePlanItem::where('plan_id', '=', $carePlan->id)->where('section_id', '=', $careSection['id'])->get();
@@ -86,7 +88,7 @@ class CarePlanRepository {
 
         // now populate parent ids @todo shouldnt have to do this
         $carePlanItems = CarePlanItem::where('plan_id', '=', $carePlanDupe->id)->get();
-        if($carePlanItems->count() > 0) {
+        if ($carePlanItems->count() > 0) {
             foreach ($carePlanItems as $carePlanItem) {
 
                 // skip if no care item relation
@@ -94,7 +96,7 @@ class CarePlanRepository {
                     continue 1;
                 }
                 // skip if care_item.parent_id = 0
-                if($carePlanItem->careItem->parent_id == 0) {
+                if ($carePlanItem->careItem->parent_id == 0) {
                     continue 1;
                 }
                 // get parent care item
@@ -120,7 +122,8 @@ class CarePlanRepository {
         return $carePlanDupe;
     }
 
-    public function adminEmailNotify(User $user, $recipients){
+    public function adminEmailNotify(User $user, $recipients)
+    {
 
 //   Template:
 //        From: CircleLink Health
@@ -134,7 +137,7 @@ class CarePlanRepository {
         $email_view = 'emails.newpatientnotify';
         $program = Program::find($user->blogId());
         $program_name = $program->display_name;
-        $email_subject = '[' . $program_name . '] New '. ucwords($user->role()) .' Registration!';
+        $email_subject = '[' . $program_name . '] New ' . ucwords($user->role()) . ' Registration!';
         $data = array(
             'patient_name' => $user->getFullNameAttribute(),
             'patient_id' => $user->ID,
@@ -142,7 +145,7 @@ class CarePlanRepository {
             'program' => $program_name
         );
 
-        Mail::send($email_view, $data, function($message) use ($recipients,$email_subject) {
+        Mail::send($email_view, $data, function ($message) use ($recipients, $email_subject) {
             $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
             $message->to($recipients)->subject($email_subject);
         });

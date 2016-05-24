@@ -333,6 +333,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\Activity');
     }
 
+	public function patientActivities()
+	{
+		return $this->hasMany('App\Activity', 'patient_id', 'ID');
+	}
+
     public function ucp()
 	{
 		return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
@@ -1609,7 +1614,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         $this->user_login = $user_email;
         $this->user_email = $user_email;
-        $this->user_pass = $user_pass;
+        $this->password = bcrypt($user_pass);
         $this->save();
 
         return $this;

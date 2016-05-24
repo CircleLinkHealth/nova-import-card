@@ -110,7 +110,7 @@ class PatientCareplanController extends Controller
                     $careplanStatus = 'Approve Now';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
-                    if (Auth::user()->can(['is-provider'])) {
+                    if (Auth::user()->hasRole(['provider'])) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
                     }
                 } else if ($patient->carePlanStatus == 'draft') {
@@ -186,6 +186,14 @@ class PatientCareplanController extends Controller
         if (!$request['users']) {
             return response()->json("Something went wrong..");
         }
+
+        //Welcome Letter Check
+        $letter = false;
+
+        if (isset($request['letter'])) {
+            $letter = true;
+        }
+
         $users = explode(',', $request['users']);
         $reportService = new ReportsService($users);
         //Save Printed Careplan as Meta
@@ -208,6 +216,7 @@ class PatientCareplanController extends Controller
             'patient' => false,
             'isPdf' => true,
         ]);
+
         $fileNameBlankPage = $storageDirectory.$datetimePrefix.'-0-PDFblank.pdf';
         $fileNameWithPathBlankPage = base_path($fileNameBlankPage);
         $pdf->save($fileNameWithPathBlankPage, true);
@@ -228,6 +237,7 @@ class PatientCareplanController extends Controller
             $pdf->loadView('wpUsers.patient.multiview', [
                 'careplans' => array($user_id => $careplan),
                 'isPdf' => true,
+                'letter' => $letter
             ]);
             $pdf->setOption('footer-center', 'Page [page]');
 
@@ -235,22 +245,22 @@ class PatientCareplanController extends Controller
             $fileNameWithPath = base_path($fileName);
             $pdf->save($fileNameWithPath, true);
             $pageCount = $this->count_pages($fileNameWithPath);
-            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $pageCount;
+//            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $pageCount;
 
             // append blank page if needed
             if ($pageCount % 2 != 0) {
-                echo PHP_EOL . '<br /><br />Add blank page...';
-                echo PHP_EOL . '<br /><br />'.$fileName;
-                echo PHP_EOL . '<br /><br />'.$fileNameBlankPage;
+//                echo PHP_EOL . '<br /><br />Add blank page...';
+//                echo PHP_EOL . '<br /><br />'.$fileName;
+//                echo PHP_EOL . '<br /><br />'.$fileNameBlankPage;
                 $fileName = $storageDirectory.$this->merge_pages(array($fileName, $fileNameBlankPage), $prefix, $storageDirectory);
                 $fileNameWithPath = base_path($fileName);
-                echo PHP_EOL . '<br /><br />Merge complete..';
+//                echo PHP_EOL . '<br /><br />Merge complete..';
             }
 
             // add to array
             $pageFileNames[] = $fileName;
 
-            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $this->count_pages($fileNameWithPath);
+//            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $this->count_pages($fileNameWithPath);
             $p++;
         }
 
@@ -341,7 +351,7 @@ class PatientCareplanController extends Controller
         }
 
         $showApprovalButton = false; // default hide
-        if (Auth::user()->can(['is-provider'])) {
+        if (Auth::user()->hasRole(['provider'])) {
             if ($patient->carePlanStatus != 'provider_approved') {
                 $showApprovalButton = true;
             }
@@ -602,7 +612,7 @@ class PatientCareplanController extends Controller
         $editMode = false;
 
         $showApprovalButton = false;
-        if (auth()->user()->can(['is-provider'])) {
+        if (auth()->user()->hasRole(['provider'])) {
             if ($patient->carePlanStatus != 'provider_approved') {
                 $showApprovalButton = true;
             }
@@ -714,7 +724,7 @@ class PatientCareplanController extends Controller
             // check for approval here
             // should we update careplan_status?
             if ($user->carePlanStatus != 'provider_approved') {
-                if (Auth::user()->can(['is-provider'])) {
+                if (Auth::user()->hasRole(['provider'])) {
                     $user->carePlanStatus = 'provider_approved'; // careplan_status
                     $user->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver
                     $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date

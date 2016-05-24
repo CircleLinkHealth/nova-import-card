@@ -101,6 +101,18 @@ class CcdVendorsTableSeeder extends Seeder
                 'created_at' => '0000-00-00 00:00:00',
                 'updated_at' => '0000-00-00 00:00:00',
             ),
+            7 => 
+            array (
+                'id' => 10,
+                'ccd_import_routine_id' => 5,
+                'vendor_name' => 'Epic - Carolina Medical Associates',
+                'ehr_oid' => NULL,
+                'doctor_name' => NULL,
+                'doctor_oid' => NULL,
+                'custodian_name' => NULL,
+                'created_at' => '0000-00-00 00:00:00',
+                'updated_at' => '0000-00-00 00:00:00',
+            ),
         ));
         
         

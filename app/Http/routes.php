@@ -87,15 +87,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('vue', function () {
         return view('CCDViewer.new-vuer');
     });
-    Route::get('getVueVar/{ccdId}', function ($ccdId) {
-        //Amazing Charts Sample
-//        return App\XmlCCD::find(434)->ccd;
-//        return response('123', 400);
-        return App\XmlCCD::find($ccdId)->ccd;
-
-        //BB Sample
-        //	return App\XmlCCD::find(430)->ccd;
-    });
+    
 
     /**
      * CCD Importer Routes
@@ -199,6 +191,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('excelReportT1', ['uses' => 'ReportsController@excelReportT1', 'as' => 'excel.report.t1']);
         Route::get('excelReportT2', ['uses' => 'ReportsController@excelReportT2', 'as' => 'excel.report.t2']);
         Route::get('excelReportT3', ['uses' => 'ReportsController@excelReportT3', 'as' => 'excel.report.t3']);
+        Route::get('excelReportT4', ['uses' => 'ReportsController@excelReportT4', 'as' => 'excel.report.t4']);
 
         $prefix = 'admin'; // admin prefix
         Entrust::routeNeedsPermission($prefix, ['admin-access'], Redirect::to(URL::route('login')));
