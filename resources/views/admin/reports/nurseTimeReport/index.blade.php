@@ -59,6 +59,8 @@
                         </tbody>
                     </table>
                 </div>
+
+                <a href="{{ URL::route('admin.reports.nurseTime.exportxls', array()) }}" class="btn btn-primary">XLS Export</a>
             </div>
         </div>
     </div>

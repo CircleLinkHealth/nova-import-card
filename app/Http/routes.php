@@ -287,8 +287,8 @@ Route::group(['middleware' => 'auth'], function () {
         // report - nurse time report
         //Entrust::routeNeedsPermission($prefix . '/reports/nurseTime*', 'report-nurse-time-view');
         //Entrust::routeNeedsPermission($prefix . '/reports/nurseTime/*/*', 'report-nurse-time-manage');
-        Route::resource('reports/nurseTime', 'Admin\Reports\NurseTimeReportController');
-        Route::post('reports/nurseTime/{id}/edit', ['uses' => 'Admin\Reports\NurseTimeReportController@update', 'as' => 'admin.reports/nurseTime.update']);
+        Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
+        Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 
         // questions
         Entrust::routeNeedsPermission($prefix . 'questions*', 'programs-manage');
