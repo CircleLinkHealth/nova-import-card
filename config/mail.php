@@ -119,6 +119,6 @@ return [
 	|
 	*/
 
-	'pretend' => app()->environment('production'),
+	'pretend' => !app()->environment('production'),
 
 ];
