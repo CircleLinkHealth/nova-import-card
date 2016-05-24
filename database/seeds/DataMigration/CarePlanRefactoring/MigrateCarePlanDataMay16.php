@@ -144,7 +144,7 @@ class MigrateCarePlanDataMay16 extends \Illuminate\Database\Seeder
                 'cpm_instruction_id' => $instruction->id,
             ]);
 
-            $this->command->info("\tMigrated misc $misc->name for user with id $userId");
+            $this->command->info("\tMigrated misc details $misc->name for user with id $userId");
         }
     }
 
