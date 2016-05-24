@@ -75,24 +75,27 @@ class ImportManager
          */
         $providerId = empty($this->demographicsImport->provider_id) ? null : $this->demographicsImport->provider_id;
 
-        //care team
-        $member = PatientCareTeamMember::create([
-            'user_id' => $this->user->ID,
-            'member_user_id' => $providerId,
-            'type' => PatientCareTeamMember::MEMBER,
-        ]);
+        if ($providerId) {
+            //care team
+            $member = PatientCareTeamMember::create([
+                'user_id' => $this->user->ID,
+                'member_user_id' => $providerId,
+                'type' => PatientCareTeamMember::MEMBER,
+            ]);
 
-        $billing = PatientCareTeamMember::create([
-            'user_id' => $this->user->ID,
-            'member_user_id' => $providerId,
-            'type' => PatientCareTeamMember::BILLING_PROVIDER,
-        ]);
+            $billing = PatientCareTeamMember::create([
+                'user_id' => $this->user->ID,
+                'member_user_id' => $providerId,
+                'type' => PatientCareTeamMember::BILLING_PROVIDER,
+            ]);
 
-        $lead = PatientCareTeamMember::create([
-            'user_id' => $this->user->ID,
-            'member_user_id' => $providerId,
-            'type' => PatientCareTeamMember::LEAD_CONTACT,
-        ]);
+            $lead = PatientCareTeamMember::create([
+                'user_id' => $this->user->ID,
+                'member_user_id' => $providerId,
+                'type' => PatientCareTeamMember::LEAD_CONTACT,
+            ]);
+        }
+
 
         //patient info
         $patientInfo = PatientInfo::updateOrCreate([
