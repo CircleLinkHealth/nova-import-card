@@ -34,6 +34,10 @@
 		<!-- Parsley -->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
 
+		<!-- http://curioussolutions.github.io/DateTimePicker/ -->
+		<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
+		<script type="text/javascript" src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
+
 		<!-- START BOOTSTRAP -->
 		<!-- Latest compiled and minified CSS -->
 		<link href="{{ asset('/css/bootswatch-v3.3.6.css') }}" rel="stylesheet">
