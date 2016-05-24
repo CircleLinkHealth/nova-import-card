@@ -22,7 +22,7 @@
                         <div class="row">
                             <div class="col-xs-2"><label for="start_date">Start Date:</label></div>
                             <div class="col-xs-4"><input id="start_date" class="form-control" name="start_date" type="input" value="{{ (old('start_date') ? old('start_date') : ($startDate->format('Y-m-d') ? $startDate->format('Y-m-d') : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('start_date') }}</span></div>
-                            <div class="col-xs-2"><label for="end_date">End Date:</label></div>
+                            <div class="col-xs-2"><label for="end_date">End Date:</label><div id="dtBox"></div></div>
                             <div class="col-xs-4"><input id="end_date" class="form-control" name="end_date" type="input" value="{{ (old('end_date') ? old('end_date') : ($endDate->format('Y-m-d') ? $endDate->format('Y-m-d') : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('end_date') }}</span></div>
                         </div>
                         <div class="row" style="margin:0px 10px;">
