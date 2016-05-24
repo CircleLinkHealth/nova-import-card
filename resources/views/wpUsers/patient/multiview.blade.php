@@ -286,7 +286,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         <div class="col-xs-10">
                             <ul><strong>Taking these Medications</strong>
-                                <li>{{$careplan['taking_meds']}}</li>
+                                @if($careplan['taking_meds'])
+                                    <li><?= nl2br($careplan['taking_meds']) ?></li>
+                                @endif
                             </ul>
                         </div>
                     </div>
@@ -361,25 +363,22 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                     </div>
                 </div>
-            <?php
-            if(isset($careplan['treating']) && !empty($careplan['treating'])) {
-            foreach($careplan['treating'] as $key => $value){ ?>
-            <!-- Hypertension -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For
-                                <?= $key ?>:</h3>
-                        </div>
-                        <div class="col-xs-12">
-                            <p><?= nl2br($value) ?></p>
+            @if($careplan['problems'])
+                <?php foreach($careplan['problems'] as $key => $value){ ?>
+                <!-- Hypertension -->
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For
+                                    <?= $key ?>:</h3>
+                            </div>
+                            <div class="col-xs-12">
+                                <p><?= nl2br($value) ?></p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            <?php
-            }
-            }
-            ?>
+                <?php } ?>
+            @endif
 
             <!-- /INSTRUCTIONS -->
 
