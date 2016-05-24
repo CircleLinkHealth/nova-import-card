@@ -239,8 +239,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="row gutter">
                         <div class="col-xs-12">
                             <ul class="subareas__list">
-                                @if(isset($careplan['treating']) && !empty($careplan['treating']))
-                                    @foreach($careplan['treating'] as $key => $value)
+                                @if(isset($careplan['problems']) && !empty($careplan['problems']))
+                                    @foreach($careplan['problems'] as $key => $value)
                                         <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$key}}</li>
                                     @endforeach
                                 @endif
