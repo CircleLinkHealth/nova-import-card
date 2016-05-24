@@ -114,11 +114,6 @@ class NotesController extends Controller
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
     public function create(Request $request, $patientId)
     {
 
@@ -210,11 +205,6 @@ class NotesController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
     public function store(Request $input, $patientId)
     {
         // convert minutes to seconds.
@@ -277,12 +267,6 @@ class NotesController extends Controller
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
     public function show(Request $input, $patientId, $noteId)
     {
         $patient = User::find($patientId);
@@ -344,7 +328,6 @@ class NotesController extends Controller
 
         return view('wpUsers.patient.note.view', $view_data);
     }
-
 
     public function send(Request $input, $patientId, $noteId)
     {

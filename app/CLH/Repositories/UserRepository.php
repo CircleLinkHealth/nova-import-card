@@ -512,13 +512,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             'patient_email' => $user->getEmailForPasswordReset(),
             'program' => $program_name
         );
-
-        if (app()->environment('production')) {
+        
             Mail::send($email_view, $data, function ($message) use ($recipients, $email_subject) {
                 $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
                 $message->to($recipients)->subject($email_subject);
             });
-        }
 
     }
 
