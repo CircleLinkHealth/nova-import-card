@@ -232,6 +232,7 @@ class PatientCareplanController extends Controller
             if(empty($careplan)) {
                 return false;
             }
+
             // build pdf
             $pdf = App::make('snappy.pdf.wrapper');
             $pdf->loadView('wpUsers.patient.multiview', [
