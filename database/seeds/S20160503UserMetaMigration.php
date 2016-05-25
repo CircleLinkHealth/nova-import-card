@@ -128,7 +128,7 @@ class S20160503UserMetaMigration extends Seeder {
             $user->patientInfo->careplan_qa_date = $user->getUserMetaByKey('careplan_qa_date');
             $user->patientInfo->careplan_qa_approver = $user->getUserMetaByKey('careplan_qa_approver');
 
-            $user->patientInfo->registration_date = $user->getUserMetaByKey('registration_date');
+            $user->patientInfo->registration_date = '';
             $user->patientInfo->cur_month_activity_time = $user->getUserMetaByKey('cur_month_activity_time');
 
             $user->patientInfo->consent_date = $user->getUserConfigByKey('consent_date');
