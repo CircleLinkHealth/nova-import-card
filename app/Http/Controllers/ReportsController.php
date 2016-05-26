@@ -326,7 +326,6 @@ class ReportsController extends Controller
         }
 
         $reportData = "data:" . json_encode(array_values($u20_patients)) . "";
-        debug(json_encode($u20_patients));
 
         $years = array();
         for ($i = 0; $i < 3; $i++) {
@@ -348,7 +347,6 @@ class ReportsController extends Controller
             'months' => $months,
             'data' => $act_data
         ];
-        //debug($reportData);
 
         return view('reports.billing', $data);
     }
@@ -459,7 +457,6 @@ class ReportsController extends Controller
                 $biometrics_array[$bio_name]['data'] = '';
             }//debug($biometrics_array);
         }
-        debug($biometrics_array);
 
         return view('wpUsers.patient.biometric-chart', ['patient' => $patient, 'biometrics_array' => $biometrics_array]);
     }
