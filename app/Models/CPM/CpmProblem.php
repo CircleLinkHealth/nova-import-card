@@ -76,7 +76,7 @@ class CpmProblem extends Model implements Serviceable{
      */
     public function cpmSymptomsToBeActivated()
     {
-        return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_problems_activate_cpm_symptoms')
+        return $this->belongsToMany(CpmSymptom::class, 'cpm_problems_activate_cpm_symptoms')
             ->withPivot('care_plan_template_id')
             ->withTimestamps();
     }

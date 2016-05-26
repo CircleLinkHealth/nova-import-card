@@ -11,158 +11,370 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
      */
     public function run()
     {
-        $defaultTemplate = \App\CarePlanTemplate::whereType('type')->first();
+        $cpmProblems = \App\Models\CPM\CpmProblem::all();
+        $defaultData = $this->getDefaultData();
+        $defaultTemplate = \App\CarePlanTemplate::whereType('CLH Default')->first();
 
+        /**
+         * Wow, brah. That's cray. #3-nested-loops #killing-dat-big-O :joy:
+         */
+        foreach ($cpmProblems as $problem) {
+            $problemDefaults = $defaultData[$problem->name];
 
+            foreach ($problemDefaults as $relationship => $data) {
+                
+                $type = app($data['type']);
+                $values = $data['values'];
+                
+                if (empty($values)) continue;
+                
+                foreach ($values as $value) {
+                    $relObj = $type->whereName($value)->first();
+                    
+                    if ($relObj)
+                    {
+                        $this->command->info("Found {$relObj->name}");
+
+                        try {
+                            $problem->{$relationship}()->attach($relObj->id, [
+                                'care_plan_template_id' => $defaultTemplate->id,
+                            ]);
+                        } catch (Illuminate\Database\QueryException $e){
+                            $errorCode = $e->errorInfo[1];
+                            if($errorCode == 1062){
+                                $this->command->error("\tRelationship already already exists, so it won't be added again.\t");
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public function getDefaultData()
     {
         return [
             'Diabetes' => [
-                'cpmBiometricsToBeActivated' => ['Blood Sugar'],
-                'cpmLifestylesToBeActivated' => ['Diabetic Diet'],
-                'cpmMedicationGroupsToBeActivated' => ['Oral Diabetes Meds'],
-                'cpmSymptomsToBeActivated' => [
-                    'Weakness/dizziness',
-                    'Shortness of breath',
-                    'Chest pain/tightness',
-                    'Fatigue',
-                    'Pain'
+
+                'cpmBiometricsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmBiometric::class,
+                    'values' => ['Blood Sugar']
                 ],
+
+                'cpmLifestylesToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmLifestyle::class,
+                    'values' => ['Diabetic Diet'],
+                ],
+
+                'cpmMedicationGroupsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+                    'values' => ['Oral Diabetes Meds'],
+                ],
+
+                'cpmSymptomsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmSymptom::class,
+                    'values' => [
+                        'Weakness/dizziness',
+                        'Shortness of breath',
+                        'Chest pain/tightness',
+                        'Fatigue',
+                        'Pain'
+                    ],
+                ],
+
             ],
 
             'Hypertension' => [
-                'cpmBiometricsToBeActivated' => ['Blood Pressure'],
-                'cpmLifestylesToBeActivated' => ['Low Salt Diet'],
-                'cpmMedicationGroupsToBeActivated' => ['Blood Pressure Meds'],
+
+                'cpmBiometricsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmBiometric::class,
+                    'values' => ['Blood Pressure'],
+                ],
+
+                'cpmLifestylesToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmLifestyle::class,
+                    'values' => ['Low Salt Diet'],
+                ],
+
+                'cpmMedicationGroupsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+                    'values' => ['Blood Pressure Meds'],
+                ],
+
                 'cpmSymptomsToBeActivated' => [
-                    'Shortness of breath',
-                    'Coughing/wheezing',
-                    'Chest pain/tightness',
-                    'Fatigue',
-                    'Weakness/dizziness',
-                    'Swelling in legs/feet',
-                    'Sweating',
-                    'Palpitations',
-                    'Anxiety',
+                    'type' => \App\Models\CPM\CpmSymptom::class,
+                    'values' => [
+                        'Shortness of breath',
+                        'Coughing/wheezing',
+                        'Chest pain/tightness',
+                        'Fatigue',
+                        'Weakness/dizziness',
+                        'Swelling in legs/feet',
+                        'Sweating',
+                        'Palpitations',
+                        'Anxiety',
+                    ],
                 ],
             ],
 
             'Afib' => [
-                'cpmBiometricsToBeActivated' => ['Blood Pressure'],
-                'cpmLifestylesToBeActivated' => [],
-                'cpmMedicationGroupsToBeActivated' => [],
+
+                'cpmBiometricsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmBiometric::class,
+                    'values' => ['Blood Pressure'],
+                ],
+
+                'cpmLifestylesToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmLifestyle::class,
+                    'values' => [],
+                ],
+
+                'cpmMedicationGroupsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+                    'values' => [],
+                ],
+
                 'cpmSymptomsToBeActivated' => [
-                    'Shortness of breath',
-                    'Coughing/wheezing',
-                    'Chest pain/tightness',
-                    'Fatigue',
-                    'Weakness/dizziness',
-                    'Swelling in legs/feet',
-                    'Sweating',
-                    'Palpitations',
-                    'Anxiety',
+                    'type' => \App\Models\CPM\CpmSymptom::class,
+                    'values' => [
+                        'Shortness of breath',
+                        'Coughing/wheezing',
+                        'Chest pain/tightness',
+                        'Fatigue',
+                        'Weakness/dizziness',
+                        'Swelling in legs/feet',
+                        'Sweating',
+                        'Palpitations',
+                        'Anxiety',
+                    ],
                 ],
             ],
 
             'CAD' => [
-                'cpmBiometricsToBeActivated' => ['Blood Pressure'],
-                'cpmLifestylesToBeActivated' => ['Healthy Diet'],
-                'cpmMedicationGroupsToBeActivated' => [],
+
+                'cpmBiometricsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmBiometric::class,
+                    'values' => ['Blood Pressure'],
+                ],
+
+                'cpmLifestylesToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmLifestyle::class,
+                    'values' => ['Healthy Diet'],
+                ],
+
+                'cpmMedicationGroupsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+                    'values' => [],
+                ],
+
                 'cpmSymptomsToBeActivated' => [
-                    'Shortness of breath',
-                    'Coughing/wheezing',
-                    'Chest pain/tightness',
-                    'Fatigue',
-                    'Weakness/dizziness',
-                    'Swelling in legs/feet',
-                    'Sweating',
-                    'Palpitations',
-                    'Anxiety',
+                    'type' => \App\Models\CPM\CpmSymptom::class,
+                    'values' => [
+                        'Shortness of breath',
+                        'Coughing/wheezing',
+                        'Chest pain/tightness',
+                        'Fatigue',
+                        'Weakness/dizziness',
+                        'Swelling in legs/feet',
+                        'Sweating',
+                        'Palpitations',
+                        'Anxiety',
+                    ],
                 ],
             ],
 
             'Depression' => [
-                'cpmBiometricsToBeActivated' => [],
-                'cpmLifestylesToBeActivated' => [],
-                'cpmMedicationGroupsToBeActivated' => ['Mood/Depression Meds'],
+
+                'cpmBiometricsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmBiometric::class,
+                    'values' => [],
+                ],
+
+                'cpmLifestylesToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmLifestyle::class,
+                    'values' => [],
+                ],
+
+                'cpmMedicationGroupsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+                    'values' => ['Mood/Depression Meds'],
+                ],
+
                 'cpmSymptomsToBeActivated' => [
-                    'Sweating',
-                    'Palpitations',
-                    'Anxiety',
-                    'Feeling down/sleep changes',
+                    'type' => \App\Models\CPM\CpmSymptom::class,
+                    'values' => [
+                        'Sweating',
+                        'Palpitations',
+                        'Anxiety',
+                        'Feeling down/sleep changes',
+                    ],
                 ],
             ],
 
             'CHF' => [
-                'cpmBiometricsToBeActivated' => ['Blood Pressure', 'Weight'],
-                'cpmLifestylesToBeActivated' => [],
-                'cpmMedicationGroupsToBeActivated' => [],
+
+                'cpmBiometricsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmBiometric::class,
+                    'values' => ['Blood Pressure', 'Weight'],
+                ],
+
+                'cpmLifestylesToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmLifestyle::class,
+                    'values' => [],
+                ],
+
+                'cpmMedicationGroupsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+                    'values' => [],
+                ],
+
                 'cpmSymptomsToBeActivated' => [
-                    'Shortness of breath',
-                    'Coughing/wheezing',
-                    'Chest pain/tightness',
-                    'Fatigue',
-                    'Weakness/dizziness',
-                    'Swelling in legs/feet',
-                    'Sweating',
-                    'Palpitations',
-                    'Anxiety',
+                    'type' => \App\Models\CPM\CpmSymptom::class,
+                    'values' => [
+                        'Shortness of breath',
+                        'Coughing/wheezing',
+                        'Chest pain/tightness',
+                        'Fatigue',
+                        'Weakness/dizziness',
+                        'Swelling in legs/feet',
+                        'Sweating',
+                        'Palpitations',
+                        'Anxiety',
+                    ],
                 ],
             ],
 
             'High Cholesterol' => [
-                'cpmBiometricsToBeActivated' => [],
-                'cpmLifestylesToBeActivated' => ['Healthy Diet'],
-                'cpmMedicationGroupsToBeActivated' => [],
+
+                'cpmBiometricsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmBiometric::class,
+                    'values' => [],
+                ],
+
+                'cpmLifestylesToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmLifestyle::class,
+                    'values' => ['Healthy Diet'],
+                ],
+
+                'cpmMedicationGroupsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+                    'values' => [],
+                ],
+
                 'cpmSymptomsToBeActivated' => [
-                    'Shortness of breath',
-                    'Chest pain/tightness',
+                    'type' => \App\Models\CPM\CpmSymptom::class,
+                    'values' => [
+                        'Shortness of breath',
+                        'Chest pain/tightness',
+                    ],
                 ],
             ],
 
             'Kidney Disease' => [
-                'cpmBiometricsToBeActivated' => ['Blood Pressure'],
-                'cpmLifestylesToBeActivated' => ['Healthy Diet'],
-                'cpmMedicationGroupsToBeActivated' => ['Kidney Disease Meds'],
+
+                'cpmBiometricsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmBiometric::class,
+                    'values' => ['Blood Pressure'],
+                ],
+
+                'cpmLifestylesToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmLifestyle::class,
+                    'values' => ['Healthy Diet'],
+                ],
+
+                'cpmMedicationGroupsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+                    'values' => ['Kidney Disease Meds'],
+                ],
+
                 'cpmSymptomsToBeActivated' => [
-                    'Shortness of breath',
-                    'Coughing/wheezing',
-                    'Fatigue',
-                    'Weakness/dizziness',
-                    'Swelling in legs/feet',
-                    'Chest pain/tightness',
+                    'type' => \App\Models\CPM\CpmSymptom::class,
+                    'values' => [
+                        'Shortness of breath',
+                        'Coughing/wheezing',
+                        'Fatigue',
+                        'Weakness/dizziness',
+                        'Swelling in legs/feet',
+                        'Chest pain/tightness',
+                    ]
                 ],
             ],
 
             'Dementia' => [
-                'cpmBiometricsToBeActivated' => [],
-                'cpmLifestylesToBeActivated' => [],
-                'cpmMedicationGroupsToBeActivated' => ['Dementia Meds'],
-                'cpmSymptomsToBeActivated' => [],
-            ],
 
-            'Asthma--COPD' => [
-                'cpmBiometricsToBeActivated' => [],
-                'cpmLifestylesToBeActivated' => [],
-                'cpmMedicationGroupsToBeActivated' => ['Breathing Meds for Asthma/COPD'],
+                'cpmBiometricsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmBiometric::class,
+                    'values' => [],
+                ],
+
+                'cpmLifestylesToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmLifestyle::class,
+                    'values' => [],
+                ],
+
+                'cpmMedicationGroupsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+                    'values' => ['Dementia Meds'],
+                ],
+
                 'cpmSymptomsToBeActivated' => [
-                    'Shortness of breath',
-                    'Coughing/wheezing',
-                    'Chest pain/tightness',
-                    'Fatigue',
-                    'Weakness/dizziness',
-                    'Palpitations',
-                    'Anxiety',
+                    'type' => \App\Models\CPM\CpmSymptom::class,
+                    'values' => [],
                 ],
             ],
 
+            'Asthma--COPD' => [
+
+                'cpmBiometricsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmBiometric::class,
+                    'values' => [],
+                ],
+
+                'cpmLifestylesToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmLifestyle::class,
+                    'values' => [],
+                ],
+
+                'cpmMedicationGroupsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+                    'values' => ['Breathing Meds for Asthma/COPD'],
+                ],
+
+                'cpmSymptomsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmSymptom::class,
+                    'values' => [
+                        'Shortness of breath',
+                        'Coughing/wheezing',
+                        'Chest pain/tightness',
+                        'Fatigue',
+                        'Weakness/dizziness',
+                        'Palpitations',
+                        'Anxiety',
+                    ],
+                ]
+            ],
+
             'Smoking' => [
-                'cpmBiometricsToBeActivated' => [],
-                'cpmLifestylesToBeActivated' => [],
-                'cpmMedicationGroupsToBeActivated' => [],
-                'cpmSymptomsToBeActivated' => [],
+
+                'cpmBiometricsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmBiometric::class,
+                    'values' => [],
+                ],
+
+                'cpmLifestylesToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmLifestyle::class,
+                    'values' => [],
+                ],
+
+                'cpmMedicationGroupsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+                    'values' => [],
+                ],
+
+                'cpmSymptomsToBeActivated' => [
+                    'type' => \App\Models\CPM\CpmSymptom::class,
+                    'values' => [],
+                ],
             ],
 
         ];
