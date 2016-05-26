@@ -1,5 +1,6 @@
 <?php namespace App\Providers;
 
+use App\AppConfig;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\Contracts\Repositories\CcdaRepository;
@@ -25,7 +26,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // app config
+        $appConfigs = AppConfig::all();
+        $adminStylesheet = $appConfigs->where('config_key', 'admin_stylesheet')->first();
+        view()->share('app_config_admin_stylesheet', 'admin-bootswatch-default.css');
+        if($adminStylesheet) {
+            view()->share('app_config_admin_stylesheet', $adminStylesheet->config_value);
+        }
     }
 
     /**
