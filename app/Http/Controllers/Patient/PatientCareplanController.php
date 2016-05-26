@@ -232,6 +232,7 @@ class PatientCareplanController extends Controller
             if(empty($careplan)) {
                 return false;
             }
+
             // build pdf
             $pdf = App::make('snappy.pdf.wrapper');
             $pdf->loadView('wpUsers.patient.multiview', [
@@ -248,7 +249,7 @@ class PatientCareplanController extends Controller
 //            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $pageCount;
 
             // append blank page if needed
-            if ($pageCount % 2 != 0) {
+            if ((count($users) > 1) && $pageCount % 2 != 0) {
 //                echo PHP_EOL . '<br /><br />Add blank page...';
 //                echo PHP_EOL . '<br /><br />'.$fileName;
 //                echo PHP_EOL . '<br /><br />'.$fileNameBlankPage;
