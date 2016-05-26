@@ -1,5 +1,4 @@
 @extends('partials.providerUI')
-{{$notes}}
 @section('content')
 
     <div class="row main-form-block" style="margin-top:60px;">
@@ -25,27 +24,9 @@
                             }
                         </style>
                         <script>
-                            function filterText(text){
-                                // var text = node;
-                                if (!text) return obs_alerts_dtable.filter();
-
-                                obs_alerts_dtable.filter(function(obj){
-                                    return obj.ccm_status == text;
-                                })
-                            }
-                            function sortByParam(a,b){
-                                a = a.patient_name_sort;
-                                b = b.patient_name_sort;
-                                return a>b?1:(a<b?-1:0);
-                            }
-                            function zeroPad(nr,base){
-                                var  len = (String(base).length - String(nr).length)+1;
-                                return len > 0? new Array(len).join('0')+nr : nr;
-                            }
-
-                            function startCompare(value, filter) {
+                            function startCompare(value, filter){
                                 value = value.toString().toLowerCase();
-                                filter = '<' + filter.toString().toLowerCase();
+                                filter = '<'+filter.toString().toLowerCase();
                                 return value.indexOf(filter) === 0;
                             }
                             webix.locale.pager = {
@@ -54,55 +35,58 @@
                                 next: ">",// the next button
                                 prev: "<"// the previous button
                             };
+                            webix.ui.datafilter.mySummColumn = webix.extend({
+                                refresh:function(master, node, value){
+                                    var seconds = 0;
+                                    master.data.each(function(obj){
+                                        seconds = seconds+parseInt(obj.duration);
+                                    });
+                                    var date = new Date(seconds * 1000);
+                                    var mm = Math.floor(seconds/60);
+                                    var ss = date.getSeconds();
+                                    if (ss < 10) {ss = "0"+ss;}
+                                    var time = ""+mm+":"+ss;
+                                    result = "<span title='"+mm+":"+ss+"' style='float:right;'><b>" + time + "</b></span>";
+                                    node.firstChild.innerHTML = result;
+                                }
+                            }, webix.ui.datafilter.summColumn);
+
                             obs_alerts_dtable = new webix.ui({
-                                container: "obs_alerts_container",
-                                view: "datatable",
-                                autoheight: true,
-                                fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
-                                scrollX: false,
-                                resizeColumn: true,
-                                columns: [
-                                    {
-                                        id: "patient_name",
-                                        header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 200,
-                                        sort:'string',
+                                container:"obs_alerts_container",
+                                view:"datatable",
+                                autoheight:true,
+                                fixedRowHeight:false,  rowLineHeight:25, rowHeight:25,
+                                scrollX:true,
+                                resizeColumn:true,
+                                footer:false,
+                                columns:[
 
-                                    },                                    {
-                                        id: "program_name",
-                                        header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
-                                        // fillspace: true,
-                                        width: 200,
-                                        sort:'string',
+                                    {id:"patient_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}],    width:150, sort:'string'},
+                                    {id:"program_name",   header:["Program",{content:"textFilter", placeholder:"Filter"}],    width:150, sort:'string'},
+                                    {id:"provider_name",   header:["Program",{content:"textFilter", placeholder:"Filter"}],    width:150, sort:'string'},
+                                    {id:"author_name", header:["Author",{content:"textFilter", placeholder:"Filter"}],    width:150, sort:'string'},
+                                    {id:"tags", css:{'text-align':'left','top': 0, 'left': 0, 'bottom': 0, 'right': 0},  header:["Status",{content:"textFilter", placeholder:"Filter"}],    width:150, sort:'string'},
+                                    {id:"type",  header:["Type",{content:"textFilter", placeholder:"Filter"}],    width:150, sort:'string'},
+                                    {id:"comment",  header:["Preview",{content:"textFilter", placeholder:"Filter"}],    width:150, sort:'string'},
+                                    {id:"date",  header:["Date",{content:"textFilter", placeholder:"Filter"}],    width:150, sort:'string'},
 
-                                    },                                    {
-                                        id: "provider_name",
-                                        header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
-                                        // fillspace: true,
-                                        width: 200,
-                                        sort:'string',
 
-                                    }
                                 ],
-
-                                ready: function () {
+                                ready:function(){
                                     this.adjustRowHeight("obs_key");
                                 },
-
-                                pager: {
-                                    container: "paging_container",// the container where the pager controls will be placed into
-                                    template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
-                                    size: 10, // the number of records per a page
-                                    group: 5   // the number of pages in the pager
+                                /*ready:function(){
+                                 this.adjustRowHeight("obs_value");
+                                 },*/
+                                pager:{
+                                    animate:true,
+                                    container:"paging_container",// the container where the pager controls will be placed into
+                                    template:"{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
+                                    size:10, // the number of records per a page
+                                    group:5   // the number of pages in the pager
                                 },
-
-                            {!! $notes !!}
-
-                            });
-
-                            webix.event(window, "resize", function () {
-                                obs_alerts_dtable.adjust();
-                            })
+                                {!! $notes !!}                         });
+                            webix.event(window, "resize", function(){ obs_alerts_dtable.adjust(); })
                         </script>
                         <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                onclick="webix.toPDF($$(obs_alerts_dtable), {
