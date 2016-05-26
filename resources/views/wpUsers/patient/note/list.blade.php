@@ -1,5 +1,5 @@
 @extends('partials.providerUI')
-{{$acts}}
+{{$notes}}
 @section('content')
 
     <div class="row main-form-block" style="margin-top:60px;">
@@ -16,7 +16,7 @@
                         <i class="icon icon--date-time"></i>
                 </div>
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12">
-                    @if($acts)
+                    @if($notes)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
                         <style>
@@ -56,90 +56,49 @@
                             };
                             obs_alerts_dtable = new webix.ui({
                                 container: "obs_alerts_container",
-                                view: "treetable",
-                                // view:"datatable",
-                                //css:"webix_clh_cf_style",
+                                view: "datatable",
                                 autoheight: true,
                                 fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
-                                // leftSplit:2,
                                 scrollX: false,
                                 resizeColumn: true,
                                 columns: [
                                     {
                                         id: "patient_name",
                                         header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
+                                        width: 200,
+                                        sort:'string',
+
+                                    },                                    {
+                                        id: "program_name",
+                                        header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
                                         // fillspace: true,
                                         width: 200,
                                         sort:'string',
-                                        template:"<a href='<?php echo URL::route('patient.activity.providerUIIndex', array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
+
+                                    },                                    {
+                                        id: "provider_name",
+                                        header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
+                                        // fillspace: true,
+                                        width: 200,
+                                        sort:'string',
 
                                     }
                                 ],
+
                                 ready: function () {
                                     this.adjustRowHeight("obs_key");
                                 },
-                                /*ready:function(){
-                                 this.adjustRowHeight("obs_value");
-                                 },*/
+
                                 pager: {
                                     container: "paging_container",// the container where the pager controls will be placed into
                                     template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
                                     size: 10, // the number of records per a page
                                     group: 5   // the number of pages in the pager
                                 },
-                                {!! $acts !!}
-                                });
-                            function gby() {
-                                obs_alerts_dtable.ungroup();
-                                obs_alerts_dtable.group({
-                                    by: "provider",
-                                    map: {
-                                        colsum_total: ["colsum_total", "sum"],
-                                        title: ["provider"]
-                                    },
-                                    footer: {
-                                        colsum_total: ["colsum_total", "sum"],
-                                        row: function (obj) {
-                                            var seconds = obj.colsum_total;
-                                            var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
-                                            var ss = date.getSeconds();
-                                            var time = mm+":"+zeroPad(ss,10);
-                                            return "<span style='float:right;'>Total Time: " + time + "</span>";
-                                        }
-                                    },
-                                    row: "provider"
-                                });
-                            }
-                            function gbyp() {
-                                obs_alerts_dtable.ungroup();
-                                obs_alerts_dtable.group({
-                                    by: "patient_name",
-                                    map: {
-                                        colsum_total: ["colsum_total", "sum"],
-                                        title: ["patient_name"]
-                                    },
-                                    footer: {
-                                        colsum_total: ["colsum_total", "sum"],
-                                        row: function (obj) {
-                                            var seconds = obj.colsum_total;
-                                            var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds/60);
-                                            var ss = date.getSeconds();
-                                            if (ss < 10) {ss = "0"+ss;}
-                                            var time = mm+":"+ss;
-                                            return "<span style='float:right;'>Total Time: " + time + "</span>";
-                                        }
-                                    },
-                                    row: "patient_name"
-                                });
-                            }
-                            function ug() {
-                                obs_alerts_dtable.ungroup();
-                            }
-                            obs_alerts_dtable.ungroup();
-                            obs_alerts_dtable.sort('#patient_name#');
-                            obs_alerts_dtable.hideColumn("site");
+
+                            {!! $notes !!}
+
+                            });
 
                             webix.event(window, "resize", function () {
                                 obs_alerts_dtable.adjust();

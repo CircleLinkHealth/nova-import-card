@@ -76,8 +76,7 @@ class WebixFormatter implements ReportFormatter
 
         //dd($formatted_notes);
 
-        return "data:" . json_encode($formatted_notes) . "";
-
+        return "data:" . json_encode(array_values($formatted_notes)) . "";
     }
 
 }
