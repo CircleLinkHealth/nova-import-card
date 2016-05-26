@@ -47,13 +47,13 @@ class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
                 ->lists('cpm_symptom_id')
                 ->all();
 
-            if ($biometricsToActivate) $this->user->cpmBiometrics()->sync($biometricsToActivate);
+            if ($biometricsToActivate) $this->user->cpmBiometrics()->sync($biometricsToActivate, false);
 
-            if ($lifestylesToActivate) $this->user->cpmLifestyles()->sync($lifestylesToActivate);
+            if ($lifestylesToActivate) $this->user->cpmLifestyles()->sync($lifestylesToActivate, false);
 
-            if ($medsToActivate) $this->user->cpmMedicationGroups()->sync($medsToActivate);
+            if ($medsToActivate) $this->user->cpmMedicationGroups()->sync($medsToActivate, false);
 
-            if ($symptomsToActivate) $this->user->cpmSymptoms()->sync($symptomsToActivate);
+            if ($symptomsToActivate) $this->user->cpmSymptoms()->sync($symptomsToActivate, false);
         }
 
     }
