@@ -1,17 +1,16 @@
 <?php namespace App\Services;
 
 use App\CarePlan;
-use App\CarePlanTemplate;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesQuestions;
 use App\CPRulesUCP;
 use App\ForeignId;
 use App\Location;
+use App\Models\CPM\Cpm;
 use App\Models\CPM\CpmBiometric;
+use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
-use App\Observation;
-use App\PatientCarePlan;
 use App\PatientReports;
 use App\User;
 use App\UserMeta;
@@ -19,15 +18,12 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Mockery\CountValidator\Exception;
-use App\Services\CPM\CpmMiscService;
-use App\Models\CPM\Cpm;
-
 
 
 class ReportsService
 {
-    //Progress Report API
 
+    //FOR MOBILE API
     public function reportHeader($id)
     {
         $user = User::find($id);
@@ -85,6 +81,31 @@ class ReportsService
             throw new Exception('User not found..');
         }
         return $user->cpmProblems()->get()->lists('name')->all();
+    }
+
+    public function getInstructionsForOtherProblems(User $user){
+
+        if(!$user){
+            //nullify
+            return "User not found...";
+        }
+
+        $problem = $user->cpmMiscs->where('name',CpmMisc::OTHER_CONDITIONS)->all();
+
+        if(empty($problem)){
+            //https://youtu.be/LloIp0HMJjc?t=19s
+            return '';
+        }
+
+        $instructions = CpmInstruction::find($problem[0]->pivot->cpm_instruction_id);
+
+        if(empty($instructions)){
+            //defualt
+                return 'No instructions at this time';
+        }
+
+        return $instructions->name;
+
     }
     
     public function getSymptomsToMonitor(CarePlan $carePlan)
@@ -817,17 +838,23 @@ class ReportsService
                 $user = User::find($user);
             }
             $careplanReport[$user->ID]['symptoms'] = $user->cpmSymptoms()->get()->lists('name')->all();
+            $careplanReport[$user->ID]['problem'] = $user->cpmProblems()->get()->lists('name')->all();
             $careplanReport[$user->ID]['problems'] = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($user);
             $careplanReport[$user->ID]['lifestyle'] = $user->cpmLifestyles()->get()->lists('name')->all();
             $careplanReport[$user->ID]['biometrics'] = $user->cpmBiometrics()->get()->lists('name')->all();
-            $careplanReport[$user->ID]['problem'] = $user->cpmProblems()->get()->lists('name')->all();
             $careplanReport[$user->ID]['medications'] = $user->cpmMedicationGroups()->get()->lists('name')->all();
+        }
+
+        $other_problems = $this->getInstructionsforOtherProblems($user);
+
+        if(!empty($other_problems)) {
+            $careplanReport[$user->ID]['problems']['Other Problems'] = $other_problems;
         }
 
         //Get Biometrics with Values
         $careplanReport[$user->ID]['bio_data'] = array();
 
-            //Ignore Smoking - Untracked Biometric
+        //Ignore Smoking - Untracked Biometric
         if(($key = array_search(CpmBiometric::SMOKING, $careplanReport[$user->ID]['biometrics'])) !== false) {
             unset($careplanReport[$user->ID]['biometrics'][$key]);
         }
@@ -860,7 +887,6 @@ class ReportsService
         }
 
         //Allergies
-
         if($user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->first()){
                 $careplanReport[$user->ID]['allergies'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::ALLERGIES);
             } else {
@@ -868,7 +894,6 @@ class ReportsService
             }
 
         //Social Services
-
         if($user->cpmMiscs->where('name',CpmMisc::SOCIAL_SERVICES)->first()){
             $careplanReport[$user->ID]['social'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::SOCIAL_SERVICES);
         } else {
@@ -876,7 +901,6 @@ class ReportsService
         }
 
         //Other
-
         if($user->cpmMiscs->where('name',CpmMisc::OTHER)->first()){
             $careplanReport[$user->ID]['other'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::OTHER);
         } else {
@@ -884,7 +908,6 @@ class ReportsService
         }
 
         //Appointments
-
         if($user->cpmMiscs->where('name',CpmMisc::APPOINTMENTS)->first()){
             $careplanReport[$user->ID]['appointments'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::APPOINTMENTS);
         } else {
