@@ -128,8 +128,10 @@ class S20160503UserMetaMigration extends Seeder {
             $user->patientInfo->careplan_qa_date = $user->getUserMetaByKey('careplan_qa_date');
             $user->patientInfo->careplan_qa_approver = $user->getUserMetaByKey('careplan_qa_approver');
 
+            $user->patientInfo->registration_date = '';
+            $user->patientInfo->cur_month_activity_time = $user->getUserMetaByKey('cur_month_activity_time');
+
             $user->patientInfo->consent_date = $user->getUserConfigByKey('consent_date');
-            $user->patientInfo->cur_month_activity_time = $user->getUserConfigByKey('cur_month_activity_time');
             $user->patientInfo->date_paused = $user->getUserConfigByKey('date_paused');
             $user->patientInfo->date_withdrawn = $user->getUserConfigByKey('date_withdrawn');
             $user->patientInfo->gender = $user->getUserConfigByKey('gender');
@@ -140,7 +142,6 @@ class S20160503UserMetaMigration extends Seeder {
             $user->patientInfo->preferred_cc_contact_days = $user->getUserConfigByKey('preferred_cc_contact_days');
             $user->patientInfo->preferred_contact_time = $user->getUserConfigByKey('preferred_contact_time');
             $user->patientInfo->preferred_contact_timezone = $user->getUserConfigByKey('preferred_contact_timezone');
-            $user->patientInfo->registration_date = $user->getUserConfigByKey('registration_date');
             $user->patientInfo->daily_reminder_optin = $user->getUserConfigByKey('daily_reminder_optin');
             $user->patientInfo->daily_reminder_time = $user->getUserConfigByKey('daily_reminder_time');
             $user->patientInfo->daily_reminder_areas = $user->getUserConfigByKey('daily_reminder_areas');

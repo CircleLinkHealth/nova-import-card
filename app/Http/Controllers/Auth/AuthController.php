@@ -1,11 +1,13 @@
 <?php namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\AppConfig;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Validator;
 use App\Http\Controllers\Controller;
 //use App\CLH\Traits\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
+use DateTime;
 
 class AuthController extends Controller
 {
@@ -75,6 +77,30 @@ class AuthController extends Controller
 
     public function redirectPath()
     {
+        // run AppConfig app_config processes here
+        $appConfigs = AppConfig::all();
+
+        // cur_month_ccm_time_last_reset
+        $curMonthCcmTimeLastReset = $appConfigs->where('config_key', 'cur_month_ccm_time_last_reset')->first();
+        if($curMonthCcmTimeLastReset) {
+            $curMonthStartDate = (new DateTime('first day of this month'))->format('Y-m-d');
+            $curMonthStartDate = $curMonthStartDate . ' 00:00:01';
+            if($curMonthCcmTimeLastReset->config_value < $curMonthStartDate) {
+                // reset all users time
+                $users = User::whereHas('patientInfo', function ($q) {
+                    $q->where('cur_month_activity_time', '>', '0');
+                })->get();
+
+                foreach($users as $user) {
+                    $user->patientInfo()->update(array("cur_month_activity_time" => "0"));
+                }
+
+                // update config timestamp
+                $curMonthCcmTimeLastReset->config_value = date('Y-m-d H:i:s');
+                $curMonthCcmTimeLastReset->save();
+            }
+        }
+
         if (auth()->user()) {
             if (auth()->user()->hasRole('administrator')) {
                 return '/admin';
