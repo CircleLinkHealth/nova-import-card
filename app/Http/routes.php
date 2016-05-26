@@ -135,6 +135,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patients.demographics.store']);
         Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
         Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
+        Route::get('notes-list', ['uses' => 'NotesController@listing', 'as' => 'patient.note.listing']);
     });
 
     // **** PATIENTS (/manage-patients/{patientId}/)
@@ -164,7 +165,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         // notes
         Route::group(['prefix' => 'notes'], function () {
-            Route::get('list', ['uses' => 'NotesController@listing', 'as' => 'patient.note.listing']);
             Route::get('create', ['uses' => 'NotesController@create', 'as' => 'patient.note.create']);
             Route::post('store', ['uses' => 'NotesController@store', 'as' => 'patient.note.store']);
             Route::get('', ['uses' => 'NotesController@index', 'as' => 'patient.note.index']);
@@ -186,6 +186,28 @@ Route::group(['middleware' => 'auth'], function () {
     // ADMIN (/admin)
     /****************************/
     Route::group(['prefix' => 'admin'], function () {
+
+        Route::get('dupes', function () {
+            $results = DB::select( DB::raw("
+                SELECT *
+                FROM lv_activities
+                WHERE performed_at != '0000-00-00 00:00:00'
+                AND performed_at > '2016-04-30'
+                /*AND duration != '0'*/
+                AND provider_id != '1877'
+                /*group by concat(performed_at, provider_id)
+                having count(*) >= 2 */") );
+            $a = 0;
+            foreach($results as $result) {
+                echo $result->id .
+                    ' - ' . $result->provider_id .
+                    ' - ' . $result->performed_at .
+                    '<br /><br />';
+                $a++;
+            }
+            echo "TOTAL:" .$a;
+            dd('done');
+        });
 
         // excel reports
         Route::get('excelReportT1', ['uses' => 'ReportsController@excelReportT1', 'as' => 'excel.report.t1']);
@@ -261,6 +283,12 @@ Route::group(['middleware' => 'auth'], function () {
         Entrust::routeNeedsPermission($prefix . 'permissions/*/*', 'roles-permissions-manage');
         Route::resource('permissions', 'Admin\PermissionController');
         Route::post('permissions/{id}/edit', ['uses' => 'Admin\PermissionController@update', 'as' => 'admin.permissions.update']);
+
+        // report - nurse time report
+        //Entrust::routeNeedsPermission($prefix . '/reports/nurseTime*', 'report-nurse-time-view');
+        //Entrust::routeNeedsPermission($prefix . '/reports/nurseTime/*/*', 'report-nurse-time-manage');
+        Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
+        Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 
         // questions
         Entrust::routeNeedsPermission($prefix . 'questions*', 'programs-manage');
@@ -418,6 +446,7 @@ Route::group(['before' => 'jwt-auth', 'prefix' => 'wp/api/v2.1', 'middleware' =>
     Route::get('careplan', 'CareplanController@show');
     Route::get('reports/progress', 'ReportsController@progress');
     Route::get('reports/careplan', 'ReportsController@careplan');
+
 
     // locations
     Route::get('locations', 'LocationController@index');

@@ -126,7 +126,7 @@
                                 </div>
                                 <div class="col-lg-8 col-lg-offset-2">
                                     <div class="row">
-                                        <strong>Note: Clinical Call time entered manually should not include time spent in the CarePlanManager portal working on a unique patient.</strong>
+                                        <strong>Note: Clinical call time entered manually should not include time spent working in CarePlanManager on unique patient pages.</strong>
                                     </div>
                                 </div>
                                 <div class="">

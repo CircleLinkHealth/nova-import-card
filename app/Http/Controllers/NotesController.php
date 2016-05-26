@@ -2,15 +2,13 @@
 
 use App\Activity;
 use App\ActivityMeta;
-use App\CLH\Facades\StringManipulation;
+use App\Formatters\WebixFormatter;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Services\ActivityService;
 use App\Program;
+use App\Services\ActivityService;
+use App\Services\NoteService;
 use App\User;
-use Carbon\Carbon;
-use DateTime;
-use DateTimeZone;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,11 +17,17 @@ use Laracasts\Flash\Flash;
 
 class NotesController extends Controller
 {
-    /**
-     * Display a listing of the notes for a user.
-     *
-     * @return Response
-     */
+
+    private $service;
+    private $formatter;
+
+    public function __construct(NoteService $noteService, WebixFormatter $formatter)
+    {
+        $this->service = $noteService;
+        $this->formatter = $formatter;
+    }
+
+
     public function index(Request $request, $patientId)
     {
 
@@ -89,30 +93,27 @@ class NotesController extends Controller
     public function listing(Request $request)
     {
 
+        //Get Viewable Patients
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get()->lists('ID')->all();
 
-        $acts = DB::table('lv_activities')
-            ->select(DB::raw('*,provider_id, type'))
-            ->whereIn('patient_id', $patients)
-            ->where(function ($q) {
-                $q->where('logged_from', 'note')
-                    ->Orwhere('logged_from', 'manual_input');
-            })
-            ->orderBy('performed_at', 'desc')
-            ->get();
 
-        return $acts;
+        $notes = $this->service->getNotesForPatients($patients);
+
+        if(!empty($notes)) {
+
+            $notes = $this->formatter->formatDataForNotesListingReport($notes);
+            
+        } else {
+        throw new Exception('No Notes Found.');
+        }
+
+        return view('wpUsers.patient.note.list', compact(['notes']));
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
     public function create(Request $request, $patientId)
     {
 
@@ -204,11 +205,6 @@ class NotesController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
     public function store(Request $input, $patientId)
     {
         // convert minutes to seconds.
@@ -250,7 +246,7 @@ class NotesController extends Controller
         $logger_name = $logger->display_name;
 
         //if emails are to be sent
-        debug($input);
+
         if (array_key_exists('careteam', $input)) {
             //Log to Meta Table
             $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_by', 'meta_value' => $logger->ID]);
@@ -271,20 +267,12 @@ class NotesController extends Controller
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
     public function show(Request $input, $patientId, $noteId)
     {
         $patient = User::find($patientId);
         $note_act = Activity::find($noteId);
         $metaComment = $note_act->getActivityCommentFromMeta($noteId);
-        //$meta = DB::table('lv_activitymeta')->where('activity_id', $noteId)->where('meta_key', 'phone')->pluck('meta_value');
         $meta = $note_act->meta()->get();
-        //dd($meta);
 
         //Set up note packet for view
         $note = array();
@@ -340,7 +328,6 @@ class NotesController extends Controller
 
         return view('wpUsers.patient.note.view', $view_data);
     }
-
 
     public function send(Request $input, $patientId, $noteId)
     {

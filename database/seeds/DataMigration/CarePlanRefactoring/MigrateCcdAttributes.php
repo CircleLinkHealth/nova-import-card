@@ -74,19 +74,22 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
                 continue;
             }
 
-            $result = \App\Models\CCD\CcdProblem::firstOrCreate([
-                'ccda_id' => $problems_import->ccda_id,
-                'vendor_id' => $problems_import->vendor_id,
-                'ccd_problem_log_id' => $problems_import->ccd_problem_log_id,
-                'name' => $problems_import->name,
-                'activate' => $problems_import->activate,
-                'cpm_problem_id' => $problems_import->cpm_problem_id,
-                'code_system_name' => $problems_import->code_system_name,
-                'code' => $problems_import->code,
-                'code_system' => $problems_import->code_system,
-
-                'patient_id' => $patient_id,
-            ]);
+            try{
+                $result = \App\Models\CCD\CcdProblem::firstOrCreate([
+                    'ccda_id' => $problems_import->ccda_id,
+                    'vendor_id' => $problems_import->vendor_id,
+                    'ccd_problem_log_id' => $problems_import->ccd_problem_log_id,
+                    'name' => $problems_import->name,
+                    'activate' => $problems_import->activate,
+                    'cpm_problem_id' => $problems_import->cpm_problem_id,
+                    'code_system_name' => $problems_import->code_system_name,
+                    'code' => $problems_import->code,
+                    'code_system' => $problems_import->code_system,
+                    'patient_id' => $patient_id,
+                ]);
+            } catch (\Exception $e){
+                $this->command->error($e->getMessage());
+            }
 
             $this->command->info("Migrated ProblemsImport ID: " . $problems_import->id . " to CcdProblems ID: " . $result->id);
         }

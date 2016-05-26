@@ -1,17 +1,20 @@
 <?php namespace App\Providers;
 
+use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\DemographicsImportRepository;
 use App\Contracts\Repositories\UserRepository;
+use App\Formatters\Reports\Webix\NotesList;
 use App\Repositories\ActivityRepositoryEloquent;
 use App\Repositories\AprimaCcdApiRepositoryEloquent;
 use App\Repositories\CcdaRepositoryEloquent;
 use App\Repositories\CcmTimeApiLogRepositoryEloquent;
 use App\Repositories\DemographicsImportRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
+use App\WebixFormatter\WebixFormatter;
 use Illuminate\Support\ServiceProvider;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
@@ -72,6 +75,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             UserRepository::class,
             UserRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            ReportFormatter::class,
+            WebixFormatter::class
         );
 
         if ( $this->app->environment( 'local' ) ) {

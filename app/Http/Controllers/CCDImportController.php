@@ -46,7 +46,7 @@ class CCDImportController extends Controller
 
                 $user = $this->repo->createRandomUser($demographics);
 
-                $importer = new ImportManager($allergies->all(), $demographics, $medications->all(), $problems->all(), $strategies->all(), $user);
+                $importer = new ImportManager($allergies->all(), $demographics, $medications->all(), $problems->all(), $strategies->all(), $user, $ccda);
                 $importer->import();
 
                 $imported[] = [
