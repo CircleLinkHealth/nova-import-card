@@ -611,15 +611,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 // registration_date
     public function getRegistrationDateAttribute()
     {
-        if (!$this->patientInfo) return '';
-        return $this->patientInfo->registration_date;
+        return $this->user_registered;
     }
 
     public function setRegistrationDateAttribute($value)
     {
-        if (!$this->patientInfo) return '';
-        $this->patientInfo->registration_date = $value;
-        $this->patientInfo->save();
+        $this->user_registered = $value;
+        $this->save();
         return true;
     }
 
