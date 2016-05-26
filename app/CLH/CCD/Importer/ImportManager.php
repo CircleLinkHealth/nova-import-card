@@ -5,13 +5,12 @@ namespace App\CLH\CCD\Importer;
 
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
+use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
-use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmMisc;
-use App\Models\CPM\CpmProblem;
 use App\PatientCareTeamMember;
 use App\PatientInfo;
 use App\PhoneNumber;
@@ -184,8 +183,12 @@ class ImportManager
         //Weight
         $weightParseAndStore = new Weight($this->user->program_id, $this->user);
         $weight = $weightParseAndStore->parse($this->decodedCcda);
-        
         if (!empty($weight)) $weightParseAndStore->import($weight);
+        
+        //Blood Pressure
+        $bloodPressureParseAndStore = new BloodPressure($this->user->program_id, $this->user);
+        $bloodPressure = $bloodPressureParseAndStore->parse($this->decodedCcda);
+        if (!empty($bloodPressure)) $bloodPressureParseAndStore->import($bloodPressure);
 
         return true;
     }
