@@ -3,7 +3,9 @@
 namespace App\CLH\CCD\Importer;
 
 
+use App\CLH\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
+use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdMedication;
@@ -23,13 +25,15 @@ class ImportManager
     private $problemsImport;
     private $ccdaStrategies;
     private $user;
+    private $decodedCcda;
 
     public function __construct(array $allergiesImport = null,
                                 DemographicsImport $demographicsImport,
                                 array $medicationsImport,
                                 array $problemsImport,
                                 array $strategies,
-                                User $user)
+                                User $user,
+                                Ccda $ccda)
     {
         $this->allergiesImport = $allergiesImport;
         $this->demographicsImport = $demographicsImport;
@@ -37,6 +41,7 @@ class ImportManager
         $this->problemsImport = $problemsImport;
         $this->ccdaStrategies = $strategies;
         $this->user = $user;
+        $this->decodedCcda = \GuzzleHttp\json_decode($ccda->json);
     }
 
     public function import()
@@ -166,9 +171,21 @@ class ImportManager
         /**
          * CarePlan Defaults
          */
+        
+        //Transitional Care
         $miscId = CpmMisc::whereName(CpmMisc::TRACK_CARE_TRANSITIONS)->first();
-
         $this->user->cpmMiscs()->attach($miscId->id);
+
+
+        /**
+         * Biometrics
+         */
+        
+        //Weight
+        $weightParseAndStore = new Weight($this->user->program_id, $this->user);
+        $weight = $weightParseAndStore->parse($this->decodedCcda);
+        
+        if (!empty($weight)) $weightParseAndStore->import($weight);
 
         return true;
     }
