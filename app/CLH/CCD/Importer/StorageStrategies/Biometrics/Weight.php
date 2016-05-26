@@ -21,7 +21,19 @@ class Weight extends BaseStorageStrategy implements StorageStrategy
 
         $biometric = CpmBiometric::whereName(CpmBiometric::WEIGHT)->first();
 
-        $this->user->cpmBiometrics()->attach($biometric->id);
+        try {
+            $this->user->cpmBiometrics()->attach($biometric->id);
+        } catch (\Exception $e) {
+            //check if this is a mysql exception for unique key constraint
+            if ($e instanceof \Illuminate\Database\QueryException) {
+                $errorCode = $e->errorInfo[1];
+                if ($errorCode == 1062) {
+                    //do nothing
+                    //we don't actually want to terminate the program if we detect duplicates
+                    //we just don't wanna add the row again
+                }
+            }
+        }
     }
 
     public function parse($jsonDecodedCcda)
