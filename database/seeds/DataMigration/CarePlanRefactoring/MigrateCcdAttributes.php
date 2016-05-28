@@ -67,9 +67,16 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
         $this->command->comment(PHP_EOL . 'Begin Migrating Problems...' . PHP_EOL);
 
         foreach($problems_imports as $problems_import){
-            $patient_id = \App\CLH\CCD\Ccda::where('id',$problems_import->ccda_id)->lists('patient_id')->first();
+            $ccda = \App\CLH\CCD\Ccda::where('id',$problems_import->ccda_id)->first();
 
-            if(is_null($patient_id)){
+            if(empty($ccda)){
+                $this->command->info("No user associated to CCDA for ProblemsImport ID: " . $problems_import->id);
+                continue;
+            }
+
+            $patient_id = $ccda->patient_id;
+
+            if(empty($patient_id)){
                 $this->command->info("No user associated to CCDA for ProblemsImport ID: " . $problems_import->id);
                 continue;
             }
