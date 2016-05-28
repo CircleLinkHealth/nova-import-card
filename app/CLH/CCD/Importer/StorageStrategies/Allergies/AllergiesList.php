@@ -8,6 +8,8 @@ use App\CLH\Contracts\CCD\StorageStrategy;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
+use App\Models\CPM\CpmInstruction;
+use App\Models\CPM\CpmMisc;
 use Illuminate\Support\Facades\Log;
 
 class AllergiesList extends BaseStorageStrategy implements StorageStrategy
@@ -18,16 +20,15 @@ class AllergiesList extends BaseStorageStrategy implements StorageStrategy
 
         if ( empty($this->blogId) or empty($this->user) ) throw new \Exception( 'UserID and BlogID are required.' );
 
-        $carePlan = CarePlan::where( 'program_id', '=', $this->blogId )->where( 'type', '=', 'Program Default' )->first();
+        $instruction = CpmInstruction::create([
+            'name' => $allergiesList
+        ]);
+        
+        $misc = CpmMisc::whereName(CpmMisc::ALLERGIES)
+            ->first();
 
-        if ( !$carePlan ) {
-            throw new \Exception( 'Unable to build careplan' );
-        }
-
-        $carePlan->setCareItemUserValue( $this->user, 'allergies-details', $allergiesList );
-        $carePlan->setCareItemUserValue( $this->user, 'allergies', 'Active' );
-
-        $this->user->care_plan_id = $carePlan->id;
-        $this->user->save();
+        $this->user->cpmMiscs()->attach($misc->id, [
+            'cpm_instruction_id' => $instruction->id
+        ]);
     }
 }

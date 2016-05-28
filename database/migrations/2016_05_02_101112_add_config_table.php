@@ -14,6 +14,9 @@ class AddConfigTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('app_config')) {
+            Schema::drop('app_config');
+        }
         if (!Schema::hasTable('app_config')) {
             echo 'Schema::add app_config table'.PHP_EOL;
             Schema::create('app_config', function (Blueprint $table) {

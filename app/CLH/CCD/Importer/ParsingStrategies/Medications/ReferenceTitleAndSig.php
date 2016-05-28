@@ -19,15 +19,15 @@ class ReferenceTitleAndSig implements ParsingStrategy
 
         $medsList = '';
 
-        foreach ( $medicationsSection as $medication ) {
-            if ( !$validator->validate( $medication ) ) continue;
+        foreach ($medicationsSection as $medication) {
+            if (!$validator->validate($medication)) continue;
 
             $medication->import = true;
             $medication->save();
 
             $consMed = $this->consolidateMedicationInfo($medication);
 
-            $importedMed = (new MedicationImport())->create([
+            $medsList[] = (new MedicationImport())->create([
                 'ccda_id' => $ccd->id,
                 'vendor_id' => $ccd->vendor_id,
                 'ccd_medication_log_id' => $medication->id,
@@ -37,8 +37,6 @@ class ReferenceTitleAndSig implements ParsingStrategy
                 'code_system' => $consMed->cons_code_system,
                 'code_system_name' => $consMed->cons_code_system_name,
             ]);
-
-            $medsList[] = $importedMed;
         }
 
         return $medsList;

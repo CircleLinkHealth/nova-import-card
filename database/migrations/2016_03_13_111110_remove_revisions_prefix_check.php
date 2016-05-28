@@ -2,7 +2,7 @@
 
 use App\Role;
 use App\User;
-use App\WpBlog;
+use App\Program;
 use App\CLH\Repositories\UserRepository;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;

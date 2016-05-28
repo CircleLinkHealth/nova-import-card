@@ -1,8 +1,6 @@
 <?php namespace App\CLH\Traits\Auth;
 
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Auth\Registrar;
 
 trait AuthenticatesAndRegistersUsers {
 

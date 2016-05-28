@@ -15,6 +15,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\CLH\CCD\ValidatesQAImportOutput;
 
+use App\PatientCareTeamMember;
 use App\PatientReports;
 use App\User;
 use Carbon\Carbon;
@@ -52,9 +53,7 @@ class CcdApiController extends Controller
 
     public function getCcmTime(Request $request)
     {
-        if (!\Session::has('apiUser')) {
-            return response()->json(['error' => 'Authentication failed.'], 403);
-        }
+        if (!\Session::has('apiUser')) return response()->json(['error' => 'Authentication failed.'], 403);
 
         $user = \Session::get('apiUser');
 
@@ -112,10 +111,7 @@ class CcdApiController extends Controller
 
     public function reports(Request $request)
     {
-
-        if (!\Session::has('apiUser')) {
-            return response()->json(['error' => 'Authentication failed.'], 403);
-        }
+        if (!\Session::has('apiUser')) return response()->json(['error' => 'Authentication failed.'], 403);
 
         $user = \Session::get('apiUser');
 
@@ -135,48 +131,38 @@ class CcdApiController extends Controller
 
         $locationId = $this->getApiUserLocation($user);
 
-        //$pendingReports = PatientReports::where('location_id',$locationId);
         $pendingReports = PatientReports::where('location_id', $locationId)
             ->whereBetween('created_at', [
                 $startDate, $endDate
             ]);
-        if ($sendAll) {
-            $pendingReports->withTrashed();
-        }
-
+        if ($sendAll) $pendingReports->withTrashed();
         $pendingReports = $pendingReports->get();
 
-        if ($pendingReports->isEmpty()) {
-            return response()->json(["message" => "No Pending Reports"], 404);
-        }
+        if ($pendingReports->isEmpty()) return response()->json(["message" => "No Pending Reports"], 404);
 
-        $json = array();
-        $i = 0;
+        $json = [];
+
         foreach ($pendingReports as $report) {
 
             //Get patient's lead provider
-            $patient_provider = User::find($report->patient_id)->getLeadContactIDAttribute();
-            if (!$patient_provider) {
-                continue;
-            }
+            $provider = PatientCareTeamMember::whereUserId($report->patient_id)
+                ->whereType('lead_contact')
+                ->first();
+
+            if (empty($provider)) continue;
 
             //Get lead provider's foreign_id
             $foreignId_obj = ForeignId::where('system', ForeignId::APRIMA)
-                ->where('user_id', $patient_provider)
+                ->where('user_id', $provider->member_user_id)
                 ->where('location_id', $locationId)
                 ->first();
 
-            if (empty($foreignId_obj)) {
-                continue;
-            }
+            if (empty($foreignId_obj)) continue;
 
-            //Check if field exists
-            if (!$report->file_base64) {
-                continue;
-            }
+            if (empty($report->file_base64)) continue;
 
             if ($foreignId_obj->foreign_id) {
-                $json[$i] = [
+                $json[] = [
                     'patientId' => $report->patient_mrn,
                     'providerId' => $foreignId_obj->foreign_id,
                     'comment' => null,
@@ -185,7 +171,6 @@ class CcdApiController extends Controller
                     'created_at' => $report->created_at->toDateTimeString(),
                 ];
             }
-            $i++;
         }
 
         PatientReports::where('location_id', $locationId)->delete();
@@ -326,7 +311,6 @@ class CcdApiController extends Controller
     public function notifyAdmins(User $user, Ccda $ccda, $providerInfo = null, $status, $line = null, $errorMessage = null)
     {
         $recipients = [
-            'Plawlor@circlelinkhealth.com',
             'rohanm@circlelinkhealth.com',
             'mantoniou@circlelinkhealth.com',
             'jkatz@circlelinkhealth.com',

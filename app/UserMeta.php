@@ -20,7 +20,7 @@ class UserMeta extends Model {
      *
      * @var string
      */
-    protected $table = 'wp_usermeta';
+    protected $table = 'usermeta';
 
     /**
      * The primary key for the model.

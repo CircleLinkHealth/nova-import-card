@@ -5,12 +5,11 @@ namespace App\CLH\CCD\Importer;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\DefaultSections\TransitionalCare;
-use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserConfig as UserConfigStorage;
-use App\CLH\CCD\Importer\StorageStrategies\Demographics\UserMeta as UserMetaStorage;
-use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfig as UserConfigParser;
-use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMeta as UserMetaParser;
-use App\CLH\DataTemplates\UserConfigTemplate;
-use App\CLH\DataTemplates\UserMetaTemplate;
+use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\CcdMedication;
+use App\Models\CCD\CcdProblem;
+use App\Models\CPM\CpmMisc;
+use App\Models\CPM\CpmProblem;
 use App\PatientCareTeamMember;
 use App\PatientInfo;
 use App\PhoneNumber;
@@ -76,27 +75,32 @@ class ImportManager
          */
         $providerId = empty($this->demographicsImport->provider_id) ? null : $this->demographicsImport->provider_id;
 
-        //care team
-        $member = PatientCareTeamMember::create([
-            'user_id' => $this->user->ID,
-            'member_user_id' => $providerId,
-            'type' => PatientCareTeamMember::MEMBER,
-        ]);
+        if ($providerId) {
+            //care team
+            $member = PatientCareTeamMember::create([
+                'user_id' => $this->user->ID,
+                'member_user_id' => $providerId,
+                'type' => PatientCareTeamMember::MEMBER,
+            ]);
 
-        $billing = PatientCareTeamMember::create([
-            'user_id' => $this->user->ID,
-            'member_user_id' => $providerId,
-            'type' => PatientCareTeamMember::BILLING_PROVIDER,
-        ]);
+            $billing = PatientCareTeamMember::create([
+                'user_id' => $this->user->ID,
+                'member_user_id' => $providerId,
+                'type' => PatientCareTeamMember::BILLING_PROVIDER,
+            ]);
 
-        $lead = PatientCareTeamMember::create([
-            'user_id' => $this->user->ID,
-            'member_user_id' => $providerId,
-            'type' => PatientCareTeamMember::LEAD_CONTACT,
-        ]);
+            $lead = PatientCareTeamMember::create([
+                'user_id' => $this->user->ID,
+                'member_user_id' => $providerId,
+                'type' => PatientCareTeamMember::LEAD_CONTACT,
+            ]);
+        }
+
 
         //patient info
-        $patientInfo = PatientInfo::create([
+        $patientInfo = PatientInfo::updateOrCreate([
+            'user_id' => $this->user->ID,
+        ], [
             'birth_date' => $this->demographicsImport->dob,
             'careplan_status' => 'draft',
             'ccm_status' => 'enrolled',
@@ -111,6 +115,10 @@ class ImportManager
             'preferred_contact_timezone' => $this->demographicsImport->preferred_contact_timezone,
             'user_id' => $this->user->ID,
         ]);
+
+        if (empty($patientInfo)) {
+            throw new \Exception('Unable to create patient info');
+        }
 
         if (!empty($homeNumber = $this->demographicsImport->home_phone)) {
             $homePhone = PhoneNumber::create([
@@ -150,10 +158,17 @@ class ImportManager
         }
 
         /**
+         * Populate display_name on User
+         */
+        $this->user->display_name = "{$this->user->first_name} {$this->user->last_name}";
+        $this->user->save();
+
+        /**
          * CarePlan Defaults
          */
-        $transitionalCare = new TransitionalCare($this->user->program_id, $this->user);
-        $transitionalCare->setDefaults();
+        $miscId = CpmMisc::whereName(CpmMisc::TRACK_CARE_TRANSITIONS)->first();
+
+        $this->user->cpmMiscs()->attach($miscId->id);
 
         return true;
     }
@@ -168,6 +183,15 @@ class ImportManager
             $allergiesList = '';
 
             foreach ($this->allergiesImport as $allergy) {
+
+                $ccdAllergy = CcdAllergy::create([
+                    'ccda_id' => $allergy->ccda_id,
+                    'vendor_id' => $allergy->vendor_id,
+                    'patient_id' => $this->user->ID,
+                    'ccd_allergy_log_id' => $allergy->ccd_allergy_log_id,
+                    'allergen_name' => $allergy->allergen_name,
+                ]);
+
                 if (!isset($allergy->allergen_name)) continue;
                 $allergiesList .= "\n\n";
                 $allergiesList .= ucfirst(strtolower($allergy->allergen_name)) . ";";
@@ -210,8 +234,20 @@ class ImportManager
                     ? '' : ', ' . strtoupper($codeSystemName($problem));
 
                 $problemsList .= empty($problem->code) ? ';' : ', ' . $problem->code . ';';
-            }
 
+                $ccdProblem = CcdProblem::create([
+                    'ccda_id' => $problem->ccda_id,
+                    'vendor_id' => $problem->vendor_id,
+                    'ccd_problem_log_id' => $problem->ccd_problem_log_id,
+                    'name' => $problem->name,
+                    'code' => $problem->code,
+                    'code_system' => $problem->code_system,
+                    'code_system_name' => $problem->code_system_name,
+                    'activate' => $problem->activate,
+                    'cpm_problem_id' => $problem->cpm_problem_id,
+                    'patient_id' => $this->user->ID,
+                ]);
+            }
 
             $storage->import($problemsList);
         }
@@ -229,10 +265,10 @@ class ImportManager
             foreach ($this->problemsImport as $problem) {
                 if (empty($problem->cpm_problem_id)) continue;
 
-                $problemsToActivate[] = CPMProblem::find($problem->cpm_problem_id)->care_item_name;
+                $problemsToActivate[] = $problem->cpm_problem_id;
             }
 
-            $storage->import($problemsToActivate);
+            $storage->import(array_unique($problemsToActivate));
         }
     }
 
@@ -258,6 +294,18 @@ class ImportManager
                     )
                 );
 
+                $ccdMedication = CcdMedication::create([
+                    'ccda_id' => $medication->ccda_id,
+                    'vendor_id' => $medication->vendor_id,
+                    'ccd_medication_log_id' => $medication->ccd_medication_log_id,
+                    'medication_group_id' => $medication->medication_group_id,
+                    'name' => $medication->name,
+                    'sig' => $medication->sig,
+                    'code' => $medication->code,
+                    'code_system' => $medication->code_system,
+                    'code_system_name' => $medication->code_system_name,
+                    'patient_id' => $this->user->ID,
+                ]);
             }
 
 

@@ -6,7 +6,7 @@ use App\CLH\Facades\StringManipulation;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Services\ActivityService;
-use App\WpBlog;
+use App\Program;
 use App\User;
 use Carbon\Carbon;
 use DateTime;
@@ -86,11 +86,28 @@ class NotesController extends Controller
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
+    public function listing(Request $request)
+    {
+
+        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
+                $q->where('name', '=', 'participant');
+            })->get()->lists('ID')->all();
+
+        $acts = DB::table('lv_activities')
+            ->select(DB::raw('*,provider_id, type'))
+            ->whereIn('patient_id', $patients)
+            ->where(function ($q) {
+                $q->where('logged_from', 'note')
+                    ->Orwhere('logged_from', 'manual_input');
+            })
+            ->orderBy('performed_at', 'desc')
+            ->get();
+
+        return $acts;
+
+    }
+
     public function create(Request $request, $patientId)
     {
 
@@ -131,9 +148,9 @@ class NotesController extends Controller
             }
 
             //providers
-            $providers = WpBlog::getProviders($user->blogId());
-            $nonCCMCareCenterUsers = WpBlog::getNonCCMCareCenterUsers($user->blogId());
-            $careCenterUsers = WpBlog::getCareCenterUsers($user->blogId());
+            $providers = Program::getProviders($user->blogId());
+            $nonCCMCareCenterUsers = Program::getNonCCMCareCenterUsers($user->blogId());
+            $careCenterUsers = Program::getCareCenterUsers($user->blogId());
             $provider_info = array();
 
             if(!empty($providers)) {
@@ -150,7 +167,7 @@ class NotesController extends Controller
                     }
                 }
             }
-            debug($careCenterUsers);
+
             if(!empty($careCenterUsers)) {
                 foreach ($careCenterUsers as $careCenterUser) {
                     if($careCenterUser->fullName) {
@@ -182,11 +199,6 @@ class NotesController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
     public function store(Request $input, $patientId)
     {
         // convert minutes to seconds.
@@ -249,12 +261,6 @@ class NotesController extends Controller
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
     public function show(Request $input, $patientId, $noteId)
     {
         $patient = User::find($patientId);
@@ -279,7 +285,7 @@ class NotesController extends Controller
                         $meta_tags[] = 'Outbound Call';
                         break;
                     case('reached'):
-                        $meta_tags[] = 'Patient Reached';
+                        $meta_tags[] = 'Successful Clinical Call';
                         break;
                     case('admitted'):
                         $meta_tags[] = 'Patient Recently in Hospital/ER';
@@ -318,7 +324,6 @@ class NotesController extends Controller
 
         return view('wpUsers.patient.note.view', $view_data);
     }
-
 
     public function send(Request $input, $patientId, $noteId)
     {

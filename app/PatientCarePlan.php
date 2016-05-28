@@ -4,16 +4,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class PatientCarePlan extends Model {
 
-    public function careplantemplate()
+    protected $guarded = [];
+
+    public function carePlanTemplate()
     {
-        return $this->belongsTo('App\CarePlanTemplate');
+        return $this->belongsTo(CarePlanTemplate::class);
     }
 
     public function patient()
     {
-        return $this->belongsTo('App\User','patient_id');
+        return $this->belongsTo(User::class,'patient_id');
     }
 
+    public function getCarePlanTemplateIdAttribute()
+    {
+        //@todo: pretty sure that's not the way it's done. come back here later
+        return $this->attributes['care_plan_template_id'];
+    }
     //To add functions to get user values
 
 }

@@ -31,6 +31,9 @@ class CreateCarePlanTemplatesCpmProblems extends Migration {
 				->onDelete('cascade');
 
 			$table->timestamps();
+
+			$table->unique(['cpm_problem_id', 'care_plan_template_id']);
+
 		});
 	}
 

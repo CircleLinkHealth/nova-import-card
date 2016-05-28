@@ -30,7 +30,6 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-04-25 18:37:28',
                 'care_item_name' => 'diabetes',
-                'default_instructions' => NULL,
             ),
             1 => 
             array (
@@ -45,7 +44,6 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-04-25 18:37:28',
                 'care_item_name' => 'hypertension',
-                'default_instructions' => NULL,
             ),
             2 => 
             array (
@@ -60,7 +58,6 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-04-25 18:37:28',
                 'care_item_name' => 'afib',
-                'default_instructions' => NULL,
             ),
             3 => 
             array (
@@ -75,7 +72,6 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-04-25 18:37:28',
                 'care_item_name' => 'cad',
-                'default_instructions' => NULL,
             ),
             4 => 
             array (
@@ -90,7 +86,6 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-04-25 18:37:29',
                 'care_item_name' => 'depression',
-                'default_instructions' => NULL,
             ),
             5 => 
             array (
@@ -105,7 +100,6 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-04-25 18:37:29',
                 'care_item_name' => 'chf',
-                'default_instructions' => NULL,
             ),
             6 => 
             array (
@@ -120,7 +114,6 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-04-25 18:37:29',
                 'care_item_name' => 'high-cholesterol',
-                'default_instructions' => NULL,
             ),
             7 => 
             array (
@@ -135,7 +128,6 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-04-25 18:37:29',
                 'care_item_name' => 'kidney-disease',
-                'default_instructions' => NULL,
             ),
             8 => 
             array (
@@ -150,7 +142,6 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-04-25 18:37:29',
                 'care_item_name' => 'dementia',
-                'default_instructions' => NULL,
             ),
             9 => 
             array (
@@ -165,22 +156,20 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at' => '2016-01-27 13:11:24',
                 'updated_at' => '2016-04-25 18:37:29',
                 'care_item_name' => 'asthmacopd',
-                'default_instructions' => NULL,
             ),
             10 => 
             array (
                 'id' => 14,
-                'care_item_id' => NULL,
+                'care_item_id' => 56,
                 'name' => 'Smoking',
-                'icd10from' => '',
-                'icd10to' => '',
-                'icd9from' => 0,
-                'icd9to' => 0,
+                'icd10from' => 'F17',
+                'icd10to' => 'F17.3',
+                'icd9from' => 305.10000000000002,
+                'icd9to' => 305.10000000000002,
                 'contains' => '',
                 'created_at' => '0000-00-00 00:00:00',
-                'updated_at' => '0000-00-00 00:00:00',
+                'updated_at' => '2016-05-17 11:35:29',
                 'care_item_name' => 'cf-sol-smo-10-smoking',
-                'default_instructions' => NULL,
             ),
         ));
         

@@ -1,3 +1,4 @@
+{{--This is the admin careplan section edit--}}
 <div class="row">
     <a href="{{ URL::route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-primary btn-xs section-reload" section="{{ $careSection->id }}">Refresh</a>
     <button type="button" class="btn btn-success btn-xs" data-toggle="collapse" href="#collapseSectionEdit{{ $careSection->id }}" aria-expanded="false" aria-controls="collapseSectionEdit{{ $careSection->id }}">Edit</button>

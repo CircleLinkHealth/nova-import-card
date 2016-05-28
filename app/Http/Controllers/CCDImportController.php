@@ -24,51 +24,64 @@ class CCDImportController extends Controller
 
     public function import(Request $request)
     {
-        $ccdsToImport = $request->input( 'ccdsToImport' );
-        $ccdsToDelete = $request->input( 'ccdsToDelete' );
+        $ccdsToImport = $request->input('ccdsToImport');
+        $ccdsToDelete = $request->input('ccdsToDelete');
 
-        foreach ( $ccdsToImport as $id ) {
-            $ccda = Ccda::find( $id );
 
-            if ( empty($ccda) ) continue;
+        if (!empty($ccdsToImport)) {
+            foreach ($ccdsToImport as $id) {
+                $ccda = Ccda::find($id);
 
-            $vendorId = $ccda->vendor_id;
+                if (empty($ccda)) continue;
 
-            $allergies = AllergyImport::whereCcdaId( $id )->whereSubstituteId( null )->get();
-            $demographics = DemographicsImport::whereCcdaId( $id )->whereSubstituteId( null )->first();
-            $medications = MedicationImport::whereCcdaId( $id )->whereSubstituteId( null )->get();
-            $problems = ProblemImport::whereCcdaId( $id )->whereSubstituteId( null )->get();
+                $vendorId = $ccda->vendor_id;
 
-            $strategies = empty($ccda->vendor_id)
-                ?: CcdVendor::find( $ccda->vendor_id )->routine()->first()->strategies()->get();
+                $allergies = AllergyImport::whereCcdaId($id)->whereSubstituteId(null)->get();
+                $demographics = DemographicsImport::whereCcdaId($id)->whereSubstituteId(null)->first();
+                $medications = MedicationImport::whereCcdaId($id)->whereSubstituteId(null)->get();
+                $problems = ProblemImport::whereCcdaId($id)->whereSubstituteId(null)->get();
 
-            $user = $this->repo->createRandomUser($demographics);
+                $strategies = empty($ccda->vendor_id)
+                    ?: CcdVendor::find($ccda->vendor_id)->routine()->first()->strategies()->get();
 
-            $importer = new ImportManager( $allergies->all(), $demographics, $medications->all(), $problems->all(), $strategies->all(), $user );
-            $importer->import();
+                $user = $this->repo->createRandomUser($demographics);
 
-            $imported[] = [
-                'ccdaId' => $id,
-                'userId' => $user->ID
-            ];
+                $importer = new ImportManager($allergies->all(), $demographics, $medications->all(), $problems->all(), $strategies->all(), $user);
+                $importer->import();
 
-            $ccda->imported = true;
-            $ccda->patient_id = $user->ID;
-            $ccda->save();
+                $imported[] = [
+                    'ccdaId' => $id,
+                    'userId' => $user->ID
+                ];
 
-            $ccda->qaSummary()->delete();
+                $ccda->imported = true;
+                $ccda->patient_id = $user->ID;
+                $ccda->save();
+
+                $allergiesDelete = AllergyImport::whereCcdaId($id)->delete();
+                $demographicsDelete = $demographics->delete();
+                $medicationsDelete = MedicationImport::whereCcdaId($id)->delete();
+                $problemsDelete = ProblemImport::whereCcdaId($id)->delete();
+
+                $ccda->qaSummary()->delete();
+            }
         }
 
-        foreach ( $ccdsToDelete as $id ) {
-            if ( empty($id) ) continue;
-            Ccda::destroy( $id );
-            $summary = QAImportSummary::whereCcdaId( $id )->first();
-            if ( !empty($summary) ) $summary->delete();
 
-            $deleted[] = $id;
+        if (!empty($ccdsToDelete)) {
+            $deleted = [];
+
+            foreach ($ccdsToDelete as $id) {
+                if (empty($id)) continue;
+                Ccda::destroy($id);
+                $summary = QAImportSummary::whereCcdaId($id)->first();
+                if (!empty($summary)) $summary->delete();
+
+                $deleted[] = $id;
+            }
         }
 
-        return response()->json( compact( 'imported', 'deleted' ), 200 );
+        return response()->json(compact('imported', 'deleted'), 200);
     }
 
 }

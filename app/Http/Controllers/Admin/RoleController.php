@@ -8,7 +8,7 @@ use App\CPRulesItemMeta;
 use App\CPRulesItem;
 use App\Http\Controllers\Controller;
 
-use App\WpBlog;
+use App\Program;
 use Illuminate\Http\Request;
 use Auth;
 

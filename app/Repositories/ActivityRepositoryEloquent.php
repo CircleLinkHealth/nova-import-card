@@ -55,7 +55,6 @@ class ActivityRepositoryEloquent extends BaseRepository implements ActivityRepos
         //Dynamically get all the tables' names since we'll probably change them soon
         $activitiesTable = (new Activity())->getTable();
         $userTable = (new User())->getTable();
-        $actMeta = (new ActivityMeta())->getTable();
 
         $activities = Activity::select(DB::raw("
                 $activitiesTable.id as id,
@@ -63,19 +62,16 @@ class ActivityRepositoryEloquent extends BaseRepository implements ActivityRepos
                 duration as length,
                 duration_unit as lengthUnit,
                 $userTable.display_name as servicePerson,
-                $activitiesTable.performed_at as startingDateTime,
-                $actMeta.meta_value as comment
+                $activitiesTable.performed_at as startingDateTime
                 "))
             ->whereProviderId($providerId)
             ->wherePatientId($patientId)
             ->join($userTable, "$userTable.ID", '=', "$activitiesTable.provider_id")
-            ->join($actMeta, "$actMeta.activity_id", '=', "$activitiesTable.id")
-            ->where("$actMeta.meta_key", 'comment')
             ->whereBetween("$activitiesTable.performed_at", [
                 $startDate, $endDate
             ]);
         if (!$sendAll) {
-            $activities->whereNotIn("$activitiesTable.id", CcmTimeApiLog::lists('activity_id'));
+            $activities->whereNotIn("$activitiesTable.id", CcmTimeApiLog::lists('activity_id')->all());
         }
         $activities = $activities->get();
 

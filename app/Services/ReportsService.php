@@ -7,31 +7,34 @@ use App\CPRulesQuestions;
 use App\CPRulesUCP;
 use App\ForeignId;
 use App\Location;
-use App\Observation;
+use App\Models\CPM\Cpm;
+use App\Models\CPM\CpmBiometric;
+use App\Models\CPM\CpmInstruction;
+use App\Models\CPM\CpmMisc;
 use App\PatientReports;
-use App\Services\CareplanUIService;
 use App\User;
 use App\UserMeta;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
-use PhpSpec\Exception\Exception;
+use Mockery\CountValidator\Exception;
+
 
 class ReportsService
 {
-    //Progress Report API
 
+    //FOR MOBILE API
     public function reportHeader($id)
     {
         $user = User::find($id);
-        $user_meta = UserMeta::where('user_id', '=', $user->ID)->lists('meta_value', 'meta_key');
+        $user_meta = UserMeta::where('user_id', '=', $user->ID)->lists('meta_value', 'meta_key')->all();
         $userHeader['date'] = Carbon::now()->toDateString();
         $userHeader['Patient_Name'] = $user_meta['first_name'] . ' ' . $user_meta['last_name'];
         $userConfig = $user->userConfig();
         $userHeader['Patient_Phone'] = $userConfig['study_phone_number'];
         $provider = User::findOrFail($user->billingProviderID);
         $providerConfig = $provider->userConfig();
-        $provider_meta = UserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key');
+        $provider_meta = UserMeta::where('user_id', '=', $provider->ID)->lists('meta_value', 'meta_key')->all();
         $userHeader['Provider_Name'] = trim($providerConfig['prefix'] . ' ' . $provider_meta['first_name'] . ' ' . $provider_meta['last_name'] . ' ' . $providerConfig['qualification']);
         $userHeader['Provider_Phone'] = $providerConfig['study_phone_number'];
         $userHeader['Clinic_Name'] = Location::getLocationName($userConfig['preferred_contact_location']);
@@ -45,7 +48,7 @@ class ReportsService
         //PCP has the sections for each provider, get all sections for the user's blog
         $pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', $item)->first();
         //Get all the items for each section
-        $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
+        $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id')->all();
         for ($i = 0; $i < count($items); $i++) {
             //get id's of all lifestyle items that are active for the given user
             $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value', 'Active')->where('user_id', $user->ID)->first();
@@ -69,61 +72,42 @@ class ReportsService
 
     public function getBiometricsToMonitor(User $user)
     {
-        $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-            ->first();
-        $carePlan->build($user->ID);
-        $itemsToMonitor = array();
-        if ($carePlan) {
-            foreach ($carePlan->careSections as $section) {
-                if ($section->name == 'biometrics-to-monitor') {
-                    foreach ($section->carePlanItems as $item) {
-                        if ($item->meta_value == 'Active') {
-                            $itemsToMonitor[] = $item->careItem->display_name;
-                        }
-                    }
-                }
-            }
-        }
-        return $itemsToMonitor;
+       return $user->cpmBiometrics()->get()->lists('name')->all();
     }
 
-    public function getProblemsToMonitor(CarePlan $carePlan)
+    public function getProblemsToMonitor(User $user)
     {
-        $itemsToMonitor = array();
-        if ($carePlan) {
-            foreach ($carePlan->careSections as $section) {
-                if ($section->name == 'diagnosis-problems-to-monitor') {
-                    foreach ($section->carePlanItems as $item) {
-                        if ($item->meta_value == 'Active') {
-                            $itemsToMonitor[] = $item->careItem->display_name;
-                        }
-                    }
-                }
-            }
+        if(!$user){
+            throw new Exception('User not found..');
         }
-        return $itemsToMonitor;
+        return $user->cpmProblems()->get()->lists('name')->all();
     }
 
-    public function getProblemsToMonitorWithDetails(CarePlan $carePlan)
-    {
-        $itemsToMonitor = array();
-        if ($carePlan) {
-            foreach ($carePlan->careSections as $section) {
-                if ($section->name == 'diagnosis-problems-to-monitor') {
-                    foreach ($section->carePlanItems as $item) {
-                        if ($item->meta_value == 'Active') {
-                            foreach ($item->children as $child) {
-                                $details = ($child->meta_value == '') ? 'No instructions at this time' : $child->meta_value;
-                                $itemsToMonitor[$item->careItem->display_name] = $details;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $itemsToMonitor;
-    }
+    public function getInstructionsForOtherProblems(User $user){
 
+        if(!$user){
+            //nullify
+            return "User not found...";
+        }
+
+        $problem = $user->cpmMiscs->where('name',CpmMisc::OTHER_CONDITIONS)->all();
+
+        if(empty($problem)){
+            //https://youtu.be/LloIp0HMJjc?t=19s
+            return '';
+        }
+
+        $instructions = CpmInstruction::find($problem[0]->pivot->cpm_instruction_id);
+
+        if(empty($instructions)){
+            //defualt
+                return 'No instructions at this time';
+        }
+
+        return $instructions->name;
+
+    }
+    
     public function getSymptomsToMonitor(CarePlan $carePlan)
     {
         $temp = array();
@@ -158,41 +142,16 @@ class ReportsService
         return $temp;
     }
 
-    public function medicationsList(CarePlan $carePlan)
+    public function medicationsList(User $user)
     {
-        $medications = array();
-        if ($carePlan) {
-            foreach ($carePlan->careSections as $section) {
-                if ($section->name == 'medications-to-monitor') {
-                    foreach ($section->carePlanItems as $item) {
-                        if ($item->meta_value == 'Active') {
-                            //if($item->careItem->display_name != "Other Meds"){
-                                $medications[] = $item->careItem->display_name;
-                            //}
-                        }
-                    }
-                }
-            }
-        }//debug($medications);
+        $medications = $user->cpmMedicationGroups()->get()->lists('name')->all();
         return $medications;
     }
 
-    public function getMedicationStatus(User $user, CarePlan $carePlan, $fromApp = true)
+    public function getMedicationStatus(User $user, $fromApp = true)
     {
-        $medications_categories = array();
-        if ($carePlan) {
-            foreach ($carePlan->careSections as $section) {
-                if ($section->name == 'medications-to-monitor') {
-                    foreach ($section->carePlanItems as $item) {
-                        if ($item->meta_value == 'Active' && $item->careItem->display_name != 'Medication List') {
-                            $medications_categories[] = $item->careItem->display_name;
-                            debug($item->careItem->display_name);
-                        }
-                    }
-                }
-            }
-        }
-
+        $medications_categories = $user->cpmMedicationGroups()->get()->lists('name')->all();
+        debug($medications_categories);
         //get all medication observations for the user
         $medication_obs = DB::connection('mysql_no_prefix')
             ->table('rules_questions')
@@ -292,35 +251,14 @@ class ReportsService
     }
 
     public
-    function getTargetValueForBiometric($carePlan = false, $biometric, $user)
+    function getTargetValueForBiometric($biometric, User $user)
     {
-        if(!$carePlan) {
-            $carePlan = CarePlan::where('id', '=', $user->care_plan_id)
-                ->first();
-            $carePlan->build($user->ID);
-        }
-        switch ($biometric) {
-            case "Weight":
-                return $carePlan->getCareItemUserValue($user, 'weight-target-weight');
-                break;
-            case "Blood_Sugar":
-            case "Blood Sugar":
-                return $carePlan->getCareItemUserValue($user, 'blood-sugar-target-bs');
-                break;
-            case "Blood_Pressure":
-            case "Blood Pressure":
-                return $carePlan->getCareItemUserValue($user, 'blood-pressure-target-bp');
-                break;
-            case "Smoking":
-                return $carePlan->getCareItemUserValue($user, 'smoking-per-day-target-count');
-                break;
-            default:
-                return 'N/A';
-        }
+        $bio = CpmBiometric::whereName(str_replace('_', ' ', $biometric))->first();
+        $biometric_values = app(config('cpmmodelsmap.biometrics')[$bio->type])->getUserValues($user);
+        return $biometric_values['target'] . ReportsService::biometricsUnitMapping($biometric);
     }
 
-    public
-    function getBiometricsData($biometric, $user)
+    public function getBiometricsData($biometric, $user)
     {
         $data = DB::table('lv_observations')
             ->select(DB::raw('user_id, replace(obs_key,\'_\',\' \') \'Observation\',
@@ -411,7 +349,7 @@ class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
-            }else {
+            } else {
                 $progression = '';
             }
         } else if ($weeklyReading1 <= 100) {
@@ -421,7 +359,7 @@ class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
-            }else {
+            } else {
                 $progression = '';
             }
         }
@@ -435,6 +373,7 @@ class ReportsService
 
         return $changes_array;
     }
+
     public function analyzeBloodSugar($weeklyReading1, $weeklyReading2)
     {
         $change = $weeklyReading1 - $weeklyReading2;
@@ -460,7 +399,7 @@ class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
-            }else {
+            } else {
                 $progression = '';
             }
         } else if ($weeklyReading1 <= 70 && $weeklyReading1 > 60) {
@@ -470,7 +409,7 @@ class ReportsService
                 $progression = 'up';
             } else if ($change < 0) {
                 $progression = 'down';
-            }else {
+            } else {
                 $progression = '';
             }
         } else if ($weeklyReading1 <= 60) {
@@ -494,14 +433,15 @@ class ReportsService
 
         return $changes_array;
     }
+
     public function analyzeWeight($weeklyReading1, $weeklyReading2)
     {
         $change = $weeklyReading1 - $weeklyReading2;
-        if($change > 0){
+        if ($change > 0) {
             $color = 'grey';
             $progression = 'up';
             $copy = 'Increased';
-        } else if ($change < 0){
+        } else if ($change < 0) {
             $color = 'grey';
             $progression = 'down';
             $copy = 'Decreased';
@@ -520,6 +460,7 @@ class ReportsService
 
         return $changes_array;
     }
+
     public function biometricsIndicators($weeklyReading1, $weeklyReading2, $biometric, $target)
     {//debug($biometric);
 
@@ -529,7 +470,7 @@ class ReportsService
         } else if ($biometric == 'Blood_Pressure') {
 //            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
             return $this->analyzeBloodPressure($weeklyReading1, $weeklyReading2);
-        } else if($biometric == 'Weight'){
+        } else if ($biometric == 'Weight') {
 //            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
             return $this->analyzeWeight($weeklyReading1, $weeklyReading2);
         }
@@ -558,7 +499,7 @@ class ReportsService
 
         //get observations for user to calculate adherence
         $tracking_pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Biometrics to Monitor')->first();
-        $tracking_items = CPRulesItem::where('pcp_id', $tracking_pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
+        $tracking_items = CPRulesItem::where('pcp_id', $tracking_pcp->pcp_id)->where('items_parent', 0)->lists('items_id')->all();
         // gives the biometrics being monitered for the given user
         for ($i = 0; $i < count($tracking_items); $i++) {
             //get id's of all biometrics items that are active for the given user
@@ -577,7 +518,7 @@ class ReportsService
                 //get all the targets for biometrics that are being observed
                 $target_items = CPRulesItem::where('items_parent', $items_for_user[$i]->items_id)->where('items_text', 'like', '%Target%')->get();
                 foreach ($target_items as $target_item) {
-                    $target_value = CPRulesUCP::where('items_id', $target_item->items_id)->where('user_id', $user->ID)->lists('meta_value');
+                    $target_value = CPRulesUCP::where('items_id', $target_item->items_id)->where('user_id', $user->ID)->lists('meta_value')->all();
                     $target_array[str_replace('_', ' ', $tracking_q->obs_key)] = $target_value[0];
                 }
             }
@@ -698,7 +639,7 @@ class ReportsService
         $pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Diagnosis / Problems to Monitor')->first();
 
         //Get all the items for each section
-        $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
+        $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id')->all();
         for ($i = 0; $i < count($items); $i++) {
             //get id's of all lifestyle items that are active for the given user
             $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value', 'Active')->where('user_id', $user->ID)->first();
@@ -849,7 +790,7 @@ class ReportsService
         $other['Data'] = array();
         $pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
         //Get all the items for each section
-        $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id');
+        $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id')->all();
 
         for ($i = 0; $i < count($items); $i++) {
             //get id's of all lifestyle items that are active for the given user
@@ -892,125 +833,127 @@ class ReportsService
         $careplanReport = array();
 
         foreach ($patients as $user) {
-            if (! is_object($user)) {
+            if (!is_object($user)) {
                 $user = User::find($user);
             }
-            $careplanReport[$user->ID]['symptoms'] = array();
-            $careplanReport[$user->ID]['problems'] = array();
-            $careplanReport[$user->ID]['lifestyle'] = array();
-            $careplanReport[$user->ID]['biometrics'] = array();
+            $careplanReport[$user->ID]['symptoms'] = $user->cpmSymptoms()->get()->lists('name')->all();
+            $careplanReport[$user->ID]['problem'] = $user->cpmProblems()->get()->lists('name')->all();
+            $careplanReport[$user->ID]['problems'] = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($user);
+            $careplanReport[$user->ID]['lifestyle'] = $user->cpmLifestyles()->get()->lists('name')->all();
+            $careplanReport[$user->ID]['biometrics'] = $user->cpmBiometrics()->get()->lists('name')->all();
+            $careplanReport[$user->ID]['medications'] = $user->cpmMedicationGroups()->get()->lists('name')->all();
+        }
+
+        $other_problems = $this->getInstructionsforOtherProblems($user);
+
+        if(!empty($other_problems)) {
+            $careplanReport[$user->ID]['problems']['Other Problems'] = $other_problems;
+        }
+
+        //Get Biometrics with Values
+        $careplanReport[$user->ID]['bio_data'] = array();
+
+        //Ignore Smoking - Untracked Biometric
+        if(($key = array_search(CpmBiometric::SMOKING, $careplanReport[$user->ID]['biometrics'])) !== false) {
+            unset($careplanReport[$user->ID]['biometrics'][$key]);
+        }
+
+        foreach ($careplanReport[$user->ID]['biometrics'] as $metric) {
+            $biometric = $user->cpmBiometrics->where('name', $metric)->first();
+            $biometric_values = app(config('cpmmodelsmap.biometrics')[$biometric->type])->getUserValues($user);
 
 
-            $carePlan = CarePlan::where('id', '=', $user->care_plan_id)->first();
-            if ($carePlan) {
-                $carePlan->build($user->ID);
-                foreach ($carePlan->careSections as $section) {
-                    if ($section->name == 'symptoms-to-monitor') {
-                        foreach ($section->carePlanItems as $item) {
-                            if ($item->meta_value == 'Active') {
-                                $careplanReport[$user->ID]['symptoms'][] = $item->careItem->display_name;
-                            }
-                        }
-                    }
-                    if ($section->name == 'diagnosis-problems-to-monitor') {
-                        foreach ($section->carePlanItems as $item) {
-                            if ($item->meta_value == 'Active') {
-                                $careplanReport[$user->ID]['problems'][] = $item->careItem->display_name;
-                            }
-                        }
-                    }
-                    if ($section->name == 'lifestyle-to-monitor') {
-                        foreach ($section->carePlanItems as $item) {
-                            if ($item->meta_value == 'Active') {
-                                $careplanReport[$user->ID]['lifestyle'][] = $item->careItem->display_name;
-                            }
-                        }
-                    }
-                    if ($section->name == 'biometrics-to-monitor') {
-                        foreach ($section->carePlanItems as $item) {
-                            if ($item->meta_value == 'Active') {
-                                $careplanReport[$user->ID]['biometrics'][] = $item->careItem->display_name;
-                            }
-                        }
-                    }
+            if(($biometric_values)){
+                if (($biometric_values['starting'] == '')) {
+                    $biometric_values['starting'] = 'TBD';
                 }
-                $careplanReport[$user->ID]['medications'] = (new ReportsService())->medicationsList($carePlan);//debug($medications);
-                $careplanReport[$user->ID]['treating'] = (new ReportsService())->getProblemsToMonitorWithDetails($carePlan);
-                $biometrics = (new ReportsService())->getBiometricsToMonitor($user);
-            }
-            //Remove cigarettes
-            if (($key = array_search('Smoking (# per day)', $biometrics)) !== false) {
-                unset($biometrics[$key]);
-            }
-            //debug($biometrics);
 
-            $careplanReport[$user->ID]['bio_data'] = array();
-
-            foreach ($biometrics as $metric) {
-                $careplanReport[$user->ID]['bio_data'][$metric]['target'] = (new ReportsService())->getTargetValueForBiometric($carePlan, $metric, $user) . ReportsService::biometricsUnitMapping($metric);
-                $careplanReport[$user->ID]['bio_data'][$metric]['starting'] = Observation::getStartingObservation($user->ID, (new ReportsService())->biometricsMessageIdMapping($metric)) . ReportsService::biometricsUnitMapping($metric);
+                if (($biometric_values['target'] == '')) {
+                    $biometric_values['target'] = 'TBD';
+                }
             }
 
-            if ($carePlan->getCareItemUserValue($user, 'medication-list-details')) {
-                $careplanReport[$user->ID]['taking_meds'] = $carePlan->getCareItemUserValue($user, 'medication-list-details');
+
+            $careplanReport[$user->ID]['bio_data'][$metric]['target'] = $biometric_values['target'] . ReportsService::biometricsUnitMapping($metric);
+            $careplanReport[$user->ID]['bio_data'][$metric]['starting'] = $biometric_values['starting'] . ReportsService::biometricsUnitMapping($metric);
+        }
+
+        //Medications List
+        if($user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->first()){
+            $careplanReport[$user->ID]['taking_meds'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::MEDICATION_LIST);
+        } else {
+            $careplanReport[$user->ID]['taking_meds'] = '';
+        }
+
+        //Allergies
+        if($user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->first()){
+                $careplanReport[$user->ID]['allergies'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::ALLERGIES);
             } else {
-                $careplanReport[$user->ID]['taking_meds'] = '';
+                $careplanReport[$user->ID]['allergies'] = '';
             }
 
-            if ($carePlan->getCareItemUserValue($user, 'allergies') == 'Active') {
-                $careplanReport[$user->ID]['allergies'] = $carePlan->getCareItemUserValue($user, 'allergies-details');
-            } else {
-                $careplanReport[$user->ID]['allergies'] = 'No instructions at this time';
-            }
+        //Social Services
+        if($user->cpmMiscs->where('name',CpmMisc::SOCIAL_SERVICES)->first()){
+            $careplanReport[$user->ID]['social'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::SOCIAL_SERVICES);
+        } else {
+            $careplanReport[$user->ID]['social'] = '';
+        }
 
-            if ($carePlan->getCareItemUserValue($user, 'social-services') == 'Active') {
-                $careplanReport[$user->ID]['social'] = $carePlan->getCareItemUserValue($user, 'social-services-details');
-            } else {
-                $careplanReport[$user->ID]['social'] = 'No instructions at this time';
-            }
+        //Other
+        if($user->cpmMiscs->where('name',CpmMisc::OTHER)->first()){
+            $careplanReport[$user->ID]['other'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::OTHER);
+        } else {
+            $careplanReport[$user->ID]['other'] = '';
+        }
 
-            if ($carePlan->getCareItemUserValue($user, 'other') == 'Active') {
-                $careplanReport[$user->ID]['other'] = $carePlan->getCareItemUserValue($user, 'other-details');
-            } else {
-                $careplanReport[$user->ID]['other'] = 'No instructions at this time';
-            }
-
-            if ($carePlan->getCareItemUserValue($user, 'appointments') == 'Active') {
-                $careplanReport[$user->ID]['appointments'] = $carePlan->getCareItemUserValue($user, 'appointments-details');
-            } else {
-                $careplanReport[$user->ID]['appointments'] = 'No instructions at this time';
-            }
+        //Appointments
+        if($user->cpmMiscs->where('name',CpmMisc::APPOINTMENTS)->first()){
+            $careplanReport[$user->ID]['appointments'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::APPOINTMENTS);
+        } else {
+            $careplanReport[$user->ID]['appointments'] = '';
         }
         return $careplanReport;
     }
 
-    public function createPatientReport($user, $provider_id){
+    public function createPatientReport($user, $provider_id)
+    {
+        $careplan = $this->carePlanGenerator([$user]);
 
-        $careplan = $this->carePlanGenerator( [$user] );
-
-        $pdf = App::make( 'snappy.pdf.wrapper' );
-        $pdf->loadView( 'wpUsers.patient.careplan.print', [
+        $pdf = App::make('snappy.pdf.wrapper');
+        $pdf->loadView('wpUsers.patient.careplan.print', [
             'patient' => $user,
-            'treating' => $careplan[ $user->ID ][ 'treating' ],
-            'biometrics' => $careplan[ $user->ID ][ 'bio_data' ],
-            'symptoms' => $careplan[ $user->ID ][ 'symptoms' ],
-            'lifestyle' => $careplan[ $user->ID ][ 'lifestyle' ],
-            'medications_monitor' => $careplan[ $user->ID ][ 'medications' ],
-            'taking_medications' => $careplan[ $user->ID ][ 'taking_meds' ],
-            'allergies' => $careplan[ $user->ID ][ 'allergies' ],
-            'social' => $careplan[ $user->ID ][ 'social' ],
-            'appointments' => $careplan[ $user->ID ][ 'appointments' ],
-            'other' => $careplan[ $user->ID ][ 'other' ],
+            'problems' => $careplan[$user->ID]['problems'],
+            'biometrics' => $careplan[$user->ID]['bio_data'],
+            'symptoms' => $careplan[$user->ID]['symptoms'],
+            'lifestyle' => $careplan[$user->ID]['lifestyle'],
+            'medications_monitor' => $careplan[$user->ID]['medications'],
+            'taking_medications' => $careplan[$user->ID]['taking_meds'],
+            'allergies' => $careplan[$user->ID]['allergies'],
+            'social' => $careplan[$user->ID]['social'],
+            'appointments' => $careplan[$user->ID]['appointments'],
+            'other' => $careplan[$user->ID]['other'],
             'isPdf' => true,
-        ] );
+        ]);
 
-        $file_name  = base_path('storage/pdfs/careplans/' . str_random(40) . '.pdf');
-        $pdf->save($file_name,true);
+        $file_name = base_path('storage/pdfs/careplans/' . str_random(40) . '.pdf');
+        $pdf->save($file_name, true);
         $base_64_report = base64_encode(file_get_contents($file_name));
+
+        $locationId = $user->getpreferredContactLocationAttribute();
+
+        if (empty($locationId)) return false;
 
         try {
             //get foreign provider id
             $foreign_id = ForeignId::where('user_id', $provider_id)->where('system', ForeignId::APRIMA)->first();
+
+            //update the foreign id to include a location as well
+            if (empty($foreign_id->location_id))
+            {
+                $foreign_id->location_id = $locationId;
+                $foreign_id->save();
+            }
+
         } catch (\Exception $e) {
             \Log::error("No foreign Id found when creating report. Message: $e->getMessage(). Code: $e->getCode()");
             return;
@@ -1021,13 +964,15 @@ class ReportsService
             return;
         }
 
+
+
         $patientReport = PatientReports::create([
             'patient_id' => $user->ID,
             'patient_mrn' => $user->getMRNAttribute(),
             'provider_id' => $foreign_id->foreign_id,
             'file_type' => PatientReports::CAREPLAN,
             'file_base64' => $base_64_report,
-            'location_id' => $user->getpreferredContactLocationAttribute(),
+            'location_id' => $locationId,
         ]);
     }
 

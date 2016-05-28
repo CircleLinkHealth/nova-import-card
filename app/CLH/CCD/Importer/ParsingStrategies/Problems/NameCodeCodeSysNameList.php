@@ -29,7 +29,7 @@ class NameCodeCodeSysNameList implements ParsingStrategy
              */
             $problemCodes = $this->consolidateProblemInfo( $ccdProblem );
 
-            $importedProblem = (new ProblemImport())->create([
+            $problemsList[] = (new ProblemImport())->create([
                 'ccda_id' => $ccd->id,
                 'vendor_id' => $ccd->vendor_id,
                 'ccd_problem_log_id' => $ccdProblem->id,
@@ -38,8 +38,6 @@ class NameCodeCodeSysNameList implements ParsingStrategy
                 'code_system' => $problemCodes->cons_code_system,
                 'code_system_name' => $problemCodes->cons_code_system_name,
             ]);
-
-            $problemsList[] = $importedProblem;
         }
 
         return $problemsList;

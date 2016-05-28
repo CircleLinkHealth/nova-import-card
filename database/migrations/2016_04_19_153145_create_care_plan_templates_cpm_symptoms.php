@@ -31,6 +31,9 @@ class CreateCarePlanTemplatesCpmSymptoms extends Migration {
 				->onDelete('cascade');
 
 			$table->timestamps();
+
+			$table->unique(['cpm_symptom_id', 'care_plan_template_id']);
+
 		});
 	}
 

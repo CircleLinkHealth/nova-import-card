@@ -4,7 +4,7 @@ use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\User;
 use App\UserMeta;
-use App\WpBlog;
+use App\Program;
 use App\Role;
 use App\CarePlan;
 use App\ProviderInfo;
@@ -37,20 +37,20 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
-        if($user->hasRole('participant')) {
+        if ($user->hasRole('participant')) {
             $this->saveOrUpdatePatientInfo($user, $params);
-            $this->createDefaultCarePlan($user, $params);
+//            $this->createDefaultCarePlan($user, $params);
         }
 
         // provider info
-        if($user->hasRole('provider')) {
+        if ($user->hasRole('provider')) {
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
         //Add Email Notification
-        $sendTo =  ['patientsupport@circlelinkhealth.com'];
+        $sendTo = ['patientsupport@circlelinkhealth.com'];
         if (app()->environment('production')) {
-            $this->adminEmailNotify( $user, $sendTo );
+            $this->adminEmailNotify($user, $sendTo);
         }
         $user->push();
         return $user;
@@ -71,12 +71,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
-        if($user->hasRole('participant')) {
+        if ($user->hasRole('participant')) {
             $this->saveOrUpdatePatientInfo($user, $params);
         }
 
         // provider info
-        if($user->hasRole('provider')) {
+        if ($user->hasRole('provider')) {
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
@@ -92,66 +92,58 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->program_id = $params->get('program_id');
         $user->care_plan_id = $params->get('care_plan_id');
         $user->auto_attach_programs = $params->get('auto_attach_programs');
-        if($params->get('first_name')) {
+        if ($params->get('first_name')) {
             $user->first_name = $params->get('first_name');
         }
-        if($params->get('last_name')) {
+        if ($params->get('last_name')) {
             $user->last_name = $params->get('last_name');
         }
-        if($params->get('address')) {
+        if ($params->get('address')) {
             $user->address = $params->get('address');
         }
-        if($params->get('address2')) {
+        if ($params->get('address2')) {
             $user->address2 = $params->get('address2');
         }
-        if($params->get('city')) {
+        if ($params->get('city')) {
             $user->city = $params->get('city');
         }
-        if($params->get('state')) {
+        if ($params->get('state')) {
             $user->state = $params->get('state');
         }
-        if($params->get('zip')) {
+        if ($params->get('zip')) {
             $user->zip = $params->get('zip');
         }
         $user->save();
     }
 
-    public function saveOrUpdatePatientInfo(User $user, ParameterBag $params) {
-        // make sure user has patientInfo
-        if(!$user->patientInfo) {
-            $user->patientInfo = new PatientInfo();
-            $user->patientInfo->save();
-        }
+    public function saveOrUpdatePatientInfo(User $user, ParameterBag $params)
+    {
         $patientInfo = $user->patientInfo->toArray();
 
         // contact days checkbox formatting, @todo this is not normalized properly?
-        if(is_array($params->get('contact_days'))) {
+        if (is_array($params->get('contact_days'))) {
             $contactDays = $params->get('contact_days');
             $contactDaysDelmited = '';
-            for($i=0; $i < count($contactDays); $i++){
-                $contactDaysDelmited .= (count($contactDays) == $i+1) ? $contactDays[$i] : $contactDays[$i] . ', ';
+            for ($i = 0; $i < count($contactDays); $i++) {
+                $contactDaysDelmited .= (count($contactDays) == $i + 1) ? $contactDays[$i] : $contactDays[$i] . ', ';
             }
             $params->add(array('preferred_cc_contact_days' => $contactDaysDelmited));
         }
 
-        foreach($patientInfo as $key => $value) {
-            if($params->get($key)) {
+        foreach ($patientInfo as $key => $value) {
+            if ($params->get($key)) {
                 $user->patientInfo->$key = $params->get($key);
             }
         }
         $user->patientInfo->save();
     }
 
-    public function saveOrUpdateProviderInfo(User $user, ParameterBag $params) {
-        // make sure user has providerInfo
-        if(!$user->providerInfo) {
-            $user->providerInfo = new ProviderInfo();
-            $user->providerInfo->save();
-        }
+    public function saveOrUpdateProviderInfo(User $user, ParameterBag $params)
+    {
         $providerInfo = $user->providerInfo->toArray();
 
-        foreach($providerInfo as $key => $value) {
-            if($params->get($key)) {
+        foreach ($providerInfo as $key => $value) {
+            if ($params->get($key)) {
                 $user->providerInfo->$key = $params->get($key);
             }
         }
@@ -216,7 +208,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     {
         /*
         // meta
-        $userMeta = UserMeta::where('user_id', '=', $wpUser->ID)->lists('meta_value', 'meta_key');
+        $userMeta = UserMeta::where('user_id', '=', $wpUser->ID)->lists('meta_value', 'meta_key')->all();
 
         // config
         $userConfig = (new UserConfigTemplate())->getArray();
@@ -257,11 +249,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         */
     }
 
-    public function saveOrUpdatePhoneNumbers(User $user, ParameterBag $params) {
+    public function saveOrUpdatePhoneNumbers(User $user, ParameterBag $params)
+    {
         // phone numbers
-        if(!empty($params->get('study_phone_number'))) { // add study as home
+        if (!empty($params->get('study_phone_number'))) { // add study as home
             $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
-            if(!$phoneNumber) {
+            if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->is_primary = 1;
@@ -269,11 +262,10 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $phoneNumber->number = $params->get('study_phone_number');
             $phoneNumber->type = 'home';
             $phoneNumber->save();
-            echo 'Added home study_phone_number'.PHP_EOL;
         }
-        if(!empty($params->get('home_phone_number'))) {
+        if (!empty($params->get('home_phone_number'))) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
-            if(!$phoneNumber) {
+            if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->is_primary = 1;
@@ -281,44 +273,41 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $phoneNumber->number = $params->get('home_phone_number');
             $phoneNumber->type = 'home';
             $phoneNumber->save();
-            echo 'Added home home_phone_number'.PHP_EOL;
         }
-        if(!empty($params->get('work_phone_number'))) {
+        if (!empty($params->get('work_phone_number'))) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'work')->first();
-            if(!$phoneNumber) {
+            if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->user_id = $user->ID;
             $phoneNumber->number = $params->get('work_phone_number');
             $phoneNumber->type = 'work';
             $phoneNumber->save();
-            echo 'Added work work_phone_number'.PHP_EOL;
         }
-        if(!empty($params->get('mobile_phone_number'))) {
+        if (!empty($params->get('mobile_phone_number'))) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'mobile')->first();
-            if(!$phoneNumber) {
+            if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->user_id = $user->ID;
             $phoneNumber->number = $params->get('mobile_phone_number');
             $phoneNumber->type = 'mobile';
             $phoneNumber->save();
-            echo 'Added mobile mobile_phone_number'.PHP_EOL;
         }
     }
 
     public function saveOrUpdateRoles(User $user, ParameterBag $params)
     {
         // support for both single or array or roles
-        if(!empty($params->get('role'))) {
+        if (!empty($params->get('role'))) {
             $user->roles()->sync(array($params->get('role')));
             $user->save();
             $user->load('roles');
         }
 
-        if(!empty($params->get('roles'))) {
+        if (!empty($params->get('roles'))) {
             // support if one role is passed in as a string
-            if(!is_array($params->get('roles'))) {
+            if (!is_array($params->get('roles'))) {
                 $roleId = $params->get('roles');
                 $user->roles()->sync(array($roleId));
             } else {
@@ -327,7 +316,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
 
         // add patient info
-        if($user->hasRole('participant') && !$user->patientInfo) {
+        if ($user->hasRole('participant') && !$user->patientInfo) {
             $patientInfo = new PatientInfo;
             $patientInfo->user_id = $user->ID;
             $patientInfo->save();
@@ -335,7 +324,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
 
         // add provider info
-        if($user->hasRole('provider') && !$user->providerInfo) {
+        if ($user->hasRole('provider') && !$user->providerInfo) {
             $providerInfo = new ProviderInfo;
             $providerInfo->user_id = $user->ID;
             $providerInfo->save();
@@ -348,11 +337,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     {
         // get selected programs
         $userPrograms = array();
-        if($params->get('programs')) { // && ($wpUser->programs->count() > 0)
+        if ($params->get('programs')) { // && ($wpUser->programs->count() > 0)
             $userPrograms = $params->get('programs');
         }
-        if($params->get('program_id')) {
-            if(!in_array($params->get('program_id'), $userPrograms)) {
+        if ($params->get('program_id')) {
+            if (!in_array($params->get('program_id'), $userPrograms)) {
                 $userPrograms[] = $params->get('program_id');
             }
         }
@@ -360,7 +349,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         //dd($userPrograms);
 
         // if still empty at this point, no program_id or program param
-        if(empty($userPrograms)) {
+        if (empty($userPrograms)) {
             return true;
         }
 
@@ -370,7 +359,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // get role
         $roleId = $params->get('role');
-        if($roleId) {
+        if ($roleId) {
             $role = Role::find($roleId);
         } else {
             // default to participant
@@ -380,8 +369,8 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // first detatch relationship
         $wpUser->programs()->detach();
 
-        $wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('blog_id');
-        foreach($wpBlogs as $wpBlogId) {
+        $wpBlogs = Program::orderBy('blog_id', 'desc')->lists('blog_id')->all();
+        foreach ($wpBlogs as $wpBlogId) {
             if (in_array($wpBlogId, $userPrograms)) {
                 $wpUser->programs()->attach($wpBlogId);
             }
@@ -389,16 +378,16 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     }
 
 
+    public function createDefaultCarePlan($user, $params)
+    {
 
-    public function createDefaultCarePlan($user, $params) {
-
-        $program = WpBlog::find($user->program_id);
-        if(!$program) {
+        $program = Program::find($user->program_id);
+        if (!$program) {
             return false;
         }
         // just need to add programs default @todo here should get the programs default one to use from programs config
         $carePlan = CarePlan::where('program_id', '=', $program->blog_id)->where('type', '=', 'Program Default')->first();
-        if(!$carePlan) {
+        if (!$carePlan) {
             return false;
         }
 
@@ -407,7 +396,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // populate defaults from careplan
         $carePlan->build();
-        foreach($carePlan->careSections as $careSection) {
+        foreach ($carePlan->careSections as $careSection) {
             // add parent items to each section
             $careSection->carePlanItems = $carePlan->carePlanItems()
                 ->where('section_id', '=', $careSection->id)
@@ -425,7 +414,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                     // children
                     if ($carePlanItem->children->count() > 0) {
                         foreach ($carePlanItem->children as $carePlanItemChild) {
-                            $carePlan->setCareItemUserValue($user, $carePlanItemChild->careItem->name, $carePlanItemChild->meta_value);
+                            echo '  ' . $carePlanItemChild->id;
+                            echo '  ' . $carePlanItemChild->meta_value;
+                            $carePlan->setCareItemUserValue($user,
+                                $carePlanItemChild->careItem->name,
+                                $carePlanItemChild->meta_value);
                         }
                     }
                 }
@@ -497,39 +490,40 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         */
     }
 
-    public function adminEmailNotify(User $user, $recipients){
+    public function adminEmailNotify(User $user, $recipients)
+    {
 
 //   Template:
 //        From: CircleLink Health
 //        Sent: Tuesday, January 5, 10:11 PM
 //        Subject: [Site Name] New User Registration!
-//        To: Phil Lawlor       Plawlor@circlelinkhealth.com
-//            Linda Warshavsky  lindaw@circlelinkhealth.com
+//        To: Linda Warshavsky  lindaw@circlelinkhealth.com
 //
 //New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
 
         $email_view = 'emails.newpatientnotify';
-        $program = WpBlog::find($user->blogId());
+        $program = Program::find($user->blogId());
         $program_name = $program->display_name;
-        $email_subject = '[' . $program_name . '] New '. ucwords($user->role()) .' Registration!';
+        $email_subject = '[' . $program_name . '] New ' . ucwords($user->role()) . ' Registration!';
         $data = array(
             'patient_name' => $user->getFullNameAttribute(),
             'patient_id' => $user->ID,
             'patient_email' => $user->getEmailForPasswordReset(),
             'program' => $program_name
         );
+        
+            Mail::send($email_view, $data, function ($message) use ($recipients, $email_subject) {
+                $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
+                $message->to($recipients)->subject($email_subject);
+            });
 
-        Mail::send($email_view, $data, function($message) use ($recipients,$email_subject) {
-            $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
-            $message->to($recipients)->subject($email_subject);
-        });
     }
 
     public function findByRole($role, $select = '*')
     {
         return User::select(DB::raw($select))
-            ->whereHas( 'roles', function ($q) use ($role) {
-            $q->where( 'name', '=', $role );
-        } )->get();
+            ->whereHas('roles', function ($q) use ($role) {
+                $q->where('name', '=', $role);
+            })->get();
     }
 }

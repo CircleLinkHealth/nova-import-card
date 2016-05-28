@@ -25,7 +25,7 @@ class AllergenNamesList implements ParsingStrategy
 
             $ccdAllergyLog->import = true;
             $ccdAllergyLog->save();
-
+            
             $importedAllergy = new AllergyImport();
 
             $allergiesList[] = $importedAllergy->create([

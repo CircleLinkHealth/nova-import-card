@@ -10,7 +10,7 @@ trait Instructable
      *
      * @return mixed
      */
-    public function instructions()
+    public function cpmInstructions()
     {
         return $this->morphToMany(CpmInstruction::class, 'instructable');
     }

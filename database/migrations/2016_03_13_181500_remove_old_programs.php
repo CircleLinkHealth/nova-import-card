@@ -2,7 +2,7 @@
 
 use App\Role;
 use App\User;
-use App\WpBlog;
+use App\Program;
 use App\CLH\Repositories\UserRepository;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -18,14 +18,14 @@ class RemoveOldPrograms extends Migration {
 	public function up()
 	{
 		// get programs
-		$programs = WpBlog::where('blog_id', '<', '7')->get();
+		$programs = Program::where('blog_id', '<', '7')->get();
 		$i = 0;
 		$programIds = array('');
 		foreach($programs as $program) {
 			$programIds[] = $program->blog_id;
 		}
 		foreach($programIds as $programId) {
-			$program = WpBlog::where('blog_id', '=', $programId)->first();
+			$program = Program::where('blog_id', '=', $programId)->first();
 			if(empty($program)) {
 				echo PHP_EOL . 'Processing program:: EMPTY';
 			} else {

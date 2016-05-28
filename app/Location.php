@@ -32,7 +32,7 @@ class Location extends Entity implements LocationInterface
 
     public function program()
     {
-        return $this->belongsTo('App\WpBlog', 'location_id');
+        return $this->belongsTo(Program::class, 'location_id');
     }
 
     public function user()
@@ -56,9 +56,9 @@ class Location extends Entity implements LocationInterface
             if(!$parent_location) {
                 return false;
             }
-            return Location::where('parent_id', '=', $parent_location->id)->lists('name', 'id');
+            return Location::where('parent_id', '=', $parent_location->id)->lists('name', 'id')->all();
         } else {
-            return Location::where('parent_id', '!=', 'NULL')->lists('name', 'id');
+            return Location::where('parent_id', '!=', 'NULL')->lists('name', 'id')->all();
         }
     }
 
@@ -70,23 +70,23 @@ class Location extends Entity implements LocationInterface
 
     public static function getAllNodes()
     {
-        return Location::all()->lists('name', 'id');
+        return Location::all()->lists('name', 'id')->all();
     }
 
     public static function getAllParents()
     {
-        return Location::whereRaw('parent_id IS NULL')->lists('name', 'id');
+        return Location::whereRaw('parent_id IS NULL')->lists('name', 'id')->all();
     }
 
     public static function getParents($id)
     {
         $l = Location::find($id);
-        return Location::where('id',$l->parent_id)->lists('name', 'id');
+        return Location::where('id',$l->parent_id)->lists('name', 'id')->all();
     }
 
     public static function getParentsSubs($id)
     {
-        return Location::where('parent_id', '=', $id)->lists('name', 'id');
+        return Location::where('parent_id', '=', $id)->lists('name', 'id')->all();
     }
 
 }

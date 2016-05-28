@@ -21,6 +21,7 @@ var CcdUploader = Vue.extend({
             blogs: new Array,
             ccdVendors: new Array,
             selectedVendor: null,
+            selectedProgram: null,
             progress: 0,
             buffer: 100,
             message: 'Drop CCD Records in the box below, or click on it to browse your computer for CCDs. It is recommended that you import up to 5 CCDs in one go.',
@@ -78,10 +79,12 @@ var UploadedCcdsPanel = Vue.extend({
         syncCcds: function () {
             $('#syncCcdsBtn').attr('disabled', true);
 
-            this.$http.post('/ccd-importer/import', {
+            var payload = {
                 ccdsToImport: this.okToImport,
                 ccdsToDelete: this.okToDelete
-            }, function (data, status, request) {
+            };
+
+            this.$http.post('/ccd-importer/import', payload, function (data, status, request) {
                 if (data.imported) {
                     for (var i = 0; i < data.imported.length; i++) {
                         $('#import-row-' + data.imported[i].ccdaId).html(

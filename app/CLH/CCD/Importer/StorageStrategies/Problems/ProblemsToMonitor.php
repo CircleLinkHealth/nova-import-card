@@ -6,22 +6,25 @@ namespace App\CLH\CCD\Importer\StorageStrategies\Problems;
 use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\StorageStrategy;
+use App\Models\CPM\CpmProblem;
 
 
 class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
 {
-    public function import($cpmProblemNames = [])
+    public function import($cpmProblemIds = [])
     {
-        if ( empty($cpmProblemNames) ) return;
+        if ( empty($cpmProblemIds) ) return;
+        
+        $cpmProblems = CpmProblem::findMany($cpmProblemIds);
 
-        $carePlan = CarePlan::where( 'program_id', '=', $this->blogId )->where( 'type', '=', 'Program Default' )->first();
+        foreach ($cpmProblems as $cpmProblem)
+        {
+            $instructions = $cpmProblem->cpmInstructions()->get();
 
-        if ( !$carePlan ) {
-            throw new \Exception( 'Careplan Not Found' );
+            $this->user->cpmProblems()->attach($cpmProblem->id, [
+                'cpm_instruction_id' => $instructions->isEmpty() ?: $instructions[0]->id,
+            ]);
         }
-
-        foreach ( $cpmProblemNames as $cpmProblemName ) {
-            $carePlan->setCareItemUserValue( $this->user, $cpmProblemName, "Active" );
-        }
+        
     }
 }

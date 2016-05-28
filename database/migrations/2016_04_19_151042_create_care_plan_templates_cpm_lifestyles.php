@@ -31,6 +31,9 @@ class CreateCarePlanTemplatesCpmLifestyles extends Migration {
 				->onDelete('cascade');
 
 			$table->timestamps();
+
+			$table->unique(['cpm_lifestyle_id', 'care_plan_template_id']);
+
 		});
 	}
 

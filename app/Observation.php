@@ -171,7 +171,7 @@ class Observation extends Model {
             $q->where('meta_key', 'starting_observation')
               ->where('message_id', $message_id);
 
-        })->where('user_id', $userId)->lists('obs_value');
+        })->where('user_id', $userId)->lists('obs_value')->all();
         */
 
         $starting = Observation::where('user_id', $userId)

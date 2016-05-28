@@ -1,152 +1,145 @@
 <?php namespace App;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
+use App\Contracts\Serviceable;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
+use App\Models\CPM\Biometrics\CpmBloodPressure;
+use App\Models\CPM\Biometrics\CpmBloodSugar;
+use App\Models\CPM\Biometrics\CpmSmoking;
+use App\Models\CPM\Biometrics\CpmWeight;
+use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmLifestyle;
 use App\Models\CPM\CpmMedicationGroup;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
+use App\Services\UserService;
 use DateTime;
-use Hautelook\Phpass\PasswordHash;
 use Illuminate\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use Illuminate\Support\Facades\App;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use MikeMcLin\WpPassword\Facades\WpPassword;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
-use Auth;
-
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract
-{
-
-    use SoftDeletes;
-
-    use Authenticatable, CanResetPassword, EntrustUserTrait;
-
-    // for revisionable
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionCreationsEnabled = true;
-
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'users';
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'ID';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = ['user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log', 'user_status', 'auto_attach_programs', 'display_name', 'spam', 'password',
-        'first_name',
-        'last_name',
-        'address',
-        'city',
-        'state',
-        'zip',
-        'is_auto_generated'];
-
-    protected $hidden = ['user_pass'];
-
-    protected $dates = ['user_registered'];
-
-    /**
-     * @todo: make timestamps work
-     */
-    public $timestamps = false;
-
-    public $rules = array(
-        'user_login' => 'required',                        // just a normal required validation
-        'user_email' => 'required|email',     // required and must be unique in the wp_users table
-        'user_pass' => 'required',
-        'user_pass_confirm' => 'required|same:user_pass',           // required and has to match the password field
-        //'user_nicename'         => 'required',
-        //'user_status'         => 'required',
-        //'display_name'         => 'required',
-    );
-
-    public $patient_rules = array(
-        //"user_id" => "required",
-        "daily_reminder_optin" => "required",
-        "daily_reminder_time" => "required",
-        "daily_reminder_areas" => "required",
-        "hospital_reminder_optin" => "required",
-        "hospital_reminder_time" => "required",
-        "hospital_reminder_areas" => "required",
-        "qualification" => "",
-        "specialty" => "",
-        "npi_number" => "",
-        "first_name" => "required",
-        "last_name" => "required",
-        "gender" => "required",
-        "mrn_number" => "required",
-        "birth_date" => "required",
-        "home_phone_number" => "required",
-        "email" => "",
-        "address" => "",
-        "city" => "",
-        "state" => "",
-        "zip" => "",
-        "preferred_contact_time" => "required",
-        "preferred_contact_timezone" => "required",
-        "consent_date" => "required",
-        "ccm_status" => "required",
-        "program_id" => "required"
-    );
 
 
-    // WordPress uses differently named fields for create and update fields than Laravel does
-    const CREATED_AT = 'post_date';
-    const UPDATED_AT = 'post_modified';
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable {
+
+	use SoftDeletes;
+
+	use Authenticatable, CanResetPassword, EntrustUserTrait;
+
+	// for revisionable
+	use \Venturecraft\Revisionable\RevisionableTrait;
+	protected $revisionCreationsEnabled = true;
+
+	/**
+	 * The database table used by the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'users';
+
+	/**
+	 * The primary key for the model.
+	 *
+	 * @var string
+	 */
+	protected $primaryKey = 'ID';
+
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array
+	 */
+	protected $fillable = [
+		'user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log',
+		'user_status', 'auto_attach_programs', 'display_name', 'spam', 'password', 'first_name', 'last_name', 'address',
+		'city', 'state', 'zip', 'is_auto_generated', 'program_id'];
+
+	protected $hidden = ['user_pass', 'password'];
+
+	protected $dates = ['user_registered'];
+
+	/**
+	 * @todo: make timestamps work
+	 */
+	public $timestamps = false;
+
+	public $rules = array(
+		'user_login'             => 'required',                        // just a normal required validation
+		'user_email'            => 'required|email',     // required and must be unique in the wp_users table
+		'user_pass'         => 'required',
+		'user_pass_confirm' => 'required|same:user_pass',           // required and has to match the password field
+		//'user_nicename'         => 'required',
+		//'user_status'         => 'required',
+		//'display_name'         => 'required',
+	);
+
+	public $patient_rules = array(
+		//"user_id" => "required",
+		"daily_reminder_optin" => "required",
+		"daily_reminder_time" => "required",
+		"daily_reminder_areas" => "required",
+		"hospital_reminder_optin" => "required",
+		"hospital_reminder_time" => "required",
+		"hospital_reminder_areas" => "required",
+		"qualification" => "",
+		"specialty" => "",
+		"npi_number" => "",
+		"first_name" => "required",
+		"last_name" => "required",
+		"gender" => "required",
+		"mrn_number" => "required",
+		"birth_date" => "required",
+		"home_phone_number" => "required",
+		"email" => "",
+		"address" => "",
+		"city" => "",
+		"state" => "",
+		"zip" => "",
+		"preferred_contact_time" => "required",
+		"preferred_contact_timezone" => "required",
+		"consent_date" => "required",
+		"ccm_status" => "required",
+		"program_id" => "required"
+	);
 
 
-    // for revisionable
-    public static function boot()
-    {
-        parent::boot();
 
-        static::deleting(function ($user) {
-            $user->providerInfo()->delete();
-            $user->patientInfo()->delete();
-            $user->patientCarePlans()->delete();
-            $user->patientCareTeamMembers()->delete();
-        });
-
-        self::restoring(function ($user) {
-            $user->providerInfo()->restore();
-            $user->patientInfo()->restore();
-            $user->patientCarePlans()->restore();
-            $user->patientCareTeamMembers()->restore();
-        });
-    }
+	// WordPress uses differently named fields for create and update fields than Laravel does
+	const CREATED_AT = 'post_date';
+	const UPDATED_AT = 'post_modified';
 
 
-    public function getAuthIdentifier()
-    {
-        return $this->getKey();
-    }
+	// for revisionable
+	public static function boot()
+	{
+		parent::boot();
+
+		static::deleting(function($user) {
+			$user->providerInfo()->delete();
+			$user->patientInfo()->delete();
+			$user->carePlan()->delete();
+			$user->patientCareTeamMembers()->delete();
+		});
+
+		self::restoring(function ($user) {
+			$user->providerInfo()->restore();
+			$user->patientInfo()->restore();
+			$user->carePlan()->restore();
+			$user->patientCareTeamMembers()->restore();
+		});
+	}
+
+	public function getAuthIdentifier()
+	{
+		return $this->getKey();
+	}
 
     public function getAuthPassword()
     {
@@ -199,12 +192,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      */
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function cpmBiometrics()
+	{
+		return $this->belongsToMany(CpmBiometric::class, 'cpm_biometrics_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
+			->withTimestamps('created_at', 'updated_at');
+	}
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function cpmLifestyles()
     {
-        return $this->belongsToMany(CpmLifestyle::class, 'cpm_lifestyles_users');
+        return $this->belongsToMany(CpmLifestyle::class, 'cpm_lifestyles_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
+			->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -212,7 +217,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmMedicationGroups()
     {
-        return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_medication_groups_users');
+        return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_medication_groups_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
+			->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -220,7 +227,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmMiscs()
     {
-        return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users');
+        return $this->belongsToMany(CpmMisc::class, 'cpm_miscs_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
+			->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -228,7 +237,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmProblems()
     {
-        return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users');
+        return $this->belongsToMany(CpmProblem::class, 'cpm_problems_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
+			->withTimestamps('created_at', 'updated_at');
     }
 
     /**
@@ -236,8 +247,49 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function cpmSymptoms()
     {
-        return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users');
+        return $this->belongsToMany(CpmSymptom::class, 'cpm_symptoms_users', 'patient_id')
+			->withPivot('cpm_instruction_id')
+			->withTimestamps('created_at', 'updated_at');
     }
+
+
+	/*
+	 *
+	 * CPM Biometrics
+	 *
+	 */
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function cpmBloodPressure()
+	{
+		return $this->hasOne(CpmBloodPressure::class, 'patient_id');
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function cpmBloodSugar()
+	{
+		return $this->hasOne(CpmBloodSugar::class, 'patient_id');
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function cpmSmoking()
+	{
+		return $this->hasOne(CpmSmoking::class, 'patient_id');
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function cpmWeight()
+	{
+		return $this->hasOne(CpmWeight::class, 'patient_id');
+	}
 
     /*****/
 
@@ -254,6 +306,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function meta()
     {
         return $this->hasMany('App\UserMeta', 'user_id', 'ID');
+    }
+
+    public function patientDemographics()
+    {
+        return $this->hasMany(DemographicsImport::class, 'provider_id');
     }
 
     public function comment()
@@ -276,213 +333,211 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\Activity');
     }
 
+	public function patientActivities()
+	{
+		return $this->hasMany('App\Activity', 'patient_id', 'ID');
+	}
+
     public function ucp()
-    {
-        return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
-    }
+	{
+		return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
+	}
 
-    public function providerInfo()
-    {
-        return $this->hasOne('App\ProviderInfo', 'user_id', 'ID');
-    }
+	public function providerInfo()
+	{
+		return $this->hasOne('App\ProviderInfo', 'user_id', 'ID');
+	}
 
-    public function patientInfo()
-    {
-        return $this->hasOne('App\PatientInfo', 'user_id', 'ID');
-    }
+	public function patientInfo()
+	{
+		return $this->hasOne('App\PatientInfo', 'user_id', 'ID');
+	}
 
-    public function phoneNumbers()
-    {
-        return $this->hasMany('App\PhoneNumber', 'user_id', 'ID');
-    }
+	public function phoneNumbers()
+	{
+		return $this->hasMany('App\PhoneNumber', 'user_id', 'ID');
+	}
 
-    public function patientCarePlans()
-    {
-        return $this->hasMany('App\PatientCarePlan', 'user_id', 'ID');
-    }
+	public function carePlan()
+	{
+		return $this->hasOne(PatientCarePlan::class, 'patient_id', 'ID');
+	}
 
-    public function patientCareTeamMembers()
-    {
-        return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'ID');
-    }
-
-
-// END RELATIONSHIPS
+	public function patientCareTeamMembers()
+	{
+		return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'ID');
+	}
 
 
-    public function viewableProgramIds()
-    {
-        $programIds = $this->programs()->lists('blog_id');
-        return $programIds;
-    }
+	// END RELATIONSHIPS
 
-    public function viewablePatientIds()
-    {
-        // get all patients who are in the same programs
-        $programIds = $this->viewableProgramIds();
-        $patientIds = User::whereHas('programs', function ($q) use ($programIds) {
-            $q->whereIn('program_id', $programIds);
-        });
 
-        if (!Auth::user()->can('admin-access')) {
-            $patientIds->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            });
-        }
+	public function viewableProgramIds() {
+		$programIds = $this->programs()->lists('blog_id')->all();
+		return $programIds;
+	}
 
-        $patientIds = $patientIds->lists('ID');
-        return $patientIds;
-    }
+	public function viewablePatientIds() {
+		// get all patients who are in the same programs
+		$programIds = $this->viewableProgramIds();
+		$patientIds = User::whereHas('programs', function ($q) use ($programIds) {
+			$q->whereIn('program_id', $programIds);
+		});
 
-    public function viewableUserIds()
-    {
-        // get all patients who are in the same programs
-        $programIds = $this->viewableProgramIds();
-        $patientIds = User::whereHas('programs', function ($q) use ($programIds) {
-            $q->whereIn('program_id', $programIds);
-        });
+		//if(!Auth::user()->can('admin-access')) {
+			$patientIds->whereHas('roles', function ($q) {
+				$q->where('name', '=', 'participant');
+			});
+		//}
 
-        $patientIds = $patientIds->lists('ID');
-        return $patientIds;
-    }
+		$patientIds = $patientIds->lists('ID')->all();
+		return $patientIds;
+	}
 
-    public function userConfig()
-    {
-        $key = 'wp_' . $this->blogId() . '_user_config';
-        $userConfig = $this->meta->where('meta_key', $key)->first();
-        if (!$userConfig) {
-            return false;
-        } else {
-            return unserialize($userConfig['meta_value']);
-        }
-    }
+	public function viewableUserIds() {
+		// get all patients who are in the same programs
+		$programIds = $this->viewableProgramIds();
+		$patientIds = User::whereHas('programs', function ($q) use ($programIds) {
+			$q->whereIn('program_id', $programIds);
+		});
 
-    public function userMeta($key = null)
-    {
-        $userMeta = $this->meta->lists('meta_value', 'meta_key');
-        $userMeta['user_config'] = $this->userConfig();
-        if (!$userMeta) {
-            return false;
-        } else {
-            return $userMeta;
-        }
-    }
+		$patientIds = $patientIds->lists('ID')->all();
+		return $patientIds;
+	}
 
-    public function getUserMetaByKey($key)
-    {
-        $value = '';
-        $meta = $this->meta->where('meta_key', $key)->first();
-        if (!empty($meta && $meta->meta_value != '')) {
-            $value = $meta->meta_value;
-        }
-        return $value;
-    }
+    public function userConfig(){
+		$key = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = $this->meta->where('meta_key', $key)->first();
+		if(!$userConfig) {
+			return false;
+		} else {
+			return unserialize($userConfig['meta_value']);
+		}
+	}
 
-    public function setUserMetaByKey($key, $value)
-    {
-        $meta = $this->meta->where('meta_key', $key)->first();
-        if (!empty($meta)) {
-            $meta->meta_value = $value;
-            $meta->save();
-        } else {
-            $meta = new UserMeta;
-            $meta->meta_key = $key;
-            $meta->meta_value = $value;
-            $meta->user_id = $this->ID;
-            $this->meta()->save($meta);
-            $this->load('meta');
-        }
-        return true;
-    }
+    public function userMeta($key=null){
+		$userMeta = $this->meta->lists('meta_value', 'meta_key')->all();
+		$userMeta['user_config'] = $this->userConfig();
+		if(!$userMeta) {
+			return false;
+		} else {
+			return $userMeta;
+		}
+	}
 
-    public function getUserConfigByKey($key)
-    {
-        $userConfig = $this->userConfig();
-        return (isset($userConfig[$key])) ? $userConfig[$key] : '';
-    }
+	public function getUserMetaByKey($key)
+	{
+		$value = '';
+		$meta = $this->meta->where('meta_key', $key)->first();
+		if(!empty($meta && $meta->meta_value != '' ) ) {
+			$value = $meta->meta_value;
+		}
+		return $value;
+	}
 
-    public function setUserConfigByKey($key, $value)
-    {
-        $configKey = 'wp_' . $this->blogId() . '_user_config';
-        $userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key', $configKey)->first();
-        if (empty($userConfig)) {
-            $userConfig = new UserMeta;
-            $userConfig->meta_key = $configKey;
-            $userConfig->meta_value = serialize(array());
-            $userConfig->user_id = $this->ID;
-            $userConfig->save();
-            $userConfigArray = array();
-        } else {
-            $userConfigArray = unserialize($userConfig['meta_value']);
-        }
+	public function setUserMetaByKey($key, $value)
+	{
+		$meta = $this->meta->where('meta_key', $key)->first();
+		if( !empty($meta) ) {
+			$meta->meta_value = $value;
+			$meta->save();
+		} else {
+			$meta = new UserMeta;
+			$meta->meta_key = $key;
+			$meta->meta_value = $value;
+			$meta->user_id = $this->ID;
+			$this->meta()->save($meta);
+			$this->load('meta');
+		}
+		return true;
+	}
 
-        // serialize value if needed
-        /*
-        if(is_array($value)) {
-            $value = serialize($value);
-        }
-        */
-        $userConfigArray[$key] = $value;
-        $userConfig->meta_value = serialize($userConfigArray);
-        $userConfig->save();
-        return true;
-    }
+	public function getUserConfigByKey($key)
+	{
+		$userConfig = $this->userConfig();
+		return (isset($userConfig[$key])) ? $userConfig[$key] : '';
+	}
 
-// START ATTRIBUTES
-    public function setUserAttributeByKey($key, $value)
-    {
+	public function setUserConfigByKey($key, $value)
+	{
+		$configKey = 'wp_'.$this->blogId().'_user_config';
+		$userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key',$configKey)->first();
+		if(empty($userConfig)) {
+			$userConfig = new UserMeta;
+			$userConfig->meta_key = $configKey;
+			$userConfig->meta_value = serialize(array());
+			$userConfig->user_id = $this->ID;
+			$userConfig->save();
+			$userConfigArray = array();
+		} else {
+			$userConfigArray = unserialize($userConfig['meta_value']);
+		}
 
-        $func = create_function('$c', 'return strtoupper($c[1]);');
-        $attribute = preg_replace_callback('/_([a-z])/', $func, $key);
+		// serialize value if needed
+		/*
+		if(is_array($value)) {
+			$value = serialize($value);
+		}
+		*/
+		$userConfigArray[$key] = $value;
+		$userConfig->meta_value = serialize($userConfigArray);
+		$userConfig->save();
+		return true;
+	}
 
-        // these are now on User model, no longer remote attributes:
-        if ($key === 'firstName' || $key == 'lastName') {
-            return true;
-        }
+    // START ATTRIBUTES
+	public function setUserAttributeByKey($key, $value)
+	{
+		$func = create_function('$c', 'return strtoupper($c[1]);');
+		$attribute = preg_replace_callback('/_([a-z])/', $func, $key);
 
-        // hack overrides and depreciated keys, @todo fix these
-        if ($attribute == 'careplanProviderDate') {
-            $attribute = 'careplanProviderApproverDate';
-        } else if ($attribute == 'mrnNumber') {
-            $attribute = 'mrn';
-        } else if ($attribute == 'studyPhoneNumber') {
-            return false;
-        } else if ($attribute == 'billingProvider') {
-            $attribute = 'billingProviderID';
-        } else if ($attribute == 'leadContact') {
-            $attribute = 'leadContactID';
-        } else if ($attribute == 'programId') {
-            return false;
-        }
+		// these are now on User model, no longer remote attributes:
+		if( $key === 'firstName' || $key == 'lastName' ) {
+			return true;
+		}
 
-        // serialize any arrays
-        if (is_array($value)) {
-            $value = serialize($value);
-        }
+		// hack overrides and depreciated keys, @todo fix these
+		if($attribute == 'careplanProviderDate') {
+			$attribute = 'careplanProviderApproverDate';
+		} else if($attribute == 'mrnNumber') {
+			$attribute = 'mrn';
+		} else if($attribute == 'studyPhoneNumber') {
+			$attribute = 'phone';
+		} else if($attribute == 'billingProvider') {
+			$attribute = 'billingProviderID';
+		} else if($attribute == 'leadContact') {
+			$attribute = 'leadContactID';
+		} else if($attribute == 'programId') {
+			return false;
+		}
 
-        // get before for debug
-        $before = $this->$attribute;
-        if (is_array($before)) {
-            $before = serialize($before);
-        }
+		// serialize any arrays
+		if(is_array($value)) {
+			$value = serialize($value);
+		}
 
-        // call save attribute
-        echo '----' . $attribute . '<br />';
-        $this->$attribute = $value;
-        $this->save();
+		// get before for debug
+		$before = $this->$attribute;
+		if(is_array($before)) {
+			$before = serialize($before);
+		}
 
-        // get after for debug
-        $after = $this->$attribute;
-        if (is_array($after)) {
-            $after = serialize($after);
-        }
-        //echo $attribute .' -- Before: ' . $before . '<br />';
-        //echo $attribute .' -- Value: ' . $value . '<br />';
-        //echo $attribute .' -- After: ' . $after . '<br />';
-        return true;
-    }
+		// call save attribute
+		$this->$attribute = $value;
+		$this->save();
 
-// basic attributes
+		// get after for debug
+		$after = $this->$attribute;
+		if(is_array($after)) {
+			$after = serialize($after);
+		}
+		//echo $attribute .' -- Before: ' . $before . '<br />';
+		//echo $attribute .' -- Value: ' . $value . '<br />';
+		//echo $attribute .' -- After: ' . $after . '<br />';
+		return true;
+	}
+
+    // basic attributes
 
 	// first_name
 	/*
@@ -508,7 +563,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return true;
 	}
 
-// full name
+	// full name
     public function getFullNameAttribute()
     {
         $firstName = $this->first_name;
@@ -556,15 +611,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 // registration_date
     public function getRegistrationDateAttribute()
     {
-        if (!$this->patientInfo) return '';
-        return $this->patientInfo->registration_date;
+        return $this->user_registered;
     }
 
     public function setRegistrationDateAttribute($value)
     {
-        if (!$this->patientInfo) return '';
-        $this->patientInfo->registration_date = $value;
-        $this->patientInfo->save();
+        $this->user_registered = $value;
+        $this->save();
         return true;
     }
 
@@ -1503,12 +1556,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function primaryProgram()
     {
-        return $this->belongsTo('App\WpBlog', 'program_id', 'blog_id');
+        return $this->belongsTo(Program::class, 'program_id', 'blog_id');
     }
 
     public function programs()
     {
-        return $this->belongsToMany('App\WpBlog', 'lv_program_user', 'user_id', 'program_id');
+        return $this->belongsToMany(Program::class, 'lv_program_user', 'user_id', 'program_id');
     }
 
 // user data scrambler
@@ -1559,7 +1612,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         $this->user_login = $user_email;
         $this->user_email = $user_email;
-        $this->user_pass = $user_pass;
+        $this->password = bcrypt($user_pass);
         $this->save();
 
         return $this;
@@ -1593,4 +1646,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
         return $userUcpData;
     }
+	
+	//Get this model's serice
+	public function service()
+	{
+		return new UserService();
+	}
 }

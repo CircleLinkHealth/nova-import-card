@@ -3,7 +3,7 @@
 use App\Role;
 use App\User;
 use App\UserMeta;
-use App\WpBlog;
+use App\Program;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -52,7 +52,7 @@ class AttachCareCenterRoles  extends Migration {
 					}
 					echo PHP_EOL.'Attach '. $userInfo['id'] .' to role '. $userInfo['program'];
 					// attach program
-					$program = WpBlog::find($userInfo['program']);
+					$program = Program::find($userInfo['program']);
 					if(!$program) {
 						continue 1;
 					}

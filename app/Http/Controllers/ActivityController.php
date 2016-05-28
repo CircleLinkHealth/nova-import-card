@@ -2,7 +2,7 @@
 
 use App\Activity;
 use App\ActivityMeta;
-use App\WpBlog;
+use App\Program;
 use App\User;
 use App\UserMeta;
 use App\Services\ActivityService;
@@ -21,25 +21,14 @@ use Illuminate\Support\Facades\Mail;
  */
 class ActivityController extends Controller {
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @param Request $request
-	 * @return Response
-	 */
 	public function index(Request $request)
 	{
-		// display view
-		$activities = Activity::orderBy('id', 'desc')->paginate(10);
-		return view('activities.index', [ 'activities' => $activities ]);
+			// display view
+			$activities = Activity::orderBy('id', 'desc')->paginate(10);
+			return view('activities.index', [ 'activities' => $activities ]);
 
 	}
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
 	public function create(Request $request, $patientId)
 	{
 
@@ -75,7 +64,7 @@ class ActivityController extends Controller {
 			}
 
 			//providers
-			$providers = WpBlog::getProviders($user->blogId());
+			$providers = Program::getProviders($user->blogId());
 			$provider_info = array();
 
 			foreach ($providers as $provider) {
@@ -98,16 +87,10 @@ class ActivityController extends Controller {
 		}
 	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  array  $params
-	 * @return Response
-	 */
 	public function store(Request $request, $params = false)
 	{
 
-		if($params) {
+        if($params) {
 			$input = $request->all();
 		} else if ( $request->isJson() ) {
 			$input = $request->input();
@@ -115,7 +98,7 @@ class ActivityController extends Controller {
 			return response("Unauthorized", 401);
 		}//debug($request->all());
 
-		// convert minutes to seconds.
+        // convert minutes to seconds.
 		if($input['duration']) {
 			$input['duration'] = $input['duration'] * 60;
 		}
@@ -144,14 +127,6 @@ class ActivityController extends Controller {
 		return redirect()->route('patient.activity.view', ['patient' => $activity->patient_id, 'actId' => $activity->id])->with('messages', ['Successfully Created New Offline Activity']);
 	}
 
-
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function show(Request $input, $patientId, $actId)
 	{
 		$patient = User::find($patientId);
@@ -187,12 +162,6 @@ class ActivityController extends Controller {
 		return view('wpUsers.patient.activity.view', $view_data);
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param Request $request
-	 * @return Response
-	 */
 	public function update(Request $request)
 	{
 		if ( $request->isJson() )
@@ -226,13 +195,7 @@ class ActivityController extends Controller {
 
 		return response("Activity Updated", 201);
 	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
+	
 	public function destroy($id)
 	{
 		//
@@ -247,16 +210,16 @@ class ActivityController extends Controller {
 		$messages = \Session::get('messages');
 		if (isset($input['selectMonth'])) {
 			$time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
-			$start = $time->startOfMonth()->toDateTimeString();
-			$end = $time->endOfMonth()->toDateTimeString();
+			$start = $time->startOfMonth()->format('Y-m-d');
+			$end = $time->endOfMonth()->format('Y-m-d');
 			$month_selected = $time->format('m');
 			$month_selected_text = $time->format('F');
 			$year_selected = $time->format('Y');
 
 		} else {
 			$time = Carbon::now();
-			$start = Carbon::now()->startOfMonth()->toDateTimeString();
-			$end = Carbon::now()->endOfMonth()->toDateTimeString();
+			$start = Carbon::now()->startOfMonth()->format('Y-m-d');
+			$end = Carbon::now()->endOfMonth()->format('Y-m-d');
 			$month_selected = $time->format('m');
 			$month_selected_text = $time->format('F');
 			$year_selected = $time->format('Y');
@@ -309,5 +272,5 @@ class ActivityController extends Controller {
 				'data' => $data,
 				'messages' => $messages
 			]);
-	}
+		}
 }

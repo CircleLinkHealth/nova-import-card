@@ -1,6 +1,6 @@
 <?php namespace database\seeds;
 
-use App\WpBlog;
+use App\Program;
 use App\CarePlan;
 use App\CareSection;
 use App\CareItem;
@@ -91,13 +91,13 @@ class S20151215CarePlanMigration3 extends Seeder {
     // this will create the system default careplan
     public function run() {
         echo "start";
-        $programs = WpBlog::where('blog_id', '>', '6')->get();
+        $programs = Program::where('blog_id', '>', '6')->get();
         if(empty($programs)) {
             dd('no programs');
         }
         foreach($programs as $program) {
             // get pcp sections
-            $pcps = CPRulesPCP::where('prov_id', '=', $program->blog_id)->lists('pcp_id');
+            $pcps = CPRulesPCP::where('prov_id', '=', $program->blog_id)->lists('pcp_id')->all();
 
             // get items for these sections
             $items = CPRulesItem::whereIn('pcp_id', $pcps)->get();

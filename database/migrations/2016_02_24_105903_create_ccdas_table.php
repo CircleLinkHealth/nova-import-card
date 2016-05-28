@@ -24,7 +24,7 @@ class CreateCcdasTable extends Migration {
 
 			$table->foreign('user_id')
 				->references('ID')
-				->on('wp_users')
+				->on((new \App\User())->getTable())
 				->onUpdate('cascade')
 				->onDelete('cascade');
 

@@ -142,8 +142,6 @@ $provider = App\User::find($patient->getBillingProviderIDAttribute());
                             <div class="col-xs-12 col-sm-4 col-sm-pull-2 col-xs-pull-2">
                                 <div class="patient-summary__info__graph">
                                     <div id="chartDiv-mg/dL" style="width:360px;height:160px;margin:1px;"></div>
-                                    <script src="http://sbcf.cpm.com/wp-content/themes/CLH_Provider/respo/webix/codebase/webix.js"
-                                            type="text/javascript"></script>
 
                                     <script>
 

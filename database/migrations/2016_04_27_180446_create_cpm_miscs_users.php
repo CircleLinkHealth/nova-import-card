@@ -32,7 +32,7 @@ class CreateCpmMiscsUsers extends Migration {
 
 			$table->timestamps();
 
-			$table->index(['patient_id', 'cpm_misc_id']);
+			$table->unique(['patient_id', 'cpm_misc_id']);
 		});
 	}
 

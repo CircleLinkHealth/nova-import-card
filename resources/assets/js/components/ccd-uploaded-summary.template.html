@@ -6,7 +6,8 @@
             <th class="mdl-data-table__cell--non-numeric">Edit</th>
             <th class="mdl-data-table__cell--non-numeric">Delete</th>
             <th class="mdl-data-table__cell--non-numeric">Name</th>
-            <th class="mdl-data-table__cell--non-numeric">CCDA ID</th>
+            <th class="mdl-data-table__cell--non-numeric">Duplicate User id</th>
+            <th class="mdl-data-table__cell--non-numeric">CCDA id</th>
             <th class="mdl-data-table__cell--non-numeric">Provider</th>
             <th class="mdl-data-table__cell--non-numeric">Location</th>
             <th>Allergies</th>
@@ -39,12 +40,19 @@
                        for="delete-{{ qaSummary.ccda_id }}" id="delete-label-{{ qaSummary.ccda_id }}">
                     <input v-model="okToDelete" value="{{ qaSummary.ccda_id }}" type="checkbox"
                            id="delete-{{ qaSummary.ccda_id }}" class="mdl-switch__input"
-                            v-on:click="toggleCheckboxes">
+                           v-on:click="toggleCheckboxes">
                     <span class="mdl-switch__label"></span>
                 </label>
             </td>
 
             <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.name }}</td>
+
+            <td class="mdl-data-table__cell--non-numeric">
+                <a v-if="qaSummary.duplicate_id" target="_blank" href="/manage-patients/{{ qaSummary.duplicate_id }}/summary">
+                    {{ qaSummary.duplicate_id }}
+                </a>
+            </td>
+
             <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.ccda_id }}</td>
             <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.provider }}</td>
             <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.location }}</td>

@@ -9,6 +9,8 @@ use App\CLH\Contracts\CCD\StorageStrategy;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesUCP;
+use App\Models\CPM\CpmInstruction;
+use App\Models\CPM\CpmMisc;
 use Illuminate\Support\Facades\Log;
 
 class MedicationsList extends BaseStorageStrategy implements StorageStrategy
@@ -16,13 +18,17 @@ class MedicationsList extends BaseStorageStrategy implements StorageStrategy
 
     public function import($medsList)
     {
-        $carePlan = CarePlan::where( 'program_id', '=', $this->blogId )->where( 'type', '=', 'Program Default' )->first();
+        if (empty($medsList)) return;
+        
+        $instruction = CpmInstruction::create([
+            'name' => $medsList
+        ]);
 
-        if ( !$carePlan ) {
-            throw new \Exception( 'Unable to build careplan' );
-        }
+        $misc = CpmMisc::whereName(CpmMisc::MEDICATION_LIST)
+            ->first();
 
-        $carePlan->setCareItemUserValue( $this->user, 'medication-list-details', $medsList );
-        $carePlan->setCareItemUserValue( $this->user, 'cf-sol-med-ohm-medication-list', 'Active' );
+        $this->user->cpmMiscs()->attach($misc->id, [
+            'cpm_instruction_id' => $instruction->id
+        ]);
     }
 }

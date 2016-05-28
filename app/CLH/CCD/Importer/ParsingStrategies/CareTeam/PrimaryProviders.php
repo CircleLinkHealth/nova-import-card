@@ -14,10 +14,12 @@ use App\User;
 class PrimaryProviders implements ParsingStrategy
 {
     private $users;
+    private $locationId;
 
-    public function __construct(UserRepository $users)
+    public function __construct(UserRepository $users, $locationId)
     {
         $this->users = $users;
+        $this->locationId;
     }
 
     /**
@@ -59,7 +61,8 @@ class PrimaryProviders implements ParsingStrategy
                     $attributes = [
                         'user_id' => $provider->ID,
                         'foreign_id' => $providerLog->provider_id,
-                        'system' => ForeignId::APRIMA
+                        'system' => ForeignId::APRIMA,
+                        'location_id' => empty($this->locationId) ? null : $this->locationId,
                     ];
                     
                     $foreignId = ForeignId::updateOrCreate($attributes, $attributes);

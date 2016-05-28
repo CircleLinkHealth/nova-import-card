@@ -34,6 +34,10 @@
 		<!-- Parsley -->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
 
+		<!-- http://curioussolutions.github.io/DateTimePicker/ -->
+		<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
+		<script type="text/javascript" src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
+
 		<!-- START BOOTSTRAP -->
 		<!-- Latest compiled and minified CSS -->
 		<link href="{{ asset('/css/bootswatch-v3.3.6.css') }}" rel="stylesheet">
@@ -135,7 +139,7 @@
 									<ul class="dropdown-menu" role="menu">
 										<li><a href="{{ URL::route('admin.programs.index', array()) }}">Programs</a></li>
 										@if(Entrust::can('locations-view'))
-											<li><a href="{{ URL::route('admin.locations.index', array()) }}">Locations</a></li>
+											<li><a href="{{ URL::route('locations.index', array()) }}">Locations</a></li>
 										@endif
 										@if(Entrust::can('programs-manage'))
 											<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>

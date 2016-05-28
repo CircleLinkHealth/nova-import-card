@@ -4,7 +4,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Location;
-use App\WpBlog;
+use App\Program;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Auth;
@@ -41,7 +41,7 @@ class LocationController extends Controller {
 		if(!Auth::user()->can('locations-manage')) {
 			abort(403);
 		}
-		$blogs = WpBlog::all();
+		$blogs = Program::all();
 		return view('locations.create', [ 'locations' => Location::getAllParents(), 'blogs' => $blogs ]);
 	}
 
@@ -116,7 +116,7 @@ class LocationController extends Controller {
 		if(!Auth::user()->can('locations-manage')) {
 			abort(403);
 		}debug(Location::getParents($id));
-		$blogs = WpBlog::all();
+		$blogs = Program::all();
 		return view('locations.edit', ['location' => Location::find($id), 'locations' => Location::getParents($id), 'blogs' => $blogs]);
 	}
 

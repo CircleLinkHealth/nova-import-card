@@ -2,45 +2,63 @@
 
 namespace App\CLH\CCD;
 
+use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
 use App\CLH\CCD\QAImportSummary;
+use App\User;
+use Carbon\Carbon;
 
 
 trait ValidatesQAImportOutput
 {
-    public function validateQAImportOutput($output, Ccda $ccda)
+    public function validateQAImportOutput(Ccda $ccda, $output)
     {
-        $jsonCcd = $output;
+        $demographics = CcdDemographicsLog::whereCcdaId($ccda->id)->first();
 
-        $name = function () use ($jsonCcd) {
-            return empty($name = $jsonCcd[ 'userMeta' ]->first_name . ' ' . $jsonCcd[ 'userMeta' ]->last_name)
+        $name = function () use ($demographics) {
+            return empty($name = $demographics->first_name . ' ' . $demographics->last_name)
                 ?: $name;
         };
 
-        $provider = function () use ($jsonCcd) {
-            if ( isset($jsonCcd[ 'provider' ][ 0 ]) ) return $jsonCcd[ 'provider' ][ 0 ][ 'display_name' ];
+        $provider = function () use ($output) {
+            if (isset($output['provider'][0])) return $output['provider'][0]['display_name'];
         };
 
-        $location = function () use ($jsonCcd) {
-            if ( isset($jsonCcd[ 'location' ][ 0 ]) ) return $jsonCcd[ 'location' ][ 0 ][ 'name' ];
+        $location = function () use ($output) {
+            if (isset($output['location'][0])) return $output['location'][0]['name'];
         };
 
-        $counter = function ($index) use ($jsonCcd) {
-            return count( $jsonCcd[ $index ] );
+        $duplicateCheck = function () use ($demographics) {
+            $date = (new Carbon($demographics->dob))->format('Y-m-d');
+
+            $dup = User::with([
+                'patientInfo' => function ($q) use ($demographics, $date) {
+                    $q->where('birth_date', '=', $date);
+                }])
+                ->whereFirstName($demographics->first_name)
+                ->whereLastName($demographics->last_name)
+                ->first();
+
+            return empty($dup) ? null : $dup->ID;
+        };
+
+        $counter = function ($index) use ($output) {
+            return count($output[$index]);
         };
 
 
         $qaSummary = new QAImportSummary();
         $qaSummary->ccda_id = $ccda->id;
         $qaSummary->name = $name();
-        $qaSummary->medications = $counter( 3 );
-        $qaSummary->problems = $counter( 1 );
-        $qaSummary->allergies = $counter( 0 );
+        $qaSummary->medications = $counter(3);
+        $qaSummary->problems = $counter(1);
+        $qaSummary->allergies = $counter(0);
         $qaSummary->provider = $provider();
         $qaSummary->location = $location();
+        $qaSummary->duplicate_id = $duplicateCheck();
 
         $isFlagged = false;
 
-        if ( $qaSummary->medications == 0 || $qaSummary->problems == 0 || empty($qaSummary->location) || empty($qaSummary->provider) || empty($qaSummary->name) ) $isFlagged = true;
+        if ($qaSummary->medications == 0 || $qaSummary->problems == 0 || empty($qaSummary->location) || empty($qaSummary->provider) || empty($qaSummary->name)) $isFlagged = true;
 
         $qaSummary->flag = $isFlagged;
         $qaSummary->save();

@@ -30,7 +30,7 @@ class ObservationController extends Controller {
 		$params = $request->all();
 
 		// filter user
-		$users = User::OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID');
+		$users = User::OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID')->all();
 		$filterUser = 'all';
 		if(!empty($params['filterUser'])) {
 			$filterUser = $params['filterUser'];

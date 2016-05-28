@@ -78,8 +78,8 @@
                                 multiselect:true,
                                 blockselect:true,
                                 columns:[
-                                    { id:"first_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='{{ URL::route('patient.summary', array('patient' => '#key#'))}}'>#first_name# #last_name#</a>", width:100, sort:'string',adjust:true, fillspace:true},
-                                    { id:"last_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"<a href='{{ URL::route('patient.summary', array('patient' => '#key#'))}}'>#last_name#, #first_name#</a>", width:120, sort:'string',adjust:true, fillspace:true},
+                                    { id:"first_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"#first_name# #last_name#", width:100, sort:'string',adjust:true, fillspace:true},
+                                    { id:"last_name",   header:["Patient Name",{content:"textFilter", placeholder:"Filter"}], template:"#last_name#, #first_name#", width:120, sort:'string',adjust:true, fillspace:true},
                                     { id:"careplan_printed",   header:["Printed",{content:"selectFilter"}],    width:120, sort:'text',
                                         template: function (obj) {
                                             if (obj.careplan_printed == 'Yes'){
@@ -113,7 +113,7 @@
                                 on:{
                                     onSelectChange:function(){
                                         var text = obs_alerts_dtable.getSelectedId(true).join();
-                                        var textmsg = "<a href='{!! URL::route('patients.careplan.multi')!!}?users="+text+"' class='btn btn-primary'>Print Selected</a>";
+                                        var textmsg = "<a href='{!! URL::route('patients.careplan.multi')!!}?users="+text+"&letter' class='btn btn-primary'>Print Selected</a>";
                                         document.getElementById('print_list').innerHTML = textmsg+'\n<BR>';
                                     }
                                 },

@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers\Admin;
 
 use App\CPRulesQuestions;
-use App\WpBlog;
+use App\Program;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -91,7 +91,7 @@ class CPRQuestionController extends Controller
 			abort(403);
 		}
 		$question = CPRulesQuestions::find($id);
-		$programs = WpBlog::get();
+		$programs = Program::get();
 		if (!empty($question->rulesItems)) {
 			foreach ($question->rulesItems as $item) {
 				if (isset($item->pcp->program->first()->domain)) {

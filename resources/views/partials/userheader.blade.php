@@ -12,15 +12,15 @@
                             Provider: <em>No Provider Selected </em>
                         @endif
                         Location:</strong>
-                                <?= (is_null($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>
+                                <?= (empty($patient->getPreferredLocationName())) ?  'Not Set' : $patient->getPreferredLocationName();  ?>
                 </span>
                 <?php
                     // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
-                $seconds = $patient->patientInfo->cur_month_activity_time;
+                $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
                 $H = floor($seconds / 3600);
                 $i = ($seconds / 60) % 60;
                 $s = $seconds % 60;
-                $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+                $monthlyTime = sprintf("%02d:%02d:%02d",$H, $i, $s);
                 ?>
                <a href="{{URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID))}}"><span class="pull-right">{{
                 date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
@@ -32,6 +32,7 @@
                 <li class="inline-block">{{$patient->gender}}</li>
                 <li class="inline-block">{{$patient->age}} yrs</li>
                 <li class="inline-block">{{$patient->phone}}</li>
+                <li class=" inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ?  'N/A' : ucwords($patient->ccm_status);  ?></li>
             </ul>
         </div>
     </div>
@@ -45,13 +46,14 @@
         </div>
     </div>
     @endif
-    @if(isset($treating))
+
+    @if(!empty($problems))
         <div style="clear:both"></div>
         <ul class="person-conditions-list inline-block text-medium">
-            @foreach($treating as $key => $value)
+            @foreach($problems as $problem)
                 <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
                                                 checked="checked" disabled="disabled">
-                    <label for="condition27"><span> </span>{{$key}}</label>
+                    <label for="condition27"><span> </span>{{$problem}}</label>
                 </li>
             @endforeach
         </ul>
