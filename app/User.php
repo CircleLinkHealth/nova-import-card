@@ -65,11 +65,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	protected $dates = ['user_registered'];
 
-	/**
-	 * @todo: make timestamps work
-	 */
-	public $timestamps = true;
-
 	public $rules = array(
 		'user_login'             => 'required',                        // just a normal required validation
 		'user_email'            => 'required|email',     // required and must be unique in the wp_users table
