@@ -97,8 +97,8 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
                 $this->call(MigrateCarePlanDataMay16::class);
                 $this->command->info(MigrateCarePlanDataMay16::class . ' ran.');
 
-                $this->call(MigrateUserCpmProblemsInstructions::class);
-                $this->command->info(MigrateUserCpmProblemsInstructions::class . ' ran.');
+//                $this->call(MigrateUserCpmProblemsInstructions::class);
+//                $this->command->info(MigrateUserCpmProblemsInstructions::class . ' ran.');
                 
 //                $this->call(MigrateCcdAttributes::class);
 //                $this->command->info(MigrateCcdAttributes::class . ' ran.');
