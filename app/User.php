@@ -68,7 +68,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	/**
 	 * @todo: make timestamps work
 	 */
-	public $timestamps = false;
+	public $timestamps = true;
 
 	public $rules = array(
 		'user_login'             => 'required',                        // just a normal required validation
@@ -108,12 +108,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"ccm_status" => "required",
 		"program_id" => "required"
 	);
-
-
-
-	// WordPress uses differently named fields for create and update fields than Laravel does
-	const CREATED_AT = 'post_date';
-	const UPDATED_AT = 'post_modified';
 
 
 	// for revisionable
