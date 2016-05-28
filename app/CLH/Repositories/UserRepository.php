@@ -117,6 +117,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     }
 
     public function saveOrUpdatePatientInfo(User $user, ParameterBag $params) {
+        // make sure user has patientInfo
+        if(!$user->patientInfo) {
+            $user->patientInfo = new PatientInfo();
+            $user->patientInfo->save();
+        }
         $patientInfo = $user->patientInfo->toArray();
 
         // contact days checkbox formatting, @todo this is not normalized properly?
@@ -138,6 +143,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     }
 
     public function saveOrUpdateProviderInfo(User $user, ParameterBag $params) {
+        // make sure user has providerInfo
+        if(!$user->providerInfo) {
+            $user->providerInfo = new ProviderInfo();
+            $user->providerInfo->save();
+        }
         $providerInfo = $user->providerInfo->toArray();
 
         foreach($providerInfo as $key => $value) {
@@ -372,35 +382,8 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         $wpBlogs = WpBlog::orderBy('blog_id', 'desc')->lists('blog_id');
         foreach($wpBlogs as $wpBlogId) {
-            if (!in_array($wpBlogId, $userPrograms)) {
-                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_config")->delete();
-                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->delete();
-                $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->delete();
-            } else {
+            if (in_array($wpBlogId, $userPrograms)) {
                 $wpUser->programs()->attach($wpBlogId);
-                // user level
-                $userLevel = $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_user_level")->first();
-                if($userLevel) {
-                    $userLevel->meta_value = "0";
-                } else {
-                    $userLevel = new UserMeta;
-                    $userLevel->meta_key = "wp_{$wpBlogId}_user_level";
-                    $userLevel->meta_value = "0";
-                    $userLevel->user_id = $wpUser->ID;
-                }
-                $userLevel->save();
-
-                // capabilities
-                $capabilities = $wpUser->meta()->whereMetaKey("wp_{$wpBlogId}_capabilities")->first();
-                if($capabilities) {
-                    $capabilities->meta_value = serialize(array($role->name => '1'));
-                } else {
-                    $capabilities = new UserMeta;
-                    $capabilities->meta_key = "wp_{$wpBlogId}_capabilities";
-                    $capabilities->meta_value = serialize(array($role->name => '1'));
-                    $capabilities->user_id = $wpUser->ID;
-                }
-                $capabilities->save();
             }
         }
     }

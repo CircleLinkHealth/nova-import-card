@@ -1,0 +1,37 @@
+<?php namespace App\Models\CCD;
+
+use App\CLH\CCD\ItemLogger\CcdMedicationLog;
+use App\Models\CPM\CpmMedicationGroup;
+use App\User;
+use Illuminate\Database\Eloquent\Model;
+
+class CcdMedication extends Model {
+
+    protected $guarded = [];
+
+    protected $table = 'ccd_medications';
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function ccdLog()
+    {
+        return $this->belongsTo(CcdMedicationLog::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cpmMedicationGroup()
+    {
+        return $this->belongsTo(CpmMedicationGroup::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'patient_id');
+    }
+}

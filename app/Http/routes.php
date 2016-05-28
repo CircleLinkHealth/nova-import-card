@@ -196,8 +196,9 @@ Route::group( ['middleware' => 'auth'], function () {
         Route::get( 'excelReportT1', ['uses' => 'ReportsController@excelReportT1', 'as' => 'excel.report.t1'] );
         Route::get( 'excelReportT2', ['uses' => 'ReportsController@excelReportT2', 'as' => 'excel.report.t2'] );
 
-        $prefix = 'admin/'; // admin prefix
-        Entrust::routeNeedsPermission( $prefix . '*', 'admin-access', Redirect::to( URL::route( 'login' ) ) );
+        $prefix = 'admin'; // admin prefix
+        Entrust::routeNeedsPermission( $prefix, ['admin-access'], Redirect::to( URL::route( 'login' ) ) );
+        Entrust::routeNeedsPermission( $prefix . '/*', ['admin-access'], Redirect::to( URL::route( 'login' ) ) );
 
         // dashboard
         Route::get( '', ['uses' => 'Admin\DashboardController@index', 'as' => 'admin.dashboard'] );
@@ -205,6 +206,13 @@ Route::group( ['middleware' => 'auth'], function () {
 
         // impersonation
         Route::post( 'impersonate', ['uses' => 'ImpersonationController@postImpersonate', 'as' => 'post.impersonate'] );
+
+        // appConfig
+        Entrust::routeNeedsPermission( $prefix . 'appConfig*', 'app-config-view' );
+        Entrust::routeNeedsPermission( $prefix . 'appConfig/*/*', 'app-config-manage' );
+        Route::resource( 'appConfig', 'Admin\AppConfigController' );
+        Route::post( 'appConfig/{id}/edit', ['uses' => 'Admin\AppConfigController@update', 'as' => 'admin.appConfig.update'] );
+        Route::get( 'appConfig/{id}/destroy', ['uses' => 'Admin\AppConfigController@destroy', 'as' => 'admin.appConfig.destroy'] );
 
         // activities
         Entrust::routeNeedsPermission( $prefix . 'activities*', 'activities-view' );

@@ -33,6 +33,10 @@ class WpBlog extends Model {
         return $this->hasMany('App\CPRulesPCP', 'prov_id', 'blog_id');
     }
 
+    public function careplan() {
+        return $this->hasMany('App\CarePlanTemplate', 'patient_id');
+    }
+
     public function users() {
         return $this->belongsToMany('App\User', 'lv_program_user', 'program_id', 'user_id');
     }

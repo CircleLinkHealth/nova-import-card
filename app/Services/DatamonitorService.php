@@ -1192,21 +1192,13 @@ class DatamonitorService {
 
 		// get user info
 		$user = User::find($observation['user_id']);
-		$user_meta_config = UserMeta::where('user_id',$user->ID)->where('meta_key','like','%config%')->first();
-		$user_meta_blog = $user->program_id;
-		$user_data = unserialize($user_meta_config->meta_value);
-		// get recipients
-		if(!array_key_exists('send_alert_to',$user_data)) {
-			return 'ERROR: no send_alert_to in $user_data';
-		}
-
-		if(empty($user_data['send_alert_to'])) {
-			return 'ERROR: $user_data send_alert_to is empty';
+		if(!$user) {
+			return false;
 		}
 
 		// get message info
 		$msgCPRules = new MsgCPRules();
-		$message_info = $msgCPRules->getQuestion($message_id, $user->ID, 'EMAIL_'.$user_data['preferred_contact_language'], $user_meta_blog, 'SOL');
+		$message_info = $msgCPRules->getQuestion($message_id, $user->ID, 'EMAIL_'.$user->preferred_contact_language, $user->program_id, 'SOL');
 
 		//Breaks down here, suspect the params are not as expected in getQuestion()
 
@@ -1222,7 +1214,11 @@ class DatamonitorService {
 
 
 		$email_sent_list = array();
-		foreach($user_data['send_alert_to'] as $recipient_id) {
+
+		if(!is_array($user->sendAlertTo)) {
+			return false;
+		}
+		foreach($user->sendAlertTo as $recipient_id) {
 
 			$provider_user = User::find($recipient_id);
 			$email = $provider_user->user_email;

@@ -16,7 +16,7 @@
                 </span>
                 <?php
                     // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
-                $seconds = $patient->monthlyTime;
+                $seconds = $patient->patientInfo->cur_month_activity_time;
                 $H = floor($seconds / 3600);
                 $i = ($seconds / 60) % 60;
                 $s = $seconds % 60;

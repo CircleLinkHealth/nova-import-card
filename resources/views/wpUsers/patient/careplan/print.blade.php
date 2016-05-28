@@ -20,12 +20,13 @@ if ( !function_exists( 'biometricGoal' ) ) {
         return ($starting > $target) ? 'Lower' : $verb;
     }
 }
+if(isset($patient) && !empty($patient)) {
 $billing = App\User::find( $patient->getBillingProviderIDAttribute() );
 $lead = App\User::find( $patient->getLeadContactIDAttribute() );
 
 $today = \Carbon\Carbon::now()->toFormattedDateString();
 // $provider = App\User::find($patient->getLeadContactIDAttribute());
-
+}
 ?>
 @if(!isset($isPdf))
     @section('title', 'Care Plan View/Print')
@@ -33,6 +34,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 @endif
 
 @section('content')
+    @if(isset($patient) && !empty($patient))
     <div class="container">
         <section class="patient-summary">
             <div class="patient-info__main">
@@ -330,4 +332,5 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             <!-- /OTHER INFORMATION -->
         </section>
     </div>
+    @endif
 @stop

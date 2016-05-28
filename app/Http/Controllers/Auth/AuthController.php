@@ -105,6 +105,18 @@ class AuthController extends Controller {
 		}
 
 		// switch destination based on role
+		if($this->auth->user()) {
+			if($this->auth->user()->hasRole('administrator')) {
+				return '/admin';
+			} else if($this->auth->user()->hasRole('provider')) {
+				return '/manage-patients/dashboard';
+			} else if($this->auth->user()->hasRole('care-center')) {
+				return '/manage-patients/dashboard';
+			} else {
+				return '/manage-patients/dashboard';
+			}
+		}
+		/*
 		$role = $this->auth->user()->roles[0]->name;
 
 		switch ($role)
@@ -115,5 +127,6 @@ class AuthController extends Controller {
 			case 'provider': return '/manage-patients/dashboard';
 			default: return '/manage-patients/dashboard';
 		}
+		*/
 	}
 }

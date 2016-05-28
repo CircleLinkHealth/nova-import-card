@@ -44,26 +44,24 @@ class PatientController extends Controller {
 	{
 		// get number of approvals
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-			->with('meta')->whereHas('roles', function($q) {
+			->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get();
 		$p=0;
 		if($patients->count() > 0) {
 			foreach ($patients as $user) {
-				$userMeta = $user->userMeta();
-				if(!isset($userMeta['careplan_status'])) {
+				if(!isset($user->patientInfo->careplan_status)) {
 					continue 1;
 				}
-				$careplan_status = $userMeta['careplan_status'];
 				// patient approval counts
 				if(Auth::user()->hasRole(['administrator', 'care-center'])) {
 					// care-center and administrator counts number of drafts
-					if ($careplan_status == 'draft') {
+					if ($user->patientInfo->careplan_status == 'draft') {
 						$p++;
 					}
 				} else if(Auth::user()->hasRole(['provider'])) {
 					// provider counts number of drafts
-					if ($careplan_status == 'qa_approved') {
+					if ($user->patientInfo->careplan_status == 'qa_approved') {
 						$p++;
 					}
 
@@ -273,7 +271,7 @@ class PatientController extends Controller {
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
 				->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
-				->select(DB::raw('wp_users.*'))
+				->select(DB::raw('users.*'))
 				//->join('wp_users AS approver', 'THIS JOIN', '=', 'WONT WORK')
 				->whereHas('roles', function($q) {
 					$q->where('name', '=', 'participant');
@@ -404,8 +402,8 @@ class PatientController extends Controller {
 					'age' => $patient->age,
 					'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
 					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
-					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
-					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
+					'ccm_time' => $patient->patientInfo->cur_month_activity_time, //$ccm_time[0],
+					'ccm_seconds' => $patient->patientInfo->cur_month_activity_time, //$meta[$part->ID]['cur_month_activity_time'][0]
 					'provider'=> $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
 					'site'=> $programName,
 
@@ -429,7 +427,7 @@ class PatientController extends Controller {
 	{
 		$patientData = array();
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-			->with('meta')->whereHas('roles', function($q) {
+			->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get();
 		if($patients->count() > 0) {
@@ -497,8 +495,8 @@ class PatientController extends Controller {
 					'age' => $patient->age,
 					'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
 					'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
-					'ccm_time' => $patient->monthlyTime, //$ccm_time[0],
-					'ccm_seconds' => $patient->monthlyTime, //$meta[$part->ID]['cur_month_activity_time'][0]
+					'ccm_time' => $patient->patientInfo->cur_month_activity_time, //$ccm_time[0],
+					'ccm_seconds' => $patient->patientInfo->cur_month_activity_time, //$meta[$part->ID]['cur_month_activity_time'][0]
 					'provider'=> $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
 				);
 			}
@@ -519,7 +517,7 @@ class PatientController extends Controller {
 	{
 		// get number of approvals
 		$patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-			->with('meta')->whereHas('roles', function($q) {
+			->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function($q) {
 				$q->where('name', '=', 'participant');
 			})->get()->lists('fullNameWithId', 'ID');
 
@@ -535,7 +533,7 @@ class PatientController extends Controller {
 
 		$sql="select distinct
 			*
-        	FROM wp_users u
+        	FROM users u
         	JOIN patient_info pi ON pi.user_id = u.ID
              AND u.ID IN (".$userIds.")
              AND concat(u.first_name , ' ', u.last_name, ' ', pi.user_id, ' ', pi.mrn_number, ' ', pi.birth_date ) like '%" . $query . "%'
@@ -554,7 +552,7 @@ class PatientController extends Controller {
 			$dob = new Carbon(($user->birth_date));
 			$patients[$i]['dob'] = $dob->format('m-d-Y');
 			$patients[$i]['mrn'] = $user->mrn_number;
-			$patients[$i]['link'] = URL::route('patient.summary', array('patient' => $d->id));
+			$patients[$i]['link'] = URL::route('patient.summary', array('patient' => $user->ID));
 			$programObj = WpBlog::find(($user->program_id)) ? WpBlog::find(($user->program_id)) : "";
 			if($programObj->display_name){
 				$patients[$i]['program'] = $programObj->display_name;

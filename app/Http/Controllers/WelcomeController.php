@@ -33,6 +33,7 @@ class WelcomeController extends Controller {
 	public function index()
 	{
 		//dd(Auth::redirectPath());
+		/*
 		if(Auth::user()) {
 			$role = Auth::user()->roles[0]->name;
 
@@ -47,6 +48,18 @@ class WelcomeController extends Controller {
 					return redirect()->route('patients.dashboard', [])->send();
 				default:
 					return view('welcome');
+			}
+		}
+		*/
+		if(Auth::user()) {
+			if(Auth::user()->hasRole('administrator')) {
+				return redirect()->route('admin.dashboard', [])->send();
+			} else if(Auth::user()->hasRole('provider')) {
+				return redirect()->route('patients.dashboard', [])->send();
+			} else if(Auth::user()->hasRole('care-center')) {
+				return redirect()->route('patients.dashboard', [])->send();
+			} else {
+				return redirect()->route('patients.dashboard', [])->send();
 			}
 		}
 		return redirect()->route('login', [])->send();

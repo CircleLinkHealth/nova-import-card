@@ -260,6 +260,14 @@ class CcdApiController extends Controller
             'source' => Ccda::API,
         ]);
 
+        try {
+            \Log::info("CCDA id: $ccdObj->id");
+            \Log::info("From: Aprima");
+            \Log::info("Provider: $providerJsonStr");
+        } catch (\Exception $e) {
+        }
+
+
         //We are saving the JSON CCD after we save the XML, just in case Parsing fails
         //If Parsing fails we let ourselves know, but not Aprima.
         try {
@@ -288,7 +296,8 @@ class CcdApiController extends Controller
         //If Logging fails we let ourselves know, but not Aprima.
         //Yes. Repetitions. I KNOW!
         try {
-            $importer = new QAImportManager($programId, $ccdObj, $provider['ID'], $locationId);
+            $providerId = empty($provider['ID']) ? null : $provider['ID'];
+            $importer = new QAImportManager($programId, $ccdObj, $providerId, $locationId);
             $output = $importer->generateCarePlanFromCCD();
         } catch (\Exception $e) {
             if (app()->environment('production')) {

@@ -23,13 +23,15 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use DateTimeZone;
-use EllipseSynergie\ApiResponse\Laravel\Response;
+//use EllipseSynergie\ApiResponse\Laravel\Response;
 use Illuminate\Support\Facades\URL;
 use PasswordHash;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Input;
 use Auth;
 use DB;
+use Illuminate\Support\Facades\App;
+use Response;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -43,7 +45,7 @@ class PatientCareplanController extends Controller
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
-            ->select(DB::raw('wp_users.*'))
+            ->select(DB::raw('users.*'))
             ->get();
 
         // get approvers before
@@ -111,14 +113,14 @@ class PatientCareplanController extends Controller
                     $careplanStatus = 'Approve Now';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
-                    if (Auth::user()->hasRole('provider')) {
+                    if (Auth::user()->hasRole(['provider'])) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
                     }
                 } else if ($patient->carePlanStatus == 'draft') {
                     $careplanStatus = 'CLH Approve';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'CLH Approve';
-                    if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
+                    if (Auth::user()->hasRole(['care-center']) || Auth::user()->hasRole(['administrator'])) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
                     }
                 }
@@ -151,27 +153,29 @@ class PatientCareplanController extends Controller
                     }
                 }
 
-                $patientData[] = array(
-                    'key' => $patient->ID,
-                    'id' => $patient->ID,
-                    'patient_name' => $patient->fullName,
-                    'first_name' => $patient->first_name,
-                    'last_name' => $patient->last_name,
-                    'careplan_status' => $careplanStatus,
-                    'careplan_status_link' => $careplanStatusLink,
-                    'careplan_provider_approver' => $approverName,
-                    'dob' => Carbon::parse($patient->birthDate)->format('m/d/Y'),
-                    'phone' => $patient->phone,
-                    'age' => $patient->age,
-                    'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
-                    'last_read' => '',
-                    'ccm_time' => $patient->monthlyTime,
-                    'ccm_seconds' => $patient->monthlyTime,
-                    'provider' => $bpName,
-                    'program_name' => $programName,
-                    'careplan_last_printed' => $printed_date,
-                    'careplan_printed' => $printed_status
-                );
+                if($patient->patientInfo) {
+                    $patientData[] = array(
+                        'key' => $patient->ID,
+                        'id' => $patient->ID,
+                        'patient_name' => $patient->fullName,
+                        'first_name' => $patient->first_name,
+                        'last_name' => $patient->last_name,
+                        'careplan_status' => $careplanStatus,
+                        'careplan_status_link' => $careplanStatusLink,
+                        'careplan_provider_approver' => $approverName,
+                        'dob' => Carbon::parse($patient->birthDate)->format('m/d/Y'),
+                        'phone' => $patient->phone,
+                        'age' => $patient->age,
+                        'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
+                        'last_read' => '',
+                        'ccm_time' => $patient->patientInfo->cur_month_activity_time,
+                        'ccm_seconds' => $patient->patientInfo->cur_month_activity_time,
+                        'provider' => $bpName,
+                        'program_name' => $programName,
+                        'careplan_last_printed' => $printed_date,
+                        'careplan_printed' => $printed_status
+                    );
+                }
             }
         }
         debug($patientData);
@@ -195,8 +199,95 @@ class PatientCareplanController extends Controller
                 $user->save();
             }
         }
-        $careplans = $reportService->carePlanGenerator($users);
-        return view('wpUsers.patient.multiview', compact(['careplans']));
+
+        // vars
+        $storageDirectory = 'storage/pdfs/careplans/';
+        $datetimePrefix = date('Y-m-dH:i:s');
+        $pageFileNames = array();
+
+        // first create blank page
+        $pdf = App::make('snappy.pdf.wrapper');
+        $pdf->loadView('wpUsers.patient.careplan.print', [
+            'patient' => false,
+            'isPdf' => true,
+        ]);
+        $fileNameBlankPage = $storageDirectory.$datetimePrefix.'-0-PDFblank.pdf';
+        $fileNameWithPathBlankPage = base_path($fileNameBlankPage);
+        $pdf->save($fileNameWithPathBlankPage, true);
+
+        // create pdf for each user
+        $p = 1;
+        foreach($users as $user_id) {
+            // add p to datetime prefix
+            $prefix = $datetimePrefix . '-' . $p;
+            $user = User::find($user_id);
+            $careplan = $reportService->carePlanGenerator(array($user));
+            $careplan = $careplan[$user_id];
+            if(empty($careplan)) {
+                return false;
+            }
+            // build pdf
+            $pdf = App::make('snappy.pdf.wrapper');
+            $pdf->loadView('wpUsers.patient.multiview', [
+                'careplans' => array($user_id => $careplan),
+                'isPdf' => true,
+            ]);
+            $pdf->setOption('footer-center', 'Page [page]');
+
+            $fileName = $storageDirectory.$prefix.'-PDF_' . str_random(40) . '.pdf';
+            $fileNameWithPath = base_path($fileName);
+            $pdf->save($fileNameWithPath, true);
+            $pageCount = $this->count_pages($fileNameWithPath);
+            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $pageCount;
+
+            // append blank page if needed
+            if ($pageCount % 2 != 0) {
+                echo PHP_EOL . '<br /><br />Add blank page...';
+                echo PHP_EOL . '<br /><br />'.$fileName;
+                echo PHP_EOL . '<br /><br />'.$fileNameBlankPage;
+                $fileName = $storageDirectory.$this->merge_pages(array($fileName, $fileNameBlankPage), $prefix, $storageDirectory);
+                $fileNameWithPath = base_path($fileName);
+                echo PHP_EOL . '<br /><br />Merge complete..';
+            }
+
+            // add to array
+            $pageFileNames[] = $fileName;
+
+            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $this->count_pages($fileNameWithPath);
+            $p++;
+        }
+
+        // merge to final file
+        $mergedFileName = $this->merge_pages($pageFileNames, $datetimePrefix, $storageDirectory);
+        $mergedFileNameWithPath = $storageDirectory.$this->merge_pages($pageFileNames, $datetimePrefix, $storageDirectory);
+        //dd($mergedFileName . ' - PAGE COUNT: '.$this->count_pages(base_path($mergedFileNameWithPath)));
+
+        return Response::make(file_get_contents(base_path($mergedFileNameWithPath)), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$mergedFileName.'"'
+        ]);
+        //return view('wpUsers.patient.multiview', compact(['careplans']));
+    }
+
+    public function count_pages($pdfname) {
+        $pdftext = file_get_contents($pdfname);
+        $num = preg_match_all("/\/Page\W/", $pdftext, $dummy);
+        return $num;
+    }
+
+    public function merge_pages($fileArray, $prefix = '', $storageDirectory = '') {
+        //$fileArray= array("name1.pdf","name2.pdf","name3.pdf","name4.pdf");
+
+        $outputFileName = $prefix."-merged.pdf";
+        $outputName = base_path($storageDirectory.$prefix."-merged.pdf");
+
+        $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$outputName ";
+//Add each pdf file to the end of the command
+        foreach($fileArray as $file) {
+            $cmd .= base_path($file)." ";
+        }
+        $result = shell_exec($cmd);
+        return $outputFileName;
     }
 
     /**
@@ -233,27 +324,6 @@ class PatientCareplanController extends Controller
         $patientRoleId = Role::where('name', '=', 'participant')->first();
         $patientRoleId = $patientRoleId->id;
 
-        // user meta
-        $userMeta = (new UserMetaTemplate())->getArray();
-        if ($patientId) {
-            $userMeta = UserMeta::where('user_id', '=', $patientId)->lists('meta_value', 'meta_key');
-        }
-
-        // user config
-        $userConfig = (new UserConfigTemplate())->getArray();
-        if ($patientId) {
-            if (isset($userMeta['wp_' . $programId . '_user_config'])) {
-                $userConfig = unserialize($userMeta['wp_' . $programId . '_user_config']);
-                $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
-            }
-            // set role
-            $capabilities = array();
-            if (isset($userMeta['wp_' . $programId . '_capabilities'])) {
-                $capabilities = unserialize($userMeta['wp_' . $programId . '_capabilities']);
-                $wpRole = key($capabilities);
-            }
-        }
-
         // locations @todo get location id for WpBlog
         $program = WpBlog::find($programId);
         $locations = array();
@@ -274,7 +344,7 @@ class PatientCareplanController extends Controller
         }
 
         $showApprovalButton = false; // default hide
-        if (Auth::user()->hasRole('provider')) {
+        if (Auth::user()->hasRole(['provider'])) {
             if ($patient->carePlanStatus != 'provider_approved') {
                 $showApprovalButton = true;
             }
@@ -304,7 +374,7 @@ class PatientCareplanController extends Controller
         // instantiate user
         $user = new User;
         if ($patientId) {
-            $user = User::with('meta')->find($patientId);
+            $user = User::with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->find($patientId);
             if (!$user) {
                 return response("User not found", 401);
             }
@@ -404,7 +474,7 @@ class PatientCareplanController extends Controller
 
         // get providers
         $providers = array();
-        $providers = User::with('meta')
+        $providers = User::with('phoneNumbers', 'providerInfo')
             ->whereHas('programs', function ($q) use ($patient) {
                 $q->whereIn('program_id', $patient->viewableProgramIds());
             })
@@ -444,7 +514,7 @@ class PatientCareplanController extends Controller
         }
 
         // instantiate user
-        $patient = User::with('meta')->find($patientId);
+        $patient = User::with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->find($patientId);
         if (!$patient) {
             return response("Patient user not found", 401);
         }
@@ -554,7 +624,7 @@ class PatientCareplanController extends Controller
         $editMode = false;
 
         $showApprovalButton = false;
-        if (Auth::user()->hasRole('provider')) {
+        if (Auth::user()->hasRole(['provider'])) {
             if ($patient->carePlanStatus != 'provider_approved') {
                 $showApprovalButton = true;
             }
@@ -585,7 +655,7 @@ class PatientCareplanController extends Controller
         }
 
         // instantiate user
-        $user = User::with('meta')->find($patientId);
+        $user = User::with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->find($patientId);
         if (!$user) {
             return response("User not found", 401);
         }
@@ -596,7 +666,7 @@ class PatientCareplanController extends Controller
             // check for approval here
             // should we update careplan_status?
             if ($user->carePlanStatus != 'provider_approved') {
-                if (Auth::user()->hasRole('provider')) {
+                if (Auth::user()->hasRole(['provider'])) {
                     $user->carePlanStatus = 'provider_approved'; // careplan_status
                     $user->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver
                     $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date

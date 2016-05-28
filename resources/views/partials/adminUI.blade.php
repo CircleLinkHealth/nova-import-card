@@ -36,7 +36,7 @@
 
 		<!-- START BOOTSTRAP -->
 		<!-- Latest compiled and minified CSS -->
-		<link href="{{ asset('/css/bootstrap-bootstwatch-superhero.css') }}" rel="stylesheet">
+		<link href="{{ asset('/css/bootswatch-v3.3.6.css') }}" rel="stylesheet">
 		<style>
 			.table-striped>tbody>tr:nth-child(odd)>td,
 			.table-striped>tbody>tr:nth-child(odd)>th {
@@ -98,6 +98,17 @@
 										<li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a></li>
 										<li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
 										<li><a href="{{ URL::route('admin.ucp.index', array()) }}">UCP</a></li>
+									</ul>
+								</li>
+							@endif
+
+							@if(Entrust::can('app-config-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Settings<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.appConfig.index', array()) }}">App Config</a></li>
 									</ul>
 								</li>
 							@endif

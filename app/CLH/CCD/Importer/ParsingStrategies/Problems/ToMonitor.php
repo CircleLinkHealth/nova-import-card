@@ -5,7 +5,7 @@ namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 use App\CLH\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\ProblemImport;
-use App\CLH\CCD\Importer\CPMProblem;
+use App\Models\CPM\CpmProblem;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
@@ -18,7 +18,7 @@ class ToMonitor implements ParsingStrategy
     {
         $problemsSection = ProblemImport::whereCcdaId( $ccd->id )->get();
 
-        $cpmProblems = CPMProblem::all();
+        $cpmProblems = CpmProblem::all();
 
         $problemsToActivate = [];
 
