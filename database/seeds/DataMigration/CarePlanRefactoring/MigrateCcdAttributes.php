@@ -10,10 +10,10 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
 
         $allergy_imports = \App\CLH\CCD\ImportedItems\AllergyImport::all();
 
-        foreach($allergy_imports as $allergy_import){
-            $patient_id = \App\CLH\CCD\Ccda::where('id',$allergy_import->ccda_id)->lists('patient_id')->first();
+        foreach ($allergy_imports as $allergy_import) {
+            $patient_id = \App\CLH\CCD\Ccda::where('id', $allergy_import->ccda_id)->lists('patient_id')->first();
 
-            if(is_null($patient_id)){
+            if (is_null($patient_id)) {
                 $this->command->info("No user associated to CCDA for MedicationsImport ID" . $allergy_import->id);
                 continue;
             }
@@ -35,10 +35,10 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
         $this->command->comment(PHP_EOL . 'Begin Migrating Medications...' . PHP_EOL);
         $medications_imports = \App\CLH\CCD\ImportedItems\MedicationImport::all();
 
-        foreach($medications_imports as $medications_import){
-            $patient_id = \App\CLH\CCD\Ccda::where('id',$medications_import->ccda_id)->lists('patient_id')->first();
+        foreach ($medications_imports as $medications_import) {
+            $patient_id = \App\CLH\CCD\Ccda::where('id', $medications_import->ccda_id)->lists('patient_id')->first();
 
-            if(is_null($patient_id)){
+            if (is_null($patient_id)) {
                 $this->command->info("No user associated to CCDA for MedicationsImport ID: " . $medications_import->id);
                 continue;
             }

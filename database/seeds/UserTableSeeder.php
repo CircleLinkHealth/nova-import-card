@@ -16,12 +16,6 @@ class UserTableSeeder extends Seeder {
         'email' => 'mantoniou@circlelinkhealth.com',
         'password' => Hash::make('iamadmin')
         ]);
-
-        User::create([
-        'name' => 'Phil Lawlor',
-        'email' => 'PLawlor@circlelinkhealth.com',
-        'password' => Hash::make('iamadmin')
-        ]);
     }
 
 }
