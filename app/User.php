@@ -1112,7 +1112,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 $ct[] = $careTeamMember->member_user_id;
             }
         }
-        return $ct;
+
+		/**
+		 * Added this to fix providers not showing up for users who don't have member.
+		 */
+		$ct = $this->patientCareTeamMembers
+			->where('type', 'lead_contact')
+			->lists('member_user_id')
+			->all();
+
+		return $ct;
     }
 
     public function setCareTeamAttribute($memberUserIds)
