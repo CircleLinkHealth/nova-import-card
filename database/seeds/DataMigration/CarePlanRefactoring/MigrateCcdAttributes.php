@@ -66,15 +66,22 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
         $problems_imports = \App\CLH\CCD\ImportedItems\ProblemImport::all();
         $this->command->comment(PHP_EOL . 'Begin Migrating Problems...' . PHP_EOL);
 
-        foreach($problems_imports as $problems_import){
-            $patient_id = \App\CLH\CCD\Ccda::where('id',$problems_import->ccda_id)->lists('patient_id')->first();
+        foreach ($problems_imports as $problems_import) {
+            $ccda = \App\CLH\CCD\Ccda::where('id', $problems_import->ccda_id)->first();
 
-            if(is_null($patient_id)){
+            if (empty($ccda)) {
                 $this->command->info("No user associated to CCDA for ProblemsImport ID: " . $problems_import->id);
                 continue;
             }
 
-            try{
+            $patient_id = $ccda->patient_id;
+
+            if (empty($patient_id)) {
+                $this->command->info("No user associated to CCDA for ProblemsImport ID: " . $problems_import->id);
+                continue;
+            }
+
+            try {
                 $result = \App\Models\CCD\CcdProblem::firstOrCreate([
                     'ccda_id' => $problems_import->ccda_id,
                     'vendor_id' => $problems_import->vendor_id,
@@ -85,11 +92,29 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
                     'code_system_name' => $problems_import->code_system_name,
                     'code' => $problems_import->code,
                     'code_system' => $problems_import->code_system,
+
                     'patient_id' => $patient_id,
                 ]);
-            } catch (\Exception $e){
-                $this->command->error($e->getMessage());
+            } catch (\Exception $e)
+            {
+                //If it is failing because of a foreign key constraint, then enter it without cpm_problem_id
+                if ($e->errorInfo[1] == 1452)
+                {
+                    $result = \App\Models\CCD\CcdProblem::firstOrCreate([
+                        'ccda_id' => $problems_import->ccda_id,
+                        'vendor_id' => $problems_import->vendor_id,
+                        'ccd_problem_log_id' => $problems_import->ccd_problem_log_id,
+                        'name' => $problems_import->name,
+                        'activate' => $problems_import->activate,
+                        'code_system_name' => $problems_import->code_system_name,
+                        'code' => $problems_import->code,
+                        'code_system' => $problems_import->code_system,
+
+                        'patient_id' => $patient_id,
+                    ]);
+                }
             }
+
 
             $this->command->info("Migrated ProblemsImport ID: " . $problems_import->id . " to CcdProblems ID: " . $result->id);
         }
