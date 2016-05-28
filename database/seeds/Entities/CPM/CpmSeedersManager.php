@@ -100,8 +100,8 @@ class CpmSeedersManager extends \Illuminate\Database\Seeder
                 $this->call(MigrateUserCpmProblemsInstructions::class);
                 $this->command->info(MigrateUserCpmProblemsInstructions::class . ' ran.');
                 
-                $this->call(MigrateCcdAttributes::class);
-                $this->command->info(MigrateCcdAttributes::class . ' ran.');
+//                $this->call(MigrateCcdAttributes::class);
+//                $this->command->info(MigrateCcdAttributes::class . ' ran.');
             } catch (\Exception $e) {
                 Log::critical($e);
                 $this->command->error($e);
