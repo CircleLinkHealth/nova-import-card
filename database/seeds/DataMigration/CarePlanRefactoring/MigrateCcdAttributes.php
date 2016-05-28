@@ -10,10 +10,10 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
 
         $allergy_imports = \App\CLH\CCD\ImportedItems\AllergyImport::all();
 
-        foreach($allergy_imports as $allergy_import){
-            $patient_id = \App\CLH\CCD\Ccda::where('id',$allergy_import->ccda_id)->lists('patient_id')->first();
+        foreach ($allergy_imports as $allergy_import) {
+            $patient_id = \App\CLH\CCD\Ccda::where('id', $allergy_import->ccda_id)->lists('patient_id')->first();
 
-            if(is_null($patient_id)){
+            if (is_null($patient_id)) {
                 $this->command->info("No user associated to CCDA for MedicationsImport ID" . $allergy_import->id);
                 continue;
             }
@@ -35,10 +35,10 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
         $this->command->comment(PHP_EOL . 'Begin Migrating Medications...' . PHP_EOL);
         $medications_imports = \App\CLH\CCD\ImportedItems\MedicationImport::all();
 
-        foreach($medications_imports as $medications_import){
-            $patient_id = \App\CLH\CCD\Ccda::where('id',$medications_import->ccda_id)->lists('patient_id')->first();
+        foreach ($medications_imports as $medications_import) {
+            $patient_id = \App\CLH\CCD\Ccda::where('id', $medications_import->ccda_id)->lists('patient_id')->first();
 
-            if(is_null($patient_id)){
+            if (is_null($patient_id)) {
                 $this->command->info("No user associated to CCDA for MedicationsImport ID: " . $medications_import->id);
                 continue;
             }
@@ -66,34 +66,55 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
         $problems_imports = \App\CLH\CCD\ImportedItems\ProblemImport::all();
         $this->command->comment(PHP_EOL . 'Begin Migrating Problems...' . PHP_EOL);
 
-        foreach($problems_imports as $problems_import){
-            $ccda = \App\CLH\CCD\Ccda::where('id',$problems_import->ccda_id)->first();
+        foreach ($problems_imports as $problems_import) {
+            $ccda = \App\CLH\CCD\Ccda::where('id', $problems_import->ccda_id)->first();
 
-            if(empty($ccda)){
+            if (empty($ccda)) {
                 $this->command->info("No user associated to CCDA for ProblemsImport ID: " . $problems_import->id);
                 continue;
             }
 
             $patient_id = $ccda->patient_id;
 
-            if(empty($patient_id)){
+            if (empty($patient_id)) {
                 $this->command->info("No user associated to CCDA for ProblemsImport ID: " . $problems_import->id);
                 continue;
             }
 
-            $result = \App\Models\CCD\CcdProblem::firstOrCreate([
-                'ccda_id' => $problems_import->ccda_id,
-                'vendor_id' => $problems_import->vendor_id,
-                'ccd_problem_log_id' => $problems_import->ccd_problem_log_id,
-                'name' => $problems_import->name,
-                'activate' => $problems_import->activate,
-                'cpm_problem_id' => $problems_import->cpm_problem_id,
-                'code_system_name' => $problems_import->code_system_name,
-                'code' => $problems_import->code,
-                'code_system' => $problems_import->code_system,
+            try {
+                $result = \App\Models\CCD\CcdProblem::firstOrCreate([
+                    'ccda_id' => $problems_import->ccda_id,
+                    'vendor_id' => $problems_import->vendor_id,
+                    'ccd_problem_log_id' => $problems_import->ccd_problem_log_id,
+                    'name' => $problems_import->name,
+                    'activate' => $problems_import->activate,
+                    'cpm_problem_id' => $problems_import->cpm_problem_id,
+                    'code_system_name' => $problems_import->code_system_name,
+                    'code' => $problems_import->code,
+                    'code_system' => $problems_import->code_system,
 
-                'patient_id' => $patient_id,
-            ]);
+                    'patient_id' => $patient_id,
+                ]);
+            } catch (\Exception $e)
+            {
+                //If it is failing because of a foreign key constraint, then enter it without cpm_problem_id
+                if ($e->errorInfo[1] == 1452)
+                {
+                    $result = \App\Models\CCD\CcdProblem::firstOrCreate([
+                        'ccda_id' => $problems_import->ccda_id,
+                        'vendor_id' => $problems_import->vendor_id,
+                        'ccd_problem_log_id' => $problems_import->ccd_problem_log_id,
+                        'name' => $problems_import->name,
+                        'activate' => $problems_import->activate,
+                        'code_system_name' => $problems_import->code_system_name,
+                        'code' => $problems_import->code,
+                        'code_system' => $problems_import->code_system,
+
+                        'patient_id' => $patient_id,
+                    ]);
+                }
+            }
+
 
             $this->command->info("Migrated ProblemsImport ID: " . $problems_import->id . " to CcdProblems ID: " . $result->id);
         }
