@@ -66,10 +66,10 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
                     'values' => ['Diabetic Diet'],
                 ],
 
-                'cpmMedicationGroupsToBeActivated' => [
-                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
-                    'values' => ['Oral Diabetes Meds'],
-                ],
+//                'cpmMedicationGroupsToBeActivated' => [
+//                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+//                    'values' => ['Oral Diabetes Meds'],
+//                ],
 
                 'cpmSymptomsToBeActivated' => [
                     'type' => \App\Models\CPM\CpmSymptom::class,
@@ -96,10 +96,10 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
                     'values' => ['Low Salt Diet'],
                 ],
 
-                'cpmMedicationGroupsToBeActivated' => [
-                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
-                    'values' => ['Blood Pressure Meds'],
-                ],
+//                'cpmMedicationGroupsToBeActivated' => [
+//                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+//                    'values' => ['Blood Pressure Meds'],
+//                ],
 
                 'cpmSymptomsToBeActivated' => [
                     'type' => \App\Models\CPM\CpmSymptom::class,
@@ -129,10 +129,10 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
                     'values' => [],
                 ],
 
-                'cpmMedicationGroupsToBeActivated' => [
-                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
-                    'values' => [],
-                ],
+//                'cpmMedicationGroupsToBeActivated' => [
+//                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+//                    'values' => [],
+//                ],
 
                 'cpmSymptomsToBeActivated' => [
                     'type' => \App\Models\CPM\CpmSymptom::class,
@@ -162,10 +162,10 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
                     'values' => ['Healthy Diet'],
                 ],
 
-                'cpmMedicationGroupsToBeActivated' => [
-                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
-                    'values' => [],
-                ],
+//                'cpmMedicationGroupsToBeActivated' => [
+//                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+//                    'values' => [],
+//                ],
 
                 'cpmSymptomsToBeActivated' => [
                     'type' => \App\Models\CPM\CpmSymptom::class,
@@ -195,10 +195,10 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
                     'values' => [],
                 ],
 
-                'cpmMedicationGroupsToBeActivated' => [
-                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
-                    'values' => ['Mood/Depression Meds'],
-                ],
+//                'cpmMedicationGroupsToBeActivated' => [
+//                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+//                    'values' => ['Mood/Depression Meds'],
+//                ],
 
                 'cpmSymptomsToBeActivated' => [
                     'type' => \App\Models\CPM\CpmSymptom::class,
@@ -223,10 +223,10 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
                     'values' => [],
                 ],
 
-                'cpmMedicationGroupsToBeActivated' => [
-                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
-                    'values' => [],
-                ],
+//                'cpmMedicationGroupsToBeActivated' => [
+//                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+//                    'values' => [],
+//                ],
 
                 'cpmSymptomsToBeActivated' => [
                     'type' => \App\Models\CPM\CpmSymptom::class,
@@ -256,10 +256,10 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
                     'values' => ['Healthy Diet'],
                 ],
 
-                'cpmMedicationGroupsToBeActivated' => [
-                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
-                    'values' => [],
-                ],
+//                'cpmMedicationGroupsToBeActivated' => [
+//                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+//                    'values' => [],
+//                ],
 
                 'cpmSymptomsToBeActivated' => [
                     'type' => \App\Models\CPM\CpmSymptom::class,
@@ -282,10 +282,10 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
                     'values' => ['Healthy Diet'],
                 ],
 
-                'cpmMedicationGroupsToBeActivated' => [
-                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
-                    'values' => ['Kidney Disease Meds'],
-                ],
+//                'cpmMedicationGroupsToBeActivated' => [
+//                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+//                    'values' => ['Kidney Disease Meds'],
+//                ],
 
                 'cpmSymptomsToBeActivated' => [
                     'type' => \App\Models\CPM\CpmSymptom::class,
@@ -312,10 +312,10 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
                     'values' => [],
                 ],
 
-                'cpmMedicationGroupsToBeActivated' => [
-                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
-                    'values' => ['Dementia Meds'],
-                ],
+//                'cpmMedicationGroupsToBeActivated' => [
+//                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+//                    'values' => ['Dementia Meds'],
+//                ],
 
                 'cpmSymptomsToBeActivated' => [
                     'type' => \App\Models\CPM\CpmSymptom::class,
@@ -335,10 +335,10 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
                     'values' => [],
                 ],
 
-                'cpmMedicationGroupsToBeActivated' => [
-                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
-                    'values' => ['Breathing Meds for Asthma/COPD'],
-                ],
+//                'cpmMedicationGroupsToBeActivated' => [
+//                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+//                    'values' => ['Breathing Meds for Asthma/COPD'],
+//                ],
 
                 'cpmSymptomsToBeActivated' => [
                     'type' => \App\Models\CPM\CpmSymptom::class,
@@ -366,10 +366,10 @@ class ProblemsActivateCpmEntitiesSeeder extends Seeder
                     'values' => [],
                 ],
 
-                'cpmMedicationGroupsToBeActivated' => [
-                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
-                    'values' => [],
-                ],
+//                'cpmMedicationGroupsToBeActivated' => [
+//                    'type' => \App\Models\CPM\CpmMedicationGroup::class,
+//                    'values' => [],
+//                ],
 
                 'cpmSymptomsToBeActivated' => [
                     'type' => \App\Models\CPM\CpmSymptom::class,
