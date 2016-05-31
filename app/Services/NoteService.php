@@ -36,7 +36,7 @@ class NoteService
                 $start, $end
             ])
             ->orderBy('performed_at', 'desc')
-            ->take(1000)->get();
+            ->take(250)->get();
 
     }
 
