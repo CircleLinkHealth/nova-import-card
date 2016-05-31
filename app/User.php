@@ -68,7 +68,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	/**
 	 * @todo: make timestamps work
 	 */
-	public $timestamps = false;
+	public $timestamps = true;
 
 	public $rules = array(
 		'user_login'             => 'required',                        // just a normal required validation
@@ -108,12 +108,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"ccm_status" => "required",
 		"program_id" => "required"
 	);
-
-
-
-	// WordPress uses differently named fields for create and update fields than Laravel does
-	const CREATED_AT = 'post_date';
-	const UPDATED_AT = 'post_modified';
 
 
 	// for revisionable
@@ -1112,7 +1106,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 $ct[] = $careTeamMember->member_user_id;
             }
         }
-        return $ct;
+
+		/**
+		 * Added this to fix providers not showing up for users who don't have member.
+		 */
+		$ct = $this->patientCareTeamMembers
+			->where('type', 'lead_contact')
+			->lists('member_user_id')
+			->all();
+
+		return $ct;
     }
 
     public function setCareTeamAttribute($memberUserIds)

@@ -129,8 +129,7 @@ class CarePlanRepository
 //        From: CircleLink Health
 //        Sent: Tuesday, January 5, 10:11 PM
 //        Subject: [Site Name] New User Registration!
-//        To: Phil Lawlor       Plawlor@circlelinkhealth.com
-//            Linda Warshavsky  lindaw@circlelinkhealth.com
+//        To: Linda Warshavsky  lindaw@circlelinkhealth.com
 //
 //New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
 
