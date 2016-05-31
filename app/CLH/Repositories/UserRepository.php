@@ -24,6 +24,9 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     {
         $user = $user->createNewUser($params->get('user_email'), $params->get('user_pass'));
 
+        // set registration date field on users
+        $user->user_registered = date('Y-m-d H:i:s');
+
         // the basics
         $this->saveOrUpdateUserInfo($user, $params);
 
