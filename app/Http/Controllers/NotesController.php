@@ -35,16 +35,7 @@ class NotesController extends Controller
         $patient = User::find($patientId);
         $messages = \Session::get('messages');
 
-        $acts = DB::table('lv_activities')
-            ->select(DB::raw('*,provider_id, type'))
-            ->where('patient_id', $patientId)
-            ->where(function ($q) {
-                $q->where('logged_from', 'note')
-                    ->Orwhere('logged_from', 'manual_input');
-            })
-            ->orderBy('performed_at', 'desc')
-            ->get();
-
+        $acts = $this->service->getNotesForPatient($patient);
 
         $acts = json_decode(json_encode($acts), true);
 
@@ -150,7 +141,7 @@ class NotesController extends Controller
                 $q->where('name', '=', 'participant');
             })->get()->lists('ID')->all();
         
-        $notes = $this->service->getNotesForPatients($patients,$start,$end);
+        $notes = $this->service->getNotesWithRangeForPatients($patients,$start,$end);
 
         if(!empty($notes)) {
 
