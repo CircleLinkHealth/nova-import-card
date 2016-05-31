@@ -8,6 +8,7 @@ use App\Program;
 use App\Services\ActivityService;
 use App\Services\NoteService;
 use App\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -90,27 +91,84 @@ class NotesController extends Controller
 
     }
 
-    public function listing(Request $request)
-    {
+    public function listing(Request $request){
+
+        $input = $request->all();
+
+        $isDateFiltered = false;
+
+        //TIME FILTERS
+
+        //if month and year are selected
+        if (isset($input['selectMonth'])) {
+            $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+            $start = $time->startOfMonth()->format('Y-m-d');
+            $end = $time->endOfMonth()->format('Y-m-d');
+            $month_selected_text = $time->format('F');
+            $month_selected = $time->format('m');
+            $year_selected = $time->format('Y');
+
+            //time title for view
+            $time_title = $month_selected_text . ' ' . $year_selected;
+            $isDateFiltered = true;
+            
+        }
+        //if user resets time
+        else if(isset($input['reset'])){
+            $time = Carbon::now();
+            $start = Carbon::now()->subYears(5)->format('Y-m-d');
+            $end = Carbon::now()->addYears(5)->format('Y-m-d');
+            $month_selected_text = $time->format('F');
+            $month_selected = '';
+            $year_selected = '';
+
+            //time title for view
+            $time_title = 'All Notes';
+
+        //page first loads
+        } else {
+            $time = Carbon::now();
+            $start = Carbon::now()->subYears(5)->format('Y-m-d');
+            $end = Carbon::now()->addYears(5)->format('Y-m-d');
+            $month_selected_text = $time->format('F');
+            $month_selected = '';
+            $year_selected = '';
+
+            //time title for view
+            $time_title = 'All Notes';
+        }
+
+        debug($isDateFiltered);
+
+        $years = $this->service->getYearsArray();
+        $months = $this->service->getMonthsArray();
+
 
         //Get Viewable Patients
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get()->lists('ID')->all();
-
-
-        $notes = $this->service->getNotesForPatients($patients);
+        
+        $notes = $this->service->getNotesForPatients($patients,$start,$end);
 
         if(!empty($notes)) {
 
             $notes = $this->formatter->formatDataForNotesListingReport($notes);
             
-        } else {
-        throw new Exception('No Notes Found.');
         }
 
-        return view('wpUsers.patient.note.list', compact(['notes']));
+        $data = ['years' => array_reverse($years),
+            'month_selected' => $month_selected,
+            'year_selected' => $year_selected,
+            'month_selected_text' => $month_selected_text,
+            'months' => $months,
+            'notes' => $notes,
+            'time_title' => $time_title,
+            'dateFilter' => $isDateFiltered
+        ];
+
+        return view('wpUsers.patient.note.list', $data);
 
     }
 

@@ -166,7 +166,6 @@ class ActivityService
                 $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
                 $message->to($email)->subject($email_subject);
             });
-
         }
         return true;
 //		dd(count(Mail::failures()));

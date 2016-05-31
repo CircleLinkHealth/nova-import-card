@@ -27,6 +27,8 @@ class WebixFormatter implements ReportFormatter
 
             //Display Name
             $formatted_notes[$count]['patient_name'] = $patient->display_name ? $patient->display_name : '';
+            //ID
+            $formatted_notes[$count]['patient_id'] = $note->patient_id;
 
             //Program Name
             $program = Program::find($patient->program_id);
@@ -61,8 +63,8 @@ class WebixFormatter implements ReportFormatter
             $meta = ActivityMeta::where('activity_id',$note->id)
                 ->where(function($query){
                     $query->where('meta_key', 'call_status')
-                        ->orWhere('meta_key', 'email_sent_to')
                         ->orWhere('meta_key', 'hospital')
+                        ->OrWhere('meta_key', 'email_sent_to')
                         ->orWhere('meta_key', 'comment');
                 })
                 ->get();
@@ -71,22 +73,31 @@ class WebixFormatter implements ReportFormatter
             $formatted_notes[$count]['comment'] = $metaComment->meta_value;
             $formatted_notes[$count]['date'] = Carbon::parse($note->created_at)->format('Y-m-d');
 
+            //Check if note was sent to a provider
+            $mail_forwarded_meta = ActivityMeta::where('activity_id',$note->id)
+                ->where('meta_key', 'email_sent_to')
+                ->get();
+
+            foreach ($mail_forwarded_meta as $m) {
+//                if ($m->meta_key == 'email_sent_to') {
+//                    $sent_to_user = User::find($m->meta_value);
+//                    if ($sent_to_user->providerInfo) {
+                        $formatted_notes[$count]['tags'] = '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+//                    }
+//                }
+            }
+
             foreach ($meta as $m) {
                 switch ($m->meta_value) {
                     case('reached'):
-                        $formatted_notes[$count]['tags'] .= '<div class="label label-info">Reached</div>';
+                        $formatted_notes[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
                         break;
                     case('admitted'):
-                        $formatted_notes[$count]['tags'] .= '<div class="label label-danger">ER</div>';
+                        $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
                         break;
                 }
             }
 
-            foreach ($meta as $m) {
-                if($m->meta_key == 'email_sent_to') {
-                    $formatted_notes[$count]['tags'] .= '<div class="label label-warning">Email</div>';
-                }
-            }
 
             //Topic / Offline Act Name
             //Preview

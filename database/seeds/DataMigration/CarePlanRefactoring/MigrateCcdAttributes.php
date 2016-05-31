@@ -74,9 +74,6 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
                 continue;
             }
 
-<<<<<<< HEAD
-            try{
-=======
             $patient_id = $ccda->patient_id;
 
             if (empty($patient_id)) {
@@ -85,7 +82,6 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
             }
 
             try {
->>>>>>> v3.0.5
                 $result = \App\Models\CCD\CcdProblem::firstOrCreate([
                     'ccda_id' => $problems_import->ccda_id,
                     'vendor_id' => $problems_import->vendor_id,
@@ -96,13 +92,6 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
                     'code_system_name' => $problems_import->code_system_name,
                     'code' => $problems_import->code,
                     'code_system' => $problems_import->code_system,
-<<<<<<< HEAD
-                    'patient_id' => $patient_id,
-                ]);
-            } catch (\Exception $e){
-                $this->command->error($e->getMessage());
-            }
-=======
 
                     'patient_id' => $patient_id,
                 ]);
@@ -126,7 +115,6 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
                 }
             }
 
->>>>>>> v3.0.5
 
             $this->command->info("Migrated ProblemsImport ID: " . $problems_import->id . " to CcdProblems ID: " . $result->id);
         }
