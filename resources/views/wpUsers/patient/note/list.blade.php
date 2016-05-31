@@ -7,13 +7,13 @@
                 <div class="main-form-title col-lg-12">
                     All Patient Notes
                 </div>
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-
-                    {!! Form::open(array('url' => URL::route('patient.reports.u20'), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
-
-                    <div class="form-group  pull-right" style="margin-top:10px;">
-                        <i class="icon icon--date-time"></i>
-                </div>
+                    {{--@include('partials.userheader')--}}
+                    {{--<div class="col-sm-2" >--}}
+                        {{--<a href="--}}
+                        {{--{{ URL::route('patient.note.create', array('patient' => $patient->ID)) }}"--}}
+                           {{--class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW--}}
+                            {{--NOTE</a><br>--}}
+                    {{--</div>--}}
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12">
                     @if($notes)
                         <div id="obs_alerts_container" class=""></div><br/>
@@ -82,7 +82,7 @@
                                     animate:true,
                                     container:"paging_container",// the container where the pager controls will be placed into
                                     template:"{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
-                                    size:10, // the number of records per a page
+                                    size:15, // the number of records per a page
                                     group:5   // the number of pages in the pager
                                 },
                                 {!! $notes !!}                         });
@@ -100,10 +100,6 @@
                                        });">
                         <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
                                onclick="webix.toExcel(obs_alerts_dtable);">
-                        @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
-                            <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
-                            <input id='site_hide_btn' type='button' class='btn btn-primary' value='Hide Program' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("site");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
-                        @endif
                         <script type="text/javascript">
                             window.onload=filterText('Enrolled');
                         </script>

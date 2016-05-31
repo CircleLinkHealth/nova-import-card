@@ -74,17 +74,17 @@ class WebixFormatter implements ReportFormatter
             foreach ($meta as $m) {
                 switch ($m->meta_value) {
                     case('reached'):
-                        $formatted_notes[$count]['tags'] .= '<div class="label label-info">Reached</div>';
+                        $formatted_notes[$count]['tags'] .= '<div class="label label-info">Reached</div> ';
                         break;
                     case('admitted'):
-                        $formatted_notes[$count]['tags'] .= '<div class="label label-danger">ER</div>';
+                        $formatted_notes[$count]['tags'] .= '<div class="label label-danger">ER</div> ';
                         break;
                 }
             }
 
             foreach ($meta as $m) {
                 if($m->meta_key == 'email_sent_to') {
-                    $formatted_notes[$count]['tags'] .= '<div class="label label-warning">Email</div>';
+                    $formatted_notes[$count]['tags'] .= '<div class="label label-warning">Email</div> ';
                 }
             }
 
