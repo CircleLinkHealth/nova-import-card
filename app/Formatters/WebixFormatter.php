@@ -27,6 +27,8 @@ class WebixFormatter implements ReportFormatter
 
             //Display Name
             $formatted_notes[$count]['patient_name'] = $patient->display_name ? $patient->display_name : '';
+            //ID
+            $formatted_notes[$count]['patient_id'] = $note->patient_id;
 
             //Program Name
             $program = Program::find($patient->program_id);
@@ -57,7 +59,6 @@ class WebixFormatter implements ReportFormatter
             //Comments
             $metaComment = ActivityMeta::where('activity_id',$note->id)
                 ->where('meta_key', 'comment')->first();
-            
 
             $meta = ActivityMeta::where('activity_id',$note->id)
                 ->where(function($query){
@@ -72,10 +73,18 @@ class WebixFormatter implements ReportFormatter
             $formatted_notes[$count]['comment'] = $metaComment->meta_value;
             $formatted_notes[$count]['date'] = Carbon::parse($note->created_at)->format('Y-m-d');
 
-            foreach ($meta as $m) {
-                if($m->meta_key == 'email_sent_to') {
-                    $formatted_notes[$count]['tags'] = '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
-                }
+            //Check if note was sent to a provider
+            $mail_forwarded_meta = ActivityMeta::where('activity_id',$note->id)
+                ->where('meta_key', 'email_sent_to')
+                ->get();
+
+            foreach ($mail_forwarded_meta as $m) {
+//                if ($m->meta_key == 'email_sent_to') {
+//                    $sent_to_user = User::find($m->meta_value);
+//                    if ($sent_to_user->providerInfo) {
+                        $formatted_notes[$count]['tags'] = '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+//                    }
+//                }
             }
 
             foreach ($meta as $m) {

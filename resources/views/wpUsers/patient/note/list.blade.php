@@ -92,6 +92,7 @@
                                 fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
                                 scrollX: true,
                                 resizeColumn: true,
+                                tooltip:true,
                                 footer: false,
                                 columns: [
 
@@ -130,19 +131,21 @@
                                         id: "type",
                                         header: ["Type", {content: "textFilter", placeholder: "Filter"}],
                                         width: 150,
-                                        sort: 'string'
-                                    },
-                                    {
-                                        id: "comment",
-                                        header: ["Preview", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 150,
-                                        sort: 'string'
+                                        sort: 'string',
+                                        template:"<a href='<?php echo URL::route('patient.note.view', array('patient' => '#patient_id#','noteId'=>'#id#')); ?>'>#type#</a>"
                                     },
                                     {
                                         id: "date",
                                         header: ["Date", {content: "textFilter", placeholder: "Filter"}],
                                         width: 150,
                                         sort: 'string'
+                                    },
+                                    {
+                                        id: "comment",
+                                        header: ["Preview", {content: "textFilter", placeholder: "Filter"}],
+                                        width: 150,
+                                        sort: 'string',
+                                        tooltip:['#comment#']
                                     }
                                 ],
 
@@ -177,8 +180,8 @@
                                     <input id='site_hide_btn' type='button' class='btn btn-primary' value='Hide Program' style='display:none;margin:4px;' onclick='obs_alerts_dtable.hideColumn("program_name");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
                                 @endif
                             </div>
-                            <div class="col-sm-6 vertical-center" style="padding: 10px;">
-                                <p style="text-align: center; margin-bottom: 0px"><strong>Legend</strong></p>
+                            <div class="col-sm-6 vertical-center" style="padding: 10px; top: -14px">
+                                <p style="text-align: center; margin-bottom: 0px"><strong><em>Legend</em></strong></p>
                                 <div class="label label-info" style="margin-right: 4px; text-align: right;">
                                     <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
                                 </div>
@@ -192,13 +195,10 @@
                                 <div class="label label-warning" style="margin-right: 4px; text-align: right;">
                                     <span class="glyphicon glyphicon-envelope"></span>
                                 </div>
-                                Forwarded to provider
+                                Forwarded To Provider
                             </div>
                         </div>
                 </div>
-                <script type="text/javascript">
-                    window.onload = filterText('Enrolled');
-                </script>
                 @else
                     <div style="text-align:center;margin:50px;">There are no patients under 20 minutes
                         this month.
