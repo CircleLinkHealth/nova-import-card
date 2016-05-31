@@ -2,13 +2,29 @@
 
 namespace App\Services;
 
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class NoteService
 {
 
-    public function getNotesForPatients($patients,$start,$end){
+
+    public function getNotesForPatient(User $patient){
+
+        return DB::table('lv_activities')
+            ->select(DB::raw('*,provider_id, type'))
+            ->where('patient_id', $patient->ID)
+            ->where(function ($q) {
+                $q->where('logged_from', 'note')
+                    ->Orwhere('logged_from', 'manual_input');
+            })
+            ->orderBy('performed_at', 'desc')
+            ->get();
+
+    }
+
+    public function getNotesWithRangeForPatients($patients,$start,$end){
 
         return DB::table('lv_activities')
             ->select(DB::raw('*,provider_id, type'))
@@ -20,7 +36,7 @@ class NoteService
                 $start, $end
             ])
             ->orderBy('performed_at', 'desc')
-            ->get();
+            ->take(1000)->get();
 
     }
 
