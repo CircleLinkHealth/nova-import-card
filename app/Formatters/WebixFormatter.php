@@ -57,12 +57,13 @@ class WebixFormatter implements ReportFormatter
             //Comments
             $metaComment = ActivityMeta::where('activity_id',$note->id)
                 ->where('meta_key', 'comment')->first();
+            
 
             $meta = ActivityMeta::where('activity_id',$note->id)
                 ->where(function($query){
                     $query->where('meta_key', 'call_status')
-                        ->orWhere('meta_key', 'email_sent_to')
                         ->orWhere('meta_key', 'hospital')
+                        ->OrWhere('meta_key', 'email_sent_to')
                         ->orWhere('meta_key', 'comment');
                 })
                 ->get();
@@ -72,21 +73,22 @@ class WebixFormatter implements ReportFormatter
             $formatted_notes[$count]['date'] = Carbon::parse($note->created_at)->format('Y-m-d');
 
             foreach ($meta as $m) {
-                switch ($m->meta_value) {
-                    case('reached'):
-                        $formatted_notes[$count]['tags'] .= '<div class="label label-info">Reached</div> ';
-                        break;
-                    case('admitted'):
-                        $formatted_notes[$count]['tags'] .= '<div class="label label-danger">ER</div> ';
-                        break;
+                if($m->meta_key == 'email_sent_to') {
+                    $formatted_notes[$count]['tags'] = '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
                 }
             }
 
             foreach ($meta as $m) {
-                if($m->meta_key == 'email_sent_to') {
-                    $formatted_notes[$count]['tags'] .= '<div class="label label-warning">Email</div> ';
+                switch ($m->meta_value) {
+                    case('reached'):
+                        $formatted_notes[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
+                        break;
+                    case('admitted'):
+                        $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
+                        break;
                 }
             }
+
 
             //Topic / Offline Act Name
             //Preview
