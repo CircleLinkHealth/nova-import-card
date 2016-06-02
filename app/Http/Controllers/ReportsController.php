@@ -45,7 +45,7 @@ class ReportsController extends Controller
         $biometrics_array = array();
 
         foreach ($biometrics as $biometric) {
-            $biometrics_data[$biometric] = (new ReportsService())->getBiometricsData(str_replace('_', ' ', $biometric), $user);
+            $biometrics_data[$biometric] = (new ReportsService())->getBiometricsData(str_replace(' ', '_', $biometric), $user);
         }
 
         foreach ($biometrics_data as $key => $value) {
@@ -58,7 +58,7 @@ class ReportsController extends Controller
                 $biometrics_array[$bio_name]['change'] = $changes['change'];
                 $biometrics_array[$bio_name]['progression'] = $changes['progression'];
                 $biometrics_array[$bio_name]['status'] = (isset($changes['status'])) ? $changes['status'] : 'Unchanged';
-//				//$changes['bio']= $bio_name;debug($changes);
+ 				//$changes['bio']= $bio_name;debug($changes);
                 $biometrics_array[$bio_name]['lastWeekAvg'] = intval($last->Avg);
             }
 
@@ -69,7 +69,7 @@ class ReportsController extends Controller
             if ($value) {
                 foreach ($value as $key => $value) {
                     $biometrics_array[$bio_name]['unit'] = (new ReportsService())->biometricsUnitMapping(str_replace('_', ' ', $bio_name));
-                    $biometrics_array[$bio_name]['target'] = (new ReportsService())->getTargetValueForBiometric($bio_name, $user);
+                    $biometrics_array[$bio_name]['target'] = (new ReportsService())->getTargetValueForBiometric($bio_name, $user, false);
                     $biometrics_array[$bio_name]['reading'] = intval($value->Avg);
                     if (intval($value->Avg) > $biometrics_array[$bio_name]['max']) {
                         $biometrics_array[$bio_name]['max'] = intval($value->Avg);
