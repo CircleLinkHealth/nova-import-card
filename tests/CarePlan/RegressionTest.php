@@ -88,6 +88,53 @@ class RegressionTest extends TestCase
 
     public function createNewPatient()
     {
-        
+        $this->visit('/manage-patients/dashboard')
+            ->see('Add a patient')
+            ->click('add-patient')
+            ->seePageIs('/manage-patients/careplan/demographics');
+
+
+        $faker = Faker\Factory::create();
+
+        $firstName = $faker->firstName;
+        $lastName = $faker->lastName;
+        $mrn = $faker->randomNumber(6);
+        $gender = ['radioFemale', 'radioMale'];
+        $language = ['languageEnglish', 'languageSpanish'];
+        $dob = $faker->dateTime('Y-m-d');
+        $homePhone = \App\CLH\Facades\StringManipulation::formatPhoneNumber($faker->phoneNumber);
+        $cellPhone = \App\CLH\Facades\StringManipulation::formatPhoneNumber($faker->phoneNumber);
+        $email = $faker->email;
+        $streetAddress = $faker->streetAddress;
+        $city = $faker->city;
+        $state = $faker->stateAbbr;
+        $zip = $faker->postcode;
+        $agentName = $faker->name;
+        $agentPhone = \App\CLH\Facades\StringManipulation::formatPhoneNumber($faker->phoneNumber);
+        $agentRelationship = 'Next of Kin';
+        $agentEmail = $faker->email;
+
+        $this->type($firstName, 'first_name')
+            ->type($lastName, 'last_name')
+            ->select(null, $gender[array_rand($gender, 1)])
+            ->select(null, $language[array_rand($language, 1)])
+            ->type($mrn, 'mrn_number')
+            ->type($dob, 'birth_date')
+            ->type($homePhone, 'home_phone_number')
+            ->type($cellPhone, 'mobile_phone_number')
+            ->type($email, 'email')
+            ->type($streetAddress, 'address')
+            ->type($city, 'city')
+            ->select($state, 'address')
+            ->type($zip, 'zip')
+            ->type($agentName, 'agent_name')
+            ->type($agentPhone, 'agent_telephone')
+            ->type($agentRelationship, 'agent_relationship')
+            ->type($agentEmail, 'agent_email')
+        ;
+
+        //By default PHPUnit fails the test if the output buffer wasn't closed.
+        //So we're adding this to make the test work.
+        ob_end_clean();
     }
 }
