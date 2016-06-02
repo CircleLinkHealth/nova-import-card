@@ -42,7 +42,7 @@ class S20160602UserAddressMigration extends Seeder {
             $user->address = $user->getUserConfigByKey('address');
             $user->address2 = $user->getUserConfigByKey('address2');
             $user->zip = $user->getUserConfigByKey('zip');
-            $user->status = $user->getUserConfigByKey('status');
+            $user->status = '';
             $user->save();
 
             echo 'Saved '.PHP_EOL;
