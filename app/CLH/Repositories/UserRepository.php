@@ -92,6 +92,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->user_nicename = $params->get('user_nicename');
         $user->user_login = $params->get('user_login');
         $user->user_status = $params->get('user_status');
+        if($params->get('access_disabled')) {
+            $user->access_disabled = $params->get('access_disabled');
+        } else {
+            $user->access_disabled = 0; // 0 = good, 1 = disabled
+        }
         $user->program_id = $params->get('program_id');
         $user->care_plan_id = $params->get('care_plan_id');
         $user->auto_attach_programs = $params->get('auto_attach_programs');
