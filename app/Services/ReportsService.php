@@ -250,12 +250,16 @@ class ReportsService
 
     }
 
-    public
-    function getTargetValueForBiometric($biometric, User $user)
+    public function getTargetValueForBiometric($biometric, User $user, $showUnits = true)
     {
         $bio = CpmBiometric::whereName(str_replace('_', ' ', $biometric))->first();
         $biometric_values = app(config('cpmmodelsmap.biometrics')[$bio->type])->getUserValues($user);
-        return $biometric_values['target'] . ReportsService::biometricsUnitMapping($biometric);
+
+        if($showUnits) {
+            return $biometric_values['target'] . ReportsService::biometricsUnitMapping($biometric);
+        } else {
+            return $biometric_values['target'];
+        }
     }
 
     public function getBiometricsData($biometric, $user)
@@ -276,7 +280,9 @@ class ReportsService
             ->groupBy('realweek')
             ->orderBy('obs_date')
             ->get();
+
         return ($data) ? $data : '';
+
     }
 
     public
