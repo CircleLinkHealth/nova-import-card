@@ -116,8 +116,8 @@ class RegressionTest extends TestCase
 
         $this->type($firstName, 'first_name')
             ->type($lastName, 'last_name')
-            ->select(null, $gender[array_rand($gender, 1)])
-            ->select(null, $language[array_rand($language, 1)])
+            ->check($gender[array_rand($gender, 1)])
+            ->check($language[array_rand($language, 1)])
             ->type($mrn, 'mrn_number')
             ->type($dob, 'birth_date')
             ->type($homePhone, 'home_phone_number')
@@ -131,6 +131,17 @@ class RegressionTest extends TestCase
             ->type($agentPhone, 'agent_telephone')
             ->type($agentRelationship, 'agent_relationship')
             ->type($agentEmail, 'agent_email')
+            ->type($agentEmail, 'agent_email')
+            ->click('contact_time')
+            ->see('Set')
+            ->type('05:00 PM', 'preferred_contact_time')
+            ->check('contact-days-1')
+            ->check('contact-days-2')
+            ->check('contact-days-3')
+            ->check('contact-days-4')
+            ->check('contact-days-5')
+            ->check('contact-days-6')
+            ->check('contact-days-7')
         ;
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
