@@ -13,6 +13,8 @@ class RegressionTest extends TestCase
 {
     use \Illuminate\Foundation\Testing\DatabaseTransactions;
 
+    protected $provider;
+
     public function testCreateProvider()
     {
         $faker = Faker\Factory::create();
@@ -56,5 +58,28 @@ class RegressionTest extends TestCase
                 'role_id' => $role,
             ]);
         }
+
+        $this->provider = $user;
+    }
+
+    public function testLogin()
+    {
+        /*
+         * Since we're using DatabaseTransactions, it seems like Laravel rolls back after executing each method.
+         * @todo: research what's going on and figure out if DatabaseTransactions can be rolled back after all tests run
+         *
+         * For let's just call it again.
+         */
+        $this->testCreateProvider();
+
+        $this->visit('/auth/login')
+            ->see('CarePlanManager')
+            ->type($this->provider->user_email, 'email')
+            ->type('password', 'password')
+            ->press('Log In')
+            ->seePageIs('/manage-patients/dashboard');
+
+        
+        ob_end_clean();
     }
 }
