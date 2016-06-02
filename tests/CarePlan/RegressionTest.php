@@ -3,12 +3,7 @@ use App\CLH\Repositories\UserRepository;
 use App\User;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 4/19/16
- * Time: 4:34 PM
- */
+
 class RegressionTest extends TestCase
 {
     use \Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -79,7 +74,8 @@ class RegressionTest extends TestCase
             ->press('Log In')
             ->seePageIs('/manage-patients/dashboard');
 
-        
+        //By default PHPUnit fails the test if the output buffer wasn't closed.
+        //So we're adding this to make the test work.
         ob_end_clean();
     }
 }
