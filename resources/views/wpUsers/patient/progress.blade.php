@@ -12,7 +12,6 @@ function trim_bp($bp){
     echo $bp_[0];
 }
 
-
 ?>
 @section('content')
     <div class="container">
