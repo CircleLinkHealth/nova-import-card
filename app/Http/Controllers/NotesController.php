@@ -381,7 +381,6 @@ class NotesController extends Controller
     public function send(Request $input, $patientId, $noteId)
     {
         $input = $input->all();
-        debug($input);
 
         if (isset($input['careteam'])) {
             $activity = Activity::findOrFail($input['noteId']);
