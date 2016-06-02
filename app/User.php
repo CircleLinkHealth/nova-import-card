@@ -1605,6 +1605,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $user->agentEmail = 'secret@agent.net';
         $user->agentRelationship = 'SA';
         $user->save();
+
     }
 
     public function createNewUser($user_email, $user_pass)
