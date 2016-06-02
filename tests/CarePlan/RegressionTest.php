@@ -10,7 +10,23 @@ class RegressionTest extends TestCase
 
     protected $provider;
 
-    public function testCreateProvider()
+    public function testClhRegressionTesting()
+    {
+        /*
+         * Since we're using DatabaseTransactions, it seems like Laravel rolls back after executing each method.
+         * @todo: research what's going on and figure out if DatabaseTransactions can be rolled back after all tests run
+         *
+         * For let's just call it again.
+         */
+        $this->createProvider();
+
+        $this->providerLogin();
+
+        $this->createNewPatient();
+
+    }
+
+    public function createProvider()
     {
         $faker = Faker\Factory::create();
 
@@ -46,8 +62,7 @@ class RegressionTest extends TestCase
         $this->seeInDatabase('users', ['user_email' => $email]);
 
         //check that the roles were created
-        foreach ($roles as $role)
-        {
+        foreach ($roles as $role) {
             $this->seeInDatabase('lv_role_user', [
                 'user_id' => $user->ID,
                 'role_id' => $role,
@@ -57,16 +72,8 @@ class RegressionTest extends TestCase
         $this->provider = $user;
     }
 
-    public function testLogin()
+    public function providerLogin()
     {
-        /*
-         * Since we're using DatabaseTransactions, it seems like Laravel rolls back after executing each method.
-         * @todo: research what's going on and figure out if DatabaseTransactions can be rolled back after all tests run
-         *
-         * For let's just call it again.
-         */
-        $this->testCreateProvider();
-
         $this->visit('/auth/login')
             ->see('CarePlanManager')
             ->type($this->provider->user_email, 'email')
@@ -77,5 +84,10 @@ class RegressionTest extends TestCase
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
         ob_end_clean();
+    }
+
+    public function createNewPatient()
+    {
+        
     }
 }
