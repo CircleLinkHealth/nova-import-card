@@ -8,6 +8,7 @@ class RegressionTest extends TestCase
 {
 //    use \Illuminate\Foundation\Testing\DatabaseTransactions;
 
+    protected $patient;
     protected $provider;
 
     public function testClhRegressionTesting()
@@ -129,7 +130,7 @@ class RegressionTest extends TestCase
             ->type($dob, 'birth_date')
             ->type($homePhone, 'home_phone_number')
             ->type($cellPhone, 'mobile_phone_number')
-//            ->type($email, 'email')
+            ->type($email, 'email')
             ->type($streetAddress, 'address')
             ->type($city, 'city')
             ->select($state, 'state')
@@ -159,7 +160,10 @@ class RegressionTest extends TestCase
             'state' => $state,
             'zip' => $zip
         ]);
+        
+        $patient = User::whereUserEmail($email)->first();
 
+        $this->patient = $patient;
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
