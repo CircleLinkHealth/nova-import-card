@@ -160,7 +160,7 @@ $user_info = array();
                                         <label class="sr-only" for="lastName">Email Address</label>
                                         <input type="email" class="form-control" name="email" id="email"
                                                placeholder="Email Address"
-                                               value="{{ (old('email') ? old('email') : ($patient->email ? $patient->email : '')) }}">
+                                               value="{{ (old('email') ? old('email') : ($patient->user_email ? $patient->user_email : '')) }}">
                                         <span class="help-block">{{ $errors->first('email') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('address') ? 'has-error' : '' }}">
