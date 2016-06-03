@@ -104,8 +104,10 @@ class RegressionTest extends TestCase
         $firstName = $faker->firstName;
         $lastName = $faker->lastName;
         $mrn = $faker->randomNumber(6);
-        $gender = ['F', 'M'];
-        $language = ['EN', 'ES'];
+        $genderCollection = ['F', 'M'];
+        $gender = $genderCollection[array_rand($genderCollection, 1)];
+        $languageCollection = ['EN', 'ES'];
+        $language = $languageCollection[array_rand($languageCollection, 1)];
         $dob = $faker->date();
         $homePhone = \App\CLH\Facades\StringManipulation::formatPhoneNumber($faker->phoneNumber);
         $cellPhone = \App\CLH\Facades\StringManipulation::formatPhoneNumber($faker->phoneNumber);
@@ -128,8 +130,8 @@ class RegressionTest extends TestCase
             ->actingAs($this->provider)
             ->type($firstName, 'first_name')
             ->type($lastName, 'last_name')
-            ->select($gender[array_rand($gender, 1)], 'gender')
-            ->select($language[array_rand($language, 1)], 'preferred_contact_language')
+            ->select($gender, 'gender')
+            ->select($language, 'preferred_contact_language')
             ->type($mrn, 'mrn_number')
             ->type($dob, 'birth_date')
             ->type($homePhone, 'home_phone_number')
@@ -151,7 +153,8 @@ class RegressionTest extends TestCase
             ->select($timezone, 'preferred_contact_timezone')
             ->select($ccmStatus, 'ccm_status')
             ->press('Add Patient')
-            ->click('#approve-forward');
+            ->select(10, 'preferred_contact_location')
+            ->press('TestSubmit');
 
         $this->seeInDatabase('users', [
             'first_name' => $firstName,
@@ -164,10 +167,35 @@ class RegressionTest extends TestCase
             'state' => $state,
             'zip' => $zip
         ]);
-        
+
         $patient = User::whereUserEmail($email)->first();
 
         $this->patient = $patient;
+
+        $this->seeInDatabase('patient_info', [
+            'user_id' => $this->patient->ID,
+            'agent_name' => $agentName,
+            'agent_telephone' => $agentPhone,
+            'agent_email' => $agentEmail,
+            'agent_relationship' => $agentRelationship,
+            'birth_date' => $dob,
+            'ccm_status' => $ccmStatus,
+            'consent_date' => $consentDate,
+            'gender' => $gender,
+            'mrn_number' => $mrn,
+            'preferred_contact_location' => 10,
+            'preferred_contact_language' => $language,
+            'preferred_contact_method' => $contactMethod,
+            'preferred_contact_time' => $contactTime,
+            'preferred_contact_timezone' => $timezone,
+            'daily_reminder_optin' => 'Y',
+            'daily_reminder_time' => '08:00',
+            'daily_reminder_areas' => 'TBD',
+            'hospital_reminder_optin' => 'Y',
+            'hospital_reminder_time' => '19:00',
+            'hospital_reminder_areas' => 'TBD',
+            'careplan_status' => 'draft',
+        ]);
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
@@ -193,11 +221,12 @@ class RegressionTest extends TestCase
 
     public function fillCareplanPage1()
     {
-        $carePlanProblems = $this->patient->service()
+        $carePlanTemplate = $this->patient->service()
             ->firstOrDefaultCarePlan($this->patient)
             ->carePlanTemplate()
-            ->first()
-            ->cpmProblems()
+            ->first();
+
+        $carePlanProblems = $carePlanTemplate->cpmProblems()
             ->lists('cpm_problem_id')
             ->all();
         
@@ -209,8 +238,15 @@ class RegressionTest extends TestCase
         foreach ($carePlanProblems as $problemId)
         {
             $this->select($problemId, "cpmProblems[$problemId]");
+            $this->press('TestSubmit');
+
+            $this->seeInDatabase('cpm_problems_users', [
+                'cpm_problem_id' => $problemId,
+                'patient_id' => $this->patient->ID,
+            ]);
         }
 
-        $this->press('TestSubmit');
+
+
     }
 }
