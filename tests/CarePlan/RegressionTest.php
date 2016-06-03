@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class RegressionTest extends TestCase
 {
-    use \Illuminate\Foundation\Testing\DatabaseTransactions;
+//    use \Illuminate\Foundation\Testing\DatabaseTransactions;
 
     protected $provider;
 
@@ -99,9 +99,9 @@ class RegressionTest extends TestCase
         $firstName = $faker->firstName;
         $lastName = $faker->lastName;
         $mrn = $faker->randomNumber(6);
-        $gender = ['radioFemale', 'radioMale'];
-        $language = ['languageEnglish', 'languageSpanish'];
-        $dob = $faker->dateTime('Y-m-d');
+        $gender = ['F', 'M'];
+        $language = ['EN', 'ES'];
+        $dob = $faker->date();
         $homePhone = \App\CLH\Facades\StringManipulation::formatPhoneNumber($faker->phoneNumber);
         $cellPhone = \App\CLH\Facades\StringManipulation::formatPhoneNumber($faker->phoneNumber);
         $email = $faker->email;
@@ -113,36 +113,53 @@ class RegressionTest extends TestCase
         $agentPhone = \App\CLH\Facades\StringManipulation::formatPhoneNumber($faker->phoneNumber);
         $agentRelationship = 'Next of Kin';
         $agentEmail = $faker->email;
+        $contactTime = '05:00 PM';
+        $contactMethod = 'CCT';
+        $consentDate = $faker->date();
+        $timezone = 'America/New_York';
+        $ccmStatus = 'enrolled';
 
-        $this->type($firstName, 'first_name')
+        $this
+            ->actingAs($this->provider)
+            ->type($firstName, 'first_name')
             ->type($lastName, 'last_name')
-            ->check($gender[array_rand($gender, 1)])
-            ->check($language[array_rand($language, 1)])
+            ->select($gender[array_rand($gender, 1)], 'gender')
+            ->select($language[array_rand($language, 1)], 'preferred_contact_language')
             ->type($mrn, 'mrn_number')
             ->type($dob, 'birth_date')
             ->type($homePhone, 'home_phone_number')
             ->type($cellPhone, 'mobile_phone_number')
-            ->type($email, 'email')
+//            ->type($email, 'email')
             ->type($streetAddress, 'address')
             ->type($city, 'city')
-            ->select($state, 'address')
+            ->select($state, 'state')
             ->type($zip, 'zip')
             ->type($agentName, 'agent_name')
             ->type($agentPhone, 'agent_telephone')
             ->type($agentRelationship, 'agent_relationship')
             ->type($agentEmail, 'agent_email')
             ->type($agentEmail, 'agent_email')
-            ->click('contact_time')
-            ->see('Set')
-            ->type('05:00 PM', 'preferred_contact_time')
-            ->check('contact-days-1')
-            ->check('contact-days-2')
-            ->check('contact-days-3')
-            ->check('contact-days-4')
-            ->check('contact-days-5')
-            ->check('contact-days-6')
-            ->check('contact-days-7')
-        ;
+            ->type($contactTime, 'preferred_contact_time')
+//            ->click('#contact-days-3')
+            ->select($contactMethod, 'preferred_contact_method')
+            ->type($consentDate, 'consent_date')
+            ->select($timezone, 'preferred_contact_timezone')
+            ->select($ccmStatus, 'ccm_status')
+            ->press('Add Patient')
+            ->click('#approve');
+
+        $this->seeInDatabase('users', [
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'user_email' => $email,
+            'display_name' => "$firstName $lastName",
+            'program_id' => 9,
+            'address' => $streetAddress,
+            'city' => $city,
+            'state' => $state,
+            'zip' => $zip
+        ]);
+
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
