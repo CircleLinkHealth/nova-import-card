@@ -144,7 +144,6 @@ class ActivityService
         $user = User::find($user_id);
         for ($i = 0; $i < count($careteam); $i++) {
             $provider_user = User::find($careteam[$i]);
-            debug($provider_user);
             $email = $provider_user->user_email;
             $performed_at = Carbon::parse($performed_at)->toFormattedDateString();
             $data = array(
@@ -164,6 +163,9 @@ class ActivityService
             
             Mail::send($email_view, $data, function ($message) use ($email, $email_subject) {
                 $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
+
+                //Forwards notes to Linda
+                $message->cc('Lindaw@circlelinkhealth.com');
                 $message->to($email)->subject($email_subject);
             });
 

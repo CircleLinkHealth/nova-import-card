@@ -6,6 +6,12 @@
 <?php
 $today = \Carbon\Carbon::now()->toFormattedDateString();
 $provider = App\User::find($patient->getBillingProviderIDAttribute());
+
+function trim_bp($bp){
+    $bp_ = explode('/', $bp);
+    echo $bp_[0];
+}
+
 ?>
 @section('content')
     <div class="container">
@@ -117,25 +123,21 @@ $provider = App\User::find($patient->getBillingProviderIDAttribute());
                                     </div>
                                     <div class="col-xs-3 text-center" style="Zoom:75%">
                                         <div class="patient-summary__info">
-                                            {{abs($value['lastWeekAvg'])}} <span
-                                                    class="patient-summary__metrics">{{trim($value['unit'])}}</span>
+                                            {{abs($value['lastWeekAvg'])}}
+                                            <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
                                         </div>
-                                        <div class="patient-summary__info__legend">
-                                            Latest Weekly Avg.
-                                        </div>
+                                        <div class="patient-summary__info__legend">Latest Weekly Avg.</div>
                                     </div>
 
                                     <div class="col-xs-3  text-center" style="Zoom:75%">
                                         <div class="patient-summary__info">
-                                            @if($value['target'] != '')
-                                                {{$value['target']}}
+                                            @if($value['target'] != ''){{trim_bp($value['target'])}}
+                                            <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
                                             @else
                                                 N/A
                                             @endif
                                         </div>
-                                            <div class="patient-summary__info__legend">
-                                                Goal
-                                            </div>
+                                            <div class="patient-summary__info__legend">Goal</div>
                                     </div>
                                 </div>
                             </div>
