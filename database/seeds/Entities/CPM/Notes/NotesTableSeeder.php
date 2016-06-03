@@ -19,6 +19,9 @@ class NotesTableSeeder extends Seeder
             ->orderBy('performed_at', 'desc')
             ->get();
 
+        $this->command->info('Found ' . count($activity_notes) .  ' ...');
+        $this->command->line('');
+
         foreach ($activity_notes as $activity_note) {
 
             $this->command->warn("Transferring Activity ID: " . $activity_note->id);
@@ -92,7 +95,7 @@ class NotesTableSeeder extends Seeder
                                         'receiver_cpm_id' => $receiver->ID
                                     ]);
                                 }
-                                $this->command->info("Mail Logged. " . $cpm_mail_log->id);
+                                $this->command->info("Mail Logged - cpm_mail_log id: " . $cpm_mail_log->id);
 
                             }
                         }
@@ -109,50 +112,50 @@ class NotesTableSeeder extends Seeder
                 'isTCM' => $tcm_flag
             ]);
 
-            $this->command->info("Transferred!. " . $note->id);
+            $this->command->info("Transferred Note ID: " . $note->id);
 
             $patient = \App\User::find($activity_note->patient_id);
             $author = \App\User::find($activity_note->logger_id);
 
-            if (is_object($call_direction)) {
+            if(is_object($patient) && is_object($author)) {
+                if (is_object($call_direction)) {
 
-                if (is_object($call_status)) {
-                    $status = 'reached';
-                } else {
-                    $status = 'not reached';
+                    if (is_object($call_status)) {
+                        $status = 'reached';
+                    } else {
+                        $status = 'not reached';
+                    }
+
+                    if ($call_direction == 'inbound') {
+                        $outbound_num = $patient->primaryPhone;
+                        $outbound_id = $patient->ID;
+                        $inbound_num = $author->primaryPhone;
+                        $inbound_id = $author->ID;
+                    } else {
+                        $outbound_num = $author->primaryPhone;
+                        $outbound_id = $author->ID;
+                        $inbound_num = $patient->primaryPhone;
+                        $inbound_id = $patient->ID;
+                    }
+
+                    $call = \App\Call::create([
+
+                        'note_id' => $note->id,
+                        'service' => 'phone',
+                        'status' => $status,
+
+                        'inbound_phone_number' => $outbound_num,
+                        'outbound_phone_number' => $inbound_num,
+
+                        'inbound_cpm_id' => $inbound_id,
+                        'outbound_cpm_id' => $outbound_id,
+
+                        //?
+                        'call_time' => '',
+
+                    ]);
+                    $this->command->info("Call created for Note: " . $call->id);
                 }
-
-                if ($call_direction == 'inbound') {
-                    $outbound_num = $patient->primaryPhone;
-                    $outbound_id = $patient->ID;
-                    $inbound_num = $author->primaryPhone;
-                    $inbound_id = $author->ID;
-                } else {
-                    $outbound_num = $author->primaryPhone;
-                    $outbound_id = $author->ID;
-                    $inbound_num = $patient->primaryPhone;
-                    $inbound_id = $patient->ID;
-                }
-
-                $call = \App\Call::create([
-
-                    'note_id' => $note->id,
-                    'service' => 'phone',
-                    'status' => $status,
-
-                    'inbound_phone_number' => $outbound_num,
-                    'outbound_phone_number' => $inbound_num,
-
-                    'inbound_cpm_id' => $inbound_id,
-                    'outbound_cpm_id' => $outbound_id,
-
-                    //?
-                    'call_time' => '',
-
-                ]);
-
-                $this->command->info("Call created for Note! " . $call->id);
-
             }
             $this->command->info("Successfully Migrated to Note id: " . $note->id);
         }
