@@ -24,6 +24,10 @@ class RegressionTest extends TestCase
         $this->providerLogin();
 
         $this->createNewPatient();
+        
+//        $this->addPatientCareTeam();
+
+        $this->fillCareplanPage1();
 
     }
 
@@ -147,7 +151,7 @@ class RegressionTest extends TestCase
             ->select($timezone, 'preferred_contact_timezone')
             ->select($ccmStatus, 'ccm_status')
             ->press('Add Patient')
-            ->click('#approve');
+            ->click('#approve-forward');
 
         $this->seeInDatabase('users', [
             'first_name' => $firstName,
@@ -168,5 +172,45 @@ class RegressionTest extends TestCase
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
         ob_end_clean();
+    }
+    
+    public function addPatientCareTeam()
+    {
+        $this
+            ->actingAs($this->provider)
+            ->visit("/manage-patients/{$this->patient->ID}/careplan/team")
+            ->see('Edit Patient Care Team')
+            ->click('#add-care-team-member')
+            ->select($this->provider->display_name, 'provider_id')
+            ->see('Billing Provider')
+            ->check('#ctm1bp') //billing provider html name attr
+            ->see('Lead Contact')
+            ->check('ctlc') //lead contact html name attr
+            ->see('Send Alert')
+            ->check('#ctm1sa') //send alert html name attr
+        ;
+    }
+
+    public function fillCareplanPage1()
+    {
+        $carePlanProblems = $this->patient->service()
+            ->firstOrDefaultCarePlan($this->patient)
+            ->carePlanTemplate()
+            ->first()
+            ->cpmProblems()
+            ->lists('cpm_problem_id')
+            ->all();
+        
+        $this
+            ->actingAs($this->provider)
+            ->visit("/manage-patients/{$this->patient->ID}/careplan/sections/1")
+            ->see('Diagnosis / Problems to Monitor');
+        
+        foreach ($carePlanProblems as $problemId)
+        {
+            $this->select($problemId, "cpmProblems[$problemId]");
+        }
+
+        $this->press('TestSubmit');
     }
 }
