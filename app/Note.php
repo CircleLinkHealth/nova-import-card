@@ -9,7 +9,10 @@ class Note extends Model
     protected $table = 'notes';
 
     protected $fillable = [
-
+        'patient_id' ,
+        'author_id' ,
+        'body',
+        'isTCM'
     ];
 
 
