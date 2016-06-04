@@ -1,5 +1,6 @@
 <?php
 use App\CLH\Repositories\UserRepository;
+use App\PatientCareTeamMember;
 use App\User;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -25,7 +26,7 @@ class RegressionTest extends TestCase
 
         $this->createNewPatient();
         
-//        $this->addPatientCareTeam();
+        $this->addPatientCareTeam();
 
         $this->fillCareplanPage1();
         
@@ -60,6 +61,12 @@ class RegressionTest extends TestCase
             'zip' => '12345',
             'is_auto_generated' => true,
             'roles' => $roles,
+            
+            //provider Info
+            'prefix' => 'Dr',
+            'qualification' => 'MD',
+            'npi_number' => 1234567890,
+            'specialty' => 'Unit Tester',
         ]);
 
         //create a user
@@ -206,18 +213,44 @@ class RegressionTest extends TestCase
     
     public function addPatientCareTeam()
     {
+        //We cannot use the UI to add care team members
+        //because jQuery spits out the HTML for each provider.
+        //Therefore, we're gonna add a provider programmatically
+        //and make sure they show up.
+
+        $member = PatientCareTeamMember::create([
+            'user_id' => $this->patient->ID,
+            'member_user_id' => $this->provider->ID,
+            'type' => PatientCareTeamMember::MEMBER,
+        ]);
+
+        $billing = PatientCareTeamMember::create([
+            'user_id' => $this->patient->ID,
+            'member_user_id' => $this->provider->ID,
+            'type' => PatientCareTeamMember::BILLING_PROVIDER,
+        ]);
+
+        $lead = PatientCareTeamMember::create([
+            'user_id' => $this->patient->ID,
+            'member_user_id' => $this->provider->ID,
+            'type' => PatientCareTeamMember::LEAD_CONTACT,
+        ]);
+
+        $sendAlerts = PatientCareTeamMember::create([
+            'user_id' => $this->patient->ID,
+            'member_user_id' => $this->provider->ID,
+            'type' => PatientCareTeamMember::SEND_ALERT_TO,
+        ]);
+        
         $this
             ->actingAs($this->provider)
             ->visit("/manage-patients/{$this->patient->ID}/careplan/team")
             ->see('Edit Patient Care Team')
             ->click('#add-care-team-member')
-            ->select($this->provider->display_name, 'provider_id')
             ->see('Billing Provider')
-            ->check('#ctm1bp') //billing provider html name attr
             ->see('Lead Contact')
-            ->check('ctlc') //lead contact html name attr
             ->see('Send Alert')
-            ->check('#ctm1sa') //send alert html name attr
+            ->see($this->provider->display_name)
         ;
     }
 
