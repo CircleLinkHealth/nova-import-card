@@ -41,6 +41,7 @@ class RegressionTest extends TestCase
         $firstName = $faker->firstName;
         $lastName = $faker->lastName;
         $email = $faker->email;
+        $workPhone = \App\CLH\Facades\StringManipulation::formatPhoneNumber($faker->phoneNumber);
 
         $roles = [
             \App\Role::whereName('provider')->first()->id,
@@ -67,6 +68,9 @@ class RegressionTest extends TestCase
             'qualification' => 'MD',
             'npi_number' => 1234567890,
             'specialty' => 'Unit Tester',
+            
+            //phones
+            'home_phone_number' => $workPhone,
         ]);
 
         //create a user
