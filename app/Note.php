@@ -12,7 +12,8 @@ class Note extends Model
         'patient_id' ,
         'author_id' ,
         'body',
-        'isTCM'
+        'isTCM',
+        'created_at'
     ];
 
 

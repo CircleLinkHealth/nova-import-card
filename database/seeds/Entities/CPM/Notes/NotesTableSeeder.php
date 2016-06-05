@@ -16,6 +16,7 @@ class NotesTableSeeder extends Seeder
         $activity_notes = DB::table('lv_activities')
             ->select(DB::raw('*,provider_id, type'))
             ->where('logged_from', 'note')
+            ->where('id',55360)
             ->orderBy('performed_at', 'desc')
             ->get();
 
@@ -38,12 +39,12 @@ class NotesTableSeeder extends Seeder
 
             //Check if ER box was checked
             $tcm = ActivityMeta::where('activity_id', $activity_note->id)
-                ->where('meta_key', 'hospital')->get();
+                ->where('meta_key', 'hospital')->first();
 
             $tcm_flag = false;
 
-            if (is_object($tcm)) {
-                $tcm_flag = true;
+            if (is_object($tcm)){
+                    $tcm_flag = true;
             }
 
             $call_direction = ActivityMeta::where('activity_id', $activity_note->id)
@@ -92,15 +93,13 @@ class NotesTableSeeder extends Seeder
                                         'subject' => '',
                                         'type' => 'note',
                                         'sender_cpm_id' => $sender->ID,
-                                        'receiver_cpm_id' => $receiver->ID
+                                        'receiver_cpm_id' => $receiver->ID,
+                                        'created_at' => $activity_note->created_at
                                     ]);
                                 }
                                 $this->command->info("Mail Logged - cpm_mail_log id: " . $cpm_mail_log->id);
-
                             }
                         }
-
-
                     }
                 }
             }
@@ -109,7 +108,8 @@ class NotesTableSeeder extends Seeder
                 'patient_id' => $activity_note->patient_id,
                 'author_id' => $activity_note->logger_id,
                 'body' => $comment,
-                'isTCM' => $tcm_flag
+                'isTCM' => $tcm_flag,
+                'created_at' => $activity_note->created_at
             ]);
 
             $this->command->info("Transferred Note ID: " . $note->id);
@@ -152,6 +152,8 @@ class NotesTableSeeder extends Seeder
 
                         //?
                         'call_time' => '',
+                        'created_at' => $activity_note->created_at
+
 
                     ]);
                     $this->command->info("Call created for Note: " . $call->id);
