@@ -4,38 +4,44 @@ $new_user = false;
 
 $careTeamUserIds = $patient->careTeam;
 $ctmsa = array();
-if(!empty($patient->sendAlertTo)) {
+if (!empty($patient->sendAlertTo)) {
     $ctmsa = $patient->sendAlertTo;
 }
 $ctbp = $patient->billingProviderID;
 $ctlc = $patient->leadContactID;
 
-function buildProviderDropDown($providers, $activeId = false) {
-    $html = '<select name="provider_id" class="selectpicker ctselectpicker" data-size="10">';
-    $html .= '<option value="">Choose..</option>';
-    foreach ($providers as $provider) :
-        $selected = '';
-        if($provider->ID == $activeId) {
-            $selected = 'selected="selected"';
-        }
-        $html .= '<option value="'.$provider->ID.'" "'.$selected.'">'.ucwords( preg_replace('/[^A-Za-z0-9\-]/', '', $provider->first_name) . ' ' . preg_replace('/[^A-Za-z0-9\-]/', '', $provider->last_name) ).'</option>';
-    endforeach;
-    $html .= '</select>';
-    return $html;
+if (!function_exists('buildProviderDropDown')) {
+    function buildProviderDropDown($providers, $activeId = false)
+    {
+        $html = '<select name="provider_id" class="selectpicker ctselectpicker" data-size="10">';
+        $html .= '<option value="">Choose..</option>';
+        foreach ($providers as $provider) :
+            $selected = '';
+            if ($provider->ID == $activeId) {
+                $selected = 'selected="selected"';
+            }
+            $html .= '<option value="' . $provider->ID . '" "' . $selected . '">' . ucwords(preg_replace('/[^A-Za-z0-9\-]/', '', $provider->first_name) . ' ' . preg_replace('/[^A-Za-z0-9\-]/', '', $provider->last_name)) . '</option>';
+        endforeach;
+        $html .= '</select>';
+        return $html;
+    }
 }
 
-function buildProviderInfoContainers($providers) {
-    $html = '<div id="providerInfoContainers" style="display:none;">';
-    foreach ($providers as $provider) :
+if (!function_exists('buildProviderInfoContainers')) {
+    function buildProviderInfoContainers($providers)
+    {
+        $html = '<div id="providerInfoContainers" style="display:none;">';
+        foreach ($providers as $provider) :
 // echo "<pre>"; var_export($provider); echo "</pre>";
-        $html .= '<div id="providerInfo'.$provider->ID.'">';
-        $html .= '<strong><span id="providerName'.$provider->ID.'" style="display:none;">'.ucwords( $provider->first_name . ' ' . $provider->last_name) . '</span></strong>';
-        $html .= '<strong>Specialty:</strong> ' . $provider->specialty;
-        $html .= '<BR><strong>Tel:</strong> ' . $provider->phone;
+            $html .= '<div id="providerInfo' . $provider->ID . '">';
+            $html .= '<strong><span id="providerName' . $provider->ID . '" style="display:none;">' . ucwords($provider->first_name . ' ' . $provider->last_name) . '</span></strong>';
+            $html .= '<strong>Specialty:</strong> ' . $provider->specialty;
+            $html .= '<BR><strong>Tel:</strong> ' . $provider->phone;
+            $html .= '</div>';
+        endforeach;
         $html .= '</div>';
-    endforeach;
-    $html .= '</div>';
-    return $html;
+        return $html;
+    }
 }
 ?>
 
@@ -47,25 +53,25 @@ function buildProviderInfoContainers($providers) {
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/patient/careteam.js') }}"></script>
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
             // CARE TEAM JS
             var ctmCount = 0;
             var ctMembers = [];
-            $( ".addCareTeamMember" ).on('click', function() {
+            $(".addCareTeamMember").on('click', function () {
                 //alert('adding care team member ' + ctmCount);
                 addCareTeamMember();
                 //return false;
             });
 
 
-            $('#careTeamMembers').on('click', '.removeCtm', function(event) {
+            $('#careTeamMembers').on('click', '.removeCtm', function (event) {
                 ctmId = $(this).attr('ctmId');
                 name = '#ctm' + ctmId;
                 $(name).detach();
                 return false;
             });
 
-            $('body').on('change', '.ctselectpicker', function(event) {
+            $('body').on('change', '.ctselectpicker', function (event) {
                 event.preventDefault();
                 // set vars
                 selectpickerid = $(this).attr('id');
@@ -74,7 +80,7 @@ function buildProviderInfoContainers($providers) {
                 $('#ctm' + ctmCountId + 'Info').html('');
 
                 // error notification if new selection is already in ctMembers
-                if(jQuery.inArray(providerid, ctMembers) !== -1) {
+                if (jQuery.inArray(providerid, ctMembers) !== -1) {
                     // set to choose
                     $("#" + selectpickerid + " option[value='']").prop('selected', true);
                     $("#" + selectpickerid + "").selectpicker('refresh');
@@ -83,10 +89,10 @@ function buildProviderInfoContainers($providers) {
                 // reprocess ctMembers from all selectpickers
                 ctMembers = [];
                 $('.carePlanMemberIds').remove();
-                $(".ctselectpicker").each(function() {
+                $(".ctselectpicker").each(function () {
                     selectpickerid = $(this).attr('id');
                     var providerid = $("#" + selectpickerid + " option:selected").val();
-                    if(providerid !== undefined && providerid !== '') {
+                    if (providerid !== undefined && providerid !== '') {
                         ctmCountId = $(this).closest('.row').find('.ctmCountArr').val();
                         ctMembers.push(providerid);
                         $('#careTeamMembers').append('<input class="carePlanMemberIds" type="hidden" name="carePlanMemberIds[]" value="' + providerid + '">');
@@ -130,7 +136,7 @@ function buildProviderInfoContainers($providers) {
                 html2 += '</div>';
                 html2 += '</div>';
                 // remove already used members from new select
-                $( "#careTeamMembers" ).append( html1 + html2 );
+                $("#careTeamMembers").append(html1 + html2);
                 thisSelect = $('#ctm' + ctmCount + '').find('.ctselectpicker');
                 selectName = thisSelect.attr('name', 'ctm' + ctmCount + 'provider');
                 selectId = thisSelect.attr('id', 'ctm' + ctmCount + 'provider');
@@ -138,11 +144,12 @@ function buildProviderInfoContainers($providers) {
                 $('.ctselectpicker').selectpicker();
 
                 // add class (doesnt persist through append() for some reason??)
-                $('#ctm'+ctmCount+'').addClass('careTeamMemberContainer');
+                $('#ctm' + ctmCount + '').addClass('careTeamMemberContainer');
                 console.log('Selected Providers: ' + ctMembers.join("\n"));
                 hasFormChanged = false;
                 return false;
             }
+
             <?php
             if(!empty($careTeamUsers)) {
                 foreach ($careTeamUsers as $careTeamUser) {
@@ -154,19 +161,19 @@ function buildProviderInfoContainers($providers) {
                     }
                     ?>
                     addCareTeamMember();
-                    $('#ctm' + ctmCount + 'provider').val(<?php echo $careTeamUser->ID; ?>);
-                    $('#ctm' + ctmCount + 'provider').change();
-                    <?php
-                    if(in_array($careTeamUser->ID, $ctmsa)) {
-                        echo "$( '#ctm' + ctmCount + 'sa' ).prop('checked', true);";
-                    }
-                    if($careTeamUser->ID == $ctbp) {
-                        echo "$( '#ctm' + ctmCount + 'bp' ).prop('checked', true);";
-                    }
-                    if($careTeamUser->ID == $ctlc) {
-                        echo "$( '#ctm' + ctmCount + 'lc' ).prop('checked', true);";
-                    }
-                }
+            $('#ctm' + ctmCount + 'provider').val(<?php echo $careTeamUser->ID; ?>);
+            $('#ctm' + ctmCount + 'provider').change();
+            <?php
+            if (in_array($careTeamUser->ID, $ctmsa)) {
+                echo "$( '#ctm' + ctmCount + 'sa' ).prop('checked', true);";
+            }
+            if ($careTeamUser->ID == $ctbp) {
+                echo "$( '#ctm' + ctmCount + 'bp' ).prop('checked', true);";
+            }
+            if ($careTeamUser->ID == $ctlc) {
+                echo "$( '#ctm' + ctmCount + 'lc' ).prop('checked', true);";
+            }
+            }
             }
             ?>
         });
@@ -177,8 +184,8 @@ function buildProviderInfoContainers($providers) {
     {!! Form::open(array('url' => URL::route('patient.careteam.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <style>
         .careTeamMemberContainer {
-            margin-top:30px;
-            border-bottom:1px solid #ccc;
+            margin-top: 30px;
+            border-bottom: 1px solid #ccc;
         }
     </style>
     <input type=hidden name=user_id value="{{ $patient->ID }}">
@@ -238,16 +245,11 @@ function buildProviderInfoContainers($providers) {
                             --}}
                         @endforeach
                         {!! $phtml !!}
-                        <a href="" class="addCareTeamMember pull-right btn btn-primary" style="margin:20px;"><span class="glyphicon glyphicon-plus-sign"></span> Add Care Team Member</a>
-                        <br />
-                        <br />
+                        <a id="add-care-team-member" href="" class="addCareTeamMember pull-right btn btn-primary"
+                           style="margin:20px;"><span class="glyphicon glyphicon-plus-sign"></span> Add Care Team Member</a>
+                        <br/>
+                        <br/>
                     </div>
-
-
-
-
-
-
 
 
                     <div class="modal fade" id="ctModal" tabindex="-1" role="dialog" aria-labelledby="ctModalLabel">
@@ -260,13 +262,16 @@ function buildProviderInfoContainers($providers) {
                                     <p><span id="ctModalError"></span></p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" id="ctModalYes" class="btn btn-warning"  data-dismiss="modal">Continue editing</button>
+                                    <button type="button" id="ctModalYes" class="btn btn-warning" data-dismiss="modal">
+                                        Continue editing
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="modal fade" id="ctConfModal" tabindex="-1" role="dialog" aria-labelledby="ctConfModalLabel">
+                    <div class="modal fade" id="ctConfModal" tabindex="-1" role="dialog"
+                         aria-labelledby="ctConfModalLabel">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -276,8 +281,12 @@ function buildProviderInfoContainers($providers) {
                                     <p><span id="ctConfModalError"></span></p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" id="ctConfModalNo" class="btn btn-warning"  data-dismiss="modal">Continue editing</button>
-                                    <button type="button" id="ctConfModalYes" class="btn btn-primary"  data-dismiss="modal">Confirm and save</button>
+                                    <button type="button" id="ctConfModalNo" class="btn btn-warning"
+                                            data-dismiss="modal">Continue editing
+                                    </button>
+                                    <button type="button" id="ctConfModalYes" class="btn btn-primary"
+                                            data-dismiss="modal">Confirm and save
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -288,7 +297,7 @@ function buildProviderInfoContainers($providers) {
     </div>
     <?php echo buildProviderInfoContainers($providers); ?>
     @include('wpUsers.patient.careplan.footer')
-    <br /><br />
+    <br/><br/>
     </form>
 @stop
 

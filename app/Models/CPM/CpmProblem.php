@@ -15,7 +15,7 @@ class CpmProblem extends Model implements Serviceable{
     protected $table = 'cpm_problems';
 
 	protected $guarded = [];
-
+    
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -27,6 +27,58 @@ class CpmProblem extends Model implements Serviceable{
     public function carePlanItemIdDeprecated()
     {
         return $this->belongsTo(CareItem::class);
+    }
+
+    /**
+     * During the CCD Importing process, if a patient has this problem, we will be creating a relationship between
+     * the patient and this CpmEntity. In other words, this can activate this CpmEntity for the patient.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmBiometricsToBeActivated()
+    {
+        return $this->belongsToMany(CpmBiometric::class, 'cpm_problems_activate_cpm_biometrics')
+            ->withPivot('care_plan_template_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * During the CCD Importing process, if a patient has this problem, we will be creating a relationship between
+     * the patient and this CpmEntity. In other words, this can activate this CpmEntity for the patient.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmLifestylesToBeActivated()
+    {
+        return $this->belongsToMany(CpmLifestyle::class, 'cpm_problems_activate_cpm_lifestyles')
+            ->withPivot('care_plan_template_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * During the CCD Importing process, if a patient has this problem, we will be creating a relationship between
+     * the patient and this CpmEntity. In other words, this can activate this CpmEntity for the patient.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmMedicationGroupsToBeActivated()
+    {
+        return $this->belongsToMany(CpmMedicationGroup::class, 'cpm_problems_activate_cpm_medication_groups')
+            ->withPivot('care_plan_template_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * During the CCD Importing process, if a patient has this problem, we will be creating a relationship between
+     * the patient and this CpmEntity. In other words, this can activate this CpmEntity for the patient.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function cpmSymptomsToBeActivated()
+    {
+        return $this->belongsToMany(CpmSymptom::class, 'cpm_problems_activate_cpm_symptoms')
+            ->withPivot('care_plan_template_id')
+            ->withTimestamps();
     }
     
     /**

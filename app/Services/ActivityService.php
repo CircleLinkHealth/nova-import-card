@@ -168,7 +168,6 @@ class ActivityService
                 $message->cc('Lindaw@circlelinkhealth.com');
                 $message->to($email)->subject($email_subject);
             });
-
         }
         return true;
 //		dd(count(Mail::failures()));

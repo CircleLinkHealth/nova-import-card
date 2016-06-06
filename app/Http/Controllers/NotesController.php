@@ -2,15 +2,14 @@
 
 use App\Activity;
 use App\ActivityMeta;
-use App\CLH\Facades\StringManipulation;
+use App\Formatters\WebixFormatter;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Services\ActivityService;
 use App\Program;
+use App\Services\ActivityService;
+use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
-use DateTime;
-use DateTimeZone;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,11 +18,17 @@ use Laracasts\Flash\Flash;
 
 class NotesController extends Controller
 {
-    /**
-     * Display a listing of the notes for a user.
-     *
-     * @return Response
-     */
+
+    private $service;
+    private $formatter;
+
+    public function __construct(NoteService $noteService, WebixFormatter $formatter)
+    {
+        $this->service = $noteService;
+        $this->formatter = $formatter;
+    }
+
+
     public function index(Request $request, $patientId)
     {
 
@@ -86,25 +91,84 @@ class NotesController extends Controller
 
     }
 
-    public function listing(Request $request)
-    {
+    public function listing(Request $request){
 
+        $input = $request->all();
+
+        $isDateFiltered = false;
+
+        //TIME FILTERS
+
+        //if month and year are selected
+        if (isset($input['selectMonth'])) {
+            $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+            $start = $time->startOfMonth()->format('Y-m-d');
+            $end = $time->endOfMonth()->format('Y-m-d');
+            $month_selected_text = $time->format('F');
+            $month_selected = $time->format('m');
+            $year_selected = $time->format('Y');
+
+            //time title for view
+            $time_title = $month_selected_text . ' ' . $year_selected;
+            $isDateFiltered = true;
+            
+        }
+        //if user resets time
+        else if(isset($input['reset'])){
+            $time = Carbon::now();
+            $start = Carbon::now()->subYears(5)->format('Y-m-d');
+            $end = Carbon::now()->addYears(5)->format('Y-m-d');
+            $month_selected_text = $time->format('F');
+            $month_selected = '';
+            $year_selected = '';
+
+            //time title for view
+            $time_title = 'All Notes';
+
+        //page first loads
+        } else {
+            $time = Carbon::now();
+            $start = Carbon::now()->subYears(5)->format('Y-m-d');
+            $end = Carbon::now()->addYears(5)->format('Y-m-d');
+            $month_selected_text = $time->format('F');
+            $month_selected = '';
+            $year_selected = '';
+
+            //time title for view
+            $time_title = 'All Notes';
+        }
+
+        debug($isDateFiltered);
+
+        $years = $this->service->getYearsArray();
+        $months = $this->service->getMonthsArray();
+
+
+        //Get Viewable Patients
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get()->lists('ID')->all();
+        
+        $notes = $this->service->getNotesForPatients($patients,$start,$end);
 
-        $acts = DB::table('lv_activities')
-            ->select(DB::raw('*,provider_id, type'))
-            ->whereIn('patient_id', $patients)
-            ->where(function ($q) {
-                $q->where('logged_from', 'note')
-                    ->Orwhere('logged_from', 'manual_input');
-            })
-            ->orderBy('performed_at', 'desc')
-            ->get();
+        if(!empty($notes)) {
 
-        return $acts;
+            $notes = $this->formatter->formatDataForNotesListingReport($notes);
+            
+        }
+
+        $data = ['years' => array_reverse($years),
+            'month_selected' => $month_selected,
+            'year_selected' => $year_selected,
+            'month_selected_text' => $month_selected_text,
+            'months' => $months,
+            'notes' => $notes,
+            'time_title' => $time_title,
+            'dateFilter' => $isDateFiltered
+        ];
+
+        return view('wpUsers.patient.note.list', $data);
 
     }
 
@@ -240,7 +304,7 @@ class NotesController extends Controller
         $logger_name = $logger->display_name;
 
         //if emails are to be sent
-        debug($input);
+
         if (array_key_exists('careteam', $input)) {
             //Log to Meta Table
             $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_by', 'meta_value' => $logger->ID]);
@@ -266,9 +330,7 @@ class NotesController extends Controller
         $patient = User::find($patientId);
         $note_act = Activity::find($noteId);
         $metaComment = $note_act->getActivityCommentFromMeta($noteId);
-        //$meta = DB::table('lv_activitymeta')->where('activity_id', $noteId)->where('meta_key', 'phone')->pluck('meta_value');
         $meta = $note_act->meta()->get();
-        //dd($meta);
 
         //Set up note packet for view
         $note = array();

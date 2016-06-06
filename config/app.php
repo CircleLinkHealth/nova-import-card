@@ -1,7 +1,7 @@
 <?php
 
 return [
-
+	
 	/*
 	|--------------------------------------------------------------------------
 	| Application Debug Mode
@@ -172,6 +172,7 @@ return [
 		'Maatwebsite\Excel\ExcelServiceProvider',
         \rigor789\AirbrakeLaravel\AirbrakeServiceProvider::class,
 		Prettus\Repository\Providers\RepositoryServiceProvider::class,
+		\Maknz\Slack\SlackServiceProvider::class,
 	],
 
 	/*
@@ -227,7 +228,7 @@ return [
 		'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
 		'Image' => Barryvdh\Snappy\Facades\SnappyImage::class,
 		'Excel' => 'Maatwebsite\Excel\Facades\Excel',
-
+		'Slack' => Maknz\Slack\Facades\Slack::class,
 	],
 
 ];
