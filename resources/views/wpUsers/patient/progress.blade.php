@@ -114,7 +114,18 @@ function trim_bp($bp){
                                 <div class="row">
                                     <div class="col-xs-3 text-center" style="Zoom:75%">
                                         <div class="patient-summary__info {{strtolower($value['status'])}}">
-                                            <span><i class="icon--{{strtolower($value['status'])}}"> </i></span>{{abs($value['change'])}}
+                                            <span><i class="icon--<?php if($key == 'Weight'){
+                                                if(strtolower($value['status']) == 'increased'){
+                                                        echo trim("grey-up");
+                                                        }
+                                                elseif(strtolower($value['status']) == 'decreased')
+                                                        echo trim("grey-down");
+                                                else
+                                                        echo trim("unchanged");
+                                                }
+                                            else {
+                                                echo trim(strtolower($value['status']));
+                                            } ?>"> </i></span>{{abs($value['change'])}}
                                             <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
                                         </div>
                                         <div class="patient-summary__info__legend">

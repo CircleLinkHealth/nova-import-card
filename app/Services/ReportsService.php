@@ -151,7 +151,7 @@ class ReportsService
     public function getMedicationStatus(User $user, $fromApp = true)
     {
         $medications_categories = $user->cpmMedicationGroups()->get()->lists('name')->all();
-        debug($medications_categories);
+
         //get all medication observations for the user
         $medication_obs = DB::connection('mysql_no_prefix')
             ->table('rules_questions')
@@ -195,6 +195,7 @@ class ReportsService
                 }
             }
         }
+
         foreach ($temp_meds as $key => $value) {
             $yes = $value['yes'];
             $total = $value['total'];
@@ -285,8 +286,7 @@ class ReportsService
 
     }
 
-    public
-    static function biometricsUnitMapping($biometric)
+    public static function biometricsUnitMapping($biometric)
     {
         switch ($biometric) {
             case 'Blood Sugar':
