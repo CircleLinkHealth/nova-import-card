@@ -100,7 +100,9 @@
                                         id: "patient_name",
                                         header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                                         width: 150,
-                                        sort: 'string'
+                                        sort: 'string',
+                                        template:"<a href='<?php echo URL::route('patient.note.index', array('patientId' => '#patient_id#')); ?>'>#patient_name#</a>"
+
                                     },
                                     {
                                         id: "program_name",
