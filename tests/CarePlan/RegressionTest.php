@@ -1,4 +1,5 @@
 <?php
+
 use App\CLH\Repositories\UserRepository;
 use App\PatientCareTeamMember;
 use App\User;
@@ -7,7 +8,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class RegressionTest extends TestCase
 {
-    protected $patient;
+    protected $patients;
 
     protected $provider;
 
@@ -18,14 +19,28 @@ class RegressionTest extends TestCase
         $this->providerLogin();
 
         $this->createNewPatient();
+        $this->createNewPatient();
 
-        $this->addPatientCareTeam();
+        //We use this so add a random number of CpmEntities for users after the first one.
+        //In other words, the first User has all conditions, the rest can have any number of conditions.
+        $i = 1;
 
-        $this->fillCareplanPage1();
+        foreach ($this->patients as $patient) {
 
-        $this->fillCareplanPage2();
+            //If we pass the first iteration, then choose up to 15 CpmEntities randomly
+            //If the CpmEntity we are working with has less than 15 items, then number of items - 1 will be selected
+            $numberOfRowsToCreate = ($i > 1) ? rand(2, 15) : null;
 
-        $this->fillCareplanPage3();
+            $this->addPatientCareTeam($patient);
+
+            $this->fillCareplanPage1($patient, $numberOfRowsToCreate);
+
+            $this->fillCareplanPage2($patient, $numberOfRowsToCreate);
+
+            $this->fillCareplanPage3($patient, $numberOfRowsToCreate);
+
+            $i++;
+        }
 
         /**
          * Report stuff
@@ -40,11 +55,15 @@ class RegressionTest extends TestCase
             A Provider was created:
             login: {$this->provider->user_email}
             password: password
-            
+            ";
+
+        foreach ($this->patients as $patient) {
+            $text .= "
             A patient was created:
-            id: {$this->patient->ID}
-            name: {$this->patient->display_name}
-        ";
+            id: {$patient->ID}
+            name: {$patient->display_name}
+            ";
+        }
 
         if (in_array($db, ['cpm_stage', 'cpm_test'])) {
             Slack::to('#qualityassurance')
@@ -52,6 +71,7 @@ class RegressionTest extends TestCase
         }
 
         echo $text;
+
     }
 
     public function createProvider()
@@ -202,14 +222,14 @@ class RegressionTest extends TestCase
 
         $patient = User::whereUserEmail($email)->first();
 
-        $this->patient = $patient;
+        $this->patients[] = $patient;
 
         $patientInfo = $patient->patientInfo()->first();
         $patientInfo->preferred_cc_contact_days = '1, 2, 3, 4, 5, 6, 7';
         $patientInfo->save();
 
         $this->seeInDatabase('patient_info', [
-            'user_id' => $this->patient->ID,
+            'user_id' => $patient->ID,
             'agent_name' => $agentName,
             'agent_telephone' => $agentPhone,
             'agent_email' => $agentEmail,
@@ -239,7 +259,7 @@ class RegressionTest extends TestCase
         ob_end_clean();
     }
 
-    public function addPatientCareTeam()
+    public function addPatientCareTeam($patient)
     {
         //We cannot use the UI to add care team members
         //because jQuery spits out the HTML for each provider.
@@ -247,32 +267,32 @@ class RegressionTest extends TestCase
         //and make sure they show up.
 
         $member = PatientCareTeamMember::create([
-            'user_id' => $this->patient->ID,
+            'user_id' => $patient->ID,
             'member_user_id' => $this->provider->ID,
             'type' => PatientCareTeamMember::MEMBER,
         ]);
 
         $billing = PatientCareTeamMember::create([
-            'user_id' => $this->patient->ID,
+            'user_id' => $patient->ID,
             'member_user_id' => $this->provider->ID,
             'type' => PatientCareTeamMember::BILLING_PROVIDER,
         ]);
 
         $lead = PatientCareTeamMember::create([
-            'user_id' => $this->patient->ID,
+            'user_id' => $patient->ID,
             'member_user_id' => $this->provider->ID,
             'type' => PatientCareTeamMember::LEAD_CONTACT,
         ]);
 
         $sendAlerts = PatientCareTeamMember::create([
-            'user_id' => $this->patient->ID,
+            'user_id' => $patient->ID,
             'member_user_id' => $this->provider->ID,
             'type' => PatientCareTeamMember::SEND_ALERT_TO,
         ]);
 
         $this
             ->actingAs($this->provider)
-            ->visit("/manage-patients/{$this->patient->ID}/careplan/team")
+            ->visit("/manage-patients/{$patient->ID}/careplan/team")
             ->see('Edit Patient Care Team')
             ->click('#add-care-team-member')
             ->see('Billing Provider')
@@ -281,30 +301,32 @@ class RegressionTest extends TestCase
             ->see($this->provider->display_name);
     }
 
-    public function fillCareplanPage1()
+    public function fillCareplanPage1(User $patient, $numberOfRowsToCreate = null)
     {
         /*
         * Problems
         */
         $this->fillCpmEntityUserValues(
+            $patient,
             'cpmProblems',
             null,
-            "/manage-patients/{$this->patient->ID}/careplan/sections/1",
+            "/manage-patients/{$patient->ID}/careplan/sections/1",
             'Diagnosis / Problems to Monitor',
             'cpm_problem_id',
-            null
+            $numberOfRowsToCreate
         );
 
         /*
          * Lifestyles
          */
         $this->fillCpmEntityUserValues(
+            $patient,
             'cpmLifestyles',
             null,
-            "/manage-patients/{$this->patient->ID}/careplan/sections/1",
+            "/manage-patients/{$patient->ID}/careplan/sections/1",
             'Lifestyle to Monitor',
             'cpm_lifestyle_id',
-            null
+            $numberOfRowsToCreate
         );
 
 
@@ -312,12 +334,13 @@ class RegressionTest extends TestCase
          * Medication Groups
          */
         $this->fillCpmEntityUserValues(
+            $patient,
             'cpmMedicationGroups',
             null,
-            "/manage-patients/{$this->patient->ID}/careplan/sections/1",
+            "/manage-patients/{$patient->ID}/careplan/sections/1",
             'Medications to Monitor',
             'cpm_medication_group_id',
-            null
+            $numberOfRowsToCreate
         );
 
 
@@ -325,54 +348,58 @@ class RegressionTest extends TestCase
          * Miscs
          */
         $this->fillCpmEntityUserValues(
+            $patient,
             'cpmMiscs',
             1,
-            "/manage-patients/{$this->patient->ID}/careplan/sections/1",
+            "/manage-patients/{$patient->ID}/careplan/sections/1",
             null,
             'cpm_misc_id',
-            null
+            $numberOfRowsToCreate
         );
     }
 
-    public function fillCareplanPage2()
+    public function fillCareplanPage2(User $patient, $numberOfRowsToCreate = null)
     {
         /*
         * Biometrics
         */
         $this->fillCpmEntityUserValues(
+            $patient,
             'cpmBiometrics',
             null,
-            "/manage-patients/{$this->patient->ID}/careplan/sections/2",
+            "/manage-patients/{$patient->ID}/careplan/sections/2",
             'Biometrics to Monitor',
             'cpm_biometric_id',
-            null
+            $numberOfRowsToCreate
         );
     }
 
-    public function fillCareplanPage3()
+    public function fillCareplanPage3(User $patient, $numberOfRowsToCreate = null)
     {
         /*
         * Symptoms
         */
         $this->fillCpmEntityUserValues(
+            $patient,
             'cpmSymptoms',
             null,
-            "/manage-patients/{$this->patient->ID}/careplan/sections/3",
+            "/manage-patients/{$patient->ID}/careplan/sections/3",
             'Symptoms to Monitor',
             'cpm_symptom_id',
-            null
+            $numberOfRowsToCreate
         );
 
         /*
         * Additional Information
         */
         $this->fillCpmEntityUserValues(
+            $patient,
             'cpmMiscs',
             3,
-            "/manage-patients/{$this->patient->ID}/careplan/sections/3",
+            "/manage-patients/{$patient->ID}/careplan/sections/3",
             'Additional Information',
             'cpm_misc_id',
-            null
+            $numberOfRowsToCreate
         );
     }
 
@@ -391,10 +418,10 @@ class RegressionTest extends TestCase
      * @param $numberOfRowsToCreate //how many of those entities should be associated with the user. The default is
      *                                null, and that means relate all entities
      */
-    public function fillCpmEntityUserValues($relationship, $page = null, $url, $sectionTitle = null, $entityIdFieldName, $numberOfRowsToCreate = null)
+    public function fillCpmEntityUserValues(User $patient, $relationship, $page = null, $url, $sectionTitle = null, $entityIdFieldName, $numberOfRowsToCreate = null)
     {
-        $carePlanTemplate = $this->patient->service()
-            ->firstOrDefaultCarePlan($this->patient)
+        $carePlanTemplate = $patient->service()
+            ->firstOrDefaultCarePlan($patient)
             ->carePlanTemplate()
             ->first();
 
@@ -406,7 +433,13 @@ class RegressionTest extends TestCase
         empty($page) ?: $query->wherePivot('page', $page);
         $carePlanEntities = $query->get();
 
-        empty($numberOfRowsToCreate) ?: $carePlanEntities = $carePlanEntities->random($numberOfRowsToCreate);
+        if (!empty($numberOfRowsToCreate)) {
+            if ($numberOfRowsToCreate > $carePlanEntities->count()) $numberOfRowsToCreate = rand(2, $carePlanEntities->count() - 1);
+
+            $carePlanEntities = $carePlanEntities->random($numberOfRowsToCreate);
+
+            if (is_object($carePlanEntities)) $carePlanEntities = collect($carePlanEntities);
+        }
 
         $this
             ->actingAs($this->provider)
@@ -416,16 +449,17 @@ class RegressionTest extends TestCase
 
         foreach ($carePlanEntities as $entity) {
             $this->select($entity->id, "{$relationship}[$entity->id]");
+
             $this->press('TestSubmit');
 
             $this->seeInDatabase("{$entity->getTable()}_users", [
                 $entityIdFieldName => $entity->id,
-                'patient_id' => $this->patient->ID,
+                'patient_id' => $patient->ID,
                 'cpm_instruction_id' => $entity->pivot->cpm_instruction_id,
             ]);
         }
 
-        $patientEntities = $this->patient
+        $patientEntities = $patient
             ->{$relationship}()
             ->lists($entityIdFieldName)
             ->all();
