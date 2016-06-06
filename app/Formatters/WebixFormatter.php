@@ -1,7 +1,9 @@
 <?php namespace App\Formatters;
 
 use App\ActivityMeta;
+use App\Call;
 use App\Contracts\ReportFormatter;
+use App\MailLog;
 use App\Program;
 use App\User;
 use Carbon\Carbon;
@@ -13,7 +15,6 @@ class WebixFormatter implements ReportFormatter
 
     public function formatDataForNotesListingReport($notes)
     {
-
         $count = 0;
 
         foreach($notes as $note){
@@ -43,7 +44,7 @@ class WebixFormatter implements ReportFormatter
             }
 
             //Author
-            $author = User::find($note->logger_id);
+            $author = User::find($note->author_id);
             if (is_object($author)) {
                 $formatted_notes[$count]['author_name'] = $author->display_name;
             } else {
@@ -53,55 +54,33 @@ class WebixFormatter implements ReportFormatter
             //Type
             $formatted_notes[$count]['type'] = $note->type;
 
-            //Status
-            $formatted_notes[$count]['status'] = $note->type;
+            //Body
+            $formatted_notes[$count]['comment'] = $note->body;
 
-            //Comments
-            $metaComment = ActivityMeta::where('activity_id',$note->id)
-                ->where('meta_key', 'comment')->first();
-
-            $meta = ActivityMeta::where('activity_id',$note->id)
-                ->where(function($query){
-                    $query->where('meta_key', 'call_status')
-                        ->orWhere('meta_key', 'hospital')
-                        ->OrWhere('meta_key', 'email_sent_to')
-                        ->orWhere('meta_key', 'comment');
-                })
-                ->get();
-
-            $formatted_notes[$count]['tags'] = '';
-            $formatted_notes[$count]['comment'] = $metaComment->meta_value;
             $formatted_notes[$count]['date'] = Carbon::parse($note->created_at)->format('Y-m-d');
 
-            //Check if note was sent to a provider
-            $mail_forwarded_meta = ActivityMeta::where('activity_id',$note->id)
-                ->where('meta_key', 'email_sent_to')
+            //TAGS
+            $formatted_notes[$count]['tags'] = '';
+
+            $mails = MailLog::where('note_id',$note->id)
                 ->get();
 
-            foreach ($mail_forwarded_meta as $m) {
-//                if ($m->meta_key == 'email_sent_to') {
-//                    $sent_to_user = User::find($m->meta_value);
-//                    if ($sent_to_user->providerInfo) {
-                        $formatted_notes[$count]['tags'] = '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
-//                    }
-//                }
+            if(count($mails) > 0){
+                $formatted_notes[$count]['tags'] = '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
             }
 
-            foreach ($meta as $m) {
-                switch ($m->meta_value) {
-                    case('reached'):
-                        $formatted_notes[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
-                        break;
-                    case('admitted'):
-                        $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
-                        break;
+            $call = Call::where('note_id',$note->id)
+                ->first();
+
+            if(is_object($call)){
+                if($call->status == 'reached'){
+                    $formatted_notes[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
                 }
             }
 
-
-            //Topic / Offline Act Name
-            //Preview
-            //Date
+                if($note->isTCM == true){
+                    $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
+            }
 
             $count++;
         }

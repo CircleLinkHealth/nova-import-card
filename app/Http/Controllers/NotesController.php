@@ -9,10 +9,8 @@ use App\Services\ActivityService;
 use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Laracasts\Flash\Flash;
 
@@ -90,7 +88,7 @@ class NotesController extends Controller
 
         //TIME FILTERS
 
-        //if month and year are selected
+            //if month and year are selected
         if (isset($input['selectMonth'])) {
             $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
             $start = $time->startOfMonth()->format('Y-m-d');
@@ -104,7 +102,7 @@ class NotesController extends Controller
             $isDateFiltered = true;
             
         }
-        //if user resets time
+            //if user resets time
         else if(isset($input['reset'])){
             $time = Carbon::now();
             $start = Carbon::now()->subYears(5)->format('Y-m-d');
@@ -124,12 +122,9 @@ class NotesController extends Controller
             $month_selected_text = $time->format('F');
             $month_selected = '';
             $year_selected = '';
-
             //time title for view
             $time_title = 'All Notes';
         }
-
-        debug($isDateFiltered);
 
         $years = $this->service->getYearsArray();
         $months = $this->service->getMonthsArray();
@@ -256,63 +251,12 @@ class NotesController extends Controller
 
     public function store(Request $input, $patientId)
     {
-        // convert minutes to seconds.
-        if ($input['duration']) {
-            $input['duration'] = $input['duration'] * 60;
-        }
+
         $input = $input->all();
-        $activity_id = Activity::createNewActivity($input);
+        $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
-        $admitted_flag = false;
+        $this->service->storeNote($input);
 
-        // store meta
-        if (array_key_exists('meta', $input)) {
-            $meta = $input['meta'];
-            unset($input['meta']);
-            $activity = Activity::find($activity_id);
-            $metaArray = [];
-            $i = 0;
-            foreach ($meta as $actMeta) {
-                if (isset($actMeta['meta_value'])) {
-                    if ($actMeta['meta_value'] == 'admitted') {
-                        $admitted_flag = true;
-                    }
-                    $metaArray[$i] = new ActivityMeta($actMeta);
-                    $i++;
-                }
-            }
-            $activity->meta()->saveMany($metaArray);
-        }
-
-        // update usermeta: cur_month_activity_time
-        $activityService = new ActivityService;
-        $activityService->reprocessMonthlyActivityTime($input['patient_id']);
-
-        $activitySer = new ActivityService;
-        $activity = Activity::find($activity_id);
-        $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId)) . '/' . $activity->id;
-        $logger = User::find($input['logger_id']);
-        $logger_name = $logger->display_name;
-
-        //if emails are to be sent
-
-        if (array_key_exists('careteam', $input)) {
-            //Log to Meta Table
-            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_by', 'meta_value' => $logger->ID]);
-            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_to', 'meta_value' => implode(", ", $input['careteam'])]);
-            $activity->meta()->saveMany($noteMeta);
-
-            $result = $activitySer->sendNoteToCareTeam($input['careteam'], $linkToNote, $input['performed_at'], $input['patient_id'], $logger_name, true, $admitted_flag);
-
-            if ($result) {
-                return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created And Note Sent']);
-            } else return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Unable To Send Emails.']);
-
-        } else if($admitted_flag){
-            $u = User::find($patientId);
-            $user_care_team = $u->sendAlertTo;
-            $result = $activitySer->sendNoteToCareTeam($user_care_team, $linkToNote, $input['performed_at'], $input['patient_id'], $logger_name, true, $admitted_flag);
-        }
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
 
