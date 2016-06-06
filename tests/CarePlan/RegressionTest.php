@@ -25,11 +25,11 @@ class RegressionTest extends TestCase
         $this->providerLogin();
 
         $this->createNewPatient();
-        
+
         $this->addPatientCareTeam();
 
         $this->fillCareplanPage1();
-        
+
         echo "\nPatientId: {$this->patient->ID}\n PatientName: {$this->patient->display_name}";
         echo "\nProviderLogin: {$this->provider->user_email}\n ProviderPass: password";
     }
@@ -62,13 +62,13 @@ class RegressionTest extends TestCase
             'zip' => '12345',
             'is_auto_generated' => true,
             'roles' => $roles,
-            
+
             //provider Info
             'prefix' => 'Dr',
             'qualification' => 'MD',
             'npi_number' => 1234567890,
             'specialty' => 'Unit Tester',
-            
+
             //phones
             'home_phone_number' => $workPhone,
         ]);
@@ -218,7 +218,7 @@ class RegressionTest extends TestCase
         //So we're adding this to make the test work.
         ob_end_clean();
     }
-    
+
     public function addPatientCareTeam()
     {
         //We cannot use the UI to add care team members
@@ -249,7 +249,7 @@ class RegressionTest extends TestCase
             'member_user_id' => $this->provider->ID,
             'type' => PatientCareTeamMember::SEND_ALERT_TO,
         ]);
-        
+
         $this
             ->actingAs($this->provider)
             ->visit("/manage-patients/{$this->patient->ID}/careplan/team")
@@ -264,128 +264,105 @@ class RegressionTest extends TestCase
 
     public function fillCareplanPage1()
     {
+        /*
+        * Problems
+        */
+        $this->fillCpmEntityUserValues(
+            'cpmProblems',
+            null,
+            "/manage-patients/{$this->patient->ID}/careplan/sections/1",
+            'Diagnosis / Problems to Monitor',
+            'cpm_problem_id'
+        );
+
+        /*
+         * Lifestyles
+         */
+        $this->fillCpmEntityUserValues(
+            'cpmLifestyles',
+            null,
+            "/manage-patients/{$this->patient->ID}/careplan/sections/1",
+            'Lifestyle to Monitor',
+            'cpm_lifestyle_id'
+        );
+
+
+        /*
+         * Medication Groups
+         */
+        $this->fillCpmEntityUserValues(
+            'cpmMedicationGroups',
+            null,
+            "/manage-patients/{$this->patient->ID}/careplan/sections/1",
+            'Medications to Monitor',
+            'cpm_medication_group_id'
+        );
+
+
+        /*
+         * Miscs
+         */
+        $this->fillCpmEntityUserValues(
+            'cpmMiscs',
+            1,
+            "/manage-patients/{$this->patient->ID}/careplan/sections/1",
+            null,
+            'cpm_misc_id'
+        );
+    }
+
+    /**
+     * This function will populate our test User's CpmEntity relationships (problems, lifestyles, medication groups,
+     * misc, biometrics and symptoms).
+     *
+     *
+     * @param $relationship         //name of the relationship function eg. cpmProblems, cpmMiscs ... ...
+     * @param null $page            //use this ONLY for Miscs. Since Miscs can appera on all CarePlan pages, we wanna
+     *                                make sure we are only working with Miscs that live in the page we are filling
+     * @param $url                  //the url we are visiting to populate the entity relationship
+     * @param null $sectionTitle    //if there's a title that appears on the page we wanna make sure it's there 
+     *                                eg. Symptoms to Monitor
+     * @param $entityIdFieldName    //the entity's id column from the pivot table eg. cpm_problem_id
+     */
+    public function fillCpmEntityUserValues($relationship, $page = null, $url, $sectionTitle = null, $entityIdFieldName)
+    {
         $carePlanTemplate = $this->patient->service()
             ->firstOrDefaultCarePlan($this->patient)
             ->carePlanTemplate()
             ->first();
 
         /*
-         * Problems
+         * Cpm Entity
          */
-        $carePlanProblems = $carePlanTemplate->cpmProblems()
-            ->get();
-        
-        $this
-            ->actingAs($this->provider)
-            ->visit("/manage-patients/{$this->patient->ID}/careplan/sections/1")
-            ->see('Diagnosis / Problems to Monitor');
-        
-        foreach ($carePlanProblems as $problem)
-        {
-            $this->select($problem->id, "cpmProblems[$problem->id]");
-            $this->press('TestSubmit');
+        $query = $carePlanTemplate
+            ->{$relationship}();
 
-            $this->seeInDatabase('cpm_problems_users', [
-                'cpm_problem_id' => $problem->id,
-                'patient_id' => $this->patient->ID,
-                'cpm_instruction_id' => $problem->pivot->cpm_instruction_id,
-            ]);
-        }
-        
-        $patientProblems = $this->patient->cpmProblems()
-            ->lists('cpm_problem_id')
-            ->all();
+        empty($page) ?: $query->wherePivot('page', $page);
 
-        $this->assertEquals(count($patientProblems), count($carePlanProblems->all()));
-
-
-        /*
-         * Livestyles
-         */
-        $carePlanLifestyles = $carePlanTemplate->cpmLifestyles()
-            ->lists('cpm_lifestyle_id')
-            ->all();
+        $carePlanEntities = $query->get();
 
         $this
             ->actingAs($this->provider)
-            ->visit("/manage-patients/{$this->patient->ID}/careplan/sections/1")
-            ->see('Lifestyle to Monitor');
+            ->visit($url);
 
-        foreach ($carePlanLifestyles as $lifestyleId)
+        empty($sectionTitle) ?: $this->see($sectionTitle);
+
+        foreach ($carePlanEntities as $entity)
         {
-            $this->select($lifestyleId, "cpmLifestyles[$lifestyleId]");
+            $this->select($entity->id, "{$relationship}[$entity->id]");
             $this->press('TestSubmit');
 
-            $this->seeInDatabase('cpm_lifestyles_users', [
-                'cpm_lifestyle_id' => $lifestyleId,
+            $this->seeInDatabase("{$entity->getTable()}_users", [
+                $entityIdFieldName => $entity->id,
                 'patient_id' => $this->patient->ID,
+                'cpm_instruction_id' => $entity->pivot->cpm_instruction_id,
             ]);
         }
 
-        $patientLifestyles = $this->patient->cpmLifestyles()
-            ->lists('cpm_lifestyle_id')
+        $patientEntities = $this->patient->{$relationship}()
+            ->lists($entityIdFieldName)
             ->all();
 
-        $this->assertEquals(count($patientLifestyles), count($carePlanLifestyles));
-
-
-        /*
-         * Medication Groups
-         */
-        $carePlanMedGroups = $carePlanTemplate->cpmMedicationGroups()
-            ->lists('cpm_medication_group_id')
-            ->all();
-
-        $this
-            ->actingAs($this->provider)
-            ->visit("/manage-patients/{$this->patient->ID}/careplan/sections/1")
-            ->see('Medications to Monitor');
-
-        foreach ($carePlanMedGroups as $medGroupId)
-        {
-            $this->select($medGroupId, "cpmMedicationGroups[$medGroupId]");
-            $this->press('TestSubmit');
-
-            $this->seeInDatabase('cpm_medication_groups_users', [
-                'cpm_medication_group_id' => $medGroupId,
-                'patient_id' => $this->patient->ID,
-            ]);
-        }
-
-        $patientMedGroups = $this->patient->cpmMedicationGroups()
-            ->lists('cpm_medication_group_id')
-            ->all();
-
-        $this->assertEquals(count($patientMedGroups), count($carePlanMedGroups));
-
-
-        /*
-         * Miscs
-         */
-        $carePlanMiscs = $carePlanTemplate->cpmMiscs()
-            ->wherePivot('page', 1)
-            ->lists('cpm_misc_id')
-            ->all();
-
-        $this
-            ->actingAs($this->provider)
-            ->visit("/manage-patients/{$this->patient->ID}/careplan/sections/1");
-
-        foreach ($carePlanMiscs as $miscId)
-        {
-            $this->select($miscId, "cpmMiscs[$miscId]");
-            $this->press('TestSubmit');
-
-            $this->seeInDatabase('cpm_miscs_users', [
-                'cpm_misc_id' => $miscId,
-                'patient_id' => $this->patient->ID,
-            ]);
-        }
-
-        $patientMiscs = $this->patient->cpmMiscs()
-            ->lists('cpm_misc_id')
-            ->all();
-
-        $this->assertEquals(count($patientMiscs), count($carePlanMiscs));
+        $this->assertEquals(count($patientEntities), count($carePlanEntities->all()));
     }
 }
