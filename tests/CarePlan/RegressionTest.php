@@ -8,16 +8,11 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class RegressionTest extends TestCase
 {
     protected $patient;
+
     protected $provider;
 
     public function testClhRegressionTesting()
     {
-        /*
-         * Since we're using DatabaseTransactions, it seems like Laravel rolls back after executing each method.
-         * @todo: research what's going on and figure out if DatabaseTransactions can be rolled back after all tests run
-         *
-         * For let's just call it again.
-         */
         $this->createProvider();
 
         $this->providerLogin();
@@ -32,8 +27,31 @@ class RegressionTest extends TestCase
 
         $this->fillCareplanPage3();
 
-        echo "\nPatientId: {$this->patient->ID}\n PatientName: {$this->patient->display_name}";
-        echo "\nProviderLogin: {$this->provider->user_email}\n ProviderPass: password";
+        /**
+         * Report stuff
+         */
+
+        //This is kinda hacky.
+        //We are checking which database is being used to figure out which environment we are on.
+        //This is because when testing, the APP_ENV is set to 'testing'
+        $db = env('DB_DATABASE');
+
+        $text = "Automated Regression Testing run successfully on environment: $db.
+            A Provider was created:
+            login: {$this->provider->user_email}
+            password: password
+            
+            A patient was created:
+            id: {$this->patient->ID}
+            name: {$this->patient->display_name}
+        ";
+
+        if (in_array($db, ['cpm_stage', 'cpm_test'])) {
+            Slack::to('#qualityassurance')
+                ->send($text);
+        }
+
+        echo $text;
     }
 
     public function createProvider()
