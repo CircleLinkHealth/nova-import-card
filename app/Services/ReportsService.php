@@ -470,10 +470,10 @@ class ReportsService
     public function biometricsIndicators($weeklyReading1, $weeklyReading2, $biometric, $target)
     {//debug($biometric);
 
-        if ($biometric == 'Blood_Sugar') {
+        if ($biometric == 'Blood Sugar') {
 //            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
             return $this->analyzeBloodSugar($weeklyReading1, $weeklyReading2);
-        } else if ($biometric == 'Blood_Pressure') {
+        } else if ($biometric == 'Blood Pressure') {
 //            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
             return $this->analyzeBloodPressure($weeklyReading1, $weeklyReading2);
         } else if ($biometric == 'Weight') {
