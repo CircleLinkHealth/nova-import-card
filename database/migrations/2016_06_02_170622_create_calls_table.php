@@ -31,7 +31,7 @@ class CreateCallsTable extends Migration
             $table->unsignedInteger('outbound_cpm_id');
 
             //in seconds
-            $table->integer('call_time');
+            $table->integer('call_time')->nullable();
 
             $table->foreign('inbound_cpm_id')
                 ->references('ID')
