@@ -67,6 +67,7 @@ class NotesTableSeeder extends Seeder
                 'body' => $comment,
                 'isTCM' => $tcm_flag,
                 'created_at' => $activity_note->created_at,
+                'logger_id' => $activity_note->logger_id,
                 'performed_at' => $activity_note->performed_at,
                 'type' => $activity_note->type
             ]);
