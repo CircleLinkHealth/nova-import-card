@@ -54,13 +54,13 @@ class ReportsController extends Controller
                 $first = reset($value);
                 $last = end($value);
                 $changes = (new ReportsService())->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name, (new ReportsService())->getTargetValueForBiometric($bio_name, $user));
-                //debug($changes);
+
                 $biometrics_array[$bio_name]['change'] = $changes['change'];
                 $biometrics_array[$bio_name]['progression'] = $changes['progression'];
                 $biometrics_array[$bio_name]['status'] = (isset($changes['status'])) ? $changes['status'] : 'Unchanged';
  				//$changes['bio']= $bio_name;debug($changes);
                 $biometrics_array[$bio_name]['lastWeekAvg'] = intval($last->Avg);
-            }
+            }//debug($biometrics_array);
 
             $count = 1;
             $biometrics_array[$bio_name]['data'] = '';
@@ -88,7 +88,7 @@ class ReportsController extends Controller
 
         //Medication Tracking:
         $medications = (new ReportsService())->getMedicationStatus($user, false);
-
+        
         $data = [
             'treating' => $treating,
             'patientId' => $patientId,
