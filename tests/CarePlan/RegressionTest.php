@@ -7,8 +7,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class RegressionTest extends TestCase
 {
-//    use \Illuminate\Foundation\Testing\DatabaseTransactions;
-
     protected $patient;
     protected $provider;
 
@@ -258,8 +256,7 @@ class RegressionTest extends TestCase
             ->see('Billing Provider')
             ->see('Lead Contact')
             ->see('Send Alert')
-            ->see($this->provider->display_name)
-        ;
+            ->see($this->provider->display_name);
     }
 
     public function fillCareplanPage1()
@@ -272,7 +269,8 @@ class RegressionTest extends TestCase
             null,
             "/manage-patients/{$this->patient->ID}/careplan/sections/1",
             'Diagnosis / Problems to Monitor',
-            'cpm_problem_id'
+            'cpm_problem_id',
+            null
         );
 
         /*
@@ -283,7 +281,8 @@ class RegressionTest extends TestCase
             null,
             "/manage-patients/{$this->patient->ID}/careplan/sections/1",
             'Lifestyle to Monitor',
-            'cpm_lifestyle_id'
+            'cpm_lifestyle_id',
+            null
         );
 
 
@@ -295,7 +294,8 @@ class RegressionTest extends TestCase
             null,
             "/manage-patients/{$this->patient->ID}/careplan/sections/1",
             'Medications to Monitor',
-            'cpm_medication_group_id'
+            'cpm_medication_group_id',
+            null
         );
 
 
@@ -307,7 +307,8 @@ class RegressionTest extends TestCase
             1,
             "/manage-patients/{$this->patient->ID}/careplan/sections/1",
             null,
-            'cpm_misc_id'
+            'cpm_misc_id',
+            null
         );
     }
 
@@ -316,15 +317,17 @@ class RegressionTest extends TestCase
      * misc, biometrics and symptoms).
      *
      *
-     * @param $relationship         //name of the relationship function eg. cpmProblems, cpmMiscs ... ...
-     * @param null $page            //use this ONLY for Miscs. Since Miscs can appera on all CarePlan pages, we wanna
+     * @param $relationship //name of the relationship function eg. cpmProblems, cpmMiscs ... ...
+     * @param null $page //use this ONLY for Miscs. Since Miscs can appera on all CarePlan pages, we wanna
      *                                make sure we are only working with Miscs that live in the page we are filling
-     * @param $url                  //the url we are visiting to populate the entity relationship
-     * @param null $sectionTitle    //if there's a title that appears on the page we wanna make sure it's there 
+     * @param $url //the url we are visiting to populate the entity relationship
+     * @param null $sectionTitle //if there's a title that appears on the page we wanna make sure it's there
      *                                eg. Symptoms to Monitor
-     * @param $entityIdFieldName    //the entity's id column from the pivot table eg. cpm_problem_id
+     * @param $entityIdFieldName //the entity's id column from the pivot table eg. cpm_problem_id
+     * @param $numberOfRowsToCreate //how many of those entities should be associated with the user. The default is
+     *                                null, and that means relate all entities
      */
-    public function fillCpmEntityUserValues($relationship, $page = null, $url, $sectionTitle = null, $entityIdFieldName)
+    public function fillCpmEntityUserValues($relationship, $page = null, $url, $sectionTitle = null, $entityIdFieldName, $numberOfRowsToCreate = null)
     {
         $carePlanTemplate = $this->patient->service()
             ->firstOrDefaultCarePlan($this->patient)
@@ -336,10 +339,10 @@ class RegressionTest extends TestCase
          */
         $query = $carePlanTemplate
             ->{$relationship}();
-
         empty($page) ?: $query->wherePivot('page', $page);
-
         $carePlanEntities = $query->get();
+
+        empty($numberOfRowsToCreate) ?: $carePlanEntities = $carePlanEntities->random($numberOfRowsToCreate);
 
         $this
             ->actingAs($this->provider)
@@ -347,8 +350,7 @@ class RegressionTest extends TestCase
 
         empty($sectionTitle) ?: $this->see($sectionTitle);
 
-        foreach ($carePlanEntities as $entity)
-        {
+        foreach ($carePlanEntities as $entity) {
             $this->select($entity->id, "{$relationship}[$entity->id]");
             $this->press('TestSubmit');
 
