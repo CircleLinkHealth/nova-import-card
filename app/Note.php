@@ -13,8 +13,8 @@ class Note extends Model
         'author_id' ,
         'body',
         'isTCM',
-        'created_at',
-        'type'
+        'type',
+        'performed_at'
     ];
 
 

@@ -17,7 +17,8 @@ class MailLog extends Model
         'subject',
         'type',
         'sender_cpm_id',
-        'receiver_cpm_id'
+        'receiver_cpm_id',
+        'note_id'
     ];
 
     /**

@@ -61,6 +61,16 @@ class NotesTableSeeder extends Seeder
             $receiver_meta = ActivityMeta::where('activity_id', $activity_note->id)
                 ->where('meta_key', 'email_sent_to')->get();
 
+            $note = \App\Note::create([
+                'patient_id' => $activity_note->patient_id,
+                'author_id' => $activity_note->logger_id,
+                'body' => $comment,
+                'isTCM' => $tcm_flag,
+                'created_at' => $activity_note->created_at,
+                'performed_at' => $activity_note->performed_at,
+                'type' => $activity_note->type
+            ]);
+
             if (is_object($sender_meta)) {
 
                 foreach ($sender_meta as $meta_s) {
@@ -94,7 +104,8 @@ class NotesTableSeeder extends Seeder
                                         'type' => 'note',
                                         'sender_cpm_id' => $sender->ID,
                                         'receiver_cpm_id' => $receiver->ID,
-                                        'created_at' => $activity_note->created_at
+                                        'created_at' => $activity_note->created_at,
+                                        'note_id' => $note->id
                                     ]);
                                 }
                                 $this->command->info("Mail Logged - cpm_mail_log id: " . $cpm_mail_log->id);
@@ -104,14 +115,6 @@ class NotesTableSeeder extends Seeder
                 }
             }
 
-            $note = \App\Note::create([
-                'patient_id' => $activity_note->patient_id,
-                'author_id' => $activity_note->logger_id,
-                'body' => $comment,
-                'isTCM' => $tcm_flag,
-                'created_at' => $activity_note->created_at,
-                'type' => $activity_note->type
-            ]);
 
             $this->command->info("Transferred Note ID: " . $note->id);
 
@@ -152,9 +155,8 @@ class NotesTableSeeder extends Seeder
                         'outbound_cpm_id' => $outbound_id,
 
                         //?
-                        'call_time' => '',
-                        'created_at' => $activity_note->created_at
-
+                        'call_time' => 0,
+                        'created_at' => $activity_note->performed_at
 
                     ]);
                     $this->command->info("Call created for Note: " . $call->id);
