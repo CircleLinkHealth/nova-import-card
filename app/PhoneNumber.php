@@ -12,8 +12,6 @@ class PhoneNumber extends Model {
 	const MOBILE = 'mobile';
 	const WORK = 'work';
 
-	use SoftDeletes;
-
 	/**
 	 * The connection name for the model.
 	 *
