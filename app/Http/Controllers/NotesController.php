@@ -33,40 +33,10 @@ class NotesController extends Controller
         $patient = User::find($patientId);
         $messages = \Session::get('messages');
 
-        $acts = $this->service->getNotesForPatient($patient);
+        $acts = $this->service->getNotesAndOfflineActivitiesForPatient($patient);
 
-        $acts = json_decode(json_encode($acts), true);
+        $data = $this->formatter->formatDataForNotesAndOfflineActivitesReport($acts);
 
-        foreach ($acts as $key => $value) {
-            $acts[$key]['patient'] = User::find($patientId);
-        }
-
-        foreach ($acts as $key => $value) {
-            $act_id = $acts[$key]['id'];
-            $acts_ = Activity::find($act_id);
-            $comment = $acts_->getActivityCommentFromMeta($act_id);
-            $acts[$key]['comment'] = $comment;
-        }
-
-        $activities_data_with_users = array();
-        $activities_data_with_users[$patientId] = $acts;
-
-        $reportData[$patientId] = array();
-        foreach ($activities_data_with_users as $patientAct) {
-            $reportData[] = collect($patientAct)->groupBy('performed_at_year_month');
-        }
-
-        for ($i = 0; $i < count($patientAct) ; $i++) {
-            $logger_user = User::find($patientAct[$i]['logger_id']);
-            if ($logger_user) {
-                $patientAct[$i]['logger_name'] = $logger_user->getFullNameAttribute();
-            } else {
-                $patientAct[$i]['logger_name'] = 'N/A';
-            }
-        }
-        
-        $data = true;
-        $reportData = "data:" . json_encode($patientAct) . "";
         if ($patientAct == null) {
             $data = false;
         }
