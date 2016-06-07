@@ -55,3 +55,12 @@ $factory->define(\App\Models\CPM\Biometrics\CpmBloodSugar::class, function (Fake
         'starting_a1c' => rand('6.7', '13.8'),
     ];
 });
+
+$factory->define(\App\Models\CPM\Biometrics\CpmSmoking::class, function (Faker\Generator $faker) {
+
+    return [
+//        'patient_id' => '', this has to be passed in when calling the factory
+        'starting' => rand(15, 50),
+        'target' => rand(0, 8),
+    ];
+});
