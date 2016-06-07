@@ -80,7 +80,7 @@ class ReportsController extends Controller
             } else {
                 //no data
                 unset($biometrics_array[$bio_name]);
-            }
+            }       
         }//dd($biometrics_array);
 
         // get provider

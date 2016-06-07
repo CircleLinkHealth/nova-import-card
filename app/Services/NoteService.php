@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Activity;
 use App\Call;
 use App\Note;
 use App\User;
@@ -70,8 +71,10 @@ class NoteService
     public function getNotesAndOfflineActivitiesForPatient(User $patient)
     {
 
-//        return Note::whereIn('patient_id', $patient->ID)
-//            ->orderBy('created_at', 'desc')->get();
+        $notes = $this->getNotesForPatient($patient);
+        $activities =  Activity::where('patient_id', $patient->ID)
+                                ->where('')->get();
+
     }
 
     public function getNotesWithRangeForPatients($patients, $start, $end)
