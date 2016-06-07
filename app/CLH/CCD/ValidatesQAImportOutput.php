@@ -84,9 +84,9 @@ trait ValidatesQAImportOutput
             || empty($qaSummary->provider)
             || empty($qaSummary->name)
             || empty($qaSummary->has_street_address)
-            || empty($qaSummary->has_zip)
             || empty($qaSummary->has_city)
             || empty($qaSummary->has_state)
+            || empty($qaSummary->has_zip)
         ) $isFlagged = true;
 
         $qaSummary->flag = $isFlagged;
