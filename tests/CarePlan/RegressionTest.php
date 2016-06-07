@@ -4,6 +4,7 @@ use App\CLH\Repositories\UserRepository;
 use App\Models\CPM\Biometrics\CpmWeight;
 use App\PatientCareTeamMember;
 use App\User;
+use Maknz\Slack\Facades\Slack;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 
@@ -47,37 +48,11 @@ class RegressionTest extends TestCase
             $i++;
 
             $this->fillBiometrics($patient);
+
+            $this->printCarePlanTest($patient);
         }
 
-        /**
-         * Report stuff
-         */
-
-        //This is kinda hacky.
-        //We are checking which database is being used to figure out which environment we are on.
-        //This is because when testing, the APP_ENV is set to 'testing'
-        $db = env('DB_DATABASE');
-
-        $text = "Automated Regression Testing ran successfully on environment: $db.
-            A Provider was created:
-            login: {$this->provider->user_email}
-            password: password
-            ";
-
-        foreach ($this->patients as $patient) {
-            $text .= "
-            A patient was created:
-            id: {$patient->ID}
-            name: {$patient->display_name}
-            ";
-        }
-
-        if (in_array($db, ['cpm_stage', 'cpm_test'])) {
-            Slack::to('#qualityassurance')
-                ->send($text);
-        }
-
-        echo $text;
+        $this->report();
 
     }
 
@@ -510,5 +485,56 @@ class RegressionTest extends TestCase
                 'patient_id' => $patient->ID
             ]);
         }
+    }
+
+    public function printCarePlanTest(User $patient)
+    {
+        $billing = App\User::find($patient->getBillingProviderIDAttribute());
+        $today = \Carbon\Carbon::now()->toFormattedDateString();
+
+        $this->actingAs($this->provider)
+            ->visit("/manage-patients/{$patient->ID}/careplan/sections/3")
+            ->click('approve-forward')
+            ->seePageIs("/manage-patients/{$patient->ID}/view-careplan?page=3")
+            ->see('Care Plan')
+            ->see($patient->fullName)
+            ->see($patient->phone)
+            ->see($today)
+            ->see($billing->fullName)
+            ->see($billing->phone)
+        ;
+    }
+
+    public function report()
+    {
+        /**
+         * Report stuff
+         */
+
+        //This is kinda hacky.
+        //We are checking which database is being used to figure out which environment we are on.
+        //This is because when testing, the APP_ENV is set to 'testing'
+        $db = env('DB_DATABASE');
+
+        $text = "Automated Regression Testing ran successfully on environment: $db.
+            A Provider was created:
+            login: {$this->provider->user_email}
+            password: password
+            ";
+
+        foreach ($this->patients as $patient) {
+            $text .= "
+            A patient was created:
+            id: {$patient->ID}
+            name: {$patient->display_name}
+            ";
+        }
+
+        if (in_array($db, ['cpm_stage', 'cpm_test'])) {
+            Slack::to('#qualityassurance')
+                ->send($text);
+        }
+
+        echo $text;
     }
 }

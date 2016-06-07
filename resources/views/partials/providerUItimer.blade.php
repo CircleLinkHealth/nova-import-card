@@ -81,10 +81,7 @@
     if (strpos($_SERVER['REQUEST_URI'], 'login') !== false) {
         $enableTimeTracking = false;
     }
-
-    $enableTimeTracking = false;
-
-
+            
     // set patient vars
     $patientId = '';
     $patientProgramId = '';
