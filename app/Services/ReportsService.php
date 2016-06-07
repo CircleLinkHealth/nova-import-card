@@ -209,40 +209,42 @@ class ReportsService
 
             if ($yes != 0 && $total != 0) {
                 $adhereance_percent = doubleval($yes / $total);
+            } else if ($yes == 0 && $total == 1) {
+                $adhereance_percent = 0;
             } else if ($yes == 0 && $total == 0) {
                 $adhereance_percent = 1;
             } else if ($yes == 0) {
                 $adhereance_percent = 0;
             }
-
-            if ($fromApp) {
-                //add to categories based on percentage of responses
-                switch ($adhereance_percent) {
-                    case ($adhereance_percent > 0.8):
-                        $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    case ($temp_meds[$category]['percent'] >= 0.5):
-                        $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    case ($temp_meds[$category]['percent'] == 0):
-                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    default:
-                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                }
-                //echo $category.': ' . $temp_meds[$category]['percent'] . ' <br /> ';
-            } else {
+//            if ($fromApp) {
+//                //add to categories based on percentage of responses
+//                switch ($adhereance_percent) {
+//                    case ($adhereance_percent > 0.8):
+//                        $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    case ($temp_meds[$category]['percent'] >= 0.5):
+//                        $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    case ($temp_meds[$category]['percent'] == 0.0):
+//                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    default:
+//                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                }
+//                dd($category.': ' . $temp_meds[$category]['percent'] . ' <br /> ');
+//            } else {
                 // for provider UI
-                switch ($adhereance_percent) {
+                switch (true) {
                     case ($adhereance_percent > 0.8):
                         $meds_array['Better']['description'][] = $key;
                         break;
                     case ($adhereance_percent >= 0.5):
                         $meds_array['Needs Work']['description'][] = $key;
                         break;
-                    case ($adhereance_percent == 0):
+                    case ($adhereance_percent < 0.5):
                         $meds_array['Worse']['description'][] = $key;
+                        break;
                     default:
                         $meds_array['Worse']['description'][] = $key;
                         break;
@@ -250,7 +252,7 @@ class ReportsService
             }
             //Show all the medication categories and stats
             //dd(json_encode($medications)); // show the medications by adherence category
-        }
+
         $medications[0] = ['name' => $meds_array['Better']['description'], 'Section' => 'Better'];
         $medications[1] = ['name' => $meds_array['Needs Work']['description'], 'Section' => 'Needs Work'];
         $medications[2] = ['name' => $meds_array['Worse']['description'], 'Section' => 'Worse'];
