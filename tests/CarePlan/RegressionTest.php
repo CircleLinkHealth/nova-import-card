@@ -503,6 +503,30 @@ class RegressionTest extends TestCase
             ->see($billing->fullName)
             ->see($billing->phone)
         ;
+
+        /**
+         * Check that entities are on the page
+         */
+        $this->seeUserEntityNameOnPage($patient, 'cpmProblems');
+        $this->seeUserEntityNameOnPage($patient, 'cpmMedicationGroups');
+        $this->seeUserEntityNameOnPage($patient, 'cpmSymptoms');
+        $this->seeUserEntityNameOnPage($patient, 'cpmLifestyles');
+    }
+
+    /**
+     * Check that the User's CpmEntities appear on the page.
+     *
+     * @param User $patient
+     * @param $relationship  //for example 'cpmProblems'
+     */
+    public function seeUserEntityNameOnPage(User $patient, $relationship)
+    {
+        $patientEntities = $patient->{$relationship}()->get();
+
+        foreach ($patientEntities as $entity)
+        {
+            $this->see($entity->name);
+        }
     }
 
     public function report()
