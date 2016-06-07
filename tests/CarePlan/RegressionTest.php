@@ -1,6 +1,7 @@
 <?php
 
 use App\CLH\Repositories\UserRepository;
+use App\Models\CPM\Biometrics\CpmWeight;
 use App\PatientCareTeamMember;
 use App\User;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -12,6 +13,10 @@ class RegressionTest extends TestCase
 
     protected $provider;
 
+    /**
+     * Test Manager
+     * Just like your main() in java :joy:
+     */
     public function testClhRegressionTesting()
     {
         $this->createProvider();
@@ -40,6 +45,8 @@ class RegressionTest extends TestCase
             $this->fillCareplanPage3($patient, $numberOfRowsToCreate);
 
             $i++;
+
+            $this->fillBiometrics($patient);
         }
 
         /**
@@ -51,7 +58,7 @@ class RegressionTest extends TestCase
         //This is because when testing, the APP_ENV is set to 'testing'
         $db = env('DB_DATABASE');
 
-        $text = "Automated Regression Testing run successfully on environment: $db.
+        $text = "Automated Regression Testing ran successfully on environment: $db.
             A Provider was created:
             login: {$this->provider->user_email}
             password: password
@@ -476,5 +483,21 @@ class RegressionTest extends TestCase
          * Hope this makes sense in the future :)
          */
         $this->assertGreaterThanOrEqual(count($carePlanEntities->all()), count($patientEntities));
+    }
+
+    public function fillBiometrics(User $patient)
+    {
+        $weight = factory(CpmWeight::class)->create([
+            'patient_id' => $patient->ID
+        ]);
+
+        $bloodPressure = factory(\App\Models\CPM\Biometrics\CpmBloodPressure::class)->create([
+            'patient_id' => $patient->ID
+        ]);
+
+        $bloodSugar = factory(\App\Models\CPM\Biometrics\CpmBloodSugar::class)->create([
+            'patient_id' => $patient->ID
+        ]);
+        
     }
 }
