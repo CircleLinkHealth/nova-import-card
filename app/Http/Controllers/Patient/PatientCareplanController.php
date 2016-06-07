@@ -150,7 +150,7 @@ class PatientCareplanController extends Controller
                     }
                 }
 
-                if($patient->patientInfo) {
+                if ($patient->patientInfo) {
                     $patientData[] = array(
                         'key' => $patient->ID,
                         'id' => $patient->ID,
@@ -217,19 +217,19 @@ class PatientCareplanController extends Controller
             'isPdf' => true,
         ]);
 
-        $fileNameBlankPage = $storageDirectory.$datetimePrefix.'-0-PDFblank.pdf';
+        $fileNameBlankPage = $storageDirectory . $datetimePrefix . '-0-PDFblank.pdf';
         $fileNameWithPathBlankPage = base_path($fileNameBlankPage);
         $pdf->save($fileNameWithPathBlankPage, true);
 
         // create pdf for each user
         $p = 1;
-        foreach($users as $user_id) {
+        foreach ($users as $user_id) {
             // add p to datetime prefix
             $prefix = $datetimePrefix . '-' . $p;
             $user = User::find($user_id);
             $careplan = $reportService->carePlanGenerator(array($user));
             $careplan = $careplan[$user_id];
-            if(empty($careplan)) {
+            if (empty($careplan)) {
                 return false;
             }
 
@@ -242,7 +242,7 @@ class PatientCareplanController extends Controller
             ]);
             $pdf->setOption('footer-center', 'Page [page]');
 
-            $fileName = $storageDirectory.$prefix.'-PDF_' . str_random(40) . '.pdf';
+            $fileName = $storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf';
             $fileNameWithPath = base_path($fileName);
             $pdf->save($fileNameWithPath, true);
             $pageCount = $this->count_pages($fileNameWithPath);
@@ -253,7 +253,7 @@ class PatientCareplanController extends Controller
 //                echo PHP_EOL . '<br /><br />Add blank page...';
 //                echo PHP_EOL . '<br /><br />'.$fileName;
 //                echo PHP_EOL . '<br /><br />'.$fileNameBlankPage;
-                $fileName = $storageDirectory.$this->merge_pages(array($fileName, $fileNameBlankPage), $prefix, $storageDirectory);
+                $fileName = $storageDirectory . $this->merge_pages(array($fileName, $fileNameBlankPage), $prefix, $storageDirectory);
                 $fileNameWithPath = base_path($fileName);
 //                echo PHP_EOL . '<br /><br />Merge complete..';
             }
@@ -267,32 +267,34 @@ class PatientCareplanController extends Controller
 
         // merge to final file
         $mergedFileName = $this->merge_pages($pageFileNames, $datetimePrefix, $storageDirectory);
-        $mergedFileNameWithPath = $storageDirectory.$this->merge_pages($pageFileNames, $datetimePrefix, $storageDirectory);
+        $mergedFileNameWithPath = $storageDirectory . $this->merge_pages($pageFileNames, $datetimePrefix, $storageDirectory);
         //dd($mergedFileName . ' - PAGE COUNT: '.$this->count_pages(base_path($mergedFileNameWithPath)));
 
         return Response::make(file_get_contents(base_path($mergedFileNameWithPath)), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$mergedFileName.'"'
+            'Content-Disposition' => 'inline; filename="' . $mergedFileName . '"'
         ]);
         //return view('wpUsers.patient.multiview', compact(['careplans']));
     }
 
-    public function count_pages($pdfname) {
+    public function count_pages($pdfname)
+    {
         $pdftext = file_get_contents($pdfname);
         $num = preg_match_all("/\/Page\W/", $pdftext, $dummy);
         return $num;
     }
 
-    public function merge_pages($fileArray, $prefix = '', $storageDirectory = '') {
+    public function merge_pages($fileArray, $prefix = '', $storageDirectory = '')
+    {
         //$fileArray= array("name1.pdf","name2.pdf","name3.pdf","name4.pdf");
 
-        $outputFileName = $prefix."-merged.pdf";
-        $outputName = base_path($storageDirectory.$prefix."-merged.pdf");
+        $outputFileName = $prefix . "-merged.pdf";
+        $outputName = base_path($storageDirectory . $prefix . "-merged.pdf");
 
         $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$outputName ";
 //Add each pdf file to the end of the command
-        foreach($fileArray as $file) {
-            $cmd .= base_path($file)." ";
+        foreach ($fileArray as $file) {
+            $cmd .= base_path($file) . " ";
         }
         $result = shell_exec($cmd);
         return $outputFileName;
@@ -676,8 +678,8 @@ class PatientCareplanController extends Controller
 
             $lifestyleService->syncWithUser($user, $cpmLifestyles, $page, $instructions);
             $medicationGroupService->syncWithUser($user, $cpmMedicationGroups, $page, $instructions);
-		    $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
-		    $problemService->syncWithUser($user, $cpmProblems, $page, $instructions);
+            $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
+            $problemService->syncWithUser($user, $cpmProblems, $page, $instructions);
         }
 
         if ($page == 2) {
@@ -692,24 +694,37 @@ class PatientCareplanController extends Controller
 
             //weight
             if (!isset($biometricsValues['weight']['monitor_changes_for_chf'])) $biometricsValues['weight']['monitor_changes_for_chf'] = 0;
-            if (isset($biometricsValues['weight'])) CpmWeight::updateOrCreate([
+            if (!empty($biometricsValues['weight']['starting']) || !empty($biometricsValues['weight']['target'])) CpmWeight::updateOrCreate([
                 'patient_id' => $user->ID
             ], $biometricsValues['weight']);
 
             //blood sugar
-            if (isset($biometricsValues['bloodSugar'])) CpmBloodSugar::updateOrCreate([
-                'patient_id' => $user->ID
-            ], $biometricsValues['bloodSugar']);
+            if (isset($biometricsValues['bloodSugar'])) {
+                if (!empty($biometricsValues['bloodSugar']['starting']) || !empty($biometricsValues['bloodSugar']['starting_a1c'])) {
+                    CpmBloodSugar::updateOrCreate([
+                        'patient_id' => $user->ID
+                    ], $biometricsValues['bloodSugar']);
+                }
+            }
+
 
             //blood pressure
-            if (isset($biometricsValues['bloodPressure'])) CpmBloodPressure::updateOrCreate([
-                'patient_id' => $user->ID
-            ], $biometricsValues['bloodPressure']);
+            if (isset($biometricsValues['bloodPressure'])) {
+                if (!empty($biometricsValues['bloodPressure']['starting']) || !empty($biometricsValues['bloodPressure']['target'])) {
+                    CpmBloodPressure::updateOrCreate([
+                        'patient_id' => $user->ID
+                    ], $biometricsValues['bloodPressure']);
+                }
+            }
 
             //smoking
-            if (isset($biometricsValues['smoking'])) CpmSmoking::updateOrCreate([
-                'patient_id' => $user->ID
-            ], $biometricsValues['smoking']);
+            if (isset($biometricsValues['smoking'])) {
+                if (!empty($biometricsValues['smoking']['starting']) || !empty($biometricsValues['smoking']['target'])) {
+                    CpmSmoking::updateOrCreate([
+                        'patient_id' => $user->ID
+                    ], $biometricsValues['smoking']);
+                }
+            }
         }
 
         if ($page == 3) {
