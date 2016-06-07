@@ -487,17 +487,28 @@ class RegressionTest extends TestCase
 
     public function fillBiometrics(User $patient)
     {
-        $weight = factory(CpmWeight::class)->create([
-            'patient_id' => $patient->ID
-        ]);
+        if (count($patient->cpmBiometrics()->where('type', 0)->first())) {
+            $weight = factory(CpmWeight::class)->create([
+                'patient_id' => $patient->ID
+            ]);
+        }
 
-        $bloodPressure = factory(\App\Models\CPM\Biometrics\CpmBloodPressure::class)->create([
-            'patient_id' => $patient->ID
-        ]);
+        if (count($patient->cpmBiometrics()->where('type', 1)->first())) {
+            $bloodPressure = factory(\App\Models\CPM\Biometrics\CpmBloodPressure::class)->create([
+                'patient_id' => $patient->ID
+            ]);
+        }
 
-        $bloodSugar = factory(\App\Models\CPM\Biometrics\CpmBloodSugar::class)->create([
-            'patient_id' => $patient->ID
-        ]);
-        
+        if (count($patient->cpmBiometrics()->where('type', 2)->first())) {
+            $bloodSugar = factory(\App\Models\CPM\Biometrics\CpmBloodSugar::class)->create([
+                'patient_id' => $patient->ID
+            ]);
+        }
+
+        if (count($patient->cpmBiometrics()->where('type', 3)->first())) {
+            $smoking = factory(\App\Models\CPM\Biometrics\CpmSmoking::class)->create([
+                'patient_id' => $patient->ID
+            ]);
+        }
     }
 }
