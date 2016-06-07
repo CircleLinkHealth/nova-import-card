@@ -41,6 +41,12 @@ trait ValidatesQAImportOutput
             return empty($dup) ? null : $dup->ID;
         };
 
+        $phoneCheck = function () use ($demographics) {
+            return ($demographics->cell_phone
+                || $demographics->home_phone
+                || $demographics->work_phone);
+        };
+
         $counter = function ($index) use ($output) {
             return count($output[$index]);
         };
@@ -55,10 +61,17 @@ trait ValidatesQAImportOutput
         $qaSummary->provider = $provider();
         $qaSummary->location = $location();
         $qaSummary->duplicate_id = $duplicateCheck();
+        $qaSummary->has_phone = $phoneCheck();
 
         $isFlagged = false;
 
-        if ($qaSummary->medications == 0 || $qaSummary->problems == 0 || empty($qaSummary->location) || empty($qaSummary->provider) || empty($qaSummary->name)) $isFlagged = true;
+        if ($qaSummary->medications == 0
+            || $qaSummary->problems == 0
+            || empty($qaSummary->location)
+            || empty($qaSummary->provider)
+            || empty($qaSummary->name)
+            || ! $qaSummary->has_phone
+        ) $isFlagged = true;
 
         $qaSummary->flag = $isFlagged;
         $qaSummary->save();
