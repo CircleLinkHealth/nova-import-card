@@ -489,7 +489,7 @@ class RegressionTest extends TestCase
 
     public function printCarePlanTest(User $patient)
     {
-        $billing = App\User::find($patient->getBillingProviderIDAttribute());
+        $billingProvider = App\User::find($patient->getBillingProviderIDAttribute());
         $today = \Carbon\Carbon::now()->toFormattedDateString();
 
         $this->actingAs($this->provider)
@@ -500,8 +500,8 @@ class RegressionTest extends TestCase
             ->see($patient->fullName)
             ->see($patient->phone)
             ->see($today)
-            ->see($billing->fullName)
-            ->see($billing->phone)
+            ->see($billingProvider->fullName)
+            ->see($billingProvider->phone)
         ;
 
         /**
@@ -511,6 +511,9 @@ class RegressionTest extends TestCase
         $this->seeUserEntityNameOnPage($patient, 'cpmMedicationGroups');
         $this->seeUserEntityNameOnPage($patient, 'cpmSymptoms');
         $this->seeUserEntityNameOnPage($patient, 'cpmLifestyles');
+        $this->seeUserEntityNameOnPage($patient, 'cpmBiometrics', [
+            'Smoking (# per day)'
+        ]);
     }
 
     /**
@@ -518,13 +521,16 @@ class RegressionTest extends TestCase
      *
      * @param User $patient
      * @param $relationship  //for example 'cpmProblems'
+     * @param array $exclude //names to exclude
      */
-    public function seeUserEntityNameOnPage(User $patient, $relationship)
+    public function seeUserEntityNameOnPage(User $patient, $relationship, array $exclude = [])
     {
         $patientEntities = $patient->{$relationship}()->get();
 
         foreach ($patientEntities as $entity)
         {
+            if (in_array($entity->name, $exclude)) continue;
+
             $this->see($entity->name);
         }
     }
