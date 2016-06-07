@@ -196,6 +196,13 @@ class ReportsService
             }
         }
 
+        //Remove meds with no observations
+        foreach ($temp_meds as $key => $value) {
+            if($value['total'] == 0) {
+                unset($temp_meds[$key]);
+            }
+        }
+
         foreach ($temp_meds as $key => $value) {
             $yes = $value['yes'];
             $total = $value['total'];
