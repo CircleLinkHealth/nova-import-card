@@ -30,5 +30,10 @@
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
+
+        <!--We use these for time tracking-->
+        <!--@todo: TimeTracking should not be accessing superglobals directly-->
+        <server name="REQUEST_URI" value="/some/url/here"/>
+        <server name="HTTP_HOST" value="cpm.phpunit.testing"/>
     </php>
 </phpunit>
