@@ -49,15 +49,9 @@ $factory->define(\App\Models\CPM\Biometrics\CpmBloodPressure::class, function (F
 
 $factory->define(\App\Models\CPM\Biometrics\CpmBloodSugar::class, function (Faker\Generator $faker) {
 
-    $systolicStarting = rand(110, 140);
-    $diastolicStarting = rand(60, 70);
-
-    $systolicTarget = $systolicStarting - rand(10, 20);
-    $diastolicTarget = $diastolicStarting - rand(15, 20);
-
     return [
 //        'patient_id' => '', this has to be passed in when calling the factory
-        'starting' => "$systolicStarting/$diastolicStarting",
-        'starting_a1c' => "$systolicTarget/$diastolicTarget",
+        'starting' => rand(140, 300),
+        'starting_a1c' => rand('6.7', '13.8'),
     ];
 });
