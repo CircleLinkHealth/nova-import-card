@@ -54,6 +54,8 @@
                                                         <option value="SOL/CF_SOL_MED_IID">Insulin or injectable diabetes meds</option>
                                                         <option value="SOL/CF_SOL_MED_BRE">Breathing meds</option>
                                                         <option value="SOL/CF_SOL_MED_DEP">Mood/Depression meds</option>
+                                                        <option value="SOL/CF_SOL_MED_KID">Kidney Disease meds</option>
+                                                        <option value="SOL/CF_SOL_MED_DEM">Dementia meds</option>
                                                     </optgroup>
 
                                                     <optgroup label="Symptoms? (1 - 9)">
