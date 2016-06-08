@@ -17,10 +17,10 @@ class WebixFormatter implements ReportFormatter
     {
         $count = 0;
 
-        foreach($notes as $note){
+        foreach ($notes as $note) {
             $patient = User::find($note->patient_id);
 
-            if(!$patient){
+            if (!$patient) {
                 continue;
             }
 
@@ -62,24 +62,24 @@ class WebixFormatter implements ReportFormatter
             //TAGS
             $formatted_notes[$count]['tags'] = '';
 
-            $mails = MailLog::where('note_id',$note->id)
+            $mails = MailLog::where('note_id', $note->id)
                 ->get();
 
-            if(count($mails) > 0){
+            if (count($mails) > 0) {
                 $formatted_notes[$count]['tags'] = '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
             }
 
-            $call = Call::where('note_id',$note->id)
+            $call = Call::where('note_id', $note->id)
                 ->first();
 
-            if(is_object($call)){
-                if($call->status == 'reached'){
+            if (is_object($call)) {
+                if ($call->status == 'reached') {
                     $formatted_notes[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
                 }
             }
 
-                if($note->isTCM == true){
-                    $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
+            if ($note->isTCM == true) {
+                $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
             }
 
             $count++;
@@ -88,39 +88,51 @@ class WebixFormatter implements ReportFormatter
         return "data:" . json_encode(array_values($formatted_notes)) . "";
     }
 
-    public function formatDataForNotesAndOfflineActivitesReport($report_data)
+    public function formatDataForNotesAndOfflineActivitiesReport($report_data)
     {
-        $acts = json_decode(json_encode($acts), true);
 
-        foreach ($acts as $key => $value) {
-            $acts[$key]['patient'] = User::find($patientId);
+        if ($report_data->isEmpty()) {
+            return '';
         }
 
-        foreach ($acts as $key => $value) {
-            $act_id = $acts[$key]['id'];
-            $acts_ = Activity::find($act_id);
-            $comment = $acts_->getActivityCommentFromMeta($act_id);
-            $acts[$key]['comment'] = $comment;
-        }
+        $formatted_data = array();
+        $count = 0;
 
-        $activities_data_with_users = array();
-        $activities_data_with_users[$patientId] = $acts;
+        foreach ($report_data as $data) {
 
-        $reportData[$patientId] = array();
-        foreach ($activities_data_with_users as $patientAct) {
-            $reportData[] = collect($patientAct)->groupBy('performed_at_year_month');
-        }
+            $formatted_data[$count]['id'] = $data->id;
 
-        for ($i = 0; $i < count($patientAct) ; $i++) {
-            $logger_user = User::find($patientAct[$i]['logger_id']);
-            if ($logger_user) {
-                $patientAct[$i]['logger_name'] = $logger_user->getFullNameAttribute();
-            } else {
-                $patientAct[$i]['logger_name'] = 'N/A';
+
+            if (is_int($data->author_id)) // only notes have authors
+            {
+                $formatted_data[$count]['logger_name'] = User::find($data->author_id)->fullName;
+                $formatted_data[$count]['comment'] = $data->body;
+                $formatted_data[$count]['logged_from'] = 'note';
+
+            } else // handles activities
+            {
+                $formatted_data[$count]['logger_name'] = User::find($data->logger_id)->fullName;
+                $formatted_data[$count]['comment'] = $data->getCommentForActivity();
+                $formatted_data[$count]['logged_from'] = 'manual_input';
             }
+
+            $formatted_data[$count]['type_name'] = $data->type;
+            $formatted_data[$count]['performed_at'] = $data->performed_at;
+
+
+            $count++;
+
         }
 
-        $data = true;
-        return "data:" . json_encode($patientAct) . "";
+        if (!empty($formatted_data)) {
+
+            return "data:" . json_encode($formatted_data) . "";
+
+        } else {
+
+            return '';
+
+        }
     }
+
 }

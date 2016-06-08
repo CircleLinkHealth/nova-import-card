@@ -57,15 +57,7 @@ class NoteService
     public function getNotesForPatient(User $patient)
     {
 
-        return DB::table('lv_activities')
-            ->select(DB::raw('*,provider_id, type'))
-            ->where('patient_id', $patient->ID)
-            ->where(function ($q) {
-                $q->where('logged_from', 'note')
-                    ->Orwhere('logged_from', 'manual_input');
-            })
-            ->orderBy('performed_at', 'desc')
-            ->get();
+        return Note::where('patient_id',$patient->ID)->get();
     }
 
     public function getNotesAndOfflineActivitiesForPatient(User $patient)
@@ -73,20 +65,15 @@ class NoteService
 
         // @todo figure out compiling these sections together
         $notes = $this->getNotesForPatient($patient);
-        $activities = $acts = DB::table('lv_activities')
-            ->select(DB::raw('*'))
-            ->where('patient_id', $patient->ID)
-            ->where('logged_from', 'manual_input')
-            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-            ->orderBy('performed_at', 'desc')
-            ->get();
+
+        $activities = (new ActivityService())->getOfflineActivitiesForPatient($patient);
 
         //Convert to Collections
         $activities = collect($activities);
         $notes = collect($notes);
 
         $data = $notes->merge($activities)->sortByDesc('performed_at');
-
+        
         return $data;
 
     }
@@ -101,7 +88,6 @@ class NoteService
             ->orderBy('created_at', 'desc')->get();
 
     }
-
 
     public function getMonthsArray()
     {

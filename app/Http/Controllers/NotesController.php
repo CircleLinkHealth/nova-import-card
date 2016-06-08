@@ -33,16 +33,17 @@ class NotesController extends Controller
         $patient = User::find($patientId);
         $messages = \Session::get('messages');
 
-        $acts = $this->service->getNotesAndOfflineActivitiesForPatient($patient);
+        $data = $this->service->getNotesAndOfflineActivitiesForPatient($patient);
 
-        $data = $this->formatter->formatDataForNotesAndOfflineActivitesReport($acts);
+        $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($data);
 
-        if ($patientAct == null) {
-            $data = false;
+        if ($report_data == '') {
+                $data = false;
         }
+//        dd($report_data);
 
         return view('wpUsers.patient.note.index',
-            ['activity_json' => $reportData,
+            ['activity_json' => $report_data,
                 'patient' => $patient,
                 'messages' => $messages,
                 'data' => $data

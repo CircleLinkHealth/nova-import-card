@@ -18,7 +18,7 @@ interface ReportFormatter
     
     public function formatDataForNotesListingReport($notes);
 
-    public function formatDataForNotesAndOfflineActivitesReport($notes);
+    public function formatDataForNotesAndOfflineActivitiesReport($notes);
 
 
     //public function formatDataForU20Report();

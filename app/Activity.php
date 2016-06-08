@@ -44,6 +44,9 @@ class Activity extends Model implements Transformable{
 
     protected $appends = ['performed_at_year_month'];
 
+    public function getCommentForActivity(){
+        return $this->meta->where('meta_key','comment')->first()->meta_value;
+    }
 
     // for revisionable
     public static function boot()
