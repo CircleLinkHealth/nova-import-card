@@ -64,8 +64,22 @@ class PrimaryProviders implements ParsingStrategy
                         'system' => ForeignId::APRIMA,
                         'location_id' => empty($this->locationId) ? null : $this->locationId,
                     ];
-                    
-                    $foreignId = ForeignId::updateOrCreate($attributes, $attributes);
+
+                    try {
+                        $foreignId = ForeignId::updateOrCreate($attributes);
+                    } catch (\Exception $e) {
+                        //check if this is a mysql exception for unique key constraint
+                        if ($e instanceof \Illuminate\Database\QueryException) {
+                            $errorCode = $e->errorInfo[1];
+                            if ($errorCode == 1062) {
+                                //do nothing
+                                //we don't actually want to terminate the program if we detect duplicates
+                                //we just don't wanna add the row again
+                                \Log::alert($e);
+                            }
+                        }
+                    }
+
                 }
 
                 $careTeam[] = $provider;
