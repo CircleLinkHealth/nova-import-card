@@ -64,6 +64,7 @@ class WebixFormatter implements ReportFormatter
 
             $mails = MailLog::where('note_id', $note->id)
                 ->get();
+            debug($mails);
 
             if (count($mails) > 0) {
                 $formatted_notes[$count]['tags'] = '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';

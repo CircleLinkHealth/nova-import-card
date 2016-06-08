@@ -26,7 +26,6 @@ class NotesController extends Controller
         $this->formatter = $formatter;
     }
 
-
     public function index(Request $request, $patientId)
     {
 
@@ -38,7 +37,7 @@ class NotesController extends Controller
         $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($data);
 
         if ($report_data == '') {
-                $data = false;
+            $data = false;
         }
 //        dd($report_data);
 
@@ -51,7 +50,8 @@ class NotesController extends Controller
 
     }
 
-    public function listing(Request $request){
+    public function listing(Request $request)
+    {
 
         $input = $request->all();
 
@@ -59,7 +59,7 @@ class NotesController extends Controller
 
         //TIME FILTERS
 
-            //if month and year are selected
+        //if month and year are selected
         if (isset($input['selectMonth'])) {
             $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
             $start = $time->startOfMonth()->format('Y-m-d');
@@ -71,10 +71,9 @@ class NotesController extends Controller
             //time title for view
             $time_title = $month_selected_text . ' ' . $year_selected;
             $isDateFiltered = true;
-            
-        }
-            //if user resets time
-        else if(isset($input['reset'])){
+
+        } //if user resets time
+        else if (isset($input['reset'])) {
             $time = Carbon::now();
             $start = Carbon::now()->subYears(5)->format('Y-m-d');
             $end = Carbon::now()->addYears(5)->format('Y-m-d');
@@ -85,7 +84,7 @@ class NotesController extends Controller
             //time title for view
             $time_title = 'All Notes';
 
-        //page first loads
+            //page first loads
         } else {
             $time = Carbon::now();
             $start = Carbon::now()->subYears(5)->format('Y-m-d');
@@ -106,13 +105,13 @@ class NotesController extends Controller
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get()->lists('ID')->all();
-        
-        $notes = $this->service->getNotesWithRangeForPatients($patients,$start,$end);
 
-        if(!empty($notes)) {
+        $notes = $this->service->getNotesWithRangeForPatients($patients, $start, $end);
+
+        if (!empty($notes)) {
 
             $notes = $this->formatter->formatDataForNotesListingReport($notes);
-            
+
         }
 
         $data = ['years' => array_reverse($years),
@@ -149,22 +148,22 @@ class NotesController extends Controller
             if ((@unserialize($careteam_ids) !== false)) {
                 $careteam_ids = unserialize($careteam_ids);
             }
-            if(!empty($careteam_ids) && is_array($careteam_ids)) {
+            if (!empty($careteam_ids) && is_array($careteam_ids)) {
                 foreach ($careteam_ids as $id) {
-                    if(User::find($id)) {
+                    if (User::find($id)) {
                         $careteam_info[$id] = User::find($id)->fullName;
                     }
                 }
             }
 
-            if($user->timeZone == ''){
+            if ($user->timeZone == '') {
                 $userTimeZone = 'America/New_York';
             } else {
                 $userTimeZone = $user->timeZone;
             }
 
             //Check for User's blog
-            if(empty($user->blogId())){
+            if (empty($user->blogId())) {
                 return response("User's Program not found", 401);
             }
 
@@ -174,31 +173,36 @@ class NotesController extends Controller
             $careCenterUsers = Program::getCareCenterUsers($user->blogId());
             $provider_info = array();
 
-            if(!empty($providers)) {
-                foreach ($providers as $provider) {
-                    if($provider->fullName) {
-                        $provider_info[$provider->ID] = $provider->fullName;
-                    }
-                }
-            }
-            if(!empty($nonCCMCareCenterUsers)) {
+//            if(!empty($providers)) {
+//                foreach ($providers as $provider) {
+//                    if($provider->fullName) {
+//                        $provider_info[$provider->ID] = $provider->fullName;
+//                    }
+//                }
+//            }
+
+            $author = Auth::user();
+            $author_id = $author->ID;
+            $author_name = $author->fullName;
+
+            if (!empty($nonCCMCareCenterUsers)) {
                 foreach ($nonCCMCareCenterUsers as $nonCCMCareCenterUser) {
-                    if($nonCCMCareCenterUser->fullName) {
+                    if ($nonCCMCareCenterUser->fullName) {
                         $provider_info[$nonCCMCareCenterUser->ID] = $nonCCMCareCenterUser->fullName;
                     }
                 }
             }
 
-            if(!empty($careCenterUsers)) {
+            if (!empty($careCenterUsers)) {
                 foreach ($careCenterUsers as $careCenterUser) {
-                    if($careCenterUser->fullName) {
+                    if ($careCenterUser->fullName) {
                         $provider_info[$careCenterUser->ID] = $careCenterUser->fullName;
                     }
                 }
             }
 
             //Add care center users to Performed By Drop Down
-            if(!empty($careteam_info)){
+            if (!empty($careteam_info)) {
                 foreach ($careteam_info as $careteam_member) {
                     array_push($provider_info, $careteam_member);
                 }
@@ -211,7 +215,8 @@ class NotesController extends Controller
                 'patient' => $user,
                 'patient_name' => $patient_name,
                 'note_types' => Activity::input_activity_types(),
-                'provider_info' => $provider_info,
+                'author_id' => $author_id,
+                'author_name' => $author_name,
                 'careteam_info' => $careteam_info,
                 'userTimeZone' => $userTimeZone
             ];
@@ -233,54 +238,52 @@ class NotesController extends Controller
 
     public function show(Request $input, $patientId, $noteId)
     {
+
         $patient = User::find($patientId);
-        $note_act = Activity::find($noteId);
-        $metaComment = $note_act->getActivityCommentFromMeta($noteId);
-        $meta = $note_act->meta()->get();
+        $note = $this->service->getNoteWithCommunications($noteId);
 
         //Set up note packet for view
-        $note = array();
+        $data = array();
 
         //Sets up tags for patient note tags
         $meta_tags = array();
-        foreach ($meta as $m) {
-            if ($m->meta_key != 'comment') {
-                switch ($m->meta_value) {
-                    case('inbound'):
-                        $meta_tags[] = 'Inbound Call';
-                        break;
-                    case('outbound'):
-                        $meta_tags[] = 'Outbound Call';
-                        break;
-                    case('reached'):
-                        $meta_tags[] = 'Successful Clinical Call';
-                        break;
-                    case('admitted'):
-                        $meta_tags[] = 'Patient Recently in Hospital/ER';
-                        break;
-                }
+
+        //Call Info
+        if (($note->call != null)) {
+            if ($note->call->is_cpm_inbound) {
+                $meta_tags[] = 'Inbound Call';
+            } else {
+                $meta_tags[] = 'Outbound Call';
+            }
+
+            if ($note->call->status == 'reached') {
+                $meta_tags[] = 'Successful Clinical Call';
             }
         }
-        //dd($meta_tags);
 
-        $note['type'] = $note_act->type;
-        $note['id'] = $note_act->id;
-        $note['performed_at'] = $note_act->performed_at;
-        $provider = User::find($note_act->provider_id);
-        if ($provider) {
-            $note['provider_name'] = $provider->getFullNameAttribute();
-        } else {
-            $note['provider_name'] = '';
+        if ($note->isTCM) {
+            $meta_tags[] = 'Patient Recently in Hospital/ER';
         }
 
-        $note['comment'] = $metaComment;
+
+        $data['type'] = $note->type;
+        $data['id'] = $note->id;
+        $data['performed_at'] = $note->performed_at;
+        $provider = User::find($note->author_id);
+        if ($provider) {
+            $data['provider_name'] = $provider->fullName;
+        } else {
+            $data['provider_name'] = '';
+        }
+
+        $data['comment'] = $note->body;
 
         $careteam_info = array();
         $careteam_ids = $patient->careTeam;
         if ((@unserialize($careteam_ids) !== false)) {
             $careteam_ids = unserialize($careteam_ids);
         }
-        if(!empty($careteam_ids) && is_array($careteam_ids)) {
+        if (!empty($careteam_ids) && is_array($careteam_ids)) {
             foreach ($careteam_ids as $id) {
                 $careteam_info[$id] = User::find($id) ? User::find($id)->getFullNameAttribute() : '';
             }
@@ -288,7 +291,14 @@ class NotesController extends Controller
 
         asort($careteam_info);
 
-        $view_data = ['note' => $note, 'userTimeZone' => $patient->timeZone, 'careteam_info' => $careteam_info, 'patient' => $patient, 'program_id' => $patient->blogId(), 'meta' => $meta_tags];
+        $view_data = [
+            'note' => $data,
+            'userTimeZone' => $patient->timeZone,
+            'careteam_info' => $careteam_info,
+            'patient' => $patient,
+            'program_id' => $patient->blogId(),
+            'meta' => $meta_tags
+        ];
 
         return view('wpUsers.patient.note.view', $view_data);
     }

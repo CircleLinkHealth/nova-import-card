@@ -26,7 +26,7 @@ class Note extends Model
 
     public function mail()
     {
-        return $this->morphMany('App\MailLog', 'mailable');
+        return $this->hasMany('App\MailLog');
     }
 
     public function call()

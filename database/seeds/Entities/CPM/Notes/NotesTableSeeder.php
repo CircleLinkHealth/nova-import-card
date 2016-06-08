@@ -136,11 +136,13 @@ class NotesTableSeeder extends Seeder
                         $outbound_id = $patient->ID;
                         $inbound_num = $author->primaryPhone;
                         $inbound_id = $author->ID;
+                        $isCpmOutbound = false;
                     } else {
                         $outbound_num = $author->primaryPhone;
                         $outbound_id = $author->ID;
                         $inbound_num = $patient->primaryPhone;
                         $inbound_id = $patient->ID;
+                        $isCpmOutbound = true;
                     }
 
                     $call = \App\Call::create([
@@ -157,7 +159,9 @@ class NotesTableSeeder extends Seeder
 
                         //?
                         'call_time' => 0,
-                        'created_at' => $activity_note->performed_at
+                        'created_at' => $activity_note->performed_at,
+
+                        'is_cpm_outbound' => $isCpmOutbound
 
                     ]);
                     $this->command->info("Call created for Note: " . $call->id);

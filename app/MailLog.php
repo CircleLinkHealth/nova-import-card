@@ -24,9 +24,9 @@ class MailLog extends Model
     /**
      * @return array
      */
-    public function mailable()
+    public function note()
     {
-        return $this->morphTo();
+        return $this->belongsTo('App\Note', 'note_id');
     }
 
 }

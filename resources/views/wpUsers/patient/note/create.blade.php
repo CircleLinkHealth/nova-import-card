@@ -84,12 +84,8 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <select id="author_id" name="author_id"
-                                                    class="selectpickerX dropdown Valid form-control" data-size="10"
-                                                    required>
-                                                <option value=""> Select Provider</option>
-                                                @foreach ($provider_info as $id => $name)
-                                                    <option value="{{$id}}"> {{$name}} </option>
-                                                @endforeach
+                                                    class="selectpickerX dropdown Valid form-control" data-size="10" required disabled>
+                                                    <option value="{{$author_id}}" selected> {{$author_name}} </option>
                                             </select>
                                         </div>
                                     </div>
@@ -121,7 +117,7 @@
                                                                                  name="phone"
                                                                                  value="outbound" id="Outbound"/><label
                                                             for="Outbound"><span> </span>Outbound</label></div>
-                                                <input type="hidden" name="call_status" value="call_status">
+                                                <input type="hidden" name="call_status" value="">
                                                 <div><div class="radio-inline"><input type="checkbox"
                                                                                  name="call_status"
                                                                                  value="reached" id="reached"/><label
@@ -182,6 +178,7 @@
                                 <div class="form-group col-sm-4">
                                     <input type="hidden" name="patient_id" value="{{$patient->ID}}">
                                     <input type="hidden" name="logger_id" value="{{Auth::user()->ID}}">
+                                    <input type="hidden" name="author_id" value="{{Auth::user()->ID}}">
                                     <input type="hidden" name="patientID" id="patientID" value="{{$patient->ID}}">
                                     <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                 </div>

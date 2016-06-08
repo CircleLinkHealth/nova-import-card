@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Activity;
 use App\Call;
+use App\MailLog;
 use App\Note;
 use App\User;
 use Carbon\Carbon;
@@ -21,12 +22,14 @@ class NoteService
             $note->isTCM = true;
         } else {
             $note->isTCM = false;
-        } $note->save(); //update note
+        } $note->save();
 
         $patient = User::find($note->patient_id);
-        $author = User::find($note->author_id);
+        $author = User::find($input['author_id']);
 
-        $this->storeCallForNote($note, $input['call_status'], $patient, $author, $input['phone']);
+        if(isset($input['phone'])) {
+            $this->storeCallForNote($note, $input['call_status'], $patient, $author, $input['phone']);
+        }
 
         // update usermeta: cur_month_activity_time
         $activityService = new ActivityService;
@@ -56,8 +59,14 @@ class NoteService
 
     public function getNotesForPatient(User $patient)
     {
-
         return Note::where('patient_id',$patient->ID)->get();
+    }
+
+    public function getNoteWithCommunications($note_id)
+    {
+
+        return Note::where('id',$note_id)->with('call')->with('mail')->first();
+
     }
 
     public function getNotesAndOfflineActivitiesForPatient(User $patient)
@@ -85,7 +94,7 @@ class NoteService
             ->whereBetween('created_at', [
                 $start, $end
             ])
-            ->orderBy('created_at', 'desc')->get();
+            ->orderBy('created_at', 'desc')->take('100')->get();
 
     }
 
@@ -119,11 +128,14 @@ class NoteService
                     $outbound_id = $patient->ID;
                     $inbound_num = $author->primaryPhone;
                     $inbound_id = $author->ID;
+                    $isCpmOutbound = false;
                 } else {
                     $outbound_num = $author->primaryPhone;
                     $outbound_id = $author->ID;
                     $inbound_num = $patient->primaryPhone;
                     $inbound_id = $patient->ID;
+                    $isCpmOutbound = true;
+
                 }
 
                 Call::create([
@@ -141,7 +153,9 @@ class NoteService
                     //@todo figure out call times!
 
                     'call_time' => 0,
-                    'created_at' => $note->performed_at
+                    'created_at' => $note->performed_at,
+
+                    'is_cpm_outbound' => $isCpmOutbound
 
                 ]);
 //            }
@@ -150,7 +164,7 @@ class NoteService
 
     public function saveMailLogForNote($note, User $sender, User $receiver, $body, $subject){
 
-        \App\MailLog::create([
+        MailLog::create([
             'sender_email' => $sender->user_email,
             'receiver_email' => $receiver->user_email,
             'body' => '',

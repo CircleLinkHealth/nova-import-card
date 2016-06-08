@@ -21,7 +21,9 @@ class Call extends Model
         'outbound_cpm_id',
 
         'call_time',
-        'created_at'
+        'created_at',
+
+        'is_cpm_outbound'
     ];
 
     public function note()
