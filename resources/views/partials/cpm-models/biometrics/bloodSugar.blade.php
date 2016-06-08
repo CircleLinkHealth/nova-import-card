@@ -31,18 +31,18 @@
     <div class="row item-row" style="">
 
         <div class="col-sm-6 cp-item-child" style="">
-            BS Low Alert<br>
+            BS High Alert<br>
             <input class="form-control" name="biometrics[bloodSugar][high_alert]"
                    value="{{$biometrics->bloodSugar->high_alert}}"
                    placeholder="" type="text">
         </div>
-
         <div class="col-sm-6 cp-item-child" style="">
-            BS High Alert<br>
+            BS Low Alert<br>
             <input class="form-control" name="biometrics[bloodSugar][low_alert]"
                    value="{{$biometrics->bloodSugar->low_alert}}"
                    placeholder="" type="text">
         </div>
+
     </div>
     <br>
 </div>

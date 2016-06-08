@@ -10,7 +10,7 @@
             <div class="col-sm-12">
                 <ul class="" style="margin:0;padding:0;">
                     <li class="menu-item">
-                        <a href="{{ URL::route('patients.search', array()) }}">
+                        <a id="select-patient" href="{{ URL::route('patients.search', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--find-patient--big icon--menu"></i>
                             </div>
@@ -21,7 +21,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ URL::route('patients.listing', array()) }}">
+                        <a id="patient-list" href="{{ URL::route('patients.listing', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--list-patient--big icon--menu">
                                     <div class="notification btn-warning">{{ $pendingApprovals }}</div>
@@ -36,7 +36,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ URL::route('patients.demographics.show', array()) }}">
+                        <a id="add-patient" href="{{ URL::route('patients.demographics.show', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--add-patient--big icon--menu"></i>
                             </div>
@@ -47,7 +47,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ URL::route('patients.demographics.show', array()) }}">
+                        <a id="my-alerts" href="{{ URL::route('patients.demographics.show', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--alerts--big icon--menu">
                                     {{--<div class="notification btn-warning">-</div>--}}

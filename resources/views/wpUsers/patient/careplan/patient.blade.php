@@ -50,19 +50,26 @@ $user_info = array();
                                 <input type=hidden name=hospital_reminder_optin value="Y">
                                 <input type=hidden name=hospital_reminder_time value="19:00">
                                 <input type=hidden name=hospital_reminder_areas value="TBD">
-                                <input type=hidden name=qualification value="<?php /*echo $validation['qualification']['value'];*/ ?>">
-                                <input type=hidden name=specialty value="<?php /*echo $validation['specialty']['value'];*/ ?>">
-                                <input type=hidden name=npi_number value="<?php /*echo $validation['npi_number']['value'];*/ ?>">
+                                <input type=hidden name=qualification
+                                       value="<?php /*echo $validation['qualification']['value'];*/ ?>">
+                                <input type=hidden name=specialty
+                                       value="<?php /*echo $validation['specialty']['value'];*/ ?>">
+                                <input type=hidden name=npi_number
+                                       value="<?php /*echo $validation['npi_number']['value'];*/ ?>">
                                 <div class="row">
 
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('first_name') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="first_name">First Name</label>
-                                        <input type="text" class="form-control" name="first_name" id="first_name" placeholder="First Name *" value="{{ (old('first_name') ? old('first_name') : $patient->first_name) }}">
+                                        <input type="text" class="form-control" name="first_name" id="first_name"
+                                               placeholder="First Name *"
+                                               value="{{ (old('first_name') ? old('first_name') : $patient->first_name) }}">
                                         <span class="help-block">{{ $errors->first('first_name') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('last_name') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="last_name">Last Name</label>
-                                        <input type="text" class="form-control" name="last_name" id="last_name" placeholder="Last Name *"value="{{ (old('last_name') ? old('last_name') : $patient->last_name) }}">
+                                        <input type="text" class="form-control" name="last_name" id="last_name"
+                                               placeholder="Last Name *"
+                                               value="{{ (old('last_name') ? old('last_name') : $patient->last_name) }}">
                                         <span class="help-block">{{ $errors->first('last_name') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('gender') ? 'has-error' : '' }}">
@@ -74,11 +81,13 @@ $user_info = array();
                                             </div>
                                             <div class="col-sm-8">
                                                 <div class="radio-inline">
-                                                    <input type="radio" id="radioMale" name="gender" value="M" {{ ((old('gender') == 'M') ? 'checked="checked"' : (($patient->gender == 'M') ? 'checked="checked"' : '')) }}>
+                                                    <input type="radio" id="radioMale" name="gender"
+                                                           value="M" {{ ((old('gender') == 'M') ? 'checked="checked"' : (($patient->gender == 'M') ? 'checked="checked"' : '')) }}>
                                                     <label for="radioMale"><span> </span>Male</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input type="radio" id="radioFemale" name="gender" value="F" {{ ((old('gender') == 'F') ? 'checked="checked"' : (($patient->gender == 'F') ? 'checked="checked"' : '')) }}>
+                                                    <input type="radio" id="radioFemale" name="gender"
+                                                           value="F" {{ ((old('gender') == 'F') ? 'checked="checked"' : (($patient->gender == 'F') ? 'checked="checked"' : '')) }}>
                                                     <label for="radioFemale"><span> </span>Female</label>
                                                 </div>
                                                 <span class="help-block">{{ $errors->first('gender') }}</span>
@@ -88,30 +97,38 @@ $user_info = array();
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_language') ? 'has-error' : '' }} col-lg-12">
                                         <div class="row">
                                             <div class="col-sm-2 col-lg-3">
-                                                <label for="language" >Language<span class="attention">*</span>:
+                                                <label for="language">Language<span class="attention">*</span>:
                                                 </label>
                                             </div>
                                             <div class="col-sm-10 col-lg-4">
                                                 <div class="radio">
-                                                    <input type="radio" name="preferred_contact_language" id="languageEnglish" value="EN" {{ ((old('preferred_contact_language') == 'EN' || !old('preferred_contact_language')) ? 'checked="checked"' : (($patient->preferred_contact_language == 'EN') ? 'checked="checked"' : '')) }}>
+                                                    <input type="radio" name="preferred_contact_language"
+                                                           id="languageEnglish"
+                                                           value="EN" {{ ((old('preferred_contact_language') == 'EN' || !old('preferred_contact_language')) ? 'checked="checked"' : (($patient->preferred_contact_language == 'EN') ? 'checked="checked"' : '')) }}>
                                                     <label for="languageEnglish"><span> </span>English</label>
                                                 </div>
                                                 <div class="radio radio-v-margin">
-                                                    <input type="radio" name="preferred_contact_language" id="languageSpanish"  value="ES" {{ ((old('preferred_contact_language') == 'ES') ? 'checked="checked"' : (($patient->preferred_contact_language == 'ES') ? 'checked="checked"' : '')) }}>
+                                                    <input type="radio" name="preferred_contact_language"
+                                                           id="languageSpanish"
+                                                           value="ES" {{ ((old('preferred_contact_language') == 'ES') ? 'checked="checked"' : (($patient->preferred_contact_language == 'ES') ? 'checked="checked"' : '')) }}>
                                                     <label for="languageSpanish"><span> </span>Spanish</label>
                                                 </div>
                                                 <span class="help-block">{{ $errors->first('preferred_contact_language') }}</span>
                                             </div>
                                             <div class="form-group form-item form-item-spacing col-sm-12 col-lg-5 {{ $errors->first('mrn_number') ? 'has-error' : '' }}">
                                                 <label class="sr-only" for="mrn_number">MRN</label>
-                                                <input type="text" class="form-control" name="mrn_number" id="mrn_number" placeholder="MRN *" value="{{ (old('mrn_number') ? old('mrn_number') : ($patient->mrn_number ? $patient->mrn_number : '')) }}">
+                                                <input type="text" class="form-control" name="mrn_number"
+                                                       id="mrn_number" placeholder="MRN *"
+                                                       value="{{ (old('mrn_number') ? old('mrn_number') : ($patient->mrn_number ? $patient->mrn_number : '')) }}">
                                                 <span class="help-block">{{ $errors->first('mrn_number') }}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                         <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
-                                        <input id="birth_date" name="birth_date" type="input" class="form-control" value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '01-01-1960')) }}" data-field="date" data-format="yyyy-MM-dd" /><br />
+                                        <input id="birth_date" name="birth_date" type="input" class="form-control"
+                                               value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '01-01-1960')) }}"
+                                               data-field="date" data-format="yyyy-MM-dd"/><br/>
                                         <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                         <div id="dtBox"></div>
                                     </div>
@@ -120,14 +137,20 @@ $user_info = array();
                                             <div class="col-sm-6">
                                                 <div class="form-group {{ $errors->first('home_phone_number') ? 'has-error' : '' }}">
                                                     <label class="sr-only" for="telephone">Phone</label>
-                                                    <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}' class="form-control" name="home_phone_number" id="home_phone_number" placeholder="Telephone *" value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->home_phone_number ? $patient->home_phone_number : '')) }}">
+                                                    <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                           class="form-control" name="home_phone_number"
+                                                           id="home_phone_number" placeholder="Telephone *"
+                                                           value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->home_phone_number ? $patient->home_phone_number : '')) }}">
                                                     <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group {{ $errors->first('mobile_phone_number') ? 'has-error' : '' }}">
                                                     <label class="sr-only" for="mobile_phone_number">Phone</label>
-                                                    <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}' class="form-control" name="mobile_phone_number" id="mobile_phone_number" placeholder="Mobile Telephone *" value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->mobile_phone_number ? $patient->mobile_phone_number : '')) }}">
+                                                    <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                           class="form-control" name="mobile_phone_number"
+                                                           id="mobile_phone_number" placeholder="Mobile Telephone *"
+                                                           value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->mobile_phone_number ? $patient->mobile_phone_number : '')) }}">
                                                     <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
                                                 </div>
                                             </div>
@@ -135,17 +158,23 @@ $user_info = array();
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('email') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="lastName">Email Address</label>
-                                        <input type="email" class="form-control" name="email" id="email" placeholder="Email Address" value="{{ (old('email') ? old('email') : ($patient->email ? $patient->email : '')) }}">
+                                        <input type="email" class="form-control" name="email" id="email"
+                                               placeholder="Email Address"
+                                               value="{{ (old('email') ? old('email') : ($patient->user_email ? $patient->user_email : '')) }}">
                                         <span class="help-block">{{ $errors->first('email') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('address') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="address">Street Address</label>
-                                        <input type="text" class="form-control" name="address" id="address" placeholder="Street Address" value="{{ (old('address') ? old('address') : ($patient->address ? $patient->address : '')) }}">
+                                        <input type="text" class="form-control" name="address" id="address"
+                                               placeholder="Street Address"
+                                               value="{{ (old('address') ? old('address') : ($patient->address ? $patient->address : '')) }}">
                                         <span class="help-block">{{ $errors->first('address') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-6 city-input {{ $errors->first('city') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="city">City Name</label>
-                                        <input type="text" class="form-control" name="city" id="city" placeholder="City Name" value="{{ (old('city') ? old('city') : ($patient->city ? $patient->city : '')) }}">
+                                        <input type="text" class="form-control" name="city" id="city"
+                                               placeholder="City Name"
+                                               value="{{ (old('city') ? old('city') : ($patient->city ? $patient->city : '')) }}">
                                         <span class="help-block">{{ $errors->first('city') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-2 state-selector {{ $errors->first('state') ? 'has-error' : '' }}">
@@ -154,21 +183,28 @@ $user_info = array();
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-4 {{ $errors->first('zip') ? 'has-error' : '' }}">
                                         <label class="sr-only" for="zip">Zip Code</label>
-                                        <input type="text" class="form-control" name="zip" id="zip" placeholder="Zip Code" value="{{ (old('zip') ? old('zip') : ($patient->zip ? $patient->zip : '')) }}">
+                                        <input type="text" class="form-control" name="zip" id="zip"
+                                               placeholder="Zip Code"
+                                               value="{{ (old('zip') ? old('zip') : ($patient->zip ? $patient->zip : '')) }}">
                                         <span class="help-block">{{ $errors->first('zip') }}</span>
                                     </div>
                                     <div class="form-item col-sm-12">
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="form-group {{ $errors->first('agent_name') ? 'has-error' : '' }}">
-                                                    <input type="text" class="form-control" name="agent_name" id="agent_name" placeholder="Agent Name" value="{{ (old('agent_name') ? old('agent_name') : ($patient->agent_name ? $patient->agent_name : '')) }}">
+                                                    <input type="text" class="form-control" name="agent_name"
+                                                           id="agent_name" placeholder="Agent Name"
+                                                           value="{{ (old('agent_name') ? old('agent_name') : ($patient->agent_name ? $patient->agent_name : '')) }}">
                                                     <span class="help-block">{{ $errors->first('agent_name') }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group {{ $errors->first('agent_telephone') ? 'has-error' : '' }}">
                                                     <label class="sr-only" for="agent_telephone">Agent Telephone</label>
-                                                    <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}' class="form-control" name="agent_telephone" id="agent_telephone" placeholder="Agent Telephone" value="{{ (old('agent_telephone') ? old('agent_telephone') : ($patient->agent_telephone ? $patient->agent_telephone : '')) }}">
+                                                    <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
+                                                           class="form-control" name="agent_telephone"
+                                                           id="agent_telephone" placeholder="Agent Telephone"
+                                                           value="{{ (old('agent_telephone') ? old('agent_telephone') : ($patient->agent_telephone ? $patient->agent_telephone : '')) }}">
                                                     <span class="help-block">{{ $errors->first('agent_telephone') }}</span>
                                                 </div>
                                             </div>
@@ -178,13 +214,17 @@ $user_info = array();
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="form-group {{ $errors->first('agent_relationship') ? 'has-error' : '' }}">
-                                                    <input type="text" class="form-control" name="agent_relationship" id="agent_relationship" placeholder="Agent Relationship" value="{{ (old('agent_relationship') ? old('agent_relationship') : ($patient->agent_relationship ? $patient->agent_relationship : '')) }}">
+                                                    <input type="text" class="form-control" name="agent_relationship"
+                                                           id="agent_relationship" placeholder="Agent Relationship"
+                                                           value="{{ (old('agent_relationship') ? old('agent_relationship') : ($patient->agent_relationship ? $patient->agent_relationship : '')) }}">
                                                     <span class="help-block">{{ $errors->first('agent_relationship') }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group {{ $errors->first('agent_email') ? 'has-error' : '' }}">
-                                                    <input type="text" class="form-control" name="agent_email" id="agent_email" placeholder="Agent Email" value="{{ (old('agent_email') ? old('agent_email') : ($patient->agent_email ? $patient->agent_email : '')) }}">
+                                                    <input type="text" class="form-control" name="agent_email"
+                                                           id="agent_email" placeholder="Agent Email"
+                                                           value="{{ (old('agent_email') ? old('agent_email') : ($patient->agent_email ? $patient->agent_email : '')) }}">
                                                     <span class="help-block">{{ $errors->first('agent_email') }}</span>
                                                 </div>
                                             </div>
@@ -195,44 +235,62 @@ $user_info = array();
                             <div class="main-form-block main-form-secondary col-lg-5">
                                 <h4 class="form-title">Contact Preferences</h4>
                                 <div class="row">
-                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_time') ? 'has-error' : '' }}">
-                                        <label for="mf-contact">Preferred Contact Time <span class="attention">*</span>:</label>
-                                        <input id="preferred_contact_time" class="form-control" name="preferred_contact_time" type="input" value="{{ (old('preferred_contact_time') ? old('preferred_contact_time') : ($patient->preferred_contact_time ? $patient->preferred_contact_time : '')) }}"  data-field="time" data-format="HH:mm AA" /><br />
-                                        (Should be between 4pm and 9pm)
-                                        <span class="help-block">{{ $errors->first('preferred_contact_time') }}</span>
-                                    </div>
-
+                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_time') ? 'has-error' : '' }}">
+                                            <label for="mf-contact">Preferred Contact Time <span
+                                                        class="attention">*</span>:</label>
+                                            <input id="preferred_contact_time" class="form-control"
+                                                   name="preferred_contact_time" type="input"
+                                                   value="{{ (old('preferred_contact_time') ? old('preferred_contact_time') : ($patient->preferred_contact_time ? $patient->preferred_contact_time : '')) }}"
+                                                   data-field="time" data-format="HH:mm AA"/><br/>
+                                            (Should be between 4pm and 9pm)
+                                            <span class="help-block">{{ $errors->first('preferred_contact_time') }}</span>
+                                    </a>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('contact_days') ? 'has-error' : '' }}">
                                         <label for="">Preferred Contact Days <span class="attention">*</span>:</label>
                                         <div class="row" style="float: right">
-                                            <div class="radio-inline modal-box-clone label" style="margin-left: 0px;    margin-right: 0px;">
+                                            <div class="radio-inline modal-box-clone label"
+                                                 style="margin-left: 0px;    margin-right: 0px;">
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-1" name="contact_days[]" value="1" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-1"><span></span>&nbsp;M</label>
+                                                    <input id="contact-days-1" name="contact_days[]" value="1"
+                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;"
+                                                           for="contact-days-1"><span></span>&nbsp;M</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-2" name="contact_days[]" value="2" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '2') ? 'checked="checked"' : (in_array('2', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-2"><span></span>&nbsp;T</label>
+                                                    <input id="contact-days-2" name="contact_days[]" value="2"
+                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '2') ? 'checked="checked"' : (in_array('2', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;"
+                                                           for="contact-days-2"><span></span>&nbsp;T</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-3" name="contact_days[]" value="3" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '3') ? 'checked="checked"' : (in_array('3', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-3"><span></span>&nbsp;W</label>
+                                                    <input id="contact-days-3" name="contact_days[]" value="3"
+                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '3') ? 'checked="checked"' : (in_array('3', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;"
+                                                           for="contact-days-3"><span></span>&nbsp;W</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-4" name="contact_days[]" value="4" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '4') ? 'checked="checked"' : (in_array('4', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-4"><span></span>&nbsp;Th</label>
+                                                    <input id="contact-days-4" name="contact_days[]" value="4"
+                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '4') ? 'checked="checked"' : (in_array('4', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;"
+                                                           for="contact-days-4"><span></span>&nbsp;Th</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-5" name="contact_days[]" value="5" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '5') ? 'checked="checked"' : (in_array('5', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-5"><span></span>&nbsp;F</label>
+                                                    <input id="contact-days-5" name="contact_days[]" value="5"
+                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '5') ? 'checked="checked"' : (in_array('5', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;"
+                                                           for="contact-days-5"><span></span>&nbsp;F</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-6" name="contact_days[]" value="6" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '6') ? 'checked="checked"' : (in_array('6', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-6"><span></span>&nbsp;Sa</label>
+                                                    <input id="contact-days-6" name="contact_days[]" value="6"
+                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '6') ? 'checked="checked"' : (in_array('6', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;"
+                                                           for="contact-days-6"><span></span>&nbsp;Sa</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input id="contact-days-7" name="contact_days[]" value="7" type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '7') ? 'checked="checked"' : (in_array('7', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;" for="contact-days-7"><span></span>&nbsp;Su</label>
+                                                    <input id="contact-days-7" name="contact_days[]" value="7"
+                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '7') ? 'checked="checked"' : (in_array('7', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                    <label style="font-size: 120%; margin: -1px;"
+                                                           for="contact-days-7"><span></span>&nbsp;Su</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -246,10 +304,12 @@ $user_info = array();
                                         </div>
                                         <div class="col-sm-6">
                                             <div class="radio">
-                                                <input type="radio" name="preferred_contact_method" id="contactMethodCCT" value="CCT" {{ ((old('preferred_contact_method') == 'CCT') ? 'checked="checked"' : (($patient->preferred_contact_method == 'CCT') ? 'checked="checked"' : '')) }}>
+                                                <input type="radio" name="preferred_contact_method"
+                                                       id="contactMethodCCT"
+                                                       value="CCT" {{ ((old('preferred_contact_method') == 'CCT') ? 'checked="checked"' : (($patient->preferred_contact_method == 'CCT') ? 'checked="checked"' : '')) }}>
                                                 <label for="contactMethodCCT"><span> </span>Care Center</label>
                                             </div>
-<!--                                             <div class="radio radio-v-margin">
+                                        <!--                                             <div class="radio radio-v-margin">
                                                 <input type="radio" name="preferred_contact_method" id="contactMethodSMS" value="SMS" {{ ((old('preferred_contact_method') == 'SMS') ? 'checked="checked"' : (($patient->preferred_contact_method == 'SMS') ? 'checked="checked"' : '')) }}>
                                                 <label for="contactMethodSMS"><span> </span>SMS</label>
                                             </div>
@@ -263,7 +323,8 @@ $user_info = array();
                                     <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('timezone') ? 'has-error' : '' }}">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <label for="preferred_contact_timezone">Timer Zone <span class="attention">*</span>:</label>
+                                                <label for="preferred_contact_timezone">Timer Zone <span
+                                                            class="attention">*</span>:</label>
                                             </div>
                                             <div class="col-sm-12">
                                                 {!! Form::select('preferred_contact_timezone', $timezones, (old('preferred_contact_timezone') ? old('preferred_contact_timezone') : $patient->preferred_contact_timezone ? $patient->preferred_contact_timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
@@ -272,8 +333,11 @@ $user_info = array();
                                         <span class="help-block">{{ $errors->first('timezone') }}</span>
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
-                                        <label for="mf-consent_date">Consent Date <span class="attention">*</span>:</label>
-                                        <input id="consent_date" name="consent_date" class="form-control" type="input" value="{{ (old('consent_date') ? old('consent_date') : ($patient->consent_date ? $patient->consent_date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><br />
+                                        <label for="mf-consent_date">Consent Date <span
+                                                    class="attention">*</span>:</label>
+                                        <input id="consent_date" name="consent_date" class="form-control" type="input"
+                                               value="{{ (old('consent_date') ? old('consent_date') : ($patient->consent_date ? $patient->consent_date : '')) }}"
+                                               data-field="date" data-format="yyyy-MM-dd"/><br/>
                                         <span class="help-block">{{ $errors->first('consent_date') }}</span>
                                     </div>
                                     {{--<div class="col-sm-12 text-right">
@@ -299,7 +363,8 @@ $user_info = array();
                                         </div>
                                     @endif
 
-                                    <input type=hidden name=status value="{{ (old('status') ? old('status') : ($patient->status)) }}">
+                                    <input type=hidden name=status
+                                           value="{{ (old('status') ? old('status') : ($patient->status)) }}">
                                     {{--
                                     <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('status') ? 'has-error' : '' }}">
                                         <div class="row">
@@ -344,6 +409,12 @@ $user_info = array();
         </div>
     </div>
     @include('wpUsers.patient.careplan.footer')
-    <br /><br />
-    </form>
+    <br/><br/>
+
+        {{--Added this to allow for testing, since submit is done via js--}}
+        @if(app()->environment('testing'))
+        {!! Form::submit('TestSubmit', ['id' => 'unit-test-submit']) !!}
+        @endif
+
+    {!! Form::close() !!}
 @stop
