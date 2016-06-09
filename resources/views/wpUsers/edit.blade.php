@@ -104,6 +104,14 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('access_disabled', 'Access Disabled (1=disabled):') !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('access_disabled', array('0' => '0', '1' => '1'), $patient->access_disabled, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                        <div class="col-xs-2"></div>
+                                        <div class="col-xs-4"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
                                         <div class="col-xs-2">{!! Form::label('user_status', 'User Status:') !!}</div>
                                         <div class="col-xs-4">{!! Form::select('user_status', array('0' => '0', '1' => '1'), $patient->user_status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                         <div class="col-xs-2"></div>

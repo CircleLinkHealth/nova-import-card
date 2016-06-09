@@ -54,6 +54,10 @@ class NurseTimeReportController extends Controller {
 		$endDate = new DateTime(date('Y-m-d'));
 
 		// if form submitted dates, override here
+		$showAllTimes = false;
+		if($request->input('showAllTimes') == 'checked') {
+			$showAllTimes = 'checked';
+		}
 		if($request->input('start_date')) {
 			$startDate = new DateTime($request->input('start_date') . ' 00:00:01');
 		}
@@ -68,19 +72,22 @@ class NurseTimeReportController extends Controller {
 
 		$sheetRows = array(); // so we can reverse after
 
-		$userTotals = array('');
+		$userTotals = array('TOTAL:');
 		foreach($period as $dt) {
 			//echo $dt->format('Y-m-d') .'<br />';
 
 			$rowUserValues = array($dt->format('Y-m-d'));
 			foreach($users as $user) {
 				// get total activity time
-				$pageTime = PageTimer::whereBetween( 'start_time', [
+				$pageTime = PageTimer::whereBetween('start_time', [
 					$dt->format('Y-m-d') . ' 00:00:01', $dt->format('Y-m-d') . ' 23:59:59'
-				] )
-					->where( 'provider_id', $user->ID )
-					->where( 'activity_type', '!=', '' )
-					->sum('duration');
+				])
+					->where('provider_id', $user->ID);
+				// toggle whether to show total times
+				if(!$showAllTimes) {
+					$pageTime = $pageTime->where('activity_type', '!=', '');
+				}
+				$pageTime = $pageTime->sum('duration');
 
 				$total = number_format((float)($pageTime / 60), 2, '.', '');
 				$rowUserValues[] = $total;
@@ -104,15 +111,33 @@ class NurseTimeReportController extends Controller {
 		$reportRows[] = $userTotals;
 
 		// display view
-		return view('admin.reports.nurseTimeReport.index', [ 'reportColumns' => $reportColumns, 'reportRows' => $reportRows, 'startDate' => $startDate, 'endDate' => $endDate ]);
+		return view('admin.reports.nurseTimeReport.index', [ 'reportColumns' => $reportColumns, 'reportRows' => $reportRows, 'startDate' => $startDate, 'endDate' => $endDate, 'showAllTimes' => $showAllTimes ]);
 	}
 
 	/**
 	 * export
 	 */
 
-	public function exportxls()
+	public function exportxls(Request $request)
 	{
+		// get array of dates
+		$startDate = new DateTime('first day of this month');
+		$endDate = new DateTime(date('Y-m-d'));
+
+		// if form submitted dates, override here
+		$showAllTimes = false;
+		if($request->input('showAllTimes')) {
+			$showAllTimes = 'checked';
+		}
+		if($request->input('start_date')) {
+			$startDate = new DateTime($request->input('start_date') . ' 00:00:01');
+		}
+		if($request->input('end_date')) {
+			$endDate = new DateTime($request->input('end_date') . ' 23:59:59');
+		}
+
+		$period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
+
 		$users = User::with('meta')
 			->with('roles')
 			->whereHas('roles', function ($q) {
@@ -125,7 +150,7 @@ class NurseTimeReportController extends Controller {
 
 		$date = date('Y-m-d H:i:s');
 
-		Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $users) {
+		Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $users, $period, $showAllTimes) {
 
 			// Set the title
 			$excel->setTitle('CLH Report T3');
@@ -138,7 +163,7 @@ class NurseTimeReportController extends Controller {
 			$excel->setDescription('CLH Report T3');
 
 			// Our first sheet
-			$excel->sheet('Sheet 1', function ($sheet) use ($users) {
+			$excel->sheet('Sheet 1', function ($sheet) use ($users, $period, $showAllTimes) {
 				$sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
 					$protection->setSort(true);
 				});
@@ -150,31 +175,23 @@ class NurseTimeReportController extends Controller {
 				}
 				$sheet->appendRow($userColumns);
 
-				// get array of dates
-				$a = new DateTime('2016-03-30');
-				$b = new DateTime(date('Y-m-d'));
-
-				// to exclude the end date (so you just get dates between start and end date):
-				// $b->modify('-1 day');
-
-				$period = new DatePeriod($a, new DateInterval('P1D'), $b, DatePeriod::EXCLUDE_START_DATE);
-
 				$sheetRows = array(); // so we can reverse after
 
 				foreach ($period as $dt) {
-					//echo $dt->format('Y-m-d') .'<br />';
-
 					$rowUserValues = array($dt->format('Y-m-d'));
 					foreach ($users as $user) {
 						// get total activity time
 						$pageTime = PageTimer::whereBetween('start_time', [
 							$dt->format('Y-m-d') . ' 00:00:01', $dt->format('Y-m-d') . ' 23:59:59'
 						])
-							->where('provider_id', $user->ID)
-							->where('activity_type', '!=', '')
-							->sum('duration');
+							->where('provider_id', $user->ID);
+						// toggle whether to show total times
+						if(!$showAllTimes) {
+							$pageTime = $pageTime->where('activity_type', '!=', '');
+						}
+						$pageTime = $pageTime->sum('duration');
 
-						$rowUserValues[] = number_format((float)($pageTime / 60), 2, '.', '');;
+						$rowUserValues[] = number_format((float)($pageTime / 60), 2, '.', '');
 					}
 
 					$sheetRows[] = $rowUserValues;
@@ -186,17 +203,8 @@ class NurseTimeReportController extends Controller {
 				foreach ($sheetRows as $sheetRow) {
 					$sheet->appendRow($sheetRow);
 				}
-
-				//dd();
-				//dd('done');
 			});
 
-			/*
-            // Our second sheet
-            $excel->sheet('Second sheet', function($sheet) {
-
-            });
-            */
 		})->export('xls');
 	}
 

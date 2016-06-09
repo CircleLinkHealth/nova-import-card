@@ -44,6 +44,17 @@ class Authenticate {
 			}
 		}
 
+        // ensure user->access_disabled and user->status are passable
+        if(!$this->auth->guest()) {
+            if (auth()->user()) {
+                if(auth()->user()->status == 'Inactive' || auth()->user()->access_disabled == 1) {
+                    auth()->logout();
+                    session()->flush();
+                    return redirect()->route('login', [])->withErrors(['Account access disabled'])->send();
+                }
+            }
+        }
+
 		return $next($request);
 	}
 

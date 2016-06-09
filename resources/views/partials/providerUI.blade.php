@@ -151,9 +151,9 @@
                             <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">Progress
                                 Report</a>
                         </li>
-                        <li>
-                            <a href="{{ URL::route('patient.note.listing') }}"> All Patient Notes </a>
-                        </li>
+                        {{--<li>--}}
+                            {{--<a href="{{ URL::route('patient.note.listing') }}"> All Patient Notes </a>--}}
+                        {{--</li>--}}
                         <li>
                             <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient
                                 Activity Report</a>
