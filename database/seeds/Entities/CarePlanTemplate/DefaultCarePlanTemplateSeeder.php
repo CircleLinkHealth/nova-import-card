@@ -105,13 +105,6 @@ class DefaultCarePlanTemplateSeeder extends \Illuminate\Database\Seeder
                     'cpm_instruction_id' => $instruction ? $instruction->id : null,
                     'has_instruction' => true,
                 ]);
-            } elseif ($misc->name == \App\Models\CPM\CpmMisc::TRACK_CARE_TRANSITIONS) {
-                $cpt->cpmMiscs()->updateExistingPivot($misc->id, [
-                    'ui_sort' => $cpi->ui_sort,
-                    'page' => 2,
-                    'cpm_instruction_id' => $instruction ? $instruction->id : null,
-                    'has_instruction' => $instruction ? true : false,
-                ]);
             } else {
                 $cpt->cpmMiscs()->updateExistingPivot($misc->id, [
                     'ui_sort' => $cpi->ui_sort,

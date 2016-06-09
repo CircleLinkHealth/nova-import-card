@@ -170,12 +170,6 @@ class ImportManager
         /**
          * CarePlan Defaults
          */
-        
-        //Transitional Care
-        $miscId = CpmMisc::whereName(CpmMisc::TRACK_CARE_TRANSITIONS)->first();
-        $this->user->cpmMiscs()->attach($miscId->id);
-
-
         /**
          * Biometrics
          */
