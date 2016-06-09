@@ -155,7 +155,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function ccdAllergies()
     {
-        return $this->hasMany(CcdAllergy::class);
+        return $this->hasMany(CcdAllergy::class, 'patient_id');
     }
 
     /**
@@ -163,7 +163,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function ccdMedications()
     {
-        return $this->hasMany(CcdMedication::class);
+        return $this->hasMany(CcdMedication::class, 'patient_id');
     }
 
     /**
@@ -171,7 +171,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function ccdProblems()
     {
-        return $this->hasMany(CcdProblem::class);
+        return $this->hasMany(CcdProblem::class, 'patient_id');
     }
 
     /*****/
