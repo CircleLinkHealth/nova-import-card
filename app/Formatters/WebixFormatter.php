@@ -17,6 +17,8 @@ class WebixFormatter implements ReportFormatter
     {
         $count = 0;
 
+        $formatted_notes = array();
+
         foreach ($notes as $note) {
             $patient = User::find($note->patient_id);
 
@@ -86,7 +88,12 @@ class WebixFormatter implements ReportFormatter
             $count++;
         }
 
-        return "data:" . json_encode(array_values($formatted_notes)) . "";
+        if(!empty($formatted_notes)){
+            return "data:" . json_encode(array_values($formatted_notes)) . "";
+        }
+
+        return '';
+
     }
 
     public function formatDataForNotesAndOfflineActivitiesReport($report_data)

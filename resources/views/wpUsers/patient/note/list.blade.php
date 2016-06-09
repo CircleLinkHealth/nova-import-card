@@ -202,8 +202,7 @@
                         </div>
                 </div>
                 @else
-                    <div style="text-align:center;margin:50px;">There are no patients under 20 minutes
-                        this month.
+                    <div style="text-align:center;margin:50px;">There are no patients notes to view.
                     </div>
                 @endif
 
