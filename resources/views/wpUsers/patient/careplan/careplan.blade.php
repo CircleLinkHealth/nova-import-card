@@ -77,5 +77,11 @@ $new_user = false;
             </section>
         </div>
     </div>
+
+    {{--Added this to allow for testing, since submit is done via js--}}
+    @if(app()->environment('testing'))
+        {!! Form::submit('TestSubmit', ['id' => 'unit-test-submit']) !!}
+    @endif
+
     {!! Form::close() !!}
 @stop

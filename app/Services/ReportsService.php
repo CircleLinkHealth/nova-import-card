@@ -1,17 +1,16 @@
 <?php namespace App\Services;
 
 use App\CarePlan;
-use App\CarePlanTemplate;
 use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesQuestions;
 use App\CPRulesUCP;
 use App\ForeignId;
 use App\Location;
+use App\Models\CPM\Cpm;
 use App\Models\CPM\CpmBiometric;
+use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
-use App\Observation;
-use App\PatientCarePlan;
 use App\PatientReports;
 use App\User;
 use App\UserMeta;
@@ -19,15 +18,12 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Mockery\CountValidator\Exception;
-use App\Services\CPM\CpmMiscService;
-use App\Models\CPM\Cpm;
-
 
 
 class ReportsService
 {
-    //Progress Report API
 
+    //FOR MOBILE API
     public function reportHeader($id)
     {
         $user = User::find($id);
@@ -86,6 +82,31 @@ class ReportsService
         }
         return $user->cpmProblems()->get()->lists('name')->all();
     }
+
+    public function getInstructionsForOtherProblems(User $user){
+
+        if(!$user){
+            //nullify
+            return "User not found...";
+        }
+
+        $problem = $user->cpmMiscs->where('name',CpmMisc::OTHER_CONDITIONS)->all();
+
+        if(empty($problem)){
+            //https://youtu.be/LloIp0HMJjc?t=19s
+            return '';
+        }
+
+        $instructions = CpmInstruction::find($problem[0]->pivot->cpm_instruction_id);
+
+        if(empty($instructions)){
+            //defualt
+                return 'No instructions at this time';
+        }
+
+        return $instructions->name;
+
+    }
     
     public function getSymptomsToMonitor(CarePlan $carePlan)
     {
@@ -130,7 +151,7 @@ class ReportsService
     public function getMedicationStatus(User $user, $fromApp = true)
     {
         $medications_categories = $user->cpmMedicationGroups()->get()->lists('name')->all();
-        debug($medications_categories);
+
         //get all medication observations for the user
         $medication_obs = DB::connection('mysql_no_prefix')
             ->table('rules_questions')
@@ -174,46 +195,56 @@ class ReportsService
                 }
             }
         }
+
+        //Remove meds with no observations
+        foreach ($temp_meds as $key => $value) {
+            if($value['total'] == 0) {
+                unset($temp_meds[$key]);
+            }
+        }
+
         foreach ($temp_meds as $key => $value) {
             $yes = $value['yes'];
             $total = $value['total'];
 
             if ($yes != 0 && $total != 0) {
                 $adhereance_percent = doubleval($yes / $total);
+            } else if ($yes == 0 && $total == 1) {
+                $adhereance_percent = 0;
             } else if ($yes == 0 && $total == 0) {
                 $adhereance_percent = 1;
             } else if ($yes == 0) {
                 $adhereance_percent = 0;
             }
-
-            if ($fromApp) {
-                //add to categories based on percentage of responses
-                switch ($adhereance_percent) {
-                    case ($adhereance_percent > 0.8):
-                        $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    case ($temp_meds[$category]['percent'] >= 0.5):
-                        $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    case ($temp_meds[$category]['percent'] == 0):
-                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    default:
-                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                }
-                //echo $category.': ' . $temp_meds[$category]['percent'] . ' <br /> ';
-            } else {
+//            if ($fromApp) {
+//                //add to categories based on percentage of responses
+//                switch ($adhereance_percent) {
+//                    case ($adhereance_percent > 0.8):
+//                        $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    case ($temp_meds[$category]['percent'] >= 0.5):
+//                        $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    case ($temp_meds[$category]['percent'] == 0.0):
+//                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    default:
+//                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                }
+//                dd($category.': ' . $temp_meds[$category]['percent'] . ' <br /> ');
+//            } else {
                 // for provider UI
-                switch ($adhereance_percent) {
+                switch (true) {
                     case ($adhereance_percent > 0.8):
                         $meds_array['Better']['description'][] = $key;
                         break;
                     case ($adhereance_percent >= 0.5):
                         $meds_array['Needs Work']['description'][] = $key;
                         break;
-                    case ($adhereance_percent == 0):
+                    case ($adhereance_percent < 0.5):
                         $meds_array['Worse']['description'][] = $key;
+                        break;
                     default:
                         $meds_array['Worse']['description'][] = $key;
                         break;
@@ -221,7 +252,7 @@ class ReportsService
             }
             //Show all the medication categories and stats
             //dd(json_encode($medications)); // show the medications by adherence category
-        }
+
         $medications[0] = ['name' => $meds_array['Better']['description'], 'Section' => 'Better'];
         $medications[1] = ['name' => $meds_array['Needs Work']['description'], 'Section' => 'Needs Work'];
         $medications[2] = ['name' => $meds_array['Worse']['description'], 'Section' => 'Worse'];
@@ -229,12 +260,16 @@ class ReportsService
 
     }
 
-    public
-    function getTargetValueForBiometric($biometric, User $user)
+    public function getTargetValueForBiometric($biometric, User $user, $showUnits = true)
     {
         $bio = CpmBiometric::whereName(str_replace('_', ' ', $biometric))->first();
         $biometric_values = app(config('cpmmodelsmap.biometrics')[$bio->type])->getUserValues($user);
-        return $biometric_values['target'] . ReportsService::biometricsUnitMapping($biometric);
+
+        if($showUnits) {
+            return $biometric_values['target'] . ReportsService::biometricsUnitMapping($biometric);
+        } else {
+            return $biometric_values['target'];
+        }
     }
 
     public function getBiometricsData($biometric, $user)
@@ -255,11 +290,12 @@ class ReportsService
             ->groupBy('realweek')
             ->orderBy('obs_date')
             ->get();
+
         return ($data) ? $data : '';
+
     }
 
-    public
-    static function biometricsUnitMapping($biometric)
+    public static function biometricsUnitMapping($biometric)
     {
         switch ($biometric) {
             case 'Blood Sugar':
@@ -443,10 +479,10 @@ class ReportsService
     public function biometricsIndicators($weeklyReading1, $weeklyReading2, $biometric, $target)
     {//debug($biometric);
 
-        if ($biometric == 'Blood_Sugar') {
+        if ($biometric == 'Blood Sugar') {
 //            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
             return $this->analyzeBloodSugar($weeklyReading1, $weeklyReading2);
-        } else if ($biometric == 'Blood_Pressure') {
+        } else if ($biometric == 'Blood Pressure') {
 //            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
             return $this->analyzeBloodPressure($weeklyReading1, $weeklyReading2);
         } else if ($biometric == 'Weight') {
@@ -817,17 +853,23 @@ class ReportsService
                 $user = User::find($user);
             }
             $careplanReport[$user->ID]['symptoms'] = $user->cpmSymptoms()->get()->lists('name')->all();
+            $careplanReport[$user->ID]['problem'] = $user->cpmProblems()->get()->lists('name')->all();
             $careplanReport[$user->ID]['problems'] = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($user);
             $careplanReport[$user->ID]['lifestyle'] = $user->cpmLifestyles()->get()->lists('name')->all();
             $careplanReport[$user->ID]['biometrics'] = $user->cpmBiometrics()->get()->lists('name')->all();
-            $careplanReport[$user->ID]['problem'] = $user->cpmProblems()->get()->lists('name')->all();
             $careplanReport[$user->ID]['medications'] = $user->cpmMedicationGroups()->get()->lists('name')->all();
+        }
+
+        $other_problems = $this->getInstructionsforOtherProblems($user);
+
+        if(!empty($other_problems)) {
+            $careplanReport[$user->ID]['problems']['Other Problems'] = $other_problems;
         }
 
         //Get Biometrics with Values
         $careplanReport[$user->ID]['bio_data'] = array();
 
-            //Ignore Smoking - Untracked Biometric
+        //Ignore Smoking - Untracked Biometric
         if(($key = array_search(CpmBiometric::SMOKING, $careplanReport[$user->ID]['biometrics'])) !== false) {
             unset($careplanReport[$user->ID]['biometrics'][$key]);
         }
@@ -860,7 +902,6 @@ class ReportsService
         }
 
         //Allergies
-
         if($user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->first()){
                 $careplanReport[$user->ID]['allergies'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::ALLERGIES);
             } else {
@@ -868,7 +909,6 @@ class ReportsService
             }
 
         //Social Services
-
         if($user->cpmMiscs->where('name',CpmMisc::SOCIAL_SERVICES)->first()){
             $careplanReport[$user->ID]['social'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::SOCIAL_SERVICES);
         } else {
@@ -876,7 +916,6 @@ class ReportsService
         }
 
         //Other
-
         if($user->cpmMiscs->where('name',CpmMisc::OTHER)->first()){
             $careplanReport[$user->ID]['other'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::OTHER);
         } else {
@@ -884,7 +923,6 @@ class ReportsService
         }
 
         //Appointments
-
         if($user->cpmMiscs->where('name',CpmMisc::APPOINTMENTS)->first()){
             $careplanReport[$user->ID]['appointments'] = (new \App\Services\CPM\CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::APPOINTMENTS);
         } else {

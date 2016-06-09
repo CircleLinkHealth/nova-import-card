@@ -311,7 +311,6 @@ class CcdApiController extends Controller
     public function notifyAdmins(User $user, Ccda $ccda, $providerInfo = null, $status, $line = null, $errorMessage = null)
     {
         $recipients = [
-            'Plawlor@circlelinkhealth.com',
             'rohanm@circlelinkhealth.com',
             'mantoniou@circlelinkhealth.com',
             'jkatz@circlelinkhealth.com',

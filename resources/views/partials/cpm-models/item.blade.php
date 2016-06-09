@@ -84,10 +84,12 @@
                 && !empty($instructionId = $section->patientItems[$item->id]->pivot->cpm_instruction_id)
                 && !empty($instruction = \App\Models\CPM\CpmInstruction::find($instructionId)))
 
+                {{--if the user has their own instruction then use that--}}
                 <?php $instructionName = $instruction->name; ?>
 
             @elseif(!empty($instruction = \App\Models\CPM\CpmInstruction::find($item->pivot->cpm_instruction_id)))
 
+                {{--otherwise grap the cpmItem's default instruction--}}
                 <?php $instructionName = $instruction->name; ?>
 
             @endif

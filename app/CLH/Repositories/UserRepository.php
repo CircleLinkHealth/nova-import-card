@@ -24,6 +24,9 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     {
         $user = $user->createNewUser($params->get('user_email'), $params->get('user_pass'));
 
+        // set registration date field on users
+        $user->user_registered = date('Y-m-d H:i:s');
+
         // the basics
         $this->saveOrUpdateUserInfo($user, $params);
 
@@ -89,6 +92,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->user_nicename = $params->get('user_nicename');
         $user->user_login = $params->get('user_login');
         $user->user_status = $params->get('user_status');
+        if($params->get('access_disabled')) {
+            $user->access_disabled = $params->get('access_disabled');
+        } else {
+            $user->access_disabled = 0; // 0 = good, 1 = disabled
+        }
         $user->program_id = $params->get('program_id');
         $user->care_plan_id = $params->get('care_plan_id');
         $user->auto_attach_programs = $params->get('auto_attach_programs');
@@ -497,8 +505,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 //        From: CircleLink Health
 //        Sent: Tuesday, January 5, 10:11 PM
 //        Subject: [Site Name] New User Registration!
-//        To: Phil Lawlor       Plawlor@circlelinkhealth.com
-//            Linda Warshavsky  lindaw@circlelinkhealth.com
+//        To: Linda Warshavsky  lindaw@circlelinkhealth.com
 //
 //New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
 

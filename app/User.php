@@ -17,6 +17,7 @@ use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Services\UserService;
 use DateTime;
+use Faker\Factory;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -65,11 +66,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	protected $dates = ['user_registered'];
 
-	/**
-	 * @todo: make timestamps work
-	 */
-	public $timestamps = false;
-
 	public $rules = array(
 		'user_login'             => 'required',                        // just a normal required validation
 		'user_email'            => 'required|email',     // required and must be unique in the wp_users table
@@ -108,12 +104,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"ccm_status" => "required",
 		"program_id" => "required"
 	);
-
-
-
-	// WordPress uses differently named fields for create and update fields than Laravel does
-	const CREATED_AT = 'post_date';
-	const UPDATED_AT = 'post_modified';
 
 
 	// for revisionable
@@ -165,7 +155,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function ccdAllergies()
     {
-        return $this->hasMany(CcdAllergy::class);
+        return $this->hasMany(CcdAllergy::class, 'patient_id');
     }
 
     /**
@@ -173,7 +163,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function ccdMedications()
     {
-        return $this->hasMany(CcdMedication::class);
+        return $this->hasMany(CcdMedication::class, 'patient_id');
     }
 
     /**
@@ -181,7 +171,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function ccdProblems()
     {
-        return $this->hasMany(CcdProblem::class);
+        return $this->hasMany(CcdProblem::class, 'patient_id');
     }
 
     /*****/
@@ -611,15 +601,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 // registration_date
     public function getRegistrationDateAttribute()
     {
-        if (!$this->patientInfo) return '';
-        return $this->patientInfo->registration_date;
+        return $this->user_registered;
     }
 
     public function setRegistrationDateAttribute($value)
     {
-        if (!$this->patientInfo) return '';
-        $this->patientInfo->registration_date = $value;
-        $this->patientInfo->save();
+        $this->user_registered = $value;
+        $this->save();
         return true;
     }
 
@@ -1114,7 +1102,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 $ct[] = $careTeamMember->member_user_id;
             }
         }
-        return $ct;
+
+		/**
+		 * Added this to fix providers not showing up for users who don't have member.
+		 */
+		$ct = $this->patientCareTeamMembers
+			->where('type', 'lead_contact')
+			->lists('member_user_id')
+			->all();
+
+		return $ct;
     }
 
     public function setCareTeamAttribute($memberUserIds)
@@ -1462,12 +1459,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return true;
     }
 
-    public function getCarePlanLastPrintedAttribute() {
+    public function getCareplanLastPrintedAttribute() {
         if(!$this->patientInfo) return '';
         return $this->patientInfo->careplan_last_printed;
     }
 
-    public function setCarePlanLastPrintedAttribute($value) {
+    public function setCareplanLastPrintedAttribute($value) {
         if(!$this->patientInfo) return '';
         $this->patientInfo->careplan_last_printed = $value;
         $this->patientInfo->save();
@@ -1572,42 +1569,38 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         // states array
         $states = array('Alabama' => 'AL', 'Alaska' => 'AK', 'Arizona' => 'AZ', 'Arkansas' => 'AR', 'California' => 'CA', 'Colorado' => 'CO', 'Connecticut' => 'CT', 'Delaware' => 'DE', 'Florida' => 'FL', 'Georgia' => 'GA', 'Hawaii' => 'HI', 'Idaho' => 'ID', 'Illinois' => 'IL', 'Indiana' => 'IN', 'Iowa' => 'IA', 'Kansas' => 'KS', 'Kentucky' => 'KY', 'Louisiana' => 'LA', 'Maine' => 'ME', 'Maryland' => 'MD', 'Massachusetts' => 'MA', 'Michigan' => 'MI', 'Minnesota' => 'MN', 'Mississippi' => 'MS', 'Missouri' => 'MO', 'Montana' => 'MT', 'Nebraska' => 'NE', 'Nevada' => 'NV', 'New Hampshire' => 'NH', 'New Jersey' => 'NJ', 'New Mexico' => 'NM', 'New York' => 'NY', 'North Carolina' => 'NC', 'North Dakota' => 'ND', 'Ohio' => 'OH', 'Oklahoma' => 'OK', 'Oregon' => 'OR', 'Pennsylvania' => 'PA', 'Rhode Island' => 'RI', 'South Carolina' => 'SC', 'South Dakota' => 'SD', 'Tennessee' => 'TN', 'Texas' => 'TX', 'Utah' => 'UT', 'Vermont' => 'VT', 'Virginia' => 'VA', 'Washington' => 'WA', 'West Virginia' => 'WV', 'Wisconsin' => 'WI', 'Wyoming' => 'WY');
 
-        // Some Randomness
-        // https://randomuser.me/api/?nat=us&results=3
-        if (!$randomUserInfo) {
-            $json_string = file_get_contents("https://randomuser.me/api/?nat=us&results=1");
-            if (empty($json_string)) {
-                return false;
-            }
-            $randomUserInfo = json_decode($json_string);
-            $randomUserInfo = $randomUserInfo->results[0];
+        $faker = Factory::create();
+        if(!$faker) {
+            return false;
         }
 
         //dd($randomUserInfo);
         // set random data
         $user = $this;
-        $user->first_name = $randomUserInfo->name->first;
-        $user->user_nicename = $randomUserInfo->name->first;
-        $user->last_name = 'Z-' . $randomUserInfo->name->last;
-        $user->user_login = $randomUserInfo->login->username;
-        $user->user_pass = $randomUserInfo->login->password;
-        $user->user_email = $randomUserInfo->email;
+        $user->first_name = $faker->firstName;
+        $user->user_nicename = $faker->firstName;
+        $user->last_name = 'Z-' . $faker->lastName;
+        $user->user_login = $faker->userName;
+        $user->user_pass = $faker->password;
+        $user->user_email = $faker->freeEmail;
         //$user->display_name = $randomUserInfo->username;
         $user->MRN = rand();
         $user->gender = 'M';
-        $user->address = $randomUserInfo->location->street;
-        $user->city = $randomUserInfo->location->city;
-        $user->state = $randomUserInfo->location->state;
-        $user->zip = $randomUserInfo->location->postcode;
+        $user->address = $faker->address;
+        $user->address2 = $faker->secondaryAddress;
+        $user->city = $faker->city;
+        $user->state = $faker->stateAbbr;
+        $user->zip = $faker->postcode;
         $user->phone = '111-234-5678';
         $user->workPhoneNumber = '222-234-5678';
         $user->mobilePhoneNumber = '333-234-5678';
-        $user->birthDate = date('Y-m-d', $randomUserInfo->dob);
+        $user->birthDate = $faker->dateTimeThisCentury->format('Y-m-d');
         $user->agentName = 'Secret Agent';
         $user->agentPhone = '111-234-5678';
         $user->agentEmail = 'secret@agent.net';
         $user->agentRelationship = 'SA';
         $user->save();
+
     }
 
     public function createNewUser($user_email, $user_pass)

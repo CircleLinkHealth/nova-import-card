@@ -1,5 +1,4 @@
 <?php
-
 //THIS IS FOR APRIMA ONLY
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
@@ -87,7 +86,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('vue', function () {
         return view('CCDViewer.new-vuer');
     });
-    
+
 
     /**
      * CCD Importer Routes
@@ -187,8 +186,10 @@ Route::group(['middleware' => 'auth'], function () {
     /****************************/
     Route::group(['prefix' => 'admin'], function () {
 
+        Route::get('/reports/monthly-billing', 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport');
+
         Route::get('dupes', function () {
-            $results = DB::select( DB::raw("
+            $results = DB::select(DB::raw("
                 SELECT *
                 FROM lv_activities
                 WHERE performed_at != '0000-00-00 00:00:00'
@@ -196,16 +197,16 @@ Route::group(['middleware' => 'auth'], function () {
                 /*AND duration != '0'*/
                 AND provider_id != '1877'
                 /*group by concat(performed_at, provider_id)
-                having count(*) >= 2 */") );
+                having count(*) >= 2 */"));
             $a = 0;
-            foreach($results as $result) {
+            foreach ($results as $result) {
                 echo $result->id .
                     ' - ' . $result->provider_id .
                     ' - ' . $result->performed_at .
                     '<br /><br />';
                 $a++;
             }
-            echo "TOTAL:" .$a;
+            echo "TOTAL:" . $a;
             dd('done');
         });
 

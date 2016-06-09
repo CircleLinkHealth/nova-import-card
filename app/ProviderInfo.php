@@ -35,7 +35,7 @@ class ProviderInfo extends Model {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_id', 'qualification', 'npi_number', 'specialty'];
+	protected $fillable = ['user_id', 'prefix', 'qualification', 'npi_number', 'specialty'];
 
 	public $timestamps = false;
 

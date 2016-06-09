@@ -3,7 +3,9 @@
         @if(isset($patient) && !$new_user )
             <div class="progress-buttons col-sm-12 col-centered text-center">
                 <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="/" omitsubmit="yes">Cancel</a>
-                <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->ID)) }}">></a>
+                <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->ID)) }}">
+
+                </a>
                 <button type="submit" class="btn btn-orange">Submit</button>
             </div>
             <ul class="progress-list col-lg-12">

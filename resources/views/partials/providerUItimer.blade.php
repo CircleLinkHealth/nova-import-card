@@ -11,39 +11,43 @@
             </div>
             <div class="modal-footer">
                 <button type="button" id="timeModalNo" class="btn btn-warning" data-dismiss="modal">No</button>
-                <button type="button" id="timeModalYes" class="btn btn-success"  data-dismiss="modal">Yes</button>
+                <button type="button" id="timeModalYes" class="btn btn-success" data-dismiss="modal">Yes</button>
             </div>
         </div>
     </div>
 </div>
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
+
 <?php
 $qs = '';
 $option = 'att_config';
-if(!isset($activity)) {
+if (!isset($activity)) {
     $activity = 'Undefined';
 }
 $role = '';
-$title  = Route::currentRouteName(); //get_the_title();
+$title = Route::currentRouteName(); //get_the_title();
 
 
 // ip address stuff
-function get_ip_address() {
-    $ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR');
-    foreach ($ip_keys as $key) {
-        if (array_key_exists($key, $_SERVER) === true) {
-            foreach (explode(',', $_SERVER[$key]) as $ip) {
-                // trim for safety measures
-                $ip = trim($ip);
-                // attempt to validate IP
-                if (validate_ip($ip)) {
-                    return $ip;
+if (!function_exists('get_ip_address')) {
+    function get_ip_address()
+    {
+        $ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR');
+        foreach ($ip_keys as $key) {
+            if (array_key_exists($key, $_SERVER) === true) {
+                foreach (explode(',', $_SERVER[$key]) as $ip) {
+                    // trim for safety measures
+                    $ip = trim($ip);
+                    // attempt to validate IP
+                    if (validate_ip($ip)) {
+                        return $ip;
+                    }
                 }
             }
         }
-    }
 
-    return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : false;
+        return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : false;
+    }
 }
 
 
@@ -51,18 +55,23 @@ function get_ip_address() {
  * Ensures an ip address is both a valid IP and does not fall within
  * a private network range.
  */
-function validate_ip($ip)
-{
-    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
-        return false;
+if (!function_exists('validate_ip')) {
+
+    function validate_ip($ip)
+    {
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+            return false;
+        }
+        return true;
     }
-    return true;
 }
 
+
 $ipAddr = get_ip_address();
-if(!$ipAddr) {
+if (!$ipAddr) {
     $ipAddr = '';
 }
+
 
 // url stuff
 $pieces = explode("?", $_SERVER['REQUEST_URI']);
@@ -73,7 +82,7 @@ $enableTimeTracking = true;
 //$enableTimeTracking = false; // override it
 
 // disable if login
-if (strpos($_SERVER['REQUEST_URI'],'login') !== false) {
+if (strpos($_SERVER['REQUEST_URI'], 'login') !== false) {
     $enableTimeTracking = false;
 }
 
@@ -93,7 +102,7 @@ if ($enableTimeTracking) {
         var startTime = new Date();
         var noResponse = true; // set to false if user clicks yes/no button
         var totalTime = 0; // total accumulated time on page
-        var modalDelay = 60000*8; // ms modal waits before force logout (60000 = 1min)
+        var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
         var isTimerProcessed = false;
         var redirectLocation = false;
         var idleTime = 120000; // ms before modal display (60000 = 1min)
@@ -142,6 +151,7 @@ if ($enableTimeTracking) {
             // if no response to modal, log out after {modalDelay}
             if (consoleDebug) console.log('modalDelay = ' + modalDelay + ' time modal will wait to force logout ');
             var noResponseTimer = setTimeout(noResponseTotalTime, modalDelay);
+
             function noResponseTotalTime() {
                 if (consoleDebug) console.log('noResponseTotalTime() start');
                 if (consoleDebug) console.log('totalTime = ' + totalTime);
@@ -212,7 +222,7 @@ if ($enableTimeTracking) {
                 "totalTime": totalTime,
                 "programId": '<?php echo $patientProgramId; ?>',
                 "startTime": '<?php echo date('Y-m-d H:i:s'); ?>',
-                "urlFull": '<?php echo $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']; ?>',
+                "urlFull": '<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>',
                 "urlShort": '<?php echo $urlShort; ?>',
                 "ipAddr": '<?php echo $ipAddr; ?>',
                 "activity": $('#activityName').val(),
@@ -261,3 +271,4 @@ if ($enableTimeTracking) {
     Tracking Enabled: <?php echo $enableTimeTracking; ?>
 </span>
 <!-- PAGE TIMER END -->
+
