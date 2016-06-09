@@ -151,7 +151,7 @@ class ReportsService
     public function getMedicationStatus(User $user, $fromApp = true)
     {
         $medications_categories = $user->cpmMedicationGroups()->get()->lists('name')->all();
-        debug($medications_categories);
+
         //get all medication observations for the user
         $medication_obs = DB::connection('mysql_no_prefix')
             ->table('rules_questions')
@@ -195,46 +195,56 @@ class ReportsService
                 }
             }
         }
+
+        //Remove meds with no observations
+        foreach ($temp_meds as $key => $value) {
+            if($value['total'] == 0) {
+                unset($temp_meds[$key]);
+            }
+        }
+
         foreach ($temp_meds as $key => $value) {
             $yes = $value['yes'];
             $total = $value['total'];
 
             if ($yes != 0 && $total != 0) {
                 $adhereance_percent = doubleval($yes / $total);
+            } else if ($yes == 0 && $total == 1) {
+                $adhereance_percent = 0;
             } else if ($yes == 0 && $total == 0) {
                 $adhereance_percent = 1;
             } else if ($yes == 0) {
                 $adhereance_percent = 0;
             }
-
-            if ($fromApp) {
-                //add to categories based on percentage of responses
-                switch ($adhereance_percent) {
-                    case ($adhereance_percent > 0.8):
-                        $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    case ($temp_meds[$category]['percent'] >= 0.5):
-                        $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    case ($temp_meds[$category]['percent'] == 0):
-                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                    default:
-                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
-                        break;
-                }
-                //echo $category.': ' . $temp_meds[$category]['percent'] . ' <br /> ';
-            } else {
+//            if ($fromApp) {
+//                //add to categories based on percentage of responses
+//                switch ($adhereance_percent) {
+//                    case ($adhereance_percent > 0.8):
+//                        $meds_array['Better']['description'] .= ($meds_array['Better']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    case ($temp_meds[$category]['percent'] >= 0.5):
+//                        $meds_array['Needs Work']['description'] .= ($meds_array['Needs Work']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    case ($temp_meds[$category]['percent'] == 0.0):
+//                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                    default:
+//                        $meds_array['Worse']['description'] .= ($meds_array['Worse']['description'] == '' ? $category : ', ' . $category);
+//                        break;
+//                }
+//                dd($category.': ' . $temp_meds[$category]['percent'] . ' <br /> ');
+//            } else {
                 // for provider UI
-                switch ($adhereance_percent) {
+                switch (true) {
                     case ($adhereance_percent > 0.8):
                         $meds_array['Better']['description'][] = $key;
                         break;
                     case ($adhereance_percent >= 0.5):
                         $meds_array['Needs Work']['description'][] = $key;
                         break;
-                    case ($adhereance_percent == 0):
+                    case ($adhereance_percent < 0.5):
                         $meds_array['Worse']['description'][] = $key;
+                        break;
                     default:
                         $meds_array['Worse']['description'][] = $key;
                         break;
@@ -242,7 +252,7 @@ class ReportsService
             }
             //Show all the medication categories and stats
             //dd(json_encode($medications)); // show the medications by adherence category
-        }
+
         $medications[0] = ['name' => $meds_array['Better']['description'], 'Section' => 'Better'];
         $medications[1] = ['name' => $meds_array['Needs Work']['description'], 'Section' => 'Needs Work'];
         $medications[2] = ['name' => $meds_array['Worse']['description'], 'Section' => 'Worse'];
@@ -250,12 +260,16 @@ class ReportsService
 
     }
 
-    public
-    function getTargetValueForBiometric($biometric, User $user)
+    public function getTargetValueForBiometric($biometric, User $user, $showUnits = true)
     {
         $bio = CpmBiometric::whereName(str_replace('_', ' ', $biometric))->first();
         $biometric_values = app(config('cpmmodelsmap.biometrics')[$bio->type])->getUserValues($user);
-        return $biometric_values['target'] . ReportsService::biometricsUnitMapping($biometric);
+
+        if($showUnits) {
+            return $biometric_values['target'] . ReportsService::biometricsUnitMapping($biometric);
+        } else {
+            return $biometric_values['target'];
+        }
     }
 
     public function getBiometricsData($biometric, $user)
@@ -276,11 +290,12 @@ class ReportsService
             ->groupBy('realweek')
             ->orderBy('obs_date')
             ->get();
+
         return ($data) ? $data : '';
+
     }
 
-    public
-    static function biometricsUnitMapping($biometric)
+    public static function biometricsUnitMapping($biometric)
     {
         switch ($biometric) {
             case 'Blood Sugar':
@@ -464,10 +479,10 @@ class ReportsService
     public function biometricsIndicators($weeklyReading1, $weeklyReading2, $biometric, $target)
     {//debug($biometric);
 
-        if ($biometric == 'Blood_Sugar') {
+        if ($biometric == 'Blood Sugar') {
 //            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
             return $this->analyzeBloodSugar($weeklyReading1, $weeklyReading2);
-        } else if ($biometric == 'Blood_Pressure') {
+        } else if ($biometric == 'Blood Pressure') {
 //            debug($this->analyzeBloodSugar($weeklyReading1, $weeklyReading2));
             return $this->analyzeBloodPressure($weeklyReading1, $weeklyReading2);
         } else if ($biometric == 'Weight') {
