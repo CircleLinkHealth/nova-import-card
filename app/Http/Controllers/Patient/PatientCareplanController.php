@@ -616,6 +616,28 @@ class PatientCareplanController extends Controller
             $pageViewVars = $carePlanService->carePlanThirdPage($carePlan, $patient);
         }
         $editMode = false;
+
+
+        // get all
+        // We are changing Other Conditions, Medications and Allergies from all being in one textbox, to each item being a row in the database.
+
+        // For allergies we need to fill allergen_name on table ccd_allergies eg. NITROFURAN DERIVATIVES
+        // ALLERGIES
+        // get ccd allergies
+        $ccdAllergies =  CcdAllergy::all();
+        //dd($ccdAllergies);
+
+        // For problems we need to fill name, code, code_system_name. (code_system should be filled automatically from the importer) eg. Diabetes - 250.00 - ICD-9
+        // PROBLEMS
+        // get problems
+        $ccdProblems =  CcdProblem::all();
+        //dd($ccdProblems);
+
+        // For medications we need to fill name, sig, code, code_system_name. (code_system should be filled automatically from the importer) eg. Vitamin D2 50,000 unit capsule - 1 Capsule(s) PO once weekly for 8 weeks then once monthly - 901040 - RxNorm
+        // MEDICATIONS
+        $ccdMedications =  CcdMedication::all();
+        //dd($ccdMedications);
+
         $showApprovalButton = false;
         if (auth()->user()->hasRole(['provider'])) {
             if ($patient->carePlanStatus != 'provider_approved') {
@@ -632,7 +654,10 @@ class PatientCareplanController extends Controller
             'carePlan',
             'messages',
             'showApprovalButton',
-            'problems'
+            'problems',
+            'ccdAllergies',
+            'ccdProblems',
+            'ccdMedications',
         ]);
 
         return view('wpUsers.patient.careplan.careplan', array_merge($defaultViewVars, $pageViewVars));
