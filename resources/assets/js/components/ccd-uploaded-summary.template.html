@@ -6,6 +6,7 @@
             <th class="mdl-data-table__cell--non-numeric">Edit</th>
             <th class="mdl-data-table__cell--non-numeric">Delete</th>
             <th class="mdl-data-table__cell--non-numeric">Name</th>
+            <th class="mdl-data-table__cell--non-numeric">Has Phone</th>
             <th class="mdl-data-table__cell--non-numeric">Duplicate User id</th>
             <th class="mdl-data-table__cell--non-numeric">CCDA id</th>
             <th class="mdl-data-table__cell--non-numeric">Provider</th>
@@ -21,6 +22,7 @@
             <th class="mdl-data-table__cell--non-numeric">Created At</th>
         </tr>
         </thead>
+
         <tbody>
 
         <tr v-for="qaSummary in qaSummaries" v-bind:class="{ 'flag': qaSummary.flag }"
@@ -50,6 +52,8 @@
             </td>
 
             <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.name }}</td>
+
+            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.has_phone | capitalize}}</td>
 
             <td class="mdl-data-table__cell--non-numeric">
                 <a v-if="qaSummary.duplicate_id" target="_blank" href="/manage-patients/{{ qaSummary.duplicate_id }}/summary">
