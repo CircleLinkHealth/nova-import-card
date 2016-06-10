@@ -235,81 +235,82 @@ $user_info = array();
                             <div class="main-form-block main-form-secondary col-lg-5">
                                 <h4 class="form-title">Contact Preferences</h4>
                                 <div class="row">
-                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_time') ? 'has-error' : '' }}">
-                                            <label for="mf-contact">Preferred Contact Time <span
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_time') ? 'has-error' : '' }}">
+                                        <label for="mf-contact">Preferred Contact Time <span
+                                                    class="attention">*</span>:</label>
+                                        <input id="preferred_contact_time" class="form-control"
+                                               name="preferred_contact_time" type="input"
+                                               value="{{ (old('preferred_contact_time') ? old('preferred_contact_time') : ($patient->preferred_contact_time ? $patient->preferred_contact_time : '')) }}"
+                                               data-field="time" data-format="HH:mm AA"/><br/>
+                                        (Should be between 4pm and 9pm)
+                                        <span class="help-block">{{ $errors->first('preferred_contact_time') }}</span>
+                                        </a>
+                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('contact_days') ? 'has-error' : '' }}">
+                                            <label for="">Preferred Contact Days <span
                                                         class="attention">*</span>:</label>
-                                            <input id="preferred_contact_time" class="form-control"
-                                                   name="preferred_contact_time" type="input"
-                                                   value="{{ (old('preferred_contact_time') ? old('preferred_contact_time') : ($patient->preferred_contact_time ? $patient->preferred_contact_time : '')) }}"
-                                                   data-field="time" data-format="HH:mm AA"/><br/>
-                                            (Should be between 4pm and 9pm)
-                                            <span class="help-block">{{ $errors->first('preferred_contact_time') }}</span>
-                                    </a>
-                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('contact_days') ? 'has-error' : '' }}">
-                                        <label for="">Preferred Contact Days <span class="attention">*</span>:</label>
-                                        <div class="row" style="float: right">
-                                            <div class="radio-inline modal-box-clone label"
-                                                 style="margin-left: 0px;    margin-right: 0px;">
-                                                <div class="radio-inline">
-                                                    <input id="contact-days-1" name="contact_days[]" value="1"
-                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;"
-                                                           for="contact-days-1"><span></span>&nbsp;M</label>
-                                                </div>
-                                                <div class="radio-inline">
-                                                    <input id="contact-days-2" name="contact_days[]" value="2"
-                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '2') ? 'checked="checked"' : (in_array('2', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;"
-                                                           for="contact-days-2"><span></span>&nbsp;T</label>
-                                                </div>
-                                                <div class="radio-inline">
-                                                    <input id="contact-days-3" name="contact_days[]" value="3"
-                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '3') ? 'checked="checked"' : (in_array('3', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;"
-                                                           for="contact-days-3"><span></span>&nbsp;W</label>
-                                                </div>
-                                                <div class="radio-inline">
-                                                    <input id="contact-days-4" name="contact_days[]" value="4"
-                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '4') ? 'checked="checked"' : (in_array('4', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;"
-                                                           for="contact-days-4"><span></span>&nbsp;Th</label>
-                                                </div>
-                                                <div class="radio-inline">
-                                                    <input id="contact-days-5" name="contact_days[]" value="5"
-                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '5') ? 'checked="checked"' : (in_array('5', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;"
-                                                           for="contact-days-5"><span></span>&nbsp;F</label>
-                                                </div>
-                                                <div class="radio-inline">
-                                                    <input id="contact-days-6" name="contact_days[]" value="6"
-                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '6') ? 'checked="checked"' : (in_array('6', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;"
-                                                           for="contact-days-6"><span></span>&nbsp;Sa</label>
-                                                </div>
-                                                <div class="radio-inline">
-                                                    <input id="contact-days-7" name="contact_days[]" value="7"
-                                                           type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '7') ? 'checked="checked"' : (in_array('7', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                    <label style="font-size: 120%; margin: -1px;"
-                                                           for="contact-days-7"><span></span>&nbsp;Su</label>
+                                            <div class="row" style="float: right">
+                                                <div class="radio-inline modal-box-clone label"
+                                                     style="margin-left: 0px;    margin-right: 0px;">
+                                                    <div class="radio-inline">
+                                                        <input id="contact-days-1" name="contact_days[]" value="1"
+                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                        <label style="font-size: 120%; margin: -1px;"
+                                                               for="contact-days-1"><span></span>&nbsp;M</label>
+                                                    </div>
+                                                    <div class="radio-inline">
+                                                        <input id="contact-days-2" name="contact_days[]" value="2"
+                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '2') ? 'checked="checked"' : (in_array('2', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                        <label style="font-size: 120%; margin: -1px;"
+                                                               for="contact-days-2"><span></span>&nbsp;T</label>
+                                                    </div>
+                                                    <div class="radio-inline">
+                                                        <input id="contact-days-3" name="contact_days[]" value="3"
+                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '3') ? 'checked="checked"' : (in_array('3', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                        <label style="font-size: 120%; margin: -1px;"
+                                                               for="contact-days-3"><span></span>&nbsp;W</label>
+                                                    </div>
+                                                    <div class="radio-inline">
+                                                        <input id="contact-days-4" name="contact_days[]" value="4"
+                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '4') ? 'checked="checked"' : (in_array('4', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                        <label style="font-size: 120%; margin: -1px;"
+                                                               for="contact-days-4"><span></span>&nbsp;Th</label>
+                                                    </div>
+                                                    <div class="radio-inline">
+                                                        <input id="contact-days-5" name="contact_days[]" value="5"
+                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '5') ? 'checked="checked"' : (in_array('5', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                        <label style="font-size: 120%; margin: -1px;"
+                                                               for="contact-days-5"><span></span>&nbsp;F</label>
+                                                    </div>
+                                                    <div class="radio-inline">
+                                                        <input id="contact-days-6" name="contact_days[]" value="6"
+                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '6') ? 'checked="checked"' : (in_array('6', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                        <label style="font-size: 120%; margin: -1px;"
+                                                               for="contact-days-6"><span></span>&nbsp;Sa</label>
+                                                    </div>
+                                                    <div class="radio-inline">
+                                                        <input id="contact-days-7" name="contact_days[]" value="7"
+                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '7') ? 'checked="checked"' : (in_array('7', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                        <label style="font-size: 120%; margin: -1px;"
+                                                               for="contact-days-7"><span></span>&nbsp;Su</label>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
-                                        <div class="col-sm-6">
-                                            <label for="preferred_contact_method" class="contact-method">
-                                                Preferred Contact Method:
-                                            </label>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="radio">
-                                                <input type="radio" name="preferred_contact_method"
-                                                       id="contactMethodCCT"
-                                                       value="CCT" {{ ((old('preferred_contact_method') == 'CCT') ? 'checked="checked"' : (($patient->preferred_contact_method == 'CCT') ? 'checked="checked"' : '')) }}>
-                                                <label for="contactMethodCCT"><span> </span>Care Center</label>
+                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
+                                            <div class="col-sm-6">
+                                                <label for="preferred_contact_method" class="contact-method">
+                                                    Preferred Contact Method:
+                                                </label>
                                             </div>
-                                        <!--                                             <div class="radio radio-v-margin">
+                                            <div class="col-sm-6">
+                                                <div class="radio">
+                                                    <input type="radio" name="preferred_contact_method"
+                                                           id="contactMethodCCT"
+                                                           value="CCT" {{ ((old('preferred_contact_method') == 'CCT') ? 'checked="checked"' : (($patient->preferred_contact_method == 'CCT') ? 'checked="checked"' : '')) }}>
+                                                    <label for="contactMethodCCT"><span> </span>Care Center</label>
+                                                </div>
+                                            <!--                                             <div class="radio radio-v-margin">
                                                 <input type="radio" name="preferred_contact_method" id="contactMethodSMS" value="SMS" {{ ((old('preferred_contact_method') == 'SMS') ? 'checked="checked"' : (($patient->preferred_contact_method == 'SMS') ? 'checked="checked"' : '')) }}>
                                                 <label for="contactMethodSMS"><span> </span>SMS</label>
                                             </div>
@@ -317,104 +318,148 @@ $user_info = array();
                                                 <input type="radio" name="preferred_contact_method" id="contactMethodApp"  value="APP" {{ (old('preferred_contact_method') == 'APP' ? 'checked="checked"' : (($patient->preferred_contact_method == 'APP') ? 'checked="checked"' : '')) }}>
                                                 <label for="contactMethodApp"><span> </span>App</label>
                                             </div> -->
-                                        </div>
-                                        <span class="help-block">{{ $errors->first('preferred_contact_method') }}</span>
-                                    </div>
-                                    <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('timezone') ? 'has-error' : '' }}">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <label for="preferred_contact_timezone">Timer Zone <span
-                                                            class="attention">*</span>:</label>
                                             </div>
-                                            <div class="col-sm-12">
-                                                {!! Form::select('preferred_contact_timezone', $timezones, (old('preferred_contact_timezone') ? old('preferred_contact_timezone') : $patient->preferred_contact_timezone ? $patient->preferred_contact_timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
-                                            </div>
+                                            <span class="help-block">{{ $errors->first('preferred_contact_method') }}</span>
                                         </div>
-                                        <span class="help-block">{{ $errors->first('timezone') }}</span>
-                                    </div>
-                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
-                                        <label for="mf-consent_date">Consent Date <span
-                                                    class="attention">*</span>:</label>
-                                        <input id="consent_date" name="consent_date" class="form-control" type="input"
-                                               value="{{ (old('consent_date') ? old('consent_date') : ($patient->consent_date ? $patient->consent_date : '')) }}"
-                                               data-field="date" data-format="yyyy-MM-dd"/><br/>
-                                        <span class="help-block">{{ $errors->first('consent_date') }}</span>
-                                    </div>
-                                    {{--<div class="col-sm-12 text-right">
-                                        <span class="btn btn-group  text-right"><a class="btn btn-green btn-sm inline-block" omitsubmit="yes" role="button" target="_Blank" href="https://s3.amazonaws.com/clh-downloads/Circlelink+CCM+Consent+Form.pdf">Download Form</a></span>
-                                    </div>--}}
+                                        <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('timezone') ? 'has-error' : '' }}">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <label for="preferred_contact_timezone">Timer Zone <span
+                                                                class="attention">*</span>:</label>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    {!! Form::select('preferred_contact_timezone', $timezones, (old('preferred_contact_timezone') ? old('preferred_contact_timezone') : $patient->preferred_contact_timezone ? $patient->preferred_contact_timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                                </div>
+                                            </div>
+                                            <span class="help-block">{{ $errors->first('timezone') }}</span>
+                                        </div>
+                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
+                                            <label for="mf-consent_date">Consent Date <span
+                                                        class="attention">*</span>:</label>
+                                            <input id="consent_date" name="consent_date" class="form-control"
+                                                   type="input"
+                                                   value="{{ (old('consent_date') ? old('consent_date') : ($patient->consent_date ? $patient->consent_date : '')) }}"
+                                                   data-field="date" data-format="yyyy-MM-dd"/><br/>
+                                            <span class="help-block">{{ $errors->first('consent_date') }}</span>
+                                        </div>
+                                        {{--<div class="col-sm-12 text-right">
+                                            <span class="btn btn-group  text-right"><a class="btn btn-green btn-sm inline-block" omitsubmit="yes" role="button" target="_Blank" href="https://s3.amazonaws.com/clh-downloads/Circlelink+CCM+Consent+Form.pdf">Download Form</a></span>
+                                        </div>--}}
 
-                                    @if(isset($patient->ID) )
-                                        @if(($patient->primaryProgram) )
-                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }} hidden">
-                                                Program: <strong>{{ $patient->primaryProgram->display_name }}</strong>
+                                        @if(isset($patient->ID) )
+                                            @if(($patient->primaryProgram) )
+                                                <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }} hidden">
+                                                    Program:
+                                                    <strong>{{ $patient->primaryProgram->display_name }}</strong>
+                                                </div>
+                                            @endif
+                                            <input type=hidden name=program_id value="{{ $programId }}">
+                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
+                                                {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:
+    :') !!}
+                                                {!! Form::select('preferred_contact_location', $locations, $patient->preferred_contact_location, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
+                                            </div>
+                                        @else
+                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
+                                                {!! Form::label('program_id', 'Program:') !!}
+                                                {!! Form::select('program_id', $programs, $patient->program_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
                                             </div>
                                         @endif
-                                        <input type=hidden name=program_id value="{{ $programId }}">
-                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
-                                            {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:
-:') !!}
-                                            {!! Form::select('preferred_contact_location', $locations, $patient->preferred_contact_location, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
-                                        </div>
-                                    @else
-                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
-                                            {!! Form::label('program_id', 'Program:') !!}
-                                            {!! Form::select('program_id', $programs, $patient->program_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
-                                        </div>
-                                    @endif
 
-                                    <input type=hidden name=status
-                                           value="{{ (old('status') ? old('status') : ($patient->status)) }}">
-                                    {{--
-                                    <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('status') ? 'has-error' : '' }}">
-                                        <div class="row">
-                                            <div class="col-sm-2 col-lg-4">
-                                                <label for="status">Status<span class="attention">*</span>:</label>
-                                            </div>
-                                            <div class="col-sm-9 col-lg-8 status-buttons">
-                                                <div class="radio">
-                                                    <input type="radio" id="statusActive" name="status" value="Active" {{ ((old('status') == 'Active' || !old('status')) ? 'checked="checked"' : (($patient->status == 'SMS') ? 'checked="checked"' : '')) }}>
-                                                    <label for="statusActive"><span> </span>Active</label>
+                                        <input type=hidden name=status
+                                               value="{{ (old('status') ? old('status') : ($patient->status)) }}">
+                                        {{--
+                                        <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('status') ? 'has-error' : '' }}">
+                                            <div class="row">
+                                                <div class="col-sm-2 col-lg-4">
+                                                    <label for="status">Status<span class="attention">*</span>:</label>
                                                 </div>
-                                                <div class="radio radio-v-margin">
-                                                    <input type="radio" id="statusInactive" name="status"  value="Inactive" {{ (old('status') == 'Inactive' ? 'checked="checked"' : (($patient->status == 'SMS') ? 'checked="checked"' : '')) }}>
-                                                    <label for="statusInactive"><span> </span>Inactive</label>
+                                                <div class="col-sm-9 col-lg-8 status-buttons">
+                                                    <div class="radio">
+                                                        <input type="radio" id="statusActive" name="status" value="Active" {{ ((old('status') == 'Active' || !old('status')) ? 'checked="checked"' : (($patient->status == 'SMS') ? 'checked="checked"' : '')) }}>
+                                                        <label for="statusActive"><span> </span>Active</label>
+                                                    </div>
+                                                    <div class="radio radio-v-margin">
+                                                        <input type="radio" id="statusInactive" name="status"  value="Inactive" {{ (old('status') == 'Inactive' ? 'checked="checked"' : (($patient->status == 'SMS') ? 'checked="checked"' : '')) }}>
+                                                        <label for="statusInactive"><span> </span>Inactive</label>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <span class="help-block">{{ $errors->first('status') }}</span>
                                         </div>
-                                        <span class="help-block">{{ $errors->first('status') }}</span>
-                                    </div>
-                                    --}}
+                                        --}}
 
-                                    <div class="form-group form-item form-item-spacing col-sm-12">
-                                        <div class="row">
-                                            <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                            <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                        <div class="form-group form-item form-item-spacing col-sm-12">
+                                            <div class="row">
+                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
+                                                <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="form-group form-item form-item-spacing col-sm-12 hidden">
-                                        <div class="row">
-                                            <div class="col-lg-4">{!! Form::label('care_plan_id', 'Care Plan: ') !!}</div>
-                                            <div class="col-lg-8">{!! Form::select('care_plan_id', $carePlans, $patient->care_plan_id, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                        <div class="form-group form-item form-item-spacing col-sm-12 hidden">
+                                            <div class="row">
+                                                <div class="col-lg-4">{!! Form::label('care_plan_id', 'Care Plan: ') !!}</div>
+                                                <div class="col-lg-8">{!! Form::select('care_plan_id', $carePlans, $patient->care_plan_id, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                            </div>
                                         </div>
-                                    </div>
 
+                                        <br>
+                                        <br>
+                                        <br>
+
+                                        <div id="insurance-policies" class="form-item-spacing">
+
+                                            <h4 class="form-title">Insurance Policies</h4>
+
+
+                                            <button type="button" class="full-width btn-default borderless" data-toggle="collapse" data-target="#demo">
+                                                <span class="pull-left">AARP United Healthcare</span>
+                                                <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+                                            </button>
+
+                                            <div id="demo" class="collapse">
+
+                                            </div>
+
+                                            {{--<div class="input-group form-item-spacing input-group-sm">--}}
+                                                {{--<label for="policy-1">Insurance 1</label>--}}
+                                                {{--<div id="policy-1" class="form-group form-item form-item-spacing col-sm-12">--}}
+                                                    {{--<input id="insurance-name" type="text" class="form-control" placeholder="Insurance Name">--}}
+                                                    {{--<input type="text" class="form-control" placeholder="Insurance Type">--}}
+                                                {{--</div>--}}
+                                            {{--</div>--}}
+
+                                        </div>
+
+
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    @include('wpUsers.patient.careplan.footer')
-    <br/><br/>
+            @include('wpUsers.patient.careplan.footer')
+            <br/><br/>
 
-        {{--Added this to allow for testing, since submit is done via js--}}
-        @if(app()->environment('testing'))
+            @if(isset($_GET['scrollTo']))
+                <script>
+                    $(document).ready(function () {
+                        // Handler for .ready() called.
+                        $('html, body').animate({
+                            scrollTop: $("#{{ $_GET['scrollTo'] }}").offset().top
+                        }, 'slow');
+
+                        $('#insurance-name').focus();
+                    });
+                </script>
+    @endif
+
+    {{--Added this to allow for testing, since submit is done via js--}}
+    @if(app()->environment('testing'))
         {!! Form::submit('TestSubmit', ['id' => 'unit-test-submit']) !!}
-        @endif
+    @endif
 
     {!! Form::close() !!}
 @stop
