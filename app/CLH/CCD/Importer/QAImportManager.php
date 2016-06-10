@@ -3,21 +3,22 @@
 namespace App\CLH\CCD\Importer;
 
 
-use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\ParsingStrategies\CareTeam\PrimaryProviders as PrimaryProvidersParser;
-use App\CLH\CCD\Importer\ParsingStrategies\Location\ProviderLocation as ProviderLocationParser;
-use App\CLH\CCD\Importer\ParsingStrategies\Problems\DetectsProblemCodeSystemTrait;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfig as UserConfigParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMeta as UserMetaParser;
+use App\CLH\CCD\Importer\ParsingStrategies\Location\ProviderLocation as ProviderLocationParser;
+use App\CLH\CCD\Importer\ParsingStrategies\Problems\DetectsProblemCodeSystemTrait;
 use App\CLH\CCD\ImportRoutine\ExecutesImportRoutine;
 use App\CLH\CCD\ImportRoutine\RoutineBuilder;
-use App\Models\CCD\ValidatesQAImportOutput;
-use App\Models\CCD\CcdVendor;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\CLH\Repositories\UserRepository;
 use App\Location;
+use App\Models\CCD\Ccda;
+use App\Models\CCD\CcdInsurancePolicy;
+use App\Models\CCD\CcdVendor;
+use App\Models\CCD\ValidatesQAImportOutput;
 use App\User;
 use Illuminate\Support\Facades\Log;
 
@@ -25,7 +26,7 @@ class QAImportManager
 {
     use DetectsProblemCodeSystemTrait;
     use ExecutesImportRoutine;
-    use App\Models\CCD\ValidatesQAImportOutput;
+    use ValidatesQAImportOutput;
 
     private $blogId;
     private $ccd;
@@ -156,6 +157,25 @@ class QAImportManager
         $demographics->consent_date = $userConfig->consent_date;
         $demographics->preferred_contact_timezone = $userConfig->preferred_contact_timezone;
         $demographics->save();
+
+
+        if (!empty($this->ccd->payers)) {
+            foreach ($this->ccd->payers as $payer) {
+
+                if (empty($payer->insurance)) continue;
+                
+                $insurance = CcdInsurancePolicy::create([
+                    'ccda_id' => $this->ccda->id,
+                    'patient_id' => null,
+                    'name' => $payer->insurance,
+                    'type' => $payer->policy_type,
+                    'policy_id' => $payer->policy_id,
+                    'relation' => $payer->relation,
+                    'subscriber' => $payer->subscriber,
+                    'approved' => false,
+                ]);
+            }
+        }
 
         return $this->validateQAImportOutput($this->ccda, $output);
     }
