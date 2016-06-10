@@ -11,6 +11,7 @@ use App\CPRulesPCP;
 use App\CPRulesUCP;
 use App\Observation;
 use App\Services\CareplanService;
+use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmBiometricService;
 use App\Services\CPM\CpmProblemService;
 use App\PageTimer;
@@ -397,7 +398,7 @@ class ReportsController extends Controller
         return response()->json($feed);
     }
 
-    public function viewPrintCareplan(Request $request, $patientId = false)
+    public function viewPrintCareplan(Request $request, $patientId = false, CcdInsurancePolicyService $insurances)
     {
         if (!$patientId) {
             return "Patient Not Found..";
@@ -408,10 +409,14 @@ class ReportsController extends Controller
         if(!$careplan){
             return 'Careplan not found...';
         }
+        
+        $patient = User::find($patientId);
+
+        $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
 
         return view('wpUsers.patient.careplan.print',
             [
-                'patient' => User::find($patientId),
+                'patient' => $patient,
                 'problems' => $careplan[$patientId]['problems'],
                 'biometrics' => $careplan[$patientId]['bio_data'],
                 'symptoms' => $careplan[$patientId]['symptoms'],
@@ -421,7 +426,8 @@ class ReportsController extends Controller
                 'allergies' => $careplan[$patientId]['allergies'],
                 'social' => $careplan[$patientId]['social'],
                 'appointments' => $careplan[$patientId]['appointments'],
-                'other' => $careplan[$patientId]['other']
+                'other' => $careplan[$patientId]['other'],
+                'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
             ]);
     }
 

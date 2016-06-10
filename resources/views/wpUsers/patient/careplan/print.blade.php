@@ -25,7 +25,7 @@ if (isset($patient) && !empty($patient)) {
     $lead = null;
     if (!empty($patient->getBillingProviderIDAttribute())) $billing = App\User::find($patient->getBillingProviderIDAttribute());
     if (!empty($patient->getLeadContactIDAttribute())) $lead = App\User::find($patient->getLeadContactIDAttribute());
-    
+
     $today = \Carbon\Carbon::now()->toFormattedDateString();
 // $provider = App\User::find($patient->getLeadContactIDAttribute());
 }
@@ -43,6 +43,22 @@ if (isset($patient) && !empty($patient)) {
                     @if(!isset($isPdf))
                         <div class="row">
                             <div class="col-xs-12 text-right hidden-print">
+
+                                @if($showInsuranceReviewFlag)
+                                    <div class="alert alert-danger text-left" role="alert">
+                                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                        <span class="sr-only">Error:</span>
+                                        Insurance plans in record may be expired.
+                                        <a class="alert-link"
+                                           href="{{ URL::route('patient.demographics.show', [
+                                           'patientId' => $patient->ID,
+                                           'scrollTo' => 'insurance-policies'
+                                           ]) }}">
+                                            Click to edit
+                                        </a>
+                                    </div>
+                                    @endif
+
                         <span class="btn btn-group text-right">
                             <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block" aria-label="..."
                                role="button" href="{{ URL::route('patients.listing') }}">Approve More Care Plans</a>
