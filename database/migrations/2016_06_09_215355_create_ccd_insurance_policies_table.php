@@ -29,7 +29,7 @@ class CreateCcdInsurancePoliciesTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->string('name')->nullable();
+            $table->string('name')->required();
             $table->string('type')->nullable();
             $table->string('policy_id')->nullable();
             $table->string('relation')->nullable();

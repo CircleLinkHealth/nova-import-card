@@ -3,6 +3,7 @@
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\Contracts\Serviceable;
 use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\Biometrics\CpmBloodPressure;
@@ -157,6 +158,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->hasMany(CcdAllergy::class, 'patient_id');
     }
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function ccdInsurancePolicies()
+	{
+		return $this->hasMany(CcdInsurancePolicy::class, 'patient_id');
+	}
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
