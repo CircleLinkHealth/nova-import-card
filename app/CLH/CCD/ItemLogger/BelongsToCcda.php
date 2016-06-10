@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\ItemLogger;
 
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 
 trait BelongsToCcda
 {

@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer;
 
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;

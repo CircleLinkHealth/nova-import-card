@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use App\Contracts\Repositories\CcdaRepository;

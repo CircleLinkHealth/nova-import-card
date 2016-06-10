@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\ItemLogger;
 
 
-use App\CLH\CCD\CcdVendor;
+use App\Models\CCD\CcdVendor;
 
 trait LogVendorRelationship
 {

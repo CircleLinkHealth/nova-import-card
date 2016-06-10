@@ -1,4 +1,4 @@
-<?php namespace App\CLH\CCD;
+<?php namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\ModelLogRelationship;
 use App\CLH\CCD\ImportRoutine\CcdImportRoutine;

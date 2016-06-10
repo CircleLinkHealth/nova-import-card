@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer;
 
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\ParsingStrategies\CareTeam\PrimaryProviders as PrimaryProvidersParser;
 use App\CLH\CCD\Importer\ParsingStrategies\Location\ProviderLocation as ProviderLocationParser;
@@ -12,8 +12,8 @@ use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserConfig as UserConfig
 use App\CLH\CCD\Importer\ParsingStrategies\Demographics\UserMeta as UserMetaParser;
 use App\CLH\CCD\ImportRoutine\ExecutesImportRoutine;
 use App\CLH\CCD\ImportRoutine\RoutineBuilder;
-use App\CLH\CCD\ValidatesQAImportOutput;
-use App\CLH\CCD\CcdVendor;
+use App\Models\CCD\ValidatesQAImportOutput;
+use App\Models\CCD\CcdVendor;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
 use App\CLH\Repositories\UserRepository;
@@ -25,7 +25,7 @@ class QAImportManager
 {
     use DetectsProblemCodeSystemTrait;
     use ExecutesImportRoutine;
-    use ValidatesQAImportOutput;
+    use App\Models\CCD\ValidatesQAImportOutput;
 
     private $blogId;
     private $ccd;
