@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
 use App\CarePlan;
@@ -364,8 +365,24 @@ class PatientCareplanController extends Controller
         } else if ($patient->carePlanStatus == 'draft') {
             $showApprovalButton = true;
         }
+        
+        $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
-        return view('wpUsers.patient.careplan.patient', compact(['patient', 'userMeta', 'userConfig', 'states', 'locations', 'timezones', 'messages', 'patientRoleId', 'programs', 'programId', 'showApprovalButton', 'carePlans']));
+        return view('wpUsers.patient.careplan.patient', compact([
+            'patient', 
+            'userMeta', 
+            'userConfig', 
+            'states', 
+            'locations', 
+            'timezones', 
+            'messages', 
+            'patientRoleId', 
+            'programs', 
+            'programId', 
+            'showApprovalButton', 
+            'carePlans',
+            'insurancePolicies',
+        ]));
     }
 
 

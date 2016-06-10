@@ -407,30 +407,51 @@ $user_info = array();
                                         <br>
                                         <br>
 
-                                        <div id="insurance-policies" class="form-item-spacing">
+                                        @if(! $insurancePolicies->isEmpty())
 
-                                            <h4 class="form-title">Insurance Policies</h4>
+                                            <div id="insurance-policies" class="form-item-spacing">
 
+                                                <h4 class="form-title">Insurance Policies</h4>
 
-                                            <button type="button" class="full-width btn-default borderless" data-toggle="collapse" data-target="#demo">
-                                                <span class="pull-left">AARP United Healthcare</span>
-                                                <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
-                                            </button>
+                                                @foreach($insurancePolicies as $insurance)
 
-                                            <div id="demo" class="collapse">
+                                                    <div id="policy-grp-{{$insurance->id}}">
+                                                        <button type="button"
+                                                                class="full-width btn-default borderless md-line-height"
+                                                                data-toggle="collapse"
+                                                                data-target="#insurance-{{ $insurance->id }}">
+                                                                <span class="pull-left">{{ $insurance->name }}</span>
+                                                                <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+                                                        </button>
+
+                                                        <div id="insurance-{{ $insurance->id }}"
+                                                             class="collapse md-line-height text-right">
+
+                                                            @if(!empty($insurance->type))
+                                                                {{ $insurance->type }}
+                                                            @else
+                                                                Insurance type is not available.
+                                                            @endif
+                                                            <br>
+                                                            @if(! $insurance->approved)
+                                                                <button type="button" class="btn btn-primary">
+                                                                    Approve
+                                                                </button>
+                                                            @endif
+
+                                                            <button type="button" class="btn btn-danger">
+                                                                Delete
+                                                            </button>
+
+                                                            <br><br>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+
 
                                             </div>
 
-                                            {{--<div class="input-group form-item-spacing input-group-sm">--}}
-                                                {{--<label for="policy-1">Insurance 1</label>--}}
-                                                {{--<div id="policy-1" class="form-group form-item form-item-spacing col-sm-12">--}}
-                                                    {{--<input id="insurance-name" type="text" class="form-control" placeholder="Insurance Name">--}}
-                                                    {{--<input type="text" class="form-control" placeholder="Insurance Type">--}}
-                                                {{--</div>--}}
-                                            {{--</div>--}}
-
-                                        </div>
-
+                                        @endif
 
 
                                     </div>
