@@ -173,16 +173,16 @@ class ImportManager
         /**
          * CarePlan Defaults
          */
-        
+
         /**
          * Biometrics
          */
-        
+
         //Weight
         $weightParseAndStore = new Weight($this->user->program_id, $this->user);
         $weight = $weightParseAndStore->parse($this->decodedCcda);
         if (!empty($weight)) $weightParseAndStore->import($weight);
-        
+
         //Blood Pressure
         $bloodPressureParseAndStore = new BloodPressure($this->user->program_id, $this->user);
         $bloodPressure = $bloodPressureParseAndStore->parse($this->decodedCcda);
@@ -190,11 +190,10 @@ class ImportManager
 
 
         //Insurance
-        $insurance = CcdInsurancePolicy::updateOrCreate([
-            'ccda_id' => $this->ccda->id,
-        ], [
-            'patient_id' => $this->user->ID,
-        ]);
+        $insurance = CcdInsurancePolicy::where('ccda_id', '=', $this->ccda->id)
+            ->update([
+                    'patient_id' => '$this->user->ID']
+            );
 
         return true;
     }
