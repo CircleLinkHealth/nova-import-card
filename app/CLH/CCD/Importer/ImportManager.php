@@ -8,6 +8,7 @@ use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
 use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmMisc;
@@ -19,6 +20,7 @@ use App\User;
 class ImportManager
 {
     private $allergiesImport;
+    private $ccda;
     private $demographicsImport;
     private $medicationsImport;
     private $problemsImport;
@@ -40,6 +42,7 @@ class ImportManager
         $this->problemsImport = $problemsImport;
         $this->ccdaStrategies = $strategies;
         $this->user = $user;
+        $this->ccda = $ccda;
         $this->decodedCcda = \GuzzleHttp\json_decode($ccda->json);
     }
 
@@ -170,6 +173,7 @@ class ImportManager
         /**
          * CarePlan Defaults
          */
+        
         /**
          * Biometrics
          */
@@ -183,6 +187,14 @@ class ImportManager
         $bloodPressureParseAndStore = new BloodPressure($this->user->program_id, $this->user);
         $bloodPressure = $bloodPressureParseAndStore->parse($this->decodedCcda);
         if (!empty($bloodPressure)) $bloodPressureParseAndStore->import($bloodPressure);
+
+
+        //Insurance
+        $insurance = CcdInsurancePolicy::updateOrCreate([
+            'ccda_id' => $this->ccda->id,
+        ], [
+            'patient_id' => $this->user->ID,
+        ]);
 
         return true;
     }
