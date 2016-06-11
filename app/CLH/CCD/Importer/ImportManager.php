@@ -192,7 +192,7 @@ class ImportManager
         //Insurance
         $insurance = CcdInsurancePolicy::where('ccda_id', '=', $this->ccda->id)
             ->update([
-                    'patient_id' => '$this->user->ID']
+                    'patient_id' => $this->user->ID]
             );
 
         return true;
