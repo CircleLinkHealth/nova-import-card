@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 
-use App\CLH\CCD\CcdVendor;
+use App\Models\CCD\CcdVendor;
 use App\CLH\CCD\ImportedItems\AllergyImport;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\ImportedItems\MedicationImport;

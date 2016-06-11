@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers\EditImportedCcda;
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
-use App\CLH\CCD\QAImportSummary;
+use App\Models\CCD\QAImportSummary;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 

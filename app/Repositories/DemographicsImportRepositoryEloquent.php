@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\ForeignId;
 use Illuminate\Support\Facades\DB;

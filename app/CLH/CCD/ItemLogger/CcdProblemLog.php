@@ -1,6 +1,6 @@
 <?php namespace App\CLH\CCD\ItemLogger;
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\ProblemImport;
 use App\CLH\Contracts\CCD\CcdItemLog;
 use Illuminate\Database\Eloquent\Model;

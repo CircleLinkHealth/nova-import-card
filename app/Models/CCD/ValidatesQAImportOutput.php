@@ -1,9 +1,10 @@
 <?php
 
-namespace App\CLH\CCD;
+namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
-use App\CLH\CCD\QAImportSummary;
+use App\Models\CCD\QAImportSummary;
+use App\Models\CCD\Ccda;
 use App\User;
 use Carbon\Carbon;
 

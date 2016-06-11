@@ -2,9 +2,9 @@
 
 namespace App\CLH\Contracts\CCD;
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 
 interface ParsingStrategy
 {
-    public function parse(Ccda $ccda, ValidationStrategy $validator = null);
+    public function parse(\App\Models\CCD\Ccda $ccda, ValidationStrategy $validator = null);
 }

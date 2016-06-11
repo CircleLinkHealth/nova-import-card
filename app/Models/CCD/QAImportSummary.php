@@ -1,5 +1,6 @@
-<?php namespace App\CLH\CCD;
+<?php namespace App\Models\CCD;
 
+use App\Models\CCD\Ccda;
 use Illuminate\Database\Eloquent\Model;
 
 class QAImportSummary extends Model {

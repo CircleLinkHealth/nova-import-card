@@ -23,6 +23,7 @@
                     <a href="#immunizationdeclines-section">Declined Immunizations</a> ||
                     <a href="#instructions-section">Patient Instructions</a> ||
                     <a href="#medications-section">Medications</a> ||
+                    <a href="#payers-section">Payers</a> ||
                     <a href="#problems-section">Problems</a> ||
                     <a href="#procedures-section">Procedures</a> ||
                     <a href="#results-section">Results (Labs)</a> ||
@@ -115,6 +116,14 @@
                 <h2>Medications</h2>
                 <pre><code id="medications" class="javascript">
                         {!! json_encode($ccd->medications, JSON_PRETTY_PRINT) !!}
+                    </code></pre>
+
+
+                <a name="payers-section"></a>
+
+                <h2>Payers</h2>
+                <pre><code id="payers" class="javascript">
+                        {!! json_encode($ccd->payers, JSON_PRETTY_PRINT) !!}
                     </code></pre>
 
 

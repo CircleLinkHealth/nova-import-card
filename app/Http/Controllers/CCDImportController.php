@@ -1,13 +1,13 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\AllergyImport;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\ImportedItems\MedicationImport;
 use App\CLH\CCD\ImportedItems\ProblemImport;
 use App\CLH\CCD\Importer\ImportManager;
-use App\CLH\CCD\CcdVendor;
-use App\CLH\CCD\QAImportSummary;
+use App\Models\CCD\CcdVendor;
+use App\Models\CCD\QAImportSummary;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 

@@ -2,7 +2,7 @@
 
 namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\ProblemImport;
 use App\CLH\CCD\ItemLogger\CcdProblemLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
