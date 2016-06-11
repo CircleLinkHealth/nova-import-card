@@ -123,7 +123,9 @@
 
                 <h2>Payers</h2>
                 <pre><code id="payers" class="javascript">
-                        {!! json_encode($ccd->payers, JSON_PRETTY_PRINT) !!}
+                        @if(isset($ccd->payers))
+                            {!! json_encode($ccd->payers, JSON_PRETTY_PRINT) !!}
+                        @endif
                     </code></pre>
 
 
