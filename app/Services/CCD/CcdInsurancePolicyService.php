@@ -25,7 +25,7 @@ class CcdInsurancePolicyService
             ->whereApproved(true)
             ->get();
 
-        return !empty($approvedInsurance);
+        return $approvedInsurance->isEmpty();
     }
 
 }
