@@ -409,22 +409,27 @@ $user_info = array();
 
                                         @if(! $insurancePolicies->isEmpty())
 
-                                            <div id="insurance-policies" class="form-item-spacing">
+                                            <div id="insurance-policies"
+                                                 class="form-group form-item form-item-spacing col-sm-12">
 
-                                                <h4 class="form-title">Insurance Policies</h4>
+                                                <h4 id="policies-title" class="form-title">Insurance Policies</h4>
+
+                                                <?php $counter = 0; ?>
 
                                                 @foreach($insurancePolicies as $insurance)
 
-                                                    <div id="policy-grp-{{$insurance->id}}">
-                                                        <button type="button"
+                                                    <div id="policy-grp-{{$counter++}}">
+                                                        <button
+                                                                type="button"
                                                                 class="full-width btn-default borderless md-line-height"
                                                                 data-toggle="collapse"
-                                                                data-target="#insurance-{{ $insurance->id }}">
-                                                                <span class="pull-left">{{ $insurance->name }}</span>
-                                                                <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+                                                                data-target="#insurance-{{ $counter }}">
+                                                            <span class="pull-left">{{ $insurance->name }}</span>
+                                                            <span class="glyphicon glyphicon-pencil pull-right glow"
+                                                                  aria-hidden="true"></span>
                                                         </button>
 
-                                                        <div id="insurance-{{ $insurance->id }}"
+                                                        <div id="insurance-{{ $counter }}"
                                                              class="collapse md-line-height text-right">
 
                                                             @if(!empty($insurance->type))
@@ -434,14 +439,22 @@ $user_info = array();
                                                             @endif
                                                             <br>
                                                             @if(! $insurance->approved)
-                                                                <button type="button" class="btn btn-primary">
-                                                                    Approve
-                                                                </button>
+
+                                                                <div class="radio-inline">
+                                                                    <input id="approve-{{ $counter }}"
+                                                                           name="insurance[{{ $insurance->id }}]"
+                                                                           value="0" type="radio">
+                                                                    <label for="approve-{{ $counter }}"><span></span>Approve</label>
+                                                                </div>
+
                                                             @endif
 
-                                                            <button type="button" class="btn btn-danger">
-                                                                Delete
-                                                            </button>
+                                                            <div class="radio-inline">
+                                                                <input id="delete-{{ $counter }}"
+                                                                       name="insurance[{{ $insurance->id }}]"
+                                                                       value="1" type="radio">
+                                                                <label for="delete-{{ $counter }}"><span></span>Delete</label>
+                                                            </div>
 
                                                             <br><br>
                                                         </div>
@@ -466,13 +479,16 @@ $user_info = array();
 
             @if(isset($_GET['scrollTo']))
                 <script>
-                    $(document).ready(function () {
+                    $(function () {
                         // Handler for .ready() called.
                         $('html, body').animate({
                             scrollTop: $("#{{ $_GET['scrollTo'] }}").offset().top
                         }, 'slow');
 
                         $('#insurance-name').focus();
+
+                        $('.glow').addClass('animated flash');
+
                     });
                 </script>
     @endif
