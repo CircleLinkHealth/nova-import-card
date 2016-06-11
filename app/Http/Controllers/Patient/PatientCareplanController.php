@@ -410,6 +410,22 @@ class PatientCareplanController extends Controller
             }
         }
 
+        if ($params->has('insurance'))
+        {
+            foreach ($params->get('insurance') as $id => $approved)
+            {
+                if (!$approved)
+                {
+                    CcdInsurancePolicy::destroy($id);
+                    continue;
+                }
+
+                $insurance = CcdInsurancePolicy::find($id);
+                $insurance->approved = true;
+                $insurance->save();
+            }
+        }
+
         $userRepo = new UserRepository();
 
         if ($patientId) {

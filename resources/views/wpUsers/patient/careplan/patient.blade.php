@@ -443,7 +443,7 @@ $user_info = array();
                                                                 <div class="radio-inline">
                                                                     <input id="approve-{{ $counter }}"
                                                                            name="insurance[{{ $insurance->id }}]"
-                                                                           value="0" type="radio">
+                                                                           value="1" type="radio">
                                                                     <label for="approve-{{ $counter }}"><span></span>Approve</label>
                                                                 </div>
 
@@ -452,7 +452,7 @@ $user_info = array();
                                                             <div class="radio-inline">
                                                                 <input id="delete-{{ $counter }}"
                                                                        name="insurance[{{ $insurance->id }}]"
-                                                                       value="1" type="radio">
+                                                                       value="0" type="radio">
                                                                 <label for="delete-{{ $counter }}"><span></span>Delete</label>
                                                             </div>
 
