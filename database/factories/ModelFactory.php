@@ -64,3 +64,17 @@ $factory->define(\App\Models\CPM\Biometrics\CpmSmoking::class, function (Faker\G
         'target' => rand(0, 8),
     ];
 });
+
+$factory->define(\App\Models\CCD\CcdInsurancePolicy::class, function (Faker\Generator $faker) {
+
+    return [
+//        'ccda_id' => '', this has to be passed in when calling the factory
+//        'patient_id' => '', this has to be passed in when calling the factory
+        'name' => $faker->company,
+        'type' => array_rand(['Medicare', 'Medicaid'], 1),
+        'policy_id' => $faker->swiftBicNumber,
+        'relation' => array_rand(['Self', 'G8', 'Next Of Kin'], 1),
+        'subscriber' => $faker->name,
+        'approved' => rand(0, 1),
+    ];
+});

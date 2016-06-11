@@ -204,6 +204,19 @@ class RegressionTest extends TestCase
 
         $patient = User::whereUserEmail($email)->first();
 
+        $ccda = \App\Models\CCD\Ccda::create([
+            'user_id' => $patient->ID,
+            'vendor_id' => 1,
+            'source' => 'test',
+            'xml' => 'test',
+            'json' => 'test',
+        ]);
+
+        factory(\App\Models\CCD\CcdInsurancePolicy::class, 3)->create([
+            'patient_id' => $patient->ID,
+            'ccda_id' => $ccda->id,
+        ]);
+
         $this->patients[] = $patient;
 
         $patientInfo = $patient->patientInfo()->first();
