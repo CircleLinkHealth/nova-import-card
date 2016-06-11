@@ -487,6 +487,9 @@ $user_info = array();
 
                         $('#insurance-name').focus();
 
+                        $('#policies-title').css('border-left', '15px solid #47beab')
+                                .css('padding-left', '5px');
+
                         $('.glow').addClass('animated flash');
 
                     });
