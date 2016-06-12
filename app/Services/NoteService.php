@@ -94,7 +94,7 @@ class NoteService
             ->whereBetween('created_at', [
                 $start, $end
             ])
-            ->orderBy('created_at', 'desc')->take('100')->get();
+            ->orderBy('created_at', 'desc')->take('200')->get();
 
     }
 

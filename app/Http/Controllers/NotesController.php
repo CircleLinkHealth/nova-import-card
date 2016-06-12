@@ -110,9 +110,8 @@ class NotesController extends Controller
 
         if (!empty($notes)) {
 
-            $notes = $this->formatter->formatDataForNotesListingReport($notes);
-
-        }
+            $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
+        }//dd($notes);
 
         $data = ['years' => array_reverse($years),
             'month_selected' => $month_selected,
@@ -121,7 +120,8 @@ class NotesController extends Controller
             'months' => $months,
             'notes' => $notes,
             'time_title' => $time_title,
-            'dateFilter' => $isDateFiltered
+            'dateFilter' => $isDateFiltered,
+            'results' => $notes
         ];
 
         return view('wpUsers.patient.note.list', $data);

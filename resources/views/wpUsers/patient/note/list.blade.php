@@ -4,6 +4,11 @@
 
 @section('content')
 
+    <?php
+
+    $webix = "data:" . json_encode(array_values($results)) . "";
+
+    ?>
     <div class="row main-form-block" style="margin-top:60px;">
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row ">
@@ -155,14 +160,9 @@
                                     this.adjustRowHeight("obs_key");
                                 },
 
-                                pager: {
-                                    animate: true,
-                                    container: "paging_container",// the container where the pager controls will be placed into
-                                    template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
-                                    size: 15, // the number of records per a page
-                                    group: 5   // the number of pages in the pager
-                                },
-                                {!! $notes !!}                         });
+                                <?php echo $webix  ?>
+                            });
+
 
                             obs_alerts_dtable.hideColumn("program_name");
 
@@ -205,9 +205,10 @@
                     <div style="text-align:center;margin:50px;">There are no patients notes to view.
                     </div>
                 @endif
+                <div id="rohstar" style="color: #00ACC1">
 
-            </div>
+{{--                    {!! $results->render()  !!}--}}
+                </div>
         </div>
     </div>
-    </div>
-@stop
+    @stop
