@@ -3,6 +3,7 @@
 use App\Activity;
 use App\CareItemUserValue;
 use App\CareItem;
+use App\Formatters\WebixFormatter;
 use App\Location;
 use App\CarePlan;
 use App\CarePlanItem;
@@ -34,6 +35,14 @@ use Illuminate\Support\Facades\Input;
 
 class ReportsController extends Controller
 {
+    private $service;
+    private $formatter;
+
+    public function __construct(ReportsService $service, WebixFormatter $formatter)
+    {
+        $this->service = $service;
+        $this->formatter = $formatter;
+    }
 
     //PROGRESS REPORT
     public function index(Request $request, $patientId = false)
@@ -41,12 +50,12 @@ class ReportsController extends Controller
 
         $user = User::find($patientId);
         $treating = (new CpmProblemService())->getDetails($user);
-        $biometrics  = (new ReportsService())->getBiometricsToMonitor($user);
+        $biometrics  = $this->service->getBiometricsToMonitor($user);
         $biometrics_data = array();
         $biometrics_array = array();
 
         foreach ($biometrics as $biometric) {
-            $biometrics_data[$biometric] = (new ReportsService())->getBiometricsData(str_replace(' ', '_', $biometric), $user);
+            $biometrics_data[$biometric] = $this->service->getBiometricsData(str_replace(' ', '_', $biometric), $user);
         }
 
         foreach ($biometrics_data as $key => $value) {
@@ -54,7 +63,7 @@ class ReportsController extends Controller
             if ($value != null) {
                 $first = reset($value);
                 $last = end($value);
-                $changes = (new ReportsService())->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name, (new ReportsService())->getTargetValueForBiometric($bio_name, $user));
+                $changes = $this->service->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name, (new ReportsService())->getTargetValueForBiometric($bio_name, $user));
 
                 $biometrics_array[$bio_name]['change'] = $changes['change'];
                 $biometrics_array[$bio_name]['progression'] = $changes['progression'];
@@ -69,8 +78,8 @@ class ReportsController extends Controller
             //$first = reset($array);
             if ($value) {
                 foreach ($value as $key => $value) {
-                    $biometrics_array[$bio_name]['unit'] = (new ReportsService())->biometricsUnitMapping(str_replace('_', ' ', $bio_name));
-                    $biometrics_array[$bio_name]['target'] = (new ReportsService())->getTargetValueForBiometric($bio_name, $user, false);
+                    $biometrics_array[$bio_name]['unit'] = $this->service->biometricsUnitMapping(str_replace('_', ' ', $bio_name));
+                    $biometrics_array[$bio_name]['target'] = $this->service->getTargetValueForBiometric($bio_name, $user, false);
                     $biometrics_array[$bio_name]['reading'] = intval($value->Avg);
                     if (intval($value->Avg) > $biometrics_array[$bio_name]['max']) {
                         $biometrics_array[$bio_name]['max'] = intval($value->Avg);
@@ -88,7 +97,7 @@ class ReportsController extends Controller
         $provider = User::find($user->leadContactID);
 
         //Medication Tracking:
-        $medications = (new ReportsService())->getMedicationStatus($user, false);
+        $medications = $this->service->getMedicationStatus($user, false);
         
         $data = [
             'treating' => $treating,
@@ -369,8 +378,7 @@ class ReportsController extends Controller
             }
         }
 
-        $progressReport = new ReportsService();
-        $feed = $progressReport->progress($wpUser->ID);
+        $feed = $this->service->progress($wpUser->ID);
 
         return json_encode($feed);
     }
@@ -392,8 +400,7 @@ class ReportsController extends Controller
             }
         }
 
-        $progressReport = new ReportsService();
-        $feed = $progressReport->careplan($wpUser->ID);
+        $feed = $this->service->careplan($wpUser->ID);
 
         return response()->json($feed);
     }
@@ -403,8 +410,10 @@ class ReportsController extends Controller
         if (!$patientId) {
             return "Patient Not Found..";
         }
-        $reportService = new ReportsService();
-        $careplan = $reportService->carePlanGenerator([$patientId]);
+
+        $patient = User::find($patientId);
+
+        $careplan = $this->formatter->formatDataForViewPrintCareplanReport(array($patient));
 
         if(!$careplan){
             return 'Careplan not found...';
@@ -446,7 +455,7 @@ class ReportsController extends Controller
         $biometrics_array = array();
 
         foreach ($biometrics as $biometric) {
-            $biometrics_data[$biometric] = (new ReportsService())->getBiometricsData($biometric, $patient);
+            $biometrics_data[$biometric] = $this->service->getBiometricsData($biometric, $patient);
         }            //debug($biometrics_data);
 
         foreach ($biometrics_data as $key => $value) {
@@ -466,7 +475,6 @@ class ReportsController extends Controller
 
         return view('wpUsers.patient.biometric-chart', ['patient' => $patient, 'biometrics_array' => $biometrics_array]);
     }
-
 
     public function excelReportT1()
     {
@@ -542,8 +550,7 @@ class ReportsController extends Controller
             */
         })->export('xls');
     }
-
-
+    
     public function excelReportT2()
     {
         // get all users with paused ccm_status
@@ -677,7 +684,6 @@ class ReportsController extends Controller
             */
         })->export('xls');
     }
-
 
     public function excelReportT3()
     {

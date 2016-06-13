@@ -875,24 +875,68 @@ class ReportsService
         }
 
         foreach ($careplanReport[$user->ID]['biometrics'] as $metric) {
+
             $biometric = $user->cpmBiometrics->where('name', $metric)->first();
             $biometric_values = app(config('cpmmodelsmap.biometrics')[$biometric->type])->getUserValues($user);
 
+            if($biometric_values){
 
-            if(($biometric_values)){
-                if (($biometric_values['starting'] == '')) {
-                    $biometric_values['starting'] = 'TBD';
+                //Check to see whether the user has a starting value
+                if ($biometric_values['starting'] == '') {
+                    $biometric_values['starting'] = 'N/A';
                 }
 
-                if (($biometric_values['target'] == '')) {
+                //Check to see whether the user has a target value
+                if ($biometric_values['target'] == '') {
                     $biometric_values['target'] = 'TBD';
                 }
+
+                //If no values are retrievable, then default to these:
+            } else {
+                $biometric_values['starting'] = 'N/A';
+                $biometric_values['target'] = 'TBD';
             }
 
+            //Special verb use for each biometric
+            if($metric == 'Blood Pressure'){
+
+                if($biometric_values['starting'] == 'N/A') {
+
+                    $biometric_values['verb'] = 'Regulate';
+
+                } else {
+
+                    $biometric_values['verb'] = 'Maintain';
+                }
+
+            } else if ($metric == 'Weight') {
+
+                $biometric_values['verb'] = 'Maintain';
+
+            } else {
+
+                $biometric_values['verb'] = 'Raise';
+
+                if ($biometric_values['starting'] != "N/A") {
+
+                    $starting = explode('/', $biometric_values['starting']);
+                    $starting = $starting[0];
+                    $target = explode('/', $biometric_values['target']);
+                    $target = $target[0];
+
+                    if ($starting > $target) {
+                        $biometric_values['verb'] = 'Lower';
+
+                    }
+                };
+            }
 
             $careplanReport[$user->ID]['bio_data'][$metric]['target'] = $biometric_values['target'] . ReportsService::biometricsUnitMapping($metric);
             $careplanReport[$user->ID]['bio_data'][$metric]['starting'] = $biometric_values['starting'] . ReportsService::biometricsUnitMapping($metric);
+            $careplanReport[$user->ID]['bio_data'][$metric]['verb'] = $biometric_values['verb'];
+
         }
+
 
         //Medications List
         if($user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->first()){
@@ -991,5 +1035,6 @@ class ReportsService
             'location_id' => $locationId,
         ]);
     }
+    
 
 }
