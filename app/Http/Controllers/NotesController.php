@@ -55,7 +55,7 @@ class NotesController extends Controller
 
         $input = $request->all();
 
-        $isDateFiltered = false;
+        $isDateFiltered = true;
 
         //TIME FILTERS
 
@@ -70,30 +70,19 @@ class NotesController extends Controller
 
             //time title for view
             $time_title = $month_selected_text . ' ' . $year_selected;
-            $isDateFiltered = true;
 
         } //if user resets time
-        else if (isset($input['reset'])) {
+        else {
             $time = Carbon::now();
-            $start = Carbon::now()->subYears(5)->format('Y-m-d');
-            $end = Carbon::now()->addYears(5)->format('Y-m-d');
+            $start = Carbon::now()->format('Y-m-d');
+            $end = Carbon::now()->format('Y-m-d');
             $month_selected_text = $time->format('F');
-            $month_selected = '';
-            $year_selected = '';
+            $month_selected = $time->format('m');
+            $year_selected = $time->format('Y');
 
-            //time title for view
-            $time_title = 'All Notes';
+            $time_title = $month_selected_text . ' ' . $year_selected;
 
             //page first loads
-        } else {
-            $time = Carbon::now();
-            $start = Carbon::now()->subYears(5)->format('Y-m-d');
-            $end = Carbon::now()->addYears(5)->format('Y-m-d');
-            $month_selected_text = $time->format('F');
-            $month_selected = '';
-            $year_selected = '';
-            //time title for view
-            $time_title = 'All Notes';
         }
 
         $years = $this->service->getYearsArray();

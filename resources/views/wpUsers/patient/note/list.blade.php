@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="col-sm-3">
-                    <h4 class="time-report__month">{{$time_title}}</h4>
+                    <h4 class="time-report__month"></h4>
                 </div>
                 {!! Form::open(array('url' => URL::route('patient.note.listing'), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
                 <div class="form-group  pull-right" style="margin-top:10px; ">
@@ -28,7 +28,7 @@
                                 data-size="10" style="display: none;">
                             <option value="">Select Month</option>
                             @for($i = 0; $i < count($months); $i++)
-                                <option value="{{$i+1}}" @if($month_selected == $i+1 && $dateFilter) {{'selected'}} @endif>{{$months[$i]}}</option>
+                                <option value="{{$i+1}}" @if($month_selected == $i+1) {{'selected'}} @endif>{{$months[$i]}}</option>
                             @endfor
                         </select>
 
@@ -38,14 +38,11 @@
                                 <option value="">Select Year</option>
                             @foreach($years as $year)
                                     <option value="{{$year}}"
-                                            @if($year_selected == $year && $dateFilter){{'selected'}}@endif>{{$year}}</option>
+                                            @if($year_selected == $year){{'selected'}}@endif>{{$year}}</option>
                                 @endforeach
                             </select>
                         <button type="submit" value="search" name="find" id="find" class="btn btn-primary">Go</button>
                         {!! Form::close() !!}
-                            @if($dateFilter)
-                                <a href="{{ URL::route('patient.note.listing') }}" class="btn btn-primary">Reset</a>
-                            @endif
                         </div>
                     </div>
                 </div>
@@ -160,6 +157,14 @@
                                     this.adjustRowHeight("obs_key");
                                 },
 
+                                pager: {
+                                    container: "paging_container",// the container where the pager controls will be placed into
+                                    template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
+                                    size: 15, // the number of records per a page
+                                    group: 5   // the number of pages in the pager
+                                },
+
+
                                 <?php echo $webix  ?>
                             });
 
@@ -202,7 +207,7 @@
                         </div>
                 </div>
                 @else
-                    <div style="text-align:center;margin:50px;">There are no patients notes to view.
+                    <div style="text-align:center;margin:50px;">There are no patients notes to view this month.
                     </div>
                 @endif
                 <div id="rohstar" style="color: #00ACC1">
