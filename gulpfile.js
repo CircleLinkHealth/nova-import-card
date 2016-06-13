@@ -1,3 +1,5 @@
+var gulp = require('gulp');
+
 var elixir = require('laravel-elixir');
 
 elixir.config.js.browserify.transformers.push({
@@ -22,6 +24,7 @@ elixir(function(mix) {
     mix.less(['/css/wpstyle.less'], 'public/css/wpstyle.css');
     mix.less(['/css/app.less'], 'public/css/stylesheet.css');
     //mix.browserify('uploader.js');
+    mix.browserify('careplan.js');
     //mix.scripts([
     //    'resources/assets/js/material.min.js'
     //], 'public/js/scripts.js');

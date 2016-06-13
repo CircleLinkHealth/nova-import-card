@@ -84,4 +84,102 @@ $new_user = false;
     @endif
 
     {!! Form::close() !!}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- navigation bar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <a class="navbar-brand"><i class="glyphicon glyphicon-bullhorn"></i> Vue Events Bulletin Board</a>
+        </div>
+    </nav>
+
+    <!-- main body of our application -->
+    <div class="container" id="events">
+
+        <!-- add an event form -->
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>Add an Event</h3>
+                </div>
+                <div class="panel-body">
+
+                    <div class="form-group">
+                        <input class="form-control" placeholder="Event Name" v-model="event.name">
+                    </div>
+
+                    <div class="form-group">
+                        <textarea class="form-control" placeholder="Event Description" v-model="event.description"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="date" class="form-control" placeholder="Date" v-model="event.date">
+                    </div>
+
+                    <button class="btn btn-primary" v-on:click.stop.prevent="addEvent()">Submit</button>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- show the events -->
+        <div class="col-sm-6">
+            <div class="list-group">
+                <template v-for="eventitem in events">
+                <div href="#" class="list-group-item" v-on:submit.prevent v-if="eventitem.name">
+                    <h4 class="list-group-item-heading">
+                        <i class="glyphicon glyphicon-bullhorn" v-if="eventitem.name"></i>
+                        @{{ eventitem.name }}
+                        <textarea v-model="eventitem.name" id="event-edit-@{{ $index }}" style="display:none;">@{{ eventitem.name }}</textarea>
+                    </h4>
+
+                    <h5>
+                        <i class="glyphicon glyphicon-calendar" v-if="eventitem.date"></i>
+                        @{{ eventitem.date }}
+                    </h5>
+
+                    <p class="list-group-item-text" v-if="eventitem.description">@{{ eventitem.description }}</p>
+                    <button class="btn btn-xs btn-primary" v-if="eventitem.description" v-on:click.stop.prevent="deleteEvent($index, $event)" >Delete</button>
+                    <button class="btn btn-xs btn-danger" v-if="eventitem.description" v-on:click.stop.prevent="editEvent($index, $event)">Edit</button>
+                </div>
+                </template>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <!-- JS -->
+    <script src="/js/careplan.js"></script>
+
+
 @stop
