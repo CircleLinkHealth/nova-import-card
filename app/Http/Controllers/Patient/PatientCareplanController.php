@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Patient;
 
+use App\Formatters\WebixFormatter;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
@@ -230,7 +231,8 @@ class PatientCareplanController extends Controller
             // add p to datetime prefix
             $prefix = $datetimePrefix . '-' . $p;
             $user = User::find($user_id);
-            $careplan = $reportService->carePlanGenerator(array($user));
+            $formatter = new WebixFormatter();
+            $careplan = $formatter->formatDataForViewPrintCareplanReport(array($user));
             $careplan = $careplan[$user_id];
             if (empty($careplan)) {
                 return false;

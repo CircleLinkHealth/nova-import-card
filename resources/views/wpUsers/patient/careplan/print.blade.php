@@ -3,29 +3,13 @@
 @endif
 
 <?php
-if (!function_exists('biometricGoal')) {
-    function biometricGoal($starting, $target, $bp = false)
-    {
-        $starting = explode('/', $starting);
-        $starting = $starting[0];
-        $target = explode('/', $target);
-        $target = $target[0];
-        $verb = 'Raise';
-        if ($bp == 'Blood Pressure') {
-            $verb = 'Maintain';
-        };
-        if ($bp == 'Weight') {
-            $verb = 'Maintain';
-        };
-        return ($starting > $target) ? 'Lower' : $verb;
-    }
-}
+
 if (isset($patient) && !empty($patient)) {
     $billing = null;
     $lead = null;
     if (!empty($patient->getBillingProviderIDAttribute())) $billing = App\User::find($patient->getBillingProviderIDAttribute());
     if (!empty($patient->getLeadContactIDAttribute())) $lead = App\User::find($patient->getLeadContactIDAttribute());
-    
+
     $today = \Carbon\Carbon::now()->toFormattedDateString();
 // $provider = App\User::find($patient->getLeadContactIDAttribute());
 }
@@ -116,8 +100,8 @@ if (isset($patient) && !empty($patient)) {
                             <ul class="subareas__list">
                                 <li class="subareas__item subareas__item--wide col-sm-12">
                                     @foreach(array_reverse($biometrics) as $key => $value)
-                                        <div class="col-xs-5 print-row text-bold">{{ biometricGoal($value['starting'], $value['target'], $key)}} {{$key}}</div>
-                                        <div class="col-xs-4 print-row text-bold">{{(biometricGoal($value['starting'], $value['target'], $key) == 'Maintain')? 'at' :  'to' }} {{str_replace('sbp','mm Hg', $value['target'])}}</div>
+                                        <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
+                                        <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Maintain') ? 'at' :  'to' }} {{str_replace('sbp','mm Hg', $value['target'])}}</div>
                                         <div class="col-xs-3 print-row">
                                             from {{str_replace('sbp','mm Hg', $value['starting'])}}</div>
                                     @endforeach
