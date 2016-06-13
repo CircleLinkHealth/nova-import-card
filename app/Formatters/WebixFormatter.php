@@ -180,27 +180,35 @@ class WebixFormatter implements ReportFormatter
                     $biometric_values['verb'] = 'Maintain';
                 }
 
-            } else if ($metric == 'Weight') {
+            }
+
+            if ($metric == 'Weight') {
 
                 $biometric_values['verb'] = 'Maintain';
 
-            } else {
+            }
 
-                $biometric_values['verb'] = 'Raise';
+            if($metric == 'Blood Sugar'){
+                if($biometric_values['starting'] == 'N/A' || $biometric_values['target'] == 'TBD') {
 
-                if ($biometric_values['starting'] != "N/A") {
+                    $biometric_values['verb'] = 'Regulate';
 
-                    $starting = explode('/', $biometric_values['starting']);
-                    $starting = $starting[0];
-                    $target = explode('/', $biometric_values['target']);
-                    $target = $target[0];
+                } else {
 
-                    if ($starting > $target) {
+                    if ($biometric_values['starting'] > $biometric_values['target']) {
+
                         $biometric_values['verb'] = 'Lower';
 
+                    } else {
+
+                        $biometric_values['verb'] = 'Raise';
+
                     }
-                };
+                }
             }
+
+
+
 
             $careplanReport[$user->ID]['bio_data'][$metric]['target'] = $biometric_values['target'] . ReportsService::biometricsUnitMapping($metric);
             $careplanReport[$user->ID]['bio_data'][$metric]['starting'] = $biometric_values['starting'] . ReportsService::biometricsUnitMapping($metric);
