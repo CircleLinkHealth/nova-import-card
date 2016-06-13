@@ -434,10 +434,19 @@ $user_info = array();
 
                                                             @if(!empty($insurance->type))
                                                                 {{ $insurance->type }}
+                                                                @else
+                                                                {{ 'Insurance type is not available' }}
+                                                                @endif
+
+
+                                                            @if(!empty($insurance->policy_id))
+                                                                    / {{ $insurance->policy_id }}
                                                             @else
-                                                                Insurance type is not available.
+                                                                    {{ 'Policy ID is not available' }}
                                                             @endif
+
                                                             <br>
+
                                                             @if(! $insurance->approved)
 
                                                                 <div class="radio-inline">
