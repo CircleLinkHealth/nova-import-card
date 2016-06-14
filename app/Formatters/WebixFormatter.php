@@ -186,11 +186,11 @@ class WebixFormatter implements ReportFormatter
 
                 if ($biometric_values['starting'] > $biometric_values['target']) {
 
-                    $biometric_values['verb'] = 'Lower';
+                    $biometric_values['verb'] = 'Decrease';
 
                 } else {
 
-                    $biometric_values['verb'] = 'Raise';
+                    $biometric_values['verb'] = 'Increase';
 
                 }
 
