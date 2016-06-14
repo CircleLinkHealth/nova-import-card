@@ -171,7 +171,7 @@ class WebixFormatter implements ReportFormatter
             //Special verb use for each biometric
             if($metric == 'Blood Pressure'){
 
-                if($biometric_values['starting'] == 'N/A') {
+                if($biometric_values['starting'] == 'N/A' || $biometric_values['target'] == 'TBD') {
 
                     $biometric_values['verb'] = 'Regulate';
 
@@ -184,7 +184,15 @@ class WebixFormatter implements ReportFormatter
 
             if ($metric == 'Weight') {
 
-                $biometric_values['verb'] = 'Maintain';
+                if ($biometric_values['starting'] > $biometric_values['target']) {
+
+                    $biometric_values['verb'] = 'Lower';
+
+                } else {
+
+                    $biometric_values['verb'] = 'Raise';
+
+                }
 
             }
 
