@@ -72,16 +72,16 @@ class NotesController extends Controller
             $time_title = $month_selected_text . ' ' . $year_selected;
 
         } //if user resets time
-        else {
+            else
+        {
             $time = Carbon::now();
-            $start = Carbon::now()->format('Y-m-d');
-            $end = Carbon::now()->format('Y-m-d');
+            $start = $time->startOfMonth()->format('Y-m-d');
+            $end = $time->endOfMonth()->format('Y-m-d');
             $month_selected_text = $time->format('F');
             $month_selected = $time->format('m');
             $year_selected = $time->format('Y');
 
             $time_title = $month_selected_text . ' ' . $year_selected;
-
             //page first loads
         }
 
@@ -296,21 +296,8 @@ class NotesController extends Controller
     {
         $input = $input->all();
 
-        if (isset($input['careteam'])) {
-            $activity = Activity::findOrFail($input['noteId']);
-            $activityService = new ActivityService;
-            $logger = User::find($input['logger_id']);
-            $logger_name = $logger->getFullNameAttribute();
-            $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId)) . '/' . $activity->id;
+        $this->service->forwardNote($input, $patientId);
 
-            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_by', 'meta_value' => $logger->ID]);
-            $noteMeta[] = new ActivityMeta(['meta_key' => 'email_sent_to', 'meta_value' => implode(", ", $input['careteam'])]);
-            $activity->meta()->saveMany($noteMeta);
-
-            $result = $activityService->sendNoteToCareTeam($input['careteam'], $linkToNote, $activity->performed_at, $input['patient_id'], $logger_name, false);
-
-            return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Note Successfully Sent!']);
-        }
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Something went wrong...']);
     }
 }

@@ -9,6 +9,7 @@ use App\Note;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
 class NoteService
@@ -41,19 +42,14 @@ class NoteService
         //if emails are to be sent
 
         if (array_key_exists('careteam', $input)) {
-            //Log to Meta Table
-            foreach ($input['careteam'] as $item){
-                    // @todo add support for body and subject
-                $this->saveMailLogForNote($note, $logger, $patient, '', '');
-            }
 
-            (new ActivityService())->sendNoteToCareTeam($input['careteam'], $linkToNote, $input['performed_at'], $input['patient_id'], $logger_name, true, $note->isTCM);
+            $this->sendNoteToCareTeam($note, $input['careteam'], $linkToNote, true);
 
         } else if ($note->isTCM) {
 
             $user_care_team = $patient->sendAlertTo;
 
-            $result = (new ActivityService())->sendNoteToCareTeam($user_care_team, $linkToNote, $input['performed_at'], $input['patient_id'], $logger_name, true, $note->isTCM);
+            $result = $this->sendNoteToCareTeam($note, $user_care_team, $linkToNote, true);
         }
     }
 
@@ -162,20 +158,96 @@ class NoteService
 //        }
     }
 
-    public function saveMailLogForNote($note, User $sender, User $receiver, $body, $subject){
+    //MAIL HELPERS
 
-        MailLog::create([
-            'sender_email' => $sender->user_email,
-            'receiver_email' => $receiver->user_email,
-            'body' => '',
-            'subject' => '',
-            'type' => 'note',
-            'sender_cpm_id' => $sender->ID,
-            'receiver_cpm_id' => $receiver->ID,
-            'created_at' => $note->created_at,
-            'note_id' => $note->id
-        ]);
+    public function sendNoteToCareTeam(Note $note, &$careteam, $url, $newNoteFlag)
+    {
+
+        /*
+         *  New note: "Please see new note for patient [patient name]: [link]"
+         *  Old/Fw'd note: "Please see forwarded note for patient [patient  name], created on [creation date] by [note creator]: [link]
+         */
+
+        $patient = User::find($note->patient_id);
+        $sender = User::find($note->logger_id);
+
+        for ($i = 0; $i < count($careteam); $i++) {
+
+            $receiver = User::find($careteam[$i]);
+
+            if(is_object($receiver) == false){
+                continue;
+            }
+
+            $email = $receiver->user_email;
+
+            $performed_at = Carbon::parse($note->performed_at)->toFormattedDateString();
+
+            $data = array(
+                'patient_name' => $patient->fullName,
+                'url' => $url,
+                'time' => $performed_at,
+                'logger' => $sender->fullName
+            );
+
+            if ($newNoteFlag || $note->isTCM) {
+                $email_view = 'emails.newnote';
+                $email_subject = 'Urgent Patient Note from CircleLink Health';
+            } else {
+                $email_view = 'emails.existingnote';
+                $email_subject = 'You have received a new note notification from CarePlan Manager';
+            }
+
+            Mail::send($email_view, $data, function ($message) use ($email, $email_subject) {
+                $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
+
+                //Forwards notes to Linda
+                $message->cc('Lindaw@circlelinkhealth.com');
+                $message->to($email)->subject($email_subject);
+            });
+
+            MailLog::create([
+                'sender_email' => $sender->user_email,
+                'receiver_email' => $receiver->user_email,
+                'body' => '',
+                'subject' => $email_subject,
+                'type' => 'note',
+                'sender_cpm_id' => $sender->ID,
+                'receiver_cpm_id' => $receiver->ID,
+                'created_at' => $note->created_at,
+                'note_id' => $note->id
+            ]);
+
+        }
+        return true;
 
     }
+
+    public function forwardNote($input, $patientId){
+
+        if (isset($input['careteam'])) {
+
+            $note = Note::findOrFail($input['noteId']);
+
+            $author = User::find($input['logger_id']);
+
+            if(is_object($author)){
+                $author_name = $author->fullName;
+            } else {
+                $author_name = '';
+            }
+
+            $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId)) . '/' . $note->id;
+
+            $result = $this->sendNoteToCareTeam(
+                $note,
+                $input['careteam'],
+                $linkToNote,
+                false);
+        }
+
+        return true;
+    }
+
 
 }
