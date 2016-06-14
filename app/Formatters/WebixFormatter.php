@@ -177,21 +177,36 @@ class WebixFormatter implements ReportFormatter
 
                 } else {
 
-                    $biometric_values['verb'] = 'Maintain';
+                    if ($biometric_values['starting'] > $biometric_values['target']) {
+
+                        $biometric_values['verb'] = 'Decrease';
+
+                    } else {
+
+                        $biometric_values['verb'] = 'Increase';
+
+                    }
                 }
 
             }
 
             if ($metric == 'Weight') {
 
-                if ($biometric_values['starting'] > $biometric_values['target']) {
+                if($biometric_values['starting'] == 'N/A' || $biometric_values['target'] == 'TBD') {
 
-                    $biometric_values['verb'] = 'Decrease';
+                    $biometric_values['verb'] = 'Regulate';
 
                 } else {
 
-                    $biometric_values['verb'] = 'Increase';
+                    if ($biometric_values['starting'] > $biometric_values['target']) {
 
+                        $biometric_values['verb'] = 'Decrease';
+
+                    } else {
+
+                        $biometric_values['verb'] = 'Increase';
+
+                    }
                 }
 
             }
@@ -205,11 +220,11 @@ class WebixFormatter implements ReportFormatter
 
                     if ($biometric_values['starting'] > $biometric_values['target']) {
 
-                        $biometric_values['verb'] = 'Lower';
+                        $biometric_values['verb'] = 'Decrease';
 
                     } else {
 
-                        $biometric_values['verb'] = 'Raise';
+                        $biometric_values['verb'] = 'Increase';
 
                     }
                 }
