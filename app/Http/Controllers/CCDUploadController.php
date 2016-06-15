@@ -1,10 +1,10 @@
 <?php namespace App\Http\Controllers;
 
 use App\CLH\CCD\ItemLogger\CcdItemLogger;
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
-use App\CLH\CCD\QAImportSummary;
-use App\CLH\CCD\CcdVendor;
+use App\Models\CCD\QAImportSummary;
+use App\Models\CCD\CcdVendor;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 use App\Location;
@@ -101,10 +101,11 @@ class CCDUploadController extends Controller
                     ->whereNull('patient_id');
             }])
             ->get()
-            ->toArray();
+            ->sortBy('name')
+            ->all();
 
         JavaScript::put( [
-            'qaSummaries' => $qaSummaries,
+            'qaSummaries' => array_values($qaSummaries),
         ] );
 
         return view( 'CCDUploader.uploadedSummary' );

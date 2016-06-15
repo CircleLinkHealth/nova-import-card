@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers\CCDViewer;
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;

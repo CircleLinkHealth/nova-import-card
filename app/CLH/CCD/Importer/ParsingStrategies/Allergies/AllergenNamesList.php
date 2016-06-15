@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Allergies;
 
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\AllergyImport;
 use App\CLH\CCD\ItemLogger\CcdAllergyLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;

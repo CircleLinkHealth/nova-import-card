@@ -21,8 +21,14 @@ elixir(function(mix) {
     // mix.phpUnit([
     //     'tests/AprimaApi/*'
     // ]);
-    mix.less(['/css/wpstyle.less'], 'public/css/wpstyle.css');
-    mix.less(['/css/app.less'], 'public/css/stylesheet.css');
+    // mix.less(['/css/wpstyle.less'], 'public/css/wpstyle.css');
+
+    //PLEASE DON'T CHANGE THIS - michalis
+    mix.less([
+        '/css/app.less',
+        '/css/animate.min.css'
+    ], 'public/css/stylesheet.css');
+
     //mix.browserify('uploader.js');
     mix.browserify('careplan.js');
     //mix.scripts([

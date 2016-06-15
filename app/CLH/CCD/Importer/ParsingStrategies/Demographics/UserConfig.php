@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Demographics;
 
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\Importer\ParsingStrategies\Facades\UserMetaParserHelpers;
 use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;

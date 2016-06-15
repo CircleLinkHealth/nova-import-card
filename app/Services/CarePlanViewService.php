@@ -107,17 +107,7 @@ class CarePlanViewService
 
         $patientMiscs = $patient->cpmMiscs()->get();
         $patientMiscsIds = $patientMiscs->lists('id')->all();
-
-        $transCare = new Section();
-        $transCare->name = 'cpmMiscs';
-        $transCare->title = 'Transitional Care Management';
-        $transCare->miscs = $template->cpmMiscs()->whereIn('name', [
-            CpmMisc::TRACK_CARE_TRANSITIONS,
-        ])->orderBy('pivot_ui_sort')->get();
-        $transCare->patientMiscsIds = $patientMiscsIds;
-        $transCare->patientMiscs = $patientMiscs->keyBy('id');
-
-
+        
         $bloodPressure = $patient->cpmBloodPressure()->firstOrNew([]);
         $bloodSugar = $patient->cpmBloodSugar()->firstOrNew([]);
         $smoking = $patient->cpmSmoking()->firstOrNew([]);
@@ -136,7 +126,6 @@ class CarePlanViewService
         //Add sections here in order
         $sections = [
             $biometrics,
-            $transCare,
         ];
         
         $biometrics = new Biometrics();
@@ -147,8 +136,7 @@ class CarePlanViewService
 
         return compact('sections', 'biometrics');
     }
-
-
+    
     public function carePlanThirdPage(CarePlan $carePlan, User $patient)
     {
         if (empty($carePlan)) return false;

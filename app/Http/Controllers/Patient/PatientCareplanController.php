@@ -1,6 +1,8 @@
 <?php namespace App\Http\Controllers\Patient;
 
+use App\Formatters\WebixFormatter;
 use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
 use App\CarePlan;
@@ -230,7 +232,8 @@ class PatientCareplanController extends Controller
             // add p to datetime prefix
             $prefix = $datetimePrefix . '-' . $p;
             $user = User::find($user_id);
-            $careplan = $reportService->carePlanGenerator(array($user));
+            $formatter = new WebixFormatter();
+            $careplan = $formatter->formatDataForViewPrintCareplanReport(array($user));
             $careplan = $careplan[$user_id];
             if (empty($careplan)) {
                 return false;
@@ -364,8 +367,24 @@ class PatientCareplanController extends Controller
         } else if ($patient->carePlanStatus == 'draft') {
             $showApprovalButton = true;
         }
+        
+        $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
-        return view('wpUsers.patient.careplan.patient', compact(['patient', 'userMeta', 'userConfig', 'states', 'locations', 'timezones', 'messages', 'patientRoleId', 'programs', 'programId', 'showApprovalButton', 'carePlans']));
+        return view('wpUsers.patient.careplan.patient', compact([
+            'patient', 
+            'userMeta', 
+            'userConfig', 
+            'states', 
+            'locations', 
+            'timezones', 
+            'messages', 
+            'patientRoleId', 
+            'programs', 
+            'programId', 
+            'showApprovalButton', 
+            'carePlans',
+            'insurancePolicies',
+        ]));
     }
 
 
@@ -390,6 +409,22 @@ class PatientCareplanController extends Controller
             $user = User::with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->find($patientId);
             if (!$user) {
                 return response("User not found", 401);
+            }
+        }
+
+        if ($params->has('insurance'))
+        {
+            foreach ($params->get('insurance') as $id => $approved)
+            {
+                if (!$approved)
+                {
+                    CcdInsurancePolicy::destroy($id);
+                    continue;
+                }
+
+                $insurance = CcdInsurancePolicy::find($id);
+                $insurance->approved = true;
+                $insurance->save();
             }
         }
 

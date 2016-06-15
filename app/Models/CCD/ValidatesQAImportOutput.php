@@ -1,9 +1,10 @@
 <?php
 
-namespace App\CLH\CCD;
+namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
-use App\CLH\CCD\QAImportSummary;
+use App\Models\CCD\QAImportSummary;
+use App\Models\CCD\Ccda;
 use App\User;
 use Carbon\Carbon;
 
@@ -41,8 +42,30 @@ trait ValidatesQAImportOutput
             return empty($dup) ? null : $dup->ID;
         };
 
+        $phoneCheck = function () use ($demographics) {
+            return ($demographics->cell_phone
+                || $demographics->home_phone
+                || $demographics->work_phone);
+        };
+
         $counter = function ($index) use ($output) {
             return count($output[$index]);
+        };
+
+        $hasStreetAddress = function () use ($demographics) {
+            return empty($demographics->street) ? false : true;
+        };
+
+        $hasCity = function () use ($demographics) {
+            return empty($demographics->city) ? false : true;
+        };
+
+        $hasState = function () use ($demographics) {
+            return empty($demographics->state) ? false : true;
+        };
+
+        $hasZip = function () use ($demographics) {
+            return empty($demographics->zip) ? false : true;
         };
 
 
@@ -55,10 +78,25 @@ trait ValidatesQAImportOutput
         $qaSummary->provider = $provider();
         $qaSummary->location = $location();
         $qaSummary->duplicate_id = $duplicateCheck();
+        $qaSummary->has_street_address = $hasStreetAddress();
+        $qaSummary->has_zip = $hasZip();
+        $qaSummary->has_city = $hasCity();
+        $qaSummary->has_state = $hasState();
+        $qaSummary->has_phone = $phoneCheck();
 
         $isFlagged = false;
 
-        if ($qaSummary->medications == 0 || $qaSummary->problems == 0 || empty($qaSummary->location) || empty($qaSummary->provider) || empty($qaSummary->name)) $isFlagged = true;
+        if ($qaSummary->medications == 0
+            || $qaSummary->problems == 0
+            || empty($qaSummary->location)
+            || empty($qaSummary->provider)
+            || empty($qaSummary->name)
+            || empty($qaSummary->has_street_address)
+            || empty($qaSummary->has_city)
+            || empty($qaSummary->has_state)
+            || empty($qaSummary->has_zip)
+            || ! $qaSummary->has_phone
+        ) $isFlagged = true;
 
         $qaSummary->flag = $isFlagged;
         $qaSummary->save();

@@ -8,7 +8,6 @@
 
 namespace App\Contracts;
 
-
 interface ReportFormatter
 {
     
@@ -22,7 +21,7 @@ interface ReportFormatter
 
     //public function formatDataForAllBillingReport();
 
-    //public function formatDataForAllViewPrintCareplanReport();
+    public function formatDataForViewPrintCareplanReport($users);
 
     //public function formatDataForPatientActivitiesReport();
 

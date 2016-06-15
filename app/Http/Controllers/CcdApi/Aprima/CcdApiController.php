@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers\CcdApi\Aprima;
 
 use App\CcmTimeApiLog;
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
 use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Repositories\CCDImporterRepository;
@@ -13,7 +13,7 @@ use App\Contracts\Repositories\UserRepository;
 use App\ForeignId;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\CLH\CCD\ValidatesQAImportOutput;
+use App\Models\CCD\ValidatesQAImportOutput;
 
 use App\PatientCareTeamMember;
 use App\PatientReports;
@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Mail;
 class CcdApiController extends Controller
 {
 
-    use ValidatesQAImportOutput;
+    use App\Models\CCD\ValidatesQAImportOutput;
 
     protected $api;
     protected $activities;
