@@ -36,6 +36,12 @@ class Note extends Model
 
     public function author()
     {
-        return $this->belongsTo('App\User', 'author_id', 'ID');    }
+        return $this->belongsTo('App\User', 'author_id', 'ID');    
+    }
+
+    public function program()
+    {
+        return $this->belongsTo('App\User', 'author_id', 'ID');
+    }
 
 }

@@ -32,9 +32,7 @@ class WebixFormatter implements ReportFormatter
             //ID
             $formatted_notes[$count]['patient_id'] = $note->patient_id;
 
-            //Program Name
-            $program = Program::find($note->patient->program_id);
-            if ($program) $formatted_notes[$count]['program_name'] = $program->display_name;
+            $formatted_notes[$count]['program_name'] = $note->patient->primaryProgram->display_name;
 
             //Provider Name
             $provider = User::find(intval($note->patient->billingProviderID));
