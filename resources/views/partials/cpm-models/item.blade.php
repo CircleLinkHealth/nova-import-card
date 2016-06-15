@@ -104,7 +104,7 @@
                 <!-- Modal -->
                 <div id="{{ $section->name }}-{{$i}}{{$item->id}}-Detail" class="modal fade text-left"
                      role="dialog">
-                    <div class="modal-dialog modal-lg">
+                    <div class="modal-dialog modal-md">
 
                         <!-- Modal content-->
                         <div class="modal-content">
@@ -115,7 +115,7 @@
                             </div>
                             <div class="modal-body">
                                 @if( $item->name == 'Medication List' )
-                                    @include('wpUsers.patient.careplan.items.medications')
+                                    @include('partials.ccd-models.items.medications')
                                 @else
                                     <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
                                           name="instructions[{{ $section->name }}][{{ $item->id }}]"

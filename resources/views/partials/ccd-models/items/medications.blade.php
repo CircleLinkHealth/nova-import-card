@@ -6,9 +6,8 @@
             <div class="list-group">
                 <template v-for="medicationitem in medications">
                 <div href="#" class="list-group-item" v-on:submit.prevent v-if="medicationitem.name">
-                    <h4 class="list-group-item-heading">
-                        <i class="glyphicon glyphicon-bullhorn" v-if="medicationitem.name"></i>
-                        @{{ medicationitem.name }}
+                    <h4 class="list-group-item-heading" v-if="medicationitem.name">
+                        <span id="medication-name-@{{ $index }}"><i class="glyphicon glyphicon-asterisk"></i> @{{ medicationitem.name }}</span>
                         <textarea v-model="medicationitem.name" id="medication-edit-@{{ $index }}" style="display:none;">@{{ medicationitem.name }}</textarea>
                     </h4>
 
@@ -18,8 +17,9 @@
                     </h5>
 
                     <p class="list-group-item-text" v-if="medicationitem.name">@{{ medicationitem.description }}</p>
-                    <button class="btn btn-xs btn-primary" v-if="medicationitem.name" v-on:click.stop.prevent="deleteEvent($index, $medication)" >Delete</button>
-                    <button class="btn btn-xs btn-danger" v-if="medicationitem.name" v-on:click.stop.prevent="editEvent($index, $medication)">Edit</button>
+                    <button class="btn btn-xs btn-danger medication-delete-btn" v-if="medicationitem.name" v-on:click.stop.prevent="deleteEvent($index, $medication)" >Delete</button>
+                    <button class="btn btn-xs btn-primary medication-edit-btn" v-if="medicationitem.name" v-on:click.stop.prevent="editEvent($index, $medication)">Edit</button>
+                    <button class="btn btn-xs btn-success medication-save-btn" id="medication-save-btn-@{{ $index }}" v-if="medicationitem.name" v-on:click.stop.prevent="storeEvent($index, $medication)" style="display:none;">Save</button>
                 </div>
                 </template>
 
@@ -50,4 +50,4 @@
 
 
     <!-- JS -->
-    <script src="/js/careplan.js"></script>
+    <script src="/js/medicationItem.js"></script>

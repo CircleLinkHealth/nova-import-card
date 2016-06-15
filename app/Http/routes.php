@@ -1,18 +1,41 @@
 <?php
 
+Route::get('CCDModelItems/MedicationListItem', 'CCDModelItems\MedicationListItemController@index');
+Route::post('CCDModelItems/MedicationListItem/store', 'CCDModelItems\MedicationListItemController@store');
+
+Route::get('CCDModelItems/ProblemsItem', 'CCDModelItems\ProblemsItemController@index');
+Route::post('CCDModelItems/ProblemsItem/store', 'CCDModelItems\ProblemsItemController@store');
+
+Route::get('CCDModelItems/AllergiesItem', 'CCDModelItems\AllergiesItemController@index');
+Route::post('CCDModelItems/AllergiesItem/store', 'CCDModelItems\AllergiesItem@store');
+
 // this is your GET AJAX route
 Route::get('/ajax/get', function () {
     // pass back some data
-    $data   = array('value' => 'some data');
+    $data   = array(
+        array(
+            'id' => 1,
+            'name' => 'Example Medication from server'),
+        array(
+            'id' => 2,
+            'name' => 'second Medication from server')
+    );
     // return a JSON response
     return  Response::json($data);
 });
 // this is your POST AJAX route
 Route::post('/ajax/post', function () {
     // pass back some data, along with the original data, just to prove it was received
-    $data   = array('value' => 'some data', 'input' => Request::input());
+    $medications = Input::all();
+    $string = '';
+    if(!empty($medications)) {
+        foreach($medications as $key => $value) {
+            // store medication
+            $string = $string .'--' . $key;
+        }
+    }
     // return a JSON response
-    return  Response::json($data);
+    return  Response::json($string);
 });
 
 //THIS IS FOR APRIMA ONLY

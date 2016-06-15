@@ -13,16 +13,27 @@ new Vue({
         // When the application loads, we want to call the method that initializes
         // some data
         this.fetchEvents();
+        this.loadUsers();
     },
     // Methods we want to use in our application are registered here
     methods: {
+
+        loadUsers: function() {
+            this.$http.get('/ajax/get', function(data, status, request){
+                console.log('STATUS: ' + status);
+                if(status == 200)
+                {
+                    this.medications = data;
+                }
+            });
+        },
 
         // We dedicate a method to retrieving and setting some data
         fetchEvents: function() {
             var medications = [
                 {
                     id: 1,
-                    name: 'Example Medication 1',
+                    name: 'Default',
                     //description: 'Toronto International Film Festival',
                     //date: '2015-09-10'
                 }
@@ -32,61 +43,53 @@ new Vue({
             this.$set('medications', medications);
         },
 
-        // ajax success
-        onSuccess: function(data, status, xhr) {
-                // with our success handler, we're just logging the data...
-                console.log(data, status, xhr);
-                // but you can do something with it if you like - the JSON is deserialised into an object
-                console.log(String(data.value).toUpperCase())
-        },
-
         // Adds an medication to the existing medications array
         addEvent: function() {
             if(this.medication.name) {
+                // add to array
                 this.medications.push(this.medication);
+
+                // reset form values
                 this.medication = { name: '', description: '', date: '' };
+
+                // save on server
+                this.postEvents();
             }
-            // we're not passing any data with the get route, though you can if you want
-            $.get( "/ajax/get", function( data ) {
-
-                alert( "Data Loaded: " + data );
-            });
-
-            // Send the data using post
-            var posting = $.post( "/ajax/post", this.medications );
-
-            // Put the results in a div
-            posting.done(function( data ) {
-                alert('posted!');
-                console.log(data);
-                // hide all textareas
-
-                // show edit buttons
-            });
         },
 
-        // Adds an medication to the existing medications array
+        // Edit an existing medicationon the array
         editEvent: function(index) {
+            // hide text
+            $('#medication-name-' + index).toggle();
+
             // show textarea
-            var editId = 'medication-edit-' + index;
-            $('#' + editId).toggle();
-            //alert(editId);
+            $('#medication-edit-' + index).toggle();
 
             // hide all edit buttons
+            $('.medication-edit-btn').hide();
+            $('.medication-delete-btn').hide();
 
             // show save button
+            $('#medication-save-btn-' + index).toggle();
         },
 
         // Adds an medication to the existing medications array
         storeEvent: function(index) {
+            // show text
+            $('#medication-name-' + index).toggle();
 
             // hide textarea
-            var editId = 'medication-edit-' + index;
-            $('#' + editId).toggle();
+            $('#medication-edit-' + index).toggle();
 
             // show all edit buttons
+            $('.medication-edit-btn').show();
+            $('.medication-delete-btn').show();
 
             // hide save button
+            $('#medication-save-btn-' + index).toggle();
+
+            // save on server
+            this.postEvents();
         },
 
         deleteEvent: function(index, e) {
@@ -94,22 +97,29 @@ new Vue({
             //e.stopPropagation();
             if(confirm("Are you sure you want to delete this medication?")) {
                 // $remove is a Vue convenience method similar to splice
-                //alert(index);
                 console.log(this.medications);
-                //this.medications.$remove(index);
-                /*
-                this.medications.push({ id: 5,
-                    name: 'The Martian Premiere',
-                    description: 'The Martian comes to theatres.',
-                    date: '2015-10-02' });
-                    */
                 Vue.delete(this.medications, index);
                 //this.medications.splice(index, 1);
                 console.log(this.medications);
-                //alert('done');
+                // save on server
+                this.postEvents();
                 return false;
             }
             return false;
+        },
+
+        postEvents: function(index, e) {
+
+            // Send the data using post
+            var posting = $.post( "/ajax/post", this.medications );
+            console.log(this.medications);
+            // Put the results in a div
+            posting.done(function( data ) {
+                console.log(data);
+                // hide all textareas
+
+                // show edit buttons
+            });
         }
     }
 });
