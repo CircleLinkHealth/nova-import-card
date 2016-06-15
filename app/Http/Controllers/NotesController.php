@@ -298,7 +298,7 @@ class NotesController extends Controller
 
         $this->service->forwardNote($input, $patientId);
 
-        return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Something went wrong...']);
+        return redirect()->route('patient.note.index', ['patient' => $patientId]);
     }
 }
 

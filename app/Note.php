@@ -19,7 +19,7 @@ class Note extends Model
     ];
 
 
-    public function user()
+    public function patient()
     {
         return $this->belongsTo('App\User', 'patient_id', 'ID');
     }
@@ -33,5 +33,9 @@ class Note extends Model
     {
         return $this->hasOne('App\Call');
     }
+
+    public function author()
+    {
+        return $this->belongsTo('App\User', 'author_id', 'ID');    }
 
 }

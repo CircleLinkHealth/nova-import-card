@@ -92,7 +92,9 @@ class NoteService
             ->whereBetween('performed_at', [
                 $start, $end
             ])
-            ->orderBy('performed_at', 'desc')->get();
+            ->orderBy('performed_at', 'desc')
+            ->with('patient')->with('mail')->with('call')->with('author')
+            ->get();
 
     }
 

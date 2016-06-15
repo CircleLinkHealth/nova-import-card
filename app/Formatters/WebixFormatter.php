@@ -24,25 +24,20 @@ class WebixFormatter implements ReportFormatter
         $formatted_notes = array();
 
         foreach ($notes as $note) {
-            $patient = User::find($note->patient_id);
-
-            if (!$patient) {
-                continue;
-            }
 
             $formatted_notes[$count]['id'] = $note->id;
 
             //Display Name
-            $formatted_notes[$count]['patient_name'] = $patient->display_name ? $patient->display_name : '';
+            $formatted_notes[$count]['patient_name'] = $note->patient->display_name ? $note->patient->display_name : '';
             //ID
             $formatted_notes[$count]['patient_id'] = $note->patient_id;
 
             //Program Name
-            $program = Program::find($patient->program_id);
+            $program = Program::find($note->patient->program_id);
             if ($program) $formatted_notes[$count]['program_name'] = $program->display_name;
 
             //Provider Name
-            $provider = User::find(intval($patient->billingProviderID));
+            $provider = User::find(intval($note->patient->billingProviderID));
             if (is_object($provider)) {
                 $formatted_notes[$count]['provider_name'] = $provider->fullName;
             } else {
@@ -50,7 +45,7 @@ class WebixFormatter implements ReportFormatter
             }
 
             //Author
-            $author = User::find($note->author_id);
+            $author = $note->author;
             if (is_object($author)) {
                 $formatted_notes[$count]['author_name'] = $author->display_name;
             } else {
@@ -68,18 +63,13 @@ class WebixFormatter implements ReportFormatter
             //TAGS
             $formatted_notes[$count]['tags'] = '';
 
-            $mails = MailLog::where('note_id', $note->id)
-                ->get();
-
-            if (count($mails) > 0) {
+            if (($note->mail != null)) {
                 $formatted_notes[$count]['tags'] = '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
             }
 
-            $call = Call::where('note_id', $note->id)
-                ->first();
 
-            if (is_object($call)) {
-                if ($call->status == 'reached') {
+            if (($note->call != null)) {
+                if ($note->call->status == 'reached') {
                     $formatted_notes[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
                 }
             }
