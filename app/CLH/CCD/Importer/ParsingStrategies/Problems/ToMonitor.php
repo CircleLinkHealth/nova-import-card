@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Problems;
 
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\ProblemImport;
 use App\Models\CPM\CpmProblem;
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;

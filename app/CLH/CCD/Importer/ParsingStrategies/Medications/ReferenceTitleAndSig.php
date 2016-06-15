@@ -3,7 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Medications;
 
 
-use App\CLH\CCD\Ccda;
+use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\MedicationImport;
 use App\CLH\CCD\ItemLogger\CcdMedicationLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;

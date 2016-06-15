@@ -1,9 +1,10 @@
 <?php
 
-namespace App\CLH\CCD;
+namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
-use App\CLH\CCD\QAImportSummary;
+use App\Models\CCD\QAImportSummary;
+use App\Models\CCD\Ccda;
 use App\User;
 use Carbon\Carbon;
 
@@ -41,6 +42,12 @@ trait ValidatesQAImportOutput
             return empty($dup) ? null : $dup->ID;
         };
 
+        $phoneCheck = function () use ($demographics) {
+            return ($demographics->cell_phone
+                || $demographics->home_phone
+                || $demographics->work_phone);
+        };
+
         $counter = function ($index) use ($output) {
             return count($output[$index]);
         };
@@ -75,6 +82,7 @@ trait ValidatesQAImportOutput
         $qaSummary->has_zip = $hasZip();
         $qaSummary->has_city = $hasCity();
         $qaSummary->has_state = $hasState();
+        $qaSummary->has_phone = $phoneCheck();
 
         $isFlagged = false;
 
@@ -87,6 +95,7 @@ trait ValidatesQAImportOutput
             || empty($qaSummary->has_city)
             || empty($qaSummary->has_state)
             || empty($qaSummary->has_zip)
+            || ! $qaSummary->has_phone
         ) $isFlagged = true;
 
         $qaSummary->flag = $isFlagged;

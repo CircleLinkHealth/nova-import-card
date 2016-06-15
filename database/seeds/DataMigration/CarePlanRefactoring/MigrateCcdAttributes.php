@@ -11,7 +11,7 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
         $allergy_imports = \App\CLH\CCD\ImportedItems\AllergyImport::all();
 
         foreach ($allergy_imports as $allergy_import) {
-            $patient_id = \App\CLH\CCD\Ccda::where('id', $allergy_import->ccda_id)->lists('patient_id')->first();
+            $patient_id = \App\Models\CCD\Ccda::where('id', $allergy_import->ccda_id)->lists('patient_id')->first();
 
             if (is_null($patient_id)) {
                 $this->command->info("No user associated to CCDA for MedicationsImport ID" . $allergy_import->id);
@@ -36,7 +36,7 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
         $medications_imports = \App\CLH\CCD\ImportedItems\MedicationImport::all();
 
         foreach ($medications_imports as $medications_import) {
-            $patient_id = \App\CLH\CCD\Ccda::where('id', $medications_import->ccda_id)->lists('patient_id')->first();
+            $patient_id = \App\Models\CCD\Ccda::where('id', $medications_import->ccda_id)->lists('patient_id')->first();
 
             if (is_null($patient_id)) {
                 $this->command->info("No user associated to CCDA for MedicationsImport ID: " . $medications_import->id);
@@ -67,7 +67,7 @@ class MigrateCcdAttributes extends \Illuminate\Database\Seeder
         $this->command->comment(PHP_EOL . 'Begin Migrating Problems...' . PHP_EOL);
 
         foreach ($problems_imports as $problems_import) {
-            $ccda = \App\CLH\CCD\Ccda::where('id', $problems_import->ccda_id)->first();
+            $ccda = \App\Models\CCD\Ccda::where('id', $problems_import->ccda_id)->first();
 
             if (empty($ccda)) {
                 $this->command->info("No user associated to CCDA for ProblemsImport ID: " . $problems_import->id);

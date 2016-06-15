@@ -136,8 +136,7 @@ class CarePlanViewService
 
         return compact('sections', 'biometrics');
     }
-
-
+    
     public function carePlanThirdPage(CarePlan $carePlan, User $patient)
     {
         if (empty($carePlan)) return false;
