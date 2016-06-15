@@ -101,10 +101,11 @@ class CCDUploadController extends Controller
                     ->whereNull('patient_id');
             }])
             ->get()
-            ->toArray();
+            ->sortBy('name')
+            ->all();
 
         JavaScript::put( [
-            'qaSummaries' => $qaSummaries,
+            'qaSummaries' => array_values($qaSummaries),
         ] );
 
         return view( 'CCDUploader.uploadedSummary' );
