@@ -86,11 +86,13 @@ class NoteService
     public function getNotesWithRangeForPatients($patients, $start, $end)
     {
 
+//        dd($start . " " . $end);
+
         return Note::whereIn('patient_id', $patients)
-            ->whereBetween('created_at', [
+            ->whereBetween('performed_at', [
                 $start, $end
             ])
-            ->orderBy('created_at', 'desc')->take('200')->get();
+            ->orderBy('performed_at', 'desc')->get();
 
     }
 

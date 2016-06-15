@@ -16,7 +16,7 @@ class NotesTableSeeder extends Seeder
         $activity_notes = DB::table('lv_activities')
             ->select(DB::raw('*,provider_id, type'))
             ->where('logged_from', 'note')
-          //->where('id',55360) tester
+            ->where('id', 55297) //tester
             ->orderBy('performed_at', 'desc')
             ->get();
 
@@ -71,6 +71,9 @@ class NotesTableSeeder extends Seeder
                 'performed_at' => $activity_note->performed_at,
                 'type' => $activity_note->type
             ]);
+
+            $this->command->info('Created: ' . $note->performed_at .  ' ...');
+
 
             if (is_object($sender_meta)) {
 

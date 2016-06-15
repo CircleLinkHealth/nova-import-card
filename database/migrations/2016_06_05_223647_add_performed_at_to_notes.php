@@ -14,7 +14,7 @@ class AddPerformedAtToNotes extends Migration
     {
         Schema::table('notes', function (Blueprint $table) {
 
-            $table->date('performed_at');
+            $table->timestamp('performed_at');
 
         });
     }

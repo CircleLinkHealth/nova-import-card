@@ -38,7 +38,7 @@ class Activity extends Model implements Transformable{
      */
 
     protected $fillable = ['type', 'duration', 'duration_unit', 'patient_id', 'provider_id', 'logger_id',
-        'logged_from', 'performed_at', 'performed_at_gmt', 'page_timer_id'];
+        'logged_from', 'performed_at', 'performed_at_gmt', 'page_timer_id','created_at'];
 
     protected $dates = ['deleted_at'];
 

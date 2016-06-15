@@ -63,7 +63,7 @@ class WebixFormatter implements ReportFormatter
             //Body
             $formatted_notes[$count]['comment'] = $note->body;
 
-            $formatted_notes[$count]['date'] = Carbon::parse($note->created_at)->format('Y-m-d');
+            $formatted_notes[$count]['date'] = Carbon::parse($note->performed_at)->format('Y-m-d');
 
             //TAGS
             $formatted_notes[$count]['tags'] = '';
