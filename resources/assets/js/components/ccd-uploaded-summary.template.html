@@ -10,6 +10,10 @@
             <th class="mdl-data-table__cell--non-numeric">CCDA id</th>
             <th class="mdl-data-table__cell--non-numeric">Provider</th>
             <th class="mdl-data-table__cell--non-numeric">Location</th>
+            <th class="mdl-data-table__cell--non-numeric">Has Street Address</th>
+            <th class="mdl-data-table__cell--non-numeric">Has City</th>
+            <th class="mdl-data-table__cell--non-numeric">Has State</th>
+            <th class="mdl-data-table__cell--non-numeric">Has Zip</th>
             <th>Allergies</th>
             <th>Medications</th>
             <th>Problems</th>
@@ -56,6 +60,10 @@
             <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.ccda_id }}</td>
             <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.provider }}</td>
             <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.location }}</td>
+            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.has_street_address | capitalize }}</td>
+            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.has_city | capitalize }}</td>
+            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.has_state | capitalize }}</td>
+            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.has_zip | capitalize }}</td>
             <td>{{ qaSummary.allergies }}</td>
             <td>{{ qaSummary.medications }}</td>
             <td>{{ qaSummary.problems }}</td>
