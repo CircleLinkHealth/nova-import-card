@@ -1,4 +1,20 @@
 <?php
+
+// this is your GET AJAX route
+Route::get('/ajax/get', function () {
+    // pass back some data
+    $data   = array('value' => 'some data');
+    // return a JSON response
+    return  Response::json($data);
+});
+// this is your POST AJAX route
+Route::post('/ajax/post', function () {
+    // pass back some data, along with the original data, just to prove it was received
+    $data   = array('value' => 'some data', 'input' => Request::input());
+    // return a JSON response
+    return  Response::json($data);
+});
+
 //THIS IS FOR APRIMA ONLY
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful

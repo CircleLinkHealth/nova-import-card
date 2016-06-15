@@ -114,9 +114,13 @@
                                     : {{ $buttonLabel }}</h4>
                             </div>
                             <div class="modal-body">
-                                <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
+                                @if( $item->name == 'Medication List' )
+                                    @include('wpUsers.patient.careplan.items.medications')
+                                @else
+                                    <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
                                           name="instructions[{{ $section->name }}][{{ $item->id }}]"
                                           style="height: 400px;">{{ trim($instructionName) }}</textarea>
+                                @endif
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close
