@@ -45,6 +45,7 @@ class MsgCPRules {
         // echo '<br>Valid tmpArray: ';
         // print_r($tmpArray);
 
+        /*
         $qdata = $this->getQuestion($strMsgID, 0, '', $pid);
         $log[] = "MsgCPRules->getValidAnswer() obs_key = ".$qdata->obs_key;
 
@@ -74,18 +75,19 @@ class MsgCPRules {
                 }
             }
             return array();
-            /*
-            $mixedReturn = $this->getMixedValid($strMsgID, $pid, $strResponse);
-            if(empty($mixedReturn)) {
-                $testStr = str_replace( '_', '/', $strResponse);
-                if(!isset($tmpArray[0]) || $tmpArray[0] <> date('m', strtotime($testStr))) {
-                    return array();
-                } elseif (!isset($tmpArray[1]) || $tmpArray[1] <> date('d', strtotime($testStr))) {
-                    return array();
-                }
-            }
-            */
+
+            //$mixedReturn = $this->getMixedValid($strMsgID, $pid, $strResponse);
+            //if(empty($mixedReturn)) {
+            //    $testStr = str_replace( '_', '/', $strResponse);
+            //    if(!isset($tmpArray[0]) || $tmpArray[0] <> date('m', strtotime($testStr))) {
+            //        return array();
+            //    } elseif (!isset($tmpArray[1]) || $tmpArray[1] <> date('d', strtotime($testStr))) {
+            //        return array();
+            //    }
+            //}
+
         }
+        */
 
 
         if($strMsgID == 'CF_HSP_30'){
@@ -106,7 +108,6 @@ class MsgCPRules {
         // if(empty($strResponse)) {
         // 	$strResponse2 = 'Blank_Response';
         // }
-
 
         $strQS	= '';
         if(!empty($qstype)) {
