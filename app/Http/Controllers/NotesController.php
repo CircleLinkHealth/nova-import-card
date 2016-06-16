@@ -100,7 +100,7 @@ class NotesController extends Controller
         if (!empty($notes)) {
 
             $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
-        }//dd($notes);
+        }dd($notes);
 
         $data = ['years' => array_reverse($years),
             'month_selected' => $month_selected,

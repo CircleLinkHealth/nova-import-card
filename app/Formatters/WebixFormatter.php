@@ -79,27 +79,6 @@ class WebixFormatter implements ReportFormatter
             $count++;
         }
 
-//        //This would contain all data to be sent to the view
-//        $notes = array();
-//
-//        //Get current page form url e.g. &page=6
-//        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-//
-//        //Create a new Laravel collection from the array data
-//        $collection = new Collection($formatted_notes);
-//
-//        //Define how many items we want to be visible in each page
-//        $per_page = 15;
-//
-//        //Slice the collection to get the items to display in current page
-//        $currentPageResults = $collection->slice(($currentPage-1) * $per_page, $per_page)->all();
-//
-//        //Create our paginator and add it to the data array
-//        $results = new LengthAwarePaginator($currentPageResults, count($collection), $per_page);
-//
-//        //Set base url for pagination links to follow e.g custom/url?page=6
-//        $results->setPath($request->url());
-
         return $formatted_notes;
 
     }
