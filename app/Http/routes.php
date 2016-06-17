@@ -1,16 +1,7 @@
 <?php
 
-Route::get('CCDModelItems/MedicationListItem', 'CCDModelItems\MedicationListItemController@index');
-Route::post('CCDModelItems/MedicationListItem/store', 'CCDModelItems\MedicationListItemController@store');
-
-Route::get('CCDModelItems/ProblemsItem', 'CCDModelItems\ProblemsItemController@index');
-Route::post('CCDModelItems/ProblemsItem/store', 'CCDModelItems\ProblemsItemController@store');
-
-Route::get('CCDModelItems/AllergiesItem', 'CCDModelItems\AllergiesItemController@index');
-Route::post('CCDModelItems/AllergiesItem/store', 'CCDModelItems\AllergiesItem@store');
-
 // this is your GET AJAX route
-Route::get('/ajax/get', function () {
+Route::get('/test/ajax/get', function () {
     // pass back some data
     $data   = array(
         array(
@@ -103,6 +94,22 @@ Route::group(['namespace' => 'Redox'], function () {
 /****************************/
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
+
+    Route::get('/CCDModels/Items/MedicationListItem', 'CCDModels\Items\MedicationListItemController@index');
+    Route::post('/CCDModels/Items/MedicationListItem/store', 'CCDModels\Items\MedicationListItemController@store');
+    Route::post('/CCDModels/Items/MedicationListItem/update', 'CCDModels\Items\MedicationListItemController@update');
+    Route::post('/CCDModels/Items/MedicationListItem/destroy', 'CCDModels\Items\MedicationListItemController@destroy');
+
+    Route::get('/CCDModels/Items/ProblemsItem', 'CCDModels\Items\ProblemsItemController@index');
+    Route::post('/CCDModels/Items/ProblemsItem/store', 'CCDModels\Items\ProblemsItemController@store');
+    Route::post('/CCDModels/Items/ProblemsItem/update', 'CCDModels\Items\ProblemsItemController@update');
+    Route::post('/CCDModels/Items/ProblemsItem/destroy', 'CCDModels\Items\ProblemsItemController@destroy');
+
+    Route::get('/CCDModels/Items/AllergiesItem', 'CCDModels\Items\AllergiesItemController@index');
+    Route::post('/CCDModels/Items/AllergiesItem/store', 'CCDModels\Items\AllergiesItemController@store');
+    Route::post('/CCDModels/Items/AllergiesItem/update', 'CCDModels\Items\AllergiesItemController@update');
+    Route::post('/CCDModels/Items/AllergiesItem/destroy', 'CCDModels\Items\AllergiesItemController@destroy');
+
     /**
      * LOGGER
      */

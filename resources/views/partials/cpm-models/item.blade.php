@@ -116,6 +116,10 @@
                             <div class="modal-body">
                                 @if( $item->name == 'Medication List' )
                                     @include('partials.ccd-models.items.medications')
+                                @elseif( $item->name == 'Other Conditions' )
+                                    @include('partials.ccd-models.items.problems')
+                                @elseif( $item->name == 'Allergies' )
+                                    @include('partials.ccd-models.items.allergies')
                                 @else
                                     <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
                                           name="instructions[{{ $section->name }}][{{ $item->id }}]"
