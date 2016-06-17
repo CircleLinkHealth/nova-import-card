@@ -13,10 +13,10 @@ class DropFkCcdaIdFromCcdMedications extends Migration
     public function up()
     {
         Schema::table('ccd_medications', function ($table) {
-            //$table->dropForeign('ccd_medications_ccda_id_foreign');
-            //$table->dropForeign('ccd_medications_ccd_medication_log_id_foreign');
-            //$table->dropForeign('ccd_medications_vendor_id_foreign');
-            //$table->dropForeign('medication_group_foreign');
+            $table->dropForeign('ccd_medications_ccda_id_foreign');
+            $table->dropForeign('ccd_medications_ccd_medication_log_id_foreign');
+            $table->dropForeign('ccd_medications_vendor_id_foreign');
+            $table->dropForeign('medication_group_foreign');
 
             $table->integer('ccda_id')->nullable()->change();
             $table->integer('ccd_medication_log_id')->nullable()->change();
@@ -25,12 +25,10 @@ class DropFkCcdaIdFromCcdMedications extends Migration
         });
 
         Schema::table('ccd_problems', function ($table) {
-            /*
             $table->dropForeign('ccd_problems_ccda_id_foreign');
             $table->dropForeign('ccd_problems_ccd_problem_log_id_foreign');
             $table->dropForeign('ccd_problems_vendor_id_foreign');
             $table->dropForeign('ccd_problems_cpm_problem_id_foreign');
-            */
 
             $table->integer('ccda_id')->nullable()->change();
             $table->integer('ccd_problem_log_id')->nullable()->change();
@@ -39,11 +37,9 @@ class DropFkCcdaIdFromCcdMedications extends Migration
         });
 
         Schema::table('ccd_allergies', function ($table) {
-            /*
             $table->dropForeign('ccd_allergies_ccda_id_foreign');
             $table->dropForeign('ccd_allergies_ccd_allergy_log_id_foreign');
             $table->dropForeign('ccd_allergies_vendor_id_foreign');
-            */
 
             $table->integer('ccda_id')->nullable()->change();
             $table->integer('ccd_allergy_log_id')->nullable()->change();
