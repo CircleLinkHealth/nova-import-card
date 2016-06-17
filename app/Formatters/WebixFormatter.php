@@ -152,6 +152,7 @@ class WebixFormatter implements ReportFormatter
             $biometric_values = app(config('cpmmodelsmap.biometrics')[$biometric->type])->getUserValues($user);
 
             if($biometric_values){
+
                 //Check to see whether the user has a starting value
                 if ($biometric_values['starting'] == '') {
                     $biometric_values['starting'] = 'N/A';
@@ -181,11 +182,15 @@ class WebixFormatter implements ReportFormatter
 
                         $biometric_values['verb'] = 'Decrease';
 
-                    } else {
+                    } else if ($biometric_values['starting'] < $biometric_values['target']){
 
-                        $biometric_values['verb'] = 'Increase';
+                            $biometric_values['verb'] = 'Increase';
 
-                    }
+                        } else {
+
+                            $biometric_values['verb'] = 'Regulate';
+
+                        }
                 }
 
             }
@@ -202,9 +207,13 @@ class WebixFormatter implements ReportFormatter
 
                         $biometric_values['verb'] = 'Decrease';
 
-                    } else {
+                    } else if ($biometric_values['starting'] < $biometric_values['target']){
 
                         $biometric_values['verb'] = 'Increase';
+
+                    } else {
+
+                        $biometric_values['verb'] = 'Regulate';
 
                     }
                 }
@@ -222,9 +231,13 @@ class WebixFormatter implements ReportFormatter
 
                         $biometric_values['verb'] = 'Decrease';
 
-                    } else {
+                    } else if ($biometric_values['starting'] < $biometric_values['target']){
 
                         $biometric_values['verb'] = 'Increase';
+
+                    } else {
+
+                        $biometric_values['verb'] = 'Regulate';
 
                     }
                 }
