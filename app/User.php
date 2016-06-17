@@ -388,6 +388,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $patientIds;
 	}
 
+	public function viewableProviderIds() {
+		// get all patients who are in the same programs
+		$programIds = $this->viewableProgramIds();
+		$patientIds = User::whereHas('programs', function ($q) use ($programIds) {
+			$q->whereIn('program_id', $programIds);
+		});
+
+		//if(!Auth::user()->can('admin-access')) {
+		$patientIds->whereHas('roles', function ($q) {
+			$q->where('name', '=', 'provider');
+		});
+		//}
+
+		$patientIds = $patientIds->lists('ID')->all();
+		return $patientIds;
+	}
+
 	public function viewableUserIds() {
 		// get all patients who are in the same programs
 		$programIds = $this->viewableProgramIds();

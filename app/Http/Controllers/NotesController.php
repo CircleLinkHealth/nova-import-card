@@ -55,10 +55,9 @@ class NotesController extends Controller
 
         $input = $request->all();
 
-        $user = Auth::user();
-        $program = $user->primaryProgram;
-        $program_id = $program->blog_id;
-        $providers_for_blog = collect($program->getProviders($program_id))->lists('display_name', 'ID');
+        $session_user = Auth::user();
+
+        $providers_for_blog = User::whereIn('ID', $session_user->viewableProviderIds())->lists('display_name','ID');
 
         //TIME FILTERS
 
