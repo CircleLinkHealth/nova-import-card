@@ -5,8 +5,9 @@
 @section('content')
 
     <?php
-
-    $webix = "data:" . json_encode(array_values($results)) . "";
+    if(isset($results)){
+                $webix = "data:" . json_encode(array_values($results)) . "";
+    }
 
     ?>
     <div class="row main-form-block" style="margin-top:60px;">
@@ -21,10 +22,28 @@
                 </div>
                 {!! Form::open(array('url' => URL::route('patient.note.listing'), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
                 <div class="form-group  pull-right" style="margin-top:10px; ">
-                    <i class="icon icon--date-time"></i>
+
+
+                        <span class="glyphicon glyphicon-user" aria-hidden="true" style="color: #63bbe8; font-size: 28px; top: 0.4em;"></span>
+
+                        <label for="provider" class="sr-only">Select Month:</label>
+
+                        <select name="provider" id="provider" class="selectpicker" data-width="200px" required="required"
+                                data-size="10" style="display: none;">
+                            <option value="">Select Provider</option>
+                            @foreach($providers_for_blog as $key => $value)
+                                @if(isset($selected_provider) && $selected_provider->ID == $key)
+                                    <option value="{{$selected_provider->ID}}" selected>{{$selected_provider->display_name}}</option>
+                                @else
+                                <option value={{$key}}>{{$value}}</option>
+                                @endif
+                            @endforeach
+                        </select>
+
                     <div class="inline-block">
-                        <label for="selectMonth" class="sr-only">Select Month:</label>
-                        <select name="selectMonth" id="selectMonth" class="selectpicker" data-width="200px"
+                        <i class="icon icon--date-time" style="margin-left:16px"></i>
+                        <label for="month" class="sr-only">Select Month:</label>
+                        <select name="month" id="month" class="selectpicker" data-width="200px" required="required"
                                 data-size="10" style="display: none;">
                             <option value="">Select Month</option>
                             @for($i = 0; $i < count($months); $i++)
@@ -33,8 +52,8 @@
                         </select>
 
                         <div class="inline-block">
-                            <label for="selectYear" class="sr-only">Select Year:</label>
-                            <select name="selectYear" id="selectYear" class="selectpicker" data-width="150px" style="display: none;">
+                            <label for="year" class="sr-only">Select Year:</label>
+                            <select name="year" id="year" class="selectpicker" data-width="150px" style="display: none;" required="required">
                                 <option value="">Select Year</option>
                             @foreach($years as $year)
                                     <option value="{{$year}}"
@@ -49,6 +68,7 @@
 
 
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12" style="border-top: 3px solid #50b2e2">
+                   @if($isProviderSelected)
                     @if($notes)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
@@ -113,12 +133,6 @@
                                         sort: 'string',
                                     },
                                     {
-                                        id: "provider_name",
-                                        header: ["Provider Name", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 150,
-                                        sort: 'string'
-                                    },
-                                    {
                                         id: "author_name",
                                         header: ["Author", {content: "selectFilter", placeholder: "Filter"}],
                                         width: 150,
@@ -147,7 +161,7 @@
                                     {
                                         id: "comment",
                                         header: ["Preview", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 150,
+                                        width: 225,
                                         sort: 'string',
                                         tooltip:['#comment#']
                                     }
@@ -207,7 +221,11 @@
                         </div>
                 </div>
                 @else
-                    <div style="text-align:center;margin:50px;">There are no patients notes to view this month.
+                    <div style="text-align:center;margin:50px;">There are no patients notes for {{$selected_provider->display_name}}.
+                    </div>
+                @endif
+              @else
+                    <div style="text-align:center;margin:50px;">Please select a Provider.
                     </div>
                 @endif
                 <div id="rohstar" style="color: #00ACC1">

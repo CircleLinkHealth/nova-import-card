@@ -55,13 +55,16 @@ class NotesController extends Controller
 
         $input = $request->all();
 
-        $isDateFiltered = true;
+        $user = Auth::user();
+        $program = $user->primaryProgram;
+        $program_id = $program->blog_id;
+        $providers_for_blog = collect($program->getProviders($program_id))->lists('display_name', 'ID');
 
         //TIME FILTERS
 
         //if month and year are selected
-        if (isset($input['selectMonth'])) {
-            $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+        if (isset($input['month'])) {
+            $time = Carbon::createFromDate($input['year'], $input['month'], 15);
             $start = $time->startOfMonth()->format('Y-m-d');
             $end = $time->endOfMonth()->format('Y-m-d');
             $month_selected_text = $time->format('F');
@@ -69,11 +72,9 @@ class NotesController extends Controller
             $year_selected = $time->format('Y');
 
             //time title for view
-            $time_title = $month_selected_text . ' ' . $year_selected;
 
         } //if user resets time
-            else
-        {
+        else {
             $time = Carbon::now();
             $start = $time->startOfMonth()->format('Y-m-d');
             $end = $time->endOfMonth()->format('Y-m-d');
@@ -81,43 +82,62 @@ class NotesController extends Controller
             $month_selected = $time->format('m');
             $year_selected = $time->format('Y');
 
-            $time_title = $month_selected_text . ' ' . $year_selected;
-            //page first loads
         }
 
         $years = $this->service->getYearsArray();
         $months = $this->service->getMonthsArray();
 
+        //Check to see whether a provider was selected.
+        if (isset($input['provider']) && $input['provider'] != '') {
 
-        //Get Viewable Patients
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })->get()->lists('ID')->all();
+            $provider = User::find($input['provider']);
 
-        $notes = $this->service->getNotesWithRangeForPatients($patients, $start, $end);
+            $title = $provider->display_name;
 
-        if (!empty($notes)) {
+            $notes = $this->service->getNotesWithRangeForProvider($provider->ID, $start, $end);
+            
+            if (!empty($notes)) {
 
-            $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
-        }dd($notes);
+                $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
+            }
 
-        $data = ['years' => array_reverse($years),
-            'month_selected' => $month_selected,
-            'year_selected' => $year_selected,
-            'month_selected_text' => $month_selected_text,
-            'months' => $months,
-            'notes' => $notes,
-            'time_title' => $time_title,
-            'dateFilter' => $isDateFiltered,
-            'results' => $notes
-        ];
+
+            $data = ['years' => array_reverse($years),
+                'month_selected' => $month_selected,
+                'year_selected' => $year_selected,
+                'month_selected_text' => $month_selected_text,
+                'months' => $months,
+                'notes' => $notes,
+                'title' => $title,
+                'dateFilter' => true,
+                'results' => $notes,
+                'providers_for_blog' => $providers_for_blog,
+                'isProviderSelected' => true,
+                'selected_provider' => $provider
+            ];
+
+        } else { // Not enough data for a report, return only the essentials
+
+            $data = [
+                'years' => array_reverse($years),
+                'month_selected' => $month_selected,
+                'year_selected' => $year_selected,
+                'month_selected_text' => $month_selected_text,
+                'months' => $months,
+                'title' => 'No Provider Selected',
+                'notes' => false,
+                'providers_for_blog' => $providers_for_blog,
+                'isProviderSelected' => false
+            ];
+
+        }
 
         return view('wpUsers.patient.note.list', $data);
 
     }
 
-    public function create(Request $request, $patientId)
+    public
+    function create(Request $request, $patientId)
     {
 
         if ($patientId) {
@@ -214,7 +234,8 @@ class NotesController extends Controller
         }
     }
 
-    public function store(Request $input, $patientId)
+    public
+    function store(Request $input, $patientId)
     {
 
         $input = $input->all();
@@ -225,7 +246,8 @@ class NotesController extends Controller
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
 
-    public function show(Request $input, $patientId, $noteId)
+    public
+    function show(Request $input, $patientId, $noteId)
     {
 
         $patient = User::find($patientId);
@@ -292,7 +314,8 @@ class NotesController extends Controller
         return view('wpUsers.patient.note.view', $view_data);
     }
 
-    public function send(Request $input, $patientId, $noteId)
+    public
+    function send(Request $input, $patientId, $noteId)
     {
         $input = $input->all();
 
