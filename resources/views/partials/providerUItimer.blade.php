@@ -127,7 +127,9 @@ if ($enableTimeTracking) {
             // we went idle, add previously active time to total time
             endTime = new Date();
             totalTime = (totalTime + (endTime - startTime));
-            if (consoleDebug) console.log('added previously active time to total time');
+            // remove 90000 of the 120000 seconds here
+            totalTime = (totalTime - 90000);
+            if (consoleDebug) console.log('added previously active time to total time than removed 90000 (only 30 seconds of the 2 minutes idle counts)');
             if (consoleDebug) console.log('totalTime = ' + totalTime);
 
             // reset startTime to time modal was opened
