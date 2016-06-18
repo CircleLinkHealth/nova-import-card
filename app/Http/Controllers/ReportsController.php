@@ -128,8 +128,6 @@ class ReportsController extends Controller
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
 
         $u20_patients = array();
-        debug(jdmonthname(1, 1));
-        debug($month_selected);
 
         // ROLLUP CATEGORIES
         $CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
@@ -168,10 +166,6 @@ class ReportsController extends Controller
                     ->orderBy('performed_at', 'desc')
                     ->get();
 
-//				foreach ($acts as $key => $value) {
-//					$acts[$key]['patient'] = User::find($patient->ID);
-//				}
-
                 foreach ($acts as $activity) {
                     if (in_array($activity->type, $CarePlan)) {
                         $u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
@@ -190,7 +184,7 @@ class ReportsController extends Controller
                 $act_count++;
             }
         }
-        debug($u20_patients);
+
         foreach ($u20_patients as $key => $value) {
             if ($value['colsum_total'] >= 1200) {
                 unset($u20_patients[$key]);
@@ -198,7 +192,6 @@ class ReportsController extends Controller
         }
 
         $reportData = "data:" . json_encode(array_values($u20_patients)) . "";
-        debug(json_encode($u20_patients));
 
         $years = array();
         for ($i = 0; $i < 3; $i++) {
@@ -221,7 +214,6 @@ class ReportsController extends Controller
             //'patient' => $patient_,
             'data' => $act_data
         ];
-        //debug($reportData);
 
         return view('reports.u20', $data);
     }
@@ -427,11 +419,6 @@ class ReportsController extends Controller
             ]);
     }
 
-    /**
-     * @param Request $request
-     * @param bool|false $patientId
-     * @return \Illuminate\View\View
-     */
     public function biometricsCharts(Request $request, $patientId = false)
     {
 
@@ -462,7 +449,6 @@ class ReportsController extends Controller
 
         return view('wpUsers.patient.biometric-chart', ['patient' => $patient, 'biometrics_array' => $biometrics_array]);
     }
-
 
     public function excelReportT1()
     {
@@ -538,7 +524,6 @@ class ReportsController extends Controller
             */
         })->export('xls');
     }
-
 
     public function excelReportT2()
     {
@@ -673,7 +658,6 @@ class ReportsController extends Controller
             */
         })->export('xls');
     }
-
 
     public function excelReportT3()
     {

@@ -96,6 +96,20 @@ class NoteService
 
     }
 
+    public function getForwardedNotesWithRangeForPatients($patients, $start, $end)
+    {
+
+        return Note::whereIn('patient_id', $patients)
+            ->whereBetween('performed_at', [
+                $start, $end
+            ])
+            ->has('mail')
+            ->orderBy('performed_at', 'desc')
+            ->with('patient')->with('mail')->with('call')->with('author')
+            ->get();
+
+    }
+
     public function getNotesWithRangeForProvider($provider, $start, $end)
     {
 
@@ -107,7 +121,7 @@ class NoteService
                   ->where('type','billing_provider');
             })->lists('ID');
 
-        return $this->getNotesWithRangeForPatients($patients, $start, $end);
+        return $this->getForwardedNotesWithRangeForPatients($patients, $start, $end);
 
     }
 

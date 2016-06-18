@@ -44,11 +44,12 @@
                                     view: "datatable",
                                     //css:"webix_clh_cf_style",
                                     autoheight: true,
-                                    fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
+                                    fixedRowHeight: true, rowLineHeight: 25, rowHeight: 25,
                                     // leftSplit:2,
                                     scrollX: false,
                                     resizeColumn: true,
                                     footer: true,
+                                    tooltip:true,
                                     columns: [
                                         {
                                             id: "type_name",
@@ -88,7 +89,8 @@
                                             header: ["Preview"],
                                             fillspace: true,
                                             width: 400,
-                                            sort: 'string'
+                                            sort: 'string',
+                                            tooltip:['#comment#']
                                         },
                                         {
                                             id: "performed_at",

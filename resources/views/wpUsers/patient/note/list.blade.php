@@ -60,7 +60,7 @@
                                             @if($year_selected == $year){{'selected'}}@endif>{{$year}}</option>
                                 @endforeach
                             </select>
-                        <button type="submit" value="search" name="find" id="find" class="btn btn-primary">Go</button>
+                        <button type="submit" id="find" class="btn btn-primary">Go</button>
                         {!! Form::close() !!}
                         </div>
                     </div>
@@ -123,7 +123,8 @@
                                         header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                                         width: 150,
                                         sort: 'string',
-                                        template:"<a href='<?php echo URL::route('patient.note.index', array('patientId' => '#patient_id#')); ?>'>#patient_name#</a>"
+                                        template:"<a href='<?php echo URL::route('patient.note.view', array('patient' => '#patient_id#','noteId'=>'#id#')); ?>'>#patient_name#</a>"
+
 
                                     },
                                     {
@@ -150,7 +151,6 @@
                                         header: ["Type", {content: "textFilter", placeholder: "Filter"}],
                                         width: 150,
                                         sort: 'string',
-                                        template:"<a href='<?php echo URL::route('patient.note.view', array('patient' => '#patient_id#','noteId'=>'#id#')); ?>'>#type#</a>"
                                     },
                                     {
                                         id: "date",
