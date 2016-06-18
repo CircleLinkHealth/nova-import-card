@@ -22,8 +22,6 @@
                 </div>
                 {!! Form::open(array('url' => URL::route('patient.note.listing'), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
                 <div class="form-group  pull-right" style="margin-top:10px; ">
-
-
                         <span class="glyphicon glyphicon-user" aria-hidden="true" style="color: #63bbe8; font-size: 28px; top: 0.4em;"></span>
 
                         <label for="provider" class="sr-only">Select Month:</label>
@@ -163,7 +161,8 @@
                                         header: ["Preview", {content: "textFilter", placeholder: "Filter"}],
                                         width: 225,
                                         sort: 'string',
-                                        tooltip:['#comment#']
+                                        tooltip:['#comment#'],
+                                        fillspace: true
                                     }
                                 ],
 
@@ -191,32 +190,35 @@
 
                         </script>
                         <div class="row">
+                            <style>
+                                li{padding-bottom: 2px;}
+                            </style>
+                            <div class="col-sm-6" style="padding: 10px; top: -14px">
+                                <li><div class="label label-info" style="margin-right: 4px; text-align: right;">
+                                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                                    </div>
+                                    Patient Reached</li>
+
+                                <li><div class="label label-danger" style="margin-right: 4px; text-align: right;">
+                                        <span class="glyphicon glyphicon-flag"></span>
+                                    </div>
+                                    Patient in ER</li>
+
+                                <li><div class="label label-warning" style="margin-right: 4px; text-align: right;">
+                                        <span class="glyphicon glyphicon-envelope"></span>
+                                    </div>
+                                    Forwarded To Provider</li>
+                            </div>
+
                             <div class="col-sm-6">
-                                <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:4px;'
+                                <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:1px;'
                                        onclick="webix.toPDF(obs_alerts_dtable);">
-                                <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:4px;'
+                                <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:1px;'
                                        onclick="webix.toExcel(obs_alerts_dtable);">
                                 @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
                                     <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program' style='margin:4px;' onclick='obs_alerts_dtable.showColumn("program_name");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
                                     <input id='site_hide_btn' type='button' class='btn btn-primary' value='Hide Program' style='display:none;margin:4px;' onclick='obs_alerts_dtable.hideColumn("program_name");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
                                 @endif
-                            </div>
-                            <div class="col-sm-6 vertical-center" style="padding: 10px; top: -14px">
-                                <p style="text-align: center; margin-bottom: 0px"><strong><em>Legend</em></strong></p>
-                                <div class="label label-info" style="margin-right: 4px; text-align: right;">
-                                    <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
-                                </div>
-                                Patient Reached
-
-                                <div class="label label-danger" style="margin-right: 4px; text-align: right;">
-                                    <span class="glyphicon glyphicon-flag"></span>
-                                </div>
-                                Patient in ER
-
-                                <div class="label label-warning" style="margin-right: 4px; text-align: right;">
-                                    <span class="glyphicon glyphicon-envelope"></span>
-                                </div>
-                                Forwarded To Provider
                             </div>
                         </div>
                 </div>
