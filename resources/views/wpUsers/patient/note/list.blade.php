@@ -145,10 +145,12 @@
                                         sort: 'string'
                                     },
                                     {
-                                        id: "type",
-                                        header: ["Type", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 150,
+                                        id: "comment",
+                                        header: ["Preview", {content: "textFilter", placeholder: "Filter"}],
+                                        width: 225,
                                         sort: 'string',
+                                        tooltip:['#comment#'],
+                                        fillspace: true
                                     },
                                     {
                                         id: "date",
@@ -157,13 +159,11 @@
                                         sort: 'string'
                                     },
                                     {
-                                        id: "comment",
-                                        header: ["Preview", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 225,
+                                        id: "type",
+                                        header: ["Type", {content: "textFilter", placeholder: "Filter"}],
+                                        width: 150,
                                         sort: 'string',
-                                        tooltip:['#comment#'],
-                                        fillspace: true
-                                    }
+                                    },
                                 ],
 
                                 ready: function () {
@@ -223,12 +223,11 @@
                         </div>
                 </div>
                 @else
-                    <div style="text-align:center;margin:50px;">There are no patients notes for {{$selected_provider->display_name}}.
+                    <div style="text-align:center;margin:50px;">There are no patients notes for {{$selected_provider->display_name}} in {{$month_selected . "/" . $year_selected}}.
                     </div>
                 @endif
               @else
-                    <div style="text-align:center;margin:50px;">Please select a Provider.
-                    </div>
+                    <div style="text-align:center;margin:50px;"><strong>Please select a Provider to view patient's notes.</strong></div>
                 @endif
                 <div id="rohstar" style="color: #00ACC1">
 
