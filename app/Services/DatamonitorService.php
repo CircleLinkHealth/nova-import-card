@@ -456,13 +456,22 @@ class DatamonitorService
             $label = 'success';
         } else {
             $max_systolic_bp = $userUcpData['alert_keys']['Blood_Pressure'];
+            $pieces = explode("/", $max_systolic_bp);
+            if (sizeof($pieces) == 2) {
+                $max_systolic_bp = $pieces[0];
+            }
             $min_systolic_bp = $userUcpData['alert_keys']['Blood_Pressure_Low'];
-            $log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp},  BP Low: {$min_systolic_bp} (systolic) - obs_value={$obs_value}" . PHP_EOL;
+            $pieces = explode("/", $min_systolic_bp);
+            if (sizeof($pieces) == 2) {
+                $min_systolic_bp = $pieces[0];
+            }
+            $log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp}(systolic),  BP Low: {$min_systolic_bp}(systolic) - obs_value={$obs_value}(systolic)" . PHP_EOL;
             // compare observation value (systolic/diastolic) to patient max/min blood pressure limit
             if (!empty($obs_value) && !empty($min_systolic_bp) && !empty($max_systolic_bp)) {
                 if ($obs_value <= $min_systolic_bp) { //81
                     $message_id = 'CF_AL_02';
-                    $send_alert = "{$obs_value} (systolic) is <= {$min_systolic_bp} (systolic)";
+                    $send_alert = "[{$obs_value} (systolic) is <= {$min_systolic_bp} (systolic)]";
+                    $log_string .= $send_alert;
                     $send_email = true;
                     $label = 'danger';
                 } else if ($obs_value > $min_systolic_bp && $obs_value < 101) {
@@ -473,7 +482,8 @@ class DatamonitorService
                     $label = 'warning';
                 } else if ($obs_value > $max_systolic_bp) { //180
                     $message_id = 'CF_AL_03';
-                    $send_alert = "{$obs_value} (systolic) is >= {$max_systolic_bp} (systolic)";
+                    $send_alert = "[{$obs_value} (systolic) is >= {$max_systolic_bp} (systolic)]";
+                    $log_string .= $send_alert;
                     $send_email = true;
                     $label = 'danger';
                 }
