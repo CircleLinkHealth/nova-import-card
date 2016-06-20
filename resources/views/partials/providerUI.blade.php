@@ -85,7 +85,7 @@
                     <li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Select Patient</a>
                     </li>
                     <li><a href="{{ URL::route('patient.note.listing') }}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"
-                                                                             style="height: 16px; width: 22px; font-size: 17px; top: 4px"></span>Notes to MDs</a></li>
+                                                                             style="height: 16px; width: 22px; font-size: 17px; top: 4px"></span>All Notes</a></li>
                     <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
                     </li>
                     <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add

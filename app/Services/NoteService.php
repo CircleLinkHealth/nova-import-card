@@ -121,6 +121,21 @@ class NoteService
                   ->where('type','billing_provider');
             })->lists('ID');
 
+        return $this->getNotesWithRangeForPatients($patients, $start, $end);
+
+    }
+
+    public function getForwardedNotesWithRangeForProvider($provider, $start, $end)
+    {
+
+        $patients = User::whereHas('patientCareTeamMembers',
+
+            function($q) use ($provider) {
+
+                $q->where('member_user_id', $provider)
+                    ->where('type','billing_provider');
+            })->lists('ID');
+
         return $this->getForwardedNotesWithRangeForPatients($patients, $start, $end);
 
     }

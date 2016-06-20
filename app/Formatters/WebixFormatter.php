@@ -61,18 +61,18 @@ class WebixFormatter implements ReportFormatter
             //TAGS
             $formatted_notes[$count]['tags'] = '';
 
-            if (($note->mail != null)) {
+            if (count($note->mail) > 0) {
                 $formatted_notes[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
             }
 
 
-            if (($note->call != null)) {
+            if (count($note->call) > 0) {
                 if ($note->call->status == 'reached') {
                     $formatted_notes[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
                 }
             }
 
-            if ($note->isTCM == true) {
+            if ($note->isTCM) {
                 $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
             }
 

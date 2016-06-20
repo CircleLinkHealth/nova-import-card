@@ -55,6 +55,7 @@ class NotesController extends Controller
 
         $input = $request->all();
 
+
         $session_user = Auth::user();
 
         $providers_for_blog = User::whereIn('ID', $session_user->viewableProviderIds())->lists('display_name','ID')->sort();
@@ -62,29 +63,29 @@ class NotesController extends Controller
         //TIME FILTERS
 
         //if month and year are selected
-        if (isset($input['month'])) {
-            $time = Carbon::createFromDate($input['year'], $input['month'], 15);
-            $start = $time->startOfMonth()->format('Y-m-d');
-            $end = $time->endOfMonth()->format('Y-m-d');
-            $month_selected_text = $time->format('F');
-            $month_selected = $time->format('m');
-            $year_selected = $time->format('Y');
-
-            //time title for view
+        if (isset($input['range'])) {
+            //Sub no of months by input
+            $months = $input['range'];
+            $start = Carbon::now()->startOfMonth()->subMonth($months)->format('Y-m-d');
+            $end = Carbon::now()->endOfMonth()->format('Y-m-d');
 
         } //if user resets time
         else {
-            $time = Carbon::now();
-            $start = $time->startOfMonth()->format('Y-m-d');
-            $end = $time->endOfMonth()->format('Y-m-d');
-            $month_selected_text = $time->format('F');
-            $month_selected = $time->format('m');
-            $year_selected = $time->format('Y');
+            $months = 0;
+            $start = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+        }
+
+        if (isset($input['mail_filter'])) {
+
+            $only_mailed_notes = true;
+
+        } else {
+
+            $only_mailed_notes = false;
 
         }
 
-        $years = $this->service->getYearsArray();
-        $months = $this->service->getMonthsArray();
 
         //Check to see whether a provider was selected.
         if (isset($input['provider']) && $input['provider'] != '') {
@@ -93,40 +94,40 @@ class NotesController extends Controller
 
             $title = $provider->display_name;
 
-            $notes = $this->service->getNotesWithRangeForProvider($provider->ID, $start, $end);
-            
+            if($only_mailed_notes){
+                $notes = $this->service->getForwardedNotesWithRangeForProvider($provider->ID, $start, $end);
+
+            } else {
+                $notes = $this->service->getNotesWithRangeForProvider($provider->ID, $start, $end);
+
+            }
+
             if (!empty($notes)) {
 
                 $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
             }
 
-
-            $data = ['years' => array_reverse($years),
-                'month_selected' => $month_selected,
-                'year_selected' => $year_selected,
-                'month_selected_text' => $month_selected_text,
-                'months' => $months,
+            $data = [
+                'filter' => $input['provider'],
                 'notes' => $notes,
                 'title' => $title,
-                'dateFilter' => true,
+                'dateFilter' => $months,
                 'results' => $notes,
                 'providers_for_blog' => $providers_for_blog,
                 'isProviderSelected' => true,
-                'selected_provider' => $provider
+                'selected_provider' => $provider,
+                'only_mailed_notes' => $only_mailed_notes
             ];
 
         } else { // Not enough data for a report, return only the essentials
 
             $data = [
-                'years' => array_reverse($years),
-                'month_selected' => $month_selected,
-                'year_selected' => $year_selected,
-                'month_selected_text' => $month_selected_text,
-                'months' => $months,
+                'filter' => 0,
                 'title' => 'No Provider Selected',
                 'notes' => false,
                 'providers_for_blog' => $providers_for_blog,
-                'isProviderSelected' => false
+                'isProviderSelected' => false,
+                'only_mailed_notes' => false
             ];
 
         }
