@@ -46,19 +46,22 @@
                         </a>
                     </li>
 
-                    <li class="menu-item">
-                        <a id="my-alerts" href="{{ URL::route('patients.demographics.show', array()) }}">
-                            <div class="icon-container column-centered">
-                                <i class="icon--alerts--big icon--menu">
+                    {{--<li class="menu-item">--}}
+                        {{--<a id="my-alerts" href="{{ URL::route('patients.demographics.show', array()) }}">--}}
+                            {{--<div class="icon-container column-centered">--}}
+                                {{--<i class="icon--alerts--big icon--menu">--}}
                                     {{--<div class="notification btn-warning">-</div>--}}
-                                </i>
-                            </div>
-                            <div class="icon-container column-centered">
-                                <p class="text-medium-big text--menu text-serif">My Alerts & &nbsp;&nbsp;<br>
-                                    Tasks<BR><BR></p>
-                            </div>
-                        </a>
-                    </li>
+                                {{--</i>--}}
+                            {{--</div>--}}
+                            {{--<div class="icon-container column-centered">--}}
+                                {{--<span class="glyphicon glyphicon-envelope" aria-hidden="true"--}}
+                                      {{--style="height: 16px; width: 22px; font-size: 17px; top: 4px">--}}
+                                {{--<p class="text-medium-big text--menu text-serif">Notes Sent to  &nbsp;&nbsp;<br>--}}
+                                    {{--Provider<BR><BR></p>--}}
+                                {{--</span>--}}
+                            {{--</div>--}}
+                        {{--</a>--}}
+                    {{--</li>--}}
 
                 </ul>
             </div>

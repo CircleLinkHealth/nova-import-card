@@ -119,7 +119,7 @@
                                     {
                                         id: "patient_name",
                                         header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 150,
+                                        width: 140,
                                         sort: 'string',
                                         template:"<a href='<?php echo URL::route('patient.note.view', array('patient' => '#patient_id#','noteId'=>'#id#')); ?>'>#patient_name#</a>"
 
@@ -128,34 +128,35 @@
                                     {
                                         id: "program_name",
                                         header: ["Program", {content: "selectFilter", placeholder: "Filter"}],
-                                        width: 150,
+                                        width: 140,
                                         sort: 'string',
                                     },
                                     {
                                         id: "author_name",
                                         header: ["Author", {content: "selectFilter", placeholder: "Filter"}],
-                                        width: 150,
+                                        width: 140,
                                         sort: 'string'
                                     },
                                     {
                                         id: "tags",
                                         css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
                                         header: ["Status", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 150,
+                                        width: 110,
                                         sort: 'string'
                                     },
                                     {
                                         id: "comment",
                                         header: ["Preview", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 225,
+                                        width: 250,
                                         sort: 'string',
                                         tooltip:['#comment#'],
-                                        fillspace: true
+                                        fillspace: true,
+                                        template:"<a href='<?php echo URL::route('patient.note.view', array('patient' => '#patient_id#','noteId'=>'#id#')); ?>'>#comment#</a>"
                                     },
                                     {
                                         id: "date",
                                         header: ["Date", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 150,
+                                        width: 110,
                                         sort: 'string'
                                     },
                                     {
@@ -202,7 +203,7 @@
                                 <li><div class="label label-danger" style="margin-right: 4px; text-align: right;">
                                         <span class="glyphicon glyphicon-flag"></span>
                                     </div>
-                                    Patient in ER</li>
+                                    Patient recently in ER or Hospital</li>
 
                                 <li><div class="label label-warning" style="margin-right: 4px; text-align: right;">
                                         <span class="glyphicon glyphicon-envelope"></span>

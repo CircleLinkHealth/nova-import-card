@@ -16,7 +16,7 @@ class NotesTableSeeder extends Seeder
         $activity_notes = DB::table('lv_activities')
             ->select(DB::raw('*,provider_id, type'))
             ->where('logged_from', 'note')
-            ->where('id', 55297) //tester
+//            ->where('id', 55297) //tester
             ->orderBy('performed_at', 'desc')
             ->get();
 

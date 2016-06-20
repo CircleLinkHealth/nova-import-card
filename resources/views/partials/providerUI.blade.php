@@ -84,12 +84,14 @@
                     <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
                     <li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Select Patient</a>
                     </li>
+                    <li><a href="{{ URL::route('patient.note.listing') }}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"
+                                                                             style="height: 16px; width: 22px; font-size: 17px; top: 4px"></span>Notes to MDs</a></li>
                     <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
                     </li>
                     <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add
                             Patient</a></li>
-                    <li><a href="{{ URL::route('patients.alerts') }}"><i class="icon--alert--white"></i> Alerts</a></li>
-                    @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+
+                @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
                         <li><a class="btn btn-primary btn-xs"
                                href="{{ empty($patient->ID) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->ID)) }}"><i
                                         class="icon--home--white"></i> Admin</a></li>
@@ -145,14 +147,11 @@
                        omitsubmit="yes">Patient Reports <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li>
-                            <a href="{{ empty($patient->ID) ? URL::route('patients.search') : '' }}">Patient Alerts</a>
-                        </li>
-                        <li>
                             <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">Progress
                                 Report</a>
                         </li>
                         <li>
-                            <a href="{{ URL::route('patient.note.listing') }}"> All Patient Notes </a>
+                            <a href="{{ URL::route('patient.note.listing') }}"> Notes Sent to Provider </a>
                         </li>
                         <li>
                             <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient

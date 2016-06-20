@@ -137,7 +137,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('careplan/demographics', ['uses' => 'Patient\PatientCareplanController@storePatientDemographics', 'as' => 'patients.demographics.store']);
         Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
         Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
-        Route::get('notes-list', ['uses' => 'NotesController@listing', 'as' => 'patient.note.listing']);
+        Route::get('provider-notes', ['uses' => 'NotesController@listing', 'as' => 'patient.note.listing']);
     });
 
     // **** PATIENTS (/manage-patients/{patientId}/)
