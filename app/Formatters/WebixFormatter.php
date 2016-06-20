@@ -8,6 +8,7 @@ use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Program;
 use App\Services\CPM\CpmMiscService;
+use App\Services\NoteService;
 use App\Services\ReportsService;
 use App\User;
 use Carbon\Carbon;
@@ -62,7 +63,9 @@ class WebixFormatter implements ReportFormatter
             $formatted_notes[$count]['tags'] = '';
 
             if (count($note->mail) > 0) {
-                $formatted_notes[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+                if((new NoteService())->wasSentToProvider($note)){
+                    $formatted_notes[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+                }
             }
 
 

@@ -11,9 +11,11 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use Mockery\Matcher\Not;
 
 class NoteService
 {
+
 
     public function storeNote($input)
     {
@@ -295,5 +297,23 @@ class NoteService
         return true;
     }
 
+    public function wasSentToProvider(Note $note){
+
+        $mails = $note->mail;
+        
+        if(count($mails) < 1){
+            return false;
+        }
+
+        foreach ($mails as $mail){
+            $mail_recipient = User::find($mail->receiver_cpm_id);
+            if($mail_recipient->hasRole('provider')){
+                debug($mail->receiver_cpm_id);
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 }
