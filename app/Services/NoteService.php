@@ -55,11 +55,15 @@ class NoteService
         }
     }
 
+    //NOTE RETRIEVALS (ranges, relations, owners)
+
+    //Get all notes for patient
     public function getNotesForPatient(User $patient)
     {
         return Note::where('patient_id',$patient->ID)->get();
     }
 
+    //Get note with mail
     public function getNoteWithCommunications($note_id)
     {
 
@@ -67,6 +71,7 @@ class NoteService
 
     }
 
+    //Get data for patient note index page, w/ offline activities
     public function getNotesAndOfflineActivitiesForPatient(User $patient)
     {
 
@@ -80,11 +85,12 @@ class NoteService
         $notes = collect($notes);
 
         $data = $notes->merge($activities)->sortByDesc('performed_at');
-        
+
         return $data;
 
     }
 
+    //Get all notes for patients with specified date range
     public function getNotesWithRangeForPatients($patients, $start, $end)
     {
 
@@ -98,6 +104,7 @@ class NoteService
 
     }
 
+    //Get all notes that were forwarded with specified date range
     public function getForwardedNotesWithRangeForPatients($patients, $start, $end)
     {
 
@@ -112,6 +119,7 @@ class NoteService
 
     }
 
+    //Get all notes for a given provider with specified date range
     public function getNotesWithRangeForProvider($provider, $start, $end)
     {
 
@@ -120,13 +128,14 @@ class NoteService
             function($q) use ($provider) {
 
                 $q->where('member_user_id', $provider)
-                  ->where('type','billing_provider');
+                    ->where('type','billing_provider');
             })->lists('ID');
 
         return $this->getNotesWithRangeForPatients($patients, $start, $end);
 
     }
 
+    //Get all notes that have been sent to anyone for a given provider with specified date range
     public function getForwardedNotesWithRangeForProvider($provider, $start, $end)
     {
 
@@ -142,24 +151,7 @@ class NoteService
 
     }
 
-    public function getMonthsArray()
-    {
-        return array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
-    }
-
-    public function getYearsArray()
-    {
-
-        $years = array();
-        for ($i = 0; $i < 3; $i++) {
-            $years[] = Carbon::now()->subYear($i)->year;
-        }
-        array_reverse($years);
-
-        return $years;
-
-    }
-
+    //Save call information for note
     public function storeCallForNote($note, $status, User $patient, User $author, $phone_direction)
     {
 
@@ -167,47 +159,48 @@ class NoteService
         $author = User::find($note->logger_id);
 
 
-                if ($phone_direction == 'inbound') {
-                    $outbound_num = $patient->primaryPhone;
-                    $outbound_id = $patient->ID;
-                    $inbound_num = $author->primaryPhone;
-                    $inbound_id = $author->ID;
-                    $isCpmOutbound = false;
-                } else {
-                    $outbound_num = $author->primaryPhone;
-                    $outbound_id = $author->ID;
-                    $inbound_num = $patient->primaryPhone;
-                    $inbound_id = $patient->ID;
-                    $isCpmOutbound = true;
+        if ($phone_direction == 'inbound') {
+            $outbound_num = $patient->primaryPhone;
+            $outbound_id = $patient->ID;
+            $inbound_num = $author->primaryPhone;
+            $inbound_id = $author->ID;
+            $isCpmOutbound = false;
+        } else {
+            $outbound_num = $author->primaryPhone;
+            $outbound_id = $author->ID;
+            $inbound_num = $patient->primaryPhone;
+            $inbound_id = $patient->ID;
+            $isCpmOutbound = true;
 
-                }
+        }
 
-                Call::create([
+        Call::create([
 
-                    'note_id' => $note->id,
-                    'service' => 'phone',
-                    'status' => $status,
+            'note_id' => $note->id,
+            'service' => 'phone',
+            'status' => $status,
 
-                    'inbound_phone_number' => $outbound_num,
-                    'outbound_phone_number' => $inbound_num,
+            'inbound_phone_number' => $outbound_num,
+            'outbound_phone_number' => $inbound_num,
 
-                    'inbound_cpm_id' => $inbound_id,
-                    'outbound_cpm_id' => $outbound_id,
+            'inbound_cpm_id' => $inbound_id,
+            'outbound_cpm_id' => $outbound_id,
 
-                    //@todo figure out call times!
+            //@todo figure out call times!
 
-                    'call_time' => 0,
-                    'created_at' => $note->performed_at,
+            'call_time' => 0,
+            'created_at' => $note->performed_at,
 
-                    'is_cpm_outbound' => $isCpmOutbound
+            'is_cpm_outbound' => $isCpmOutbound
 
-                ]);
+        ]);
 //            }
 //        }
     }
 
     //MAIL HELPERS
 
+    //send notes when stored
     public function sendNoteToCareTeam(Note $note, &$careteam, $url, $newNoteFlag)
     {
 
@@ -271,6 +264,7 @@ class NoteService
 
     }
 
+    //note sender
     public function forwardNote($input, $patientId){
 
         if (isset($input['careteam'])) {
@@ -297,10 +291,11 @@ class NoteService
         return true;
     }
 
+    //return bool of whether note was sent to a provider
     public function wasSentToProvider(Note $note){
 
         $mails = $note->mail;
-        
+
         if(count($mails) < 1){
             return false;
         }
