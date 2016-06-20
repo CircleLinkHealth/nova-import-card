@@ -45,7 +45,7 @@
                             </div>
                         </div>
                         <div class="col-sm-3 text-right">
-                            <button class="btn btn-success" v-on:click.stop.prevent="addProblem()">Submit</button>
+                            <button class="btn btn-success" v-on:click.stop.prevent="addProblem()"><span><i class="glyphicon glyphicon-plus"></i> Add</span></button>
                         </div>
                     </div>
                 </div>
