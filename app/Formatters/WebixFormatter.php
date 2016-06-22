@@ -2,6 +2,9 @@
 
 use App\ActivityMeta;
 use App\Contracts\ReportFormatter;
+use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\CcdMedication;
+use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Program;
@@ -243,17 +246,21 @@ class WebixFormatter implements ReportFormatter
     array_reverse($careplanReport[$user->ID]['bio_data']);
 
         //Medications List
-        if($user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->first()){
-            $careplanReport[$user->ID]['taking_meds'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::MEDICATION_LIST);
-        } else {
-            $careplanReport[$user->ID]['taking_meds'] = '';
+        $careplanReport[$user->ID]['taking_meds'] = '';
+        $meds = CcdMedication::where('patient_id', '=', $user->ID)->get();
+        if($meds->count() > 0) {
+            foreach($meds as $med) {
+                $careplanReport[$user->ID]['taking_meds'] .= '<br>'.$med->name;
+            }
         }
 
         //Allergies
-        if($user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->first()){
-            $careplanReport[$user->ID]['allergies'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::ALLERGIES);
-        } else {
-            $careplanReport[$user->ID]['allergies'] = '';
+        $careplanReport[$user->ID]['allergies'] = '';
+        $allergies = CcdAllergy::where('patient_id', '=', $user->ID)->get();
+        if($allergies->count() > 0) {
+            foreach($allergies as $allergy) {
+                $careplanReport[$user->ID]['allergies'] .= '<br>'.$allergy->allergen_name;
+            }
         }
 
         //Social Services

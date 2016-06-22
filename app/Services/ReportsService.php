@@ -7,6 +7,7 @@ use App\CPRulesQuestions;
 use App\CPRulesUCP;
 use App\ForeignId;
 use App\Location;
+use App\Models\CCD\CcdProblem;
 use App\Models\CPM\Cpm;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmInstruction;
@@ -90,6 +91,18 @@ class ReportsService
             return "User not found...";
         }
 
+        // Other Conditions / CcdProblem List
+        $ccdProblems = '';
+        $problems = CcdProblem::where('patient_id', '=', $user->ID)->get();
+        if($problems->count() > 0) {
+            foreach($problems as $problem) {
+                $ccdProblems .= '<br>'.$problem->name;
+            }
+        }
+
+        return $ccdProblems;
+
+        /*
         $problem = $user->cpmMiscs->where('name',CpmMisc::OTHER_CONDITIONS)->all();
 
         if(empty($problem)){
@@ -105,6 +118,7 @@ class ReportsService
         }
 
         return $instructions->name;
+        */
 
     }
     
