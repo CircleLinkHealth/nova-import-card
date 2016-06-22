@@ -48,10 +48,11 @@ class ObservationService {
 		}
 
 		// process obs_key
+		// harccode change 3.0.6 - $wpUser->program_id is now '16'
 		if (empty($obsKey)) {
 			$msgCPRules = new MsgCPRules;
-			$qsType = $msgCPRules->getQsType($obsMessageId, $wpUser->program_id);
-			$currQuestionInfo = $msgCPRules->getQuestion($obsMessageId, $userId, 'SMS_EN', $wpUser->program_id, $qsType);
+			$qsType = $msgCPRules->getQsType($obsMessageId, '16');
+			$currQuestionInfo = $msgCPRules->getQuestion($obsMessageId, $userId, 'SMS_EN', '10', $qsType);
 			$obsKey = $currQuestionInfo->obs_key;
 		}
 

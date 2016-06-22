@@ -46,8 +46,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="row">
                         <div class="col-xs-12 text-right hidden-print">
 					<span class="btn btn-group text-right">
-					<A class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                       HREF="javascript:window.print()">Print This Page</A>
+					<!--<A class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
+                       HREF="javascript:window.print()">Print This Page</A>-->
 				<form class="lang" action="#" method="POST" id="form">
                     <input type="hidden" name="lang" value="es"/>
                     <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
@@ -73,8 +73,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>
                                 <div class="col-xs-7 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div>
-                                <div class="col-xs-7 address">{{$patient->getPreferredLocationAddress()->city}}
-                                    , {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
+                                <div class="col-xs-7 address">{{$patient->getPreferredLocationAddress()->city}}, {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div>
                                 <!-- <div class="col-xs-12 address"></div> -->
                             </div>
@@ -98,8 +97,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <div class="col-xs-12">
                                 <div class="col-xs-9 address">{{strtoupper($patient->fullName)}}</div>
                                 <div class="col-xs-9 address">{{strtoupper($patient->address)}}</div>
-                                <div class="col-xs-9 address"> {{strtoupper($patient->city)}}
-                                    , {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
+                                <div class="col-xs-9 address"> {{strtoupper($patient->city)}}, {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
                             </div>
                         </div>
                         <div class="row address">
@@ -115,8 +113,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <div class="col-xs-10 welcome-copy">
                                 <div class="row gutter">
                                     <BR><BR><BR>
-                                    Dear {{ucfirst(strtolower($patient->first_name))}} {{ucfirst(strtolower($patient->last_name))}}
-                                    ,
+                                    Dear {{ucfirst(strtolower($patient->first_name))}} {{ucfirst(strtolower($patient->last_name))}},
                                 </div>
                                 <div class="row gutter">
                                 </div>
@@ -128,7 +125,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 <div class="row gutter"><BR>
                                     <ul type="disc" style="line-height: 1.0em;list-style-type: disc;">
                                         <li style="list-style-type: disc;margin: 0 0;">Have 24/7 access to your care
-                                            team by calling (844) 968-1800
+                                            team by calling (888) 729-4045
                                         </li>
                                         <li style="list-style-type: disc;margin: 15px 0;">Receive a weekly call to check
                                             up on how you are doing
@@ -157,7 +154,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 <div class="row gutter">
                                 </div>
                                 <div class="row gutter text-bold text-center">
-                                    (844) 968-1800
+                                    (888) 729-4045
                                 </div>
                                 <div class="row gutter">
                                 </div>
@@ -167,7 +164,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 <div class="row gutter">
                                 </div>
                                 <div class="row gutter">
-                                    Best,
+                                    <br>Best,<br><br><br>
                                 </div>
                                 <div class="row gutter">
                                 </div>

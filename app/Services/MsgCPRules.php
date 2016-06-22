@@ -45,7 +45,7 @@ class MsgCPRules {
         // echo '<br>Valid tmpArray: ';
         // print_r($tmpArray);
 
-        $qdata = $this->getQuestion($strMsgID, 0, '', $pid);
+        $qdata = $this->getQuestion($strMsgID, 0, '', '16');
         $log[] = "MsgCPRules->getValidAnswer() obs_key = ".$qdata->obs_key;
 
         if($debug) {
@@ -113,11 +113,12 @@ class MsgCPRules {
             $strQS	= " AND qs.qs_type = '{$qstype}' ";
         }
 
+        // hardcoded qs.provider_id = '16'
         $query = "select qs.*, if(ISNULL(a.value), '{$strResponse}', a.value) as value
                 FROM rules_question_sets qs
                 LEFT JOIN rules_questions q using (qid)
                 LEFT JOIN rules_answers a using (aid)
-                WHERE qs.provider_id = {$pid}
+                WHERE qs.provider_id = 16
                 {$strQS}
                 AND if('' = '{$strMsgID}', true, q.msg_id = '{$strMsgID}')
                 and (CONCAT(',',a.value,',',a.alt_answers,',') rlike ',{$strResponse2},'
