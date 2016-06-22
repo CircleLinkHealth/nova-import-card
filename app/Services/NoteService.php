@@ -147,7 +147,19 @@ class NoteService
                     ->where('type','billing_provider');
             })->lists('ID');
 
-        return $this->getForwardedNotesWithRangeForPatients($patients, $start, $end);
+        $notes = $this->getForwardedNotesWithRangeForPatients($patients, $start, $end);
+
+        $provider_forwarded_notes = array();
+//        dd($notes);
+
+        foreach ($notes as $note){
+
+            if($this->wasSentToProvider($note)){
+                $provider_forwarded_notes[] = $note;
+            }
+        }
+
+        return collect($provider_forwarded_notes);
 
     }
 
