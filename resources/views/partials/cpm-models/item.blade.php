@@ -104,7 +104,7 @@
                 <!-- Modal -->
                 <div id="{{ $section->name }}-{{$i}}{{$item->id}}-Detail" class="modal fade text-left"
                      role="dialog">
-                    <div class="modal-dialog modal-lg">
+                    <div class="modal-dialog modal-md">
 
                         <!-- Modal content-->
                         <div class="modal-content">
@@ -114,9 +114,17 @@
                                     : {{ $buttonLabel }}</h4>
                             </div>
                             <div class="modal-body">
-                                <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
+                                @if( $item->name == 'Medication List' )
+                                    @include('partials.ccd-models.items.medications')
+                                @elseif( $item->name == 'Other Conditions' )
+                                    @include('partials.ccd-models.items.problems')
+                                @elseif( $item->name == 'Allergies' )
+                                    @include('partials.ccd-models.items.allergies')
+                                @else
+                                    <textarea id="item-{{ $section->name }}-{{$i}}{{$item->id}}-modal"
                                           name="instructions[{{ $section->name }}][{{ $item->id }}]"
                                           style="height: 400px;">{{ trim($instructionName) }}</textarea>
+                                @endif
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close
