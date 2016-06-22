@@ -250,7 +250,7 @@ class WebixFormatter implements ReportFormatter
         $meds = CcdMedication::where('patient_id', '=', $user->ID)->get();
         if($meds->count() > 0) {
             foreach($meds as $med) {
-                $careplanReport[$user->ID]['taking_meds'] .= '<br>'.$med->name;
+                $careplanReport[$user->ID]['taking_meds'] .= '<br><br>'.$med->name;
             }
         }
 
@@ -259,7 +259,7 @@ class WebixFormatter implements ReportFormatter
         $allergies = CcdAllergy::where('patient_id', '=', $user->ID)->get();
         if($allergies->count() > 0) {
             foreach($allergies as $allergy) {
-                $careplanReport[$user->ID]['allergies'] .= '<br>'.$allergy->allergen_name;
+                $careplanReport[$user->ID]['allergies'] .= '<br><br>'.$allergy->allergen_name;
             }
         }
 

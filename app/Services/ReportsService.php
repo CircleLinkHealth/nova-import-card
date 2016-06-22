@@ -96,7 +96,7 @@ class ReportsService
         $problems = CcdProblem::where('patient_id', '=', $user->ID)->get();
         if($problems->count() > 0) {
             foreach($problems as $problem) {
-                $ccdProblems .= '<br>'.$problem->name;
+                $ccdProblems .= '<br><br>'.$problem->name;
             }
         }
 
