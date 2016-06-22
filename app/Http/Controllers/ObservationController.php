@@ -207,8 +207,8 @@ class ObservationController extends Controller {
 		}
 
 		// validate answer
-		$qsType  = $msgCPRules->getQsType($obsMessageId, $wpUser->program_id);
-		$answerResponse =  $msgCPRules->getValidAnswer($wpUser->program_id, $qsType, $obsMessageId, $params['obs_value'], false);
+		$qsType = $msgCPRules->getQsType($obsMessageId, '16');
+		$answerResponse =  $msgCPRules->getValidAnswer('16', $qsType, $obsMessageId, $params['obs_value'], false);
 		if(!$answerResponse) {
 			return redirect()->back()->withErrors(['You entered an invalid value, please review and resubmit.'])->withInput();
 		}

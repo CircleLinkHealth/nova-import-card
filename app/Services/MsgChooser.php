@@ -187,8 +187,10 @@ class MsgChooser {
         $this->provid = $wpUser->program_id;
 
         // current message info
-        $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', $wpUser->program_id, $qsType);
-        $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, $this->provid, $userId);
+        // 3.0.6 $wpUser->program_id is being hardcoded to '16'
+        $currQuestionInfo  = $msgCPRules->getQuestion($msgId, $userId, 'SMS_EN', '16', $qsType);
+        // 3.0.6 $this->provid is being hardcoded to '16'
+        $currQuestionInfo->message = $msgSubstitutions->doSubstitutions($currQuestionInfo->message, '16', $userId);
         $log[] = 'MsgChooser->setObsResponse() currQuestionInfo->message['.$currQuestionInfo->msgtype.'] = '.$currQuestionInfo->message.'';
         $log[] = 'MsgChooser->setObsResponse() currQuestion answer = '.$answer.'';
 
@@ -220,7 +222,7 @@ class MsgChooser {
 
             //  get new information in case of loop
             if($nextMsgId) {
-                $nextQuestionInfo = $msgCPRules->getQuestion($nextMsgId, $userId, 'APP_EN', $wpUser->program_id, $qsType);
+                $nextQuestionInfo = $msgCPRules->getQuestion($nextMsgId, $userId, 'APP_EN', '10', $qsType);
                 $nextQuestionInfo->message = $msgSubstitutions->doSubstitutions($nextQuestionInfo->message, $this->provid, $userId);
                 $log[] = 'MsgChooser->setObsResponse() nextQuestionInfo->message[' . $nextQuestionInfo->msgtype . '] = ' . $nextQuestionInfo->message . '';
                 $log[] = 'MsgChooser->setObsResponse() nextQuestionInfo->qtype = ' . $nextQuestionInfo->qtype . '';
