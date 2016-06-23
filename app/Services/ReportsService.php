@@ -95,9 +95,16 @@ class ReportsService
         $ccdProblems = '';
         $problems = CcdProblem::where('patient_id', '=', $user->ID)->get();
         if($problems->count() > 0) {
+            $i = 0;
             foreach($problems as $problem) {
-                $ccdProblems .= '<br><br>'.$problem->name;
+                if($i > 0) {
+                    $ccdProblems .= '<br>';
+                }
+                $ccdProblems .= $problem->name;
+                $i++;
             }
+        } else {
+            $ccdProblems = "No instructions at this time.";
         }
 
         return $ccdProblems;
