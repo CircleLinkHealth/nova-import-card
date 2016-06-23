@@ -277,18 +277,32 @@ class WebixFormatter implements ReportFormatter
         $careplanReport[$user->ID]['taking_meds'] = '';
         $meds = CcdMedication::where('patient_id', '=', $user->ID)->get();
         if($meds->count() > 0) {
+            $i = 0;
             foreach($meds as $med) {
-                $careplanReport[$user->ID]['taking_meds'] .= '<br><br>'.$med->name;
+                if($i > 0) {
+                    $careplanReport[$user->ID]['taking_meds'] .= '<br>';
+                }
+                $careplanReport[$user->ID]['taking_meds'] .= $med->name;
+                $i++;
             }
+        } else {
+            $careplanReport[$user->ID]['taking_meds'] = "No instructions at this time.";
         }
 
         //Allergies
         $careplanReport[$user->ID]['allergies'] = '';
         $allergies = CcdAllergy::where('patient_id', '=', $user->ID)->get();
         if($allergies->count() > 0) {
+            $i = 0;
             foreach($allergies as $allergy) {
-                $careplanReport[$user->ID]['allergies'] .= '<br><br>'.$allergy->allergen_name;
+                if($i > 0) {
+                    $careplanReport[$user->ID]['allergies'] .= '<br>';
+                }
+                $careplanReport[$user->ID]['allergies'] .= $allergy->allergen_name;
+                $i++;
             }
+        } else {
+            $careplanReport[$user->ID]['allergies'] = "No instructions at this time.";
         }
 
         //Social Services
