@@ -1,13 +1,11 @@
 <?php namespace App\Formatters;
 
+use App\ActivityMeta;
 use App\Contracts\ReportFormatter;
-use App\Models\CCD\CcdAllergy;
-use App\Models\CCD\CcdMedication;
-use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
+use App\Program;
 use App\Services\CPM\CpmMiscService;
-use App\Services\NoteService;
 use App\Services\ReportsService;
 use App\User;
 use Carbon\Carbon;
@@ -17,25 +15,31 @@ class WebixFormatter implements ReportFormatter
 
     //Transform Reports Data for Webix
 
-    public function formatDataForNotesListingReport($notes, $request)
+    public function formatDataForNotesListingReport($notes)
     {
+
         $count = 0;
 
-        $formatted_notes = array();
+        foreach($notes as $note){
+            $patient = User::find($note->patient_id);
 
-        foreach ($notes as $note) {
+            if(!$patient){
+                continue;
+            }
 
             $formatted_notes[$count]['id'] = $note->id;
 
             //Display Name
-            $formatted_notes[$count]['patient_name'] = $note->patient->display_name ? $note->patient->display_name : '';
+            $formatted_notes[$count]['patient_name'] = $patient->display_name ? $patient->display_name : '';
             //ID
             $formatted_notes[$count]['patient_id'] = $note->patient_id;
 
-            $formatted_notes[$count]['program_name'] = $note->patient->primaryProgram->display_name;
+            //Program Name
+            $program = Program::find($patient->program_id);
+            if ($program) $formatted_notes[$count]['program_name'] = $program->display_name;
 
             //Provider Name
-            $provider = User::find(intval($note->patient->billingProviderID));
+            $provider = User::find(intval($patient->billingProviderID));
             if (is_object($provider)) {
                 $formatted_notes[$count]['provider_name'] = $provider->fullName;
             } else {
@@ -43,7 +47,7 @@ class WebixFormatter implements ReportFormatter
             }
 
             //Author
-            $author = $note->author;
+            $author = User::find($note->logger_id);
             if (is_object($author)) {
                 $formatted_notes[$count]['author_name'] = $author->display_name;
             } else {
@@ -53,82 +57,60 @@ class WebixFormatter implements ReportFormatter
             //Type
             $formatted_notes[$count]['type'] = $note->type;
 
-            //Body
-            $formatted_notes[$count]['comment'] = $note->body;
+            //Status
+            $formatted_notes[$count]['status'] = $note->type;
 
-            $formatted_notes[$count]['date'] = Carbon::parse($note->performed_at)->format('Y-m-d');
+            //Comments
+            $metaComment = ActivityMeta::where('activity_id',$note->id)
+                ->where('meta_key', 'comment')->first();
 
-            //TAGS
+            $meta = ActivityMeta::where('activity_id',$note->id)
+                ->where(function($query){
+                    $query->where('meta_key', 'call_status')
+                        ->orWhere('meta_key', 'hospital')
+                        ->OrWhere('meta_key', 'email_sent_to')
+                        ->orWhere('meta_key', 'comment');
+                })
+                ->get();
+
             $formatted_notes[$count]['tags'] = '';
+            $formatted_notes[$count]['comment'] = $metaComment->meta_value;
+            $formatted_notes[$count]['date'] = Carbon::parse($note->created_at)->format('Y-m-d');
 
-            if (count($note->mail) > 0) {
-                if((new NoteService())->wasSentToProvider($note)){
-                    $formatted_notes[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+            //Check if note was sent to a provider
+            $mail_forwarded_meta = ActivityMeta::where('activity_id',$note->id)
+                ->where('meta_key', 'email_sent_to')
+                ->get();
+
+            foreach ($mail_forwarded_meta as $m) {
+//                if ($m->meta_key == 'email_sent_to') {
+//                    $sent_to_user = User::find($m->meta_value);
+//                    if ($sent_to_user->providerInfo) {
+                        $formatted_notes[$count]['tags'] = '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+//                    }
+//                }
+            }
+
+            foreach ($meta as $m) {
+                switch ($m->meta_value) {
+                    case('reached'):
+                        $formatted_notes[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
+                        break;
+                    case('admitted'):
+                        $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
+                        break;
                 }
             }
 
 
-            if (count($note->call) > 0) {
-                if ($note->call->status == 'reached') {
-                    $formatted_notes[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
-                }
-            }
-
-            if ($note->isTCM) {
-                $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
-            }
+            //Topic / Offline Act Name
+            //Preview
+            //Date
 
             $count++;
         }
 
-        return $formatted_notes;
-
-    }
-
-    public function formatDataForNotesAndOfflineActivitiesReport($report_data)
-    {
-
-        if ($report_data->isEmpty()) {
-            return '';
-        }
-
-        $formatted_data = array();
-        $count = 0;
-
-        foreach ($report_data as $data) {
-
-            $formatted_data[$count]['id'] = $data->id;
-
-
-            if (is_int($data->author_id)) // only notes have authors
-            {
-                $formatted_data[$count]['logger_name'] = User::find($data->author_id)->fullName;
-                $formatted_data[$count]['comment'] = $data->body;
-                $formatted_data[$count]['logged_from'] = 'note';
-
-            } else // handles activities
-            {
-                $formatted_data[$count]['logger_name'] = User::find($data->logger_id)->fullName;
-                $formatted_data[$count]['comment'] = $data->getCommentForActivity();
-                $formatted_data[$count]['logged_from'] = 'manual_input';
-            }
-
-            $formatted_data[$count]['type_name'] = $data->type;
-            $formatted_data[$count]['performed_at'] = $data->performed_at;
-
-            $count++;
-
-        }
-
-        if (!empty($formatted_data)) {
-
-            return "data:" . json_encode($formatted_data) . "";
-
-        } else {
-
-            return '';
-
-        }
+        return "data:" . json_encode(array_values($formatted_notes)) . "";
     }
 
     public function formatDataForViewPrintCareplanReport($users)
@@ -170,7 +152,6 @@ class WebixFormatter implements ReportFormatter
             $biometric_values = app(config('cpmmodelsmap.biometrics')[$biometric->type])->getUserValues($user);
 
             if($biometric_values){
-
                 //Check to see whether the user has a starting value
                 if ($biometric_values['starting'] == '') {
                     $biometric_values['starting'] = 'N/A';
@@ -200,7 +181,7 @@ class WebixFormatter implements ReportFormatter
 
                         $biometric_values['verb'] = 'Decrease';
 
-                    } else if ($biometric_values['starting'] < $biometric_values['target']){
+                    } else {
 
                         $biometric_values['verb'] = 'Increase';
 
@@ -225,13 +206,9 @@ class WebixFormatter implements ReportFormatter
 
                         $biometric_values['verb'] = 'Decrease';
 
-                    } else if ($biometric_values['starting'] < $biometric_values['target']){
-
-                        $biometric_values['verb'] = 'Increase';
-
                     } else {
 
-                        $biometric_values['verb'] = 'Regulate';
+                        $biometric_values['verb'] = 'Increase';
 
                     }
                 }
@@ -249,13 +226,9 @@ class WebixFormatter implements ReportFormatter
 
                         $biometric_values['verb'] = 'Decrease';
 
-                    } else if ($biometric_values['starting'] < $biometric_values['target']){
-
-                        $biometric_values['verb'] = 'Increase';
-
                     } else {
 
-                        $biometric_values['verb'] = 'Regulate';
+                        $biometric_values['verb'] = 'Increase';
 
                     }
                 }
@@ -271,38 +244,20 @@ class WebixFormatter implements ReportFormatter
         }//dd($careplanReport[$user->ID]['bio_data']);
 
 
-        array_reverse($careplanReport[$user->ID]['bio_data']);
+    array_reverse($careplanReport[$user->ID]['bio_data']);
 
         //Medications List
-        $careplanReport[$user->ID]['taking_meds'] = '';
-        $meds = CcdMedication::where('patient_id', '=', $user->ID)->get();
-        if($meds->count() > 0) {
-            $i = 0;
-            foreach($meds as $med) {
-                if($i > 0) {
-                    $careplanReport[$user->ID]['taking_meds'] .= '<br>';
-                }
-                $careplanReport[$user->ID]['taking_meds'] .= $med->name;
-                $i++;
-            }
+        if($user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->first()){
+            $careplanReport[$user->ID]['taking_meds'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::MEDICATION_LIST);
         } else {
-            $careplanReport[$user->ID]['taking_meds'] = "No instructions at this time.";
+            $careplanReport[$user->ID]['taking_meds'] = '';
         }
 
         //Allergies
-        $careplanReport[$user->ID]['allergies'] = '';
-        $allergies = CcdAllergy::where('patient_id', '=', $user->ID)->get();
-        if($allergies->count() > 0) {
-            $i = 0;
-            foreach($allergies as $allergy) {
-                if($i > 0) {
-                    $careplanReport[$user->ID]['taking_meds'] .= '<br>';
-                }
-                $careplanReport[$user->ID]['allergies'] .= $allergy->allergen_name;
-                $i++;
-            }
+        if($user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->first()){
+            $careplanReport[$user->ID]['allergies'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::ALLERGIES);
         } else {
-            $careplanReport[$user->ID]['allergies'] = "No instructions at this time.";
+            $careplanReport[$user->ID]['allergies'] = '';
         }
 
         //Social Services
