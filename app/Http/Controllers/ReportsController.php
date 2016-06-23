@@ -797,7 +797,7 @@ class ReportsController extends Controller
                 $i = 0;
                 // header
                 $sheet->appendRow(array(
-                    'id', 'Provider', 'Program', 'CCM Status', 'DOB', 'Phone', 'Registered On', 'CCM', 'Patient Reached', 'Last Entered Note', 'Note Content', '2nd to last Entered Note', 'Note Content'
+                    'id', 'Provider', 'Program', 'CCM Status', 'DOB', 'Phone', 'Registered On', 'CCM', 'Patient Reached', 'Last Entered Note', 'Note Content', '2nd to last Entered Note', 'Note Content', '3rd to last Entered Note', 'Note Content'
                 ));
 
                 foreach($users as $user) {
@@ -835,6 +835,9 @@ class ReportsController extends Controller
                     $activity2comment = '';
                     $activity2status = '';
                     $activity2date = '';
+                    $activity3comment = '';
+                    $activity3status = '';
+                    $activity3date = '';
                     $activities = $user->patientActivities()
                         ->whereHas('meta', function($q) {
                             $q->where('meta_key', 'comment');
@@ -865,6 +868,11 @@ class ReportsController extends Controller
                                 $activity2status = $callStatus;
                                 $activity2date = $activity->performed_at;
                             }
+                            if($a == 2) {
+                                $activity3comment = $activity->id . ' ' . $comment;
+                                $activity3status = $callStatus;
+                                $activity3date = $activity->performed_at;
+                            }
                             $a++;
                         }
                     }
@@ -881,7 +889,9 @@ class ReportsController extends Controller
                         $activity1date,
                         $activity1comment,
                         $activity2date,
-                        $activity2comment
+                        $activity2comment,
+                        $activity3date,
+                        $activity3comment
                     ));
                     $i++;
                 }
