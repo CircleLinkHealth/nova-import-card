@@ -13,51 +13,51 @@
     <!-- Fonts -->
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 
-    @if(!isset($isPdf))
-            <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+@if(!isset($isPdf))
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
 
-    <!-- Scripts -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <!-- Scripts -->
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
-    <!-- http://trentrichardson.com/examples/timepicker/
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>-->
+        <!-- http://trentrichardson.com/examples/timepicker/
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>-->
 
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-      ga('create', 'UA-9084372-23', 'auto');
-      ga('send', 'pageview');
+            ga('create', 'UA-9084372-23', 'auto');
+            ga('send', 'pageview');
 
-    </script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
-    <script src="{{ asset('/js/scripts.js') }}"></script>
-    <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
-    <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
+        </script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
+        <script src="{{ asset('/js/scripts.js') }}"></script>
+        <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
+        <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
 
-    <!-- http://curioussolutions.github.io/DateTimePicker/ -->
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
+        <!-- http://curioussolutions.github.io/DateTimePicker/ -->
+        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
+        <script type="text/javascript" src="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.js"></script>
 
-    <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
-    <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
+        <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
+        <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
 
-    <!-- select2 -->
-    <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
-    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+        <!-- select2 -->
+        <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
+        <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
     @endif
 </head>
 <body>
@@ -84,11 +84,13 @@
                     <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
                     <li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Select Patient</a>
                     </li>
+                    <li><a href="{{ URL::route('patient.note.listing') }}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"
+                                                                                 style="height: 16px; width: 22px; font-size: 17px; top: 4px"></span>Notes Report</a></li>
                     <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
                     </li>
                     <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add
                             Patient</a></li>
-                    <li><a href="{{ URL::route('patients.alerts') }}"><i class="icon--alert--white"></i> Alerts</a></li>
+
                     @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
                         <li><a class="btn btn-primary btn-xs"
                                href="{{ empty($patient->ID) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->ID)) }}"><i
@@ -145,15 +147,12 @@
                        omitsubmit="yes">Patient Reports <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li>
-                            <a href="{{ empty($patient->ID) ? URL::route('patients.search') : '' }}">Patient Alerts</a>
-                        </li>
-                        <li>
                             <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.reports.progress', array('patient' => $patient->ID)) }}">Progress
                                 Report</a>
                         </li>
-                        {{--<li>--}}
-                            {{--<a href="{{ URL::route('patient.note.listing') }}"> All Patient Notes </a>--}}
-                        {{--</li>--}}
+                        <li>
+                            <a href="{{ URL::route('patient.note.listing') }}">Notes Report</a>
+                        </li>
                         <li>
                             <a href="{{ empty($patient->ID) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID)) }}">Patient
                                 Activity Report</a>
@@ -202,10 +201,10 @@
     </div>
     --}}
     @if(!isset($isPdf))
-            <!-- PAGE TIMER START -->
-    @include('partials.providerUItimer')
-            <!-- PAGE TIMER END -->
-@endif
+        <!-- PAGE TIMER START -->
+        @include('partials.providerUItimer')
+        <!-- PAGE TIMER END -->
+    @endif
 
 </body>
 </html>

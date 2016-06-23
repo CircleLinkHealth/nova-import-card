@@ -11,14 +11,17 @@
          syntaxCheck="false">
     <testsuites>
         <testsuite name="Application Test Suite">
-            <directory>./tests/</directory>
+        <directory>./tests/Notes/</directory>
         </testsuite>
-        <testsuite name="Aprima_Api">
-            <directory>./tests/AprimaApi/</directory>
-        </testsuite>
-        <testsuite name="Care_Plan">
-            <directory>./tests/CarePlan/</directory>
-        </testsuite>
+        <!--<testsuite name="Notes">-->
+            <!--<directory>./tests/Notes/</directory>-->
+        <!--</testsuite>-->
+        <!--<testsuite name="Aprima_Api">-->
+            <!--<directory>./tests/AprimaApi/</directory>-->
+        <!--</testsuite>-->
+        <!--<testsuite name="Care_Plan">-->
+            <!--<directory>./tests/CarePlan/</directory>-->
+        <!--</testsuite>-->
     </testsuites>
     <listeners>
         <listener class="\Mockery\Adapter\Phpunit\TestListener"

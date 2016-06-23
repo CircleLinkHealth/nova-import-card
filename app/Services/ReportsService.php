@@ -43,34 +43,6 @@ class ReportsService
         return $userHeader;
     }
 
-    public static function getItemsForParent($item, User $user)
-    {
-        $categories = array();
-        //PCP has the sections for each provider, get all sections for the user's blog
-        $pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', $item)->first();
-        //Get all the items for each section
-        $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id')->all();
-        for ($i = 0; $i < count($items); $i++) {
-            //get id's of all lifestyle items that are active for the given user
-            $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value', 'Active')->where('user_id', $user->ID)->first();
-            if ($item_for_user[$i] != null) {
-                //Find the items_text for the one's that are active
-                $user_items = CPRulesItem::find($item_for_user[$i]->items_id);
-                $categories[] = [
-                    'name' => $user_items->items_text,
-                    'items_id' => $user_items->items_id,
-                    'section_text' => $item,
-                    'items_text' => $user_items->items_text
-                ];
-            }
-        }
-        if (count($categories) > 0) {
-            return $categories;
-        } else {
-            return false;
-        }
-    }
-
     public function getBiometricsToMonitor(User $user)
     {
        return $user->cpmBiometrics()->get()->lists('name')->all();
@@ -863,8 +835,7 @@ class ReportsService
 //    }
     
     //Generates View Data for Careplans
-    // If only one element is passed, it returns just one array, otherwise it gives an assoc array with
-    // the key as
+    // If only one element is passed, it returns just one array, otherwise it gives an assoc array
     public function carePlanGenerator($patients)
     {
         $careplanReport = array();

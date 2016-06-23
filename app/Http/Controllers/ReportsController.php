@@ -68,7 +68,7 @@ class ReportsController extends Controller
                 $biometrics_array[$bio_name]['change'] = $changes['change'];
                 $biometrics_array[$bio_name]['progression'] = $changes['progression'];
                 $biometrics_array[$bio_name]['status'] = (isset($changes['status'])) ? $changes['status'] : 'Unchanged';
- 				//$changes['bio']= $bio_name;debug($changes);
+                //$changes['bio']= $bio_name;debug($changes);
                 $biometrics_array[$bio_name]['lastWeekAvg'] = intval($last->Avg);
             }//debug($biometrics_array);
 
@@ -98,7 +98,7 @@ class ReportsController extends Controller
 
         //Medication Tracking:
         $medications = $this->service->getMedicationStatus($user, false);
-        
+
         $data = [
             'treating' => $treating,
             'patientId' => $patientId,
@@ -136,8 +136,6 @@ class ReportsController extends Controller
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
 
         $u20_patients = array();
-        debug(jdmonthname(1, 1));
-        debug($month_selected);
 
         // ROLLUP CATEGORIES
         $CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
@@ -198,7 +196,6 @@ class ReportsController extends Controller
                 $act_count++;
             }
         }
-        debug($u20_patients);
         foreach ($u20_patients as $key => $value) {
             if ($value['colsum_total'] >= 1200) {
                 unset($u20_patients[$key]);
@@ -206,7 +203,6 @@ class ReportsController extends Controller
         }
 
         $reportData = "data:" . json_encode(array_values($u20_patients)) . "";
-        debug(json_encode($u20_patients));
 
         $years = array();
         for ($i = 0; $i < 3; $i++) {
@@ -418,7 +414,7 @@ class ReportsController extends Controller
         if(!$careplan){
             return 'Careplan not found...';
         }
-        
+
         $patient = User::find($patientId);
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
@@ -440,11 +436,6 @@ class ReportsController extends Controller
             ]);
     }
 
-    /**
-     * @param Request $request
-     * @param bool|false $patientId
-     * @return \Illuminate\View\View
-     */
     public function biometricsCharts(Request $request, $patientId = false)
     {
 
@@ -550,7 +541,7 @@ class ReportsController extends Controller
             */
         })->export('xls');
     }
-    
+
     public function excelReportT2()
     {
         // get all users with paused ccm_status

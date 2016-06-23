@@ -15,7 +15,10 @@ interface ReportFormatter
      * This Interface will be used to format reports for the CPM Frontend
      */
     
-    public function formatDataForNotesListingReport($notes);
+    public function formatDataForNotesListingReport($notes, $request);
+
+    public function formatDataForNotesAndOfflineActivitiesReport($notes);
+
 
     //public function formatDataForU20Report();
 

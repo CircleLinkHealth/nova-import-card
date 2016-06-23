@@ -332,6 +332,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\Activity');
     }
 
+	public function notes()
+	{
+		return $this->hasMany('App\Note');
+	}
+
 	public function patientActivities()
 	{
 		return $this->hasMany('App\Activity', 'patient_id', 'ID');
@@ -387,6 +392,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$patientIds->whereHas('roles', function ($q) {
 				$q->where('name', '=', 'participant');
 			});
+		//}
+
+		$patientIds = $patientIds->lists('ID')->all();
+		return $patientIds;
+	}
+
+	public function viewableProviderIds() {
+		// get all patients who are in the same programs
+		$programIds = $this->viewableProgramIds();
+		$patientIds = User::whereHas('programs', function ($q) use ($programIds) {
+			$q->whereIn('program_id', $programIds);
+		});
+
+		//if(!Auth::user()->can('admin-access')) {
+		$patientIds->whereHas('roles', function ($q) {
+			$q->where('name', '=', 'provider');
+		});
 		//}
 
 		$patientIds = $patientIds->lists('ID')->all();

@@ -19,6 +19,18 @@ class ActivityService
      * @param Carbon $to
      * @return mixed
      */
+
+    public function getOfflineActivitiesForPatient(User $patient){
+
+        return Activity::select(DB::raw('*'))
+            ->where('patient_id', $patient->ID)
+            ->where('logged_from', 'manual_input')
+            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+            ->orderBy('performed_at', 'desc')
+            ->get();
+
+    }
+
     public function getTotalActivityTimeForRange($userId, Carbon $from, Carbon $to)
     {
         $acts = new Collection(DB::table('lv_activities')
@@ -123,58 +135,4 @@ class ActivityService
         return true;
     }
 
-    /**
-     * @param $careteam
-     * @param $url
-     * @param $performed_at
-     * @param $user_id
-     * @param $logger_name
-     * @param $newNoteFlag (checks whether it's a new note or an old one)
-     * @param bool $admitted_flag
-     * @return bool
-     */
-    public function sendNoteToCareTeam(&$careteam, $url, $performed_at, $user_id, $logger_name, $newNoteFlag, $admitted_flag = false)
-    {
-
-        /*
-         *  New note: "Please see new note for patient [patient name]: [link]"
-         *  Old/Fw'd note: "Please see forwarded note for patient [patient  name], created on [creation date] by [note creator]: [link]
-         */
-
-        $user = User::find($user_id);
-        for ($i = 0; $i < count($careteam); $i++) {
-            $provider_user = User::find($careteam[$i]);
-            $email = $provider_user->user_email;
-            $performed_at = Carbon::parse($performed_at)->toFormattedDateString();
-            $data = array(
-                'patient_name' => $user->display_name,
-                'url' => $url,
-                'time' => $performed_at,
-                'logger' => $logger_name
-            );
-
-            if ($newNoteFlag || $admitted_flag) {
-                $email_view = 'emails.newnote';
-                $email_subject = 'Urgent Patient Note from CircleLink Health';
-            } else {
-                $email_view = 'emails.existingnote';
-                $email_subject = 'You have received a new note notification from CarePlan Manager';
-            }
-            
-            Mail::send($email_view, $data, function ($message) use ($email, $email_subject) {
-                $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
-
-                //Forwards notes to Linda
-                $message->cc('Lindaw@circlelinkhealth.com');
-                $message->to($email)->subject($email_subject);
-            });
-        }
-        return true;
-//		dd(count(Mail::failures()));
-//		if( count(Mail::failures()) > 0 ) {
-//			return false;
-//		} else {
-//			return true;
-//		}
-    }
 }

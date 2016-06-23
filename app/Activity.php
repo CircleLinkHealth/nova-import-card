@@ -38,12 +38,15 @@ class Activity extends Model implements Transformable{
      */
 
     protected $fillable = ['type', 'duration', 'duration_unit', 'patient_id', 'provider_id', 'logger_id',
-        'logged_from', 'performed_at', 'performed_at_gmt', 'page_timer_id'];
+        'logged_from', 'performed_at', 'performed_at_gmt', 'page_timer_id','created_at'];
 
     protected $dates = ['deleted_at'];
 
     protected $appends = ['performed_at_year_month'];
 
+    public function getCommentForActivity(){
+        return $this->meta->where('meta_key','comment')->first()->meta_value;
+    }
 
     // for revisionable
     public static function boot()
