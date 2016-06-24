@@ -214,10 +214,10 @@ class WebixFormatter implements ReportFormatter
                         $biometric_values['verb'] = 'Regulate';
 
                     }
-                }
 
-                if($starting >= 70 && $starting <= 130) {
-                    $biometric_values['verb'] = 'Regulate';
+                    if($starting >= 100 && $starting <= 130) {
+                        $biometric_values['verb'] = 'Regulate';
+                    }
                 }
 
             }
