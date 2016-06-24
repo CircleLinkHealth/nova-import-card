@@ -64,19 +64,21 @@ class ReportsService
         }
 
         // Other Conditions / CcdProblem List
-        $ccdProblems = '';
-        $problems = CcdProblem::where('patient_id', '=', $user->ID)->get();
-        if($problems->count() > 0) {
-            $i = 0;
-            foreach($problems as $problem) {
-                if($i > 0) {
-                    $ccdProblems .= '<br>';
+        $ccdProblems = 'No instructions at this time.';
+        $problem = $user->cpmMiscs->where('name',CpmMisc::OTHER_CONDITIONS)->all();
+        if(!empty($problem)){
+            $problems = CcdProblem::where('patient_id', '=', $user->ID)->get();
+            if ($problems->count() > 0) {
+                $ccdProblems = '';
+                $i = 0;
+                foreach ($problems as $problem) {
+                    if ($i > 0) {
+                        $ccdProblems .= '<br>';
+                    }
+                    $ccdProblems .= $problem->name;
+                    $i++;
                 }
-                $ccdProblems .= $problem->name;
-                $i++;
             }
-        } else {
-            $ccdProblems = "No instructions at this time.";
         }
 
         return $ccdProblems;

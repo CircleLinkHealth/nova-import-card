@@ -274,35 +274,45 @@ class WebixFormatter implements ReportFormatter
     array_reverse($careplanReport[$user->ID]['bio_data']);
 
         //Medications List
-        $careplanReport[$user->ID]['taking_meds'] = '';
-        $meds = CcdMedication::where('patient_id', '=', $user->ID)->get();
-        if($meds->count() > 0) {
-            $i = 0;
-            foreach($meds as $med) {
-                if($i > 0) {
-                    $careplanReport[$user->ID]['taking_meds'] .= '<br>';
+        $careplanReport[$user->ID]['taking_meds'] = 'No instructions at this time.';
+        $medicationList = $user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->all();
+        if(!empty($medicationList)) {
+            $meds = CcdMedication::where('patient_id', '=', $user->ID)->get();
+            if ($meds->count() > 0) {
+                $i = 0;
+                $careplanReport[$user->ID]['taking_meds'] = '';
+                foreach ($meds as $med) {
+                    if(empty($med->name)) {
+                        continue 1;
+                    }
+                    if ($i > 0) {
+                        $careplanReport[$user->ID]['taking_meds'] .= '<br>';
+                    }
+                    $careplanReport[$user->ID]['taking_meds'] .= $med->name;
+                    $i++;
                 }
-                $careplanReport[$user->ID]['taking_meds'] .= $med->name;
-                $i++;
             }
-        } else {
-            $careplanReport[$user->ID]['taking_meds'] = "No instructions at this time.";
         }
 
         //Allergies
-        $careplanReport[$user->ID]['allergies'] = '';
-        $allergies = CcdAllergy::where('patient_id', '=', $user->ID)->get();
-        if($allergies->count() > 0) {
-            $i = 0;
-            foreach($allergies as $allergy) {
-                if($i > 0) {
-                    $careplanReport[$user->ID]['allergies'] .= '<br>';
+        $careplanReport[$user->ID]['allergies'] = 'No instructions at this time.';
+        $allergy = $user->cpmMiscs->where('name',CpmMisc::ALLERGIES)->all();
+        if(!empty($allergy)){
+            $allergies = CcdAllergy::where('patient_id', '=', $user->ID)->get();
+            if($allergies->count() > 0) {
+                $careplanReport[$user->ID]['allergies'] = '';
+                $i = 0;
+                foreach($allergies as $allergy) {
+                    if(empty($allergy->allergen_name)) {
+                        continue 1;
+                    }
+                    if($i > 0) {
+                        $careplanReport[$user->ID]['allergies'] .= '<br>';
+                    }
+                    $careplanReport[$user->ID]['allergies'] .= $allergy->allergen_name;
+                    $i++;
                 }
-                $careplanReport[$user->ID]['allergies'] .= $allergy->allergen_name;
-                $i++;
             }
-        } else {
-            $careplanReport[$user->ID]['allergies'] = "No instructions at this time.";
         }
 
         //Social Services
