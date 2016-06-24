@@ -196,11 +196,16 @@ class WebixFormatter implements ReportFormatter
 
                 } else {
 
-                    if ($biometric_values['starting'] > $biometric_values['target']) {
+                    $starting = explode('/', $biometric_values['starting']);
+                    $starting = $starting[0];
+                    $target = explode('/', $biometric_values['target']);
+                    $target = $target[0];
+
+                    if ($starting > $target) {
 
                         $biometric_values['verb'] = 'Decrease';
 
-                    } else if ($biometric_values['starting'] < $biometric_values['target']){
+                    } else if ($starting < $target){
 
                         $biometric_values['verb'] = 'Increase';
 
@@ -211,10 +216,9 @@ class WebixFormatter implements ReportFormatter
                     }
                 }
 
-                if(intval($biometric_values['starting']) >= 100 && intval($biometric_values['starting']) <= 130) {
+                if($starting >= 70 && $starting <= 130) {
                     $biometric_values['verb'] = 'Regulate';
                 }
-
 
             }
 
