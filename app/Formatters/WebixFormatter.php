@@ -274,7 +274,7 @@ class WebixFormatter implements ReportFormatter
     array_reverse($careplanReport[$user->ID]['bio_data']);
 
         //Medications List
-        $careplanReport[$user->ID]['taking_meds'] = 'No instructions at this time.';
+        $careplanReport[$user->ID]['taking_meds'] = 'No instructions at this time';
         $medicationList = $user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->all();
         if(!empty($medicationList)) {
             $meds = CcdMedication::where('patient_id', '=', $user->ID)->get();
@@ -295,7 +295,7 @@ class WebixFormatter implements ReportFormatter
         }
 
         //Allergies
-        $careplanReport[$user->ID]['allergies'] = 'No instructions at this time.';
+        $careplanReport[$user->ID]['allergies'] = 'No instructions at this time';
         $allergy = $user->cpmMiscs->where('name',CpmMisc::ALLERGIES)->all();
         if(!empty($allergy)){
             $allergies = CcdAllergy::where('patient_id', '=', $user->ID)->get();

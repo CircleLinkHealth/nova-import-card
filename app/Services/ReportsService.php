@@ -64,7 +64,7 @@ class ReportsService
         }
 
         // Other Conditions / CcdProblem List
-        $ccdProblems = 'No instructions at this time.';
+        $ccdProblems = 'No instructions at this time';
         $problem = $user->cpmMiscs->where('name',CpmMisc::OTHER_CONDITIONS)->all();
         if(!empty($problem)){
             $problems = CcdProblem::where('patient_id', '=', $user->ID)->get();
