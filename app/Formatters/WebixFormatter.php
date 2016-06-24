@@ -202,14 +202,19 @@ class WebixFormatter implements ReportFormatter
 
                     } else if ($biometric_values['starting'] < $biometric_values['target']){
 
-                            $biometric_values['verb'] = 'Increase';
+                        $biometric_values['verb'] = 'Increase';
 
-                        } else {
+                    } else {
 
-                            $biometric_values['verb'] = 'Regulate';
+                        $biometric_values['verb'] = 'Regulate';
 
-                        }
+                    }
                 }
+
+                if(intval($biometric_values['starting']) >= 100 && intval($biometric_values['starting']) <= 130) {
+                    $biometric_values['verb'] = 'Regulate';
+                }
+
 
             }
 
@@ -259,6 +264,12 @@ class WebixFormatter implements ReportFormatter
 
                     }
                 }
+
+                if(intval($biometric_values['starting']) >= 70 && intval($biometric_values['starting']) <= 130) {
+                    $biometric_values['verb'] = 'Regulate';
+                }
+
+
             }
 
 
@@ -271,7 +282,7 @@ class WebixFormatter implements ReportFormatter
         }//dd($careplanReport[$user->ID]['bio_data']);
 
 
-    array_reverse($careplanReport[$user->ID]['bio_data']);
+        array_reverse($careplanReport[$user->ID]['bio_data']);
 
         //Medications List
         $careplanReport[$user->ID]['taking_meds'] = 'No instructions at this time';
