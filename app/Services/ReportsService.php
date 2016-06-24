@@ -72,6 +72,9 @@ class ReportsService
                 $ccdProblems = '';
                 $i = 0;
                 foreach ($problems as $problem) {
+                    if(empty($problem->name)) {
+                        continue 1;
+                    }
                     if ($i > 0) {
                         $ccdProblems .= '<br>';
                     }
