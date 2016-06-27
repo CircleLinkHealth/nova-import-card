@@ -23,6 +23,7 @@ class MoveItems306 extends Migration {
 	 */
 	public function up()
 	{
+		/*
 		// add approval meta to patient info
 		$users = User::whereHas('roles', function ($q) {
 			$q->where('name', '=', 'participant');
@@ -69,6 +70,7 @@ class MoveItems306 extends Migration {
 			$i++;
 
 		}
+		*/
 
 
 
