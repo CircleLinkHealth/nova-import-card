@@ -71,10 +71,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
                                 <div class="col-xs-7 address">{{$patient->primaryProgram->display_name}}</div>
                                 <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>
-                                <div class="col-xs-7 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
-                                <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div>
-                                <div class="col-xs-7 address">{{$patient->getPreferredLocationAddress()->city}}, {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
-                                <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div>
+                                <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
+                                <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div> -->
+                                <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->city}}, {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
+                                <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div> -->
                                 <!-- <div class="col-xs-12 address"></div> -->
                             </div>
                         </div>
