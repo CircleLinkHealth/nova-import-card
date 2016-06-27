@@ -8,7 +8,7 @@ new Vue({
     el: '#medications',
     data: {
         // default form values
-        medication: { id: '', patient_id: patientId, name: '' }
+        medication: { id: '', patient_id: patientId, name: '', sig: '' }
     },
     // Anything within the ready function will run when the application loads
     ready: function() {
@@ -45,8 +45,8 @@ new Vue({
                     // reset form values
                     var id = response.data.id.id;
                     var patient_id = $('#patient_id').val();
-                    this.medications.push({ id: id, patient_id: patient_id, name: response.data.id.name });
-                    this.medication = { id: '', patient_id: patient_id, name: '' };
+                    this.medications.push({ id: id, patient_id: patient_id, name: response.data.id.name, sig: response.data.id.sig });
+                    this.medication = { id: '', patient_id: patient_id, name: '', sig: '' };
 
                 }, (response) => {
 
@@ -62,6 +62,7 @@ new Vue({
 
             // show textarea
             $('#medication-edit-' + index).toggle();
+            $('#medication-edit-sig-' + index).toggle();
 
             // hide all edit buttons
             $('.medication-edit-btn').hide();
@@ -85,6 +86,7 @@ new Vue({
 
                 // hide textarea
                 $('#medication-edit-' + index).toggle();
+                $('#medication-edit-sig-' + index).toggle();
 
                 // show all edit buttons
                 $('.medication-edit-btn').show();

@@ -11,6 +11,7 @@
                             <div class="list-group-item-heading" v-if="medicationitem.name">
                                 <span id="medication-name-@{{ $index }}">@{{ medicationitem.name }}</span>
                                 <textarea v-model="medicationitem.name" id="medication-edit-@{{ $index }}" style="display:none;">@{{ medicationitem.name }}</textarea>
+                                <textarea v-model="medicationitem.sig" id="medication-edit-sig-@{{ $index }}" style="display:none;">@{{ medicationitem.sig }}</textarea>
                                 <input type="hidden" name="id" value="@{{ medicationitem.id }}">
                                 <input type="hidden" name="patient_id" value="@{{ medicationitem.patient_id }}">
                             </div>
@@ -42,6 +43,7 @@
                             <input type="hidden" id="patient_id" name="patient_id" value="{{ $patient->ID }}">
                             <div class="form-group">
                                 <input class="form-control" placeholder="Medication Name" v-model="medication.name">
+                                <input class="form-control" placeholder="Instructions" v-model="medication.sig">
                             </div>
                         </div>
                         <div class="col-sm-3 text-right">

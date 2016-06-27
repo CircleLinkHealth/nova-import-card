@@ -24,7 +24,8 @@ class MedicationListItemController extends Controller {
 				$data[] = array(
 					'id' => $ccdMedication->id,
 					'patient_id' => $ccdMedication->patient_id,
-					'name' => $ccdMedication->name);
+					'name' => $ccdMedication->name,
+					'sig' => $ccdMedication->sig);
 			}
 		}
 		// return a JSON response
@@ -39,6 +40,7 @@ class MedicationListItemController extends Controller {
 			$ccdMedication = New CcdMedication;
 			$ccdMedication->patient_id = $medication['patient_id'];
 			$ccdMedication->name = $medication['name'];
+			$ccdMedication->sig = $medication['sig'];
 			$ccdMedication->save();
 			$id = $ccdMedication;
 		}
@@ -57,6 +59,7 @@ class MedicationListItemController extends Controller {
 				return response( "Medication not found", 401 );
 			}
 			$ccdMedication->name = $medication['name'];
+			$ccdMedication->sig = $medication['sig'];
 			$ccdMedication->save();
 		}
 		$string = '';
