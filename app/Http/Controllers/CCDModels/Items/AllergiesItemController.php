@@ -18,7 +18,7 @@ class AllergiesItemController extends Controller {
 	{
 		$data   = array();
 		$patientId = $request->input('patient_id');
-		$ccdAllergies = CcdAllergy::where('patient_id', '=', $patientId)->get();
+		$ccdAllergies = CcdAllergy::where('patient_id', '=', $patientId)->orderBy('allergen_name')->get();
 		if($ccdAllergies->count() > 0) {
 			foreach($ccdAllergies as $ccdAllergy) {
 				$data[] = array(

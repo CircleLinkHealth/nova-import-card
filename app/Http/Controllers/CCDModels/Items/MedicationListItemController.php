@@ -18,7 +18,7 @@ class MedicationListItemController extends Controller {
 	{
 		$data   = array();
 		$patientId = $request->input('patient_id');
-		$ccdMedications = CcdMedication::where('patient_id', '=', $patientId)->get();
+		$ccdMedications = CcdMedication::where('patient_id', '=', $patientId)->orderBy('name')->get();
 		if($ccdMedications->count() > 0) {
 			foreach($ccdMedications as $ccdMedication) {
 				$data[] = array(

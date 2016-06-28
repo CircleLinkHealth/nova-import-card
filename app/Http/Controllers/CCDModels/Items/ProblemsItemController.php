@@ -18,7 +18,7 @@ class ProblemsItemController extends Controller {
 	{
 		$data   = array();
 		$patientId = $request->input('patient_id');
-		$ccdProblems = CcdProblem::where('patient_id', '=', $patientId)->get();
+		$ccdProblems = CcdProblem::where('patient_id', '=', $patientId)->orderBy('name')->get();
 		if($ccdProblems->count() > 0) {
 			foreach($ccdProblems as $ccdProblem) {
 				$data[] = array(
