@@ -57,8 +57,10 @@ new Vue({
 
         // Edit an existing medicationon the array
         editMedication: function(index) {
+
             // hide text
             $('#medication-name-' + index).toggle();
+            $('#medication-sig-' + index).toggle();
 
             // show textarea
             $('#medication-edit-' + index).toggle();
@@ -83,6 +85,7 @@ new Vue({
                 console.log(data);
                 // show text
                 $('#medication-name-' + index).toggle();
+                $('#medication-sig-' + index).toggle();
 
                 // hide textarea
                 $('#medication-edit-' + index).toggle();

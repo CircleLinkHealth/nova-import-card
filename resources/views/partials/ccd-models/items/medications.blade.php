@@ -9,7 +9,8 @@
                     <div class="row">
                         <div class="col-sm-9">
                             <div class="list-group-item-heading" v-if="medicationitem.name">
-                                <span id="medication-name-@{{ $index }}">@{{ medicationitem.name }}</span>
+                                <span id="medication-name-@{{ $index }}"><strong>@{{ medicationitem.name }}</strong></span>
+                                <span id="medication-sig-@{{ $index }}"><br />@{{ medicationitem.sig }}</span>
                                 <textarea v-model="medicationitem.name" id="medication-edit-@{{ $index }}" style="display:none;">@{{ medicationitem.name }}</textarea>
                                 <textarea v-model="medicationitem.sig" id="medication-edit-sig-@{{ $index }}" style="display:none;">@{{ medicationitem.sig }}</textarea>
                                 <input type="hidden" name="id" value="@{{ medicationitem.id }}">
