@@ -67,7 +67,7 @@ class ReportsService
         $ccdProblems = 'No instructions at this time';
         $problem = $user->cpmMiscs->where('name',CpmMisc::OTHER_CONDITIONS)->all();
         if(!empty($problem)){
-            $problems = CcdProblem::where('patient_id', '=', $user->ID)->get();
+            $problems = CcdProblem::where('patient_id', '=', $user->ID)->orderBy('name')->get();
             if ($problems->count() > 0) {
                 $ccdProblems = '';
                 $i = 0;

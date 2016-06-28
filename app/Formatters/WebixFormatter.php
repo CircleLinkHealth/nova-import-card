@@ -292,7 +292,7 @@ class WebixFormatter implements ReportFormatter
         $careplanReport[$user->ID]['taking_meds'] = 'No instructions at this time';
         $medicationList = $user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->all();
         if(!empty($medicationList)) {
-            $meds = CcdMedication::where('patient_id', '=', $user->ID)->get();
+            $meds = CcdMedication::where('patient_id', '=', $user->ID)->orderBy('name')->get();
             if ($meds->count() > 0) {
                 $i = 0;
                 $careplanReport[$user->ID]['taking_meds'] = '';
@@ -303,7 +303,7 @@ class WebixFormatter implements ReportFormatter
                     if ($i > 0) {
                         $careplanReport[$user->ID]['taking_meds'] .= '<br>';
                     }
-                    $careplanReport[$user->ID]['taking_meds'] .= $med->name;
+                    $careplanReport[$user->ID]['taking_meds'] .= '<strong>'.$med->name.'</strong><br>'.$med->sig;
                     $i++;
                 }
             }
@@ -313,7 +313,7 @@ class WebixFormatter implements ReportFormatter
         $careplanReport[$user->ID]['allergies'] = 'No instructions at this time';
         $allergy = $user->cpmMiscs->where('name',CpmMisc::ALLERGIES)->all();
         if(!empty($allergy)){
-            $allergies = CcdAllergy::where('patient_id', '=', $user->ID)->get();
+            $allergies = CcdAllergy::where('patient_id', '=', $user->ID)->orderBy('allergen_name')->get();
             if($allergies->count() > 0) {
                 $careplanReport[$user->ID]['allergies'] = '';
                 $i = 0;
