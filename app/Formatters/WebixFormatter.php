@@ -303,7 +303,10 @@ class WebixFormatter implements ReportFormatter
                     if ($i > 0) {
                         $careplanReport[$user->ID]['taking_meds'] .= '<br>';
                     }
-                    $careplanReport[$user->ID]['taking_meds'] .= '<strong>'.$med->name.'</strong><br>'.$med->sig;
+                    $careplanReport[$user->ID]['taking_meds'] .= ''.$med->name;
+                    if(!empty($med->sig)) {
+                        $careplanReport[$user->ID]['taking_meds'] .= '<br>- '.$med->sig;
+                    }
                     $i++;
                 }
             }
