@@ -9,6 +9,7 @@ use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 use App\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class CCDUploadController extends Controller
@@ -34,6 +35,8 @@ class CCDUploadController extends Controller
             return response()->json( 'No file found', 400 );
         }
 
+        $qaSummaries = new Collection();
+
         foreach ( $request->file( 'file' ) as $file ) {
             $xml = file_get_contents( $file );
 
@@ -58,15 +61,9 @@ class CCDUploadController extends Controller
 
             $importer = new QAImportManager( $blogId, $ccda );
             $output = $importer->generateCarePlanFromCCD();
-
-            $qaSummaries[] = $output;
         }
 
-        JavaScript::put( [
-            'qaSummaries' => $qaSummaries,
-        ] );
-
-        return view( 'CCDUploader.uploadedSummary' );
+        return redirect()->route('view.files.ready.to.import');
     }
 
     /**
