@@ -232,6 +232,8 @@ Route::group(['middleware' => 'auth'], function () {
     /****************************/
     Route::group(['prefix' => 'admin'], function () {
 
+        Route::get('/reports/monthly-billing', 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport');
+
         Route::get('dupes', function () {
             $results = DB::select( DB::raw("
                 SELECT *
