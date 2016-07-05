@@ -234,11 +234,19 @@ class NotesController extends Controller
         }
     }
 
-    public
-    function store(Request $input, $patientId)
+    public function store(Request $input, $patientId)
     {
 
         $input = $input->all();
+
+
+        if(isset($input['call_status']) && $input['call_status'] == 'reached'){
+
+            //CALCULATE THE TIMES, suggest, redirect!
+            $patient = User::where('ID',$patientId)->first();
+            return view('wpUsers.patient.calls.create', ['patient' => $patient]);
+
+        }
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
         $this->service->storeNote($input);
