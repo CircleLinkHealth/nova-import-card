@@ -39,7 +39,7 @@ class MonthlyBillingReportsController extends Controller
         $end = $time->endOfMonth()->endOfDay()->format("Y-m-d H:i:s");
 
         $patientsOver20MinsQuery = DB::table('lv_activities')
-            ->select(DB::raw('patient_id, provider_id, SUM(duration) as ccmTime'))
+            ->select(DB::raw('patient_id, SUM(duration) as ccmTime'))
             ->whereBetween('performed_at', [
                 $start, $end
             ])
