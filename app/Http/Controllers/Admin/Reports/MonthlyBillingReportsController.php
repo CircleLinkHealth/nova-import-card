@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Reports;
 
 use App\Activity;
+use App\Call;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
@@ -68,13 +69,14 @@ class MonthlyBillingReportsController extends Controller
 
             $billableCpmProblems = [];
 
-            $notes = Note::whereHas('call', function ($query) {
-                $query->whereStatus('reached');
+            $calls = Call::where(function ($q) use ($patient) {
+                $q->where('inbound_cpm_id', $patient->ID)
+                    ->orWhere('outbound_cpm_id', $patient->ID);
             })
-                ->whereBetween('performed_at', [
+                ->whereStatus('reached')
+                ->whereBetween('created_at', [
                     $start, $end
                 ])
-                ->wherePatientId($patient->ID)
                 ->get();
 
             $provider = User::find($patient->billingProviderID);
@@ -189,7 +191,7 @@ class MonthlyBillingReportsController extends Controller
 
                     'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
 
-                    '#_succ_clin_calls' => $notes->count(),
+                    '#_succ_clin_calls' => $calls->count(),
                 ];
 
                 continue;
@@ -224,7 +226,7 @@ class MonthlyBillingReportsController extends Controller
 
                 'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
 
-                '#_succ_clin_calls' => $notes->count(),
+                '#_succ_clin_calls' => $calls->count(),
             ]);
         }
 
