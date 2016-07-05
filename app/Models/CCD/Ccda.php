@@ -12,6 +12,7 @@ class Ccda extends Model implements Transformable {
 
     //define sources here
     const API = 'api';
+    const EMR_DIRECT = 'emr_direct';
     const IMPORTER = 'importer';
 
     protected $guarded = [];
