@@ -10,6 +10,7 @@ use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
+use App\Note;
 use App\Program;
 use App\Role;
 use App\User;
@@ -67,16 +68,12 @@ class MonthlyBillingReportsController extends Controller
 
             $billableCpmProblems = [];
 
-            $notes = Activity::with([
-                'meta' => function ($query) {
-                    $query->whereMetaKey('call_status')
-                        ->whereMetaValue('reached');
-                }
-            ])
+            $notes = Note::whereHas('call', function ($query) {
+                $query->whereStatus('reached');
+            })
                 ->whereBetween('performed_at', [
                     $start, $end
                 ])
-                ->whereLoggedFrom('note')
                 ->wherePatientId($patient->ID)
                 ->get();
 
