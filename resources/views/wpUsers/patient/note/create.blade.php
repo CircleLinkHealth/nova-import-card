@@ -15,97 +15,114 @@
 
 
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
+        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1" style="border-bottom: 3px solid #50b2e2;">
             <div class="row">
-                <div class="main-form-title col-lg-12">
+                <div class="main-form-title col-lg-12" >
                     Record New Note
                 </div>
                 {!! Form::open(array('url' => URL::route('patient.note.store', ['patientId' => $patient]), 'class' => 'form-horizontal')) !!}
 
                 @include('partials.userheader')
 
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    <div class="form-block col-md-6">
+                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="border-bottom: 3px solid #50b2e2; padding: 10px">
+
+                    <div class="new-note-item">
                         <div class="row">
-                            <div class="new-note-item">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <label for="activityKey">
-                                            Note Topic
-                                        </label>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <select id="activityKey" name="type"
-                                                    class="selectpickerX dropdownValid form-control"
-                                                    data-size="10" required>
-                                                <option value=""> Select Topic</option>
-                                                @foreach ($note_types as $note_type)
-                                                    <option value="{{$note_type}}"> {{$note_type}} </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                            <label class="col-xs-2" for="inputEmail1">General Comment</label>
+                            <div class="col-xs-10">
+                                <input type="email" class="form-control" id="inputEmail1"
+                                       placeholder="Patient has a taco addiction.">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="new-note-item">
+                </div>
+            </div>
+
+            <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="border-bottom: 0px solid #50b2e2;">
+                <div class="form-block col-md-6">
+                    <div class="row">
+                        <div class="new-note-item">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label for="activityKey">
+                                        Note Topic
+                                    </label>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <select id="activityKey" name="type"
+                                                class="selectpickerX dropdownValid form-control"
+                                                data-size="10" required>
+                                            <option value=""> Select Topic</option>
+                                            @foreach ($note_types as $note_type)
+                                                <option value="{{$note_type}}"> {{$note_type}} </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="form-block col-md-6">
-                        <div class="row">
-                            <div class="new-note-item">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <label for="observationDate">
-                                            When (Patient Local Time):
-                                        </label>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <input name="performed_at" type="datetime-local"
-                                                   class="selectpickerX form-control"
-                                                   data-width="95px" data-size="10" list max="{{$userTime}}"
-                                                   value="{{$userTime}}"
-                                                   required>
-                                        </div>
+                </div>
+                <div class="form-block col-md-6">
+                    <div class="row">
+                        <div class="new-note-item">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label for="observationDate">
+                                        When (Patient Local Time):
+                                    </label>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <input name="performed_at" type="datetime-local"
+                                               class="selectpickerX form-control"
+                                               data-width="95px" data-size="10" list max="{{$userTime}}"
+                                               value="{{$userTime}}"
+                                               required>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="form-block col-md-6">
-                        <div class="row">
-                            <div class="new-note-item">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <label for="activityKey">
-                                            Performed By
-                                        </label>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <select id="author_id" name="author_id"
-                                                    class="selectpickerX dropdown Valid form-control" data-size="10" required disabled>
-                                                    <option value="{{$author_id}}" selected> {{$author_name}} </option>
-                                            </select>
-                                        </div>
+                </div>
+                <div class="form-block col-md-6">
+                    <div class="row">
+                        <div class="new-note-item">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label for="activityKey">
+                                        Performed By
+                                    </label>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <select id="author_id" name="author_id"
+                                                class="selectpickerX dropdown Valid form-control" data-size="10"
+                                                required disabled>
+                                            <option value="{{$author_id}}" selected> {{$author_name}} </option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="form-block col-md-6">
-                        <div class="row">
-                            <div class="new-note-item">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <div class="panel-group" id="accordion">
-                                            <label data-toggle="collapse" data-target="#collapseOne">
-                                                <div class="radio"><input type="checkbox" name="meta[0][meta_key]"
-                                                                          id="phone"
-                                                                          value="phone"/><label
-                                                            for="phone"><span> </span>Patient Phone Session</label>
-                                                </div>
-                                            </label>
+                </div>
+                <div class="form-block col-md-6">
+                    <div class="row">
+                        <div class="new-note-item">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="panel-group" id="accordion">
+                                        <label data-toggle="collapse" data-target="#collapseOne">
+                                            <div class="radio"><input type="checkbox" name="meta[0][meta_key]"
+                                                                      id="phone"
+                                                                      value="phone"/><label
+                                                        for="phone"><span> </span>Patient Phone Session</label>
+                                            </div>
+                                        </label>
 
                                             <div id="collapseOne" class="panel-collapse collapse in">
                                                 <div class="radio-inline"><input type="radio"

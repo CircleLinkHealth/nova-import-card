@@ -108,5 +108,32 @@ class PatientInfo extends Model {
 		return true;
 	}
 
+	public static function numberToTextDaySwitcher($string){
+
+		$mapper = function($i){
+
+			switch($i){
+				case 1: return ' Mon'; break;
+				case 2: return ' Tu'; break;
+				case 3: return ' Wed'; break;
+				case 4: return ' Thu'; break;
+				case 5: return ' Fri'; break;
+				case 6: return ' Sat'; break;
+				case 7: return ' Sun'; break;
+			}
+
+			return '';
+
+		};
+
+		$days = explode(',', $string);
+
+		$formatted = array_map($mapper, $days);
+		
+		return implode(',', $formatted);
+
+	}
+
+
 	// END ATTRIBUTES
 }
