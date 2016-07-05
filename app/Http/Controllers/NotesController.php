@@ -260,7 +260,7 @@ class NotesController extends Controller
         $meta_tags = array();
 
         //Call Info
-        if (($note->call != null)) {
+        if (count($note->call) > 0) {
             if ($note->call->is_cpm_inbound) {
                 $meta_tags[] = 'Inbound Call';
             } else {
