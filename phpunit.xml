@@ -13,12 +13,12 @@
         <testsuite name="Application Test Suite">
         <directory>./tests/Notes/</directory>
         </testsuite>
-        <!--<testsuite name="Notes">-->
-            <!--<directory>./tests/Notes/</directory>-->
-        <!--</testsuite>-->
-        <!--<testsuite name="Aprima_Api">-->
-            <!--<directory>./tests/AprimaApi/</directory>-->
-        <!--</testsuite>-->
+        <testsuite name="Notes">
+            <directory>./tests/Notes/</directory>
+        </testsuite>
+        <testsuite name="Aprima_Api">
+            <directory>./tests/AprimaApi/</directory>
+        </testsuite>
         <testsuite name="Care_Plan">
             <directory>./tests/CarePlan/</directory>
         </testsuite>
