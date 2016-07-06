@@ -167,6 +167,8 @@ class MonthlyBillingReportsController extends Controller
                     ? $billableCpmProblems[1]
                     : new CpmProblem();
 
+                $message = is_object($instruction) ? $instruction->name : 'N/A';
+
                 $problems[] = [
                     'provider_name' => $provider->fullName,
                     'patient_name' => $patient->fullName,
@@ -179,7 +181,7 @@ class MonthlyBillingReportsController extends Controller
                     'other_conditions_text_1' => isset($otherConditionsText[$billableCpmProblems[0]->id])
                         ? $otherConditionsText[$billableCpmProblems[0]->id]
                         //otherwise just output the whole instruction
-                        : $instruction->name,
+                        : $message,
 
                     'problem_name_2' => $billableCpmProblems[1]->name,
                     'problem_code_2' => 'N/A',
@@ -187,7 +189,7 @@ class MonthlyBillingReportsController extends Controller
                     'other_conditions_text_2' => isset($otherConditionsText[$billableCpmProblems[1]->id])
                         ? $otherConditionsText[$billableCpmProblems[1]->id]
                         //otherwise just output the whole instruction
-                        : $instruction->name,
+                        : $message,
 
                     'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
 
