@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Reports;
 
 use App\Activity;
+use App\Call;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
@@ -10,6 +11,7 @@ use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
+use App\Note;
 use App\Program;
 use App\Role;
 use App\User;
@@ -37,7 +39,7 @@ class MonthlyBillingReportsController extends Controller
         $end = $time->endOfMonth()->endOfDay()->format("Y-m-d H:i:s");
 
         $patientsOver20MinsQuery = DB::table('lv_activities')
-            ->select(DB::raw('patient_id, provider_id, SUM(duration) as ccmTime'))
+            ->select(DB::raw('patient_id, SUM(duration) as ccmTime'))
             ->whereBetween('performed_at', [
                 $start, $end
             ])
@@ -67,17 +69,14 @@ class MonthlyBillingReportsController extends Controller
 
             $billableCpmProblems = [];
 
-            $notes = Activity::with([
-                'meta' => function ($query) {
-                    $query->whereMetaKey('call_status')
-                        ->whereMetaValue('reached');
-                }
-            ])
-                ->whereBetween('performed_at', [
+            $calls = Call::where(function ($q) use ($patient) {
+                $q->where('inbound_cpm_id', $patient->ID)
+                    ->orWhere('outbound_cpm_id', $patient->ID);
+            })
+                ->whereStatus('reached')
+                ->whereBetween('created_at', [
                     $start, $end
                 ])
-                ->whereLoggedFrom('note')
-                ->wherePatientId($patient->ID)
                 ->get();
 
             $provider = User::find($patient->billingProviderID);
@@ -168,6 +167,8 @@ class MonthlyBillingReportsController extends Controller
                     ? $billableCpmProblems[1]
                     : new CpmProblem();
 
+                $message = is_object($instruction) ? $instruction->name : 'N/A';
+
                 $problems[] = [
                     'provider_name' => $provider->fullName,
                     'patient_name' => $patient->fullName,
@@ -180,7 +181,7 @@ class MonthlyBillingReportsController extends Controller
                     'other_conditions_text_1' => isset($otherConditionsText[$billableCpmProblems[0]->id])
                         ? $otherConditionsText[$billableCpmProblems[0]->id]
                         //otherwise just output the whole instruction
-                        : $instruction->name,
+                        : $message,
 
                     'problem_name_2' => $billableCpmProblems[1]->name,
                     'problem_code_2' => 'N/A',
@@ -188,11 +189,11 @@ class MonthlyBillingReportsController extends Controller
                     'other_conditions_text_2' => isset($otherConditionsText[$billableCpmProblems[1]->id])
                         ? $otherConditionsText[$billableCpmProblems[1]->id]
                         //otherwise just output the whole instruction
-                        : $instruction->name,
+                        : $message,
 
                     'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
 
-                    '#_succ_clin_calls' => $notes->count(),
+                    '#_succ_clin_calls' => $calls->count(),
                 ];
 
                 continue;
@@ -227,7 +228,7 @@ class MonthlyBillingReportsController extends Controller
 
                 'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
 
-                '#_succ_clin_calls' => $notes->count(),
+                '#_succ_clin_calls' => $calls->count(),
             ]);
         }
 

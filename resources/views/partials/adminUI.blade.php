@@ -201,6 +201,17 @@
 									</ul>
 								</li>
 							@endif
+
+							@if(Entrust::can('app-config-view'))
+								<li role="presentation" class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+										Reports<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a></li>
+									</ul>
+								</li>
+							@endif
 						</ul>
 
 						<ul class="nav navbar-nav navbar-right">
@@ -208,18 +219,15 @@
 								{{--<li><a href="{{ url('/auth/login') }}">Login</a></li>--}}
 								{{--<li><a href="{{ url('/auth/register') }}">Register</a></li>--}}
 							@else
-				<div class="col-sm-6">
-					<div class="pull-right">
-						<a href="{{ URL::route('patients.dashboard', array()) }}" class="btn" style="margin-left:10px;"><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
-					</div>
-				</div>
 								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->ID }}]<span class="caret"></span></a>
-									<ul class="dropdown-menu" role="menu">
-										<li><a href="{{ URL::route('admin.users.edit', array('id' => Auth::user()->ID)) }}" class=""> My Account</a></li>
-										<li><a href="{{ url('/auth/logout') }}">Logout</a></li>
-									</ul>
-								</li>
+								<a href="{{ URL::route('patients.dashboard', array()) }}" class="btn-xs btn-primary" style=""><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a></li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->ID }}]<span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="{{ URL::route('admin.users.edit', array('id' => Auth::user()->ID)) }}" class=""> My Account</a></li>
+									<li><a href="{{ url('/auth/logout') }}">Logout</a></li>
+								</ul>
+							</li>
 							@endif
 						</ul>
 					</div>
