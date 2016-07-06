@@ -1,23 +1,27 @@
 <?php namespace App\Services\PhiMail;
 
+use App\CLH\CCD\Importer\QAImportManager;
+use App\CLH\CCD\ItemLogger\CcdItemLogger;
+use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\CCD\Ccda;
+use App\Models\CCD\CcdVendor;
 use App\Services\PhiMail\PhiMailConnector;
 use Illuminate\Support\Facades\Log;
 
 class PhiMail {
 
-    public static function loadFile($filename) {
+    public function loadFile($filename) {
         return file_get_contents($filename);
     }
 
-    public static function writeDataFile($filename, $data) {
+    public function writeDataFile($filename, $data) {
         return file_put_contents($filename, $data);
     }
 
     /**
      * @param args the command line arguments
      */
-    public static function main() {
+    public function sendReceive() {
 
         try {
             // Specify which parts of the example to run.
@@ -160,12 +164,37 @@ class PhiMail {
                                     . $showRes->filename . "\n");
 //                                self::writeDataFile($attachmentSaveDirectory . $showRes->filename, $showRes->data);
 
-                                Ccda::create([
+
+                                $atPosition = strpos($cr->sender, '@');
+
+                                if (!$atPosition) continue;
+
+                                $senderDomain = substr($cr->sender, $atPosition);
+
+                                $vendorId = Ccda::EMAIL_DOMAIN_TO_VENDOR_MAP[$senderDomain];
+
+                                $vendor = CcdVendor::find($vendorId);
+
+                                $ccda = Ccda::create([
                                     'user_id' => null,
-                                    'vendor_id' => 1,
+                                    'vendor_id' => $vendorId,
                                     'xml' => $showRes->data,
                                     'source' => Ccda::EMR_DIRECT,
                                 ]);
+
+                                $ccdaRepo = new CCDImporterRepository;
+
+                                $json = $ccdaRepo->toJson($ccda->xml);
+                                $ccda->json = $json;
+                                $ccda->save();
+
+                                $logger = new CcdItemLogger($ccda);
+                                $logger->logAll();
+                                
+                                $importer = new QAImportManager($vendor->program_id, $ccda);
+                                $importer->generateCarePlanFromCCD();
+
+                                Log::info("{$showRes->filename} imported successfully");
                             }
 
                             // Display the list of attachments and associated info. This info is only
@@ -217,7 +246,7 @@ class PhiMail {
             $c->close();
         } catch (\Exception $ignore) { }
 
-        Log::info("============\n");
+        Log::info("============END\n");
 
     }
 }
