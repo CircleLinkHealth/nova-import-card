@@ -3,11 +3,9 @@
 use App\Activity;
 use App\PatientInfo;
 use App\User;
-use App\UserMeta;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Mail;
 
 class ActivityService
 {

@@ -3,6 +3,8 @@
 @section('title', 'Patient Call Scheduler')
 @section('activity', 'Patient Call Scheduler')
 
+{{$window}} <? die(); ?>
+
 @section('content')
 
     <div class="row" style="margin-top:60px;">
@@ -27,7 +29,7 @@
                                         <input name="performed_at" type="date"
                                                class="selectpickerX form-control"
                                                data-width="95px" data-size="10"
-                                               value="{{\Carbon\Carbon::now()->addDay()->format('Y-m-d')}}"
+                                               value="{{\Carbon\Carbon::parse($date)->format('Y-m-d')}}"
                                                required>
                                     </div>
                                 </div>
@@ -51,10 +53,9 @@
                                         <select id="activityKey" name="type"
                                                 class="selectpickerX dropdownValid form-control"
                                                 data-size="10" required>
-                                            <option value=""> Select Range</option>
-                                            <option value="" selected> 9am - 12noon</option>
-                                            <option value=""> 12noon - 3pm</option>
-                                            <option value=""> 3pm - 6pm</option>
+                                            <option value="9:30am - 12n" {{$window == App\PatientInfo::CALL_WINDOW_0930_1200 ? 'selected' : ''}}> 9:30am - 12n</option>
+                                            <option value="12n - 3pm" {{$window == App\PatientInfo::CALL_WINDOW_1200_1500 ? 'selected' : ''}}> 12n - 3pm</option>
+                                            <option value="3pm - 6pm" {{$window == App\PatientInfo::CALL_WINDOW_1500_1800 ? 'selected' : ''}}> 3pm - 6pm</option>
 
                                         </select>
                                     </div>
@@ -64,19 +65,19 @@
                     </div>
                 </div>
 
-                <div class="form-block col-md-6">
-                    <div class="row" style="margin-bottom: 0px">
-                        <div class="new-note-item">
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <div class="panel-group inline" id="accordion" style="margin-bottom: 0px">
-                                        <label data-toggle="collapse" data-target="#collapseOne">
-                                            <div class="radio"><input type="checkbox" name="status"
-                                                                      id="status"
-                                                                      value="status"/><label
-                                                        for="status"><span> </span>Patient Status Override (currently Enrolled)</label>
-                                            </div>
-                                        </label>
+                {{--<div class="form-block col-md-6">--}}
+                    {{--<div class="row" style="margin-bottom: 0px">--}}
+                        {{--<div class="new-note-item">--}}
+                            {{--<div class="form-group">--}}
+                                {{--<div class="col-sm-12">--}}
+                                    {{--<div class="panel-group inline" id="accordion" style="margin-bottom: 0px">--}}
+                                        {{--<label data-toggle="collapse" data-target="#collapseOne">--}}
+                                            {{--<div class="radio"><input type="checkbox" name="status"--}}
+                                                                      {{--id="status"--}}
+                                                                      {{--value="status"/><label--}}
+                                                        {{--for="status"><span> </span>Patient Status Override (currently Enrolled)</label>--}}
+                                            {{--</div>--}}
+                                        {{--</label>--}}
 
                                         {{--<div id="collapseOne" class="panel-collapse collapse in">--}}
                                             {{--<div><select id="status" name="status"--}}
@@ -89,14 +90,14 @@
                                                 {{--</select>--}}
                                             {{--</div>--}}
                                         {{--</div>--}}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                    {{--</div>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
 
-        <div class="form-block col-md-6">
+        <div class="form-block col-md-12">
             <div class="row">
                 <div class="new-note-item">
                     <div class="form-group">

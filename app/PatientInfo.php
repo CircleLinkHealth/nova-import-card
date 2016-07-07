@@ -7,6 +7,10 @@ use Auth;
 
 class PatientInfo extends Model {
 
+	 const CALL_WINDOW_0930_1200 = '9:30am - 12n';
+	 const CALL_WINDOW_1200_1500 = '12n - 3pm';
+	 const CALL_WINDOW_1500_1800 = '3pm - 6pm';
+
 	use SoftDeletes;
 
 	/**
@@ -114,7 +118,7 @@ class PatientInfo extends Model {
 
 			switch($i){
 				case 1: return ' Mon'; break;
-				case 2: return ' Tu'; break;
+				case 2: return ' Tue'; break;
 				case 3: return ' Wed'; break;
 				case 4: return ' Thu'; break;
 				case 5: return ' Fri'; break;

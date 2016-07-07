@@ -1,18 +1,16 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
-use App\ActivityMeta;
 use App\Formatters\WebixFormatter;
 use App\Http\Requests;
 use App\Program;
-use App\Services\ActivityService;
 use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\URL;
 use Laracasts\Flash\Flash;
+use App\Services\Calls\SchedulerService;
 
 class NotesController extends Controller
 {
@@ -136,8 +134,7 @@ class NotesController extends Controller
 
     }
 
-    public
-    function create(Request $request, $patientId)
+    public function create(Request $request, $patientId)
     {
 
         if ($patientId) {
@@ -243,8 +240,14 @@ class NotesController extends Controller
         if(isset($input['call_status']) && $input['call_status'] == 'reached'){
 
             //CALCULATE THE TIMES, suggest, redirect!
+
             $patient = User::where('ID',$patientId)->first();
-            return view('wpUsers.patient.calls.create', ['patient' => $patient]);
+
+            debug($patient->patientInfo->preferred_contact_time);
+
+            $prediction = (new SchedulerService)->scheduleCall($patient);
+
+            return view('wpUsers.patient.calls.create', $prediction);
 
         }
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
