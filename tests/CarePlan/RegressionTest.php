@@ -116,7 +116,7 @@ class RegressionTest extends TestCase
     {
         $this->visit('/auth/login')
             ->see('CarePlanManager')
-            ->type($this->provider->user_email, 'email')
+            ->type($this->provider->user_email, 'user_email')
             ->type('password', 'password')
             ->press('Log In')
             ->seePageIs('/manage-patients/dashboard');
