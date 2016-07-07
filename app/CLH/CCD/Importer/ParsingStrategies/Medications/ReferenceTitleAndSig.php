@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Medications;
 
 
+use App\CLH\Facades\StringManipulation;
 use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\MedicationImport;
 use App\CLH\CCD\ItemLogger\CcdMedicationLog;
@@ -31,8 +32,8 @@ class ReferenceTitleAndSig implements ParsingStrategy
                 'ccda_id' => $ccd->id,
                 'vendor_id' => $ccd->vendor_id,
                 'ccd_medication_log_id' => $medication->id,
-                'name' => $medication->reference_title,
-                'sig' => $medication->reference_sig,
+                'name' => ucfirst( $medication->reference_title ),
+                'sig' => ucfirst( StringManipulation::stringDiff( $medication->reference_title, $medication->reference_sig ) ),
                 'code' => $consMed->cons_code,
                 'code_system' => $consMed->cons_code_system,
                 'code_system_name' => $consMed->cons_code_system_name,
