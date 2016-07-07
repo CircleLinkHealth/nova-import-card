@@ -18,7 +18,7 @@ class S20160705ParseDiscreetItems extends Seeder
      *
      * @return void
      */
-    public function up()
+    public function run()
     {
         /*
         DB::table('ccd_problems')->truncate();
@@ -92,15 +92,5 @@ class S20160705ParseDiscreetItems extends Seeder
                 $existingItem->delete();
             }
         }
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
     }
 }
