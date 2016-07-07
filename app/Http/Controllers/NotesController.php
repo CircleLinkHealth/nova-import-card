@@ -3,6 +3,7 @@
 use App\Activity;
 use App\Formatters\WebixFormatter;
 use App\Http\Requests;
+use App\PatientInfo;
 use App\Program;
 use App\Services\NoteService;
 use App\User;
@@ -139,18 +140,18 @@ class NotesController extends Controller
 
         if ($patientId) {
             // patient view
-            $user = User::find($patientId);
-            if (!$user) {
+            $patient = User::find($patientId);
+            if (!$patient) {
                 return response("User not found", 401);
             }
 
-            $patient_name = $user->fullName;
+            $patient_name = $patient->fullName;
 
             //Gather details to generate form
 
             //careteam
             $careteam_info = array();
-            $careteam_ids = $user->careTeam;
+            $careteam_ids = $patient->careTeam;
             if ((@unserialize($careteam_ids) !== false)) {
                 $careteam_ids = unserialize($careteam_ids);
             }
@@ -162,21 +163,21 @@ class NotesController extends Controller
                 }
             }
 
-            if ($user->timeZone == '') {
+            if ($patient->timeZone == '') {
                 $userTimeZone = 'America/New_York';
             } else {
-                $userTimeZone = $user->timeZone;
+                $userTimeZone = $patient->timeZone;
             }
 
             //Check for User's blog
-            if (empty($user->blogId())) {
+            if (empty($patient->blogId())) {
                 return response("User's Program not found", 401);
             }
 
             //providers
-            $providers = Program::getProviders($user->blogId());
-            $nonCCMCareCenterUsers = Program::getNonCCMCareCenterUsers($user->blogId());
-            $careCenterUsers = Program::getCareCenterUsers($user->blogId());
+            $providers = Program::getProviders($patient->blogId());
+            $nonCCMCareCenterUsers = Program::getNonCCMCareCenterUsers($patient->blogId());
+            $careCenterUsers = Program::getCareCenterUsers($patient->blogId());
             $provider_info = array();
 
 //            if(!empty($providers)) {
@@ -213,18 +214,23 @@ class NotesController extends Controller
                     array_push($provider_info, $careteam_member);
                 }
             }
+            
+            //Patient Call Windows:
+            $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
+            
             asort($provider_info);
             asort($careteam_info);
 
             $view_data = [
-                'program_id' => $user->blogId(),
-                'patient' => $user,
+                'program_id' => $patient->blogId(),
+                'patient' => $patient,
                 'patient_name' => $patient_name,
                 'note_types' => Activity::input_activity_types(),
                 'author_id' => $author_id,
                 'author_name' => $author_name,
                 'careteam_info' => $careteam_info,
-                'userTimeZone' => $userTimeZone
+                'userTimeZone' => $userTimeZone,
+                'window' => $window
             ];
 
             return view('wpUsers.patient.note.create', $view_data);

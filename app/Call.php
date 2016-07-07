@@ -7,12 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Call extends Model
 {
 
+
+
     protected $table = 'calls';
 
     protected $fillable = [
         'note_id',
         'service',
         'status',
+            // reached -> Successful Clinical Call
+            // not reached -> Unsuccessful attempt
+            // scheduled -> Call to be made
 
         'inbound_phone_number',
         'outbound_phone_number',

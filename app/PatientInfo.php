@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -112,6 +113,56 @@ class PatientInfo extends Model {
 		return true;
 	}
 
+
+
+
+	/* @todo: put following helper functions it's own service class */
+
+	public function getPatientPreferredTimes($patient){
+
+		$time = Carbon::parse($patient->patientInfo->preferred_contact_time)->format('H:i');
+
+		$days = PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days);
+		$days = $days = explode(',', $days);
+		$days_formatted = array();
+
+
+		foreach ($days as $day){
+			$days_formatted[] = Carbon::parse($day)->format('Y-m-d');
+		}
+
+		return [
+
+			'days' => $days_formatted,
+			'time' => $time
+
+		];
+	}
+
+	public function parsePatientCallPreferredWindow($patient){
+
+		$window_date_time_930am = Carbon::parse('09:30')->format('H:i');
+		$window_date_time_12n = Carbon::parse('12:00')->format('H:i');
+		$window_date_time_3pm = Carbon::parse('15:00')->format('H:i');
+		$window_date_time_6pm = Carbon::parse('18:00')->format('H:i');
+
+		$time = $patient->patientInfo->preferred_contact_time;
+
+		switch ($time){
+			case ($time >= $window_date_time_930am && $time < $window_date_time_12n):
+				$window = PatientInfo::CALL_WINDOW_0930_1200; break;
+			case ($time >= $window_date_time_12n && $time < $window_date_time_3pm):
+				$window = PatientInfo::CALL_WINDOW_1200_1500; break;
+			case ($time >= $window_date_time_3pm && $time > $window_date_time_6pm):
+				$window = PatientInfo::CALL_WINDOW_1500_1800; break;
+			default:
+				$window = 'Not able to calculate suitable window'; break;
+		}
+
+		return $window;
+
+	}
+
 	public static function numberToTextDaySwitcher($string){
 
 		$mapper = function($i){
@@ -139,5 +190,4 @@ class PatientInfo extends Model {
 	}
 
 
-	// END ATTRIBUTES
 }

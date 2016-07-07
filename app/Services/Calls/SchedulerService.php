@@ -6,6 +6,12 @@ use Carbon\Carbon;
 
 class SchedulerService
 {
+//    protected $patient;
+//
+//    public function __construct($user_patient)
+//    {
+//        $this->patient = $user_patient;
+//    }
 
     //This function will be the initial rendition of algorithm
     //to calculate the patient's next call date.
@@ -16,48 +22,29 @@ class SchedulerService
         // 1) Check the patient's preferred days and times
 
     public function scheduleCall($patient){
+        
+        return $this->getPatientNextCallWindow($patient);
 
-        $time = Carbon::parse($patient->patientInfo->preferred_contact_time)->format('H:i');
+    }
 
-        $days = PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days);
-        $days = $days = explode(',', $days);
-        $days_formatted = array();
+    public function getPatientNextCallWindow($patient){
 
+        $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
-        foreach ($days as $day){
-            $days_formatted[] = Carbon::parse($day)->format('Y-m-d');
-        }
+        $time = $patient_preferred_times['time'];
+        $dates = $patient_preferred_times['days'];
 
-        $window_date_time_930am = Carbon::parse('09:30')->format('H:i');
-        $window_date_time_12n = Carbon::parse('12:00')->format('H:i');
-        $window_date_time_3pm = Carbon::parse('15:00')->format('H:i');
-        $window_date_time_6pm = Carbon::parse('18:00')->format('H:i');
+        $earliest_contact_day = min($dates);
 
-
-        $earliest_contact_day = min($days_formatted);
-        $window = '';
-
-        switch ($time){
-            case ($time >= $window_date_time_930am && $time < $window_date_time_12n):
-                $window = PatientInfo::CALL_WINDOW_0930_1200; break;
-            case ($time >= $window_date_time_12n && $time < $window_date_time_3pm):
-                $window = PatientInfo::CALL_WINDOW_1200_1500; break;
-            case ($time >= $window_date_time_3pm && $time > $window_date_time_6pm):
-                $window = PatientInfo::CALL_WINDOW_1500_1800; break;
-            default:
-                $window = 'Not able to calculate suitable window'; break;
-        }
+        $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
         return [
-
             'patient' => $patient,
             'date' => $earliest_contact_day,
             'window' => $window,
             'raw_time' => $time
 
         ];
-        
-        
     }
 
 

@@ -3,8 +3,6 @@
 @section('title', 'Patient Call Scheduler')
 @section('activity', 'Patient Call Scheduler')
 
-{{$window}} <? die(); ?>
-
 @section('content')
 
     <div class="row" style="margin-top:60px;">

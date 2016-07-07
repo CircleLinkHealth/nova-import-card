@@ -29,8 +29,8 @@
                     <div class="row" >
                         <label class="col-xs-6" style="padding-left: 16px;" for="comment">General Comment</label>
                         <label class="col-xs-2" style="padding-left: 0px;" for="contact_days">Contact Days</label>
-                        <label class="col-xs-2" style="padding-left: 0px; left: -4px" for="contact_time">Contact Time</label>
-                        <label class="col-xs-2" style="left: -25px" for="contact_time">Frequency</label>
+                        <label class="col-xs-2" style="padding-left: 0px; left: -4px" for="windows[]">Contact Time</label>
+                        <label class="col-xs-2" style="left: -25px" for="frequency">Call Frequency</label>
                     </div>
 
                     <div class="col-xs-6" style="padding-left: 0px;">
@@ -53,18 +53,18 @@
                         </select>
                     </div>
                     <div class="col-xs-2" style="padding-left: 0px;">
-                        <select id="contact_time" name="contact_time" class="selectpickerX dropdownValid form-control" data-size="2" style="width: 110px">
-                            <option value=""> 9am-12n</option>
-                            <option value=""> 12n-3pm</option>
-                            <option value=""> 3pm-6pm</option>
+                        <select id="contact_time" name="windows[]" class="selectpicker dropdown Valid form-control" data-size="3" style="width: 110px">
+                            <option value="9:30am - 12n" {{$window == App\PatientInfo::CALL_WINDOW_0930_1200 ? 'selected' : ''}}>9:30-12</option>
+                            <option value="12n - 3pm" {{$window == App\PatientInfo::CALL_WINDOW_1200_1500 ? 'selected' : ''}}>12-3</option>
+                            <option value="3pm - 6pm" {{$window == App\PatientInfo::CALL_WINDOW_1500_1800 ? 'selected' : ''}}>3-6</option>
                         </select>
                     </div>
                     <div class="col-xs-2" style="padding-left: 0px;">
-                        <select id="contact_time" name="contact_time" class="selectpickerX dropdownValid form-control" data-size="2" style="width: 110px">
-                            <option value=""> 1x</option>
-                            <option value=""> 2x</option>
-                            <option value=""> 3x</option>
-                            <option value=""> 4x</option>
+                        <select id="contact_time" name="contact_time" class="selectpickerX dropdown Valid form-control" data-size="2" style="width: 110px">
+                            <option value=""> 1x Monthly</option>
+                            <option value=""> 2x Monthly</option>
+                            <option value=""> 3x Monthly</option>
+                            <option value=""> 4x Monthly</option>
                         </select>
                     </div>
                 </div>
