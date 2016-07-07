@@ -78,17 +78,17 @@
                                             </div>
                                         </label>
 
-                                        <div id="collapseOne" class="panel-collapse collapse in">
-                                            <div><select id="status" name="status"
-                                                                              class="selectpickerX dropdownValid form-control"
-                                                                              data-size="10">
-                                                    <option value=""> Enrolled</option>
-                                                    <option value=""> Withdrawn</option>
-                                                    <option value=""> Paused</option>
+                                        {{--<div id="collapseOne" class="panel-collapse collapse in">--}}
+                                            {{--<div><select id="status" name="status"--}}
+                                                                              {{--class="selectpickerX dropdownValid form-control"--}}
+                                                                              {{--data-size="10">--}}
+                                                    {{--<option value=""> Enrolled</option>--}}
+                                                    {{--<option value=""> Withdrawn</option>--}}
+                                                    {{--<option value=""> Paused</option>--}}
 
-                                                </select>
-                                            </div>
-                                        </div>
+                                                {{--</select>--}}
+                                            {{--</div>--}}
+                                        {{--</div>--}}
                                     </div>
                                 </div>
                             </div>
