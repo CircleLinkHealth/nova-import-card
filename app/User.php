@@ -21,19 +21,19 @@ use DateTime;
 use Faker\Factory;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use MikeMcLin\WpPassword\Facades\WpPassword;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable {
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, Serviceable {
 
 	use SoftDeletes;
 
-	use Authenticatable, CanResetPassword, EntrustUserTrait;
+	use Authenticatable, Authorizable, CanResetPassword, EntrustUserTrait;
 
 	// for revisionable
 	use \Venturecraft\Revisionable\RevisionableTrait;
@@ -1542,12 +1542,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $this->patientInfo->date_withdrawn = $value;
         $this->patientInfo->save();
         return true;
-    }
-
-// Whenever the user_pass field is modified, WordPress' internal hashing function will run
-    public function setUserPassAttribute($pass)
-    {
-        $this->attributes['user_pass'] = WpPassword::make($pass);
     }
 
 // END ATTRIBUTES

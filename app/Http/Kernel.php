@@ -34,7 +34,7 @@ class Kernel extends HttpKernel {
 		'authApiCall' => 'App\Http\Middleware\AuthenticateApiCall',
         'getRedoxAccessToken' => 'App\Http\Middleware\GetRedoxAccessToken',
         'patientProgramSecurity' => 'App\Http\Middleware\PatientProgramSecurity',
-		'impersonation.check' => Middleware\ImpersonationMiddleware::class,
+//		'impersonation.check' => Middleware\ImpersonationMiddleware::class,
 	];
 
 }

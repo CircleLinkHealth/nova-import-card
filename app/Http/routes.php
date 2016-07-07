@@ -138,7 +138,7 @@ Route::group(['middleware' => 'auth'], function () {
      * CCD Importer Routes
      */
     Route::group(['prefix' => 'ccd-importer'], function () {
-        Entrust::routeNeedsPermission('ccd-importer/*', ['ccd-import'], redirect()->back());
+        //Entrust::routeNeedsPermission('ccd-importer/*', ['ccd-import'], redirect()->back());
 
         Route::get('create', [
             'uses' => 'CCDUploadController@create',
@@ -263,8 +263,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('excelReportT4', ['uses' => 'ReportsController@excelReportT4', 'as' => 'excel.report.t4']);
 
         $prefix = 'admin'; // admin prefix
-        Entrust::routeNeedsPermission($prefix, ['admin-access'], Redirect::to(URL::route('login')));
-        Entrust::routeNeedsPermission($prefix . '/*', ['admin-access'], Redirect::to(URL::route('login')));
+        //Entrust::routeNeedsPermission($prefix, ['admin-access'], Redirect::to(URL::route('login')));
+        //Entrust::routeNeedsPermission($prefix . '/*', ['admin-access'], Redirect::to(URL::route('login')));
 
         // dashboard
         Route::get('', ['uses' => 'Admin\DashboardController@index', 'as' => 'admin.dashboard']);
@@ -274,28 +274,28 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('impersonate', ['uses' => 'ImpersonationController@postImpersonate', 'as' => 'post.impersonate']);
 
         // appConfig
-        Entrust::routeNeedsPermission($prefix . 'appConfig*', 'app-config-view');
-        Entrust::routeNeedsPermission($prefix . 'appConfig/*/*', 'app-config-manage');
+        //Entrust::routeNeedsPermission($prefix . 'appConfig*', 'app-config-view');
+        //Entrust::routeNeedsPermission($prefix . 'appConfig/*/*', 'app-config-manage');
         Route::resource('appConfig', 'Admin\AppConfigController');
         Route::post('appConfig/{id}/edit', ['uses' => 'Admin\AppConfigController@update', 'as' => 'admin.appConfig.update']);
         Route::get('appConfig/{id}/destroy', ['uses' => 'Admin\AppConfigController@destroy', 'as' => 'admin.appConfig.destroy']);
 
         // activities
-        Entrust::routeNeedsPermission($prefix . 'activities*', 'activities-view');
+        //Entrust::routeNeedsPermission($prefix . 'activities*', 'activities-view');
         Route::resource('activities', 'ActivityController');
         Route::get('activities/create', ['uses' => 'ActivityController@create', 'as' => 'admin.activities.create']);
         Route::get('activities/{id}', ['uses' => 'ActivityController@show', 'as' => 'admin.activities.show']);
         Route::get('activities/{id}/edit', ['uses' => 'ActivityController@edit', 'as' => 'admin.activities.edit']);
 
         // pagetimer
-        Entrust::routeNeedsPermission($prefix . 'pagetimer*', 'activities-pagetimer-view');
+        //Entrust::routeNeedsPermission($prefix . 'pagetimer*', 'activities-pagetimer-view');
         Route::resource('pagetimer', 'PageTimerController');
         Route::get('pagetimer/create', ['uses' => 'PageTimerController@create', 'as' => 'admin.pagetimer.create']);
         Route::get('pagetimer/{id}', ['uses' => 'PageTimerController@show', 'as' => 'admin.pagetimer.show']);
         Route::get('pagetimer/{id}/edit', ['uses' => 'PageTimerController@edit', 'as' => 'admin.pagetimer.edit']);
 
         // users
-        Entrust::routeNeedsPermission($prefix . 'users*', 'users-view-all');
+        //Entrust::routeNeedsPermission($prefix . 'users*', 'users-view-all');
         Route::get('users', ['uses' => 'UserController@index', 'as' => 'admin.users.index']);
         Route::post('users', ['uses' => 'UserController@store', 'as' => 'admin.users.store']);
         Route::get('users/create', ['uses' => 'UserController@create', 'as' => 'admin.users.create']);
@@ -310,7 +310,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('users/{id}/msgcenter', ['uses' => 'UserController@showMsgCenter', 'as' => 'admin.users.msgCenterUpdate']);
 
         // rules
-        Entrust::routeNeedsPermission($prefix . 'rules*', 'rules-engine-view');
+        //Entrust::routeNeedsPermission($prefix . 'rules*', 'rules-engine-view');
         Route::resource('rules', 'RulesController');
         Route::get('rules/create', ['uses' => 'RulesController@create', 'as' => 'admin.rules.create']);
         Route::post('rules/store', ['uses' => 'RulesController@store', 'as' => 'admin.rules.store']);
@@ -320,66 +320,66 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('rulesmatches', ['uses' => 'RulesController@showMatches', 'as' => 'admin.rules.matches']);
 
         // roles
-        Entrust::routeNeedsPermission($prefix . 'roles*', 'roles-view');
-        Entrust::routeNeedsPermission($prefix . 'roles/*/*', 'roles-manage');
+        //Entrust::routeNeedsPermission($prefix . 'roles*', 'roles-view');
+        //Entrust::routeNeedsPermission($prefix . 'roles/*/*', 'roles-manage');
         Route::resource('roles', 'Admin\RoleController');
         Route::post('roles/{id}/edit', ['uses' => 'Admin\RoleController@update', 'as' => 'admin.roles.update']);
 
         // permissions
-        Entrust::routeNeedsPermission($prefix . 'permissions*', 'roles-permissions-view');
-        Entrust::routeNeedsPermission($prefix . 'permissions/*/*', 'roles-permissions-manage');
+        //Entrust::routeNeedsPermission($prefix . 'permissions*', 'roles-permissions-view');
+        //Entrust::routeNeedsPermission($prefix . 'permissions/*/*', 'roles-permissions-manage');
         Route::resource('permissions', 'Admin\PermissionController');
         Route::post('permissions/{id}/edit', ['uses' => 'Admin\PermissionController@update', 'as' => 'admin.permissions.update']);
 
         // report - nurse time report
-        //Entrust::routeNeedsPermission($prefix . '/reports/nurseTime*', 'report-nurse-time-view');
-        //Entrust::routeNeedsPermission($prefix . '/reports/nurseTime/*/*', 'report-nurse-time-manage');
+        ////Entrust::routeNeedsPermission($prefix . '/reports/nurseTime*', 'report-nurse-time-view');
+        ////Entrust::routeNeedsPermission($prefix . '/reports/nurseTime/*/*', 'report-nurse-time-manage');
         Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
         Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 
         // questions
-        Entrust::routeNeedsPermission($prefix . 'questions*', 'programs-manage');
+        //Entrust::routeNeedsPermission($prefix . 'questions*', 'programs-manage');
         Route::resource('questions', 'Admin\CPRQuestionController');
         Route::post('questions/{id}/edit', ['uses' => 'Admin\CPRQuestionController@update', 'as' => 'admin.questions.update']);
         Route::get('questions/{id}/destroy', ['uses' => 'Admin\CPRQuestionController@destroy', 'as' => 'admin.questions.destroy']);
 
         // questionSets
-        Entrust::routeNeedsPermission($prefix . 'questionSets*', 'programs-manage');
+        //Entrust::routeNeedsPermission($prefix . 'questionSets*', 'programs-manage');
         Route::resource('questionSets', 'Admin\CPRQuestionSetController');
         Route::post('questionSets', ['uses' => 'Admin\CPRQuestionSetController@index', 'as' => 'admin.questionSets']);
         Route::post('questionSets/{id}/edit', ['uses' => 'Admin\CPRQuestionSetController@update', 'as' => 'admin.questionSets.update']);
         Route::get('questionSets/{id}/destroy', ['uses' => 'Admin\CPRQuestionSetController@destroy', 'as' => 'admin.questionSets.destroy']);
 
         // items
-        Entrust::routeNeedsPermission($prefix . 'items*', 'programs-manage');
+        //Entrust::routeNeedsPermission($prefix . 'items*', 'programs-manage');
         Route::resource('items', 'Admin\CPRItemController');
         Route::post('items/{id}/edit', ['uses' => 'Admin\CPRItemController@update', 'as' => 'admin.items.update']);
         Route::get('items/{id}/destroy', ['uses' => 'Admin\CPRItemController@destroy', 'as' => 'admin.items.destroy']);
 
         // ucp
-        Entrust::routeNeedsPermission($prefix . 'ucp*', 'programs-manage');
+        //Entrust::routeNeedsPermission($prefix . 'ucp*', 'programs-manage');
         Route::resource('ucp', 'Admin\CPRUCPController');
         Route::post('ucp/{id}/edit', ['uses' => 'Admin\CPRUCPController@update', 'as' => 'admin.ucp.update']);
         Route::get('ucp/{id}/destroy', ['uses' => 'Admin\CPRUCPController@destroy', 'as' => 'admin.ucp.destroy']);
 
         // observations
-        Entrust::routeNeedsPermission($prefix . 'observations*', 'observations-view');
-        Entrust::routeNeedsPermission($prefix . 'observations/edit', 'observations-edit');
-        Entrust::routeNeedsPermission($prefix . 'observations/create', 'observations-create');
+        //Entrust::routeNeedsPermission($prefix . 'observations*', 'observations-view');
+        //Entrust::routeNeedsPermission($prefix . 'observations/edit', 'observations-edit');
+        //Entrust::routeNeedsPermission($prefix . 'observations/create', 'observations-create');
         Route::resource('observations', 'Admin\ObservationController');
         Route::post('observations', ['uses' => 'Admin\ObservationController@index', 'as' => 'admin.observations']);
         Route::post('observations/{id}/edit', ['uses' => 'Admin\ObservationController@update', 'as' => 'admin.observations.update']);
         Route::get('observations/{id}/destroy', ['uses' => 'Admin\ObservationController@destroy', 'as' => 'admin.observations.destroy']);
 
         // commentspets);
-        Entrust::routeNeedsPermission($prefix . 'comments/edit', 'observations-edit');
-        Entrust::routeNeedsPermission($prefix . 'comments/create', 'observations-create');
+        //Entrust::routeNeedsPermission($prefix . 'comments/edit', 'observations-edit');
+        //Entrust::routeNeedsPermission($prefix . 'comments/create', 'observations-create');
         Route::resource('comments', 'Admin\CommentController');
         Route::post('comments/{id}/edit', ['uses' => 'Admin\CommentController@update', 'as' => 'admin.comments.update']);
         Route::get('comments/{id}/destroy', ['uses' => 'Admin\CommentController@destroy', 'as' => 'admin.comments.destroy']);
 
         // programs
-        Entrust::routeNeedsPermission($prefix . 'programs*', 'programs-view');
+        //Entrust::routeNeedsPermission($prefix . 'programs*', 'programs-view');
         Route::resource('programs', 'Admin\WpBlogController');
         Route::get('programs', ['uses' => 'Admin\WpBlogController@index', 'as' => 'admin.programs.index']);
         Route::get('programs/create', ['uses' => 'Admin\WpBlogController@create', 'as' => 'admin.programs.create']);
@@ -391,7 +391,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('programs/{id}/questions', ['uses' => 'Admin\WpBlogController@showQuestions', 'as' => 'admin.programs.questions']);
 
         // locations
-        Entrust::routeNeedsPermission($prefix . 'locations*', 'programs-view');
+        //Entrust::routeNeedsPermission($prefix . 'locations*', 'programs-view');
         Route::resource('locations', 'LocationController');
         Route::get('locations', ['uses' => 'LocationController@index', 'as' => 'locations.index']);
         Route::get('locations/{id}', ['uses' => 'LocationController@show', 'as' => 'locations.show']);
@@ -400,27 +400,27 @@ Route::group(['middleware' => 'auth'], function () {
 
 
         // apikeys
-        Entrust::routeNeedsPermission($prefix . 'apikeys*', 'apikeys-view');
+        //Entrust::routeNeedsPermission($prefix . 'apikeys*', 'apikeys-view');
         Route::resource('apikeys', 'Admin\ApiKeyController', [
             'only' => ['index', 'destroy', 'store'],
         ]);
 
 
         // care items
-        Entrust::routeNeedsPermission($prefix . 'careitems*', 'programs-manage');
+        //Entrust::routeNeedsPermission($prefix . 'careitems*', 'programs-manage');
         Route::resource('careitems', 'Admin\CareItemController');
         Route::post('careitems/{id}/edit', ['uses' => 'Admin\CareItemController@update', 'as' => 'admin.careitems.update']);
         Route::get('careitems/{id}/destroy', ['uses' => 'Admin\CareItemController@destroy', 'as' => 'admin.careitems.destroy']);
 
         // care plans
-        Entrust::routeNeedsPermission($prefix . 'careplans*', 'programs-manage');
+        //Entrust::routeNeedsPermission($prefix . 'careplans*', 'programs-manage');
         Route::resource('careplans', 'Admin\CarePlanController');
         Route::post('careplans/{id}/edit', ['uses' => 'Admin\CarePlanController@update', 'as' => 'admin.careplans.update']);
         Route::post('careplans/{id}/duplicate', ['uses' => 'Admin\CarePlanController@duplicate', 'as' => 'admin.careplans.duplicate']);
         Route::get('careplans/{id}/destroy', ['uses' => 'Admin\CarePlanController@destroy', 'as' => 'admin.careplans.destroy']);
 
         // care plan sections
-        Entrust::routeNeedsPermission($prefix . 'careplansections*', 'programs-manage');
+        //Entrust::routeNeedsPermission($prefix . 'careplansections*', 'programs-manage');
         Route::resource('careplansections', 'Admin\CarePlanSectionController');
         Route::post('careplansections/{id}/edit', ['uses' => 'Admin\CarePlanSectionController@update', 'as' => 'admin.careplansections.update']);
         Route::get('careplansections/{id}/destroy', ['uses' => 'Admin\CarePlanSectionController@destroy', 'as' => 'admin.careplansections.destroy']);
