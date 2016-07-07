@@ -11,7 +11,7 @@ use App\CareItemUserValue;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class S20160705ParseDiscreetItems extends Migration
+class S20160705ParseDiscreetItems extends Seeder
 {
     /**
      * Run the migrations.
