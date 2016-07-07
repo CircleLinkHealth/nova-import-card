@@ -15,7 +15,7 @@
 
 
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
+        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1" style="border-bottom: 3px solid #50b2e2;">
             <div class="row">
                 <div class="main-form-title col-lg-12" >
                     Record New Note
@@ -30,7 +30,7 @@
                         <label class="col-xs-6" style="padding-left: 16px;" for="comment">General Comment</label>
                         <label class="col-xs-2" style="padding-left: 0px;" for="contact_days">Contact Days</label>
                         <label class="col-xs-2" style="padding-left: 0px; left: -4px" for="contact_time">Contact Time</label>
-                        <label class="col-xs-2" style="left: -25px" for="contact_time">Calls Per Month</label>
+                        <label class="col-xs-2" style="left: -25px" for="contact_time">Frequency</label>
                     </div>
 
                     <div class="col-xs-6" style="padding-left: 0px;">
@@ -41,7 +41,7 @@
                     <div class="col-xs-2" style="padding-left: 0px;">
                         <select id=contact_days" name=days[]"
                                 class="selectpicker dropdown Valid form-control"
-                                data-size="7" style="width: 150px"
+                                data-size="7" style="width: 155px"
                                 multiple>
                             <option value="" selected> Mon </option>
                             <option value=""> Tue </option>
@@ -70,7 +70,7 @@
                 </div>
             </div>
 
-            <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="border-bottom: 3px solid #50b2e2;">
+            <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style=" border:0px;padding: 10px 35px;">
                 <div class="form-block col-md-6">
                     <div class="row">
                         <div class="new-note-item">
