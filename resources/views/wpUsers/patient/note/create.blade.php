@@ -15,7 +15,7 @@
 
 
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1" style="border-bottom: 3px solid #50b2e2;">
+        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="main-form-title col-lg-12" >
                     Record New Note
@@ -24,23 +24,44 @@
 
                 @include('partials.userheader')
 
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="border-bottom: 3px solid #50b2e2; padding: 10px">
+                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="padding: 10px; ">
 
-                    <div class="new-note-item">
-                        <div class="row">
-                            <label class="col-xs-2" for="inputEmail1">General Comment</label>
-                            <div class="col-xs-10">
-                                <input type="email" class="form-control" id="inputEmail1"
+                        <div class="row" >
+                            <label class="col-xs-6" style="padding-left: 16px;" for="comment">General Comment</label>
+                            <label class="col-xs-3" style="padding-left: 0px;" for="contact_days">Contact Days</label>
+                            <label class="col-xs-3" style="padding-left: 0px;" for="contact_time">Contact Time</label>
+                        </div>
+
+                    <div class="col-xs-6" style="padding-left: 0px;">
+                                <input type="text" class="form-control" id="comment"
                                        placeholder="Patient has a taco addiction.">
                             </div>
+
+                    <div class="col-xs-3" style="padding-left: 0px;">
+                            <select id=contact_days" name=days[]"
+                                    class="selectpicker dropdown Valid form-control"
+                                    data-size="7" style="width: 150px"
+                                    multiple>
+                                <option value="" selected> Mon </option>
+                                <option value=""> Tue </option>
+                                <option value=""> Wed </option>
+                                <option value=""> Thu </option>
+                                <option value=""> Fri </option>
+                                <option value=""> Sat </option>
+                                <option value=""> Sun </option>
+                            </select>
                         </div>
+                    <div class="col-xs-2" style="padding-left: 0px;">
+                        <select id="contact_time" name="contact_time" class="selectpickerX dropdownValid form-control" data-size="2" style="width: 150px">
+                            <option value=""> 9am-12n</option>
+                            <option value=""> 12n-3pm</option>
+                            <option value=""> 3pm-6pm</option>
+                        </select>
                     </div>
-                </div>
-                <div class="new-note-item">
                 </div>
             </div>
 
-            <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="border-bottom: 0px solid #50b2e2;">
+            <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="border-bottom: 3px solid #50b2e2;">
                 <div class="form-block col-md-6">
                     <div class="row">
                         <div class="new-note-item">
