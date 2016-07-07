@@ -31,11 +31,11 @@ class PhiMail {
             $send = false;
             $receive = true;
 
-            $phiMailServer = "sandbox.phimail-dev.com";
-            $phiMailPort = 32541; // this is the default port #
+            $phiMailServer = env('EMR_DIRECT_MAIL_SERVER');
+            $phiMailPort = env('EMR_DIRECT_PORT'); // this is the default port #
 
-            $phiMailUser = "circlelinkhealth@test.directproject.net";
-            $phiMailPass = "gpcn3z9n";
+            $phiMailUser = env('EMR_DIRECT_USER');
+            $phiMailPass = env('EMR_DIRECT_PASSWORD');
 
             $outboundRecipient = "recipient@direct.anotherdomain.com";
             $attachmentSaveDirectory = base_path() . '/storage/ccdas/';
@@ -114,30 +114,30 @@ class PhiMail {
             // API documentation for further information about address groups.
             if ($receive) {
                 while (true) {
-                    Log::info("============\n");
-                    Log::info("Checking mailbox\n");
+                    echo ("============\n");
+                    echo ("Checking mailbox\n");
 
                     // check next message or status update
                     $cr = $c->check();
 
                     if ($cr == null) {
 
-                        Log::info("Check returned null; no messages on queue.\n");
+                        echo ("Check returned null; no messages on queue.\n");
                         break;
 
                     } else if($cr->isMail()) {
                         // If you are checking messages for an address group,
                         // $cr->recipient will contain the address in that
                         // group to which this message should be delivered.
-                        Log::info("A new message is available for " . $cr->recipient . "\n");
-                        Log::info("from " . $cr->sender . "; id "
+                        echo ("A new message is available for " . $cr->recipient . "\n");
+                        echo ("from " . $cr->sender . "; id "
                             . $cr->messageId . "; #att=" . $cr->numAttachments
                             . "\n");
 
                         for ($i = 0; $i <= $cr->numAttachments; $i++) {
                             // Get content for part i of the current message.
                             $showRes = $c->show($i);
-                            Log::info("MimeType = " . $showRes->mimeType
+                            echo ("MimeType = " . $showRes->mimeType
                                 . "; length=" . $showRes->length . "\n");
 
                             // List all the headers. Headers are set by the
@@ -147,7 +147,7 @@ class PhiMail {
                             // to which this message should be delivered
                             // internally; use $cr->recipient instead.
                             foreach ($showRes->headers as $header) {
-                                Log::info("Header: " . $header . "\n");
+                                echo ("Header: " . $header . "\n");
                             }
 
                             // Process the content; for this example text data 
@@ -157,10 +157,10 @@ class PhiMail {
                                 // ... do something with text parts ...
                                 // For this example we assume ascii or utf8 
                                 $s = $showRes->data;
-                                Log::info("Content:\n" . $s . "\n");
+                                echo ("Content:\n" . $s . "\n");
                             } else {
                                 // ... do something with binary data ...
-                                Log::info("Content: <BINARY>  Writing attachment file "
+                                echo ("Content: <BINARY>  Writing attachment file "
                                     . $showRes->filename . "\n");
 //                                self::writeDataFile($attachmentSaveDirectory . $showRes->filename, $showRes->data);
 
@@ -194,13 +194,13 @@ class PhiMail {
                                 $importer = new QAImportManager($vendor->program_id, $ccda);
                                 $importer->generateCarePlanFromCCD();
 
-                                Log::info("{$showRes->filename} imported successfully");
+                                echo ("{$showRes->filename} imported successfully");
                             }
 
                             // Display the list of attachments and associated info. This info is only
                             // included with message part 0.
                             for ($k = 0; $i == 0 && $k < $cr->numAttachments; $k++) {
-                                Log::info("Attachment " . ($k + 1)
+                                echo ("Attachment " . ($k + 1)
                                     . ": " . $showRes->attachmentInfo[$k]->mimeType
                                     . " fn:" . $showRes->attachmentInfo[$k]->filename
                                     . " Desc:" . $showRes->attachmentInfo[$k]->description
@@ -217,9 +217,9 @@ class PhiMail {
                     } else {
 
                         // Process a status update for a previously sent message.
-                        Log::info("Status message for ID = " . $cr->messageId . "\n");
-                        Log::info("  StatusCode = " . $cr->statusCode . "\n");
-                        if ($cr->info != null) Log::info("  Info = " . $cr->info . "\n");
+                        echo ("Status message for ID = " . $cr->messageId . "\n");
+                        echo ("  StatusCode = " . $cr->statusCode . "\n");
+                        if ($cr->info != null) echo ("  Info = " . $cr->info . "\n");
                         if ($cr->statusCode == "failed") {
                             // ...do something about a failed message...
                             // $cr->messageId will match the messageId returned
@@ -239,14 +239,14 @@ class PhiMail {
             }
 
         } catch (\Exception $e) {
-            Log::info($e->getMessage() . "\n");
+            echo ($e->getMessage() . "\n");
         }
 
         try {
             $c->close();
         } catch (\Exception $ignore) { }
 
-        Log::info("============END\n");
+        echo ("============END\n");
 
     }
 }
