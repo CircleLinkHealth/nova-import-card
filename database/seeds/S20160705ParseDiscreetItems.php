@@ -7,9 +7,9 @@ use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
 use App\User;
-use App\CareItemUserValue;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Seeder;
 
 class S20160705ParseDiscreetItems extends Seeder
 {
