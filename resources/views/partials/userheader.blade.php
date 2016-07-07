@@ -32,7 +32,17 @@
                 <li class="inline-block">{{$patient->gender}}</li>
                 <li class="inline-block">{{$patient->age}} yrs</li>
                 <li class="inline-block">{{$patient->phone}}</li>
-                <li class=" inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ?  'N/A' : ucwords($patient->ccm_status);  ?></li>
+                <li class="inline-block">
+                    <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2" style="width: 100px">
+                            <option value=""> Enrolled</option>
+                            <option value=""> Withdrawn</option>
+                            <option value=""> Paused</option>
+                    </select>
+                </li>
+                {{--<li class="inline-block">Contact Time: {{$patient->patientInfo->preferred_contact_time}}--}}
+                {{--<li class="inline-block">Contact Days: {{--}}
+                    {{--\App\PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days)--}}
+                {{--}}</li>--}}
             </ul>
         </div>
     </div>
@@ -59,3 +69,5 @@
         </ul>
     @endif
 </div>
+
+
