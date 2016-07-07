@@ -21,7 +21,6 @@ use DateTime;
 use Faker\Factory;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
@@ -29,11 +28,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, Serviceable {
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable {
 
-	use SoftDeletes;
+	use EntrustUserTrait {
+		EntrustUserTrait::restore insteadof SoftDeletes;
+	}
 
-	use Authenticatable, Authorizable, CanResetPassword, EntrustUserTrait;
+	use Authenticatable, CanResetPassword, SoftDeletes;
 
 	// for revisionable
 	use \Venturecraft\Revisionable\RevisionableTrait;
