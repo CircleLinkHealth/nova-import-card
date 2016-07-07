@@ -16,7 +16,7 @@ class AddCallWindowToCallsTable extends Migration
 
             $table->text('window_start');
             $table->text('window_end');
-//            $table->date('call_date');
+            $table->date('call_date');
 
         });
     }
@@ -32,7 +32,7 @@ class AddCallWindowToCallsTable extends Migration
 
             $table->dropColumn('window_start');
             $table->dropColumn('window_end');
-//            $table->date('call_date');
+            $table->dropColumn('call_date');
 
         });
     }
