@@ -11,7 +11,7 @@
                 <div class="main-form-title col-lg-12">
                     Schedule Next Call
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.note.index', array('patient' => $patient->ID)), 'method' => 'GET')) !!}
+                {!! Form::open(array('url' => URL::route('call.schedule', array('patient' => $patient->ID)), 'method' => 'POST')) !!}
 
                 <div class="form-block col-md-6" style="padding-top: 13px">
                     <div class="row">
@@ -24,7 +24,7 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                        <input name="performed_at" type="date"
+                                        <input name="date" type="date"
                                                class="selectpickerX form-control"
                                                data-width="95px" data-size="10"
                                                value="{{\Carbon\Carbon::parse($date)->format('Y-m-d')}}"
@@ -62,38 +62,7 @@
                         </div>
                     </div>
                 </div>
-
-                {{--<div class="form-block col-md-6">--}}
-                    {{--<div class="row" style="margin-bottom: 0px">--}}
-                        {{--<div class="new-note-item">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<div class="col-sm-12">--}}
-                                    {{--<div class="panel-group inline" id="accordion" style="margin-bottom: 0px">--}}
-                                        {{--<label data-toggle="collapse" data-target="#collapseOne">--}}
-                                            {{--<div class="radio"><input type="checkbox" name="status"--}}
-                                                                      {{--id="status"--}}
-                                                                      {{--value="status"/><label--}}
-                                                        {{--for="status"><span> </span>Patient Status Override (currently Enrolled)</label>--}}
-                                            {{--</div>--}}
-                                        {{--</label>--}}
-
-                                        {{--<div id="collapseOne" class="panel-collapse collapse in">--}}
-                                            {{--<div><select id="status" name="status"--}}
-                                                                              {{--class="selectpickerX dropdownValid form-control"--}}
-                                                                              {{--data-size="10">--}}
-                                                    {{--<option value=""> Enrolled</option>--}}
-                                                    {{--<option value=""> Withdrawn</option>--}}
-                                                    {{--<option value=""> Paused</option>--}}
-
-                                                {{--</select>--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-                {{--</div>--}}
+                <input type="hidden" name="patient_id" value="{{$patient->ID}}"/>
 
         <div class="form-block col-md-12">
             <div class="row">
@@ -117,21 +86,5 @@
                 </div>
             </div>
         </div>
-
-        <script>
-            $('.collapse').collapse();
-
-            $("input:checkbox").on('click', function () {
-                var $box = $(this);
-                if ($box.is(":checked")) {
-
-                    var group = "input:checkbox[name='" + $box.attr("name") + "']";
-                    $(group).prop("checked", false);
-                    $box.prop("checked", true);
-                } else {
-                    $box.prop("checked", false);
-                }
-            });
-        </script>
 
 @stop

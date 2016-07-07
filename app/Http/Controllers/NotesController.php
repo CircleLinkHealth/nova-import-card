@@ -239,26 +239,20 @@ class NotesController extends Controller
 
     public function store(Request $input, $patientId)
     {
-
         $input = $input->all();
 
+        $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
+        $this->service->storeNote($input);
 
         if(isset($input['call_status']) && $input['call_status'] == 'reached'){
 
-            //CALCULATE THE TIMES, suggest, redirect!
-
             $patient = User::where('ID',$patientId)->first();
-
-            debug($patient->patientInfo->preferred_contact_time);
 
             $prediction = (new SchedulerService)->scheduleCall($patient);
 
             return view('wpUsers.patient.calls.create', $prediction);
 
         }
-        $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
-
-        $this->service->storeNote($input);
 
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
