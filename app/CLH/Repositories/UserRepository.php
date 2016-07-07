@@ -139,6 +139,13 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
 
         foreach ($patientInfo as $key => $value) {
+            // hack for date_paused and date_withdrawn
+            if(
+                $key == 'date_paused'
+                || $key == 'date_withdrawn'
+            ) {
+                continue 1;
+            }
             if ($params->get($key)) {
                 $user->patientInfo->$key = $params->get($key);
             }
