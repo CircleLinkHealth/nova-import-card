@@ -10,7 +10,7 @@
                         <div class="col-sm-9">
                             <div class="list-group-item-heading" v-if="allergyitem.name">
                                 <span id="allergy-name-@{{ $index }}">@{{ allergyitem.name }}</span>
-                                <textarea v-model="allergyitem.name" id="allergy-edit-@{{ $index }}" style="display:none;">@{{ allergyitem.name }}</textarea>
+                                <textarea v-model="allergyitem.name" id="allergy-edit-@{{ $index }}" style="display:none;" rows="10">@{{ allergyitem.name }}</textarea>
                                 <input type="hidden" name="id" value="@{{ allergyitem.id }}">
                                 <input type="hidden" name="patient_id" value="@{{ allergyitem.patient_id }}">
                             </div>
@@ -38,13 +38,13 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-sm-9">
+                        <div class="col-sm-10">
                             <input type="hidden" id="patient_id" name="patient_id" value="{{ $patient->ID }}">
                             <div class="form-group">
                                 <input class="form-control" placeholder="Allergy Name" v-model="allergy.name">
                             </div>
                         </div>
-                        <div class="col-sm-3 text-right">
+                        <div class="col-sm-2 text-right">
                             <button class="btn btn-success" v-on:click.stop.prevent="addAllergy()"><span><i class="glyphicon glyphicon-plus"></i> Add</span></button>
                         </div>
                     </div>

@@ -545,10 +545,9 @@ class ReportsController extends Controller
     public function excelReportT2()
     {
         // get all users with paused ccm_status
-        $users = User::with('meta')
-            ->whereHas('meta', function($q) {
-                $q->where('meta_key', '=', 'ccm_status');
-                $q->where('meta_value', '=', 'paused');
+        $users = User::with('patientInfo')
+            ->whereHas('patientInfo', function($q) {
+                $q->where('ccm_status', '=', 'paused');
             })
             ->get();
 
@@ -587,7 +586,7 @@ class ReportsController extends Controller
                     'State',
                     'Zip',
                     'CCM Time',
-                    'Date Start',
+                    'Date Registered',
                     'Date Paused',
                     'Date Withdrawn',
                     'Site',
@@ -604,11 +603,6 @@ class ReportsController extends Controller
                     if($i > 2000000) {
                         continue 1;
                     }
-                    $userConfig = $user->meta->where('meta_key', 'wp_' . $user->program_id . '_user_config')->first();
-                    if(!$userConfig) {
-                        continue 1;
-                    }
-                    $userConfig = unserialize($userConfig->meta_value);
 
                     $billingProvider = User::find($user->billingProviderID);
                     if(!$billingProvider) {
@@ -619,7 +613,7 @@ class ReportsController extends Controller
                         $billingProviderPhone = $billingProvider->phone;
                     }
 
-                    $location = Location::find($userConfig['preferred_contact_location']);
+                    $location = Location::find($user->patientInfo->preferred_contact_location);
                     if(!$location) {
                         $locationName = '';
                         $locationPhone = '';
@@ -650,12 +644,12 @@ class ReportsController extends Controller
                         $user->state,
                         $user->zip,
                         $user->monthlyTime,
-                        'Date Start',
-                        $user->date_paused,
-                        'Date Withdrawn',
+                        $user->patientInfo->user_registered,
+                        $user->patientInfo->date_paused,
+                        $user->patientInfo->date_withdrawn,
                         $user->program_id,
                         'Caller ID', // provider_phone
-                        $userConfig['preferred_contact_location'],
+                        $user->patientInfo->preferred_contact_location,
                         $locationName,
                         $locationPhone,
                         $locationAddress,
