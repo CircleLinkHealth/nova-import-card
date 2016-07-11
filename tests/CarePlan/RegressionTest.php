@@ -573,7 +573,7 @@ class RegressionTest extends TestCase
             ";
         }
 
-        if (in_array($db, ['cpm_stage', 'cpm_test', 'cpm_hotfix'])) {
+        if (in_array($db, ['cpm_staging', 'cpm_testing', 'cpm_hotfix'])) {
             Slack::to('#qualityassurance')
                 ->send($text);
         }
