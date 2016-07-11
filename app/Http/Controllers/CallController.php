@@ -13,9 +13,15 @@ use App\Http\Controllers\Controller;
 class CallController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        //
+
+        $input = $request->all();
+        
+        $calls = Call::where('status','scheduled')->get();
+
+    return $calls;
+
     }
 
     public function create()
@@ -28,11 +34,11 @@ class CallController extends Controller
 
         $input = $request->all();
 
-        dd($input);
+        $window = explode(' - ', $input['window']);
 
-        Call::create([
+        $call = Call::create([
 
-            'note_id' => '',
+            'note_id' => 34918,
             'service' => 'phone',
             'status' => 'scheduled',
 
@@ -40,18 +46,20 @@ class CallController extends Controller
             'outbound_phone_number' => '',
 
             'inbound_cpm_id' => $input['patient_id'],
-            'outbound_cpm_id' => '',
+            'outbound_cpm_id' => 1,
             
             'call_time' => 0,
             'created_at' => Carbon::now()->toDateTimeString(),
 
             'call_date' => $input['date'],
-            'window_start' => '',
-            'window_start' => '',
-            
+            'window_start' => $window[0],
+            'window_end' => $window[1],
+
             'is_cpm_outbound' => true
 
         ]);
+
+        return redirect()->route('call.index', ['patientId' => $input['patient_id']]);
 
     }
 

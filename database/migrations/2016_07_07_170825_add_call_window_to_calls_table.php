@@ -18,6 +18,8 @@ class AddCallWindowToCallsTable extends Migration
             $table->text('window_end');
             $table->date('call_date');
 
+            $table->unsignedInteger('outbound_cpm_id')->nullable()->change();
+
         });
     }
 

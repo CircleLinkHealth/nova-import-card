@@ -48,12 +48,12 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                        <select id="activityKey" name="type"
+                                        <select id="activityKey" name="window"
                                                 class="selectpickerX dropdownValid form-control"
                                                 data-size="10" required>
-                                            <option value="9:30am - 12n" {{$window == App\PatientInfo::CALL_WINDOW_0930_1200 ? 'selected' : ''}}> 9:30am - 12n</option>
-                                            <option value="12n - 3pm" {{$window == App\PatientInfo::CALL_WINDOW_1200_1500 ? 'selected' : ''}}> 12n - 3pm</option>
-                                            <option value="3pm - 6pm" {{$window == App\PatientInfo::CALL_WINDOW_1500_1800 ? 'selected' : ''}}> 3pm - 6pm</option>
+                                            <option value="09:30 - 12:00" {{$window == App\PatientInfo::CALL_WINDOW_0930_1200 ? 'selected' : ''}}>{{App\PatientInfo::CALL_WINDOW_0930_1200}}</option>
+                                            <option value="12:00 - 15:00" {{$window == App\PatientInfo::CALL_WINDOW_1200_1500 ? 'selected' : ''}}>{{App\PatientInfo::CALL_WINDOW_1200_1500}}</option>
+                                            <option value="15:00 - 18:00" {{$window == App\PatientInfo::CALL_WINDOW_1500_1800 ? 'selected' : ''}}>{{App\PatientInfo::CALL_WINDOW_1500_1800}}</option>
 
                                         </select>
                                     </div>

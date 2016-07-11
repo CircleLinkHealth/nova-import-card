@@ -28,6 +28,10 @@ class Call extends Model
         'call_time',
         'created_at',
 
+        'call_date',
+        'window_start',
+        'window_end',
+
         'is_cpm_outbound'
     ];
 
