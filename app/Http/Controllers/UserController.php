@@ -350,31 +350,23 @@ class UserController extends Controller
         }
 
         // build revision info
-        $userHistory = collect( [] );
+        $revisions = array();
 
         // first for user
+        $revisionHistory = collect( [] );
         foreach ( $patient->revisionHistory->sortByDesc( 'updated_at' )->take( 10 ) as $history ) {
-            $userHistory->push( $history );
+            $revisionHistory->push( $history );
         }
+        $revisions['User'] = $revisionHistory;
 
-        /*
-        // than for usermeta
-        $userMetas = UserMeta::where( 'user_id', '=', $id )->get();
-        if ( $userMetas->count() > 0 ) {
-            foreach ( $userMetas as $userMeta ) {
-                if ($userMeta->revisionHistory->count() > 0) {
-                    $metaItemHistory = $userMeta->revisionHistory->sortByDesc('updated_at')->take(10);
-                    if ($metaItemHistory->count() > 0) {
-                        foreach ($metaItemHistory as $history) {
-                            $userHistory->push($history);
-                        }
-                    }
-                }
+        // patientInfo
+        if($role->name == 'participant') {
+            $revisionHistory = collect([]);
+            foreach ($patient->patientInfo->revisionHistory->sortByDesc('updated_at')->take(10) as $history) {
+                $revisionHistory->push($history);
             }
+            $revisions['Patient Info'] = $revisionHistory;
         }
-        $revisions = $userHistory->sortByDesc( 'updated_at' );
-        */
-        $revisions = new Collection();
 
         $params = $request->all();
         if ( !empty($params) ) {
