@@ -98,7 +98,7 @@
 
                                         template:function(obj){
                                             if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                return "<a href='<?php echo URL::route('patient.activity.view', array('patientId' => $patient->ID)); ?>/"  + obj.id + "'>" + obj.type + "</a>"
+                                                return "<a href='<?php echo URL::route('patient.activity.view', array('patientId' => $patient->ID, 'actId' => '')); ?>/"  + obj.id + "'>" + obj.type + "</a>"
                                             else
                                                 return obj.type;
                                         },
