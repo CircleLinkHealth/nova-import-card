@@ -10,10 +10,6 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/tralves/Swaggervel"
-    },
-    {
-      "type": "vcs",
       "url": "https://github.com/michalisantoniou6/php-ccd-parser"
     }
   ],

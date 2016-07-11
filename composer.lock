@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9a222fca1933707a6903969ef223f3bc",
-    "content-hash": "7571d547e29706012e9b62cb954eaf52",
+    "hash": "d78d6617b779bb8d9c9128c54098cc6c",
+    "content-hash": "af9f1e5381e4858613f673796094baff",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -734,16 +734,16 @@
         },
         {
             "name": "franzose/closure-table",
-            "version": "v4.1.3",
+            "version": "4.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/franzose/ClosureTable.git",
-                "reference": "248ef24277dee83782a372048d0e959ebcd0d096"
+                "reference": "8198a43f2237da35a2b9298d286a073650e95568"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/franzose/ClosureTable/zipball/248ef24277dee83782a372048d0e959ebcd0d096",
-                "reference": "248ef24277dee83782a372048d0e959ebcd0d096",
+                "url": "https://api.github.com/repos/franzose/ClosureTable/zipball/8198a43f2237da35a2b9298d286a073650e95568",
+                "reference": "8198a43f2237da35a2b9298d286a073650e95568",
                 "shasum": ""
             },
             "require": {
@@ -788,7 +788,7 @@
                 "laravel",
                 "pages"
             ],
-            "time": "2016-07-06 13:04:59"
+            "time": "2016-07-08 08:19:46"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1233,13 +1233,13 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/tralves/Swaggervel.git",
-                "reference": "36639fdc7abb0657ea64ea1f48dcbcf03de0b37f"
+                "url": "https://github.com/slampenny/Swaggervel.git",
+                "reference": "e026d72cacec8b2db8b2510179d73042f5e87bb9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tralves/Swaggervel/zipball/36639fdc7abb0657ea64ea1f48dcbcf03de0b37f",
-                "reference": "36639fdc7abb0657ea64ea1f48dcbcf03de0b37f",
+                "url": "https://api.github.com/repos/slampenny/Swaggervel/zipball/e026d72cacec8b2db8b2510179d73042f5e87bb9",
+                "reference": "e026d72cacec8b2db8b2510179d73042f5e87bb9",
                 "shasum": ""
             },
             "require": {
@@ -1252,6 +1252,7 @@
                     "Jlapp\\Swaggervel": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1263,17 +1264,14 @@
             ],
             "description": "A great way to integrate Swagger into Laravel",
             "keywords": [
+                "L4",
                 "api",
                 "documentation",
-                "l4",
                 "l5",
                 "laravel",
                 "swagger"
             ],
-            "support": {
-                "source": "https://github.com/tralves/Swaggervel/tree/master"
-            },
-            "time": "2016-01-29 20:25:32"
+            "time": "2016-01-25 15:38:17"
         },
         {
             "name": "knplabs/knp-snappy",
@@ -2755,23 +2753,23 @@
         },
         {
             "name": "swiftmailer/swiftmailer",
-            "version": "v5.4.2",
+            "version": "v5.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "d8db871a54619458a805229a057ea2af33c753e8"
+                "reference": "4cc92842069c2bbc1f28daaaf1d2576ec4dfe153"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/d8db871a54619458a805229a057ea2af33c753e8",
-                "reference": "d8db871a54619458a805229a057ea2af33c753e8",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/4cc92842069c2bbc1f28daaaf1d2576ec4dfe153",
+                "reference": "4cc92842069c2bbc1f28daaaf1d2576ec4dfe153",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "mockery/mockery": "~0.9.1,<0.9.4"
+                "mockery/mockery": "~0.9.1"
             },
             "type": "library",
             "extra": {
@@ -2804,7 +2802,7 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2016-05-01 08:45:47"
+            "time": "2016-07-08 11:51:25"
         },
         {
             "name": "symfony/console",
