@@ -25,15 +25,16 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use MikeMcLin\WpPassword\Facades\WpPassword;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable {
 
-	use SoftDeletes;
+	use EntrustUserTrait {
+		EntrustUserTrait::restore insteadof SoftDeletes;
+	}
 
-	use Authenticatable, CanResetPassword, EntrustUserTrait;
+	use Authenticatable, CanResetPassword, SoftDeletes;
 
 	// for revisionable
 	use \Venturecraft\Revisionable\RevisionableTrait;
@@ -61,7 +62,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	protected $fillable = [
 		'user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log',
 		'user_status', 'auto_attach_programs', 'display_name', 'spam', 'password', 'first_name', 'last_name', 'address',
-		'city', 'state', 'zip', 'is_auto_generated', 'program_id'];
+		'city', 'state', 'zip', 'is_auto_generated', 'program_id', 'remember_token'];
 
 	protected $hidden = ['user_pass', 'password'];
 
@@ -126,16 +127,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			$user->patientCareTeamMembers()->restore();
 		});
 	}
-
-	public function getAuthIdentifier()
-	{
-		return $this->getKey();
-	}
-
-    public function getAuthPassword()
-    {
-        return $this->user_pass;
-    }
 
     public function getEmailForPasswordReset()
     {
@@ -1552,12 +1543,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $this->patientInfo->date_withdrawn = $value;
         $this->patientInfo->save();
         return true;
-    }
-
-// Whenever the user_pass field is modified, WordPress' internal hashing function will run
-    public function setUserPassAttribute($pass)
-    {
-        $this->attributes['user_pass'] = WpPassword::make($pass);
     }
 
 // END ATTRIBUTES

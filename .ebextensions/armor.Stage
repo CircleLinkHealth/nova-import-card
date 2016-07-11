@@ -1,6 +1,0 @@
-cd /home/ec2-user
-wget https://get.core.armor.com/latest/armor-agent.rpm
-sudo yum install -y /home/ec2-user/armor-agent.rpm
-sudo sed -i 's/license=/license=9KR66-XMBBR-CDFRH-TRGCP-BBPTW/' /etc/armor/armor.cfg
-sudo service armor-agent start
-sudo hostname cpm-v3-stage

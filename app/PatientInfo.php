@@ -12,6 +12,12 @@ class PatientInfo extends Model {
 	 const CALL_WINDOW_1500_1800 = '3pm - 6pm';
 
 	use SoftDeletes;
+	use \Venturecraft\Revisionable\RevisionableTrait;
+
+	public static function boot()
+	{
+		parent::boot();
+	}
 
 	/**
 	 * The connection name for the model.
@@ -112,6 +118,23 @@ class PatientInfo extends Model {
 		return true;
 	}
 
+
+	public function setCcmStatusAttribute($value)
+	{
+		$statusBefore = $this->ccm_status;
+		$this->attributes['ccm_status'] = $value;
+		// update date tracking
+		if ($statusBefore !== $value) {
+			if ($value == 'paused') {
+				$this->attributes['date_paused'] = date("Y-m-d H:i:s");
+			};
+			if ($value == 'withdrawn') {
+				$this->attributes['date_withdrawn'] = date("Y-m-d H:i:s");
+			};
+		}
+		$this->save();
+		return true;
+	}
 	public static function numberToTextDaySwitcher($string){
 
 		$mapper = function($i){

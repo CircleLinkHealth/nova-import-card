@@ -116,7 +116,7 @@ class RegressionTest extends TestCase
     {
         $this->visit('/auth/login')
             ->see('CarePlanManager')
-            ->type($this->provider->user_email, 'email')
+            ->type($this->provider->user_email, 'user_email')
             ->type('password', 'password')
             ->press('Log In')
             ->seePageIs('/manage-patients/dashboard');
@@ -573,7 +573,7 @@ class RegressionTest extends TestCase
             ";
         }
 
-        if (in_array($db, ['cpm_stage', 'cpm_test', 'cpm_hotfix'])) {
+        if (in_array($db, ['cpm_staging', 'cpm_testing', 'cpm_hotfix'])) {
             Slack::to('#qualityassurance')
                 ->send($text);
         }
