@@ -8,6 +8,12 @@ use Auth;
 class PatientInfo extends Model {
 
 	use SoftDeletes;
+	use \Venturecraft\Revisionable\RevisionableTrait;
+
+	public static function boot()
+	{
+		parent::boot();
+	}
 
 	/**
 	 * The connection name for the model.
