@@ -178,7 +178,7 @@ return [
         \rigor789\AirbrakeLaravel\AirbrakeServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         \Maknz\Slack\SlackServiceProvider::class,
-        Dusterio\AwsWorker\Integrations\LaravelServiceProvider::class,
+//        Dusterio\AwsWorker\Integrations\LaravelServiceProvider::class,
     ],
 
     /*
