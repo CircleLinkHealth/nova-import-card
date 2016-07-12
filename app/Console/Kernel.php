@@ -34,12 +34,9 @@ class Kernel extends ConsoleKernel {
 	 */
 	protected function schedule(Schedule $schedule)
 	{
-		$schedule->call(function(){
-			AppConfig::create([
-				'config_key' => 'hello',
-				'config_value' => 'test',
-			]);
-		})->everyMinute();
+//		$schedule->call(function(){
+//			
+//		})->everyMinute();
 	}
 
 }
