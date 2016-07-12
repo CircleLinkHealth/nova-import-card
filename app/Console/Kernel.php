@@ -37,7 +37,7 @@ class Kernel extends ConsoleKernel {
 	{
 		$schedule->call(function(){
 			(new PhiMail)->sendReceive();
-		})->everyMinute();
+		})->everyFiveMinutes();
 	}
 
 }

@@ -42,7 +42,7 @@ class PhiMail {
             'kgallo@circlelinkhealth.com',
         ];
 
-        $view = 'emrDirectCCDsReceived';
+        $view = 'emails.emrDirectCCDsReceived';
         $subject = "We received {$numberOfCcds} CCDs from EMR Direct.";
 
         $data = [
