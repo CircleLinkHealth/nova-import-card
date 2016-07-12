@@ -1,34 +1,5 @@
 <?php
 
-// this is your GET AJAX route
-Route::get('/test/ajax/get', function () {
-    // pass back some data
-    $data = array(
-        array(
-            'id' => 1,
-            'name' => 'Example Medication from server'),
-        array(
-            'id' => 2,
-            'name' => 'second Medication from server')
-    );
-    // return a JSON response
-    return Response::json($data);
-});
-// this is your POST AJAX route
-Route::post('/ajax/post', function () {
-    // pass back some data, along with the original data, just to prove it was received
-    $medications = Input::all();
-    $string = '';
-    if (!empty($medications)) {
-        foreach ($medications as $key => $value) {
-            // store medication
-            $string = $string . '--' . $key;
-        }
-    }
-    // return a JSON response
-    return Response::json($string);
-});
-
 //THIS IS FOR APRIMA ONLY
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
