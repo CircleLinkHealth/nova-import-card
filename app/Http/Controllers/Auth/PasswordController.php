@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Http\Request;
 
 class PasswordController extends Controller {
 
@@ -30,4 +31,14 @@ class PasswordController extends Controller {
 		$this->middleware('guest');
 	}
 
+	/**
+	 * Get the needed credentials for sending the reset link.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return array
+	 */
+	protected function getSendResetLinkEmailCredentials(Request $request)
+	{
+		return $request->only('user_email');
+	}
 }
