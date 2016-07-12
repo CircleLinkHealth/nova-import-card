@@ -1,9 +1,5 @@
 <?php
 
-Route::get('emr', function () {
-    (new \App\Services\PhiMail\PhiMail)->sendReceive();
-});
-
 // this is your GET AJAX route
 Route::get('/test/ajax/get', function () {
     // pass back some data
