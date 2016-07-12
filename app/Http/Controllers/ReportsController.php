@@ -838,25 +838,18 @@ class ReportsController extends Controller
                     $activity3comment = '';
                     $activity3status = '';
                     $activity3date = '';
-                    $activities = $user->patientActivities()
-                        ->whereHas('meta', function($q) {
-                            $q->where('meta_key', 'comment');
-                        })
+                    $activities = $user->notes()
                         ->orderBy('performed_at', 'DESC')
                         ->limit(3)
                         ->get();
                     if($activities->count() > 0) {
                         $a = 0;
                         foreach($activities as $activity) {
-                            $commentMeta = $activity->meta->where('meta_key', 'comment')->first();
-                            $comment = '';
-                            if($commentMeta) {
-                                $comment = $commentMeta->meta_value;
-                            }
-                            $callStatusMeta = $activity->meta->where('meta_key', 'call_status')->first();
+                            $comment = $activity->body;
                             $callStatus = '';
-                            if($callStatusMeta) {
-                                $callStatus = $callStatusMeta->meta_value;
+                            $call = $activity->call()->first();
+                            if($call) {
+                                $callStatus = $call->status;
                             }
                             if($a == 0) {
                                 $activity1comment = $activity->id . ' ' . $comment;
