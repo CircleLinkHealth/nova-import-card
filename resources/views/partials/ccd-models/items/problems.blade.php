@@ -7,15 +7,15 @@
                 <template v-for="problemitem in problems">
                 <div href="#" class="list-group-item" v-on:submit.prevent v-if="problemitem.name" style="padding:5px;font-size:12px;">
                     <div class="row">
-                        <div class="col-sm-9">
+                        <div class="col-sm-10">
                             <div class="list-group-item-heading" v-if="problemitem.name">
                                 <span id="problem-name-@{{ $index }}">@{{ problemitem.name }}</span>
-                                <textarea v-model="problemitem.name" id="problem-edit-@{{ $index }}" style="display:none;">@{{ problemitem.name }}</textarea>
+                                <textarea v-model="problemitem.name" id="problem-edit-@{{ $index }}" style="display:none;" rows="10">@{{ problemitem.name }}</textarea>
                                 <input type="hidden" name="id" value="@{{ problemitem.id }}">
                                 <input type="hidden" name="patient_id" value="@{{ problemitem.patient_id }}">
                             </div>
                         </div>
-                    <div class="col-sm-3 text-right">
+                    <div class="col-sm-2 text-right">
 
                         <p class="list-group-item-text" v-if="problemitem.name">@{{ problemitem.description }}</p>
                         <button class="btn btn-xs btn-danger problem-delete-btn" v-if="problemitem.name" v-on:click.stop.prevent="deleteProblem($index, $problem)" ><span><i class="glyphicon glyphicon-remove"></i></span></button>

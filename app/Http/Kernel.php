@@ -28,13 +28,16 @@ class Kernel extends HttpKernel {
 	 */
 	protected $routeMiddleware = [
 		'aprima.ccdapi.auth.adapter' => Middleware\AprimaCcdApiAuthAdapter::class,
-		'auth' => 'App\Http\Middleware\Authenticate',
-		'auth.basic' => 'Illuminate\Auth\Middleware\AuthenticateWithBasicAuth',
-		'guest' => 'App\Http\Middleware\RedirectIfAuthenticated',
-		'authApiCall' => 'App\Http\Middleware\AuthenticateApiCall',
-        'getRedoxAccessToken' => 'App\Http\Middleware\GetRedoxAccessToken',
-        'patientProgramSecurity' => 'App\Http\Middleware\PatientProgramSecurity',
-		'impersonation.check' => Middleware\ImpersonationMiddleware::class,
+		'auth' => \App\Http\Middleware\Authenticate::class,
+		'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+		'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+		'authApiCall' => \App\Http\Middleware\AuthenticateApiCall::class,
+        'getRedoxAccessToken' => \App\Http\Middleware\GetRedoxAccessToken::class,
+        'patientProgramSecurity' => \App\Http\Middleware\PatientProgramSecurity::class,
+		'role' => \Zizaco\Entrust\Middleware\EntrustRole::class,
+		'permission' => \Zizaco\Entrust\Middleware\EntrustPermission::class,
+		'ability' => \Zizaco\Entrust\Middleware\EntrustAbility::class,
+//		'impersonation.check' => Middleware\ImpersonationMiddleware::class,
 	];
 
 }
