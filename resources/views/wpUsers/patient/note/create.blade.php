@@ -12,8 +12,6 @@
     $userTimeGMT = $userTimeGMT->format('Y-m-d\TH:i');
     ?>
 
-
-
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1" style="border-bottom: 3px solid #50b2e2;">
             <div class="row">
@@ -24,51 +22,21 @@
 
                 @include('partials.userheader')
 
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style="padding: 10px; ">
 
-                    <div class="row" >
-                        <label class="col-xs-6" style="padding-left: 16px;" for="comment">General Comment</label>
-                        <label class="col-xs-2" style="padding-left: 0px;" for="contact_days">Contact Days</label>
-                        <label class="col-xs-2" style="padding-left: 0px; left: -4px" for="windows[]">Contact Time</label>
-                        <label class="col-xs-2" style="left: -25px" for="frequency">Call Frequency</label>
+
+
+
+                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style=" border:0px;padding: 10px 48px;">
+                    <div>
+                        <label class="col-xs-3 inline-block" style="padding: 0px" for="comment">General Comment</label>
                     </div>
 
-                    <div class="col-xs-6" style="padding-left: 0px;">
-                        <input type="text" class="form-control" id="comment"
+                    <div class="col-xs-12 inline-block" style="padding-left: 0px;">
+                        <input type="text" class="form-control" id="comment" style="width: 102%"
                                placeholder="Patient has a taco addiction.">
                     </div>
+                    </div>
 
-                    <div class="col-xs-2" style="padding-left: 0px;">
-                        <select id=contact_days" name=days[]"
-                                class="selectpicker dropdown Valid form-control"
-                                data-size="7" style="width: 155px"
-                                multiple>
-                            <option value="" selected> Mon </option>
-                            <option value=""> Tue </option>
-                            <option value=""> Wed </option>
-                            <option value=""> Thu </option>
-                            <option value=""> Fri </option>
-                            <option value=""> Sat </option>
-                            <option value=""> Sun </option>
-                        </select>
-                    </div>
-                    <div class="col-xs-2" style="padding-left: 0px;">
-                        <select id="contact_time" name="windows[]" class="selectpicker dropdown Valid form-control" data-size="3" style="width: 110px">
-                            <option value="9:30am - 12n" {{$window == App\PatientInfo::CALL_WINDOW_0930_1200 ? 'selected' : ''}}>9:30-12</option>
-                            <option value="12n - 3pm" {{$window == App\PatientInfo::CALL_WINDOW_1200_1500 ? 'selected' : ''}}>12-3</option>
-                            <option value="3pm - 6pm" {{$window == App\PatientInfo::CALL_WINDOW_1500_1800 ? 'selected' : ''}}>3-6</option>
-                        </select>
-                    </div>
-                    <div class="col-xs-2" style="padding-left: 0px;">
-                        <select id="contact_time" name="contact_time" class="selectpickerX dropdown Valid form-control" data-size="2" style="width: 110px">
-                            <option value=""> 1x Monthly</option>
-                            <option value=""> 2x Monthly</option>
-                            <option value=""> 3x Monthly</option>
-                            <option value=""> 4x Monthly</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
 
             <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12" style=" border:0px;padding: 10px 35px;">
                 <div class="form-block col-md-6">
@@ -242,6 +210,9 @@
                                 </div>
                             </div>
                             <script>
+
+
+
                                 $('.collapse').collapse();
 
                                 $("input:checkbox").on('click', function () {
@@ -259,6 +230,8 @@
                                         $box.prop("checked", false);
                                     }
                                 });
+
+
                             </script>
                             {!! Form::close() !!}
                         </div>

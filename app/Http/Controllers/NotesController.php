@@ -241,6 +241,8 @@ class NotesController extends Controller
     {
         $input = $input->all();
 
+        dd($input);
+
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
         $this->service->storeNote($input);
 
