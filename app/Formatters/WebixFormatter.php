@@ -102,13 +102,13 @@ class WebixFormatter implements ReportFormatter
 
             if (is_int($data->author_id)) // only notes have authors
             {
-                $formatted_data[$count]['logger_name'] = User::find($data->author_id)->fullName;
+                $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->author_id)->fullName;
                 $formatted_data[$count]['comment'] = $data->body;
                 $formatted_data[$count]['logged_from'] = 'note';
 
             } else // handles activities
             {
-                $formatted_data[$count]['logger_name'] = User::find($data->logger_id)->fullName;
+                $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->logger_id)->fullName;
                 $formatted_data[$count]['comment'] = $data->getCommentForActivity();
                 $formatted_data[$count]['logged_from'] = 'manual_input';
             }

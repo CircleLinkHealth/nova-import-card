@@ -1,4 +1,5 @@
 <?php
+
 //THIS IS FOR APRIMA ONLY
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
@@ -366,21 +367,10 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         // report - nurse time report
-        Route::group([
-            'middleware' => [
-                'permission:report-nurse-time-view',
-            ]
-        ], function () {
-            Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
-        });
 
-        Route::group([
-            'middleware' => [
-                'permission:report-nurse-time-manage',
-            ]
-        ], function () {
-            Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
-        });
+        Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
+        
+        Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 
         // questions
         Route::group([
