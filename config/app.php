@@ -179,6 +179,7 @@ return [
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         \Maknz\Slack\SlackServiceProvider::class,
         Collective\Bus\BusServiceProvider::class,
+        Dusterio\AwsWorker\Integrations\LaravelServiceProvider::class,
     ],
 
     /*
