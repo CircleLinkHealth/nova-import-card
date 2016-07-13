@@ -37,8 +37,7 @@ class Kernel extends ConsoleKernel {
 	protected function schedule(Schedule $schedule)
 	{
 		$schedule->call(function(){
-//			(new PhiMail)->sendReceive();
-			Log::info('testing');
+			(new PhiMail)->sendReceive();
 		})->everyMinute();
 	}
 }
