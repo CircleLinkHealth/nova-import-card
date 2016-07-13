@@ -40,5 +40,4 @@ class Kernel extends ConsoleKernel {
 			(new PhiMail)->sendReceive();
 		})->everyMinute();
 	}
-
 }
