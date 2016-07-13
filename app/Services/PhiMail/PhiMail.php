@@ -287,7 +287,8 @@ class PhiMail {
             }
 
         } catch (\Exception $e) {
-            echo ($e->getMessage() . "\n");
+            echo $e->getMessage() . "\n" . $e->getFile() . "\n" . $e->getLine();
+            echo $e->getTraceAsString() . "\n";
         }
 
         try {

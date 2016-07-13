@@ -22,7 +22,9 @@ return [
      */
     'ignore_environments' => [
         'local',
-        'testing',
+        'test',
+        'stage',
+        'worker'
     ],
 
     /**
