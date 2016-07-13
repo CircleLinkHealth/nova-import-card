@@ -156,7 +156,7 @@ class PhiMail {
             if ($receive) {
                 while (true) {
 //                    echo ("============\n");
-//                    echo ("Checking mailbox\n");
+                    Log::info("Checking mailbox\n");
 
                     // check next message or status update
                     $cr = $c->check();
