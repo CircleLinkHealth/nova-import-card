@@ -43,6 +43,13 @@ class Kernel extends ConsoleKernel {
         $schedule->call(function (){
             Log::info('testing');
         })->everyMinute();
+
+        $schedule->call(function(){
+            AppConfig::create([
+                'config_key' => 'kraaa',
+                'config_value' => 'pooooo',
+            ]);
+        })->everyMinute();
 	}
 
 }
