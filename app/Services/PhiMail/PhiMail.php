@@ -9,6 +9,7 @@ use App\Services\PhiMail\PhiMailConnector;
 use App\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Maknz\Slack\Facades\Slack;
 
 class PhiMail {
 
@@ -156,14 +157,15 @@ class PhiMail {
             if ($receive) {
                 while (true) {
 //                    echo ("============\n");
-                    Log::info("Checking mailbox\n");
+//                    echo ("Checking mailbox\n");
 
                     // check next message or status update
                     $cr = $c->check();
 
                     if ($cr == null) {
 
-//                        echo ("Check returned null; no messages on queue.\n");
+                        Slack::to('#background-tasks')
+                            ->send("Checked EMR Direct Mailbox. There where no messages. \n");
                         break;
 
                     } else if($cr->isMail()) {
@@ -262,6 +264,9 @@ class PhiMail {
 
                         if ($cr->numAttachments > 0) $this->notifyAdmins($ccdas);
 
+                        Slack::to('#background-tasks')
+                            ->send("Checked EMR Direct Mailbox. There where {$cr->numAttachments} messages. \n");
+
                     } else {
 
                         // Process a status update for a previously sent message.
@@ -295,7 +300,7 @@ class PhiMail {
             $c->close();
         } catch (\Exception $ignore) { }
 
-        echo ("============END\n");
+//        echo ("============END\n");
 
     }
 }
