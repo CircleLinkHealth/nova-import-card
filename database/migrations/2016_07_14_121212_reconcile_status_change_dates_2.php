@@ -26,15 +26,31 @@ class ReconcileStatusChangeDates2 extends Migration {
 		$usersPausedNoDate = User::whereHas('roles', function ($q) {
 			$q->where('name', '=', 'participant');
 		})->with('patientInfo')->whereHas('patientInfo', function ($pq) {
-			$pq->where('ccm_status', '=', 'paused');
-			$pq->where('date_paused', '=', '');
+			$pq->where(function ($query) {
+				$query->where('ccm_status', '=', 'paused');
+			});
+			$pq->where(function ($query) {
+				$query->where('date_paused', '=', '')->orWhereNull('date_paused');
+			});
 		})->get();
+
+		/*
+		foreach($usersPausedNoDate as $user) {
+			echo PHP_EOL.$user->ID;
+			echo PHP_EOL.$user->patientInfo->ccm_status;
+			echo PHP_EOL.$user->patientInfo->date_paused;
+		}
+		*/
 
 		$usersWithdrawnNoDate = User::whereHas('roles', function ($q) {
 			$q->where('name', '=', 'participant');
-		})->whereHas('patientInfo', function ($pq) {
-			$pq->where('ccm_status', '=', 'withdrawn');
-			$pq->where('date_withdrawn', '=', '');
+		})->with('patientInfo')->whereHas('patientInfo', function ($pq) {
+			$pq->where(function ($query) {
+				$query->where('ccm_status', '=', 'withdrawn');
+			});
+			$pq->where(function ($query) {
+				$query->where('date_withdrawn', '=', '')->orWhereNull('date_withdrawn');
+			});
 		})->get();
 
 		echo 'Process usersPausedNoDate - Users found: '.$usersPausedNoDate->count().PHP_EOL;
@@ -93,7 +109,7 @@ class ReconcileStatusChangeDates2 extends Migration {
 				$a++;
 			}
 		}
-		if($activity1date > '2016-07-01') {
+		if($activity1date > '2016-06-01') {
 			echo 'Activity: ' . $activity1date . PHP_EOL;
 			echo 'Comment: ' . $activity1comment . PHP_EOL;
 			echo 'Activity 2: ' . $activity2date . PHP_EOL;
