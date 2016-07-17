@@ -20,7 +20,7 @@
                 @include('partials.userheader')
 
                 <div class="main-form-block main-form-horizontal col-md-12" style="border-bottom: 3px #50b2e2 solid;>
-        <div class="row">
+        <div class=">
             <div class="form-block col-md-6">
                 <div class="row">
                     <div class="new-activity-item">
@@ -51,7 +51,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <select id="performedBy" name="provider_id" class="selectpicker" data-size="10" disabled>
-                                        <option value="391" >{{$activity['provider_name']}}</option>
+                                        <option value="391" >{{ $activity['provider_name']}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -109,7 +109,7 @@
             </div>
             <div class="form-item form-item-spacing text-center">
                 <input type="hidden" value="update_activity" />
-                <a href="{{URL::route('patient.activity.providerUIIndex', ['patientId' => $patient])}}" class="btn btn-primary btn-lg form-item--button form-item-spacing" role="button">Return to Notes/Offline Activities</a>
+                <a href="{{ route('patient.activity.providerUIIndex', ['patientId' => $patient->ID])}}" class="btn btn-primary btn-lg form-item--button form-item-spacing" role="button">Return to Notes/Offline Activities</a>
 
             </div>
             <div class="form-item form-item-spacing text-center">
