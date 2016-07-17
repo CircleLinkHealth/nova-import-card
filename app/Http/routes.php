@@ -34,6 +34,7 @@ Route::controllers([
     'password' => 'Auth\PasswordController',
 ]);
 Route::get('login', ['uses' => 'Auth\AuthController@getLogin', 'as' => 'login']);
+Route::get('auth/logout', ['uses' => 'Auth\AuthController@getLogout', 'as' => 'logout']);
 
 // Password reset link request routes...
 Route::get('password/email', 'Auth\PasswordController@getEmail');
