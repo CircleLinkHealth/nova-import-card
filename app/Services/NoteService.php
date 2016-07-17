@@ -37,7 +37,7 @@ class NoteService
         // update usermeta: cur_month_activity_time
         $activityService = new ActivityService;
         $activityService->reprocessMonthlyActivityTime($input['patient_id']);
-        $linkToNote = URL::route('patient.note.view', array('patientId' => $note->patient_id)) . '/' . $note->id;
+        $linkToNote = route('patient.note.view', array('patientId' => $note->patient_id, 'noteId' => '')) . '/' . $note->id;
         $logger = User::find($input['logger_id']);
         $logger_name = $logger->display_name;
 

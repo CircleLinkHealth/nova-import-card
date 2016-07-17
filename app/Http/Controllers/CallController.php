@@ -34,7 +34,10 @@ class CallController extends Controller
 
         $input = $request->all();
 
-        $window = explode(' - ', $input['window']);
+        $window_start = $input['time'];
+
+        //temp add 1 hour to make window
+        $window_end = Carbon::parse($input['time'])->addHour()->format('H:i:s');
 
         $call = Call::create([
 
@@ -52,14 +55,16 @@ class CallController extends Controller
             'created_at' => Carbon::now()->toDateTimeString(),
 
             'call_date' => $input['date'],
-            'window_start' => $window[0],
-            'window_end' => $window[1],
+            'window_start' => $window_start,
+            'window_end' => $window_end,
 
             'is_cpm_outbound' => true
 
         ]);
 
-        return redirect()->route('call.index', ['patientId' => $input['patient_id']]);
+        return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])->with('messages', ['Successfully Created Note']);
+
+//        return redirect()->route('call.index', ['patientId' => $input['patient_id']]);
 
     }
 

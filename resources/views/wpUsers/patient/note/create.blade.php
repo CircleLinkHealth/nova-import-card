@@ -37,8 +37,9 @@
                      style=" border-bottom:3px solid #50b2e2;padding: 10px 48px;">
 
                     <div class="col-xs-12" style="">
-                        <input type="text" class="form-control"
-                               value="Patient seems to be recovering from taco addition. Down to 10 tacos a day."
+                        <input type="text" class="form-control" name="general_comment" id="general_comment"
+                               value="{{$patient->patientInfo->general_comment}}"
+                               placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
                                aria-describedby="sizing-addon2" style="margin: 0 auto; text-align: left; color: #333;">
                     </div>
 
@@ -57,11 +58,10 @@
                             <div id="slidingDiv" class="" style="display: none; margin: 0 auto;
     text-align: left;border:0px; padding: 10px 35px;">
                                 <div class="row">
-                                    <label class="col-xs-4" style="padding-left: 0px;" for="contact_day">Contact
-                                        Days</label>
-                                    <label class="col-xs-4" style="padding-left: 0px; left: -4px" for="contact_time">Contact
-                                        Time</label>
-                                    <label class="col-xs-4" style="left: -20px" for="frequency">Call Frequency</label>
+                                    <label class="col-xs-4" style="padding-left: -1px;" for="contact_day">Contact Days</label>
+                                    <label class="col-xs-3" style="padding-left: 0px; left: 0px" for="window_start">Window Start Time</label>
+                                    <label class="col-xs-3" style="padding-left: 0px; left: 0px" for="window_end">Window End Time</label>
+                                    <label class="col-xs-1" style="left: -20px" for="frequency">Frequency</label>
                                 </div>
 
                                 <div class="col-xs-4" style="padding-left: 0px;">
@@ -69,52 +69,49 @@
                                             class="selectpicker dropdown Valid form-control"
                                             data-size="7" style="width: 155px"
                                             multiple>
-                                        <option value="" {{in_array("1", explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
+                                        <option value="1" {{in_array("1", explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
                                             Mon
                                         </option>
-                                        <option value="" {{in_array(" 2",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
+                                        <option value="2" {{in_array(" 2",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
                                             Tue
                                         </option>
-                                        <option value="" {{in_array(" 3",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
+                                        <option value="3" {{in_array(" 3",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
                                             Wed
                                         </option>
-                                        <option value="" {{in_array(" 4",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
+                                        <option value="4" {{in_array(" 4",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
                                             Thu
                                         </option>
-                                        <option value="" {{in_array(" 5",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
+                                        <option value="5" {{in_array(" 5",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
                                             Fri
                                         </option>
-                                        <option value="" {{in_array(" 6",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
+                                        <option value="6" {{in_array(" 6",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
                                             Sat
                                         </option>
-                                        <option value="" {{in_array(" 7",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
+                                        <option value="7" {{in_array(" 7",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
                                             Sun
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-xs-4" style="padding-left: 0px;">
-                                    <select id="contact_time" name="windows[]"
-                                            class="selectpicker dropdown Valid form-control" data-size="3"
-                                            style="width: 110px">
-                                        <option value="9:30am - 12n" {{$window == App\PatientInfo::CALL_WINDOW_0930_1200 ? 'selected' : ''}}>
-                                            9:30-12
-                                        </option>
-                                        <option value="12n - 3pm" {{$window == App\PatientInfo::CALL_WINDOW_1200_1500 ? 'selected' : ''}}>
-                                            12-3
-                                        </option>
-                                        <option value="3pm - 6pm" {{$window == App\PatientInfo::CALL_WINDOW_1500_1800 ? 'selected' : ''}}>
-                                            3-6
-                                        </option>
-                                    </select>
+
+                                <div class="col-xs-3" style="padding-left: 0px;">
+                                    <input class="form-control" name="window_start" type="time"
+                                           value="{{$patient->patientInfo->daily_contact_window_start}}"
+                                           id="window_start" placeholder="time">
                                 </div>
-                                <div class="col-xs-4" style="padding-left: 0px;">
-                                    <select id="frequency" name="contact_time"
+
+                                <div class="col-xs-3" style="padding-left: 0px;">
+                                    <input class="form-control" name="window_end" type="time"
+                                           value="{{$patient->patientInfo->daily_contact_window_end}}"
+                                           id="window_end" placeholder="time">
+                                </div>
+                                <div class="col-xs-2" style="padding-left: 0px;">
+                                    <select id="frequency" name="frequency"
                                             class="selectpickerX dropdown Valid form-control" data-size="2"
                                             style="width: 150px" >
-                                        <option value="1"> 1x Monthly</option>
-                                        <option value="2"> 2x Monthly</option>
-                                        <option value="3"> 3x Monthly</option>
-                                        <option value="4"> 4x Monthly</option>
+                                        <option value="1" {{$patient->patientInfo->preferred_calls_per_month == 1 ? 'selected' : ''}}> 1x Monthly</option>
+                                        <option value="2" {{$patient->patientInfo->preferred_calls_per_month == 2 ? 'selected' : ''}}> 2x Monthly</option>
+                                        <option value="3" {{$patient->patientInfo->preferred_calls_per_month == 3 ? 'selected' : ''}}> 3x Monthly</option>
+                                        <option value="4" {{$patient->patientInfo->preferred_calls_per_month == 4 ? 'selected' : ''}}> 4x Monthly</option>
                                     </select>
                                 </div>
                             </div>

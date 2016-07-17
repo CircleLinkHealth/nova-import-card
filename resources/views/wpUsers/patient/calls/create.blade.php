@@ -48,14 +48,9 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                        <select id="activityKey" name="window"
-                                                class="selectpickerX dropdownValid form-control"
-                                                data-size="10" required>
-                                            <option value="09:30 - 12:00" {{$window == App\PatientInfo::CALL_WINDOW_0930_1200 ? 'selected' : ''}}>{{App\PatientInfo::CALL_WINDOW_0930_1200}}</option>
-                                            <option value="12:00 - 15:00" {{$window == App\PatientInfo::CALL_WINDOW_1200_1500 ? 'selected' : ''}}>{{App\PatientInfo::CALL_WINDOW_1200_1500}}</option>
-                                            <option value="15:00 - 18:00" {{$window == App\PatientInfo::CALL_WINDOW_1500_1800 ? 'selected' : ''}}>{{App\PatientInfo::CALL_WINDOW_1500_1800}}</option>
-
-                                        </select>
+                                            <input class="form-control" name="time" type="time"
+                                                   value="{{$patient->patientInfo->daily_contact_window_start}}"
+                                                   id="time" placeholder="time">
                                     </div>
                                 </div>
                             </div>

@@ -8,10 +8,6 @@ use Auth;
 
 class PatientInfo extends Model {
 
-	 const CALL_WINDOW_0930_1200 = '9:30am - 12n';
-	 const CALL_WINDOW_1200_1500 = '12n - 3pm';
-	 const CALL_WINDOW_1500_1800 = '3pm - 6pm';
-
 	use SoftDeletes;
 	use \Venturecraft\Revisionable\RevisionableTrait;
 
@@ -126,7 +122,8 @@ class PatientInfo extends Model {
 
 	public function getPatientPreferredTimes($patient){
 
-		$time = Carbon::parse($patient->patientInfo->preferred_contact_time)->format('H:i');
+		$window_start = Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i');
+		$window_end = Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('H:i');
 
 		$days = PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days);
 		$days = $days = explode(',', $days);
@@ -140,32 +137,22 @@ class PatientInfo extends Model {
 		return [
 
 			'days' => $days_formatted,
-			'time' => $time
+			'window_start' => $window_start,
+			'window_end' => $window_end
 
 		];
 	}
 
 	public function parsePatientCallPreferredWindow($patient){
 
-		$window_date_time_930am = Carbon::parse('09:30')->format('H:i');
-		$window_date_time_12n = Carbon::parse('12:00')->format('H:i');
-		$window_date_time_3pm = Carbon::parse('15:00')->format('H:i');
-		$window_date_time_6pm = Carbon::parse('18:00')->format('H:i');
+		$window_start = Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i');
+		$window_end = Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('H:i');
 
-		$time = $patient->patientInfo->preferred_contact_time;
+		return [
 
-		switch ($time){
-			case ($time >= $window_date_time_930am && $time < $window_date_time_12n):
-				$window = PatientInfo::CALL_WINDOW_0930_1200; break;
-			case ($time >= $window_date_time_12n && $time < $window_date_time_3pm):
-				$window = PatientInfo::CALL_WINDOW_1200_1500; break;
-			case ($time >= $window_date_time_3pm && $time > $window_date_time_6pm):
-				$window = PatientInfo::CALL_WINDOW_1500_1800; break;
-			default:
-				$window = 'Not able to calculate suitable window'; break;
-		}
-
-		return $window;
+			'start' => $window_start,
+			'end' => $window_end
+		];
 
 	}
 

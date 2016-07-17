@@ -241,14 +241,28 @@ class NotesController extends Controller
     {
         $input = $input->all();
 
-        dd($input);
+//        dd($input);
 
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
+
         $this->service->storeNote($input);
 
-        if(isset($input['call_status']) && $input['call_status'] == 'reached'){
+        $patient = User::where('ID',$patientId)->first();
 
-            $patient = User::where('ID',$patientId)->first();
+        //Update patient info changes
+
+        $info = $patient->patientInfo;
+
+        $info->general_comment = $input['general_comment'];
+        $info->daily_contact_window_start = $input['window_start'];
+        $info->daily_contact_window_end = $input['window_end'];
+        $info->preferred_calls_per_month = $input['frequency'];
+        $info->preferred_cc_contact_days = implode(', ',$input['days']);
+
+        $info->save();
+
+
+        if(isset($input['call_status']) && $input['call_status'] == 'reached'){
 
             $prediction = (new SchedulerService)->scheduleCall($patient);
 

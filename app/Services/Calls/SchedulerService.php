@@ -31,7 +31,8 @@ class SchedulerService
 
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
-        $time = $patient_preferred_times['time'];
+        $window_start = $patient_preferred_times['window_start'];
+        $window_end = $patient_preferred_times['window_end']; // @todo: consider usage once algorithm is finer
         $dates = $patient_preferred_times['days'];
 
         $earliest_contact_day = min($dates);
@@ -42,7 +43,8 @@ class SchedulerService
             'patient' => $patient,
             'date' => $earliest_contact_day,
             'window' => $window,
-            'raw_time' => $time
+            //give it the start time for now...
+            'raw_time' => $window_start
 
         ];
     }
