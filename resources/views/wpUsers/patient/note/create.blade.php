@@ -45,7 +45,7 @@
 
 
                     <div class="col-xs-12 inline-block row" style=" padding: 0px; width: 98%; text-align: center;">
-                        Contact Time: Between 10am and 9pm
+                        Contact Time: Between {{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i A')}} and {{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('h:i A')}}
                         on {{\App\PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days)}}
 
 
