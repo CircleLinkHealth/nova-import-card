@@ -28,7 +28,7 @@ class SchedulerService
             return $this->getPatientNextCallWindow($patient);
 
         } else {
-            
+
             //Attempt reschedule
             return $this->scheduleNextAttempt($patient);
 
@@ -62,10 +62,8 @@ class SchedulerService
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
         $window_start = $patient_preferred_times['window_start'];
-        $window_end = $patient_preferred_times['window_end']; // @todo: consider usage once algorithm is finer
-        $dates = $patient_preferred_times['days'];
 
-        $earliest_contact_day = min($dates);
+        $earliest_contact_day = Carbon::now()->addDay()->format('Y-m-d');
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
