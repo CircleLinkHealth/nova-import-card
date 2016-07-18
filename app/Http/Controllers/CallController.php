@@ -41,7 +41,6 @@ class CallController extends Controller
 
         $call = Call::create([
 
-            'note_id' => '',
             'service' => 'phone',
             'status' => 'scheduled',
 

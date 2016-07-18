@@ -28,8 +28,8 @@ class SchedulerService
             return $this->getPatientNextCallWindow($patient);
 
         } else {
+            
             //Attempt reschedule
-
             return $this->scheduleNextAttempt($patient);
 
         }
