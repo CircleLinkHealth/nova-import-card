@@ -264,13 +264,19 @@ class NotesController extends Controller
 
         if(isset($input['call_status']) && $input['call_status'] == 'reached'){
 
-            $prediction = (new SchedulerService)->scheduleCall($patient);
+            $prediction = (new SchedulerService)->scheduleCall($patient, true);
+
+            return view('wpUsers.patient.calls.create', $prediction);
+
+        } else {
+
+            $prediction = (new SchedulerService)->scheduleCall($patient, false);
 
             return view('wpUsers.patient.calls.create', $prediction);
 
         }
 
-        return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
+//        return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
 
     public

@@ -259,10 +259,16 @@ class NoteService
                 $message->to($email)->subject($email_subject);
             });
 
+            if($newNoteFlag){
+                $body = 'Please see new note for patient ' . $patient->fullName . ':' . $url;
+            } else {
+                $body = 'Please see forwarded note for patient ' . $patient->fullName . ', created on ' . $performed_at  . ' by '.$sender->fullName.':' . $url;
+            }
+
             MailLog::create([
                 'sender_email' => $sender->user_email,
                 'receiver_email' => $receiver->user_email,
-                'body' => '',
+                'body' => $body,
                 'subject' => $email_subject,
                 'type' => 'note',
                 'sender_cpm_id' => $sender->ID,
@@ -291,7 +297,7 @@ class NoteService
                 $author_name = '';
             }
 
-            $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId)) . '/' . $note->id;
+            $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId, 'noteId' => $note->id));
 
             $result = $this->sendNoteToCareTeam(
                 $note,

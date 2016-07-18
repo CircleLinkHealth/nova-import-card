@@ -333,7 +333,7 @@
                                             easing: '', // the animation effect you want. Remove this line if you dont want an effect and if you haven't included jQuery UI
                                             changeText: 1, // if you dont want the button text to change, set this to 0
                                             showText: "<span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>", //the button text to show when a div is closed
-                                            hideText: 'Save' // the button text to show when a div is open
+                                            hideText: "<div style='color: #47beab;'> Hide </div>" // the button text to show when a div is open
 
                                         });
 
@@ -348,7 +348,7 @@
                                                 speed: 2000,
                                                 easing: '',
                                                 changeText: 0,
-                                                showText: 'Save',
+                                                showText: 'Hide',
                                                 hideText: '(changes saved on note submission)'
 
                                             };
