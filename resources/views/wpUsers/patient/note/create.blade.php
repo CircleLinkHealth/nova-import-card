@@ -45,8 +45,8 @@
 
 
                     <div class="col-xs-12 inline-block row" style=" padding: 0px; width: 98%; text-align: center;">
-                        Contact Time: Between {{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i A')}} and {{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('h:i A')}}
-                        on {{\App\PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days)}}
+                        Call Times: <span id="start_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i A')}}</span> to <span id="end_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('h:i A')}}</span>
+                        on <span id="days_text">{{\App\PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days)}}</span>; <span id="frequency_text">{{$patient->patientInfo->preferred_calls_per_month . 'x Monthly'}}</span>
 
 
                         <button type="" class="show_hide edit_button" href="#" rel="#slidingDiv" onclick="change_contact_string()">
@@ -302,8 +302,27 @@
                                 </div>
                                 <script>
 
-                                    // Script is for the "phone session" part
+                                    $(document).ready(function() {
+                                        $("#window_start").change(function() {
+                                            $('#start_window_text').html($(this).val());
+                                        }).change();
+                                    });
 
+                                    $(document).ready(function() {
+                                        $("#window_end").change(function() {
+                                            $('#end_window_text').html($(this).val());
+                                        }).change();
+                                    });
+
+                                    $(document).ready(function() {
+                                        $("#frequency").change(function() {
+                                            $('#frequency_text').html($(this).val());
+                                        }).change();
+                                    });
+
+
+
+                                    // Script is for the "phone session" part
 
                                     $('.collapse').collapse();
 

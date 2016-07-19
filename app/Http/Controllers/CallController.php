@@ -3,15 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Call;
-use App\Services\NoteService;
+use App\Http\Requests;
+use App\Services\Calls\SchedulerService;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
 class CallController extends Controller
 {
+
+    private $scheduler;
+
+    public function __construct(SchedulerService $callScheduler)
+    {
+        $this->scheduler = $callScheduler;
+    }
 
     public function index(Request $request)
     {
@@ -36,30 +42,13 @@ class CallController extends Controller
 
         $window_start = $input['time'];
 
+        $patient = User::find($input['patient_id'])->patientInfo();
+        dd($patient);
+
         //temp add 1 hour to make window
         $window_end = Carbon::parse($input['time'])->addHour()->format('H:i:s');
 
-        $call = Call::create([
-
-            'service' => 'phone',
-            'status' => 'scheduled',
-
-            'inbound_phone_number' => '',
-            'outbound_phone_number' => '',
-
-            'inbound_cpm_id' => $input['patient_id'],
-            'outbound_cpm_id' => 1,
-            
-            'call_time' => 0,
-            'created_at' => Carbon::now()->toDateTimeString(),
-
-            'call_date' => $input['date'],
-            'window_start' => $window_start,
-            'window_end' => $window_end,
-
-            'is_cpm_outbound' => true
-
-        ]);
+        $this->scheduler->storeScheduledCall($patient->ID, $window_start, $input['date']);
 
         return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])->with('messages', ['Successfully Created Note']);
 
