@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\CLH\Traits\Auth\ResetsPasswords;
+use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 
 class PasswordController extends Controller {
@@ -40,5 +40,16 @@ class PasswordController extends Controller {
 	protected function getSendResetLinkEmailCredentials(Request $request)
 	{
 		return $request->only('user_email');
+	}
+
+	/**
+	 * Validate the request of sending reset link.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return void
+	 */
+	protected function validateSendResetLinkEmail(Request $request)
+	{
+		$this->validate($request, ['user_email' => 'required|email']);
 	}
 }
