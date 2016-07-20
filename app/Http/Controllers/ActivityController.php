@@ -157,9 +157,13 @@ class ActivityController extends Controller {
 			$activity['comment'] = '';
 		}
 
-		$view_data = ['activity' => $activity, 'userTimeZone' => $patient->timeZone,'careteam_info' => $careteam_info, 'patient' => $patient,'program_id' => $patient->blogId()];
-
-//		dd($view_data);
+		$view_data = [
+			'activity' => $activity,
+			'userTimeZone' => $patient->timeZone,
+			'careteam_info' => $careteam_info,
+			'patient' => $patient,
+			'program_id' => $patient->blogId(),
+			'messages' => $messages];
 
 		return view('wpUsers.patient.activity.view', $view_data);
 	}

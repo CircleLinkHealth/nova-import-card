@@ -233,14 +233,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('view/{actId}', ['uses' => 'ActivityController@show', 'as' => 'patient.activity.view']);
             Route::get('', ['uses' => 'ActivityController@providerUIIndex', 'as' => 'patient.activity.providerUIIndex']);
         });
-
-        //call scheduling
-        Route::group(['prefix' => 'calls'], function () {
-            Route::get('', ['uses' => 'CallController@index', 'as' => 'call.index']);
-            Route::get('create', ['uses' => 'CallController@create', 'as' => 'call.create']);
-            Route::post('schedule', ['uses' => 'CallController@schedule', 'as' => 'call.schedule']);
-            Route::get('edit/{actId}', ['uses' => 'CallController@edit', 'as' => 'call.edit']);
-        });
     });
 
     /****************************/
@@ -403,21 +395,10 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         // report - nurse time report
-        Route::group([
-            'middleware' => [
-                'permission:report-nurse-time-view',
-            ]
-        ], function () {
-            Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
-        });
 
-        Route::group([
-            'middleware' => [
-                'permission:report-nurse-time-manage',
-            ]
-        ], function () {
-            Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
-        });
+        Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
+        
+        Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 
         // questions
         Route::group([

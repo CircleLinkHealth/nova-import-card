@@ -100,7 +100,7 @@
                 <div class="form-group">
                     <div class="col-sm-12">
                         <input type="hidden" name="meta[0][meta_key]" value="comment">
-                        <textarea readonly class="form-control" placeholder="Enter Comment..." name="meta[0][meta_value]">{{$activity['comment']}}</textarea>
+                        <textarea readonly class="form-control" placeholder="Enter Comment..." name="meta[0][meta_value]">{{$activity['comment'][0]}}</textarea>
                     </div>
                 </div>
             </div>
