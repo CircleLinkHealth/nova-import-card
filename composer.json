@@ -36,7 +36,8 @@
     "maatwebsite/excel": "~2.1.0",
     "prettus/l5-repository": "^2.1",
     "laravelcollective/bus": "5.2.*",
-    "maknz/slack": "^1.7"
+    "maknz/slack": "^1.7",
+    "laravelcollective/bus": "5.2.x"
   },
   "require-dev": {
     "symfony/dom-crawler": "~3.0",

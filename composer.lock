@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "42f7b90e464d0a0d9854ba586fa49f9e",
-    "content-hash": "4909d40579909b48dc575363b7e02c22",
+    "hash": "7477fcec27f6dc37404d44d81bc7cf05",
+    "content-hash": "dfa0d8fa08a67bdf2baccfdd73231a2d",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -1217,16 +1217,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.2.39",
+            "version": "5.2.41",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "c2a77050269b4e03bd9a735a9f24e573a7598b8a"
+                "reference": "29ba2e310cfeb42ab6545bcd81ff4c2ec1f6b5c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/c2a77050269b4e03bd9a735a9f24e573a7598b8a",
-                "reference": "c2a77050269b4e03bd9a735a9f24e573a7598b8a",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/29ba2e310cfeb42ab6545bcd81ff4c2ec1f6b5c2",
+                "reference": "29ba2e310cfeb42ab6545bcd81ff4c2ec1f6b5c2",
                 "shasum": ""
             },
             "require": {
@@ -1283,7 +1283,8 @@
                 "illuminate/support": "self.version",
                 "illuminate/translation": "self.version",
                 "illuminate/validation": "self.version",
-                "illuminate/view": "self.version"
+                "illuminate/view": "self.version",
+                "tightenco/collect": "self.version"
             },
             "require-dev": {
                 "aws/aws-sdk-php": "~3.0",
@@ -1342,7 +1343,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2016-06-17 19:25:12"
+            "time": "2016-07-20 13:13:06"
         },
         {
             "name": "laravelcollective/bus",
@@ -1591,16 +1592,16 @@
         },
         {
             "name": "maatwebsite/excel",
-            "version": "v2.1.2",
+            "version": "v2.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Maatwebsite/Laravel-Excel.git",
-                "reference": "aae17dbd6f39606cf8f588359a7a79438ab5aa53"
+                "reference": "c6ab521e8a5f2a4acc83cb575c4a09733a5e17c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/aae17dbd6f39606cf8f588359a7a79438ab5aa53",
-                "reference": "aae17dbd6f39606cf8f588359a7a79438ab5aa53",
+                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/c6ab521e8a5f2a4acc83cb575c4a09733a5e17c9",
+                "reference": "c6ab521e8a5f2a4acc83cb575c4a09733a5e17c9",
                 "shasum": ""
             },
             "require": {
@@ -1628,8 +1629,7 @@
             "type": "library",
             "autoload": {
                 "classmap": [
-                    "src/Maatwebsite/Excel",
-                    "tests/TestCase.php"
+                    "src/Maatwebsite/Excel"
                 ],
                 "psr-0": {
                     "Maatwebsite\\Excel\\": "src/"
@@ -1655,7 +1655,7 @@
                 "import",
                 "laravel"
             ],
-            "time": "2016-03-01 17:45:44"
+            "time": "2016-07-09 09:40:10"
         },
         {
             "name": "maknz/slack",
