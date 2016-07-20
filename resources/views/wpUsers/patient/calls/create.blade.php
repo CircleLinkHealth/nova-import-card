@@ -34,7 +34,18 @@
                                                value="{{\Carbon\Carbon::parse($date)->format('Y-m-d')}}"
                                                required>
                                     </div>
+                                    <div>
+                                        <i>
+                                            @if($successful)
+                                                *currently defaults to a week later.
+                                            @else
+                                                *currently defaults to next business day.
+                                            @endif
+
+                                        </i>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>

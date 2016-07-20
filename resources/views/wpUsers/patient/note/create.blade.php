@@ -43,9 +43,10 @@
                                aria-describedby="sizing-addon2" style="margin: 0 auto; text-align: left; color: #333;">
                     </div>
 
+                    <!-- The next div is the contact statement -->
 
                     <div class="col-xs-12 inline-block row" style=" padding: 0px; width: 98%; text-align: center;">
-                        Call Times: <span id="start_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i A')}}</span> to <span id="end_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('h:i A')}}</span>
+                        Call Times: <span id="start_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i')}}</span> to <span id="end_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('H:i')}}</span>
                         on <span id="days_text">{{\App\PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days)}}</span>; <span id="frequency_text">{{$patient->patientInfo->preferred_calls_per_month}}</span>x Monthly
 
 
@@ -65,7 +66,7 @@
                                 </div>
 
                                 <div class="col-xs-4" style="padding-left: 0px;">
-                                    <select id=contact_day" name=days[]"
+                                    <select id=contact_days" name=days[]"
                                             class="selectpicker dropdown Valid form-control"
                                             data-size="7" style="width: 155px"
                                             multiple>
@@ -300,17 +301,39 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                {!! Form::close() !!}
+
+
                                 <script>
 
                                     $(document).ready(function() {
+
+                                        console.log();
+
+//                                        $("#contact_days").change(function() {
+//
+//                                            var tags = [];
+//                                            $('#contact_days').each(function() {
+//                                                tags.push($(this).val());
+//                                            });
+//
+//                                            alert($("#contact_day"));
+//
+//                                            $('#days_text').html(tags.join(', '));
+//                                        }).change();
+                                    });
+
+                                    $(document).ready(function() {
                                         $("#window_start").change(function() {
-                                            $('#start_window_text').html($(this).val());
+
+                                            $('#start_window_text').html(parseTime($(this).val()));
                                         }).change();
                                     });
 
                                     $(document).ready(function() {
                                         $("#window_end").change(function() {
-                                            $('#end_window_text').html($(this).val());
+                                            $('#end_window_text').html(parseTime($(this).val()));
                                         }).change();
                                     });
 
@@ -320,6 +343,17 @@
                                         }).change();
                                     });
 
+                                    function parseTime(timeString)
+                                    {
+                                        if (timeString == '') return null;
+                                        var d = new Date();
+                                        var time = timeString.match(/(\d+)(:(\d\d))?\s*(p?)/i);
+                                        d.setHours( parseInt(time[1],10) + ( ( parseInt(time[1],10) < 12 && time[4] ) ? 12 : 0) );
+                                        d.setMinutes( parseInt(time[3],10) || 0 );
+                                        d.setSeconds(0, 0);
+                                        return ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2)
+
+                                    }
 
 
                                     // Script is for the "phone session" part
@@ -394,23 +428,11 @@
 
                                         };
 
-                                        var frequency = document.getElementById("frequency").innerHTML;
-                                        var days = document.getElementById("contact_day").innerHTML;
-                                        var time = document.getElementById("contact_time").innerHTML;
-
-//                                        var contact_string = 'Contact Time: Between ' + time + ' on ' + days + ", " + frequency + "per month";
-
-                                        console.log(time);
-
                                     })(jQuery);
-
-                                    window.onload = function () {
-
-                                    }
 
                                 </script>
 
-                                {!! Form::close() !!}
+
                             </div>
                         </div>
                     </div>

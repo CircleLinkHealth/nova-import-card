@@ -27,7 +27,7 @@ class SchedulerService
 
         if ($success) {
 
-            return $this->getPatientNextCallWindow($patient);
+            return $this->scheduleNextCall($patient);
 
         } else {
 
@@ -37,15 +37,16 @@ class SchedulerService
         }
     }
 
-    public function getPatientNextCallWindow($patient){
+    public function scheduleNextCall($patient){
 
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
         $window_start = $patient_preferred_times['window_start'];
-        $window_end = $patient_preferred_times['window_end']; // @todo: consider usage once algorithm is finer
+
+//        $window_end = $patient_preferred_times['window_end']; // @todo: consider usage once algorithm is finer
         $dates = $patient_preferred_times['days'];
 
-        $earliest_contact_day = min($dates);
+        $earliest_contact_day = Carbon::parse(min($dates))->addWeek()->format('Y-m-d');
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
@@ -63,13 +64,13 @@ class SchedulerService
 
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
-        $window_start = $patient_preferred_times['window_start'];
+        $window_start = Carbon::parse($patient_preferred_times['window_start'])->addWeek()->format('H:i:s');;
 
         $earliest_contact_day = Carbon::now()->addDay()->format('Y-m-d');
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
-        $this->scheduler->storeScheduledCall($patient->ID, $window_start, $input['date']);
+        $this->storeScheduledCall($patient->ID, $window_start, $earliest_contact_day);
 
 
         return [

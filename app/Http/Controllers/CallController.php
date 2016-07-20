@@ -43,17 +43,14 @@ class CallController extends Controller
         $window_start = $input['time'];
 
         $patient = User::find($input['patient_id'])->patientInfo();
-        dd($patient);
 
         //temp add 1 hour to make window
         $window_end = Carbon::parse($input['time'])->addHour()->format('H:i:s');
 
-        $this->scheduler->storeScheduledCall($patient->ID, $window_start, $input['date']);
+        $this->scheduler->storeScheduledCall($input['patient_id'], $window_start, $input['date']);
 
         return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])->with('messages', ['Successfully Created Note']);
-
-//        return redirect()->route('call.index', ['patientId' => $input['patient_id']]);
-
+        
     }
 
     public function show($id)
@@ -61,18 +58,4 @@ class CallController extends Controller
         //
     }
 
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    public function destroy($id)
-    {
-        //
-    }
 }

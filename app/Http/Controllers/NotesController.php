@@ -261,6 +261,10 @@ class NotesController extends Controller
 
         $info->save();
 
+        if(!isset($input['phone'])){
+                   return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
+
+        }
 
         if(isset($input['call_status']) && $input['call_status'] == 'reached'){
 
@@ -276,11 +280,10 @@ class NotesController extends Controller
 
         }
 
-//        return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
 
-    public
-    function show(Request $input, $patientId, $noteId)
+
+    public function show(Request $input, $patientId, $noteId)
     {
 
         $patient = User::find($patientId);
