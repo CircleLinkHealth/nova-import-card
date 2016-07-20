@@ -47,7 +47,7 @@
 
                                 <div class="col-sm-12">
                                     <label for="activityKey">
-                                        Predicted Time Window (Patient Local Time)
+                                        Next Call Date (Patient Local Time)
                                     </label>
                                 </div>
                                 <div class="col-sm-12">

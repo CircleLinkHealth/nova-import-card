@@ -46,7 +46,7 @@
 
                     <div class="col-xs-12 inline-block row" style=" padding: 0px; width: 98%; text-align: center;">
                         Call Times: <span id="start_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i A')}}</span> to <span id="end_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('h:i A')}}</span>
-                        on <span id="days_text">{{\App\PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days)}}</span>; <span id="frequency_text">{{$patient->patientInfo->preferred_calls_per_month . 'x Monthly'}}</span>
+                        on <span id="days_text">{{\App\PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days)}}</span>; <span id="frequency_text">{{$patient->patientInfo->preferred_calls_per_month}}</span>x Monthly
 
 
                         <button type="" class="show_hide edit_button" href="#" rel="#slidingDiv" onclick="change_contact_string()">
@@ -59,8 +59,8 @@
     text-align: left;border:0px; padding: 10px 35px;">
                                 <div class="row">
                                     <label class="col-xs-4" style="padding-left: -1px;" for="contact_day">Contact Days</label>
-                                    <label class="col-xs-3" style="padding-left: 0px; left: 0px" for="window_start">Window Start Time</label>
-                                    <label class="col-xs-3" style="padding-left: 0px; left: 0px" for="window_end">Window End Time</label>
+                                    <label class="col-xs-3" style="padding-left: 0px; left: 0px" for="window_start">Call Start Time</label>
+                                    <label class="col-xs-3" style="padding-left: 0px; left: 0px" for="window_end">Call End Time</label>
                                     <label class="col-xs-1" style="left: -20px" for="frequency">Frequency</label>
                                 </div>
 
