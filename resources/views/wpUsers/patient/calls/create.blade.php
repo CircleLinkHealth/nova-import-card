@@ -37,7 +37,7 @@
                                     <div>
                                         <i>
                                             @if($successful)
-                                                *currently defaults to a week later.
+                                                *currently defaults to a week after next earliest available date.
                                             @else
                                                 *currently defaults to next business day.
                                             @endif
