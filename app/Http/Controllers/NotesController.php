@@ -136,8 +136,7 @@ class NotesController extends Controller
 
     }
 
-    public
-    function create(Request $request, $patientId)
+    public function create(Request $request, $patientId)
     {
 
         if ($patientId) {
@@ -234,8 +233,7 @@ class NotesController extends Controller
         }
     }
 
-    public
-    function store(Request $input, $patientId)
+    public function store(Request $input, $patientId)
     {
 
         $input = $input->all();
@@ -246,8 +244,7 @@ class NotesController extends Controller
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
     }
 
-    public
-    function show(Request $input, $patientId, $noteId)
+    public function show(Request $input, $patientId, $noteId)
     {
 
         $patient = User::find($patientId);
@@ -314,8 +311,7 @@ class NotesController extends Controller
         return view('wpUsers.patient.note.view', $view_data);
     }
 
-    public
-    function send(Request $input, $patientId, $noteId)
+    public function send(Request $input, $patientId, $noteId)
     {
         $input = $input->all();
 
