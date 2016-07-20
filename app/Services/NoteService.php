@@ -292,7 +292,6 @@ class NoteService
             }
 
             $linkToNote = route('patient.note.view', array('patientId' => $patientId, 'noteId' => $note->id));
-dd($linkToNote);
 
             $result = $this->sendNoteToCareTeam(
                 $note,
