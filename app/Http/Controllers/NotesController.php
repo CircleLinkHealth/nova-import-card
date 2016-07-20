@@ -262,11 +262,15 @@ class NotesController extends Controller
         $info->save();
 
         if(!isset($input['phone'])){
-                   return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
+
+            return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
 
         }
 
         if(isset($input['call_status']) && $input['call_status'] == 'reached'){
+
+            $info->last_successful_contact_time = Carbon::now()->format('Y-m-d');
+            $info->save();
 
             $prediction = (new SchedulerService)->scheduleCall($patient, true);
 
@@ -281,8 +285,7 @@ class NotesController extends Controller
         }
 
     }
-
-
+    
     public function show(Request $input, $patientId, $noteId)
     {
 
