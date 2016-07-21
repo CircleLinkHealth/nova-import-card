@@ -26,7 +26,7 @@ $user_info = array();
                 <div class="row">
                     @if(isset($patient->ID) )
                         <div class="main-form-title col-lg-12">
-                            Edit Patient
+                            Edit Patient Profile
                         </div>
                         @include('partials.userheader')
                     @else
