@@ -50,7 +50,7 @@
                         on <span id="days_text">{{\App\PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days)}}</span>; <span id="frequency_text">{{$patient->patientInfo->preferred_calls_per_month}}</span>x Monthly
 
 
-                        <button type="" class="show_hide edit_button" href="#" rel="#slidingDiv" onclick="change_contact_string()">
+                        <button type="" class="show_hide edit_button" href="#" rel="#slidingDiv">
                             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                         </button>
 
@@ -66,31 +66,17 @@
                                 </div>
 
                                 <div class="col-xs-4" style="padding-left: 0px;">
-                                    <select id=contact_days" name=days[]"
+                                    <select id="days" name="days[]"
                                             class="selectpicker dropdown Valid form-control"
                                             data-size="7" style="width: 155px"
                                             multiple>
-                                        <option value="1" {{in_array("1", explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
-                                            Mon
-                                        </option>
-                                        <option value="2" {{in_array(" 2",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
-                                            Tue
-                                        </option>
-                                        <option value="3" {{in_array(" 3",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
-                                            Wed
-                                        </option>
-                                        <option value="4" {{in_array(" 4",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
-                                            Thu
-                                        </option>
-                                        <option value="5" {{in_array(" 5",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
-                                            Fri
-                                        </option>
-                                        <option value="6" {{in_array(" 6",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
-                                            Sat
-                                        </option>
-                                        <option value="7" {{in_array(" 7",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>
-                                            Sun
-                                        </option>
+                                        <option value="1" {{in_array("1", explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Mon</option>
+                                        <option value="2" {{in_array(" 2",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Tue</option>
+                                        <option value="3" {{in_array(" 3",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Wed</option>
+                                        <option value="4" {{in_array(" 4",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Thu</option>
+                                        <option value="5" {{in_array(" 5",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Fri</option>
+                                        <option value="6" {{in_array(" 6",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Sat</option>
+                                        <option value="7" {{in_array(" 7",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Sun</option>
                                     </select>
                                 </div>
 
@@ -307,21 +293,20 @@
 
                                 <script>
 
+
                                     $(document).ready(function() {
+                                            $("#days").change(function() {
 
-                                        console.log();
+                                                var countries = [];
 
-//                                        $("#contact_days").change(function() {
-//
-//                                            var tags = [];
-//                                            $('#contact_days').each(function() {
-//                                                tags.push($(this).val());
-//                                            });
-//
-//                                            alert($("#contact_day"));
-//
-//                                            $('#days_text').html(tags.join(', '));
-//                                        }).change();
+                                                $.each($("#days option:selected"), function(){
+                                                    countries.push($(this).html());
+                                                });
+
+                                                $('#days_text').html(countries.join(', '));
+
+                                        }).change();
+
                                     });
 
                                     $(document).ready(function() {
