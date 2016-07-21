@@ -4,7 +4,7 @@
     <br />
     <div class="btn-group btn-group-justified" role="group" aria-label="...">
         <div class="btn-group" role="group">
-            <button type="button" dtarget="{{ URL::route('patient.demographics.show', array('patientId' => $patient->ID)) }}" class="btn btn-primary submitFormBtn @if(Route::is('patient.demographics.show')) active @endif"><span class="btn-number">1</span> <span class="btn-text">Patient Contact</span></button>
+            <button type="button" dtarget="{{ URL::route('patient.demographics.show', array('patientId' => $patient->ID)) }}" class="btn btn-primary submitFormBtn @if(Route::is('patient.demographics.show')) active @endif"><span class="btn-number">1</span> <span class="btn-text">Patient Profile</span></button>
         </div>
         <div class="btn-group" role="group">
             <button type="button" dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->ID)) }}" class="btn btn-primary submitFormBtn @if(Route::is('patient.careteam.show')) active @endif"><span class="btn-number">2</span> <span class="btn-text">Patient Care Team</span></button>
