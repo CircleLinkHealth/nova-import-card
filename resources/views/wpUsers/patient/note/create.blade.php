@@ -233,7 +233,9 @@
                                             // the checked state of the group/box on the other hand will change
                                             // and the current value is retrieved using .prop() method
                                             $(group).prop("checked", false);
+                                            $("#Outbound").prop("checked", true);
                                             $box.prop("checked", true);
+
                                         } else {
                                             $box.prop("checked", false);
                                         }

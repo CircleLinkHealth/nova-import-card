@@ -261,28 +261,22 @@ class NotesController extends Controller
 
         $info->save();
 
-        if(!isset($input['phone'])){
-
-            return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
-
-        }
 
         if(isset($input['call_status']) && $input['call_status'] == 'reached'){
 
             $info->last_successful_contact_time = Carbon::now()->format('Y-m-d');
             $info->save();
 
-            $prediction = (new SchedulerService)->scheduleCall($patient, true);
+//            $prediction = (new SchedulerService)->scheduleCall($patient, true);
 
-            return view('wpUsers.patient.calls.create', $prediction);
 
         } else {
 
-            $prediction = (new SchedulerService)->scheduleCall($patient, false);
-
-            return view('wpUsers.patient.calls.create', $prediction);
+//            $prediction = (new SchedulerService)->scheduleCall($patient, false);
 
         }
+
+        return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
 
     }
     
@@ -353,8 +347,7 @@ class NotesController extends Controller
         return view('wpUsers.patient.note.view', $view_data);
     }
 
-    public
-    function send(Request $input, $patientId, $noteId)
+    public function send(Request $input, $patientId, $noteId)
     {
         $input = $input->all();
 

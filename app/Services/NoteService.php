@@ -248,7 +248,7 @@ class NoteService
                 $email_subject = 'Urgent Patient Note from CircleLink Health';
             } else {
                 $email_view = 'emails.existingnote';
-                $email_subject = 'You have received a new note notification from CarePlan Manager';
+                $email_subject = 'You have been forwarded a note from CarePlanManager';
             }
 
             Mail::send($email_view, $data, function ($message) use ($email, $email_subject) {
@@ -256,6 +256,8 @@ class NoteService
 
                 //Forwards notes to Linda
                 $message->cc('Lindaw@circlelinkhealth.com');
+                $message->cc('raph@circlelinkhealth.com');
+
                 $message->to($email)->subject($email_subject);
             });
 
