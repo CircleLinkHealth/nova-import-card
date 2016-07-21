@@ -190,6 +190,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
         Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
         Route::get('provider-notes', ['uses' => 'NotesController@listing', 'as' => 'patient.note.listing']);
+        // nurse call list
+        Route::group(['prefix' => 'nurse-call-list'], function () {
+            Route::get('', ['uses' => 'NurseCallListController@index', 'as' => 'nurseCallList.index']);
+        });
     });
 
     // **** PATIENTS (/manage-patients/{patientId}/)

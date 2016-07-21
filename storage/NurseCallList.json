@@ -1,0 +1,26 @@
+{
+  "nurse_user_id": 100,
+  "comments": ".",
+  "data": {
+    "version": "0.1",
+    "event_date_time": "2016-07-21 09:25:45"
+  },
+  "call_list": [
+    {
+      "user_id": 1000,
+      "first_name": "Kevin",
+      "last_name": "Gallo",
+      "call_window_start": "2016-07-21 09:30:00",
+      "call_window_end": "2016-07-21 11:30:00",
+      "ccm_time": "248"
+    },
+    {
+      "user_id": 1001,
+      "first_name": "Kevin",
+      "last_name": "Gallo",
+      "call_window_start": "2016-07-21 09:30:00",
+      "call_window_end": "2016-07-21 11:30:00",
+      "ccm_time": "652"
+    }
+  ]
+}

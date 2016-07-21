@@ -5,6 +5,7 @@
 
 
 @section('content')
+    <a href="{{ URL::route('nurseCallList.index', array()) }}">Nurse Call List</a>
     <div class="container container--menu">
         <div class="row row-centered">
             <div class="col-sm-12">
