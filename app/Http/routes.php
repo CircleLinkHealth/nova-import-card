@@ -191,8 +191,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
         Route::get('provider-notes', ['uses' => 'NotesController@listing', 'as' => 'patient.note.listing']);
         // nurse call list
-        Route::group(['prefix' => 'nurse-call-list'], function () {
-            Route::get('', ['uses' => 'NurseCallListController@index', 'as' => 'nurseCallList.index']);
+        Route::group(['prefix' => 'patient-call-list'], function () {
+            Route::get('', ['uses' => 'PatientCallListController@index', 'as' => 'patientCallList.index']);
         });
     });
 

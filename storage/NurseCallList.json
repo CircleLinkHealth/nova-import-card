@@ -8,19 +8,31 @@
   "call_list": [
     {
       "user_id": 1000,
-      "first_name": "Kevin",
-      "last_name": "Gallo",
-      "call_window_start": "2016-07-21 09:30:00",
-      "call_window_end": "2016-07-21 11:30:00",
-      "ccm_time": "248"
+      "nurse": "",
+      "dob": "",
+      "call_window_start": "",
+      "call_window_end": "",
+      "call_center_status": "",
+      "attempt_notes": "",
+      "last_call_date": "",
+      "ccm_time": "",
+      "num_success_calls": "",
+      "provider": "",
+      "program": ""
     },
     {
       "user_id": 1001,
-      "first_name": "Kevin",
-      "last_name": "Gallo",
-      "call_window_start": "2016-07-21 09:30:00",
-      "call_window_end": "2016-07-21 11:30:00",
-      "ccm_time": "652"
+      "nurse": "",
+      "dob": "",
+      "call_window_start": "",
+      "call_window_end": "",
+      "call_center_status": "",
+      "attempt_notes": "",
+      "last_call_date": "",
+      "ccm_time": "",
+      "num_success_calls": "",
+      "provider": "",
+      "program": ""
     }
   ]
 }

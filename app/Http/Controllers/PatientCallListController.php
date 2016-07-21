@@ -6,7 +6,7 @@ use App\User;
 
 use Illuminate\Http\Request;
 
-class NurseCallListController extends Controller {
+class PatientCallListController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
@@ -15,7 +15,7 @@ class NurseCallListController extends Controller {
 	 */
 	public function index()
 	{
-		return view('nurseCallList.index', []);
+		return view('patientCallList.index', []);
 	}
 
 	/**
