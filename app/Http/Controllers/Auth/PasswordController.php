@@ -32,6 +32,19 @@ class PasswordController extends Controller {
 	}
 
 	/**
+	 * Get the password reset credentials from the request.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return array
+	 */
+	protected function getResetCredentials(Request $request)
+	{
+		return $request->only(
+			'user_email', 'password', 'password_confirmation', 'token'
+		);
+	}
+
+	/**
 	 * Get the needed credentials for sending the reset link.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
