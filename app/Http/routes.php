@@ -1,5 +1,14 @@
 <?php
 
+Route::get('cal', function () {
+
+//    $patients = \App\PatientInfo::where('user_id', 874);
+//
+//    
+//
+//    return $no_of_calls;
+
+});
 Route::get('emr', function () {
     (new \App\Services\PhiMail\PhiMail)->sendReceive();
 });

@@ -94,7 +94,7 @@
                     </div>
                 </div>
             </div>
-                    </div>
+                </div>
                 </div>
             <div class="new-activity-item">
                 <div class="form-group">

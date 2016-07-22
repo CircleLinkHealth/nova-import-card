@@ -7,12 +7,6 @@ use Carbon\Carbon;
 
 class SchedulerService
 {
-//    protected $patient;
-//
-//    public function __construct($user_patient)
-//    {
-//        $this->patient = $user_patient;
-//    }
 
     //This function will be the initial rendition of algorithm
     //to calculate the patient's next call date.
@@ -22,22 +16,30 @@ class SchedulerService
     // proposed layers to filter predicted date and time:
     // 1) Check the patient's preferred days and times
 
-    public function scheduleCall($patient, $success)
+    public function predictCall($patient, $success)
     {
-
         if ($success) {
 
-            return $this->scheduleNextCall($patient);
+            return $this->predictNextCall($patient);
 
         } else {
 
-            //Attempt reschedule
-            return $this->scheduleNextAttempt($patient);
+            return $this->predictNextAttempt($patient);
 
         }
     }
+    
+    public function analyzePatientCCMProgress($patient){
+        
+//        $ccm_time = $patient
+        
+        
+        
+    }
 
-    public function scheduleNextCall($patient){
+    public function predictNextCall($patient){
+
+        if($patient->ccm_time)
 
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
@@ -60,7 +62,7 @@ class SchedulerService
         ];
     }
 
-    public function scheduleNextAttempt($patient){
+    public function predictNextAttempt($patient){
 
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
@@ -82,7 +84,7 @@ class SchedulerService
             'successful' => false
         ];
     }
-
+    
     public function storeScheduledCall($patientId, $window_start, $date)
     {
 
