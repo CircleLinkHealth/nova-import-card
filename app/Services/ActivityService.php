@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\PatientInfo;
+use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
 use DB;
@@ -121,6 +122,9 @@ class ActivityService
             foreach ($users as $user) {
                 // get all activities for user for month
                 $totalDuration = $this->getTotalActivityTimeForMonth($user->ID, $month, $year);
+
+                //update report
+                (new PatientMonthlySummary())->updateMonthlyReportForPatient($user, $totalDuration);
 
                 // update cur_month_activity_time with total
                 PatientInfo::updateOrCreate([
