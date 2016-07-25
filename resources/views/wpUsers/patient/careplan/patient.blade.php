@@ -235,66 +235,8 @@ $user_info = array();
                             <div class="main-form-block main-form-secondary col-lg-5">
                                 <h4 class="form-title">Contact Preferences</h4>
                                 <div class="row">
-                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_time') ? 'has-error' : '' }}">
-                                        <label for="mf-contact">Preferred Contact Time <span
-                                                    class="attention">*</span>:</label>
-                                        <input id="preferred_contact_time" class="form-control"
-                                               name="preferred_contact_time" type="input"
-                                               value="{{ (old('preferred_contact_time') ? old('preferred_contact_time') : ($patient->preferred_contact_time ? $patient->preferred_contact_time : '')) }}"
-                                               data-field="time" data-format="HH:mm AA"/><br/>
-                                        (Should be between 4pm and 9pm)
-                                        <span class="help-block">{{ $errors->first('preferred_contact_time') }}</span>
-                                        </a>
-                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('contact_days') ? 'has-error' : '' }}">
-                                            <label for="">Preferred Contact Days <span
-                                                        class="attention">*</span>:</label>
-                                            <div class="row" style="float: right">
-                                                <div class="radio-inline modal-box-clone label"
-                                                     style="margin-left: 0px;    margin-right: 0px;">
-                                                    <div class="radio-inline">
-                                                        <input id="contact-days-1" name="contact_days[]" value="1"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                        <label style="font-size: 120%; margin: -1px;"
-                                                               for="contact-days-1"><span></span>&nbsp;M</label>
-                                                    </div>
-                                                    <div class="radio-inline">
-                                                        <input id="contact-days-2" name="contact_days[]" value="2"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '2') ? 'checked="checked"' : (in_array('2', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                        <label style="font-size: 120%; margin: -1px;"
-                                                               for="contact-days-2"><span></span>&nbsp;T</label>
-                                                    </div>
-                                                    <div class="radio-inline">
-                                                        <input id="contact-days-3" name="contact_days[]" value="3"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '3') ? 'checked="checked"' : (in_array('3', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                        <label style="font-size: 120%; margin: -1px;"
-                                                               for="contact-days-3"><span></span>&nbsp;W</label>
-                                                    </div>
-                                                    <div class="radio-inline">
-                                                        <input id="contact-days-4" name="contact_days[]" value="4"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '4') ? 'checked="checked"' : (in_array('4', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                        <label style="font-size: 120%; margin: -1px;"
-                                                               for="contact-days-4"><span></span>&nbsp;Th</label>
-                                                    </div>
-                                                    <div class="radio-inline">
-                                                        <input id="contact-days-5" name="contact_days[]" value="5"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '5') ? 'checked="checked"' : (in_array('5', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                        <label style="font-size: 120%; margin: -1px;"
-                                                               for="contact-days-5"><span></span>&nbsp;F</label>
-                                                    </div>
-                                                    <div class="radio-inline">
-                                                        <input id="contact-days-6" name="contact_days[]" value="6"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '6') ? 'checked="checked"' : (in_array('6', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                        <label style="font-size: 120%; margin: -1px;"
-                                                               for="contact-days-6"><span></span>&nbsp;Sa</label>
-                                                    </div>
-                                                    <div class="radio-inline">
-                                                        <input id="contact-days-7" name="contact_days[]" value="7"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '7') ? 'checked="checked"' : (in_array('7', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
-                                                        <label style="font-size: 120%; margin: -1px;"
-                                                               for="contact-days-7"><span></span>&nbsp;Su</label>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
+                                        @include('partials.patientContactChangeProfile')
                                         </div>
 
                                         <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
