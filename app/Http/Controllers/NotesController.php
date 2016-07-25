@@ -10,8 +10,6 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Laracasts\Flash\Flash;
-use App\Services\Calls\SchedulerService;
 
 class NotesController extends Controller
 {
@@ -249,15 +247,31 @@ class NotesController extends Controller
 
         $patient = User::where('ID',$patientId)->first();
 
-        //Update patient info changes
-
+        //UPDATE USER INFO CHANGES
         $info = $patient->patientInfo;
 
-        $info->general_comment = $input['general_comment'];
-        $info->daily_contact_window_start = $input['window_start'];
-        $info->daily_contact_window_end = $input['window_end'];
-        $info->preferred_calls_per_month = $input['frequency'];
-        $info->preferred_cc_contact_days = implode(', ',$input['days']);
+        //User header update status
+        $info->ccm_status = $input['status'];
+
+        if(isset($input['general_comment'])){
+            $info->general_comment = $input['general_comment'];
+        }
+
+        if(isset($input['window_start'])){
+            $info->daily_contact_window_start = $input['window_start'];
+        }
+
+        if(isset($input['window_end'])){
+            $info->daily_contact_window_end = $input['window_end'];
+        }
+
+        if(isset($input['frequency'])){
+            $info->preferred_calls_per_month = $input['frequency'];
+        }
+
+        if(isset($input['days'])){
+            $info->preferred_cc_contact_days = implode(', ',$input['days']);
+        }
 
         $info->save();
 
@@ -267,12 +281,12 @@ class NotesController extends Controller
             $info->last_successful_contact_time = Carbon::now()->format('Y-m-d');
             $info->save();
 
-//            $prediction = (new SchedulerService)->scheduleCall($patient, true);
+        //$prediction = (new SchedulerService)->scheduleCall($patient, true);
 
 
         } else {
 
-//            $prediction = (new SchedulerService)->scheduleCall($patient, false);
+        //$prediction = (new SchedulerService)->scheduleCall($patient, false);
 
         }
 
