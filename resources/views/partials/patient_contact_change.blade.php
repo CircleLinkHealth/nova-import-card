@@ -25,8 +25,8 @@
     text-align: left;border:0px; padding: 10px 35px;">
                 <div class="row">
                     <label class="col-xs-4" style="padding-left: -1px;" for="contact_day">Contact Days</label>
-                    <label class="col-xs-3" style="padding-left: 0px; left: 0px" for="window_start">Call Start Time</label>
-                    <label class="col-xs-3" style="padding-left: 0px; left: 0px" for="window_end">Call End Time</label>
+                    <label class="col-xs-3" style="padding-left: 0px; left: 0px" for="window_start">Calls Start Time</label>
+                    <label class="col-xs-3" style="padding-left: 0px; left: 0px" for="window_end">Calls End Time</label>
                     <label class="col-xs-1" style="left: -20px" for="frequency">Frequency</label>
                 </div>
 
@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="col-xs-12" style="color: red; text-align: center">
-                    <b>Must save entire note to update call times.</b>
+                    <b>*Please save the entire note to update call times</b>
                 </div>
 
             </div>
@@ -134,7 +134,7 @@
             easing: '', // the animation effect you want. Remove this line if you dont want an effect and if you haven't included jQuery UI
             changeText: 1, // if you dont want the button text to change, set this to 0
             showText: "<span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>", //the button text to show when a div is closed
-            hideText: "<div style='color: #47beab;'> Hide </div>" // the button text to show when a div is open
+            hideText: "<div style='color: #47beab;'> Hide* </div>" // the button text to show when a div is open
 
         });
 

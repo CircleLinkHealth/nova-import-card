@@ -32,14 +32,17 @@
                 <li class="inline-block">{{$patient->gender}}</li>
                 <li class="inline-block">{{$patient->age}} yrs</li>
                 <li class="inline-block">{{$patient->phone}}</li>
-                <li class=" inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ?  'N/A' : ucwords($patient->ccm_status);  ?></li>
-                {{--<li class="inline-block">--}}
-                    {{--<select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2" style="width: 100px">--}}
-                            {{--<option value="" {{$patient->ccm_status == 'enrolled' ? 'selected' : ''}}> Enrolled</option>--}}
-                            {{--<option value="" {{$patient->ccm_status == 'withdrawn' ? 'selected' : ''}}> Withdrawn</option>--}}
-                            {{--<option value="" {{$patient->ccm_status == 'paused' ? 'selected' : ''}}> Paused</option>--}}
-                    {{--</select>--}}
-                {{--</li>--}}
+                @if(Route::is('patient.note.create'))
+                    <li class="inline-block">
+                        <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2" style="width: 100px">
+                            <option class="enrolled" value="enrolled" {{$patient->ccm_status == 'enrolled' ? 'selected' : ''}}> Enrolled</option>
+                            <option class="withdrawn" value="withdrawn" {{$patient->ccm_status == 'withdrawn' ? 'selected' : ''}}> Withdrawn</option>
+                            <option class="paused" value="paused" {{$patient->ccm_status == 'paused' ? 'selected' : ''}}> Paused</option>
+                        </select>
+                    </li>
+                @else
+                    <li class=" inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ?  'N/A' : ucwords($patient->ccm_status);  ?></li>
+                @endif
             </ul>
         </div>
     </div>

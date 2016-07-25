@@ -250,9 +250,11 @@ class NotesController extends Controller
 
         $patient = User::where('ID',$patientId)->first();
 
-        //Update patient info changes
-
+        //UPDATE USER INFO CHANGES
         $info = $patient->patientInfo;
+
+        //User header update status
+        $info->ccm_status = $input['status'];
 
         if(isset($input['general_comment'])){
             $info->general_comment = $input['general_comment'];
