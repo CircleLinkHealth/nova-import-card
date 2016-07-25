@@ -49,6 +49,11 @@ class PatientInfo extends Model {
 		return $this->belongsTo('App\User', 'ID', 'user_id');
 	}
 
+	public function patientContactWindows()
+	{
+		return $this->hasMany('App\PatientContactWindows', 'id', 'patient_info_id');
+	}
+
 	public function patientSummaries()
 	{
 		return $this->hasMany('App\PatientMonthlySummary', 'id', 'patient_info_id');
