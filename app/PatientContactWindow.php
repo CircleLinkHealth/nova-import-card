@@ -1,19 +1,9 @@
 <?php namespace App;
 
-use Carbon\Carbon;
-use DateTime;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Auth;
 
 class PatientContactWindow extends Model {
-
-	/**
-	 * The connection name for the model.
-	 *
-	 * @var string
-	 */
-	protected $connection = 'mysql';
 
 	/**
 	 * The database table used by the model.
@@ -29,14 +19,13 @@ class PatientContactWindow extends Model {
 	 */
 	protected $primaryKey = 'id';
 
-	public $timestamps = false;
+	protected $guarded = ['id'];
 
 	// START RELATIONSHIPS
 
-	// user
-	public function user()
+	public function patient_info()
 	{
-		return $this->belongsTo('App\User', 'ID', 'user_id');
+		return $this->belongsTo(PatientInfo::class);
 	}
 
 	// END RELATIONSHIPS
