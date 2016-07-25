@@ -16,8 +16,8 @@ class CreatePatientContactWindowTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('patient_info_id');
             $table->integer('day_of_week');
-            $table->date('window_time_start');
-            $table->integer('window_time_end');
+            $table->time('window_time_start');
+            $table->time('window_time_end');
             $table->timestamps();
             $table->foreign('patient_info_id')
                 ->references('id')

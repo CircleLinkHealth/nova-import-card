@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\CLH\Repositories\UserRepository;
 use App\Formatters\WebixFormatter;
 use App\Http\Requests;
 use App\PatientInfo;
@@ -11,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Calls\SchedulerService;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class NotesController extends Controller
 {
@@ -273,6 +275,11 @@ class NotesController extends Controller
         }
 
         $info->save();
+
+        // also update patientCallWindows @todo - do this only
+        $params = new ParameterBag($input);
+        $userRepo = new UserRepository();
+        $userRepo->saveOrUpdatePatientCallWindows($patient, $params);
 
         if(!isset($input['phone'])){
 

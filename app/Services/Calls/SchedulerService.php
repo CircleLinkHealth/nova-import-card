@@ -39,8 +39,6 @@ class SchedulerService
 
     public function predictNextCall($patient){
 
-        if($patient->ccm_time)
-
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
         $window_start = $patient_preferred_times['window_start'];

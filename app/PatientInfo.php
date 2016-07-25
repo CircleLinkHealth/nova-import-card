@@ -51,12 +51,12 @@ class PatientInfo extends Model {
 
 	public function patientContactWindows()
 	{
-		return $this->hasMany('App\PatientContactWindows', 'id', 'patient_info_id');
+		return $this->hasMany('App\PatientContactWindow', 'patient_info_id', 'id');
 	}
 
 	public function patientSummaries()
 	{
-		return $this->hasMany('App\PatientMonthlySummary', 'id', 'patient_info_id');
+		return $this->hasMany('App\PatientMonthlySummary', 'patient_info_id', 'id');
 	}
 
 	// END RELATIONSHIPS
@@ -125,6 +125,31 @@ class PatientInfo extends Model {
 		return true;
 	}
 
+
+	// daily_contact_window_start
+	public function getDailyContactWindowStartAttribute() {
+		return Carbon::parse($this->attributes['daily_contact_window_start'])->format('H:i');
+	}
+	public function setDailyContactWindowStartAttribute($value) {
+		$this->attributes['daily_contact_window_start'] = $value;
+		$this->save();
+		return true;
+		// remove patient contact windows
+		if($this->patientContactWindows) {
+			$this->patientContactWindows()->delete();
+		}
+		// loop through days and recreate patientContactWindows
+		dd($this->preferred_cc_contact_days);
+		$days = implode(', ',$value);
+	}
+
+	// daily_contact_window_end
+	public function getDailyContactWindowEndAttribute() {
+		return Carbon::parse($this->attributes['daily_contact_window_end'])->format('H:i');
+	}
+	public function setDailyContactWindowEndAttribute() {
+		//dd('oh yeah!');
+	}
 
 
 
