@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="col-xs-12" style="color: red; text-align: center">
-                    <b>*Must save note to update call times</b>
+                    <b>*Please save the entire note to update call times</b>
                 </div>
 
             </div>
