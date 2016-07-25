@@ -365,6 +365,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('users/{id}/careplan', ['uses' => 'CareplanController@show', 'as' => 'admin.users.careplan']);
             Route::get('users/{id}/msgcenter', ['uses' => 'UserController@showMsgCenter', 'as' => 'admin.users.msgCenter']);
             Route::post('users/{id}/msgcenter', ['uses' => 'UserController@showMsgCenter', 'as' => 'admin.users.msgCenterUpdate']);
+            Route::get('users/masterPatientCallList', ['uses' => 'Admin\MasterPatientCallListController@index', 'as' => 'admin.masterPatientCallList.index']);
         });
 
         // rules

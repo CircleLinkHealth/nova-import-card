@@ -99,6 +99,7 @@
 									<ul class="dropdown-menu" role="menu">
 										<li><a href="{{ URL::route('admin.users.index', array()) }}">All Users</a></li>
 										<li><a href="{{ URL::route('admin.users.create', array()) }}">New User</a></li>
+										<li><a href="{{ URL::route('admin.masterPatientCallList.index', array()) }}">Patient Call List</a></li>
 										<li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a></li>
 										<li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
 										<li><a href="{{ URL::route('admin.ucp.index', array()) }}">UCP</a></li>
