@@ -10,7 +10,6 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Laracasts\Flash\Flash;
 use App\Services\Calls\SchedulerService;
 
 class NotesController extends Controller
@@ -253,30 +252,51 @@ class NotesController extends Controller
 
         $info = $patient->patientInfo;
 
-        $info->general_comment = $input['general_comment'];
-        $info->daily_contact_window_start = $input['window_start'];
-        $info->daily_contact_window_end = $input['window_end'];
-        $info->preferred_calls_per_month = $input['frequency'];
-        $info->preferred_cc_contact_days = implode(', ',$input['days']);
+        if(isset($input['general_comment'])){
+            $info->general_comment = $input['general_comment'];
+        }
+
+        if(isset($input['window_start'])){
+            $info->daily_contact_window_start = $input['window_start'];
+        }
+
+        if(isset($input['window_end'])){
+            $info->daily_contact_window_end = $input['window_end'];
+        }
+
+        if(isset($input['frequency'])){
+            $info->preferred_calls_per_month = $input['frequency'];
+        }
+
+        if(isset($input['days'])){
+            $info->preferred_cc_contact_days = implode(', ',$input['days']);
+        }
 
         $info->save();
 
+        if(!isset($input['phone'])){
 
-        if(isset($input['call_status']) && $input['call_status'] == 'reached'){
-
-            $info->last_successful_contact_time = Carbon::now()->format('Y-m-d');
-            $info->save();
-
-//            $prediction = (new SchedulerService)->scheduleCall($patient, true);
-
-
-        } else {
-
-//            $prediction = (new SchedulerService)->scheduleCall($patient, false);
+            return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
 
         }
 
-        return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
+        if(isset($input['call_status']) && $input['call_status'] == 'reached'){
+
+            //Updates when the patient was contacted last
+            $info->last_successful_contact_time = Carbon::now()->format('Y-m-d');
+            $info->save();
+
+            $prediction = (new SchedulerService)->predictNextCall($patient, true);
+
+            return view('wpUsers.patient.calls.create', $prediction);
+
+        } else {
+
+            $prediction = (new SchedulerService)->predictNextCall($patient, false);
+
+            return view('wpUsers.patient.calls.create', $prediction);
+
+        }
 
     }
     

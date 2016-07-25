@@ -56,7 +56,7 @@
                            value="{{$patient->patientInfo->daily_contact_window_end}}"
                            id="window_end" placeholder="time">
                 </div>
-                <div class="col-xs-2" style="padding-left: 0px;">
+                <div class="col-xs-2" style="padding-left: 0px; padding-bottom: 3px">
                     <select id="frequency" name="frequency"
                             class="selectpickerX dropdown Valid form-control" data-size="2"
                             style="width: 150px" >
@@ -66,6 +66,11 @@
                         <option value="4" {{$patient->patientInfo->preferred_calls_per_month == 4 ? 'selected' : ''}}> 4x Monthly</option>
                     </select>
                 </div>
+
+                <div class="col-xs-12" style="color: red; text-align: center">
+                    <b>Must save entire note to update call times.</b>
+                </div>
+
             </div>
         </div>
     </div>
