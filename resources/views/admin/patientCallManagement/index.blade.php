@@ -11,7 +11,7 @@
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">Patient Call Management</div>
+                    <div class="panel-heading">Manage Patient Calls</div>
                     <div class="panel-body">
                         @include('errors.errors')
                         @include('errors.messages')
