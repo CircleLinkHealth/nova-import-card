@@ -26,9 +26,8 @@
     "laravelcollective/html": "~5.0",
     "guzzlehttp/guzzle": "~5.3|~6.0",
     "rap2hpoutre/laravel-log-viewer": "^0.4.0",
-    "jlapp/swaggervel": "master-dev",
     "zizaco/entrust": "5.2.x-dev",
-    "fideloper/proxy": "~3.0",
+    "fideloper/proxy": "~3.1",
     "michalisantoniou6/php-ccd-parser": "dev-master",
     "barryvdh/laravel-debugbar": "^2.0",
     "laracasts/utilities": "~2.0",
@@ -40,6 +39,7 @@
     "h4cc/wkhtmltoimage-amd64": "0.12.x",
     "maatwebsite/excel": "~2.1.0",
     "prettus/l5-repository": "^2.1",
+    "laravelcollective/bus": "5.2.x",
     "maknz/slack": "^1.7",
     "dusterio/laravel-aws-worker": "^0.1.5"
   },

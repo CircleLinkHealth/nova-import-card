@@ -1,15 +1,18 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\ActivityMeta;
 use App\Formatters\WebixFormatter;
 use App\Http\Requests;
 use App\PatientInfo;
 use App\Program;
+use App\Services\ActivityService;
 use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Laracasts\Flash\Flash;
 use App\Services\Calls\SchedulerService;
 

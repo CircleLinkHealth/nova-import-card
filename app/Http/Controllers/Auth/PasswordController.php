@@ -1,8 +1,9 @@
 <?php namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\CLH\Traits\Auth\ResetsPasswords;
+use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
 class PasswordController extends Controller {
 
@@ -32,6 +33,33 @@ class PasswordController extends Controller {
 	}
 
 	/**
+	 * Get the password reset validation rules.
+	 *
+	 * @return array
+	 */
+	protected function getResetValidationRules()
+	{
+		return [
+			'token' => 'required',
+			'user_email' => 'required|email',
+			'password' => 'required|confirmed|min:6',
+		];
+	}
+
+	/**
+	 * Get the password reset credentials from the request.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return array
+	 */
+	protected function getResetCredentials(Request $request)
+	{
+		return $request->only(
+			'user_email', 'password', 'password_confirmation', 'token'
+		);
+	}
+
+	/**
 	 * Get the needed credentials for sending the reset link.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
@@ -40,5 +68,16 @@ class PasswordController extends Controller {
 	protected function getSendResetLinkEmailCredentials(Request $request)
 	{
 		return $request->only('user_email');
+	}
+
+	/**
+	 * Validate the request of sending reset link.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return void
+	 */
+	protected function validateSendResetLinkEmail(Request $request)
+	{
+		$this->validate($request, ['user_email' => 'required|email']);
 	}
 }

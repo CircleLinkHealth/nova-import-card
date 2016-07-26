@@ -61,6 +61,7 @@ Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::get('/', 'WelcomeController@index');
+Route::get('home', 'WelcomeController@index');
 
 Route::controllers([
     'auth' => 'Auth\AuthController',

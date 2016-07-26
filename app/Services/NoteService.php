@@ -299,7 +299,7 @@ class NoteService
                 $author_name = '';
             }
 
-            $linkToNote = URL::route('patient.note.view', array('patientId' => $patientId, 'noteId' => $note->id));
+            $linkToNote = route('patient.note.view', array('patientId' => $patientId, 'noteId' => $note->id));
 
             $result = $this->sendNoteToCareTeam(
                 $note,
