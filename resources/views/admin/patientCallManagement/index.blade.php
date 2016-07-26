@@ -14,6 +14,7 @@
                     <div class="panel-heading">Patient Call Management</div>
                     <div class="panel-body">
                         @include('errors.errors')
+                        @include('errors.messages')
 
                         <div class="row">
                             {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
@@ -92,7 +93,7 @@
                                         </td>
                                         <td class="text-right">
                                             @if(Entrust::can('users-edit-all'))
-                                                <a href="{{ URL::route('admin.users.edit', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+                                                <a href="{{ URL::route('admin.patientCallManagement.edit', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
                                             @endif
                                         </td>
                                     </tr>

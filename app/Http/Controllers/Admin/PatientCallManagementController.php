@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Carbon\Carbon;
 use DateTime;
+use Auth;
 
 use Illuminate\Http\Request;
 
@@ -31,6 +32,66 @@ class PatientCallManagementController extends Controller {
 		$calls = $calls->paginate( 20 );
 
 		return view('admin.patientCallManagement.index', compact(['calls', 'date']));
+	}
+
+	/**
+	 * Show the form for editing an existing resource.
+	 *
+	 * @return Response
+	 */
+	public function edit(Request $request, $id)
+	{
+		if ( !Auth::user()->can( 'users-edit-all' ) ) {
+			abort( 403 );
+		}
+		$messages = \Session::get( 'messages' );
+
+		$params = $request->all();
+
+		$call = Call::find( $id );
+		if ( !$call ) {
+			return response( "Call not found", 401 );
+		}
+
+		// get all users with paused ccm_status
+		$nurses = User::with('meta')
+			->with('roles')
+			->whereHas('roles', function($q) {
+				$q->where(function ($query) {
+					$query->orWhere('name', 'care-center');
+					$query->orWhere('name', 'no-ccm-care-center');
+				});
+			})
+			->pluck('display_name', 'ID');
+
+		return view('admin.patientCallManagement.edit', compact(['call', 'nurses']));
+	}
+
+
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int $id
+	 * @return Response
+	 */
+	public function update(Request $request, $id)
+	{
+		if ( !Auth::user()->can( 'users-edit-all' ) ) {
+			abort( 403 );
+		}
+		// instantiate user
+		$call = Call::find( $id );
+		if ( !$call ) {
+			return response( "Call not found", 401 );
+		}
+
+		// input
+		$call->outbound_cpm_id = $request->input('outbound_cpm_id');
+		$call->window_start = $request->input('window_start');
+		$call->window_end = $request->input('window_end');
+		$call->save();
+
+		return redirect()->back()->with( 'messages', ['successfully updated call'] );
 	}
 
 	/**

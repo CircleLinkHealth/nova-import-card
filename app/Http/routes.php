@@ -366,6 +366,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('users/{id}/msgcenter', ['uses' => 'UserController@showMsgCenter', 'as' => 'admin.users.msgCenter']);
             Route::post('users/{id}/msgcenter', ['uses' => 'UserController@showMsgCenter', 'as' => 'admin.users.msgCenterUpdate']);
             Route::get('users/patientCallManagement', ['uses' => 'Admin\PatientCallManagementController@index', 'as' => 'admin.patientCallManagement.index']);
+            Route::get('users/patientCallManagement/{id}/edit', ['uses' => 'Admin\PatientCallManagementController@edit', 'as' => 'admin.patientCallManagement.edit']);
+            Route::post('users/patientCallManagement/{id}/edit', ['uses' => 'Admin\PatientCallManagementController@update', 'as' => 'admin.patientCallManagement.update']);
         });
 
         // rules
