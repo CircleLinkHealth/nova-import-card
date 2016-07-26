@@ -40,5 +40,10 @@ class Call extends Model
         return $this->belongsTo('App\Note', 'note_id', 'id');
     }
 
+    public function outboundUser()
+    {
+        return $this->belongsTo('App\User', 'outbound_cpm_id', 'ID');
+    }
+
 
 }

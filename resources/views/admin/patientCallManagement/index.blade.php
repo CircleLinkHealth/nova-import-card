@@ -56,7 +56,7 @@
                             <tr>
                                 <th></th>
                                 <th>Nurse</th>
-                                <th>Full Name</th>
+                                <th>Patient</th>
                                 <th>DOB</th>
                                 <th>Contact Window Start</th>
                                 <th>Contact Window End</th>
@@ -74,23 +74,24 @@
                             @if (count($calls) > 0)
                                 @foreach($calls as $call)
                                     <tr>
-                                        <td><input type="checkbox" name="users[]" value="{{ $call->id }}"></td>
-                                        <td><a href="{{ URL::route('admin.users.edit', array('id' => $call->id)) }}" class=""> {{ $call->id }}</a></td>
+                                        <td><input type="checkbox" name="calls[]" value="{{ $call->id }}"></td>
                                         <td>
-                                            {{$call->id}}
+                                            @if($call->outboundUser)
+                                                {{ $call->outboundUser->display_name }}
+                                            @else
+                                                <em style="color:red;">unassigned</em>
+                                            @endif
                                         </td>
-                                        <td>{{ $call->id }}</td>
-                                        <td>{{ $call->id }}</td>
-                                        <td>{{ $call->id }}</td>
-                                        <td>{{ $call->id }}</td>
-                                        <td>{{ $call->id }}</td>
-                                        <td>{{ $call->id }}</td>
-                                        <td>{{ $call->id }}</td>
-                                        <td>{{ $call->id }}</td>
-                                        <td>{{ $call->id }}</td>
-                                        <td>
-                                            {{$call->id}}
-                                        </td>
+                                        <td>{{ $call->inbound_cpm_id }}</td>
+                                        <td>-</td>
+                                        <td>{{ $call->window_start }}</td>
+                                        <td>{{ $call->window_end }}</td>
+                                        <td>-</td>
+                                        <td>{{ $call->status }}</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
                                         <td class="text-right">
                                             @if(Entrust::can('users-edit-all'))
                                                 <a href="{{ URL::route('admin.patientCallManagement.edit', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
