@@ -1,11 +1,13 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\ActivityMeta;
 use App\CLH\Repositories\UserRepository;
 use App\Formatters\WebixFormatter;
 use App\Http\Requests;
 use App\PatientInfo;
 use App\Program;
+use App\Services\ActivityService;
 use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
@@ -13,6 +15,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Calls\SchedulerService;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Illuminate\Support\Facades\URL;
+use Laracasts\Flash\Flash;
+use App\Services\Calls\SchedulerService;
 
 class NotesController extends Controller
 {
@@ -252,6 +257,12 @@ class NotesController extends Controller
 
         //UPDATE USER INFO CHANGES
         $info = $patient->patientInfo;
+
+        $info->general_comment = $input['general_comment'];
+        $info->daily_contact_window_start = $input['window_start'];
+        $info->daily_contact_window_end = $input['window_end'];
+        $info->preferred_calls_per_month = $input['frequency'];
+        $info->preferred_cc_contact_days = implode(', ',$input['days']);
 
         //User header update status
         $info->ccm_status = $input['status'];
