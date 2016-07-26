@@ -41,6 +41,7 @@ class PatientMonthlySummary extends Model
 
     public function updateMonthlyReportForPatient(User $patient, $ccm_time){
 
+        dd('updateMonthlyReportForPatient');
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
         $day_end = Carbon::parse(Carbon::now()->endOfMonth()->format('Y-m-d'));
 
