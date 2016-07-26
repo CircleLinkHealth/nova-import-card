@@ -59,7 +59,7 @@ class ToMonitor implements ParsingStrategy
             /*
              * ICD-10 Check
              */
-            if ( in_array( $ccdProblem->code_system_name, ['ICD-10', 'ICD10'] ) || in_array( $ccdProblem->code_system, ['2.16.840.1.113883.6.3', '2.16.840.1.113883.6.4'] ) ) {
+            if ( in_array( $ccdProblem->code_system_name, ['ICD-10', 'ICD10', 'ICD-10-CM'] ) || in_array( $ccdProblem->code_system, ['2.16.840.1.113883.6.3', '2.16.840.1.113883.6.4'] ) ) {
                 foreach ( $cpmProblems as $cpmProblem ) {
                     if ( (string)$ccdProblem->code >= (string)$cpmProblem->icd10from
                         && (string)$ccdProblem->code <= (string)$cpmProblem->icd10to
