@@ -17,7 +17,6 @@ use App\Services\Calls\SchedulerService;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Illuminate\Support\Facades\URL;
 use Laracasts\Flash\Flash;
-use App\Services\Calls\SchedulerService;
 
 class NotesController extends Controller
 {
