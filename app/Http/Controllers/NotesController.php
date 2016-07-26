@@ -95,9 +95,11 @@ class NotesController extends Controller
             $title = $provider->display_name;
 
             if($only_mailed_notes){
+
                 $notes = $this->service->getForwardedNotesWithRangeForProvider($provider->ID, $start, $end);
 
             } else {
+
                 $notes = $this->service->getNotesWithRangeForProvider($provider->ID, $start, $end);
 
             }
@@ -241,9 +243,7 @@ class NotesController extends Controller
     public function store(Request $input, $patientId)
     {
         $input = $input->all();
-
-//        dd($input);
-
+        
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
         $this->service->storeNote($input);
