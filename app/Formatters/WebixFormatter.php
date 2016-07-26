@@ -100,7 +100,7 @@ class WebixFormatter implements ReportFormatter
             $formatted_data[$count]['id'] = $data->id;
 
 
-            if (is_int($data->author_id)) // only notes have authors
+            if (isset($data->author_id)) // only notes have authors
             {
                 $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->author_id)->fullName;
                 $formatted_data[$count]['comment'] = $data->body;
