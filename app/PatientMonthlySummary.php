@@ -59,14 +59,16 @@ class PatientMonthlySummary extends Model
 
         $report = PatientMonthlySummary::where('patient_info_id', $info->id)->where('month_year', $day_start)->first();
 
+        dd($report);
         if($report) {
             $report->ccm_time = $ccm_time;
             $report->no_of_calls = $no_of_calls;
             $report->no_of_successful_calls = $no_of_successful_calls;
             $report->save();
         } else {
-            //dd('no report');
+            dd('no report');
         }
+
 
     }
 }
