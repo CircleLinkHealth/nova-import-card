@@ -43,7 +43,7 @@ class AuthController extends Controller
 
         //Transform the credentials to match our JWT Auth. They were using EHR API, remember?
         $credentials = [
-            'email' => $request->input('username'),
+            'user_email' => $request->input('username'),
             'password' => $request->input('password'),
         ];
 
