@@ -1,5 +1,5 @@
 <div class="col-md-12" style="">
-    <div class="row">
+    <div class="row" style="padding-bottom: 10px">
         <label for="contact_day">Contact Days</label>
         <select id="days" name="days[]"
                 class="selectpicker dropdown Valid form-control"
@@ -17,8 +17,8 @@
 </div>
 
 <div class="col-md-12" style="">
-    <div class="row">
-        <label for="window_start">Call Start Time</label>
+    <div class="row"style="padding-bottom: 10px">
+        <label for="window_start">Calls Start Time</label>
         <input class="form-control" name="window_start" type="time"
                value="{{$patient->patientInfo->daily_contact_window_start}}"
                id="window_start" placeholder="time">
@@ -26,8 +26,8 @@
 </div>
 
 <div class="col-md-12" style="">
-    <div class="row">
-        <label for="window_end">Call End Time</label>
+    <div class="row" style="padding-bottom: 10px">
+        <label for="window_end">Calls End Time</label>
         <input class="form-control" name="window_end" type="time"
                value="{{$patient->patientInfo->daily_contact_window_end}}"
                id="window_end" placeholder="time">
@@ -35,11 +35,11 @@
 </div>
 
 <div class="col-md-12" style="">
-    <div class="row">
+    <div class="row" style="padding-bottom: 10px">
         <label for="frequency">Frequency</label>
         <select id="frequency" name="frequency"
                 class="selectpickerX dropdown Valid form-control" data-size="2"
-                style="width: 150px" >
+                style="width: 90" >
             <option value="1" {{$patient->patientInfo->preferred_calls_per_month == 1 ? 'selected' : ''}}> 1x Monthly</option>
             <option value="2" {{$patient->patientInfo->preferred_calls_per_month == 2 ? 'selected' : ''}}> 2x Monthly</option>
             <option value="3" {{$patient->patientInfo->preferred_calls_per_month == 3 ? 'selected' : ''}}> 3x Monthly</option>
