@@ -22,6 +22,7 @@ class CpmBloodPressure extends Model implements Biometric
         'systolic_low_alert' => 80,
         'diastolic_high_alert' => 90,
         'diastolic_low_alert' => 40,
+        'target' => '130/80',
     ];
 
     /**
