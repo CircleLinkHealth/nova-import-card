@@ -3,6 +3,7 @@
 
 use App\Call;
 use App\Note;
+use App\PatientContactWindow;
 use App\PatientInfo;
 use App\Services\NoteService;
 use App\User;
@@ -13,87 +14,80 @@ class SchedulerService
 {
 
     //This function will be the initial rendition of algorithm
-    //to calculate the patient's next call date.
-    //It will take the patient's User object
+    //to predict the patient's next call date.
+    //It will take the patient's User object,
+    //the Note and the outcome of the call
     //as input and return a datetime
-
-    // proposed layers to filter predicted date and time:
-    // 1) Check the patient's preferred days and times
 
     public function predictCall($patient, $note ,$success)
     {
 
-        $scheduled_call = $this->getCallForPatient($patient);
+        $scheduled_call = $this->getScheduledCallForPatient($patient);
 
         $note = Note::find($note);
 
         if ($success) {
 
-            //Update and close previous call
-
-
-            if($scheduled_call) {
-                $scheduled_call->status = 'reached';
-                $scheduled_call->note_id = $note->id;
-                $scheduled_call->call_date = Carbon::now()->format('Y-m-d');
-                $scheduled_call->outbound_cpm_id = Auth::user()->ID;
-                $scheduled_call->save();
-            } else {
-                (new NoteService)->storeCallForNote($note, 'reached', $patient, Auth::user(), 'outbound');
-            }
-
-
-            return $this->successfulCallHandler($patient);
+            return $this->successfulCallHandler($patient, $note, $scheduled_call);
 
         } else {
 
-            //Update and close previous call, if exists.
-            if($scheduled_call) {
-                $scheduled_call->status = 'not reached';
-                $scheduled_call->note_id = $note->id;
-                $scheduled_call->call_date = Carbon::now()->format('Y-m-d');
-                $scheduled_call->outbound_cpm_id = Auth::user()->ID;
-                $scheduled_call->save();
-
-            } else {
-                (new NoteService)->storeCallForNote($note, 'not reached', $patient, Auth::user(), 'outbound');
-
-            }
-
-            return $this->unsuccessfulCallHandler($patient);
+            return $this->unsuccessfulCallHandler($patient, $note, $scheduled_call);
 
         }
     }
 
-    public function successfulCallHandler($patient){
+    public function successfulCallHandler($patient, $note, $scheduled_call){
 
-        $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
+        //Update and close previous call
+        if($scheduled_call) {
+            
+            $scheduled_call->status = 'reached';
+            $scheduled_call->note_id = $note->id;
+            $scheduled_call->call_date = Carbon::now()->format('Y-m-d');
+            $scheduled_call->outbound_cpm_id = Auth::user()->ID;
+            $scheduled_call->save();
 
-        $window_start = Carbon::parse($patient_preferred_times['window_start'])->format('H:i');
-        $window_end = Carbon::parse($patient_preferred_times['window_end'])->format('H:i');
+        } else { // If call doesn't exist, make one and store it
 
-        $dates = $patient_preferred_times['days'];
+            (new NoteService)->storeCallForNote($note, 'reached', $patient, Auth::user(), 'outbound');
+
+        }
+
+        $next_contact_window = (new PatientContactWindow())->getEarliestWindowForPatient($patient);
+
+        $window_start = Carbon::parse($next_contact_window['window_start'])->format('H:i');
+        $window_end = Carbon::parse($next_contact_window['window_end'])->format('H:i');
 
         //TO CALCULATE
-        $earliest_contact_day = Carbon::parse(min($dates))->addWeek()->format('Y-m-d');
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
-//      $this->storeScheduledCall($patient->ID, $window_start, $window_end, $earliest_contact_day);
-
         return [
             'patient' => $patient,
-            'date' => $earliest_contact_day,
+            'date' => $next_contact_window['day'],
             'window' => $window,
             //give it the start time for now...
-            'raw_time' => $window_start,
+            'window_start' => $window_start,
+            'window_end' => $window_end,
             'successful' => true
         ];
     }
 
-    //Unsuccessful Call Handler
+    public function unsuccessfulCallHandler($patient, $note, $scheduled_call){
 
-    public function unsuccessfulCallHandler($patient){
+        //Update and close previous call, if exists.
+        if($scheduled_call) {
+            $scheduled_call->status = 'not reached';
+            $scheduled_call->note_id = $note->id;
+            $scheduled_call->call_date = Carbon::now()->format('Y-m-d');
+            $scheduled_call->outbound_cpm_id = Auth::user()->ID;
+            $scheduled_call->save();
+
+        } else {
+            (new NoteService)->storeCallForNote($note, 'not reached', $patient, Auth::user(), 'outbound');
+
+        }
 
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
@@ -116,8 +110,7 @@ class SchedulerService
         ];
     }
 
-    //This is the function where the new call is created.
-    
+    //Create new scheduled call
     public function storeScheduledCall($patientId, $window_start, $window_end, $date)
     {
 
@@ -149,8 +142,7 @@ class SchedulerService
     }
 
     //extract the last scheduled call
-
-    public function getCallForPatient($patient){
+    public function getScheduledCallForPatient($patient){
 
         $call = Call::where(function($q) use ($patient)
         {

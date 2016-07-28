@@ -40,8 +40,8 @@ class CallController extends Controller
 
         $input = $request->all();
 
-        $window_start = $input['window_start'];
-        $window_end = $input['window_end'];
+        $window_start = Carbon::parse($input['window_start'])->format('H:i');
+        $window_end = Carbon::parse($input['window_end'])->format('H:i');
         
         $this->scheduler->storeScheduledCall($input['patient_id'], $window_start, $window_end,$input['date']);
 

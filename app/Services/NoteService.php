@@ -27,11 +27,6 @@ class NoteService
         } $note->save();
 
         $patient = User::find($note->patient_id);
-        $author = User::find($input['author_id']);
-
-//        if(isset($input['phone'])) {
-//            $this->storeCallForNote($note, $input['call_status'], $patient, $author, $input['phone']);
-//        }
 
         // update usermeta: cur_month_activity_time
         $activityService = new ActivityService;
