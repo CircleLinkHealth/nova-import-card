@@ -16,7 +16,6 @@ use Mockery\Matcher\Not;
 class NoteService
 {
 
-
     public function storeNote($input)
     {
         $note = Note::create($input);
@@ -30,9 +29,9 @@ class NoteService
         $patient = User::find($note->patient_id);
         $author = User::find($input['author_id']);
 
-        if(isset($input['phone'])) {
-            $this->storeCallForNote($note, $input['call_status'], $patient, $author, $input['phone']);
-        }
+//        if(isset($input['phone'])) {
+//            $this->storeCallForNote($note, $input['call_status'], $patient, $author, $input['phone']);
+//        }
 
         // update usermeta: cur_month_activity_time
         $activityService = new ActivityService;
@@ -51,7 +50,7 @@ class NoteService
 
             $user_care_team = $patient->sendAlertTo;
 
-            $result = $this->sendNoteToCareTeam($note, $user_care_team, $linkToNote, true);
+            $this->sendNoteToCareTeam($note, $user_care_team, $linkToNote, true);
         }
 
         return $note;

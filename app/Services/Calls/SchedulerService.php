@@ -2,7 +2,9 @@
 
 
 use App\Call;
+use App\Note;
 use App\PatientInfo;
+use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -23,16 +25,23 @@ class SchedulerService
 
         $scheduled_call = $this->getCallForPatient($patient);
 
+        $note = Note::find($note);
+
         if ($success) {
 
             //Update and close previous call
 
+
             if($scheduled_call) {
                 $scheduled_call->status = 'reached';
-                $scheduled_call->note_id = $note;
+                $scheduled_call->note_id = $note->id;
                 $scheduled_call->call_date = Carbon::now()->format('Y-m-d');
                 $scheduled_call->outbound_cpm_id = Auth::user()->ID;
+                $scheduled_call->save();
+            } else {
+                (new NoteService)->storeCallForNote($note, 'reached', $patient, Auth::user(), 'outbound');
             }
+
 
             return $this->successfulCallHandler($patient);
 
@@ -41,9 +50,14 @@ class SchedulerService
             //Update and close previous call, if exists.
             if($scheduled_call) {
                 $scheduled_call->status = 'not reached';
-                $scheduled_call->note_id = $note;
+                $scheduled_call->note_id = $note->id;
                 $scheduled_call->call_date = Carbon::now()->format('Y-m-d');
                 $scheduled_call->outbound_cpm_id = Auth::user()->ID;
+                $scheduled_call->save();
+
+            } else {
+                (new NoteService)->storeCallForNote($note, 'not reached', $patient, Auth::user(), 'outbound');
+
             }
 
             return $this->unsuccessfulCallHandler($patient);
