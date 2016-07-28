@@ -253,7 +253,7 @@ class NotesController extends Controller
         
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
-        $this->service->storeNote($input);
+        $note = $this->service->storeNote($input);
 
         $patient = User::where('ID',$patientId)->first();
 
@@ -306,13 +306,13 @@ class NotesController extends Controller
             $info->last_successful_contact_time = Carbon::now()->format('Y-m-d');
             $info->save();
 
-            $prediction = (new SchedulerService)->predictCall($patient, true);
+            $prediction = (new SchedulerService)->predictCall($patient, $note->id, true);
 
             return view('wpUsers.patient.calls.create', $prediction);
 
         } else {
 
-            $prediction = (new SchedulerService)->predictCall($patient, false);
+            $prediction = (new SchedulerService)->predictCall($patient, $note->id, false);
 
             return view('wpUsers.patient.calls.create', $prediction);
 

@@ -53,6 +53,8 @@ class NoteService
 
             $result = $this->sendNoteToCareTeam($note, $user_care_team, $linkToNote, true);
         }
+
+        return $note;
     }
 
     //NOTE RETRIEVALS (ranges, relations, owners)
