@@ -3,7 +3,9 @@
 
 use App\Call;
 use App\PatientInfo;
+use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
 {
@@ -18,37 +20,51 @@ class SchedulerService
 
     public function predictCall($patient, $success)
     {
+
+        $scheduled_call = $this->getCallForPatient($patient);
+
         if ($success) {
 
-            return $this->predictNextCall($patient);
+            //Update and close previous call
+
+            if($scheduled_call) {
+                $scheduled_call->status = 'reached';
+                $scheduled_call->call_date = Carbon::now()->format('Y-m-d');
+                $scheduled_call->outbound_cpm_id = Auth::user()->ID;
+                $scheduled_call->save();
+            }
+
+            return $this->successfulCallHandler($patient);
 
         } else {
 
-            return $this->predictNextAttempt($patient);
+            //Update and close previous call, if exists.
+            if($scheduled_call) {
+                $scheduled_call->status = 'not reached';
+                $scheduled_call->call_date = Carbon::now()->format('Y-m-d');
+                $scheduled_call->outbound_cpm_id = Auth::user()->ID;
+                $scheduled_call->save();
+            }
+
+            return $this->unsuccessfulCallHandler($patient);
 
         }
     }
-    
-    public function analyzePatientCCMProgress($patient){
-        
-//        $ccm_time = $patient
-        
-        
-        
-    }
 
-    public function predictNextCall($patient){
+    public function successfulCallHandler($patient){
 
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
-        $window_start = $patient_preferred_times['window_start'];
+        $window_start = Carbon::parse($patient_preferred_times['window_start'])->format('H:i:s');
+        $window_end = Carbon::parse($patient_preferred_times['window_end'])->format('H:i:s');
 
-//        $window_end = $patient_preferred_times['window_end']; // @todo: consider usage once algorithm is finer
         $dates = $patient_preferred_times['days'];
 
         $earliest_contact_day = Carbon::parse(min($dates))->addWeek()->format('Y-m-d');
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
+
+//        $this->storeScheduledCall($patient->ID, $window_start, $window_end, $earliest_contact_day);
 
         return [
             'patient' => $patient,
@@ -60,18 +76,20 @@ class SchedulerService
         ];
     }
 
-    public function predictNextAttempt($patient){
+    //Unsuccessful Call Handler
+
+    public function unsuccessfulCallHandler($patient){
 
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
-        $window_start = Carbon::parse($patient_preferred_times['window_start'])->addWeek()->format('H:i:s');;
+        $window_start = Carbon::parse($patient_preferred_times['window_start'])->format('H:i:s');
+        $window_end = Carbon::parse($patient_preferred_times['window_end'])->format('H:i:s');
 
         $earliest_contact_day = Carbon::now()->addDay()->format('Y-m-d');
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
-        $this->storeScheduledCall($patient->ID, $window_start, $earliest_contact_day);
-
+//        $this->storeScheduledCall($patient->ID, $window_start, $window_end, $earliest_contact_day);
 
         return [
             'patient' => $patient,
@@ -82,21 +100,26 @@ class SchedulerService
             'successful' => false
         ];
     }
+
+    //This is the function where the new call is created.
     
-    public function storeScheduledCall($patientId, $window_start, $date)
+    public function storeScheduledCall($patientId, $window_start, $window_end, $date)
     {
 
-        $window_end = Carbon::parse($window_start)->addHour()->format('H:i:s');
+        $patient = User::find($patientId);
+
+        $window_start = Carbon::parse($window_start)->format('H:i');
+        $window_end = Carbon::parse($window_start)->format('H:i');
 
         return Call::create([
 
             'service' => 'phone',
             'status' => 'scheduled',
 
-            'inbound_phone_number' => '',
+            'inbound_phone_number' => $patient->phone ? $patient->phone : '',
             'outbound_phone_number' => '',
 
-            'inbound_cpm_id' => $patientId,
+            'inbound_cpm_id' => $patient->ID,
 
             'call_time' => 0,
             'created_at' => Carbon::now()->toDateTimeString(),
@@ -109,4 +132,20 @@ class SchedulerService
 
         ]);
     }
+
+    //extract the last scheduled call
+
+    public function getCallForPatient($patient){
+
+        $call = Call::where(function($q) use ($patient)
+        {
+            $q->where('outbound_cpm_id', $patient->ID)
+            ->orWhere('inbound_cpm_id', $patient->ID);
+        })
+            ->where('status', '=' , 'scheduled')
+            ->first();
+
+        return $call;
+    }
+
 }
