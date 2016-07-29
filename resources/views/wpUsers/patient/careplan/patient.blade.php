@@ -273,6 +273,7 @@ $user_info = array();
                                                     {!! Form::select('preferred_contact_timezone', $timezones, (old('preferred_contact_timezone') ? old('preferred_contact_timezone') : $patient->preferred_contact_timezone ? $patient->preferred_contact_timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                                 </div>
                                             </div>
+
                                             <span class="help-block">{{ $errors->first('timezone') }}</span>
                                         </div>
                                         <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
