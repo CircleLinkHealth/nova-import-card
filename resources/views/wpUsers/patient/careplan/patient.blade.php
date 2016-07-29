@@ -266,7 +266,7 @@ $user_info = array();
                                         <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('timezone') ? 'has-error' : '' }}">
                                             <div class="row">
                                                 <div class="col-sm-12">
-                                                    <label for="preferred_contact_timezone">Timer Zone <span
+                                                    <label for="preferred_contact_timezone">Time Zone <span
                                                                 class="attention">*</span>:</label>
                                                 </div>
                                                 <div class="col-sm-12">
