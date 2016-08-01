@@ -26,8 +26,11 @@ class MonthlyBillingReportsController extends Controller
     public function makeMonthlyReport(Request $request)
     {
         //whether over or under 20 minutes
-        $under = $request->input('under', 'false');
-        $overOrUnder = $under ? '<' : '>';
+        $under = $request->input('under', false);
+
+        $overOrUnder = $under
+            ? '<'
+            : '>';
 
         //20 mins in seconds
         $ccmTimeMin = (20 * 60);
