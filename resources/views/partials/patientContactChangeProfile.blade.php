@@ -1,3 +1,13 @@
+<?php
+
+$contact_days_array = array();
+if($patient->patientInfo->preferred_cc_contact_days){
+    $contact_days_array = array_merge(explode(',',$patient->patientInfo->preferred_cc_contact_days));
+}
+
+?>
+
+
 <div class="col-md-12" style="">
     <div class="row" style="padding-bottom: 10px">
         <label for="contact_day">Contact Days</label>
@@ -5,13 +15,13 @@
                 class="selectpicker dropdown Valid form-control"
                 data-size="7" style="width: 155px"
                 multiple>
-            <option value="1" {{in_array("1", explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Mon</option>
-            <option value="2" {{in_array(" 2",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Tue</option>
-            <option value="3" {{in_array(" 3",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Wed</option>
-            <option value="4" {{in_array(" 4",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Thu</option>
-            <option value="5" {{in_array(" 5",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Fri</option>
-            <option value="6" {{in_array(" 6",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Sat</option>
-            <option value="7" {{in_array(" 7",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Sun</option>
+            <option value="1" {{in_array("1", $contact_days_array ) ? "selected" : ''}}>Mon</option>
+            <option value="2" {{in_array(" 2",$contact_days_array) ? "selected" : ''}}>Tue</option>
+            <option value="3" {{in_array(" 3",$contact_days_array) ? "selected" : ''}}>Wed</option>
+            <option value="4" {{in_array(" 4",$contact_days_array) ? "selected" : ''}}>Thu</option>
+            <option value="5" {{in_array(" 5",$contact_days_array) ? "selected" : ''}}>Fri</option>
+            <option value="6" {{in_array(" 6",$contact_days_array) ? "selected" : ''}}>Sat</option>
+            <option value="7" {{in_array(" 7",$contact_days_array) ? "selected" : ''}}>Sun</option>
         </select>
     </div>
 </div>
