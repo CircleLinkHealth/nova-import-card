@@ -223,6 +223,8 @@
 
                                     $('.collapse').collapse();
 
+                                    <?php //@todo check bug later. ?>
+
                                     $("input:checkbox").on('click', function () {
                                         // in the handler, 'this' refers to the box clicked on
                                         var $box = $(this);

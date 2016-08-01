@@ -153,6 +153,9 @@ class NotesController extends Controller
             }
 
             $patient_name = $patient->fullName;
+            
+            //Pull up user's call information. 
+            
 
             //Gather details to generate form
 
@@ -250,18 +253,12 @@ class NotesController extends Controller
         
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
-        $this->service->storeNote($input);
+        $note = $this->service->storeNote($input);
 
         $patient = User::where('ID',$patientId)->first();
 
         //UPDATE USER INFO CHANGES
         $info = $patient->patientInfo;
-
-        $info->general_comment = $input['general_comment'];
-        $info->daily_contact_window_start = $input['window_start'];
-        $info->daily_contact_window_end = $input['window_end'];
-        $info->preferred_calls_per_month = $input['frequency'];
-        $info->preferred_cc_contact_days = implode(', ',$input['days']);
 
         //User header update status
         $info->ccm_status = $input['status'];
@@ -293,6 +290,10 @@ class NotesController extends Controller
         $userRepo = new UserRepository();
         $userRepo->saveOrUpdatePatientCallWindows($patient, $params);
 
+        // If the note wasn't a phone call, redirect to Notes/Offline Activities page
+        // If the note was a successful or unsuccessful call, take to prediction
+        // engine
+        
         if(!isset($input['phone'])){
 
             return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
@@ -305,13 +306,13 @@ class NotesController extends Controller
             $info->last_successful_contact_time = Carbon::now()->format('Y-m-d');
             $info->save();
 
-            $prediction = (new SchedulerService)->predictNextCall($patient, true);
+            $prediction = (new SchedulerService)->predictCall($patient, $note->id, true);
 
             return view('wpUsers.patient.calls.create', $prediction);
 
         } else {
 
-            $prediction = (new SchedulerService)->predictNextCall($patient, false);
+            $prediction = (new SchedulerService)->predictCall($patient, $note->id, false);
 
             return view('wpUsers.patient.calls.create', $prediction);
 

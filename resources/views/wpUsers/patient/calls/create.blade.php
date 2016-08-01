@@ -17,13 +17,13 @@
                 </div>
                 {!! Form::open(array('url' => URL::route('call.schedule', array('patient' => $patient->ID)), 'method' => 'POST')) !!}
 
-                <div class="form-block col-md-6" style="padding-top: 13px">
+                <div class="form-block col-md-4" style="padding-top: 13px">
                     <div class="row">
                         <div class="new-note-item">
                             <div class="form-group">
                                 <div class="col-sm-12">
                                     <label for="observationDate">
-                                        Predicted Next Contact Date (Patient Local Time)
+                                        Predicted Next Contact Date
                                     </label>
                                 </div>
                                 <div class="col-sm-12">
@@ -34,16 +34,6 @@
                                                value="{{\Carbon\Carbon::parse($date)->format('Y-m-d')}}"
                                                required>
                                     </div>
-                                    <div>
-                                        <i>
-                                            @if($successful)
-                                                *currently defaults to a week after next earliest available date.
-                                            @else
-                                                *currently defaults to next business day.
-                                            @endif
-
-                                        </i>
-                                    </div>
                                 </div>
 
                             </div>
@@ -51,21 +41,43 @@
                     </div>
                 </div>
 
-                <div class="form-block col-md-6" style="padding-top: 13px">
+                <div class="form-block col-md-4" style="padding-top: 13px">
                     <div class="row">
                         <div class="new-note-item">
                             <div class="form-group">
 
                                 <div class="col-sm-12">
                                     <label for="activityKey">
-                                        Next Call Date (Patient Local Time)
+                                        Next Call Window Begin:
                                     </label>
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                            <input class="form-control" name="time" type="time"
+                                            <input class="form-control" name="window_start" type="time"
                                                    value="{{$patient->patientInfo->daily_contact_window_start}}"
-                                                   id="time" placeholder="time">
+                                                   id="window_start" placeholder="time">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-block col-md-4" style="padding-top: 13px">
+                    <div class="row">
+                        <div class="new-note-item">
+                            <div class="form-group">
+
+                                <div class="col-sm-12">
+                                    <label for="activityKey">
+                                        Next Call Window End:
+                                    </label>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <input class="form-control" name="window_end" type="time"
+                                               value="{{$patient->patientInfo->daily_contact_window_end}}"
+                                               id="window_start" placeholder="time">
                                     </div>
                                 </div>
                             </div>
