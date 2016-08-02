@@ -89,7 +89,8 @@ class PhiMail {
             //   <intermediate_CA_certificate.pem>
             //   <root_CA_certificate.pem>
             //
-            //PhiMailConnector::setClientCertificate("/path/to/client_key.pem", "**my_private_key_passphrase**");
+            PhiMailConnector::setClientCertificate("/resources/certificates/emr-sandbox-key.pem",
+                "IWantPorkEbabmitMushr00m$");
 
             // This command is recommended for added security to set the trusted 
             // SSL certificate or trust anchor for the phiMail server.
