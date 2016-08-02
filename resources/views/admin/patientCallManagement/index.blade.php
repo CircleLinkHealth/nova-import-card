@@ -27,7 +27,7 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-xs-2"><label for="date">Date:</label></div><div id="dtBox"></div>
-                                    <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date->format('Y-m-d') ? $date->format('Y-m-d') : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
+                                    <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
                                 </div>
 
                                 <div class="row">
