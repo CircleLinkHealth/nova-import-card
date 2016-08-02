@@ -32,7 +32,7 @@
 
                                 <div class="row">
                                     <div class="col-xs-2"><label for="filterNurse">Nurse:</label></div>
-                                    <div class="col-xs-4">{!! Form::select('filterNurse', $nurses, $filterNurse, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                    <div class="col-xs-4">{!! Form::select('filterNurse', array('all' => 'All') + $nurses, $filterNurse, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                                 </div>
                             </div>
                             <div class="row" style="margin-top:50px;">

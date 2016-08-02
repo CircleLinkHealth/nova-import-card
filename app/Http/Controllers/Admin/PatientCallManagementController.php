@@ -26,9 +26,11 @@ class PatientCallManagementController extends Controller {
 		//$date = new DateTime(date('Y-m-d'));
 		$date = 'All';
 		if($request->input('date')) {
-			$date = new DateTime($request->input('date') . ' 00:00:01');
-			$calls->where('call_date', '=', $date->format('Y-m-d'));
-			$date = $date->format('Y-m-d');
+			if ( strtolower($request->input('date')) != 'all' ) {
+				$date = new DateTime($request->input('date') . ' 00:00:01');
+				$calls->where('call_date', '=', $date->format('Y-m-d'));
+				$date = $date->format('Y-m-d');
+			}
 		}
 
 		// filter nurse
@@ -54,7 +56,7 @@ class PatientCallManagementController extends Controller {
 					$query->orWhere('name', 'no-ccm-care-center');
 				});
 			})
-			->pluck('display_name', 'ID');
+			->lists( 'display_name', 'ID' )->all();
 
 		return view('admin.patientCallManagement.index', compact(['calls', 'date', 'nurses', 'filterNurse']));
 	}
