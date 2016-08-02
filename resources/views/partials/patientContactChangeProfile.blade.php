@@ -1,7 +1,7 @@
 <?php
 
 $contact_days_array = array();
-if($patient->patientInfo->preferred_cc_contact_days){
+if(isset($patient->patientInfo)){
     $contact_days_array = array_merge(explode(',',$patient->patientInfo->preferred_cc_contact_days));
 }
 
