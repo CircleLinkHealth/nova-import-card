@@ -182,7 +182,7 @@ class RegressionTest extends TestCase
             ->type($agentRelationship, 'agent_relationship')
             ->type($agentEmail, 'agent_email')
             ->type($agentEmail, 'agent_email')
-            ->type($contactTime, 'preferred_contact_time')
+            //->type($contactTime, 'preferred_contact_time')
             ->select($contactMethod, 'preferred_contact_method')
             ->type($consentDate, 'consent_date')
             ->select($timezone, 'preferred_contact_timezone')
