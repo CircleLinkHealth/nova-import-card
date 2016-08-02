@@ -13,7 +13,8 @@ class Secure {
 	 */
 	public function handle($request, Closure $next)
 	{
-		if (! $request->secure() && ! app()->environment('local')) {
+		if (! $request->secure()
+			&& ! in_array(app()->environment(), ['local', 'testing'])) {
 			return redirect()->secure($request->getRequestUri());
 		}
 

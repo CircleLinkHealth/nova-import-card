@@ -14,7 +14,6 @@ class RegressionTest extends TestCase
 
     protected $provider;
 
-    protected $baseUrl = 'https://localhost';
     /**
      * Test Manager
      * Just like your main() in java :joy:
@@ -182,7 +181,7 @@ class RegressionTest extends TestCase
             ->type($agentRelationship, 'agent_relationship')
             ->type($agentEmail, 'agent_email')
             ->type($agentEmail, 'agent_email')
-            ->type($contactTime, 'preferred_contact_time')
+            //->type($contactTime, 'preferred_contact_time')
             ->select($contactMethod, 'preferred_contact_method')
             ->type($consentDate, 'consent_date')
             ->select($timezone, 'preferred_contact_timezone')
@@ -235,11 +234,11 @@ class RegressionTest extends TestCase
             'consent_date' => $consentDate,
             'gender' => $gender,
             'mrn_number' => $mrn,
-            'preferred_cc_contact_days' => '1, 2, 3, 4, 5, 6, 7',
+//            'preferred_cc_contact_days' => '1, 2, 3, 4, 5, 6, 7',
             'preferred_contact_location' => 10,
             'preferred_contact_language' => $language,
             'preferred_contact_method' => $contactMethod,
-            'preferred_contact_time' => $contactTime,
+//            'preferred_contact_time' => $contactTime,
             'preferred_contact_timezone' => $timezone,
             'daily_reminder_optin' => 'Y',
             'daily_reminder_time' => '08:00',

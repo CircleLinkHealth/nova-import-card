@@ -227,6 +227,11 @@ class NotesController extends Controller
             
             //Patient Call Windows:
             $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
+
+            $contact_days_array = array();
+            if($patient->patientInfo->preferred_cc_contact_days){
+                $contact_days_array = array_merge(explode(',',$patient->patientInfo->preferred_cc_contact_days));
+            }
             
             asort($provider_info);
             asort($careteam_info);
@@ -240,7 +245,8 @@ class NotesController extends Controller
                 'author_name' => $author_name,
                 'careteam_info' => $careteam_info,
                 'userTimeZone' => $userTimeZone,
-                'window' => $window
+                'window' => $window,
+                'contact_days_array' => $contact_days_array
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
