@@ -10,9 +10,16 @@
 
     <!-- The next div is the contact statement -->
 
+    @if($window_flag)
     <div class="col-xs-12 inline-block row" style=" padding: 0px; width: 98%; text-align: center;">
         Call Times: <span id="start_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i')}}</span> to <span id="end_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('H:i')}}</span>
         on <span id="days_text">{{\App\PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days)}}</span>; <span id="frequency_text">{{$patient->patientInfo->preferred_calls_per_month}}</span>x Monthly
+    @else
+            <div class="col-xs-12 inline-block row" style=" padding: 0px; width: 98%; text-align: center;">
+                <span style="color: red"><b> Please enter preferred call times, if known.</b></span>
+
+    @endif
+
 
 
         <button type="" class="show_hide edit_button" href="#" rel="#slidingDiv">
@@ -67,9 +74,15 @@
                     </select>
                 </div>
 
+                @if($window_flag)
                 <div class="col-xs-12" style="color: red; text-align: center">
                     <b>*Please save the entire note to update call times</b>
                 </div>
+                @else
+                    <div class="col-xs-12" style="text-align: center">
+                        <b>*Saving note will create call times</b>
+                    </div>
+                @endif
 
             </div>
         </div>
