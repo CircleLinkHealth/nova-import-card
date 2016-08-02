@@ -1,14 +1,5 @@
 <?php
 
-Route::get('cal', function () {
-
-//    $patients = \App\PatientInfo::where('user_id', 874);
-//
-//    
-//
-//    return $no_of_calls;
-
-});
 Route::get('emr', function () {
     (new \App\Services\PhiMail\PhiMail)->sendReceive();
 });
@@ -267,6 +258,9 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix' => 'admin'
     ], function () {
+
+        Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
+
 
         Route::get('/reports/monthly-billing', 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport');
 
