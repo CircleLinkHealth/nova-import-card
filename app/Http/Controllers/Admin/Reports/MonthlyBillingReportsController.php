@@ -25,6 +25,13 @@ class MonthlyBillingReportsController extends Controller
 {
     public function makeMonthlyReport(Request $request)
     {
+        //whether over or under 20 minutes
+        $under = $request->input('under', false);
+
+        $overOrUnder = $under
+            ? '<'
+            : '>';
+
         //20 mins in seconds
         $ccmTimeMin = (20 * 60);
         $month = $request->input('month');
@@ -43,7 +50,7 @@ class MonthlyBillingReportsController extends Controller
             ->whereBetween('performed_at', [
                 $start, $end
             ])
-            ->having('ccmTime', '>', $ccmTimeMin)
+            ->having('ccmTime', $overOrUnder, $ccmTimeMin)
             ->groupBy('patient_id');
 
         $patientsOver20Mins = (new Collection($patientsOver20MinsQuery->get()))->keyBy('patient_id');

@@ -14,6 +14,7 @@ class RegressionTest extends TestCase
 
     protected $provider;
 
+    protected $baseUrl = 'https://localhost';
     /**
      * Test Manager
      * Just like your main() in java :joy:

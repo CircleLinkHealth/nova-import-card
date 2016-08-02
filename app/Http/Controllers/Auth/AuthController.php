@@ -66,6 +66,18 @@ class AuthController extends Controller
 
     }
 
+    /**
+     * Show the application registration form.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getLogout()
+    {
+        auth()->logout();
+        session()->flush();
+        return redirect()->route('login', [])->send();
+    }
+
 
     /**
      * Handle a registration request for the application.
