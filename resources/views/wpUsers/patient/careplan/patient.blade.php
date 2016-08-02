@@ -234,7 +234,7 @@ $user_info = array();
                             </div>
                             <div class="main-form-block main-form-secondary col-lg-5">
                                 <h4 class="form-title">Contact Preferences</h4>
-                                <div class="row">
+                                <div class="row" style=" padding-right: 15px;">
                                         <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
                                         @include('partials.patientContactChangeProfile')
                                         </div>
@@ -266,13 +266,14 @@ $user_info = array();
                                         <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('timezone') ? 'has-error' : '' }}">
                                             <div class="row">
                                                 <div class="col-sm-12">
-                                                    <label for="preferred_contact_timezone">Timer Zone <span
+                                                    <label for="preferred_contact_timezone">Time Zone <span
                                                                 class="attention">*</span>:</label>
                                                 </div>
                                                 <div class="col-sm-12">
                                                     {!! Form::select('preferred_contact_timezone', $timezones, (old('preferred_contact_timezone') ? old('preferred_contact_timezone') : $patient->preferred_contact_timezone ? $patient->preferred_contact_timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                                 </div>
                                             </div>
+
                                             <span class="help-block">{{ $errors->first('timezone') }}</span>
                                         </div>
                                         <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
@@ -299,7 +300,7 @@ $user_info = array();
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
                                                 {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:
     :') !!}
-                                                {!! Form::select('preferred_contact_location', $locations, $patient->preferred_contact_location, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
+                                                {!! Form::select('preferred_contact_location', $locations, $patient->preferred_contact_location, ['class' => 'form-control select-picker', 'style' => 'width:90;']) !!}
                                             </div>
                                         @else
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">

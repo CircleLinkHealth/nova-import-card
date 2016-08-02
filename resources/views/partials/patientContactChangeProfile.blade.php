@@ -1,34 +1,34 @@
+<?php
+
+$contact_days_array = array();
+if($patient->patientInfo->preferred_cc_contact_days){
+    $contact_days_array = array_merge(explode(',',$patient->patientInfo->preferred_cc_contact_days));
+}
+
+?>
+
+
 <div class="col-md-12" style="">
-    <div class="row">
+    <div class="row" style="padding-bottom: 10px">
         <label for="contact_day">Contact Days</label>
         <select id="days" name="days[]"
                 class="selectpicker dropdown Valid form-control"
                 data-size="7" style="width: 155px"
                 multiple>
-            @if(!$patient->patientInfo)
-                <option value="1" selected>Mon</option>
-                <option value="2">Tue</option>
-                <option value="3" selected>Wed</option>
-                <option value="4">Thu</option>
-                <option value="5" selected>Fri</option>
-                <option value="6">Sat</option>
-                <option value="7">Sun</option>
-            @else
-                <option value="1" {{in_array("1", explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Mon</option>
-                <option value="2" {{in_array(" 2",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Tue</option>
-                <option value="3" {{in_array(" 3",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Wed</option>
-                <option value="4" {{in_array(" 4",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Thu</option>
-                <option value="5" {{in_array(" 5",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Fri</option>
-                <option value="6" {{in_array(" 6",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Sat</option>
-                <option value="7" {{in_array(" 7",explode(',',$patient->patientInfo->preferred_cc_contact_days)) ? "selected" : ''}}>Sun</option>
-            @endif
+            <option value="1" {{in_array("1", $contact_days_array ) ? "selected" : ''}}>Mon</option>
+            <option value="2" {{in_array(" 2",$contact_days_array) ? "selected" : ''}}>Tue</option>
+            <option value="3" {{in_array(" 3",$contact_days_array) ? "selected" : ''}}>Wed</option>
+            <option value="4" {{in_array(" 4",$contact_days_array) ? "selected" : ''}}>Thu</option>
+            <option value="5" {{in_array(" 5",$contact_days_array) ? "selected" : ''}}>Fri</option>
+            <option value="6" {{in_array(" 6",$contact_days_array) ? "selected" : ''}}>Sat</option>
+            <option value="7" {{in_array(" 7",$contact_days_array) ? "selected" : ''}}>Sun</option>
         </select>
     </div>
 </div>
 
 <div class="col-md-12" style="">
-    <div class="row">
-        <label for="window_start">Call Start Time</label>
+    <div class="row"style="padding-bottom: 10px">
+        <label for="window_start">Calls Start Time</label>
         <input class="form-control" name="window_start" type="time"
                value="@if($patient->patientInfo) {{$patient->patientInfo->daily_contact_window_start}} @endif"
                id="window_start" placeholder="time">
@@ -36,8 +36,8 @@
 </div>
 
 <div class="col-md-12" style="">
-    <div class="row">
-        <label for="window_end">Call End Time</label>
+    <div class="row" style="padding-bottom: 10px">
+        <label for="window_end">Calls End Time</label>
         <input class="form-control" name="window_end" type="time"
                value="@if($patient->patientInfo) {{$patient->patientInfo->daily_contact_window_end}} @endif"
                id="window_end" placeholder="time">
@@ -45,11 +45,11 @@
 </div>
 
 <div class="col-md-12" style="">
-    <div class="row">
+    <div class="row" style="padding-bottom: 10px">
         <label for="frequency">Frequency</label>
         <select id="frequency" name="frequency"
                 class="selectpickerX dropdown Valid form-control" data-size="2"
-                style="width: 150px" >
+                style="width: 90px" >
             @if(!$patient->patientInfo)
                 <option value="1"> 1x Monthly</option>
                 <option value="2" selected> 2x Monthly</option>
