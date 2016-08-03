@@ -6,46 +6,40 @@
 @section('content')
 
     <script type="text/javascript" src="{{ asset('/js/admin/reports/patientCallManagement.js') }}"></script>
-    <div class="container-fluid">
+    <div class="">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-8">
                         <h1>Patient Call List</h1>
+                        <p>My assigned scheduled calls in order by priority:</p>
                     </div>
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">My patients to call:</div>
-                    <div class="panel-body">
+                <div class="">
+                    <div class="">
                         @include('errors.errors')
                         @include('errors.messages')
 
-                        <div class="row">
-                            {!! Form::open(array('url' => URL::route('patientCallList.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                        </div>
-
-
-
-                        <div id="filters" class="">
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-xs-2"><label for="date">Date:</label></div><div id="dtBox"></div>
-                                    <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
-                                </div>
-                            </div>
-                            <div class="row" style="margin-top:50px;">
-                                <div class="col-sm-12">
-                                    <div class="" style="text-align:center;">
-                                        {!! Form::hidden('action', 'filter') !!}
-                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
-                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</button>
-                                        </form>
+                        {!! Form::open(array('url' => URL::route('patientCallList.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                        <div id="filters" class="" style="margin:40px 0px;">
+                            <h3>Filters</h3>
+                                <div class="form-group">
+                                    <div id="dtBox"></div>
+                                    <label for="date" class="col-sm-2 control-label">Date: </label>
+                                    <div class="col-sm-10">
+                                        <input id="date" class="form-control pull-right" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span>
                                     </div>
                                 </div>
-                            </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10" style="margin-top:10px;">
+                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filter</button>
+                                    </div>
+                                </div>
                         </div>
+                        </form>
 
-                        <table class="table table-striped">
+                        <h3>Scheduled Calls</h3>
+                        <table class="table table-striped" style="">
                             <thead>
                             <tr>
                                 <th></th>
@@ -91,7 +85,7 @@
                                         <td>-</td>
                                         <td class="text-right">
                                             @if(Entrust::can('users-edit-all'))
-                                                <a href="{{ URL::route('admin.patientCallManagement.edit', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Complete call</a>
+                                                <a href="{{ URL::route('patientCallList.index', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Complete call</a>
                                             @endif
                                         </td>
                                     </tr>
