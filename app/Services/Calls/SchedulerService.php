@@ -61,6 +61,8 @@ class SchedulerService
 
         //TO CALCULATE
 
+        $next_contact_windows = PatientContactWindow::getNextWindowsForPatient($patient);
+
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
         return [
@@ -70,6 +72,7 @@ class SchedulerService
             //give it the start time for now...
             'window_start' => $window_start,
             'window_end' => $window_end,
+            'next_contact_windows' => $next_contact_windows,
             'successful' => true
         ];
     }

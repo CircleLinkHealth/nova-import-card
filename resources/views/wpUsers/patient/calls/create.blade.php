@@ -84,7 +84,40 @@
                         </div>
                     </div>
                 </div>
+
                 <input type="hidden" name="patient_id" value="{{$patient->ID}}"/>
+
+
+                @if($next_contact_windows)
+                <div class="form-block col-md-12">
+                    <div class="row">
+                        <div class="new-note-item">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <div class="form-item form-item-spacing">
+                                            <div class="col-sm-12">
+                                                <label for="activityKey">
+                                                    Patient's Next Available Call Windows:
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <ul class="list-group">
+                                                @foreach($next_contact_windows as $contact_window)
+                                                    <li class="list-group-item">
+                                                        On {{\Carbon\Carbon::parse($contact_window['string_start'])->toFormattedDateString()}} between {{\Carbon\Carbon::parse($contact_window['string_start'])->format('h:i A')}} and {{\Carbon\Carbon::parse($contact_window['string_end'])->format('h:i A')}}
+                                                    </li>
+                                                @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
 
         <div class="form-block col-md-12">
             <div class="row">
