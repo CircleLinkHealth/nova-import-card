@@ -54,13 +54,13 @@
 
                 <div class="col-xs-3" style="padding-left: 0px;">
                     <input class="form-control" name="window_start" type="time"
-                           value="{{$patient->patientInfo->daily_contact_window_start}}"
+                           value="{{$patient->patientInfo->getDailyContactWindowStartAttribute()}}"
                            id="window_start" placeholder="time">
                 </div>
 
                 <div class="col-xs-3" style="padding-left: 0px;">
                     <input class="form-control" name="window_end" type="time"
-                           value="{{$patient->patientInfo->daily_contact_window_end}}"
+                           value="{{$patient->patientInfo->getDailyContactWindowEndAttribute()}}"
                            id="window_end" placeholder="time">
                 </div>
                 <div class="col-xs-2" style="padding-left: 0px; padding-bottom: 3px">

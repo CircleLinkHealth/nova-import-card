@@ -54,7 +54,7 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                             <input class="form-control" name="window_start" type="time"
-                                                   value="{{$patient->patientInfo->daily_contact_window_start}}"
+                                                   value="{{$window_start}}"
                                                    id="window_start" placeholder="time">
                                     </div>
                                 </div>
@@ -76,7 +76,7 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <input class="form-control" name="window_end" type="time"
-                                               value="{{$patient->patientInfo->daily_contact_window_end}}"
+                                               value="{{$window_end}}"
                                                id="window_start" placeholder="time">
                                     </div>
                                 </div>

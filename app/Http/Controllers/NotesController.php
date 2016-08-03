@@ -233,7 +233,6 @@ class NotesController extends Controller
             }
             
             //Patient Call Windows:
-            $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
             
             asort($provider_info);
             asort($careteam_info);
@@ -247,7 +246,6 @@ class NotesController extends Controller
                 'author_name' => $author_name,
                 'careteam_info' => $careteam_info,
                 'userTimeZone' => $userTimeZone,
-                'window' => $window,
                 'window_flag' => $patient_contact_window_exists
             ];
 
@@ -276,11 +274,11 @@ class NotesController extends Controller
         }
 
         if(isset($input['window_start'])){
-            $info->daily_contact_window_start = $input['window_start'];
+            $info->setDailyContactWindowStartAttribute($input['window_start']);
         }
 
         if(isset($input['window_end'])){
-            $info->daily_contact_window_end = $input['window_end'];
+            $info->setDailyContactWindowEndAttribute($input['window_end']);
         }
 
         if(isset($input['frequency'])){
