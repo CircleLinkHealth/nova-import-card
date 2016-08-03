@@ -54,4 +54,11 @@ class CallController extends Controller
         //
     }
 
+    public function showCallsForPatient($patientId)
+    {
+        $calls = Call::where('inbound_cpm_id',$patientId)->paginate();
+
+        return view('admin.calls.index', ['calls' => $calls, 'patient' => User::find($patientId)]);
+    }
+
 }

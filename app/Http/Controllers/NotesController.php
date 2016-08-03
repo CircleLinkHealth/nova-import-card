@@ -152,6 +152,13 @@ class NotesController extends Controller
                 return response("User not found", 401);
             }
 
+            //set contact flag
+            $patient_contact_window_exists = false; 
+            
+            if(count($patient->patientInfo->patientContactWindows) != 0){
+                $patient_contact_window_exists = true;
+            }
+
             $patient_name = $patient->fullName;
             
             //Pull up user's call information. 
@@ -246,6 +253,7 @@ class NotesController extends Controller
                 'careteam_info' => $careteam_info,
                 'userTimeZone' => $userTimeZone,
                 'window' => $window,
+                'window_flag' => $patient_contact_window_exists
                 'contact_days_array' => $contact_days_array
             ];
 
