@@ -219,6 +219,10 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix' => 'admin'
     ], function () {
 
+        Route::get('emr-direct/check', function (){
+            (new \App\Services\PhiMail\PhiMail())->sendReceive();
+        });
+
         Route::get('/reports/monthly-billing', 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport');
 
         Route::get('dupes', function () {

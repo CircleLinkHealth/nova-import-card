@@ -90,7 +90,7 @@ class PhiMail {
             //   <intermediate_CA_certificate.pem>
             //   <root_CA_certificate.pem>
             //
-            PhiMailConnector::setClientCertificate("/resources/certificates/emr-sandbox-key.pem",
+            PhiMailConnector::setClientCertificate("/resources/certificates/emr-sandbox-conc-keys.pem",
                 "IWantPorkEbabmitMushr00m$");
 
             // This command is recommended for added security to set the trusted 
@@ -157,8 +157,8 @@ class PhiMail {
             // API documentation for further information about address groups.
             if ($receive) {
                 while (true) {
-//                    echo ("============\n");
-//                    echo ("Checking mailbox\n");
+                    echo ("============\n");
+                    echo ("Checking mailbox\n");
 
                     // check next message or status update
                     $cr = $c->check();
@@ -173,10 +173,10 @@ class PhiMail {
                         // If you are checking messages for an address group,
                         // $cr->recipient will contain the address in that
                         // group to which this message should be delivered.
-//                        echo ("A new message is available for " . $cr->recipient . "\n");
-//                        echo ("from " . $cr->sender . "; id "
-//                            . $cr->messageId . "; #att=" . $cr->numAttachments
-//                            . "\n");
+                        echo ("A new message is available for " . $cr->recipient . "\n");
+                        echo ("from " . $cr->sender . "; id "
+                            . $cr->messageId . "; #att=" . $cr->numAttachments
+                            . "\n");
 
                         for ($i = 0; $i <= $cr->numAttachments; $i++) {
                             // Get content for part i of the current message.
@@ -200,7 +200,7 @@ class PhiMail {
                             if (!strncmp($showRes->mimeType, 'text/', 5)) {
                                 // ... do something with text parts ...
                                 // For this example we assume ascii or utf8 
-                                $s = $showRes->data;
+//                                $s = $showRes->data;
 //                                echo ("Content:\n" . $s . "\n");
                             } else {
                                 // ... do something with binary data ...
@@ -239,7 +239,7 @@ class PhiMail {
                                 $importer = new QAImportManager($vendor->program_id, $ccda);
                                 $importer->generateCarePlanFromCCD();
 
-//                                echo ("{$showRes->filename} imported successfully");
+                                echo ("{$showRes->filename} imported successfully");
                                 
                                 $ccdas[] = [
                                     'id' => $ccda->id,
@@ -249,13 +249,13 @@ class PhiMail {
 
                             // Display the list of attachments and associated info. This info is only
                             // included with message part 0.
-//                            for ($k = 0; $i == 0 && $k < $cr->numAttachments; $k++) {
-//                                echo ("Attachment " . ($k + 1)
-//                                    . ": " . $showRes->attachmentInfo[$k]->mimeType
-//                                    . " fn:" . $showRes->attachmentInfo[$k]->filename
-//                                    . " Desc:" . $showRes->attachmentInfo[$k]->description
-//                                    . "\n");
-//                            }
+                            for ($k = 0; $i == 0 && $k < $cr->numAttachments; $k++) {
+                                echo ("Attachment " . ($k + 1)
+                                    . ": " . $showRes->attachmentInfo[$k]->mimeType
+                                    . " fn:" . $showRes->attachmentInfo[$k]->filename
+                                    . " Desc:" . $showRes->attachmentInfo[$k]->description
+                                    . "\n");
+                            }
                         }
 
                         // This signals the server that the message can be safely removed from the queue
@@ -265,8 +265,12 @@ class PhiMail {
 
                         if ($cr->numAttachments > 0) $this->notifyAdmins($ccdas);
 
+                        $message = "Checked EMR Direct Mailbox. There where {$cr->numAttachments} messages. \n";
+
+                        echo $message;
+
                         Slack::to('#background-tasks')
-                            ->send("Checked EMR Direct Mailbox. There where {$cr->numAttachments} messages. \n");
+                            ->send($message);
 
                     } else {
 
@@ -301,7 +305,7 @@ class PhiMail {
             $c->close();
         } catch (\Exception $ignore) { }
 
-//        echo ("============END\n");
+        echo ("============END\n");
 
     }
 }
