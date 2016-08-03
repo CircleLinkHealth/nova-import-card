@@ -27,7 +27,12 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-xs-2"><label for="date">Date:</label></div><div id="dtBox"></div>
-                                    <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date->format('Y-m-d') ? $date->format('Y-m-d') : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
+                                    <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-2"><label for="filterNurse">Nurse:</label></div>
+                                    <div class="col-xs-4">{!! Form::select('filterNurse', array('all' => 'All') + $nurses, $filterNurse, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                                 </div>
                             </div>
                             <div class="row" style="margin-top:50px;">
@@ -58,6 +63,7 @@
                                 <th>Nurse</th>
                                 <th>Patient</th>
                                 <th>DOB</th>
+                                <th>Date</th>
                                 <th>Contact Window Start</th>
                                 <th>Contact Window End</th>
                                 <th>Call Center Status</th>
@@ -84,10 +90,12 @@
                                         </td>
                                         <td>{{ $call->inbound_cpm_id }}</td>
                                         <td>-</td>
+                                        <td>{{ $call->call_date }}</td>
                                         <td>{{ $call->window_start }}</td>
                                         <td>{{ $call->window_end }}</td>
                                         <td>-</td>
                                         <td>{{ $call->status }}</td>
+                                        <td>-</td>
                                         <td>-</td>
                                         <td>-</td>
                                         <td>-</td>

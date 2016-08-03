@@ -19,19 +19,46 @@ class PatientCallManagementController extends Controller {
 	 */
 	public function index(Request $request)
 	{
-		$date = new DateTime(date('Y-m-d'));
+		// get all calls
+		$calls = Call::where('id', '>', 0);
 
-		// if form submitted dates, override here
+		// filter date
+		//$date = new DateTime(date('Y-m-d'));
+		$date = 'All';
 		if($request->input('date')) {
-			$date = new DateTime($request->input('date') . ' 00:00:01');
+			if ( strtolower($request->input('date')) != 'all' ) {
+				$date = new DateTime($request->input('date') . ' 00:00:01');
+				$calls->where('call_date', '=', $date->format('Y-m-d'));
+				$date = $date->format('Y-m-d');
+			}
 		}
 
-		// get all calls for date
-		$calls = Call::where('call_date', '=', $date->format('Y-m-d'));
+		// filter nurse
+		$filterNurse = array();
+		if ( !empty($request->input('filterNurse')) ) {
+			$filterNurse = $request->input('filterNurse');
+			if ( $request->input('filterNurse') != 'all' ) {
+				$calls->where( 'outbound_cpm_id', '=', $filterNurse );
+			}
+		}
 
-		$calls = $calls->paginate( 20 );
+		$calls->orderBy('call_date', 'desc');
+		$calls = $calls->paginate( 10 );
 
-		return view('admin.patientCallManagement.index', compact(['calls', 'date']));
+
+
+		// get all nurses
+		$nurses = User::with('meta')
+			->with('roles')
+			->whereHas('roles', function($q) {
+				$q->where(function ($query) {
+					$query->orWhere('name', 'care-center');
+					$query->orWhere('name', 'no-ccm-care-center');
+				});
+			})
+			->lists( 'display_name', 'ID' )->all();
+
+		return view('admin.patientCallManagement.index', compact(['calls', 'date', 'nurses', 'filterNurse']));
 	}
 
 	/**
@@ -53,7 +80,7 @@ class PatientCallManagementController extends Controller {
 			return response( "Call not found", 401 );
 		}
 
-		// get all users with paused ccm_status
+		// get all nurses
 		$nurses = User::with('meta')
 			->with('roles')
 			->whereHas('roles', function($q) {
