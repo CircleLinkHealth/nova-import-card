@@ -18,7 +18,7 @@
         });
     </script>
 
-    {!! Form::open(array('url' => URL::route('admin.appConfig.store', array()), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => URL::route('MonthlyBillingReportsController.makeMonthlyReport', array()), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -38,8 +38,24 @@
                     <div class="panel-body">
 
                         <div class="form-group">
-                            <div class="col-sm-2">{!! Form::label('ccm_time_minutes', 'CCM Time in Minutes:') !!}</div>
-                            <div class="col-sm-10">{!! Form::text('ccm_time_minutes', '20', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-2">
+                                {!! Form::label('ccm_time_minutes', 'CCM Time in Minutes:') !!}
+                            </div>
+                            <div class="col-sm-2">
+                                {!! Form::text('ccm_time_minutes', '20', ['class' => 'form-control']) !!}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-2">
+                                {!! Form::label('under', 'Under') !!}
+                            </div>
+                            <div class="col-sm-10">
+                                <div class="col-sm-1">
+                                    {!! Form::checkbox('under', 'true', false, ['class' => 'form-control']) !!}
+                                </div>
+                                check for under, leave unchecked for over
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -59,14 +75,11 @@
                                 |
                                 <button class="btn-primary btn-xs" id="programsUncheckAll">Uncheck All</button>
                                 @foreach( $programs as $id => $name )
-                                    <div class="row" id="program_{{ $id }}"
-                                         style="border-bottom:1px solid #000;">
-                                        <div class="col-sm-2">
-                                            <div class="text-right">
-                                                {!! Form::checkbox('programs[]', $id, [], ['style' => '', 'class' => 'programs']) !!}
-                                            </div>
+                                    <div class="row" id="program_{{ $id }}">
+                                        <div class="col-sm-12">
+                                            {!! Form::checkbox('programs[]', $id, [], ['style' => '', 'class' => 'programs']) !!}
+                                            {!! Form::label("label-$name", "$name - ID: $id", array('class' => '')) !!}
                                         </div>
-                                        <div class="col-sm-10">{!! Form::label("label-$name", "$name - ID: $id", array('class' => '')) !!}</div>
                                     </div>
                                 @endforeach
                             </div>
