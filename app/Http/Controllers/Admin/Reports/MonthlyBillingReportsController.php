@@ -23,6 +23,13 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class MonthlyBillingReportsController extends Controller
 {
+    public function create()
+    {
+        $programs = Program::orderBy( 'blog_id', 'desc' )->lists( 'display_name', 'blog_id' )->all();
+
+        return view('admin.monthlyBillingReports.create', compact(['programs']));
+    }
+    
     public function makeMonthlyReport(Request $request)
     {
         //whether over or under 20 minutes
