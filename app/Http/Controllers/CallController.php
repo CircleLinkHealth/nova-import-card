@@ -21,8 +21,6 @@ class CallController extends Controller
 
     public function index(Request $request)
     {
-
-        $input = $request->all();
         
         $calls = Call::where('status','scheduled')->get();
 

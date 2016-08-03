@@ -253,7 +253,7 @@ class NotesController extends Controller
                 'careteam_info' => $careteam_info,
                 'userTimeZone' => $userTimeZone,
                 'window' => $window,
-                'contact_days_array' => $contact_days_array
+                'contact_days_array' => $contact_days_array,
                 'window_flag' => $patient_contact_window_exists
             ];
 
