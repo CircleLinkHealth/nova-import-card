@@ -135,20 +135,15 @@ class PatientInfo extends Model {
 		$this->save();
 		return true;
 		// remove patient contact windows
-		if($this->patientContactWindows) {
-			$this->patientContactWindows()->delete();
-		}
-		// loop through days and recreate patientContactWindows
-		dd($this->preferred_cc_contact_days);
-		$days = implode(', ',$value);
 	}
 
 	// daily_contact_window_end
 	public function getDailyContactWindowEndAttribute() {
 		return Carbon::parse($this->attributes['daily_contact_window_end'])->format('H:i');
 	}
-	public function setDailyContactWindowEndAttribute() {
-		//dd('oh yeah!');
+	public function setDailyContactWindowEndAttribute($value) {
+		$this->attributes['daily_contact_window_end'] = $value;
+		$this->save();
 	}
 
 

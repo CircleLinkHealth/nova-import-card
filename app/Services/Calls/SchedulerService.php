@@ -61,6 +61,8 @@ class SchedulerService
 
         //TO CALCULATE
 
+        $next_contact_windows = PatientContactWindow::getNextWindowsForPatient($patient);
+
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
         return [
@@ -70,6 +72,7 @@ class SchedulerService
             //give it the start time for now...
             'window_start' => $window_start,
             'window_end' => $window_end,
+            'next_contact_windows' => $next_contact_windows,
             'successful' => true
         ];
     }
@@ -85,27 +88,25 @@ class SchedulerService
             $scheduled_call->save();
 
         } else {
+
             (new NoteService)->storeCallForNote($note, 'not reached', $patient, Auth::user(), 'outbound');
 
         }
 
+
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
-        $window_start = Carbon::parse($patient_preferred_times['window_start'])->format('H:i:s');
-        $window_end = Carbon::parse($patient_preferred_times['window_end'])->format('H:i:s');
+        $window_start = Carbon::parse($patient_preferred_times['window_start'])->format('H:i');
+        $window_end = Carbon::parse($patient_preferred_times['window_end'])->format('H:i');
 
+        //Schedule call for tomorrow.
         $earliest_contact_day = Carbon::now()->addDay()->format('Y-m-d');
-
-        $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
-
-//      $this->storeScheduledCall($patient->ID, $window_start, $window_end, $earliest_contact_day);
-
+        
         return [
             'patient' => $patient,
             'date' => $earliest_contact_day,
-            'window' => $window,
-            //give it the start time for now...
-            'raw_time' => $window_start,
+            'window_start' => $window_start,
+            'window_end' => $window_end,
             'successful' => false
         ];
     }
