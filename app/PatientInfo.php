@@ -133,8 +133,6 @@ class PatientInfo extends Model {
 	public function setDailyContactWindowStartAttribute($value) {
 		$this->attributes['daily_contact_window_start'] = $value;
 		$this->save();
-		return true;
-		// remove patient contact windows
 	}
 
 	// daily_contact_window_end
