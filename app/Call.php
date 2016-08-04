@@ -56,11 +56,14 @@ class Call extends Model
         $date_start = Carbon::parse($date)->startOfMonth();
         $date_end = Carbon::parse($date)->endOfMonth();
 
-        $no_of_calls = Call::where('outbound_cpm_id', $patient->user_id)
-            ->orWhere('inbound_cpm_id', $patient->user_id)
-            ->where('created_at', '<=' , $date_end)
-            ->where('created_at', '>=' , $date_start)->count();
-
+        $no_of_calls = Call::where(
+                function ($q) use ($patient){
+                    $q->where('outbound_cpm_id', $patient->ID)
+                        ->orWhere('inbound_cpm_id', $patient->ID);
+                })
+            ->where('created_at', '>=' , $date_start)
+            ->where('created_at', '<=' , $date_end)->count();
+        
         return $no_of_calls;
     }
 
@@ -71,8 +74,8 @@ class Call extends Model
 
         $no_of_successful_calls = Call::where('status','reached')->where(
             function ($q) use ($patient){
-                $q->where('outbound_cpm_id', $patient->user_id)
-                    ->orWhere('inbound_cpm_id', $patient->user_id);
+                $q->where('outbound_cpm_id', $patient->ID)
+                    ->orWhere('inbound_cpm_id', $patient->ID);
             })
             ->where('created_at', '<=' , $date_end)
             ->where('created_at', '>=' , $date_start)->count();

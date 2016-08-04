@@ -156,10 +156,10 @@
                                                 <div class="col-sm-12">
                                                     <ul class="list-group">
                                                             <li class="list-group-item">
-                                                               <b> Successful Calls:</b> <span style="color: green">{{\App\Services\NoteService::numberOfSuccessfulCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString())}}</span>
+                                                               <b> Successful Calls:</b> <span style="color: green">{{\App\Call::numberOfSuccessfulCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString())}}</span>
                                                             </li>
                                                             <li class="list-group-item">
-                                                                <b> Total Calls:</b> {{\App\Services\NoteService::numberOfCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString())}}
+                                                                <b> Total Calls:</b> {{\App\Call::numberOfCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString())}}
                                                             </li>
                                                     </ul>
                                                 </div>

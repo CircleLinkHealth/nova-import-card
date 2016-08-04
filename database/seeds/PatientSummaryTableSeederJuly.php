@@ -1,5 +1,6 @@
 <?php
 
+use App\Call;
 use Illuminate\Database\Seeder;
 
 class PatientSummaryTableSeederJuly extends Seeder
@@ -19,12 +20,16 @@ class PatientSummaryTableSeederJuly extends Seeder
             $this->command->info('Transferring Patient: ' . $patient->user_id .  '...');
             $this->command->line('');
 
-            $no_of_calls = \App\Call::where('outbound_cpm_id', $patient->user_id)
-                                        ->orWhere('inbound_cpm_id', $patient->user_id)
-                                        ->where('created_at', '<=' , '2016-07-31')
-                                        ->where('created_at', '>=' , '2016-07-01')->count();
+            $no_of_calls = Call::where('outbound_cpm_id', $patient->user_id)
+                ->where(
+                    function ($q) use ($patient){
+                        $q->where('outbound_cpm_id', $patient->user_id)
+                            ->orWhere('inbound_cpm_id', $patient->user_id);
+                    })
+                ->where('created_at', '>=' , '2016-07-01')
+                ->where('created_at', '<=' , '2016-07-31')->count();
 
-            $no_of_successful_calls = \App\Call::where('status','reached')->where(function ($q) use ($patient){
+            $no_of_successful_calls = Call::where('status','reached')->where(function ($q) use ($patient){
                                              $q->where('outbound_cpm_id', $patient->user_id)
                                               ->orWhere('inbound_cpm_id', $patient->user_id);})
                                         ->where('created_at', '<=' , '2016-07-31')
