@@ -59,7 +59,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.patientCallManagement.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ URL::route('admin.patientCallManagement.index', array()) }}" class="btn btn-danger">Back</a>
                                     {!! Form::submit('Update Call', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

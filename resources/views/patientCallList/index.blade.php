@@ -49,7 +49,6 @@
                                 <th>Date</th>
                                 <th>Contact Window Start</th>
                                 <th>Contact Window End</th>
-                                <th>Call Center Status</th>
                                 <th>Status</th>
                                 <th>Last Date called</th>
                                 <th>CCM Time to date</th>
@@ -76,13 +75,30 @@
                                         <td>{{ $call->call_date }}</td>
                                         <td>{{ $call->window_start }}</td>
                                         <td>{{ $call->window_end }}</td>
-                                        <td>-</td>
                                         <td>{{ $call->status }}</td>
                                         <td>-</td>
+                                        <td>
+                                            @if($call->inboundUser)
+                                                {{ $call->inboundUser->patientInfo->currentMonthCCMTime }}
+                                            @else
+                                                <em style="color:red;">-</em>
+                                            @endif
+                                        </td>
                                         <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
+                                        <td>
+                                            @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider'))
+                                                {{ $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->member->display_name }}
+                                            @else
+                                                <em style="color:red;">-</em>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($call->inboundUser && $call->inboundUser->primaryProgram)
+                                                {{ $call->inboundUser->primaryProgram->display_name }}
+                                            @else
+                                                <em style="color:red;">unassigned</em>
+                                            @endif
+                                        </td>
                                         <td class="text-right">
                                             @if(Entrust::can('users-edit-all'))
                                                 <a href="{{ URL::route('patientCallList.index', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Complete call</a>

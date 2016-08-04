@@ -201,6 +201,24 @@ class PatientInfo extends Model {
 		$this->save();
 		return true;
 	}
+
+
+	// Return s current months CCM time formatted for UI
+	public function getCurrentMonthCCMTimeAttribute()
+	{
+		// monthly ccm time
+		$seconds = $this->curMonthActivityTime;
+		if($seconds < 600) {
+			//continue 1;
+		}
+		$H = floor($seconds / 3600);
+		$i = ($seconds / 60) % 60;
+		$s = $seconds % 60;
+		$monthlyTime = sprintf("%03d:%02d", $i, $s);
+
+		return $monthlyTime;
+	}
+
 	public static function numberToTextDaySwitcher($string){
 
 		$mapper = function($i){
