@@ -239,7 +239,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 </div>
                 <!-- /CARE AREAS -->
                 <!-- BIOMETRICS -->
-                @if($biometrics)
+                @if($careplan['bio_data'])
                     <div class="patient-info__subareas">
                         <div class="row">
                             <div class="col-xs-12">
