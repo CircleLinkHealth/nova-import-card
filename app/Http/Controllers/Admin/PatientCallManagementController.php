@@ -42,7 +42,17 @@ class PatientCallManagementController extends Controller {
 			}
 		}
 
-		$calls->orderBy('call_date', 'desc');
+		// filter status
+		$filterStatus = 'scheduled';
+		if ( !empty($request->input('filterStatus')) ) {
+			$filterStatus = $request->input('filterStatus');
+		}
+		if ( $request->input('filterStatus') != 'all' ) {
+			$calls->where( 'status', '=', $filterStatus );
+		}
+
+		$calls->orderBy('call_date', 'asc');
+		$calls->orderBy('window_start', 'asc');
 		$calls = $calls->paginate( 10 );
 
 
@@ -58,7 +68,7 @@ class PatientCallManagementController extends Controller {
 			})
 			->lists( 'display_name', 'ID' )->all();
 
-		return view('admin.patientCallManagement.index', compact(['calls', 'date', 'nurses', 'filterNurse']));
+		return view('admin.patientCallManagement.index', compact(['calls', 'date', 'nurses', 'filterNurse', 'filterStatus']));
 	}
 
 	/**
