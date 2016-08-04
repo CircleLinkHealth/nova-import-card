@@ -104,7 +104,9 @@
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            @if(Entrust::can('users-edit-all'))
+                                            @if($call->status == 'reached')
+
+                                            @elseif($call->status == 'scheduled')
                                                 <a href="{{ URL::route('patientCallList.index', array('id' => $call->id)) }}" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i> Unassign</a>
                                             @endif
                                         </td>
