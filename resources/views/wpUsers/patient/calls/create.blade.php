@@ -13,7 +13,14 @@
             $success_percent = ( ($no_of_successful_calls) / ($no_of_calls) ) * 100;
 
     // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
+
     $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
+
+    $ccm_time_achieved = false;
+            if($seconds >= 1200){
+                $ccm_time_achieved = true;
+            }
+
     $H = floor($seconds / 3600);
     $i = ($seconds / 60) % 60;
     $s = $seconds % 60;
@@ -146,8 +153,10 @@
                                                     </label>
                                                 </div>
                                                 <div class="col-sm-12">
-                                                    <div>
-                                                        <h2>{{$monthlyTime}}</h2>
+                                                    <div class="row">
+                                                        @if($ccm_time_achieved)
+                                                            <h3>{{$monthlyTime}}<span class="glyphicon glyphicon-ok"></span></h3>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
