@@ -91,8 +91,8 @@ class PhiMail {
             //   <root_CA_certificate.pem>
             //
             PhiMailConnector::setClientCertificate(
-                "/resources/certificates/emr-sandbox-conc-keys.pem",
-                "IWantPorkEbabmitMushr00m$"
+                env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
+                env('EMR_DIRECT_PASS_PHRASE')
             );
 
             // This command is recommended for added security to set the trusted 
