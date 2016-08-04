@@ -52,7 +52,7 @@
                     <li class="menu-item">
                         <a id="patient-list" href="{{ URL::route('patientCallList.index', array()) }}">
                             <div class="icon-container column-centered">
-                                <i class="icon--list-patient--big icon--menu"></i>
+                                <i class="icon--phone-call--big icon--menu"></i>
                             </div>
                             <div>
                                 <p class="text-medium-big text--menu text-serif">Scheduled Calls<BR><BR><br></p>
