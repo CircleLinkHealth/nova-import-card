@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Call extends Model
@@ -48,6 +49,35 @@ class Call extends Model
     public function inboundUser()
     {
         return $this->belongsTo('App\User', 'inbound_cpm_id', 'ID');
+    }
+
+    public static function numberOfCallsForPatientForMonth(User $patient, $date){
+
+        $date_start = Carbon::parse($date)->startOfMonth();
+        $date_end = Carbon::parse($date)->endOfMonth();
+
+        $no_of_calls = Call::where('outbound_cpm_id', $patient->user_id)
+            ->orWhere('inbound_cpm_id', $patient->user_id)
+            ->where('created_at', '<=' , $date_end)
+            ->where('created_at', '>=' , $date_start)->count();
+
+        return $no_of_calls;
+    }
+
+    public static function numberOfSuccessfulCallsForPatientForMonth(User $patient, $date){
+
+        $date_start = Carbon::parse($date)->startOfMonth();
+        $date_end = Carbon::parse($date)->endOfMonth();
+
+        $no_of_successful_calls = Call::where('status','reached')->where(
+            function ($q) use ($patient){
+                $q->where('outbound_cpm_id', $patient->user_id)
+                    ->orWhere('inbound_cpm_id', $patient->user_id);
+            })
+            ->where('created_at', '<=' , $date_end)
+            ->where('created_at', '>=' , $date_start)->count();
+
+        return $no_of_successful_calls;
     }
 
 

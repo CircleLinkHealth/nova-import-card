@@ -34,18 +34,12 @@ class SchedulerService
 
         $note = Note::find($note);
 
+        //Updates Call Record
+        PatientMonthlySummary::updateCallInfoForPatient($patient->patientInfo, $success);
+
+
         if ($success) {
 
-            $monthly_record = $patient->patientInfo->patientSummaries;
-            
-//            if(!$monthly_record){
-//
-//                PatientMonthlySummary::create({
-//
-//                });
-//
-//            }
-            
             return $this->callPredictor->successfulCallHandler($patient, $note, $scheduled_call);
 
         } else {
