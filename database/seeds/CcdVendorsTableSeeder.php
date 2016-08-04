@@ -111,7 +111,7 @@ class CcdVendorsTableSeeder extends Seeder
             7 => 
             array (
                 'id' => 10,
-                'program_id' => NULL,
+                'program_id' => 25,
                 'ccd_import_routine_id' => 5,
                 'vendor_name' => 'Epic - Carolina Medical Associates',
                 'ehr_oid' => NULL,
