@@ -10,41 +10,35 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-3">
                         <h1>Patient Call List</h1>
-                        <p>My assigned scheduled calls in order by priority:</p>
+                        <p>My assigned calls</p>
+                    </div>
+                    <div class="col-sm-9">
+                        {!! Form::open(array('url' => URL::route('patientCallList.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                        <div id="filters" class="" style="margin:40px 0px;">
+                            <div class="form-group">
+                                <div id="dtBox"></div>
+                                <label for="date" class="col-sm-1 control-label">Date: </label>
+                                <div class="col-sm-4">
+                                    <input id="date" class="form-control pull-right" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span>
+                                </div>
+                                <label for="filterStatus" class="col-sm-1 control-label">Status: </label>
+                                <div class="col-sm-4">
+                                    {!! Form::select('filterStatus', array('all' => 'All', 'scheduled' => 'Scheduled', 'reached' => 'Reached'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filter</button>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
                     </div>
                 </div>
                 <div class="">
                     <div class="">
                         @include('errors.errors')
                         @include('errors.messages')
-
-                        {!! Form::open(array('url' => URL::route('patientCallList.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                        <div id="filters" class="" style="margin:40px 0px;">
-                            <h3>Filters</h3>
-                                <div class="form-group">
-                                    <div id="dtBox"></div>
-                                    <label for="date" class="col-sm-2 control-label">Date: </label>
-                                    <div class="col-sm-10">
-                                        <input id="date" class="form-control pull-right" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="filterStatus" class="col-sm-2 control-label">Status: </label>
-                                    <div class="col-sm-10">
-                                        {!! Form::select('filterStatus', array('all' => 'All', 'scheduled' => 'Scheduled', 'reached' => 'Reached'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-sm-10" style="margin-top:10px;">
-                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filter</button>
-                                    </div>
-                                </div>
-                        </div>
-                        </form>
 
                         <h3>Scheduled Calls</h3>
                         <style>
