@@ -43,13 +43,12 @@
                             <thead>
                             <tr>
                                 <th></th>
-                                <th>Nurse</th>
+                                <th>Status</th>
                                 <th>Patient</th>
                                 <th>DOB</th>
                                 <th>Date</th>
                                 <th>Contact Window Start</th>
                                 <th>Contact Window End</th>
-                                <th>Status</th>
                                 <th>Last Date called</th>
                                 <th>CCM Time to date</th>
                                 <th># success</th>
@@ -64,18 +63,23 @@
                                     <tr>
                                         <td><input type="checkbox" name="calls[]" value="{{ $call->id }}"></td>
                                         <td>
-                                            @if($call->outboundUser)
-                                                {{ $call->outboundUser->display_name }}
+                                            @if($call->status == 'reached')
+                                                <button class="btn btn-success btn-xs"><i class="glyphicon glyphicon-ok"></i> Reached</button>
+                                            @elseif($call->status == 'scheduled')
+                                                <button class="btn btn-warning btn-xs"><i class="glyphicon glyphicon-list"></i> Scheduled</button>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($call->inboundUser)
+                                                {{ $call->inboundUser->display_name }}
                                             @else
                                                 <em style="color:red;">unassigned</em>
                                             @endif
                                         </td>
-                                        <td>{{ $call->inbound_cpm_id }}</td>
                                         <td>-</td>
                                         <td>{{ $call->call_date }}</td>
                                         <td>{{ $call->window_start }}</td>
                                         <td>{{ $call->window_end }}</td>
-                                        <td>{{ $call->status }}</td>
                                         <td>-</td>
                                         <td>
                                             @if($call->inboundUser)
@@ -86,7 +90,7 @@
                                         </td>
                                         <td>-</td>
                                         <td>
-                                            @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider'))
+                                            @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first())
                                                 {{ $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->member->display_name }}
                                             @else
                                                 <em style="color:red;">-</em>
@@ -101,7 +105,7 @@
                                         </td>
                                         <td class="text-right">
                                             @if(Entrust::can('users-edit-all'))
-                                                <a href="{{ URL::route('patientCallList.index', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Complete call</a>
+                                                <a href="{{ URL::route('patientCallList.index', array('id' => $call->id)) }}" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i> Unassign</a>
                                             @endif
                                         </td>
                                     </tr>
