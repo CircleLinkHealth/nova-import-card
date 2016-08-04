@@ -4,6 +4,7 @@
 use App\Algorithms\Calls\PredictCall;
 use App\Call;
 use App\Note;
+use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
 
@@ -35,6 +36,16 @@ class SchedulerService
 
         if ($success) {
 
+            $monthly_record = $patient->patientInfo->patientSummaries;
+            
+//            if(!$monthly_record){
+//
+//                PatientMonthlySummary::create({
+//
+//                });
+//
+//            }
+            
             return $this->callPredictor->successfulCallHandler($patient, $note, $scheduled_call);
 
         } else {
