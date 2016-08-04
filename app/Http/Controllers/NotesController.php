@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\ActivityMeta;
+use App\Algorithms\Calls\PredictCall;
 use App\CLH\Repositories\UserRepository;
 use App\Formatters\WebixFormatter;
 use App\Http\Requests;
@@ -281,14 +282,6 @@ class NotesController extends Controller
             $info->general_comment = $input['general_comment'];
         }
 
-        if(isset($input['window_start'])){
-            $info->daily_contact_window_start = $input['window_start'];
-        }
-
-        if(isset($input['window_end'])){
-            $info->daily_contact_window_end = $input['window_end'];
-        }
-
         if(isset($input['frequency'])){
             $info->preferred_calls_per_month = $input['frequency'];
         }
@@ -320,13 +313,13 @@ class NotesController extends Controller
             $info->last_successful_contact_time = Carbon::now()->format('Y-m-d');
             $info->save();
 
-            $prediction = (new SchedulerService)->predictCall($patient, $note->id, true);
+            $prediction = (new SchedulerService(new PredictCall))->getNextCall($patient, $note->id, true);
 
             return view('wpUsers.patient.calls.create', $prediction);
 
         } else {
 
-            $prediction = (new SchedulerService)->predictCall($patient, $note->id, false);
+            $prediction = (new SchedulerService(new PredictCall))->getNextCall($patient, $note->id, false);
 
             return view('wpUsers.patient.calls.create', $prediction);
 
