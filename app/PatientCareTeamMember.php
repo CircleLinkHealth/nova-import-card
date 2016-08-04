@@ -49,6 +49,11 @@ class PatientCareTeamMember extends Model {
 	{
 		return $this->belongsTo('App\User', 'ID', 'user_id');
 	}
+
+	public function member()
+	{
+		return $this->belongsTo('App\User', 'member_user_id', 'ID');
+	}
 	// END RELATIONSHIPS
 
 }

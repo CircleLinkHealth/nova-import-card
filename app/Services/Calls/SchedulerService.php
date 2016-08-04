@@ -93,20 +93,23 @@ class SchedulerService
 
         }
 
-
         $patient_preferred_times = (new PatientInfo)->getPatientPreferredTimes($patient);
 
         $window_start = Carbon::parse($patient_preferred_times['window_start'])->format('H:i');
         $window_end = Carbon::parse($patient_preferred_times['window_end'])->format('H:i');
 
         //Schedule call for tomorrow.
-        $earliest_contact_day = Carbon::now()->addDay()->format('Y-m-d');
-        
+        $earliest_contact_day = Carbon::now()->addDay();
+
+        $next_contact_windows = PatientContactWindow::getNextWindowsForPatient($patient);
+
+
         return [
             'patient' => $patient,
             'date' => $earliest_contact_day,
             'window_start' => $window_start,
             'window_end' => $window_end,
+            'next_contact_windows' => $next_contact_windows,
             'successful' => false
         ];
     }
