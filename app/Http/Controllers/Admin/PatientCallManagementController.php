@@ -99,6 +99,7 @@ class PatientCallManagementController extends Controller {
 					$query->orWhere('name', 'no-ccm-care-center');
 				});
 			})
+			->orderBy('last_name', 'ASC')
 			->pluck('display_name', 'ID');
 
 		return view('admin.patientCallManagement.edit', compact(['call', 'nurses']));
@@ -123,7 +124,11 @@ class PatientCallManagementController extends Controller {
 		}
 
 		// input
-		$call->outbound_cpm_id = $request->input('outbound_cpm_id');
+		if($request->input('outbound_cpm_id') && !empty($request->input('outbound_cpm_id')) && $request->input('outbound_cpm_id') != 'unassigned') {
+			$call->outbound_cpm_id = $request->input('outbound_cpm_id');
+		} else {
+			$call->outbound_cpm_id = null;
+		}
 		$call->window_start = $request->input('window_start');
 		$call->window_end = $request->input('window_end');
 		$call->save();

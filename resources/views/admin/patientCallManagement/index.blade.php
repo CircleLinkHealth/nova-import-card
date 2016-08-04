@@ -1,7 +1,7 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/admin/reports/patientCallManagement.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">

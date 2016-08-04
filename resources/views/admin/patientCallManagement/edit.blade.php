@@ -1,7 +1,7 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
     {!! Form::open(array('url' => URL::route('admin.patientCallManagement.update', array('id' => $call->id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
@@ -45,15 +45,17 @@
 
                         <div class="form-group" style="margin-top:50px;">
                             <div class="col-xs-2">{!! Form::label('outbound_cpm_id', 'Assigned Nurse:') !!}</div>
-                            <div class="col-xs-4">{!! Form::select('outbound_cpm_id', $nurses, $call->outbound_cpm_id, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-xs-4">{!! Form::select('outbound_cpm_id', array('unassigned' => 'Unassigned') + $nurses->all(), $call->outbound_cpm_id, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                             <div class="col-xs-6"></div>
                         </div>
 
                         <div class="form-group">
+                            <div id="tBox"></div>
+
                             <div class="col-sm-2">{!! Form::label('window_start', 'Window Start Time:') !!}</div>
-                            <div class="col-sm-4">{!! Form::text('window_start', $call->window_start, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-4"><input id="window_start" class="form-control" name="window_start" type="input" value="{{ (old('window_start') ? old('window_start') : ($call->window_start ? $call->window_start : '')) }}"  data-field="time" data-format="HH:mm" /><span class="help-block">{{ $errors->first('window_start') }}</span></div>
                             <div class="col-sm-2">{!! Form::label('window_end', 'Window End Time:') !!}</div>
-                            <div class="col-sm-4">{!! Form::text('window_end', $call->window_end, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-4"><input id="window_end" class="form-control" name="window_end" type="input" value="{{ (old('window_end') ? old('window_end') : ($call->window_end ? $call->window_end : '')) }}"  data-field="time" data-format="HH:mm" /><span class="help-block">{{ $errors->first('window_end') }}</span></div>
                         </div>
 
                         <div class="row" style="margin-top:50px;">
