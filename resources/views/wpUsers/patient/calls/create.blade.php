@@ -5,6 +5,22 @@
 
 @section('content')
 
+    <?php
+
+            $no_of_successful_calls = \App\Call::numberOfSuccessfulCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString());
+            $no_of_calls = \App\Call::numberOfCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString());
+
+            $success_percent = ( ($no_of_successful_calls) / ($no_of_calls) ) * 100;
+
+    // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
+    $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
+    $H = floor($seconds / 3600);
+    $i = ($seconds / 60) % 60;
+    $s = $seconds % 60;
+    $monthlyTime = sprintf("%02d:%02d:%02d",$H, $i, $s);
+
+    ?>
+
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1" style="border-bottom:3px solid #50b2e2">
             <div class="row">
@@ -131,7 +147,7 @@
                                                 </div>
                                                 <div class="col-sm-12">
                                                     <div>
-                                                        <h2>{{$patient->patientInfo->currentMonthCCMTime}}</h2>
+                                                        <h2>{{$monthlyTime}}</h2>
                                                     </div>
                                                 </div>
                                             </div>
@@ -156,11 +172,14 @@
                                                 <div class="col-sm-12">
                                                     <ul class="list-group">
                                                             <li class="list-group-item">
-                                                               <b> Successful Calls:</b> <span style="color: green">{{\App\Call::numberOfSuccessfulCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString())}}</span>
+                                                               <b> Successful Calls:</b> <span style="color: green"> {{$no_of_successful_calls}} </span>
                                                             </li>
                                                             <li class="list-group-item">
-                                                                <b> Total Calls:</b> {{\App\Call::numberOfCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString())}}
+                                                                <b> Total Calls:</b> {{$no_of_calls}}
                                                             </li>
+                                                        <li class="list-group-item">
+                                                            <b> Call Success: {{round($success_percent, 2)}}%</b>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </div>
