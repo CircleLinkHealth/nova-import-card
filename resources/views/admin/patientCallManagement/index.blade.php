@@ -34,6 +34,11 @@
                                     <div class="col-xs-2"><label for="filterNurse">Nurse:</label></div>
                                     <div class="col-xs-4">{!! Form::select('filterNurse', array('all' => 'All') + $nurses, $filterNurse, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                                 </div>
+
+                                <div class="row" style="margin-top:15px;">
+                                    <div class="col-xs-2"><label for="filterNurse">Status:</label></div>
+                                    <div class="col-xs-4">{!! Form::select('filterStatus', array('all' => 'All', 'scheduled' => 'Scheduled', 'reached' => 'Reached'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                </div>
                             </div>
                             <div class="row" style="margin-top:50px;">
                                 <div class="col-sm-12">
