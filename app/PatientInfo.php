@@ -128,6 +128,9 @@ class PatientInfo extends Model {
 
 	// daily_contact_window_start
 	public function getDailyContactWindowStartAttribute() {
+		if(empty($this->attributes['daily_contact_window_start'])) {
+			return '';
+		}
 		return Carbon::parse($this->attributes['daily_contact_window_start'])->format('H:i');
 	}
 	public function setDailyContactWindowStartAttribute($value) {
@@ -137,6 +140,9 @@ class PatientInfo extends Model {
 
 	// daily_contact_window_end
 	public function getDailyContactWindowEndAttribute() {
+		if(empty($this->attributes['daily_contact_window_end'])) {
+			return '';
+		}
 		return Carbon::parse($this->attributes['daily_contact_window_end'])->format('H:i');
 	}
 	public function setDailyContactWindowEndAttribute($value) {
