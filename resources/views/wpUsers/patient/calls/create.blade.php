@@ -89,14 +89,14 @@
 
 
                 @if($next_contact_windows)
-                <div class="form-block col-md-12">
-                    <div class="row">
+                <div class="form-block col-md-8">
+                    <div class="row" style="border-top: solid 2px #50b2e2;">
                         <div class="new-note-item">
                             <div class="form-group">
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <div class="form-item form-item-spacing">
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-12" style="padding-bottom: 4px;">
                                                 <label for="activityKey">
                                                     Patient's Next Available Call Windows:
                                                 </label>
@@ -117,6 +117,60 @@
                         </div>
                     </div>
                 </div>
+                    <div class="form-block col-md-4">
+                        <div class="row" style="border-top: solid 2px #50b2e2;">
+                            <div class="new-note-item">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <div class="form-item form-item-spacing">
+                                                <div class="col-sm-12" style="margin-bottom: -17px;">
+                                                    <label for="activityKey">
+                                                        <b>{{Carbon\Carbon::now()->format('F')}} CCM Time</b>
+                                                    </label>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div>
+                                                        <h2>{{$patient->patientInfo->currentMonthCCMTime}}</h2>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-block col-md-4">
+                        <div class="row" >
+                            <div class="new-note-item">
+                                <div class="form-group">
+                                    <div class="col-sm-12" style="margin-top: -25px;">
+                                        <div class="form-group">
+                                            <div class="form-item form-item-spacing">
+                                                <div class="col-sm-12" style="margin-bottom: 9px">
+                                                    <label for="activityKey">
+                                                        <b>{{Carbon\Carbon::now()->format('F')}} Call Statistics:</b>
+                                                    </label>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <ul class="list-group">
+                                                            <li class="list-group-item">
+                                                               <b> Successful Calls:</b> <span style="color: green">{{\App\Services\NoteService::numberOfSuccessfulCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString())}}</span>
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                <b> Total Calls:</b> {{\App\Services\NoteService::numberOfCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString())}}
+                                                            </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 @endif
 
         <div class="form-block col-md-12">
