@@ -30,6 +30,14 @@
                                         <input id="date" class="form-control pull-right" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span>
                                     </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="filterStatus" class="col-sm-2 control-label">Status: </label>
+                                    <div class="col-sm-10">
+                                        {!! Form::select('filterStatus', array('all' => 'All', 'scheduled' => 'Scheduled', 'reached' => 'Reached'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
                                     <div class="col-sm-offset-2 col-sm-10" style="margin-top:10px;">
                                         <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filter</button>
@@ -39,6 +47,11 @@
                         </form>
 
                         <h3>Scheduled Calls</h3>
+                        <style>
+                            .table tbody>tr>td.vert-align{
+                                vertical-align: middle;
+                            }
+                        </style>
                         <table class="table table-striped" style="">
                             <thead>
                             <tr>
@@ -61,8 +74,13 @@
                             @if (count($calls) > 0)
                                 @foreach($calls as $call)
                                     <tr>
-                                        <td><input type="checkbox" name="calls[]" value="{{ $call->id }}"></td>
                                         <td>
+                                            <input type="checkbox" name="calls[]" value="{{ $call->id }}">
+                                            @if($call->inboundUser && $call->status == 'scheduled')
+                                                <a href="{{ URL::route('patient.demographics.show', array('patient' => $call->inboundUser->ID)) }}" class="btn btn-primary"><span class="glyphicon glyphicon-earphone" style="margin-right:3px;font-size: 20px;padding:5px;"></span></a>
+                                            @endif
+                                        </td>
+                                        <td class="vert-align">
                                             @if($call->status == 'reached')
                                                 <button class="btn btn-success btn-xs"><i class="glyphicon glyphicon-ok"></i> Reached</button>
                                             @elseif($call->status == 'scheduled')
@@ -71,7 +89,7 @@
                                         </td>
                                         <td>
                                             @if($call->inboundUser)
-                                                {{ $call->inboundUser->display_name }}
+                                                <a href="{{ URL::route('patient.demographics.show', array('patient' => $call->inboundUser->ID)) }}" style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
                                             @else
                                                 <em style="color:red;">unassigned</em>
                                             @endif
@@ -103,7 +121,7 @@
                                                 <em style="color:red;">unassigned</em>
                                             @endif
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-right vert-align">
                                             @if($call->status == 'reached')
 
                                             @elseif($call->status == 'scheduled')

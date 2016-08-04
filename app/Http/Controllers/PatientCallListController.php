@@ -44,14 +44,24 @@ class PatientCallListController extends Controller {
 			}
 		}
 
+		// filter status
+		$filterStatus = 'scheduled';
+		if ( !empty($request->input('filterStatus')) ) {
+			$filterStatus = $request->input('filterStatus');
+		}
+		if ( $request->input('filterStatus') != 'all' ) {
+			$calls->where( 'status', '=', $filterStatus );
+		}
+
 		// filter nurse
 		$calls->where( 'outbound_cpm_id', '=', \Auth::user()->ID );
 
-		$calls->orderBy('window_start', 'desc');
+		$calls->orderBy('call_date', 'asc');
+		$calls->orderBy('window_start', 'asc');
 		$calls = $calls->paginate( 10 );
 
 
-		return view('patientCallList.index', compact(['calls', 'date']));
+		return view('patientCallList.index', compact(['calls', 'date', 'filterStatus']));
 	}
 
 	/**
