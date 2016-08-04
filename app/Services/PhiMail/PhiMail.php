@@ -91,7 +91,7 @@ class PhiMail {
             //   <root_CA_certificate.pem>
             //
             PhiMailConnector::setClientCertificate(
-                env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
+                base_path() . env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
                 env('EMR_DIRECT_PASS_PHRASE')
             );
 
