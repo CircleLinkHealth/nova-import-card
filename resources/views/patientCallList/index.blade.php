@@ -61,13 +61,11 @@
                                                 <th></th>
                                                 <th>Status</th>
                                                 <th>Patient</th>
-                                                <th>DOB</th>
                                                 <th>Date</th>
-                                                <th>Contact Window Start</th>
-                                                <th>Contact Window End</th>
+                                                <th>Call Window</th>
                                                 <th>Last Date called</th>
                                                 <th>CCM Time to date</th>
-                                                <th># success</th>
+                                                <th># Calls to date</th>
                                                 <th>Provider</th>
                                                 <th>Program</th>
                                                 <th></th>
@@ -97,10 +95,8 @@
                                                                 <em style="color:red;">unassigned</em>
                                                             @endif
                                                         </td>
-                                                        <td>-</td>
-                                                        <td>{{ $call->call_date }}</td>
-                                                        <td>{{ $call->window_start }}</td>
-                                                        <td>{{ $call->window_end }}</td>
+                                                        <td><span style="color:#50B2E2;font-weight:bold;">{{ $call->call_date }}</span></td>
+                                                        <td><span style="color:#50B2E2;font-weight:bold;">{{ $call->window_start }}-{{ $call->window_end }}</span></td>
                                                         <td>-</td>
                                                         <td>
                                                             @if($call->inboundUser)
@@ -109,7 +105,10 @@
                                                                 <em style="color:red;">-</em>
                                                             @endif
                                                         </td>
-                                                        <td>-</td>
+                                                        <td>
+                                                            @if($call->inboundUser)                                                                             {{\App\Services\NoteService::numberOfCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString())}} [<span style="color:green;">{{\App\Services\NoteService::numberOfSuccessfulCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString())}}</span>]
+                                                            @endif
+                                                        </td>
                                                         <td>
                                                             @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first())
                                                                 {{ $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->member->display_name }}
