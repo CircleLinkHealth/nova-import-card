@@ -28,7 +28,7 @@ class PatientCallManagementController extends Controller {
 						$call = Call::find($callId);
 						if($call) {
 							if($request->input('assigned_nurse') && !empty($request->input('assigned_nurse')) && $request->input('assigned_nurse') != 'unassigned') {
-								$call->outbound_cpm_id = $request->input('outbound_cpm_id');
+								$call->outbound_cpm_id = $request->input('assigned_nurse');
 							} else {
 								$call->outbound_cpm_id = null;
 							}
