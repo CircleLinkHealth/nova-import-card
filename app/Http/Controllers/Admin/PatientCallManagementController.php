@@ -19,6 +19,28 @@ class PatientCallManagementController extends Controller {
 	 */
 	public function index(Request $request)
 	{
+		// input
+		if ( $request->input( 'action' ) && $request->input( 'action' ) == 'assign' ) {
+			if ( ($request->input( 'calls' ) && !empty($request->input( 'calls' ))) &&
+				($request->input( 'assigned_nurse' ) && !empty($request->input( 'assigned_nurse' ))) ) {
+				if(is_array($request->input( 'calls' ))) {
+					foreach($request->input( 'calls' ) as $callId) {
+						$call = Call::find($callId);
+						if($call) {
+							if($request->input('assigned_nurse') && !empty($request->input('assigned_nurse')) && $request->input('assigned_nurse') != 'unassigned') {
+								$call->outbound_cpm_id = $request->input('assigned_nurse');
+							} else {
+								$call->outbound_cpm_id = null;
+							}
+							$call->save();
+						}
+					}
+				}
+				// assign nurse to calls
+				return redirect()->back()->with( 'messages', ['successfully assigned calls to nurse'] );
+			}
+		}
+
 		// get all calls
 		$calls = Call::where('id', '>', 0);
 
@@ -37,7 +59,9 @@ class PatientCallManagementController extends Controller {
 		$filterNurse = array();
 		if ( !empty($request->input('filterNurse')) ) {
 			$filterNurse = $request->input('filterNurse');
-			if ( $request->input('filterNurse') != 'all' ) {
+			if ( $request->input('filterNurse') == 'unassigned' ) {
+				$calls->where( 'outbound_cpm_id', '=', null );
+			} else if ( $request->input('filterNurse') != 'all' ) {
 				$calls->where( 'outbound_cpm_id', '=', $filterNurse );
 			}
 		}
@@ -66,6 +90,7 @@ class PatientCallManagementController extends Controller {
 					$query->orWhere('name', 'no-ccm-care-center');
 				});
 			})
+			->orderBy('last_name', 'ASC')
 			->lists( 'display_name', 'ID' )->all();
 
 		return view('admin.patientCallManagement.index', compact(['calls', 'date', 'nurses', 'filterNurse', 'filterStatus']));
@@ -99,6 +124,7 @@ class PatientCallManagementController extends Controller {
 					$query->orWhere('name', 'no-ccm-care-center');
 				});
 			})
+			->orderBy('last_name', 'ASC')
 			->pluck('display_name', 'ID');
 
 		return view('admin.patientCallManagement.edit', compact(['call', 'nurses']));
@@ -123,7 +149,11 @@ class PatientCallManagementController extends Controller {
 		}
 
 		// input
-		$call->outbound_cpm_id = $request->input('outbound_cpm_id');
+		if($request->input('outbound_cpm_id') && !empty($request->input('outbound_cpm_id')) && $request->input('outbound_cpm_id') != 'unassigned') {
+			$call->outbound_cpm_id = $request->input('outbound_cpm_id');
+		} else {
+			$call->outbound_cpm_id = null;
+		}
 		$call->window_start = $request->input('window_start');
 		$call->window_end = $request->input('window_end');
 		$call->save();
