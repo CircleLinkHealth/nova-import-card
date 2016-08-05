@@ -54,23 +54,14 @@
 
 
                         {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                        @if(Entrust::can('users-edit-all'))
-                            Selected Call Actions:
-                            <select name="action">
-                                <option value="scramble">Assign Nurse:</option>
-                            </select>
-                            <button type="submit" value="Submit" class="btn btn-primary btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-circle-arrow-right"></i> Perform Action</button>
-                        @endif
                         <table class="table table-striped">
                             <thead>
                             <tr>
                                 <th></th>
                                 <th>Nurse</th>
                                 <th>Patient</th>
-                                <th>DOB</th>
                                 <th>Date</th>
-                                <th>Contact Window Start</th>
-                                <th>Contact Window End</th>
+                                <th>Contact Window</th>
                                 <th>Status</th>
                                 <th>Last Date called</th>
                                 <th>CCM Time to date</th>
@@ -87,23 +78,28 @@
                                         <td><input type="checkbox" name="calls[]" value="{{ $call->id }}"></td>
                                         <td>
                                             @if($call->outboundUser)
-                                                {{ $call->outboundUser->display_name }}
+                                                <a href="{{ URL::route('admin.users.edit', array('patient' => $call->outboundUser->ID)) }}" class="">{{ $call->outboundUser->display_name }}</a>
                                             @else
                                                 <em style="color:red;">unassigned</em>
                                             @endif
                                         </td>
                                         <td>
                                             @if($call->inboundUser)
-                                                {{ $call->inboundUser->display_name }}
+                                                <a href="{{ URL::route('admin.users.edit', array('patient' => $call->inboundUser->ID)) }}" class="">{{ $call->inboundUser->display_name }}</a>
                                             @else
                                                 <em style="color:red;">unassigned</em>
                                             @endif
                                         </td>
-                                        <td>-</td>
-                                        <td>{{ $call->call_date }}</td>
-                                        <td>{{ $call->window_start }}</td>
-                                        <td>{{ $call->window_end }}</td>
-                                        <td>{{ $call->status }}</td>
+                                        <td><span style="font-weight:bold;">{{ $call->call_date }}</span>
+                                        </td>
+                                        <td><span style="font-weight:bold;">{{ $call->window_start }}-{{ $call->window_end }}</span></td>
+                                        <td>
+                                            @if($call->status == 'reached')
+                                                <span class="text-success"><i class="glyphicon glyphicon-ok">-Reached</i></span>
+                                            @elseif($call->status == 'scheduled')
+                                                <span class="text-warning"><i class="glyphicon glyphicon-list">-Scheduled</i></span>
+                                            @endif
+                                        </td>
                                         <td>-</td>
                                         <td>
                                             @if($call->inboundUser)
@@ -112,7 +108,10 @@
                                                 <em style="color:red;">-</em>
                                             @endif
                                         </td>
-                                        <td>-</td>
+                                        <td>
+                                            @if($call->inboundUser)                                                                             {{ \App\Call::numberOfCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }} (<span style="color:green;">{{ \App\Call::numberOfSuccessfulCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }}</span>)
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first())
                                                 {{ $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->member->display_name }}
@@ -139,6 +138,18 @@
                             @endif
                             </tbody>
                         </table>
+                        <div class="row" style="margin:40px 0px;">
+                            <div class="col-xs-4">
+                                With selected calls:&nbsp;&nbsp;
+                                <select name="action">
+                                    <option value="assign">Assign Nurse:</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-6">Nurse:&nbsp;&nbsp;{!! Form::select('assigned_nurse', array('unassigned' => 'Unassigned') + $nurses, 'unassigned', ['class' => '', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-xs-2">
+                                <button type="submit" value="Submit" class="btn btn-primary btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-circle-arrow-right"></i> Perform Action</button>
+                            </div>
+                        </div>
                         </form>
                         {{ $calls->links() }}
                     </div>
