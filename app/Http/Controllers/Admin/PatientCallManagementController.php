@@ -42,7 +42,7 @@ class PatientCallManagementController extends Controller {
 		}
 
 		// get all calls
-		$calls = Call::where('id', '>', 0);
+		$calls = Call::where('call_date', '!=', '0000-00-00');
 
 		// filter date
 		//$date = new DateTime(date('Y-m-d'));
