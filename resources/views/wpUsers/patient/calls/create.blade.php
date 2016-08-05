@@ -10,7 +10,12 @@
             $no_of_successful_calls = \App\Call::numberOfSuccessfulCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString());
             $no_of_calls = \App\Call::numberOfCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString());
 
-            $success_percent = ( ($no_of_successful_calls) / ($no_of_calls) ) * 100;
+            if($no_of_successful_calls == 0 || $no_of_calls == 0){
+                $success_percent = 'N/A';
+            } else {
+                $success_percent = ( ($no_of_successful_calls) / ($no_of_calls) ) * 100;
+            }
+
 
     // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
 
