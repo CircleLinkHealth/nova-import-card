@@ -97,7 +97,11 @@
                                                         </td>
                                                         <td><span style="color:#50B2E2;font-weight:bold;">{{ $call->call_date }}</span></td>
                                                         <td><span style="color:#50B2E2;font-weight:bold;">{{ $call->window_start }}-{{ $call->window_end }}</span></td>
-                                                        <td>-</td>
+                                                        <td>
+                                                            @if($call->inboundUser)
+                                                                {{ $call->inboundUser->patientInfo->last_successful_contact_time }}
+                                                            @endif
+                                                        </td>
                                                         <td>
                                                             @if($call->inboundUser)
                                                                 {{ $call->inboundUser->patientInfo->currentMonthCCMTime }}

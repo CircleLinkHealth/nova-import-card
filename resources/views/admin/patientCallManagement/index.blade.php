@@ -100,7 +100,11 @@
                                                 <span class="text-warning"><i class="glyphicon glyphicon-list">-Scheduled</i></span>
                                             @endif
                                         </td>
-                                        <td>-</td>
+                                        <td>
+                                            @if($call->inboundUser)
+                                                {{ $call->inboundUser->patientInfo->last_successful_contact_time }}
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($call->inboundUser)
                                                 {{ $call->inboundUser->patientInfo->currentMonthCCMTime }}
