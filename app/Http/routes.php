@@ -1,38 +1,4 @@
 <?php
-
-Route::get('emr', function () {
-    (new \App\Services\PhiMail\PhiMail)->sendReceive();
-});
-
-// this is your GET AJAX route
-Route::get('/test/ajax/get', function () {
-    // pass back some data
-    $data = array(
-        array(
-            'id' => 1,
-            'name' => 'Example Medication from server'),
-        array(
-            'id' => 2,
-            'name' => 'second Medication from server')
-    );
-    // return a JSON response
-    return Response::json($data);
-});
-// this is your POST AJAX route
-Route::post('/ajax/post', function () {
-    // pass back some data, along with the original data, just to prove it was received
-    $medications = Input::all();
-    $string = '';
-    if (!empty($medications)) {
-        foreach ($medications as $key => $value) {
-            // store medication
-            $string = $string . '--' . $key;
-        }
-    }
-    // return a JSON response
-    return Response::json($string);
-});
-
 //THIS IS FOR APRIMA ONLY
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
@@ -259,10 +225,19 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix' => 'admin'
     ], function () {
 
+        Route::post('/reports/monthly-billing', [
+            'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
+            'as' => 'MonthlyBillingReportsController.makeMonthlyReport'
+        ]);
+        
+        Route::get('/reports/monthly-billing/create', [
+            'uses' => 'Admin\Reports\MonthlyBillingReportsController@create',
+            'as' => 'MonthlyBillingReportsController.create'    
+        ]);
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
-
-
-        Route::get('/reports/monthly-billing', 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport');
+        Route::get('emr-direct/check', function (){
+            (new \App\Services\PhiMail\PhiMail())->sendReceive();
+        });
 
         Route::get('dupes', function () {
             $results = DB::select(DB::raw("
@@ -415,9 +390,8 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         // report - nurse time report
-
+        //these fall under the admin-access permission
         Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
-        
         Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 
         // questions

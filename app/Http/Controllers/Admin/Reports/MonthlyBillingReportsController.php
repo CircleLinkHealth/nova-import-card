@@ -23,6 +23,13 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class MonthlyBillingReportsController extends Controller
 {
+    public function create()
+    {
+        $programs = Program::orderBy('blog_id', 'desc')->lists('display_name', 'blog_id')->all();
+
+        return view('admin.monthlyBillingReports.create', compact(['programs']));
+    }
+
     public function makeMonthlyReport(Request $request)
     {
         //whether over or under 20 minutes
@@ -32,219 +39,238 @@ class MonthlyBillingReportsController extends Controller
             ? '<'
             : '>';
 
+        $ccmTimeMin = $request->input('ccm_time_minutes', 20);
+
         //20 mins in seconds
-        $ccmTimeMin = (20 * 60);
+        $ccmTimeSec = ($ccmTimeMin * 60);
         $month = $request->input('month');
         $year = $request->input('year');
         $patientRole = Role::whereName('participant')->first();
-        $programId = $request->input('programId');
-        $program = Program::find($programId);
+        $programs = $request->input('programs');
 
 
-        $time = Carbon::createFromDate($year, $month, 15);
-        $start = $time->startOfMonth()->startOfDay()->format("Y-m-d H:i:s");
-        $end = $time->endOfMonth()->endOfDay()->format("Y-m-d H:i:s");
+        foreach ($programs as $programId) {
+            $program = Program::find($programId);
 
-        $patientsOver20MinsQuery = DB::table('lv_activities')
-            ->select(DB::raw('patient_id, SUM(duration) as ccmTime'))
-            ->whereBetween('performed_at', [
-                $start, $end
-            ])
-            ->having('ccmTime', $overOrUnder, $ccmTimeMin)
-            ->groupBy('patient_id');
+            $time = Carbon::createFromDate($year, $month, 15);
+            $start = $time->startOfMonth()->startOfDay()->format("Y-m-d H:i:s");
+            $end = $time->endOfMonth()->endOfDay()->format("Y-m-d H:i:s");
 
-        $patientsOver20Mins = (new Collection($patientsOver20MinsQuery->get()))->keyBy('patient_id');
-        $patientsOver20MinsIds = $patientsOver20MinsQuery->lists('patient_id');
-
-
-        $patients = User::with([
-            'ccdProblems' => function ($query) {
-                $query->whereNotNull('cpm_problem_id');
-            },
-            'cpmProblems'
-        ])
-            ->whereHas('roles', function ($q) use ($patientRole) {
-                $q->where('name', '=', $patientRole->name);
-            })
-            ->where('program_id', '=', $programId)
-            ->whereIn('ID', $patientsOver20MinsIds)
-            ->get();
-
-        $problems = [];
-
-        foreach ($patients as $patient) {
-
-            $billableCpmProblems = [];
-
-            $calls = Call::where(function ($q) use ($patient) {
-                $q->where('inbound_cpm_id', $patient->ID)
-                    ->orWhere('outbound_cpm_id', $patient->ID);
-            })
-                ->whereStatus('reached')
-                ->whereBetween('created_at', [
+            $patientsOver20MinsQuery = DB::table('lv_activities')
+                ->select(DB::raw('patient_id, SUM(duration) as ccmTime'))
+                ->whereBetween('performed_at', [
                     $start, $end
                 ])
+                ->having('ccmTime', $overOrUnder, $ccmTimeSec)
+                ->groupBy('patient_id');
+
+            $patientsOver20Mins = (new Collection($patientsOver20MinsQuery->get()))->keyBy('patient_id');
+            $patientsOver20MinsIds = $patientsOver20MinsQuery->lists('patient_id');
+
+
+            $patients = User::with([
+                'ccdProblems' => function ($query) {
+                    $query->whereNotNull('cpm_problem_id');
+                },
+                'cpmProblems'
+            ])
+                ->whereHas('roles', function ($q) use ($patientRole) {
+                    $q->where('name', '=', $patientRole->name);
+                })
+                ->where('program_id', '=', $programId)
+                ->whereIn('ID', $patientsOver20MinsIds)
                 ->get();
 
-            $provider = User::find($patient->billingProviderID);
+            $problems = [];
 
-            //for patients whose ccd problems were not logged
-            //we're gonna pick their cpm problems
-            if (count($patient->ccdProblems) < 1) {
+            foreach ($patients as $patient) {
 
-                $patientCpmProblems = $patient->cpmProblems;
+                $billableCpmProblems = [];
 
-                //get the other conditions misc. we need its id
-                $cpmMisc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)->first();
+                $calls = Call::where(function ($q) use ($patient) {
+                    $q->where('inbound_cpm_id', $patient->ID)
+                        ->orWhere('outbound_cpm_id', $patient->ID);
+                })
+                    ->whereStatus('reached')
+                    ->whereBetween('created_at', [
+                        $start, $end
+                    ])
+                    ->get();
+
+                $provider = User::find($patient->billingProviderID);
+
+                //for patients whose ccd problems were not logged
+                //we're gonna pick their cpm problems
+                if (count($patient->ccdProblems) < 1) {
+
+                    $patientCpmProblems = $patient->cpmProblems;
+
+                    //get the other conditions misc. we need its id
+                    $cpmMisc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)->first();
 
 
-                $cpmMiscOtherCond = $patient->cpmMiscs()->wherePivot('cpm_misc_id', $cpmMisc->id)->first();
+                    $cpmMiscOtherCond = $patient->cpmMiscs()->wherePivot('cpm_misc_id', $cpmMisc->id)->first();
 
-                //if there's no instruction return N/A
-                //mainly done because we're exporting to a spreadsheet
-                if (empty($cpmMiscOtherCond->pivot->cpm_instruction_id)) {
-                    $instruction = false;
-                } else {
-                    $instruction = CpmInstruction::find($cpmMiscOtherCond->pivot->cpm_instruction_id);
-                }
+                    //if there's no instruction return N/A
+                    //mainly done because we're exporting to a spreadsheet
+                    if (empty($cpmMiscOtherCond->pivot->cpm_instruction_id)) {
+                        $instruction = false;
+                    } else {
+                        $instruction = CpmInstruction::find($cpmMiscOtherCond->pivot->cpm_instruction_id);
+                    }
 
-                //now we are gonna try and pattern match the problem's name
-                //to a line in the other conditions field.
-                //may god be with us on this quest
-                foreach ($patientCpmProblems as $cpmProblem) {
+                    //now we are gonna try and pattern match the problem's name
+                    //to a line in the other conditions field.
+                    //may god be with us on this quest
+                    foreach ($patientCpmProblems as $cpmProblem) {
 
-                    if (empty($instruction)) {
-                        //add it to billable
+                        if (empty($instruction)) {
+                            //add it to billable
+                            $billableCpmProblems[] = $cpmProblem;
+                            $otherConditionsText[$cpmProblem->id] = 'N/A';
+
+                            continue;
+                        }
+
+                        //check for the keywords
+                        $keywords = explode(',', $cpmProblem->contains);
+
+                        foreach ($keywords as $keyword) {
+                            if (empty($keyword)) continue;
+
+                            if ($strPos = strpos($instruction->name, $keyword)) {
+
+                                $break = strpos($instruction->name, ';', $strPos);
+
+                                $otherConditionsText[$cpmProblem->id] = substr($instruction->name, $strPos, $break - $strPos);
+
+                                //add it to billable
+                                $billableCpmProblems[] = $cpmProblem;
+
+                                continue 2;
+                            }
+                        }
+
+                        //search blindly using everything from the snomed table
+                        //put this in a function later
+
+                        $keywords = SnomedToICD10Map::where('icd_10_code', 'like', "%$cpmProblem->icd10from%")
+                            ->lists('icd_10_name');
+
+                        foreach ($keywords as $keyword) {
+                            if (empty($keyword)) continue;
+
+                            if ($strPos = strpos($instruction->name, $keyword)) {
+
+                                $break = strpos($instruction->name, ';', $strPos);
+
+                                $otherConditionsText[$cpmProblem->id] = substr($instruction->name, $strPos, $break - $strPos);
+
+                                //add it to billable
+                                $billableCpmProblems[] = $cpmProblem;
+
+                                continue 2;
+                            }
+                        }
+
                         $billableCpmProblems[] = $cpmProblem;
-                        $otherConditionsText[$cpmProblem->id] = 'N/A';
-
-                        continue;
                     }
 
-                    //check for the keywords
-                    $keywords = explode(',', $cpmProblem->contains);
+                    //why didn't I just loop here?
+                    $billableCpmProblems[0] = isset($billableCpmProblems[0])
+                        ? $billableCpmProblems[0]
+                        : new CpmProblem();
 
-                    foreach ($keywords as $keyword) {
-                        if (empty($keyword)) continue;
+                    $billableCpmProblems[1] = isset($billableCpmProblems[1])
+                        ? $billableCpmProblems[1]
+                        : new CpmProblem();
 
-                        if ($strPos = strpos($instruction->name, $keyword)) {
+                    $message = is_object($instruction) ? $instruction->name : 'N/A';
 
-                            $break = strpos($instruction->name, ';', $strPos);
+                    $problems[] = [
+                        'provider_name' => $provider->fullName,
+                        'patient_name' => $patient->fullName,
+                        'patient_dob' => $patient->birthDate,
+                        'patient_phone' => $patient->primaryPhone,
 
-                            $otherConditionsText[$cpmProblem->id] = substr($instruction->name, $strPos, $break - $strPos);
+                        'problem_name_1' => $billableCpmProblems[0]->name,
+                        'problem_code_1' => 'N/A',
+                        'code_system_name_1' => 'N/A',
+                        'other_conditions_text_1' => isset($otherConditionsText[$billableCpmProblems[0]->id])
+                            ? $otherConditionsText[$billableCpmProblems[0]->id]
+                            //otherwise just output the whole instruction
+                            : $message,
 
-                            //add it to billable
-                            $billableCpmProblems[] = $cpmProblem;
+                        'problem_name_2' => $billableCpmProblems[1]->name,
+                        'problem_code_2' => 'N/A',
+                        'code_system_name_2' => 'N/A',
+                        'other_conditions_text_2' => isset($otherConditionsText[$billableCpmProblems[1]->id])
+                            ? $otherConditionsText[$billableCpmProblems[1]->id]
+                            //otherwise just output the whole instruction
+                            : $message,
 
-                            continue 2;
-                        }
-                    }
+                        'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
 
-                    //search blindly using everything from the snomed table
-                    //put this in a function later
+                        '#_succ_clin_calls' => $calls->count(),
+                    ];
 
-                    $keywords = SnomedToICD10Map::where('icd_10_code', 'like', "%$cpmProblem->icd10from%")
-                        ->lists('icd_10_name');
-
-                    foreach ($keywords as $keyword) {
-                        if (empty($keyword)) continue;
-
-                        if ($strPos = strpos($instruction->name, $keyword)) {
-
-                            $break = strpos($instruction->name, ';', $strPos);
-
-                            $otherConditionsText[$cpmProblem->id] = substr($instruction->name, $strPos, $break - $strPos);
-
-                            //add it to billable
-                            $billableCpmProblems[] = $cpmProblem;
-
-                            continue 2;
-                        }
-                    }
-
-                    $billableCpmProblems[] = $cpmProblem;
+                    continue;
                 }
 
-                //why didn't I just loop here?
-                $billableCpmProblems[0] = isset($billableCpmProblems[0])
-                    ? $billableCpmProblems[0]
-                    : new CpmProblem();
 
-                $billableCpmProblems[1] = isset($billableCpmProblems[1])
-                    ? $billableCpmProblems[1]
-                    : new CpmProblem();
+                $patientCcdProblems = $patient->ccdProblems;
 
-                $message = is_object($instruction) ? $instruction->name : 'N/A';
+                $billableCcdProblems[0] = isset($patientCcdProblems[0])
+                    ? $patientCcdProblems[0]
+                    : new CcdProblem();
 
-                $problems[] = [
+                $billableCcdProblems[1] = isset($patientCcdProblems[1])
+                    ? $patientCcdProblems[1]
+                    : new CcdProblem();
+
+                array_push($problems, [
                     'provider_name' => $provider->fullName,
                     'patient_name' => $patient->fullName,
                     'patient_dob' => $patient->birthDate,
                     'patient_phone' => $patient->primaryPhone,
 
-                    'problem_name_1' => $billableCpmProblems[0]->name,
-                    'problem_code_1' => 'N/A',
-                    'code_system_name_1' => 'N/A',
-                    'other_conditions_text_1' => isset($otherConditionsText[$billableCpmProblems[0]->id])
-                        ? $otherConditionsText[$billableCpmProblems[0]->id]
-                        //otherwise just output the whole instruction
-                        : $message,
+                    'problem_name_1' => $billableCcdProblems[0]->name,
+                    'problem_code_1' => $billableCcdProblems[0]->code,
+                    'code_system_name_1' => $billableCcdProblems[0]->code_system_name,
+                    'other_conditions_text_1' => 'N/A',
 
-                    'problem_name_2' => $billableCpmProblems[1]->name,
-                    'problem_code_2' => 'N/A',
-                    'code_system_name_2' => 'N/A',
-                    'other_conditions_text_2' => isset($otherConditionsText[$billableCpmProblems[1]->id])
-                        ? $otherConditionsText[$billableCpmProblems[1]->id]
-                        //otherwise just output the whole instruction
-                        : $message,
+                    'problem_name_2' => $billableCcdProblems[1]->name,
+                    'problem_code_2' => $billableCcdProblems[1]->code,
+                    'code_system_name_2' => $billableCcdProblems[1]->code_system_name,
+                    'other_conditions_text_2' => 'N/A',
 
                     'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
 
                     '#_succ_clin_calls' => $calls->count(),
-                ];
-
-                continue;
+                ]);
             }
 
-
-            $patientCcdProblems = $patient->ccdProblems;
-
-            $billableCcdProblems[0] = isset($patientCcdProblems[0])
-                ? $patientCcdProblems[0]
-                : new CcdProblem();
-
-            $billableCcdProblems[1] = isset($patientCcdProblems[1])
-                ? $patientCcdProblems[1]
-                : new CcdProblem();
-
-            array_push($problems, [
-                'provider_name' => $provider->fullName,
-                'patient_name' => $patient->fullName,
-                'patient_dob' => $patient->birthDate,
-                'patient_phone' => $patient->primaryPhone,
-
-                'problem_name_1' => $billableCcdProblems[0]->name,
-                'problem_code_1' => $billableCcdProblems[0]->code,
-                'code_system_name_1' => $billableCcdProblems[0]->code_system_name,
-                'other_conditions_text_1' => 'N/A',
-
-                'problem_name_2' => $billableCcdProblems[1]->name,
-                'problem_code_2' => $billableCcdProblems[1]->code,
-                'code_system_name_2' => $billableCcdProblems[1]->code_system_name,
-                'other_conditions_text_2' => 'N/A',
-
-                'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
-
-                '#_succ_clin_calls' => $calls->count(),
+            $direction = $under ? 'under' : 'over';
+            
+            $worksheets[] = compact([
+                'problems',
+                'program',
+                'month',
+                'year',
             ]);
+
         }
 
-        Excel::create("Billing Report - $month-$year - $program->display_name", function ($excel) use ($problems, $program, $month, $year) {
-            $excel->sheet("Billing Report - $month-$year", function ($sheet) use ($problems) {
-                $sheet->fromArray(
-                    $problems
-                );
-            });
-        })->export('csv');
+        Excel::create("Billing Report $direction $ccmTimeMin minutes - $month/$year", function ($excel) use ($worksheets) {
+            foreach ($worksheets as $worksheet)
+            {
+                $excel->sheet("{$worksheet['program']->display_name}", function ($sheet) use ($worksheet) {
+                    $sheet->fromArray(
+                        $worksheet['problems']
+                    );
+                });
+            }
+        })->export('xls');
+
     }
 }
