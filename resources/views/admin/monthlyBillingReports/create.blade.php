@@ -59,6 +59,41 @@
                         </div>
 
                         <div class="form-group">
+                            <div class="col-sm-2">
+                                {!! Form::label('status', 'Status') !!}
+                            </div>
+
+                            <div class="col-sm-10">
+                                <div class="col-sm-10">
+                                    <div class="col-sm-1">
+                                        {!! Form::checkbox('status[]', 'enrolled', true, ['class' => 'form-control']) !!}
+                                    </div>
+                                    <div class="col-sm-9">
+                                        {!! Form::label('status', 'Enrolled') !!}
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-10">
+                                    <div class="col-sm-1">
+                                        {!! Form::checkbox('status[]', 'withdrawn', true, ['class' => 'form-control']) !!}
+                                    </div>
+                                    <div class="col-sm-9">
+                                        {!! Form::label('status', 'Withdrawn') !!}
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-10">
+                                    <div class="col-sm-1">
+                                        {!! Form::checkbox('status[]', 'paused', true, ['class' => 'form-control']) !!}
+                                    </div>
+                                    <div class="col-sm-9">
+                                        {!! Form::label('status', 'Paused') !!}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <div class="col-sm-2">{!! Form::label('month', 'Month:') !!}</div>
                             <div class="col-sm-10">{!! Form::text('month', date('m'), ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                         </div>

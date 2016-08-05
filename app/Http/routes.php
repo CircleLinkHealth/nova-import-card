@@ -225,20 +225,22 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix' => 'admin'
     ], function () {
 
+        Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
+
         Route::post('/reports/monthly-billing', [
             'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
             'as' => 'MonthlyBillingReportsController.makeMonthlyReport'
         ]);
-        
+
         Route::get('/reports/monthly-billing/create', [
             'uses' => 'Admin\Reports\MonthlyBillingReportsController@create',
-            'as' => 'MonthlyBillingReportsController.create'    
+            'as' => 'MonthlyBillingReportsController.create'
         ]);
-        Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
-        Route::get('emr-direct/check', function (){
+
+        Route::get('emr-direct/check', function () {
             (new \App\Services\PhiMail\PhiMail())->sendReceive();
         });
-
+        
         Route::get('dupes', function () {
             $results = DB::select(DB::raw("
                 SELECT *
