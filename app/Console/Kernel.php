@@ -7,8 +7,10 @@ use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 
+use App\Services\PhiMail\PhiMail;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 
 class Kernel extends ConsoleKernel {
@@ -35,11 +37,7 @@ class Kernel extends ConsoleKernel {
 	protected function schedule(Schedule $schedule)
 	{
 		$schedule->call(function(){
-			AppConfig::create([
-				'config_key' => 'hello',
-				'config_value' => 'test',
-			]);
+			(new PhiMail)->sendReceive();
 		})->everyMinute();
 	}
-
 }

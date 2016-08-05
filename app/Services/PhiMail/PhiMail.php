@@ -6,7 +6,10 @@ use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
 use App\Services\PhiMail\PhiMailConnector;
+use App\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Maknz\Slack\Facades\Slack;
 
 class PhiMail {
 
@@ -19,11 +22,50 @@ class PhiMail {
     }
 
     /**
+     * This is to help notify us of the status of CCDs we receive.
+     *
+     *
+     * @param User $user
+     * @param Ccda $ccda
+     * @param $fileNames
+     * @param null $line
+     * @param null $errorMessage
+     */
+    public function notifyAdmins($ccdas = [])
+    {
+        $numberOfCcds = count($ccdas);
+
+        $recipients = [
+            'rohanm@circlelinkhealth.com',
+            'mantoniou@circlelinkhealth.com',
+            'jkatz@circlelinkhealth.com',
+            'Raph@circlelinkhealth.com',
+            'kgallo@circlelinkhealth.com',
+        ];
+
+        $view = 'emails.emrDirectCCDsReceived';
+        $subject = "We received {$numberOfCcds} CCDs from EMR Direct.";
+
+        $data = [
+            'ccdas' => $ccdas,
+            'numberOfCcds' => $numberOfCcds
+        ];
+
+        Mail::send($view, $data, function ($message) use ($recipients, $subject) {
+            $message->from('aprima-api@careplanmanager.com', 'CircleLink Health');
+            $message->to($recipients)->subject($subject);
+        });
+    }
+
+    /**
      * @param args the command line arguments
      */
     public function sendReceive() {
 
         try {
+            $fileNames = [];
+            $ccdas = [];
+
             // Specify which parts of the example to run.
             // Note: Send and receive examples are grouped here for demonstration
             // purposes only. In general, receive operations would run in a separate
@@ -38,7 +80,7 @@ class PhiMail {
             $phiMailPass = env('EMR_DIRECT_PASSWORD');
 
             $outboundRecipient = "recipient@direct.anotherdomain.com";
-            $attachmentSaveDirectory = base_path() . '/storage/ccdas/';
+//            $attachmentSaveDirectory = base_path() . '/storage/ccdas/';
 
             // Use the following command to enable client TLS authentication, if
             // required. The key file referenced should contain the following 
@@ -48,7 +90,10 @@ class PhiMail {
             //   <intermediate_CA_certificate.pem>
             //   <root_CA_certificate.pem>
             //
-            //PhiMailConnector::setClientCertificate("/path/to/client_key.pem", "**my_private_key_passphrase**");
+            PhiMailConnector::setClientCertificate(
+                base_path() . env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
+                env('EMR_DIRECT_PASS_PHRASE')
+            );
 
             // This command is recommended for added security to set the trusted 
             // SSL certificate or trust anchor for the phiMail server.
@@ -122,7 +167,8 @@ class PhiMail {
 
                     if ($cr == null) {
 
-                        echo ("Check returned null; no messages on queue.\n");
+                        Slack::to('#background-tasks')
+                            ->send("Checked EMR Direct Mailbox. There where no messages. \n");
                         break;
 
                     } else if($cr->isMail()) {
@@ -137,8 +183,8 @@ class PhiMail {
                         for ($i = 0; $i <= $cr->numAttachments; $i++) {
                             // Get content for part i of the current message.
                             $showRes = $c->show($i);
-                            echo ("MimeType = " . $showRes->mimeType
-                                . "; length=" . $showRes->length . "\n");
+//                            echo ("MimeType = " . $showRes->mimeType
+//                                . "; length=" . $showRes->length . "\n");
 
                             // List all the headers. Headers are set by the
                             // sender and may include Subject, Date, additional
@@ -146,9 +192,9 @@ class PhiMail {
                             // Do NOT use the To: header to determine the address
                             // to which this message should be delivered
                             // internally; use $cr->recipient instead.
-                            foreach ($showRes->headers as $header) {
-                                echo ("Header: " . $header . "\n");
-                            }
+//                            foreach ($showRes->headers as $header) {
+//                                echo ("Header: " . $header . "\n");
+//                            }
 
                             // Process the content; for this example text data 
                             // is echoed to the console and non-text data is
@@ -156,12 +202,12 @@ class PhiMail {
                             if (!strncmp($showRes->mimeType, 'text/', 5)) {
                                 // ... do something with text parts ...
                                 // For this example we assume ascii or utf8 
-                                $s = $showRes->data;
-                                echo ("Content:\n" . $s . "\n");
+//                                $s = $showRes->data;
+//                                echo ("Content:\n" . $s . "\n");
                             } else {
                                 // ... do something with binary data ...
-                                echo ("Content: <BINARY>  Writing attachment file "
-                                    . $showRes->filename . "\n");
+//                                echo ("Content: <BINARY>  Writing attachment file "
+//                                    . $showRes->filename . "\n");
 //                                self::writeDataFile($attachmentSaveDirectory . $showRes->filename, $showRes->data);
 
 
@@ -171,6 +217,7 @@ class PhiMail {
 
                                 $senderDomain = substr($cr->sender, $atPosition);
 
+                                //Map the email domain of the sender to one of our CCD Vendors
                                 $vendorId = Ccda::EMAIL_DOMAIN_TO_VENDOR_MAP[$senderDomain];
 
                                 $vendor = CcdVendor::find($vendorId);
@@ -195,6 +242,11 @@ class PhiMail {
                                 $importer->generateCarePlanFromCCD();
 
                                 echo ("{$showRes->filename} imported successfully");
+                                
+                                $ccdas[] = [
+                                    'id' => $ccda->id,
+                                    'fileName' => $showRes->filename,
+                                ];
                             }
 
                             // Display the list of attachments and associated info. This info is only
@@ -206,7 +258,6 @@ class PhiMail {
                                     . " Desc:" . $showRes->attachmentInfo[$k]->description
                                     . "\n");
                             }
-
                         }
 
                         // This signals the server that the message can be safely removed from the queue
@@ -214,12 +265,21 @@ class PhiMail {
                         // retrieved and processed.
                         $c->acknowledgeMessage();
 
+                        if ($cr->numAttachments > 0) $this->notifyAdmins($ccdas);
+
+                        $message = "Checked EMR Direct Mailbox. There where {$cr->numAttachments} messages. \n";
+
+                        echo $message;
+
+                        Slack::to('#background-tasks')
+                            ->send($message);
+
                     } else {
 
                         // Process a status update for a previously sent message.
-                        echo ("Status message for ID = " . $cr->messageId . "\n");
-                        echo ("  StatusCode = " . $cr->statusCode . "\n");
-                        if ($cr->info != null) echo ("  Info = " . $cr->info . "\n");
+//                        echo ("Status message for ID = " . $cr->messageId . "\n");
+//                        echo ("  StatusCode = " . $cr->statusCode . "\n");
+//                        if ($cr->info != null) echo ("  Info = " . $cr->info . "\n");
                         if ($cr->statusCode == "failed") {
                             // ...do something about a failed message...
                             // $cr->messageId will match the messageId returned
@@ -239,7 +299,8 @@ class PhiMail {
             }
 
         } catch (\Exception $e) {
-            echo ($e->getMessage() . "\n");
+            echo $e->getMessage() . "\n" . $e->getFile() . "\n" . $e->getLine();
+            echo $e->getTraceAsString() . "\n";
         }
 
         try {

@@ -41,9 +41,9 @@ if (isset($patient) && !empty($patient)) {
                                             Click to edit
                                         </a>
                                     </div>
-                                    @endif
+                                @endif
 
-                        <span class="btn btn-group text-right">
+                                <span class="btn btn-group text-right">
                             <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block" aria-label="..."
                                role="button" href="{{ URL::route('patients.listing') }}">Approve More Care Plans</a>
                         <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
