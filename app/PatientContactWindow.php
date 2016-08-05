@@ -97,9 +97,31 @@ class PatientContactWindow extends Model {
 
 		foreach ($patient_windows as $window){
 
-			//Start H and i to get Carbon support in setting up next available window from weekday + time
 			$carbon_date_start = Carbon::parse('next ' . $week[$window->day_of_week]);
 			$carbon_date_end = Carbon::parse('next ' . $week[$window->day_of_week]);
+
+
+			$carbon_hour_start = Carbon::parse($window->window_time_start)->format('H');
+			$carbon_minutes_start = Carbon::parse($window->window_time_start)->format('i');
+
+			$carbon_hour_end = Carbon::parse($window->window_time_end)->format('H');
+			$carbon_minutes_end = Carbon::parse($window->window_time_end)->format('i');
+
+			$carbon_date_start->setTime($carbon_hour_start, $carbon_minutes_start);
+			$carbon_date_end->setTime($carbon_hour_end, $carbon_minutes_end);
+
+			$windows[$count]['string_start'] = $carbon_date_start->toDateTimeString();
+			$windows[$count]['string_end'] = $carbon_date_end->toDateTimeString();
+			$count++;
+		}
+
+
+		//current solution to double the number of windows, add a week and give more options. @todo refactor
+
+		foreach ($patient_windows as $window){
+
+			$carbon_date_start = Carbon::parse('next ' . $week[$window->day_of_week])->addWeek(1);
+			$carbon_date_end = Carbon::parse('next ' . $week[$window->day_of_week])->addWeek(1);
 
 
 			$carbon_hour_start = Carbon::parse($window->window_time_start)->format('H');
