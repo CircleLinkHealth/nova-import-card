@@ -48,6 +48,8 @@ class MonthlyBillingReportsController extends Controller
         $patientRole = Role::whereName('participant')->first();
         $programs = $request->input('programs');
 
+        $ccmStatuses = $request->input('status', []);
+
 
         foreach ($programs as $programId) {
             $program = Program::find($programId);
@@ -72,10 +74,14 @@ class MonthlyBillingReportsController extends Controller
                 'ccdProblems' => function ($query) {
                     $query->whereNotNull('cpm_problem_id');
                 },
-                'cpmProblems'
+                'cpmProblems',
+                'patientInfo'
             ])
                 ->whereHas('roles', function ($q) use ($patientRole) {
                     $q->where('name', '=', $patientRole->name);
+                })
+                ->whereHas('patientInfo', function ($query) use ($ccmStatuses) {
+                    $query->whereIn('ccm_status', $ccmStatuses);
                 })
                 ->where('program_id', '=', $programId)
                 ->whereIn('ID', $patientsOver20MinsIds)
@@ -209,6 +215,8 @@ class MonthlyBillingReportsController extends Controller
                             //otherwise just output the whole instruction
                             : $message,
 
+                        'ccm_status' => $patient->patientInfo->ccm_status,
+
                         'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
 
                         '#_succ_clin_calls' => $calls->count(),
@@ -244,6 +252,8 @@ class MonthlyBillingReportsController extends Controller
                     'code_system_name_2' => $billableCcdProblems[1]->code_system_name,
                     'other_conditions_text_2' => 'N/A',
 
+                    'ccm_status' => $patient->patientInfo->ccm_status,
+
                     'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
 
                     '#_succ_clin_calls' => $calls->count(),
@@ -251,7 +261,7 @@ class MonthlyBillingReportsController extends Controller
             }
 
             $direction = $under ? 'under' : 'over';
-            
+
             $worksheets[] = compact([
                 'problems',
                 'program',
@@ -262,8 +272,7 @@ class MonthlyBillingReportsController extends Controller
         }
 
         Excel::create("Billing Report $direction $ccmTimeMin minutes - $month/$year", function ($excel) use ($worksheets) {
-            foreach ($worksheets as $worksheet)
-            {
+            foreach ($worksheets as $worksheet) {
                 $excel->sheet("{$worksheet['program']->display_name}", function ($sheet) use ($worksheet) {
                     $sheet->fromArray(
                         $worksheet['problems']
