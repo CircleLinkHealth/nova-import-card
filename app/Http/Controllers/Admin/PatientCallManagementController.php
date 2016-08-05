@@ -59,7 +59,9 @@ class PatientCallManagementController extends Controller {
 		$filterNurse = array();
 		if ( !empty($request->input('filterNurse')) ) {
 			$filterNurse = $request->input('filterNurse');
-			if ( $request->input('filterNurse') != 'all' ) {
+			if ( $request->input('filterNurse') == 'unassigned' ) {
+				$calls->where( 'outbound_cpm_id', '=', null );
+			} else if ( $request->input('filterNurse') != 'all' ) {
 				$calls->where( 'outbound_cpm_id', '=', $filterNurse );
 			}
 		}

@@ -32,7 +32,7 @@
 
                                 <div class="row">
                                     <div class="col-xs-2"><label for="filterNurse">Nurse:</label></div>
-                                    <div class="col-xs-4">{!! Form::select('filterNurse', array('all' => 'All') + $nurses, $filterNurse, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                    <div class="col-xs-4">{!! Form::select('filterNurse', array('all' => 'All', 'unassigned' => 'Unassigned') + $nurses, $filterNurse, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                                 </div>
 
                                 <div class="row" style="margin-top:15px;">
@@ -45,7 +45,7 @@
                                     <div class="" style="text-align:center;">
                                         {!! Form::hidden('action', 'filter') !!}
                                         <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
-                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</button>
+                                        <a href="{{ URL::route('admin.patientCallManagement.index', array()) }}" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</a>
                                         </form>
                                     </div>
                                 </div>
