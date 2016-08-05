@@ -106,7 +106,7 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser)                                                                             {{\App\Services\NoteService::numberOfCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString())}} [<span style="color:green;">{{\App\Services\NoteService::numberOfSuccessfulCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString())}}</span>]
+                                                            @if($call->inboundUser)                                                                             {{ \App\Call::numberOfCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }} (<span style="color:green;">{{ \App\Call::numberOfSuccessfulCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }}</span>)
                                                             @endif
                                                         </td>
                                                         <td>
