@@ -12,6 +12,9 @@ class CreatePatientContactWindowTable extends Migration
      */
     public function up()
     {
+
+        if (!Schema::hasTable('patient_contact_window')) {
+
         Schema::create('patient_contact_window', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('patient_info_id');
@@ -24,7 +27,8 @@ class CreatePatientContactWindowTable extends Migration
                 ->on('patient_info')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-        });
+            });
+        }
     }
 
     /**
