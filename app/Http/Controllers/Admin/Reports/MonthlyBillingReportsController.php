@@ -32,6 +32,7 @@ class MonthlyBillingReportsController extends Controller
 
     public function makeMonthlyReport(Request $request)
     {
+        $worksheets = [];
         //whether over or under 20 minutes
         $under = $request->input('under', false);
 
@@ -49,7 +50,6 @@ class MonthlyBillingReportsController extends Controller
         $programs = $request->input('programs');
 
         $ccmStatuses = $request->input('status', []);
-
 
         foreach ($programs as $programId) {
             $program = Program::find($programId);
@@ -272,6 +272,23 @@ class MonthlyBillingReportsController extends Controller
         }
 
         Excel::create("Billing Report $direction $ccmTimeMin minutes - $month/$year", function ($excel) use ($worksheets) {
+
+            //Add program to each patient for master list
+            $masterList = [];
+            foreach ($worksheets as $worksheet)
+            {
+                foreach ($worksheet['problems'] as $row)
+                {
+                    $row['program'] = $worksheet['program']->display_name;
+                    $masterList[] = $row;
+                }
+            }
+
+            $excel->sheet('Master', function ($sheet) use ($masterList) {
+                $sheet->fromArray(
+                    $masterList
+                );
+            });
             foreach ($worksheets as $worksheet) {
                 $excel->sheet("{$worksheet['program']->display_name}", function ($sheet) use ($worksheet) {
                     $sheet->fromArray(
