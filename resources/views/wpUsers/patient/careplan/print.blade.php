@@ -132,21 +132,23 @@ if (isset($patient) && !empty($patient)) {
                 <div class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications</h2>
+                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications <a class="btn btn-primary" href="{{ URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></h2>
                         </div>
                         <div class="col-xs-10">
                             <ul><strong>Monitoring these Medications</strong><BR>
-                                @if($medications_monitor)
+                                @if(!empty($medications_monitor))
                                     @foreach($medications_monitor as $medi)
-                                        <li>{{$medi}}</li>
+                                        <li style="margin-top:8px;">{{$medi}}</li>
                                     @endforeach
                                 @endif
                             </ul>
                         </div>
                         <div class="col-xs-10">
-                            <ul><strong>Taking these Medications</strong>
-                                @if($taking_medications)
-                                    <li><?= nl2br($taking_medications) ?></li>
+                            <ul><strong>Taking these Medications</strong><BR>
+                                @if(!empty($taking_medications))
+                                    @foreach($taking_medications as $medi)
+                                        <li style="margin-top:8px;">{{$medi}}</li>
+                                    @endforeach
                                 @endif
                             </ul>
                         </div>
