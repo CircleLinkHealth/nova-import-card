@@ -1,13 +1,49 @@
 <?php namespace App\Algorithms\Calls;
 
+use App\Call;
 use App\PatientContactWindow;
 use App\PatientInfo;
 use App\Services\NoteService;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class PredictCall
 {
+
+    public function getPatientCallInfo(User $patient, $prediction){
+
+        $no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth($patient,Carbon::now()->toDateTimeString());
+        $no_of_calls = Call::numberOfCallsForPatientForMonth($patient,Carbon::now()->toDateTimeString());
+
+        if($no_of_successful_calls == 0 || $no_of_calls == 0){
+            $success_percent = 'N/A';
+        } else {
+            $success_percent = ( ($no_of_successful_calls) / ($no_of_calls) ) * 100;
+        }
+
+        // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
+
+        $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
+
+        $ccm_time_achieved = false;
+        if($seconds >= 1200){
+            $ccm_time_achieved = true;
+        }
+
+        $H = floor($seconds / 3600);
+        $i = ($seconds / 60) % 60;
+        $s = $seconds % 60;
+        $monthlyTime = sprintf("%02d:%02d:%02d",$H, $i, $s);
+
+        $prediction['no_of_successful_calls'] = $no_of_successful_calls;
+        $prediction['no_of_calls'] = $no_of_calls;
+        $prediction['success_percent'] = $success_percent;
+        $prediction['ccm_time_achieved'] = $ccm_time_achieved;
+        $prediction['formatted_monthly_time'] = $monthlyTime;
+
+        return $prediction;
+    }
 
     public function successfulCallHandler($patient, $note, $scheduled_call){
 
@@ -37,7 +73,9 @@ class PredictCall
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
-        return [
+        //Call Info
+
+        $prediction = [
             'patient' => $patient,
             'date' => $next_contact_window['day'],
             'window' => $window,
@@ -47,6 +85,10 @@ class PredictCall
             'next_contact_windows' => $next_contact_windows,
             'successful' => true
         ];
+
+        $prediction = $this->getPatientCallInfo($patient, $prediction);
+
+        return $prediction;
     }
 
     public function unsuccessfulCallHandler($patient, $note, $scheduled_call){
@@ -75,8 +117,7 @@ class PredictCall
 
         $next_contact_windows = PatientContactWindow::getNextWindowsForPatient($patient);
 
-
-        return [
+        $prediction =  [
             'patient' => $patient,
             'date' => $earliest_contact_day,
             'window_start' => $window_start,
@@ -84,6 +125,11 @@ class PredictCall
             'next_contact_windows' => $next_contact_windows,
             'successful' => false
         ];
+
+        $prediction = $this->getPatientCallInfo($patient, $prediction);
+
+        return $prediction;
+
     }
     
 }
