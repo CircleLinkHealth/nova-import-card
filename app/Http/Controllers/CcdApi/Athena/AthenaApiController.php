@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\CcdApi\Athena;
 
+use App\Services\AthenaAPI\APICalls;
 use App\Services\AthenaAPI\APIConnection;
 use Illuminate\Http\Request;
 
@@ -11,28 +12,14 @@ use App\Http\Controllers\Controller;
 class AthenaApiController extends Controller
 {
     protected $api;
-    protected $key = '8q63pe2583be9pjctxxtcejp';
-    protected $secret = 'HpFT8Smxe65mWTD';
-    protected $version = 'preview1';
-    protected $practiceid = 1959188;
 
     public function __construct()
     {
-        $this->api = new APIConnection($this->version, $this->key, $this->secret, $this->practiceid);
+        $this->api = new APICalls();
     }
     
-    public function getCcd()
+    public function getCcd($patientId = 4185, $departmentId = 1)
     {
-        $patientId = 4185;
-
-        $ccda = $this->api->GET("patients/{$patientId}/ccda", [
-            'patientid' => $patientId,
-            'practiceid' => $this->practiceid,
-            'departmentid' => 1,
-            'purpose' => 'internal',
-            'xmloutput' => false,
-        ]);
-
-        echo 'here';
+        $this->api->getCcd($patientId, $departmentId);
     }
 }
