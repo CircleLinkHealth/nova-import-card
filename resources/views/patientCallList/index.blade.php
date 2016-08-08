@@ -6,6 +6,38 @@
 @section('content')
 
     <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script>
+        $(document).ready(function() {
+            var cpmEditableStatus = false;
+            var cpmEditableID = false;
+            $('#cpmEditableTable').DataTable( {
+                "scrollX": true
+            } );
+
+            $('#cpmEditableTable').on('click', '.cpm-editable-icon', function(){
+                // editing!
+                if(cpmEditableStatus === true) {
+                    alert('already editing');
+                    // force close existing edit
+                    return false;
+                }
+                cpmEditableStatus = true;
+                //alert( "Handler for .click() called." );
+                dataValue = $( this ).parent().parent().attr('data-value');
+                $( this ).parent().parent().html('<input type="text" id="cpm-editable-value" value="' + dataValue + '" /><a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
+                return false;
+            });
+
+            $('#cpmEditableTable').on('click', '#cpm-editable-save', function(){
+                dataValue = $('#cpm-editable-value').val();
+                $( this ).parent().html(dataValue + '<a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon"></span></a>');
+                cpmEditableStatus = false;
+                return false;
+            });
+        } );
+    </script>
 
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
@@ -54,15 +86,20 @@
                                             .table tbody>tr>td.vert-align{
                                                 vertical-align: middle;
                                             }
+
+                                            #cpmEditableTable tbody>tr>td {
+                                                white-space: nowrap;
+                                            }
                                         </style>
-                                        <table class="table table-striped" style="">
+                                        <table style=""  id="cpmEditableTable" class="display" width="100%" cellspacing="0">
                                             <thead>
                                             <tr>
                                                 <th></th>
                                                 <th>Status</th>
                                                 <th>Patient</th>
-                                                <th>Date</th>
-                                                <th>Call Window</th>
+                                                <th>Next Call Date</th>
+                                                <th>Next Call Time Start</th>
+                                                <th>Next Call Time End</th>
                                                 <th>Last Date called</th>
                                                 <th>CCM Time to date</th>
                                                 <th># Calls to date</th>
@@ -95,8 +132,12 @@
                                                                 <em style="color:red;">unassigned</em>
                                                             @endif
                                                         </td>
-                                                        <td><span style="color:#50B2E2;font-weight:bold;">{{ $call->call_date }}</span></td>
-                                                        <td><span style="color:#50B2E2;font-weight:bold;">{{ $call->window_start }}-{{ $call->window_end }}</span></td>
+                                                        <td class="cpm-editable" field="call_date" data-value="{{ $call->call_date }}">{{ $call->call_date }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon"></span></a>
+                                                        </td>
+                                                        <td class="cpm-editable" field="window_start" data-value="{{ $call->window_start }}">{{ $call->window_start }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon"></span></a>
+                                                        </td>
+                                                        <td class="cpm-editable" field="window_end" data-value="{{ $call->window_end }}">{{ $call->window_end }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon"></span></a>
+                                                        </td>
                                                         <td>
                                                             @if($call->inboundUser)
                                                                 {{ $call->inboundUser->patientInfo->last_successful_contact_time }}
@@ -142,7 +183,7 @@
                                             </tbody>
                                         </table>
                                         </form>
-                                        {{ $calls->links() }}
+                                        <?php //$calls->links() ?>
                                     </div>
                                 </div>
                             </div>
