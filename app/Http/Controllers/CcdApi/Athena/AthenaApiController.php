@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\CcdApi\Athena;
 
-use App\Services\AthenaAPI\APICalls;
-use App\Services\AthenaAPI\APIConnection;
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Requests;
+use App\Services\AthenaAPI\APICalls;
 
 class AthenaApiController extends Controller
 {
