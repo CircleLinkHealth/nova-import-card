@@ -130,6 +130,17 @@ class PatientController extends Controller
         $observations->where('obs_unit', '!=', "invalid");
         $observations->where('obs_unit', '!=', "scheduled");
         $observations->orderBy('obs_date', 'desc');
+
+        if($detailSection == 'obs_biometrics') {
+            $observations->whereIn('obs_key', array('Cigarettes', 'Blood_Pressure', 'Blood_Sugar','Weight'));
+        } else if($detailSection == 'obs_medications') {
+            $observations->whereIn('obs_key', array('Adherence'));
+        } else if($detailSection == 'obs_symptoms') {
+            $observations->whereIn('obs_key', array('Symptom', 'Severity'));
+        } else if($detailSection == 'obs_lifestyle') {
+            $observations->whereIn('obs_key', array('Other', 'Call'));
+        }
+
         $observations = $observations->get();
 
         // build array of pcp
@@ -204,26 +215,6 @@ class PatientController extends Controller
                     break;
             }
         }
-
-        // At this point, everything that didnt match went to lifestyle
-        // get array of lifestyle questions, and only include these in obs_lifestyle (also include Call observations!)
-
-        //$lifestyle_questions = $this->rules_model->getQuestionIdsByPCP(2, 7);
-        /*
-        $lifestyle_questions = array();
-        $lifestyle_msg_ids = array();
-        $filtered_lifestyle_obs = array();
-        foreach($lifestyle_questions as $lifestyle_question) {
-            $lifestyle_msg_ids[] = $lifestyle_question['msg_id'];
-        }
-
-        foreach($obs_by_pcp['obs_lifestyle'] as $lifestyle_obs) {
-            if((($lifestyle_obs['obs_key'] == 'Call')) || (in_array($lifestyle_obs['obs_message_id'], $lifestyle_msg_ids) && $lifestyle_obs['obs_value'] != '')) {
-                $filtered_lifestyle_obs[] = $lifestyle_obs;
-            }
-        }
-        $obs_by_pcp['obs_lifestyle'] = $filtered_lifestyle_obs;
-        */
 
         $observation_json = array();
         foreach ($obs_by_pcp as $section => $observations) {
