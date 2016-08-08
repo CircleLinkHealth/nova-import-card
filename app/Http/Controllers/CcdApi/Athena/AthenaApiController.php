@@ -23,8 +23,10 @@ class AthenaApiController extends Controller
     
     public function getCcd()
     {
-        $ccda = $this->api->GET('ccda', [
-            'patientid' => 4185,
+        $patientId = 4185;
+
+        $ccda = $this->api->GET("patients/{$patientId}/ccda", [
+            'patientid' => $patientId,
             'practiceid' => $this->practiceid,
             'departmentid' => 1,
             'purpose' => 'internal',
