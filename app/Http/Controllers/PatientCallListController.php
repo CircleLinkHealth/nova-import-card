@@ -58,7 +58,8 @@ class PatientCallListController extends Controller {
 
 		$calls->orderBy('call_date', 'asc');
 		$calls->orderBy('window_start', 'asc');
-		$calls = $calls->paginate( 10 );
+		//$calls = $calls->paginate( 10 );
+		$calls = $calls->get();
 
 
 		return view('patientCallList.index', compact(['calls', 'date', 'filterStatus']));
