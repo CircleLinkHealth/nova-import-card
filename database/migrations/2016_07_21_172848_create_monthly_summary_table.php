@@ -12,29 +12,32 @@ class CreateMonthlySummaryTable extends Migration
      */
     public function up()
     {
-        Schema::create('patient_monthly_summaries', function (Blueprint $table) {
+        if (!Schema::hasTable('patient_monthly_summaries')) {
 
-            $table->increments('id');
+            Schema::create('patient_monthly_summaries', function (Blueprint $table) {
 
-            $table->unsignedInteger('patient_info_id');
+                $table->increments('id');
 
-            $table->integer('ccm_time');
+                $table->unsignedInteger('patient_info_id');
 
-            $table->date('month_year');
+                $table->integer('ccm_time');
 
-            $table->integer('no_of_calls');
+                $table->date('month_year');
 
-            $table->integer('no_of_successful_calls');
+                $table->integer('no_of_calls');
 
-            $table->timestamps();
+                $table->integer('no_of_successful_calls');
 
-            $table->foreign('patient_info_id')
-                ->references('id')
-                ->on('patient_info')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+                $table->timestamps();
 
-        });
+                $table->foreign('patient_info_id')
+                    ->references('id')
+                    ->on('patient_info')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
+
+            });
+        }
     }
 
     /**
