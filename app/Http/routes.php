@@ -1,5 +1,7 @@
 <?php
 
+Route::get('athena', 'CcdApi\Athena\AthenaApiController@getCcd');
+
 //THIS IS FOR APRIMA ONLY
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
