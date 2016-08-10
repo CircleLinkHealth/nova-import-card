@@ -113,10 +113,6 @@
                                                 @foreach($calls as $call)
                                                     <tr>
                                                         <td>
-                                                            <input type="checkbox" name="calls[]" value="{{ $call->id }}">
-                                                            @if($call->inboundUser && $call->status == 'scheduled')
-                                                                <a href="{{ URL::route('patient.demographics.show', array('patient' => $call->inboundUser->ID)) }}" class="btn btn-primary"><span class="glyphicon glyphicon-earphone" style="margin-right:3px;font-size: 20px;padding:5px;"></span></a>
-                                                            @endif
                                                         </td>
                                                         <td class="vert-align">
                                                             @if($call->status == 'reached')
