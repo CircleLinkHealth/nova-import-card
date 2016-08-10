@@ -137,18 +137,26 @@ if (isset($patient) && !empty($patient)) {
                         <div class="col-xs-10">
                             <ul><strong>Monitoring these Medications</strong><BR>
                                 @if(!empty($medications_monitor))
-                                    @foreach($medications_monitor as $medi)
-                                        <li style="margin-top:8px;">{{$medi}}</li>
-                                    @endforeach
+                                    @if(is_array($medications_monitor))
+                                        @foreach($medications_monitor as $medi)
+                                            <li style="margin-top:8px;">{{$medi}}</li>
+                                        @endforeach
+                                    @else
+                                        {{$medications_monitor}}
+                                    @endif
                                 @endif
                             </ul>
                         </div>
                         <div class="col-xs-10">
                             <ul><strong>Taking these Medications</strong><BR>
                                 @if(!empty($taking_medications))
-                                    @foreach($taking_medications as $medi)
-                                        <li style="margin-top:8px;">{{$medi}}</li>
-                                    @endforeach
+                                    @if(is_array($taking_medications))
+                                        @foreach($taking_medications as $medi)
+                                            <li style="margin-top:8px;">{{$medi}}</li>
+                                        @endforeach
+                                    @else
+                                        {{$taking_medications}}
+                                    @endif
                                 @endif
                             </ul>
                         </div>
