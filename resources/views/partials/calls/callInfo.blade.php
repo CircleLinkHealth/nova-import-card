@@ -30,10 +30,10 @@
     <div class="row" style="border-top: solid 2px #50b2e2;">
         <div class="new-note-item">
             <div class="form-group">
-                <div class="col-sm-12">
+                <div class="col-sm-12" style="padding-left: 0px">
                     <div class="form-group">
                         <div class="form-item form-item-spacing">
-                            <div class="col-sm-12" style="margin-bottom: -17px;">
+                            <div class="col-sm-12" style="margin-bottom: -17px; ">
                                 <label for="activityKey">
                                     <b>{{Carbon\Carbon::now()->format('F')}} CCM Time</b>
                                 </label>
@@ -41,7 +41,7 @@
                             <div class="col-sm-12">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <h3 style="{{$ccm_time_achieved ? 'color: #47beab;' : ''}}">{{$monthlyTime}}
+                                        <h3 style="{{$ccm_time_achieved ? 'color: #47beab;' : ''}}">{{$formatted_monthly_time}}
                                             @if($ccm_time_achieved)
                                                 <span class="glyphicon glyphicon-ok"></span>
                                             @endif
@@ -57,10 +57,10 @@
     </div>
 </div>
 <div class="form-block col-md-4">
-    <div class="row" >
+    <div class="row" style="margin-right: 35px" >
         <div class="new-note-item">
             <div class="form-group">
-                <div class="col-sm-12" style="margin-top: -25px;">
+                <div class="col-sm-12" style="margin-top: -25px; padding-left: 0px">
                     <div class="form-group">
                         <div class="form-item form-item-spacing">
                             <div class="col-sm-12" style="margin-bottom: 9px">
@@ -68,7 +68,7 @@
                                     <b>{{Carbon\Carbon::now()->format('F')}} Call Statistics:</b>
                                 </label>
                             </div>
-                            <div class="col-sm-12">
+                            <div class="col-sm-12" style="width: 135%;">
                                 <ul class="list-group">
                                     <li class="list-group-item">
                                         <b> Successful Calls:</b> <span style="color: green"> {{$no_of_successful_calls}} </span>
@@ -78,6 +78,9 @@
                                     </li>
                                     <li class="list-group-item">
                                         <b> Call Success: {{round($success_percent, 2)}}%</b>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <b> Last Successful Call Date: {{$patient->patientInfo->last_successful_contact_time == '0000-00-00' ? 'N/A' : \Carbon\Carbon::parse($patient->patientInfo->last_successful_contact_time)->toFormattedDateString()}}</b>
                                     </li>
                                 </ul>
                             </div>

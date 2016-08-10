@@ -46,10 +46,20 @@ class PatientMonthlySummary extends Model
 
 
         } else {
+            
+            if($record->count() == 1){
 
-            $record[0]->no_of_calls = $record->no_of_calls + 1;
-            $record[0]->no_of_successful_calls = $record->no_of_calls + $successful_call_increment;
-            $record[0]->save();
+                $record->no_of_calls = $record->no_of_calls + 1;
+                $record->no_of_successful_calls = $record->no_of_calls + $successful_call_increment;
+                $record->save();
+
+            } else {
+
+                $record[0]->no_of_calls = $record[0]->no_of_calls + 1;
+                $record[0]->no_of_successful_calls = $record[0]->no_of_calls + $successful_call_increment;
+                $record[0]->save();
+
+            }
 
         }
 

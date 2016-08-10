@@ -5,34 +5,6 @@
 
 @section('content')
 
-    <?php
-
-            $no_of_successful_calls = \App\Call::numberOfSuccessfulCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString());
-            $no_of_calls = \App\Call::numberOfCallsForPatientForMonth($patient,Carbon\Carbon::now()->toDateTimeString());
-
-            if($no_of_successful_calls == 0 || $no_of_calls == 0){
-                $success_percent = 'N/A';
-            } else {
-                $success_percent = ( ($no_of_successful_calls) / ($no_of_calls) ) * 100;
-            }
-
-
-    // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
-
-    $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
-
-    $ccm_time_achieved = false;
-            if($seconds >= 1200){
-                $ccm_time_achieved = true;
-            }
-
-    $H = floor($seconds / 3600);
-    $i = ($seconds / 60) % 60;
-    $s = $seconds % 60;
-    $monthlyTime = sprintf("%02d:%02d:%02d",$H, $i, $s);
-
-    ?>
-
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1" style="border-bottom:3px solid #50b2e2">
             <div class="row">

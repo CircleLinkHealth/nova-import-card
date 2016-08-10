@@ -32,7 +32,7 @@ class PatientContactWindow extends Model {
 
 	// END RELATIONSHIPS
 
-	public function getEarliestWindowForPatient($patient){
+	public function getEarliestWindowForPatient(User $patient){
 
 		$patient_windows = $patient->patientInfo->patientContactWindows()->get();
 
