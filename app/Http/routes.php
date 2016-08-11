@@ -1,6 +1,8 @@
 <?php
 
 //THIS IS FOR APRIMA ONLY
+use Maatwebsite\Excel\Facades\Excel;
+
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
     Route::post('oauth/access_token', 'CcdApi\Aprima\AuthController@getAccessToken');
@@ -214,15 +216,37 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix' => 'admin'
     ], function () {
 
-        Route::post('/reports/monthly-billing', [
-            'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
-            'as' => 'MonthlyBillingReportsController.makeMonthlyReport'
-        ]);
-        
-        Route::get('/reports/monthly-billing/create', [
-            'uses' => 'Admin\Reports\MonthlyBillingReportsController@create',
-            'as' => 'MonthlyBillingReportsController.create'    
-        ]);
+        Route::group([
+            'prefix' => 'reports'
+        ], function (){
+            Route::post('monthly-billing', [
+                'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
+                'as' => 'MonthlyBillingReportsController.makeMonthlyReport'
+            ]);
+
+            Route::get('monthly-billing/create', [
+                'uses' => 'Admin\Reports\MonthlyBillingReportsController@create',
+                'as' => 'MonthlyBillingReportsController.create'
+            ]);
+
+            Route::get('ethnicity', function (){
+                $data = \App\CLH\CCD\ItemLogger\CcdDemographicsLog::get([
+                    'first_name',
+                    'last_name',
+                    'dob',
+                    'race',
+                    'ethnicity'
+                ]);
+
+                Excel::create("Ethnicity Report", function ($excel) use ($data) {
+                    $excel->sheet('Master', function ($sheet) use ($data) {
+                        $sheet->fromArray(
+                            $data
+                        );
+                    });
+                })->export('xls');
+            });
+        });
 
         Route::get('dupes', function () {
             $results = DB::select(DB::raw("
