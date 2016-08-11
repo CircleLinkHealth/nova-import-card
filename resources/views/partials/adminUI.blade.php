@@ -231,12 +231,14 @@
                                 Reports<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ URL::route('view.files.ready.to.import', []) }}">CCDs To Import</a></li>
+                                <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
+                                        Billing Report</a></li>
                                 <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a>
                                 </li>
                                 <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a>
                                 </li>
-                                <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
-                                        Billing Report</a></li>
+
                             </ul>
                         </li>
                     @endif
