@@ -12,12 +12,14 @@ class AddEthnicity extends Migration
      */
     public function up()
     {
-        Schema::table('ccd_demographics_logs', function (Blueprint $table) {
-            $table->string('ethnicity')
-                ->nullable()
-                ->default(null)
-                ->after('language');
-        });
+        if (!Schema::hasColumn('ccd_demographics_logs', 'ethnicity')) {
+            Schema::table('ccd_demographics_logs', function (Blueprint $table) {
+                $table->string('ethnicity')
+                    ->nullable()
+                    ->default(null)
+                    ->after('language');
+            });
+        }
     }
 
     /**
