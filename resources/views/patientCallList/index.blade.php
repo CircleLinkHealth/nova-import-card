@@ -113,9 +113,9 @@
                                                     <tr>
                                                         <td class="vert-align">
                                                             @if($call->status == 'reached')
-                                                                <button class="btn btn-success btn-xs"><i class="glyphicon glyphicon-ok"></i> Reached</button>
+                                                                <span class="btn btn-success btn-xs"><i class="glyphicon glyphicon-ok"></i> Reached</span>
                                                             @elseif($call->status == 'scheduled')
-                                                                <button class="btn btn-warning btn-xs"><i class="glyphicon glyphicon-list"></i> Scheduled</button>
+                                                                <span class="btn btn-warning btn-xs"><i class="glyphicon glyphicon-list"></i> Scheduled</span>
                                                             @endif
                                                         </td>
                                                         <td>
