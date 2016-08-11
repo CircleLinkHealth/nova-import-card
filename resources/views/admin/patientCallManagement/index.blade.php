@@ -2,6 +2,96 @@
 
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script>
+        $(document).ready(function() {
+            // vars
+            var consoleDebug = true;
+            var cpmEditableStatus = false;
+            var cpmEditableCallId = false;
+            var cpmEditableColumnName = false;
+            var cpmEditableColumnValue = false;
+            var cpmEditableTd = false;
+
+            // instantiate datatables.net script on table
+            $('#cpmEditableTable').DataTable( {
+                "scrollX": true
+            } );
+
+            // edit action
+            $('#cpmEditableTable').on('click', '.cpm-editable-icon', function(){
+                if(cpmEditableStatus === true) {
+                    alert('already editing');
+                    return false;
+                    //saveEditableField();
+                }
+                cpmEditableCallId = $( this ).attr('call-id');
+                cpmEditableColumnName = $( this ).attr('column-name');
+                cpmEditableColumnValue = $( this ).attr('column-value');
+                cpmEditableTd = $( this ).parent().parent();
+                openEditableField();
+                return false;
+            });
+
+            // save action
+            $('#cpmEditableTable').on('click', '#cpm-editable-save', function(){
+                cpmEditableColumnValue = $('#editableInput').val();
+                saveEditableField();
+                return false;
+            });
+
+            // open editable field function
+            function openEditableField() {
+                cpmEditableStatus = true;
+                if(cpmEditableColumnName == 'outbound_cpm_id') {
+                    alert( $('[name=nurseFormSelect]').val() );
+                    $('[name=nurseFormSelect]').val( cpmEditableColumnValue );
+                    alert( $('[name=nurseFormSelect]').val() );
+                    var html = $('#nurseFormWrapper').html() + ' <a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>';
+                    $(cpmEditableTd).html(html);
+                } else if(cpmEditableColumnName == 'call_date') {
+                    $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="date" type="editableInput" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
+                } else if(cpmEditableColumnName == 'window_start' || cpmEditableColumnName == 'window_end') {
+                    $(cpmEditableTd).html('<input id="editableInput" style="width:50px;" class="" name="editableInput" type="input" value="' + cpmEditableColumnValue + '"  data-field="time" data-format="HH:mm" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
+                }
+                return false;
+            }
+
+            // save editable field function
+            function saveEditableField() {
+                $( cpmEditableTd ).html(cpmEditableColumnValue + '<a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '"></span></a>');
+
+                $( cpmEditableTd ).addClass('highlight');
+                setTimeout(function(){
+                    $( cpmEditableTd ).removeClass('highlight');
+                    cpmEditableStatus = false;
+                }, 1000);
+
+                var data = {
+                    "callId": cpmEditableCallId,
+                    "columnName": cpmEditableColumnName,
+                    "value": cpmEditableColumnValue
+                };
+                if (consoleDebug) console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo URL::route('api.callupdate'); ?>',
+                    data: data,
+                    //cache: false,
+                    encode: true,
+                    //processData: false,
+                    success: function (data) {
+                        // do something to signify success
+                    }
+                });
+                return false;
+            }
+        } );
+    </script>
+    <div id="nurseFormWrapper" style="display:none;">
+        {!! Form::select('nurseFormSelect', array('unassigned' => 'Unassigned') + $nurses->all(), '', ['class' => 'select-picker', 'style' => 'width:150px;']) !!}
+    </div>
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -15,6 +105,9 @@
                     <div class="panel-body">
                         @include('errors.errors')
                         @include('errors.messages')
+
+                        <div id="dtBox"></div>
+                        <div id="tBox"></div>
 
                         <div class="row">
                             {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
@@ -31,8 +124,13 @@
                                 </div>
 
                                 <div class="row">
+                                    <div class="col-xs-2"><label for="date">Date:</label></div>
+                                    <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
+                                </div>
+
+                                <div class="row">
                                     <div class="col-xs-2"><label for="filterNurse">Nurse:</label></div>
-                                    <div class="col-xs-4">{!! Form::select('filterNurse', array('all' => 'All', 'unassigned' => 'Unassigned') + $nurses, $filterNurse, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                    <div class="col-xs-4">{!! Form::select('filterNurse', array('all' => 'All', 'unassigned' => 'Unassigned') + $nurses->all(), $filterNurse, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                                 </div>
 
                                 <div class="row" style="margin-top:15px;">
@@ -54,18 +152,37 @@
 
 
                         {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                        <table class="table table-striped">
+                        <style>
+                            .table tbody>tr>td.vert-align{
+                                vertical-align: middle;
+                            }
+
+                            #cpmEditableTable tbody>tr>td {
+                                white-space: nowrap;
+                            }
+
+                            .cpm-editable {
+                                color:#000;
+                            }
+
+                            .highlight {
+                                color:green;
+                                font-weight:bold;
+                            }
+                        </style>
+                        <table style=""  id="cpmEditableTable" class="display" width="100%" cellspacing="0">
                             <thead>
                             <tr>
                                 <th></th>
+                                <th>Status</th>
                                 <th>Nurse</th>
                                 <th>Patient</th>
-                                <th>Date</th>
-                                <th>Contact Window</th>
-                                <th>Status</th>
+                                <th>Next Call Date</th>
+                                <th>Next Call Time Start</th>
+                                <th>Next Call Time End</th>
                                 <th>Last Date called</th>
                                 <th>CCM Time to date</th>
-                                <th># success</th>
+                                <th># Calls to date</th>
                                 <th>Provider</th>
                                 <th>Program</th>
                                 <th></th>
@@ -76,29 +193,32 @@
                                 @foreach($calls as $call)
                                     <tr>
                                         <td><input type="checkbox" name="calls[]" value="{{ $call->id }}"></td>
+                                        <td class="vert-align">
+                                            @if($call->status == 'reached')
+                                                <button class="btn btn-success btn-xs"><i class="glyphicon glyphicon-ok"></i> Reached</button>
+                                            @elseif($call->status == 'scheduled')
+                                                <button class="btn btn-warning btn-xs"><i class="glyphicon glyphicon-list"></i> Scheduled</button>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($call->outboundUser)
-                                                <a href="{{ URL::route('admin.users.edit', array('patient' => $call->outboundUser->ID)) }}" class="">{{ $call->outboundUser->display_name }}</a>
+                                                {{ $call->outboundUser->display_name }}
                                             @else
                                                 <em style="color:red;">unassigned</em>
                                             @endif
                                         </td>
                                         <td>
                                             @if($call->inboundUser)
-                                                <a href="{{ URL::route('admin.users.edit', array('patient' => $call->inboundUser->ID)) }}" class="">{{ $call->inboundUser->display_name }}</a>
+                                                <a href="{{ URL::route('patient.demographics.show', array('patient' => $call->inboundUser->ID)) }}">{{ $call->inboundUser->display_name }} </a>
                                             @else
                                                 <em style="color:red;">unassigned</em>
                                             @endif
                                         </td>
-                                        <td><span style="font-weight:bold;">{{ $call->call_date }}</span>
+                                        <td class="cpm-editable" field="call_date" data-value="{{ $call->call_date }}">{{ $call->call_date }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon" call-id="{{ $call->id }}" column-name="call_date" column-value="{{ $call->call_date }}"></span></a>
                                         </td>
-                                        <td><span style="font-weight:bold;">{{ $call->window_start }}-{{ $call->window_end }}</span></td>
-                                        <td>
-                                            @if($call->status == 'reached')
-                                                <span class="text-success"><i class="glyphicon glyphicon-ok">-Reached</i></span>
-                                            @elseif($call->status == 'scheduled')
-                                                <span class="text-warning"><i class="glyphicon glyphicon-list">-Scheduled</i></span>
-                                            @endif
+                                        <td class="cpm-editable" field="window_start" data-value="{{ $call->window_start }}">{{ $call->window_start }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon" call-id="{{ $call->id }}" column-name="window_start" column-value="{{ $call->window_start }}"></span></a>
+                                        </td>
+                                        <td class="cpm-editable" field="window_end" data-value="{{ $call->window_end }}">{{ $call->window_end }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon" call-id="{{ $call->id }}" column-name="window_end" column-value="{{ $call->window_end }}"></span></a>
                                         </td>
                                         <td>
                                             @if($call->inboundUser)
@@ -127,13 +247,11 @@
                                             @if($call->inboundUser && $call->inboundUser->primaryProgram)
                                                 {{ $call->inboundUser->primaryProgram->display_name }}
                                             @else
-                                                <em style="color:red;">unassigned</em>
+                                                <em style="color:red;">n/a</em>
                                             @endif
                                         </td>
-                                        <td class="text-right">
-                                            @if(Entrust::can('users-edit-all'))
-                                                <a href="{{ URL::route('admin.patientCallManagement.edit', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
-                                            @endif
+                                        <td class="text-right vert-align">
+                                            <a href="{{ URL::route('admin.patientCallManagement.edit', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -149,13 +267,14 @@
                                     <option value="assign">Assign Nurse:</option>
                                 </select>
                             </div>
-                            <div class="col-xs-6">Nurse:&nbsp;&nbsp;{!! Form::select('assigned_nurse', array('unassigned' => 'Unassigned') + $nurses, 'unassigned', ['class' => '', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-xs-6">Nurse:&nbsp;&nbsp;
+                                {!! Form::select('assigned_nurse', array('unassigned' => 'Unassigned') + $nurses->all(), 'unassigned', ['class' => 'select-picker', 'style' => 'width:50%;']) !!}
+                            </div>
                             <div class="col-xs-2">
                                 <button type="submit" value="Submit" class="btn btn-primary btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-circle-arrow-right"></i> Perform Action</button>
                             </div>
                         </div>
                         </form>
-                        {{ $calls->links() }}
                     </div>
                 </div>
             </div>

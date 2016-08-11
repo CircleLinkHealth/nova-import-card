@@ -59,4 +59,26 @@ class CallController extends Controller
         return view('admin.calls.index', ['calls' => $calls, 'patient' => User::find($patientId)]);
     }
 
+    public function update(Request $request)
+    {
+
+        $data = $request->only('callId',
+            'columnName',
+            'value');
+
+        if(empty($data['callId'])) {
+            return response("missing required params", 201);
+        }
+        $call = Call::find($data['callId']);
+        if(!$call) {
+            return response("could not locate call ".$data['callId'], 201);
+        }
+
+        $call->$data['columnName'] = $data['value'];
+        $call->save();
+
+        return response("successfully updated call ".$data['columnName']."=".$data['value']." - CallId=".$data['callId'], 201);
+
+    }
+
 }

@@ -77,7 +77,8 @@ class PatientCallManagementController extends Controller {
 
 		$calls->orderBy('call_date', 'asc');
 		$calls->orderBy('window_start', 'asc');
-		$calls = $calls->paginate( 10 );
+		//$calls = $calls->paginate( 10 );
+		$calls = $calls->get();
 
 
 
@@ -91,7 +92,7 @@ class PatientCallManagementController extends Controller {
 				});
 			})
 			->orderBy('last_name', 'ASC')
-			->lists( 'display_name', 'ID' )->all();
+			->pluck('display_name', 'ID');
 
 		return view('admin.patientCallManagement.index', compact(['calls', 'date', 'nurses', 'filterNurse', 'filterStatus']));
 	}

@@ -94,7 +94,6 @@
                                         <table style=""  id="cpmEditableTable" class="display" width="100%" cellspacing="0">
                                             <thead>
                                             <tr>
-                                                <th></th>
                                                 <th>Status</th>
                                                 <th>Patient</th>
                                                 <th>Next Call Date</th>
@@ -112,8 +111,6 @@
                                             @if (count($calls) > 0)
                                                 @foreach($calls as $call)
                                                     <tr>
-                                                        <td>
-                                                        </td>
                                                         <td class="vert-align">
                                                             @if($call->status == 'reached')
                                                                 <button class="btn btn-success btn-xs"><i class="glyphicon glyphicon-ok"></i> Reached</button>
@@ -128,12 +125,9 @@
                                                                 <em style="color:red;">unassigned</em>
                                                             @endif
                                                         </td>
-                                                        <td class="cpm-editable" field="call_date" data-value="{{ $call->call_date }}">{{ $call->call_date }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon"></span></a>
-                                                        </td>
-                                                        <td class="cpm-editable" field="window_start" data-value="{{ $call->window_start }}">{{ $call->window_start }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon"></span></a>
-                                                        </td>
-                                                        <td class="cpm-editable" field="window_end" data-value="{{ $call->window_end }}">{{ $call->window_end }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon"></span></a>
-                                                        </td>
+                                                        <td>{{ $call->call_date }}</td>
+                                                        <td>{{ $call->window_start }}</td>
+                                                        <td>{{ $call->window_end }}</td>
                                                         <td>
                                                             @if($call->inboundUser)
                                                                 {{ $call->inboundUser->patientInfo->last_successful_contact_time }}
@@ -161,7 +155,7 @@
                                                             @if($call->inboundUser && $call->inboundUser->primaryProgram)
                                                                 {{ $call->inboundUser->primaryProgram->display_name }}
                                                             @else
-                                                                <em style="color:red;">unassigned</em>
+                                                                <em style="color:red;">n/a</em>
                                                             @endif
                                                         </td>
                                                         <td class="text-right vert-align">
