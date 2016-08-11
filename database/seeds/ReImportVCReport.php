@@ -48,6 +48,8 @@ class ReImportVCReport extends Seeder
                         'subscriber' => $payer->subscriber,
                         'approved' => false,
                     ]);
+
+                    $this->command->info("ReImported CCD with ID {$ccda->id}");
                 }
             }
         }
