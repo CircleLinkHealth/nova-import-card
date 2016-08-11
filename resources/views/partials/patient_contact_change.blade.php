@@ -79,8 +79,8 @@
                     <b>*Please save the entire note to update call times</b>
                 </div>
                 @else
-                    <div class="col-xs-12" style="text-align: center">
-                        <b>*Saving note will create call times</b>
+                    <div class="col-xs-12" style="color: orangered; text-align: center">
+                        <b>*Please save the entire note to update call times</b>
                     </div>
                 @endif
 
