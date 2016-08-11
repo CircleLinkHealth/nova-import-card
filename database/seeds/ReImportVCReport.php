@@ -26,6 +26,7 @@ class ReImportVCReport extends Seeder
 
             //Save Ethnicity
             $ccdDemogrLog->ethnicity = $jsonCcda->demographics->ethnicity;
+            $ccdDemogrLog->race = $jsonCcda->demographics->race;
             $ccdDemogrLog->save();
 
             //Save Insurance
