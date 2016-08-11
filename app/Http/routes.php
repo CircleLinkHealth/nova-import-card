@@ -1,7 +1,6 @@
 <?php
 
 //THIS IS FOR APRIMA ONLY
-use Maatwebsite\Excel\Facades\Excel;
 
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
@@ -218,7 +217,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::group([
             'prefix' => 'reports'
-        ], function (){
+        ], function () {
             Route::post('monthly-billing', [
                 'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
                 'as' => 'MonthlyBillingReportsController.makeMonthlyReport'
@@ -229,23 +228,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'as' => 'MonthlyBillingReportsController.create'
             ]);
 
-            Route::get('ethnicity', function (){
-                $data = \App\CLH\CCD\ItemLogger\CcdDemographicsLog::get([
-                    'first_name',
-                    'last_name',
-                    'dob',
-                    'race',
-                    'ethnicity'
-                ]);
-
-                Excel::create("Ethnicity Report", function ($excel) use ($data) {
-                    $excel->sheet('Master', function ($sheet) use ($data) {
-                        $sheet->fromArray(
-                            $data
-                        );
-                    });
-                })->export('xls');
-            });
+            Route::get('ethnicity', [
+                'uses' => 'Admin\Reports\EthnicityReportController@getReport',
+                'as' => 'EthnicityReportController.getReport'
+            ]);
         });
 
         Route::get('dupes', function () {
@@ -398,7 +384,7 @@ Route::group(['middleware' => 'auth'], function () {
         // report - nurse time report
 
         Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
-        
+
         Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 
         // questions
