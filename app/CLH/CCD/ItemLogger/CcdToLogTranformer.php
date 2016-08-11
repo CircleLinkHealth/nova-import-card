@@ -53,6 +53,7 @@ class CcdToLogTranformer
             'work_phone' => $phones[ 'work' ][ 0 ],
             'email' => $demographics->email,
             'language' => $demographics->language,
+            'ethnicity' => $demographics->ethnicity,
         ];
     }
 
