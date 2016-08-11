@@ -106,13 +106,6 @@ class PatientController extends Controller
 
         $problems = $carePlanViewService->getProblemsToMonitor($wpUser);
 
-//        $carePlan = CarePlan::where('id', '=', $wpUser->care_plan_id)
-//            ->first();
-
-//        if ($carePlan) {
-//            $carePlan->build($wpUser->ID);
-//        }
-
         $params = $request->all();
         $detailSection = '';
         if (isset($params['detail'])) {
@@ -126,11 +119,11 @@ class PatientController extends Controller
             array('section' => 'obs_lifestyle', 'id' => 'obs_lifestyle_dtable', 'title' => 'Lifestyle', 'col_name_question' => 'Question', 'col_name_severity' => 'Response'),
         );
 
-        $observations = Observation::where('user_id', '=', $wpUser->ID);
-        $observations->where('obs_unit', '!=', "invalid");
-        $observations->where('obs_unit', '!=', "scheduled");
-        $observations->orderBy('obs_date', 'desc');
-        $observations = $observations->get();
+        $observations = Observation::where('user_id', '=', $wpUser->ID)
+            ->where('obs_unit', '!=', "invalid")
+            ->where('obs_unit', '!=', "scheduled")
+            ->orderBy('obs_date', 'desc')
+            ->get();
 
         // build array of pcp
         $obs_by_pcp = array(
