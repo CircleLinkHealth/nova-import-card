@@ -1,5 +1,14 @@
 <?php
 //THIS IS FOR APRIMA ONLY
+
+Route::get('algo', function (){
+
+//    $carbon = (new \App\PatientContactWindow)->getEarliestWindowForPatientFromDate(\App\User::find(512), \Carbon\Carbon::parse('2016-10-10'));
+        $carbon = Carbon\Carbon::parse('next month')->firstOfMonth();
+    return $carbon;
+
+});
+
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
     Route::post('oauth/access_token', 'CcdApi\Aprima\AuthController@getAccessToken');
