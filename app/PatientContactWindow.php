@@ -76,6 +76,50 @@ class PatientContactWindow extends Model {
 
 	}
 
+	public function getEarliestWindowForPatientFromDate(User $patient, Carbon $date){
+
+		$patient_windows = $patient->patientInfo->patientContactWindows()->get();
+
+		if(!$patient_windows){
+
+			return $date->tomorrow()->toDateTimeString();
+
+		}
+
+		// leaving first blank to offset weird way of storing week as 1-7 instead of 0-6.
+		// Returns a datetime string with all the necessary time information
+		$week = ['', Carbon::MONDAY, Carbon::TUESDAY, Carbon::WEDNESDAY, Carbon::THURSDAY, Carbon::FRIDAY, Carbon::SATURDAY, Carbon::SUNDAY];
+
+		$min_date = Carbon::maxValue();
+
+		foreach ($patient_windows as $window){
+
+			$carbon_date = $date->next($week[$window->day_of_week]);
+
+			$carbon_hour = Carbon::parse($window->window_time_start)->format('H');
+			$carbon_minutes = Carbon::parse($window->window_time_start)->format('i');
+			$carbon_date->setTime($carbon_hour, $carbon_minutes);
+
+			$date_string = $carbon_date->toDateTimeString();
+
+			if($min_date > $date_string){
+				$min_date = $date_string;
+				$min_date_carbon = $date_string;
+				$closest_window = $window;
+			}
+		}
+
+		return [
+
+			'day' => $min_date_carbon,
+			'window_start' => Carbon::parse($closest_window->window_time_start)->format('H:i'),
+			'window_end' => Carbon::parse($closest_window->window_time_end)->format('H:i')
+
+		];
+
+	}
+
+
 	//Returns Array with each element containing a start_window_time and an end_window_time in dateString format
 	public static function getNextWindowsForPatient($patient){
 
