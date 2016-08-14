@@ -4,6 +4,7 @@
 @section('activity', 'Patient Note Creation')
 
 @section('content')
+
     <?php
     $userTime = \Carbon\Carbon::now();
     $userTime->setTimezone($userTimeZone);
@@ -223,7 +224,7 @@
 
                                     $('.collapse').collapse();
 
-                                    <?php //@todo check bug later. ?>
+                                    //@todo check bug later.
 
                                     $("input:checkbox").on('click', function () {
                                         // in the handler, 'this' refers to the box clicked on

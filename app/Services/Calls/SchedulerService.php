@@ -19,12 +19,6 @@ class SchedulerService
         $this->callPredictor = $algorithm;
     }
 
-    //This function will be the initial rendition of algorithm
-    //to predict the patient's next call date.
-    //It will take the patient's User object,
-    //the Note and the outcome of the call
-    //as input and return a datetime
-
     // Success is the call's status.
     // true for reached, false for not reached 
     public function getNextCall($patient, $note ,$success)
@@ -48,7 +42,6 @@ class SchedulerService
 
         }
     }
-
     
     //Create new scheduled call
     public function storeScheduledCall($patientId, $window_start, $window_end, $date)

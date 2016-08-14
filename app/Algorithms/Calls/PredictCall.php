@@ -89,11 +89,15 @@ class PredictCall
         //To get initial date to offset
         $next_contact_window = (new PatientContactWindow())->getEarliestWindowForPatient($patient);
         $next_window_carbon = Carbon::parse($next_contact_window['day']);
+        debug('First available: ' . $next_window_carbon);
 
         //To determine which week we are in the current month, as a factor
         $week_num = Carbon::now()->weekOfMonth;
+        debug('Week Num: ' . $week_num);
 
         $ccm_time = $patient->patientInfo()->first()->cur_month_activity_time;
+        debug('CCM Time: ' . $ccm_time);
+
 
         if($ccm_time > 1199){ // More than 20 mins
 
@@ -130,7 +134,10 @@ class PredictCall
 
         }
 
-        //the day we can use to start predicting the next call date, and subsequent windows.
+        debug('Post Algo First Available: ' . $next_window_carbon);
+
+
+        //this will give us the first available call window from the date the logic offsets, per the patient's preferred times. 
         $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($patient, $next_window_carbon);
         
         //String to facilitate testing

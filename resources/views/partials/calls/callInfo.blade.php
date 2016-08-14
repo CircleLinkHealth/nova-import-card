@@ -55,8 +55,6 @@
             </div>
         </div>
     </div>
-</div>
-<div class="form-block col-md-4">
     <div class="row" style="margin-right: 35px" >
         <div class="new-note-item">
             <div class="form-group">
@@ -91,3 +89,19 @@
         </div>
     </div>
 </div>
+
+<script>
+
+    $(document).ready(function() {
+
+        $("#name option").filter(function() {
+            return $(this).val() == $("#firstname").val();
+        }).attr('selected', true);
+
+        $("#name").live("change", function() {
+
+            $("#firstname").val($(this).find("option:selected").attr("value"));
+        });
+    });
+
+</script>
