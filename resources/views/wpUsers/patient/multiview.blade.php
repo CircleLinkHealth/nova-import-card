@@ -260,7 +260,6 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                     </div>
             @endif
-
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
@@ -271,19 +270,15 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         <div class="col-xs-10">
                             <ul><strong>Monitoring these Medications</strong><BR>
-                                @if(!empty($careplan['medications']))
-                                    @foreach($careplan['medications'] as $medi)
-                                        <li>{{$medi}}</li>
-                                    @endforeach
-                                @endif
+                                @foreach($careplan['medications'] as $medi)
+                                    <li>{{$medi}}</li>
+                                @endforeach
                             </ul>
                         </div>
                         <div class="col-xs-10">
                             <ul><strong>Taking these Medications</strong>
-                                @if(!empty($careplan['taking_meds']))
-                                    @foreach($careplan['taking_meds'] as $medi)
-                                        <li>{{$medi}}</li>
-                                    @endforeach
+                                @if($careplan['taking_meds'])
+                                    <li><?= nl2br($careplan['taking_meds']) ?></li>
                                 @endif
                             </ul>
                         </div>
