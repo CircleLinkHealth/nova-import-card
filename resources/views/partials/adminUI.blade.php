@@ -111,7 +111,8 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ URL::route('admin.users.index', array()) }}">All Users</a></li>
                                 <li><a href="{{ URL::route('admin.users.create', array()) }}">New User</a></li>
-                                <li><a href="{{ URL::route('admin.patientCallManagement.index', array()) }}">Patient Call Management</a>
+                                <li><a href="{{ URL::route('admin.patientCallManagement.index', array()) }}">Patient
+                                        Call Management</a>
                                 <li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a>
                                 </li>
                             </ul>
@@ -224,17 +225,24 @@
                     @endif
 
                     <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                           aria-expanded="false">
                             Reports<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="{{ URL::route('view.files.ready.to.import', []) }}">CCDs To Import</a></li>
+                            <li><a href="{{ URL::route('EthnicityReportController.getReport', []) }}">Ethnicity/Race
+                                    Report</a></li>
                             <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
-                                    Billing</a></li>
-                            <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a></li>
-                            <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a></li>
+                                    Billing Report</a></li>
+                            <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a>
+                            </li>
+                            <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a>
+                            </li>
+
                         </ul>
                     </li>
+
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">

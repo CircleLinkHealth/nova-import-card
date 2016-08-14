@@ -1,6 +1,4 @@
 <?php
-//THIS IS FOR APRIMA ONLY
-
 Route::get('algo', function (){
 
 //    $carbon = (new \App\PatientContactWindow)->getEarliestWindowForPatientFromDate(\App\User::find(512), \Carbon\Carbon::parse('2016-10-10'));
@@ -9,6 +7,7 @@ Route::get('algo', function (){
 
 });
 
+//THIS IS FOR APRIMA ONLY
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
     Route::post('oauth/access_token', 'CcdApi\Aprima\AuthController@getAccessToken');
@@ -236,15 +235,24 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
 
-        Route::post('/reports/monthly-billing', [
-            'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
-            'as' => 'MonthlyBillingReportsController.makeMonthlyReport'
-        ]);
+        Route::group([
+            'prefix' => 'reports'
+        ], function () {
+            Route::post('monthly-billing', [
+                'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
+                'as' => 'MonthlyBillingReportsController.makeMonthlyReport'
+            ]);
 
-        Route::get('/reports/monthly-billing/create', [
-            'uses' => 'Admin\Reports\MonthlyBillingReportsController@create',
-            'as' => 'MonthlyBillingReportsController.create'
-        ]);
+            Route::get('monthly-billing/create', [
+                'uses' => 'Admin\Reports\MonthlyBillingReportsController@create',
+                'as' => 'MonthlyBillingReportsController.create'
+            ]);
+
+            Route::get('ethnicity', [
+                'uses' => 'Admin\Reports\EthnicityReportController@getReport',
+                'as' => 'EthnicityReportController.getReport'
+            ]);
+        });
 
         Route::get('emr-direct/check', function () {
             (new \App\Services\PhiMail\PhiMail())->sendReceive();
@@ -403,6 +411,7 @@ Route::group(['middleware' => 'auth'], function () {
         // report - nurse time report
         //these fall under the admin-access permission
         Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
+
         Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 
         // questions

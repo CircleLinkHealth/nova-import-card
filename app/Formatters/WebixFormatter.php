@@ -295,18 +295,16 @@ class WebixFormatter implements ReportFormatter
             $meds = CcdMedication::where('patient_id', '=', $user->ID)->orderBy('name')->get();
             if ($meds->count() > 0) {
                 $i = 0;
-                $careplanReport[$user->ID]['taking_meds'] = '';
+                $careplanReport[$user->ID]['taking_meds'] = array();
                 foreach ($meds as $med) {
                     if(empty($med->name)) {
                         continue 1;
                     }
-                    if ($i > 0) {
-                        $careplanReport[$user->ID]['taking_meds'] .= '<br>';
-                    }
-                    $careplanReport[$user->ID]['taking_meds'] .= ''.$med->name;
+                    $medText = ''.$med->name;
                     if(!empty($med->sig)) {
-                        $careplanReport[$user->ID]['taking_meds'] .= '<br>- '.$med->sig;
+                        $medText .= '<br>- '.$med->sig;
                     }
+                    $careplanReport[$user->ID]['taking_meds'][] = $medText;
                     $i++;
                 }
             }

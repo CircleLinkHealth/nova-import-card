@@ -278,7 +278,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <div class="col-xs-10">
                             <ul><strong>Taking these Medications</strong>
                                 @if($careplan['taking_meds'])
-                                    <li><?= nl2br($careplan['taking_meds']) ?></li>
+                                    @foreach($careplan['taking_meds'] as $med)
+                                        <li><?= nl2br($med) ?></li>
+                                    @endforeach
                                 @endif
                             </ul>
                         </div>
