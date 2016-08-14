@@ -60,6 +60,7 @@ class PatientContactWindow extends Model {
 			$date_string = $carbon_date->toDateTimeString();
 
 			if($min_date > $date_string){
+				
 				$min_date = $date_string;
 				$min_date_carbon = $date_string;
 				$closest_window = $window;
@@ -145,9 +146,18 @@ class PatientContactWindow extends Model {
 
 		$patient_windows = $patient->patientInfo->patientContactWindows()->get();
 
+		//If nothing, give tomorrow
 		if(!$patient_windows){
 
-			return $date->tomorrow()->toDateTimeString();
+			 $day = $date->tomorrow()->toDateTimeString();
+
+			return [
+
+					'day' => $day,
+					'window_start' => Carbon::parse('10:00:00')->format('H:i'),
+					'window_end' => Carbon::parse('18:00:00')->format('H:i')
+
+				];
 
 		}
 
@@ -185,7 +195,7 @@ class PatientContactWindow extends Model {
 	}
 
 	//Returns Array with each element containing a start_window_time and an end_window_time in dateString format
-	public function getNextWindowsForPatientFromDate($patient, $date){
+	public function getNextWindowsForPatientFromDate($patient, $date_offset){
 
 		$patient_windows = $patient->patientInfo->patientContactWindows()->get();
 
@@ -203,13 +213,15 @@ class PatientContactWindow extends Model {
 		$count = 0;
 
 		//The date from the algorithm is supplied here to find the amount of time we wait before calling him back.
-		$date_offset = Carbon::parse($date);
 
 		//In this section, we loop through the next days of the week that the patient is available,
 		//and after assigning the times to the carbon object, we add it to an array as available
 		//contact days
 
 		foreach ($patient_windows as $window){
+
+			debug('Get next ' . $week[$window->day_of_week] . ': ' . $date_offset);
+
 
 			$carbon_date_start = $date_offset->next($week[$window->day_of_week]);
 			$carbon_date_end = $date_offset->next($week[$window->day_of_week]);

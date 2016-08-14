@@ -88,57 +88,63 @@ class PredictCall
 
         //To get initial date to offset
         $next_contact_window = (new PatientContactWindow())->getEarliestWindowForPatient($patient);
+        $next_window_carbon = Carbon::parse($next_contact_window['day']);
 
         //To determine which week we are in the current month, as a factor
         $week_num = Carbon::now()->weekOfMonth;
 
         $ccm_time = $patient->patientInfo()->first()->cur_month_activity_time;
 
-        if($ccm_time > 1200){ // More than 20 mins
+        if($ccm_time > 1199){ // More than 20 mins
 
             if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
 
                 //Logic: Call patient in the second last week of the month
-                $next_contact_window = Carbon::now()->lastOfMonth()->subDay(7);
+                $next_window_carbon = $next_window_carbon->endOfMonth()->subWeek(1);
 
             } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
                 
                 //Logic: Call patient in first week of next month
-                $next_contact_window = Carbon::parse('next month')->firstOfMonth();
+                $next_window_carbon = $next_window_carbon->next('month')->firstOfMonth();
                 
             } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
 
                 //Logic: Call patient after two weeks
-                $next_contact_window = Carbon::now()->addWeek(2);
+                $next_window_carbon = $next_window_carbon->addWeek(2);
 
             }
 
-        } else if ($ccm_time > 900){ // 15 - 20 mins
+        } else if ($ccm_time > 899){ // 15 - 20 mins
 
-            $next_contact_window = Carbon::now();
+            if($week_num == 1){
+
+            }
+
+            //Logic: Add 3 weeks or
 
         } else if ($ccm_time > 599){ // 10 - 15 mins
 
-            $next_contact_window = Carbon::now();
 
         } else { // 0 - 10 mins
 
-            $next_contact_window = Carbon::now();
 
         }
 
         //the day we can use to start predicting the next call date, and subsequent windows.
-        $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($patient, $next_contact_window);
+        $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($patient, $next_window_carbon);
         
         //String to facilitate testing
-        $patient_situation = $patient->fullName . 'was called successfully in week ' . $week_num . ' and has ccm time: ' . intval($ccm_time/60) . ' mins';
+        $patient_situation = $patient->fullName . 'was called successfully in <b>week '
+                                . $week_num . ' </b> and has <b>ccm time: ' . intval($ccm_time/60) . ' mins </b>. ' .
+                                  'His predicted next call date is: <b>' . Carbon::parse($next_predicted_contact_window['day'])->toDateTimeString()
+                                    . '</b>' ;
 
         $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
         $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
 
         //TO CALCULATE
 
-        $next_contact_windows = (new PatientContactWindow)->getNextWindowsForPatientFromDate($patient, $next_predicted_contact_window);
+        $next_contact_windows = (new PatientContactWindow)->getNextWindowsForPatientFromDate($patient, Carbon::parse($next_predicted_contact_window['day']));
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
