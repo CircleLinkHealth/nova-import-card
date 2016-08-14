@@ -89,15 +89,11 @@ class PredictCall
         //To get initial date to offset
         $next_contact_window = (new PatientContactWindow())->getEarliestWindowForPatient($patient);
         $next_window_carbon = Carbon::parse($next_contact_window['day']);
-        debug('First available: ' . $next_window_carbon);
 
         //To determine which week we are in the current month, as a factor
         $week_num = Carbon::now()->weekOfMonth;
-        debug('Week Num: ' . $week_num);
 
         $ccm_time = $patient->patientInfo()->first()->cur_month_activity_time;
-        debug('CCM Time: ' . $ccm_time);
-
 
         if($ccm_time > 1199){ // More than 20 mins
 
@@ -118,23 +114,73 @@ class PredictCall
 
             }
 
-        } else if ($ccm_time > 899){ // 15 - 20 mins
+        }
 
-            if($week_num == 1){
+        else if ($ccm_time > 899){ // 15 - 20 mins
+
+            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+
+                //Logic: Call patient in the second last week of the month
+                //Note, might result in very close calls if second week.
+                $next_window_carbon = $next_window_carbon->endOfMonth()->subWeek(2);
+
+            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+
+                //Logic: Call patient in last week of month
+                $next_window_carbon = $next_window_carbon->endOfMonth()->subWeek(1);
+
+            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+
+                //Logic: Call patient after two weeks
+                $next_window_carbon = $next_window_carbon->addWeek(2);
 
             }
 
             //Logic: Add 3 weeks or
 
-        } else if ($ccm_time > 599){ // 10 - 15 mins
+        }
 
+        else if ($ccm_time > 599){ // 10 - 15 mins
 
-        } else { // 0 - 10 mins
+            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
 
+                //Logic: Call patient in 2 weeks.
+                $next_window_carbon = $next_window_carbon->addWeek(2);
+
+            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+
+                //Logic: Call patient in first week of next month
+                $next_window_carbon = $next_window_carbon->addWeek(1);
+
+            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+
+                //Logic: Call patient after two weeks
+                $next_window_carbon = $next_window_carbon->addWeek(1);
+
+            }
 
         }
 
-        debug('Post Algo First Available: ' . $next_window_carbon);
+        else { // 0 - 10 mins
+
+            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+
+                //Logic: Call patient in the second last week of the month
+                $next_window_carbon = $next_window_carbon->addWeek(1);
+
+            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+
+                //Logic: Call patient in first week of next month
+                $next_window_carbon = $next_window_carbon->addWeek(1);
+
+            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+
+                //Logic: Call patient after two weeks
+                $next_window_carbon = $next_window_carbon->addWeek(1);
+
+            }
+
+        } 
 
 
         //this will give us the first available call window from the date the logic offsets, per the patient's preferred times. 
@@ -211,6 +257,11 @@ class PredictCall
         $prediction = $this->getAlgorithmFactors($patient, $prediction);
 
         return $prediction;
+
+    }
+
+    public function successfulCallTimeRouter(){
+
 
     }
 
