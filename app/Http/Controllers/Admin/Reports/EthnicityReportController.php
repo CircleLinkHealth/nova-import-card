@@ -15,7 +15,7 @@ class EthnicityReportController extends Controller
     {
         $data = CcdDemographicsLog::all();
 
-        //Add program id
+        //Prepare spreadsheet data
         $filtered = $data->map(function ($demoLog){
             $ccdVendor = CcdVendor::find($demoLog->vendor_id);
             $program = Program::find($ccdVendor->program_id);
