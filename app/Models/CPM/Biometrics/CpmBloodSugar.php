@@ -18,7 +18,7 @@ class CpmBloodSugar extends Model implements Biometric
 
     protected $attributes = [
         'target' => 120,
-        'high_alert' => 351,
+        'high_alert' => 350,
         'low_alert' => 60,
     ];
 

@@ -248,9 +248,8 @@ class DatamonitorService
         ];
         $userUcpData["alert_keys"] = [
             "Weight" => empty($weight) ?: $weight->target,
-            "Blood_Sugar" => empty($bloodSugar) ?: $bloodSugar->high_alert,
-            "Blood_Sugar_Low" => empty($bloodSugar) ?: $bloodSugar->low_alert,
-            'Blood_Sugar_Starting' => empty($bloodSugar) ?: $bloodSugar->starting,
+
+            'bloodSugar' => $bloodSugar,
 
             'bloodPressure' => $bloodPressure,
 
@@ -522,29 +521,29 @@ class DatamonitorService
         //dd($userUcpData);
         //blood-sugar-bs-high-alert
         //blood-sugar-bs-low-alert
-        if (!isset($userUcpData['alert_keys']['Blood_Sugar']) || !isset($userUcpData['alert_keys']['Blood_Sugar_Low'])) {
+        if (!isset($userUcpData['alert_keys']['bloodSugar'])) {
             $log_string .= 'Missing UCP data for bs and/or bs low';
             $label = 'success';
         } else {
-            //Changed it to fit https://slack-files.com/files-pri-safe/T03DZ2NFQ-F1L6ZE82H/progress_report_algo_03.2016.pdf?c=1470340230-e582bbde05a95f2abe6f6bf803992c782a33f95a
-//            $max_blood_sugar = $userUcpData['alert_keys']['Blood_Sugar'];
-//            $min_blood_sugar = $userUcpData['alert_keys']['Blood_Sugar_Low'];
+            $bloodSugar = $userUcpData['alert_keys']['bloodSugar'];
 
-            $max_blood_sugar = 130;
-            $mid_blood_sugar = 70;
-            $min_blood_sugar = 60;
+            $lowAlert = empty($bloodSugar) ? 60 : $bloodSugar->low_alert;
+            $highAlert = empty($bloodSugar) ? 350 : $bloodSugar->high_alert;
+
+            $max_blood_sugar_healthy_range = 140;
+            $min_blood_sugar_healthy_range = 80;
 
             $extra_vars['bsvalue'] = $obs_value;
-            $log_string = PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar}, BS Low: {$min_blood_sugar}" . PHP_EOL;
-            if (!empty($obs_value) && !empty($min_blood_sugar) && !empty($max_blood_sugar)) {
-                if (($obs_value <= $min_blood_sugar) || ($obs_value >= $max_blood_sugar)) { //61
+            $log_string = PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar_healthy_range}, BS Low: {$lowAlert}" . PHP_EOL;
+            if (!empty($obs_value) && !empty($lowAlert) && !empty($max_blood_sugar_healthy_range)) {
+                if (($obs_value <= $lowAlert) || ($obs_value >= $highAlert)) { //61
                     $message_id = 'CF_AL_04';
-                    $send_alert = "{$obs_value} (systolic) is <= {$min_blood_sugar} (systolic)";
+                    $send_alert = "{$obs_value} (systolic) is <= {$lowAlert} (systolic)";
                     $send_email = true;
                     $label = 'danger';
-                } else if ($obs_value >= $mid_blood_sugar && $obs_value <= $max_blood_sugar) {
+                } else if ($obs_value >= $min_blood_sugar_healthy_range && $obs_value <= $max_blood_sugar_healthy_range) {
                     $label = 'success';
-                } else if ($obs_value >= $min_blood_sugar && $obs_value <= $mid_blood_sugar) { //351
+                } else if (($obs_value <= $min_blood_sugar_healthy_range && $obs_value >= $lowAlert) || ($obs_value <= $highAlert && $obs_value >= $max_blood_sugar_healthy_range)) { //351
                     $label = 'warning';
                 }
             } else {
