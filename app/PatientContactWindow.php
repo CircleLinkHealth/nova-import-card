@@ -132,7 +132,9 @@ class PatientContactWindow extends Model {
 
 	}
 
-	public function getEarliestWindowForPatientFromDate(User $patient, Carbon $offset_date){
+	public function getEarliestWindowForPatientFromDate(User $patient, $offset_date){
+
+		$offset_date = Carbon::parse($offset_date);
 
 		$patient_windows = $patient->patientInfo->patientContactWindows()->get();
 
@@ -169,14 +171,13 @@ class PatientContactWindow extends Model {
 
 			if($min_date > $date_string){
 				$min_date = $date_string;
-				$min_date_carbon = $date_string;
 				$closest_window = $window;
 			}
 		}
 
 		return [
 
-			'day' => $min_date_carbon,
+			'day' => $min_date,
 			'window_start' => Carbon::parse($closest_window->window_time_start)->format('H:i'),
 			'window_end' => Carbon::parse($closest_window->window_time_end)->format('H:i')
 
