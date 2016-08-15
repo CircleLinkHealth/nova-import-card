@@ -269,27 +269,27 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications</h2>
                         </div>
                         <div class="col-xs-10">
-                            <ul><strong>Monitoring these Medications</strong><BR>
-                                @if(!empty($medications_monitor))
-                                    @if(is_array($medications_monitor))
-                                        @foreach($medications_monitor as $medi)
+                            <ul><strong>Monitoring these Medicationsr</strong><BR>
+                                @if(!empty($careplan['medications']))
+                                    @if(is_array($careplan['medications']))
+                                        @foreach($careplan['medications'] as $medi)
                                             <li style="margin-top:12px;">{{$medi}}</li>
                                         @endforeach
                                     @else
-                                        {{$medications_monitor}}
+                                        {{$careplan['medications']}}
                                     @endif
                                 @endif
                             </ul>
                         </div>
                         <div class="col-xs-10">
                             <ul><strong>Taking these Medications</strong><BR>
-                                @if(!empty($taking_medications))
-                                    @if(is_array($taking_medications))
-                                        @foreach($taking_medications as $medi)
+                                @if(!empty($careplan['taking_meds']))
+                                    @if(is_array($careplan['taking_meds']))
+                                        @foreach($careplan['taking_meds'] as $medi)
                                             <li style="margin-top:12px;">{{$medi}}</li>
                                         @endforeach
                                     @else
-                                        {{$taking_medications}}
+                                        {{$careplan['taking_meds']}}
                                     @endif
                                 @endif
                             </ul>
