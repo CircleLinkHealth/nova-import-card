@@ -248,12 +248,8 @@ class DatamonitorService
         ];
         $userUcpData["alert_keys"] = [
             "Weight" => empty($weight) ?: $weight->target,
-
             'bloodSugar' => $bloodSugar,
-
             'bloodPressure' => $bloodPressure,
-
-            "Cigarettes" => empty($smoking) ?: $smoking->target,
         ];
 
         $first_name = $user->meta()->where('meta_key', '=', 'last_names')->first();
@@ -804,13 +800,11 @@ class DatamonitorService
             return false;
         }
         $max_cigs = 4;
-        if (isset($userUcpData['alert_keys']['Cigarettes'])) {
-            $max_cigs = $userUcpData['alert_keys']['Cigarettes'];
-        }
-        if ($obs_value > $max_cigs) {
+
+        if ($obs_value >= $max_cigs) {
             $label = 'danger';
             $message_id = 'CF_AL_07';
-            $send_alert = "Patient cigs too high, {$obs_value} > 4";
+            $send_alert = "The patient's cigarette number is too high. The patient had {$obs_value} cigarettes. An alert is sent out if the cigarette count is {$max_cigs} or more.";
             $log_string = "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}][ucp cigs={$max_cigs}] cigs too high, {$obs_value} > {$max_cigs}" . PHP_EOL;
             $send_email = false;
         } else {
@@ -825,6 +819,7 @@ class DatamonitorService
             'extra_vars' => $extra_vars,
             'label' => $label
         );
+
         return $result_array;
     }
 
@@ -834,7 +829,8 @@ class DatamonitorService
      * @param $observation
      * @return array
      */
-    public function process_alert_obs_call($user, $userUcpData, $observation, $int_blog_id)
+    public
+    function process_alert_obs_call($user, $userUcpData, $observation, $int_blog_id)
     {
         // set blog id
         $this->int_blog_id = $int_blog_id;
@@ -869,7 +865,8 @@ class DatamonitorService
      * @param $observation
      * @return array
      */
-    public function process_alert_obs_adherence($user, $userUcpData, $observation, $int_blog_id)
+    public
+    function process_alert_obs_adherence($user, $userUcpData, $observation, $int_blog_id)
     {
         // set blog id
         $this->int_blog_id = $int_blog_id;
@@ -913,7 +910,8 @@ class DatamonitorService
      * @param $observation
      * @return array
      */
-    public function process_alert_obs_other($user, $userUcpData, $observation, $int_blog_id)
+    public
+    function process_alert_obs_other($user, $userUcpData, $observation, $int_blog_id)
     {
         // set blog id
         $this->int_blog_id = $int_blog_id;
@@ -953,7 +951,8 @@ class DatamonitorService
      * @param $observation
      * @return array
      */
-    public function process_alert_obs_hsp($user, $userUcpData, $observation, $int_blog_id)
+    public
+    function process_alert_obs_hsp($user, $userUcpData, $observation, $int_blog_id)
     {
         // set blog id
         $this->int_blog_id = $int_blog_id;
@@ -1049,7 +1048,8 @@ class DatamonitorService
      * @param $message_id
      * @return string
      */
-    public function send_obs_alert($observation, $message_id, $send_email, $extra_vars, $source = false, $int_blog_id)
+    public
+    function send_obs_alert($observation, $message_id, $send_email, $extra_vars, $source = false, $int_blog_id)
     {
         // set blog id
         $this->int_blog_id = $int_blog_id;
@@ -1178,7 +1178,8 @@ class DatamonitorService
      * @param int $int_blog_id
      * @return bool|string
      */
-    public function send_email($observation, $message_id, $extra_vars, $int_blog_id = 7)
+    public
+    function send_email($observation, $message_id, $extra_vars, $int_blog_id = 7)
     {
 
         // get user info
@@ -1270,7 +1271,8 @@ class DatamonitorService
     }
 
 
-    public function get_alert_msg_info($alert_msg_id)
+    public
+    function get_alert_msg_info($alert_msg_id)
     {
         if ($alert_msg_id == 'CF_AL_01') {
             $alert_sort_weight = 7;
