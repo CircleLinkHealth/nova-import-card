@@ -251,8 +251,9 @@ class DatamonitorService
             "Blood_Sugar" => empty($bloodSugar) ?: $bloodSugar->high_alert,
             "Blood_Sugar_Low" => empty($bloodSugar) ?: $bloodSugar->low_alert,
             'Blood_Sugar_Starting' => empty($bloodSugar) ?: $bloodSugar->starting,
-            "Blood_Pressure" => empty($bloodPressure) ?: $bloodPressure->systolic_high_alert,
-            "Blood_Pressure_Low" => empty($bloodPressure) ?: $bloodPressure->systolic_low_alert,
+
+            'bloodPressure' => $bloodPressure,
+
             "Cigarettes" => empty($smoking) ?: $smoking->target,
         ];
 
@@ -452,39 +453,31 @@ class DatamonitorService
         if (sizeof($pieces) == 2) {
             $obs_value = $pieces[0];
         }
-        if (!isset($userUcpData['alert_keys']['Blood_Pressure']) || !isset($userUcpData['alert_keys']['Blood_Pressure_Low'])) {
+        if (!isset($userUcpData['alert_keys']['bloodPressure'])) {
             $log_string .= 'Missing UCP data for bp and/or bp low';
             $label = 'success';
         } else {
-            //changed to fit https://slack-files.com/files-pri-safe/T03DZ2NFQ-F1L6ZE82H/progress_report_algo_03.2016.pdf?c=1470340230-e582bbde05a95f2abe6f6bf803992c782a33f95a
+            $bloodPressure = $userUcpData['alert_keys']['bloodPressure'];
 
-//            $max_systolic_bp = $userUcpData['alert_keys']['Blood_Pressure'];
-            $max_systolic_bp = 130;
+            //the CLH healthy range
+            $min_systolic_bp_healthy_range = 100;
+            $max_systolic_bp_healthy_range = 140;
 
-            $pieces = explode("/", $max_systolic_bp);
-            if (sizeof($pieces) == 2) {
-                $max_systolic_bp = $pieces[0];
-            }
+            $lowAlert = empty($bloodPressure) ? 80 : $bloodPressure->systolic_low_alert;
+            $highAlert = empty($bloodPressure) ? 180 : $bloodPressure->systolic_high_alert;
 
-//            $min_systolic_bp = $userUcpData['alert_keys']['Blood_Pressure_Low'];
-            $min_systolic_bp = 100;
-
-            $pieces = explode("/", $min_systolic_bp);
-            if (sizeof($pieces) == 2) {
-                $min_systolic_bp = $pieces[0];
-            }
-            $log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp}(systolic),  BP Low: {$min_systolic_bp}(systolic) - obs_value={$obs_value}(systolic)" . PHP_EOL;
+            $log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp_healthy_range}(systolic),  BP Low: {$min_systolic_bp_healthy_range}(systolic) - obs_value={$obs_value}(systolic)" . PHP_EOL;
             // compare observation value (systolic/diastolic) to patient max/min blood pressure limit
-            if (!empty($obs_value) && !empty($min_systolic_bp) && !empty($max_systolic_bp)) {
-                if ($obs_value >= $max_systolic_bp) { //81
+            if (!empty($obs_value) && !empty($min_systolic_bp_healthy_range) && !empty($max_systolic_bp_healthy_range)) {
+                if ($obs_value >= $highAlert || $obs_value <= $lowAlert) { //81
                     $message_id = 'CF_AL_02';
-                    $send_alert = "[{$obs_value} (systolic) is <= {$min_systolic_bp} (systolic)]";
+                    $send_alert = "[{$obs_value} (systolic) is <= {$min_systolic_bp_healthy_range} (systolic)]";
                     $log_string .= $send_alert;
                     $send_email = true;
                     $label = 'danger';
-                } else if ($obs_value >= $min_systolic_bp && $obs_value <= $max_systolic_bp) {
+                } else if ($obs_value >= $min_systolic_bp_healthy_range && $obs_value <= $max_systolic_bp_healthy_range) {
                     $label = 'success';
-                } else if ($obs_value <= $min_systolic_bp) {
+                } else if (($obs_value <= $min_systolic_bp_healthy_range && $obs_value >= $lowAlert) || ($obs_value <= $highAlert && $obs_value >= $max_systolic_bp_healthy_range)) {
                     $label = 'warning';
                 }
             } else {
