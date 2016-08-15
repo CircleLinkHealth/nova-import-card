@@ -270,17 +270,27 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         <div class="col-xs-10">
                             <ul><strong>Monitoring these Medications</strong><BR>
-                                @foreach($careplan['medications'] as $medi)
-                                    <li>{{$medi}}</li>
-                                @endforeach
+                                @if(!empty($medications_monitor))
+                                    @if(is_array($medications_monitor))
+                                        @foreach($medications_monitor as $medi)
+                                            <li style="margin-top:12px;">{{$medi}}</li>
+                                        @endforeach
+                                    @else
+                                        {{$medications_monitor}}
+                                    @endif
+                                @endif
                             </ul>
                         </div>
                         <div class="col-xs-10">
-                            <ul><strong>Taking these Medications</strong>
-                                @if($careplan['taking_meds'])
-                                    @foreach($careplan['taking_meds'] as $med)
-                                        <li><?= nl2br($med) ?></li>
-                                    @endforeach
+                            <ul><strong>Taking these Medications</strong><BR>
+                                @if(!empty($taking_medications))
+                                    @if(is_array($taking_medications))
+                                        @foreach($taking_medications as $medi)
+                                            <li style="margin-top:12px;">{{$medi}}</li>
+                                        @endforeach
+                                    @else
+                                        {{$taking_medications}}
+                                    @endif
                                 @endif
                             </ul>
                         </div>

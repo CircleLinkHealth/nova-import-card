@@ -307,7 +307,7 @@
                                 obs_alerts_dtable.adjust();
                             })
                         </script>
-                        @role('provider')
+                        @role(['administrator', 'provider'])
                         <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                onclick="webix.toPDF($$(obs_alerts_dtable), {
                                 header:'CarePlanManager.com - Billing Report <?= date('M d,Y') ?>',
