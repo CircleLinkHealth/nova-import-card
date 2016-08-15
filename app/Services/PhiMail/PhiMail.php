@@ -35,26 +35,33 @@ class PhiMail {
     {
         $numberOfCcds = count($ccdas);
 
-        $recipients = [
-            'rohanm@circlelinkhealth.com',
-            'mantoniou@circlelinkhealth.com',
-            'jkatz@circlelinkhealth.com',
-            'Raph@circlelinkhealth.com',
-            'kgallo@circlelinkhealth.com',
-        ];
+        $link = route('view.files.ready.to.import');
 
-        $view = 'emails.emrDirectCCDsReceived';
-        $subject = "We received {$numberOfCcds} CCDs from EMR Direct.";
-
-        $data = [
-            'ccdas' => $ccdas,
-            'numberOfCcds' => $numberOfCcds
-        ];
-
-        Mail::send($view, $data, function ($message) use ($recipients, $subject) {
-            $message->from('aprima-api@careplanmanager.com', 'CircleLink Health');
-            $message->to($recipients)->subject($subject);
-        });
+        Slack::to('#ccd-file-status')
+            ->send("We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
+        
+//        $numberOfCcds = count($ccdas);
+//
+//        $recipients = [
+//            'rohanm@circlelinkhealth.com',
+//            'mantoniou@circlelinkhealth.com',
+//            'jkatz@circlelinkhealth.com',
+//            'Raph@circlelinkhealth.com',
+//            'kgallo@circlelinkhealth.com',
+//        ];
+//
+//        $view = 'emails.emrDirectCCDsReceived';
+//        $subject = "We received {$numberOfCcds} CCDs from EMR Direct.";
+//
+//        $data = [
+//            'ccdas' => $ccdas,
+//            'numberOfCcds' => $numberOfCcds
+//        ];
+//
+//        Mail::send($view, $data, function ($message) use ($recipients, $subject) {
+//            $message->from('aprima-api@careplanmanager.com', 'CircleLink Health');
+//            $message->to($recipients)->subject($subject);
+//        });
     }
 
     /**
