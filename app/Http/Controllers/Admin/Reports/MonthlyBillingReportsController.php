@@ -217,7 +217,7 @@ class MonthlyBillingReportsController extends Controller
 
                         'ccm_status' => $patient->patientInfo->ccm_status,
 
-                        'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
+                        'ccm_time' => number_format($patientsOver20Mins->get($patient->ID)->ccmTime / 60, 2),
 
                         '#_succ_clin_calls' => $calls->count(),
                     ];
@@ -254,7 +254,7 @@ class MonthlyBillingReportsController extends Controller
 
                     'ccm_status' => $patient->patientInfo->ccm_status,
 
-                    'ccm_time' => ceil($patientsOver20Mins->get($patient->ID)->ccmTime / 60),
+                    'ccm_time' => number_format($patientsOver20Mins->get($patient->ID)->ccmTime / 60, 2),
 
                     '#_succ_clin_calls' => $calls->count(),
                 ]);

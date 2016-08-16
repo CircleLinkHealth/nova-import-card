@@ -139,7 +139,7 @@ if (isset($patient) && !empty($patient)) {
                                 @if(!empty($medications_monitor))
                                     @if(is_array($medications_monitor))
                                         @foreach($medications_monitor as $medi)
-                                            <li style="margin-top:8px;">{{$medi}}</li>
+                                            <li style="margin-top:12px;">{{$medi}}</li>
                                         @endforeach
                                     @else
                                         {{$medications_monitor}}
@@ -152,7 +152,7 @@ if (isset($patient) && !empty($patient)) {
                                 @if(!empty($taking_medications))
                                     @if(is_array($taking_medications))
                                         @foreach($taking_medications as $medi)
-                                            <li style="margin-top:8px;">{{$medi}}</li>
+                                            <li style="margin-top:12px;">{{$medi}}</li>
                                         @endforeach
                                     @else
                                         {{$taking_medications}}

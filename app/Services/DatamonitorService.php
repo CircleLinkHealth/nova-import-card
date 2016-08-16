@@ -248,12 +248,8 @@ class DatamonitorService
         ];
         $userUcpData["alert_keys"] = [
             "Weight" => empty($weight) ?: $weight->target,
-            "Blood_Sugar" => empty($bloodSugar) ?: $bloodSugar->high_alert,
-            "Blood_Sugar_Low" => empty($bloodSugar) ?: $bloodSugar->low_alert,
-            'Blood_Sugar_Starting' => empty($bloodSugar) ?: $bloodSugar->starting,
-            "Blood_Pressure" => empty($bloodPressure) ?: $bloodPressure->systolic_high_alert,
-            "Blood_Pressure_Low" => empty($bloodPressure) ?: $bloodPressure->systolic_low_alert,
-            "Cigarettes" => empty($smoking) ?: $smoking->target,
+            'bloodSugar' => $bloodSugar,
+            'bloodPressure' => $bloodPressure,
         ];
 
         $first_name = $user->meta()->where('meta_key', '=', 'last_names')->first();
@@ -452,39 +448,31 @@ class DatamonitorService
         if (sizeof($pieces) == 2) {
             $obs_value = $pieces[0];
         }
-        if (!isset($userUcpData['alert_keys']['Blood_Pressure']) || !isset($userUcpData['alert_keys']['Blood_Pressure_Low'])) {
+        if (!isset($userUcpData['alert_keys']['bloodPressure'])) {
             $log_string .= 'Missing UCP data for bp and/or bp low';
             $label = 'success';
         } else {
-            //changed to fit https://slack-files.com/files-pri-safe/T03DZ2NFQ-F1L6ZE82H/progress_report_algo_03.2016.pdf?c=1470340230-e582bbde05a95f2abe6f6bf803992c782a33f95a
+            $bloodPressure = $userUcpData['alert_keys']['bloodPressure'];
 
-//            $max_systolic_bp = $userUcpData['alert_keys']['Blood_Pressure'];
-            $max_systolic_bp = 130;
+            //the CLH healthy range
+            $min_systolic_bp_healthy_range = 100;
+            $max_systolic_bp_healthy_range = 140;
 
-            $pieces = explode("/", $max_systolic_bp);
-            if (sizeof($pieces) == 2) {
-                $max_systolic_bp = $pieces[0];
-            }
+            $lowAlert = empty($bloodPressure) ? 80 : $bloodPressure->systolic_low_alert;
+            $highAlert = empty($bloodPressure) ? 180 : $bloodPressure->systolic_high_alert;
 
-//            $min_systolic_bp = $userUcpData['alert_keys']['Blood_Pressure_Low'];
-            $min_systolic_bp = 100;
-
-            $pieces = explode("/", $min_systolic_bp);
-            if (sizeof($pieces) == 2) {
-                $min_systolic_bp = $pieces[0];
-            }
-            $log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp}(systolic),  BP Low: {$min_systolic_bp}(systolic) - obs_value={$obs_value}(systolic)" . PHP_EOL;
+            $log_string .= PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BP High: {$max_systolic_bp_healthy_range}(systolic),  BP Low: {$min_systolic_bp_healthy_range}(systolic) - obs_value={$obs_value}(systolic)" . PHP_EOL;
             // compare observation value (systolic/diastolic) to patient max/min blood pressure limit
-            if (!empty($obs_value) && !empty($min_systolic_bp) && !empty($max_systolic_bp)) {
-                if ($obs_value >= $max_systolic_bp) { //81
+            if (!empty($obs_value) && !empty($min_systolic_bp_healthy_range) && !empty($max_systolic_bp_healthy_range)) {
+                if ($obs_value >= $highAlert || $obs_value <= $lowAlert) { //81
                     $message_id = 'CF_AL_02';
-                    $send_alert = "[{$obs_value} (systolic) is <= {$min_systolic_bp} (systolic)]";
+                    $send_alert = "[{$obs_value} (systolic) is <= {$min_systolic_bp_healthy_range} (systolic)]";
                     $log_string .= $send_alert;
                     $send_email = true;
                     $label = 'danger';
-                } else if ($obs_value >= $min_systolic_bp && $obs_value <= $max_systolic_bp) {
+                } else if ($obs_value >= $min_systolic_bp_healthy_range && $obs_value <= $max_systolic_bp_healthy_range) {
                     $label = 'success';
-                } else if ($obs_value <= $min_systolic_bp) {
+                } else if (($obs_value <= $min_systolic_bp_healthy_range && $obs_value >= $lowAlert) || ($obs_value <= $highAlert && $obs_value >= $max_systolic_bp_healthy_range)) {
                     $label = 'warning';
                 }
             } else {
@@ -529,29 +517,29 @@ class DatamonitorService
         //dd($userUcpData);
         //blood-sugar-bs-high-alert
         //blood-sugar-bs-low-alert
-        if (!isset($userUcpData['alert_keys']['Blood_Sugar']) || !isset($userUcpData['alert_keys']['Blood_Sugar_Low'])) {
+        if (!isset($userUcpData['alert_keys']['bloodSugar'])) {
             $log_string .= 'Missing UCP data for bs and/or bs low';
             $label = 'success';
         } else {
-            //Changed it to fit https://slack-files.com/files-pri-safe/T03DZ2NFQ-F1L6ZE82H/progress_report_algo_03.2016.pdf?c=1470340230-e582bbde05a95f2abe6f6bf803992c782a33f95a
-//            $max_blood_sugar = $userUcpData['alert_keys']['Blood_Sugar'];
-//            $min_blood_sugar = $userUcpData['alert_keys']['Blood_Sugar_Low'];
+            $bloodSugar = $userUcpData['alert_keys']['bloodSugar'];
 
-            $max_blood_sugar = 130;
-            $mid_blood_sugar = 70;
-            $min_blood_sugar = 60;
+            $lowAlert = empty($bloodSugar) ? 60 : $bloodSugar->low_alert;
+            $highAlert = empty($bloodSugar) ? 350 : $bloodSugar->high_alert;
+
+            $max_blood_sugar_healthy_range = 140;
+            $min_blood_sugar_healthy_range = 80;
 
             $extra_vars['bsvalue'] = $obs_value;
-            $log_string = PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar}, BS Low: {$min_blood_sugar}" . PHP_EOL;
-            if (!empty($obs_value) && !empty($min_blood_sugar) && !empty($max_blood_sugar)) {
-                if (($obs_value <= $min_blood_sugar) || ($obs_value >= $max_blood_sugar)) { //61
+            $log_string = PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar_healthy_range}, BS Low: {$lowAlert}" . PHP_EOL;
+            if (!empty($obs_value) && !empty($lowAlert) && !empty($max_blood_sugar_healthy_range)) {
+                if (($obs_value <= $lowAlert) || ($obs_value >= $highAlert)) { //61
                     $message_id = 'CF_AL_04';
-                    $send_alert = "{$obs_value} (systolic) is <= {$min_blood_sugar} (systolic)";
+                    $send_alert = "{$obs_value} (systolic) is <= {$lowAlert} (systolic)";
                     $send_email = true;
                     $label = 'danger';
-                } else if ($obs_value >= $mid_blood_sugar && $obs_value <= $max_blood_sugar) {
+                } else if ($obs_value >= $min_blood_sugar_healthy_range && $obs_value <= $max_blood_sugar_healthy_range) {
                     $label = 'success';
-                } else if ($obs_value >= $min_blood_sugar && $obs_value <= $mid_blood_sugar) { //351
+                } else if (($obs_value <= $min_blood_sugar_healthy_range && $obs_value >= $lowAlert) || ($obs_value <= $highAlert && $obs_value >= $max_blood_sugar_healthy_range)) { //351
                     $label = 'warning';
                 }
             } else {
@@ -812,13 +800,11 @@ class DatamonitorService
             return false;
         }
         $max_cigs = 4;
-        if (isset($userUcpData['alert_keys']['Cigarettes'])) {
-            $max_cigs = $userUcpData['alert_keys']['Cigarettes'];
-        }
-        if ($obs_value > $max_cigs) {
+
+        if ($obs_value >= $max_cigs) {
             $label = 'danger';
             $message_id = 'CF_AL_07';
-            $send_alert = "Patient cigs too high, {$obs_value} > 4";
+            $send_alert = "The patient's cigarette number is too high. The patient had {$obs_value} cigarettes. An alert is sent out if the cigarette count is {$max_cigs} or more.";
             $log_string = "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}][ucp cigs={$max_cigs}] cigs too high, {$obs_value} > {$max_cigs}" . PHP_EOL;
             $send_email = false;
         } else {
@@ -833,6 +819,7 @@ class DatamonitorService
             'extra_vars' => $extra_vars,
             'label' => $label
         );
+
         return $result_array;
     }
 
@@ -842,7 +829,8 @@ class DatamonitorService
      * @param $observation
      * @return array
      */
-    public function process_alert_obs_call($user, $userUcpData, $observation, $int_blog_id)
+    public
+    function process_alert_obs_call($user, $userUcpData, $observation, $int_blog_id)
     {
         // set blog id
         $this->int_blog_id = $int_blog_id;
@@ -877,7 +865,8 @@ class DatamonitorService
      * @param $observation
      * @return array
      */
-    public function process_alert_obs_adherence($user, $userUcpData, $observation, $int_blog_id)
+    public
+    function process_alert_obs_adherence($user, $userUcpData, $observation, $int_blog_id)
     {
         // set blog id
         $this->int_blog_id = $int_blog_id;
@@ -921,7 +910,8 @@ class DatamonitorService
      * @param $observation
      * @return array
      */
-    public function process_alert_obs_other($user, $userUcpData, $observation, $int_blog_id)
+    public
+    function process_alert_obs_other($user, $userUcpData, $observation, $int_blog_id)
     {
         // set blog id
         $this->int_blog_id = $int_blog_id;
@@ -961,7 +951,8 @@ class DatamonitorService
      * @param $observation
      * @return array
      */
-    public function process_alert_obs_hsp($user, $userUcpData, $observation, $int_blog_id)
+    public
+    function process_alert_obs_hsp($user, $userUcpData, $observation, $int_blog_id)
     {
         // set blog id
         $this->int_blog_id = $int_blog_id;
@@ -1057,7 +1048,8 @@ class DatamonitorService
      * @param $message_id
      * @return string
      */
-    public function send_obs_alert($observation, $message_id, $send_email, $extra_vars, $source = false, $int_blog_id)
+    public
+    function send_obs_alert($observation, $message_id, $send_email, $extra_vars, $source = false, $int_blog_id)
     {
         // set blog id
         $this->int_blog_id = $int_blog_id;
@@ -1186,7 +1178,8 @@ class DatamonitorService
      * @param int $int_blog_id
      * @return bool|string
      */
-    public function send_email($observation, $message_id, $extra_vars, $int_blog_id = 7)
+    public
+    function send_email($observation, $message_id, $extra_vars, $int_blog_id = 7)
     {
 
         // get user info
@@ -1278,7 +1271,8 @@ class DatamonitorService
     }
 
 
-    public function get_alert_msg_info($alert_msg_id)
+    public
+    function get_alert_msg_info($alert_msg_id)
     {
         if ($alert_msg_id == 'CF_AL_01') {
             $alert_sort_weight = 7;

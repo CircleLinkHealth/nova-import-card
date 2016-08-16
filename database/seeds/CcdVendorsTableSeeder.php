@@ -121,6 +121,32 @@ class CcdVendorsTableSeeder extends Seeder
                 'created_at' => '0000-00-00 00:00:00',
                 'updated_at' => '0000-00-00 00:00:00',
             ),
+            8 => 
+            array (
+                'id' => 11,
+                'program_id' => 12,
+                'ccd_import_routine_id' => 8,
+                'vendor_name' => 'Medent - Montgomery Medical',
+                'ehr_oid' => NULL,
+                'doctor_name' => NULL,
+                'doctor_oid' => NULL,
+                'custodian_name' => NULL,
+                'created_at' => '0000-00-00 00:00:00',
+                'updated_at' => '0000-00-00 00:00:00',
+            ),
+            9 => 
+            array (
+                'id' => 12,
+                'program_id' => 27,
+                'ccd_import_routine_id' => 9,
+                'vendor_name' => 'Monheit',
+                'ehr_oid' => NULL,
+                'doctor_name' => NULL,
+                'doctor_oid' => NULL,
+                'custodian_name' => NULL,
+                'created_at' => '0000-00-00 00:00:00',
+                'updated_at' => '0000-00-00 00:00:00',
+            ),
         ));
         
         
