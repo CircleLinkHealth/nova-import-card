@@ -9,6 +9,7 @@
             <th>Date</th>
             <th>Window Start</th>
             <th>Window End</th>
+            <th>Body</th>
         </tr>
         </thead>
     </table>
@@ -52,8 +53,9 @@
             columns: [
                 {data: 'id', name: 'calls.id'},
                 {data: 'call_date', name: 'call_date'},
-                {data: 'window_start', name: 'calls.window_start'},
-                {data: 'window_end', name: 'calls.window_end'}
+                {data: 'window_start', name: 'window_start'},
+                {data: 'window_end', name: 'window_end'},
+                {data: 'body', name: 'body'}
             ]
         });
     });
