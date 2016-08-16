@@ -125,7 +125,7 @@ class PredictCall
 
                 //Logic: Call patient in the second last week of the month
                 //Note, might result in very close calls if second week.
-                $next_window_carbon->endOfMonth()->subWeek(2);
+                $next_window_carbon->addWeek(2);
 
             } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
 

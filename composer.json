@@ -41,7 +41,8 @@
     "prettus/l5-repository": "^2.1",
     "laravelcollective/bus": "5.2.x",
     "maknz/slack": "^1.7",
-    "dusterio/laravel-aws-worker": "^0.1.5"
+    "dusterio/laravel-aws-worker": "^0.1.5",
+    "yajra/laravel-datatables-oracle": "^6.17"
   },
   "require-dev": {
     "symfony/dom-crawler": "~3.0",
