@@ -9,7 +9,8 @@
             <th>Date</th>
             <th>Window Start</th>
             <th>Window End</th>
-            <th>Body</th>
+            <th>Note Type</th>
+            <th>Note Body</th>
         </tr>
         </thead>
     </table>
@@ -55,6 +56,7 @@
                 {data: 'call_date', name: 'call_date'},
                 {data: 'window_start', name: 'window_start'},
                 {data: 'window_end', name: 'window_end'},
+                {data: 'type', name: 'type'},
                 {data: 'body', name: 'body'}
             ]
         });

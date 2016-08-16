@@ -47,6 +47,13 @@ class DatatablesController extends Controller
                     return '';
                 }
             })
+            ->editColumn('type', function($call) {
+                if($call->note) {
+                    return $call->note->type;
+                } else {
+                    return '';
+                }
+            })
             ->make(true);
     }
 }
