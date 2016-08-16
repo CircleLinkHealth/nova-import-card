@@ -531,7 +531,8 @@ class DatamonitorService
 
             $extra_vars['bsvalue'] = $obs_value;
             $log_string = PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar_healthy_range}, BS Low: {$lowAlert}" . PHP_EOL;
-            if (!empty($obs_value) && !empty($lowAlert) && !empty($max_blood_sugar_healthy_range)) {
+
+            if (!empty($obs_value)) {
                 if (($obs_value <= $lowAlert) || ($obs_value >= $highAlert)) { //61
                     $message_id = 'CF_AL_04';
                     $send_alert = "{$obs_value} (systolic) is <= {$lowAlert} (systolic)";
