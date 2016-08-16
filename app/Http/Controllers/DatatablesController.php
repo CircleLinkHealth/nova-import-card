@@ -36,24 +36,26 @@ class DatatablesController extends Controller
 
     public function anyDataCalls()
     {
-        $calls = Call::with('note')->select(['calls.*'])->get();
+        $calls = Call::with('note')->select(['calls.id', 'calls.call_date', 'calls.window_start', 'calls.window_end', 'notes.type', 'notes.body', 'calls.note_id'])->leftJoin('notes', 'calls.note_id','=','notes.id')->get();
         //$calls = Call::with('note')->select(['calls.*'])->get();
 
         return Datatables::of($calls)
-            ->editColumn('body', function($call) {
+            /*
+            ->editColumn('notes.body', function($call) {
                 if($call->note) {
                     return $call->note->body;
                 } else {
-                    return '';
+                    return 'n/a';
                 }
             })
-            ->editColumn('type', function($call) {
+            ->editColumn('notes.type', function($call) {
                 if($call->note) {
                     return $call->note->type;
                 } else {
-                    return '';
+                    return 'n/a';
                 }
             })
+            */
             ->make(true);
     }
 }
