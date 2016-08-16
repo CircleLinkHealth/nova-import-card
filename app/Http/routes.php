@@ -613,3 +613,11 @@ Route::group(['prefix' => 'cron'], function () {
         $msgScheduler->index($id);
     });
 });
+
+Route::controller('datatables', 'DatatablesController', [
+    'anyData'  => 'datatables.data',
+    'anyDataCalls'  => 'datatables.anyDataCalls',
+    'getIndex' => 'datatables',
+]);
+
+Route::get('datatables/callData', ['uses' => 'DatatablesController@callData', 'as' => 'datatables.callData']);
