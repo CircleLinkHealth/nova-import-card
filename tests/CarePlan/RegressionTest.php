@@ -23,8 +23,8 @@ class RegressionTest extends TestCase
 
         $this->providerLogin($this->provider);
 
-        $this->createNewPatient();
-        $this->createNewPatient();
+        $this->patients[] = $this->createNewPatient();
+        $this->patients[] = $this->createNewPatient();
 
         //We use this so add a random number of CpmEntities for users after the first one.
         //In other words, the first User has all conditions, the rest can have any number of conditions.

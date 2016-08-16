@@ -173,8 +173,6 @@ trait HandlesUsersAndCarePlans
             'ccda_id' => $ccda->id,
         ]);
 
-        $this->patients[] = $patient;
-
         $patientInfo = $patient->patientInfo()->first();
         $patientInfo->preferred_cc_contact_days = '1, 2, 3, 4, 5, 6, 7';
         $patientInfo->save();
@@ -208,6 +206,8 @@ trait HandlesUsersAndCarePlans
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
         ob_end_clean();
+        
+        return $patient;
     }
 
     public function addPatientCareTeam($patient)
