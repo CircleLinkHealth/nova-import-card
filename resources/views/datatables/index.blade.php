@@ -107,18 +107,39 @@
     <table class="table table-bordered" id="calls-table">
         <thead>
         <tr>
-            <th>Id</th>
-            <th>Patient Name</th>
+            <th>Status</th>
+            <th>Nurse</th>
+            <th>Patient</th>
             <th>Date</th>
             <th>Window Start</th>
             <th>Window End</th>
             <th>CCM Time</th>
+            <th># Calls to date</th>
             <th>Last call</th>
             <!--<th>Billing Provider</th>-->
+            <th>Provider</th>
+            <th>Program</th>
             <th>Note Type</th>
             <th>Note Body</th>
         </tr>
         </thead>
+        <tfoot>
+        <tr>
+            <th>Status</th>
+            <th>Nurse</th>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Window Start</th>
+            <th>Window End</th>
+            <th>CCM Time</th>
+            <th># Calls to date</th>
+            <th>Last call</th>
+            <th>Billing Provider</th>
+            <th>Program</th>
+            <th>Note Type</th>
+            <th>Note Body</th>
+        </tr>
+        </tfoot>
     </table>
 
     <h1>USERS</h1>
@@ -153,23 +174,47 @@
     });
 
     $(function() {
-        $('#calls-table').DataTable({
+        // Setup - add a text input to each footer cell
+        $('#calls-table tfoot th').each( function () {
+            var title = $(this).text();
+            $(this).html( '<input style="width:100%;margin:0;padding:0;" type="text" placeholder="Search" />' );
+        } );
+
+
+        var callstable = $('#calls-table').DataTable({
+            scrollX: true,
             processing: true,
             serverSide: true,
             ajax: '{{ route('datatables.anyDataCalls') }}',
             columns: [
-                {data: 'id', name: 'calls.id'},
+                {data: 'status', name: 'calls.status'},
+                {data: 'nurse_name', name: 'nurse_name'},
                 {data: 'patient_name', name: 'patient_name'},
                 {data: 'call_date', name: 'call_date'},
                 {data: 'window_start', name: 'window_start'},
                 {data: 'window_end', name: 'window_end'},
                 {data: 'cur_month_activity_time', name: 'cur_month_activity_time'},
+                {data: 'cur_month_activity_time', name: 'cur_month_activity_time'},
                 {data: 'last_successful_contact_time', name: 'last_successful_contact_time', searchable: false, sortable: false},
-                //{data: 'billing_provider', name: 'billing_provider'},
+                {data: 'program_name', name: 'program_name'},
+                {data: 'program_name', name: 'program_name'},
                 {data: 'type', name: 'type'},
                 {data: 'body', name: 'body'},
             ]
         });
+
+        // Apply the search
+        callstable.columns().every( function () {
+            var that = this;
+
+            $( 'input', this.footer() ).on( 'keyup change', function () {
+                if ( that.search() !== this.value ) {
+                    that
+                            .search( this.value )
+                            .draw();
+                }
+            } );
+        } );
     });
 </script>
 @endpush

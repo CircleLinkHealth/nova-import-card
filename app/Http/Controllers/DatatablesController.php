@@ -43,6 +43,7 @@ class DatatablesController extends Controller
             ->select(
                 [
                     'calls.id',
+                    'calls.status',
                     'calls.outbound_cpm_id',
                     'calls.inbound_cpm_id',
                     'calls.call_date',
@@ -52,16 +53,35 @@ class DatatablesController extends Controller
                     'notes.body',
                     'calls.note_id',
                     'patient_info.cur_month_activity_time',
-                    'patient.display_name AS patient_name'
+                    'nurse.display_name AS nurse_name',
+                    'patient.display_name AS patient_name',
+                    'program.display_name AS program_name'
                 ])
             ->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
             ->leftJoin('notes', 'calls.note_id','=','notes.id')
+            ->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
             ->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
+            ->leftJoin('wp_blogs AS program', 'patient.program_id','=','program.blog_id')
             ->get();
+
 
         return Datatables::of($calls)
             ->editColumn('call_date', function($call) {
                 return $call->call_date . '<a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon" call-id="'.$call->id.'" column-name="call_date" column-value="'.$call->call_date.'"></span>';
+            })
+            ->editColumn('status', function($call) {
+                if($call->status == 'reached') {
+                    return '<span class="btn btn-success btn-xs"><i class="glyphicon glyphicon-ok"></i> Reached</span>';
+                } elseif($call->status == 'scheduled') {
+                    return '<span class="btn btn-warning btn-xs"><i class="glyphicon glyphicon-list"></i> Scheduled</span>';
+                }
+            })
+            ->editColumn('nurse_name', function($call) {
+                if($call->nurse_name) {
+                    return $call->nurse_name;
+                } else {
+                    return '<em style="color:red;">unassigned</em>';
+                }
             })
             ->editColumn('cur_month_activity_time', function($call) {
                 if($call->inboundUser && $call->inboundUser->patientInfo) {
