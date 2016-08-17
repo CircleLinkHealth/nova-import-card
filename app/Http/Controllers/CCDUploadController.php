@@ -8,6 +8,7 @@ use App\Models\CCD\CcdVendor;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Requests;
 use App\Location;
+use App\Program;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
@@ -42,15 +43,15 @@ class CCDUploadController extends Controller
 
             $json = $this->repo->toJson( $xml );
 
-            $blogId = $request->input( 'program_id' );
+            $vendor = empty($request->input( 'ccd_vendor_id' )) ?: CcdVendor::find($request->input( 'ccd_vendor_id' ));
 
-            if ( empty($blogId) ) throw new \Exception( 'Blog id not found,', 400 );
+            $program = Program::find($vendor->program_id);
 
-            $vendorId = empty($request->input( 'ccd_vendor_id' )) ?: $request->input( 'ccd_vendor_id' );
+            if ( empty($program) ) throw new \Exception( 'Program not found,', 400 );
 
             $ccda = Ccda::create( [
                 'user_id' => auth()->user()->ID,
-                'vendor_id' => $vendorId,
+                'vendor_id' => $vendor->id,
                 'xml' => $xml,
                 'json' => $json,
                 'source' => Ccda::IMPORTER,
@@ -59,7 +60,7 @@ class CCDUploadController extends Controller
             $logger = new CcdItemLogger( $ccda );
             $logger->logAll();
 
-            $importer = new QAImportManager( $blogId, $ccda );
+            $importer = new QAImportManager( $program->blog_id, $ccda );
             $output = $importer->generateCarePlanFromCCD();
         }
 
