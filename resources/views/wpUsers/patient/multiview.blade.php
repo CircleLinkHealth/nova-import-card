@@ -275,7 +275,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 @if(!empty($careplan['medications']))
                                     @if(is_array($careplan['medications']))
                                         @foreach($careplan['medications'] as $medi)
-                                            <li style="margin-top:12px;">{{$medi}}</li>
+                                            <li style="margin-top:14px;">{!! $medi !!}</li>
                                         @endforeach
                                     @else
                                         {{$careplan['medications']}}
@@ -288,7 +288,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 @if(!empty($careplan['taking_meds']))
                                     @if(is_array($careplan['taking_meds']))
                                         @foreach($careplan['taking_meds'] as $medi)
-                                            <li style="margin-top:12px;">{{$medi}}</li>
+                                            <li style="margin:14px 0px 0px 0px;">{!! $medi !!}</li>
                                         @endforeach
                                     @else
                                         {{$careplan['taking_meds']}}

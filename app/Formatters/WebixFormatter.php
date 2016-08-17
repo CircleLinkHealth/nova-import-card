@@ -302,7 +302,7 @@ class WebixFormatter implements ReportFormatter
                         : $medText = ''.$med->name;
 
                     if(!empty($med->sig)) {
-                        $medText .= '<br>- '.$med->sig;
+                        $medText .= '<br /><span style="font-style:italic;">- '.$med->sig.'</span>';
                     }
                     $careplanReport[$user->ID]['taking_meds'][] = $medText;
                     $i++;
