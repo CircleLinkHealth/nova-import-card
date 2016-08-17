@@ -1,14 +1,120 @@
 @extends('layouts.master')
 
 @section('content')
+    <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
+    <!-- JQuery -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script>
+        $(document).ready(function() {
+            // vars
+            var consoleDebug = true;
+            var cpmEditableStatus = false;
+            var cpmEditableCallId = false;
+            var cpmEditableColumnName = false;
+            var cpmEditableColumnValue = false;
+            var cpmEditableTd = false;
+
+            // edit action
+            $('#calls-table').on('click', '.cpm-editable-icon', function(){
+                if(cpmEditableStatus === true) {
+                    alert('already editing');
+                    return false;
+                    //saveEditableField();
+                }
+                cpmEditableCallId = $( this ).attr('call-id');
+                cpmEditableColumnName = $( this ).attr('column-name');
+                cpmEditableColumnValue = $( this ).attr('column-value');
+                cpmEditableTd = $( this ).parent().parent();
+                openEditableField();
+                return false;
+            });
+
+            // save action
+            $('#calls-table').on('click', '#cpm-editable-save', function(){
+                cpmEditableColumnValue = $('#editableInput').val();
+                saveEditableField();
+                return false;
+            });
+
+            // open editable field function
+            function openEditableField() {
+                cpmEditableStatus = true;
+                if(cpmEditableColumnName == 'outbound_cpm_id') {
+                    alert( $('[name=nurseFormSelect]').val() );
+                    $('[name=nurseFormSelect]').val( cpmEditableColumnValue );
+                    alert( $('[name=nurseFormSelect]').val() );
+                    var html = $('#nurseFormWrapper').html() + ' <a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>';
+                    $(cpmEditableTd).html(html);
+                } else if(cpmEditableColumnName == 'call_date') {
+                    $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="date" type="editableInput" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
+                } else if(cpmEditableColumnName == 'window_start' || cpmEditableColumnName == 'window_end') {
+                    $(cpmEditableTd).html('<input id="editableInput" style="width:50px;" class="" name="editableInput" type="input" value="' + cpmEditableColumnValue + '"  data-field="time" data-format="HH:mm" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
+                }
+                return false;
+            }
+
+            // save editable field function
+            function saveEditableField() {
+                $( cpmEditableTd ).html(cpmEditableColumnValue + '<a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '"></span></a>');
+
+                $( cpmEditableTd ).addClass('highlight');
+                setTimeout(function(){
+                    $( cpmEditableTd ).removeClass('highlight');
+                    cpmEditableStatus = false;
+                }, 1000);
+
+                var data = {
+                    "callId": cpmEditableCallId,
+                    "columnName": cpmEditableColumnName,
+                    "value": cpmEditableColumnValue
+                };
+                if (consoleDebug) console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo URL::route('api.callupdate'); ?>',
+                    data: data,
+                    //cache: false,
+                    encode: true,
+                    //processData: false,
+                    success: function (data) {
+                        // do something to signify success
+                    }
+                });
+                return false;
+            }
+        } );
+    </script>
+    <style>
+        #calls-table tbody>tr>td {
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .cpm-editable {
+            color:#000;
+        }
+
+        .highlight {
+            color:green;
+            font-weight:bold;
+        }
+    </style>
     <h1>CALLS</h1>
     <table class="table table-bordered" id="calls-table">
         <thead>
         <tr>
             <th>Id</th>
+            <th>Patient Name</th>
             <th>Date</th>
             <th>Window Start</th>
             <th>Window End</th>
+            <th>CCM Time</th>
+            <th>Last call</th>
+            <!--<th>Billing Provider</th>-->
             <th>Note Type</th>
             <th>Note Body</th>
         </tr>
@@ -53,11 +159,15 @@
             ajax: '{{ route('datatables.anyDataCalls') }}',
             columns: [
                 {data: 'id', name: 'calls.id'},
+                {data: 'patient_name', name: 'patient_name'},
                 {data: 'call_date', name: 'call_date'},
                 {data: 'window_start', name: 'window_start'},
                 {data: 'window_end', name: 'window_end'},
+                {data: 'cur_month_activity_time', name: 'cur_month_activity_time'},
+                {data: 'last_successful_contact_time', name: 'last_successful_contact_time', searchable: false, sortable: false},
+                //{data: 'billing_provider', name: 'billing_provider'},
                 {data: 'type', name: 'type'},
-                {data: 'body', name: 'body'}
+                {data: 'body', name: 'body'},
             ]
         });
     });
