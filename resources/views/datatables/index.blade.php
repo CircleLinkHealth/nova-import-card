@@ -134,8 +134,7 @@
             <th>CCM Time</th>
             <th># Calls to date</th>
             <th>Last call</th>
-            <!--<th>Billing Provider</th>-->
-            <th>Provider</th>
+            <th>Billing Provider</th>
             <th>Program</th>
             <th>Note Type</th>
             <th>Note Body</th>
@@ -197,9 +196,8 @@
                 {data: 'cur_month_activity_time', name: 'cur_month_activity_time'},
                 {data: 'cur_month_activity_time', name: 'cur_month_activity_time'},
                 {data: 'last_successful_contact_time', name: 'last_successful_contact_time', searchable: false, sortable: false},
-                //{data: 'billing_provider', name: 'billing_provider'},
-                {data: 'status', name: 'calls.status'},
-                {data: 'status', name: 'calls.status'},
+                {data: 'program_name', name: 'program_name'},
+                {data: 'program_name', name: 'program_name'},
                 {data: 'type', name: 'type'},
                 {data: 'body', name: 'body'},
             ]

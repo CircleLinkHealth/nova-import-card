@@ -54,12 +54,14 @@ class DatatablesController extends Controller
                     'calls.note_id',
                     'patient_info.cur_month_activity_time',
                     'nurse.display_name AS nurse_name',
-                    'patient.display_name AS patient_name'
+                    'patient.display_name AS patient_name',
+                    'program.display_name AS program_name'
                 ])
             ->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
             ->leftJoin('notes', 'calls.note_id','=','notes.id')
             ->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
             ->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
+            ->leftJoin('wp_blogs AS program', 'patient.program_id','=','program.blog_id')
             ->get();
 
 
