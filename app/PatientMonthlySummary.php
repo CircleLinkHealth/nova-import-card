@@ -20,47 +20,29 @@ class PatientMonthlySummary extends Model
     //updates Call info for patient
     public static function updateCallInfoForPatient(PatientInfo $patient, $ifSuccessful){
 
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
+        // get record for month
+        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
+        $record = $patient->patientSummaries()->where('month_year',$day_start)->first();
 
-
-        $record = $patient->patientSummaries()->where('month_year',$day_start)->get();
-
-        //Determine whether to add to record or not
-
+        // set increment var
         $successful_call_increment = 0;
-
         if($ifSuccessful){
             $successful_call_increment = 1;
         }
 
-        if($record && $record->count() < 1){
-
-            $record = PatientMonthlySummary::create([
-                'patient_info_id' => $patient->id,
-                'ccm_time' =>  0,
-                'month_year' => $day_start,
-                'no_of_calls' => 1,
-                'no_of_successful_calls' => $successful_call_increment
-
-            ]);
-
-
+        // Determine whether to add to record or not
+        if(!$record){
+            $record = new PatientMonthlySummary;
+            $record->patient_info_id = $patient->id;
+            $record->ccm_time = 0;
+            $record->month_year = $day_start;
+            $record->no_of_calls = 1;
+            $record->no_of_successful_calls = $successful_call_increment;
+            $record->save();
         } else {
-            
-            if($record->count() == 1){
-
-                $record->no_of_calls = $record->no_of_calls + 1;
-                $record->no_of_successful_calls = $record->no_of_calls + $successful_call_increment;
-                $record->save();
-
-            } else {
-
-                $record[0]->no_of_calls = $record[0]->no_of_calls + 1;
-                $record[0]->no_of_successful_calls = $record[0]->no_of_calls + $successful_call_increment;
-                $record[0]->save();
-
-            }
-
+            $record->no_of_calls = $record->no_of_calls + 1;
+            $record->no_of_successful_calls = $record->no_of_calls + $successful_call_increment;
+            $record->save();
         }
 
 
@@ -69,26 +51,22 @@ class PatientMonthlySummary extends Model
 
     public static function updateCCMInfoForPatient(PatientInfo $patient, $ccmTime){
 
-        $record = $patient->patientSummaries();
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
+        // get record for month
+        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
+        $record = $patient->patientSummaries()->where('month_year',$day_start)->first();
 
         //Detemine whether to add to record or not
-        if($record){
-
-            PatientMonthlySummary::create([
-                'patient_info_id' => $patient->id,
-                'ccm_time' =>  $ccmTime,
-                'month_year' => $day_start,
-                'no_of_calls' => 0,
-                'no_of_successful_calls' => 0
-
-            ]);
-
+        if(!$record){
+            $record = new PatientMonthlySummary;
+            $record->patient_info_id = $patient->id;
+            $record->ccm_time = $ccmTime;
+            $record->month_year = $day_start;
+            $record->no_of_calls = 0;
+            $record->no_of_successful_calls = 0;
+            $record->save();
         } else {
-
             $record->ccm_time = $ccmTime;
             $record->save();
-
         }
 
     }
