@@ -14,17 +14,20 @@
     <div class="col-xs-12 inline-block row" style=" padding: 0px; width: 98%; text-align: center;">
         Call Times: <span id="start_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i')}}</span> to <span id="end_window_text">{{Carbon\Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('H:i')}}</span>
         on <span id="days_text">{{\App\PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days)}}</span>; <span id="frequency_text">{{$patient->patientInfo->preferred_calls_per_month}}</span>x Monthly
+        <button type="" class="show_hide edit_button" href="#" rel="#slidingDiv">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+        </button>
     @else
             <div class="col-xs-12 inline-block row" style=" padding: 0px; width: 98%; text-align: center;">
-                <span style="color: red"><b> Please enter preferred call times, if known.</b></span>
+                <button type="" class="show_hide edit_button" href="#" rel="#slidingDiv">
+                    <span style="color: red"><b> Please enter preferred call times, if known.</b></span>
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                </button>
 
     @endif
 
 
 
-        <button type="" class="show_hide edit_button" href="#" rel="#slidingDiv">
-            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-        </button>
 
 
         <div class="form-block col-md-12">
