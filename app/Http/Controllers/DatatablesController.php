@@ -58,7 +58,8 @@ class DatatablesController extends Controller
                     'patient_info.birth_date',
                     'nurse.display_name AS nurse_name',
                     'patient.display_name AS patient_name',
-                    'program.display_name AS program_name'
+                    'program.display_name AS program_name',
+                    'billing_provider.display_name AS billing_provider'
                 ])
             ->where('calls.status', '=', 'scheduled')
             ->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
@@ -66,10 +67,19 @@ class DatatablesController extends Controller
             ->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
             ->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
             ->leftJoin('wp_blogs AS program', 'patient.program_id','=','program.blog_id')
+            ->leftJoin('patient_care_team_members', function($join)
+            {
+                $join->on('patient.ID', '=', 'patient_care_team_members.user_id');
+                $join->where('patient_care_team_members.type', '=', "billing_provider");
+            })
+            ->leftJoin('users AS billing_provider', 'patient_care_team_members.member_user_id','=','billing_provider.ID')
             ->get();
 
 
         return Datatables::of($calls)
+            ->editColumn('checkbox', function($call) {
+                return '<input type="checkbox" name="calls[]" value="'.$call->id.'">';
+            })
             ->editColumn('call_date', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->id.'" column-name="call_date" column-value="'.$call->call_date.'">'.$call->call_date.'</span>';
             })

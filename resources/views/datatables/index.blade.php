@@ -141,8 +141,6 @@
             <th>Patient Status</th>
             <th>Billing Provider</th>
             <th>Program</th>
-            <th>Note Type</th>
-            <th>Note Date</th>
         </tr>
         </thead>
         <tfoot>
@@ -161,8 +159,6 @@
             <th>Patient Status</th>
             <th>Billing Provider</th>
             <th>Program</th>
-            <th>Note Type</th>
-            <th>Note Date</th>
         </tr>
         </tfoot>
     </table>
@@ -235,8 +231,6 @@
                 {data: 'ccm_status', name: 'ccm_status'},
                 {data: 'program_name', name: 'program_name'},
                 {data: 'program_name', name: 'program_name'},
-                {data: 'note_type', name: 'note_type'},
-                {data: 'note_datetime', name: 'note_datetime'},
             ]
         });
 
