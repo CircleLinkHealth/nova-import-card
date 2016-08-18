@@ -58,6 +58,7 @@ class DatatablesController extends Controller
                     'patient.display_name AS patient_name',
                     'program.display_name AS program_name'
                 ])
+            ->where('calls.status', '=', 'scheduled')
             ->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
             ->leftJoin('notes', 'calls.note_id','=','notes.id')
             ->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
