@@ -54,6 +54,8 @@ class DatatablesController extends Controller
                     'notes.performed_at AS note_datetime',
                     'calls.note_id',
                     'patient_info.cur_month_activity_time',
+                    'patient_info.ccm_status',
+                    'patient_info.birth_date',
                     'nurse.display_name AS nurse_name',
                     'patient.display_name AS patient_name',
                     'program.display_name AS program_name'

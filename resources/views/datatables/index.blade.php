@@ -4,10 +4,21 @@
     <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
     <!-- JQuery -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/jquery-1.12.3.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+    <link href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+    <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+    <script src="//cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+
+
+
+
     <script>
         $(document).ready(function() {
             // vars
@@ -112,21 +123,23 @@
         }
     </style>
     <h1>CALLS</h1>
-    <table class="table table-bordered" id="calls-table">
+    <table class="" width="100%" cellspacing="0" id="calls-table">
         <thead>
         <tr>
             <th style="width:50px;"></th>
             <th>Status</th>
-            <th>Nurse</th>
             <th>Patient</th>
-            <th>Date</th>
+            <th>DOB</th>
+            <th>Next Call Date</th>
             <th>Window Start</th>
             <th>Window End</th>
+            <th>Nurse</th>
             <th>CCM Time</th>
             <th># Calls to date</th>
             <th>Last call</th>
             <!--<th>Billing Provider</th>-->
-            <th>Provider</th>
+            <th>Patient Status</th>
+            <th>Billing Provider</th>
             <th>Program</th>
             <th>Note Type</th>
             <th>Note Date</th>
@@ -136,14 +149,16 @@
         <tr>
             <th style="width:50px;"></th>
             <th>Status</th>
-            <th>Nurse</th>
             <th>Patient</th>
-            <th>Date</th>
+            <th>DOB</th>
+            <th>Next Call Date</th>
             <th>Window Start</th>
             <th>Window End</th>
+            <th>Nurse</th>
             <th>CCM Time</th>
             <th># Calls to date</th>
             <th>Last call</th>
+            <th>Patient Status</th>
             <th>Billing Provider</th>
             <th>Program</th>
             <th>Note Type</th>
@@ -192,6 +207,13 @@
 
 
         var callstable = $('#calls-table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5'
+            ],
             scrollX: true,
             processing: true,
             serverSide: true,
@@ -201,14 +223,16 @@
                     "className":      'details-control', "data":           'blank', searchable: false, sortable: false
                 },
                 {data: 'status', name: 'status'},
-                {data: 'nurse_name', name: 'nurse_name'},
                 {data: 'patient_name', name: 'patient_name'},
+                {data: 'birth_date', name: 'birth_date'},
                 {data: 'call_date', name: 'call_date'},
                 {data: 'window_start', name: 'window_start'},
                 {data: 'window_end', name: 'window_end'},
+                {data: 'nurse_name', name: 'nurse_name'},
                 {data: 'cur_month_activity_time', name: 'cur_month_activity_time'},
                 {data: 'cur_month_activity_time', name: 'cur_month_activity_time'},
                 {data: 'last_successful_contact_time', name: 'last_successful_contact_time', searchable: false, sortable: false},
+                {data: 'ccm_status', name: 'ccm_status'},
                 {data: 'program_name', name: 'program_name'},
                 {data: 'program_name', name: 'program_name'},
                 {data: 'note_type', name: 'note_type'},
