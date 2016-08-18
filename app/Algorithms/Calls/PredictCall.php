@@ -1,7 +1,6 @@
 <?php namespace App\Algorithms\Calls;
 
 use App\Call;
-use App\Http\Controllers\CallController;
 use App\Note;
 use App\PatientContactWindow;
 use App\PatientInfo;
@@ -9,7 +8,6 @@ use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
 class PredictCall
 {
