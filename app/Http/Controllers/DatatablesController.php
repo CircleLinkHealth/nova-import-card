@@ -117,6 +117,25 @@ class DatatablesController extends Controller
                     return 'n/a';
                 }
             })
+            ->addColumn('patient_call_windows', function($call) {
+                if($call->inboundUser && $call->inboundUser->patientInfo) {
+                    $dowMap = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
+                    $windowText = '';
+                    $windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
+                    if($windows) {
+                        $windowText .= '<ul>';
+                        foreach($windows as $window) {
+                            $windowText .= '<li>';
+                            $windowText .= $dowMap[$window->day_of_week] . ': ' . $window->window_time_start . ' - ' .$window->window_time_end;
+                            $windowText .= '</li>';
+                        }
+                        $windowText .= '</ul>';
+                    }
+                    return $windowText;
+                } else {
+                    return 'n/a';
+                }
+            })
             ->addColumn('blank', function($call) {
                 return '';
             })

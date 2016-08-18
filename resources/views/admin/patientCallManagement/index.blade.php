@@ -260,13 +260,13 @@
 
 
             var callstable = $('#calls-table').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copyHtml5',
-                    'excelHtml5',
-                    'csvHtml5',
-                    'pdfHtml5'
-                ],
+                //dom: 'Bfrtip',
+                //buttons: [
+                //    'copyHtml5',
+                //   'excelHtml5',
+                //    'csvHtml5',
+                //    'pdfHtml5'
+                //],
                 scrollX: true,
                 processing: true,
                 serverSide: true,
@@ -304,6 +304,10 @@
                         '<td>Note:</td>'+
                         '<td>'+d.note_body+'</td>'+
                         '</tr>'+
+                        '<td>Call Windows:</td>'+
+                        '<td>'+d.patient_call_windows+'</td>'+
+                        '</tr>'+
+                        '<tr>'+
                         '<tr>'+
                         '<td>Extra info:</td>'+
                         '<td>And any further details here...</td>'+

@@ -32,7 +32,7 @@ class CallsTableSeeder extends Seeder {
                 $obj->created_at = Carbon::now();
                 $obj->updated_at = Carbon::now();
                 $obj->inbound_cpm_id = $user->ID;
-                $obj->outbound_cpm_id = '2183';
+                $obj->outbound_cpm_id = null;
                 $obj->is_cpm_outbound = '1';
                 $obj->call_time = '0';
                 $obj->inbound_phone_number = '111-234-5678';
