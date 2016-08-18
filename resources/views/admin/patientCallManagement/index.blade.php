@@ -197,8 +197,9 @@
                                 <th>Window End</th>
                                 <th>Nurse</th>
                                 <th>CCM Time</th>
-                                <th># Calls to date</th>
                                 <th>Last call</th>
+                                <th># Total Calls</th>
+                                <th># Successfull Calls</th>
                                 <!--<th>Billing Provider</th>-->
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
@@ -217,8 +218,9 @@
                                 <th>Window End</th>
                                 <th>Nurse</th>
                                 <th>CCM Time</th>
-                                <th># Calls to date</th>
                                 <th>Last call</th>
+                                <th># Total Calls</th>
+                                <th># Successfull Calls</th>
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
                                 <th>Program</th>
@@ -284,8 +286,9 @@
                     {data: 'window_end', name: 'window_end'},
                     {data: 'nurse_name', name: 'nurse_name'},
                     {data: 'cur_month_activity_time', name: 'cur_month_activity_time'},
-                    {data: 'cur_month_activity_time', name: 'cur_month_activity_time'},
-                    {data: 'last_successful_contact_time', name: 'last_successful_contact_time', searchable: false, sortable: false},
+                    {data: 'last_successful_contact_time', name: 'last_successful_contact_time'},
+                    {data: 'no_of_calls', name: 'no_of_calls'},
+                    {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},
                     {data: 'ccm_status', name: 'ccm_status'},
                     {data: 'billing_provider', name: 'billing_provider'},
                     {data: 'program_name', name: 'program_name'},
