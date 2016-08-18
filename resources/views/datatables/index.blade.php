@@ -59,7 +59,7 @@
 
             // save editable field function
             function saveEditableField() {
-                $( cpmEditableTd ).html(cpmEditableColumnValue + '<a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '"></span></a>');
+                $( cpmEditableTd ).html('<a href="#"><span class="cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '">' + cpmEditableColumnValue + '</span></a>');
 
                 $( cpmEditableTd ).addClass('highlight');
                 setTimeout(function(){
@@ -102,11 +102,20 @@
             color:green;
             font-weight:bold;
         }
+        td.details-control {
+            color:#fff;
+            background: url('{{ asset('/vendor/datatables-images/details_open.png') }}') no-repeat center center;
+            cursor: pointer;
+        }
+        tr.shown td.details-control {
+            background: url('{{ asset('/vendor/datatables-images/details_close.png') }}') no-repeat center center;
+        }
     </style>
     <h1>CALLS</h1>
     <table class="table table-bordered" id="calls-table">
         <thead>
         <tr>
+            <th style="width:50px;"></th>
             <th>Status</th>
             <th>Nurse</th>
             <th>Patient</th>
@@ -120,11 +129,12 @@
             <th>Provider</th>
             <th>Program</th>
             <th>Note Type</th>
-            <th>Note Body</th>
+            <th>Note Date</th>
         </tr>
         </thead>
         <tfoot>
         <tr>
+            <th style="width:50px;"></th>
             <th>Status</th>
             <th>Nurse</th>
             <th>Patient</th>
@@ -137,7 +147,7 @@
             <th>Billing Provider</th>
             <th>Program</th>
             <th>Note Type</th>
-            <th>Note Body</th>
+            <th>Note Date</th>
         </tr>
         </tfoot>
     </table>
@@ -187,7 +197,10 @@
             serverSide: true,
             ajax: '{{ route('datatables.anyDataCalls') }}',
             columns: [
-                {data: 'status', name: 'calls.status'},
+                {
+                    "className":      'details-control', "data":           'blank', searchable: false, sortable: false
+                },
+                {data: 'status', name: 'status'},
                 {data: 'nurse_name', name: 'nurse_name'},
                 {data: 'patient_name', name: 'patient_name'},
                 {data: 'call_date', name: 'call_date'},
@@ -198,10 +211,46 @@
                 {data: 'last_successful_contact_time', name: 'last_successful_contact_time', searchable: false, sortable: false},
                 {data: 'program_name', name: 'program_name'},
                 {data: 'program_name', name: 'program_name'},
-                {data: 'type', name: 'type'},
-                {data: 'body', name: 'body'},
+                {data: 'note_type', name: 'note_type'},
+                {data: 'note_datetime', name: 'note_datetime'},
             ]
         });
+
+        /* Formatting function for row details - modify as you need */
+        function format ( d ) {
+            // `d` is the original data object for the row
+            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+                    '<tr>'+
+                    '<td>Note Type:</td>'+
+                    '<td>'+d.note_type+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                    '<td>Note:</td>'+
+                    '<td>'+d.note_body+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                    '<td>Extra info:</td>'+
+                    '<td>And any further details here...</td>'+
+                    '</tr>'+
+                    '</table>';
+        }
+
+        // Add event listener for opening and closing details
+        $('#calls-table tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = callstable.row( tr );
+
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                row.child( format(row.data()) ).show();
+                tr.addClass('shown');
+            }
+        } );
 
         // Apply the search
         callstable.columns().every( function () {

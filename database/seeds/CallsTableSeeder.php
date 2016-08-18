@@ -10,7 +10,7 @@ class CallsTableSeeder extends Seeder {
     {
         for ($i = 0; $i < 1000; $i++) {
             $obj = new Call;
-            $obj->call_date = '2016-08-20';
+            $obj->call_date = '2016-08-26';
             $obj->window_start = '08:40';
             $obj->window_end = '15:40';
             $obj->service = 'phone';
@@ -18,7 +18,7 @@ class CallsTableSeeder extends Seeder {
             $obj->created_at = Carbon::now();
             $obj->updated_at = Carbon::now();
             $obj->inbound_cpm_id = '1020';
-            $obj->outbound_cpm_id = '1020';
+            $obj->outbound_cpm_id = '2183';
             $obj->is_cpm_outbound = '1';
             $obj->call_time = '0';
             $obj->inbound_phone_number = '111-234-5678';

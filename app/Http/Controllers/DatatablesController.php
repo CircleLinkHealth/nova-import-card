@@ -49,8 +49,9 @@ class DatatablesController extends Controller
                     'calls.call_date',
                     'calls.window_start',
                     'calls.window_end',
-                    'notes.type',
-                    'notes.body',
+                    'notes.type AS note_type',
+                    'notes.body AS note_body',
+                    'notes.performed_at AS note_datetime',
                     'calls.note_id',
                     'patient_info.cur_month_activity_time',
                     'nurse.display_name AS nurse_name',
@@ -67,7 +68,13 @@ class DatatablesController extends Controller
 
         return Datatables::of($calls)
             ->editColumn('call_date', function($call) {
-                return $call->call_date . '<a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon" call-id="'.$call->id.'" column-name="call_date" column-value="'.$call->call_date.'"></span>';
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->id.'" column-name="call_date" column-value="'.$call->call_date.'">'.$call->call_date.'</span>';
+            })
+            ->editColumn('window_start', function($call) {
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->id.'" column-name="window_start" column-value="'.$call->window_start.'">'.$call->window_start.'</span>';
+            })
+            ->editColumn('window_end', function($call) {
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->id.'" column-name="window_end" column-value="'.$call->window_end.'">'.$call->window_end.'</span>';
             })
             ->editColumn('status', function($call) {
                 if($call->status == 'reached') {
@@ -96,6 +103,9 @@ class DatatablesController extends Controller
                 } else {
                     return 'n/a';
                 }
+            })
+            ->addColumn('blank', function($call) {
+                return '';
             })
             ->make(true);
     }
