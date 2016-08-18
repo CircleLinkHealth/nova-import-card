@@ -139,47 +139,6 @@
                         <div id="dtBox"></div>
                         <div id="tBox"></div>
 
-                        <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                        </div>
-
-
-
-                        <a class="btn btn-info panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseFilter">Toggle Filters</a><br /><br />
-                        <div id="collapseFilter" class="panel-collapse collapse">
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-xs-2"><label for="date">Date:</label></div><div id="dtBox"></div>
-                                    <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-xs-2"><label for="date">Date:</label></div>
-                                    <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-xs-2"><label for="filterNurse">Nurse:</label></div>
-                                    <div class="col-xs-4">{!! Form::select('filterNurse', array('all' => 'All', 'unassigned' => 'Unassigned') + $nurses->all(), $filterNurse, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
-                                </div>
-
-                                <div class="row" style="margin-top:15px;">
-                                    <div class="col-xs-2"><label for="filterStatus">Status:</label></div>
-                                    <div class="col-xs-4">{!! Form::select('filterStatus', array('all' => 'All', 'scheduled' => 'Scheduled', 'reached' => 'Reached'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
-                                </div>
-                            </div>
-                            <div class="row" style="margin-top:50px;">
-                                <div class="col-sm-12">
-                                    <div class="" style="text-align:center;">
-                                        {!! Form::hidden('action', 'filter') !!}
-                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
-                                        <a href="{{ URL::route('admin.patientCallManagement.index', array()) }}" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</a>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
 
                         {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
 
