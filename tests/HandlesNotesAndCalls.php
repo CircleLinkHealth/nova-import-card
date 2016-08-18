@@ -19,7 +19,7 @@ trait HandlesNotesAndCalls
             ->type('Just Recorded some vitals for patient.', 'body')
             //Add someone to email
             ->select('Patient Support', 'careteam[]')
-            ->press('note');
+            ->press('submit');
 
     }
 

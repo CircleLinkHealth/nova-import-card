@@ -7,6 +7,7 @@ use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
 class PredictCall
 {
@@ -98,93 +99,7 @@ class PredictCall
         //the last week is incomplete but has a few days. For the
         //sake of our calculation, we observe this 5th week.
 
-        if($ccm_time > 1199){ // More than 20 mins
-
-            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
-
-                //Logic: Call patient in the second last week of the month
-                $next_window_carbon->endOfMonth()->subWeek(2);
-
-            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
-                
-                //Logic: Call patient in first week of next month
-                $next_window_carbon->addMonth(1)->firstOfMonth();
-                
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
-
-                //Logic: Call patient after two weeks
-                $next_window_carbon->addWeek(2);
-
-            }
-
-        }
-
-        else if ($ccm_time > 899){ // 15 - 20 mins
-
-            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
-
-                //Logic: Call patient in the second last week of the month
-                //Note, might result in very close calls if second week.
-                $next_window_carbon->addWeek(2);
-
-            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
-
-                //Logic: Call patient in last week of month
-                $next_window_carbon->endOfMonth()->subWeek(2);
-
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
-
-                //Logic: Call patient after two weeks
-                $next_window_carbon->addWeek(2);
-
-            }
-
-            //Logic: Add 3 weeks or
-
-        }
-
-        else if ($ccm_time > 599){ // 10 - 15 mins
-
-            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
-
-                //Logic: Call patient in 2 weeks.
-                $next_window_carbon->addWeek(2);
-
-            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
-
-                //Logic: Call patient in first week of next month
-                $next_window_carbon->addWeek(1);
-
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
-
-                //Logic: Call patient after two weeks
-                $next_window_carbon->addWeek(1);
-
-            }
-
-        }
-
-        else { // 0 - 10 mins
-
-            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
-
-                //Logic: Call patient in the second last week of the month
-                $next_window_carbon->addWeek(1);
-
-            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
-
-                //Logic: Call patient in first week of next month
-                $next_window_carbon->addWeek(1);
-
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
-
-                //Logic: Call patient after two weeks
-                $next_window_carbon->addWeek(1);
-
-            }
-
-        }
-
+        $next_window_carbon = $this->getSuccessfulCallTimeOffset($ccm_time, $week_num, $next_window_carbon);
 
         //this will give us the first available call window from the date the logic offsets, per the patient's preferred times. 
         $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($patient, $next_window_carbon);
@@ -232,6 +147,8 @@ class PredictCall
             $scheduled_call->outbound_cpm_id = Auth::user()->ID;
             $scheduled_call->save();
 
+            $flash = new FlashBag('Welcome Aboard!');
+
         } else {
 
             (new NoteService)->storeCallForNote($note, 'not reached', $patient, Auth::user(), 'outbound');
@@ -256,93 +173,10 @@ class PredictCall
         //the last week is incomplete but has a few days. For the
         //sake of our calculation, we observe this 5th week.
 
-        if($ccm_time > 1199){ // More than 20 mins
+        $no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth($patient,Carbon::now()->toDateTimeString());
+        $hasHadASuccessfulCall = $no_of_successful_calls->count() > 0 ? true : false;
 
-            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
-
-                //Logic: Call patient in the second last week of the month
-                $next_window_carbon->endOfMonth()->subWeek(2);
-
-            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
-
-                //Logic: Call patient in first week of next month
-                $next_window_carbon->addMonth(1)->firstOfMonth();
-
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
-
-                //Logic: Call patient after two weeks
-                $next_window_carbon->addWeek(2);
-
-            }
-
-        }
-
-        else if ($ccm_time > 899){ // 15 - 20 mins
-
-            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
-
-                //Logic: Call patient in the second last week of the month
-                //Note, might result in very close calls if second week.
-                $next_window_carbon->addWeek(2);
-
-            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
-
-                //Logic: Call patient in last week of month
-                $next_window_carbon->endOfMonth()->subWeek(2);
-
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
-
-                //Logic: Call patient after two weeks
-                $next_window_carbon->addWeek(2);
-
-            }
-
-            //Logic: Add 3 weeks or
-
-        }
-
-        else if ($ccm_time > 599){ // 10 - 15 mins
-
-            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
-
-                //Logic: Call patient in 2 weeks.
-                $next_window_carbon->addWeek(2);
-
-            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
-
-                //Logic: Call patient in first week of next month
-                $next_window_carbon->addWeek(1);
-
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
-
-                //Logic: Call patient after two weeks
-                $next_window_carbon->addWeek(1);
-
-            }
-
-        }
-
-        else { // 0 - 10 mins
-
-            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
-
-                //Logic: Call patient in the second last week of the month
-                $next_window_carbon->addWeek(1);
-
-            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
-
-                //Logic: Call patient in first week of next month
-                $next_window_carbon->addWeek(1);
-
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
-
-                //Logic: Call patient after two weeks
-                $next_window_carbon->addWeek(1);
-
-            }
-
-        }
-
+        $next_window_carbon = $this->getUnsuccessfulCallTimeOffset($ccm_time, $week_num, $next_window_carbon, $hasHadASuccessfulCall);
 
         //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
         $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($patient, $next_window_carbon);
@@ -362,25 +196,210 @@ class PredictCall
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
+        //Call Info
 
-
-
-        $prediction =  [
+        $prediction = [
+            'predicament' => $patient_situation,
             'patient' => $patient,
-            'date' => $earliest_contact_day,
+            'date' => $next_predicted_contact_window['day'],
+            'window' => $window,
             'window_start' => $window_start,
             'window_end' => $window_end,
             'next_contact_windows' => $next_contact_windows,
-            'successful' => false
+            'successful' => true
         ];
 
         $prediction = $this->getAlgorithmFactors($patient, $prediction);
 
         return $prediction;
+    }
+
+    //The next two functions will give us the time we have to wait until making the next
+    //attempt at reaching a patient
+
+    public function getSuccessfulCallTimeOffset($ccm_time, $week_num, $next_window_carbon){
+
+        if($ccm_time > 1199){ // More than 20 mins
+
+            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+
+                //Logic: Call patient in the second last week of the month
+                return $next_window_carbon->endOfMonth()->subWeek(2);
+
+            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+
+                //Logic: Call patient in first week of next month
+                return $next_window_carbon->addMonth(1)->firstOfMonth();
+
+            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+
+                //Logic: Call patient after two weeks
+                return $next_window_carbon->addWeek(2);
+
+            }
+
+        }
+
+        else if ($ccm_time > 899){ // 15 - 20 mins
+
+            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+
+                //Logic: Call patient in the second last week of the month
+                //Note, might result in very close calls if second week.
+                return $next_window_carbon->addWeek(2);
+
+            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+
+                //Logic: Call patient in last week of month
+                return $next_window_carbon->endOfMonth()->subWeek(2);
+
+            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+
+                //Logic: Call patient after two weeks
+                return $next_window_carbon->addWeek(2);
+
+            }
+
+            //Logic: Add 3 weeks or
+
+        }
+
+        else if ($ccm_time > 599){ // 10 - 15 mins
+
+            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+
+                //Logic: Call patient in 2 weeks.
+                return $next_window_carbon->addWeek(2);
+
+            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+
+                //Logic: Call patient in first week of next month
+                return $next_window_carbon->addWeek(1);
+
+            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+
+                //Logic: Call patient after two weeks
+                return $next_window_carbon->addWeek(1);
+
+            }
+
+        }
+
+        else { // 0 - 10 mins
+
+            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+
+                //Logic: Call patient in the second last week of the month
+                return $next_window_carbon->addWeek(1);
+
+            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+
+                //Logic: Call patient in first week of next month
+                return $next_window_carbon->addWeek(1);
+
+            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+
+                //Logic: Call patient after two weeks
+                return $next_window_carbon->addWeek(1);
+
+            }
+
+        }
 
     }
 
-    public function successfulCallTimeRouter(){
+    public function getUnsuccessfulCallTimeOffset($ccm_time, $week_num, Carbon $next_window_carbon, $hasHadASuccessfulCall){
+
+        if($ccm_time > 1199){ // More than 20 mins
+
+            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+
+                //Logic: Call patient in the second last week of the month
+                return ($hasHadASuccessfulCall) ?
+                    //Call first window of next month
+                    $next_window_carbon->addMonth(1)->firstOfMonth() :
+                    //try the next saturday
+                    $next_window_carbon->next(Carbon::SATURDAY);
+
+            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+
+                //Logic: Call patient in first week of next month
+                return $next_window_carbon->addMonth(1)->firstOfMonth();
+
+            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+
+                //Logic: Call patient after two weeks
+                return $next_window_carbon->addWeek(2);
+
+            }
+
+        }
+
+        else if ($ccm_time > 899){ // 15 - 20 mins
+
+            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+
+                //Logic: Call patient in the second last week of the month
+                //Note, might result in very close calls if second week.
+                return $next_window_carbon->addWeek(2);
+
+            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+
+                //Logic: Call patient in last week of month
+                return $next_window_carbon->endOfMonth()->subWeek(2);
+
+            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+
+                //Logic: Call patient after two weeks
+                return $next_window_carbon->addWeek(2);
+
+            }
+
+            //Logic: Add 3 weeks or
+
+        }
+
+        else if ($ccm_time > 599){ // 10 - 15 mins
+
+            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+
+                //Logic: Call patient in 2 weeks.
+                return $next_window_carbon->addWeek(2);
+
+            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+
+                //Logic: Call patient in first week of next month
+                return $next_window_carbon->addWeek(1);
+
+            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+
+                //Logic: Call patient after two weeks
+                return $next_window_carbon->addWeek(1);
+
+            }
+
+        }
+
+        else { // 0 - 10 mins
+
+            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+
+                //Logic: Call patient in the second last week of the month
+                return $next_window_carbon->addWeek(1);
+
+            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+
+                //Logic: Call patient in first week of next month
+                return $next_window_carbon->addWeek(1);
+
+            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+
+                //Logic: Call patient after two weeks
+                return $next_window_carbon->addWeek(1);
+
+            }
+
+        }
 
 
     }

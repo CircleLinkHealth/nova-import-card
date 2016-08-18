@@ -30,7 +30,8 @@
                     Record New Note
                 </div>
 
-                <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient])}}" class="form-horizontal">
+                <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient])}}"
+                      class="form-horizontal">
 
                     @include('partials.userheader')
 
@@ -224,8 +225,7 @@
                                     <div class="form-item form-item-spacing text-center">
                                         <div>
                                             <div class="col-sm-12">
-                                                    <button id="submit" name="note" type="submit"
-                                                        value="new_note"
+                                                <button name="submit" id="submit" type="submit"
                                                         class="btn btn-primary btn-lg form-item--button form-item-spacing">Save/Send Note</button>
                                             </div>
                                         </div>
