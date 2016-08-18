@@ -13,11 +13,11 @@ class SchedulerService
 
     protected $callPredictor;
 
-    //Instantiate class with a prediction algorithm of choice
-    public function __construct(PredictCall $algorithm)
-    {
-        $this->callPredictor = $algorithm;
-    }
+//    //Instantiate class with a prediction algorithm of choice
+//    public function __construct(PredictCall $algorithm)
+//    {
+//        $this->callPredictor = $algorithm;
+//    }
 
     // Success is the call's status.
     // true for reached, false for not reached 
@@ -34,11 +34,11 @@ class SchedulerService
 
         if ($success) {
 
-            return $this->callPredictor->successfulCallHandler($patient, $note, $scheduled_call);
+            return (new PredictCall($patient, $note, $scheduled_call))->successfulCallHandler();
 
         } else {
 
-            return $this->callPredictor->unsuccessfulCallHandler($patient, $note, $scheduled_call);
+            return (new PredictCall($patient, $note, $scheduled_call))->unsuccessfulCallHandler();
 
         }
     }
