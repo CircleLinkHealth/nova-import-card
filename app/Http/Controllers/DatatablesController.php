@@ -42,7 +42,7 @@ class DatatablesController extends Controller
             ->with('note')
             ->select(
                 [
-                    'calls.id',
+                    'calls.id AS call_id',
                     'calls.status',
                     'calls.outbound_cpm_id',
                     'calls.inbound_cpm_id',
@@ -81,8 +81,8 @@ class DatatablesController extends Controller
 
 
         return Datatables::of($calls)
-            ->editColumn('checkbox', function($call) {
-                return '<input type="checkbox" name="calls[]" value="'.$call->id.'">';
+            ->editColumn('call_id', function($call) {
+                return $call->call_id.' <input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
             })
             ->editColumn('call_date', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->id.'" column-name="call_date" column-value="'.$call->call_date.'">'.$call->call_date.'</span>';

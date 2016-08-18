@@ -277,7 +277,7 @@
                     {
                         "className":      'details-control', "data":           'blank', searchable: false, sortable: false
                     },
-                    {data: 'checkbox', name: 'checkbox'},
+                    {data: 'call_id', name: 'call_id'},
                     {data: 'status', name: 'status'},
                     {data: 'patient_name', name: 'patient_name'},
                     {data: 'birth_date', name: 'birth_date'},
