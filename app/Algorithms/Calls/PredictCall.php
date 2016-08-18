@@ -112,13 +112,13 @@ class PredictCall
         //the last week is incomplete but has a few days. For the
         //sake of our calculation, we observe this 5th week.
 
-        $next_window_carbon = $this->getSuccessfulCallTimeOffset($this->ccmTime, $week_num, $next_window_carbon);
+        $next_window_carbon = $this->getSuccessfulCallTimeOffset($week_num, $next_window_carbon);
 
         //this will give us the first available call window from the date the logic offsets, per the patient's preferred times. 
         $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient, $next_window_carbon);
 
         //String to facilitate testing
-        $patient_situation = $this->patient->fullName . 'was called successfully in <b>week '
+        $patient_situation = $this->patient->fullName . 'was called <span style="color:green">successfully</span> in <b>week '
                                 . $week_num . ' </b> and has <b>ccm time: ' . intval($this->ccmTime/60) . ' mins </b> (' . $this->ccmTime .
                                   ' seconds). He can be called starting <b>' . $next_window_carbon->toDateTimeString() . '</b> but his first window after that is: <b>' . $next_predicted_contact_window['day']
                                     . '</b>' ;
@@ -183,15 +183,15 @@ class PredictCall
         //sake of our calculation, we observe this 5th week.
 
         $no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
-        $hasHadASuccessfulCall = $no_of_successful_calls->count() > 0 ? true : false;
+        $hasHadASuccessfulCall = $no_of_successful_calls > 0 ? true : false;
 
-        $next_window_carbon = $this->getUnsuccessfulCallTimeOffset($this->ccmTime, $week_num, $next_window_carbon, $hasHadASuccessfulCall);
+        $next_window_carbon = $this->getUnsuccessfulCallTimeOffset($week_num, $next_window_carbon);
 
         //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
         $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient, $next_window_carbon);
 
         //String to facilitate testing
-        $patient_situation = $this->patient->fullName . 'was called successfully in <b>week '
+        $patient_situation = $this->patient->fullName . 'was called <span style="color: red">unsuccessfully</span> in <b>week '
             . $week_num . ' </b> and has <b>ccm time: ' . intval($this->ccmTime/60) . ' mins </b> (' . $this->ccmTime .
             ' seconds). He can be called starting <b>' . $next_window_carbon->toDateTimeString() . '</b> but his first window after that is: <b>' . $next_predicted_contact_window['day']
             . '</b>' ;
@@ -226,9 +226,9 @@ class PredictCall
     //The next two functions will give us the time we have to wait until making the next
     //attempt at reaching a patient
 
-    public function getSuccessfulCallTimeOffset($ccm_time, $week_num, $next_window_carbon){
+    public function getSuccessfulCallTimeOffset($week_num, $next_window_carbon){
 
-        if($ccm_time > 1199){ // More than 20 mins
+        if($this->ccmTime > 1199){ // More than 20 mins
 
             if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
 
@@ -249,7 +249,7 @@ class PredictCall
 
         }
 
-        else if ($ccm_time > 899){ // 15 - 20 mins
+        else if ($this->ccmTime > 899){ // 15 - 20 mins
 
             if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
 
@@ -273,7 +273,7 @@ class PredictCall
 
         }
 
-        else if ($ccm_time > 599){ // 10 - 15 mins
+        else if ($this->ccmTime > 599){ // 10 - 15 mins
 
             if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
 
@@ -287,7 +287,7 @@ class PredictCall
 
             } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
 
-                //Logic: Call patient after two weeks
+                //Logic: Call patient after one week
                 return $next_window_carbon->addWeek(1);
 
             }
@@ -314,56 +314,74 @@ class PredictCall
             }
 
         }
+
+        //If nothing matches, just return the same date
+        return $next_window_carbon;
 
     }
 
-    public function getUnsuccessfulCallTimeOffset($ccm_time, $week_num, Carbon $next_window_carbon, $hasHadASuccessfulCall){
+    public function getUnsuccessfulCallTimeOffset($week_num, Carbon $next_window_carbon){
 
-        if($ccm_time > 1199){ // More than 20 mins
+        if($this->ccmTime > 1199){ // More than 20 mins
 
+            if($this->successfulCallsThisMonth > 0){ //If there was a successful call this month...
+
+                //First window of next month
+                return $next_window_carbon->addMonth(1)->firstOfMonth();
+
+            } else {
+
+                //try to connect in the weekend
+                return $next_window_carbon->next(Carbon::SATURDAY);
+
+            }
 
         }
 
-        else if ($ccm_time > 899){ // 15 - 20 mins
+        else if ($this->ccmTime > 899){ // 15 - 20 mins
 
-            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
-
-                //Logic: Call patient in the second last week of the month
-                //Note, might result in very close calls if second week.
-                return $next_window_carbon->addWeek(2);
-
-            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+            if($this->successfulCallsThisMonth > 0){ //If there was a successful call this month
 
                 //Logic: Call patient in last week of month
                 return $next_window_carbon->endOfMonth()->subWeek(2);
 
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+            } else
 
-                //Logic: Call patient after two weeks
-                return $next_window_carbon->addWeek(2);
+                //Call after a week
+                return $next_window_carbon->addWeek(1);
 
             }
 
-            //Logic: Add 3 weeks or
+        else if ($this->ccmTime > 599){ // 10 - 15 mins
 
-        }
+            if($this->successfulCallsThisMonth > 0) { //If there was a successful call this month
 
-        else if ($ccm_time > 599){ // 10 - 15 mins
+                if ($week_num < 4) { // We are in the first three weeks of the month
 
-            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+                    //Logic: Call patient in 1 weeks.
+                    return $next_window_carbon->addWeek(1);
 
-                //Logic: Call patient in 2 weeks.
-                return $next_window_carbon->addWeek(2);
+                } else if ($week_num == 4 || $week_num == 5) { //next day
 
-            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+                    //Logic: Call patient in first week of next month
+                    return $next_window_carbon->tomorrow();
 
-                //Logic: Call patient in first week of next month
-                return $next_window_carbon->addWeek(1);
+                }
 
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+            } else {
 
-                //Logic: Call patient after two weeks
-                return $next_window_carbon->addWeek(1);
+                if ($week_num < 4) { // We are in the first three weeks of the month
+
+                    //Logic: Call patient in 1 weeks.
+                    return $next_window_carbon->addWeek(1); //@todo implement low priority
+
+                } else if ($week_num == 4 || $week_num == 5) { //next day
+
+                    //Logic: Call patient in first week of next month
+                    return $next_window_carbon->tomorrow();
+
+                }
+
 
             }
 
@@ -371,25 +389,22 @@ class PredictCall
 
         else { // 0 - 10 mins
 
-            if($week_num == 1 || $week_num == 2){ // We are in the first two weeks of the month
+            if($this->successfulCallsThisMonth > 0) { //If there was a successful call this month
 
-                //Logic: Call patient in the second last week of the month
+                //Logic: Call patient in 1 weeks.
                 return $next_window_carbon->addWeek(1);
 
-            } else if ($week_num == 3 || $week_num == 4 ){ //second last week of month
+            } else {
 
-                //Logic: Call patient in first week of next month
-                return $next_window_carbon->addWeek(1);
+                return $next_window_carbon->addWeek(1); // @todo implement low priority
 
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
-
-                //Logic: Call patient after two weeks
-                return $next_window_carbon->addWeek(1);
 
             }
 
         }
 
+        //If nothing matches, just return the same date
+        return $next_window_carbon;
 
     }
 
