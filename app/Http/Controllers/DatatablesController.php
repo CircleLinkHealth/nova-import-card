@@ -77,6 +77,7 @@ class DatatablesController extends Controller
                 $join->where('patient_care_team_members.type', '=', "billing_provider");
             })
             ->leftJoin('users AS billing_provider', 'patient_care_team_members.member_user_id','=','billing_provider.ID')
+            ->groupBy('call_id')
             ->get();
 
 
