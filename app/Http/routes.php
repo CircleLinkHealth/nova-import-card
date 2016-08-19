@@ -215,6 +215,10 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix' => 'admin'
     ], function () {
 
+        Route::get('emr-direct/check', function () {
+            (new \App\Services\PhiMail\PhiMail())->sendReceive();
+        });
+
         Route::group([
             'prefix' => 'reports'
         ], function () {
