@@ -306,10 +306,13 @@ class PhiMail {
             }
 
         } catch (\Exception $e) {
-            $message = $e->getMessage() . "\n" . $e->getFile() . "\n" . $e->getLine() . PHP_EOL . $e->getTraceAsString() . "\n";
+            $message = $e->getMessage() . "\n" . $e->getFile() . "\n" . $e->getLine();
+            $traceString = $e->getTraceAsString() . "\n";
             echo $message;
+            echo $traceString;
 
             Log::error($message);
+            Log::error($traceString);
         }
 
         try {
