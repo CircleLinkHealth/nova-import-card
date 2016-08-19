@@ -104,7 +104,7 @@ class PhiMail {
 
             // This command is recommended for added security to set the trusted 
             // SSL certificate or trust anchor for the phiMail server.
-            PhiMailConnector::setServerCertificate(base_path() . '/resources/certificates/EMRDirectTestCA.pem');
+            PhiMailConnector::setServerCertificate(base_path() . env('EMR_DIRECT_SERVER_CERT_PEM_PATH'));
 
             $c = new PhiMailConnector($phiMailServer, $phiMailPort);
             $c->authenticateUser($phiMailUser, $phiMailPass);
