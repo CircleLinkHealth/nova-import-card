@@ -39,16 +39,16 @@ class CarePlanViewService
 
         //get the User's cpmProblems
         $patientProblems = $patient->cpmProblems()->get();
-        $patientProblemsIds = $patientProblems->lists('id')->all();
+        $patientProblemsIds = $patientProblems->pluck('id')->all();
 
         $patientLifestyles = $patient->cpmLifestyles()->get();
-        $patientLifestylesIds = $patientLifestyles->lists('id')->all();
+        $patientLifestylesIds = $patientLifestyles->pluck('id')->all();
 
         $patientMedicationGroups = $patient->cpmMedicationGroups()->get();
-        $patientMedicationGroupsIds = $patientMedicationGroups->lists('id')->all();
+        $patientMedicationGroupsIds = $patientMedicationGroups->pluck('id')->all();
         
         $patientMiscs = $patient->cpmMiscs()->get();
-        $patientMiscsIds = $patientMiscs->lists('id')->all();
+        $patientMiscsIds = $patientMiscs->pluck('id')->all();
 
         $template = $template->loadWithInstructionsAndSort([
             'cpmLifestyles',
@@ -106,7 +106,7 @@ class CarePlanViewService
 
 
         $patientMiscs = $patient->cpmMiscs()->get();
-        $patientMiscsIds = $patientMiscs->lists('id')->all();
+        $patientMiscsIds = $patientMiscs->pluck('id')->all();
         
         $bloodPressure = $patient->cpmBloodPressure()->firstOrNew([]);
         $bloodSugar = $patient->cpmBloodSugar()->firstOrNew([]);
@@ -119,7 +119,7 @@ class CarePlanViewService
         $biometrics->name = 'cpmBiometrics';
         $biometrics->title = 'Biometrics to Monitor';
         $biometrics->items = $template->cpmBiometrics;
-        $biometrics->patientItemIds = $patientBiometrics->lists('id')->all();
+        $biometrics->patientItemIds = $patientBiometrics->pluck('id')->all();
         $biometrics->patientItems = $patientBiometrics->keyBy('id');
 
 
@@ -150,10 +150,10 @@ class CarePlanViewService
 
         //get the User's cpmProblems
         $patientSymptoms = $patient->cpmSymptoms()->get();
-        $patientSymptomsIds = $patientSymptoms->lists('id')->all();
+        $patientSymptomsIds = $patientSymptoms->pluck('id')->all();
         
         $patientMiscs = $patient->cpmMiscs()->get();
-        $patientMiscsIds = $patientMiscs->lists('id')->all();
+        $patientMiscsIds = $patientMiscs->pluck('id')->all();
 
         $symptoms = new Section();
         $symptoms->name = 'cpmSymptoms';
@@ -195,12 +195,12 @@ class CarePlanViewService
     public function getProblemsToMonitor(User $patient)
     {
         $problems = $patient->cpmProblems()
-            ->lists('name', 'cpm_problem_id')
+            ->pluck('name', 'cpm_problem_id')
             ->all();
         
         $otherConditions = $patient->cpmMiscs()
             ->where('name', CpmMisc::OTHER_CONDITIONS)
-            ->lists('name', 'cpm_misc_id')
+            ->pluck('name', 'cpm_misc_id')
             ->all();
         
         return $otherConditions

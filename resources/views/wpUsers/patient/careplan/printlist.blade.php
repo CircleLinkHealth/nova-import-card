@@ -127,6 +127,7 @@
                         </script>
                         <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name' style='margin:15px;' onclick='obs_alerts_dtable.showColumn("last_name");obs_alerts_dtable.hideColumn("first_name");obs_alerts_dtable.sort("#last_name#");this.style.display = "none";getElementById("firstName_btn").style.display = "inline-block";'>
                         <input id='firstName_btn' type='button' class='btn btn-primary' value='Show by First Name' style='display:none;margin:15px;' onclick='obs_alerts_dtable.hideColumn("last_name");obs_alerts_dtable.showColumn("first_name");obs_alerts_dtable.sort("#first_name#");this.style.display = "none";getElementById("lastName_btn").style.display = "inline-block";'>
+                        @role(['administrator', 'provider'])
                         <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                onclick="webix.toPDF($$(obs_alerts_dtable), {
                                 header:'CarePlanManager.com - Patient CarePlan Print List',
@@ -150,6 +151,7 @@
                                 // 'careplan_status':  { header:'CarePlan Status', tooltip:'#tooltip#' , width:125, template: webix.template('#careplan_status#')},
                                 'reg_date':         { header:'Registered On', width:120, sort:'string', template: webix.template('#reg_date#')},
                                                                                 }});">
+                    @endrole
                         <span id="print_list" class='print-list'></span>
                         <script type="text/javascript">
                             // window.onload=filterText('#careplan_last_printed#','X');
