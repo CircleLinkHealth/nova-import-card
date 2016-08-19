@@ -19,6 +19,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Maknz\Slack\Facades\Slack;
 
 class CcdApiController extends Controller
 {
@@ -305,29 +306,35 @@ class CcdApiController extends Controller
      */
     public function notifyAdmins(User $user, Ccda $ccda, $providerInfo = null, $status, $line = null, $errorMessage = null)
     {
-        $recipients = [
-            'rohanm@circlelinkhealth.com',
-            'mantoniou@circlelinkhealth.com',
-            'jkatz@circlelinkhealth.com',
-            'Raph@circlelinkhealth.com',
-            'kgallo@circlelinkhealth.com',
-        ];
+        $link = route('view.files.ready.to.import');
 
-        $view = 'emails.aprimaSentCCDs';
-        $subject = "Aprima sent a CCD. It went {$status}.";
+        Slack::to('#ccd-file-status')
+            ->send("Aprima sent a CCD. It went {$status}. \n Please visit {$link} to import.");
 
-        $data = [
-            'ccdId' => $ccda->id,
-            'errorMessage' => $errorMessage,
-            'userId' => $user->ID,
-            'line' => $line,
-            'providerInfo' => $providerInfo
-        ];
-
-        Mail::send($view, $data, function ($message) use ($recipients, $subject) {
-            $message->from('aprima-api@careplanmanager.com', 'CircleLink Health');
-            $message->to($recipients)->subject($subject);
-        });
+        //REPLACE EMAILS WITH SLACK
+//        $recipients = [
+//            'rohanm@circlelinkhealth.com',
+//            'mantoniou@circlelinkhealth.com',
+//            'jkatz@circlelinkhealth.com',
+//            'Raph@circlelinkhealth.com',
+//            'kgallo@circlelinkhealth.com',
+//        ];
+//
+//        $view = 'emails.aprimaSentCCDs';
+//        $subject = "Aprima sent a CCD. It went {$status}.";
+//
+//        $data = [
+//            'ccdId' => $ccda->id,
+//            'errorMessage' => $errorMessage,
+//            'userId' => $user->ID,
+//            'line' => $line,
+//            'providerInfo' => $providerInfo
+//        ];
+//
+//        Mail::send($view, $data, function ($message) use ($recipients, $subject) {
+//            $message->from('aprima-api@careplanmanager.com', 'CircleLink Health');
+//            $message->to($recipients)->subject($subject);
+//        });
     }
 
     public function getApiUserLocation($user)

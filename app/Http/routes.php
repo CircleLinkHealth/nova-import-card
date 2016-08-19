@@ -1,6 +1,7 @@
 <?php
 
 //THIS IS FOR APRIMA ONLY
+
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
     Route::post('oauth/access_token', 'CcdApi\Aprima\AuthController@getAccessToken');
@@ -50,16 +51,16 @@ Route::post('password/reset', 'Auth\PasswordController@postReset');
 //    REDOX
 /****************************/
 /****************************/
-//Route::group(['namespace' => 'Redox'], function () {
-//    Route::get('redox', [
-//        'uses' => 'AppVerificationController@getVerificationRequest'
-//    ]);
-//
-//    Route::group(['middleware' => 'getRedoxAccessToken'], function () {
-//        //@todo: this is not an actual route, it was made for testing
-//        Route::get('testRedoxx', 'PostToRedoxController@index');
-//    });
-//});
+Route::group(['namespace' => 'Redox'], function () {
+    Route::get('redox', [
+        'uses' => 'AppVerificationController@getVerificationRequest'
+    ]);
+
+    Route::group(['middleware' => 'getRedoxAccessToken'], function () {
+        //@todo: this is not an actual route, it was made for testing
+        Route::get('testRedoxx', 'PostToRedoxController@index');
+    });
+});
 
 /****************************/
 /****************************/
@@ -67,11 +68,6 @@ Route::post('password/reset', 'Auth\PasswordController@postReset');
 /****************************/
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
-
-    //A route to send/receive from EMR Direct
-    Route::get('emr', function () {
-        (new \App\Services\PhiMail\PhiMail)->sendReceive();
-    });
 
     Route::get('/CCDModels/Items/MedicationListItem', 'CCDModels\Items\MedicationListItemController@index');
     Route::post('/CCDModels/Items/MedicationListItem/store', 'CCDModels\Items\MedicationListItemController@store');
@@ -219,11 +215,24 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix' => 'admin'
     ], function () {
 
-        Route::get('emr-direct/check', function (){
-            (new \App\Services\PhiMail\PhiMail())->sendReceive();
-        });
+        Route::group([
+            'prefix' => 'reports'
+        ], function () {
+            Route::post('monthly-billing', [
+                'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
+                'as' => 'MonthlyBillingReportsController.makeMonthlyReport'
+            ]);
 
-        Route::get('/reports/monthly-billing', 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport');
+            Route::get('monthly-billing/create', [
+                'uses' => 'Admin\Reports\MonthlyBillingReportsController@create',
+                'as' => 'MonthlyBillingReportsController.create'
+            ]);
+
+            Route::get('ethnicity', [
+                'uses' => 'Admin\Reports\EthnicityReportController@getReport',
+                'as' => 'EthnicityReportController.getReport'
+            ]);
+        });
 
         Route::get('dupes', function () {
             $results = DB::select(DB::raw("
@@ -373,8 +382,9 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         // report - nurse time report
-        //these fall under the admin-access permission
+
         Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
+
         Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 
         // questions

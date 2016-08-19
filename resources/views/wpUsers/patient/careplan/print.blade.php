@@ -46,8 +46,10 @@ if (isset($patient) && !empty($patient)) {
                         <span class="btn btn-group text-right">
                             <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block" aria-label="..."
                                role="button" href="{{ URL::route('patients.listing') }}">Approve More Care Plans</a>
-                        <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                           HREF="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->ID }}">Print This Page</a>
+                            @role(['administrator', 'provider'])
+                                <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
+                           href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->ID }}">Print This Page</a>
+                            @endrole
                     <form class="lang" action="#" method="POST" id="form">
                         <input type="hidden" name="lang" value="es"/>
                         <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
@@ -132,21 +134,31 @@ if (isset($patient) && !empty($patient)) {
                 <div class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications</h2>
+                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications <a class="btn btn-primary" href="{{ URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></h2>
                         </div>
                         <div class="col-xs-10">
                             <ul><strong>Monitoring these Medications</strong><BR>
-                                @if($medications_monitor)
-                                    @foreach($medications_monitor as $medi)
-                                        <li>{{$medi}}</li>
-                                    @endforeach
+                                @if(!empty($medications_monitor))
+                                    @if(is_array($medications_monitor))
+                                        @foreach($medications_monitor as $medi)
+                                            <li style="margin-top:14px;">{!! $medi !!}</li>
+                                        @endforeach
+                                    @else
+                                        {{$medications_monitor}}
+                                    @endif
                                 @endif
                             </ul>
                         </div>
                         <div class="col-xs-10">
-                            <ul><strong>Taking these Medications</strong>
-                                @if($taking_medications)
-                                    <li><?= nl2br($taking_medications) ?></li>
+                            <ul><strong>Taking these Medications</strong><BR>
+                                @if(!empty($taking_medications))
+                                    @if(is_array($taking_medications))
+                                        @foreach($taking_medications as $medi)
+                                            <li style="margin:14px 0px 0px 0px;">{!! $medi !!}</li>
+                                        @endforeach
+                                    @else
+                                        {{$taking_medications}}
+                                    @endif
                                 @endif
                             </ul>
                         </div>
