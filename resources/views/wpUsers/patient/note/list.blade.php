@@ -221,6 +221,7 @@
                                 </div>
 
                                 <div class="col-sm-6">
+                                    @role(['administrator', 'provider'])
                                     <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
                                            onclick="webix.toExcel($$(obs_alerts_dtable), {
                                                    header:'CarePlanManager.com - All Patient Notes <?= date('M d,Y') ?>',
@@ -249,6 +250,7 @@
                                                    'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#author_name#')},
 
                                                    }});">
+                                    @endrole
                                     @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
                                         <input id='site_show_btn' type='button' class='btn btn-primary'
                                                value='Show Program' style='margin:4px;'
