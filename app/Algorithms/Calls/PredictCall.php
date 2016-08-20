@@ -27,9 +27,6 @@ class PredictCall
     private $successfulCallsThisMonth;
     private $ccmTime;
 
-
-
-
     public function __construct(User $calledPatient, Note $currentNote, $currentCall)
     {
 
