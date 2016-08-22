@@ -86,13 +86,13 @@ class DatatablesController extends Controller
                 return '<input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
             })
             ->editColumn('call_date', function($call) {
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->id.'" column-name="call_date" column-value="'.$call->call_date.'">'.$call->call_date.'</span>';
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="call_date" column-value="'.$call->call_date.'">'.$call->call_date.'</span>';
             })
             ->editColumn('window_start', function($call) {
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->id.'" column-name="window_start" column-value="'.$call->window_start.'">'.$call->window_start.'</span>';
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="window_start" column-value="'.$call->window_start.'">'.$call->window_start.'</span>';
             })
             ->editColumn('window_end', function($call) {
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->id.'" column-name="window_end" column-value="'.$call->window_end.'">'.$call->window_end.'</span>';
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="window_end" column-value="'.$call->window_end.'">'.$call->window_end.'</span>';
             })
             ->editColumn('status', function($call) {
                 if($call->status == 'reached') {
