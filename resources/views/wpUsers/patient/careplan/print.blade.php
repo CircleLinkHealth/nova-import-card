@@ -46,8 +46,10 @@ if (isset($patient) && !empty($patient)) {
                         <span class="btn btn-group text-right">
                             <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block" aria-label="..."
                                role="button" href="{{ URL::route('patients.listing') }}">Approve More Care Plans</a>
-                        <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                           HREF="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->ID }}">Print This Page</a>
+                            @role(['administrator', 'provider'])
+                                <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
+                           href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->ID }}">Print This Page</a>
+                            @endrole
                     <form class="lang" action="#" method="POST" id="form">
                         <input type="hidden" name="lang" value="es"/>
                         <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
@@ -139,7 +141,7 @@ if (isset($patient) && !empty($patient)) {
                                 @if(!empty($medications_monitor))
                                     @if(is_array($medications_monitor))
                                         @foreach($medications_monitor as $medi)
-                                            <li style="margin-top:8px;">{{$medi}}</li>
+                                            <li style="margin-top:14px;">{!! $medi !!}</li>
                                         @endforeach
                                     @else
                                         {{$medications_monitor}}
@@ -152,7 +154,7 @@ if (isset($patient) && !empty($patient)) {
                                 @if(!empty($taking_medications))
                                     @if(is_array($taking_medications))
                                         @foreach($taking_medications as $medi)
-                                            <li style="margin-top:8px;">{{$medi}}</li>
+                                            <li style="margin:14px 0px 0px 0px;">{!! $medi !!}</li>
                                         @endforeach
                                     @else
                                         {{$taking_medications}}

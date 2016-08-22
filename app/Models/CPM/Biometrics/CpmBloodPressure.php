@@ -18,7 +18,7 @@ class CpmBloodPressure extends Model implements Biometric
     ];
 
     protected $attributes = [
-        'systolic_high_alert' => 181,
+        'systolic_high_alert' => 180,
         'systolic_low_alert' => 80,
         'diastolic_high_alert' => 90,
         'diastolic_low_alert' => 40,
