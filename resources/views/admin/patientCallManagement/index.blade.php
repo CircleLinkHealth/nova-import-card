@@ -158,20 +158,19 @@
                         <table class="display" width="100%" cellspacing="0" id="calls-table">
                             <thead>
                             <tr>
-                                <th></th>
-                                <th style="width:50px;"></th>
-                                <th>Status</th>
+                                <th class="nosearch"></th>
+                                <th class="nosearch" style="width:50px;"></th>
+                                <th>Nurse</th>
                                 <th>Patient</th>
                                 <th>DOB</th>
-                                <th>Next Call Date</th>
+                                <th>Call Status</th>
+                                <th>Next Call</th>
                                 <th>Window Start</th>
                                 <th>Window End</th>
-                                <th>Nurse</th>
-                                <th>CCM Time</th>
                                 <th>Last call</th>
-                                <th># Total Calls</th>
-                                <th># Successfull Calls</th>
-                                <!--<th>Billing Provider</th>-->
+                                <th class="nosearch">CCM Time</th>
+                                <th>Total Calls</th>
+                                <th>Successfull Calls</th>
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
                                 <th>Program</th>
@@ -181,17 +180,17 @@
                             <tr>
                                 <th></th>
                                 <th style="width:50px;"></th>
-                                <th>Status</th>
+                                <th>Nurse</th>
                                 <th>Patient</th>
                                 <th>DOB</th>
+                                <th>Call Status</th>
                                 <th>Next Call Date</th>
                                 <th>Window Start</th>
                                 <th>Window End</th>
-                                <th>Nurse</th>
-                                <th>CCM Time</th>
                                 <th>Last call</th>
-                                <th># Total Calls</th>
-                                <th># Successfull Calls</th>
+                                <th>CCM Time</th>
+                                <th>Total Calls</th>
+                                <th>Successfull Calls</th>
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
                                 <th>Program</th>
@@ -213,8 +212,10 @@
         $(function() {
             // Setup - add a text input to each footer cell
             $('#calls-table thead th').each( function () {
-                var title = $(this).text();
-                $(this).html( title + '<br /><input style="width:100%;margin:0;padding:0;" type="text" placeholder="Search" />' );
+                if(!$(this).hasClass('nosearch')) {
+                    var title = $(this).text();
+                    $(this).html(title + '<br /><input style="width:100%;margin:0;padding:0;" type="text" placeholder="Search" />');
+                }
             } );
 
 
@@ -237,15 +238,15 @@
                         "className":      'details-control', "data":           'blank', searchable: false, sortable: false
                     },
                     {data: 'call_id', name: 'call_id'},
-                    {data: 'status', name: 'status'},
+                    {data: 'nurse_name', name: 'nurse_name'},
                     {data: 'patient_name', name: 'patient_name'},
                     {data: 'birth_date', name: 'birth_date'},
+                    {data: 'status', name: 'status'},
                     {data: 'call_date', name: 'call_date'},
                     {data: 'window_start', name: 'window_start'},
                     {data: 'window_end', name: 'window_end'},
-                    {data: 'nurse_name', name: 'nurse_name'},
-                    {data: 'cur_month_activity_time', name: 'cur_month_activity_time'},
                     {data: 'last_successful_contact_time', name: 'last_successful_contact_time'},
+                    {data: 'cur_month_activity_time', name: 'cur_month_activity_time', searchable: false},
                     {data: 'no_of_calls', name: 'no_of_calls'},
                     {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},
                     {data: 'ccm_status', name: 'ccm_status'},
