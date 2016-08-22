@@ -83,7 +83,7 @@ class DatatablesController extends Controller
 
         return Datatables::of($calls)
             ->editColumn('call_id', function($call) {
-                return $call->call_id.' <input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
+                return '<input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
             })
             ->editColumn('call_date', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->id.'" column-name="call_date" column-value="'.$call->call_date.'">'.$call->call_date.'</span>';

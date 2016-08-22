@@ -141,9 +141,21 @@
 
 
                         {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-
-                                        <!--<td><input type="checkbox" name="calls[]" value="$call->id"></td> -->
-                        <table class="" width="100%" cellspacing="0" id="calls-table">
+                        <div class="row" style="margin:40px 0px;">
+                            <div class="col-xs-4">
+                                With selected calls:&nbsp;&nbsp;
+                                <select name="action">
+                                    <option value="assign">Assign Nurse:</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-6">Nurse:&nbsp;&nbsp;
+                                {!! Form::select('assigned_nurse', array('unassigned' => 'Unassigned') + $nurses->all(), 'unassigned', ['class' => 'select-picker', 'style' => 'width:50%;']) !!}
+                            </div>
+                            <div class="col-xs-2">
+                                <button type="submit" value="Submit" class="btn btn-primary btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-circle-arrow-right"></i> Perform Action</button>
+                            </div>
+                        </div>
+                        <table class="display" width="100%" cellspacing="0" id="calls-table">
                             <thead>
                             <tr>
                                 <th></th>
@@ -186,20 +198,6 @@
                             </tr>
                             </tfoot>
                         </table>
-                        <div class="row" style="margin:40px 0px;">
-                            <div class="col-xs-4">
-                                With selected calls:&nbsp;&nbsp;
-                                <select name="action">
-                                    <option value="assign">Assign Nurse:</option>
-                                </select>
-                            </div>
-                            <div class="col-xs-6">Nurse:&nbsp;&nbsp;
-                                {!! Form::select('assigned_nurse', array('unassigned' => 'Unassigned') + $nurses->all(), 'unassigned', ['class' => 'select-picker', 'style' => 'width:50%;']) !!}
-                            </div>
-                            <div class="col-xs-2">
-                                <button type="submit" value="Submit" class="btn btn-primary btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-circle-arrow-right"></i> Perform Action</button>
-                            </div>
-                        </div>
                         </form>
                     </div>
                 </div>
@@ -214,9 +212,9 @@
 
         $(function() {
             // Setup - add a text input to each footer cell
-            $('#calls-table tfoot th').each( function () {
+            $('#calls-table thead th').each( function () {
                 var title = $(this).text();
-                $(this).html( '<input style="width:100%;margin:0;padding:0;" type="text" placeholder="Search" />' );
+                $(this).html( title + '<br /><input style="width:100%;margin:0;padding:0;" type="text" placeholder="Search" />' );
             } );
 
 
@@ -228,7 +226,9 @@
                 //    'csvHtml5',
                 //    'pdfHtml5'
                 //],
+                "iDisplayLength": 100,
                 scrollX: true,
+                fixedHeader: true,
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('datatables.anyDataCalls') }}',
@@ -298,7 +298,7 @@
             callstable.columns().every( function () {
                 var that = this;
 
-                $( 'input', this.footer() ).on( 'keyup change', function () {
+                $( 'input', this.header() ).on( 'keyup change', function () {
                     if ( that.search() !== this.value ) {
                         that
                                 .search( this.value )
