@@ -42,12 +42,13 @@ class AuthController extends Controller
         }
 
 
-        if (auth()->check())
-        {
-            auth()->logout();
-            session()->flush();
-            return redirect()->route('login', [])->send();
-        }
+//        if (auth()->check())
+//        {
+//            auth()->logout();
+//            session()->flush();
+//            return redirect()->route('login', [])->send();
+//        }
+
     }
 
 

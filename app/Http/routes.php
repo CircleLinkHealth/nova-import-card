@@ -2,6 +2,20 @@
 
 //THIS IS FOR APRIMA ONLY
 
+use App\User;
+
+Route::get('online-nurses', function (){
+
+    $users = User::whereHas('roles', function ($q) {
+        $q->where('name', '=', 'care-center');
+    })
+        ->where('is_online', true)
+        ->get();
+
+    return $users;
+
+});
+
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
     Route::post('oauth/access_token', 'CcdApi\Aprima\AuthController@getAccessToken');
