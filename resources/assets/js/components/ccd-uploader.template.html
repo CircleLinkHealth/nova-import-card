@@ -8,19 +8,6 @@
         <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data"
               class="mdl-cell mdl-cell--12-col" action="/ccd-importer/qaimport">
 
-
-            <!--PROGRAM LIST-->
-            <div class="mdl-cell mdl-cell--12-col">
-                <h5>Please choose a program in which you wish to import.</h5>
-
-                <label v-for="blog in blogs" class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-cell--2-col"
-                       for="blog-{{ blog.blog_id }}">
-                    <input type="radio" id="blog-{{ blog.blog_id }}" class="mdl-radio__button" name="program_id"
-                           value="{{ blog.blog_id }}" v-model="selectedProgram" required>
-                    <span class="mdl-radio__label">{{ blog.name | capitalize}}</span>
-                </label>
-            </div>
-
             <!--VENDOR LIST-->
             <div class="mdl-cell mdl-cell--12-col">
                 <h5>Please choose an Import profile for this CCD.</h5>
@@ -34,7 +21,7 @@
             </div>
 
             <!--UPLOAD BOX-->
-            <div v-show="selectedVendor&&selectedProgram" class="mdl-cell mdl-cell--12-col">
+            <div v-show="selectedVendor" class="mdl-cell mdl-cell--12-col">
 
                 <input type="file" id="ccd" name="file[]" class="dropzone" multiple>
 

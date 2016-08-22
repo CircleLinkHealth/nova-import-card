@@ -5,10 +5,10 @@
         <div class="col-sm-12">
             <div class="list-group">
                 <template v-for="medicationitem in medications">
-                <div href="#" class="list-group-item" v-on:submit.prevent v-if="medicationitem.name" style="padding:5px;font-size:12px;">
+                <div href="#" class="list-group-item" v-on:submit.prevent style="padding:5px;font-size:12px;">
                     <div class="row">
                         <div class="col-sm-10">
-                            <div class="list-group-item-heading" v-if="medicationitem.name">
+                            <div class="list-group-item-heading">
                                 <span id="medication-name-@{{ $index }}"><strong>@{{ medicationitem.name }}</strong></span>
                                 <span id="medication-sig-@{{ $index }}"><br />@{{ medicationitem.sig }}</span>
                                 <textarea v-model="medicationitem.name" id="medication-edit-@{{ $index }}" style="display:none;" rows="5">@{{ medicationitem.name }}</textarea>
@@ -19,10 +19,10 @@
                         </div>
                         <div class="col-sm-2 text-right">
 
-                            <p class="list-group-item-text" v-if="medicationitem.name">@{{ medicationitem.description }}</p>
-                            <button class="btn btn-xs btn-danger medication-delete-btn" v-if="medicationitem.name" v-on:click.stop.prevent="deleteMedication($index, $medication)" ><span><i class="glyphicon glyphicon-remove"></i></span></button>
-                            <button class="btn btn-xs btn-primary medication-edit-btn" v-if="medicationitem.name" v-on:click.stop.prevent="editMedication($index, $medication)"><span><i class="glyphicon glyphicon-pencil"></i></span></button>
-                            <button class="btn btn-xs btn-success medication-save-btn" id="medication-save-btn-@{{ $index }}" v-if="medicationitem.name" v-on:click.stop.prevent="updateMedication($index, $medication)" style="display:none;"><span><i class="glyphicon glyphicon-ok"></i></span></button>
+                            <p class="list-group-item-text">@{{ medicationitem.description }}</p>
+                            <button class="btn btn-xs btn-danger medication-delete-btn" v-on:click.stop.prevent="deleteMedication($index, $medication)" ><span><i class="glyphicon glyphicon-remove"></i></span></button>
+                            <button class="btn btn-xs btn-primary medication-edit-btn" v-on:click.stop.prevent="editMedication($index, $medication)"><span><i class="glyphicon glyphicon-pencil"></i></span></button>
+                            <button class="btn btn-xs btn-success medication-save-btn" id="medication-save-btn-@{{ $index }}" v-on:click.stop.prevent="updateMedication($index, $medication)" style="display:none;"><span><i class="glyphicon glyphicon-ok"></i></span></button>
                         </div>
                     </div>
                 </div>

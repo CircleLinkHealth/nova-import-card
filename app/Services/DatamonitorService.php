@@ -1,18 +1,14 @@
 <?php namespace App\Services;
 
+use App\Comment;
 use App\CPRulesQuestions;
 use App\Http\Requests;
-use App\Program;
-use App\User;
 use App\Observation;
 use App\ObservationMeta;
-use App\UserMeta;
-use App\Comment;
-use App\CarePlan;
+use App\Program;
+use App\User;
 use DateTime;
 use Mail;
-use DB;
-use Validator;
 
 class DatamonitorService
 {
@@ -247,9 +243,9 @@ class DatamonitorService
             "HSP" => '', //empty
         ];
         $userUcpData["alert_keys"] = [
-            "Weight" => empty($weight) ?: $weight->target,
-            'bloodSugar' => $bloodSugar,
-            'bloodPressure' => $bloodPressure,
+            "Weight" => empty($weight) ? false : $weight->target,
+            'bloodSugar' => empty($bloodSugar) ? false : $bloodSugar,
+            'bloodPressure' => empty($bloodPressure) ? false : $bloodPressure,
         ];
 
         $first_name = $user->meta()->where('meta_key', '=', 'last_names')->first();
@@ -531,7 +527,8 @@ class DatamonitorService
 
             $extra_vars['bsvalue'] = $obs_value;
             $log_string = PHP_EOL . "OBSERVATION[{$observation['id']}] Patient[{$observation['user_id']}] BS High: {$max_blood_sugar_healthy_range}, BS Low: {$lowAlert}" . PHP_EOL;
-            if (!empty($obs_value) && !empty($lowAlert) && !empty($max_blood_sugar_healthy_range)) {
+
+            if (!empty($obs_value)) {
                 if (($obs_value <= $lowAlert) || ($obs_value >= $highAlert)) { //61
                     $message_id = 'CF_AL_04';
                     $send_alert = "{$obs_value} (systolic) is <= {$lowAlert} (systolic)";
@@ -1048,8 +1045,7 @@ class DatamonitorService
      * @param $message_id
      * @return string
      */
-    public
-    function send_obs_alert($observation, $message_id, $send_email, $extra_vars, $source = false, $int_blog_id)
+    public function send_obs_alert($observation, $message_id, $send_email, $extra_vars, $source = false, $int_blog_id)
     {
         // set blog id
         $this->int_blog_id = $int_blog_id;
@@ -1178,8 +1174,7 @@ class DatamonitorService
      * @param int $int_blog_id
      * @return bool|string
      */
-    public
-    function send_email($observation, $message_id, $extra_vars, $int_blog_id = 7)
+    public function send_email($observation, $message_id, $extra_vars, $int_blog_id = 7)
     {
 
         // get user info

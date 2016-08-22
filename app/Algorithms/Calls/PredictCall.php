@@ -16,24 +16,24 @@ class PredictCall
     // Currently, the factors taken into consideration are:
     //  - Call Status (Reached, Unreached)
     //  - Current Month's CCM Time Bracket (0-10, 10-15, 15-20, >20)
-    //  - Week Number in current Month (1, 2, 3, 4) [Special Consideration for months with 5 weeks: (1, 2, 3+4, 5)]
+    //  - Week Number in current Month (1, 2, 3, 4) [Special Consideration for months with 5/6 weeks: (1, 2, 3+4, 5)]
     //  - No Of Successful Calls to Patient
     // ------------------------------------*---------------------------------------
 
     private $call;
+    private $callStatus;
     private $patient;
     private $note;
     private $callsThisMonth;
     private $successfulCallsThisMonth;
     private $ccmTime;
 
-
-
-
-    public function __construct(User $calledPatient, Note $currentNote, $currentCall)
+    public function __construct(User $calledPatient, Note $currentNote, $currentCall, $currentCallStatus)
     {
 
         $this->call = $currentCall;
+        $this->callStatus = $currentCallStatus;
+        
         $this->patient = $calledPatient;
         $this->note = $currentNote;
 
@@ -50,6 +50,19 @@ class PredictCall
     //differently from unsuccessful calls.
 
 
+    public function predict(){
+    
+    if ($this->callStatus) {
+
+            return $this->successfulCallHandler();
+
+        } else {
+
+        return $this->successfulCallHandler();
+
+}
+    }
+    
     //Currently returns ccm_time, no of calls, no of succ calls, patient call time prefs, week#
     public function formatAlgoDataForView($prediction){
 
