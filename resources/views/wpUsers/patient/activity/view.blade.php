@@ -109,7 +109,8 @@
             </div>
             <div class="form-item form-item-spacing text-center">
                 <input type="hidden" value="update_activity" />
-                <a href="{{URL::route('patient.activity.providerUIIndex', ['patientId' => $patient])}}" class="btn btn-primary btn-lg form-item--button form-item-spacing" role="button">Return to Notes/Offline Activities</a>
+
+                    <a href="{{URL::route('patient.note.index', ['patientId' => $patient])}}" class="btn btn-primary btn-lg form-item--button form-item-spacing" role="button">Return to Notes/Offline Activities</a>
 
             </div>
             <div class="form-item form-item-spacing text-center">

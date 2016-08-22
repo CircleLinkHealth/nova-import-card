@@ -57,131 +57,141 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="patient-info__main">
                     </div>
                     @if($letter)
-                    <div class="patient-info__main">
-                        <div class="row gutter">
-                            <div class="col-xs-12"
-                                 style="background-image: url('../img/clh_logo_sm.png'); height: 70px; background-repeat: no-repeat;background-position: 50%;">
-                                <div class="col-xs-1 col-xs-offset-5"></div>
-                                <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
-                                <div class="col-xs-7 address">
-                                    @if($billing)
-                                        @if($billing->fullName){{$billing->fullName}}@endif @if($billing->qualification){{$billing->qualification}}@endif
-                                @endif
+                        <div class="patient-info__main">
+                            <div class="row gutter">
+                                <div class="col-xs-12"
+                                     style="background-image: url('../img/clh_logo_sm.png'); height: 70px; background-repeat: no-repeat;background-position: 50%;">
+                                    <div class="col-xs-1 col-xs-offset-5"></div>
+                                    <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
+                                    <div class="col-xs-7 address">
+                                        @if($billing)
+                                            @if($billing->fullName){{$billing->fullName}}@endif @if($billing->qualification){{$billing->qualification}}@endif
+                                        @endif
+                                    </div>
+                                    <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
+                                    <div class="col-xs-7 address">{{$patient->primaryProgram->display_name}}</div>
+                                    <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>
+                                    @if($patient->getPreferredLocationAddress())
+                                    <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
+                                    <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div> -->
+                                    <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->city}}
+                                        , {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
+                                    @endif
+                                    <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div> -->
+                                    <!-- <div class="col-xs-12 address"></div> -->
                                 </div>
-                                <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
-                                <div class="col-xs-7 address">{{$patient->primaryProgram->display_name}}</div>
-                                <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>
-                                <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
-                                <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div> -->
-                                <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->city}}, {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
-                                <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div> -->
-                                <!-- <div class="col-xs-12 address"></div> -->
                             </div>
-                        </div>
 
-                        <div class="row gutter">
-                        </div>
-                        <div class="row gutter">
-                            <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                        </div>
-                        <div class="row gutter">
-                            <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                        </div>
-                        <div class="row gutter">
-                            <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                        </div>
-                        <div class="row gutter">
-                            <div class="col-xs-12 col-sm-12">&nbsp;</div>
-                        </div>
-                        <div class="row gutter">
-                            <div class="col-xs-12">
-                                <div class="col-xs-9 address">{{strtoupper($patient->fullName)}}</div>
-                                <div class="col-xs-9 address">{{strtoupper($patient->address)}}</div>
-                                <div class="col-xs-9 address"> {{strtoupper($patient->city)}}, {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
+                            <div class="row gutter">
                             </div>
-                        </div>
-                        <div class="row address">
-                        </div>
-                        <div class="row address">
-                        </div>
-                        <div class="row gutter">
-                        </div>
-                        <div class="row gutter">
-                            <div class="col-xs-10 text-right"><?= date("F d, Y") ?></div>
-                        </div>
-                        <div class="row gutter">
-                            <div class="col-xs-10 welcome-copy">
-                                <div class="row gutter">
-                                    <BR><BR><BR>
-                                    Dear {{ucfirst(strtolower($patient->first_name))}} {{ucfirst(strtolower($patient->last_name))}},
-                                </div>
-                                <div class="row gutter">
-                                </div>
-                                <div class="row gutter" style="line-height: 1.0em;">
-                                    Welcome to your doctors's chronic care management program! We are happy that you
-                                    have decided to enroll in this very worthwhile program designed for Medicare
-                                    patients like you. As a participant, you will benefit in a number of ways:
-                                </div>
-                                <div class="row gutter"><BR>
-                                    <ul type="disc" style="line-height: 1.0em;list-style-type: disc;">
-                                        <li style="list-style-type: disc;margin: 0 0;">Have 24/7 access to your care
-                                            team by calling (888) 729-4045
-                                        </li>
-                                        <li style="list-style-type: disc;margin: 15px 0;">Receive a weekly call to check
-                                            up on how you are doing
-                                        </li>
-                                        <li style="list-style-type: disc;margin: 15px 0;">Avoid the inconvenience of
-                                            frequent office visits and co-pays by using this program's remote care
-                                        </li>
-                                        <li style="list-style-type: disc;margin: 15px 0;">All of the information
-                                            gathered will be available to your doctor and will allow them to see how you
-                                            are doing even when you are not in their office
-                                        </li>
-                                        <li style="list-style-type: disc;margin: 5px 0;">This program will help you take
-                                            better care of yourself by staying connected to your care team and doctor
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="row gutter" style="line-height: 1.0em;">
-                                    Enclosed please find a copy of your personalized care plan. Please take a few
-                                    minutes to review the care plan and call us if you have any questions.
-                                </div>
-                                <div class="row gutter"><BR>
-                                </div>
-                                <div class="row gutter">
-                                    Don't forget your care team can be reached 24/7 at the following number:
-                                </div>
-                                <div class="row gutter">
-                                </div>
-                                <div class="row gutter text-bold text-center">
-                                    (888) 729-4045
-                                </div>
-                                <div class="row gutter">
-                                </div>
-                                <div class="row gutter">
-                                    Thanks and we look forward to working with you!
-                                </div>
-                                <div class="row gutter">
-                                </div>
-                                <div class="row gutter">
-                                    <br>Best,<br><br><br>
-                                </div>
-                                <div class="row gutter">
-                                </div>
-                                <div class="row gutter">
-                                </div>
-                                <div class="row gutter">
-                                </div>
-                                <div class="row gutter">
-                                    Linda Warshavsky
-                                </div>
-                                <div class="row gutter">
+                            <div class="row gutter">
+                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
+                            </div>
+                            <div class="row gutter">
+                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
+                            </div>
+                            <div class="row gutter">
+                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
+                            </div>
+                            <div class="row gutter">
+                                <div class="col-xs-12 col-sm-12">&nbsp;</div>
+                            </div>
+                            <div class="row gutter">
+                                <div class="col-xs-12">
+                                    <div class="col-xs-9 address">{{strtoupper($patient->fullName)}}</div>
+                                    <div class="col-xs-9 address">{{strtoupper($patient->address)}}</div>
+                                    <div class="col-xs-9 address"> {{strtoupper($patient->city)}}
+                                        , {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
                                 </div>
                             </div>
+                            <div class="row address">
+                            </div>
+                            <div class="row address">
+                            </div>
+                            <div class="row gutter">
+                            </div>
+                            <div class="row gutter">
+                                <div class="col-xs-10 text-right"><?= date("F d, Y") ?></div>
+                            </div>
+                            <div class="row gutter">
+                                <div class="col-xs-10 welcome-copy">
+                                    <div class="row gutter">
+                                        <BR><BR><BR>
+                                        Dear {{ucfirst(strtolower($patient->first_name))}} {{ucfirst(strtolower($patient->last_name))}}
+                                        ,
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter" style="line-height: 1.0em;">
+                                        Welcome to your doctors's chronic care management program! We are happy that you
+                                        have decided to enroll in this very worthwhile program designed for Medicare
+                                        patients like you. As a participant, you will benefit in a number of ways:
+                                    </div>
+                                    <div class="row gutter"><BR>
+                                        <ul type="disc" style="line-height: 1.0em;list-style-type: disc;">
+                                            <li style="list-style-type: disc;margin: 0 0;">Have 24/7 access to your care
+                                                team by calling (888) 729-4045
+                                            </li>
+                                            <li style="list-style-type: disc;margin: 15px 0;">Receive a weekly call to
+                                                check
+                                                up on how you are doing
+                                            </li>
+                                            <li style="list-style-type: disc;margin: 15px 0;">Avoid the inconvenience of
+                                                frequent office visits and co-pays by using this program's remote care
+                                            </li>
+                                            <li style="list-style-type: disc;margin: 15px 0;">All of the information
+                                                gathered will be available to your doctor and will allow them to see how
+                                                you
+                                                are doing even when you are not in their office
+                                            </li>
+                                            <li style="list-style-type: disc;margin: 5px 0;">This program will help you
+                                                take
+                                                better care of yourself by staying connected to your care team and
+                                                doctor
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="row gutter" style="line-height: 1.0em;">
+                                        Enclosed please find a copy of your personalized care plan. Please take a few
+                                        minutes to review the care plan and call us if you have any questions.
+                                    </div>
+                                    <div class="row gutter"><BR>
+                                    </div>
+                                    <div class="row gutter">
+                                        Don't forget your care team can be reached 24/7 at the following number:
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter text-bold text-center">
+                                        (888) 729-4045
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter">
+                                        Thanks and we look forward to working with you!
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter">
+                                        <br>Best,<br><br><br>
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                    <div class="row gutter">
+                                        Linda Warshavsky
+                                    </div>
+                                    <div class="row gutter">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div><div class="breakhere"></div>
-                    <!-- <div class="row pb-before" style="color:white;">This page left intentionally blank</div> -->
-                @endif
+                        <div class="breakhere"></div>
+                        <!-- <div class="row pb-before" style="color:white;">This page left intentionally blank</div> -->
+                    @endif
                     <div class="row gutter">
                         <div class="col-xs-12">
                             <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
@@ -231,26 +241,28 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 </div>
                 <!-- /CARE AREAS -->
                 <!-- BIOMETRICS -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Your Health
-                                Goals</h2>
+                @if($careplan['bio_data'])
+                    <div class="patient-info__subareas">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Your Health
+                                    Goals</h2>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <ul class="subareas__list">
+                                <li class="subareas__item subareas__item--wide col-sm-12">
+                                    @foreach(array_reverse($careplan['bio_data']) as $key => $value)
+                                        <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
+                                        <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Maintain') ? 'at' :  'to' }} {{$value['target']}}</div>
+                                        <div class="col-xs-3 print-row">from {{$value['starting']}}</div>
+                                    @endforeach
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="row">
-                        <ul class="subareas__list">
-                            <li class="subareas__item subareas__item--wide col-sm-12">
-                                @foreach(array_reverse($careplan['bio_data']) as $key => $value)
-                                    <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
-                                    <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Maintain') ? 'at' :  'to' }} {{$value['target']}}</div>
-                                    <div class="col-xs-3 print-row">from {{$value['starting']}}</div>
-                                @endforeach
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- /BIOMETRICS -->
+            @endif
+            <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
                 <div class="patient-info__subareas">
@@ -260,15 +272,27 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         <div class="col-xs-10">
                             <ul><strong>Monitoring these Medications</strong><BR>
-                                @foreach($careplan['medications'] as $medi)
-                                    <li>{{$medi}}</li>
-                                @endforeach
+                                @if(!empty($careplan['medications']))
+                                    @if(is_array($careplan['medications']))
+                                        @foreach($careplan['medications'] as $medi)
+                                            <li style="margin-top:14px;">{!! $medi !!}</li>
+                                        @endforeach
+                                    @else
+                                        {{$careplan['medications']}}
+                                    @endif
+                                @endif
                             </ul>
                         </div>
                         <div class="col-xs-10">
-                            <ul><strong>Taking these Medications</strong>
-                                @if($careplan['taking_meds'])
-                                    <li><?= nl2br($careplan['taking_meds']) ?></li>
+                            <ul><strong>Taking these Medications</strong><BR>
+                                @if(!empty($careplan['taking_meds']))
+                                    @if(is_array($careplan['taking_meds']))
+                                        @foreach($careplan['taking_meds'] as $medi)
+                                            <li style="margin:14px 0px 0px 0px;">{!! $medi !!}</li>
+                                        @endforeach
+                                    @else
+                                        {{$careplan['taking_meds']}}
+                                    @endif
                                 @endif
                             </ul>
                         </div>
