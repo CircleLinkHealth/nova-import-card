@@ -285,11 +285,10 @@ class PhiMail
 
         Log::info("Sender EMR Address Domain: {$senderDomain}");
 
-        //Map the email domain of the sender to one of our CCD Vendors
-        $vendorId = Ccda::EMAIL_DOMAIN_TO_VENDOR_MAP[$senderDomain];
+        $vendorMap = Ccda::EMAIL_DOMAIN_TO_VENDOR_MAP;
 
-        //default to carolina for now
-        $vendorId = empty($vendorId) ? 10 : $vendorId;
+        //Map the email domain of the sender to one of our CCD Vendors, or assume carolina meds
+        $vendorId = key_exists($senderDomain, $vendorMap) ? $vendorMap[$senderDomain] : 10;
 
         $vendor = CcdVendor::find($vendorId);
 
