@@ -1,17 +1,19 @@
 <?php namespace App\Http\Controllers\Admin\Reports;
 
-use App\Http\Requests;
+use App\Call;
 use App\Http\Controllers\Controller;
-
-use App\Program;
-use App\User;
+use App\Http\Requests;
 use App\PageTimer;
-use Illuminate\Http\Request;
+use App\User;
 use Auth;
-use DateTime;
-use DatePeriod;
+use Carbon\Carbon;
 use DateInterval;
+use DatePeriod;
+use DateTime;
 use Excel;
+use Illuminate\Http\Request;
+use Yajra\Datatables\Facades\Datatables;
+
 
 class NurseTimeReportController extends Controller {
 
@@ -206,6 +208,102 @@ class NurseTimeReportController extends Controller {
 			});
 
 		})->export('xls');
+	}
+
+	public function makeDailyReport(){
+
+		return view('admin.reports.nursedaily');
+
+	}
+
+
+	public function dailyReport(){
+		$nurse_ids = User::whereHas('roles', function ($q) {
+			$q->where('name', '=', 'care-center');
+		})->pluck('ID');
+
+		//test
+		$nurse_ids[] = 1752;
+
+		foreach ($nurse_ids as $nurse_id){
+
+			$nurse = User::find($nurse_id);
+
+			$nurses[$nurse->fullName]['id'] = $nurse_id;
+			$nurses[$nurse->fullName]['name'] = $nurse->fullName;
+
+			$last_activity_date = PageTimer::where('provider_id', $nurse_id)->max('end_time');
+
+			//Time Since Last Activity
+			if($last_activity_date){
+				$nurses[$nurse->fullName]['Time Since Last Activity'] = Carbon::parse($last_activity_date)->diffForHumans();
+			} else {
+				$nurses[$nurse->fullName]['Time Since Last Activity'] = 'N/A';
+			}
+
+			$nurses[$nurse->fullName]['# Calls Made Today'] =
+				Call::where('outbound_cpm_id', $nurse_id)
+					->where(function ($q){
+						$q->where('updated_at', '>=' , Carbon::now()->startOfDay())
+							->where('updated_at', '<=' , Carbon::now()->endOfDay());
+					})
+					->where(function ($q){
+						$q->where('status', 'reached')
+							->orWhere('status', '');
+					})
+					->count();
+
+			$nurses[$nurse->fullName]['# Successful Calls Made Today'] =
+				Call::where('outbound_cpm_id', $nurse_id)
+					->where(function ($q){
+						$q->where('updated_at', '>=' , Carbon::now()->startOfDay())
+							->where('updated_at', '<=' , Carbon::now()->endOfDay());
+					})
+					->where('status', 'reached')
+					->count();
+
+//        $nurses[$nurse->fullName]['# Scheduled Calls Today'] =
+//            \App\Call::where('outbound_cpm_id', $nurse_id)
+//                ->where(function ($q){
+//                    $q->where('updated_at', '>=' , Carbon::now()->startOfDay())
+//                        ->where('updated_at', '<=' , Carbon::now()->endOfDay());
+//                })
+//                ->where('status', 'scheduled')
+//                ->count();
+
+			$seconds = PageTimer::where('provider_id', $nurse_id)
+				->where(function ($q){
+					$q->where('updated_at', '>=' , Carbon::now()->startOfDay())
+						->where('updated_at', '<=' , Carbon::now()->endOfDay());
+				})
+				->whereNotNull('activity_type')
+				->sum('duration');
+
+			$H = floor($seconds / 3600);
+			$i = ($seconds / 60) % 60;
+			$s = $seconds % 60;
+			$monthlyTime = sprintf("%02d:%02d:%02d",$H, $i, $s);
+
+			$nurses[$nurse->fullName]['CCM Time Accrued Today (mins)'] = $monthlyTime;
+
+			$carbon_now = Carbon::now();
+			$carbon_last_act = Carbon::parse($last_activity_date);
+			$nurses[$nurse->fullName]['last_activity'] = Carbon::parse($last_activity_date);
+
+			$diff = $carbon_now->diffInSeconds($carbon_last_act);
+
+			$nurses[$nurse->fullName]['lessThan20MinsAgo'] = false;
+
+			if($diff <= 1200 && $nurses[$nurse->fullName]['Time Since Last Activity'] != 'N/A'){
+				$nurses[$nurse->fullName]['lessThan20MinsAgo'] = true;
+			}
+
+		}
+
+		$nurses = collect($nurses)->sortByDesc('last_activity');
+
+		return Datatables::collection($nurses)->make(true);
+
 	}
 
 }
