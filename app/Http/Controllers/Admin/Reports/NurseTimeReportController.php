@@ -223,24 +223,26 @@ class NurseTimeReportController extends Controller {
 			$q->where('name', '=', 'care-center');
 		})->pluck('ID');
 
+		$i = 0;
+		$nurses = array();
 
 		foreach ($nurse_ids as $nurse_id){
 
 			$nurse = User::find($nurse_id);
 
-			$nurses[$nurse->fullName]['id'] = $nurse_id;
-			$nurses[$nurse->fullName]['name'] = $nurse->fullName;
+			$nurses[$i]['id'] = $nurse_id;
+			$nurses[$i]['name'] = $nurse->fullName;
 
 			$last_activity_date = PageTimer::where('provider_id', $nurse_id)->max('end_time');
 
 			//Time Since Last Activity
 			if($last_activity_date){
-				$nurses[$nurse->fullName]['Time Since Last Activity'] = Carbon::parse($last_activity_date)->diffForHumans();
+				$nurses[$i]['Time Since Last Activity'] = Carbon::parse($last_activity_date)->diffForHumans();
 			} else {
-				$nurses[$nurse->fullName]['Time Since Last Activity'] = 'N/A';
+				$nurses[$i]['Time Since Last Activity'] = 'N/A';
 			}
 
-			$nurses[$nurse->fullName]['# Calls Made Today'] =
+			$nurses[$i]['# Calls Made Today'] =
 				Call::where('outbound_cpm_id', $nurse_id)
 					->where(function ($q){
 						$q->where('updated_at', '>=' , Carbon::now()->startOfDay())
@@ -252,7 +254,7 @@ class NurseTimeReportController extends Controller {
 					})
 					->count();
 
-			$nurses[$nurse->fullName]['# Successful Calls Made Today'] =
+			$nurses[$i]['# Successful Calls Made Today'] =
 				Call::where('outbound_cpm_id', $nurse_id)
 					->where(function ($q){
 						$q->where('updated_at', '>=' , Carbon::now()->startOfDay())
@@ -279,23 +281,25 @@ class NurseTimeReportController extends Controller {
 				->sum('duration');
 
 			$H = floor($seconds / 3600);
-			$i = ($seconds / 60) % 60;
+			$m = ($seconds / 60) % 60;
 			$s = $seconds % 60;
-			$monthlyTime = sprintf("%02d:%02d:%02d",$H, $i, $s);
+			$monthlyTime = sprintf("%02d:%02d:%02d",$H, $m, $s);
 
-			$nurses[$nurse->fullName]['CCM Time Accrued Today (mins)'] = $monthlyTime;
+			$nurses[$i]['CCM Time Accrued Today (mins)'] = $monthlyTime;
 
 			$carbon_now = Carbon::now();
 			$carbon_last_act = Carbon::parse($last_activity_date);
-			$nurses[$nurse->fullName]['last_activity'] = Carbon::parse($last_activity_date);
+			$nurses[$i]['last_activity'] = Carbon::parse($last_activity_date);
 
 			$diff = $carbon_now->diffInSeconds($carbon_last_act);
 
-			$nurses[$nurse->fullName]['lessThan20MinsAgo'] = false;
+			$nurses[$i]['lessThan20MinsAgo'] = false;
 
-			if($diff <= 1200 && $nurses[$nurse->fullName]['Time Since Last Activity'] != 'N/A'){
-				$nurses[$nurse->fullName]['lessThan20MinsAgo'] = true;
+			if($diff <= 1200 && $nurses[$i]['Time Since Last Activity'] != 'N/A'){
+				$nurses[$i]['lessThan20MinsAgo'] = true;
 			}
+
+			$i++;
 
 		}
 
