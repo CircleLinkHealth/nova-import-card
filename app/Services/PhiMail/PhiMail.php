@@ -38,33 +38,12 @@ class PhiMail
     {
         $numberOfCcds = count($ccdas);
 
-        $link = route('view.files.ready.to.import');
+        //the worker generates the route using localhost so I am hardcoding it
+//        $link = route('view.files.ready.to.import');
+        $link = 'https://www.careplanmanager.com/ccd-importer/qaimport';
 
         Slack::to('#ccd-file-status')
             ->send("We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
-
-//        $numberOfCcds = count($ccdas);
-//
-//        $recipients = [
-//            'rohanm@circlelinkhealth.com',
-//            'mantoniou@circlelinkhealth.com',
-//            'jkatz@circlelinkhealth.com',
-//            'Raph@circlelinkhealth.com',
-//            'kgallo@circlelinkhealth.com',
-//        ];
-//
-//        $view = 'emails.emrDirectCCDsReceived';
-//        $subject = "We received {$numberOfCcds} CCDs from EMR Direct.";
-//
-//        $data = [
-//            'ccdas' => $ccdas,
-//            'numberOfCcds' => $numberOfCcds
-//        ];
-//
-//        Mail::send($view, $data, function ($message) use ($recipients, $subject) {
-//            $message->from('aprima-api@careplanmanager.com', 'CircleLink Health');
-//            $message->to($recipients)->subject($subject);
-//        });
     }
 
     /**
@@ -220,46 +199,11 @@ class PhiMail
 //                                echo ("Content: <BINARY>  Writing attachment file "
 //                                    . $showRes->filename . "\n");
 //                                self::writeDataFile($attachmentSaveDirectory . $showRes->filename, $showRes->data);
+                                $import = $this->importCcd($cr->sender, $showRes);
 
+                                if (!$import) continue;
 
-                                $atPosition = strpos($cr->sender, '@');
-
-                                if (!$atPosition) continue;
-
-                                $senderDomain = substr($cr->sender, $atPosition);
-
-                                Log::info("Sender Server Domain: {$senderDomain}");
-
-                                //Map the email domain of the sender to one of our CCD Vendors
-                                $vendorId = Ccda::EMAIL_DOMAIN_TO_VENDOR_MAP[$senderDomain];
-
-                                $vendor = CcdVendor::find($vendorId);
-
-                                $ccda = Ccda::create([
-                                    'user_id' => null,
-                                    'vendor_id' => $vendorId,
-                                    'xml' => $showRes->data,
-                                    'source' => Ccda::EMR_DIRECT,
-                                ]);
-
-                                $ccdaRepo = new CCDImporterRepository;
-
-                                $json = $ccdaRepo->toJson($ccda->xml);
-                                $ccda->json = $json;
-                                $ccda->save();
-
-                                $logger = new CcdItemLogger($ccda);
-                                $logger->logAll();
-
-                                $importer = new QAImportManager($vendor->program_id, $ccda);
-                                $importer->generateCarePlanFromCCD();
-
-                                echo("{$showRes->filename} imported successfully");
-
-                                $ccdas[] = [
-                                    'id' => $ccda->id,
-                                    'fileName' => $showRes->filename,
-                                ];
+                                $ccdas[] = $import;
                             }
 
                             // Display the list of attachments and associated info. This info is only
@@ -330,5 +274,49 @@ class PhiMail
 
         echo("============END\n");
 
+    }
+
+    public function importCcd($sender, $attachment)
+    {
+        $atPosition = strpos($sender, '@');
+
+        if (!$atPosition) return false;
+
+        //get the domain of the sender's emr address to see where it came from
+        $senderDomain = substr($sender, $atPosition);
+
+        Log::info("Sender EMR Address Domain: {$senderDomain}");
+
+        //Map the email domain of the sender to one of our CCD Vendors
+        $vendorId = Ccda::EMAIL_DOMAIN_TO_VENDOR_MAP[$senderDomain];
+
+        //default to carolina for now
+        $vendorId = empty($vendorId) ? 10 : $vendorId;
+
+        $vendor = CcdVendor::find($vendorId);
+
+        $ccda = Ccda::create([
+            'user_id' => null,
+            'vendor_id' => $vendorId,
+            'xml' => $attachment->data,
+            'source' => Ccda::EMR_DIRECT,
+        ]);
+
+        $ccdaRepo = new CCDImporterRepository;
+
+        $json = $ccdaRepo->toJson($ccda->xml);
+        $ccda->json = $json;
+        $ccda->save();
+
+        $logger = new CcdItemLogger($ccda);
+        $logger->logAll();
+
+        $importer = new QAImportManager($vendor->program_id, $ccda);
+        $importer->generateCarePlanFromCCD();
+
+        return [
+            'id' => $ccda->id,
+            'fileName' => $attachment->filename,
+        ];
     }
 }
