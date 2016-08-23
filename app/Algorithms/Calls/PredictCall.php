@@ -105,8 +105,6 @@ class PredictCall
 
         }
 
-
-
         //Here, we try to get the earliest contact window for the current patient,
         //and then determine the number of weeks to offset the next call by with
         //some analysis of the patient's current factors.

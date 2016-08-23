@@ -21,26 +21,18 @@ class SchedulerService
 
     // Success is the call's status.
     // true for reached, false for not reached 
-    public function getNextCall($patient, $note ,$success)
+    public function getNextCall($patient, $noteId ,$success)
     {
 
         $scheduled_call = $this->getScheduledCallForPatient($patient);
 
-        $note = Note::find($note);
+        $note = Note::find($noteId);
 
         //Updates Call Record
         PatientMonthlySummary::updateCallInfoForPatient($patient->patientInfo, $success);
 
+        return (new PredictCall($patient, $note, $scheduled_call, $success))->predict();
 
-        if ($success) {
-
-            return (new PredictCall($patient, $note, $scheduled_call))->successfulCallHandler();
-
-        } else {
-
-            return (new PredictCall($patient, $note, $scheduled_call))->unsuccessfulCallHandler();
-
-        }
     }
     
     //Create new scheduled call
