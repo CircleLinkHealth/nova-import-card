@@ -36,6 +36,8 @@ class PhiMail
      */
     public function notifyAdmins($ccdas = [])
     {
+        if (app()->environment('local')) return;
+
         $numberOfCcds = count($ccdas);
 
         //the worker generates the route using localhost so I am hardcoding it
@@ -191,14 +193,13 @@ class PhiMail
                             // written to files.
                             if (!strncmp($showRes->mimeType, 'text/', 5)) {
                                 // ... do something with text parts ...
-                                // For this example we assume ascii or utf8 
-//                                $s = $showRes->data;
-//                                echo ("Content:\n" . $s . "\n");
+                                Log::info('The text part of the mail');
+                                Log::info($showRes->data);
                             } else {
-                                // ... do something with binary data ...
-//                                echo ("Content: <BINARY>  Writing attachment file "
-//                                    . $showRes->filename . "\n");
-//                                self::writeDataFile($attachmentSaveDirectory . $showRes->filename, $showRes->data);
+
+                                //save ccd to file
+                                self::writeDataFile(storage_path($showRes->filename), $showRes->data);
+
                                 $import = $this->importCcd($cr->sender, $showRes);
 
                                 if (!$import) continue;
@@ -221,6 +222,8 @@ class PhiMail
                         // and should only be sent after all required parts of the message have been
                         // retrieved and processed.
                         $c->acknowledgeMessage();
+
+                        Log::info('Number of Attachments: ' . $cr->numAttachments);
 
                         if ($cr->numAttachments > 0) {
                             $this->notifyAdmins($ccdas);
