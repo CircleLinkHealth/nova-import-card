@@ -3,9 +3,8 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-use App\Call;
+use App\Program;
 use App\User;
-use App\PageTimer;
 use Illuminate\Http\Request;
 use Auth;
 use DateTime;
@@ -33,8 +32,8 @@ class PatientConditionsReportController extends Controller {
 	{
 		$date = date('Y-m-d H:i:s');
 
-		$patients = User::with('meta')
-			->with('roles')
+		$patients = User::with('roles')
+			->with('patientInfo')
 			->whereHas('roles', function ($q) {
 				$q->where(function ($query) {
 					$query->orWhere('name', 'participant');
@@ -61,10 +60,16 @@ class PatientConditionsReportController extends Controller {
 				});
 				$i = 0;
 				// header
-				$userColumns = array('Patient Name', 'Total Conditions', 'Conditions');
+				$userColumns = array('Patient Name', 'Status', 'Program', 'Total Conditions', 'Conditions');
 				$sheet->appendRow($userColumns);
 
 				foreach ($patients as $patient) {
+					// program
+					$programName = '';
+					$program = Program::find($patient->program_id);
+					if ($program) $programName = $program->display_name;
+
+					// problems
 					$patientProblems = $patient->cpmProblems()->get();
 					$conditionsText = '';
 					$total = $patientProblems->count();
@@ -74,7 +79,7 @@ class PatientConditionsReportController extends Controller {
 						}
 						$conditionsText = rtrim($conditionsText, ",");
 					}
-					$columns = array($patient->display_name, $total, $conditionsText);
+					$columns = array($patient->display_name, $patient->patientInfo->ccm_status, $programName, $total, $conditionsText);
 					$sheet->appendRow($columns);
 				}
 			});
