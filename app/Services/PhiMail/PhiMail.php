@@ -11,13 +11,16 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Maknz\Slack\Facades\Slack;
 
-class PhiMail {
+class PhiMail
+{
 
-    public function loadFile($filename) {
+    public function loadFile($filename)
+    {
         return file_get_contents($filename);
     }
 
-    public function writeDataFile($filename, $data) {
+    public function writeDataFile($filename, $data)
+    {
         return file_put_contents($filename, $data);
     }
 
@@ -39,7 +42,7 @@ class PhiMail {
 
         Slack::to('#ccd-file-status')
             ->send("We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
-        
+
 //        $numberOfCcds = count($ccdas);
 //
 //        $recipients = [
@@ -67,7 +70,8 @@ class PhiMail {
     /**
      * @param args the command line arguments
      */
-    public function sendReceive() {
+    public function sendReceive()
+    {
 
         try {
             $fileNames = [];
@@ -166,8 +170,8 @@ class PhiMail {
             // API documentation for further information about address groups.
             if ($receive) {
                 while (true) {
-                    echo ("============\n");
-                    echo ("Checking mailbox\n");
+                    echo("============\n");
+                    echo("Checking mailbox\n");
 
                     // check next message or status update
                     $cr = $c->check();
@@ -178,12 +182,12 @@ class PhiMail {
                             ->send("Checked EMR Direct Mailbox. There where no messages. \n");
                         break;
 
-                    } else if($cr->isMail()) {
+                    } else if ($cr->isMail()) {
                         // If you are checking messages for an address group,
                         // $cr->recipient will contain the address in that
                         // group to which this message should be delivered.
-                        echo ("A new message is available for " . $cr->recipient . "\n");
-                        echo ("from " . $cr->sender . "; id "
+                        echo("A new message is available for " . $cr->recipient . "\n");
+                        echo("from " . $cr->sender . "; id "
                             . $cr->messageId . "; #att=" . $cr->numAttachments
                             . "\n");
 
@@ -224,6 +228,8 @@ class PhiMail {
 
                                 $senderDomain = substr($cr->sender, $atPosition);
 
+                                Log::info("Sender Server Domain: {$senderDomain}");
+
                                 //Map the email domain of the sender to one of our CCD Vendors
                                 $vendorId = Ccda::EMAIL_DOMAIN_TO_VENDOR_MAP[$senderDomain];
 
@@ -244,12 +250,12 @@ class PhiMail {
 
                                 $logger = new CcdItemLogger($ccda);
                                 $logger->logAll();
-                                
+
                                 $importer = new QAImportManager($vendor->program_id, $ccda);
                                 $importer->generateCarePlanFromCCD();
 
-                                echo ("{$showRes->filename} imported successfully");
-                                
+                                echo("{$showRes->filename} imported successfully");
+
                                 $ccdas[] = [
                                     'id' => $ccda->id,
                                     'fileName' => $showRes->filename,
@@ -259,7 +265,7 @@ class PhiMail {
                             // Display the list of attachments and associated info. This info is only
                             // included with message part 0.
                             for ($k = 0; $i == 0 && $k < $cr->numAttachments; $k++) {
-                                echo ("Attachment " . ($k + 1)
+                                echo("Attachment " . ($k + 1)
                                     . ": " . $showRes->attachmentInfo[$k]->mimeType
                                     . " fn:" . $showRes->attachmentInfo[$k]->filename
                                     . " Desc:" . $showRes->attachmentInfo[$k]->description
@@ -272,14 +278,16 @@ class PhiMail {
                         // retrieved and processed.
                         $c->acknowledgeMessage();
 
-                        if ($cr->numAttachments > 0) $this->notifyAdmins($ccdas);
+                        if ($cr->numAttachments > 0) {
+                            $this->notifyAdmins($ccdas);
 
-                        $message = "Checked EMR Direct Mailbox. There where {$cr->numAttachments} messages. \n";
+                            $message = "Checked EMR Direct Mailbox. There where {$cr->numAttachments} messages. \n";
 
-                        echo $message;
+                            echo $message;
 
-                        Slack::to('#background-tasks')
-                            ->send($message);
+                            Slack::to('#background-tasks')->send($message);
+                        }
+
 
                     } else {
 
@@ -317,9 +325,10 @@ class PhiMail {
 
         try {
             $c->close();
-        } catch (\Exception $ignore) { }
+        } catch (\Exception $ignore) {
+        }
 
-        echo ("============END\n");
+        echo("============END\n");
 
     }
 }
