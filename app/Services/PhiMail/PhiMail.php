@@ -235,6 +235,7 @@ class PhiMail
                             Slack::to('#background-tasks')->send($message);
                         }
 
+                        Log::info('***************');
 
                     } else {
 
