@@ -179,6 +179,7 @@ return [
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         \Maknz\Slack\SlackServiceProvider::class,
         Collective\Bus\BusServiceProvider::class,
+        Yajra\Datatables\DatatablesServiceProvider::class
         Dusterio\AwsWorker\Integrations\LaravelServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
 
@@ -240,7 +241,6 @@ return [
         'JWTFactory' => \Tymon\JWTAuth\Facades\JWTFactory::class,
         'PDF' => \Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Slack' => Maknz\Slack\Facades\Slack::class,
-        'Datatables' => Yajra\Datatables\Facades\Datatables::class,
     ],
 
 ];

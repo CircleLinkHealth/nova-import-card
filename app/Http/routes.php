@@ -1,13 +1,7 @@
 <?php
-Route::get('algo', function (){
-
-//    $carbon = (new \App\PatientContactWindow)->getEarliestWindowForPatientFromDate(\App\User::find(512), \Carbon\Carbon::parse('2016-10-10'));
-        $carbon = Carbon\Carbon::parse('next month')->firstOfMonth();
-    return $carbon;
-
-});
 
 //THIS IS FOR APRIMA ONLY
+
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
     Route::post('oauth/access_token', 'CcdApi\Aprima\AuthController@getAccessToken');
@@ -416,6 +410,9 @@ Route::group(['middleware' => 'auth'], function () {
         // report - nurse time report
         //these fall under the admin-access permission
         Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
+
+        Route::get('reports/nurse/daily', ['uses' => 'Admin\Reports\NurseTimeReportController@makeDailyReport', 'as' => 'admin.reports.nurse.daily']);
+        Route::get('reports/nurse/daily/data', ['uses' => 'Admin\Reports\NurseTimeReportController@dailyReport', 'as' => 'admin.reports.nurse.daily.data']);
 
         Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 

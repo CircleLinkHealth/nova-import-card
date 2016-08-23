@@ -115,6 +115,8 @@
                                         Call Management</a>
                                 <li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a>
                                 </li>
+                                <li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
+                                <li><a href="{{ URL::route('admin.ucp.index', array()) }}">UCP</a></li>
                             </ul>
                         </li>
                     @endif
@@ -236,14 +238,16 @@
                             <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
                                     Billing Report</a></li>
                             <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a>
+                            <li><a href="{{ URL::route('admin.reports.nurse.daily', array()) }}">Daily Nurse Report</a></li>
+
                             <li><a href="{{ URL::route('CallReportController.exportxls', array()) }}">Calls</a>
                             </li>
                             <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a>
                             </li>
 
-                        </ul>
-                    </li>
-
+                            </ul>
+                        </li>
+                    @endif
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
