@@ -71,10 +71,12 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="col-xs-4 col-xs-offset-1 print-row text-right">290 Harbor Drive</div>
                                     <div class="col-xs-7 address">{{$patient->primaryProgram->display_name}}</div>
                                     <div class="col-xs-4 col-xs-offset-1 print-row text-right">Stamford, CT 06902</div>
+                                    @if($patient->getPreferredLocationAddress())
                                     <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->address_line_1}}</div>
                                     <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Phone: 203 847 5890</div> -->
                                     <div class="col-xs-12 address">{{$patient->getPreferredLocationAddress()->city}}
                                         , {{$patient->getPreferredLocationAddress()->state}} {{$patient->getPreferredLocationAddress()->postal_code}}</div>
+                                    @endif
                                     <!-- <div class="col-xs-4 col-xs-offset-1 print-row text-right">Fax: 203 847 5899</div> -->
                                     <!-- <div class="col-xs-12 address"></div> -->
                                 </div>
@@ -269,11 +271,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications</h2>
                         </div>
                         <div class="col-xs-10">
-                            <ul><strong>Monitoring these Medicationsr</strong><BR>
+                            <ul><strong>Monitoring these Medications</strong><BR>
                                 @if(!empty($careplan['medications']))
                                     @if(is_array($careplan['medications']))
                                         @foreach($careplan['medications'] as $medi)
-                                            <li style="margin-top:12px;">{{$medi}}</li>
+                                            <li style="margin-top:14px;">{!! $medi !!}</li>
                                         @endforeach
                                     @else
                                         {{$careplan['medications']}}
@@ -286,7 +288,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 @if(!empty($careplan['taking_meds']))
                                     @if(is_array($careplan['taking_meds']))
                                         @foreach($careplan['taking_meds'] as $medi)
-                                            <li style="margin-top:12px;">{{$medi}}</li>
+                                            <li style="margin:14px 0px 0px 0px;">{!! $medi !!}</li>
                                         @endforeach
                                     @else
                                         {{$careplan['taking_meds']}}

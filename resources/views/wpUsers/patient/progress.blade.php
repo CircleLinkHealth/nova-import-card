@@ -18,13 +18,15 @@ function trim_bp($bp){
         <section class="patient-summary">
             <div class="row" style="margin-top:60px;">
                 <div class="patient-info__main" style="padding-left: 51px;">
+                    @role(['administrator', 'provider'])
                     <div class="row">
                         <div class="col-xs-12 text-right hidden-print">
-					<span class="btn btn-group text-right">
-					<A class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                       HREF="javascript:window.print()">Print This Page</A>
-				</span></div>
+					        <span class="btn btn-group text-right">
+					        <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button" href="javascript:window.print()">Print This Page</a>
+				            </span>
+                        </div>
                     </div>
+                    @endrole
                     <div class="row">
                         <div class="col-xs-12">
                             <h1 class="patient-summary__title patient-summary__title_16 patient-summary--careplan patient-summary--progress-report">

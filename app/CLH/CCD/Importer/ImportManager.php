@@ -202,80 +202,46 @@ class ImportManager
     {
         if (empty($this->allergiesImport)) return false;
 
-        if (class_exists($allergiesListStorage)) {
-            $storage = new $allergiesListStorage($this->user->program_id, $this->user);
+        foreach ($this->allergiesImport as $allergy) {
 
-            $allergiesList = '';
-
-            foreach ($this->allergiesImport as $allergy) {
-
-                $ccdAllergy = CcdAllergy::create([
-                    'ccda_id' => $allergy->ccda_id,
-                    'vendor_id' => $allergy->vendor_id,
-                    'patient_id' => $this->user->ID,
-                    'ccd_allergy_log_id' => $allergy->ccd_allergy_log_id,
-                    'allergen_name' => $allergy->allergen_name,
-                ]);
-
-                if (!isset($allergy->allergen_name)) continue;
-                $allergiesList .= "\n\n";
-                $allergiesList .= ucfirst(strtolower($allergy->allergen_name)) . ";";
-            }
-
-            $storage->import($allergiesList);
+            $ccdAllergy = CcdAllergy::create([
+                'ccda_id' => $allergy->ccda_id,
+                'vendor_id' => $allergy->vendor_id,
+                'patient_id' => $this->user->ID,
+                'ccd_allergy_log_id' => $allergy->ccd_allergy_log_id,
+                'allergen_name' => $allergy->allergen_name,
+            ]);
         }
+
+        $misc = CpmMisc::whereName(CpmMisc::ALLERGIES)
+            ->first();
+
+        $this->user->cpmMiscs()->attach($misc->id);
     }
 
     private function storeProblemsList($problemsListStorage)
     {
         if (empty($this->problemsImport)) return false;
 
-        if (class_exists($problemsListStorage)) {
-            $storage = new $problemsListStorage($this->user->program_id, $this->user);
-
-            $problemsList = '';
-
-            foreach ($this->problemsImport as $problem) {
-                $problemsList .= "\n\n";
-
-                //quick fix to display snomed ct in middletown
-                $codeSystemName = function ($problem) {
-                    return empty($problem->code_system_name)
-                        ? empty($problem->code_system)
-                            ? null
-                            : ($problem->code_system == '2.16.840.1.113883.6.96')
-                                ? 'SNOMED CT'
-                                : (($problem->code_system == '2.16.840.1.113883.6.4') || ($problem->code_system == '2.16.840.1.113883.6.103'))
-                                    ? 'ICD-9'
-                                    : ($problem->code_system == '2.16.840.1.113883.6.3')
-                                        ? 'ICD-10'
-                                        : null
-                        : $problem->code_system_name;
-                };
-
-                $problemsList .= ucwords(strtolower($problem->name));
-
-                $problemsList .= (is_null($codeSystemName($problem)))
-                    ? '' : ', ' . strtoupper($codeSystemName($problem));
-
-                $problemsList .= empty($problem->code) ? ';' : ', ' . $problem->code . ';';
-
-                $ccdProblem = CcdProblem::create([
-                    'ccda_id' => $problem->ccda_id,
-                    'vendor_id' => $problem->vendor_id,
-                    'ccd_problem_log_id' => $problem->ccd_problem_log_id,
-                    'name' => $problem->name,
-                    'code' => $problem->code,
-                    'code_system' => $problem->code_system,
-                    'code_system_name' => $problem->code_system_name,
-                    'activate' => $problem->activate,
-                    'cpm_problem_id' => $problem->cpm_problem_id,
-                    'patient_id' => $this->user->ID,
-                ]);
-            }
-
-            $storage->import($problemsList);
+        foreach ($this->problemsImport as $problem) {
+            $ccdProblem = CcdProblem::create([
+                'ccda_id' => $problem->ccda_id,
+                'vendor_id' => $problem->vendor_id,
+                'ccd_problem_log_id' => $problem->ccd_problem_log_id,
+                'name' => $problem->name,
+                'code' => $problem->code,
+                'code_system' => $problem->code_system,
+                'code_system_name' => $problem->code_system_name,
+                'activate' => $problem->activate,
+                'cpm_problem_id' => $problem->cpm_problem_id,
+                'patient_id' => $this->user->ID,
+            ]);
         }
+
+        $misc = CpmMisc::whereName(CpmMisc::OTHER_CONDITIONS)
+            ->first();
+
+        $this->user->cpmMiscs()->attach($misc->id);
     }
 
     private function storeProblemsToMonitor($problemsToMonitorStorage)
@@ -301,40 +267,24 @@ class ImportManager
     {
         if (empty($this->medicationsImport)) return false;
 
-        if (class_exists($medicationsListStorage)) {
-            $storage = new $medicationsListStorage($this->user->program_id, $this->user);
-
-            $medicationsList = '';
-
-            foreach ($this->medicationsImport as $medication) {
-                $medicationsList .= "\n\n";
-                empty($medication->name)
-                    ?: $medicationsList .= ucfirst(strtolower($medication->name));
-
-                $medicationsList .= ucfirst(
-                    strtolower(
-                        empty($medText = $medication->sig)
-                            ? ';'
-                            : ', ' . $medText . ";"
-                    )
-                );
-
-                $ccdMedication = CcdMedication::create([
-                    'ccda_id' => $medication->ccda_id,
-                    'vendor_id' => $medication->vendor_id,
-                    'ccd_medication_log_id' => $medication->ccd_medication_log_id,
-                    'medication_group_id' => $medication->medication_group_id,
-                    'name' => $medication->name,
-                    'sig' => $medication->sig,
-                    'code' => $medication->code,
-                    'code_system' => $medication->code_system,
-                    'code_system_name' => $medication->code_system_name,
-                    'patient_id' => $this->user->ID,
-                ]);
-            }
-
-
-            $storage->import($medicationsList);
+        foreach ($this->medicationsImport as $medication) {
+            $ccdMedication = CcdMedication::create([
+                'ccda_id' => $medication->ccda_id,
+                'vendor_id' => $medication->vendor_id,
+                'ccd_medication_log_id' => $medication->ccd_medication_log_id,
+                'medication_group_id' => $medication->medication_group_id,
+                'name' => $medication->name,
+                'sig' => $medication->sig,
+                'code' => $medication->code,
+                'code_system' => $medication->code_system,
+                'code_system_name' => $medication->code_system_name,
+                'patient_id' => $this->user->ID,
+            ]);
         }
+
+        $misc = CpmMisc::whereName(CpmMisc::MEDICATION_LIST)
+            ->first();
+
+        $this->user->cpmMiscs()->attach($misc->id);
     }
 }
