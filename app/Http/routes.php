@@ -232,6 +232,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\EthnicityReportController@getReport',
                 'as' => 'EthnicityReportController.getReport'
             ]);
+
+            Route::get('patient-conditions', [
+                'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
+                'as' => 'PatientConditionsReportController.getReport'
+            ]);
         });
 
         Route::get('dupes', function () {
