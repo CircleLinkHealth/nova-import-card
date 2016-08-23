@@ -238,7 +238,7 @@
                                         Billing Report</a></li>
                                 <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a>
                                 </li>
-                                <li><a href="{{ URL::route('PatientConditionsReportController.getReport', array()) }}">Patient Conditions</a>
+                                <li><a href="{{ URL::route('PatientConditionsReportController.getReport', array()) }}">Patient Conditions (export)</a>
                                 </li>
                                 <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a>
                                 </li>
