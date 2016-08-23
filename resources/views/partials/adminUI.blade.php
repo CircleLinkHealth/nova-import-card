@@ -236,6 +236,7 @@
                             <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
                                     Billing Report</a></li>
                             <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a>
+                            <li><a href="{{ URL::route('CallReportController.exportxls', array()) }}">Calls</a>
                             </li>
                             <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a>
                             </li>

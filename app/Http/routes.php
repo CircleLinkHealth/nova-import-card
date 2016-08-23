@@ -252,6 +252,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\EthnicityReportController@getReport',
                 'as' => 'EthnicityReportController.getReport'
             ]);
+
+            Route::get('call', [
+                'uses' => 'Admin\Reports\CallReportController@exportxls',
+                'as' => 'CallReportController.exportxls'
+            ]);
         });
 
         Route::get('emr-direct/check', function () {

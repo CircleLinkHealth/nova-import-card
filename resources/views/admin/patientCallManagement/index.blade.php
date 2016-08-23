@@ -139,7 +139,11 @@
                         <div id="dtBox"></div>
                         <div id="tBox"></div>
 
-
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <a href="{{ URL::route('CallReportController.exportxls', array()) }}" class="btn btn-success pull-right">Excel Export</a>
+                            </div>
+                        </div>
                         {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                         <div class="row" style="margin:40px 0px;">
                             <div class="col-xs-4">
