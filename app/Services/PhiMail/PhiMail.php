@@ -209,7 +209,7 @@ class PhiMail
                             // Display the list of attachments and associated info. This info is only
                             // included with message part 0.
                             for ($k = 0; $i == 0 && $k < $cr->numAttachments; $k++) {
-                                echo("Attachment " . ($k + 1)
+                                Log::info("Attachment " . ($k + 1)
                                     . ": " . $showRes->attachmentInfo[$k]->mimeType
                                     . " fn:" . $showRes->attachmentInfo[$k]->filename
                                     . " Desc:" . $showRes->attachmentInfo[$k]->description
