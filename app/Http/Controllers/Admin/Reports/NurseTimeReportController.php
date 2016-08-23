@@ -216,14 +216,13 @@ class NurseTimeReportController extends Controller {
 
 	}
 
-
+	//@todo Code needs cleanup, done with urgency in mind
 	public function dailyReport(){
+		
 		$nurse_ids = User::whereHas('roles', function ($q) {
 			$q->where('name', '=', 'care-center');
 		})->pluck('ID');
 
-		//test
-		$nurse_ids[] = 1752;
 
 		foreach ($nurse_ids as $nurse_id){
 
