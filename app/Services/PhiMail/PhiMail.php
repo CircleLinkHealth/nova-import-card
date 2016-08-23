@@ -165,8 +165,8 @@ class PhiMail
                         // If you are checking messages for an address group,
                         // $cr->recipient will contain the address in that
                         // group to which this message should be delivered.
-                        echo("A new message is available for " . $cr->recipient . "\n");
-                        echo("from " . $cr->sender . "; id "
+                        Log::info("A new message is available for " . $cr->recipient . "\n");
+                        Log::info("from " . $cr->sender . "; id "
                             . $cr->messageId . "; #att=" . $cr->numAttachments
                             . "\n");
 
@@ -260,8 +260,6 @@ class PhiMail
         } catch (\Exception $e) {
             $message = $e->getMessage() . "\n" . $e->getFile() . "\n" . $e->getLine();
             $traceString = $e->getTraceAsString() . "\n";
-            echo $message;
-            echo $traceString;
 
             Log::error($message);
             Log::error($traceString);
