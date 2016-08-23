@@ -232,7 +232,7 @@
                 fixedHeader: true,
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('datatables.anyDataCalls') }}',
+                ajax: '{{ route('datatables.anyCallsManagement') }}',
                 columns: [
                     {
                         "className":      'details-control', "data":           'blank', searchable: false, sortable: false

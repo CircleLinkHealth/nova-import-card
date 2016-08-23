@@ -35,7 +35,7 @@ class DatatablesController extends Controller
         return Datatables::of($users)->make();
     }
 
-    public function anyDataCalls()
+    public function anyCallsManagement()
     {
         $calls = Call::with('inboundUser')
             ->with('outboundUser')
@@ -87,6 +87,14 @@ class DatatablesController extends Controller
             })
             ->editColumn('call_date', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="call_date" column-value="'.$call->call_date.'">'.$call->call_date.'</span>';
+            })
+            ->editColumn('number_successful_calls', function($call) {
+                if($call->inboundUser && $call->inboundUser->inboundCalls) {
+                    $allCalls = $call->inboundUser->inboundCalls()->where('status', '!=', 'scheduled')->get();
+                    if($allCalls) {
+                        return $allCalls->count();
+                    }
+                }
             })
             ->editColumn('window_start', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="window_start" column-value="'.$call->window_start.'">'.$call->window_start.'</span>';
@@ -140,6 +148,11 @@ class DatatablesController extends Controller
             ->make(true);
     }
 
+    /*
+     * This is an example of returning a collection - works great except for performance with larger result sets
+     */
+
+    /*
     public function anyDataCallsCollection()
     {
         $calls = Call::with('note')->has('note')->select(['calls.id', 'calls.call_date', 'calls.window_start', 'calls.window_end', 'notes.type', 'notes.body', 'calls.note_id'])->leftJoin('notes', 'calls.note_id','=','notes.id')->get();
@@ -189,4 +202,5 @@ $call->inboundUser->patientInfo->last_successful_contact_time;
             })
             ->make(true);
     }
+    */
 }

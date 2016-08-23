@@ -363,6 +363,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'ID');
 	}
 
+	public function inboundCalls()
+	{
+		return $this->hasMany('App\Call', 'inbound_cpm_id', 'ID');
+	}
+
+	public function outboundCalls()
+	{
+		return $this->hasMany('App\Call', 'outbound_cpm_id', 'ID');
+	}
+
 
 	// END RELATIONSHIPS
 

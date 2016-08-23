@@ -616,7 +616,7 @@ Route::group(['prefix' => 'cron'], function () {
 
 Route::controller('datatables', 'DatatablesController', [
     'anyData'  => 'datatables.data',
-    'anyDataCalls'  => 'datatables.anyDataCalls',
+    'anyCallsManagement'  => 'datatables.anyCallsManagement',
     'getIndex' => 'datatables',
 ]);
 
