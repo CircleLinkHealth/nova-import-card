@@ -247,7 +247,7 @@
 
                             </ul>
                         </li>
-                    @endif
+
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
