@@ -28,7 +28,13 @@ class PatientMonthlySummary extends Model
         $successful_call_increment = 0;
         if($ifSuccessful){
             $successful_call_increment = 1;
+            // reset call attempts back to 0
+            $patient->no_call_attempts_since_last_success = 0;
+        } else {
+            // add +1 to call attempts
+            $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
         }
+        $patient->save();
 
         // Determine whether to add to record or not
         if(!$record){
