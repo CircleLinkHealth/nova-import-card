@@ -191,11 +191,11 @@ class PhiMail
                             // Process the content; for this example text data 
                             // is echoed to the console and non-text data is
                             // written to files.
-                            if (!strncmp($showRes->mimeType, 'text/', 5)) {
+//                            if (!strncmp($showRes->mimeType, 'text/', 5)) {
                                 // ... do something with text parts ...
                                 Log::info('The text part of the mail');
                                 Log::info($showRes->data);
-                            } else {
+//                            } else {
 
                                 //save ccd to file
                                 self::writeDataFile(storage_path($showRes->filename), $showRes->data);
@@ -205,7 +205,7 @@ class PhiMail
                                 if (!$import) continue;
 
                                 $ccdas[] = $import;
-                            }
+//                            }
 
                             // Display the list of attachments and associated info. This info is only
                             // included with message part 0.
