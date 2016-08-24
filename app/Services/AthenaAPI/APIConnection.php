@@ -125,11 +125,26 @@ class APIConnection {
         # $contents is false if there was an error, so if it was a 401 Not Authorized, propogate the
         # false.  Otherwise, try it again with ignored errors.
         if ($contents === false) {
-            $response_headers = http_parse_headers(implode("\r\n", $http_response_header));
-            $response_code = $response_headers['Response Code'];
-            if ($response_code === 401) {
-                return false;
+
+            if (! app()->environment('local') && function_exists('http_parse_headers'))
+            {
+                $response_headers = http_parse_headers(implode("\r\n", $http_response_header));
+                $response_code = $response_headers['Response Code'];
+                if ($response_code === 401) {
+                    return false;
+                }
             }
+            else
+            {
+                /*
+                 * Hack to check for 401 response without needing to install PECL to be able to use http_parse_headers()
+                 */
+                if (str_contains($http_response_header[0], '401'))
+                {
+                    return false;
+                }
+            }
+
             if (!$secondcall) {
                 return $this->call($verb, $url, $body, $headers, $secondcall=true);
             }
@@ -167,7 +182,7 @@ class APIConnection {
      * @access private
      */
     private function url_join() {
-        return join('/', array_map(function ($p) { return trim($p, '/'); }, func_get_args()));
+        return join('/', array_map(function ($p) {return trim($p, '/');}, array_filter(func_get_args())));
     }
 
     /**
@@ -190,10 +205,10 @@ class APIConnection {
 
         # Join up a URL and add the parameters, since GET requests require parameters in the URL.
         $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
+
         if ($new_parameters) {
             $new_url .= '?' . http_build_query($new_parameters);
         }
-
         return $this->authorized_call('GET', $new_url, array(), $new_headers);
     }
 
