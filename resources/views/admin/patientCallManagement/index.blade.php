@@ -167,11 +167,11 @@
                                 <th>Nurse</th>
                                 <th>Patient</th>
                                 <th>DOB</th>
-                                <th>Call Status</th>
+                                <th class="nosearch">Last Call Status</th>
                                 <th>Next Call</th>
                                 <th>Window Start</th>
                                 <th>Window End</th>
-                                <th>Last call</th>
+                                <th>Last Call</th>
                                 <th class="nosearch">CCM Time</th>
                                 <th>Total Calls</th>
                                 <th>Successfull Calls</th>
@@ -187,11 +187,11 @@
                                 <th>Nurse</th>
                                 <th>Patient</th>
                                 <th>DOB</th>
-                                <th>Call Status</th>
+                                <th>Last Call Status</th>
                                 <th>Next Call Date</th>
                                 <th>Window Start</th>
                                 <th>Window End</th>
-                                <th>Last call</th>
+                                <th>Last Call</th>
                                 <th>CCM Time</th>
                                 <th>Total Calls</th>
                                 <th>Successfull Calls</th>
@@ -245,11 +245,11 @@
                     {data: 'nurse_name', name: 'nurse_name'},
                     {data: 'patient_name', name: 'patient_name'},
                     {data: 'birth_date', name: 'birth_date'},
-                    {data: 'status', name: 'status'},
+                    {data: 'no_call_attempts_since_last_success', name: 'no_call_attempts_since_last_success', searchable: false},
                     {data: 'call_date', name: 'call_date'},
                     {data: 'window_start', name: 'window_start'},
                     {data: 'window_end', name: 'window_end'},
-                    {data: 'last_successful_contact_time', name: 'last_successful_contact_time'},
+                    {data: 'last_contact_time', name: 'last_contact_time'},
                     {data: 'cur_month_activity_time', name: 'cur_month_activity_time', searchable: false},
                     {data: 'no_of_calls', name: 'no_of_calls'},
                     {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},

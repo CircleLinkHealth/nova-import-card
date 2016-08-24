@@ -55,6 +55,8 @@ class DatatablesController extends Controller
                     'calls.note_id',
                     'patient_info.cur_month_activity_time',
                     'patient_info.last_successful_contact_time',
+                    'patient_info.last_contact_time',
+                    'patient_info.no_call_attempts_since_last_success',
                     'patient_info.ccm_status',
                     'patient_info.birth_date',
                     'patient_monthly_summaries.no_of_calls',
@@ -88,14 +90,6 @@ class DatatablesController extends Controller
             ->editColumn('call_date', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="call_date" column-value="'.$call->call_date.'">'.$call->call_date.'</span>';
             })
-            ->editColumn('number_successful_calls', function($call) {
-                if($call->inboundUser && $call->inboundUser->inboundCalls) {
-                    $allCalls = $call->inboundUser->inboundCalls()->where('status', '!=', 'scheduled')->get();
-                    if($allCalls) {
-                        return $allCalls->count();
-                    }
-                }
-            })
             ->editColumn('window_start', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="window_start" column-value="'.$call->window_start.'">'.$call->window_start.'</span>';
             })
@@ -121,6 +115,13 @@ class DatatablesController extends Controller
                     return $call->inboundUser->patientInfo->currentMonthCCMTime;
                 } else {
                     return 'n/a';
+                }
+            })
+            ->editColumn('no_call_attempts_since_last_success', function($call) {
+                if($call->no_call_attempts_since_last_success > 0) {
+                    return $call->no_call_attempts_since_last_success.'x Attempts';
+                } else {
+                    return 'Success';
                 }
             })
             ->addColumn('patient_call_windows', function($call) {

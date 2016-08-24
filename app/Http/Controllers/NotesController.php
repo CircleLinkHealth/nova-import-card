@@ -308,22 +308,20 @@ class NotesController extends Controller
         }
 
         if(isset($input['call_status']) && $input['call_status'] == 'reached'){
-
-            //Updates when the patient was contacted last
-            $info->last_successful_contact_time = Carbon::now()->format('Y-m-d');
-            $info->save();
-
+            //Updates when the patient was successfully contacted last
+            $info->last_successful_contact_time = Carbon::now()->format('Y-m-d'); // @todo add H:i:s
+            //predict
             $prediction = (new SchedulerService(new PredictCall))->getNextCall($patient, $note->id, true);
-
-            return view('wpUsers.patient.calls.create', $prediction);
-
         } else {
-
+            //predict
             $prediction = (new SchedulerService(new PredictCall))->getNextCall($patient, $note->id, false);
-
-            return view('wpUsers.patient.calls.create', $prediction);
-
         }
+
+        // add last contact time regardless of if success
+        $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+        $info->save();
+
+        return view('wpUsers.patient.calls.create', $prediction);
 
     }
     
