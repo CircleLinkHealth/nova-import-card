@@ -309,7 +309,7 @@ class NotesController extends Controller
 
         if(isset($input['call_status']) && $input['call_status'] == 'reached'){
             //Updates when the patient was successfully contacted last
-            $info->last_successful_contact_time = Carbon::now()->format('Y-m-d'); // @todo add H:i:s
+            $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
             //predict
             $prediction = (new SchedulerService(new PredictCall))->getNextCall($patient, $note->id, true);
         } else {
