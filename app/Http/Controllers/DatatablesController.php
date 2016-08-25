@@ -105,10 +105,11 @@ class DatatablesController extends Controller
             })
             ->editColumn('nurse_name', function($call) {
                 if($call->nurse_name) {
-                    return $call->nurse_name;
+                    $nurseName = $call->nurse_name;
                 } else {
-                    return '<em style="color:red;">unassigned</em>';
+                    //$nurseName = '<em style="color:red;">unassigned</em>';
                 }
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="outbound_cpm_id" column-value="'.$call->outbound_cpm_id.'">'.$call->nurse_name.'</span>';
             })
             ->editColumn('cur_month_activity_time', function($call) {
                 if($call->inboundUser && $call->inboundUser->patientInfo) {
