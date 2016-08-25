@@ -13,7 +13,6 @@ use DateTime;
 use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\View;
 use Yajra\Datatables\Facades\Datatables;
 
 
@@ -238,11 +237,12 @@ class NurseTimeReportController extends Controller {
 
 			$last_activity_date = DB::table('lv_page_timer')->select(DB::raw('max(`end_time`) as last_activity'))->where('provider_id', $nurse_id)->get();
 
-			$last_activity_date = $last_activity_date == null ? Carbon::now()->subMonths(6)->toDateTimeString() : $last_activity_date;
+			if($last_activity_date[0]->last_activity == null){
+				$nurses[$i]['Time Since Last Activity'] = 'N/A';
+			} else {
+				$nurses[$i]['Time Since Last Activity'] = Carbon::parse($last_activity_date[0]->last_activity)->diffForHumans();
 
-			$nurses[$i]['Time Since Last Activity'] = Carbon::parse($last_activity_date[0]->last_activity)->diffForHumans();
-
-
+			}
 
 			$nurses[$i]['# Calls Made Today'] =
 				Call::where('outbound_cpm_id', $nurse_id)
@@ -289,17 +289,31 @@ class NurseTimeReportController extends Controller {
 
 			$nurses[$i]['CCM Time Accrued Today (mins)'] = $monthlyTime;
 
-//			$carbon_now = Carbon::now();
-//			$carbon_last_act = Carbon::parse($last_activity_date[0]->last_activity);
-//			$nurses[$i]['last_activity'] = $carbon_last_act->toDateTimeString();
-//
-//			$diff = $carbon_now->diffInSeconds($carbon_last_act);
-//
-//			$nurses[$i]['lessThan20MinsAgo'] = false;
-//
-//			if($diff <= 1200 && $nurses[$i]['Time Since Last Activity'] != 'N/A'){
-//				$nurses[$i]['lessThan20MinsAgo'] = true;
-//			}
+			$carbon_now = Carbon::now();
+
+			$nurses[$i]['lessThan20MinsAgo'] = false;
+
+			if($last_activity_date == null){
+
+				$nurses[$i]['last_activity'] = 'N/A';
+
+			} else {
+
+				$carbon_last_act = Carbon::parse($last_activity_date[0]->last_activity);
+				$nurses[$i]['last_activity'] = $carbon_last_act->toDateTimeString();
+
+				$diff = $carbon_now->diffInSeconds($carbon_last_act);
+
+				if ($diff <= 1200 && $nurses[$i]['Time Since Last Activity'] != 'N/A') {
+					$nurses[$i]['lessThan20MinsAgo'] = true;
+				}
+			}
+
+			debug($nurses[$i]);
+
+			if($nurses[$i]['Time Since Last Activity'] == 'N/A'){
+				unset($nurses[$i]);
+			}
 
 			$i++;
 

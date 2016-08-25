@@ -35,6 +35,9 @@
                                         <th>
                                             CCM Time Accrued Today (mins)
                                         </th>
+                                        <th>
+                                            Last Activity
+                                        </th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -58,9 +61,22 @@
                         {data: '# Successful Calls Made Today', name: '# Successful Calls Made Today'},
                         {data: '# Calls Made Today', name: '# Calls Made Today'},
                         {data: 'CCM Time Accrued Today (mins)', name: 'CCM Time Accrued Today (mins)'},
+                        {data: 'last_activity', name: 'Last Activity'},
+                    ],
+                    "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                        console.log(aData['lessThan20MinsAgo']);
+                        if ( aData['lessThan20MinsAgo'] == true )
+                        {
+                            $('td', nRow).css('background-color', 'rgba(151, 218, 172, 1)');
+                        }
+                    },
+                    "iDisplayLength": 25,
+                    "columnDefs": [
+                        { "type": "date", targets: 'last_activity' }
                     ]
                 });
             });
+
 
 
         </script>
