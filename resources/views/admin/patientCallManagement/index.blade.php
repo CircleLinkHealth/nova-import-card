@@ -22,6 +22,7 @@
             var cpmEditableCallId = false;
             var cpmEditableColumnName = false;
             var cpmEditableColumnValue = false;
+            var cpmEditableColumnDisplayText = false;
             var cpmEditableTd = false;
 
             // edit action
@@ -34,6 +35,7 @@
                 cpmEditableCallId = $( this ).attr('call-id');
                 cpmEditableColumnName = $( this ).attr('column-name');
                 cpmEditableColumnValue = $( this ).attr('column-value');
+                cpmEditableColumnDisplayText = $( this ).attr('column-value');
                 cpmEditableTd = $( this ).parent().parent();
                 openEditableField();
                 return false;
@@ -42,6 +44,10 @@
             // save action
             $('#calls-table').on('click', '#cpm-editable-save', function(){
                 cpmEditableColumnValue = $('#editableInput').val();
+                cpmEditableColumnDisplayText = $('#editableInput').val();
+                if(cpmEditableColumnName == 'outbound_cpm_id') {
+                    cpmEditableColumnDisplayText = $("#editableInput option:selected").text();
+                }
                 saveEditableField();
                 return false;
             });
@@ -76,7 +82,7 @@
 
             // save editable field function
             function saveEditableField() {
-                $( cpmEditableTd ).html('<a href="#"><span class="cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '">' + cpmEditableColumnValue + '</span></a>');
+                $( cpmEditableTd ).html('<a href="#"><span class="cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '">' + cpmEditableColumnDisplayText + '</span></a>');
 
                 $( cpmEditableTd ).addClass('highlight');
                 setTimeout(function(){
