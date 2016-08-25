@@ -227,7 +227,7 @@ class NurseTimeReportController extends Controller {
 
 		$i = 0;
 		$nurses = array();
-		$nurse_ids[] = 1752;
+
 
 		foreach ($nurse_ids as $nurse_id){
 
