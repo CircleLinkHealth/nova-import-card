@@ -16,10 +16,6 @@ class EventServiceProvider extends ServiceProvider {
 			'App\Events\UpdateUserLoginInfo'
 		],
 
-		'Illuminate\Auth\Events\Logout' => [
-			'App\Events\UpdateUserLogoutInfo'
-		],
-
 	];
 
 	/**
