@@ -2,10 +2,6 @@
 
 //THIS IS FOR APRIMA ONLY
 
-use App\PageTimer;
-use App\User;
-use Carbon\Carbon;
-
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
     Route::post('oauth/access_token', 'CcdApi\Aprima\AuthController@getAccessToken');

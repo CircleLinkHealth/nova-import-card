@@ -334,7 +334,10 @@ class NurseTimeReportController extends Controller {
 
 		}
 
-		$nurses = collect($nurses)->sortBy('last_activity');
+		$nurses = collect($nurses);
+		$nurses->sortBy('last_activity');
+
+		debug($nurses);
 
 		return Datatables::collection($nurses)->make(true);
 

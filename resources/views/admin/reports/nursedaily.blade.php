@@ -38,7 +38,7 @@
                                         <th>
                                             Total Mins Today
                                         </th>
-                                        <th>
+                                        <th id="last" class="last">
                                             Last Activity
                                         </th>
                                     </tr>
@@ -77,13 +77,17 @@
                         }
                     },
                     "iDisplayLength": 25,
-//                    "columnDefs": [
-//                        { "type": "date", targets: 'last_activity' }
-//                    ]
+                    "columnDefs": [
+                        { "type": "date", targets: 'last_activity' }
+                    ]
                 });
+
             });
 
-
+            var data = table
+                    .column( 'last_activity' )
+                    .data()
+                    .sort();
 
         </script>
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
