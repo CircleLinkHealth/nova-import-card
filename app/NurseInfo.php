@@ -21,6 +21,10 @@ class NurseInfo extends Model
         return $this->hasMany('App\Call');
     }
 
+    public function states(){
+
+        return $this->belongsToMany('App\States');
+    }
 
 
 }
