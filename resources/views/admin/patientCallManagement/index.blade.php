@@ -173,6 +173,7 @@
                                 <th>Next Call</th>
                                 <th>Window Start</th>
                                 <th>Window End</th>
+                                <th>Preferred Call Days</th>
                                 <th>Last Call</th>
                                 <th class="nosearch">CCM Time</th>
                                 <th>Total Calls</th>
@@ -193,6 +194,7 @@
                                 <th>Next Call Date</th>
                                 <th>Window Start</th>
                                 <th>Window End</th>
+                                <th>Preferred Call Days</th>
                                 <th>Last Call</th>
                                 <th>CCM Time</th>
                                 <th>Total Calls</th>
@@ -251,6 +253,7 @@
                     {data: 'call_date', name: 'call_date'},
                     {data: 'window_start', name: 'window_start'},
                     {data: 'window_end', name: 'window_end'},
+                    {data: 'patient_call_window_days_short', name: 'patient_call_window_days_short'},
                     {data: 'last_contact_time', name: 'last_contact_time'},
                     {data: 'cur_month_activity_time', name: 'cur_month_activity_time', searchable: false},
                     {data: 'no_of_calls', name: 'no_of_calls'},
