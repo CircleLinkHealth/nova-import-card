@@ -338,9 +338,9 @@ class PatientController extends Controller
                     $careplanStatus = 'Approve Now';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
-//                    if (Auth::user()->hasRole('provider')) {
+                    if (Auth::user()->hasRole('provider')) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.careplan.print', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
-//                    }
+                    }
                 } else if ($patient->carePlanStatus == 'draft') {
                     $careplanStatus = 'CLH Approve';
                     $tooltip = $careplanStatus;
