@@ -19,19 +19,6 @@ class APICalls
         $this->api = new APIConnection($this->version, $this->key, $this->secret, env('ATHENA_CLH_PRACTICE_ID'));
     }
 
-    public function getCcd($patientId, $practiceId, $departmentId = 1)
-    {
-        $response = $this->api->GET("patients/{$patientId}/ccda", [
-            'patientid' => $patientId,
-            'practiceid' => $practiceId,
-            'departmentid' => $departmentId,
-            'purpose' => 'internal',
-            'xmloutput' => true,
-        ]);
-
-        return $this->response($response);
-    }
-
     public function getBookedAppointments($practiceId, $startDate, $endDate, $showInsurance = false, $limit = 1000, $departmentId = 1)
     {
         $response = $this->api->GET("{$practiceId}/appointments/booked", [
@@ -46,13 +33,33 @@ class APICalls
         return $this->response($response);
     }
 
-    /**
-     * @param $url
-     * @return bool|mixed
-     */
+    public function getCcd($patientId, $practiceId, $departmentId = 1)
+    {
+        $response = $this->api->GET("patients/{$patientId}/ccda", [
+            'patientid' => $patientId,
+            'practiceid' => $practiceId,
+            'departmentid' => $departmentId,
+            'purpose' => 'internal',
+            'xmloutput' => true,
+        ]);
+
+        return $this->response($response);
+    }
+
     public function getNextPage($url)
     {
         return $this->api->GET($url);
+    }
+
+    public function getPatientCustomFields($patientId, $practiceId, $departmentId = 1)
+    {
+        $response = $this->api->GET("patients/{$patientId}/customfields", [
+            'patientid' => $patientId,
+            'practiceid' => $practiceId,
+            'departmentid' => $departmentId
+        ]);
+
+        return $this->response($response);
     }
 
     private function response($response)
