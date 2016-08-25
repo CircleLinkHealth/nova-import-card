@@ -59,8 +59,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     @if($letter)
                         <div class="patient-info__main">
                             <div class="row gutter">
-                                <div class="col-xs-12"
-                                     style="background-image: url('../img/clh_logo_sm.png'); height: 70px; background-repeat: no-repeat;background-position: 50%;">
+                                <div class="col-xs-12">
                                     <div class="col-xs-1 col-xs-offset-5"></div>
                                     <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
                                     <div class="col-xs-7 address">
@@ -116,25 +115,20 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <div class="row gutter">
                                 <div class="col-xs-10 welcome-copy">
                                     <div class="row gutter">
-                                        <BR><BR><BR>
+                                        <BR><BR><BR><BR>
                                         Dear {{ucfirst(strtolower($patient->first_name))}} {{ucfirst(strtolower($patient->last_name))}}
                                         ,
                                     </div>
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        Welcome to your doctors's chronic care management program! We are happy that you
+                                        Welcome to your doctor's chronic care management program! We are happy that you
                                         have decided to enroll in this very worthwhile program designed for Medicare
                                         patients like you. As a participant, you will benefit in a number of ways:
                                     </div>
                                     <div class="row gutter"><BR>
                                         <ul type="disc" style="line-height: 1.0em;list-style-type: disc;">
-                                            <li style="list-style-type: disc;margin: 0 0;">Have 24/7 access to your care
-                                                team by calling (888) 729-4045
-                                            </li>
-                                            <li style="list-style-type: disc;margin: 15px 0;">Receive a weekly call to
-                                                check
-                                                up on how you are doing
+                                            <li style="list-style-type: disc;margin: 15px 0;">Receive regular calls to check up on how you are doing
                                             </li>
                                             <li style="list-style-type: disc;margin: 15px 0;">Avoid the inconvenience of
                                                 frequent office visits and co-pays by using this program's remote care
@@ -152,20 +146,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                         </ul>
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        Enclosed please find a copy of your personalized care plan. Please take a few
-                                        minutes to review the care plan and call us if you have any questions.
-                                    </div>
-                                    <div class="row gutter"><BR>
-                                    </div>
-                                    <div class="row gutter">
-                                        Don't forget your care team can be reached 24/7 at the following number:
+                                        Enclosed please find a copy of your personalized care plan. Please take a few minutes to review the care plan and call us if you have any questions. You can leave a message for your care team 24/7 at the following number:
                                     </div>
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter text-bold text-center">
                                         (888) 729-4045
                                     </div>
-                                    <div class="row gutter">
+                                    <div class="row gutter"><BR><BR>
                                     </div>
                                     <div class="row gutter">
                                         Thanks and we look forward to working with you!
