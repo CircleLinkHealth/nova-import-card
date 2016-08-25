@@ -1,38 +1,19 @@
 <?php namespace App\Http\Controllers\Patient;
 
-use App\Activity;
-use App\CPRulesQuestions;
-use App\Observation;
-use App\Services\CarePlanViewService;
-use App\Services\ReportsService;
-use App\CarePlan;
 use App\CareItem;
-use App\CarePlanItem;
-use App\Program;
-use App\Location;
-use App\User;
-use App\UserMeta;
-use App\Role;
-use App\Services\ActivityService;
-use App\Services\CareplanService;
-use App\Services\ObservationService;
-use App\Services\MsgUser;
-use App\Services\MsgUI;
-use App\Services\MsgChooser;
-use App\Services\MsgScheduler;
-use App\Http\Requests;
+use App\CPRulesQuestions;
 use App\Http\Controllers\Controller;
-use DateTimeZone;
-use EllipseSynergie\ApiResponse\Laravel\Response;
-use Illuminate\Support\Facades\Input;
-use PasswordHash;
-use Auth;
-use DB;
-use URL;
+use App\Http\Requests;
+use App\Observation;
+use App\Program;
+use App\Services\CarePlanViewService;
+use App\User;
 use Carbon\Carbon;
-
+use DB;
+use EllipseSynergie\ApiResponse\Laravel\Response;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Auth;
+use URL;
 
 class PatientController extends Controller
 {
@@ -269,6 +250,18 @@ class PatientController extends Controller
      */
     public function showPatientListing(Request $request)
     {
+
+        //If returning back from after approving a careplan from /view-careplan,
+        //then update the status.
+        $input = $request->all();
+
+        if(isset($input['patient_approval_id'])){
+            $approved_patient = User::find($input['patient_approval_id']);
+            $approved_patient->carePlanStatus = 'provider_approved'; // careplan_status
+            $approved_patient->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver
+            $approved_patient->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
+        }
+
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
@@ -346,7 +339,7 @@ class PatientController extends Controller
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
                     if (Auth::user()->hasRole('provider')) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.careplan.print', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
                     }
                 } else if ($patient->carePlanStatus == 'draft') {
                     $careplanStatus = 'CLH Approve';
@@ -428,6 +421,7 @@ class PatientController extends Controller
      */
     public function showPatientCarePlanPrintList(Request $request)
     {
+
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {

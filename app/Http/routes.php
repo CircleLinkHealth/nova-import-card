@@ -2,11 +2,9 @@
 
 //THIS IS FOR APRIMA ONLY
 
-Route::get('this', function (){
-
-    return (new \App\Http\Controllers\Admin\Reports\NurseTimeReportController())->dailyReport();
-
-});
+use App\PageTimer;
+use App\User;
+use Carbon\Carbon;
 
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
@@ -570,7 +568,6 @@ Route::group(['prefix' => 'third-party-api-settings'], function () {
 Route::group(['middleware' => 'cors'], function () {
     //Route::get('pagetimer', 'PageTimerController@store');
     Route::post('api/v2.1/pagetimer', ['uses' => 'PageTimerController@store', 'as' => 'api.pagetracking']);
-    Route::post('callupdate', ['uses' => 'CallController@update', 'as' => 'api.callupdate']);
 });
 
 /*
