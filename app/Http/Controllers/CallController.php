@@ -76,7 +76,12 @@ class CallController extends Controller
             return response("could not locate call ".$data['callId'], 201);
         }
 
-        $call->$data['columnName'] = $data['value'];
+        // for null outbound_cpm_id
+        if($data['columnName'] == 'outbound_cpm_id' && (empty($data['value']) || strtolower($data['value']) == 'unassigned' )) {
+            $call->$data['columnName'] = null;
+        } else {
+            $call->$data['columnName'] = $data['value'];
+        }
         $call->save();
 
         return response("successfully updated call ".$data['columnName']."=".$data['value']." - CallId=".$data['callId'], 201);

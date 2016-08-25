@@ -22,6 +22,7 @@
             var cpmEditableCallId = false;
             var cpmEditableColumnName = false;
             var cpmEditableColumnValue = false;
+            var cpmEditableColumnDisplayText = false;
             var cpmEditableTd = false;
 
             // edit action
@@ -34,6 +35,7 @@
                 cpmEditableCallId = $( this ).attr('call-id');
                 cpmEditableColumnName = $( this ).attr('column-name');
                 cpmEditableColumnValue = $( this ).attr('column-value');
+                cpmEditableColumnDisplayText = $( this ).attr('column-value');
                 cpmEditableTd = $( this ).parent().parent();
                 openEditableField();
                 return false;
@@ -42,6 +44,10 @@
             // save action
             $('#calls-table').on('click', '#cpm-editable-save', function(){
                 cpmEditableColumnValue = $('#editableInput').val();
+                cpmEditableColumnDisplayText = $('#editableInput').val();
+                if(cpmEditableColumnName == 'outbound_cpm_id') {
+                    cpmEditableColumnDisplayText = $("#editableInput option:selected").text();
+                }
                 saveEditableField();
                 return false;
             });
@@ -50,12 +56,22 @@
             function openEditableField() {
                 cpmEditableStatus = true;
                 if(cpmEditableColumnName == 'outbound_cpm_id') {
-                    alert( $('[name=nurseFormSelect]').val() );
-                    //alert( $('[name=nurseFormSelect]').val() );
-                    //$('[name=nurseFormSelect]').val( cpmEditableColumnValue );
-                    //alert( $('[name=nurseFormSelect]').val() );
+                    //alert( cpmEditableColumnValue );
                     var html = $('#nurseFormWrapper').html() + ' <a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>';
                     $(cpmEditableTd).html(html);
+                    $(".nurseFormSelect").each(function(index, element) {
+                        // get second one, skip first template in hidden div one
+                        if(index == 1) {
+                            // set value
+                            $(this).val(cpmEditableColumnValue);
+                            console.log('element at index ' + index + 'is ' + (this.tagName));
+                            console.log('element at index ' + index + 'is ' + (this.tagName));
+                            console.log('current element as dom object:' + element);
+                            console.log('current element as jQuery object:' + $(this));
+                            $(this).attr('id', "editableInput");
+                            console.log('current element id ==:' + $(this).attr('id'));
+                        }
+                    });
                 } else if(cpmEditableColumnName == 'call_date') {
                     $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="date" type="editableInput" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 } else if(cpmEditableColumnName == 'window_start' || cpmEditableColumnName == 'window_end') {
@@ -66,8 +82,7 @@
 
             // save editable field function
             function saveEditableField() {
-                alert(cpmEditableColumnValue);
-                $( cpmEditableTd ).html('<a href="#"><span class="cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '">' + cpmEditableColumnValue + '</span></a>');
+                $( cpmEditableTd ).html('<a href="#"><span class="cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '">' + cpmEditableColumnDisplayText + '</span></a>');
 
                 $( cpmEditableTd ).addClass('highlight');
                 setTimeout(function(){
@@ -122,7 +137,7 @@
 
 
     <div id="nurseFormWrapper" style="display:none;">
-        {!! Form::select('nurseFormSelect', array('unassigned' => 'Unassigned') + $nurses->all(), '', ['class' => 'select-picker', 'style' => 'width:150px;']) !!}
+        {!! Form::select('nurseFormSelect', array('unassigned' => 'Unassigned') + $nurses->all(), '', ['class' => 'select-picker nurseFormSelect', 'style' => 'width:150px;']) !!}
     </div>
     <div class="container-fluid">
         <div class="row">
