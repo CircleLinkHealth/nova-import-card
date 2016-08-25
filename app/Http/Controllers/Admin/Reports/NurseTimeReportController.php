@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Admin\Reports;
 
+use App\Activity;
 use App\Call;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
@@ -219,13 +220,14 @@ class NurseTimeReportController extends Controller {
 
 	//@todo Code needs cleanup, done with urgency in mind
 	public function dailyReport(){
-		
+
 		$nurse_ids = User::whereHas('roles', function ($q) {
 			$q->where('name', '=', 'care-center');
 		})->pluck('ID');
 
 		$i = 0;
 		$nurses = array();
+		$nurse_ids[] = 1752;
 
 		foreach ($nurse_ids as $nurse_id){
 
@@ -243,7 +245,7 @@ class NurseTimeReportController extends Controller {
 
 			}
 
-			$nurses[$i]['# Calls Made Today'] =
+			$nurses[$i]['# Calls Today'] =
 				Call::where('outbound_cpm_id', $nurse_id)
 					->where(function ($q){
 						$q->where('updated_at', '>=' , Carbon::now()->startOfDay())
@@ -255,7 +257,7 @@ class NurseTimeReportController extends Controller {
 					})
 					->count();
 
-			$nurses[$i]['# Successful Calls Made Today'] =
+			$nurses[$i]['# Successful Calls Today'] =
 				Call::where('outbound_cpm_id', $nurse_id)
 					->where(function ($q){
 						$q->where('updated_at', '>=' , Carbon::now()->startOfDay())
@@ -273,7 +275,22 @@ class NurseTimeReportController extends Controller {
 //                ->where('status', 'scheduled')
 //                ->count();
 
-			$seconds = PageTimer::where('provider_id', $nurse_id)
+			$activity_time = Activity::where(function ($q) use ($nurse_id){
+					$q->where('provider_id', $nurse_id)
+						->orWhere('logger_id', $nurse_id);
+					})
+				->where(function ($q){
+					$q->where('created_at', '>=' , Carbon::now()->startOfDay())
+						->where('created_at', '<=' , Carbon::now()->endOfDay());
+				})
+				->sum('duration');
+
+			$H1 = floor($activity_time / 3600);
+			$m1 = ($activity_time / 60) % 60;
+			$s1 = $activity_time % 60;
+			$activity_time_formatted = sprintf("%02d:%02d:%02d",$H1, $m1, $s1);
+
+			$system_time = PageTimer::where('provider_id', $nurse_id)
 				->where(function ($q){
 					$q->where('updated_at', '>=' , Carbon::now()->startOfDay())
 					->where('updated_at', '<=' , Carbon::now()->endOfDay());
@@ -281,12 +298,13 @@ class NurseTimeReportController extends Controller {
 				->whereNotNull('activity_type')
 				->sum('duration');
 
-			$H = floor($seconds / 3600);
-			$m = ($seconds / 60) % 60;
-			$s = $seconds % 60;
-			$monthlyTime = sprintf("%02d:%02d:%02d",$H, $m, $s);
+			$H2 = floor($system_time / 3600);
+			$m2 = ($system_time / 60) % 60;
+			$s2 = $system_time % 60;
+			$system_time_formatted = sprintf("%02d:%02d:%02d",$H2, $m2, $s2);
 
-			$nurses[$i]['CCM Time Accrued Today (mins)'] = $monthlyTime;
+			$nurses[$i]['CCM Mins Today'] = $activity_time_formatted;
+			$nurses[$i]['Total Mins Today'] = $system_time_formatted;
 
 			$carbon_now = Carbon::now();
 
@@ -316,7 +334,7 @@ class NurseTimeReportController extends Controller {
 
 		}
 
-		$nurses = collect($nurses)->sortByDesc('last_activity');
+		$nurses = collect($nurses)->sortBy('last_activity');
 
 		return Datatables::collection($nurses)->make(true);
 
