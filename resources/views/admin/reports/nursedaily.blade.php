@@ -35,9 +35,9 @@
                                         <th>
                                             CCM Mins Today
                                         </th>
-                                        <th>
-                                            Total Mins Today
-                                        </th>
+                                        {{--<th>--}}
+                                            {{--Total Mins Today--}}
+                                        {{--</th>--}}
                                         <th id="last" class="last">
                                             Last Activity
                                         </th>
@@ -66,7 +66,7 @@
                         {data: '# Successful Calls Today', name: '# Successful Calls Today'},
                         {data: '# Calls Today', name: '# Calls Today'},
                         {data: 'CCM Mins Today', name: 'CCM Mins Today'},
-                        {data: 'Total Mins Today', name: 'Total Mins Today'},
+//                        {data: 'Total Mins Today', name: 'Total Mins Today'},
                         {data: 'last_activity', name: 'Last Activity'},
                     ],
                     "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
