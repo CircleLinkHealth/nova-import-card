@@ -27,7 +27,7 @@
                                             Time Since Last Activity
                                         </th>
                                         <th>
-                                            # Calls Made Today
+                                            # Calls Today
                                         </th>
                                         <th>
                                             # Successful Calls Today
@@ -83,11 +83,6 @@
                 });
 
             });
-
-            var data = table
-                    .column( 'last_activity' )
-                    .data()
-                    .sort();
 
         </script>
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>

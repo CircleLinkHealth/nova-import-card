@@ -295,7 +295,7 @@ class NurseTimeReportController extends Controller {
 					$q->where('updated_at', '>=' , Carbon::now()->startOfDay())
 					->where('updated_at', '<=' , Carbon::now()->endOfDay());
 				})
-				->whereNotNull('activity_type')
+//				->whereNotNull('activity_type')
 				->sum('duration');
 
 			$H2 = floor($system_time / 3600);
