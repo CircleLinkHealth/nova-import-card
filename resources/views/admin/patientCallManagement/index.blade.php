@@ -51,8 +51,9 @@
                 cpmEditableStatus = true;
                 if(cpmEditableColumnName == 'outbound_cpm_id') {
                     alert( $('[name=nurseFormSelect]').val() );
-                    $('[name=nurseFormSelect]').val( cpmEditableColumnValue );
-                    alert( $('[name=nurseFormSelect]').val() );
+                    //alert( $('[name=nurseFormSelect]').val() );
+                    //$('[name=nurseFormSelect]').val( cpmEditableColumnValue );
+                    //alert( $('[name=nurseFormSelect]').val() );
                     var html = $('#nurseFormWrapper').html() + ' <a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>';
                     $(cpmEditableTd).html(html);
                 } else if(cpmEditableColumnName == 'call_date') {
@@ -65,6 +66,7 @@
 
             // save editable field function
             function saveEditableField() {
+                alert(cpmEditableColumnValue);
                 $( cpmEditableTd ).html('<a href="#"><span class="cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '">' + cpmEditableColumnValue + '</span></a>');
 
                 $( cpmEditableTd ).addClass('highlight');
