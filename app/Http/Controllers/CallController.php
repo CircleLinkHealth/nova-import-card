@@ -8,6 +8,7 @@ use App\Services\Calls\SchedulerService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CallController extends Controller
 {
@@ -40,8 +41,9 @@ class CallController extends Controller
 
         $window_start = Carbon::parse($input['window_start'])->format('H:i');
         $window_end = Carbon::parse($input['window_end'])->format('H:i');
-        
-        $this->scheduler->storeScheduledCall($input['patient_id'], $window_start, $window_end,$input['date']);
+
+        //We are storing the current caller as the next scheduled call's outbound cpm_id
+        $this->scheduler->storeScheduledCall($input['patient_id'], $window_start, $window_end,$input['date'], Auth::user()->ID);
 
         return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])->with('messages', ['Successfully Created Note']);
         

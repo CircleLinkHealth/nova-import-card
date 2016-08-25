@@ -36,7 +36,7 @@ class SchedulerService
     }
     
     //Create new scheduled call
-    public function storeScheduledCall($patientId, $window_start, $window_end, $date)
+    public function storeScheduledCall($patientId, $window_start, $window_end, $date, $nurse_id = false)
     {
 
         $patient = User::find($patientId);
@@ -53,6 +53,7 @@ class SchedulerService
             'outbound_phone_number' => '',
 
             'inbound_cpm_id' => $patient->ID,
+            'outbound_cpm_id' => isset($nurse_id) ? $nurse_id : '',
 
             'call_time' => 0,
             'created_at' => Carbon::now()->toDateTimeString(),
