@@ -257,6 +257,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\CallReportController@exportxls',
                 'as' => 'CallReportController.exportxls'
             ]);
+
+            Route::get('patient-conditions', [
+                'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
+                'as' => 'PatientConditionsReportController.getReport'
+            ]);
         });
 
         Route::get('emr-direct/check', function () {
