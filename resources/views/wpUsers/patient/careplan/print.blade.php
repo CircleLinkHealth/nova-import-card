@@ -45,7 +45,7 @@ if (isset($patient) && !empty($patient)) {
 
                         <span class="btn btn-group text-right">
                             <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block" aria-label="..."
-                               role="button" href="{{ URL::route('patients.listing') }}">Approve Care Plan</a>
+                               role="button" href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->ID]) }}">Approve Care Plan</a>
                             @role(['administrator', 'provider'])
                                 <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
                            href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->ID }}">Print This Page</a>
