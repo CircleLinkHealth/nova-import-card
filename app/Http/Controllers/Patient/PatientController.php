@@ -26,6 +26,8 @@ class PatientController extends Controller
      */
     public function showDashboard(Request $request)
     {
+        $pendingApprovals = 0;
+
         // patient approval counts
         if (Auth::user()->hasRole(['administrator', 'care-center'])) {
             // care-center and administrator counts number of drafts
