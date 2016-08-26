@@ -392,6 +392,9 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
 
+        Route::get('reports/nurse/daily', ['uses' => 'Admin\Reports\NurseTimeReportController@makeDailyReport', 'as' => 'admin.reports.nurse.daily']);
+        Route::get('reports/nurse/daily/data', ['uses' => 'Admin\Reports\NurseTimeReportController@dailyReport', 'as' => 'admin.reports.nurse.daily.data']);
+
         Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 
         // questions

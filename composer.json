@@ -37,7 +37,8 @@
     "prettus/l5-repository": "^2.1",
     "laravelcollective/bus": "5.2.*",
     "maknz/slack": "^1.7",
-    "laravelcollective/bus": "5.2.x"
+    "laravelcollective/bus": "5.2.x",
+    "yajra/laravel-datatables-oracle": "~6.0"
   },
   "require-dev": {
     "symfony/dom-crawler": "~3.0",

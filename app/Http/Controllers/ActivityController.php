@@ -67,9 +67,32 @@ class ActivityController extends Controller {
 			$providers = Program::getProviders($user->blogId());
 			$provider_info = array();
 
+			$nurse_ids = User::whereHas('roles', function ($q) {
+				$q->where('name', '=', 'care-center');
+			})->pluck('ID');
+
+			foreach ($nurse_ids as $nurse_id){
+
+				$nurse = User::find($nurse_id);
+
+				$viewable_patients = $nurse->viewablePatientIds();
+
+				if(in_array($patientId, $viewable_patients)){
+					$provider_info[$nurse->ID] = $nurse->fullName;
+				}
+
+			}
+
+
 			foreach ($providers as $provider) {
 				$provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
 			}
+
+			foreach ($providers as $provider) {
+				$provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
+			}
+
+			
 
 			asort($provider_info);
 
