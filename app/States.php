@@ -9,7 +9,7 @@ class States extends Model
 
     public function nurses(){
         
-        return $this->hasMany('App\NurseInfo');
+        return $this->belongsToMany('App\NurseInfo');
 
     }
 

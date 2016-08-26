@@ -6,6 +6,10 @@ use App\PageTimer;
 use App\User;
 use Carbon\Carbon;
 
+Route::get('state', function(){
+   return \App\States::whereCode('NY')->value('id');
+});
+
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
     Route::post('oauth/access_token', 'CcdApi\Aprima\AuthController@getAccessToken');

@@ -23,7 +23,7 @@ class NurseInfo extends Model
 
     public function states(){
 
-        return $this->belongsToMany('App\States');
+        return $this->belongsToMany('App\States','nurse_info_state');
     }
 
 
