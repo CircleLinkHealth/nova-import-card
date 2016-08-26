@@ -161,6 +161,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
 
+
         App\Providers\UserMetaParserHelpersServiceProvider::class,
         App\Providers\StringManipulationServiceProvider::class,
 
@@ -179,6 +180,7 @@ return [
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         \Maknz\Slack\SlackServiceProvider::class,
         Collective\Bus\BusServiceProvider::class,
+        Yajra\Datatables\DatatablesServiceProvider::class
     ],
 
     /*
