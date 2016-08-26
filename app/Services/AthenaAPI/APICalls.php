@@ -62,6 +62,21 @@ class APICalls
         return $this->response($response);
     }
 
+    public function postPatientDocument($patientId, $practiceId, $attachmentContent, $documentSubClass = 'CLINICALDOCUMENT', $contentType = 'multipart/form-data')
+    {
+        $response = $this->api->POST("patients/{$patientId}/documents", [
+            'patientid' => $patientId,
+            'practiceid' => $practiceId,
+            'attachmentcontents' => $attachmentContent,
+            'Content-Type' => $contentType,
+            'documentsubclass' => $documentSubClass,
+        ], [
+            'Content-type' => 'multipart/form-data',
+        ]);
+
+        return $this->response($response);
+    }
+
     private function response($response)
     {
         //check for errors

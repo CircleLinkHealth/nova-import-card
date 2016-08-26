@@ -1,6 +1,6 @@
 <?php
 
-Route::get('athena', 'CcdApi\Athena\AthenaApiController@getCcd');
+Route::get('athena', 'CcdApi\Athena\AthenaApiController@postPatientDocument');
 
 //THIS IS FOR APRIMA ONLY
 

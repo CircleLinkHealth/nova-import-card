@@ -182,7 +182,12 @@ class APIConnection {
      * @access private
      */
     private function url_join() {
-        return join('/', array_map(function ($p) {return trim($p, '/');}, array_filter(func_get_args())));
+        return join('/', array_map(function ($p) {
+            return trim($p, '/');
+        }, array_filter(func_get_args(), function($value){
+                return ! (is_null($value) || $value == '');
+            }
+        )));
     }
 
     /**
@@ -205,10 +210,10 @@ class APIConnection {
 
         # Join up a URL and add the parameters, since GET requests require parameters in the URL.
         $new_url = $this->url_join($this->baseurl, $this->practiceid, $url);
-
         if ($new_parameters) {
             $new_url .= '?' . http_build_query($new_parameters);
         }
+
         return $this->authorized_call('GET', $new_url, array(), $new_headers);
     }
 
