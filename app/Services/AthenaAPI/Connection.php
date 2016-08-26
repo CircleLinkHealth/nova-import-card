@@ -39,7 +39,7 @@
  * If an API response returns 401 Not Authorized, a new access token is obtained and the request is
  * retried.
  */
-class APIConnection {
+class Connection {
     public $practiceid;
 
     private $version;
@@ -73,6 +73,11 @@ class APIConnection {
         $this->authurl = 'https://api.athenahealth.com/' . $auth_prefixes[$this->version];
 
         $this->authenticate();
+    }
+
+    public function setPracticeId($practiceId)
+    {
+        $this->practiceid = $practiceId;
     }
 
     private function authenticate() {

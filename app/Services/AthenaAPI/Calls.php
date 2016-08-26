@@ -3,7 +3,7 @@
 namespace App\Services\AthenaAPI;
 
 
-class APICalls
+class Calls
 {
     protected $api;
     protected $key;
@@ -16,12 +16,13 @@ class APICalls
         $this->secret = env('ATHENA_SECRET');
         $this->version = env('ATHENA_VERSION');
 
-        $this->api = new APIConnection($this->version, $this->key, $this->secret, env('ATHENA_CLH_PRACTICE_ID'));
+        $this->api = new Connection($this->version, $this->key, $this->secret, env('ATHENA_CLH_PRACTICE_ID'));
     }
 
     /**
      * Get a practise's book appointments for a date range
-     * 
+     * Dates are expected in mm/dd/yyyy format.
+     *
      * @param $practiceId
      * @param $startDate
      * @param $endDate
@@ -30,15 +31,18 @@ class APICalls
      * @param int $departmentId
      * @return mixed
      */
-    public function getBookedAppointments($practiceId, $startDate, $endDate, $showInsurance = false, $limit = 1000, $departmentId = 1)
+    public function getBookedAppointments($practiceId, $startDate, $endDate, $showInsurance = false, $limit = 1000, $departmentId = 1, $showCancelled = false)
     {
-        $response = $this->api->GET("{$practiceId}/appointments/booked", [
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("appointments/booked", [
             'practiceid' => $practiceId,
             'startdate' => $startDate,
             'enddate' => $endDate,
             'departmentid' => $departmentId,
             'showinsurance' => $showInsurance,
             'limit' => $limit,
+            'showcancelled' => $showCancelled,
         ]);
 
         return $this->response($response);
