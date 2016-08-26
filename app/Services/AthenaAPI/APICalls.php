@@ -19,6 +19,17 @@ class APICalls
         $this->api = new APIConnection($this->version, $this->key, $this->secret, env('ATHENA_CLH_PRACTICE_ID'));
     }
 
+    /**
+     * Get a practise's book appointments for a date range
+     * 
+     * @param $practiceId
+     * @param $startDate
+     * @param $endDate
+     * @param bool $showInsurance
+     * @param int $limit
+     * @param int $departmentId
+     * @return mixed
+     */
     public function getBookedAppointments($practiceId, $startDate, $endDate, $showInsurance = false, $limit = 1000, $departmentId = 1)
     {
         $response = $this->api->GET("{$practiceId}/appointments/booked", [
@@ -33,6 +44,14 @@ class APICalls
         return $this->response($response);
     }
 
+    /**
+     * Get a patient's CCDA record
+     *
+     * @param $patientId
+     * @param $practiceId
+     * @param int $departmentId
+     * @return mixed
+     */
     public function getCcd($patientId, $practiceId, $departmentId = 1)
     {
         $response = $this->api->GET("patients/{$patientId}/ccda", [
@@ -46,11 +65,25 @@ class APICalls
         return $this->response($response);
     }
 
+    /**
+     * Get the next paginated result set
+     *
+     * @param $url
+     * @return bool|mixed
+     */
     public function getNextPage($url)
     {
         return $this->api->GET($url);
     }
 
+    /**
+     * Get the patient's custom fields
+     *
+     * @param $patientId
+     * @param $practiceId
+     * @param int $departmentId
+     * @return mixed
+     */
     public function getPatientCustomFields($patientId, $practiceId, $departmentId = 1)
     {
         $response = $this->api->GET("patients/{$patientId}/customfields", [
@@ -62,17 +95,37 @@ class APICalls
         return $this->response($response);
     }
 
-    public function postPatientDocument($patientId, $practiceId, $attachmentContent, $documentSubClass = 'CLINICALDOCUMENT', $contentType = 'multipart/form-data')
+    /**
+     * Post a file (eg. pdf careplan)
+     *
+     * @param $patientId
+     * @param $practiceId
+     * @param $attachmentContent
+     * @param string $documentSubClass
+     * @param string $contentType
+     * @return mixed
+     */
+    public function postPatientDocument($patientId, $practiceId, $attachmentContent, $documentSubClass = 'CLINICALDOCUMENT', $contentType = 'multipart/form-data', $departmentId = 1)
     {
-        $response = $this->api->POST("patients/{$patientId}/documents", [
-            'patientid' => $patientId,
-            'practiceid' => $practiceId,
-            'attachmentcontents' => $attachmentContent,
-            'Content-Type' => $contentType,
-            'documentsubclass' => $documentSubClass,
-        ], [
-            'Content-type' => 'multipart/form-data',
-        ]);
+//        $response = $this->api->POST("patients/{$patientId}/documents", [
+//            'patientid' => $patientId,
+//            'practiceid' => $practiceId,
+//            'departmentid' => $departmentId,
+//            'attachmentcontents' => $attachmentContent,
+//            'Content-Type' => $contentType,
+//            'documentsubclass' => $documentSubClass,
+//            'autoclose' => false,
+//        ], [
+//            'Content-type' => 'multipart/form-data',
+//        ]);
+
+        /*
+         * HACK
+         * @todo: Figure out why the above doesn't work
+         */
+        $command = "curl -v -k 'https://api.athenahealth.com/preview1/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId -F 'attachmentcontents=$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
+
+        $response = exec($command);
 
         return $this->response($response);
     }
