@@ -28,6 +28,7 @@ class CreateCcdaRequestsTable extends Migration
             //patient id on the api we are talking to
             $table->unsignedInteger('patient_id');
             $table->unsignedInteger('department_id');
+            $table->unsignedInteger('practice_id');
 
             $table->boolean('successful_call')->nullable();
 

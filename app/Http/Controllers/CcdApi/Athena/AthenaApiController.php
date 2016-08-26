@@ -19,8 +19,10 @@ class AthenaApiController extends Controller
 
     public function getTodays()
     {
-        return $this->service->getTodayCcds(1959188);
+        $this->service->getAppointmentsForToday(1959188);
+        $this->service->getCcdsFromRequestQueue(5);
     }
+
 }
 
 

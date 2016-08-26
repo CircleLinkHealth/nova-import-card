@@ -15,6 +15,7 @@ class CcdaRequest extends Model implements Transformable
         'vendor',
         'patient_id',
         'department_id',
+        'practice_id',
         'successful_call',
     ];
 

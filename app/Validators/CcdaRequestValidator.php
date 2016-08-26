@@ -11,6 +11,7 @@ class CcdaRequestValidator extends LaravelValidator
     protected $rules = [
         ValidatorInterface::RULE_CREATE => [
             'patient_id' => 'required',
+            'practice_id' => 'required',
             'vendor' => 'required',
         ],
         ValidatorInterface::RULE_UPDATE => [],

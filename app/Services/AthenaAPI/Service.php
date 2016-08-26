@@ -23,31 +23,35 @@ class Service
         $this->ccdaRequests = $ccdaRequests;
     }
 
-    public function getTodayCcds($practiceId)
+    public function getAppointmentsForToday($practiceId)
     {
         $today = Carbon::today()->format('m/d/Y');
 
         $response = $this->api->getBookedAppointments($practiceId, $today, $today, false, 1000, 1);
-        $this->logPatientIdsFromAppointments($response);
+        $this->logPatientIdsFromAppointments($response, $practiceId);
     }
 
-    public function logPatientIdsFromAppointments($response)
+    public function logPatientIdsFromAppointments($response, $practiceId)
     {
         foreach ($response['appointments'] as $bookedAppointment) {
             $this->ccdaRequests->create([
                 'patient_id' => $bookedAppointment['patientid'],
                 'department_id' => $bookedAppointment['departmentid'],
-                'vendor' => 'athena'
+                'vendor' => 'athena',
+                'practice_id' => $practiceId,
             ]);
         }
 
-        if (isset($response['next'])) $this->logPatientIdsFromAppointments($this->api->getNextPage($response['next']));
+        if (isset($response['next'])) $this->logPatientIdsFromAppointments($this->api->getNextPage($response['next']), $practiceId);
     }
 
-
-    public function getCcd($patientId = 3212, $departmentId = 1, $practiceId = 1959188)
+    public function getCcdsFromRequestQueue($number = 5)
     {
-        return $this->api->getCcd($patientId, $practiceId, $departmentId);
+        $ccdaRequests = $this->ccdaRequests->skipPresenter()->all()->take($number);
+
+        foreach ($ccdaRequests as $ccdaRequest) {
+            $ccda = $this->api->getCcd($ccdaRequest->patient_id, $ccdaRequest->practice_id, $ccdaRequest->department_id);
+        }
     }
 
     public function getPatientCustomFields($patientId = 909, $departmentId = 1, $practiceId = 1959188)
