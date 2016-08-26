@@ -27,22 +27,21 @@ class Service
     {
         $today = Carbon::today()->format('m/d/Y');
 
-        $this->logPatientIdsFromAppointments($practiceId, $today, $today, false, 1000, 1);
+        $response = $this->api->getBookedAppointments($practiceId, $today, $today, false, 1000, 1);
+        $this->logPatientIdsFromAppointments($response);
     }
 
-    public function logPatientIdsFromAppointments($practiceId, $startDate, $endDate, $showInsurance = false, $limit = 1000, $departmentId = 1, $showCancelled = false)
+    public function logPatientIdsFromAppointments($response)
     {
-        $response = $this->api->getBookedAppointments($practiceId, $startDate, $endDate, $showInsurance, $limit, $departmentId, $showCancelled);
-
-        $bookedAppointments = $response['appointments'];
-
-        foreach ($bookedAppointments as $appointment) {
+        foreach ($response['appointments'] as $bookedAppointment) {
             $this->ccdaRequests->create([
-                'patient_id' => $appointment['patientid'],
-                'department_id' => $appointment['departmentid'],
+                'patient_id' => $bookedAppointment['patientid'],
+                'department_id' => $bookedAppointment['departmentid'],
                 'vendor' => 'athena'
             ]);
         }
+
+        if (isset($response['next'])) $this->logPatientIdsFromAppointments($this->api->getNextPage($response['next']));
     }
 
 

@@ -77,6 +77,19 @@ class Calls
      */
     public function getNextPage($url)
     {
+        //@todo: this is a workaround to compensate for a bug in athena
+        //it always returns production urls
+        if(app()->environment('local'))
+        {
+            //removes the api version
+            if(($pos = strpos($url, '/', 1)) !== false)
+            {
+                $url = substr($url, $pos + 1);
+            }
+        }
+
+        $this->api->setPracticeId(null);
+
         return $this->api->GET($url);
     }
 
@@ -134,6 +147,13 @@ class Calls
         return $this->response($response);
     }
 
+    /**
+     * Checks if the response contains errors. If it does, it logs the response and throws an Exception
+     *
+     * @throws \Exception
+     * @param $response
+     * @return mixed
+     */
     private function response($response)
     {
         //check for errors
