@@ -103,6 +103,9 @@ class DatatablesController extends Controller
                     return '<span class="btn btn-warning btn-xs"><i class="glyphicon glyphicon-list"></i> Scheduled</span>';
                 }
             })
+            ->editColumn('patient_name', function($call) {
+                return '<a href="'.\URL::route('patient.demographics.show', array('patientId' => $call->inboundUser->ID)).'" target="_blank">'.$call->patient_name.'</span>';
+            })
             ->editColumn('nurse_name', function($call) {
                 if($call->nurse_name) {
                     $nurseName = $call->nurse_name;
