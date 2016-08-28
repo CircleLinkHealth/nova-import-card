@@ -120,6 +120,7 @@ class ActivityService
         if (!empty($users)) {
             // loop through each user
             foreach ($users as $user) {
+                /*
                 // get all activities for user for month
                 $totalDuration = $this->getTotalActivityTimeForMonth($user->ID, $month, $year);
 
@@ -132,6 +133,7 @@ class ActivityService
                 ], [
                     'cur_month_activity_time' => $totalDuration
                 ]);
+                */
             }
         }
         return true;
