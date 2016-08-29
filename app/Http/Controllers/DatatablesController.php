@@ -156,8 +156,12 @@ class DatatablesController extends Controller
                     $windowText = '';
                     $windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
                     if($windows) {
-                        foreach($windows as $window) {
-                            $windowText .= $days[$window->day_of_week] . ',';
+                        foreach($days as $key => $val) {
+                            foreach ($windows as $window) {
+                                if($window->day_of_week == $key) {
+                                    $windowText .= $days[$window->day_of_week] . ',';
+                                }
+                            }
                         }
                     }
                     return rtrim($windowText, ',');
