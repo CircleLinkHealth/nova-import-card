@@ -63,7 +63,7 @@ class Calls
             'practiceid' => $practiceId,
             'departmentid' => $departmentId,
             'purpose' => 'internal',
-            'xmloutput' => true,
+            'xmloutput' => false,
         ]);
 
         return $this->response($response);
