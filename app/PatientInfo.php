@@ -39,8 +39,6 @@ class PatientInfo extends Model {
 
 	protected $guarded = [];
 
-	public $timestamps = false;
-
 	// START RELATIONSHIPS
 
 	// user
