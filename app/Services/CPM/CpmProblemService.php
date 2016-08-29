@@ -19,7 +19,7 @@ class CpmProblemService implements CpmModel
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         $user->cpmProblems()->sync($ids);
-        
+
         $instructionService = new CpmInstructionService();
 
         foreach ($ids as $problemId) {
@@ -27,8 +27,7 @@ class CpmProblemService implements CpmModel
             $entityId = $problemId;
             $entityForeign = 'cpm_problem_id';
 
-            if (isset($instructions[$relationship][$entityId]))
-            {
+            if (isset($instructions[$relationship][$entityId])) {
                 $instructionInput = $instructions[$relationship][$entityId];
 
                 $instructionService->syncWithUser($user, $relationship, $entityForeign, $entityId, $instructionInput);
@@ -38,22 +37,28 @@ class CpmProblemService implements CpmModel
         return true;
     }
 
-    public function getProblemsWithInstructionsForUser(User $user){
+    public function getProblemsWithInstructionsForUser(User $user)
+    {
+        $instructions = [];
 
         //Get all the User's Problems
-        $problems =  $user->cpmProblems()->get()->all();
-        if(!$problems) return '';
+        $problems = $user->cpmProblems()->get()->all();
+        if (!$problems) return '';
+
         //For each problem, extract the instructions and
         //store in a key value pair
-        foreach($problems as $problem){
-            if(!$problem){continue;}
+        foreach ($problems as $problem) {
+            if (!$problem) {
+                continue;
+            }
+
             $instruction = \App\Models\CPM\CpmInstruction::find($problem->pivot->cpm_instruction_id);
-            if($instruction) {
+
+            if ($instruction) {
                 $instructions[$problem->name] = $instruction->name;
-            } else {
-                return '';
             }
         }
+
         return $instructions;
     }
 

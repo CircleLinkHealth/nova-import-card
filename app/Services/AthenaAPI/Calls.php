@@ -88,6 +88,7 @@ class Calls
             }
         }
 
+        //just so it doesn't append clh_practice_id to the url
         $this->api->setPracticeId(null);
 
         return $this->api->GET($url);
@@ -107,6 +108,24 @@ class Calls
             'patientid' => $patientId,
             'practiceid' => $practiceId,
             'departmentid' => $departmentId
+        ]);
+
+        return $this->response($response);
+    }
+
+    /**
+     * Get the practice's custom fields
+     *
+     * @param $practiceId
+     * @return mixed
+     */
+    public function getPracticeCustomFields($practiceId)
+    {
+        //just so it doesn't append clh_practice_id to the url
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("customfields", [
+            'practiceid' => $practiceId,
         ]);
 
         return $this->response($response);
