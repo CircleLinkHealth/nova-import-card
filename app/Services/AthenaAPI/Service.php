@@ -9,6 +9,7 @@
 namespace App\Services\AthenaAPI;
 
 
+use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
 use Carbon\Carbon;
 
@@ -16,11 +17,13 @@ class Service
 {
     protected $api;
     protected $ccdaRequests;
+    protected $ccdas;
 
-    public function __construct(CcdaRequestRepository $ccdaRequests)
+    public function __construct(CcdaRequestRepository $ccdaRequests, CcdaRepository $ccdas)
     {
         $this->api = new Calls();
         $this->ccdaRequests = $ccdaRequests;
+        $this->ccdas = $ccdas;
     }
 
     public function getAppointmentsForToday($practiceId)
@@ -50,7 +53,16 @@ class Service
         $ccdaRequests = $this->ccdaRequests->skipPresenter()->all()->take($number);
 
         foreach ($ccdaRequests as $ccdaRequest) {
-            $ccda = $this->api->getCcd($ccdaRequest->patient_id, $ccdaRequest->practice_id, $ccdaRequest->department_id);
+            $xmlCcda = $this->api->getCcd($ccdaRequest->patient_id, $ccdaRequest->practice_id, $ccdaRequest->department_id);
+
+            if (!$xmlCcda) continue;
+
+            $ccda = $this->ccdas->create([
+                'xml' => $xmlCcda,
+            ]);
+
+            $ccdaRequest->ccda_id = $ccda->id;
+            $ccdaRequest->save();
         }
     }
 
