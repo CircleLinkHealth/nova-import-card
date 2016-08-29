@@ -284,20 +284,11 @@
                 // `d` is the original data object for the row
                 return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
                         '<tr>'+
-                        '<td>Note Type:</td>'+
-                        '<td>'+d.note_type+'</td>'+
-                        '</tr>'+
-                        '<tr>'+
-                        '<td>Note:</td>'+
-                        '<td>'+d.note_body+'</td>'+
+                        '<td>Last 3 Notes:</td>'+
+                        '<td>'+d.notes_html+'</td>'+
                         '</tr>'+
                         '<td>Call Windows:</td>'+
                         '<td>'+d.patient_call_windows+'</td>'+
-                        '</tr>'+
-                        '<tr>'+
-                        '<tr>'+
-                        '<td>Extra info:</td>'+
-                        '<td>And any further details here...</td>'+
                         '</tr>'+
                         '</table>';
             }

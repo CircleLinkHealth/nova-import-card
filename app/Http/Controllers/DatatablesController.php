@@ -165,6 +165,23 @@ class DatatablesController extends Controller
                     return 'n/a';
                 }
             })
+            ->addColumn('notes_html', function($call) {
+                $notesHtml = '';
+                if($call->inboundUser) {
+                    $notes = $call->inboundUser->notes()->orderBy('created_at','desc')->limit(3)->get();
+                    if($notes->count() > 0) {
+                        $notesHtml .= '<ul>';
+                        foreach($notes as $note) {
+                            $notesHtml .= '<li>';
+                            $notesHtml .= 'Note '.$note->created_at.':<br />';
+                            $notesHtml .= $note->body;
+                            $notesHtml .= '</li>';
+                        }
+                        $notesHtml .= '</ul>';
+                    }
+                }
+                return $notesHtml;
+            })
             ->addColumn('blank', function($call) {
                 return '';
             })
