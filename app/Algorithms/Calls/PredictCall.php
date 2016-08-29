@@ -4,6 +4,7 @@ use App\Call;
 use App\Note;
 use App\PatientContactWindow;
 use App\PatientInfo;
+use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
@@ -23,19 +24,19 @@ class PredictCall
     private $call;
     private $callStatus;
     private $patient;
-    private $note;
+    //Since you can't pass a note in for the reconcile function
+    private $note = null;
     private $callsThisMonth;
     private $successfulCallsThisMonth;
     private $ccmTime;
 
-    public function __construct(User $calledPatient, Note $currentNote, $currentCall, $currentCallStatus)
+    public function __construct(User $calledPatient, $currentCall, $currentCallStatus)
     {
 
         $this->call = $currentCall;
         $this->callStatus = $currentCallStatus;
         
         $this->patient = $calledPatient;
-        $this->note = $currentNote;
 
         $this->callsThisMonth = Call::numberOfCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
         $this->successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
@@ -50,9 +51,11 @@ class PredictCall
     //differently from unsuccessful calls.
 
 
-    public function predict(){
+    public function predict($note){
+
+    $this->note = $note;
     
-    if ($this->callStatus) {
+        if ($this->callStatus) {
 
             return $this->successfulCallHandler();
 
@@ -61,6 +64,7 @@ class PredictCall
         return $this->successfulCallHandler();
 
 }
+
     }
     
     //Currently returns ccm_time, no of calls, no of succ calls, patient call time prefs, week#
@@ -127,7 +131,7 @@ class PredictCall
         $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient, $next_window_carbon);
 
         //String to facilitate testing
-        $patient_situation = $this->patient->fullName . 'was called <span style="color:green">successfully</span> in <b>week '
+        $patient_situation = $this->patient->fullName . ' was called <span style="color:green">successfully</span> in <b>week '
                                 . $week_num . ' </b> and has <b>ccm time: ' . intval($this->ccmTime/60) . ' mins </b> (' . $this->ccmTime .
                                   ' seconds). He can be called starting <b>' . $next_window_carbon->toDateTimeString() . '</b> but his first window after that is: <b>' . $next_predicted_contact_window['day']
                                     . '</b>' ;
@@ -164,7 +168,11 @@ class PredictCall
         //Update and close previous call, if exists.
         if($this->call) {
             $this->call->status = 'not reached';
-            $this->call->note_id = $this->note->id;
+
+            if($this->note != null){
+                $this->call->note_id = $this->note->id;
+            }
+
             $this->call->call_date = Carbon::now()->format('Y-m-d');
             $this->call->outbound_cpm_id = Auth::user()->ID;
             $this->call->save();
@@ -200,7 +208,7 @@ class PredictCall
         $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient, $next_window_carbon);
 
         //String to facilitate testing
-        $patient_situation = $this->patient->fullName . 'was called <span style="color: red">unsuccessfully</span> in <b>week '
+        $patient_situation = $this->patient->fullName . ' was called <span style="color: red">unsuccessfully</span> in <b>week '
             . $week_num . ' </b> and has <b>ccm time: ' . intval($this->ccmTime/60) . ' mins </b> (' . $this->ccmTime .
             ' seconds). He can be called starting <b>' . $next_window_carbon->toDateTimeString() . '</b> but his first window after that is: <b>' . $next_predicted_contact_window['day']
             . '</b>' ;
@@ -230,6 +238,21 @@ class PredictCall
         $prediction = $this->formatAlgoDataForView($prediction);
 
         return $prediction;
+    }
+
+    //Handle missed/dropped/unattemped calls as a job
+    //This is not in the algo since we don't have
+    //a not associated to this kind of call
+    public function reconcileDroppedCallHandler(){
+
+        $this->call->status = 'dropped';
+        $this->call->call_date = Carbon::now()->format('Y-m-d');
+        $this->call->save();
+
+        $prediction = $this->unsuccessfulCallHandler();
+
+        (new SchedulerService())->storeScheduledCall($this->patient->ID, $prediction['window_start'], $prediction['end'], Carbon::now()->parse('m-d-Y'), Auth::user()->ID);
+
     }
 
     //The next two functions will give us the time we have to wait until making the next
