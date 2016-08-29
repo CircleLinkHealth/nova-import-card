@@ -11,6 +11,7 @@ class Ccda extends Model implements Transformable {
     use ModelLogRelationship, TransformableTrait;
 
     //define sources here
+    const ATHENA_API = 'athena_api';
     const API = 'api';
     const EMR_DIRECT = 'emr_direct';
     const IMPORTER = 'importer';
