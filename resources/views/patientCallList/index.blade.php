@@ -15,28 +15,6 @@
             $('#cpmEditableTable').DataTable( {
                 "scrollX": true
             } );
-
-            $('#cpmEditableTable').on('click', '.cpm-editable-icon', function(){
-                // editing!
-                if(cpmEditableStatus === true) {
-                    alert('already editing');
-                    // force close existing edit
-                    return false;
-                }
-                cpmEditableStatus = true;
-                //alert( "Handler for .click() called." );
-                dataValue = $( this ).parent().parent().attr('data-value');
-                $( this ).parent().parent().html('<input type="text" id="cpm-editable-value" value="' + dataValue + '" /><a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
-                return false;
-            });
-
-            $('#cpmEditableTable').on('click', '#cpm-editable-save', function(){
-                dataValue = $('#cpm-editable-value').val();
-                $( this ).parent().html(dataValue + '<a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon"></span></a>');
-                cpmEditableStatus = false;
-                return false;
-            });
-        } );
     </script>
 
     <div class="row" style="margin-top:60px;">
@@ -120,7 +98,7 @@
                                                         </td>
                                                         <td>
                                                             @if($call->inboundUser)
-                                                                <a href="{{ URL::route('patient.demographics.show', array('patient' => $call->inboundUser->ID)) }}" style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
+                                                                <a href="{{ URL::route('patient.careplan.show', array('patient' => $call->inboundUser->ID, 'page' => 1)) }}" style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
                                                             @else
                                                                 <em style="color:red;">unassigned</em>
                                                             @endif
