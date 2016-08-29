@@ -36,7 +36,7 @@ class PhiMail
      */
     public function notifyAdmins($ccdas = [])
     {
-        if (app()->environment('local')) return;
+        if (! app()->environment('worker')) return;
 
         $numberOfCcds = count($ccdas);
 

@@ -432,6 +432,25 @@ class PatientCareplanController extends Controller
         $userRepo = new UserRepository();
 
         if ($patientId) {
+            $patient = User::where('ID',$patientId)->first();
+            //Update patient info changes
+            $info = $patient->patientInfo;
+            if($params->get('general_comment')){
+                $info->general_comment = $params->get('general_comment');
+            }
+            if($params->get('window_start')){
+                $info->daily_contact_window_start = $params->get('window_start');
+            }
+            if($params->get('window_end')){
+                $info->daily_contact_window_end = $params->get('window_end');
+            }
+            if($params->get('frequency')){
+                $info->preferred_calls_per_month = $params->get('frequency');
+            }
+            if($params->get('days')){
+                $info->preferred_cc_contact_days = implode(', ',$params->get('days'));
+            }
+            $info->save();
             // validate
             $messages = [
                 'required' => 'The :attribute field is required.',

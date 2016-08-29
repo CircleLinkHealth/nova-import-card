@@ -1,8 +1,14 @@
 <?php
 
-Route::get('athena', 'CcdApi\Athena\AthenaApiController@getTodays');
-
 //THIS IS FOR APRIMA ONLY
+
+use App\PageTimer;
+use App\User;
+use Carbon\Carbon;
+
+Route::get('state', function(){
+   return \App\States::whereCode('NY')->value('id');
+});
 
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
@@ -161,6 +167,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('u20', ['uses' => 'ReportsController@u20', 'as' => 'patient.reports.u20']);
         Route::get('billing', ['uses' => 'ReportsController@billing', 'as' => 'patient.reports.billing']);
         Route::get('provider-notes', ['uses' => 'NotesController@listing', 'as' => 'patient.note.listing']);
+        // nurse call list
+        Route::group(['prefix' => 'patient-call-list'], function () {
+            Route::get('', ['uses' => 'PatientCallListController@index', 'as' => 'patientCallList.index']);
+        });
     });
 
     // **** PATIENTS (/manage-patients/{patientId}/)
@@ -205,6 +215,14 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('view/{actId}', ['uses' => 'ActivityController@show', 'as' => 'patient.activity.view']);
             Route::get('', ['uses' => 'ActivityController@providerUIIndex', 'as' => 'patient.activity.providerUIIndex']);
         });
+
+        //call scheduling
+        Route::group(['prefix' => 'calls'], function () {
+            Route::get('', ['uses' => 'CallController@index', 'as' => 'call.index']);
+            Route::get('create', ['uses' => 'CallController@create', 'as' => 'call.create']);
+            Route::post('schedule', ['uses' => 'CallController@schedule', 'as' => 'call.schedule']);
+            Route::get('edit/{actId}', ['uses' => 'CallController@edit', 'as' => 'call.edit']);
+        });
     });
 
     /****************************/
@@ -217,9 +235,7 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix' => 'admin'
     ], function () {
 
-        Route::get('emr-direct/check', function () {
-            (new \App\Services\PhiMail\PhiMail())->sendReceive();
-        });
+        Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
 
         Route::group([
             'prefix' => 'reports'
@@ -239,12 +255,21 @@ Route::group(['middleware' => 'auth'], function () {
                 'as' => 'EthnicityReportController.getReport'
             ]);
 
+            Route::get('call', [
+                'uses' => 'Admin\Reports\CallReportController@exportxls',
+                'as' => 'CallReportController.exportxls'
+            ]);
+
             Route::get('patient-conditions', [
                 'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
                 'as' => 'PatientConditionsReportController.getReport'
             ]);
         });
 
+        Route::get('emr-direct/check', function () {
+            (new \App\Services\PhiMail\PhiMail())->sendReceive();
+        });
+        
         Route::get('dupes', function () {
             $results = DB::select(DB::raw("
                 SELECT *
@@ -341,6 +366,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('users/{id}/careplan', ['uses' => 'CareplanController@show', 'as' => 'admin.users.careplan']);
             Route::get('users/{id}/msgcenter', ['uses' => 'UserController@showMsgCenter', 'as' => 'admin.users.msgCenter']);
             Route::post('users/{id}/msgcenter', ['uses' => 'UserController@showMsgCenter', 'as' => 'admin.users.msgCenterUpdate']);
+            Route::get('users/patientCallManagement', ['uses' => 'Admin\PatientCallManagementController@index', 'as' => 'admin.patientCallManagement.index']);
+            Route::get('users/patientCallManagement/{id}/edit', ['uses' => 'Admin\PatientCallManagementController@edit', 'as' => 'admin.patientCallManagement.edit']);
+            Route::post('users/patientCallManagement/{id}/edit', ['uses' => 'Admin\PatientCallManagementController@update', 'as' => 'admin.patientCallManagement.update']);
         });
 
         // rules
@@ -393,7 +421,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         // report - nurse time report
-
+        //these fall under the admin-access permission
         Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
 
         Route::get('reports/nurse/daily', ['uses' => 'Admin\Reports\NurseTimeReportController@makeDailyReport', 'as' => 'admin.reports.nurse.daily']);
@@ -544,6 +572,7 @@ Route::group(['prefix' => 'third-party-api-settings'], function () {
 Route::group(['middleware' => 'cors'], function () {
     //Route::get('pagetimer', 'PageTimerController@store');
     Route::post('api/v2.1/pagetimer', ['uses' => 'PageTimerController@store', 'as' => 'api.pagetracking']);
+    Route::post('callupdate', ['uses' => 'CallController@update', 'as' => 'api.callupdate']);
 });
 
 /*
@@ -599,3 +628,11 @@ Route::group(['prefix' => 'cron'], function () {
         $msgScheduler->index($id);
     });
 });
+
+Route::controller('datatables', 'DatatablesController', [
+    'anyData'  => 'datatables.data',
+    'anyCallsManagement'  => 'datatables.anyCallsManagement',
+    'getIndex' => 'datatables',
+]);
+
+Route::get('datatables/callData', ['uses' => 'DatatablesController@callData', 'as' => 'datatables.callData']);
