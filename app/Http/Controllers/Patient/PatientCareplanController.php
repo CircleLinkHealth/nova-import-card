@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Patient;
 
+use App\ForeignId;
 use App\Formatters\WebixFormatter;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdInsurancePolicy;
@@ -10,6 +11,7 @@ use App\CLH\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Location;
+use App\Models\CCD\CcdVendor;
 use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
@@ -30,10 +32,12 @@ use Auth;
 use Carbon\Carbon;
 use DateTimeZone;
 use DB;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 use Response;
+use Symfony\Component\Console\Tests\Helper\FormatterHelperTest;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 //use EllipseSynergie\ApiResponse\Laravel\Response;
@@ -368,21 +372,21 @@ class PatientCareplanController extends Controller
         } else if ($patient->carePlanStatus == 'draft') {
             $showApprovalButton = true;
         }
-        
+
         $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
         return view('wpUsers.patient.careplan.patient', compact([
-            'patient', 
-            'userMeta', 
-            'userConfig', 
-            'states', 
-            'locations', 
-            'timezones', 
-            'messages', 
-            'patientRoleId', 
-            'programs', 
-            'programId', 
-            'showApprovalButton', 
+            'patient',
+            'userMeta',
+            'userConfig',
+            'states',
+            'locations',
+            'timezones',
+            'messages',
+            'patientRoleId',
+            'programs',
+            'programId',
+            'showApprovalButton',
             'carePlans',
             'insurancePolicies',
         ]));
@@ -413,12 +417,9 @@ class PatientCareplanController extends Controller
             }
         }
 
-        if ($params->has('insurance'))
-        {
-            foreach ($params->get('insurance') as $id => $approved)
-            {
-                if (!$approved)
-                {
+        if ($params->has('insurance')) {
+            foreach ($params->get('insurance') as $id => $approved) {
+                if (!$approved) {
                     CcdInsurancePolicy::destroy($id);
                     continue;
                 }
@@ -689,7 +690,8 @@ class PatientCareplanController extends Controller
                                          CpmMedicationGroupService $medicationGroupService,
                                          CpmMiscService $miscService,
                                          CpmProblemService $problemService,
-                                         CpmSymptomService $symptomService
+                                         CpmSymptomService $symptomService,
+                                         Container $container
     )
     {
         // input
@@ -797,6 +799,25 @@ class PatientCareplanController extends Controller
                         (new ReportsService())->createAprimaPatientCarePlanPdfReport($user, $user->getCarePlanProviderApproverAttribute());
                     }
 
+                    //If it's an Athena patient, send the PDF to Athena API
+                    $programId = Auth::user()->program_id;
+
+                    if (isset($programId)) {
+                        $vendor = CcdVendor::whereProgramId($programId)
+                            ->whereEhrName(ForeignId::ATHENA)
+                            ->whereNotNull('practice_id')
+                            ->first();
+
+                        if ($vendor) {
+                            $reportsService = $container->make(ReportsService::class);
+
+                            $response = $container->call([
+                                $reportsService, 'createAthenaPatientCarePlanPdfReport'
+                            ], [
+                                'user' => $user->ID,
+                            ]);
+                        }
+                    }
 
                 } else {
                     $user->carePlanStatus = 'qa_approved'; // careplan_status

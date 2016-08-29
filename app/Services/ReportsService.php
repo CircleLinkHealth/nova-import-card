@@ -5,8 +5,10 @@ use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesQuestions;
 use App\CPRulesUCP;
+use App\Entities\CcdaRequest;
 use App\ForeignId;
 use App\Location;
+use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\Cpm;
 use App\Models\CPM\CpmBiometric;
@@ -1016,18 +1018,18 @@ class ReportsService
 
     public function createAthenaPatientCarePlanPdfReport($user, Service $athenaService)
     {
-        $file_name = $this->makePdfCareplan($user);
+        if (!is_object($user)) $user = User::find($user);
 
+        $pathToPdf = $this->makePdfCareplan($user);
 
+        $ccda = Ccda::wherePatientId($user->ID)->first();
+        $ccdaRequest = CcdaRequest::whereCcdaId($ccda->id)->first();
 
-//        $patientReport = PatientReports::create([
-//            'patient_id' => $user->ID,
-//            'patient_mrn' => $user->getMRNAttribute(),
-//            'provider_id' => '',
-//            'file_type' => PatientReports::CAREPLAN,
-//            'file_base64' => $base_64_report,
-//            'location_id' => $locationId,
-//        ]);
+        if ($pathToPdf) {
+            $response = $athenaService->postPatientDocument($ccdaRequest->patient_id, $ccdaRequest->practice_id, $pathToPdf);
+
+            return \GuzzleHttp\json_decode($response, true);
+        }
     }
 
     public function makePdfCareplan($user)

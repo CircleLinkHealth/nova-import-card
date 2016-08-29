@@ -123,14 +123,8 @@ class Service
         });
     }
 
-    public function postPatientDocument(
-        $patientId = 909,
-        $practiceId = 1959188,
-        $attachmentContentPath = null,
-        $documentSubClass = 'CLINICALDOCUMENT',
-        $contentType = 'multipart/form-data'
-    )
+    public function postPatientDocument($patientId, $practiceId, $attachmentContentPath, $documentSubClass = 'CLINICALDOCUMENT', $contentType = 'multipart/form-data')
     {
-        return $this->api->postPatientDocument($patientId, $practiceId, "@$attachmentContentPath", $documentSubClass = 'CLINICALDOCUMENT', $contentType = 'multipart/form-data');
+        return $this->api->postPatientDocument($patientId, $practiceId, $attachmentContentPath, $documentSubClass, $contentType);
     }
 }
