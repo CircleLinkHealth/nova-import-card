@@ -42,6 +42,7 @@ class DatatablesController extends Controller
             ->with('note')
             ->select(
                 [
+                    \DB::raw('coalesce(nurse.display_name, "unassigned") as nurse_name'),
                     'calls.id AS call_id',
                     'calls.status',
                     'calls.outbound_cpm_id',
@@ -61,7 +62,6 @@ class DatatablesController extends Controller
                     'patient_info.birth_date',
                     'patient_monthly_summaries.no_of_calls',
                     'patient_monthly_summaries.no_of_successful_calls',
-                    'nurse.display_name AS nurse_name',
                     'patient.display_name AS patient_name',
                     'program.display_name AS program_name',
                     'billing_provider.display_name AS billing_provider'
@@ -107,12 +107,7 @@ class DatatablesController extends Controller
                 return '<a href="'.\URL::route('patient.careplan.show', array('patientId' => $call->inboundUser->ID, 'page' => 1)).'" target="_blank">'.$call->patient_name.'</span>';
             })
             ->editColumn('nurse_name', function($call) {
-                if($call->nurse_name) {
-                    $nurseName = $call->nurse_name;
-                } else {
-                    $nurseName = 'unassigned';
-                }
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="outbound_cpm_id" column-value="'.$call->outbound_cpm_id.'">'.$nurseName.'</span>';
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="outbound_cpm_id" column-value="'.$call->outbound_cpm_id.'">'.$call->nurse_name.'</span>';
             })
             ->editColumn('cur_month_activity_time', function($call) {
                 if($call->inboundUser && $call->inboundUser->patientInfo) {
