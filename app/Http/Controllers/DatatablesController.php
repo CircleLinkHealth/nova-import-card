@@ -124,23 +124,33 @@ class DatatablesController extends Controller
                 }
             })
             ->addColumn('patient_call_windows', function($call) {
+                $days = array(
+                    1 => 'M',
+                    2 => 'Tu',
+                    3 => 'W',
+                    4 => 'Th',
+                    5 => 'F',
+                    6 => 'Sa',
+                    7 => 'Su'
+                );
                 if($call->inboundUser && $call->inboundUser->patientInfo) {
-                    $dowMap = array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
                     $windowText = '';
                     $windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
                     if($windows) {
                         $windowText .= '<ul>';
-                        foreach($windows as $window) {
-                            $windowText .= '<li>';
-                            $windowText .= $dowMap[$window->day_of_week] . ': ' . $window->window_time_start . ' - ' .$window->window_time_end;
-                            $windowText .= '</li>';
+                        foreach($days as $key => $val) {
+                            foreach ($windows as $window) {
+                                if($window->day_of_week == $key) {
+                                    $windowText .= '<li>';
+                                    $windowText .= $days[$window->day_of_week] . ': ' . $window->window_time_start . ' - ' .$window->window_time_end;
+                                    $windowText .= '</li>';
+                                }
+                            }
                         }
                         $windowText .= '</ul>';
                     }
-                    return $windowText;
-                } else {
-                    return 'n/a';
                 }
+                return $windowText;
             })
             ->addColumn('patient_call_window_days_short', function($call) {
                 $days = array(
