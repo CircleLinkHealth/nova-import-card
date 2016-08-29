@@ -71,7 +71,7 @@ class DatatablesController extends Controller
             ->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
             ->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
             ->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
-            ->leftJoin('patient_monthly_summaries', 'patient_monthly_summaries.patient_info_id','=','patient_info.user_id')
+            ->leftJoin('patient_monthly_summaries', 'patient_monthly_summaries.patient_info_id','=','patient_info.id')
             ->leftJoin('wp_blogs AS program', 'patient.program_id','=','program.blog_id')
             ->leftJoin('patient_care_team_members', function($join)
             {
