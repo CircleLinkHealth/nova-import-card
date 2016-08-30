@@ -13,13 +13,15 @@ use Illuminate\Support\Facades\Auth;
 class PredictCall
 {
 
-    // ------------------------------------*---------------------------------------
-    // Currently, the factors taken into consideration are:
-    //  - Call Status (Reached, Unreached)
-    //  - Current Month's CCM Time Bracket (0-10, 10-15, 15-20, >20)
-    //  - Week Number in current Month (1, 2, 3, 4) [Special Consideration for months with 5/6 weeks: (1, 2, 3+4, 5)]
-    //  - No Of Successful Calls to Patient
-    // ------------------------------------*---------------------------------------
+    /*
+    ------------------------------------*---------------------------------------
+    Currently, the factors taken into consideration are:
+      - Call Status (Reached, Unreached)
+      - Current Month's CCM Time Bracket (0-10, 10-15, 15-20, >20)
+      - Week Number in current Month (1, 2, 3, 4) [Special Consideration for months with 5/6 weeks: (1, 2, 3+4, 5)]
+      - No Of Successful Calls to Patient
+     ------------------------------------*---------------------------------------
+    */
 
     private $call;
     private $callStatus;
@@ -45,11 +47,12 @@ class PredictCall
 
     }
 
-    //In order to predict a call, a patient's factors are taken into consideration.
-    //These factors are the different switches that determine the best next
-    //plausible call date for a patient. Successful calls are handled
-    //differently from unsuccessful calls.
-
+    /*
+    In order to predict a call, a patient's factors are taken into consideration.
+    These factors are the different switches that determine the best next
+    plausible call date for a patient. Successful calls are handled
+    differently from unsuccessful calls.
+    */
 
     public function predict($note){
 
@@ -61,9 +64,9 @@ class PredictCall
 
         } else {
 
-        return $this->successfulCallHandler();
+            return $this->successfulCallHandler();
 
-}
+        }
 
     }
     
@@ -167,12 +170,9 @@ class PredictCall
 
         //Update and close previous call, if exists.
         if($this->call) {
+
             $this->call->status = 'not reached';
-
-            if($this->note != null){
-                $this->call->note_id = $this->note->id;
-            }
-
+            $this->call->note_id = $this->note->id;
             $this->call->call_date = Carbon::now()->format('Y-m-d');
             $this->call->outbound_cpm_id = Auth::user()->ID;
             $this->call->save();
@@ -199,8 +199,8 @@ class PredictCall
         //the last week is incomplete but has a few days. For the
         //sake of our calculation, we observe this 5th week.
 
-        $no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
-        $hasHadASuccessfulCall = $no_of_successful_calls > 0 ? true : false;
+//        $no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
+//        $hasHadASuccessfulCall = $no_of_successful_calls > 0 ? true : false;
 
         $next_window_carbon = $this->getUnsuccessfulCallTimeOffset($week_num, $next_window_carbon);
 
@@ -232,7 +232,7 @@ class PredictCall
             'window_start' => $window_start,
             'window_end' => $window_end,
             'next_contact_windows' => $next_contact_windows,
-            'successful' => true
+            'successful' => false
         ];
 
         $prediction = $this->formatAlgoDataForView($prediction);
@@ -240,18 +240,56 @@ class PredictCall
         return $prediction;
     }
 
-    //Handle missed/dropped/unattemped calls as a job
-    //This is not in the algo since we don't have
-    //a not associated to this kind of call
+    /*
+     Handle missed/dropped/unattempted calls as a job
+     This is not in the algo since we don't have
+     a not associated to this kind of call
+    */
+
     public function reconcileDroppedCallHandler(){
 
-        $this->call->status = 'dropped';
-        $this->call->call_date = Carbon::now()->format('Y-m-d');
-        $this->call->save();
+        //Update and close previous call, if exists.
+        if($this->call) {
 
-        $prediction = $this->unsuccessfulCallHandler();
+            $this->call->status = 'dropped';
+            $this->call->call_date = Carbon::now()->format('Y-m-d');
+            $this->call->outbound_cpm_id = Auth::user()->ID;
+            $this->call->save();
 
-        (new SchedulerService())->storeScheduledCall($this->patient->ID, $prediction['window_start'], $prediction['end'], Carbon::now()->parse('m-d-Y'), Auth::user()->ID);
+        } else {
+
+            (new NoteService)->storeCallForNote($this->note, 'dropped', $this->patient, Auth::user(), 'outbound');
+
+        }
+
+        //Here, we try to get the earliest contact window for the current patient,
+        //and then determine the number of weeks to offset the next call by with
+        //some analysis of the patient's current factors.
+
+        //FACTORS
+
+        //Set current day
+        $next_window_carbon = Carbon::now();
+
+        //To determine which week we are in the current month, as a factor
+        $week_num = Carbon::now()->weekOfMonth;
+
+        //To be noted that most months technically have 5 weeks, i.e.,
+        //the last week is incomplete but has a few days. For the
+        //sake of our calculation, we observe this 5th week.
+
+        //$no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
+        //$hasHadASuccessfulCall = $no_of_successful_calls > 0 ? true : false;
+
+        $next_window_carbon = $this->getUnsuccessfulCallTimeOffset($week_num, $next_window_carbon);
+
+        //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
+        $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient, $next_window_carbon);
+
+        $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
+        $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
+
+        return (new SchedulerService())->storeScheduledCall($this->patient->ID, $window_start, $window_end, Carbon::now()->toDateString(), Auth::user()->ID);
 
     }
 
