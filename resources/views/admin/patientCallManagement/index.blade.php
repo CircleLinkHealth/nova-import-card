@@ -186,8 +186,8 @@
                                 <th>DOB</th>
                                 <th class="nosearch">Last Call Status</th>
                                 <th>Next Call</th>
-                                <th>Window Start</th>
-                                <th>Window End</th>
+                                <th>Call Time Start</th>
+                                <th>Call Time End</th>
                                 <th>Preferred Call Days</th>
                                 <th>Last Call</th>
                                 <th class="nosearch">CCM Time</th>
@@ -207,8 +207,8 @@
                                 <th>DOB</th>
                                 <th>Last Call Status</th>
                                 <th>Next Call Date</th>
-                                <th>Window Start</th>
-                                <th>Window End</th>
+                                <th>Call Time Start</th>
+                                <th>Call Time End</th>
                                 <th>Preferred Call Days</th>
                                 <th>Last Call</th>
                                 <th>CCM Time</th>

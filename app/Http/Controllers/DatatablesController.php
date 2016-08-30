@@ -56,7 +56,7 @@ class DatatablesController extends Controller
                     'calls.note_id',
                     'patient_info.cur_month_activity_time',
                     'patient_info.last_successful_contact_time',
-                    'patient_info.last_contact_time',
+                    \DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
                     'patient_info.no_call_attempts_since_last_success',
                     'patient_info.ccm_status',
                     'patient_info.birth_date',
@@ -111,7 +111,7 @@ class DatatablesController extends Controller
             })
             ->editColumn('cur_month_activity_time', function($call) {
                 if($call->inboundUser && $call->inboundUser->patientInfo) {
-                    return $call->inboundUser->patientInfo->currentMonthCCMTime;
+                    return substr($call->inboundUser->patientInfo->currentMonthCCMTime, 1);
                 } else {
                     return 'n/a';
                 }
