@@ -1,21 +1,17 @@
 <?php namespace App\Http\Controllers\Patient;
 
-use App\ForeignId;
-use App\Formatters\WebixFormatter;
-use App\Models\CCD\CcdAllergy;
-use App\Models\CCD\CcdInsurancePolicy;
-use App\Models\CCD\CcdMedication;
-use App\Models\CCD\CcdProblem;
 use App\CarePlan;
 use App\CLH\Repositories\UserRepository;
+use App\Events\CarePlanWasApproved;
+use App\Formatters\WebixFormatter;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\Location;
-use App\Models\CCD\CcdVendor;
+use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
+use App\Program;
 use App\Role;
 use App\Services\CarePlanViewService;
 use App\Services\CPM\CpmBiometricService;
@@ -27,24 +23,18 @@ use App\Services\CPM\CpmSymptomService;
 use App\Services\ReportsService;
 use App\Services\UserService;
 use App\User;
-use App\Program;
 use Auth;
 use Carbon\Carbon;
 use DateTimeZone;
 use DB;
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 use Response;
-use Symfony\Component\Console\Tests\Helper\FormatterHelperTest;
 use Symfony\Component\HttpFoundation\ParameterBag;
-
-//use EllipseSynergie\ApiResponse\Laravel\Response;
 
 class PatientCareplanController extends Controller
 {
-
     //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
     public function index(Request $request)
     {
@@ -690,8 +680,7 @@ class PatientCareplanController extends Controller
                                          CpmMedicationGroupService $medicationGroupService,
                                          CpmMiscService $miscService,
                                          CpmProblemService $problemService,
-                                         CpmSymptomService $symptomService,
-                                         Container $container
+                                         CpmSymptomService $symptomService
     )
     {
         // input
@@ -776,61 +765,9 @@ class PatientCareplanController extends Controller
 
             $miscService->syncWithUser($user, $cpmMiscs, $page, $instructions);
             $symptomService->syncWithUser($user, $cpmSymptoms, $page, $instructions);
+
+            event(new CarePlanWasApproved($user));
         }
-
-        if ($page == 3) {
-            // check for approval here
-            // should we update careplan_status?
-            if ($user->carePlanStatus != 'provider_approved') {
-                if (Auth::user()->hasRole(['provider'])) {
-                    $user->carePlanStatus = 'provider_approved'; // careplan_status
-                    $user->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver
-                    $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
-
-                    //Creating Reports for Aprima API
-                    //      Since there isn't a way to get the provider's location,
-                    //      we assume the patient's location and check it that
-                    //      is a child of Aprima's Location.
-                    $locationId = $user->getpreferredContactLocationAttribute();
-
-                    $locationObj = Location::find($locationId);
-
-                    if (!empty($locationObj) && $locationObj->parent_id == Location::APRIMA_ID) {
-                        (new ReportsService())->createAprimaPatientCarePlanPdfReport($user, $user->getCarePlanProviderApproverAttribute());
-                    }
-
-                    //If it's an Athena patient, send the PDF to Athena API
-                    $programId = Auth::user()->program_id;
-
-                    if (isset($programId)) {
-                        $vendor = CcdVendor::whereProgramId($programId)
-                            ->whereEhrName(ForeignId::ATHENA)
-                            ->whereNotNull('practice_id')
-                            ->first();
-
-                        if ($vendor) {
-                            $reportsService = $container->make(ReportsService::class);
-
-                            $response = $container->call([
-                                $reportsService, 'createAthenaPatientCarePlanPdfReport'
-                            ], [
-                                'user' => $user->ID,
-                            ]);
-                        }
-                    }
-
-                } else {
-                    $user->carePlanStatus = 'qa_approved'; // careplan_status
-                    $user->carePlanQaApprover = Auth::user()->ID; // careplan_qa_approver
-                    $user->carePlanQaDate = date('Y-m-d H:i:s'); // careplan_qa_date
-                }
-                $user->save();
-            }
-        }
-
-//        return redirect($direction)->with('messages', ['No care plan found to update.']);
-//        return redirect()->back()->with('errors', ['No care plan found to update.']);
-
 
         if ($direction) {
             return redirect($direction)->with('messages', ['Successfully updated patient care plan.']);

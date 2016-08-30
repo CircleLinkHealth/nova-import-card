@@ -1,21 +1,13 @@
 <?php namespace App\Services;
 
 use App\CarePlan;
-use App\CPRulesItem;
-use App\CPRulesPCP;
-use App\CPRulesQuestions;
-use App\CPRulesUCP;
-use App\Entities\CcdaRequest;
 use App\ForeignId;
 use App\Location;
-use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\Cpm;
 use App\Models\CPM\CpmBiometric;
-use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use App\PatientReports;
-use App\Services\AthenaAPI\Service;
 use App\User;
 use App\UserMeta;
 use Carbon\Carbon;
@@ -1014,22 +1006,6 @@ class ReportsService
             'file_base64' => $base_64_report,
             'location_id' => $locationId,
         ]);
-    }
-
-    public function createAthenaPatientCarePlanPdfReport($user, Service $athenaService)
-    {
-        if (!is_object($user)) $user = User::find($user);
-
-        $pathToPdf = $this->makePdfCareplan($user);
-
-        $ccda = Ccda::wherePatientId($user->ID)->first();
-        $ccdaRequest = CcdaRequest::whereCcdaId($ccda->id)->first();
-
-        if ($pathToPdf) {
-            $response = $athenaService->postPatientDocument($ccdaRequest->patient_id, $ccdaRequest->practice_id, $pathToPdf);
-
-            return \GuzzleHttp\json_decode($response, true);
-        }
     }
 
     public function makePdfCareplan($user)

@@ -15,6 +15,11 @@ class EventServiceProvider extends ServiceProvider {
 		'Illuminate\Auth\Events\Login' => [
 			'App\Events\UpdateUserLoginInfo'
 		],
+        'App\Events\CarePlanWasApproved' => [
+            'App\Listeners\UpdateCarePlanStatus',
+            'App\Listeners\CreateAprimaPdfCarePlan',
+            'App\Listeners\CreateAthenaPdfCarePlan',
+        ],
 	];
 
 	/**
