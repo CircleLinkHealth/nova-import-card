@@ -191,21 +191,21 @@ class PhiMail
                             // Process the content; for this example text data 
                             // is echoed to the console and non-text data is
                             // written to files.
-//                            if (!strncmp($showRes->mimeType, 'text/', 5)) {
-                                // ... do something with text parts ...
-                                Log::info('The text part of the mail');
-                                Log::info($showRes->data);
-//                            } else {
 
+                            if (str_contains($showRes->mimeType, 'plain')) {
+                                // ... do something with text parts ...
+                                Log::info('The plain text part of the mail');
+                                Log::info($showRes->data);
+                                self::writeDataFile(storage_path(str_random(20) . '.txt'), $showRes->data);
+                            } elseif (str_contains($showRes->mimeType, 'xml')) {
                                 //save ccd to file
                                 self::writeDataFile(storage_path(str_random(20) . '.xml'), $showRes->data);
-
                                 $import = $this->importCcd($cr->sender, $showRes);
 
                                 if (!$import) continue;
 
                                 $ccdas[] = $import;
-//                            }
+                            }
 
                             // Display the list of attachments and associated info. This info is only
                             // included with message part 0.
@@ -217,7 +217,6 @@ class PhiMail
                                     . "\n");
                             }
                         }
-
                         // This signals the server that the message can be safely removed from the queue
                         // and should only be sent after all required parts of the message have been
                         // retrieved and processed.
