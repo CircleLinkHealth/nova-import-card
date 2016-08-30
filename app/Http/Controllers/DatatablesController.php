@@ -186,8 +186,12 @@ class DatatablesController extends Controller
                     if($notes->count() > 0) {
                         $notesHtml .= '<ul>';
                         foreach($notes as $note) {
-                            $notesHtml .= '<li>';
-                            $notesHtml .= 'Note '.$note->created_at.':<br />';
+                            $notesHtml .= '<li style="margin:5px 0px;">';
+                            $notesHtml .= 'Note '.$note->created_at.': ';
+                            $notesHtml .= '<span style="font-weight:bold;">'.$note->type.'</span> ';
+                            if($note->isTCM == 1) {
+                                $notesHtml .= '<span class="btn-danger">Hospital</span> - ';
+                            }
                             $notesHtml .= $note->body;
                             $notesHtml .= '</li>';
                         }
