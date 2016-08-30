@@ -34,11 +34,9 @@ class PhiMail
      * @param null $line
      * @param null $errorMessage
      */
-    public function notifyAdmins($ccdas = [])
+    public function notifyAdmins($numberOfCcds)
     {
         if (app()->environment('local')) return;
-
-        $numberOfCcds = count($ccdas);
 
         //the worker generates the route using localhost so I am hardcoding it
 //        $link = route('view.files.ready.to.import');
@@ -225,7 +223,7 @@ class PhiMail
                         Log::info('Number of Attachments: ' . $cr->numAttachments);
 
                         if ($cr->numAttachments > 0) {
-                            $this->notifyAdmins($ccdas);
+                            $this->notifyAdmins($cr->numAttachments);
 
                             $message = "Checked EMR Direct Mailbox. There where {$cr->numAttachments} messages. \n";
 
