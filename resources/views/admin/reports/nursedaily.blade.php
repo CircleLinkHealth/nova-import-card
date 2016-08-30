@@ -27,7 +27,7 @@
                                             Time Since Last Activity
                                         </th>
                                         <th>
-                                            # Calls Made Today
+                                            # Calls Today
                                         </th>
                                         <th>
                                             # Successful Calls Today
@@ -35,9 +35,9 @@
                                         <th>
                                             CCM Mins Today
                                         </th>
-                                        <th>
-                                            Total Mins Today
-                                        </th>
+                                        {{--<th>--}}
+                                            {{--Total Mins Today--}}
+                                        {{--</th>--}}
                                         <th id="last" class="last">
                                             Last Activity
                                         </th>
@@ -66,7 +66,7 @@
                         {data: '# Successful Calls Today', name: '# Successful Calls Today'},
                         {data: '# Calls Today', name: '# Calls Today'},
                         {data: 'CCM Mins Today', name: 'CCM Mins Today'},
-                        {data: 'Total Mins Today', name: 'Total Mins Today'},
+//                        {data: 'Total Mins Today', name: 'Total Mins Today'},
                         {data: 'last_activity', name: 'Last Activity'},
                     ],
                     "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
@@ -83,11 +83,6 @@
                 });
 
             });
-
-            var data = table
-                    .column( 'last_activity' )
-                    .data()
-                    .sort();
 
         </script>
         <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>

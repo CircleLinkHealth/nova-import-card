@@ -14,7 +14,7 @@ class Secure {
 	public function handle($request, Closure $next)
 	{
 		if (! $request->secure()
-			&& ! in_array(app()->environment(), ['local', 'testing'])) {
+			&& ! in_array(app()->environment(), ['local', 'testing', 'worker', 'worker-staging'])) {
 			return redirect()->secure($request->getRequestUri());
 		}
 

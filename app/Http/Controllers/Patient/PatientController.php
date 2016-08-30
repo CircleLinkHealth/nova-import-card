@@ -5,6 +5,7 @@ use App\CPRulesQuestions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Observation;
+use App\PatientInfo;
 use App\Program;
 use App\Services\CarePlanViewService;
 use App\User;
@@ -25,39 +26,22 @@ class PatientController extends Controller
      */
     public function showDashboard(Request $request)
     {
-        // get number of approvals
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })->get();
-        $p = 0;
-        if ($patients->count() > 0) {
-            foreach ($patients as $user) {
-                if (!isset($user->patientInfo->careplan_status)) {
-                    continue 1;
-                }
-                // patient approval counts
-                if (Auth::user()->hasRole(['administrator', 'care-center'])) {
-                    // care-center and administrator counts number of drafts
-                    if ($user->patientInfo->careplan_status == 'draft') {
-                        $p++;
-                    }
-                } else if (Auth::user()->hasRole(['provider'])) {
-                    // provider counts number of drafts
-                    if ($user->patientInfo->careplan_status == 'qa_approved') {
-                        $p++;
-                    }
+        $pendingApprovals = 0;
 
-                }
-            }
-        }
-        $pendingApprovals = $p;
-
-        if (!$impersonatedUserEmail = $request->input('impersonatedUserEmail')) {
-            $impersonatedUserEmail = '';
+        // patient approval counts
+        if (Auth::user()->hasRole(['administrator', 'care-center'])) {
+            // care-center and administrator counts number of drafts
+            $pendingApprovals = PatientInfo::whereIn('user_id', Auth::user()->viewablePatientIds())
+                ->whereCareplanStatus('draft')
+                ->count();
+        } else if (Auth::user()->hasRole(['provider'])) {
+            // provider counts number of drafts
+            $pendingApprovals = PatientInfo::whereIn('user_id', Auth::user()->viewablePatientIds())
+                ->whereCareplanStatus('qa_approved')
+                ->count();
         }
 
-        return view('wpUsers.patient.dashboard', compact(['pendingApprovals', 'impersonatedUserEmail']));
+        return view('wpUsers.patient.dashboard', compact(['pendingApprovals']));
     }
 
     /**
@@ -255,7 +239,7 @@ class PatientController extends Controller
         //then update the status.
         $input = $request->all();
 
-        if(isset($input['patient_approval_id'])){
+        if (isset($input['patient_approval_id'])) {
             $approved_patient = User::find($input['patient_approval_id']);
             $approved_patient->carePlanStatus = 'provider_approved'; // careplan_status
             $approved_patient->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver

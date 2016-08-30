@@ -11,14 +11,6 @@ use Carbon\Carbon;
 class SchedulerService
 {
 
-    protected $callPredictor;
-
-//    //Instantiate class with a prediction algorithm of choice
-//    public function __construct(PredictCall $algorithm)
-//    {
-//        $this->callPredictor = $algorithm;
-//    }
-
     // Success is the call's status.
     // true for reached, false for not reached 
     public function getNextCall($patient, $noteId ,$success)
@@ -31,7 +23,7 @@ class SchedulerService
         //Updates Call Record
         PatientMonthlySummary::updateCallInfoForPatient($patient->patientInfo, $success);
 
-        return (new PredictCall($patient, $note, $scheduled_call, $success))->predict();
+        return (new PredictCall($patient, $scheduled_call, $success))->predict($note);
 
     }
     
@@ -79,6 +71,41 @@ class SchedulerService
             ->first();
 
         return $call;
+    }
+
+    public static function getUnAttemptedCalls(){
+
+        $calls = Call::whereStatus('scheduled')
+            ->where('call_date','<=', Carbon::now()->toDateString())->get();
+
+        $missed = array();
+
+        /*
+         * Check to see if the call is dropped if it's the current day
+         * Since we store the date and times separately for other
+         * considerations, we have to join them and compare
+         * to see if a call was missed on the same day
+        */
+
+        foreach ($calls as $call){
+
+            $end_carbon = Carbon::parse($call->call_date);
+
+            $carbon_hour_end = Carbon::parse($call->window_end)->format('H');
+            $carbon_minutes_end = Carbon::parse($call->window_end)->format('i');
+
+            $end_time = $end_carbon->setTime($carbon_hour_end, $carbon_minutes_end)->toDateTimeString();
+
+            $now_carbon = Carbon::now()->toDateTimeString();
+
+            if($end_time < $now_carbon){
+                $missed[] = $call;
+            }
+
+        }
+
+        return $missed;
+
     }
 
 }

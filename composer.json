@@ -7,16 +7,6 @@
   ],
   "license": "MIT",
   "type": "project",
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/tralves/Swaggervel"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/michalisantoniou6/php-ccd-parser"
-    }
-  ],
   "require": {
     "laravel/framework": "5.2.*",
     "franzose/closure-table": "4.*",
@@ -39,9 +29,9 @@
     "h4cc/wkhtmltoimage-amd64": "0.12.x",
     "maatwebsite/excel": "~2.1.0",
     "prettus/l5-repository": "^2.1",
+    "prettus/laravel-validation": "1.1.*",
     "laravelcollective/bus": "5.2.x",
     "maknz/slack": "^1.7",
-    "dusterio/laravel-aws-worker": "^0.1.5",
     "yajra/laravel-datatables-oracle": "^6.17"
   },
   "require-dev": {
