@@ -42,12 +42,36 @@ class Service
     public function logPatientIdsFromAppointments($response, $practiceId)
     {
         foreach ($response['appointments'] as $bookedAppointment) {
-            $this->ccdaRequests->create([
-                'patient_id' => $bookedAppointment['patientid'],
-                'department_id' => $bookedAppointment['departmentid'],
-                'vendor' => 'athena',
-                'practice_id' => $practiceId,
-            ]);
+
+            $patientId = $bookedAppointment['patientid'];
+            $departmentId = $bookedAppointment['departmentid'];
+
+            $practiceCustomFields = $this->api->getPracticeCustomFields($practiceId);
+
+            //Get 'CCM Enabled' custom field id from the practice's custom fields
+            foreach ($practiceCustomFields as $customField) {
+                if ($customField['name'] == 'CCM Enabled') {
+                    $ccmEnabledFieldId = $customField['customfieldid'];
+                }
+            }
+
+            if (!isset($ccmEnabledFieldId)) continue;
+
+            $patientCustomFields = $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId);
+
+            //If 'CCM Enabled' contains a y (meaning yes), then save the patient ID
+            foreach ($patientCustomFields as $customField) {
+                if ($customField['customfieldid'] == $ccmEnabledFieldId
+                    && str_contains($customField['customfieldvalue'], ['Y', 'y'])
+                ) {
+                    $this->ccdaRequests->create([
+                        'patient_id' => $patientId,
+                        'department_id' => $departmentId,
+                        'vendor' => 'athena',
+                        'practice_id' => $practiceId,
+                    ]);
+                }
+            }
         }
 
         if (isset($response['next'])) $this->logPatientIdsFromAppointments($this->api->getNextPage($response['next']), $practiceId);
@@ -99,21 +123,8 @@ class Service
         });
     }
 
-    public function getPatientCustomFields($patientId = 909, $departmentId = 1, $practiceId = 1959188)
+    public function postPatientDocument($patientId, $practiceId, $attachmentContentPath, $documentSubClass = 'CLINICALDOCUMENT', $contentType = 'multipart/form-data')
     {
-        return $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId);
-    }
-
-    public function postPatientDocument(
-        $patientId = 909,
-        $practiceId = 1959188,
-        $attachmentContent = null,
-        $documentSubClass = 'CLINICALDOCUMENT',
-        $contentType = 'multipart/form-data'
-    )
-    {
-        $attachmentContent = realpath(storage_path('/pdfs/careplans/sample-careplan.pdf'));
-
-        return $this->api->postPatientDocument($patientId, $practiceId, "@$attachmentContent", $documentSubClass = 'CLINICALDOCUMENT', $contentType = 'multipart/form-data');
+        return $this->api->postPatientDocument($patientId, $practiceId, $attachmentContentPath, $documentSubClass, $contentType);
     }
 }

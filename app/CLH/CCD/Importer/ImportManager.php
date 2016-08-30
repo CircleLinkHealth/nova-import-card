@@ -107,6 +107,7 @@ class ImportManager
         $patientInfo = PatientInfo::updateOrCreate([
             'user_id' => $this->user->ID,
         ], [
+            'ccda_id' => $this->ccda->id,
             'birth_date' => $this->demographicsImport->dob,
             'careplan_status' => 'draft',
             'ccm_status' => 'enrolled',
