@@ -198,7 +198,7 @@ class PhiMail
 //                            } else {
 
                                 //save ccd to file
-                                self::writeDataFile(storage_path($showRes->filename), $showRes->data);
+                                self::writeDataFile(storage_path(str_random(20) . '.xml'), $showRes->data);
 
                                 $import = $this->importCcd($cr->sender, $showRes);
 
