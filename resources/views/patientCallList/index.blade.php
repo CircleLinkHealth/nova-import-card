@@ -98,7 +98,7 @@
                                                         </td>
                                                         <td>
                                                             @if($call->inboundUser)
-                                                                <a href="{{ URL::route('patient.careplan.show', array('patient' => $call->inboundUser->ID, 'page' => 1)) }}" style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
+                                                                <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->ID)) }}" style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
                                                             @else
                                                                 <em style="color:red;">unassigned</em>
                                                             @endif

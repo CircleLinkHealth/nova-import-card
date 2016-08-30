@@ -104,7 +104,7 @@ class DatatablesController extends Controller
                 }
             })
             ->editColumn('patient_name', function($call) {
-                return '<a href="'.\URL::route('patient.demographics.show', array('patientId' => $call->inboundUser->ID, 'page' => 1)).'" target="_blank">'.$call->patient_name.'</span>';
+                return '<a href="'.\URL::route('patient.demographics.show', array('patientId' => $call->inboundUser->ID)).'" target="_blank">'.$call->patient_name.'</span>';
             })
             ->editColumn('nurse_name', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="outbound_cpm_id" column-value="'.$call->outbound_cpm_id.'">'.$call->nurse_name.'</span>';
