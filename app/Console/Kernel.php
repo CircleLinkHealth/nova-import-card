@@ -13,6 +13,7 @@ use App\Services\PhiMail\PhiMail;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Log;
+use Maknz\Slack\Facades\Slack;
 
 
 class Kernel extends ConsoleKernel {
@@ -50,6 +51,13 @@ class Kernel extends ConsoleKernel {
 			foreach ($calls as $call){
 				$handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call, false))->reconcileDroppedCallHandler();
 			}
+
+			if (! app()->environment('worker-staging')) return;
+
+		foreach ($handled as $call){
+			Slack::to('#background-tasks-dev')->send("We just fixed call: {$call->id}");
+		}
+
             
         })->everyFiveMinutes();
 
