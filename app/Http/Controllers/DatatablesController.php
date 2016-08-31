@@ -182,16 +182,29 @@ class DatatablesController extends Controller
             ->addColumn('notes_html', function($call) {
                 $notesHtml = '';
                 if($call->inboundUser) {
-                    $notes = $call->inboundUser->notes()->orderBy('created_at','desc')->limit(3)->get();
+                    $notes = $call->inboundUser->notes()->with('call')->orderBy('created_at','desc')->limit(3)->get();
                     if($notes->count() > 0) {
                         $notesHtml .= '<ul>';
                         foreach($notes as $note) {
                             $notesHtml .= '<li style="margin:5px 0px;">';
                             $notesHtml .= 'Note '.$note->created_at.': ';
-                            $notesHtml .= '<span style="font-weight:bold;">'.$note->type.'</span> ';
-                            if($note->isTCM == 1) {
-                                $notesHtml .= '<span class="btn-danger">Hospital</span> - ';
+
+                            //Call Info
+                            if (count($note->call) > 0) {
+                                if ($note->call->is_cpm_inbound) {
+                                    $notesHtml .= '<div class="label label-info" style="margin:5px;">Inbound Call</div>';
+                                } else {
+                                    $notesHtml .= '<div class="label label-info" style="margin:5px;">Outbound Call</div>';
+                                }
+
+                                if ($note->call->status == 'reached') {
+                                    $notesHtml .= '<div class="label label-info" style="margin:5px;">Successful Clinical Call</div>';
+                                }
                             }
+                            if ($note->isTCM) {
+                                $notesHtml .= '<div class="label label-danger">Patient Recently in Hospital/ER</div>';
+                            }
+                            $notesHtml .= '<span style="font-weight:bold;">'.$note->type.'</span> ';
                             $notesHtml .= $note->body;
                             $notesHtml .= '</li>';
                         }
