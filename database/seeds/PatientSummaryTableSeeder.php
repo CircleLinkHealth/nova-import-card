@@ -67,12 +67,13 @@ class PatientSummaryTableSeeder extends Seeder
 //                $this->command->info('Completed Patient: ' . $patient->user_id . '!');
 //                $this->command->line('');
 
-                $this->command->info($month . 'Fin.');
-
             }
 
-            $this->command->info('All Done Here. Enjoy Your Shiny New Patient Statistics!');
+            $this->command->info($month . 'Fin.');
 
         }
+
+        $this->command->info('All Done Here. Enjoy Your Shiny New Patient Statistics!');
+
     }
 }
