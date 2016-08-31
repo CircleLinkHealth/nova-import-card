@@ -54,9 +54,9 @@ class Kernel extends ConsoleKernel {
 
 			if (! app()->environment('worker-staging')) return;
 
-		foreach ($handled as $call){
-			Slack::to('#background-tasks-dev')->send("We just fixed call: {$call->id}");
-		}
+			foreach ($handled as $call){
+				Slack::to('#background-tasks-dev')->send("We just fixed call: {$call->id}");
+			}
 
             
         })->everyFiveMinutes();
