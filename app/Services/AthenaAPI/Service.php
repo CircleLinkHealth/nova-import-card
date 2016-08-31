@@ -116,9 +116,6 @@ class Service
             $importer = new QAImportManager($vendor->program_id, $ccda);
             $output = $importer->generateCarePlanFromCCD();
 
-            $ccda->imported = true;
-            $ccda->save();
-
             return $ccda;
         });
     }
