@@ -59,7 +59,7 @@ class Kernel extends ConsoleKernel {
 			}
 
             
-        })->everyFiveMinutes();
+        })->everyMinute();
 
 	}
 }
