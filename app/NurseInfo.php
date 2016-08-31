@@ -16,6 +16,11 @@ class NurseInfo extends Model
         return $this->belongsTo('App\User', 'ID', 'user_id');
     }
 
+    public function windows()
+    {
+        return $this->hasMany('App\NurseContactWindow', 'nurse_info_id', 'id');
+    }
+
     public function calls(){
     
         return $this->hasMany('App\Call');

@@ -57,14 +57,15 @@ class PredictCall
     public function predict($note){
 
     $this->note = $note;
-    
-        if ($this->callStatus) {
+
+
+        if ($this->callStatus == true) {
 
             return $this->successfulCallHandler();
 
         } else {
 
-            return $this->successfulCallHandler();
+            return $this->unsuccessfulCallHandler();
 
         }
 

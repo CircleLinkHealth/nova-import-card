@@ -15,7 +15,8 @@ class SchedulerService
     // true for reached, false for not reached 
     public function getNextCall($patient, $noteId ,$success)
     {
-
+        
+        //Collect last known scheduled call
         $scheduled_call = $this->getScheduledCallForPatient($patient);
 
         $note = Note::find($noteId);
