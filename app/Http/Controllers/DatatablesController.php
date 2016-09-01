@@ -7,6 +7,7 @@ use App\User;
 use Yajra\Datatables\Datatables;
 use App\Call;
 use Collection;
+use Carbon\Carbon;
 
 class DatatablesController extends Controller
 {
@@ -37,6 +38,8 @@ class DatatablesController extends Controller
 
     public function anyCallsManagement()
     {
+        $date = Carbon::now()->startOfMonth();
+
         $calls = Call::with('inboundUser')
             ->with('outboundUser')
             ->with('note')
@@ -71,7 +74,11 @@ class DatatablesController extends Controller
             ->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
             ->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
             ->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
-            ->leftJoin('patient_monthly_summaries', 'patient_monthly_summaries.patient_info_id','=','patient_info.id')
+            ->leftJoin('patient_monthly_summaries', function($join) use ($date)
+            {
+                $join->on('patient_monthly_summaries.patient_info_id', '=', 'patient_info.id');
+                $join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
+            })
             ->leftJoin('wp_blogs AS program', 'patient.program_id','=','program.blog_id')
             ->leftJoin('patient_care_team_members', function($join)
             {
