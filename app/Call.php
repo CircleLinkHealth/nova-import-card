@@ -7,9 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Call extends Model
 {
-
-
-
+    
     protected $table = 'calls';
 
     protected $fillable = [
@@ -29,7 +27,9 @@ class Call extends Model
         'call_time',
         'created_at',
 
-        'call_date',
+        'called_date',
+        'scheduled_date',
+
         'window_start',
         'window_end',
 

@@ -103,7 +103,7 @@ class PredictCall
 
             $this->call->status = 'reached';
             $this->call->note_id = $this->note->id;
-            $this->call->called_date = Carbon::now()->format('Y-m-d');
+            $this->call->called_date = Carbon::now()->toDateTimeString();
             $this->call->outbound_cpm_id = Auth::user()->ID;
             $this->call->save();
 
@@ -174,7 +174,7 @@ class PredictCall
 
             $this->call->status = 'not reached';
             $this->call->note_id = $this->note->id;
-            $this->call->called_date = Carbon::now()->format('Y-m-d');
+            $this->call->called_date = Carbon::now()->toDateTimeString();
             $this->call->outbound_cpm_id = Auth::user()->ID;
             $this->call->save();
 
