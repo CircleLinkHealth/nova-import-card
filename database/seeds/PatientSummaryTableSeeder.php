@@ -18,7 +18,6 @@ class PatientSummaryTableSeeder extends Seeder
          */
 
         $dates = [
-            '2016-07-01',
             '2016-08-01',
             '2016-09-01'
         ];
@@ -38,19 +37,12 @@ class PatientSummaryTableSeeder extends Seeder
 //                $this->command->info('Processing Patient: ' . $patient->user_id . '...');
 //                $this->command->line('');
 
-                $no_of_calls = Call::where('outbound_cpm_id', $patient->user_id)
-                    ->where(
-                        function ($q) use ($patient) {
-                            $q->where('outbound_cpm_id', $patient->user_id)
-                                ->orWhere('inbound_cpm_id', $patient->user_id);
-                        })
+                $no_of_calls = Call::where('inbound_cpm_id', $patient->user_id)
                     ->where('created_at', '>=', $start_date)
                     ->where('created_at', '<=', $end_date)->count();
 
-                $no_of_successful_calls = Call::where('status', 'reached')->where(function ($q) use ($patient) {
-                    $q->where('outbound_cpm_id', $patient->user_id)
-                        ->orWhere('inbound_cpm_id', $patient->user_id);
-                })
+                $no_of_successful_calls = Call::where('status', 'reached')
+                    ->where('inbound_cpm_id', $patient->user_id)
                     ->where('created_at', '<=', $end_date)
                     ->where('created_at', '>=', $start_date)->count();
 
