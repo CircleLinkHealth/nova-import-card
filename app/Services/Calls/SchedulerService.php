@@ -51,7 +51,7 @@ class SchedulerService
             'call_time' => 0,
             'created_at' => Carbon::now()->toDateTimeString(),
 
-            'call_date' => $date,
+            'scheduled_date' => $date,
             'window_start' => $window_start,
             'window_end' => $window_end,
 
@@ -77,7 +77,7 @@ class SchedulerService
     public static function getUnAttemptedCalls(){
 
         $calls = Call::whereStatus('scheduled')
-            ->where('call_date','<=', Carbon::now()->toDateString())->get();
+            ->where('scheduled_date','<=', Carbon::now()->toDateString())->get();
 
         $missed = array();
 
@@ -90,7 +90,7 @@ class SchedulerService
 
         foreach ($calls as $call){
 
-            $end_carbon = Carbon::parse($call->call_date);
+            $end_carbon = Carbon::parse($call->scheduled_date);
 
             $carbon_hour_end = Carbon::parse($call->window_end)->format('H');
             $carbon_minutes_end = Carbon::parse($call->window_end)->format('i');

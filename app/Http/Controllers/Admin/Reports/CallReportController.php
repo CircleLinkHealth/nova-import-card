@@ -100,7 +100,7 @@ class CallReportController extends Controller {
 
 				foreach ($calls as $call) {
 					//dd($call);
-					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->birth_date, $call->status, $call->call_date, $call->window_start, $call->window_end, $call->last_successful_contact_time, $call->cur_month_activity_time, $call->no_of_calls, $call->no_of_successful_calls, $call->ccm_status, $call->billing_provider, $call->program_name);
+					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->birth_date, $call->status, $call->scheduled_date, $call->window_start, $call->window_end, $call->last_successful_contact_time, $call->cur_month_activity_time, $call->no_of_calls, $call->no_of_successful_calls, $call->ccm_status, $call->billing_provider, $call->program_name);
 					$sheet->appendRow($columns);
 				}
 			});

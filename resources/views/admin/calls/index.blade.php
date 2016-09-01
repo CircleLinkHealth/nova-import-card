@@ -20,7 +20,7 @@
                 <td>{{$call->id}}</td>
                 <td>{{$call->inbound_cpm_id}}</td>
                 <td>{{$call->status}}</td>
-                <td>{{$call->call_date}}</td>
+                <td>{{$call->called_date}}</td>
                 <td>{{$call->window_start}} to {{$call->window_end}}</td>
             </tr>
         @endforeach

@@ -88,7 +88,7 @@ class DatatablesController extends Controller
                 return '<input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
             })
             ->editColumn('call_date', function($call) {
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="call_date" column-value="'.$call->call_date.'">'.$call->call_date.'</span>';
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="call_date" column-value="'.$call->scheduled_date.'">'.$call->call_date.'</span>';
             })
             ->editColumn('window_start', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="window_start" column-value="'.$call->window_start.'">'.$call->window_start.'</span>';

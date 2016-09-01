@@ -24,7 +24,7 @@ class CallsTableSeeder extends Seeder {
                 echo 'Call exists ' . $user->ID . PHP_EOL;
             } else {
                 $obj = new Call;
-                $obj->call_date = '2016-08-26';
+                $obj->scheduled_date = '2016-08-26';
                 $obj->window_start = '08:40';
                 $obj->window_end = '15:40';
                 $obj->service = 'phone';

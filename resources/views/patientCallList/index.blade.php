@@ -103,7 +103,7 @@
                                                                 <em style="color:red;">unassigned</em>
                                                             @endif
                                                         </td>
-                                                        <td>{{ $call->call_date }}</td>
+                                                        <td>{{ $call->called_date }}</td>
                                                         <td>{{ $call->window_start }}</td>
                                                         <td>{{ $call->window_end }}</td>
                                                         <td>
