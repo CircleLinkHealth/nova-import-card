@@ -300,28 +300,27 @@ class NotesController extends Controller
         // If the note wasn't a phone call, redirect to Notes/Offline Activities page
         // If the note was a successful or unsuccessful call, take to prediction
         // engine
-        
-        if(!isset($input['phone'])){
 
-            return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
+        if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
 
+            if (isset($input['call_status']) && $input['call_status'] == 'reached') {
+                //Updates when the patient was successfully contacted last
+                $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
+                //predict
+                $prediction = (new SchedulerService(new PredictCall))->getNextCall($patient, $note->id, true);
+            } else {
+                //predict
+                $prediction = (new SchedulerService(new PredictCall))->getNextCall($patient, $note->id, false);
+            }
+
+            // add last contact time regardless of if success
+            $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+            $info->save();
+
+            return view('wpUsers.patient.calls.create', $prediction);
         }
 
-        if(isset($input['call_status']) && $input['call_status'] == 'reached'){
-            //Updates when the patient was successfully contacted last
-            $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
-            //predict
-            $prediction = (new SchedulerService(new PredictCall))->getNextCall($patient, $note->id, true);
-        } else {
-            //predict
-            $prediction = (new SchedulerService(new PredictCall))->getNextCall($patient, $note->id, false);
-        }
-
-        // add last contact time regardless of if success
-        $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
-        $info->save();
-
-        return view('wpUsers.patient.calls.create', $prediction);
+        return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
 
     }
     
