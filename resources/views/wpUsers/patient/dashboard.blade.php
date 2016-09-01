@@ -49,6 +49,7 @@
                         </a>
                     </li>
 
+                    @role(['administrator', 'care-center'])
                     <li class="menu-item">
                         <a id="patient-list" href="{{ URL::route('patientCallList.index', array()) }}">
                             <div class="icon-container column-centered">
@@ -59,6 +60,7 @@
                             </div>
                         </a>
                     </li>
+                    @endrole
 
                     {{--<li class="menu-item">--}}
                         {{--<a id="my-alerts" href="{{ URL::route('patients.demographics.show', array()) }}">--}}
