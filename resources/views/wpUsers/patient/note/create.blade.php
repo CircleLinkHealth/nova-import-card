@@ -141,7 +141,6 @@
                                                                                      value="outbound"
                                                                                      id="Outbound"/><label
                                                                 for="Outbound"><span> </span>Outbound</label></div>
-                                                    <input type="hidden" name="call_status" value="">
                                                     <div>
                                                         <div class="radio-inline"><input type="checkbox"
                                                                                          name="call_status"
@@ -249,7 +248,7 @@
 
         //@todo check bug later.
 
-        $("input:checkbox").on('click', function () {
+        $("#phone").on('click', function () {
             // in the handler, 'this' refers to the box clicked on
             var $box = $(this);
             if ($box.is(":checked")) {
@@ -263,6 +262,7 @@
                 $box.prop("checked", true);
 
             } else {
+                $("#Outbound").prop("checked", false);
                 $box.prop("checked", false);
             }
         });
