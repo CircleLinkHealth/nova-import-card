@@ -195,7 +195,7 @@ class NoteService
             'outbound_cpm_id' => $outbound_id,
 
             //@todo figure out call times!
-            'called_date' => Carbon::now()->format('Y-m-d'),
+            'called_date' => Carbon::now()->toDateTimeString(),
 
             'call_time' => 0,
             'created_at' => $note->performed_at,
