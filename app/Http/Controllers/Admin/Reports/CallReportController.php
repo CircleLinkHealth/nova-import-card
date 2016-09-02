@@ -42,7 +42,7 @@ class CallReportController extends Controller {
 					'calls.status',
 					'calls.outbound_cpm_id',
 					'calls.inbound_cpm_id',
-					'calls.call_date',
+					'calls.scheduled_date',
 					'calls.window_start',
 					'calls.window_end',
 					'notes.type AS note_type',
@@ -95,7 +95,7 @@ class CallReportController extends Controller {
 				});
 				$i = 0;
 				// header
-				$userColumns = array('call_id', 'nurse_name', 'patient_name', 'birth_date', 'status', 'call_date', 'window_start', 'window_end', 'last_successful_contact_time', 'cur_month_activity_time', 'no_of_calls', 'no_of_successful_calls', 'ccm_status', 'billing_provider', 'program_name');
+				$userColumns = array('call_id', 'nurse_name', 'patient_name', 'birth_date', 'status', 'scheduled_date', 'window_start', 'window_end', 'last_successful_contact_time', 'cur_month_activity_time', 'no_of_calls', 'no_of_successful_calls', 'ccm_status', 'billing_provider', 'program_name');
 				$sheet->appendRow($userColumns);
 
 				foreach ($calls as $call) {

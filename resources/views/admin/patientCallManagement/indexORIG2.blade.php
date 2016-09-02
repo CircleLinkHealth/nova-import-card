@@ -129,7 +129,7 @@
                                                 <em style="color:red;">unassigned</em>
                                             @endif
                                         </td>
-                                        <td class="cpm-editable" field="call_date" data-value="{{ $call->call_date }}">{{ $call->call_date }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon" call-id="{{ $call->id }}" column-name="call_date" column-value="{{ $call->call_date }}"></span></a>
+                                        <td class="cpm-editable" field="scheduled_date" data-value="{{ $call->call_date }}">{{ $call->call_date }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon" call-id="{{ $call->id }}" column-name="scheduled_date" column-value="{{ $call->call_date }}"></span></a>
                                         </td>
                                         <td class="cpm-editable" field="window_start" data-value="{{ $call->window_start }}">{{ $call->window_start }} <a href="#"><span class="glyphicon glyphicon-edit cpm-editable-icon" call-id="{{ $call->id }}" column-name="window_start" column-value="{{ $call->window_start }}"></span></a>
                                         </td>

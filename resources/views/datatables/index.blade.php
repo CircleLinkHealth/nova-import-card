@@ -60,7 +60,7 @@
                     alert( $('[name=nurseFormSelect]').val() );
                     var html = $('#nurseFormWrapper').html() + ' <a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>';
                     $(cpmEditableTd).html(html);
-                } else if(cpmEditableColumnName == 'call_date') {
+                } else if(cpmEditableColumnName == 'scheduled_date') {
                     $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="date" type="editableInput" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 } else if(cpmEditableColumnName == 'window_start' || cpmEditableColumnName == 'window_end') {
                     $(cpmEditableTd).html('<input id="editableInput" style="width:50px;" class="" name="editableInput" type="input" value="' + cpmEditableColumnValue + '"  data-field="time" data-format="HH:mm" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
@@ -221,7 +221,7 @@
                 {data: 'status', name: 'status'},
                 {data: 'patient_name', name: 'patient_name'},
                 {data: 'birth_date', name: 'birth_date'},
-                {data: 'call_date', name: 'call_date'},
+                {data: 'scheduled_date', name: 'scheduled_date'},
                 {data: 'window_start', name: 'window_start'},
                 {data: 'window_end', name: 'window_end'},
                 {data: 'nurse_name', name: 'nurse_name'},

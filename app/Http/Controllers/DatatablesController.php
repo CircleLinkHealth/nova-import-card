@@ -50,7 +50,7 @@ class DatatablesController extends Controller
                     'calls.status',
                     'calls.outbound_cpm_id',
                     'calls.inbound_cpm_id',
-                    'calls.call_date',
+                    'calls.scheduled_date',
                     'calls.window_start',
                     'calls.window_end',
                     'notes.type AS note_type',
@@ -94,8 +94,8 @@ class DatatablesController extends Controller
             ->editColumn('call_id', function($call) {
                 return '<input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
             })
-            ->editColumn('call_date', function($call) {
-                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="call_date" column-value="'.$call->scheduled_date.'">'.$call->call_date.'</span>';
+            ->editColumn('scheduled_date', function($call) {
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="scheduled_date" column-value="'.$call->scheduled_date.'">'.$call->scheduled_date.'</span>';
             })
             ->editColumn('window_start', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="window_start" column-value="'.$call->window_start.'">'.$call->window_start.'</span>';

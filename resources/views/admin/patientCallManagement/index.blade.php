@@ -72,7 +72,7 @@
                             console.log('current element id ==:' + $(this).attr('id'));
                         }
                     });
-                } else if(cpmEditableColumnName == 'call_date') {
+                } else if(cpmEditableColumnName == 'scheduled_date') {
                     $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="date" type="editableInput" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 } else if(cpmEditableColumnName == 'window_start' || cpmEditableColumnName == 'window_end') {
                     $(cpmEditableTd).html('<input id="editableInput" style="width:50px;" class="" name="editableInput" type="input" value="' + cpmEditableColumnValue + '"  data-field="time" data-format="HH:mm" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
@@ -265,7 +265,7 @@
                     {data: 'patient_name', name: 'patient_name'},
                     {data: 'birth_date', name: 'birth_date'},
                     {data: 'no_call_attempts_since_last_success', name: 'no_call_attempts_since_last_success', searchable: false},
-                    {data: 'call_date', name: 'call_date'},
+                    {data: 'scheduled_date', name: 'scheduled_date'},
                     {data: 'window_start', name: 'window_start'},
                     {data: 'window_end', name: 'window_end'},
                     {data: 'patient_call_window_days_short', name: 'patient_call_window_days_short'},

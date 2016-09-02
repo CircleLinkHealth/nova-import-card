@@ -42,7 +42,7 @@ class PatientCallManagementController extends Controller {
 		}
 
 		// get all calls
-		$calls = Call::where('call_date', '!=', '0000-00-00');
+		$calls = Call::where('scheduled_date', '!=', '0000-00-00');
 
 		// filter date
 		//$date = new DateTime(date('Y-m-d'));
@@ -50,7 +50,7 @@ class PatientCallManagementController extends Controller {
 		if($request->input('date')) {
 			if ( strtolower($request->input('date')) != 'all' ) {
 				$date = new DateTime($request->input('date') . ' 00:00:01');
-				$calls->where('call_date', '=', $date->format('Y-m-d'));
+				$calls->where('scheduled_date', '=', $date->format('Y-m-d'));
 				$date = $date->format('Y-m-d');
 			}
 		}
@@ -75,7 +75,7 @@ class PatientCallManagementController extends Controller {
 			$calls->where( 'status', '=', $filterStatus );
 		}
 
-		$calls->orderBy('call_date', 'asc');
+		$calls->orderBy('scheduled_date', 'asc');
 		$calls->orderBy('window_start', 'asc');
 		//$calls = $calls->paginate( 10 );
 		$calls = $calls->get();
