@@ -120,12 +120,11 @@ class ActivityService
         if (!empty($users)) {
             // loop through each user
             foreach ($users as $user) {
-                /*
                 // get all activities for user for month
                 $totalDuration = $this->getTotalActivityTimeForMonth($user->ID, $month, $year);
 
                 //update report
-                (new PatientMonthlySummary())->updateMonthlyReportForPatient($user, $totalDuration);
+                (new PatientMonthlySummary())->updateCCMInfoForPatient($user->patientInfo, $totalDuration);
 
                 // update cur_month_activity_time with total
                 PatientInfo::updateOrCreate([
@@ -133,7 +132,6 @@ class ActivityService
                 ], [
                     'cur_month_activity_time' => $totalDuration
                 ]);
-                */
             }
         }
         return true;
