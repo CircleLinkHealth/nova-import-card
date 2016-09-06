@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PredictCall
 {
+
     /*
     ------------------------------------*---------------------------------------
     Currently, the factors taken into consideration are:
@@ -25,9 +26,8 @@ class PredictCall
     private $call;
     private $callStatus;
     private $patient;
+    //Since you can't pass a note in for the reconcile function
     private $note = null;
-    private $callsThisMonth;
-    private $successfulCallsThisMonth;
     private $ccmTime;
 
     public function __construct(User $calledPatient, $currentCall, $currentCallStatus)
@@ -37,9 +37,6 @@ class PredictCall
         $this->callStatus = $currentCallStatus;
         
         $this->patient = $calledPatient;
-
-        $this->callsThisMonth = Call::numberOfCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
-        $this->successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
 
         $this->ccmTime = $this->patient->patientInfo->cur_month_activity_time;
 
@@ -85,9 +82,12 @@ class PredictCall
         //**CCM TIME**//
         // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
 
-        $prediction['no_of_successful_calls'] = $this->successfulCallsThisMonth;
-        $prediction['no_of_calls'] = $this->callsThisMonth;
-        $prediction['success_percent'] = ($this->successfulCallsThisMonth == 0 || $this->callsThisMonth == 0) ? 0 : ( ($this->successfulCallsThisMonth) / ($this->callsThisMonth) ) * 100;
+        $callsThisMonth = Call::numberOfCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
+        $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
+
+        $prediction['no_of_successful_calls'] = $successfulCallsThisMonth;
+        $prediction['no_of_calls'] = $callsThisMonth;
+        $prediction['success_percent'] = ($successfulCallsThisMonth == 0 || $callsThisMonth == 0) ? 0 : ( ($successfulCallsThisMonth) / ($callsThisMonth) ) * 100;
         $prediction['ccm_time_achieved'] = $ccm_time_achieved;
         $prediction['formatted_monthly_time'] = $formattedMonthlyTime;
 
