@@ -241,7 +241,7 @@ class PatientCareplanController extends Controller
                 'letter' => $letter
             ]);
             $pdf->setOption('footer-center', 'Page [page]');
-            $pdf->setOption('margin-top', '2');
+            //$pdf->setOption('margin-top', '2');
 
             $fileName = $storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf';
             $fileNameWithPath = base_path($fileName);
