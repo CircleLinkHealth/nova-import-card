@@ -246,38 +246,18 @@ class PredictCall
         if($this->call) {
 
             $this->call->status = 'dropped';
-            $this->call->outbound_cpm_id = Auth::user()->ID;
             $this->call->save();
 
         } else {
 
-            (new NoteService)->storeCallForNote($this->note, 'dropped', $this->patient, Auth::user(), 'outbound');
+            (new NoteService)->storeCallForNote($this->note, 'dropped', $this->patient, null, 'outbound');
 
         }
 
-        //Here, we try to get the earliest contact window for the current patient,
-        //and then determine the number of weeks to offset the next call by with
-        //some analysis of the patient's current factors.
-
-        //FACTORS
-
-        //Set current day
-        $next_window_carbon = Carbon::now();
-
-        //To determine which week we are in the current month, as a factor
-        $week_num = Carbon::now()->weekOfMonth;
-
-        //To be noted that most months technically have 5 weeks, i.e.,
-        //the last week is incomplete but has a few days. For the
-        //sake of our calculation, we observe this 5th week.
-
-        //$no_of_successful_calls = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
-        //$hasHadASuccessfulCall = $no_of_successful_calls > 0 ? true : false;
-
-        $next_window_carbon = $this->getUnsuccessfulCallTimeOffset($week_num, $next_window_carbon);
+        //Call missed, call on next available call window.
 
         //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
-        $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient, $next_window_carbon);
+        $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient, Carbon::now());
 
         $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
         $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
