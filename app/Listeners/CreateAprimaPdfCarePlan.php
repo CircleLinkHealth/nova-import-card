@@ -13,20 +13,23 @@ class CreateAprimaPdfCarePlan
     /**
      * Create the event listener.
      *
-     * @return void
+     * @param Location $location
+     * @param ReportsService $reportsService
      */
-    public function __construct()
+    public function __construct(Location $location, ReportsService $reportsService)
     {
-        //
+        $this->location = $location;
+        $this->reportsService = $reportsService;
     }
 
     /**
      * Handle the event.
      *
-     * @param  CarePlanWasApproved  $event
-     * @return void
+     * @param  CarePlanWasApproved $event
+     * @internal param Location $location
+     * @internal param ReportsService $reportsService
      */
-    public function handle(CarePlanWasApproved $event, Location $location, ReportsService $reportsService)
+    public function handle(CarePlanWasApproved $event)
     {
         if (! auth()->user()->hasRole(['provider'])) return;
 
@@ -38,10 +41,10 @@ class CreateAprimaPdfCarePlan
         //      is a child of Aprima's Location.
         $locationId = $user->getpreferredContactLocationAttribute();
 
-        $locationObj = $location->find($locationId);
+        $locationObj = $this->location->find($locationId);
 
         if (!empty($locationObj) && $locationObj->parent_id == Location::APRIMA_ID) {
-            $reportsService->createAprimaPatientCarePlanPdfReport($user, $user->getCarePlanProviderApproverAttribute());
+            $this->reportsService->createAprimaPatientCarePlanPdfReport($user, $user->getCarePlanProviderApproverAttribute());
         }
     }
 }

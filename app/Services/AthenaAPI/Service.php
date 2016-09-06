@@ -35,7 +35,7 @@ class Service
     {
         $today = Carbon::today()->format('m/d/Y');
 
-        $response = $this->api->getBookedAppointments($practiceId, '05/01/2016', $today, false, 1000, 1);
+        $response = $this->api->getBookedAppointments($practiceId, $today, $today, false, 1000, 1);
         $this->logPatientIdsFromAppointments($response, $practiceId);
     }
 

@@ -18,27 +18,39 @@ class CreateAthenaPdfCarePlan
     /**
      * Create the event listener.
      *
-     * @return void
+     * @param CcdVendor $ccdVendor
+     * @param CcdaRepository $ccdaRepository
+     * @param CcdaRequestRepository $ccdaRequest
+     * @param ReportsService $reportsService
+     * @param Service $athenaService
      */
-    public function __construct()
+    public function __construct(CcdVendor $ccdVendor,
+                                CcdaRepository $ccdaRepository,
+                                CcdaRequestRepository $ccdaRequest,
+                                ReportsService $reportsService,
+                                Service $athenaService)
     {
-        //
+        $this->ccdVendor = $ccdVendor;
+        $this->ccdaRepository = $ccdaRepository;
+        $this->ccdaRequest = $ccdaRequest;
+        $this->reportsService = $reportsService;
+        $this->athenaService = $athenaService;
     }
 
     /**
      * Handle the event.
      *
      * @param  CarePlanWasApproved $event
-     * @return void
+     * @return mixed|void
+     * @internal param CcdVendor $ccdVendor
+     * @internal param CcdaRepository $ccdaRepository
+     * @internal param CcdaRequestRepository $ccdaRequest
+     * @internal param ReportsService $reportsService
+     * @internal param Service $athenaService
      */
-    public function handle(CarePlanWasApproved $event,
-                           CcdVendor $ccdVendor,
-                           CcdaRepository $ccdaRepository,
-                           CcdaRequestRepository $ccdaRequest,
-                           ReportsService $reportsService,
-                           Service $athenaService)
+    public function handle(CarePlanWasApproved $event)
     {
-        if (! auth()->user()->hasRole(['provider'])) return;
+        if (!auth()->user()->hasRole(['provider'])) return;
 
 
         //If it's an Athena patient, send the PDF to Athena API
@@ -46,24 +58,24 @@ class CreateAthenaPdfCarePlan
         $user = $event->patient;
 
         if (isset($programId)) {
-            $vendor = $ccdVendor->whereProgramId($programId)
+            $vendor = $this->ccdVendor->whereProgramId($programId)
                 ->whereEhrName(ForeignId::ATHENA)
                 ->whereNotNull('practice_id')
                 ->first();
 
             if ($vendor) {
-                $pathToPdf = $reportsService->makePdfCareplan($user);
+                $pathToPdf = $this->reportsService->makePdfCareplan($user);
 
-                $ccda = $ccdaRepository->findWhere([
+                $ccda = $this->ccdaRepository->findWhere([
                     'patient_id' => $user->ID
                 ])->first();
 
-                $ccdaRequest = $ccdaRequest->findWhere([
+                $ccdaRequest = $this->ccdaRequest->findWhere([
                     'ccda_id' => $ccda->id,
                 ])->first();
 
                 if ($pathToPdf) {
-                    $response = $athenaService->postPatientDocument($ccdaRequest->patient_id, $ccdaRequest->practice_id, $pathToPdf);
+                    $response = $this->athenaService->postPatientDocument($ccdaRequest->patient_id, $ccdaRequest->practice_id, $pathToPdf);
 
                     return json_decode($response, true);
                 }
