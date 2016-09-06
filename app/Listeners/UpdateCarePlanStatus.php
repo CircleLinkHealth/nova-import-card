@@ -29,7 +29,8 @@ class UpdateCarePlanStatus
     {
         $user = $event->patient;
 
-        if ($user->carePlanStatus == 'provider_approved') return;
+        //Stop the propagation to other Listeners if the CarePlan is already approved.
+        if ($user->carePlanStatus == 'provider_approved') return false;
 
         if (auth()->user()->hasRole(['provider'])) {
             $user->carePlanStatus = 'provider_approved'; // careplan_status
