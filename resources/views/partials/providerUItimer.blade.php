@@ -7,7 +7,7 @@
                 <h4 class="modal-title" id="myModalLabel">You have gone idle....</h4>
             </div>
             <div class="modal-body">
-                <p>We haven’t heard from you in a while. Do you wish to keep this session open?</p>
+                <p>We haven’t heard from you in a while. Were you working on a specific patient while we were idle?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" id="timeModalNo" class="btn btn-warning" data-dismiss="modal">No</button>
