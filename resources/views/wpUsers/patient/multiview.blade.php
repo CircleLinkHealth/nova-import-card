@@ -61,7 +61,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             <div class="row gutter">
                                 <div class="col-xs-12">
                                     <div class="col-xs-1 col-xs-offset-5"></div>
-                                    <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
+                                    <div class="col-xs-12 address"><br><strong>On Behalf of</strong></div>
                                     <div class="col-xs-7 address">
                                         @if($billing)
                                             @if($billing->fullName){{$billing->fullName}}@endif @if($billing->qualification){{$billing->qualification}}@endif
