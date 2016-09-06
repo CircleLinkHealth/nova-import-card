@@ -43,7 +43,8 @@ class CallController extends Controller
         $window_end = Carbon::parse($input['window_end'])->format('H:i');
 
         //We are storing the current caller as the next scheduled call's outbound cpm_id
-        $this->scheduler->storeScheduledCall($input['patient_id'], $window_start, $window_end,$input['date'], Auth::user()->ID);
+        $this->scheduler->storeScheduledCall($input['patient_id'], $window_start, $window_end, $input['date'],
+            Auth::user()->hasRole('care-center') ? Auth::user()->ID : null);
 
         return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])->with('messages', ['Successfully Created Note']);
         
