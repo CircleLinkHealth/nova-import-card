@@ -486,7 +486,7 @@ class PredictCall
             . ' was called '. $status .' in <b>week '
             . $week_num . ' </b> and has <b>ccm time: '
             . intval($this->ccmTime/60) . ' mins </b> ('
-            . $this->ccmTime . ' seconds). His or her next suggested call window is: <b>'
+            . $this->ccmTime . ' seconds). Patient\'s predicted call window is: <b>'
             . $next_window_carbon->toDateString() . ' (' . Carbon::parse($window_start)->format('g:i a'). ' to ' . Carbon::parse($window_end)->format('g:i a') . ')</b>.' ;
     }
 
