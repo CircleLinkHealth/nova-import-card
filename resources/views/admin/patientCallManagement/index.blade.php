@@ -183,7 +183,7 @@
                                 <th class="nosearch" style="width:50px;"></th>
                                 <th>Nurse</th>
                                 <th>Patient</th>
-                                <th>DOB</th>
+                                <th>Program</th>
                                 <th class="nosearch">Last Call Status</th>
                                 <th>Next Call</th>
                                 <th>Call Time Start</th>
@@ -195,7 +195,7 @@
                                 <th>Successfull Calls</th>
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
-                                <th>Program</th>
+                                <th>DOB</th>
                             </tr>
                             </thead>
                             <tfoot>
@@ -204,7 +204,7 @@
                                 <th style="width:50px;"></th>
                                 <th>Nurse</th>
                                 <th>Patient</th>
-                                <th>DOB</th>
+                                <th>Program</th>
                                 <th>Last Call Status</th>
                                 <th>Next Call Date</th>
                                 <th>Call Time Start</th>
@@ -216,7 +216,7 @@
                                 <th>Successfull Calls</th>
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
-                                <th>Program</th>
+                                <th>DOB</th>
                             </tr>
                             </tfoot>
                         </table>
@@ -263,7 +263,7 @@
                     {data: 'call_id', name: 'call_id'},
                     {data: 'nurse_name', name: 'nurse_name'},
                     {data: 'patient_name', name: 'patient_name'},
-                    {data: 'birth_date', name: 'birth_date'},
+                    {data: 'program_name', name: 'program_name'},
                     {data: 'no_call_attempts_since_last_success', name: 'no_call_attempts_since_last_success', searchable: false},
                     {data: 'scheduled_date', name: 'scheduled_date'},
                     {data: 'window_start', name: 'window_start'},
@@ -275,7 +275,7 @@
                     {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},
                     {data: 'ccm_status', name: 'ccm_status'},
                     {data: 'billing_provider', name: 'billing_provider'},
-                    {data: 'program_name', name: 'program_name'},
+                    {data: 'birth_date', name: 'birth_date'},
                 ]
             });
 
