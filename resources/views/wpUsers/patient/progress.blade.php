@@ -18,7 +18,7 @@ function trim_bp($bp){
         <section class="patient-summary">
             <div class="row" style="margin-top:60px;">
                 <div class="patient-info__main" style="padding-left: 51px;">
-                    @role(['administrator', 'provider'])
+                    @role(['administrator', 'med_assistant', 'provider'])
                     <div class="row">
                         <div class="col-xs-12 text-right hidden-print">
 					        <span class="btn btn-group text-right">

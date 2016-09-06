@@ -135,7 +135,7 @@
                             {!! $activity_json !!}                         });
                             webix.event(window, "resize", function(){ obs_alerts_dtable.adjust(); })
                         </script>
-                        @role(['administrator', 'provider'])
+                        @role(['administrator', 'med_assistant', 'provider'])
                         <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                onclick="webix.toPDF($$(obs_alerts_dtable), {
                                 header:'CarePlanManager.com - Patient Activity Report <?= date('M d,Y') ?>',

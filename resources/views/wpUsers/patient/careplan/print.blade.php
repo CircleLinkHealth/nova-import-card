@@ -44,7 +44,7 @@ if (isset($patient) && !empty($patient)) {
                                 @endif
 
                                 <span class="btn btn-group text-right">
-                                @role(['administrator', 'provider', 'med_assistant'])
+                                @role(['administrator', 'med_assistant', 'provider'])
                             <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block" aria-label="..."
                                role="button" href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->ID]) }}">Approve Care Plan</a>
                                 <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
