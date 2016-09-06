@@ -191,7 +191,7 @@
                                 <th>Preferred Call Days</th>
                                 <th>Last Call</th>
                                 <th class="nosearch">CCM Time</th>
-                                <th>Total Calls</th>
+                                <!-- <th>Total Calls</th> -->
                                 <th>Successfull Calls</th>
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
@@ -212,7 +212,7 @@
                                 <th>Preferred Call Days</th>
                                 <th>Last Call</th>
                                 <th>CCM Time</th>
-                                <th>Total Calls</th>
+                                <!-- <th>Total Calls</th> -->
                                 <th>Successfull Calls</th>
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
@@ -271,7 +271,7 @@
                     {data: 'patient_call_window_days_short', name: 'patient_call_window_days_short'},
                     {data: 'last_contact_time', name: 'last_contact_time'},
                     {data: 'cur_month_activity_time', name: 'cur_month_activity_time', searchable: false},
-                    {data: 'no_of_calls', name: 'no_of_calls'},
+                    //{data: 'no_of_calls', name: 'no_of_calls'},
                     {data: 'no_of_successful_calls', name: 'no_of_successful_calls'},
                     {data: 'ccm_status', name: 'ccm_status'},
                     {data: 'billing_provider', name: 'billing_provider'},
