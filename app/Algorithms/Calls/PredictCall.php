@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 
 class PredictCall
 {
-
     /*
     ------------------------------------*---------------------------------------
     Currently, the factors taken into consideration are:
@@ -26,7 +25,6 @@ class PredictCall
     private $call;
     private $callStatus;
     private $patient;
-    //Since you can't pass a note in for the reconcile function
     private $note = null;
     private $callsThisMonth;
     private $successfulCallsThisMonth;
@@ -135,10 +133,6 @@ class PredictCall
         $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient, $next_window_carbon);
 
         //String to facilitate testing
-        $patient_situation = $this->patient->fullName . ' was called <span style="color:green">successfully</span> in <b>week '
-                                . $week_num . ' </b> and has <b>ccm time: ' . intval($this->ccmTime/60) . ' mins </b> (' . $this->ccmTime .
-                                  ' seconds). He can be called starting <b>' . $next_window_carbon->toDateTimeString() . '</b> but his first window after that is: <b>' . $next_predicted_contact_window['day']
-                                    . '</b>' ;
 
         $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
         $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
@@ -150,6 +144,9 @@ class PredictCall
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($this->patient);
 
         //Call Info
+
+        $patient_situation = $this->createSchedulerInfoString($week_num, $next_window_carbon, true, $window_start, $window_end);
+
 
         $prediction = [
             'predicament' => $patient_situation,
@@ -208,12 +205,6 @@ class PredictCall
         //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
         $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient, $next_window_carbon);
 
-        //String to facilitate testing
-        $patient_situation = $this->patient->fullName . ' was called <span style="color: red">unsuccessfully</span> in <b>week '
-            . $week_num . ' </b> and has <b>ccm time: ' . intval($this->ccmTime/60) . ' mins </b> (' . $this->ccmTime .
-            ' seconds). He can be called starting <b>' . $next_window_carbon->toDateTimeString() . '</b> but his first window after that is: <b>' . $next_predicted_contact_window['day']
-            . '</b>' ;
-
         $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
         $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
 
@@ -222,6 +213,8 @@ class PredictCall
         $next_contact_windows = (new PatientContactWindow)->getNextWindowsForPatientFromDate($this->patient, Carbon::parse($next_predicted_contact_window['day']));
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($this->patient);
+
+        $patient_situation = $this->createSchedulerInfoString($week_num, $next_window_carbon, false, $window_start, $window_end);
 
         //Call Info
 
@@ -476,6 +469,25 @@ class PredictCall
         //If nothing matches, just return the same date
         return $next_window_carbon;
 
+    }
+
+    public function createSchedulerInfoString($week_num, $next_window_carbon, $success, $window_start, $window_end){
+
+        $status = '<span style="color: red">unsuccessfully</span>';
+
+        if($success == true){
+
+            $status = '<span style="color:green">successfully</span>';
+
+        }
+        
+        return
+            $this->patient->fullName
+            . ' was called '. $status .' in <b>week '
+            . $week_num . ' </b> and has <b>ccm time: '
+            . intval($this->ccmTime/60) . ' mins </b> ('
+            . $this->ccmTime . ' seconds). His or her next suggested call window is: <b>'
+            . $next_window_carbon->toDateString() . ' (' . Carbon::parse($window_start)->format('g:i a'). ' to ' . Carbon::parse($window_end)->format('g:i a') . ')</b>.' ;
     }
 
 }

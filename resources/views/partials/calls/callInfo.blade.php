@@ -1,23 +1,24 @@
 <div class="form-block col-md-8">
-    <div class="row" style="border-top: solid 2px #50b2e2;">
+    <div class="row" >
         <div class="new-note-item">
             <div class="form-group">
                 <div class="col-sm-12">
                     <div class="form-group">
                         <div class="form-item form-item-spacing">
-                            <div class="col-sm-12" style="padding-bottom: 4px;">
-                                <label for="activityKey">
-                                    Patient's Next Available Call Windows:
-                                </label>
-                            </div>
+                            {{--<div class="col-sm-12" style="padding-bottom: 4px;">--}}
+                                {{--<label for="activityKey">--}}
+                                    {{--Patient's Next Available Call Windows:--}}
+                                {{--</label>--}}
+                            {{--</div>--}}
                             <div class="col-sm-12">
-                                <ul class="list-group">
-                                    @foreach($next_contact_windows as $contact_window)
-                                        <li class="list-group-item">
-                                            On {{\Carbon\Carbon::parse($contact_window['string_start'])->toFormattedDateString()}} between {{\Carbon\Carbon::parse($contact_window['string_start'])->format('h:i A')}} and {{\Carbon\Carbon::parse($contact_window['string_end'])->format('h:i A')}}
-                                        </li>
-                                    @endforeach
-                                </ul>
+                                {!! $predicament ? $predicament : ''!!}
+                                {{--<ul class="list-group">--}}
+                                    {{--@foreach($next_contact_windows as $contact_window)--}}
+                                        {{--<li class="list-group-item">--}}
+                                            {{--On {{\Carbon\Carbon::parse($contact_window['string_start'])->toFormattedDateString()}} between {{\Carbon\Carbon::parse($contact_window['string_start'])->format('h:i A')}} and {{\Carbon\Carbon::parse($contact_window['string_end'])->format('h:i A')}}--}}
+                                        {{--</li>--}}
+                                    {{--@endforeach--}}
+                                {{--</ul>--}}
                             </div>
                         </div>
                     </div>
@@ -27,7 +28,7 @@
     </div>
 </div>
 <div class="form-block col-md-4">
-    <div class="row" style="border-top: solid 2px #50b2e2;">
+    <div class="row">
         <div class="new-note-item">
             <div class="form-group">
                 <div class="col-sm-12" style="padding-left: 0px">

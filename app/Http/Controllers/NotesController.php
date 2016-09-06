@@ -145,7 +145,7 @@ class NotesController extends Controller
 
     public function create(Request $request, $patientId)
     {
-
+        
         if ($patientId) {
             // patient view
             $patient = User::find($patientId);

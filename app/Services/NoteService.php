@@ -203,8 +203,7 @@ class NoteService
             'is_cpm_outbound' => $isCpmOutbound
 
         ]);
-//            }
-//        }
+
     }
 
     //MAIL HELPERS
