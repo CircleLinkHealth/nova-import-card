@@ -305,7 +305,7 @@ class NotesController extends Controller
          engine, then to call create
         */
 
-        if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
+        if (Auth::user()->hasRole('care-center')) {
 
             if (isset($input['phone'])) {
 
@@ -313,13 +313,11 @@ class NotesController extends Controller
 
                     //Updates when the patient was successfully contacted last
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
-
-
+                    
                     $prediction = (new SchedulerService(new PredictCall))->getNextCall($patient, $note->id, true);
 
                 } else {
-
-
+                    
                     $prediction = (new SchedulerService(new PredictCall))->getNextCall($patient, $note->id, false);
 
                 }
