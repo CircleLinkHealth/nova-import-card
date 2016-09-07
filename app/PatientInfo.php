@@ -43,8 +43,13 @@ class PatientInfo extends Model {
 	// user
 	public function user()
 	{
-		return $this->belongsTo('App\User', 'ID', 'user_id');
+		return $this->belongsTo(User::class, 'user_id', 'ID');
 	}
+
+    public function carePlanProviderApproverUser()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'ID');
+    }
 
 	// END RELATIONSHIPS
 
