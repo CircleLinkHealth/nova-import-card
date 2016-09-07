@@ -448,10 +448,11 @@ class PredictCall
         return
             $this->patient->fullName
             . ' was called '. $status .' in <b>week '
-            . $week_num . '. </b> <br/> <br/> Patient\'s predicted call window is: <b>'
-            . $next_window_carbon
-            . ' (' . Carbon::parse($window_start)->format('g:i a'). ' to '
-            . Carbon::parse($window_end)->format('g:i a') . ')</b>.' ;
+            . $week_num . '. </b> <br/> <br/> <b>'
+            . 'Please confirm or amend the above next predicted call time. </b>';
+//            . $next_window_carbon
+//            . ' (' . Carbon::parse($window_start)->format('g:i a'). ' to '
+//            . Carbon::parse($window_end)->format('g:i a') . ')</b>.' ;
     }
 
     //Currently returns ccm_time, no of calls, no of succ calls, patient call time prefs, week#
