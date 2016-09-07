@@ -66,7 +66,7 @@ class DatatablesController extends Controller
                     'patient_info.general_comment',
                     'patient_monthly_summaries.no_of_calls',
                     'patient_monthly_summaries.no_of_successful_calls',
-                    'patient.display_name AS patient_name',
+                    \DB::raw('CONCAT_WS(" ", patient.last_name, patient.first_name) AS patient_name'),
                     'program.display_name AS program_name',
                     'billing_provider.display_name AS billing_provider'
                 ])
