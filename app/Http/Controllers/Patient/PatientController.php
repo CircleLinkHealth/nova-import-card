@@ -5,6 +5,7 @@ use App\CPRulesQuestions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Observation;
+use App\PatientCareTeamMember;
 use App\PatientInfo;
 use App\Program;
 use App\Services\CarePlanViewService;
@@ -248,17 +249,23 @@ class PatientController extends Controller
 
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
-            ->select(DB::raw('users.*'))
+            ->with('phoneNumbers', 'patientInfo', 'primaryProgram')
+//            ->select(DB::raw('users.*'))
             //->join('wp_users AS approver', 'THIS JOIN', '=', 'WONT WORK')
             ->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })
-            ->with(array('observations' => function ($query) {
-                $query->where('obs_key', '!=', 'Outbound');
-                $query->orderBy('obs_date', 'DESC');
-                $query->first();
-            }))
+            ->with(array(
+                'observations' => function ($query) {
+                    $query->where('obs_key', '!=', 'Outbound');
+                    $query->orderBy('obs_date', 'DESC');
+                    $query->first();
+                },
+                'patientCareTeamMembers' => function ($q) {
+                    $q->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER)
+                        ->with('user');
+                },
+            ))
             ->get();
         $i = 0;
 
@@ -280,6 +287,12 @@ class PatientController extends Controller
         if ($patients && $patients->count() > 0) {
             $foundUsers = array(); // save resources, no duplicate db calls
             $foundPrograms = array(); // save resources, no duplicate db calls
+
+            $isProvider = Auth::user()->hasRole('provider');
+            $isCareCenter = Auth::user()->hasRole('care-center');
+            $isAdmin = Auth::user()->hasRole('administrator');
+
+
             foreach ($patients as $patient) {
                 // skip if patient has no name
                 if (empty($patient->first_name)) {
@@ -322,14 +335,14 @@ class PatientController extends Controller
                     $careplanStatus = 'Approve Now';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
-                    if (Auth::user()->hasRole('provider')) {
+                    if ($isProvider) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.careplan.print', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
                     }
                 } else if ($patient->carePlanStatus == 'draft') {
                     $careplanStatus = 'CLH Approve';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'CLH Approve';
-                    if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
+                    if ($isCareCenter || $isAdmin) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
                     }
                 }
@@ -338,7 +351,7 @@ class PatientController extends Controller
                 $bpName = '';
                 $bpID = $patient->billingProviderID;
                 if (!isset($foundPrograms[$patient->program_id])) {
-                    $program = Program::find($patient->program_id);
+                    $program = $patient->primaryProgram;
                     $foundPrograms[$patient->program_id] = $program;
                 } else {
                     $program = $foundPrograms[$patient->program_id];
@@ -347,7 +360,8 @@ class PatientController extends Controller
 
                 if (!empty($bpID)) {
                     if (!isset($foundUsers[$bpID])) {
-                        $bpUser = User::find($bpID);
+//                        $bpUser = User::find($bpID);
+                        $bpUser = $patient->patientCareTeamMembers->first()->user;
                         if ($bpUser) {
                             $bpName = $bpUser->fullName;
                             $foundUsers[$bpID] = $bpUser;
@@ -394,7 +408,13 @@ class PatientController extends Controller
         $patientJson = json_encode($patientData);
 
 
-        return view('wpUsers.patient.listing', compact(['pendingApprovals', 'patientJson']));
+        return view('wpUsers.patient.listing', compact([
+            'pendingApprovals',
+            'patientJson',
+            'isProvider',
+            'isCareCenter',
+            'isAdmin',
+        ]));
     }
 
 
