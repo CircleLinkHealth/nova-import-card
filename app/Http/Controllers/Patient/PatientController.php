@@ -250,8 +250,6 @@ class PatientController extends Controller
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'primaryProgram')
-//            ->select(DB::raw('users.*'))
-            //->join('wp_users AS approver', 'THIS JOIN', '=', 'WONT WORK')
             ->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })
@@ -298,10 +296,6 @@ class PatientController extends Controller
                 if (empty($patient->first_name)) {
                     continue 1;
                 }
-
-                if ($i >= 1) {
-                    //continue 1;
-                }
                 $i++;
                 // careplan status stuff from 2.x
                 $careplanStatus = $patient->carePlanStatus;
@@ -309,11 +303,8 @@ class PatientController extends Controller
                 $approverName = 'NA';
                 $tooltip = 'NA';
 
-                if ($patient->carePlanStatus == 'provider_approved') {
+                if ($careplanStatus == 'provider_approved') {
                     $approverId = $patient->carePlanProviderApprover;
-                    if ($approverId == 5) {
-                        //dd($approvers->where('ID', $approverId)->first());
-                    }
                     $approver = $approvers->where('ID', $approverId)->first();
                     if (!$approver) {
                         if (!empty($approverId)) {
@@ -327,18 +318,20 @@ class PatientController extends Controller
                     }
                     if ($approver) {
                         $approverName = $approver->fullName;
+                        $carePlanProviderDate = $patient->carePlanProviderDate;
+
                         $careplanStatus = 'Approved';
-                        $careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
-                        $tooltip = $approverName . ' ' . $patient->carePlanProviderDate;
+                        $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
+                        $tooltip = $approverName . ' ' . $carePlanProviderDate;
                     }
-                } else if ($patient->carePlanStatus == 'qa_approved') {
+                } else if ($careplanStatus == 'qa_approved') {
                     $careplanStatus = 'Approve Now';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
                     if ($isProvider) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.careplan.print', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
                     }
-                } else if ($patient->carePlanStatus == 'draft') {
+                } else if ($careplanStatus == 'draft') {
                     $careplanStatus = 'CLH Approve';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'CLH Approve';
@@ -358,18 +351,12 @@ class PatientController extends Controller
                 }
                 $programName = $program->display_name;
 
-                if (!empty($bpID)) {
-                    if (!isset($foundUsers[$bpID])) {
-//                        $bpUser = User::find($bpID);
-                        $bpUser = $patient->patientCareTeamMembers->first()->user;
-                        if ($bpUser) {
-                            $bpName = $bpUser->fullName;
-                            $foundUsers[$bpID] = $bpUser;
-                        }
-                    } else {
-                        $bpUser = $foundUsers[$bpID];
-                        $bpName = $bpUser->fullName;
-                    }
+                $bpCareTeamMember = $patient->patientCareTeamMembers->first();
+
+                if ($bpCareTeamMember) {
+                    $bpUser = $bpCareTeamMember->user;
+                    $bpName = $bpUser->fullName;
+                    $foundUsers[$bpID] = $bpUser;
                 }
 
                 // get date of last observation
