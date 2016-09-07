@@ -213,23 +213,23 @@ class PredictCall
 
     public function reconcileDroppedCallHandler(){
 
-        //Update and close previous call, if exists.
-//        if($this->call) {
-//
-//            $this->call->status = 'dropped';
-//            $this->call->save();
-//
-//        } else {
-//
-//            (new NoteService)->storeCallForNote($this->note, 'dropped', $this->patient, null, 'outbound');
-//
-//        }
+//        Update and close previous call, if exists.
+        if($this->call) {
+
+            $this->call->status = 'dropped';
+            $this->call->save();
+
+        } else {
+
+            (new NoteService)->storeCallForNote($this->note, 'dropped', $this->patient, null, 'outbound');
+
+        }
 
         //Call missed, call on next available call window.
 
         //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
         $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient, Carbon::now());
-        
+
         $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
         $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
         $day = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
