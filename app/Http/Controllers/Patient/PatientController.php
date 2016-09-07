@@ -3,10 +3,10 @@
 use App\CareItem;
 use App\CPRulesQuestions;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\Observation;
 use App\PatientCareTeamMember;
 use App\PatientInfo;
+use App\PhoneNumber;
 use App\Program;
 use App\Services\CarePlanViewService;
 use App\User;
@@ -249,7 +249,7 @@ class PatientController extends Controller
 
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('phoneNumbers', 'patientInfo', 'primaryProgram')
+            ->with('primaryProgram')
             ->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })
@@ -263,26 +263,18 @@ class PatientController extends Controller
                     $q->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER)
                         ->with('user');
                 },
+                'phoneNumbers' => function ($q) {
+                    $q->where('type', '=', PhoneNumber::HOME);
+                },
+                'patientInfo' => function ($q) {
+                    $q->with('carePlanProviderApproverUser');
+                }
             ))
             ->get();
         $i = 0;
 
-        // get approvers before
-        $approvers = null;
-        $approverIds = array();
         if ($patients->count() > 0) {
-            foreach ($patients as $patient) {
-                if ($patient->carePlanStatus == 'provider_approved') {
-                    $approverId = $patient->carePlanProviderApprover;
-                    if (!empty($approverId) && !in_array($approverId, $approverIds)) {
-                        $approverIds[] = $approverId;
-                    }
-                }
-            }
-            $approvers = User::whereIn('ID', $approverIds)->get();
-        }
 
-        if ($patients && $patients->count() > 0) {
             $foundUsers = array(); // save resources, no duplicate db calls
             $foundPrograms = array(); // save resources, no duplicate db calls
 
@@ -304,18 +296,7 @@ class PatientController extends Controller
                 $tooltip = 'NA';
 
                 if ($careplanStatus == 'provider_approved') {
-                    $approverId = $patient->carePlanProviderApprover;
-                    $approver = $approvers->where('ID', $approverId)->first();
-                    if (!$approver) {
-                        if (!empty($approverId)) {
-                            if (!isset($foundUsers[$approverId])) {
-                                $approver = User::find($approverId);
-                                $foundUsers[$approverId] = $approver;
-                            } else {
-                                $approver = $foundUsers[$approverId];
-                            }
-                        }
-                    }
+                    $approver = $patient->patientInfo->carePlanProviderApproverUser;
                     if ($approver) {
                         $approverName = $approver->fullName;
                         $carePlanProviderDate = $patient->carePlanProviderDate;
@@ -367,7 +348,8 @@ class PatientController extends Controller
                 }
 
                 try {
-                    $patientData[] = array('key' => $patient->ID, // $part->ID,
+                    $patientData[] = array(
+                        'key' => $patient->ID, // $part->ID,
                         'patient_name' => $patient->fullName, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
                         'first_name' => $patient->first_name, //$meta[$part->ID]["first_name"][0],
                         'last_name' => $patient->last_name, //$meta[$part->ID]["last_name"][0],
@@ -377,7 +359,7 @@ class PatientController extends Controller
                         'careplan_status_link' => $careplanStatusLink, //$careplanStatusLink,
                         'careplan_provider_approver' => $approverName, //$approverName,
                         'dob' => Carbon::parse($patient->birthDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
-                        'phone' => $patient->phone, //$user_config[$part->ID]["study_phone_number"],
+                        'phone' => isset($patient->phoneNumbers->number) ? $patient->phoneNumbers->number : $patient->phone, //$user_config[$part->ID]["study_phone_number"],
                         'age' => $patient->age,
                         'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
                         'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
