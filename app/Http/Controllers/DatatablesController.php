@@ -187,6 +187,9 @@ class DatatablesController extends Controller
                     return 'n/a';
                 }
             })
+            ->addColumn('notes_link', function($call) {
+                return '<a target="_blank" href="'.\URL::route('patient.note.index', array('patientId' => $call->inboundUser->ID)).'">Notes</a>';
+            })
             ->addColumn('notes_html', function($call) {
                 $notesHtml = '';
                 if($call->inboundUser) {

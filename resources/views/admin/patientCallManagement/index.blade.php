@@ -288,7 +288,7 @@
                         '<td>'+d.general_comment+'</td>'+
                         '</tr>'+
                         '<tr>'+
-                        '<td>Last 3 Notes:</td>'+
+                        '<td>Last 3 ' + d.notes_link + ':</td>'+
                         '<td>'+d.notes_html+'</td>'+
                         '</tr>'+
                         '<td>Call Windows:</td>'+
