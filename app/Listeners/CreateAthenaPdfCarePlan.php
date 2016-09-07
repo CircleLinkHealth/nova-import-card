@@ -66,18 +66,27 @@ class CreateAthenaPdfCarePlan
             if ($vendor) {
                 $pathToPdf = $this->reportsService->makePdfCareplan($user);
 
-                $ccda = $this->ccdaRepository->findWhere([
-                    'patient_id' => $user->ID
-                ])->first();
+                $ccda = $this->ccdaRepository
+                    ->skipPresenter()
+                    ->findWhere([
+                        'patient_id' => $user->ID
+                    ])->first();
 
-                $ccdaRequest = $this->ccdaRequest->findWhere([
-                    'ccda_id' => $ccda->id,
-                ])->first();
+                $ccdaRequest = $this->ccdaRequest
+                    ->skipPresenter()
+                    ->findWhere([
+                        'ccda_id' => $ccda->id,
+                    ])->first();
 
                 if ($pathToPdf) {
                     $response = $this->athenaService->postPatientDocument($ccdaRequest->patient_id, $ccdaRequest->practice_id, $pathToPdf);
 
-                    return json_decode($response, true);
+                    $decodedResponse = json_decode($response, true);
+
+                    if (key_exists('documentid', $decodedResponse)) {
+                        $ccdaRequest->document_id = $decodedResponse['documentid'];
+                        $ccdaRequest->save();
+                    }
                 }
             }
         }
