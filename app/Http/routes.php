@@ -1,5 +1,17 @@
 <?php
 
+Route::get('missed', function(){
+
+    $calls = (new \App\Services\Calls\SchedulerService())->getUnAttemptedCalls();
+    foreach($calls as $call){
+
+        (new \App\Algorithms\Calls\PredictCall(App\User::find($call->inbound_cpm_id), $call, false ))->reconcileDroppedCallHandler();
+
+    }
+    return $calls;
+
+});
+
 //THIS IS FOR APRIMA ONLY
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
