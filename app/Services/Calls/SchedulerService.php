@@ -11,8 +11,9 @@ use Carbon\Carbon;
 class SchedulerService
 {
 
-    // Success is the call's status.
-    // true for reached, false for not reached 
+    /* Success is the call's status.
+       true for reached, false for not reached */
+
     public function getNextCall($patient, $noteId ,$success)
     {
         
