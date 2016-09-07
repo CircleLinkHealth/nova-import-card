@@ -1,7 +1,6 @@
 <?php namespace App\Algorithms\Calls;
 
 use App\Call;
-use App\Note;
 use App\PatientContactWindow;
 use App\PatientInfo;
 use App\Services\Calls\SchedulerService;
@@ -35,7 +34,7 @@ class PredictCall
 
         $this->call = $currentCall;
         $this->callStatus = $currentCallStatus;
-        
+
         $this->patient = $calledPatient;
 
         $this->ccmTime = $this->patient->patientInfo->cur_month_activity_time;
@@ -64,34 +63,6 @@ class PredictCall
 
         }
 
-    }
-    
-    //Currently returns ccm_time, no of calls, no of succ calls, patient call time prefs, week#
-    public function formatAlgoDataForView($prediction){
-
-        $ccm_time_achieved = false;
-        if($this->ccmTime >= 1200){
-            $ccm_time_achieved = true;
-        }
-
-        $H = floor($this->ccmTime / 3600);
-        $i = ($this->ccmTime / 60) % 60;
-        $s = $this->ccmTime % 60;
-        $formattedMonthlyTime = sprintf("%02d:%02d:%02d",$H, $i, $s);
-
-        //**CCM TIME**//
-        // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
-
-        $callsThisMonth = Call::numberOfCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
-        $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
-
-        $prediction['no_of_successful_calls'] = $successfulCallsThisMonth;
-        $prediction['no_of_calls'] = $callsThisMonth;
-        $prediction['success_percent'] = ($successfulCallsThisMonth == 0 || $callsThisMonth == 0) ? 0 : ( ($successfulCallsThisMonth) / ($callsThisMonth) ) * 100;
-        $prediction['ccm_time_achieved'] = $ccm_time_achieved;
-        $prediction['formatted_monthly_time'] = $formattedMonthlyTime;
-
-        return $prediction;
     }
 
     public function successfulCallHandler(){
@@ -242,7 +213,7 @@ class PredictCall
 
     public function reconcileDroppedCallHandler(){
 
-        //Update and close previous call, if exists.
+//        Update and close previous call, if exists.
         if($this->call) {
 
             $this->call->status = 'dropped';
@@ -261,13 +232,14 @@ class PredictCall
 
         $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
         $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
+        $day = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
 
-        return (new SchedulerService())->storeScheduledCall($this->patient->ID, $window_start, $window_end, Carbon::now()->toDateString(), Auth::user()->ID);
+        return (new SchedulerService())->storeScheduledCall($this->patient->ID, $window_start, $window_end, $day, Auth::user()->ID);
 
     }
 
-    //The next two functions will give us the time we have to wait until making the next
-    //attempt at reaching a patient
+    /* The next two functions will give us the time we have to wait until making the next
+       attempt at reaching a patient */
 
     public function getSuccessfulCallTimeOffset($week_num, $next_window_carbon){
 
@@ -451,6 +423,8 @@ class PredictCall
 
     }
 
+    //Algo helpers and formatters
+
     public function createSchedulerInfoString($week_num, $next_window_carbon, $success, $window_start, $window_end){
 
         $status = '<span style="color: red">unsuccessfully</span>';
@@ -468,6 +442,34 @@ class PredictCall
             . intval($this->ccmTime/60) . ' mins </b> ('
             . $this->ccmTime . ' seconds). Patient\'s predicted call window is: <b>'
             . $next_window_carbon->toDateString() . ' (' . Carbon::parse($window_start)->format('g:i a'). ' to ' . Carbon::parse($window_end)->format('g:i a') . ')</b>.' ;
+    }
+
+    //Currently returns ccm_time, no of calls, no of succ calls, patient call time prefs, week#
+    public function formatAlgoDataForView($prediction){
+
+        $ccm_time_achieved = false;
+        if($this->ccmTime >= 1200){
+            $ccm_time_achieved = true;
+        }
+
+        $H = floor($this->ccmTime / 3600);
+        $i = ($this->ccmTime / 60) % 60;
+        $s = $this->ccmTime % 60;
+        $formattedMonthlyTime = sprintf("%02d:%02d:%02d",$H, $i, $s);
+
+        //**CCM TIME**//
+        // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
+
+        $callsThisMonth = Call::numberOfCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
+        $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
+
+        $prediction['no_of_successful_calls'] = $successfulCallsThisMonth;
+        $prediction['no_of_calls'] = $callsThisMonth;
+        $prediction['success_percent'] = ($successfulCallsThisMonth == 0 || $callsThisMonth == 0) ? 0 : ( ($successfulCallsThisMonth) / ($callsThisMonth) ) * 100;
+        $prediction['ccm_time_achieved'] = $ccm_time_achieved;
+        $prediction['formatted_monthly_time'] = $formattedMonthlyTime;
+
+        return $prediction;
     }
 
 }
