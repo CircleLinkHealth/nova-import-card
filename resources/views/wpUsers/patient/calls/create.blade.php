@@ -75,9 +75,9 @@
             <input type="hidden" name="patient_id" value="{{$patient->ID}}"/>
 
 
-            @if($next_contact_windows)
+            {{--@if($next_contact_windows)--}}
                 @include('partials.calls.callInfo')
-            @endif
+            {{--@endif--}}
 
             <div class="form-block col-md-12">
                 <div class="row">

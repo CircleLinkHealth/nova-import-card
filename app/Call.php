@@ -14,9 +14,14 @@ class Call extends Model
         'note_id',
         'service',
         'status',
-            // reached -> Successful Clinical Call
-            // not reached -> Unsuccessful attempt
-            // scheduled -> Call to be made
+
+        /*
+        Mini-documentation for call statuses:
+            reached -> Successful Clinical Call
+            not reached -> Unsuccessful attempt
+            scheduled -> Call to be made
+            dropped -> call was missed
+         */
 
         'inbound_phone_number',
         'outbound_phone_number',

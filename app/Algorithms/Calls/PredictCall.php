@@ -35,6 +35,12 @@ class PredictCall
         $this->call = $currentCall;
         $this->callStatus = $currentCallStatus;
 
+        /*
+        It is to be noted that this class should be patient independent,
+        but certain components are not updated since scheduled
+        calls are updated elsewhere. @todo search solution.
+       */
+
         $this->patient = $calledPatient;
 
         $this->ccmTime = $this->patient->patientInfo->cur_month_activity_time;
@@ -110,13 +116,13 @@ class PredictCall
 
         //TO CALCULATE
 
-        $next_contact_windows = (new PatientContactWindow)->getNextWindowsForPatientFromDate($this->patient, Carbon::parse($next_predicted_contact_window['day']));
+        //$next_contact_windows = (new PatientContactWindow)->getNextWindowsForPatientFromDate($this->patient, Carbon::parse($next_predicted_contact_window['day']));
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($this->patient);
 
         //Call Info
 
-        $patient_situation = $this->createSchedulerInfoString($week_num, $next_window_carbon, true, $window_start, $window_end);
+        $patient_situation = $this->createSchedulerInfoString($week_num, $next_predicted_contact_window['day'], true, $window_start, $window_end);
 
 
         $prediction = [
@@ -126,7 +132,7 @@ class PredictCall
             'window' => $window,
             'window_start' => $window_start,
             'window_end' => $window_end,
-            'next_contact_windows' => $next_contact_windows,
+            //'next_contact_windows' => $next_contact_windows,
             'successful' => true,
         ];
 
@@ -181,11 +187,11 @@ class PredictCall
 
         //TO CALCULATE
 
-        $next_contact_windows = (new PatientContactWindow)->getNextWindowsForPatientFromDate($this->patient, Carbon::parse($next_predicted_contact_window['day']));
+        //$next_contact_windows = (new PatientContactWindow)->getNextWindowsForPatientFromDate($this->patient, Carbon::parse($next_predicted_contact_window['day']));
 
         $window = (new PatientInfo)->parsePatientCallPreferredWindow($this->patient);
 
-        $patient_situation = $this->createSchedulerInfoString($week_num, $next_window_carbon, false, $window_start, $window_end);
+        $patient_situation = $this->createSchedulerInfoString($week_num, $next_predicted_contact_window['day'], false, $window_start, $window_end);
 
         //Call Info
 
@@ -196,7 +202,7 @@ class PredictCall
             'window' => $window,
             'window_start' => $window_start,
             'window_end' => $window_end,
-            'next_contact_windows' => $next_contact_windows,
+            //'next_contact_windows' => $next_contact_windows,
             'successful' => false
         ];
 
@@ -238,8 +244,10 @@ class PredictCall
 
     }
 
-    /* The next two functions will give us the time we have to wait until making the next
-       attempt at reaching a patient */
+    /*
+    The next two functions will give us the time we have to wait until making the next
+       attempt at reaching a patient
+    */
 
     public function getSuccessfulCallTimeOffset($week_num, $next_window_carbon){
 
@@ -434,14 +442,16 @@ class PredictCall
             $status = '<span style="color:green">successfully</span>';
 
         }
+
+        //Abdullah Z-Ryan was called successfully in week 1. Patient's next predicted call window is: 2016-09-13 (9:00 am to 6:00 pm).
         
         return
             $this->patient->fullName
             . ' was called '. $status .' in <b>week '
-            . $week_num . ' </b> and has <b>ccm time: '
-            . intval($this->ccmTime/60) . ' mins </b> ('
-            . $this->ccmTime . ' seconds). Patient\'s predicted call window is: <b>'
-            . $next_window_carbon->toDateString() . ' (' . Carbon::parse($window_start)->format('g:i a'). ' to ' . Carbon::parse($window_end)->format('g:i a') . ')</b>.' ;
+            . $week_num . '. </b> <br/> <br/> Patient\'s predicted call window is: <b>'
+            . $next_window_carbon
+            . ' (' . Carbon::parse($window_start)->format('g:i a'). ' to '
+            . Carbon::parse($window_end)->format('g:i a') . ')</b>.' ;
     }
 
     //Currently returns ccm_time, no of calls, no of succ calls, patient call time prefs, week#
@@ -460,12 +470,12 @@ class PredictCall
         //**CCM TIME**//
         // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
 
-        $callsThisMonth = Call::numberOfCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
+        //$callsThisMonth = Call::numberOfCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
         $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
 
         $prediction['no_of_successful_calls'] = $successfulCallsThisMonth;
-        $prediction['no_of_calls'] = $callsThisMonth;
-        $prediction['success_percent'] = ($successfulCallsThisMonth == 0 || $callsThisMonth == 0) ? 0 : ( ($successfulCallsThisMonth) / ($callsThisMonth) ) * 100;
+        //$prediction['no_of_calls'] = $callsThisMonth;
+        //$prediction['success_percent'] = ($successfulCallsThisMonth == 0 || $callsThisMonth == 0) ? 0 : ( ($successfulCallsThisMonth) / ($callsThisMonth) ) * 100;
         $prediction['ccm_time_achieved'] = $ccm_time_achieved;
         $prediction['formatted_monthly_time'] = $formattedMonthlyTime;
 

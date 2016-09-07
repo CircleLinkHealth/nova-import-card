@@ -11,6 +11,7 @@
                                 {{--</label>--}}
                             {{--</div>--}}
                             <div class="col-sm-12">
+                                <span style="font-size: 1.1em;">
                                 {!! $predicament ? $predicament : ''!!}
                                 {{--<ul class="list-group">--}}
                                     {{--@foreach($next_contact_windows as $contact_window)--}}
@@ -19,6 +20,7 @@
                                         {{--</li>--}}
                                     {{--@endforeach--}}
                                 {{--</ul>--}}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -72,12 +74,12 @@
                                     <li class="list-group-item">
                                         <b> Successful Calls:</b> <span style="color: green"> {{$no_of_successful_calls}} </span>
                                     </li>
-                                    <li class="list-group-item">
-                                        <b> Total Calls:</b> {{$no_of_calls}}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <b> Call Success: {{round($success_percent, 2)}}%</b>
-                                    </li>
+                                    {{--<li class="list-group-item">--}}
+                                        {{--<b> Total Calls:</b> {{$no_of_calls}}--}}
+                                    {{--</li>--}}
+                                    {{--<li class="list-group-item">--}}
+                                        {{--<b> Call Success: {{round($success_percent, 2)}}%</b>--}}
+                                    {{--</li>--}}
                                     <li class="list-group-item">
                                         <b> Last Successful Call Date: {{$patient->patientInfo->last_successful_contact_time == '0000-00-00' ? 'N/A' : \Carbon\Carbon::parse($patient->patientInfo->last_successful_contact_time)->toFormattedDateString()}}</b>
                                     </li>
