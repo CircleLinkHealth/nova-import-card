@@ -63,6 +63,7 @@ class DatatablesController extends Controller
                     'patient_info.no_call_attempts_since_last_success',
                     'patient_info.ccm_status',
                     'patient_info.birth_date',
+                    'patient_info.general_comment',
                     'patient_monthly_summaries.no_of_calls',
                     'patient_monthly_summaries.no_of_successful_calls',
                     'patient.display_name AS patient_name',

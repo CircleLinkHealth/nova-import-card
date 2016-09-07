@@ -284,6 +284,10 @@
                 // `d` is the original data object for the row
                 return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
                         '<tr>'+
+                        '<td>General Comment:</td>'+
+                        '<td>'+d.general_comment+'</td>'+
+                        '</tr>'+
+                        '<tr>'+
                         '<td>Last 3 Notes:</td>'+
                         '<td>'+d.notes_html+'</td>'+
                         '</tr>'+
