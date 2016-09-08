@@ -2,7 +2,10 @@
 
     @role(['administrator'])
         <div class="pull-right">
-            <a href="{{ route('get.CCDViewerController.showByUserId', [ 'userId' => $patient->ID]) }}" class="btn btn-primary btn-xs">
+            <a href="{{ route('get.CCDViewerController.showByUserId', [ 'userId' => $patient->ID]) }}"
+               class="btn btn-primary btn-xs"
+               target="_blank"
+            >
                 View CCDA
             </a>
         </div>
