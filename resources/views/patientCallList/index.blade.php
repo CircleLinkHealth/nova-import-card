@@ -90,9 +90,10 @@
                                                 @foreach($calls as $call)
                                                     <?php
                                                     $curTime = \Carbon\Carbon::now();
+                                                    $curDate = $curTime->toDateString();
                                                     $curTime = $curTime->toTimeString();
                                                     $rowBg = '';
-                                                    if($call->window_end < $curTime) {
+                                                    if($call->scheduled_date == $curDate && $call->window_end < $curTime) {
                                                         $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                     }
                                                     ?>

@@ -235,8 +235,9 @@ class DatatablesController extends Controller
             })
             ->addColumn('background_color', function($call) {
                 $curTime = Carbon::now();
+                $curDate = $curTime->toDateString();
                 $curTime = $curTime->toTimeString();
-                if($call->window_end < $curTime) {
+                if($call->scheduled_date == $curDate && $call->window_end < $curTime) {
                     return 'rgba(255, 0, 0, 0.4)';
                 } else {
                     return '';
