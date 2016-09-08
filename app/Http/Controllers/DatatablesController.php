@@ -53,6 +53,7 @@ class DatatablesController extends Controller
                     'calls.scheduled_date',
                     'calls.window_start',
                     'calls.window_end',
+                    'calls.attempt_note',
                     'notes.type AS note_type',
                     'notes.body AS note_body',
                     'notes.performed_at AS note_datetime',
@@ -94,6 +95,13 @@ class DatatablesController extends Controller
         return Datatables::of($calls)
             ->editColumn('call_id', function($call) {
                 return '<input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
+            })
+            ->addColumn('attempt_note_html', function($call) {
+                $attemptNote = 'no note';
+                if(!empty($call->attempt_note)) {
+                    $attemptNote = $call->attempt_note;
+                }
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="attempt_note" column-value="'.$attemptNote.'">'.$attemptNote.'</span>';
             })
             ->editColumn('scheduled_date', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="scheduled_date" column-value="'.$call->scheduled_date.'">'.$call->scheduled_date.'</span>';
