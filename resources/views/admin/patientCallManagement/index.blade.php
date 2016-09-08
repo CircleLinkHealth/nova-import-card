@@ -73,7 +73,7 @@
                         }
                     });
                 } else if(cpmEditableColumnName == 'attempt_note') {
-                    $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="editableInput" type="editableInput" value="' + cpmEditableColumnValue + '" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
+                    $(cpmEditableTd).html('<textarea id="editableInput" style="width:300px;height:50px;" class="" name="editableInput" type="editableInput" value="' + cpmEditableColumnValue + '" /></textarea> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 } else if(cpmEditableColumnName == 'scheduled_date') {
                     $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="date" type="editableInput" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 } else if(cpmEditableColumnName == 'window_start' || cpmEditableColumnName == 'window_end') {

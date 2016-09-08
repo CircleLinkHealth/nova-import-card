@@ -80,7 +80,7 @@ class CallController extends Controller
         // for null outbound_cpm_id
         if($data['columnName'] == 'outbound_cpm_id' && (empty($data['value']) || strtolower($data['value']) == 'unassigned' )) {
             $call->$data['columnName'] = null;
-        } else if($data['columnName'] == 'attempt_note' && (empty($data['value']) || strtolower($data['value']) == 'no note' )) {
+        } else if($data['columnName'] == 'attempt_note' && (empty($data['value']) || strtolower($data['value']) == 'add note' )) {
             $call->$data['columnName'] = '';
         } else {
             $call->$data['columnName'] = $data['value'];

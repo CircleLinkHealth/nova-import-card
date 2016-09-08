@@ -98,7 +98,7 @@ class DatatablesController extends Controller
                 return '<input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
             })
             ->addColumn('attempt_note_html', function($call) {
-                $attemptNote = 'no note';
+                $attemptNote = 'add note';
                 if(!empty($call->attempt_note)) {
                     $attemptNote = $call->attempt_note;
                 }
