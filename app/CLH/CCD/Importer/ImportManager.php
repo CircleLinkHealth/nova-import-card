@@ -11,6 +11,7 @@ use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
+use App\Models\CPM\CpmMisc;
 use App\PatientCareTeamMember;
 use App\PatientInfo;
 use App\PhoneNumber;

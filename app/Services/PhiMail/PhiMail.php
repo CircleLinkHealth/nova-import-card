@@ -11,13 +11,16 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Maknz\Slack\Facades\Slack;
 
-class PhiMail {
+class PhiMail
+{
 
-    public function loadFile($filename) {
+    public function loadFile($filename)
+    {
         return file_get_contents($filename);
     }
 
-    public function writeDataFile($filename, $data) {
+    public function writeDataFile($filename, $data)
+    {
         return file_put_contents($filename, $data);
     }
 
@@ -31,43 +34,23 @@ class PhiMail {
      * @param null $line
      * @param null $errorMessage
      */
-    public function notifyAdmins($ccdas = [])
+    public function notifyAdmins($numberOfCcds)
     {
-        $numberOfCcds = count($ccdas);
+        if (app()->environment('local')) return;
 
-        $link = route('view.files.ready.to.import');
+        //the worker generates the route using localhost so I am hardcoding it
+//        $link = route('view.files.ready.to.import');
+        $link = 'https://www.careplanmanager.com/ccd-importer/qaimport';
 
         Slack::to('#ccd-file-status')
             ->send("We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
-        
-//        $numberOfCcds = count($ccdas);
-//
-//        $recipients = [
-//            'rohanm@circlelinkhealth.com',
-//            'mantoniou@circlelinkhealth.com',
-//            'jkatz@circlelinkhealth.com',
-//            'Raph@circlelinkhealth.com',
-//            'kgallo@circlelinkhealth.com',
-//        ];
-//
-//        $view = 'emails.emrDirectCCDsReceived';
-//        $subject = "We received {$numberOfCcds} CCDs from EMR Direct.";
-//
-//        $data = [
-//            'ccdas' => $ccdas,
-//            'numberOfCcds' => $numberOfCcds
-//        ];
-//
-//        Mail::send($view, $data, function ($message) use ($recipients, $subject) {
-//            $message->from('aprima-api@careplanmanager.com', 'CircleLink Health');
-//            $message->to($recipients)->subject($subject);
-//        });
     }
 
     /**
      * @param args the command line arguments
      */
-    public function sendReceive() {
+    public function sendReceive()
+    {
 
         try {
             $fileNames = [];
@@ -104,7 +87,7 @@ class PhiMail {
 
             // This command is recommended for added security to set the trusted 
             // SSL certificate or trust anchor for the phiMail server.
-            PhiMailConnector::setServerCertificate(base_path() . '/resources/certificates/EMRDirectTestCA.pem');
+            PhiMailConnector::setServerCertificate(base_path() . env('EMR_DIRECT_SERVER_CERT_PEM_PATH'));
 
             $c = new PhiMailConnector($phiMailServer, $phiMailPort);
             $c->authenticateUser($phiMailUser, $phiMailPass);
@@ -166,8 +149,8 @@ class PhiMail {
             // API documentation for further information about address groups.
             if ($receive) {
                 while (true) {
-                    echo ("============\n");
-                    echo ("Checking mailbox\n");
+                    echo("============\n");
+                    echo("Checking mailbox\n");
 
                     // check next message or status update
                     $cr = $c->check();
@@ -178,12 +161,12 @@ class PhiMail {
                             ->send("Checked EMR Direct Mailbox. There where no messages. \n");
                         break;
 
-                    } else if($cr->isMail()) {
+                    } else if ($cr->isMail()) {
                         // If you are checking messages for an address group,
                         // $cr->recipient will contain the address in that
                         // group to which this message should be delivered.
-                        echo ("A new message is available for " . $cr->recipient . "\n");
-                        echo ("from " . $cr->sender . "; id "
+                        Log::info("A new message is available for " . $cr->recipient . "\n");
+                        Log::info("from " . $cr->sender . "; id "
                             . $cr->messageId . "; #att=" . $cr->numAttachments
                             . "\n");
 
@@ -206,80 +189,50 @@ class PhiMail {
                             // Process the content; for this example text data 
                             // is echoed to the console and non-text data is
                             // written to files.
-                            if (!strncmp($showRes->mimeType, 'text/', 5)) {
+
+                            if (str_contains($showRes->mimeType, 'plain')) {
                                 // ... do something with text parts ...
-                                // For this example we assume ascii or utf8 
-//                                $s = $showRes->data;
-//                                echo ("Content:\n" . $s . "\n");
-                            } else {
-                                // ... do something with binary data ...
-//                                echo ("Content: <BINARY>  Writing attachment file "
-//                                    . $showRes->filename . "\n");
-//                                self::writeDataFile($attachmentSaveDirectory . $showRes->filename, $showRes->data);
+                                Log::info('The plain text part of the mail');
+                                Log::info($showRes->data);
+                                self::writeDataFile(storage_path(str_random(20) . '.txt'), $showRes->data);
+                            } elseif (str_contains($showRes->mimeType, 'xml')) {
+                                //save ccd to file
+                                self::writeDataFile(storage_path(str_random(20) . '.xml'), $showRes->data);
+                                $import = $this->importCcd($cr->sender, $showRes);
 
+                                if (!$import) continue;
 
-                                $atPosition = strpos($cr->sender, '@');
-
-                                if (!$atPosition) continue;
-
-                                $senderDomain = substr($cr->sender, $atPosition);
-
-                                //Map the email domain of the sender to one of our CCD Vendors
-                                $vendorId = Ccda::EMAIL_DOMAIN_TO_VENDOR_MAP[$senderDomain];
-
-                                $vendor = CcdVendor::find($vendorId);
-
-                                $ccda = Ccda::create([
-                                    'user_id' => null,
-                                    'vendor_id' => $vendorId,
-                                    'xml' => $showRes->data,
-                                    'source' => Ccda::EMR_DIRECT,
-                                ]);
-
-                                $ccdaRepo = new CCDImporterRepository;
-
-                                $json = $ccdaRepo->toJson($ccda->xml);
-                                $ccda->json = $json;
-                                $ccda->save();
-
-                                $logger = new CcdItemLogger($ccda);
-                                $logger->logAll();
-                                
-                                $importer = new QAImportManager($vendor->program_id, $ccda);
-                                $importer->generateCarePlanFromCCD();
-
-                                echo ("{$showRes->filename} imported successfully");
-                                
-                                $ccdas[] = [
-                                    'id' => $ccda->id,
-                                    'fileName' => $showRes->filename,
-                                ];
+                                $ccdas[] = $import;
                             }
 
                             // Display the list of attachments and associated info. This info is only
                             // included with message part 0.
                             for ($k = 0; $i == 0 && $k < $cr->numAttachments; $k++) {
-                                echo ("Attachment " . ($k + 1)
+                                Log::info("Attachment " . ($k + 1)
                                     . ": " . $showRes->attachmentInfo[$k]->mimeType
                                     . " fn:" . $showRes->attachmentInfo[$k]->filename
                                     . " Desc:" . $showRes->attachmentInfo[$k]->description
                                     . "\n");
                             }
                         }
-
                         // This signals the server that the message can be safely removed from the queue
                         // and should only be sent after all required parts of the message have been
                         // retrieved and processed.
                         $c->acknowledgeMessage();
 
-                        if ($cr->numAttachments > 0) $this->notifyAdmins($ccdas);
+                        Log::info('Number of Attachments: ' . $cr->numAttachments);
 
-                        $message = "Checked EMR Direct Mailbox. There where {$cr->numAttachments} messages. \n";
+                        if ($cr->numAttachments > 0) {
+                            $this->notifyAdmins($cr->numAttachments);
 
-                        echo $message;
+                            $message = "Checked EMR Direct Mailbox. There where {$cr->numAttachments} messages. \n";
 
-                        Slack::to('#background-tasks')
-                            ->send($message);
+                            echo $message;
+
+                            Slack::to('#background-tasks')->send($message);
+                        }
+
+                        Log::info('***************');
 
                     } else {
 
@@ -306,15 +259,62 @@ class PhiMail {
             }
 
         } catch (\Exception $e) {
-            echo $e->getMessage() . "\n" . $e->getFile() . "\n" . $e->getLine();
-            echo $e->getTraceAsString() . "\n";
+            $message = $e->getMessage() . "\n" . $e->getFile() . "\n" . $e->getLine();
+            $traceString = $e->getTraceAsString() . "\n";
+
+            Log::error($message);
+            Log::error($traceString);
         }
 
         try {
             $c->close();
-        } catch (\Exception $ignore) { }
+        } catch (\Exception $ignore) {
+        }
 
-        echo ("============END\n");
+        echo("============END\n");
 
+    }
+
+    public function importCcd($sender, $attachment)
+    {
+        $atPosition = strpos($sender, '@');
+
+        if (!$atPosition) return false;
+
+        //get the domain of the sender's emr address to see where it came from
+        $senderDomain = substr($sender, $atPosition);
+
+        Log::info("Sender EMR Address Domain: {$senderDomain}");
+
+        $vendorMap = Ccda::EMAIL_DOMAIN_TO_VENDOR_MAP;
+
+        //Map the email domain of the sender to one of our CCD Vendors, or assume carolina meds
+        $vendorId = key_exists($senderDomain, $vendorMap) ? $vendorMap[$senderDomain] : 10;
+
+        $vendor = CcdVendor::find($vendorId);
+
+        $ccda = Ccda::create([
+            'user_id' => null,
+            'vendor_id' => $vendorId,
+            'xml' => $attachment->data,
+            'source' => Ccda::EMR_DIRECT,
+        ]);
+
+        $ccdaRepo = new CCDImporterRepository;
+
+        $json = $ccdaRepo->toJson($ccda->xml);
+        $ccda->json = $json;
+        $ccda->save();
+
+        $logger = new CcdItemLogger($ccda);
+        $logger->logAll();
+
+        $importer = new QAImportManager($vendor->program_id, $ccda);
+        $importer->generateCarePlanFromCCD();
+
+        return [
+            'id' => $ccda->id,
+            'fileName' => $attachment->filename,
+        ];
     }
 }

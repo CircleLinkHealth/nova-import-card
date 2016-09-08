@@ -24,6 +24,13 @@ class EmailsProvidersToApproveCareplans extends Command
     protected $description = 'Send a reminder email to all Providers telling them how many Careplans are awaiting approval.';
 
     /**
+     * An instance of UserRepository.
+     *
+     * @var UserRepository
+     */
+    protected $users;
+
+    /**
      * Create a new command instance.
      *
      * @return void
