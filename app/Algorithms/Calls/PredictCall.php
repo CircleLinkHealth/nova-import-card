@@ -345,9 +345,11 @@ class PredictCall
 
     public function getUnsuccessfulCallTimeOffset($week_num, Carbon $next_window_carbon){
 
+        $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient,Carbon::now()->toDateTimeString());
+
         if($this->ccmTime > 1199){ // More than 20 mins
 
-            if($this->successfulCallsThisMonth > 0){ //If there was a successful call this month...
+            if($successfulCallsThisMonth > 0){ //If there was a successful call this month...
 
                 //First window of next month
                 return $next_window_carbon->addMonth(1)->firstOfMonth();
@@ -363,7 +365,7 @@ class PredictCall
 
         else if ($this->ccmTime > 899){ // 15 - 20 mins
 
-            if($this->successfulCallsThisMonth > 0){ //If there was a successful call this month
+            if($successfulCallsThisMonth > 0){ //If there was a successful call this month
 
                 //Logic: Call patient in last week of month
                 return $next_window_carbon->endOfMonth()->subWeek(2);
@@ -377,7 +379,7 @@ class PredictCall
 
         else if ($this->ccmTime > 599){ // 10 - 15 mins
 
-            if($this->successfulCallsThisMonth > 0) { //If there was a successful call this month
+            if($successfulCallsThisMonth > 0) { //If there was a successful call this month
 
                 if ($week_num < 4) { // We are in the first three weeks of the month
 
@@ -412,7 +414,7 @@ class PredictCall
 
         else { // 0 - 10 mins
 
-            if($this->successfulCallsThisMonth > 0) { //If there was a successful call this month
+            if($successfulCallsThisMonth > 0) { //If there was a successful call this month
 
                 //Logic: Call patient in 1 weeks.
                 return $next_window_carbon->addWeek(1);
@@ -439,15 +441,15 @@ class PredictCall
 
         if($success == true){
 
-            $status = '<span style="color:green">successfully</span>';
+            $status = '<span style="color: green">successfully</span>';
 
         }
 
         //Abdullah Z-Ryan was called successfully in week 1. Patient's next predicted call window is: 2016-09-13 (9:00 am to 6:00 pm).
         
         return
-            $this->patient->fullName
-            . ' was called '. $status .' in <b>week '
+            'You just called ' . $this->patient->fullName
+            . ' '. $status .' in <b>week '
             . $week_num . '. </b> <br/> <br/> <b>'
             . 'Please confirm or amend the above next predicted call time. </b>';
 //            . $next_window_carbon
