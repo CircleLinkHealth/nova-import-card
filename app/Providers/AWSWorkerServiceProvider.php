@@ -27,7 +27,7 @@ class AWSWorkerServiceProvider extends ServiceProvider
             'worker',
             'worker-staging'
         ])) {
-            $this->app->register(Dusterio\AwsWorker\Integrations\LaravelServiceProvider::class);
+            $this->app->register(\Dusterio\AwsWorker\Integrations\LaravelServiceProvider::class);
         }
     }
 }
