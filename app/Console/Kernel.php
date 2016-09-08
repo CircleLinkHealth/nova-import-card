@@ -43,6 +43,7 @@ class Kernel extends ConsoleKernel {
 
         $schedule->call(function(){
             PatientCarePlan::notifyProvidersToApproveCareplans();
-        })->dailyAt('8:30');
+        })->weekdays()
+            ->dailyAt('8:30');
 	}
 }
