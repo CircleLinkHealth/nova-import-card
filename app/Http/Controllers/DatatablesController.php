@@ -237,7 +237,7 @@ class DatatablesController extends Controller
                 $curTime = Carbon::now();
                 $curTime = $curTime->toTimeString();
                 if($call->window_end < $curTime) {
-                    return 'rgba(255, 0, 0, 0.7)';
+                    return 'rgba(255, 0, 0, 0.4)';
                 } else {
                     return '';
                 }

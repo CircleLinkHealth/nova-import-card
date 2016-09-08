@@ -93,7 +93,7 @@
                                                     $curTime = $curTime->toTimeString();
                                                     $rowBg = '';
                                                     if($call->window_end < $curTime) {
-                                                        $rowBg = 'background-color: rgba(255, 0, 0, 0.7);';
+                                                        $rowBg = 'background-color: rgba(255, 0, 0, 0.4);';
                                                     }
                                                     ?>
                                                     <tr style="{{ $rowBg }}">
