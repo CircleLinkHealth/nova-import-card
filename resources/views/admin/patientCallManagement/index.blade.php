@@ -279,7 +279,14 @@
                     {data: 'ccm_status', name: 'ccm_status'},
                     {data: 'billing_provider', name: 'billing_provider'},
                     {data: 'birth_date', name: 'birth_date'},
-                ]
+                ],
+                "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                    console.log(aData);
+                    if ( aData['background_color'] != '' )
+                    {
+                        $('td', nRow).css('background-color', aData['background_color']);
+                    }
+                }
             });
 
             /* Formatting function for row details - modify as you need */

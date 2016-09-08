@@ -53,6 +53,7 @@ class DatatablesController extends Controller
                     'calls.scheduled_date',
                     'calls.window_start',
                     'calls.window_end',
+                    'calls.window_end AS window_end_value',
                     'calls.attempt_note',
                     'notes.type AS note_type',
                     'notes.body AS note_body',
@@ -231,6 +232,15 @@ class DatatablesController extends Controller
                     }
                 }
                 return $notesHtml;
+            })
+            ->addColumn('background_color', function($call) {
+                $curTime = Carbon::now();
+                $curTime = $curTime->toTimeString();
+                if($call->window_end < $curTime) {
+                    return 'rgba(255, 0, 0, 0.7)';
+                } else {
+                    return '';
+                }
             })
             ->addColumn('blank', function($call) {
                 return '';

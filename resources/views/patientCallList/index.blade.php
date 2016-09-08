@@ -88,7 +88,15 @@
                                             <tbody>
                                             @if (count($calls) > 0)
                                                 @foreach($calls as $call)
-                                                    <tr>
+                                                    <?php
+                                                    $curTime = \Carbon\Carbon::now();
+                                                    $curTime = $curTime->toTimeString();
+                                                    $rowBg = '';
+                                                    if($call->window_end < $curTime) {
+                                                        $rowBg = 'background-color: rgba(255, 0, 0, 0.7);';
+                                                    }
+                                                    ?>
+                                                    <tr style="{{ $rowBg }}">
                                                         <td class="vert-align">
                                                             @if($call->status == 'reached')
                                                                 <span class="btn btn-success btn-xs"><i class="glyphicon glyphicon-ok"></i> Reached</span>
@@ -103,7 +111,7 @@
                                                                 <em style="color:red;">unassigned</em>
                                                             @endif
                                                         </td>
-                                                        <td>{{ $call->called_date }}</td>
+                                                        <td>{{ $call->scheduled_date }}</td>
                                                         <td>{{ $call->window_start }}</td>
                                                         <td>{{ $call->window_end }}</td>
                                                         <td>
@@ -123,7 +131,7 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first())
+                                                            @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first() && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->member)
                                                                 {{ $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->member->display_name }}
                                                             @else
                                                                 <em style="color:red;">-</em>
