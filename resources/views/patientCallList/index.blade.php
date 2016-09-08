@@ -72,7 +72,7 @@
                                         <table style=""  id="cpmEditableTable" class="display" width="100%" cellspacing="0">
                                             <thead>
                                             <tr>
-                                                <th>Status</th>
+                                                <th></th>
                                                 <th>Patient</th>
                                                 <th>Next Call Date</th>
                                                 <th>Next Call Time Start</th>
@@ -98,10 +98,8 @@
                                                     ?>
                                                     <tr style="{{ $rowBg }}">
                                                         <td class="vert-align">
-                                                            @if($call->status == 'reached')
-                                                                <span class="btn btn-success btn-xs"><i class="glyphicon glyphicon-ok"></i> Reached</span>
-                                                            @elseif($call->status == 'scheduled')
-                                                                <span class="btn btn-warning btn-xs"><i class="glyphicon glyphicon-list"></i> Scheduled</span>
+                                                            @if(!empty($call->attempt_note))
+                                                                <button type="button" class="btn btn-xs btn-info glyphicon glyphicon-envelope" data-toggle="modal" data-target="#attemptNoteCall{{ $call->id }}">Note</button>
                                                             @endif
                                                         </td>
                                                         <td>
@@ -172,6 +170,31 @@
             </div>
         </div>
     </div>
+    </div>
 
+    <!-- call attempt_note modals -->
+    @if (count($calls) > 0)
+        @foreach($calls as $call)
+        <!-- Modal -->
+        <div id="attemptNoteCall{{ $call->id }}" class="modal fade" role="dialog">
+            <div class="modal-dialog">
 
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Call Attempt Note</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{ $call->attempt_note }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        @endforeach
+    @endif
 @stop
