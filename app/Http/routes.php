@@ -236,6 +236,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\EthnicityReportController@getReport',
                 'as' => 'EthnicityReportController.getReport'
             ]);
+
+            Route::get('patient-conditions', [
+                'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
+                'as' => 'PatientConditionsReportController.getReport'
+            ]);
         });
 
         Route::get('dupes', function () {
@@ -388,6 +393,9 @@ Route::group(['middleware' => 'auth'], function () {
         // report - nurse time report
 
         Route::get('reports/nurseTime', ['uses' => 'Admin\Reports\NurseTimeReportController@index', 'as' => 'admin.reports.nurseTime.index']);
+
+        Route::get('reports/nurse/daily', ['uses' => 'Admin\Reports\NurseTimeReportController@makeDailyReport', 'as' => 'admin.reports.nurse.daily']);
+        Route::get('reports/nurse/daily/data', ['uses' => 'Admin\Reports\NurseTimeReportController@dailyReport', 'as' => 'admin.reports.nurse.daily.data']);
 
         Route::get('reports/nurseTime/exportxls', ['uses' => 'Admin\Reports\NurseTimeReportController@exportxls', 'as' => 'admin.reports.nurseTime.exportxls']);
 

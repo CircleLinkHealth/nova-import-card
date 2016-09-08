@@ -1,38 +1,22 @@
 <?php namespace App\Http\Controllers\Patient;
 
-use App\Activity;
-use App\CPRulesQuestions;
-use App\Observation;
-use App\Services\CarePlanViewService;
-use App\Services\ReportsService;
-use App\CarePlan;
 use App\CareItem;
-use App\CarePlanItem;
-use App\Program;
-use App\Location;
-use App\User;
-use App\UserMeta;
-use App\Role;
-use App\Services\ActivityService;
-use App\Services\CareplanService;
-use App\Services\ObservationService;
-use App\Services\MsgUser;
-use App\Services\MsgUI;
-use App\Services\MsgChooser;
-use App\Services\MsgScheduler;
-use App\Http\Requests;
+use App\CPRulesQuestions;
 use App\Http\Controllers\Controller;
-use DateTimeZone;
-use EllipseSynergie\ApiResponse\Laravel\Response;
-use Illuminate\Support\Facades\Input;
-use PasswordHash;
-use Auth;
-use DB;
-use URL;
+use App\Observation;
+use App\PatientCarePlan;
+use App\PatientCareTeamMember;
+use App\PatientInfo;
+use App\PhoneNumber;
+use App\Program;
+use App\Services\CarePlanViewService;
+use App\User;
 use Carbon\Carbon;
-
+use DB;
+use EllipseSynergie\ApiResponse\Laravel\Response;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Auth;
+use URL;
 
 class PatientController extends Controller
 {
@@ -44,39 +28,9 @@ class PatientController extends Controller
      */
     public function showDashboard(Request $request)
     {
-        // get number of approvals
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })->get();
-        $p = 0;
-        if ($patients->count() > 0) {
-            foreach ($patients as $user) {
-                if (!isset($user->patientInfo->careplan_status)) {
-                    continue 1;
-                }
-                // patient approval counts
-                if (Auth::user()->hasRole(['administrator', 'care-center'])) {
-                    // care-center and administrator counts number of drafts
-                    if ($user->patientInfo->careplan_status == 'draft') {
-                        $p++;
-                    }
-                } else if (Auth::user()->hasRole(['provider'])) {
-                    // provider counts number of drafts
-                    if ($user->patientInfo->careplan_status == 'qa_approved') {
-                        $p++;
-                    }
+        $pendingApprovals = PatientCarePlan::getNumberOfCareplansPendingApproval(auth()->user());
 
-                }
-            }
-        }
-        $pendingApprovals = $p;
-
-        if (!$impersonatedUserEmail = $request->input('impersonatedUserEmail')) {
-            $impersonatedUserEmail = '';
-        }
-
-        return view('wpUsers.patient.dashboard', compact(['pendingApprovals', 'impersonatedUserEmail']));
+        return view('wpUsers.patient.dashboard', compact(['pendingApprovals']));
     }
 
     /**
@@ -269,48 +223,58 @@ class PatientController extends Controller
      */
     public function showPatientListing(Request $request)
     {
+
+        //If returning back from after approving a careplan from /view-careplan,
+        //then update the status.
+        $input = $request->all();
+
+        if (isset($input['patient_approval_id'])) {
+            $approved_patient = User::find($input['patient_approval_id']);
+            $approved_patient->carePlanStatus = 'provider_approved'; // careplan_status
+            $approved_patient->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver
+            $approved_patient->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
+        }
+
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
-            ->select(DB::raw('users.*'))
-            //->join('wp_users AS approver', 'THIS JOIN', '=', 'WONT WORK')
+            ->with('primaryProgram')
             ->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })
-            ->with(array('observations' => function ($query) {
-                $query->where('obs_key', '!=', 'Outbound');
-                $query->orderBy('obs_date', 'DESC');
-                $query->first();
-            }))
+            ->with(array(
+                'observations' => function ($query) {
+                    $query->where('obs_key', '!=', 'Outbound');
+                    $query->orderBy('obs_date', 'DESC');
+                    $query->first();
+                },
+                'patientCareTeamMembers' => function ($q) {
+                    $q->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER)
+                        ->with('user');
+                },
+                'phoneNumbers' => function ($q) {
+                    $q->where('type', '=', PhoneNumber::HOME);
+                },
+                'patientInfo' => function ($q) {
+                    $q->with('carePlanProviderApproverUser');
+                }
+            ))
             ->get();
         $i = 0;
 
-        // get approvers before
-        $approvers = null;
-        $approverIds = array();
         if ($patients->count() > 0) {
-            foreach ($patients as $patient) {
-                if ($patient->carePlanStatus == 'provider_approved') {
-                    $approverId = $patient->carePlanProviderApprover;
-                    if (!empty($approverId) && !in_array($approverId, $approverIds)) {
-                        $approverIds[] = $approverId;
-                    }
-                }
-            }
-            $approvers = User::whereIn('ID', $approverIds)->get();
-        }
 
-        if ($patients && $patients->count() > 0) {
             $foundUsers = array(); // save resources, no duplicate db calls
             $foundPrograms = array(); // save resources, no duplicate db calls
+
+            $isProvider = Auth::user()->hasRole('provider');
+            $isCareCenter = Auth::user()->hasRole('care-center');
+            $isAdmin = Auth::user()->hasRole('administrator');
+
+
             foreach ($patients as $patient) {
                 // skip if patient has no name
                 if (empty($patient->first_name)) {
                     continue 1;
-                }
-
-                if ($i >= 1) {
-                    //continue 1;
                 }
                 $i++;
                 // careplan status stuff from 2.x
@@ -319,40 +283,28 @@ class PatientController extends Controller
                 $approverName = 'NA';
                 $tooltip = 'NA';
 
-                if ($patient->carePlanStatus == 'provider_approved') {
-                    $approverId = $patient->carePlanProviderApprover;
-                    if ($approverId == 5) {
-                        //dd($approvers->where('ID', $approverId)->first());
-                    }
-                    $approver = $approvers->where('ID', $approverId)->first();
-                    if (!$approver) {
-                        if (!empty($approverId)) {
-                            if (!isset($foundUsers[$approverId])) {
-                                $approver = User::find($approverId);
-                                $foundUsers[$approverId] = $approver;
-                            } else {
-                                $approver = $foundUsers[$approverId];
-                            }
-                        }
-                    }
+                if ($careplanStatus == 'provider_approved') {
+                    $approver = $patient->patientInfo->carePlanProviderApproverUser;
                     if ($approver) {
                         $approverName = $approver->fullName;
+                        $carePlanProviderDate = $patient->carePlanProviderDate;
+
                         $careplanStatus = 'Approved';
-                        $careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
-                        $tooltip = $approverName . ' ' . $patient->carePlanProviderDate;
+                        $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
+                        $tooltip = $approverName . ' ' . $carePlanProviderDate;
                     }
-                } else if ($patient->carePlanStatus == 'qa_approved') {
+                } else if ($careplanStatus == 'qa_approved') {
                     $careplanStatus = 'Approve Now';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
-                    if (Auth::user()->hasRole('provider')) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
+                    if ($isProvider) {
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.careplan.print', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
                     }
-                } else if ($patient->carePlanStatus == 'draft') {
+                } else if ($careplanStatus == 'draft') {
                     $careplanStatus = 'CLH Approve';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'CLH Approve';
-                    if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
+                    if ($isCareCenter || $isAdmin) {
                         $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
                     }
                 }
@@ -361,24 +313,19 @@ class PatientController extends Controller
                 $bpName = '';
                 $bpID = $patient->billingProviderID;
                 if (!isset($foundPrograms[$patient->program_id])) {
-                    $program = Program::find($patient->program_id);
+                    $program = $patient->primaryProgram;
                     $foundPrograms[$patient->program_id] = $program;
                 } else {
                     $program = $foundPrograms[$patient->program_id];
                 }
                 $programName = $program->display_name;
 
-                if (!empty($bpID)) {
-                    if (!isset($foundUsers[$bpID])) {
-                        $bpUser = User::find($bpID);
-                        if ($bpUser) {
-                            $bpName = $bpUser->fullName;
-                            $foundUsers[$bpID] = $bpUser;
-                        }
-                    } else {
-                        $bpUser = $foundUsers[$bpID];
-                        $bpName = $bpUser->fullName;
-                    }
+                $bpCareTeamMember = $patient->patientCareTeamMembers->first();
+
+                if ($bpCareTeamMember) {
+                    $bpUser = $bpCareTeamMember->user;
+                    $bpName = $bpUser->fullName;
+                    $foundUsers[$bpID] = $bpUser;
                 }
 
                 // get date of last observation
@@ -389,7 +336,8 @@ class PatientController extends Controller
                 }
 
                 try {
-                    $patientData[] = array('key' => $patient->ID, // $part->ID,
+                    $patientData[] = array(
+                        'key' => $patient->ID, // $part->ID,
                         'patient_name' => $patient->fullName, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
                         'first_name' => $patient->first_name, //$meta[$part->ID]["first_name"][0],
                         'last_name' => $patient->last_name, //$meta[$part->ID]["last_name"][0],
@@ -399,7 +347,7 @@ class PatientController extends Controller
                         'careplan_status_link' => $careplanStatusLink, //$careplanStatusLink,
                         'careplan_provider_approver' => $approverName, //$approverName,
                         'dob' => Carbon::parse($patient->birthDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
-                        'phone' => $patient->phone, //$user_config[$part->ID]["study_phone_number"],
+                        'phone' => isset($patient->phoneNumbers->number) ? $patient->phoneNumbers->number : $patient->phone, //$user_config[$part->ID]["study_phone_number"],
                         'age' => $patient->age,
                         'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
                         'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
@@ -416,8 +364,12 @@ class PatientController extends Controller
         }
         $patientJson = json_encode($patientData);
 
-
-        return view('wpUsers.patient.listing', compact(['pendingApprovals', 'patientJson']));
+        return view('wpUsers.patient.listing', compact([
+            'patientJson',
+            'isProvider',
+            'isCareCenter',
+            'isAdmin',
+        ]));
     }
 
 
@@ -428,6 +380,7 @@ class PatientController extends Controller
      */
     public function showPatientCarePlanPrintList(Request $request)
     {
+
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
@@ -506,8 +459,9 @@ class PatientController extends Controller
         }
         $patientJson = json_encode($patientData);
 
-
-        return view('wpUsers.patient.carePlanPrintList', compact(['pendingApprovals', 'patientJson']));
+        return view('wpUsers.patient.carePlanPrintList', compact([
+            'patientJson'
+        ]));
     }
 
     /**
