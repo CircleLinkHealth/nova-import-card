@@ -174,6 +174,7 @@ return [
         \Collective\Html\HtmlServiceProvider::class,
         \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
+        \Fideloper\Proxy\TrustedProxyServiceProvider::class,
         \Maatwebsite\Excel\ExcelServiceProvider::class,
         \rigor789\AirbrakeLaravel\AirbrakeServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
