@@ -46,9 +46,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
         $emailsSent = $providers->map(function ($user) {
             $recipients = [
-//                $user->user_email
-                'mantoniou@circlelinkhealth.com',
-                'Raph@circlelinkhealth.com',
+                $user->user_email
             ];
 
             $numberOfCareplans = PatientCarePlan::getNumberOfCareplansPendingApproval($user);
