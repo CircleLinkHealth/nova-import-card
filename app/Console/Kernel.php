@@ -7,6 +7,7 @@ use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 
+use App\PatientCarePlan;
 use App\Services\PhiMail\PhiMail;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -39,5 +40,9 @@ class Kernel extends ConsoleKernel {
 		$schedule->call(function(){
 			(new PhiMail)->sendReceive();
 		})->everyMinute();
+
+        $schedule->call(function(){
+            PatientCarePlan::notifyProvidersToApproveCareplans();
+        })->dailyAt('8:30');
 	}
 }

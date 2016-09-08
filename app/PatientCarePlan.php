@@ -2,6 +2,7 @@
 
 use App\CLH\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 
 class PatientCarePlan extends Model {
 
