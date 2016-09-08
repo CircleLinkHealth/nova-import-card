@@ -72,6 +72,8 @@
                             console.log('current element id ==:' + $(this).attr('id'));
                         }
                     });
+                } else if(cpmEditableColumnName == 'attempt_note') {
+                    $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="editableInput" type="editableInput" value="' + cpmEditableColumnValue + '" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 } else if(cpmEditableColumnName == 'scheduled_date') {
                     $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="date" type="editableInput" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 } else if(cpmEditableColumnName == 'window_start' || cpmEditableColumnName == 'window_end') {
@@ -287,6 +289,10 @@
                         '<tr>'+
                         '<td>General Comment:</td>'+
                         '<td>'+d.general_comment+'</td>'+
+                        '</tr>'+
+                        '<tr>'+
+                        '<td>Attempt Note:</td>'+
+                        '<td>'+ d.attempt_note_html+'</td>'+
                         '</tr>'+
                         '<tr>'+
                         '<td>Last 3 ' + d.notes_link + ':</td>'+
