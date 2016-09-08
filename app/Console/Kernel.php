@@ -1,22 +1,18 @@
 <?php namespace App\Console;
 
-use App\AppConfig;
+use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\FormatLocationPhone;
 use App\Console\Commands\GeneratePatientReports;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
-
-use App\PatientCarePlan;
 use App\Services\PhiMail\PhiMail;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Log;
 
 
 class Kernel extends ConsoleKernel
 {
-
     /**
      * The Artisan commands provided by your application.
      *
@@ -28,6 +24,7 @@ class Kernel extends ConsoleKernel
         MapSnomedToCpmProblems::class,
         FormatLocationPhone::class,
         GeneratePatientReports::class,
+        EmailsProvidersToApproveCareplans::class,
     ];
 
     /**
@@ -42,9 +39,7 @@ class Kernel extends ConsoleKernel
             (new PhiMail)->sendReceive();
         })->everyMinute();
 
-        $schedule->call(function () {
-            PatientCarePlan::notifyProvidersToApproveCareplans();
-        })
+        $schedule->command('emailapprovalreminder:providers --force')
             ->weekdays()
             ->dailyAt('8:00');
     }

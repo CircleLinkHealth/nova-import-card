@@ -43,37 +43,4 @@ class PatientCarePlan extends Model {
 
         return $pendingApprovals;
     }
-
-    public static function notifyProvidersToApproveCareplans()
-    {
-        $userRepo = new UserRepository();
-
-        $providers = $userRepo->findByRole('provider');
-
-        $emailsSent = $providers->map(function ($user) {
-            $recipients = [
-                $user->user_email
-            ];
-
-            $numberOfCareplans = PatientCarePlan::getNumberOfCareplansPendingApproval($user);
-
-            if ($numberOfCareplans < 1) return false;
-
-            $data = [
-                'numberOfCareplans' => $numberOfCareplans,
-                'drName' => $user->fullName,
-            ];
-
-            $view = 'emails.careplansPendingApproval';
-            $subject = "{$numberOfCareplans} CircleLink Care Plans for your Approval!";
-
-
-            Mail::send($view, $data, function ($message) use ($recipients, $subject) {
-                $message->from('notifications@careplanmanager.com', 'CircleLink Health')
-                    ->to($recipients)
-                    ->subject($subject);
-            });
-        });
-    }
-
 }
