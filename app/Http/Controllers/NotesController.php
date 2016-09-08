@@ -307,6 +307,13 @@ class NotesController extends Controller
 
         if (Auth::user()->hasRole('care-center')) {
 
+            //If the patient was just withdrawn, let's redirect them back to notes.index
+            if($info->ccm_status == 'withdrawn') {
+
+                return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
+
+            }
+
             if (isset($input['phone'])) {
 
                 if (isset($input['call_status']) && $input['call_status'] == 'reached') {

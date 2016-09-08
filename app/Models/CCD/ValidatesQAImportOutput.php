@@ -68,16 +68,38 @@ trait ValidatesQAImportOutput
             return empty($demographics->zip) ? false : true;
         };
 
+        $medications = $counter(3);
+        $problems = $counter(1);
+        $allergies = $counter(0);
+        $fullName = $name();
+
+        $duplicateCcdCheck = function () use ($medications, $problems, $allergies, $fullName) {
+            return QAImportSummary::whereMedications($medications)
+                ->whereProblems($problems)
+                ->whereAllergies($allergies)
+                ->whereName($fullName)
+                ->exists();
+        };
+
+        $duplicatePatient = $duplicateCheck();
+        $duplicateCcdJustUploaded = $duplicateCcdCheck();
+
+        if (!empty($duplicatePatient) || $duplicateCcdJustUploaded) {
+            \Log::info("Duplicate CCD with ID {$ccda->id} was deleted.");
+            $ccda->delete();
+
+            return false;
+        }
 
         $qaSummary = new QAImportSummary();
         $qaSummary->ccda_id = $ccda->id;
-        $qaSummary->name = $name();
-        $qaSummary->medications = $counter(3);
-        $qaSummary->problems = $counter(1);
-        $qaSummary->allergies = $counter(0);
+        $qaSummary->name = $fullName;
+        $qaSummary->medications = $medications;
+        $qaSummary->problems = $problems;
+        $qaSummary->allergies = $allergies;
         $qaSummary->provider = $provider();
         $qaSummary->location = $location();
-        $qaSummary->duplicate_id = $duplicateCheck();
+        $qaSummary->duplicate_id = $duplicatePatient;
         $qaSummary->has_street_address = $hasStreetAddress();
         $qaSummary->has_zip = $hasZip();
         $qaSummary->has_city = $hasCity();
@@ -95,7 +117,7 @@ trait ValidatesQAImportOutput
             || empty($qaSummary->has_city)
             || empty($qaSummary->has_state)
             || empty($qaSummary->has_zip)
-            || ! $qaSummary->has_phone
+            || !$qaSummary->has_phone
         ) $isFlagged = true;
 
         $qaSummary->flag = $isFlagged;
