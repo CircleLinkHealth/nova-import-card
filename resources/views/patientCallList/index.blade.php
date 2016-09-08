@@ -15,6 +15,16 @@
             $('#cpmEditableTable').DataTable( {
                 "scrollX": true
             } );
+
+            $('.patientNameLink').click(function() {
+                callId = $(this).attr('call-id');
+                if ( callId && $( "#attemptNoteCall" + callId ).length ) {
+                    $( "#attemptNoteCall" + callId ).modal();
+                    return false;
+                }
+                return true;
+            });
+        });
     </script>
 
     <div class="row" style="margin-top:60px;">
@@ -105,7 +115,7 @@
                                                         </td>
                                                         <td>
                                                             @if($call->inboundUser)
-                                                                <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->ID)) }}" style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
+                                                                <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->ID)) }}" class="patientNameLink" call-id="{{ $call->id }}" style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
                                                             @else
                                                                 <em style="color:red;">unassigned</em>
                                                             @endif
@@ -176,26 +186,29 @@
     <!-- call attempt_note modals -->
     @if (count($calls) > 0)
         @foreach($calls as $call)
-        <!-- Modal -->
-        <div id="attemptNoteCall{{ $call->id }}" class="modal fade" role="dialog">
-            <div class="modal-dialog">
+            @if (!empty($call->attempt_note))
+            <!-- Modal -->
+            <div id="attemptNoteCall{{ $call->id }}" class="modal fade" role="dialog">
+                <div class="modal-dialog">
 
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Call Attempt Note</h4>
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Call Attempt Note</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>{{ $call->attempt_note }}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->ID)) }}" class="btn btn-primary">Continue to care plan</a>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <p>{{ $call->attempt_note }}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
+
                 </div>
-
             </div>
-        </div>
+            @endif
         @endforeach
     @endif
 @stop
