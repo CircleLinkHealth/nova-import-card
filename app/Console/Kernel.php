@@ -1,6 +1,9 @@
 <?php namespace App\Console;
 
+use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\FormatLocationPhone;
+use App\Console\Commands\GeneratePatientReports;
+use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 
@@ -16,11 +19,12 @@ class Kernel extends ConsoleKernel {
 	 * @var array
 	 */
 	protected $commands = [
-		'App\Console\Commands\Inspire',
+		Inspire::class,
 		NukeItemAndMeta::class,
 		MapSnomedToCpmProblems::class,
 		FormatLocationPhone::class,
-		'App\Console\Commands\GeneratePatientReports'
+		GeneratePatientReports::class,
+        EmailsProvidersToApproveCareplans::class,
 	];
 
 	/**
