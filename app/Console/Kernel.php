@@ -14,36 +14,38 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Log;
 
 
-class Kernel extends ConsoleKernel {
+class Kernel extends ConsoleKernel
+{
 
-	/**
-	 * The Artisan commands provided by your application.
-	 *
-	 * @var array
-	 */
-	protected $commands = [
-		Inspire::class,
-		NukeItemAndMeta::class,
-		MapSnomedToCpmProblems::class,
-		FormatLocationPhone::class,
-		GeneratePatientReports::class,
-	];
+    /**
+     * The Artisan commands provided by your application.
+     *
+     * @var array
+     */
+    protected $commands = [
+        Inspire::class,
+        NukeItemAndMeta::class,
+        MapSnomedToCpmProblems::class,
+        FormatLocationPhone::class,
+        GeneratePatientReports::class,
+    ];
 
-	/**
-	 * Define the application's command schedule.
-	 *
-	 * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-	 * @return void
-	 */
-	protected function schedule(Schedule $schedule)
-	{
-		$schedule->call(function(){
-			(new PhiMail)->sendReceive();
-		})->everyMinute();
+    /**
+     * Define the application's command schedule.
+     *
+     * @param  \Illuminate\Console\Scheduling\Schedule $schedule
+     * @return void
+     */
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->call(function () {
+            (new PhiMail)->sendReceive();
+        })->everyMinute();
 
-        $schedule->call(function(){
+        $schedule->call(function () {
             PatientCarePlan::notifyProvidersToApproveCareplans();
-        })->weekdays()
-            ->dailyAt('8:30');
-	}
+        })
+            ->weekdays()
+            ->dailyAt('8:00');
+    }
 }
