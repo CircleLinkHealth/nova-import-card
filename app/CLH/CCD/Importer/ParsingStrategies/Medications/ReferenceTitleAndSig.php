@@ -28,7 +28,7 @@ class ReferenceTitleAndSig implements ParsingStrategy
 
             $consMed = $this->consolidateMedicationInfo($medication);
 
-            $medsList[] = (new MedicationImport())->create([
+            $medsList[] = (new MedicationImport())->updateOrCreate([
                 'ccda_id' => $ccd->id,
                 'vendor_id' => $ccd->vendor_id,
                 'ccd_medication_log_id' => $medication->id,

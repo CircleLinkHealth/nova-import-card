@@ -1,4 +1,13 @@
 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+
+    @role(['administrator'])
+        <div class="pull-right">
+            <a href="{{ route('get.CCDViewerController.showByUserId', [ 'userId' => $patient->ID]) }}" class="btn btn-primary btn-xs">
+                View CCDA
+            </a>
+        </div>
+    @endrole
+
     <div class="row">
         <div class="col-sm-12">
             <p class="text-medium clearfix">
