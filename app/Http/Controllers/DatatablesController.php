@@ -206,7 +206,7 @@ class DatatablesController extends Controller
                     if($notes->count() > 0) {
                         $notesHtml .= '<ul>';
                         foreach($notes as $note) {
-                            $notesHtml .= '<li style="margin:5px 0px;white-space:normal;">';
+                            $notesHtml .= '<li style="width:800px;margin:5px 0px;white-space:normal;">';
                             $notesHtml .= 'Note '.$note->created_at.': ';
 
                             //Call Info
