@@ -782,6 +782,15 @@ class PatientCareplanController extends Controller
             //blood pressure
             if (isset($biometricsValues['bloodPressure'])) {
                 if (!empty($biometricsValues['bloodPressure']['starting']) || !empty($biometricsValues['bloodPressure']['target'])) {
+                    $validator = \Validator::make($biometricsValues['bloodPressure'], CpmBloodPressure::$rules, CpmBloodPressure::$messages);
+
+                    if ($validator->fails())
+                    {
+                        return redirect()
+                            ->back()
+                            ->withErrors($validator)
+                            ->withInput();
+                    }
                     CpmBloodPressure::updateOrCreate([
                         'patient_id' => $user->ID
                     ], $biometricsValues['bloodPressure']);
