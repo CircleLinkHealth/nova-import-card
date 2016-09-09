@@ -108,7 +108,7 @@ return [
     |
     */
 
-    'log' => 'daily',
+    'log' => 'single',
 
     /*
     |--------------------------------------------------------------------------
@@ -180,7 +180,8 @@ return [
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         \Maknz\Slack\SlackServiceProvider::class,
         Collective\Bus\BusServiceProvider::class,
-        Yajra\Datatables\DatatablesServiceProvider::class
+        Yajra\Datatables\DatatablesServiceProvider::class,
+        App\Providers\AWSWorkerServiceProvider::class,
     ],
 
     /*
