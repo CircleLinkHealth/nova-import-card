@@ -7,7 +7,7 @@
                 <h4 class="modal-title" id="myModalLabel">You have gone idle....</h4>
             </div>
             <div class="modal-body">
-                <p>We haven’t heard from you in a while. Were you working on a specific patient while we were idle?</p>
+                <p>Uh oh, we haven’t heard from you in a while <img src="{{ asset('/img/cute-frown-emoji.png') }}" style="width:25px;height:25px;" />. Were you working on a specific patient while we were idle?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" id="timeModalNo" class="btn btn-warning" data-dismiss="modal">No</button>
@@ -105,7 +105,7 @@ if ($enableTimeTracking) {
         var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
         var isTimerProcessed = false;
         var redirectLocation = false;
-        var idleTime = 120000; // ms before modal display (60000 = 1min)
+        var idleTime = 2000; // ms before modal display (60000 = 1min)
         var consoleDebug = true; // debug toggle
 
         // instantiate idleTimer
@@ -115,26 +115,26 @@ if ($enableTimeTracking) {
         // idleTimer ^
         $(document).on("idle.idleTimer", function (event, elem, obj) {
             if (consoleDebug) console.log('idleTimer hit');
-            if (consoleDebug) console.log('totalTime = ' + totalTime);
+            //if (consoleDebug) console.log('totalTime = ' + totalTime);
             // set to false if user clicks yes/no button
             noResponse = true;
 
             // pause timer
             $(document).idleTimer("pause");
             if (consoleDebug) console.log('paused idleTimer');
-            if (consoleDebug) console.log('totalTime = ' + totalTime);
+            if (consoleDebug) console.log('totalTime before calc = ' + totalTime);
 
             // we went idle, add previously active time to total time
             endTime = new Date();
             totalTime = (totalTime + (endTime - startTime));
             // remove 90000 of the 120000 seconds here
-            totalTime = (totalTime - 90000);
-            if (consoleDebug) console.log('added previously active time to total time than removed 90000 (only 30 seconds of the 2 minutes idle counts)');
-            if (consoleDebug) console.log('totalTime = ' + totalTime);
+            //totalTime = (totalTime - 90000);
+            //if (consoleDebug) console.log('added previously active time to total time than removed 90000 (only 30 seconds of the 2 minutes idle counts)');
+            if (consoleDebug) console.log('totalTime after adding '+(endTime - startTime)+' = ' + totalTime);
 
             // reset startTime to time modal was opened
             startTime = new Date();
-            if (consoleDebug) console.log('set startTime back to 0');
+            if (consoleDebug) console.log('set startTime to 0');
 
             function millisToMinutesAndSeconds(millis) {
                 var minutes = Math.floor(millis / 60000);
@@ -170,6 +170,13 @@ if ($enableTimeTracking) {
             }
 
             // yes/no button in modal
+            $('#timeModalYes').on("click", function () {
+                if (consoleDebug) console.log('yes clicked, setting document idleTimer over again, idleTime = '+idleTime);
+                $(document).idleTimer(idleTime);
+                return true;
+            });
+
+            // yes/no button in modal
             $('#timeModalNo').on("click", function () {
                 //alert('not reviewing patient anymore, complete and submit ' + totalTime + 'seconds');
                 $("#timerDebug").html("no longer reviewing... totalTime = " + totalTime + "");
@@ -184,7 +191,7 @@ if ($enableTimeTracking) {
             // if modal is closed (from clicking outside the modal in the grey area), force cancellation of modal idle timer
             $('#timerModal').on('hide.bs.modal', function (e) {
                 $("#timerDebug").html("still reviewing{hidden}... totalTime = " + totalTime + "");
-                startTime = new Date();
+                //startTime = new Date(); <-- we dont want to restart timer here
                 $(document).idleTimer("resume");
                 $('#timeModalNo, #timeModalYes').unbind('click');
                 // deactivate noResponseTimer
