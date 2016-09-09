@@ -755,9 +755,21 @@ class PatientCareplanController extends Controller
 
             //weight
             if (!isset($biometricsValues['weight']['monitor_changes_for_chf'])) $biometricsValues['weight']['monitor_changes_for_chf'] = 0;
-            if (!empty($biometricsValues['weight']['starting']) || !empty($biometricsValues['weight']['target'])) CpmWeight::updateOrCreate([
-                'patient_id' => $user->ID
-            ], $biometricsValues['weight']);
+            if (!empty($biometricsValues['weight']['starting']) || !empty($biometricsValues['weight']['target'])) {
+                $validator = \Validator::make($biometricsValues['weight'], CpmWeight::$rules, CpmWeight::$messages);
+
+                if ($validator->fails())
+                {
+                    return redirect()
+                        ->back()
+                        ->withErrors($validator)
+                        ->withInput();
+                }
+
+                CpmWeight::updateOrCreate([
+                    'patient_id' => $user->ID
+                ], $biometricsValues['weight']);
+            }
 
             //blood sugar
             if (isset($biometricsValues['bloodSugar'])) {
@@ -800,6 +812,16 @@ class PatientCareplanController extends Controller
             //smoking
             if (isset($biometricsValues['smoking'])) {
                 if (!empty($biometricsValues['smoking']['starting']) || !empty($biometricsValues['smoking']['target'])) {
+                    $validator = \Validator::make($biometricsValues['smoking'], CpmSmoking::$rules, CpmSmoking::$messages);
+
+                    if ($validator->fails())
+                    {
+                        return redirect()
+                            ->back()
+                            ->withErrors($validator)
+                            ->withInput();
+                    }
+
                     CpmSmoking::updateOrCreate([
                         'patient_id' => $user->ID
                     ], $biometricsValues['smoking']);

@@ -23,11 +23,11 @@ class CpmBloodSugar extends Model implements Biometric
     ];
 
     public static $rules = [
-        'starting' => 'max:3|numeric',
-        'target' => 'max:3|numeric',
-        'starting_a1c' => 'max:3|numeric',
-        'high_alert' => 'max:3|numeric',
-        'low_alert' => 'max:3|numeric',
+        'starting' => 'max:999|numeric',
+        'target' => 'max:999|numeric',
+        'starting_a1c' => 'max:999|numeric',
+        'high_alert' => 'max:999|numeric',
+        'low_alert' => 'max:999|numeric',
     ];
 
     public static $messages = [
