@@ -6,6 +6,7 @@ use App\CLH\Contracts\Repositories\UserRepository;
 use App\PatientCarePlan;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
+use Maknz\Slack\Facades\Slack;
 
 class EmailsProvidersToApproveCareplans extends Command
 {
@@ -75,7 +76,10 @@ class EmailsProvidersToApproveCareplans extends Command
                     ->subject($subject);
             });
 
-            dd();
+            Slack::to('#background-tasks')
+                ->send("Sent pending approvals email to {$user->fullName}.");
         });
+
+        $this->info("Sent {$emailsSent->count()} emails.");
     }
 }

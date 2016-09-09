@@ -4,7 +4,6 @@
             <img src="/img/cpm-logo.png" height="50" width="87.5">
         </div>
         <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">
-            <h5><b>CCD Importer</b> Last Updated: May 16th, 2016</h5>
             <h6 class="quote">"{{ Inspiring::quote() }}"</h6>
         </div>
     </div>
