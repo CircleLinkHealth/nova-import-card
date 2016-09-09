@@ -39,7 +39,7 @@ class Kernel extends ConsoleKernel
             (new PhiMail)->sendReceive();
         })->everyMinute();
 
-        $schedule->command('emailapprovalreminder:providers --force')
+        $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
             ->dailyAt('8:00');
     }
