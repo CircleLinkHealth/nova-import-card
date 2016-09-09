@@ -7,12 +7,6 @@
   ],
   "license": "MIT",
   "type": "project",
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/michalisantoniou6/php-ccd-parser"
-    }
-  ],
   "require": {
     "laravel/framework": "5.2.*",
     "franzose/closure-table": "4.*",
@@ -24,7 +18,6 @@
     "rap2hpoutre/laravel-log-viewer": "^0.4.0",
     "zizaco/entrust": "5.2.x-dev",
     "fideloper/proxy": "~3.1",
-    "michalisantoniou6/php-ccd-parser": "dev-master",
     "barryvdh/laravel-debugbar": "^2.0",
     "laracasts/utilities": "~2.0",
     "venturecraft/revisionable": "1.*",
