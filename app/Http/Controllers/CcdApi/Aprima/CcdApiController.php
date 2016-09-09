@@ -287,7 +287,7 @@ class CcdApiController extends Controller
             return response()->json(['message' => 'CCD uploaded successfully.'], 201);
         }
 
-        if (app()->environment('production')) {
+        if (app()->environment('production') && $output) {
             $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'well');
         }
 
