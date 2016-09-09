@@ -5,6 +5,7 @@ use App\CPRulesQuestions;
 use App\Events\CarePlanWasApproved;
 use App\Http\Controllers\Controller;
 use App\Observation;
+use App\PatientCarePlan;
 use App\PatientCareTeamMember;
 use App\PatientInfo;
 use App\PhoneNumber;
@@ -28,20 +29,7 @@ class PatientController extends Controller
      */
     public function showDashboard(Request $request)
     {
-        $pendingApprovals = 0;
-
-        // patient approval counts
-        if (Auth::user()->hasRole(['administrator', 'care-center'])) {
-            // care-center and administrator counts number of drafts
-            $pendingApprovals = PatientInfo::whereIn('user_id', Auth::user()->viewablePatientIds())
-                ->whereCareplanStatus('draft')
-                ->count();
-        } else if (Auth::user()->hasRole(['provider'])) {
-            // provider counts number of drafts
-            $pendingApprovals = PatientInfo::whereIn('user_id', Auth::user()->viewablePatientIds())
-                ->whereCareplanStatus('qa_approved')
-                ->count();
-        }
+        $pendingApprovals = PatientCarePlan::getNumberOfCareplansPendingApproval(auth()->user());
 
         return view('wpUsers.patient.dashboard', compact(['pendingApprovals']));
     }
@@ -372,9 +360,7 @@ class PatientController extends Controller
         }
         $patientJson = json_encode($patientData);
 
-
         return view('wpUsers.patient.listing', compact([
-            'pendingApprovals',
             'patientJson',
             'isProvider',
             'isCareCenter',
@@ -469,8 +455,9 @@ class PatientController extends Controller
         }
         $patientJson = json_encode($patientData);
 
-
-        return view('wpUsers.patient.carePlanPrintList', compact(['pendingApprovals', 'patientJson']));
+        return view('wpUsers.patient.carePlanPrintList', compact([
+            'patientJson'
+        ]));
     }
 
     /**

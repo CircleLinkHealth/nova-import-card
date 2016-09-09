@@ -13,9 +13,26 @@ class Ccda extends Model implements Transformable {
     //define sources here
     const ATHENA_API = 'athena_api';
     const API = 'api';
+    const EMR_DIRECT = 'emr_direct';
     const IMPORTER = 'importer';
 
-    protected $guarded = [];
+    const EMAIL_DOMAIN_TO_VENDOR_MAP = [
+        //Carolina Medical Associates
+        '@direct.novanthealth.org' => 10,
+        '@test.directproject.net' => 2,
+    ];
+
+    protected $fillable = [
+        'user_id',
+        'patient_id',
+        'vendor_id',
+        'source',
+        'imported',
+        'xml',
+        'json',
+    ];
+
+    
 
     public function qaSummary()
     {
