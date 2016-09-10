@@ -245,6 +245,11 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix' => 'admin'
     ], function () {
 
+        Route::post('upload-csv', [
+            'uses' => 'CallsCSVController@uploadCSV',
+            'as' => 'post.CallsCSVController.uploadCSV'
+        ]);
+
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
 
         Route::group([
