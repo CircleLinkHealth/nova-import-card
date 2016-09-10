@@ -150,8 +150,8 @@ class DatatablesController extends Controller
                     6 => 'Sa',
                     7 => 'Su'
                 );
+                $windowText = '';
                 if($call->inboundUser && $call->inboundUser->patientInfo) {
-                    $windowText = '';
                     $windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
                     if($windows) {
                         $windowText .= '<ul>';
