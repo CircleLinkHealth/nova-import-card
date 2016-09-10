@@ -94,7 +94,26 @@ class PatientCallManagementController extends Controller {
 			->orderBy('last_name', 'ASC')
 			->pluck('display_name', 'ID');
 
-		return view('admin.patientCallManagement.index', compact(['calls', 'date', 'nurses', 'filterNurse', 'filterStatus']));
+
+
+
+		// filter user
+		$patientList = User::with('roles')
+			->whereHas('roles', function($q) {
+				$q->where(function ($query) {
+					$query->where('name', 'participant');
+				});
+			})->whereDoesntHave('inboundCalls', function($q) {
+				$q->where(function ($query) {
+					$query->where('status', '=', 'scheduled');
+				});
+			})->where( 'program_id', '!=', '' )
+			->orderBy( 'ID', 'desc' )
+			->get()
+			->lists( 'fullNameWithId', 'ID' )
+			->all();
+
+		return view('admin.patientCallManagement.index', compact(['calls', 'date', 'nurses', 'filterNurse', 'filterStatus', 'patientList']));
 	}
 
 	/**

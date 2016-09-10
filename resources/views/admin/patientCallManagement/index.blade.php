@@ -3,7 +3,6 @@
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.12.3.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -75,7 +74,7 @@
                 } else if(cpmEditableColumnName == 'attempt_note') {
                     $(cpmEditableTd).html('<textarea id="editableInput" style="width:300px;height:50px;" class="" name="editableInput" type="editableInput">' + cpmEditableColumnValue + '</textarea> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 } else if(cpmEditableColumnName == 'scheduled_date') {
-                    $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="date" type="editableInput" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
+                    $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="editableInput" type="input" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 } else if(cpmEditableColumnName == 'window_start' || cpmEditableColumnName == 'window_end') {
                     $(cpmEditableTd).html('<input id="editableInput" style="width:50px;" class="" name="editableInput" type="input" value="' + cpmEditableColumnValue + '"  data-field="time" data-format="HH:mm" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 }
@@ -141,6 +140,57 @@
     <div id="nurseFormWrapper" style="display:none;">
         {!! Form::select('nurseFormSelect', array('unassigned' => 'Unassigned') + $nurses->all(), '', ['class' => 'select-picker nurseFormSelect', 'style' => 'width:150px;']) !!}
     </div>
+
+    <div class="modal fade" id="addCallModal" role="dialog" style="height: 10000px; opacity: 1;background-color: black">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                    <h4 class="modal-title" id="addCallModalLabel">Add New Call</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="margin:20px 0px 40px 0px;">
+                        <form id="addCallForm" action="<?php echo URL::route('api.callcreate'); ?>" method="post">
+                        <div class="col-md-10 col-md-offset-1">
+                            <div class="row">
+                                <div class="col-xs-12" id="addCallErrorMsg"></div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-xs-4 text-right">{!! Form::label('inbound_cpm_id', 'Patient:') !!}</div>
+                                <div class="col-xs-8">{!! Form::select('inbound_cpm_id', array('' => '') + $patientList, '', ['id' => 'addCallPatientId', 'class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-xs-4 text-right">{!! Form::label('outbound_cpm_id', 'Nurse:') !!}</div>
+                                <div class="col-xs-8">{!! Form::select('outbound_cpm_id', array('unassigned' => 'Unassigned') + $nurses->all(), 'unassigned', ['id' => 'addCallNurseId', 'class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-xs-4 text-right">{!! Form::label('scheduled_date', 'Date:') !!}</div>
+                                <div class="col-xs-8">{!! Form::input('text', 'scheduled_date', '', ['id' => 'addCallDate', 'class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "date", 'data-format' => "yyyy-MM-dd"]) !!}</div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-xs-4 text-right">{!! Form::label('window_start', 'Start Time:') !!}</div>
+                                <div class="col-xs-8">{!! Form::input('text', 'window_start', '09:00', ['id' => 'addCallWindowStart', 'class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "time", 'data-format' => "HH:mm"]) !!}</div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-xs-4 text-right">{!! Form::label('window_end', 'End Time:') !!}</div>
+                                <div class="col-xs-8">{!! Form::input('text', 'window_end', '17:00', ['id' => 'addCallWindowEnd', 'class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "time", 'data-format' => "HH:mm"]) !!}</div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-xs-4 text-right">{!! Form::label('attempt_note', 'AttemptNote:') !!}</div>
+                                <div class="col-xs-8">{!! Form::input('textarea', 'attempt_note', '', ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="addCallModalNo" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                    <button type="button" id="addCallModalYes" class="btn btn-success">Add Call</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -160,7 +210,8 @@
 
                         <div class="row">
                             <div class="col-sm-12">
-                                <a href="{{ URL::route('CallReportController.exportxls', array()) }}" class="btn btn-success pull-right">Excel Export</a>
+                                <a href="{{ URL::route('CallReportController.exportxls', array()) }}" class="btn btn-primary pull-right">Excel Export</a> &nbsp;
+                                <button style="margin-right:5px;" type="button" id="addCallButton" class="btn btn-success pull-right" data-toggle="modal" data-target="#addCallModal">Add Call</button>
                             </div>
                         </div>
                         {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
@@ -186,7 +237,7 @@
                                 <th>Nurse</th>
                                 <th>Patient</th>
                                 <th>Program</th>
-                                <th class="nosearch">Last Call Status</th>
+                                <th>Last Call Status</th>
                                 <th>Next Call</th>
                                 <th>Call Time Start</th>
                                 <th>Call Time End</th>
@@ -267,7 +318,7 @@
                     {data: 'nurse_name', name: 'nurse_name'},
                     {data: 'patient_name', name: 'patient_name'},
                     {data: 'program_name', name: 'program_name'},
-                    {data: 'no_call_attempts_since_last_success', name: 'no_call_attempts_since_last_success', searchable: false},
+                    {data: 'no_call_attempts_since_last_success', name: 'no_call_attempts_since_last_success'},
                     {data: 'scheduled_date', name: 'scheduled_date'},
                     {data: 'window_start', name: 'window_start'},
                     {data: 'window_end', name: 'window_end'},
@@ -281,7 +332,7 @@
                     {data: 'birth_date', name: 'birth_date'},
                 ],
                 "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                    console.log(aData);
+                    //console.log(aData);
                     if ( aData['background_color'] != '' )
                     {
                         $('td', nRow).css('background-color', aData['background_color']);
@@ -340,6 +391,50 @@
                     }
                 } );
             } );
+
+            $('#addCallButton').on("click", function () {
+                var d = new Date();
+                var month = d.getMonth()+1;
+                var day = d.getDate();
+                var datetime = d.getFullYear() + '-' +
+                        (month<10 ? '0' : '') + month + '-' +
+                        (day<10 ? '0' : '') + day;
+                $('#addCallPatientId').val('').trigger("change");
+                $('#addCallNurseId').val('unassigned').trigger("change");
+                $('input').val('');
+                $('select').val('');
+                $('#addCallDate').val(datetime);
+                $('#addCallWindowStart').val('09:00');
+                $('#addCallWindowEnd').val('17:00');
+                $('#addCallErrorMsg').html('');
+            } );
+
+            // add call
+            $('#addCallModalYes').on("click", function () {
+
+                $.ajax({
+                    type: $('#addCallForm').attr('method'),
+                    url: $('#addCallForm').attr('action'),
+                    data: $('#addCallForm').serialize(),
+                    success: function (data) {
+                        //alert('call successfully added');
+                        $('#addCallModal').modal('hide');
+                    },
+                    error: function (data) {
+                        console.log(data.responseText);
+                        var parsedJson = jQuery.parseJSON(data.responseText);
+                        console.log(parsedJson);
+                        errorString = '<div class="alert alert-danger"><ul>';
+                        $.each( parsedJson.errors, function( key, value) {
+                            errorString += '<li>' + value + '</li>';
+                        });
+                        errorString += '</ul></div>';
+                        $('#addCallErrorMsg').html(errorString);
+                    }
+                });
+
+                callstable.draw();
+            });
         });
     </script>
 @stop

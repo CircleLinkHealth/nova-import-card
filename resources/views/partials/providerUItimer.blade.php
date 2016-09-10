@@ -7,7 +7,7 @@
                 <h4 class="modal-title" id="myModalLabel">You have gone idle....</h4>
             </div>
             <div class="modal-body">
-                <p>Uh oh, we haven’t heard from you in a while <img src="{{ asset('/img/cute-frown-emoji.png') }}" style="width:25px;height:25px;" />. Were you working on a specific patient while we were idle?</p>
+                <p style="font-size:125%;">Uh oh, we haven’t heard from you in a while. Were you working on a specific patient while we were idle?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" id="timeModalNo" class="btn btn-warning" data-dismiss="modal">No</button>
@@ -161,10 +161,15 @@ if ($enableTimeTracking) {
                 //endTime = new Date();
                 //totalTime = (totalTime + (endTime - startTime)) - modalDelay;
                 //totalTime = (totalTime - modalDelay);
-                if (consoleDebug) console.log('totalTime = ' + totalTime);
+
                 // subtract 45 seconds for modal idle = 45000
                 // subtract 9:30 for modal idle = 1000*60*modalDelay - 90000
                 //totalTime = ( totalTime - modalDelay - 90000 );
+
+                //remove 90000 of the 120000 seconds here
+                if (consoleDebug) console.log('remove 90000 of the initial 120000 second idle period here');
+                totalTime = (totalTime - 90000);
+                if (consoleDebug) console.log('totalTime = ' + totalTime);
                 redirectLocation = 'logout';
                 submitTotalTime();
             }
