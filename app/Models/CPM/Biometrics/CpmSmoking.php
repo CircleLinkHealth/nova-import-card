@@ -13,6 +13,16 @@ class CpmSmoking extends Model implements Biometric
         'target',
     ];
 
+    public static $rules = [
+        'starting' => 'max:999|numeric',
+        'target' => 'max:999|numeric',
+    ];
+
+    public static $messages = [
+        'starting.max' => 'The Starting Blood Sugar may not be greater than 999.',
+        'target.max' => 'The Target Blood Sugar may not be greater than 999.',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

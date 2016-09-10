@@ -22,6 +22,22 @@ class CpmBloodSugar extends Model implements Biometric
         'low_alert' => 60,
     ];
 
+    public static $rules = [
+        'starting' => 'max:999|numeric',
+        'target' => 'max:999|numeric',
+        'starting_a1c' => 'max:999|numeric',
+        'high_alert' => 'max:999|numeric',
+        'low_alert' => 'max:999|numeric',
+    ];
+
+    public static $messages = [
+        'starting.max' => 'The Starting Blood Sugar may not be greater than 3 characters.',
+        'target.max' => 'The Target Blood Sugar may not be greater than 3 characters.',
+        'starting_a1c.max' => 'The Starting A1c Blood Sugar may not be greater than 3 characters.',
+        'high_alert.max' => 'The High Alert Blood Sugar may not be greater than 3 characters.',
+        'low_alert.max' => 'The Low Alert Blood Sugar may not be greater than 3 characters.',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
