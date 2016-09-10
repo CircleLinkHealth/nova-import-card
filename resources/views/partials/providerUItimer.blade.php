@@ -161,10 +161,15 @@ if ($enableTimeTracking) {
                 //endTime = new Date();
                 //totalTime = (totalTime + (endTime - startTime)) - modalDelay;
                 //totalTime = (totalTime - modalDelay);
-                if (consoleDebug) console.log('totalTime = ' + totalTime);
+
                 // subtract 45 seconds for modal idle = 45000
                 // subtract 9:30 for modal idle = 1000*60*modalDelay - 90000
                 //totalTime = ( totalTime - modalDelay - 90000 );
+
+                //remove 90000 of the 120000 seconds here
+                if (consoleDebug) console.log('remove 90000 of the initial 120000 second idle period here');
+                totalTime = (totalTime - 90000);
+                if (consoleDebug) console.log('totalTime = ' + totalTime);
                 redirectLocation = 'logout';
                 submitTotalTime();
             }
