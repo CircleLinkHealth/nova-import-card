@@ -165,7 +165,7 @@
                             </div>
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('scheduled_date', 'Date:') !!}</div>
-                                <div class="col-xs-8">{!! Form::input('text', 'scheduled_date', '', ['class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "date", 'data-format' => "yyyy-MM-dd"]) !!}</div>
+                                <div class="col-xs-8">{!! Form::input('text', 'scheduled_date', '', ['id' => 'addCallDate', 'class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "date", 'data-format' => "yyyy-MM-dd"]) !!}</div>
                             </div>
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('window_start', 'Start Time:') !!}</div>
@@ -173,7 +173,7 @@
                             </div>
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('window_end', 'End Time:') !!}</div>
-                                <div class="col-xs-8">{!! Form::input('text', 'window_end', '18:00', ['id' => 'addCallWindowEnd', 'class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "time", 'data-format' => "HH:mm"]) !!}</div>
+                                <div class="col-xs-8">{!! Form::input('text', 'window_end', '17:00', ['id' => 'addCallWindowEnd', 'class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "time", 'data-format' => "HH:mm"]) !!}</div>
                             </div>
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('attempt_note', 'AttemptNote:') !!}</div>
@@ -393,12 +393,19 @@
             } );
 
             $('#addCallButton').on("click", function () {
-                $('#addCallPatientId').val('').trigger("change");;
-                $('#addCallNurseId').val('unassigned').trigger("change");;
+                var d = new Date();
+                var month = d.getMonth()+1;
+                var day = d.getDate();
+                var datetime = d.getFullYear() + '-' +
+                        (month<10 ? '0' : '') + month + '-' +
+                        (day<10 ? '0' : '') + day;
+                $('#addCallPatientId').val('').trigger("change");
+                $('#addCallNurseId').val('unassigned').trigger("change");
                 $('input').val('');
                 $('select').val('');
+                $('#addCallDate').val(datetime);
                 $('#addCallWindowStart').val('09:00');
-                $('#addCallWindowEnd').val('15:00');
+                $('#addCallWindowEnd').val('17:00');
                 $('#addCallErrorMsg').html('');
             } );
 
