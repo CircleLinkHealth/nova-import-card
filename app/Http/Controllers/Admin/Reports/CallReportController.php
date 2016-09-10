@@ -95,12 +95,28 @@ class CallReportController extends Controller {
 				});
 				$i = 0;
 				// header
-				$userColumns = array('call_id', 'nurse_name', 'patient_name', 'birth_date', 'status', 'scheduled_date', 'window_start', 'window_end', 'last_successful_contact_time', 'cur_month_activity_time', 'no_of_calls', 'no_of_successful_calls', 'ccm_status', 'billing_provider', 'program_name');
+				$userColumns = array('id', 'nurse name', 'patient name', 'dob', 'status', 'scheduled_date', 'window start', 'window end', 'last call status', 'CCM Time', 'no of calls', 'successful calls', 'ccm status', 'billing provider', 'program name');
 				$sheet->appendRow($userColumns);
 
 				foreach ($calls as $call) {
+					if($call->inboundUser && $call->inboundUser->patientInfo) {
+						$ccmTime = substr($call->inboundUser->patientInfo->currentMonthCCMTime, 1);
+					} else {
+						$ccmTime = 'n/a';
+					}
+
+					if($call->inboundUser && $call->inboundUser->patientInfo) {
+						if (is_null($call->inboundUser->patientInfo->no_call_attempts_since_last_success)) {
+							$noAttmpts = 'n/a';
+						} else if ($call->inboundUser->patientInfo->no_call_attempts_since_last_success > 0) {
+							$noAttmpts = $call->inboundUser->patientInfo->no_call_attempts_since_last_success . 'x Attempts';
+						} else {
+							$noAttmpts = 'Success';
+						}
+					}
+
 					//dd($call);
-					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->birth_date, $call->status, $call->scheduled_date, $call->window_start, $call->window_end, $call->last_successful_contact_time, $call->cur_month_activity_time, $call->no_of_calls, $call->no_of_successful_calls, $call->ccm_status, $call->billing_provider, $call->program_name);
+					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->birth_date, $call->status, $call->scheduled_date, $call->window_start, $call->window_end, $call->last_successful_contact_time, $ccmTime, $call->no_of_calls, $noAttmpts, $call->ccm_status, $call->billing_provider, $call->program_name);
 					$sheet->appendRow($columns);
 				}
 			});
