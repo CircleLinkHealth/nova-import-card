@@ -6,10 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class NurseInfo extends Model
 {
-
-    //Relationships:
-
     protected $table = 'nurse_info';
+
+    protected $fillable = [
+        'user_id',
+        'status',
+        'license',
+        'hourly_rate',
+        'spanish',
+        'isNLC',
+    ];
 
     public function user()
     {
@@ -28,7 +34,7 @@ class NurseInfo extends Model
 
     public function states(){
 
-        return $this->belongsToMany(State::class,'nurse_info_state');
+        return $this->belongsToMany(State::class, 'nurse_info_state');
     }
 
 
