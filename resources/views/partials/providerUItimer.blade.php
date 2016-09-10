@@ -7,7 +7,7 @@
                 <h4 class="modal-title" id="myModalLabel">You have gone idle....</h4>
             </div>
             <div class="modal-body">
-                <p style="font-size:125%;">Uh oh, we haven’t heard from you in a while<img src="{{ asset('/img/tear-face-emoji.png') }}" style="width:30px;height:25px;" />. Were you working on a specific patient while we were idle?</p>
+                <p style="font-size:125%;">Uh oh, we haven’t heard from you in a while. Were you working on a specific patient while we were idle?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" id="timeModalNo" class="btn btn-warning" data-dismiss="modal">No</button>
