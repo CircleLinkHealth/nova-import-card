@@ -169,11 +169,11 @@
                             </div>
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('window_start', 'Start Time:') !!}</div>
-                                <div class="col-xs-8">{!! Form::input('text', 'window_start', '', ['class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "time", 'data-format' => "HH:mm"]) !!}</div>
+                                <div class="col-xs-8">{!! Form::input('text', 'window_start', '09:00', ['id' => 'addCallWindowStart', 'class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "time", 'data-format' => "HH:mm"]) !!}</div>
                             </div>
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('window_end', 'End Time:') !!}</div>
-                                <div class="col-xs-8">{!! Form::input('text', 'window_end', '', ['class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "time", 'data-format' => "HH:mm"]) !!}</div>
+                                <div class="col-xs-8">{!! Form::input('text', 'window_end', '18:00', ['id' => 'addCallWindowEnd', 'class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "time", 'data-format' => "HH:mm"]) !!}</div>
                             </div>
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('attempt_note', 'AttemptNote:') !!}</div>
@@ -397,6 +397,8 @@
                 $('#addCallNurseId').val('unassigned').trigger("change");;
                 $('input').val('');
                 $('select').val('');
+                $('#addCallWindowStart').val('09:00');
+                $('#addCallWindowEnd').val('15:00');
                 $('#addCallErrorMsg').html('');
             } );
 
