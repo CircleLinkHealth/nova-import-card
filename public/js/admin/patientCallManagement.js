@@ -2,6 +2,6 @@ $(document).ready(function(){
     $("#dtBox").DateTimePicker();
     $("#tBox").DateTimePicker();
 
-    $('#newCallPatient').select2();
-    $('#newCallNurse').select2();
+    $('#inbound_cpm_id').select2();
+    $('#outbound_cpm_id').select2();
 });
