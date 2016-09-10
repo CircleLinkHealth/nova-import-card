@@ -29,9 +29,69 @@ class CallController extends Controller
 
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('wpUsers.patient.calls.create');
+        $validation = \Validator::make( $request->all(), [
+            'inbound_cpm_id' => 'required',
+            'outbound_cpm_id' => '',
+            'scheduled_date' => 'required|date',
+            'window_start' => 'required|date_format:H:i',
+            'window_end' => 'required|date_format:H:i',
+            'attempt_note' => ''
+        ]);
+
+        if( $validation->fails() )
+        {
+            return response(json_encode([
+                'errors' => $validation->errors()->getMessages(),
+                'code' => 422
+            ]), 422);
+        }
+
+        $input = $request->only('inbound_cpm_id',
+            'outbound_cpm_id',
+            'newCallAttemptNote',
+            'scheduled_date',
+            'window_start',
+            'window_end',
+            'attempt_note');
+
+        // validate patient doesnt already have a scheduled call
+        $patient = User::find($input['inbound_cpm_id']);
+        if(!$patient) {
+            return response(json_encode([
+                'errors' => ['could not find patient'],
+                'code' => 406
+            ]), 406);
+        }
+
+        if($patient->inboundCalls) {
+            $scheduledCall = $patient->inboundCalls()->where('status', '=', 'scheduled')->first();
+            if($scheduledCall) {
+                return response(json_encode([
+                    'errors' => ['patient already has a scheduled call'],
+                    'code' => 406
+                ]), 406);
+            }
+        }
+
+        $call = new Call;
+        $call->inbound_cpm_id = $input['inbound_cpm_id'];
+        if(!empty($call->outbound_cpm_id)) {
+            $call->outbound_cpm_id = $input['outbound_cpm_id'];
+        }
+        $call->scheduled_date = $input['scheduled_date'];
+        $call->window_start = $input['window_start'];
+        $call->window_end = $input['window_end'];
+        $call->attempt_note = $input['attempt_note'];
+        $call->note_id = null;
+        $call->is_cpm_outbound = 1;
+        $call->service = 'phone';
+        $call->status = 'scheduled';
+        $call->save();
+
+        return response("successfully created call ", 201);
+        //return view('wpUsers.patient.calls.create');
     }
 
     public function schedule(Request $request)

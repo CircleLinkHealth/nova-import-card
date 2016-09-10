@@ -583,6 +583,7 @@ Route::group(['middleware' => 'cors'], function () {
     //Route::get('pagetimer', 'PageTimerController@store');
     Route::post('api/v2.1/pagetimer', ['uses' => 'PageTimerController@store', 'as' => 'api.pagetracking']);
     Route::post('callupdate', ['uses' => 'CallController@update', 'as' => 'api.callupdate']);
+    Route::post('callcreate', ['uses' => 'CallController@create', 'as' => 'api.callcreate']);
 });
 
 /*
