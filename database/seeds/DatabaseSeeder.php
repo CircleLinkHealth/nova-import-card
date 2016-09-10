@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder {
 
@@ -33,15 +32,13 @@ class DatabaseSeeder extends Seeder {
 		// S20150929SymItems, kg 2015/9/28
 //	    $this->call('SnomedToIcd10MapTableSeeder');
 //		$this->command->info('SnomedToIcd10MapTableSeeder success!');
-//        $this->call('CcdImportRoutinesStrategiesTableSeeder');
-//        $this->call('CcdImportRoutinesTableSeeder');
-//        $this->call('CcdVendorsTableSeeder');
-//        $this->call('CpmProblemsTableSeeder');
 
-        $this->call('StatesTableSeeder');
-        $this->call('AddExistingNurses');
-        $this->call('PatientSummaryTableSeeder');
-        $this->call('S20160910ReconcileCallAttempts');
+//      $this->call('CcdImportRoutinesStrategiesTableSeeder');
+//      $this->call('CcdImportRoutinesTableSeeder');
+//      $this->call('CcdVendorsTableSeeder');
+//      $this->call('CpmProblemsTableSeeder');
+
+
     }
 
 }
