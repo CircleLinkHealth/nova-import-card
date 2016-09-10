@@ -62,7 +62,7 @@ class DatatablesController extends Controller
                     'patient_info.cur_month_activity_time',
                     'patient_info.last_successful_contact_time',
                     \DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
-                    'patient_info.no_call_attempts_since_last_success',
+                    \DB::raw('coalesce(patient_info.no_call_attempts_since_last_success, "n/a") as no_call_attempts_since_last_success'),
                     'patient_info.ccm_status',
                     'patient_info.birth_date',
                     'patient_info.general_comment',
@@ -134,7 +134,9 @@ class DatatablesController extends Controller
                 }
             })
             ->editColumn('no_call_attempts_since_last_success', function($call) {
-                if($call->no_call_attempts_since_last_success > 0) {
+                if($call->no_call_attempts_since_last_success == 'n/a') {
+                    return 'n/a';
+                } else if($call->no_call_attempts_since_last_success > 0) {
                     return $call->no_call_attempts_since_last_success.'x Attempts';
                 } else {
                     return 'Success';

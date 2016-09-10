@@ -237,7 +237,7 @@
                                 <th>Nurse</th>
                                 <th>Patient</th>
                                 <th>Program</th>
-                                <th class="nosearch">Last Call Status</th>
+                                <th>Last Call Status</th>
                                 <th>Next Call</th>
                                 <th>Call Time Start</th>
                                 <th>Call Time End</th>
@@ -318,7 +318,7 @@
                     {data: 'nurse_name', name: 'nurse_name'},
                     {data: 'patient_name', name: 'patient_name'},
                     {data: 'program_name', name: 'program_name'},
-                    {data: 'no_call_attempts_since_last_success', name: 'no_call_attempts_since_last_success', searchable: false},
+                    {data: 'no_call_attempts_since_last_success', name: 'no_call_attempts_since_last_success'},
                     {data: 'scheduled_date', name: 'scheduled_date'},
                     {data: 'window_start', name: 'window_start'},
                     {data: 'window_end', name: 'window_end'},
