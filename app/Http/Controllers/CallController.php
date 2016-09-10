@@ -50,7 +50,6 @@ class CallController extends Controller
 
         $input = $request->only('inbound_cpm_id',
             'outbound_cpm_id',
-            'newCallAttemptNote',
             'scheduled_date',
             'window_start',
             'window_end',
@@ -77,7 +76,9 @@ class CallController extends Controller
 
         $call = new Call;
         $call->inbound_cpm_id = $input['inbound_cpm_id'];
-        if(!empty($call->outbound_cpm_id)) {
+        if(empty($input['outbound_cpm_id'])) {
+            $call->outbound_cpm_id = null;
+        } else {
             $call->outbound_cpm_id = $input['outbound_cpm_id'];
         }
         $call->scheduled_date = $input['scheduled_date'];

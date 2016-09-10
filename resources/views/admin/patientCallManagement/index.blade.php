@@ -157,11 +157,11 @@
                             </div>
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('inbound_cpm_id', 'Patient:') !!}</div>
-                                <div class="col-xs-8">{!! Form::select('inbound_cpm_id', $patientList, '', ['class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
+                                <div class="col-xs-8">{!! Form::select('inbound_cpm_id', array('' => '') + $patientList, '', ['id' => 'addCallPatientId', 'class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
                             </div>
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('outbound_cpm_id', 'Nurse:') !!}</div>
-                                <div class="col-xs-8">{!! Form::select('outbound_cpm_id', array('unassigned' => 'Unassigned') + $nurses->all(), 'unassigned', ['class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
+                                <div class="col-xs-8">{!! Form::select('outbound_cpm_id', array('unassigned' => 'Unassigned') + $nurses->all(), 'unassigned', ['id' => 'addCallNurseId', 'class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
                             </div>
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('scheduled_date', 'Date:') !!}</div>
@@ -211,7 +211,7 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <a href="{{ URL::route('CallReportController.exportxls', array()) }}" class="btn btn-primary pull-right">Excel Export</a> &nbsp;
-                                <button style="margin-right:5px;" type="button" class="btn btn-success pull-right" data-toggle="modal" data-target="#addCallModal">Add Call</button>
+                                <button style="margin-right:5px;" type="button" id="addCallButton" class="btn btn-success pull-right" data-toggle="modal" data-target="#addCallModal">Add Call</button>
                             </div>
                         </div>
                         {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
@@ -392,6 +392,14 @@
                 } );
             } );
 
+            $('#addCallButton').on("click", function () {
+                $('#addCallPatientId').val('').trigger("change");;
+                $('#addCallNurseId').val('unassigned').trigger("change");;
+                $('input').val('');
+                $('select').val('');
+                $('#addCallErrorMsg').html('');
+            } );
+
             // add call
             $('#addCallModalYes').on("click", function () {
 
@@ -401,20 +409,17 @@
                     data: $('#addCallForm').serialize(),
                     success: function (data) {
                         //alert('call successfully added');
-                        $('input').val('');
-                        $('select').val('');
-                        $('#addCallErrorMsg').html('');
                         $('#addCallModal').modal('hide');
                     },
                     error: function (data) {
                         console.log(data.responseText);
                         var parsedJson = jQuery.parseJSON(data.responseText);
                         console.log(parsedJson);
-                        errorString = '<div class="alert alert-danger">';
+                        errorString = '<div class="alert alert-danger"><ul>';
                         $.each( parsedJson.errors, function( key, value) {
-                            errorString += '<br>' + value + '';
+                            errorString += '<li>' + value + '</li>';
                         });
-                        errorString += '</div>';
+                        errorString += '</ul></div>';
                         $('#addCallErrorMsg').html(errorString);
                     }
                 });

@@ -103,6 +103,10 @@ class PatientCallManagementController extends Controller {
 				$q->where(function ($query) {
 					$query->where('name', 'participant');
 				});
+			})->whereDoesntHave('inboundCalls', function($q) {
+				$q->where(function ($query) {
+					$query->where('status', '=', 'scheduled');
+				});
 			})->where( 'program_id', '!=', '' )
 			->orderBy( 'ID', 'desc' )
 			->get()
