@@ -6,10 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class NurseInfo extends Model
 {
-
-    //Relationships:
-
     protected $table = 'nurse_info';
+
+    protected $fillable = [
+        'user_id',
+        'status',
+        'license',
+        'hourly_rate',
+        'spanish',
+        'isNLC',
+    ];
 
     public function user()
     {
