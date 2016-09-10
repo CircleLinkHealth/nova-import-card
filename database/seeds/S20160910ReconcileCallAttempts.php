@@ -30,7 +30,7 @@ class S20160910ReconcileCallAttempts extends Seeder
             if($patient->patientInfo) {
                 // count number of missed calls
                 $notes= $patient->notes()->with('call')->has('call')->orderBy( 'performed_at', 'desc' )->get();
-                if($notes->count() > 1) {
+                if($notes->count() >= 1) {
                     $this->command->info('Patient ' . $patient->ID . ': ' . $notes->count());
 
                     $n = 0;
