@@ -28,7 +28,7 @@ class NurseInfo extends Model
 
     public function states(){
 
-        return $this->belongsToMany(State::class,'nurse_info_state');
+        return $this->belongsToMany(State::class, 'nurse_info_state');
     }
 
 
