@@ -27,9 +27,9 @@ class AddExistingNurses extends Seeder
         //attach states
         $nurses[0]->states()->attach([
 
-            \App\States::whereCode('NY')->value('id'),
-            \App\States::whereCode('FL')->value('id'),
-            \App\States::whereCode('MD')->value('id')
+            \App\State::whereCode('NY')->value('id'),
+            \App\State::whereCode('FL')->value('id'),
+            \App\State::whereCode('MD')->value('id')
 
         ]);
 
@@ -47,8 +47,8 @@ class AddExistingNurses extends Seeder
 
         $nurses[1]->states()->attach([
 
-            \App\States::whereCode('FL')->value('id'),
-            \App\States::whereCode('NC')->value('id'),
+            \App\State::whereCode('FL')->value('id'),
+            \App\State::whereCode('NC')->value('id'),
 
         ]);
 
@@ -66,7 +66,7 @@ class AddExistingNurses extends Seeder
 
         $nurses[2]->states()->attach([
 
-            \App\States::whereCode('FL')->value('id'),
+            \App\State::whereCode('FL')->value('id'),
 
         ]);
 
@@ -82,7 +82,7 @@ class AddExistingNurses extends Seeder
 
         $nurses[3]->states()->attach([
 
-            \App\States::whereCode('MO')->value('id'),
+            \App\State::whereCode('MO')->value('id'),
 
         ]);
 
@@ -98,8 +98,8 @@ class AddExistingNurses extends Seeder
 //
 //        $nurses[4]->states()->saveMany([
 //
-//            \App\States::whereCode('FL'),
-//            \App\States::whereCode('PR')
+//            \App\State::whereCode('FL'),
+//            \App\State::whereCode('PR')
 //
 //        ]);
 
@@ -114,30 +114,30 @@ class AddExistingNurses extends Seeder
         ]);
 
         $nurses[5]->states()->attach([
-            \App\States::whereCode('FL')->value('id'),
-            \App\States::whereCode('GA')->value('id'),
-            \App\States::whereCode('CA')->value('id'),
-            \App\States::whereCode('CT')->value('id'),
-            \App\States::whereCode('AR')->value('id'),
-            \App\States::whereCode('IL')->value('id'),
-            \App\States::whereCode('IN')->value('id'),
-            \App\States::whereCode('IA')->value('id'),
-            \App\States::whereCode('KY')->value('id'),
-            \App\States::whereCode('KS')->value('id'),
-            \App\States::whereCode('MS')->value('id'),
-            \App\States::whereCode('MA')->value('id'),
-            \App\States::whereCode('MN')->value('id'),
-            \App\States::whereCode('MI')->value('id'),
-            \App\States::whereCode('NC')->value('id'),
-            \App\States::whereCode('NV')->value('id'),
-            \App\States::whereCode('NY')->value('id'),
-            \App\States::whereCode('OR')->value('id'),
-            \App\States::whereCode('OK')->value('id'),
-            \App\States::whereCode('PA')->value('id'),
-            \App\States::whereCode('TN')->value('id'),
-            \App\States::whereCode('TX')->value('id'),
-            \App\States::whereCode('VA')->value('id'),
-            \App\States::whereCode('WA')->value('id'),
+            \App\State::whereCode('FL')->value('id'),
+            \App\State::whereCode('GA')->value('id'),
+            \App\State::whereCode('CA')->value('id'),
+            \App\State::whereCode('CT')->value('id'),
+            \App\State::whereCode('AR')->value('id'),
+            \App\State::whereCode('IL')->value('id'),
+            \App\State::whereCode('IN')->value('id'),
+            \App\State::whereCode('IA')->value('id'),
+            \App\State::whereCode('KY')->value('id'),
+            \App\State::whereCode('KS')->value('id'),
+            \App\State::whereCode('MS')->value('id'),
+            \App\State::whereCode('MA')->value('id'),
+            \App\State::whereCode('MN')->value('id'),
+            \App\State::whereCode('MI')->value('id'),
+            \App\State::whereCode('NC')->value('id'),
+            \App\State::whereCode('NV')->value('id'),
+            \App\State::whereCode('NY')->value('id'),
+            \App\State::whereCode('OR')->value('id'),
+            \App\State::whereCode('OK')->value('id'),
+            \App\State::whereCode('PA')->value('id'),
+            \App\State::whereCode('TN')->value('id'),
+            \App\State::whereCode('TX')->value('id'),
+            \App\State::whereCode('VA')->value('id'),
+            \App\State::whereCode('WA')->value('id'),
 
         ]);
 
@@ -154,8 +154,8 @@ class AddExistingNurses extends Seeder
 
         $nurses[6]->states()->attach([
 
-            \App\States::whereCode('NJ')->value('id'),
-            \App\States::whereCode('PA')->value('id'),
+            \App\State::whereCode('NJ')->value('id'),
+            \App\State::whereCode('PA')->value('id'),
         ]);
 
 

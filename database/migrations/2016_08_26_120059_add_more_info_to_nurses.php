@@ -15,7 +15,7 @@ class AddMoreInfoToNurses extends Migration
 
         Schema::table('nurse_info', function (Blueprint $table) {
 
-            $table->boolean('isNLC')->defualt(false);
+            $table->boolean('isNLC')->default(false);
 
         });
 
