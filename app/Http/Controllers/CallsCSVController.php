@@ -14,7 +14,7 @@ class CallsCSVController extends Controller
 {
     protected $nurses = [
         'Patricia' => 1920,
-        'Kathryn' => 2159,
+        'Katie' => 2159,
         'Lydia' => 1755,
         'Sue' => 1877,
         'Monique' => 2332,
