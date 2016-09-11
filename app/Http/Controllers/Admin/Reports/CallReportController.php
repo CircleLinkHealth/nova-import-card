@@ -38,6 +38,7 @@ class CallReportController extends Controller {
 			->with('note')
 			->select(
 				[
+					\DB::raw('coalesce(nurse.display_name, "unassigned") as nurse_name'),
 					'calls.id AS call_id',
 					'calls.status',
 					'calls.outbound_cpm_id',
@@ -45,18 +46,22 @@ class CallReportController extends Controller {
 					'calls.scheduled_date',
 					'calls.window_start',
 					'calls.window_end',
+					'calls.window_end AS window_end_value',
+					'calls.attempt_note',
 					'notes.type AS note_type',
 					'notes.body AS note_body',
 					'notes.performed_at AS note_datetime',
 					'calls.note_id',
 					'patient_info.cur_month_activity_time',
 					'patient_info.last_successful_contact_time',
+					\DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
+					\DB::raw('coalesce(patient_info.no_call_attempts_since_last_success, "n/a") as no_call_attempts_since_last_success'),
 					'patient_info.ccm_status',
 					'patient_info.birth_date',
+					'patient_info.general_comment',
 					'patient_monthly_summaries.no_of_calls',
 					'patient_monthly_summaries.no_of_successful_calls',
-					'nurse.display_name AS nurse_name',
-					'patient.display_name AS patient_name',
+					\DB::raw('CONCAT_WS(", ", patient.last_name, patient.first_name) AS patient_name'),
 					'program.display_name AS program_name',
 					'billing_provider.display_name AS billing_provider'
 				])
@@ -65,7 +70,11 @@ class CallReportController extends Controller {
 			->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
 			->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
 			->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
-			->leftJoin('patient_monthly_summaries', 'patient_monthly_summaries.patient_info_id','=','patient_info.user_id')
+			->leftJoin('patient_monthly_summaries', function($join) use ($date)
+			{
+				$join->on('patient_monthly_summaries.patient_info_id', '=', 'patient_info.id');
+				$join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
+			})
 			->leftJoin('wp_blogs AS program', 'patient.program_id','=','program.blog_id')
 			->leftJoin('patient_care_team_members', function($join)
 			{
@@ -95,7 +104,7 @@ class CallReportController extends Controller {
 				});
 				$i = 0;
 				// header
-				$userColumns = array('id', 'nurse name', 'patient name', 'dob', 'status', 'scheduled_date', 'window start', 'window end', 'last call status', 'CCM Time', 'no of calls', 'successful calls', 'ccm status', 'billing provider', 'program name');
+				$userColumns = array('id', 'Nurse', 'Patient', 'DOB', 'status', 'Scheduled Date', 'Window start', 'Window end', 'CCM Time', 'no of calls', 'Last Call Status', 'CCM Status', 'Billing Provider', 'Program');
 				$sheet->appendRow($userColumns);
 
 				foreach ($calls as $call) {
@@ -116,7 +125,7 @@ class CallReportController extends Controller {
 					}
 
 					//dd($call);
-					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->birth_date, $call->status, $call->scheduled_date, $call->window_start, $call->window_end, $call->last_successful_contact_time, $ccmTime, $call->no_of_calls, $noAttmpts, $call->ccm_status, $call->billing_provider, $call->program_name);
+					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->birth_date, $call->status, $call->scheduled_date, $call->window_start, $call->window_end, $ccmTime, $call->no_of_calls, $noAttmpts, $call->ccm_status, $call->billing_provider, $call->program_name);
 					$sheet->appendRow($columns);
 				}
 			});
