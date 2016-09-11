@@ -2,7 +2,9 @@
 
 $contact_days_array = array();
 if(isset($patient->patientInfo)){
-    $contact_days_array = array_merge(explode(',',$patient->patientInfo->preferred_cc_contact_days));
+    //Not sure it should default to Tuesday. Passing in an empty array for now
+//    $contact_days_array = array_merge(explode(',',$patient->patientInfo->preferred_cc_contact_days));
+    $contact_days_array = [];
 }
 
 ?>
