@@ -152,4 +152,16 @@ class CallController extends Controller
 
     }
 
+    public function import(Request $request)
+    {
+        if ($request->hasFile('uploadedCsv')) {
+            $csv = parseCsvToArray($request->file('uploadedCsv'));
+
+            $failed = $this->scheduler->importCallsFromCsv($csv);
+
+            return json_encode($failed);
+        }
+
+    }
+
 }
