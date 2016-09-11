@@ -152,4 +152,21 @@ class CallController extends Controller
 
     }
 
+    public function import(Request $request)
+    {
+        if ($request->hasFile('uploadedCsv')) {
+            $csv = parseCsvToArray($request->file('uploadedCsv'));
+
+            $failed = $this->scheduler->importCallsFromCsv($csv);
+
+            echo "Failed to schedule a call for these patients:" . PHP_EOL;
+
+            foreach ($failed as $fail)
+            {
+                echo "Name: $fail" . PHP_EOL;
+            }
+        }
+
+    }
+
 }

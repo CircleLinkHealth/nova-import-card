@@ -241,9 +241,9 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix' => 'admin'
     ], function () {
 
-        Route::post('upload-csv', [
-            'uses' => 'CallsCSVController@uploadCSV',
-            'as' => 'post.CallsCSVController.uploadCSV'
+        Route::post('calls/import', [
+            'uses' => 'CallController@import',
+            'as' => 'post.CallController.import'
         ]);
 
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');

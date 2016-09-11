@@ -474,7 +474,9 @@ class PatientCareplanController extends Controller
             $newUserId = str_random(15);
             $params->add(array(
                 'user_login' => $newUserId,
-                'user_email' => empty($email = $params->get('email')) ? $newUserId . '@careplanmanager.com' : $email,
+                'user_email' => empty($email = $params->get('email'))
+                    ? $newUserId . '@careplanmanager.com'
+                    : $email,
                 'user_pass' => $newUserId,
                 'user_status' => '1',
                 'user_nicename' => '',

@@ -6,7 +6,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <form action="{{ route('post.CallsCSVController.uploadCSV') }}" method="post" enctype="multipart/form-data" target="_blank">
+                        <form action="{{ route('post.CallController.import') }}" method="post" enctype="multipart/form-data" target="_blank">
                             <div class="form-group">
                                 <label for="uploadedCsv">Upload Call List CSV:</label>
                                 <input type="file" name="uploadedCsv" id="uploadedCsv" required>

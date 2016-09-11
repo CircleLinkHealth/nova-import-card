@@ -93,7 +93,9 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->user_nicename = $params->get('user_nicename');
         $user->user_login = $params->get('user_login');
         $user->user_status = $params->get('user_status');
-        $user->user_email = $params->get('user_email');
+
+        if ($params->get('user_email')) $user->user_email = $params->get('user_email');
+
         if($params->get('access_disabled')) {
             $user->access_disabled = $params->get('access_disabled');
         } else {

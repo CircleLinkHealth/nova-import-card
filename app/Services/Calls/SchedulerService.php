@@ -11,12 +11,20 @@ use Carbon\Carbon;
 class SchedulerService
 {
 
+    protected $nurses = [
+        'Patricia' => 1920,
+        'Katie' => 2159,
+        'Lydia' => 1755,
+        'Sue' => 1877,
+        'Monique' => 2332,
+    ];
+
     /* Success is the call's status.
        true for reached, false for not reached */
 
-    public function getNextCall($patient, $noteId ,$success)
+    public function getNextCall($patient, $noteId, $success)
     {
-        
+
         //Collect last known scheduled call
         $scheduled_call = $this->getScheduledCallForPatient($patient);
 
@@ -28,7 +36,7 @@ class SchedulerService
         return (new PredictCall($patient, $scheduled_call, $success))->predict($note);
 
     }
-    
+
     //Create new scheduled call
     public function storeScheduledCall($patientId, $window_start, $window_end, $date, $nurse_id = false)
     {
@@ -62,23 +70,24 @@ class SchedulerService
     }
 
     //extract the last scheduled call
-    public function getScheduledCallForPatient($patient){
+    public function getScheduledCallForPatient($patient)
+    {
 
-        $call = Call::where(function($q) use ($patient)
-        {
+        $call = Call::where(function ($q) use ($patient) {
             $q->where('outbound_cpm_id', $patient->ID)
-            ->orWhere('inbound_cpm_id', $patient->ID);
+                ->orWhere('inbound_cpm_id', $patient->ID);
         })
-            ->where('status', '=' , 'scheduled')
+            ->where('status', '=', 'scheduled')
             ->first();
 
         return $call;
     }
 
-    public static function getUnAttemptedCalls(){
+    public static function getUnAttemptedCalls()
+    {
 
         $calls = Call::whereStatus('scheduled')
-            ->where('scheduled_date','<=', Carbon::now()->toDateString())->get();
+            ->where('scheduled_date', '<=', Carbon::now()->toDateString())->get();
 
         $missed = array();
 
@@ -89,7 +98,7 @@ class SchedulerService
          * to see if a call was missed on the same day
         */
 
-        foreach ($calls as $call){
+        foreach ($calls as $call) {
 
             $end_carbon = Carbon::parse($call->scheduled_date);
 
@@ -100,7 +109,7 @@ class SchedulerService
 
             $now_carbon = Carbon::now()->toDateTimeString();
 
-            if($end_time < $now_carbon){
+            if ($end_time < $now_carbon) {
                 $missed[] = $call;
             }
 
@@ -108,6 +117,64 @@ class SchedulerService
 
         return $missed;
 
+    }
+
+
+    public function importCallsFromCsv($csv)
+    {
+        $failed = [];
+
+        foreach ($csv as $patient) {
+
+            $temp = User::where('first_name', $patient['Patient First Name'])
+                ->where('last_name', $patient['Patient Last Name'])
+                ->whereHas('patientInfo', function ($q) use ($patient) {
+                    $q->where('birth_date',
+                        Carbon::parse($patient['DOB'])->toDateString()
+                    );
+                })
+                ->first();
+
+            if (is_object($temp)) {
+
+                $call = $this->getScheduledCallForPatient($temp);
+
+                Call::updateOrCreate([
+
+                    'service' => 'phone',
+                    'status' => 'scheduled',
+
+                    'inbound_phone_number' => $temp->phone ? $temp->phone : '',
+                    'outbound_phone_number' => '',
+
+                    'inbound_cpm_id' => $temp->ID,
+                    'outbound_cpm_id' => $this->nurses[$patient['Nurse']],
+
+                    'call_time' => 0,
+
+                    'is_cpm_outbound' => true
+
+                ], [
+
+                    'scheduled_date' => Carbon::parse($patient['Next call date'])->toDateString(),
+
+                    'window_start' => empty($patient['Call time From:'])
+                        ? '09:00'
+                        : Carbon::parse($patient['Call time From:'])->format('H:i'),
+
+                    'window_end' => empty($patient['Call time to:'])
+                        ? '17:00'
+                        : Carbon::parse($patient['Call time to:'])->format('H:i'),
+                ]);
+
+                $calls[] = $call;
+            } else {
+                $failed[] = "{$patient['Patient First Name']} {$patient['Patient Last Name']}";
+            }
+
+        };
+
+        return $failed;
     }
 
 }
