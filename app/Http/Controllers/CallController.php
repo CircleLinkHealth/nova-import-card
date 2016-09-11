@@ -161,7 +161,7 @@ class CallController extends Controller
 
             foreach ($failed as $fail)
             {
-                echo "Name: $fail";
+                echo "Name: $fail \n";
             }
         }
 
