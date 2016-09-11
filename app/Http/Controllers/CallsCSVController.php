@@ -22,6 +22,8 @@ class CallsCSVController extends Controller
 
     public function uploadCSV(Request $request)
     {
+        $calls = array();
+
         if ($request->hasFile('uploadedCsv')) {
             $csv = parseCsvToArray($request->file('uploadedCsv'));
 
@@ -33,7 +35,7 @@ class CallsCSVController extends Controller
                                   ->where('last_name', $patient['Patient Last Name'])
                                   ->whereHas('patientInfo',function ($q) use ($patient){
                                       $q->where('birth_date',
-                                          Carbon::parse($patient['DOB'])->toDateString()
+                                            Carbon::parse($patient['DOB'])->toDateString()
                                           );
                                   })
                                   ->first();
@@ -42,27 +44,35 @@ class CallsCSVController extends Controller
 
                     {
 
-                        $call = (new SchedulerService())->getScheduledCallForPatient($temp->ID);
+                        $call = (new SchedulerService())->getScheduledCallForPatient($temp);
 
                         Call::updateOrCreate([
 
                                 'service' => 'phone',
                                 'status' => 'scheduled',
 
-                                'inbound_phone_number' => $patient->phone ? $patient->phone : '',
+                                'inbound_phone_number' => $temp->phone ? $temp->phone : '',
                                 'outbound_phone_number' => '',
 
-                                'inbound_cpm_id' => $patient->ID,
-                                'outbound_cpm_id' => isset($nurse_id) ? $nurse_id : '',
+                                'inbound_cpm_id' => $temp->ID,
+                                'outbound_cpm_id' => $this->nurses[$patient['Nurse']],
 
                                 'call_time' => 0,
 
                                 'is_cpm_outbound' => true
 
                             ], [
+
                                 'scheduled_date' => Carbon::parse($patient['Next call date'])->toDateString(),
-                                'window_start' => Carbon::parse($patient['Call time From:'])->format('H:i'),
-                                'window_end' => Carbon::parse($patient['Call time From:'])->format('H:i'),
+
+                                'window_start' => empty($patient['Call time From:'])
+                                    ? Carbon::parse($patient['Call time From:'])->format('H:i')
+                                    : '09:00',
+
+                                'window_end' => empty($patient['Call time to:'])
+                                    ? Carbon::parse($patient['Call time to:'])->format('H:i')
+                                    : '17:00'
+
                             ]);
 
                         $calls[] = $call;
@@ -74,6 +84,7 @@ class CallsCSVController extends Controller
             }
 
             return $calls;
+
         }
     
 }
