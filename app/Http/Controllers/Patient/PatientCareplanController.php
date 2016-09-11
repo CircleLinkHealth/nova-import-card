@@ -775,7 +775,7 @@ class PatientCareplanController extends Controller
 
             //blood sugar
             if (isset($biometricsValues['bloodSugar'])) {
-                if (!empty($biometricsValues['bloodSugar']['starting']) || !empty($biometricsValues['bloodSugar']['starting_a1c'])) {
+                if (!empty($biometricsValues['bloodSugar']['starting']) || !empty($biometricsValues['bloodSugar']['starting_a1c'])  || !empty($biometricsValues['bloodSugar']['target'])) {
                     $validator = \Validator::make($biometricsValues['bloodSugar'], CpmBloodSugar::$rules, CpmBloodSugar::$messages);
 
                     if ($validator->fails())
