@@ -3,12 +3,8 @@
 Route::get('missed', function(){
 
     $calls = (new \App\Services\Calls\SchedulerService())->getUnAttemptedCalls();
-    foreach($calls as $call){
 
-        (new \App\Algorithms\Calls\PredictCall(App\User::find($call->inbound_cpm_id), $call, false ))->reconcileDroppedCallHandler();
 
-    }
-    return $calls;
 
 });
 
