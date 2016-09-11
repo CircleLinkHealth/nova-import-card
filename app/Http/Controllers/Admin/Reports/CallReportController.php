@@ -31,6 +31,7 @@ class CallReportController extends Controller {
 
 	public function exportxls(Request $request)
 	{
+		$dateStartOfMonth = $date = Carbon::now()->startOfMonth();;
 		$date = date('Y-m-d H:i:s');
 
 		$calls = Call::with('inboundUser')
@@ -70,10 +71,10 @@ class CallReportController extends Controller {
 			->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
 			->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
 			->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
-			->leftJoin('patient_monthly_summaries', function($join) use ($date)
+			->leftJoin('patient_monthly_summaries', function($join) use ($dateStartOfMonth)
 			{
 				$join->on('patient_monthly_summaries.patient_info_id', '=', 'patient_info.id');
-				$join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
+				$join->where('patient_monthly_summaries.month_year', '=', $dateStartOfMonth->format('Y-m-d'));
 			})
 			->leftJoin('wp_blogs AS program', 'patient.program_id','=','program.blog_id')
 			->leftJoin('patient_care_team_members', function($join)
