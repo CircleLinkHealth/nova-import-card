@@ -106,7 +106,7 @@ class CallReportController extends Controller {
 				});
 				$i = 0;
 				// header
-				$userColumns = array('id', 'Nurse', 'Patient', 'DOB', 'status', 'Scheduled Date', 'Window start', 'Window end', 'CCM Time', 'no of calls', 'Last Call Status', 'CCM Status', 'Billing Provider', 'Program');
+				$userColumns = array('id', 'Nurse', 'Patient', 'DOB', 'status', 'Scheduled Date', 'Window start', 'Window end', 'CCM Time', 'Successful Calls', 'Last Call Status', 'CCM Status', 'Billing Provider', 'Program');
 				$sheet->appendRow($userColumns);
 
 				foreach ($calls as $call) {
@@ -127,7 +127,7 @@ class CallReportController extends Controller {
 					}
 
 					//dd($call);
-					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->birth_date, $call->status, $call->scheduled_date, $call->window_start, $call->window_end, $ccmTime, $call->no_of_calls, $noAttmpts, $call->ccm_status, $call->billing_provider, $call->program_name);
+					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->birth_date, $call->status, $call->scheduled_date, $call->window_start, $call->window_end, $ccmTime, $call->no_of_successful_calls, $noAttmpts, $call->ccm_status, $call->billing_provider, $call->program_name);
 					$sheet->appendRow($columns);
 				}
 			});
