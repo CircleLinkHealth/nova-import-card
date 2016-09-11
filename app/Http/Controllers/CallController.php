@@ -159,11 +159,11 @@ class CallController extends Controller
 
             $failed = $this->scheduler->importCallsFromCsv($csv);
 
-            echo "Failed to schedule a call for these patients: \n\n\n";
-            
+            echo "Failed to schedule a call for these patients:" . PHP_EOL;
+
             foreach ($failed as $fail)
             {
-                echo "Name: $fail \n";
+                echo "Name: $fail" . PHP_EOL;
             }
         }
 
