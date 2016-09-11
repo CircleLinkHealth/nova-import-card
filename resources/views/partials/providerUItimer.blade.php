@@ -185,6 +185,9 @@ if ($enableTimeTracking) {
             $('#timeModalNo').on("click", function () {
                 //alert('not reviewing patient anymore, complete and submit ' + totalTime + 'seconds');
                 $("#timerDebug").html("no longer reviewing... totalTime = " + totalTime + "");
+                if (consoleDebug) console.log('remove 90000 of the initial 120000 second idle period here');
+                totalTime = (totalTime - 90000);
+                if (consoleDebug) console.log('totalTime = ' + totalTime);
                 $('#timeModalNo, #timeModalYes').unbind('click');
                 // deactivate noResponseTimer
                 clearTimeout(noResponseTimer);
