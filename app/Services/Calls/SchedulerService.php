@@ -169,9 +169,7 @@ class SchedulerService
 
                 $calls[] = $call;
             } else {
-                $failed[] = [
-                    'name' => "{$patient['Patient First Name']} {$patient['Patient Last Name']}"
-                ];
+                $failed[] = "{$patient['Patient First Name']} {$patient['Patient Last Name']}";
             }
 
         };

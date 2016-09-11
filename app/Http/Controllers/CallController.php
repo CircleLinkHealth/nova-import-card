@@ -159,7 +159,10 @@ class CallController extends Controller
 
             $failed = $this->scheduler->importCallsFromCsv($csv);
 
-            return json_encode($failed);
+            foreach ($failed as $fail)
+            {
+                echo "Name: $fail";
+            }
         }
 
     }
