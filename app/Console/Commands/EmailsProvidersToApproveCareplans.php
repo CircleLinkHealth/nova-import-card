@@ -34,7 +34,7 @@ class EmailsProvidersToApproveCareplans extends Command
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param UserRepository $users
      */
     public function __construct(UserRepository $users)
     {
@@ -53,6 +53,9 @@ class EmailsProvidersToApproveCareplans extends Command
         $providers = $this->users->findByRole('provider');
 
         $emailsSent = $providers->map(function ($user) {
+
+            if ($user->program_id == 23) return false;
+
             $recipients = [
                 $user->user_email
             ];
