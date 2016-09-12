@@ -8,7 +8,10 @@
     <div class="container container--menu">
         <div class="row row-centered">
             <div class="col-sm-12">
-                <ul class="" style="margin:0;padding:0;">
+                <ul class="
+                " style="margin:0;padding:0;">
+
+
                     <li class="menu-item">
                         <a id="select-patient" href="{{ URL::route('patients.search', array()) }}">
                             <div class="icon-container column-centered">
@@ -45,6 +48,19 @@
                             </div>
                         </a>
                     </li>
+
+                    @role(['administrator', 'care-center'])
+                    <li class="menu-item">
+                        <a id="patient-list" href="{{ URL::route('patientCallList.index', array()) }}">
+                            <div class="icon-container column-centered">
+                                <i class="icon--phone-call--big icon--menu"></i>
+                            </div>
+                            <div>
+                                <p class="text-medium-big text--menu text-serif">Scheduled Calls<BR><BR><br></p>
+                            </div>
+                        </a>
+                    </li>
+                    @endrole
 
                     {{--<li class="menu-item">--}}
                         {{--<a id="my-alerts" href="{{ URL::route('patients.demographics.show', array()) }}">--}}

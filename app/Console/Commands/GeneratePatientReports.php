@@ -81,7 +81,7 @@ class GeneratePatientReports extends Command {
 			}
 
 			if(!empty($locationObj) && $locationObj->parent_id == Location::APRIMA_ID){
-				(new ReportsService())->createPatientReport($patient, $provider_id);
+				(new ReportsService())->createAprimaPatientCarePlanPdfReport($patient, $provider_id);
 				$this->info("Report Created for User: " . $patient_id . " ");
 			}
 

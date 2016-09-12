@@ -161,7 +161,6 @@ return [
         App\Providers\RouteServiceProvider::class,
 
 
-
         App\Providers\UserMetaParserHelpersServiceProvider::class,
         App\Providers\StringManipulationServiceProvider::class,
 

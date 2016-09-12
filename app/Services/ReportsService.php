@@ -5,14 +5,17 @@ use App\CPRulesItem;
 use App\CPRulesPCP;
 use App\CPRulesQuestions;
 use App\CPRulesUCP;
+use App\Entities\CcdaRequest;
 use App\ForeignId;
 use App\Location;
+use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\Cpm;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use App\PatientReports;
+use App\Services\AthenaAPI\Service;
 use App\User;
 use App\UserMeta;
 use Carbon\Carbon;
@@ -972,28 +975,10 @@ class ReportsService
         return $careplanReport;
     }
 
-    public function createPatientReport($user, $provider_id)
+    public function createAprimaPatientCarePlanPdfReport($user, $provider_id)
     {
-        $careplan = $this->carePlanGenerator([$user]);
+        $file_name = $this->makePdfCareplan($user);
 
-        $pdf = App::make('snappy.pdf.wrapper');
-        $pdf->loadView('wpUsers.patient.careplan.print', [
-            'patient' => $user,
-            'problems' => $careplan[$user->ID]['problems'],
-            'biometrics' => $careplan[$user->ID]['bio_data'],
-            'symptoms' => $careplan[$user->ID]['symptoms'],
-            'lifestyle' => $careplan[$user->ID]['lifestyle'],
-            'medications_monitor' => $careplan[$user->ID]['medications'],
-            'taking_medications' => $careplan[$user->ID]['taking_meds'],
-            'allergies' => $careplan[$user->ID]['allergies'],
-            'social' => $careplan[$user->ID]['social'],
-            'appointments' => $careplan[$user->ID]['appointments'],
-            'other' => $careplan[$user->ID]['other'],
-            'isPdf' => true,
-        ]);
-
-        $file_name = base_path('storage/pdfs/careplans/' . str_random(40) . '.pdf');
-        $pdf->save($file_name, true);
         $base_64_report = base64_encode(file_get_contents($file_name));
 
         $locationId = $user->getpreferredContactLocationAttribute();
@@ -1021,8 +1006,6 @@ class ReportsService
             return;
         }
 
-
-
         $patientReport = PatientReports::create([
             'patient_id' => $user->ID,
             'patient_mrn' => $user->getMRNAttribute(),
@@ -1031,6 +1014,48 @@ class ReportsService
             'file_base64' => $base_64_report,
             'location_id' => $locationId,
         ]);
+    }
+
+    public function createAthenaPatientCarePlanPdfReport($user, Service $athenaService)
+    {
+        if (!is_object($user)) $user = User::find($user);
+
+        $pathToPdf = $this->makePdfCareplan($user);
+
+        $ccda = Ccda::wherePatientId($user->ID)->first();
+        $ccdaRequest = CcdaRequest::whereCcdaId($ccda->id)->first();
+
+        if ($pathToPdf) {
+            $response = $athenaService->postPatientDocument($ccdaRequest->patient_id, $ccdaRequest->practice_id, $pathToPdf);
+
+            return \GuzzleHttp\json_decode($response, true);
+        }
+    }
+
+    public function makePdfCareplan($user)
+    {
+        $careplan = $this->carePlanGenerator([$user]);
+
+        $pdf = App::make('snappy.pdf.wrapper');
+        $pdf->loadView('wpUsers.patient.careplan.print', [
+            'patient' => $user,
+            'problems' => $careplan[$user->ID]['problems'],
+            'biometrics' => $careplan[$user->ID]['bio_data'],
+            'symptoms' => $careplan[$user->ID]['symptoms'],
+            'lifestyle' => $careplan[$user->ID]['lifestyle'],
+            'medications_monitor' => $careplan[$user->ID]['medications'],
+            'taking_medications' => $careplan[$user->ID]['taking_meds'],
+            'allergies' => $careplan[$user->ID]['allergies'],
+            'social' => $careplan[$user->ID]['social'],
+            'appointments' => $careplan[$user->ID]['appointments'],
+            'other' => $careplan[$user->ID]['other'],
+            'isPdf' => true,
+        ]);
+
+        $file_name = base_path('storage/pdfs/careplans/' . str_random(40) . '.pdf');
+        $pdf->save($file_name, true);
+
+        return $file_name;
     }
     
 
