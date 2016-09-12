@@ -52,6 +52,8 @@ class SchedulerService
 
             'service' => 'phone',
             'status' => 'scheduled',
+            
+            'scheduler' => $scheduler,
 
             'inbound_phone_number' => $patient->phone ? $patient->phone : '',
             'outbound_phone_number' => '',

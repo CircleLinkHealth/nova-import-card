@@ -41,6 +41,8 @@
                     </div>
                 </div>
 
+                <input type="hidden" name="suggested_date" value="{{\Carbon\Carbon::parse($date)->format('Y-m-d')}}">
+
                 <div class="form-block col-md-8" style="padding-top: 28px">
                         <div class="row form-inline">
                             <div class="new-note-item">
