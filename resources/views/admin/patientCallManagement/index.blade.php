@@ -155,6 +155,7 @@
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
                                 <th>DOB</th>
+                                <th>Scheduler</th>
                             </tr>
                             </thead>
                             <tfoot>
@@ -176,6 +177,7 @@
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
                                 <th>DOB</th>
+                                <th>Scheduler</th>
                             </tr>
                             </tfoot>
                         </table>
@@ -236,6 +238,7 @@
                     {data: 'ccm_status', name: 'ccm_status'},
                     {data: 'billing_provider', name: 'billing_provider'},
                     {data: 'birth_date', name: 'birth_date'},
+                    {data: 'scheduler', name: 'scheduler'},
                 ],
                 "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                     //console.log(aData);

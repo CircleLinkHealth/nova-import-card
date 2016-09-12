@@ -4,6 +4,38 @@
 @section('activity', 'Patient Call Scheduler')
 
 @section('content')
+
+    <script>
+        $(document).ready(function(){
+            /* $( ".submitFormBtn").click(function(e) { */
+            $( "a").click(function(e) {
+                $( "#confirmButtonModal" ).modal();
+                e.preventDefault();
+                return false;
+            });
+        });
+    </script>
+
+    <div id="confirmButtonModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Please Confirm Call</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Please confirm call to continue.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <div class="row" style="margin-top:60px;" xmlns="http://www.w3.org/1999/html">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
              style="border-bottom:3px solid #50b2e2">

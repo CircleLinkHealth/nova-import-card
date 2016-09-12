@@ -59,6 +59,7 @@ class DatatablesController extends Controller
                     'notes.body AS note_body',
                     'notes.performed_at AS note_datetime',
                     'calls.note_id',
+                    'calls.scheduler',
                     'patient_info.cur_month_activity_time',
                     'patient_info.last_successful_contact_time',
                     \DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
@@ -98,7 +99,7 @@ class DatatablesController extends Controller
                 return '<input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
             })
             ->addColumn('attempt_note_html', function($call) {
-                $attemptNote = 'add note';
+                $attemptNote = 'Add Text';
                 if(!empty($call->attempt_note)) {
                     $attemptNote = $call->attempt_note;
                 }

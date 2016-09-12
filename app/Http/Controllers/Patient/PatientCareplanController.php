@@ -375,6 +375,10 @@ class PatientCareplanController extends Controller
 
         $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
+        $contact_days_array = array();
+        if($patient->patientInfo->preferred_cc_contact_days){
+            $contact_days_array = array_merge(explode(',',$patient->patientInfo->preferred_cc_contact_days));
+        }
         return view('wpUsers.patient.careplan.patient', compact([
             'patient',
             'userMeta',
@@ -389,6 +393,7 @@ class PatientCareplanController extends Controller
             'showApprovalButton',
             'carePlans',
             'insurancePolicies',
+            'contact_days_array'
         ]));
     }
 
