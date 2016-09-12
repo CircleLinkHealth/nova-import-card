@@ -38,13 +38,23 @@
                 date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
                  }} Time: {{ $monthlyTime }}</span></a></p>
             <a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}">
-                <span class="person-name text-big text-dark text-serif" title="{{$patient->ID}}">{{$patient->fullName}}</span></a>
+                <span class="person-name text-big text-dark text-serif" title="{{$patient->ID}}">{{$patient->fullName}}</span></a><a href="{{ URL::route('patient.demographics.show', array('patient' => $patient->ID)) }}"><span class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a>
             <ul class="person-info-list inline-block text-medium">
                 <li class="inline-block">DOB: {{$patient->birthDate}}</li>
                 <li class="inline-block">{{$patient->gender}}</li>
                 <li class="inline-block">{{$patient->age}} yrs</li>
                 <li class="inline-block">{{$patient->phone}}</li>
-                <li class=" inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ?  'N/A' : ucwords($patient->ccm_status);  ?></li>
+                @if(Route::is('patient.note.create'))
+                    <li class="inline-block">
+                        <select id="status" name="status" class="selectpickerX dropdownValid form-control" data-size="2" style="width: 100px">
+                            <option class="enrolled" value="enrolled" {{$patient->ccm_status == 'enrolled' ? 'selected' : ''}}> Enrolled</option>
+                            <option class="withdrawn" value="withdrawn" {{$patient->ccm_status == 'withdrawn' ? 'selected' : ''}}> Withdrawn</option>
+                            <option class="paused" value="paused" {{$patient->ccm_status == 'paused' ? 'selected' : ''}}> Paused</option>
+                        </select>
+                    </li>
+                @else
+                    <li class=" inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ?  'N/A' : ucwords($patient->ccm_status);  ?></li>
+                @endif
             </ul>
         </div>
     </div>
@@ -71,3 +81,5 @@
         </ul>
     @endif
 </div>
+
+

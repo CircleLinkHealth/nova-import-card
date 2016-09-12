@@ -22,6 +22,7 @@ class ForeignId extends Model implements Transformable{
 
     //Define systems here
     const APRIMA = 'aprima';
+    const ATHENA = 'athena';
 
     public function user()
     {

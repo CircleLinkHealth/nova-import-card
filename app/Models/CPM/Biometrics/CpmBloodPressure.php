@@ -25,6 +25,22 @@ class CpmBloodPressure extends Model implements Biometric
         'target' => '130/80',
     ];
 
+    public static $rules = [
+        'systolic_high_alert' => 'max:999|numeric',
+        'systolic_low_alert' => 'max:999|numeric',
+        'diastolic_high_alert' => 'max:999|numeric',
+        'diastolic_low_alert' => 'max:999|numeric',
+        'target' => 'max:7',
+    ];
+
+    public static $messages = [
+        'systolic_high_alert.max' => 'The Systolic Blood Pressure High Alert may not be greater than 999.',
+        'systolic_low_alert.max' => 'The Systolic Blood Pressure Low Alert may not be greater than 999.',
+        'diastolic_high_alert.max' => 'The Diastolic Blood Pressure High Alert may not be greater than 999.',
+        'diastolic_low_alert.max' => 'The Diastolic Blood Pressure Low Alert may not be greater than 999.',
+        'target.max' => 'The Target Blood Pressure may not be greater than 7 characters.',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

@@ -15,6 +15,8 @@ class Kernel extends HttpKernel {
 		\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
 		\Illuminate\Session\Middleware\StartSession::class,
 		\Illuminate\View\Middleware\ShareErrorsFromSession::class,
+		\Fideloper\Proxy\TrustProxies::class,
+		\App\Http\Middleware\Secure::class,
 //		\App\Http\Middleware\VerifyCsrfToken::class,
 //		This ^^ is commented out to allow forms to be submitted from other sites
 	];

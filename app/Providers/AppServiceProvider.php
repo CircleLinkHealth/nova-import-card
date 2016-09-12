@@ -5,12 +5,14 @@ use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\Contracts\Repositories\CcdaRepository;
+use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Formatters\WebixFormatter;
 use App\Repositories\ActivityRepositoryEloquent;
 use App\Repositories\AprimaCcdApiRepositoryEloquent;
 use App\Repositories\CcdaRepositoryEloquent;
+use App\Repositories\CcdaRequestRepositoryEloquent;
 use App\Repositories\CcmTimeApiLogRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
 use Illuminate\Support\ServiceProvider;
@@ -61,6 +63,11 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            CcdaRequestRepository::class,
+            CcdaRequestRepositoryEloquent::class
+        );
+
+        $this->app->bind(
             CcmTimeApiLogRepository::class,
             CcmTimeApiLogRepositoryEloquent::class
         );
@@ -71,8 +78,8 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            '\App\CLH\Contracts\Repositories\UserRepository',
-            '\App\CLH\Repositories\UserRepository'
+            \App\CLH\Contracts\Repositories\UserRepository::class,
+            \App\CLH\Repositories\UserRepository::class
         );
 
         $this->app->bind(

@@ -241,45 +241,20 @@ class CcdApiController extends Controller
             'source' => Ccda::API,
         ]);
 
-        try {
-            \Log::info("CCDA id: $ccdObj->id");
-            \Log::info("From: Aprima");
-            \Log::info("Provider: $providerJsonStr");
-        } catch (\Exception $e) {
-        }
-
-
         //We are saving the JSON CCD after we save the XML, just in case Parsing fails
         //If Parsing fails we let ourselves know, but not Aprima.
         try {
             $json = $this->importer->toJson($xml);
             $ccdObj->json = $json;
             $ccdObj->save();
-        } catch (\Exception $e) {
-            if (app()->environment('production')) {
-                $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
-            }
-            return response()->json(['message' => 'CCD uploaded successfully.'], 201);
-        }
 
-
-        //If Logging fails we let ourselves know, but not Aprima.
-        try {
             $logger = new CcdItemLogger($ccdObj);
             $logger->logAll();
-        } catch (\Exception $e) {
-            if (app()->environment('production')) {
-                $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
-            }
-            return response()->json(['message' => 'CCD uploaded successfully.'], 201);
-        }
 
-        //If Logging fails we let ourselves know, but not Aprima.
-        //Yes. Repetitions. I KNOW!
-        try {
             $providerId = empty($provider['ID']) ? null : $provider['ID'];
             $importer = new QAImportManager($programId, $ccdObj, $providerId, $locationId);
             $output = $importer->generateCarePlanFromCCD();
+
         } catch (\Exception $e) {
             if (app()->environment('production')) {
                 $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());

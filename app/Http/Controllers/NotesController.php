@@ -2,8 +2,11 @@
 
 use App\Activity;
 use App\ActivityMeta;
+use App\Algorithms\Calls\PredictCall;
+use App\CLH\Repositories\UserRepository;
 use App\Formatters\WebixFormatter;
 use App\Http\Requests;
+use App\PatientInfo;
 use App\Program;
 use App\Services\ActivityService;
 use App\Services\NoteService;
@@ -11,6 +14,8 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\Calls\SchedulerService;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Illuminate\Support\Facades\URL;
 use Laracasts\Flash\Flash;
 
@@ -95,9 +100,11 @@ class NotesController extends Controller
             $title = $provider->display_name;
 
             if($only_mailed_notes){
+
                 $notes = $this->service->getForwardedNotesWithRangeForProvider($provider->ID, $start, $end);
 
             } else {
+
                 $notes = $this->service->getNotesWithRangeForProvider($provider->ID, $start, $end);
 
             }
@@ -138,21 +145,31 @@ class NotesController extends Controller
 
     public function create(Request $request, $patientId)
     {
-
+        
         if ($patientId) {
             // patient view
-            $user = User::find($patientId);
-            if (!$user) {
+            $patient = User::find($patientId);
+            if (!$patient) {
                 return response("User not found", 401);
             }
 
-            $patient_name = $user->fullName;
+            //set contact flag
+            $patient_contact_window_exists = false; 
+            
+            if(count($patient->patientInfo->patientContactWindows) != 0){
+                $patient_contact_window_exists = true;
+            }
+
+            $patient_name = $patient->fullName;
+            
+            //Pull up user's call information. 
+            
 
             //Gather details to generate form
 
             //careteam
             $careteam_info = array();
-            $careteam_ids = $user->careTeam;
+            $careteam_ids = $patient->careTeam;
             if ((@unserialize($careteam_ids) !== false)) {
                 $careteam_ids = unserialize($careteam_ids);
             }
@@ -164,21 +181,21 @@ class NotesController extends Controller
                 }
             }
 
-            if ($user->timeZone == '') {
+            if ($patient->timeZone == '') {
                 $userTimeZone = 'America/New_York';
             } else {
-                $userTimeZone = $user->timeZone;
+                $userTimeZone = $patient->timeZone;
             }
 
             //Check for User's blog
-            if (empty($user->blogId())) {
+            if (empty($patient->blogId())) {
                 return response("User's Program not found", 401);
             }
 
             //providers
-            $providers = Program::getProviders($user->blogId());
-            $nonCCMCareCenterUsers = Program::getNonCCMCareCenterUsers($user->blogId());
-            $careCenterUsers = Program::getCareCenterUsers($user->blogId());
+            $providers = Program::getProviders($patient->blogId());
+            $nonCCMCareCenterUsers = Program::getNonCCMCareCenterUsers($patient->blogId());
+            $careCenterUsers = Program::getCareCenterUsers($patient->blogId());
             $provider_info = array();
 
 //            if(!empty($providers)) {
@@ -215,18 +232,30 @@ class NotesController extends Controller
                     array_push($provider_info, $careteam_member);
                 }
             }
+            
+            //Patient Call Windows:
+            $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
+
+            $contact_days_array = array();
+            if($patient->patientInfo->preferred_cc_contact_days){
+                $contact_days_array = array_merge(explode(',',$patient->patientInfo->preferred_cc_contact_days));
+            }
+            
             asort($provider_info);
             asort($careteam_info);
 
             $view_data = [
-                'program_id' => $user->blogId(),
-                'patient' => $user,
+                'program_id' => $patient->blogId(),
+                'patient' => $patient,
                 'patient_name' => $patient_name,
                 'note_types' => Activity::input_activity_types(),
                 'author_id' => $author_id,
                 'author_name' => $author_name,
                 'careteam_info' => $careteam_info,
-                'userTimeZone' => $userTimeZone
+                'userTimeZone' => $userTimeZone,
+                'window' => $window,
+                'window_flag' => $patient_contact_window_exists,
+                'contact_days_array' => $contact_days_array
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
@@ -237,13 +266,83 @@ class NotesController extends Controller
     {
 
         $input = $input->all();
+//        dd($input);
+
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
-        $this->service->storeNote($input);
+        $note = $this->service->storeNote($input);
+
+        $patient = User::where('ID',$patientId)->first();
+
+        //UPDATE USER INFO CHANGES
+        $info = $patient->patientInfo;
+
+        //User header update status
+        $info->ccm_status = $input['status'];
+
+        if(isset($input['general_comment'])){
+            $info->general_comment = $input['general_comment'];
+        }
+
+        if(isset($input['frequency'])){
+            $info->preferred_calls_per_month = $input['frequency'];
+        }
+
+        if(isset($input['days'])){
+            $info->preferred_cc_contact_days = implode(', ',$input['days']);
+        }
+
+        $info->save();
+
+        // also update patientCallWindows @todo - do this only
+        $params = new ParameterBag($input);
+        $userRepo = new UserRepository();
+        $userRepo->saveOrUpdatePatientCallWindows($patient, $params);
+
+        /*
+         If the note wasn't a phone call, redirect to Notes/Offline Activities page
+         If the note was a successful or unsuccessful call, take to prediction
+         engine, then to call create
+        */
+
+        if (Auth::user()->hasRole('care-center')) {
+
+            //If the patient was just withdrawn, let's redirect them back to notes.index
+            if($info->ccm_status == 'withdrawn') {
+
+                return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
+
+            }
+
+            if (isset($input['phone'])) {
+
+                if (isset($input['call_status']) && $input['call_status'] == 'reached') {
+
+                    //Updates when the patient was successfully contacted last
+                    $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
+                    
+                    $prediction = (new SchedulerService())->getNextCall($patient, $note->id, true);
+
+                } else {
+                    
+                    $prediction = (new SchedulerService())->getNextCall($patient, $note->id, false);
+
+                }
+
+                // add last contact time regardless of if success
+                $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+                $info->save();
+
+                return view('wpUsers.patient.calls.create', $prediction);
+
+            }
+
+        }
 
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
-    }
 
+    }
+    
     public function show(Request $input, $patientId, $noteId)
     {
 

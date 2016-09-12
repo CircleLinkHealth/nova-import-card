@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Dusterio\AwsWorker\Integrations\LaravelServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
 class AWSWorkerServiceProvider extends ServiceProvider
@@ -27,7 +28,7 @@ class AWSWorkerServiceProvider extends ServiceProvider
             'worker',
             'worker-staging'
         ])) {
-            $this->app->register(\Dusterio\AwsWorker\Integrations\LaravelServiceProvider::class);
+            $this->app->register(LaravelServiceProvider::class);
         }
     }
 }

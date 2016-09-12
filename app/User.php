@@ -100,7 +100,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"city" => "",
 		"state" => "",
 		"zip" => "",
-		"preferred_contact_time" => "required",
+		//"preferred_contact_time" => "required",
 		"preferred_contact_timezone" => "required",
 		"consent_date" => "required",
 		"ccm_status" => "required",
@@ -361,6 +361,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function patientCareTeamMembers()
 	{
 		return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'ID');
+	}
+
+	public function inboundCalls()
+	{
+		return $this->hasMany('App\Call', 'inbound_cpm_id', 'ID');
+	}
+
+	public function outboundCalls()
+	{
+		return $this->hasMany('App\Call', 'outbound_cpm_id', 'ID');
 	}
 
 
@@ -1014,7 +1024,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setCurMonthActivityTimeAttribute($value)
     {
-        if (!$this->patientInfo) return '';
+		if (!$this->patientInfo) return '';
         $this->patientInfo->cur_month_activity_time = $value;
         $this->patientInfo->save();
     }

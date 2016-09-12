@@ -98,7 +98,7 @@
 
                                         template:function(obj){
                                             if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                return "<a href='<?php echo URL::route('patient.activity.view', array('patientId' => $patient->ID, 'actId' => '')); ?>/"  + obj.id + "'>" + obj.type + "</a>"
+                                                return "<a href='<?php echo URL::route('patient.activity.view', array('patientId' => $patient->ID, 'atcId' => '')); ?>/"  + obj.id + "'>" + obj.type + "</a>"
                                             else
                                                 return obj.type;
                                         },
@@ -135,7 +135,7 @@
                             {!! $activity_json !!}                         });
                             webix.event(window, "resize", function(){ obs_alerts_dtable.adjust(); })
                         </script>
-                        @role(['administrator', 'provider'])
+                        @role(['administrator', 'med_assistant', 'provider'])
                         <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                onclick="webix.toPDF($$(obs_alerts_dtable), {
                                 header:'CarePlanManager.com - Patient Activity Report <?= date('M d,Y') ?>',
