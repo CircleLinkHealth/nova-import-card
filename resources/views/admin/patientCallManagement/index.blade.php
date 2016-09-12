@@ -82,7 +82,7 @@
                                 <div class="col-xs-8">{!! Form::input('text', 'window_end', '17:00', ['id' => 'addCallWindowEnd', 'class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "time", 'data-format' => "HH:mm"]) !!}</div>
                             </div>
                             <div class="row form-group">
-                                <div class="col-xs-4 text-right">{!! Form::label('attempt_note', 'AttemptNote:') !!}</div>
+                                <div class="col-xs-4 text-right">{!! Form::label('attempt_note', 'Add Text:') !!}</div>
                                 <div class="col-xs-8">{!! Form::input('textarea', 'attempt_note', '', ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                             </div>
                         </div>
@@ -209,7 +209,7 @@
                 //    'csvHtml5',
                 //    'pdfHtml5'
                 //],
-                "order": [[ 4, "desc" ]],
+                "order": [[ 4, "asc" ]],
                 "iDisplayLength": 100,
                 scrollX: true,
                 fixedHeader: true,

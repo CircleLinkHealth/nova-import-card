@@ -13,7 +13,8 @@
             var cpmEditableStatus = false;
             var cpmEditableID = false;
             $('#cpmEditableTable').DataTable( {
-                "scrollX": true
+                "scrollX": true,
+                "order": [[ 2, "asc" ]]
             } );
 
             $('.patientNameLink').click(function() {
