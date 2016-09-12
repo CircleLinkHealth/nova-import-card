@@ -119,6 +119,24 @@ class SchedulerService
 
     }
 
+    public function removeScheduledCallsForWithdrawnPatients(){
+
+        //get all patients that are withdrawn
+        $withdrawn = PatientInfo::where('ccm_status', 'withdrawn')
+            ->lists('user_id');
+
+        $withdrawn_patients_with_calls = array();
+
+        //get scheduled calls for them, if any, and delete them.
+        foreach ($withdrawn as $patient){
+            $temp = $this->getScheduledCallForPatient(User::find($patient));
+
+            if(is_object($temp)){
+                $withdrawn_patients_with_calls[] = $temp;
+                $temp->delete();
+            }
+        }
+    }
 
     public function importCallsFromCsv($csv)
     {
