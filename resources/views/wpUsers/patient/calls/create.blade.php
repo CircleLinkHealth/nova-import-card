@@ -4,6 +4,17 @@
 @section('activity', 'Patient Call Scheduler')
 
 @section('content')
+
+    <script>
+        $(document).ready(function(){
+            /* $( ".submitFormBtn").click(function(e) { */
+            $( "a").click(function(e) {
+                alert('Please confirm call to leave this page');
+                e.preventDefault();
+                return false;
+            });
+        });
+    </script>
     <div class="row" style="margin-top:60px;" xmlns="http://www.w3.org/1999/html">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
              style="border-bottom:3px solid #50b2e2">
