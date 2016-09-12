@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
@@ -41,7 +42,6 @@ class PatientInfo extends Model {
 
 	// START RELATIONSHIPS
 
-	// user
 	public function user()
 	{
 		return $this->belongsTo(User::class, 'user_id', 'ID');
@@ -62,9 +62,7 @@ class PatientInfo extends Model {
         return $this->belongsTo(User::class, 'user_id', 'ID');
     }
 
-
 	// END RELATIONSHIPS
-
 
 
 	// START ATTRIBUTES
@@ -153,8 +151,6 @@ class PatientInfo extends Model {
 		$this->attributes['daily_contact_window_end'] = $value;
 		$this->save();
 	}
-
-
 
 	/* @todo: put following helper functions it's own service class */
 
@@ -251,5 +247,12 @@ class PatientInfo extends Model {
 
 	}
 
+	//Query Scopes:
+
+	public function scopeEnrolled($query){
+
+		return $query->where('ccm_status', 'enrolled');
+
+	}
 
 }

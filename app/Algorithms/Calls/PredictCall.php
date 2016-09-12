@@ -485,5 +485,5 @@ class PredictCall
 
         return $prediction;
     }
-
+    
 }
