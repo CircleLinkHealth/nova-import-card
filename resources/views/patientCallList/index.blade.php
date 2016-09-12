@@ -126,7 +126,7 @@
                                                         <td>{{ $call->window_end }}</td>
                                                         <td>
                                                             @if($call->inboundUser)
-                                                                {{ $call->inboundUser->patientInfo->last_successful_contact_time }}
+                                                                {{ $call->inboundUser->patientInfo->last_contact_time }}
                                                             @endif
                                                         </td>
                                                         <td>
