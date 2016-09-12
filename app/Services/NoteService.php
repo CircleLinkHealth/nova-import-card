@@ -160,12 +160,8 @@ class NoteService
     }
 
     //Save call information for note
-    public function storeCallForNote($note, $status, User $patient, User $author, $phone_direction)
+    public function storeCallForNote($note, $status, User $patient, User $author, $phone_direction, $scheduler)
     {
-
-        $patient = User::find($note->patient_id);
-        $author = User::find($note->logger_id);
-
 
         if ($phone_direction == 'inbound') {
             $outbound_num = $patient->primaryPhone;
@@ -187,6 +183,8 @@ class NoteService
             'note_id' => $note->id,
             'service' => 'phone',
             'status' => $status,
+
+            'scheduler' => $scheduler,
 
             'inbound_phone_number' => $outbound_num,
             'outbound_phone_number' => $inbound_num,

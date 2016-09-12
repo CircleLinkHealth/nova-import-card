@@ -15,6 +15,8 @@ class Call extends Model
         'service',
         'status',
 
+        'scheduler',
+
         /*
         Mini-documentation for call statuses:
             reached -> Successful Clinical Call

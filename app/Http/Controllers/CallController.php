@@ -89,6 +89,7 @@ class CallController extends Controller
         $call->is_cpm_outbound = 1;
         $call->service = 'phone';
         $call->status = 'scheduled';
+        $call->scheduler = Auth::user()->ID;
         $call->save();
 
         return response("successfully created call ", 201);
@@ -103,8 +104,10 @@ class CallController extends Controller
         $window_start = Carbon::parse($input['window_start'])->format('H:i');
         $window_end = Carbon::parse($input['window_end'])->format('H:i');
 
+        $scheduler = ($input['suggested_date'] == $input['date']) ? 'algorithm' : Auth::user()->ID;
+
         //We are storing the current caller as the next scheduled call's outbound cpm_id
-        $this->scheduler->storeScheduledCall($input['patient_id'], $window_start, $window_end, $input['date'],
+        $this->scheduler->storeScheduledCall($input['patient_id'], $window_start, $window_end, $input['date'], $scheduler,
             Auth::user()->hasRole('care-center') ? Auth::user()->ID : null);
 
         return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])->with('messages', ['Successfully Created Note']);

@@ -4,6 +4,7 @@
 use App\Algorithms\Calls\PredictCall;
 use App\Call;
 use App\Note;
+use App\PatientInfo;
 use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
@@ -11,6 +12,7 @@ use Carbon\Carbon;
 class SchedulerService
 {
 
+    //nurse mapping for import csv
     protected $nurses = [
         'Patricia' => 1920,
         'Katie' => 2159,
@@ -38,7 +40,7 @@ class SchedulerService
     }
 
     //Create new scheduled call
-    public function storeScheduledCall($patientId, $window_start, $window_end, $date, $nurse_id = false)
+    public function storeScheduledCall($patientId, $window_start, $window_end, $date, $scheduler, $nurse_id = false)
     {
 
         $patient = User::find($patientId);
@@ -50,6 +52,8 @@ class SchedulerService
 
             'service' => 'phone',
             'status' => 'scheduled',
+            
+            'scheduler' => $scheduler,
 
             'inbound_phone_number' => $patient->phone ? $patient->phone : '',
             'outbound_phone_number' => '',
@@ -119,6 +123,24 @@ class SchedulerService
 
     }
 
+    public function removeScheduledCallsForWithdrawnPatients(){
+
+        //get all patients that are withdrawn
+        $withdrawn = PatientInfo::where('ccm_status', 'withdrawn')
+            ->lists('user_id');
+
+        $withdrawn_patients_with_calls = array();
+
+        //get scheduled calls for them, if any, and delete them.
+        foreach ($withdrawn as $patient){
+            $temp = $this->getScheduledCallForPatient(User::find($patient));
+
+            if(is_object($temp)){
+                $withdrawn_patients_with_calls[] = $temp;
+                $temp->delete();
+            }
+        }
+    }
 
     public function importCallsFromCsv($csv)
     {
