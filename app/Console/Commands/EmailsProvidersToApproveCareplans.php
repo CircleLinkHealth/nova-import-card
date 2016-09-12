@@ -15,7 +15,7 @@ class EmailsProvidersToApproveCareplans extends Command
      *
      * @var string
      */
-    protected $signature = 'emailapprovalreminder:providers';
+    protected $signature = 'emailapprovalreminder:providers {--pretend}';
 
     /**
      * The console command description.
@@ -50,11 +50,24 @@ class EmailsProvidersToApproveCareplans extends Command
      */
     public function handle()
     {
+        $pretend = $this->option('pretend');
+
         $providers = $this->users->findByRole('provider');
 
-        $emailsSent = $providers->map(function ($user) {
+        $bar = $this->output->createProgressBar(count($providers));
 
+        $emailsSent = $providers->map(function ($user) use ($bar, $pretend) {
+
+            //Middletown
             if ($user->program_id == 23) return false;
+
+            //Miller
+            if ($user->program_id == 10) return false;
+            //Icli
+            if ($user->program_id == 19) return false;
+            //Purser
+            if ($user->program_id == 22) return false;
+
 
             $recipients = [
                 $user->user_email
@@ -73,16 +86,36 @@ class EmailsProvidersToApproveCareplans extends Command
             $subject = "{$numberOfCareplans} CircleLink Care Plans for your Approval!";
 
 
-            Mail::send($view, $data, function ($message) use ($recipients, $subject) {
-                $message->from('notifications@careplanmanager.com', 'CircleLink Health')
-                    ->to($recipients)
-                    ->subject($subject);
-            });
+            if (!$pretend) {
+                Mail::send($view, $data, function ($message) use ($recipients, $subject) {
+                    $message->from('notifications@careplanmanager.com', 'CircleLink Health')
+                        ->to($recipients)
+                        ->subject($subject);
+                });
+            }
 
             Slack::to('#background-tasks')
                 ->send("Sent pending approvals email to {$user->fullName}.");
+
+            $bar->advance();
+
+            return [
+                'provider' => $user->fullName,
+                'pendingApprovals' => $numberOfCareplans,
+            ];
         });
 
-        $this->info("Sent {$emailsSent->count()} emails.");
+        $emailsSent = array_filter($emailsSent->all());
+
+        $bar->finish();
+
+        $this->table([
+            'provider',
+            'pendingApprovals',
+        ], $emailsSent);
+
+        $count = count($emailsSent);
+
+        $this->info("Sent $count emails.");
     }
 }
