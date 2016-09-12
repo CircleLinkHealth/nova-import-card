@@ -89,6 +89,7 @@ class CallController extends Controller
         $call->is_cpm_outbound = 1;
         $call->service = 'phone';
         $call->status = 'scheduled';
+        $call->scheduler = Auth::user()->ID;
         $call->save();
 
         return response("successfully created call ", 201);
