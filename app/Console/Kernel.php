@@ -71,7 +71,7 @@ class Kernel extends ConsoleKernel
 
         })->dailyAt('00:05');
 
-//        $schedule->command('emailapprovalreminder:providers --force')
+//        $schedule->command('emailapprovalreminder:providers')
 //            ->weekdays()
 //            ->twiceDaily(8, 14);
     }
