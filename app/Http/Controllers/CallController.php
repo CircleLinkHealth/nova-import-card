@@ -136,6 +136,9 @@ class CallController extends Controller
         if(empty($data['callId'])) {
             return response("missing required params", 201);
         }
+        if(!Auth::user()) {
+            return response("missing required scheduler user", 201);
+        }
         $call = Call::find($data['callId']);
         if(!$call) {
             return response("could not locate call ".$data['callId'], 201);
