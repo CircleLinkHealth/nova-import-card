@@ -77,7 +77,9 @@ class Calls
      */
     public function getDepartmentIds($practiceId)
     {
-        $response = $this->api->GET("{$practiceId}/departments", [
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("departments", [
             'practiceid' => $practiceId,
         ]);
 
