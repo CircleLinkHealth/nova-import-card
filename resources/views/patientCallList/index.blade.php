@@ -10,13 +10,6 @@
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script>
         $(document).ready(function() {
-            var cpmEditableStatus = false;
-            var cpmEditableID = false;
-            $('#cpmEditableTable').DataTable( {
-                "scrollX": true,
-                "order": [[ 2, "asc" ]]
-            } );
-
             $('.patientNameLink').click(function() {
                 callId = $(this).attr('call-id');
                 if ( callId && $( "#attemptNoteCall" + callId ).length ) {
@@ -187,7 +180,7 @@
     <!-- call attempt_note modals -->
     @if (count($calls) > 0)
         @foreach($calls as $call)
-            @if (!empty($call->attempt_note))
+            @if (!empty($call->attempt_note) || ($call->inboundUser && $call->inboundUser->patientInfo && !empty($call->inboundUser->patientInfo->general_comment)) )
             <!-- Modal -->
             <div id="attemptNoteCall{{ $call->id }}" class="modal fade" role="dialog">
                 <div class="modal-dialog">
@@ -199,7 +192,12 @@
                             <h4 class="modal-title">Call Attempt Note</h4>
                         </div>
                         <div class="modal-body">
-                            <p>{{ $call->attempt_note }}</p>
+                            @if($call->inboundUser && $call->inboundUser->patientInfo && !empty($call->inboundUser->patientInfo->general_comment))
+                                <p><strong>General:</strong> {{ $call->inboundUser->patientInfo->general_comment }}</p>
+                            @endif
+                            @if(!empty($call->attempt_note))
+                                <p><strong>This Call:</strong> {{ $call->attempt_note }}</p>
+                            @endif
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
