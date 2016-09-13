@@ -103,7 +103,7 @@
                                                     ?>
                                                     <tr style="{{ $rowBg }}">
                                                         <td class="vert-align">
-                                                            @if(!empty($call->attempt_note))
+                                                            @if(!empty($call->attempt_note) || ($call->inboundUser && $call->inboundUser->patientInfo && !empty($call->inboundUser->patientInfo->general_comment)))
                                                                 <button type="button" class="btn btn-xs btn-info glyphicon glyphicon-envelope" data-toggle="modal" data-target="#attemptNoteCall{{ $call->id }}">Note</button>
                                                             @endif
                                                         </td>
@@ -193,10 +193,10 @@
                         </div>
                         <div class="modal-body">
                             @if($call->inboundUser && $call->inboundUser->patientInfo && !empty($call->inboundUser->patientInfo->general_comment))
-                                <p><strong>General:</strong> {{ $call->inboundUser->patientInfo->general_comment }}</p>
+                                <p style="font-size:125%"><strong>General:</strong> {{ $call->inboundUser->patientInfo->general_comment }}</p>
                             @endif
                             @if(!empty($call->attempt_note))
-                                <p><strong>This Call:</strong> {{ $call->attempt_note }}</p>
+                                <p style="font-size:125%"><strong>This Call:</strong> {{ $call->attempt_note }}</p>
                             @endif
                         </div>
                         <div class="modal-footer">
