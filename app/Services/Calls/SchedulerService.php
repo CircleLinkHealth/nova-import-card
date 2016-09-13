@@ -5,6 +5,7 @@ use App\Activity;
 use App\Algorithms\Calls\PredictCall;
 use App\Call;
 use App\Note;
+use App\PatientContactWindow;
 use App\PatientInfo;
 use App\PatientMonthlySummary;
 use App\User;
@@ -159,6 +160,46 @@ class SchedulerService
                 ->first();
 
             if (is_object($temp)) {
+
+                $patientContactWindow = $temp->patientInfo->patientContactWindows;
+
+                if($temp->patientInfo->patientContactWindows->count() < 1){
+
+                    if($patient[' Call preference (Day)'] != '') {
+
+                        $days = explode(', ', $patient[' Call preference (Day)'] );
+
+                        foreach ($days as $day){
+
+                            PatientContactWindow::create([
+
+                                'patient_info_id' => $temp->patientInfo->id,
+                                'day_of_week' => Carbon::parse($day)->dayOfWeek + 1,
+                                'window_time_start' => Carbon::parse($patient['Call time From:'])->format('H:i'),
+                                'window_time_end' => Carbon::parse($patient['Call time to:'])->format('H:i'),
+
+                            ]);
+
+                        }
+
+                    } else {
+
+                        for($i = 1; $i < 5; $i++){
+
+                            PatientContactWindow::create([
+
+                                'patient_info_id' => $temp->patientInfo->id,
+                                'day_of_week' => $i,
+                                'window_time_start' => '09:00',
+                                'window_time_end' => '17:00',
+
+                            ]);
+
+                        }
+
+                    }
+
+                }
 
                 $call = $this->getScheduledCallForPatient($temp);
 
