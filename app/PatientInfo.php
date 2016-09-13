@@ -54,7 +54,7 @@ class PatientInfo extends Model {
 
 	public function patientSummaries()
 	{
-		return $this->hasMany('App\PatientMonthlySummary', 'patient_info_id', 'id');
+		return $this->hasMany(PatientMonthlySummary::class, 'patient_info_id', 'id');
 	}
 
     public function carePlanProviderApproverUser()
