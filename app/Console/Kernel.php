@@ -43,15 +43,19 @@ class Kernel extends ConsoleKernel
             (new PhiMail)->sendReceive();
         })->everyMinute();
 
+        //tunes scheduled call dates.
+        $schedule->call(function () {
+            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
+        })->dailyAt('11:59');
 
-//Removes All Scheduled Calls for patients that are withdrawn
+        //Removes All Scheduled Calls for patients that are withdrawn
         $schedule->call(function () {
 
             (new SchedulerService())->removeScheduledCallsForWithdrawnPatients();
 
         })->everyMinute();
 
-//Reconciles missed calls and creates a new call for patient using algo
+        //Reconciles missed calls and creates a new call for patient using algo
         $schedule->call(function () {
 
             $calls = SchedulerService::getUnAttemptedCalls();
@@ -62,7 +66,7 @@ class Kernel extends ConsoleKernel
                 $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call, false))->reconcileDroppedCallHandler();
             }
 
-//                      if (! app()->environment('worker-staging')) return;
+        //                      if (! app()->environment('worker-staging')) return;
 
             foreach ($handled as $call) {
                 Slack::to('#background-tasks-dev')->send("We just fixed call: {$call->id}");
