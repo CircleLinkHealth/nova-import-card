@@ -7,7 +7,7 @@
                 <h4 class="modal-title" id="myModalLabel">You have gone idle....</h4>
             </div>
             <div class="modal-body">
-                <p style="font-size:125%;">Uh oh, we haven’t heard from you in a while. Were you working on a specific patient while we were idle?</p>
+                <p style="font-size:125%;">We haven’t heard from you in a while <img src="{{ asset('/img/emoji-disappointed-but-relieved.png') }}" style="width:25px; height:25px; margin-bottom:5px;" />. Were you working on a specific patient while we were idle?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" id="timeModalNo" class="btn btn-warning" data-dismiss="modal">No</button>
@@ -105,7 +105,7 @@ if ($enableTimeTracking) {
         var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
         var isTimerProcessed = false;
         var redirectLocation = false;
-        var idleTime = 120000; // ms before modal display (60000 = 1min)
+        var idleTime = 2000; // ms before modal display (60000 = 1min)
         var consoleDebug = true; // debug toggle
 
         // instantiate idleTimer
