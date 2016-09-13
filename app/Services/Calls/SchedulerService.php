@@ -174,7 +174,7 @@ class SchedulerService
                             PatientContactWindow::create([
 
                                 'patient_info_id' => $temp->patientInfo->id,
-                                'day_of_week' => Carbon::parse($day)->dayOfWeek + 1,
+                                'day_of_week' => Carbon::parse('this' . $day)->dayOfWeek,
                                 'window_time_start' => Carbon::parse($patient['Call time From:'])->format('H:i'),
                                 'window_time_end' => Carbon::parse($patient['Call time to:'])->format('H:i'),
 
