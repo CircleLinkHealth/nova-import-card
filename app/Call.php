@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Call extends Model
 {
+
+    use \Venturecraft\Revisionable\RevisionableTrait;
+
+    public static function boot()
+    {
+        parent::boot();
+    }
     
     protected $table = 'calls';
 
