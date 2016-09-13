@@ -237,7 +237,7 @@ class NotesController extends Controller
             $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
 
             $contact_days_array = array();
-            if($patient->patientInfo->preferred_cc_contact_days){
+            if(is_object($patient->patientInfo->patientContactWindows)){
                 $contact_days_array = array_merge(explode(',',$patient->patientInfo->preferred_cc_contact_days));
             }
             
