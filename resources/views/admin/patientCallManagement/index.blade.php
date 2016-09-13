@@ -451,6 +451,11 @@
                 });
                 return false;
             }
+
+            // initiate tooltips
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            });
         });
     </script>
 @stop

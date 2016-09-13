@@ -214,12 +214,12 @@ class DatatablesController extends Controller
             ->addColumn('notes_html', function($call) {
                 $notesHtml = '';
                 if($call->inboundUser) {
-                    $notes = $call->inboundUser->notes()->with('call')->orderBy('created_at','desc')->limit(3)->get();
+                    $notes = $call->inboundUser->notes()->with('call')->with('mail')->orderBy('performed_at','desc')->limit(3)->get();
                     if($notes->count() > 0) {
                         $notesHtml .= '<ul>';
                         foreach($notes as $note) {
                             $notesHtml .= '<li style="width:800px;margin:5px 0px;white-space:normal;">';
-                            $notesHtml .= 'Note '.$note->created_at.': ';
+                            $notesHtml .= 'Note '.$note->performed_at.': ';
 
                             //Call Info
                             if (count($note->call) > 0) {
@@ -231,6 +231,14 @@ class DatatablesController extends Controller
 
                                 if ($note->call->status == 'reached') {
                                     $notesHtml .= '<div class="label label-info" style="margin:5px;">Successful Clinical Call</div>';
+                                }
+
+                                if(count($note->mail) > 0) {
+                                    $mailText = 'Forwarded: ';
+                                    foreach($note->mail as $mail) {
+                                        $mailText .= $mail->receiver_email . ', ';
+                                    }
+                                    $notesHtml .= '<div class="label label-info" style="margin:5px;" data-toggle="tooltip" title="'.rtrim($mailText, ',').'">Forwarded</div>';
                                 }
                             }
                             if ($note->isTCM) {

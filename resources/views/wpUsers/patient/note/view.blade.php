@@ -97,6 +97,10 @@
                                                     <h5>
                                                         <div class="label label-danger">{{ucwords($tag)}}</div>
                                                     </h5>
+                                                @elseif(strpos($tag, 'Forward') !== false)
+                                                    <h5>
+                                                        <div class="label label-info" data-toggle="tooltip" title="{{$tag}}">Forwarded</div>
+                                                    </h5>
                                                 @else
                                                     <h5>
                                                         <div class="label label-info">{{ucwords($tag)}}</div>
@@ -166,6 +170,10 @@
 
 
                                 <script>
+                                    $(function () {
+                                        $('[data-toggle="tooltip"]').tooltip()
+                                    });
+
                                     $('.collapse').collapse();
 
                                     $("input:checkbox").on('click', function () {

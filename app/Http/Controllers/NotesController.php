@@ -368,6 +368,14 @@ class NotesController extends Controller
             }
         }
 
+        if(!empty($note->mail)) {
+            $mailText = 'Forwarded: ';
+            foreach($note->mail as $mail) {
+                $mailText .= $mail->receiver_email . ', ';
+            }
+            $meta_tags[] = rtrim($mailText, ',');
+        }
+
         if ($note->isTCM) {
             $meta_tags[] = 'Patient Recently in Hospital/ER';
         }
