@@ -255,7 +255,7 @@
                 return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
                         '<tr>'+
                         '<td>General Comment:</td>'+
-                        '<td>'+d.general_comment+'</td>'+
+                        '<td>'+d.general_comment_html+'</td>'+
                         '</tr>'+
                         '<tr>'+
                         '<td>Attempt Note:</td>'+
@@ -410,6 +410,8 @@
                     });
                 } else if(cpmEditableColumnName == 'attempt_note') {
                     $(cpmEditableTd).html('<textarea id="editableInput" style="width:300px;height:50px;" class="" name="editableInput" type="editableInput">' + cpmEditableColumnValue + '</textarea> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
+                } else if(cpmEditableColumnName == 'general_comment') {
+                    $(cpmEditableTd).html('<textarea id="editableInput" style="width:300px;height:50px;" class="" name="editableInput" type="editableInput">' + cpmEditableColumnValue + '</textarea> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 } else if(cpmEditableColumnName == 'scheduled_date') {
                     $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="editableInput" type="input" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
                 } else if(cpmEditableColumnName == 'window_start' || cpmEditableColumnName == 'window_end') {
@@ -420,10 +422,6 @@
 
             // save editable field function
             function saveEditableField() {
-                // redraw if needed
-                if(cpmEditableColumnName == 'attempt_note') {
-                    callstable.draw();
-                }
                 $( cpmEditableTd ).html('<a href="#"><span class="cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '">' + cpmEditableColumnDisplayText + '</span></a>');
 
                 $( cpmEditableTd ).addClass('highlight');
@@ -446,7 +444,10 @@
                     encode: true,
                     //processData: false,
                     success: function (data) {
-                        // do something to signify success
+                        // redraw if needed
+                        if(cpmEditableColumnName == 'attempt_note' || cpmEditableColumnName == 'general_comment') {
+                            callstable.draw();
+                        }
                     }
                 });
                 return false;

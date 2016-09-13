@@ -147,9 +147,11 @@ class CallController extends Controller
             $call->scheduler = Auth::user()->ID;
         } else if($data['columnName'] == 'attempt_note' && (empty($data['value']) || strtolower($data['value']) == 'Add Text' )) {
             $call->$data['columnName'] = '';
-        } else {
-            $call->$data['columnName'] = $data['value'];
-            $call->scheduler = Auth::user()->ID;
+        } else if($data['columnName'] == 'general_comment') {
+            if($call->inboundUser && $call->inboundUser->patientInfo) {
+                $call->inboundUser->patientInfo->general_comment = $data['value'];
+                $call->inboundUser->patientInfo->save();
+            }
         }
         $call->save();
 

@@ -100,6 +100,13 @@ class DatatablesController extends Controller
             ->editColumn('call_id', function($call) {
                 return '<input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
             })
+            ->addColumn('general_comment_html', function($call) {
+                $generalComment = 'Add Text';
+                if(!empty($call->general_comment)) {
+                    $generalComment = $call->general_comment;
+                }
+                return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="general_comment" column-value="'.$generalComment.'">'.$generalComment.'</span>';
+            })
             ->addColumn('attempt_note_html', function($call) {
                 $attemptNote = 'Add Text';
                 if(!empty($call->attempt_note)) {
