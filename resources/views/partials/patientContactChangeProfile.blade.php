@@ -20,7 +20,7 @@
     <div class="row"style="padding-bottom: 10px">
         <label for="window_start">Calls Start Time</label>
         <input class="form-control" name="window_start" type="time"
-               value="@if($patient->patientInfo) {{$patient->patientInfo->daily_contact_window_start}} @endif"
+               value="@if(isset($contactWindows[0])) {{$contactWindows[0]->window_time_start}} @endif"
                id="window_start" placeholder="time">
     </div>
 </div>
@@ -29,7 +29,7 @@
     <div class="row" style="padding-bottom: 10px">
         <label for="window_end">Calls End Time</label>
         <input class="form-control" name="window_end" type="time"
-               value="@if($patient->patientInfo) {{$patient->patientInfo->daily_contact_window_end}} @endif"
+               value="@if(isset($contactWindows[0])) {{$contactWindows[0]->window_time_end}} @endif"
                id="window_end" placeholder="time">
     </div>
 </div>
