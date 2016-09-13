@@ -243,7 +243,9 @@ class DatatablesController extends Controller
                                 if(count($note->mail) > 0) {
                                     $mailText = 'Forwarded: ';
                                     foreach($note->mail as $mail) {
-                                        $mailText .= $mail->receiver_email . ', ';
+                                        if($mail->receiverUser) {
+                                            $mailText .= $mail->receiverUser->display_name . ', ';
+                                        }
                                     }
                                     $notesHtml .= '<div class="label label-info" style="margin:5px;" data-toggle="tooltip" title="'.rtrim($mailText, ',').'">Forwarded</div>';
                                 }
