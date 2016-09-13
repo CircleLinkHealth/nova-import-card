@@ -1,24 +1,16 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
-use App\ActivityMeta;
-use App\Algorithms\Calls\PredictCall;
-use App\CLH\Repositories\UserRepository;
 use App\Formatters\WebixFormatter;
-use App\Http\Requests;
 use App\PatientContactWindow;
-use App\PatientInfo;
 use App\Program;
-use App\Services\ActivityService;
+use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Services\Calls\SchedulerService;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Illuminate\Support\Facades\URL;
-use Laracasts\Flash\Flash;
 
 class NotesController extends Controller
 {
@@ -267,7 +259,6 @@ class NotesController extends Controller
     {
 
         $input = $input->all();
-//        dd($input);
 
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
@@ -289,16 +280,14 @@ class NotesController extends Controller
             $info->preferred_calls_per_month = $input['frequency'];
         }
 
-        if(isset($input['days'])){
-            $info->preferred_cc_contact_days = implode(', ',$input['days']);
-        }
-
         $info->save();
 
         // also update patientCallWindows @todo - do this only
         $params = new ParameterBag($input);
-        $userRepo = new UserRepository();
-        $userRepo->saveOrUpdatePatientCallWindows($patient, $params);
+
+        if ($params->get('days') && $params->get('window_start') && $params->get('window_end')) {
+            PatientContactWindow::sync($info, $params->get('days', []), $params->get('window_start'), $params->get('window_end'));
+        }
 
         /*
          If the note wasn't a phone call, redirect to Notes/Offline Activities page
