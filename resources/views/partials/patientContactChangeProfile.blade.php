@@ -1,15 +1,3 @@
-<?php
-
-$contact_days_array = array();
-if(isset($patient->patientInfo)){
-    //Not sure it should default to Tuesday. Passing in an empty array for now
-//    $contact_days_array = array_merge(explode(',',$patient->patientInfo->preferred_cc_contact_days));
-    $contact_days_array = [];
-}
-
-?>
-
-
 <div class="col-md-12" style="">
     <div class="row" style="padding-bottom: 10px">
         <label for="contact_day">Contact Days</label>

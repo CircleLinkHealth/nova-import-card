@@ -9,15 +9,14 @@ use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\PhiMail;
-use App\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Log;
 use Maknz\Slack\Facades\Slack;
 
 
 class Kernel extends ConsoleKernel
 {
+
     /**
      * The Artisan commands provided by your application.
      *
@@ -44,35 +43,26 @@ class Kernel extends ConsoleKernel
             (new PhiMail)->sendReceive();
         })->everyMinute();
 
-
-        //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->call(function () {
-
-            (new SchedulerService())->removeScheduledCallsForWithdrawnPatients();
-
-        })->everyMinute();
-
-        //Reconciles missed calls and creates a new call for patient using algo
         $schedule->call(function () {
 
             $calls = SchedulerService::getUnAttemptedCalls();
             $handled = array();
 
             foreach ($calls as $call) {
-                Log::info('INFO FOR NEW CALL: ' . $call->id);
                 $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call, false))->reconcileDroppedCallHandler();
             }
 
-//			if (! app()->environment('worker-staging')) return;
+            if (!app()->environment('worker-staging')) return;
 
             foreach ($handled as $call) {
                 Slack::to('#background-tasks-dev')->send("We just fixed call: {$call->id}");
             }
 
-        })->dailyAt('00:05');
 
-//        $schedule->command('emailapprovalreminder:providers')
-//            ->weekdays()
-//            ->twiceDaily(8, 14);
+        })->everyMinute();
+
+        $schedule->command('emailapprovalreminder:providers')
+            ->weekdays()
+            ->twiceDaily(8, 14);
     }
 }

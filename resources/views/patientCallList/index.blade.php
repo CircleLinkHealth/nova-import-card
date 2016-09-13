@@ -13,7 +13,8 @@
             var cpmEditableStatus = false;
             var cpmEditableID = false;
             $('#cpmEditableTable').DataTable( {
-                "scrollX": true
+                "scrollX": true,
+                "order": [[ 2, "asc" ]]
             } );
 
             $('.patientNameLink').click(function() {
@@ -125,7 +126,7 @@
                                                         <td>{{ $call->window_end }}</td>
                                                         <td>
                                                             @if($call->inboundUser)
-                                                                {{ $call->inboundUser->patientInfo->last_successful_contact_time }}
+                                                                {{ $call->inboundUser->patientInfo->last_contact_time }}
                                                             @endif
                                                         </td>
                                                         <td>

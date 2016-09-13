@@ -2,7 +2,7 @@
 
 Route::get('missed', function(){
 
-  dd(Carbon\Carbon::parse('this Tuesday')->dayOfWeek);
+  return (new \App\Services\Calls\SchedulerService)->reprocessScheduledCallsFromCCMTime();
 
 });
 
