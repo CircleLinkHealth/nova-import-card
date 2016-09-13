@@ -114,10 +114,11 @@ class ReportsController extends Controller
 
     public function u20(Request $request, $patientId = false)
     {
+        //$patient_ = User::find($patientId);
         $input = $request->all();
 
         if (isset($input['selectMonth'])) {
-            $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 01);
+            $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
             $month_selected = $time->format('m');
             $month_selected_text = $time->format('F');
             $year_selected = $time->format('Y');
@@ -132,19 +133,13 @@ class ReportsController extends Controller
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('primaryProgram')
-            ->whereHas('patientInfo.patientSummaries', function($query) use ($time){
-                $query->where('ccm_time', '<', 20*60)
-                    ->where('month_year', '=', $time->firstOfMonth());
-            })
-            ->get();
+        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
 
         $u20_patients = array();
 
         // ROLLUP CATEGORIES
-        $activityTypes = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
-        $progress = array('Review Patient progress (offline)', 'progress Report Review/Print');
+        $CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
+        $Progress = array('Review Patient Progress (offline)', 'Progress Report Review/Print');
         $RPM = array('Patient Alerts Review', 'Patient Overview Review', 'Biometrics Data Review', 'Lifestyle Data Review', 'Symptoms Data Review', 'Assessments Scores Review',
             'Medications Data Review', 'Input Observation');
         $TCM = array('Test (Scheduling, Communications, etc)', 'Transitional Care Management Activities', 'Call to Other Care Team Member', 'Appointments');
@@ -152,7 +147,7 @@ class ReportsController extends Controller
         $act_count = 0;
         foreach ($patients as $patient) {
             //$monthly_time = intval($patient->getMonthlyTimeAttribute());
-            $program = $patient->primaryProgram;
+            $program = Program::find($patient->program_id);
             if ($program) $programName = $program->display_name;
 
             if ($patient->hasRole('participant')) {
@@ -184,9 +179,9 @@ class ReportsController extends Controller
 //				}
 
                 foreach ($acts as $activity) {
-                    if (in_array($activity->type, $activityTypes)) {
+                    if (in_array($activity->type, $CarePlan)) {
                         $u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $progress)) {
+                    } else if (in_array($activity->type, $Progress)) {
                         $u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
                     } else if (in_array($activity->type, $RPM)) {
                         $u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
@@ -227,8 +222,10 @@ class ReportsController extends Controller
             'month_selected_text' => $month_selected_text,
             'year_selected' => $year_selected,
             'months' => $months,
+            //'patient' => $patient_,
             'data' => $act_data
         ];
+        //debug($reportData);
 
         return view('reports.u20', $data);
     }
