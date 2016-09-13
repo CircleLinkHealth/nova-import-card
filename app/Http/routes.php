@@ -239,6 +239,8 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix' => 'admin'
     ], function () {
 
+        Route::get('athena/check', 'CcdApi\Athena\AthenaApiController@getTodays');
+
         Route::post('calls/import', [
             'uses' => 'CallController@import',
             'as' => 'post.CallController.import'

@@ -35,8 +35,15 @@ class Service
     {
         $today = Carbon::today()->format('m/d/Y');
 
-        $response = $this->api->getBookedAppointments($practiceId, '05/01/2016', $today, false, 1000, 1);
-        $this->logPatientIdsFromAppointments($response, $practiceId);
+        $departments = $this->api->getDepartmentIds($practiceId);
+
+        foreach ($departments['departments'] as $department)
+        {
+            $response = $this->api->getBookedAppointments($practiceId, $today, $today, $department['departmentid']);
+            $this->logPatientIdsFromAppointments($response, $practiceId);
+        }
+
+
     }
 
     public function logPatientIdsFromAppointments($response, $practiceId)
@@ -116,15 +123,12 @@ class Service
             $importer = new QAImportManager($vendor->program_id, $ccda);
             $output = $importer->generateCarePlanFromCCD();
 
-            $ccda->imported = true;
-            $ccda->save();
-
             return $ccda;
         });
     }
 
-    public function postPatientDocument($patientId, $practiceId, $attachmentContentPath, $documentSubClass = 'CLINICALDOCUMENT', $contentType = 'multipart/form-data')
+    public function postPatientDocument($patientId, $practiceId, $attachmentContentPath, $departmentId)
     {
-        return $this->api->postPatientDocument($patientId, $practiceId, $attachmentContentPath, $documentSubClass, $contentType);
+        return $this->api->postPatientDocument($patientId, $practiceId, $attachmentContentPath, $departmentId);
     }
 }

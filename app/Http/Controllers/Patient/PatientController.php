@@ -2,6 +2,7 @@
 
 use App\CareItem;
 use App\CPRulesQuestions;
+use App\Events\CarePlanWasApproved;
 use App\Http\Controllers\Controller;
 use App\Observation;
 use App\PatientCarePlan;
@@ -228,12 +229,7 @@ class PatientController extends Controller
         //then update the status.
         $input = $request->all();
 
-        if (isset($input['patient_approval_id'])) {
-            $approved_patient = User::find($input['patient_approval_id']);
-            $approved_patient->carePlanStatus = 'provider_approved'; // careplan_status
-            $approved_patient->carePlanProviderApprover = Auth::user()->ID; // careplan_provider_approver
-            $approved_patient->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
-        }
+        if (isset($input['patient_approval_id'])) event(new CarePlanWasApproved(User::find($input['patient_approval_id'])));
 
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
