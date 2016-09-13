@@ -189,7 +189,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Call Attempt Note</h4>
+                            <h4 class="modal-title">Couple things about {{ $call->inboundUser->display_name }}</h4>
                         </div>
                         <div class="modal-body">
                             @if($call->inboundUser && $call->inboundUser->patientInfo && !empty($call->inboundUser->patientInfo->general_comment))
