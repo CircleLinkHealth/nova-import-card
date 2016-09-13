@@ -49,7 +49,7 @@ class PatientInfo extends Model {
     
 	public function patientContactWindows()
 	{
-		return $this->hasMany('App\PatientContactWindow', 'patient_info_id', 'id');
+		return $this->hasMany(PatientContactWindow::class, 'patient_info_id', 'id');
 	}
 
 	public function patientSummaries()
