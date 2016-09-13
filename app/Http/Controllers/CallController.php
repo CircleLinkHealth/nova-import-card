@@ -135,16 +135,16 @@ class CallController extends Controller
 
         // VALIDATION
         if(empty($data['callId'])) {
-            return response("missing required params", 201);
+            return response("missing required params", 401);
         }
         if(!Auth::user()) {
-            return response("missing required scheduler user", 201);
+            return response("missing required scheduler user", 401);
         }
 
         // find call
         $call = Call::find($data['callId']);
         if(!$call) {
-            return response("could not locate call ".$data['callId'], 201);
+            return response("could not locate call ".$data['callId'], 401);
         }
 
         // for null outbound_cpm_id
