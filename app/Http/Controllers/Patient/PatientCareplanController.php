@@ -378,7 +378,8 @@ class PatientCareplanController extends Controller
 
         $contact_days_array = array();
         if ($patient->patientInfo()->exists()) {
-            $contact_days_array = $patient->patientInfo->patientContactWindows->pluck('day_of_week')->toArray();
+            $contactWindows = $patient->patientInfo->patientContactWindows;
+            $contact_days_array = $contactWindows->pluck('day_of_week')->toArray();
         }
 
         return view('wpUsers.patient.careplan.patient', compact([
@@ -395,7 +396,8 @@ class PatientCareplanController extends Controller
             'showApprovalButton',
             'carePlans',
             'insurancePolicies',
-            'contact_days_array'
+            'contact_days_array',
+            'contactWindows',
         ]));
     }
 
