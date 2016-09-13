@@ -15,101 +15,7 @@
     <script src="//cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
     <script>
         $(document).ready(function() {
-            // vars
-            var consoleDebug = true;
-            var cpmEditableStatus = false;
-            var cpmEditableCallId = false;
-            var cpmEditableColumnName = false;
-            var cpmEditableColumnValue = false;
-            var cpmEditableColumnDisplayText = false;
-            var cpmEditableTd = false;
 
-            // edit action
-            $('#calls-table').on('click', '.cpm-editable-icon', function(){
-                if(cpmEditableStatus === true) {
-                    alert('already editing');
-                    return false;
-                    //saveEditableField();
-                }
-                cpmEditableCallId = $( this ).attr('call-id');
-                cpmEditableColumnName = $( this ).attr('column-name');
-                cpmEditableColumnValue = $( this ).attr('column-value');
-                cpmEditableColumnDisplayText = $( this ).attr('column-value');
-                cpmEditableTd = $( this ).parent().parent();
-                openEditableField();
-                return false;
-            });
-
-            // save action
-            $('#calls-table').on('click', '#cpm-editable-save', function(){
-                cpmEditableColumnValue = $('#editableInput').val();
-                cpmEditableColumnDisplayText = $('#editableInput').val();
-                if(cpmEditableColumnName == 'outbound_cpm_id') {
-                    cpmEditableColumnDisplayText = $("#editableInput option:selected").text();
-                }
-                saveEditableField();
-                return false;
-            });
-
-            // open editable field function
-            function openEditableField() {
-                cpmEditableStatus = true;
-                if(cpmEditableColumnName == 'outbound_cpm_id') {
-                    //alert( cpmEditableColumnValue );
-                    var html = $('#nurseFormWrapper').html() + ' <a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>';
-                    $(cpmEditableTd).html(html);
-                    $(".nurseFormSelect").each(function(index, element) {
-                        // get second one, skip first template in hidden div one
-                        if(index == 1) {
-                            // set value
-                            $(this).val(cpmEditableColumnValue);
-                            console.log('element at index ' + index + 'is ' + (this.tagName));
-                            console.log('element at index ' + index + 'is ' + (this.tagName));
-                            console.log('current element as dom object:' + element);
-                            console.log('current element as jQuery object:' + $(this));
-                            $(this).attr('id', "editableInput");
-                            console.log('current element id ==:' + $(this).attr('id'));
-                        }
-                    });
-                } else if(cpmEditableColumnName == 'attempt_note') {
-                    $(cpmEditableTd).html('<textarea id="editableInput" style="width:300px;height:50px;" class="" name="editableInput" type="editableInput">' + cpmEditableColumnValue + '</textarea> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
-                } else if(cpmEditableColumnName == 'scheduled_date') {
-                    $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="editableInput" type="input" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
-                } else if(cpmEditableColumnName == 'window_start' || cpmEditableColumnName == 'window_end') {
-                    $(cpmEditableTd).html('<input id="editableInput" style="width:50px;" class="" name="editableInput" type="input" value="' + cpmEditableColumnValue + '"  data-field="time" data-format="HH:mm" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
-                }
-                return false;
-            }
-
-            // save editable field function
-            function saveEditableField() {
-                $( cpmEditableTd ).html('<a href="#"><span class="cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '">' + cpmEditableColumnDisplayText + '</span></a>');
-
-                $( cpmEditableTd ).addClass('highlight');
-                setTimeout(function(){
-                    $( cpmEditableTd ).removeClass('highlight');
-                    cpmEditableStatus = false;
-                }, 1000);
-
-                var data = {
-                    "callId": cpmEditableCallId,
-                    "columnName": cpmEditableColumnName,
-                    "value": cpmEditableColumnValue
-                };
-                if (consoleDebug) console.log(data);
-                $.ajax({
-                    type: "POST",
-                    url: '<?php echo URL::route('api.callupdate'); ?>',
-                    data: data,
-                    //cache: false,
-                    encode: true,
-                    //processData: false,
-                    success: function (data) {
-                        // do something to signify success
-                    }
-                });
-                return false;
-            }
         } );
     </script>
     <style>
@@ -176,7 +82,7 @@
                                 <div class="col-xs-8">{!! Form::input('text', 'window_end', '17:00', ['id' => 'addCallWindowEnd', 'class' => 'form-control', 'style' => 'width:100%;', 'data-field' => "time", 'data-format' => "HH:mm"]) !!}</div>
                             </div>
                             <div class="row form-group">
-                                <div class="col-xs-4 text-right">{!! Form::label('attempt_note', 'AttemptNote:') !!}</div>
+                                <div class="col-xs-4 text-right">{!! Form::label('attempt_note', 'Add Text:') !!}</div>
                                 <div class="col-xs-8">{!! Form::input('textarea', 'attempt_note', '', ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                             </div>
                         </div>
@@ -249,6 +155,7 @@
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
                                 <th>DOB</th>
+                                <th>Scheduler</th>
                             </tr>
                             </thead>
                             <tfoot>
@@ -270,6 +177,7 @@
                                 <th>Patient Status</th>
                                 <th>Billing Provider</th>
                                 <th>DOB</th>
+                                <th>Scheduler</th>
                             </tr>
                             </tfoot>
                         </table>
@@ -303,7 +211,7 @@
                 //    'csvHtml5',
                 //    'pdfHtml5'
                 //],
-                "order": [[ 4, "desc" ]],
+                "order": [[ 4, "asc" ]],
                 "iDisplayLength": 100,
                 scrollX: true,
                 fixedHeader: true,
@@ -330,6 +238,7 @@
                     {data: 'ccm_status', name: 'ccm_status'},
                     {data: 'billing_provider', name: 'billing_provider'},
                     {data: 'birth_date', name: 'birth_date'},
+                    {data: 'scheduler', name: 'scheduler'},
                 ],
                 "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                     //console.log(aData);
@@ -435,6 +344,113 @@
 
                 callstable.draw();
             });
+
+
+
+
+
+
+
+
+            // vars
+            var consoleDebug = true;
+            var cpmEditableStatus = false;
+            var cpmEditableCallId = false;
+            var cpmEditableColumnName = false;
+            var cpmEditableColumnValue = false;
+            var cpmEditableColumnDisplayText = false;
+            var cpmEditableTd = false;
+
+            // edit action
+            $('#calls-table').on('click', '.cpm-editable-icon', function(){
+                if(cpmEditableStatus === true) {
+                    alert('already editing');
+                    return false;
+                    //saveEditableField();
+                }
+                cpmEditableCallId = $( this ).attr('call-id');
+                cpmEditableColumnName = $( this ).attr('column-name');
+                cpmEditableColumnValue = $( this ).attr('column-value');
+                cpmEditableColumnDisplayText = $( this ).attr('column-value');
+                cpmEditableTd = $( this ).parent().parent();
+                openEditableField();
+                return false;
+            });
+
+            // save action
+            $('#calls-table').on('click', '#cpm-editable-save', function(){
+                cpmEditableColumnValue = $('#editableInput').val();
+                cpmEditableColumnDisplayText = $('#editableInput').val();
+                if(cpmEditableColumnName == 'outbound_cpm_id') {
+                    cpmEditableColumnDisplayText = $("#editableInput option:selected").text();
+                }
+                saveEditableField();
+                return false;
+            });
+
+            // open editable field function
+            function openEditableField() {
+                cpmEditableStatus = true;
+                if(cpmEditableColumnName == 'outbound_cpm_id') {
+                    //alert( cpmEditableColumnValue );
+                    var html = $('#nurseFormWrapper').html() + ' <a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>';
+                    $(cpmEditableTd).html(html);
+                    $(".nurseFormSelect").each(function(index, element) {
+                        // get second one, skip first template in hidden div one
+                        if(index == 1) {
+                            // set value
+                            $(this).val(cpmEditableColumnValue);
+                            console.log('element at index ' + index + 'is ' + (this.tagName));
+                            console.log('element at index ' + index + 'is ' + (this.tagName));
+                            console.log('current element as dom object:' + element);
+                            console.log('current element as jQuery object:' + $(this));
+                            $(this).attr('id', "editableInput");
+                            console.log('current element id ==:' + $(this).attr('id'));
+                        }
+                    });
+                } else if(cpmEditableColumnName == 'attempt_note') {
+                    $(cpmEditableTd).html('<textarea id="editableInput" style="width:300px;height:50px;" class="" name="editableInput" type="editableInput">' + cpmEditableColumnValue + '</textarea> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
+                } else if(cpmEditableColumnName == 'scheduled_date') {
+                    $(cpmEditableTd).html('<input id="editableInput" style="width:100px;" class="" name="editableInput" type="input" value="' + cpmEditableColumnValue + '"  data-field="date" data-format="yyyy-MM-dd" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
+                } else if(cpmEditableColumnName == 'window_start' || cpmEditableColumnName == 'window_end') {
+                    $(cpmEditableTd).html('<input id="editableInput" style="width:50px;" class="" name="editableInput" type="input" value="' + cpmEditableColumnValue + '"  data-field="time" data-format="HH:mm" /> &nbsp;<a href="#" id="cpm-editable-save"><span class="glyphicon glyphicon-ok" style=""></span></a>');
+                }
+                return false;
+            }
+
+            // save editable field function
+            function saveEditableField() {
+                // redraw if needed
+                if(cpmEditableColumnName == 'attempt_note') {
+                    callstable.draw();
+                }
+                $( cpmEditableTd ).html('<a href="#"><span class="cpm-editable-icon" call-id="' + cpmEditableCallId + '" column-name="' + cpmEditableColumnName + '" column-value="' + cpmEditableColumnValue + '">' + cpmEditableColumnDisplayText + '</span></a>');
+
+                $( cpmEditableTd ).addClass('highlight');
+                setTimeout(function(){
+                    $( cpmEditableTd ).removeClass('highlight');
+                    cpmEditableStatus = false;
+                }, 1000);
+
+                var data = {
+                    "callId": cpmEditableCallId,
+                    "columnName": cpmEditableColumnName,
+                    "value": cpmEditableColumnValue
+                };
+                if (consoleDebug) console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo URL::route('api.callupdate'); ?>',
+                    data: data,
+                    //cache: false,
+                    encode: true,
+                    //processData: false,
+                    success: function (data) {
+                        // do something to signify success
+                    }
+                });
+                return false;
+            }
         });
     </script>
 @stop

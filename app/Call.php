@@ -15,6 +15,8 @@ class Call extends Model
         'service',
         'status',
 
+        'scheduler',
+
         /*
         Mini-documentation for call statuses:
             reached -> Successful Clinical Call
@@ -56,36 +58,27 @@ class Call extends Model
         return $this->belongsTo('App\User', 'inbound_cpm_id', 'ID');
     }
 
-    public static function numberOfCallsForPatientForMonth(User $patient, $date){
+    public static function numberOfCallsForPatientForMonth(User $user, $date){
 
-        $date_start = Carbon::parse($date)->startOfMonth();
-        $date_end = Carbon::parse($date)->endOfMonth();
-
-        $no_of_calls = Call::where(
-                function ($q) use ($patient){
-                    $q->where('outbound_cpm_id', $patient->ID)
-                        ->orWhere('inbound_cpm_id', $patient->ID);
-                })
-            ->where('created_at', '>=' , $date_start)
-            ->where('created_at', '<=' , $date_end)->count();
-        
-        return $no_of_calls;
+        // get record for month
+        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
+        $record = $user->patientInfo->patientSummaries()->where('month_year',$day_start)->first();
+        if(!$record) {
+            return 0;
+        }
+        return $record->no_of_calls;
     }
 
-    public static function numberOfSuccessfulCallsForPatientForMonth(User $patient, $date){
+    public static function numberOfSuccessfulCallsForPatientForMonth(User $user, $date){
 
-        $date_start = Carbon::parse($date)->startOfMonth();
-        $date_end = Carbon::parse($date)->endOfMonth();
+        // get record for month
+        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
+        $record = $user->patientInfo->patientSummaries()->where('month_year',$day_start)->first();
+        if(!$record) {
+            return 0;
+        }
+        return $record->no_of_successful_calls;
 
-        $no_of_successful_calls = Call::where('status','reached')->where(
-            function ($q) use ($patient){
-                $q->where('outbound_cpm_id', $patient->ID)
-                    ->orWhere('inbound_cpm_id', $patient->ID);
-            })
-            ->where('created_at', '<=' , $date_end)
-            ->where('created_at', '>=' , $date_start)->count();
-
-        return $no_of_successful_calls;
     }
 
 

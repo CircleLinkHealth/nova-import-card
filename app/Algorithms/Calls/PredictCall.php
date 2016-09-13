@@ -84,7 +84,7 @@ class PredictCall
 
         } else { // If call doesn't exist, make one and store it
 
-            (new NoteService)->storeCallForNote($this->note, 'reached', $this->patient, Auth::user(), 'outbound');
+            (new NoteService)->storeCallForNote($this->note, 'reached', $this->patient, Auth::user(), 'outbound', 'algorithm');
 
         }
 
@@ -154,7 +154,7 @@ class PredictCall
 
         } else {
 
-            (new NoteService)->storeCallForNote($this->note, 'not reached', $this->patient, Auth::user(), 'outbound');
+            (new NoteService)->storeCallForNote($this->note, 'not reached', $this->patient, Auth::user(), 'outbound', 'algorithm');
 
         }
 
@@ -223,11 +223,12 @@ class PredictCall
         if($this->call) {
 
             $this->call->status = 'dropped';
+            $this->call->scheduler = 'algorithm';
             $this->call->save();
 
         } else {
 
-            (new NoteService)->storeCallForNote($this->note, 'dropped', $this->patient, null, 'outbound');
+            (new NoteService)->storeCallForNote($this->note, 'dropped', $this->patient, null, 'outbound', 'algorithm');
 
         }
 
@@ -484,5 +485,5 @@ class PredictCall
 
         return $prediction;
     }
-
+    
 }

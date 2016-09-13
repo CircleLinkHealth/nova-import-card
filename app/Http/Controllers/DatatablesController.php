@@ -59,6 +59,8 @@ class DatatablesController extends Controller
                     'notes.body AS note_body',
                     'notes.performed_at AS note_datetime',
                     'calls.note_id',
+                    'calls.scheduler AS scheduler',
+                    'scheduler_user.display_name AS scheduler_user_name',
                     'patient_info.cur_month_activity_time',
                     'patient_info.last_successful_contact_time',
                     \DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
@@ -76,6 +78,7 @@ class DatatablesController extends Controller
             ->leftJoin('notes', 'calls.note_id','=','notes.id')
             ->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
             ->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
+            ->leftJoin('users AS scheduler_user', 'calls.scheduler','=','scheduler_user.ID')
             ->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
             ->leftJoin('patient_monthly_summaries', function($join) use ($date)
             {
@@ -98,7 +101,7 @@ class DatatablesController extends Controller
                 return '<input type="checkbox" name="calls[]" value="'.$call->call_id.'">';
             })
             ->addColumn('attempt_note_html', function($call) {
-                $attemptNote = 'add note';
+                $attemptNote = 'Add Text';
                 if(!empty($call->attempt_note)) {
                     $attemptNote = $call->attempt_note;
                 }
@@ -131,6 +134,13 @@ class DatatablesController extends Controller
                     return substr($call->inboundUser->patientInfo->currentMonthCCMTime, 1);
                 } else {
                     return 'n/a';
+                }
+            })
+            ->editColumn('scheduler', function($call) {
+                if( !empty($call->scheduler_user_name) ) {
+                    return $call->scheduler_user_name;
+                } else {
+                    return $call->scheduler;
                 }
             })
             ->editColumn('no_call_attempts_since_last_success', function($call) {
