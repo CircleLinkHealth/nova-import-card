@@ -4,6 +4,7 @@
 use App\Algorithms\Calls\PredictCall;
 use App\Call;
 use App\Note;
+use App\PatientInfo;
 use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
