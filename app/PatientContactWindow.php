@@ -274,7 +274,7 @@ class PatientContactWindow extends Model
      * @param string $windowEnd
      * @return array $created
      */
-    public static function sync(PatientInfo $info, array $days = [], $windowStart = '09:00:00', $windowEnd = '18:00:00')
+    public static function sync(PatientInfo $info, array $days = [], $windowStart = '09:00:00', $windowEnd = '17:00:00')
     {
         $created = [];
 
