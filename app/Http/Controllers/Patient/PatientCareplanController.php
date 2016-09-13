@@ -448,12 +448,6 @@ class PatientCareplanController extends Controller
             if ($params->get('general_comment')) {
                 $info->general_comment = $params->get('general_comment');
             }
-            if ($params->get('window_start')) {
-                $info->daily_contact_window_start = $params->get('window_start');
-            }
-            if ($params->get('window_end')) {
-                $info->daily_contact_window_end = $params->get('window_end');
-            }
             if ($params->get('frequency')) {
                 $info->preferred_calls_per_month = $params->get('frequency');
             }

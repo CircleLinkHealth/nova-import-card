@@ -6,6 +6,7 @@ use App\Algorithms\Calls\PredictCall;
 use App\CLH\Repositories\UserRepository;
 use App\Formatters\WebixFormatter;
 use App\Http\Requests;
+use App\PatientContactWindow;
 use App\PatientInfo;
 use App\Program;
 use App\Services\ActivityService;
@@ -234,7 +235,7 @@ class NotesController extends Controller
             }
             
             //Patient Call Windows:
-            $window = (new PatientInfo)->parsePatientCallPreferredWindow($patient);
+            $window = PatientContactWindow::getPreferred($patient->patientInfo);
 
             $contact_days_array = array();
             if(is_object($patient->patientInfo->patientContactWindows)){

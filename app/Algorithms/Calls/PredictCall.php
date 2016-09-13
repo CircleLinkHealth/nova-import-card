@@ -118,7 +118,7 @@ class PredictCall
 
         //$next_contact_windows = (new PatientContactWindow)->getNextWindowsForPatientFromDate($this->patient, Carbon::parse($next_predicted_contact_window['day']));
 
-        $window = (new PatientInfo)->parsePatientCallPreferredWindow($this->patient);
+        $window = PatientContactWindow::getPreferred($this->patient->patientInfo);
 
         //Call Info
 
@@ -189,7 +189,8 @@ class PredictCall
 
         //$next_contact_windows = (new PatientContactWindow)->getNextWindowsForPatientFromDate($this->patient, Carbon::parse($next_predicted_contact_window['day']));
 
-        $window = (new PatientInfo)->parsePatientCallPreferredWindow($this->patient);
+        $window = PatientContactWindow::getPreferred($this->patient->patientInfo);
+
 
         $patient_situation = $this->createSchedulerInfoString($week_num, $next_predicted_contact_window['day'], false, $window_start, $window_end);
 

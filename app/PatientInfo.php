@@ -46,7 +46,7 @@ class PatientInfo extends Model {
 	{
 		return $this->belongsTo(User::class, 'user_id', 'ID');
 	}
-    
+
 	public function patientContactWindows()
 	{
 		return $this->hasMany(PatientContactWindow::class, 'patient_info_id', 'id');
@@ -152,45 +152,6 @@ class PatientInfo extends Model {
 		$this->save();
 	}
 
-	/* @todo: put following helper functions it's own service class */
-
-	public function getPatientPreferredTimes($patient){
-
-		$window_start = Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i');
-		$window_end = Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('H:i');
-
-		$days = PatientInfo::numberToTextDaySwitcher($patient->patientInfo->preferred_cc_contact_days);
-		$days = $days = explode(',', $days);
-		$days_formatted = array();
-
-
-		foreach ($days as $day){
-			$days_formatted[] = Carbon::parse($day)->format('Y-m-d');
-		}
-
-		return [
-
-			'days' => $days_formatted,
-			'window_start' => $window_start,
-			'window_end' => $window_end
-
-		];
-	}
-
-	public function parsePatientCallPreferredWindow($patient){
-
-		$window_start = Carbon::parse($patient->patientInfo->daily_contact_window_start)->format('H:i');
-		$window_end = Carbon::parse($patient->patientInfo->daily_contact_window_end)->format('H:i');
-
-		return [
-
-			'start' => $window_start,
-			'end' => $window_end
-		];
-
-	}
-
-
 	public function setCcmStatusAttribute($value)
 	{
 		$statusBefore = $this->ccm_status;
@@ -242,7 +203,7 @@ class PatientInfo extends Model {
 		$days = explode(',', $string);
 
 		$formatted = array_map($mapper, $days);
-		
+
 		return implode(',', $formatted);
 
 	}
