@@ -157,6 +157,7 @@ class CallController extends Controller
                 $call->inboundUser->patientInfo->save();
             }
         } else {
+            $call->scheduler = Auth::user()->ID;
             $call->$data['columnName'] = $data['value'];
         }
         $call->save();
