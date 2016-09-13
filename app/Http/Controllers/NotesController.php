@@ -362,10 +362,10 @@ class NotesController extends Controller
             $mailText = 'Forwarded: ';
             foreach($note->mail as $mail) {
                 if($mail->receiverUser) {
-                    $mailText .= $mail->receiverUser->display_name . ', ';
+                    $mailText .= ' ' . $mail->receiverUser->display_name . ',';
                 }
             }
-            $meta_tags[] = rtrim($mailText, ', ');
+            $meta_tags[] = rtrim($mailText, ',');
         }
 
         if ($note->isTCM) {
