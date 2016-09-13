@@ -2,6 +2,7 @@
 
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\DataTemplates\UserMetaTemplate;
+use App\PatientContactWindow;
 use App\User;
 use App\UserMeta;
 use App\Program;
@@ -92,6 +93,9 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->user_nicename = $params->get('user_nicename');
         $user->user_login = $params->get('user_login');
         $user->user_status = $params->get('user_status');
+
+        if ($params->get('user_email')) $user->user_email = $params->get('user_email');
+
         if($params->get('access_disabled')) {
             $user->access_disabled = $params->get('access_disabled');
         } else {
@@ -124,9 +128,41 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->save();
     }
 
+    public function saveOrUpdatePatientCallWindows(User $user, ParameterBag $params) {
+        // save patientCallWindows
+        if (is_array($params->get('days')) && !empty($params->get('window_start')) && !empty($params->get('window_end'))) {
+            // loop through 0-6 days of the week, check and update patientContactWindow accordingly
+            $daysOfWeek = array(1,2,3,4,5,6,7);
+            $contactDays = $params->get('days');
+            foreach($daysOfWeek as $dayOfWeek) {
+                if(!in_array($dayOfWeek, $contactDays)) {
+                    // remove from PatientContactWindows if exists
+                    $patientContactWindow = $user->patientInfo->patientContactWindows()->where('day_of_week', '=', $dayOfWeek)->first();
+                    if($patientContactWindow) {
+                        $patientContactWindow->delete();
+                    }
+                } else {
+                    // add/update PatientContactWindows for dayOfWeek
+                    $patientContactWindow = $user->patientInfo->patientContactWindows()->where('day_of_week', '=', $dayOfWeek)->first();
+                    if(!$patientContactWindow) {
+                        // add new
+                        $patientContactWindow = new PatientContactWindow();
+                    }
+                    $patientContactWindow->patient_info_id = $user->patientInfo->id;
+                    $patientContactWindow->day_of_week = $dayOfWeek;
+                    $patientContactWindow->window_time_start = $params->get('window_start');
+                    $patientContactWindow->window_time_end = $params->get('window_end');
+                    $patientContactWindow->save();
+                }
+            }
+        }
+    }
+
     public function saveOrUpdatePatientInfo(User $user, ParameterBag $params)
     {
         $patientInfo = $user->patientInfo->toArray();
+
+        $this->saveOrUpdatePatientCallWindows($user, $params);
 
         // contact days checkbox formatting, @todo this is not normalized properly?
         if (is_array($params->get('contact_days'))) {

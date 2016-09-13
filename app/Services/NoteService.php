@@ -16,7 +16,6 @@ use Mockery\Matcher\Not;
 class NoteService
 {
 
-
     public function storeNote($input)
     {
         $note = Note::create($input);
@@ -28,11 +27,6 @@ class NoteService
         } $note->save();
 
         $patient = User::find($note->patient_id);
-        $author = User::find($input['author_id']);
-
-        if(isset($input['phone'])) {
-            $this->storeCallForNote($note, $input['call_status'], $patient, $author, $input['phone']);
-        }
 
         // update usermeta: cur_month_activity_time
         $activityService = new ActivityService;
@@ -51,8 +45,10 @@ class NoteService
 
             $user_care_team = $patient->sendAlertTo;
 
-            $result = $this->sendNoteToCareTeam($note, $user_care_team, $linkToNote, true);
+            $this->sendNoteToCareTeam($note, $user_care_team, $linkToNote, true);
         }
+
+        return $note;
     }
 
     //NOTE RETRIEVALS (ranges, relations, owners)
@@ -164,12 +160,8 @@ class NoteService
     }
 
     //Save call information for note
-    public function storeCallForNote($note, $status, User $patient, User $author, $phone_direction)
+    public function storeCallForNote($note, $status, User $patient, User $author, $phone_direction, $scheduler)
     {
-
-        $patient = User::find($note->patient_id);
-        $author = User::find($note->logger_id);
-
 
         if ($phone_direction == 'inbound') {
             $outbound_num = $patient->primaryPhone;
@@ -192,6 +184,8 @@ class NoteService
             'service' => 'phone',
             'status' => $status,
 
+            'scheduler' => $scheduler,
+
             'inbound_phone_number' => $outbound_num,
             'outbound_phone_number' => $inbound_num,
 
@@ -199,6 +193,7 @@ class NoteService
             'outbound_cpm_id' => $outbound_id,
 
             //@todo figure out call times!
+            'called_date' => Carbon::now()->toDateTimeString(),
 
             'call_time' => 0,
             'created_at' => $note->performed_at,
@@ -206,8 +201,7 @@ class NoteService
             'is_cpm_outbound' => $isCpmOutbound
 
         ]);
-//            }
-//        }
+
     }
 
     //MAIL HELPERS
@@ -248,7 +242,7 @@ class NoteService
                 $email_subject = 'Urgent Patient Note from CircleLink Health';
             } else {
                 $email_view = 'emails.existingnote';
-                $email_subject = 'You have received a new note notification from CarePlan Manager';
+                $email_subject = 'You have been forwarded a note from CarePlanManager';
             }
 
             Mail::send($email_view, $data, function ($message) use ($email, $email_subject) {
@@ -256,13 +250,21 @@ class NoteService
 
                 //Forwards notes to Linda
                 $message->cc('Lindaw@circlelinkhealth.com');
+                $message->cc('raph@circlelinkhealth.com');
+
                 $message->to($email)->subject($email_subject);
             });
+
+            if($newNoteFlag){
+                $body = 'Please see new note for patient ' . $patient->fullName . ':' . $url;
+            } else {
+                $body = 'Please see forwarded note for patient ' . $patient->fullName . ', created on ' . $performed_at  . ' by '.$sender->fullName.':' . $url;
+            }
 
             MailLog::create([
                 'sender_email' => $sender->user_email,
                 'receiver_email' => $receiver->user_email,
-                'body' => '',
+                'body' => $body,
                 'subject' => $email_subject,
                 'type' => 'note',
                 'sender_cpm_id' => $sender->ID,

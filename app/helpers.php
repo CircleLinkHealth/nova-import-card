@@ -39,3 +39,36 @@ if (!function_exists('extractNumbers')) {
         return implode($match[0]);
     }
 }
+
+if (!function_exists('parseCsvToArray')) {
+    /**
+     * Parses a CSV file into an array.
+     *
+     * @param $file
+     * @return string
+     */
+    function parseCsvToArray($file)
+    {
+        $csvArray = $fields = [];
+        $i = 0;
+        $handle = @fopen($file, "r");
+        if ($handle) {
+            while (($row = fgetcsv($handle, 4096)) !== false) {
+                if (empty($fields)) {
+                    $fields = $row;
+                    continue;
+                }
+                foreach ($row as $k => $value) {
+                    $csvArray[$i][$fields[$k]] = $value;
+                }
+                $i++;
+            }
+            if (!feof($handle)) {
+                echo "Error: unexpected fgets() fail\n";
+            }
+            fclose($handle);
+        }
+
+        return $csvArray;
+    }
+}

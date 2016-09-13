@@ -207,6 +207,7 @@ trait HandlesUsersAndCarePlans
         //So we're adding this to make the test work.
         ob_end_clean();
 
+
         return $patient;
     }
 

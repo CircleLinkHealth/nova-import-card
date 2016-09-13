@@ -11,6 +11,7 @@ use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
+use App\PatientContactWindow;
 use App\Program;
 use App\Role;
 use App\Services\CarePlanViewService;
@@ -315,7 +316,7 @@ class PatientCareplanController extends Controller
         $user = new User;
         $programId = false;
         if ($patientId) {
-            $user = User::with('patientInfo')->find($patientId);
+            $user = User::with('patientInfo.patientContactWindows')->find($patientId);
             if (!$user) {
                 return response("User not found", 401);
             }
@@ -365,6 +366,11 @@ class PatientCareplanController extends Controller
 
         $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
+        $contact_days_array = array();
+        if ($patient->patientInfo()->exists()) {
+            $contact_days_array = $patient->patientInfo->patientContactWindows->pluck('day_of_week')->toArray();
+        }
+
         return view('wpUsers.patient.careplan.patient', compact([
             'patient',
             'userMeta',
@@ -379,6 +385,7 @@ class PatientCareplanController extends Controller
             'showApprovalButton',
             'carePlans',
             'insurancePolicies',
+            'contact_days_array'
         ]));
     }
 
@@ -423,6 +430,27 @@ class PatientCareplanController extends Controller
         $userRepo = new UserRepository();
 
         if ($patientId) {
+            $patient = User::where('ID', $patientId)->first();
+            //Update patient info changes
+            $info = $patient->patientInfo;
+            if ($params->get('general_comment')) {
+                $info->general_comment = $params->get('general_comment');
+            }
+            if ($params->get('window_start')) {
+                $info->daily_contact_window_start = $params->get('window_start');
+            }
+            if ($params->get('window_end')) {
+                $info->daily_contact_window_end = $params->get('window_end');
+            }
+            if ($params->get('frequency')) {
+                $info->preferred_calls_per_month = $params->get('frequency');
+            }
+            //we are checking this $info->patientContactWindows()->exists()
+            //in case we want to delete all call windows
+            if ($params->get('days') || $info->patientContactWindows()->exists()) {
+                PatientContactWindow::sync($info, $params->get('days', []));
+            }
+            $info->save();
             // validate
             $messages = [
                 'required' => 'The :attribute field is required.',
@@ -445,7 +473,9 @@ class PatientCareplanController extends Controller
             $newUserId = str_random(15);
             $params->add(array(
                 'user_login' => $newUserId,
-                'user_email' => empty($email = $params->get('email')) ? $newUserId . '@careplanmanager.com' : $email,
+                'user_email' => empty($email = $params->get('email'))
+                    ? $newUserId . '@careplanmanager.com'
+                    : $email,
                 'user_pass' => $newUserId,
                 'user_status' => '1',
                 'user_nicename' => '',
@@ -725,13 +755,33 @@ class PatientCareplanController extends Controller
 
             //weight
             if (!isset($biometricsValues['weight']['monitor_changes_for_chf'])) $biometricsValues['weight']['monitor_changes_for_chf'] = 0;
-            if (!empty($biometricsValues['weight']['starting']) || !empty($biometricsValues['weight']['target'])) CpmWeight::updateOrCreate([
-                'patient_id' => $user->ID
-            ], $biometricsValues['weight']);
+            if (!empty($biometricsValues['weight']['starting']) || !empty($biometricsValues['weight']['target'])) {
+                $validator = \Validator::make($biometricsValues['weight'], CpmWeight::$rules, CpmWeight::$messages);
+
+                if ($validator->fails()) {
+                    return redirect()
+                        ->back()
+                        ->withErrors($validator)
+                        ->withInput();
+                }
+
+                CpmWeight::updateOrCreate([
+                    'patient_id' => $user->ID
+                ], $biometricsValues['weight']);
+            }
 
             //blood sugar
             if (isset($biometricsValues['bloodSugar'])) {
-                if (!empty($biometricsValues['bloodSugar']['starting']) || !empty($biometricsValues['bloodSugar']['starting_a1c'])) {
+                if (!empty($biometricsValues['bloodSugar']['starting']) || !empty($biometricsValues['bloodSugar']['starting_a1c']) || !empty($biometricsValues['bloodSugar']['target'])) {
+                    $validator = \Validator::make($biometricsValues['bloodSugar'], CpmBloodSugar::$rules, CpmBloodSugar::$messages);
+
+                    if ($validator->fails()) {
+                        return redirect()
+                            ->back()
+                            ->withErrors($validator)
+                            ->withInput();
+                    }
+
                     CpmBloodSugar::updateOrCreate([
                         'patient_id' => $user->ID
                     ], $biometricsValues['bloodSugar']);
@@ -742,6 +792,14 @@ class PatientCareplanController extends Controller
             //blood pressure
             if (isset($biometricsValues['bloodPressure'])) {
                 if (!empty($biometricsValues['bloodPressure']['starting']) || !empty($biometricsValues['bloodPressure']['target'])) {
+                    $validator = \Validator::make($biometricsValues['bloodPressure'], CpmBloodPressure::$rules, CpmBloodPressure::$messages);
+
+                    if ($validator->fails()) {
+                        return redirect()
+                            ->back()
+                            ->withErrors($validator)
+                            ->withInput();
+                    }
                     CpmBloodPressure::updateOrCreate([
                         'patient_id' => $user->ID
                     ], $biometricsValues['bloodPressure']);
@@ -751,6 +809,15 @@ class PatientCareplanController extends Controller
             //smoking
             if (isset($biometricsValues['smoking'])) {
                 if (!empty($biometricsValues['smoking']['starting']) || !empty($biometricsValues['smoking']['target'])) {
+                    $validator = \Validator::make($biometricsValues['smoking'], CpmSmoking::$rules, CpmSmoking::$messages);
+
+                    if ($validator->fails()) {
+                        return redirect()
+                            ->back()
+                            ->withErrors($validator)
+                            ->withInput();
+                    }
+
                     CpmSmoking::updateOrCreate([
                         'patient_id' => $user->ID
                     ], $biometricsValues['smoking']);

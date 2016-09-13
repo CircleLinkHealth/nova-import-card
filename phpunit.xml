@@ -34,8 +34,8 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
 
-        <!--We use these for time tracking-->
-        <!--@todo: TimeTracking should not be accessing superglobals directly-->
+        <!--We use these for time tracking, therefore they need to be set otherwise timetracking breaks and a PHP error is thrown-->
+        <!--@todo: TimeTracking should not be accessing superglobals directly. Change it soon. -->
         <server name="REQUEST_URI" value="/some/url/here"/>
         <server name="HTTP_HOST" value="cpm.phpunit.testing"/>
     </php>

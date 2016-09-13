@@ -59,9 +59,9 @@
                                             }],
                                             template: function (obj) {
                                                 if (obj.logged_from == "note")
-                                                    return "<a href='<?php echo URL::route('patient.note.view', array('patientId' => $patient->ID, 'noteId' => '')); ?>/"  + obj.id + "'>" + obj.type_name + "</a>"
+                                                    return "<a href='<?php echo route('patient.note.view', ['patientId' => $patient->ID, 'noteId' => '']); ?>/"  + obj.id + "'>" + obj.type_name + "</a>"
                                                 else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
-                                                    return  "<a href='<?php echo URL::route('patient.activity.view', array('patientId' => $patient->ID, 'actId' => '')); ?>/"  + obj.id + "'>" + obj.type_name + "</a>"
+                                                    return  "<a href='<?php echo route('patient.activity.view', ['patientId' => $patient->ID, 'actId' => '']); ?>/"  + obj.id + "'>" + obj.type_name + "</a>"
                                                 }
                                                 return obj.type_name;
                                             },
@@ -127,7 +127,7 @@
                                     obs_alerts_dtable.adjust();
                                 })
                             </script>
-                        @role(['administrator', 'provider'])
+                        @role(['administrator', 'med_assistant', 'provider'])
                         <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                onclick="webix.toPDF(obs_alerts_dtable);">
                         <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'

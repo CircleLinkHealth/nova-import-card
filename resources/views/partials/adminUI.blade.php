@@ -111,6 +111,8 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ URL::route('admin.users.index', array()) }}">All Users</a></li>
                                 <li><a href="{{ URL::route('admin.users.create', array()) }}">New User</a></li>
+                                <li><a href="{{ URL::route('admin.patientCallManagement.index', array()) }}">Patient
+                                        Call Management</a>
                                 <li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a>
                                 </li>
                                 <li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
@@ -224,7 +226,6 @@
                         </li>
                     @endif
 
-                    @if(Entrust::can('app-config-view'))
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
@@ -238,15 +239,18 @@
                                         Billing Report</a></li>
                                 <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a>
                                 </li>
+                                <li><a href="{{ URL::route('admin.reports.nurse.daily', array()) }}">Daily Nurse Report</a></li>
                                 <li><a href="{{ URL::route('PatientConditionsReportController.getReport', array()) }}">Patient Conditions (export)</a>
-                                </li>                                <li><a href="{{ URL::route('admin.reports.nurse.daily', array()) }}">Daily Nurse Report</a></li>
-
-                                <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a>
                                 </li>
+
+                            <li><a href="{{ URL::route('CallReportController.exportxls', array()) }}">Calls</a>
+                            </li>
+                            <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a>
+                            </li>
 
                             </ul>
                         </li>
-                    @endif
+
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">

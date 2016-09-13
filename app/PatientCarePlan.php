@@ -36,8 +36,12 @@ class PatientCarePlan extends Model {
                 ->count();
         } else if ($user->hasRole(['provider'])) {
             // provider counts number of drafts
-            $pendingApprovals = PatientInfo::whereIn('user_id', $user->viewablePatientIds())
-                ->whereCareplanStatus('qa_approved')
+            $pendingApprovals = PatientInfo::whereCareplanStatus('qa_approved')
+                ->whereCcmStatus('enrolled')
+                ->whereHas('user.patientCareTeamMembers', function ($q) use ($user){
+                    $q->where('member_user_id', '=', $user->ID)
+                        ->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER);
+                })
                 ->count();
         }
 

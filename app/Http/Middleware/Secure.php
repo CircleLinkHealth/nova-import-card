@@ -4,21 +4,21 @@ use Closure;
 
 class Secure {
 
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
-    public function handle($request, Closure $next)
-    {
-        if (! $request->secure()
-            && ! in_array(app()->environment(), ['local', 'testing', 'worker', 'worker-staging'])) {
-            return redirect()->secure($request->getRequestUri());
-        }
+	/**
+	 * Handle an incoming request.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Closure  $next
+	 * @return mixed
+	 */
+	public function handle($request, Closure $next)
+	{
+		if (! $request->secure()
+			&& ! in_array(app()->environment(), ['local', 'testing', 'worker', 'worker-staging'])) {
+			return redirect()->secure($request->getRequestUri());
+		}
 
-        return $next($request);
-    }
+		return $next($request);
+	}
 
 }
