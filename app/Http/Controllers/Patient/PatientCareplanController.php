@@ -16,6 +16,7 @@ use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
+use App\PatientContactWindow;
 use App\Role;
 use App\Services\CarePlanViewService;
 use App\Services\CPM\CpmBiometricService;
@@ -454,8 +455,10 @@ class PatientCareplanController extends Controller
             if ($params->get('frequency')) {
                 $info->preferred_calls_per_month = $params->get('frequency');
             }
-            if ($params->get('days')) {
-                $info->preferred_cc_contact_days = implode(', ', $params->get('days'));
+            //we are checking this $info->patientContactWindows()->exists()
+            //in case we want to delete all call windows
+            if ($params->get('days') || $info->patientContactWindows()->exists()) {
+                PatientContactWindow::sync($info, $params->get('days', []));
             }
             $info->save();
             // validate
