@@ -1,37 +1,24 @@
 <?php namespace App\Http\Controllers;
 
-use App\Activity;
-use App\CareItemUserValue;
 use App\CareItem;
+use App\CareItemUserValue;
 use App\Formatters\WebixFormatter;
 use App\Location;
-use App\CarePlan;
-use App\CarePlanItem;
-use App\CPRulesItem;
-use App\CPRulesPCP;
-use App\CPRulesUCP;
-use App\Observation;
-use App\Services\CareplanService;
-use App\Services\CCD\CcdInsurancePolicyService;
-use App\Services\CPM\CpmBiometricService;
-use App\Services\CPM\CpmProblemService;
+use App\Models\CPM\CpmProblem;
 use App\PageTimer;
-use DateTime;
-use DatePeriod;
-use DateInterval;
+use App\Program;
+use App\Services\CCD\CcdInsurancePolicyService;
+use App\Services\CPM\CpmProblemService;
 use App\Services\ReportsService;
 use App\User;
-use App\Program;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Models\CPM\CpmProblem;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Excel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
 
 class ReportsController extends Controller
 {
@@ -50,7 +37,7 @@ class ReportsController extends Controller
 
         $user = User::find($patientId);
         $treating = (new CpmProblemService())->getDetails($user);
-        $biometrics  = $this->service->getBiometricsToMonitor($user);
+        $biometrics = $this->service->getBiometricsToMonitor($user);
         $biometrics_data = array();
         $biometrics_array = array();
 
@@ -114,7 +101,6 @@ class ReportsController extends Controller
 
     public function u20(Request $request, $patientId = false)
     {
-        //$patient_ = User::find($patientId);
         $input = $request->all();
 
         if (isset($input['selectMonth'])) {
@@ -411,7 +397,7 @@ class ReportsController extends Controller
 
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport(array($patient));
 
-        if(!$careplan){
+        if (!$careplan) {
             return 'Careplan not found...';
         }
 
@@ -473,7 +459,7 @@ class ReportsController extends Controller
         $usersCondition = array();
         $problems = array();
         $cpmProblems = CpmProblem::all();
-        if($cpmProblems->count() > 0) {
+        if ($cpmProblems->count() > 0) {
             foreach ($cpmProblems as $cpmProblem) {
                 $problems[$cpmProblem->id] = $cpmProblem->name;
                 $problemNames[] = $cpmProblem->name;
@@ -482,7 +468,7 @@ class ReportsController extends Controller
         $careItemNames = CareItem::whereIn('display_name', $problemNames)->lists('display_name', 'id')->all();
         $careItems = CareItem::whereIn('display_name', $problemNames)->lists('id')->all();
         $careItemUserValues = CareItemUserValue::whereIn('care_item_id', $careItems)->where('value', 'Active')->get();
-        if($careItemUserValues->count() > 0) {
+        if ($careItemUserValues->count() > 0) {
             foreach ($careItemUserValues as $careItemUserValue) {
                 $usersCondition[$careItemUserValue->user_id] = $careItemNames[$careItemUserValue->care_item_id];
             }
@@ -490,7 +476,7 @@ class ReportsController extends Controller
         $date = date('Y-m-d H:i:s');
         $users = User::all();
 
-        Excel::create('CLH-Report-'.$date, function($excel) use($date, $users, $usersCondition) {
+        Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $users, $usersCondition) {
 
             // Set the title
             $excel->setTitle('CLH Report T1');
@@ -503,8 +489,8 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T1');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function($sheet) use($users, $usersCondition) {
-                $sheet->protect('clhpa$$word', function(\PHPExcel_Worksheet_Protection $protection) {
+            $excel->sheet('Sheet 1', function ($sheet) use ($users, $usersCondition) {
+                $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
                     $protection->setSort(true);
                 });
                 $i = 0;
@@ -512,18 +498,18 @@ class ReportsController extends Controller
                 $sheet->appendRow(array(
                     'id', 'name', 'condition', 'program'
                 ));
-                foreach($users as $user) {
-                    if($i > 2000000) {
+                foreach ($users as $user) {
+                    if ($i > 2000000) {
                         continue 1;
                     }
 
                     $condition = 'N/A';
-                    if(isset($usersCondition[$user->ID])) {
+                    if (isset($usersCondition[$user->ID])) {
                         $condition = $usersCondition[$user->ID];
                     }
                     $programName = 'N/A';
                     $program = Program::find($user->program_id);
-                    if($program) {
+                    if ($program) {
                         $programName = $program->display_name;
                     }
                     $sheet->appendRow(array(
@@ -546,14 +532,14 @@ class ReportsController extends Controller
     {
         // get all users with paused ccm_status
         $users = User::with('patientInfo')
-            ->whereHas('patientInfo', function($q) {
+            ->whereHas('patientInfo', function ($q) {
                 $q->where('ccm_status', '=', 'paused');
             })
             ->get();
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-'.$date, function($excel) use($date, $users) {
+        Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $users) {
 
             // Set the title
             $excel->setTitle('CLH Report T2');
@@ -566,8 +552,8 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T2');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function($sheet) use($users) {
-                $sheet->protect('clhpa$$word', function(\PHPExcel_Worksheet_Protection $protection) {
+            $excel->sheet('Sheet 1', function ($sheet) use ($users) {
+                $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
                     $protection->setSort(true);
                 });
                 $i = 0;
@@ -599,13 +585,13 @@ class ReportsController extends Controller
                     'Location State',
                     'Location Zip'
                 ));
-                foreach($users as $user) {
-                    if($i > 2000000) {
+                foreach ($users as $user) {
+                    if ($i > 2000000) {
                         continue 1;
                     }
 
                     $billingProvider = User::find($user->billingProviderID);
-                    if(!$billingProvider) {
+                    if (!$billingProvider) {
                         $billingProvider = '';
                         $billingProviderPhone = '';
                     } else {
@@ -614,7 +600,7 @@ class ReportsController extends Controller
                     }
 
                     $location = Location::find($user->patientInfo->preferred_contact_location);
-                    if(!$location) {
+                    if (!$location) {
                         $locationName = '';
                         $locationPhone = '';
                         $locationAddress = '';
@@ -675,7 +661,7 @@ class ReportsController extends Controller
         // get all users with paused ccm_status
         $users = User::with('meta')
             ->with('roles')
-            ->whereHas('roles', function($q) {
+            ->whereHas('roles', function ($q) {
                 $q->where(function ($query) {
                     $query->orWhere('name', 'care-center');
                     $query->orWhere('name', 'no-ccm-care-center');
@@ -685,7 +671,7 @@ class ReportsController extends Controller
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-'.$date, function($excel) use($date, $users) {
+        Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $users) {
 
             // Set the title
             $excel->setTitle('CLH Report T3');
@@ -698,14 +684,14 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T3');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function($sheet) use($users) {
-                $sheet->protect('clhpa$$word', function(\PHPExcel_Worksheet_Protection $protection) {
+            $excel->sheet('Sheet 1', function ($sheet) use ($users) {
+                $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
                     $protection->setSort(true);
                 });
                 $i = 0;
                 // header
                 $userColumns = array('date');
-                foreach($users as $user) {
+                foreach ($users as $user) {
                     $userColumns[] = $user->display_name;
                 }
                 $sheet->appendRow($userColumns);
@@ -721,17 +707,17 @@ class ReportsController extends Controller
 
                 $sheetRows = array(); // so we can reverse after
 
-                foreach($period as $dt) {
+                foreach ($period as $dt) {
                     //echo $dt->format('Y-m-d') .'<br />';
 
                     $rowUserValues = array($dt->format('Y-m-d'));
-                    foreach($users as $user) {
+                    foreach ($users as $user) {
                         // get total activity time
-                        $pageTime = PageTimer::whereBetween( 'start_time', [
+                        $pageTime = PageTimer::whereBetween('start_time', [
                             $dt->format('Y-m-d') . ' 00:00:01', $dt->format('Y-m-d') . ' 23:59:59'
-                        ] )
-                            ->where( 'provider_id', $user->ID )
-                            ->where( 'activity_type', '!=', '' )
+                        ])
+                            ->where('provider_id', $user->ID)
+                            ->where('activity_type', '!=', '')
                             ->sum('duration');
 
                         $rowUserValues[] = number_format((float)($pageTime / 60), 2, '.', '');;
@@ -743,7 +729,7 @@ class ReportsController extends Controller
 
                 $sheetRows = array_reverse($sheetRows);
 
-                foreach($sheetRows as $sheetRow) {
+                foreach ($sheetRows as $sheetRow) {
                     $sheet->appendRow($sheetRow);
                 }
 
@@ -764,14 +750,14 @@ class ReportsController extends Controller
     {
         // get all patients
         $users = User::with('roles')
-            ->whereHas('roles', function($q) {
+            ->whereHas('roles', function ($q) {
                 $q->where('name', 'participant');
             })
             ->get();
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-'.$date, function($excel) use($date, $users) {
+        Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $users) {
 
             // Set the title
             $excel->setTitle('CLH Report T4');
@@ -784,8 +770,8 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T4');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function($sheet) use($users) {
-                $sheet->protect('clhpa$$word', function(\PHPExcel_Worksheet_Protection $protection) {
+            $excel->sheet('Sheet 1', function ($sheet) use ($users) {
+                $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
                     $protection->setSort(true);
                 });
                 $i = 0;
@@ -794,28 +780,28 @@ class ReportsController extends Controller
                     'id', 'Provider', 'Program', 'CCM Status', 'DOB', 'Phone', 'Registered On', 'CCM', 'Patient Reached', 'Last Entered Note', 'Note Content', '2nd to last Entered Note', 'Note Content', '3rd to last Entered Note', 'Note Content'
                 ));
 
-                foreach($users as $user) {
-                    if($i > 2000000) {
+                foreach ($users as $user) {
+                    if ($i > 2000000) {
                         continue 1;
                     }
 
                     // provider
                     $billingProvider = User::find($user->billingProviderID);
                     $billingProviderName = '';
-                    if($billingProvider) {
+                    if ($billingProvider) {
                         $billingProviderName = $billingProvider->display_name;
                     }
 
                     // program
                     $programName = 'N/A';
                     $program = Program::find($user->program_id);
-                    if($program) {
+                    if ($program) {
                         $programName = $program->display_name;
                     }
 
                     // monthly time
                     $seconds = $user->curMonthActivityTime;
-                    if($seconds < 600) {
+                    if ($seconds < 600) {
                         //continue 1;
                     }
                     $H = floor($seconds / 3600);
@@ -836,26 +822,26 @@ class ReportsController extends Controller
                         ->orderBy('performed_at', 'DESC')
                         ->limit(3)
                         ->get();
-                    if($activities->count() > 0) {
+                    if ($activities->count() > 0) {
                         $a = 0;
-                        foreach($activities as $activity) {
+                        foreach ($activities as $activity) {
                             $comment = $activity->body;
                             $callStatus = '';
                             $call = $activity->call()->first();
-                            if($call) {
+                            if ($call) {
                                 $callStatus = $call->status;
                             }
-                            if($a == 0) {
+                            if ($a == 0) {
                                 $activity1comment = $activity->id . ' ' . $comment;
                                 $activity1status = $callStatus;
                                 $activity1date = $activity->performed_at;
                             }
-                            if($a == 1) {
+                            if ($a == 1) {
                                 $activity2comment = $activity->id . ' ' . $comment;
                                 $activity2status = $callStatus;
                                 $activity2date = $activity->performed_at;
                             }
-                            if($a == 2) {
+                            if ($a == 2) {
                                 $activity3comment = $activity->id . ' ' . $comment;
                                 $activity3status = $callStatus;
                                 $activity3date = $activity->performed_at;
