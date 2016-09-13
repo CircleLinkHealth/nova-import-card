@@ -138,7 +138,7 @@ class CallController extends Controller
             return response("missing required params", 201);
         }
         if(!Auth::user()) {
-            return response("missing required params", 201);
+            return response("missing required scheduler user", 201);
         }
 
         // find call
