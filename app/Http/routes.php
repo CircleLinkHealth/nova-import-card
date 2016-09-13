@@ -1,8 +1,8 @@
 <?php
 
-Route::get('missed', function(){
+Route::get('/algo/refresher', function(){
 
-  return (new \App\Services\Calls\SchedulerService)->reprocessScheduledCallsFromCCMTime();
+  return (new \App\Services\Calls\SchedulerService)->tuneScheduledCallsWithUpdatedCCMTime();
 
 });
 

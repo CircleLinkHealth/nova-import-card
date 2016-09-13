@@ -281,6 +281,7 @@ class SchedulerService
                                                                     Carbon::now())
                                                                 ->toDateString();
 
+                        $scheduled_call->scheduler = 'refresher algorithm';
                         $scheduled_call->save();
 
                         $reprocess_bucket[] = 'Patient: ' . $patient->user_id . ' was tuned, will now be called on ' . $scheduled_call->scheduled_date;
@@ -291,7 +292,9 @@ class SchedulerService
             }
         }
 
-        return $reprocess_bucket;
+        return empty($reprocess_bucket)
+            ? 'No Patients Need Refreshin\'!'
+            : $reprocess_bucket;
 
     }
 
