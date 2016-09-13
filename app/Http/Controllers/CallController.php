@@ -133,9 +133,15 @@ class CallController extends Controller
             'columnName',
             'value');
 
+        // VALIDATION
         if(empty($data['callId'])) {
             return response("missing required params", 201);
         }
+        if(!Auth::user()) {
+            return response("missing required params", 201);
+        }
+
+        // find call
         $call = Call::find($data['callId']);
         if(!$call) {
             return response("could not locate call ".$data['callId'], 201);
