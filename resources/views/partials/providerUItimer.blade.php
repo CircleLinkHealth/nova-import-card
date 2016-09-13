@@ -105,7 +105,7 @@ if ($enableTimeTracking) {
         var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
         var isTimerProcessed = false;
         var redirectLocation = false;
-        var idleTime = 2000; // ms before modal display (60000 = 1min)
+        var idleTime = 120000; // ms before modal display (60000 = 1min)
         var consoleDebug = true; // debug toggle
 
         // instantiate idleTimer
