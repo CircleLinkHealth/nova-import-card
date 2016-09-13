@@ -31,7 +31,7 @@ class Calls
      * @param int $departmentId
      * @return mixed
      */
-    public function getBookedAppointments($practiceId, $startDate, $endDate, $showInsurance = false, $limit = 1000, $departmentId = 1, $showCancelled = false)
+    public function getBookedAppointments($practiceId, $startDate, $endDate, $departmentId, $showInsurance = false, $limit = 1000, $showCancelled = false)
     {
         $this->api->setPracticeId($practiceId);
 
@@ -56,7 +56,7 @@ class Calls
      * @param int $departmentId
      * @return mixed
      */
-    public function getCcd($patientId, $practiceId, $departmentId = 1)
+    public function getCcd($patientId, $practiceId, $departmentId)
     {
         $response = $this->api->GET("patients/{$patientId}/ccda", [
             'patientid' => $patientId,
@@ -64,6 +64,21 @@ class Calls
             'departmentid' => $departmentId,
             'purpose' => 'internal',
             'xmloutput' => false,
+        ]);
+
+        return $this->response($response);
+    }
+
+    /**
+     * Get all department ids for a practice.
+     *
+     * @param $practiceId
+     * @return mixed
+     */
+    public function getDepartmentIds($practiceId)
+    {
+        $response = $this->api->GET("{$practiceId}/departments", [
+            'practiceid' => $practiceId,
         ]);
 
         return $this->response($response);
@@ -102,7 +117,7 @@ class Calls
      * @param int $departmentId
      * @return mixed
      */
-    public function getPatientCustomFields($patientId, $practiceId, $departmentId = 1)
+    public function getPatientCustomFields($patientId, $practiceId, $departmentId)
     {
         $response = $this->api->GET("patients/{$patientId}/customfields", [
             'patientid' => $patientId,
@@ -137,11 +152,12 @@ class Calls
      * @param $patientId
      * @param $practiceId
      * @param $attachmentContent
+     * @param $departmentId
      * @param string $documentSubClass
      * @param string $contentType
      * @return mixed
      */
-    public function postPatientDocument($patientId, $practiceId, $attachmentContent, $documentSubClass = 'CLINICALDOCUMENT', $contentType = 'multipart/form-data', $departmentId = 1)
+    public function postPatientDocument($patientId, $practiceId, $attachmentContent, $departmentId, $documentSubClass = 'CLINICALDOCUMENT', $contentType = 'multipart/form-data')
     {
 //        $response = $this->api->POST("patients/{$patientId}/documents", [
 //            'patientid' => $patientId,

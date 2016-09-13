@@ -35,8 +35,15 @@ class Service
     {
         $today = Carbon::today()->format('m/d/Y');
 
-        $response = $this->api->getBookedAppointments($practiceId, $today, $today);
-        $this->logPatientIdsFromAppointments($response, $practiceId);
+        $departments = $this->api->getDepartmentIds($practiceId);
+
+        foreach ($departments['departments'] as $department)
+        {
+            $response = $this->api->getBookedAppointments($practiceId, $today, $today, $department['departmentid']);
+            $this->logPatientIdsFromAppointments($response, $practiceId);
+        }
+
+
     }
 
     public function logPatientIdsFromAppointments($response, $practiceId)
@@ -120,8 +127,8 @@ class Service
         });
     }
 
-    public function postPatientDocument($patientId, $practiceId, $attachmentContentPath, $documentSubClass = 'CLINICALDOCUMENT', $contentType = 'multipart/form-data')
+    public function postPatientDocument($patientId, $practiceId, $attachmentContentPath, $departmentId)
     {
-        return $this->api->postPatientDocument($patientId, $practiceId, $attachmentContentPath, $documentSubClass, $contentType);
+        return $this->api->postPatientDocument($patientId, $practiceId, $attachmentContentPath, $departmentId);
     }
 }

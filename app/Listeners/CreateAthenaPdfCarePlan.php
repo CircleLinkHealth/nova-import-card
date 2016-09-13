@@ -79,7 +79,7 @@ class CreateAthenaPdfCarePlan
                     ])->first();
 
                 if ($pathToPdf) {
-                    $response = $this->athenaService->postPatientDocument($ccdaRequest->patient_id, $ccdaRequest->practice_id, $pathToPdf);
+                    $response = $this->athenaService->postPatientDocument($ccdaRequest->patient_id, $ccdaRequest->practice_id, $pathToPdf, $ccdaRequest->department_id);
 
                     $decodedResponse = json_decode($response, true);
 
