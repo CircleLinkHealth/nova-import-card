@@ -12,6 +12,11 @@ class PatientContactWindow extends Model
 
     protected $guarded = ['id'];
 
+    protected $attributes = [
+        'window_time_start' => '09:00:00',
+        'window_time_end' => '17:00:00',
+    ];
+
     // START RELATIONSHIPS
 
     public function patient_info()
@@ -291,5 +296,20 @@ class PatientContactWindow extends Model
         }
 
         return $created;
+    }
+
+
+    public static function getPreferred(PatientInfo $patientInfo) {
+        $window = PatientContactWindow::firstOrNew([
+            'patient_info_id' => $patientInfo->id,
+        ]);
+
+        $window_start = Carbon::parse($window->window_time_start)->format('H:i');
+        $window_end = Carbon::parse($window->window_time_end)->format('H:i');
+
+        return [
+            'start' => $window_start,
+            'end' => $window_end
+        ];
     }
 }
