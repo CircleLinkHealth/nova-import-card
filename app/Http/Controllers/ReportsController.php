@@ -132,26 +132,27 @@ class ReportsController extends Controller
             'Medications Data Review', 'Input Observation');
         $TCM = array('Test (Scheduling, Communications, etc)', 'Transitional Care Management Activities', 'Call to Other Care Team Member', 'Appointments');
         $Other = array('other', 'Medication Reconciliation');
-        $act_count = 0;
+
+        $patient_counter = 0;
         foreach ($patients as $patient) {
             //$monthly_time = intval($patient->getMonthlyTimeAttribute());
             $program = $patient->primaryProgram;
             if ($program) $programName = $program->display_name;
 
             if ($patient->hasRole('participant')) {
-                $u20_patients[$act_count]['site'] = $programName;
+                $u20_patients[$patient_counter]['site'] = $programName;
 
-                $u20_patients[$act_count]['colsum_careplan'] = 0;
-                $u20_patients[$act_count]['colsum_changes'] = 0;
-                $u20_patients[$act_count]['colsum_progress'] = 0;
-                $u20_patients[$act_count]['colsum_rpm'] = 0;
-                $u20_patients[$act_count]['colsum_tcc'] = 0;
-                $u20_patients[$act_count]['colsum_other'] = 0;
-                $u20_patients[$act_count]['colsum_total'] = 0;
-                $u20_patients[$act_count]['ccm_status'] = ucwords($patient->CCMStatus);
-                $u20_patients[$act_count]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
-                $u20_patients[$act_count]['patient_name'] = $patient->fullName;
-                $u20_patients[$act_count]['patient_id'] = $patient->ID;
+                $u20_patients[$patient_counter]['colsum_careplan'] = 0;
+                $u20_patients[$patient_counter]['colsum_changes'] = 0;
+                $u20_patients[$patient_counter]['colsum_progress'] = 0;
+                $u20_patients[$patient_counter]['colsum_rpm'] = 0;
+                $u20_patients[$patient_counter]['colsum_tcc'] = 0;
+                $u20_patients[$patient_counter]['colsum_other'] = 0;
+                $u20_patients[$patient_counter]['colsum_total'] = 0;
+                $u20_patients[$patient_counter]['ccm_status'] = ucwords($patient->CCMStatus);
+                $u20_patients[$patient_counter]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
+                $u20_patients[$patient_counter]['patient_name'] = $patient->fullName;
+                $u20_patients[$patient_counter]['patient_id'] = $patient->ID;
                 $acts = DB::table('lv_activities')
                     ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
                     ->where('patient_id', $patient->ID)
@@ -168,28 +169,27 @@ class ReportsController extends Controller
 
                 foreach ($acts as $activity) {
                     if (in_array($activity->type, $CarePlan)) {
-                        $u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
+                        $u20_patients[$patient_counter]['colsum_careplan'] += intval($activity->duration);
                     } else if (in_array($activity->type, $Progress)) {
-                        $u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
+                        $u20_patients[$patient_counter]['colsum_progress'] += intval($activity->duration);
                     } else if (in_array($activity->type, $RPM)) {
-                        $u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
+                        $u20_patients[$patient_counter]['colsum_rpm'] += intval($activity->duration);
                     } else if (in_array($activity->type, $TCM)) {
-                        $u20_patients[$act_count]['colsum_tcc'] += intval($activity->duration);
+                        $u20_patients[$patient_counter]['colsum_tcc'] += intval($activity->duration);
                     } else {
-                        $u20_patients[$act_count]['colsum_other'] += intval($activity->duration);
+                        $u20_patients[$patient_counter]['colsum_other'] += intval($activity->duration);
                     }
-                    $u20_patients[$act_count]['colsum_total'] += intval($activity->duration);
+                    $u20_patients[$patient_counter]['colsum_total'] += intval($activity->duration);
+
+                    if ($u20_patients[$patient_counter]['colsum_total'] >= 1200) {
+                        unset($u20_patients[$patient_counter]);
+                        continue 2;
+                    }
 
                 }
-                $act_count++;
+                $patient_counter++;
             }
         }
-        foreach ($u20_patients as $key => $value) {
-            if ($value['colsum_total'] >= 1200) {
-                unset($u20_patients[$key]);
-            }
-        }
-
         $reportData = "data:" . json_encode(array_values($u20_patients)) . "";
 
         $years = array();
