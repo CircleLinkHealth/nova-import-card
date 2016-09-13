@@ -119,7 +119,9 @@ class ReportsController extends Controller
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
+        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+            ->with('primaryProgram')
+            ->get();
 
         $u20_patients = array();
 
@@ -133,7 +135,7 @@ class ReportsController extends Controller
         $act_count = 0;
         foreach ($patients as $patient) {
             //$monthly_time = intval($patient->getMonthlyTimeAttribute());
-            $program = Program::find($patient->program_id);
+            $program = $patient->primaryProgram;
             if ($program) $programName = $program->display_name;
 
             if ($patient->hasRole('participant')) {
