@@ -24,6 +24,16 @@ class MailLog extends Model
     /**
      * @return array
      */
+
+    public function senderUser()
+    {
+        return $this->belongsTo('App\User', 'sender_cpm_id', 'ID');
+    }
+
+    public function receiverUser()
+    {
+        return $this->belongsTo('App\User', 'receiver_cpm_id', 'ID');
+    }
     public function note()
     {
         return $this->belongsTo('App\Note', 'note_id');
