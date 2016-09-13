@@ -376,10 +376,10 @@ class PatientCareplanController extends Controller
         $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
         $contact_days_array = array();
-        if($patient->patientInfo()->exists()){
-         
+        if ($patient->patientInfo()->exists()) {
+            $contact_days_array = $patient->patientInfo->patientContactWindows->pluck('day_of_week')->toArray();
         }
-        
+
         return view('wpUsers.patient.careplan.patient', compact([
             'patient',
             'userMeta',
@@ -439,23 +439,23 @@ class PatientCareplanController extends Controller
         $userRepo = new UserRepository();
 
         if ($patientId) {
-            $patient = User::where('ID',$patientId)->first();
+            $patient = User::where('ID', $patientId)->first();
             //Update patient info changes
             $info = $patient->patientInfo;
-            if($params->get('general_comment')){
+            if ($params->get('general_comment')) {
                 $info->general_comment = $params->get('general_comment');
             }
-            if($params->get('window_start')){
+            if ($params->get('window_start')) {
                 $info->daily_contact_window_start = $params->get('window_start');
             }
-            if($params->get('window_end')){
+            if ($params->get('window_end')) {
                 $info->daily_contact_window_end = $params->get('window_end');
             }
-            if($params->get('frequency')){
+            if ($params->get('frequency')) {
                 $info->preferred_calls_per_month = $params->get('frequency');
             }
-            if($params->get('days')){
-                $info->preferred_cc_contact_days = implode(', ',$params->get('days'));
+            if ($params->get('days')) {
+                $info->preferred_cc_contact_days = implode(', ', $params->get('days'));
             }
             $info->save();
             // validate
@@ -766,8 +766,7 @@ class PatientCareplanController extends Controller
             if (!empty($biometricsValues['weight']['starting']) || !empty($biometricsValues['weight']['target'])) {
                 $validator = \Validator::make($biometricsValues['weight'], CpmWeight::$rules, CpmWeight::$messages);
 
-                if ($validator->fails())
-                {
+                if ($validator->fails()) {
                     return redirect()
                         ->back()
                         ->withErrors($validator)
@@ -781,11 +780,10 @@ class PatientCareplanController extends Controller
 
             //blood sugar
             if (isset($biometricsValues['bloodSugar'])) {
-                if (!empty($biometricsValues['bloodSugar']['starting']) || !empty($biometricsValues['bloodSugar']['starting_a1c'])  || !empty($biometricsValues['bloodSugar']['target'])) {
+                if (!empty($biometricsValues['bloodSugar']['starting']) || !empty($biometricsValues['bloodSugar']['starting_a1c']) || !empty($biometricsValues['bloodSugar']['target'])) {
                     $validator = \Validator::make($biometricsValues['bloodSugar'], CpmBloodSugar::$rules, CpmBloodSugar::$messages);
 
-                    if ($validator->fails())
-                    {
+                    if ($validator->fails()) {
                         return redirect()
                             ->back()
                             ->withErrors($validator)
@@ -804,8 +802,7 @@ class PatientCareplanController extends Controller
                 if (!empty($biometricsValues['bloodPressure']['starting']) || !empty($biometricsValues['bloodPressure']['target'])) {
                     $validator = \Validator::make($biometricsValues['bloodPressure'], CpmBloodPressure::$rules, CpmBloodPressure::$messages);
 
-                    if ($validator->fails())
-                    {
+                    if ($validator->fails()) {
                         return redirect()
                             ->back()
                             ->withErrors($validator)
@@ -822,8 +819,7 @@ class PatientCareplanController extends Controller
                 if (!empty($biometricsValues['smoking']['starting']) || !empty($biometricsValues['smoking']['target'])) {
                     $validator = \Validator::make($biometricsValues['smoking'], CpmSmoking::$rules, CpmSmoking::$messages);
 
-                    if ($validator->fails())
-                    {
+                    if ($validator->fails()) {
                         return redirect()
                             ->back()
                             ->withErrors($validator)
