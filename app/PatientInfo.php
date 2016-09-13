@@ -127,31 +127,6 @@ class PatientInfo extends Model {
 		return true;
 	}
 
-
-	// daily_contact_window_start
-	public function getDailyContactWindowStartAttribute() {
-		if(empty($this->attributes['daily_contact_window_start'])) {
-			return '';
-		}
-		return Carbon::parse($this->attributes['daily_contact_window_start'])->format('H:i');
-	}
-	public function setDailyContactWindowStartAttribute($value) {
-		$this->attributes['daily_contact_window_start'] = $value;
-		$this->save();
-	}
-
-	// daily_contact_window_end
-	public function getDailyContactWindowEndAttribute() {
-		if(empty($this->attributes['daily_contact_window_end'])) {
-			return '';
-		}
-		return Carbon::parse($this->attributes['daily_contact_window_end'])->format('H:i');
-	}
-	public function setDailyContactWindowEndAttribute($value) {
-		$this->attributes['daily_contact_window_end'] = $value;
-		$this->save();
-	}
-
 	public function setCcmStatusAttribute($value)
 	{
 		$statusBefore = $this->ccm_status;

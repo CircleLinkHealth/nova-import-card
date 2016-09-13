@@ -454,7 +454,7 @@ class PatientCareplanController extends Controller
             //we are checking this $info->patientContactWindows()->exists()
             //in case we want to delete all call windows
             if ($params->get('days') || $info->patientContactWindows()->exists()) {
-                PatientContactWindow::sync($info, $params->get('days', []));
+                PatientContactWindow::sync($info, $params->get('days', []), $params->get('window_start'), $params->get('window_end'));
             }
             $info->save();
             // validate
