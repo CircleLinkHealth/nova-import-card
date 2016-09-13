@@ -8,7 +8,7 @@ use Tests\HandlesUsersAndCarePlans;
 class RegressionTest extends TestCase
 {
     use HandlesUsersAndCarePlans;
-    
+
     protected $patients;
 
     protected $provider;

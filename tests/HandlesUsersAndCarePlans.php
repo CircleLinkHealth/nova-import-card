@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait HandlesUsersAndCarePlans
 {
-    public function createProvider()
+    public function createProvider($programId = 9)
     {
         $faker = Factory::create();
 
@@ -32,7 +32,7 @@ trait HandlesUsersAndCarePlans
             'first_name' => $firstName,
             'last_name' => $lastName,
             'user_login' => $faker->userName,
-            'program_id' => 9, //testdrive
+            'program_id' => $programId, //id=9 is testdrive
             'address' => $faker->streetAddress,
             'address2' => '',
             'city' => $faker->city,
@@ -206,7 +206,8 @@ trait HandlesUsersAndCarePlans
         //By default PHPUnit fails the test if the output buffer wasn't closed.
         //So we're adding this to make the test work.
         ob_end_clean();
-        
+
+
         return $patient;
     }
 
