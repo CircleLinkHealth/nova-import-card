@@ -25,7 +25,6 @@ class SchedulerService
 
     /* Success is the call's status.
        true for reached, false for not reached */
-
     public function getNextCall($patient, $noteId, $success)
     {
 
@@ -161,8 +160,6 @@ class SchedulerService
 
             if (is_object($temp)) {
 
-                $patientContactWindow = $temp->patientInfo->patientContactWindows;
-
                 if($temp->patientInfo->patientContactWindows->count() < 1){
 
                     if($patient[' Call preference (Day)'] != '') {
@@ -233,7 +230,9 @@ class SchedulerService
 
                 $calls[] = $call;
             } else {
+
                 $failed[] = "{$patient['Patient First Name']} {$patient['Patient Last Name']}";
+
             }
 
         };
@@ -244,26 +243,58 @@ class SchedulerService
     /* This solve the issue where a call is scheduled but RN spends
     CCM time doing other work after the call is over and note
     is saved */
-    public function reprocessScheduledCallsFromCCMTime(){
+    public function tuneScheduledCallsWithUpdatedCCMTime(){
 
+        //Get all enrolled Patients
         $patients = PatientInfo::enrolled()->get();
 
         $reprocess_bucket = [];
 
         foreach ($patients as $patient){
 
-            $last_note_time = Activity::whereType('Patient Note Creation')->wherePatientId($patient->user_id)->pluck('created_at');
-            $last_activity_time = Activity::wherePatientId($patient->user_id)->pluck('created_at');
+            //Get time for last note entered
+            $last_note_time = Activity::whereType('Patient Note Creation')->wherePatientId($patient->user_id)->orderBy('created_at' , 'desc')->pluck('created_at')->first();
 
-            if(is_object($last_note_time) && is_object($last_activity_time)){
+            //Get time for last activity recorded
+            $last_activity_time = Activity::wherePatientId($patient->user_id)->orderBy('created_at' , 'desc')->pluck('created_at')->first();
 
+            //check if they both exist
+            if($last_note_time != null && $last_activity_time != null){
+
+                //then check if the note was made before the last activity
                 if($last_note_time < $last_activity_time){
-                    $reprocess_bucket[] = 'Patient with id ' . $patient->user_id . ' has to be reprocessed';
+
+                    //have to pull the last scheduled call, but only if it was made by the algo
+                    //since we don't mess with calls scheduled manually
+                    $scheduled_call = $patient->user->inboundCalls()->where('status', 'scheduled')->where('scheduler', 'algorithm')->first();
+                    $last_attempted_call = $patient->user->inboundCalls()->where('status', '!=', 'scheduled')->orderBy('created_at', 'desc')->first();
+
+                    //make sure we have a call attempt and a scheduled call.
+                    if(is_object($scheduled_call) && is_object($last_attempted_call)){
+
+                        $status = ($last_attempted_call->status == 'reached') ? true : false;
+
+                        //see how much time should wait now that the algo has updated information
+                        $scheduled_call->scheduled_date = (new PredictCall($patient->user, $last_attempted_call, $status))
+                                                                ->getUnsuccessfulCallTimeOffset(
+                                                                    Carbon::now()->weekOfMonth,
+                                                                    Carbon::now())
+                                                                ->toDateString();
+
+                        $scheduled_call->scheduler = 'refresher algorithm';
+                        $scheduled_call->save();
+
+                        $reprocess_bucket[] = 'Patient: ' . $patient->user_id . ' was tuned, will now be called on ' . $scheduled_call->scheduled_date;
+
+                    }
+
                 }
             }
-        }   
+        }
 
-        return $reprocess_bucket;
+        return empty($reprocess_bucket)
+            ? 'No Patients Need Refreshin\'!'
+            : $reprocess_bucket;
 
     }
 
