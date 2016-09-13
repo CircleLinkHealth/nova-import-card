@@ -325,7 +325,7 @@ class PatientCareplanController extends Controller
         $user = new User;
         $programId = false;
         if ($patientId) {
-            $user = User::with('patientInfo')->find($patientId);
+            $user = User::with('patientInfo.patientContactWindows')->find($patientId);
             if (!$user) {
                 return response("User not found", 401);
             }
@@ -376,9 +376,10 @@ class PatientCareplanController extends Controller
         $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
         $contact_days_array = array();
-        if($patient->patientInfo->preferred_cc_contact_days){
-            $contact_days_array = array_merge(explode(',',$patient->patientInfo->preferred_cc_contact_days));
+        if($patient->patientInfo()->exists()){
+         
         }
+        
         return view('wpUsers.patient.careplan.patient', compact([
             'patient',
             'userMeta',

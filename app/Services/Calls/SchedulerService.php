@@ -1,9 +1,11 @@
 <?php namespace App\Services\Calls;
 
 
+use App\Activity;
 use App\Algorithms\Calls\PredictCall;
 use App\Call;
 use App\Note;
+use App\PatientContactWindow;
 use App\PatientInfo;
 use App\PatientMonthlySummary;
 use App\User;
@@ -52,7 +54,7 @@ class SchedulerService
 
             'service' => 'phone',
             'status' => 'scheduled',
-            
+
             'scheduler' => $scheduler,
 
             'inbound_phone_number' => $patient->phone ? $patient->phone : '',
@@ -159,6 +161,46 @@ class SchedulerService
 
             if (is_object($temp)) {
 
+                $patientContactWindow = $temp->patientInfo->patientContactWindows;
+
+                if($temp->patientInfo->patientContactWindows->count() < 1){
+
+                    if($patient[' Call preference (Day)'] != '') {
+
+                        $days = explode(', ', $patient[' Call preference (Day)'] );
+
+                        foreach ($days as $day){
+
+                            PatientContactWindow::create([
+
+                                'patient_info_id' => $temp->patientInfo->id,
+                                'day_of_week' => Carbon::parse('this ' . $day)->dayOfWeek,
+                                'window_time_start' => Carbon::parse($patient['Call time From:'])->format('H:i'),
+                                'window_time_end' => Carbon::parse($patient['Call time to:'])->format('H:i'),
+
+                            ]);
+
+                        }
+
+                    } else {
+
+                        for($i = 1; $i < 6; $i++){
+
+                            PatientContactWindow::create([
+
+                                'patient_info_id' => $temp->patientInfo->id,
+                                'day_of_week' => $i,
+                                'window_time_start' => '09:00',
+                                'window_time_end' => '17:00',
+
+                            ]);
+
+                        }
+
+                    }
+
+                }
+
                 $call = $this->getScheduledCallForPatient($temp);
 
                 Call::updateOrCreate([
@@ -197,6 +239,32 @@ class SchedulerService
         };
 
         return $failed;
+    }
+
+    /* This solve the issue where a call is scheduled but RN spends
+    CCM time doing other work after the call is over and note
+    is saved */
+    public function reprocessScheduledCallsFromCCMTime(){
+
+        $patients = PatientInfo::enrolled()->get();
+
+        $reprocess_bucket = [];
+
+        foreach ($patients as $patient){
+
+            $last_note_time = Activity::whereType('Patient Note Creation')->wherePatientId($patient->user_id)->pluck('created_at');
+            $last_activity_time = Activity::wherePatientId($patient->user_id)->pluck('created_at');
+
+            if(is_object($last_note_time) && is_object($last_activity_time)){
+
+                if($last_note_time < $last_activity_time){
+                    $reprocess_bucket[] = 'Patient with id ' . $patient->user_id . ' has to be reprocessed';
+                }
+            }
+        }   
+
+        return $reprocess_bucket;
+
     }
 
 }

@@ -2,9 +2,7 @@
 
 Route::get('missed', function(){
 
-    $calls = (new \App\Services\Calls\SchedulerService())->getUnAttemptedCalls();
-
-
+  return (new \App\Services\Calls\SchedulerService)->reprocessScheduledCallsFromCCMTime();
 
 });
 
