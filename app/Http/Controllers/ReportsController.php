@@ -240,7 +240,7 @@ class ReportsController extends Controller
             ->with('primaryProgram')
             ->get();
 
-        $u20_patients = array();
+        $billing = array();
         $billable_patients = array();
 
         // ROLLUP CATEGORIES
@@ -257,24 +257,24 @@ class ReportsController extends Controller
             $program = $patient->primaryProgram;
             if ($program) $programName = $program->display_name;
             if ($patient->hasRole('participant')) {
-                $u20_patients[$patient_counter]['site'] = $programName;
-                $u20_patients[$patient_counter]['colsum_careplan'] = 0;
-                $u20_patients[$patient_counter]['colsum_changes'] = 0;
-                $u20_patients[$patient_counter]['colsum_progress'] = 0;
-                $u20_patients[$patient_counter]['colsum_rpm'] = 0;
-                $u20_patients[$patient_counter]['colsum_tcc'] = 0;
-                $u20_patients[$patient_counter]['colsum_other'] = 0;
-                $u20_patients[$patient_counter]['colsum_total'] = 0;
-                $u20_patients[$patient_counter]['ccm_status'] = ucwords($patient->CCMStatus);
-                $u20_patients[$patient_counter]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
-                $u20_patients[$patient_counter]['patient_name'] = $patient->fullName;
+                $billing[$patient_counter]['site'] = $programName;
+                $billing[$patient_counter]['colsum_careplan'] = 0;
+                $billing[$patient_counter]['colsum_changes'] = 0;
+                $billing[$patient_counter]['colsum_progress'] = 0;
+                $billing[$patient_counter]['colsum_rpm'] = 0;
+                $billing[$patient_counter]['colsum_tcc'] = 0;
+                $billing[$patient_counter]['colsum_other'] = 0;
+                $billing[$patient_counter]['colsum_total'] = 0;
+                $billing[$patient_counter]['ccm_status'] = ucwords($patient->CCMStatus);
+                $billing[$patient_counter]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
+                $billing[$patient_counter]['patient_name'] = $patient->fullName;
                 $provider = User::find(intval($patient->getBillingProviderIDAttribute()));
                 if ($provider) {
-                    $u20_patients[$patient_counter]['provider_name'] = $provider->fullName;
+                    $billing[$patient_counter]['provider_name'] = $provider->fullName;
                 } else {
-                    $u20_patients[$patient_counter]['provider_name'] = '';
+                    $billing[$patient_counter]['provider_name'] = '';
                 }
-                $u20_patients[$patient_counter]['patient_id'] = $patient->ID;
+                $billing[$patient_counter]['patient_id'] = $patient->ID;
                 $acts = DB::table('lv_activities')
                     ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
                     ->where('patient_id', $patient->ID)
@@ -290,22 +290,22 @@ class ReportsController extends Controller
 //				}
 
                 foreach ($acts as $activity) {
-                    //$u20_patients[$patient_counter]['provider'] = User::find($activity->provider_id)->getFullNameAttribute();
+                    //$billing[$patient_counter]['provider'] = User::find($activity->provider_id)->getFullNameAttribute();
                     if (in_array($activity->type, $CarePlan)) {
-                        $u20_patients[$patient_counter]['colsum_careplan'] += intval($activity->duration);
+                        $billing[$patient_counter]['colsum_careplan'] += intval($activity->duration);
                     } else if (in_array($activity->type, $Progress)) {
-                        $u20_patients[$patient_counter]['colsum_progress'] += intval($activity->duration);
+                        $billing[$patient_counter]['colsum_progress'] += intval($activity->duration);
                     } else if (in_array($activity->type, $RPM)) {
-                        $u20_patients[$patient_counter]['colsum_rpm'] += intval($activity->duration);
+                        $billing[$patient_counter]['colsum_rpm'] += intval($activity->duration);
                     } else if (in_array($activity->type, $TCM)) {
-                        $u20_patients[$patient_counter]['colsum_tcc'] += intval($activity->duration);
+                        $billing[$patient_counter]['colsum_tcc'] += intval($activity->duration);
                     } else {
-                        $u20_patients[$patient_counter]['colsum_other'] += intval($activity->duration);
+                        $billing[$patient_counter]['colsum_other'] += intval($activity->duration);
                     }
-                    $u20_patients[$patient_counter]['colsum_total'] += intval($activity->duration);
+                    $billing[$patient_counter]['colsum_total'] += intval($activity->duration);
 
-                    if ($u20_patients[$patient_counter]['colsum_total'] >= 1200) {
-                        unset($u20_patients[$patient_counter]);
+                    if ($billing[$patient_counter]['colsum_total'] < 1200) {
+                        unset($billing[$patient_counter]);
                         continue 2;
                     }
                 }
@@ -316,7 +316,7 @@ class ReportsController extends Controller
 
         }
 
-        $reportData = "data:" . json_encode($u20_patients);
+        $reportData = "data:" . json_encode($billing);
 
         $years = array();
         for ($i = 0; $i < 3; $i++) {
@@ -325,7 +325,7 @@ class ReportsController extends Controller
 
         $months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
         $act_data = true;
-        if ($u20_patients == null) {
+        if ($billing == null) {
             $act_data = false;
         }
 
