@@ -162,22 +162,15 @@ class SchedulerService
 
                 if($temp->patientInfo->patientContactWindows->count() < 1){
 
-                    if($patient[' Call preference (Day)'] != '') {
+                    if($patient[' Call preference (Day)']) {
 
                         $days = explode(', ', $patient[' Call preference (Day)'] );
 
-                        foreach ($days as $day){
-
-                            PatientContactWindow::create([
-
-                                'patient_info_id' => $temp->patientInfo->id,
-                                'day_of_week' => Carbon::parse('this ' . $day)->dayOfWeek,
-                                'window_time_start' => Carbon::parse($patient['Call time From:'])->format('H:i'),
-                                'window_time_end' => Carbon::parse($patient['Call time to:'])->format('H:i'),
-
-                            ]);
-
-                        }
+                            PatientContactWindow::sync($temp->patientInfo,
+                                $days,
+                                Carbon::parse($patient['Call time From:'])->format('H:i'),
+                                Carbon::parse($patient['Call time to:'])->format('H:i')
+                            );
 
                     } else {
 
