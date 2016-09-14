@@ -3,7 +3,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>-->
                 <h4 class="modal-title" id="myModalLabel">You have gone idle....</h4>
             </div>
             <div class="modal-body">
@@ -145,7 +145,7 @@ if ($enableTimeTracking) {
             // set html to modal and instantiate
             //$('#timeModalTotal').html(' Total elapsed: ' + millisToMinutesAndSeconds(totalTime) + ' minutes');
             if (consoleDebug) console.log('display timerModal()');
-            $('#timerModal').modal('show');
+            $('#timerModal').modal({backdrop: 'static', keyboard: false});
 
             // no response logic
             // http://www.sitepoint.com/jquery-settimeout-function-examples/
@@ -176,8 +176,7 @@ if ($enableTimeTracking) {
 
             // yes/no button in modal
             $('#timeModalYes').on("click", function () {
-                if (consoleDebug) console.log('yes clicked, setting document idleTimer over again, idleTime = '+idleTime);
-                $(document).idleTimer(idleTime);
+                if (consoleDebug) console.log('yes clicked, doing nothing here, idleTime = '+idleTime);
                 return true;
             });
 
@@ -199,6 +198,7 @@ if ($enableTimeTracking) {
             // if modal is closed (from clicking outside the modal in the grey area), force cancellation of modal idle timer
             $('#timerModal').on('hide.bs.modal', function (e) {
                 $("#timerDebug").html("still reviewing{hidden}... totalTime = " + totalTime + "");
+                if (consoleDebug) console.log('running hide.bs code here');
                 //startTime = new Date(); <-- we dont want to restart timer here
                 $(document).idleTimer("resume");
                 $('#timeModalNo, #timeModalYes').unbind('click');
