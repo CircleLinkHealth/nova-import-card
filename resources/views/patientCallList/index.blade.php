@@ -10,6 +10,11 @@
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script>
         $(document).ready(function() {
+            $('#cpmEditableTable').DataTable({
+                scrollX: true,
+                fixedHeader: true
+            });
+
             $('.patientNameLink').click(function() {
                 callId = $(this).attr('call-id');
                 if ( callId && $( "#attemptNoteCall" + callId ).length ) {
