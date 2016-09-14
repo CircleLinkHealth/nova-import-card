@@ -148,7 +148,7 @@ class PatientContactWindow extends Model
         //If no contact window, just return the same date.
         if ($patient_windows->count() == 0) {
 
-            $day = $offset_date->tomorrow()->toDateTimeString();
+            $day = $offset_date->toDateTimeString();
 
             return [
 
