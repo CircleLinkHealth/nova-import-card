@@ -91,7 +91,7 @@
 				</div>
 			</div>
 
-			@include('uploadCsv')
+			@include('partials.calls.uploadCsv')
 		</div>
 	</div>
 @endsection
