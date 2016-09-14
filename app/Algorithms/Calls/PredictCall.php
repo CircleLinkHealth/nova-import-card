@@ -22,6 +22,14 @@ class PredictCall
      ------------------------------------*---------------------------------------
     */
 
+    /*
+    Week 1: 1-7
+    Week 2: 8-14
+    Week 3: 15-21
+    Week 4: 22-28
+    Week 5: 29-31 (not for Feb)
+    */
+
     private $call;
     private $callStatus;
     private $patient;
@@ -118,8 +126,6 @@ class PredictCall
 
         //$next_contact_windows = (new PatientContactWindow)->getNextWindowsForPatientFromDate($this->patient, Carbon::parse($next_predicted_contact_window['day']));
 
-        $window = PatientContactWindow::getPreferred($this->patient->patientInfo);
-
         //Call Info
 
         $patient_situation = $this->createSchedulerInfoString($week_num, $next_predicted_contact_window['day'], true, $window_start, $window_end);
@@ -129,7 +135,6 @@ class PredictCall
             'predicament' => $patient_situation,
             'patient' => $this->patient,
             'date' => $next_predicted_contact_window['day'],
-            'window' => $window,
             'window_start' => $window_start,
             'window_end' => $window_end,
             //'next_contact_windows' => $next_contact_windows,
@@ -189,7 +194,6 @@ class PredictCall
 
         //$next_contact_windows = (new PatientContactWindow)->getNextWindowsForPatientFromDate($this->patient, Carbon::parse($next_predicted_contact_window['day']));
 
-        $window = PatientContactWindow::getPreferred($this->patient->patientInfo);
 
 
         $patient_situation = $this->createSchedulerInfoString($week_num, $next_predicted_contact_window['day'], false, $window_start, $window_end);
@@ -200,7 +204,6 @@ class PredictCall
             'predicament' => $patient_situation,
             'patient' => $this->patient,
             'date' => $next_predicted_contact_window['day'],
-            'window' => $window,
             'window_start' => $window_start,
             'window_end' => $window_end,
             //'next_contact_windows' => $next_contact_windows,
@@ -224,7 +227,7 @@ class PredictCall
         if($this->call) {
 
             $this->call->status = 'dropped';
-            $this->call->scheduler = 'algorithm';
+            $this->call->scheduler = 'rescheduler algorithm';
             $this->call->save();
 
         } else {
@@ -242,7 +245,13 @@ class PredictCall
         $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
         $day = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
 
-        return (new SchedulerService())->storeScheduledCall($this->patient->ID, $window_start, $window_end, $day, Auth::user()->ID);
+        return (new SchedulerService())->storeScheduledCall($this->patient->ID,
+                                                            $window_start,
+                                                            $window_end,
+                                                            $day,
+                                                            'rescheduler algorithm',
+                                                            $this->call->outbound_cpm_id
+            );
 
     }
 
@@ -265,7 +274,7 @@ class PredictCall
                 //Logic: Call patient in first week of next month
                 return $next_window_carbon->addMonth(1)->firstOfMonth();
 
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+            } else if ($week_num == 5 ){ //last-ish week of month
 
                 //Logic: Call patient after two weeks
                 return $next_window_carbon->addWeek(2);
@@ -287,7 +296,7 @@ class PredictCall
                 //Logic: Call patient in last week of month
                 return $next_window_carbon->endOfMonth()->subWeek(2);
 
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+            } else if ($week_num == 5 ){ //last-ish week of month
 
                 //Logic: Call patient after two weeks
                 return $next_window_carbon->addWeek(2);
@@ -310,7 +319,7 @@ class PredictCall
                 //Logic: Call patient in first week of next month
                 return $next_window_carbon->addWeek(1);
 
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+            } else if ($week_num == 5 ){ //last-ish week of month
 
                 //Logic: Call patient after one week
                 return $next_window_carbon->addWeek(1);
@@ -331,7 +340,7 @@ class PredictCall
                 //Logic: Call patient in first week of next month
                 return $next_window_carbon->addWeek(1);
 
-            } else if ($week_num == 4 || $week_num == 5 ){ //last-ish week of month
+            } else if ($week_num == 5 ){ //last-ish week of month
 
                 //Logic: Call patient after two weeks
                 return $next_window_carbon->addWeek(1);
@@ -383,12 +392,12 @@ class PredictCall
 
             if($successfulCallsThisMonth > 0) { //If there was a successful call this month
 
-                if ($week_num < 4) { // We are in the first three weeks of the month
+                if ($week_num < 5) { // We are in the first three weeks of the month
 
                     //Logic: Call patient in 1 weeks.
                     return $next_window_carbon->addWeek(1);
 
-                } else if ($week_num == 4 || $week_num == 5) { //next day
+                } else if ($week_num == 5) { //next day
 
                     //Logic: Call patient in first week of next month
                     return $next_window_carbon->tomorrow();
@@ -397,12 +406,12 @@ class PredictCall
 
             } else {
 
-                if ($week_num < 4) { // We are in the first three weeks of the month
+                if ($week_num < 5) { // We are in the first three weeks of the month
 
                     //Logic: Call patient in 1 weeks.
                     return $next_window_carbon->addWeek(1); //@todo implement low priority
 
-                } else if ($week_num == 4 || $week_num == 5) { //next day
+                } else if ($week_num == 5) { //next day
 
                     //Logic: Call patient in first week of next month
                     return $next_window_carbon->tomorrow();
