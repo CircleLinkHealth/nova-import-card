@@ -180,8 +180,8 @@ class SchedulerService
 
                                 'patient_info_id' => $temp->patientInfo->id,
                                 'day_of_week' => $i,
-                                'window_time_start' => '09:00',
-                                'window_time_end' => '17:00',
+                                'window_time_start' => '09:00:00',
+                                'window_time_end' => '17:00:00',
 
                             ]);
 
