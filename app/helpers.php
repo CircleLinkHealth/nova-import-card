@@ -1,6 +1,9 @@
 <?php
 
 
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
+
 if (!function_exists('formatPhoneNumber')) {
     /**
      * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx
@@ -55,11 +58,11 @@ if (!function_exists('parseCsvToArray')) {
         if ($handle) {
             while (($row = fgetcsv($handle, 4096)) !== false) {
                 if (empty($fields)) {
-                    $fields = $row;
+                    $fields = array_map('trim', $row);
                     continue;
                 }
                 foreach ($row as $k => $value) {
-                    $csvArray[$i][$fields[$k]] = $value;
+                    $csvArray[$i][$fields[$k]] = trim($value);
                 }
                 $i++;
             }
@@ -70,5 +73,30 @@ if (!function_exists('parseCsvToArray')) {
         }
 
         return $csvArray;
+    }
+}
+
+
+if (!function_exists('parseDaysStringToNumbers')) {
+    /**
+     * Parses a String of days into numbers.
+     *
+     * @param $daysAsString
+     * @param string $delimiter
+     * @return string
+     */
+    function parseDaysStringToNumbers($daysAsString, $delimiter = ',')
+    {
+        if (empty($daysAsString)) return [];
+
+        //eg. Monday, Tuesday, Wednesday
+        $daysString = new Collection(explode($delimiter, $daysAsString));
+
+        // 1 for Monday, 2 for Tuesday, blah, blah
+        $daysNumber = $daysString->map(function ($day) {
+            return Carbon::parse("Next $day")->dayOfWeek;
+        })->toArray();
+
+        return $daysNumber;
     }
 }
