@@ -174,18 +174,12 @@ class SchedulerService
 
                     } else {
 
-                        for($i = 1; $i < 6; $i++){
-
-                            PatientContactWindow::create([
-
-                                'patient_info_id' => $temp->patientInfo->id,
-                                'day_of_week' => $i,
-                                'window_time_start' => '09:00:00',
-                                'window_time_end' => '17:00:00',
-
-                            ]);
-
-                        }
+                            PatientContactWindow::sync(
+                                $temp->patientInfo,
+                                [1,2,3,4,5],
+                                '09:00:00',
+                                '17:00:00'
+                            );
 
                     }
 
