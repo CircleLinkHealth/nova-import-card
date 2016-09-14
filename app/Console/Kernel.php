@@ -44,9 +44,9 @@ class Kernel extends ConsoleKernel
         })->everyMinute();
 
         //tunes scheduled call dates.
-        $schedule->call(function () {
-            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-        })->dailyAt('11:59');
+//        $schedule->call(function () {
+//            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
+//        })->dailyAt('11:59');
 
         //Removes All Scheduled Calls for patients that are withdrawn
         $schedule->call(function () {
