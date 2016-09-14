@@ -66,7 +66,7 @@ class Kernel extends ConsoleKernel
                 $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call, false))->reconcileDroppedCallHandler();
             }
 
-        //                      if (! app()->environment('worker-staging')) return;
+            if(!empty($handled)) { Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls"); }
 
             foreach ($handled as $call) {
                 Slack::to('#background-tasks')->send("We just fixed call: {$call->id}");

@@ -21,8 +21,8 @@ class PredictCall
       - No Of Successful Calls to Patient
      ------------------------------------*---------------------------------------
     */
-    
-    /* 
+
+    /*
     Week 1: 1-7
     Week 2: 8-14
     Week 3: 15-21
@@ -227,7 +227,7 @@ class PredictCall
         if($this->call) {
 
             $this->call->status = 'dropped';
-            $this->call->scheduler = 'algorithm';
+            $this->call->scheduler = 'rescheduler algorithm';
             $this->call->save();
 
         } else {
@@ -245,7 +245,13 @@ class PredictCall
         $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
         $day = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
 
-        return (new SchedulerService())->storeScheduledCall($this->patient->ID, $window_start, $window_end, $day, Auth::user()->ID);
+        return (new SchedulerService())->storeScheduledCall($this->patient->ID,
+                                                            $window_start,
+                                                            $window_end,
+                                                            $day,
+                                                            'rescheduler algorithm',
+                                                            $this->call->outbound_cpm_id
+            );
 
     }
 
