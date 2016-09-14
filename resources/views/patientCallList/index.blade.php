@@ -139,10 +139,8 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first() && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->member)
-                                                                {{ $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->member->display_name }}
-                                                            @else
-                                                                <em style="color:red;">-</em>
+                                                            @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first() && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->user)
+                                                                {{ $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->user->display_name }}
                                                             @endif
                                                         </td>
                                                         <td>
