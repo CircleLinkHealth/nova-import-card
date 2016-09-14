@@ -240,7 +240,9 @@ class ReportsController extends Controller
 
         }
 
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())->get();
+        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+            ->with('primaryProgram')
+            ->get();
 
         $u20_patients = array();
         $billable_patients = array();
@@ -256,8 +258,9 @@ class ReportsController extends Controller
 
         foreach ($patients as $patient) {
 //            $monthly_time = intval($patient->getMonthlyTimeAttribute());
-            $program = Program::find($patient->program_id);
+            $program = $patient->primaryProgram;
             if ($program) $programName = $program->display_name;
+
             if ($patient->hasRole('participant')) {
                 $u20_patients[$act_count]['site'] = $programName;
                 $u20_patients[$act_count]['colsum_careplan'] = 0;
@@ -307,18 +310,16 @@ class ReportsController extends Controller
                     $u20_patients[$act_count]['colsum_total'] += intval($activity->duration);
 
                 }
+
+                if ($u20_patients[$act_count]['colsum_total'] < 1200) {
+                    unset($u20_patients[$act_count]);
+                }
+
                 $act_count++;
             }
 
         }
-
-        debug($u20_patients);
-        foreach ($u20_patients as $key => $value) {
-            if ($value['colsum_total'] < 1200) {
-                unset($u20_patients[$key]);
-            }
-        }
-
+        
         $reportData = "data:" . json_encode(array_values($u20_patients)) . "";
 
         $years = array();
