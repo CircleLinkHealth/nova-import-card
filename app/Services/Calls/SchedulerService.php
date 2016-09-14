@@ -172,9 +172,9 @@ class SchedulerService
 
             $callWindows = $info->attachNewOrDefaultCallWindows($days, $fromTime, $toTime);
 
-            $generalComment = $row['General Comment'];
+            if (array_key_exists('General Comment', $row)) $generalComment = $row['General Comment'];
 
-            if ($generalComment) {
+            if (!empty($generalComment)) {
                 $info->general_comment = $generalComment;
                 $info->save();
             }
