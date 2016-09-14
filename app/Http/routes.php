@@ -261,6 +261,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as' => 'post.CallController.import'
         ]);
 
+        Route::post('general-comments/import', [
+            'uses' => 'Admin\UploadsController@postGeneralCommentsCsv',
+            'as' => 'post.GeneralCommentsCsv'
+        ]);
+
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
 
         Route::group([
