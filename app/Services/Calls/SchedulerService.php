@@ -160,16 +160,16 @@ class SchedulerService
 
             if (is_object($temp)) {
 
-                if($temp->patientInfo->patientContactWindows->count() < 1){
-
                     if($patient[' Call preference (Day)']) {
 
                         $days = explode(', ', $patient[' Call preference (Day)'] );
 
+                        foreach ($days as $key => $day) $days[$key] = Carbon::parse("Next $day")->dayOfWeek;
+
                             PatientContactWindow::sync($temp->patientInfo,
                                 $days,
-                                Carbon::parse($patient['Call time From:'])->format('H:i'),
-                                Carbon::parse($patient['Call time to:'])->format('H:i')
+                                Carbon::parse($patient['Call time From:'])->format('H:i:s'),
+                                Carbon::parse($patient['Call time to:'])->format('H:i:s')
                             );
 
                     } else {
@@ -188,8 +188,6 @@ class SchedulerService
                         }
 
                     }
-
-                }
 
                 $call = $this->getScheduledCallForPatient($temp);
 
