@@ -17,7 +17,6 @@ use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Services\UserService;
-use Carbon\Carbon;
 use DateTime;
 use Faker\Factory;
 use Illuminate\Auth\Authenticatable;
@@ -1674,33 +1673,4 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	{
 		return new UserService();
 	}
-
-
-    /**
-     * Import Patient's Call Window from the sheet, or save default.
-     *
-     * @param array $days | eg. [1,2,3] Monday is 1
-     * @param $fromTime | eg. '09:00:00'
-     * @param $toTime | eg. '17:00:00'
-     * @return array of PatientContactWindows
-     */
-    public function attachNewOrDefaultCallWindows(array $days, $fromTime, $toTime)
-    {
-        $daysNumber = [1, 2, 3, 4, 5];
-
-        if (!empty($days)) $daysNumber = $days;
-
-        $timeFrom = '09:00:00';
-        $timeTo = '17:00:00';
-
-        if (!empty($fromTime)) $timeFrom = Carbon::parse($fromTime)->format('H:i:s');
-        if (!empty($toTime)) $timeTo = Carbon::parse($toTime)->format('H:i:s');
-
-        return PatientContactWindow::sync(
-            $this->patientInfo,
-            $daysNumber,
-            $timeFrom,
-            $timeTo
-        );
-    }
 }

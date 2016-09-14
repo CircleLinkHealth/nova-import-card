@@ -168,16 +168,15 @@ class SchedulerService
             $fromTime = $row['Call time From:'];
             $toTime = $row['Call time to:'];
 
-            $callWindows = $patient->attachNewOrDefaultCallWindows($days, $fromTime, $toTime);
+            $info = $patient->patientInfo;
+
+            $callWindows = $info->attachNewOrDefaultCallWindows($days, $fromTime, $toTime);
 
             $generalComment = $row['General Comment'];
 
             if ($generalComment) {
-                PatientInfo::updateOrCreate([
-                    'user_id' => $patient->ID
-                ], [
-                    'general_comment' => $generalComment,
-                ]);
+                $info->general_comment = $generalComment;
+                $info->save();
             }
 
             $call = $this->getScheduledCallForPatient($patient);
