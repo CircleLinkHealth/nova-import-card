@@ -106,10 +106,19 @@ class CallController extends Controller
         $scheduler = ($input['suggested_date'] == $input['date']) ? 'core algorithm' : Auth::user()->ID;
 
         //We are storing the current caller as the next scheduled call's outbound cpm_id
-        $this->scheduler->storeScheduledCall($input['patient_id'], $window_start, $window_end, $input['date'], $scheduler,
-            Auth::user()->hasRole('care-center') ? Auth::user()->ID : null);
+        $this->scheduler->storeScheduledCall(
+                                                $input['patient_id'],
+                                                $window_start,
+                                                $window_end,
+                                                $input['date'],
+                                                $scheduler,
+                                                Auth::user()->hasRole('care-center') ? Auth::user()->ID : null,
+                                                isset($input['attempt_note']) ? $input['attempt_note'] : ''
 
-        return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])->with('messages', ['Successfully Created Note']);
+                                            );
+
+        return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])
+                         ->with('messages', ['Successfully Created Note']);
         
     }
 
