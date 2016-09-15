@@ -24,7 +24,7 @@ class EmailSettingsController extends Controller
      */
     public function create()
     {
-        $settings = auth()->user()->emailSettings;
+        $settings = auth()->user()->emailSettings()->firstOrNew([]);
 
         return view('emailSettings.create', compact('settings'));
     }
