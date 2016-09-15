@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class UploadsController extends Controller
@@ -14,7 +15,7 @@ class UploadsController extends Controller
             dd('File was not uploaded. Please try again.');
         }
 
-        $file = $request->hasFile('uploadedCsv');
+        $file = $request->file('uploadedCsv');
         $csv = parseCsvToArray($file);
 
         $failed = [];
