@@ -209,7 +209,7 @@ class PatientInfo extends Model {
         if (!empty($toTime)) $timeTo = Carbon::parse($toTime)->format('H:i:s');
 
         return PatientContactWindow::sync(
-            $this->id,
+            $this,
             $daysNumber,
             $timeFrom,
             $timeTo
