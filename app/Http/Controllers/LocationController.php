@@ -140,6 +140,10 @@ class LocationController extends Controller {
 			$input['position'] = 1;
 		}
 
+		if(empty($input['parent_id'])) {
+            $input['parent_id'] = null;
+        }
+
 		Location::find($input['id'])->update($input);
 
 		return redirect()->route('locations.index')->with('messages', ['Location Updated!!']);
