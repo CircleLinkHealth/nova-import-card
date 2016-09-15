@@ -45,7 +45,6 @@ class AddTimezoneToLocations extends Migration
 
                 $program = \App\Program::where('location_id', '=', $baseLocation->id)->first();
                 if(!$program) {
-                    // @todo should delete location 59 as its not attached to any program
                     echo $location->id . 'NO PROGRAM FOR LOCATION' . PHP_EOL;
                     continue 1;
                 }
