@@ -22,6 +22,12 @@
                                 {{--</ul>--}}
                                 </span>
                             </div>
+                            @if(app()->environment() != 'production')
+                                <div class="col-sm-12"><br>
+                                <span style="font-size: 1.1em;"><b>Logic:</b> {{$logic}}
+                                </span>
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
