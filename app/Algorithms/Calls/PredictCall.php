@@ -334,7 +334,7 @@ class PredictCall
 
                 if ($this->ccmTime > 1020) {
 
-                    $this->logic = 'Greater than 17, same day, add attempt note';
+                    $this->logic = 'Greater than 17 mins, same day, add attempt note';
                     $this->attemptNote = 'Please review careplan';
 
                     return $next_window_carbon;
@@ -371,17 +371,17 @@ class PredictCall
 
             if ($week_num == 1 || $week_num == 2) { // We are in the first two weeks of the month
 
-                $this->logic = 'Call patient in the second last week of the month';
+                $this->logic = 'Call patient after a week';
                 return $next_window_carbon->addWeek(1);
 
             } else if ($week_num == 3 || $week_num == 4) { //second last week of month
 
-                $this->logic = 'Call patient in first week of next month';
+                $this->logic = 'Call patient after a week';
                 return $next_window_carbon->addWeek(1);
 
             } else if ($week_num == 5) { //last-ish week of month
 
-                $this->logic = 'Call patient after two weeks';
+                $this->logic = 'Call patient after a week';
                 return $next_window_carbon->addWeek(1);
 
             }
