@@ -574,7 +574,9 @@ class PredictCall
                     return $next_window_carbon->addWeek(1);
 
                 }
-            } else if ($week_num == 3) {
+            }
+
+            else if ($week_num == 3) {
 
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
@@ -589,7 +591,9 @@ class PredictCall
 
                 }
 
-            } else if ($week_num == 4 || $week_num == 5) {
+            }
+
+            else if ($week_num == 4 || $week_num == 5) {
 
                 $this->logic = 'Next window';
                 return $next_window_carbon;
