@@ -358,7 +358,7 @@ class NotesController extends Controller
             }
         }
 
-        if($note->mail->count() > 0) {
+        if(!empty($note->mail)) {
             $mailText = 'Forwarded: ';
             foreach($note->mail as $mail) {
                 if($mail->receiverUser) {
