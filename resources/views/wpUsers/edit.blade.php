@@ -74,7 +74,7 @@
                             @if($patient->hasRole('provider'))
                                 <li role="presentation"><a href="#providerinfo" aria-controls="providerinfo" role="tab" data-toggle="tab">Provider Info</a></li>
                             @endif
-                            @if($patient->hasRole('care-center'))
+                            @if($patient->hasRole('care-center') && $patient->nurseInfo)
                                 <li role="presentation"><a href="#nurseinfo" aria-controls="nurseinfo" role="tab" data-toggle="tab">Nurse Info</a></li>
                             @endif
                             <li role="presentation"><a href="#revisions" aria-controls="revisions" role="tab" data-toggle="tab">History</a></li>
@@ -107,7 +107,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('access_disabled', 'Access Disabled !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('access_disabled', 'Access Disabled') !!}</div>
                                         <div class="col-xs-4">{!! Form::select('access_disabled', array('0' => 'No', '1' => 'Yes'), $patient->access_disabled, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                         <div class="col-xs-2"></div>
                                         <div class="col-xs-4"></div>
@@ -468,7 +468,7 @@
                             @endif
 
 
-                            @if($patient->hasRole('care-center'))
+                            @if($patient->hasRole('care-center') && $patient->nurseInfo)
                                 <div role="tabpanel" class="tab-pane" id="nurseinfo">
                                     <h2>Nurse Info</h2>
                                     <div class="form-group">
