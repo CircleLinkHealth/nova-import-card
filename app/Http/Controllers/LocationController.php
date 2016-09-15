@@ -134,7 +134,7 @@ class LocationController extends Controller {
 
 		$input = $request->all();
 
-		if(is_null($input['parent_id'])){
+		if(empty($input['parent_id'])){
 			$input['position'] = 0;
 		} else {
 			$input['position'] = 1;
