@@ -240,7 +240,7 @@ class DatatablesController extends Controller
                                     $notesHtml .= '<div class="label label-info" style="margin:5px;">Successful Clinical Call</div>';
                                 }
 
-                                if(count($note->mail) > 0) {
+                                if($note->mail->count() > 0) {
                                     $mailText = 'Forwarded: ';
                                     foreach($note->mail as $mail) {
                                         if($mail->receiverUser) {
