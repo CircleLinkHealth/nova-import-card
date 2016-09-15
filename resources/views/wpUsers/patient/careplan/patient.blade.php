@@ -266,11 +266,20 @@ $user_info = array();
                                         <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('timezone') ? 'has-error' : '' }}">
                                             <div class="row">
                                                 <div class="col-sm-12">
-                                                    <label for="preferred_contact_timezone">Time Zone <span
+                                                    <label for="timezone">Time Zone <span
                                                                 class="attention">*</span>:</label>
                                                 </div>
                                                 <div class="col-sm-12">
-                                                    {!! Form::select('preferred_contact_timezone', $timezones, (old('preferred_contact_timezone') ? old('preferred_contact_timezone') : $patient->preferred_contact_timezone ? $patient->preferred_contact_timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                                    {!! Form::select('timezone', array(
+                                    'America/New_York' => 'Eastern Time',
+                                    'America/Chicago' => 'Central Time',
+                                    'America/Denver' => 'Mountain Time',
+                                    'America/Phoenix' => 'Mountain Time (no DST)',
+                                    'America/Los_Angeles' => 'Pacific Time',
+                                    'America/Anchorage' => 'Alaska Time',
+                                    'America/Adak' => 'Hawaii-Aleutian',
+                                    'Pacific/Honolulu' => 'Hawaii-Aleutian Time (no DST)',
+                                    ), (old('timezone') ? old('timezone') : $patient->timezone ? $patient->timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                                 </div>
                                             </div>
 

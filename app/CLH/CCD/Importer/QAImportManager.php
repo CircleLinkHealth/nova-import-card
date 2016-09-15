@@ -155,7 +155,6 @@ class QAImportManager
         $demographics->study_phone_number = $userConfig->study_phone_number;
         $demographics->preferred_contact_language = $userConfig->preferred_contact_language;
         $demographics->consent_date = $userConfig->consent_date;
-        $demographics->preferred_contact_timezone = $userConfig->preferred_contact_timezone;
         $demographics->save();
 
 

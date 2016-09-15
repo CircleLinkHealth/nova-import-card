@@ -13,6 +13,7 @@ use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmMisc;
 use App\PatientCareTeamMember;
+use App\PatientContactWindow;
 use App\PatientInfo;
 use App\PhoneNumber;
 use App\User;
@@ -115,14 +116,17 @@ class ImportManager
             'consent_date' => $this->demographicsImport->consent_date,
             'gender' => $this->demographicsImport->gender,
             'mrn_number' => $this->demographicsImport->mrn_number,
-            'preferred_cc_contact_days' => '2', //tuesday
             'preferred_contact_language' => $this->demographicsImport->preferred_contact_language,
             'preferred_contact_location' => $this->demographicsImport->location_id,
             'preferred_contact_method' => 'CCT',
-            'preferred_contact_time' => '11:00 AM',
-            'preferred_contact_timezone' => $this->demographicsImport->preferred_contact_timezone,
             'user_id' => $this->user->ID,
         ]);
+
+        // update timezone
+        $this->user->timezone = 'America/New_York';
+
+        PatientContactWindow::sync($patientInfo, [1,2,3,4,5]);
+
 
         if (empty($patientInfo)) {
             throw new \Exception('Unable to create patient info');

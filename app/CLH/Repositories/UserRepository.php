@@ -117,6 +117,9 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         if ($params->get('zip')) {
             $user->zip = $params->get('zip');
         }
+        if ($params->get('timezone')) {
+            $user->timezone = $params->get('timezone');
+        }
         $user->save();
     }
 
