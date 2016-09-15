@@ -89,21 +89,22 @@ class EmailsProvidersToApproveCareplans extends Command
             $view = 'emails.careplansPendingApproval';
             $subject = "{$numberOfCareplans} CircleLink Care Plans for your Approval!";
 
+            $settings = $user->emailSettings()->firstOrNew([]);
+
+            $send = $settings->frequency == EmailSettings::DAILY
+                ? true
+                : ($settings->frequency == EmailSettings::WEEKLY) && Carbon::today()->dayOfWeek == 1
+                    ? true
+                    : ($settings->frequency == EmailSettings::MWF) &&
+                    (Carbon::today()->dayOfWeek == 1
+                        || Carbon::today()->dayOfWeek == 3
+                        || Carbon::today()->dayOfWeek == 5)
+                        ? true
+                        : false;
+
+            if (!$send) return false;
 
             if (!$pretend) {
-                $settings = $user->emailSettings()->firstOrNew([]);
-
-                $send = $settings->frequency == EmailSettings::DAILY
-                    ? true
-                    : ($settings->frequency == EmailSettings::WEEKLY) && Carbon::today()->dayOfWeek == 1
-                        ? true
-                        : ($settings->frequency == EmailSettings::MWF) &&
-                        (Carbon::today()->dayOfWeek == 1
-                            || Carbon::today()->dayOfWeek == 3
-                            || Carbon::today()->dayOfWeek == 5)
-                            ? true
-                            : false;
-
                 if ($send) {
                     Mail::send($view, $data, function ($message) use ($recipients, $subject) {
                         $message->from('notifications@careplanmanager.com', 'CircleLink Health')
@@ -111,10 +112,10 @@ class EmailsProvidersToApproveCareplans extends Command
                             ->subject($subject);
                     });
                 }
-            }
 
-            Slack::to('#background-tasks')
-                ->send("Sent pending approvals email to {$user->fullName}.");
+                Slack::to('#background-tasks')
+                    ->send("Sent pending approvals email to {$user->fullName}.");
+            }
 
             $bar->advance();
 
