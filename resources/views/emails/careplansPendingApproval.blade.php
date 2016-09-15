@@ -20,8 +20,7 @@
 
 <img src="{{ $message->embed(public_path('/img/patient-listing-example.png')) }}" alt="Patient Listing example image.">
 <p>
-    Click the "Approve Now" link (above) for a patient of your choice and you will be taken to the Care Plan page where
-    you will review the care plan (below).
+    To review and approve, simply view patient list here, then filter to "Approve Now" using the filter header in the "CarePlan Status" column. You may also want to filter for your name in the “Provider” column:
 </p>
 
 <img src="{{ $message->embed(public_path('/img/careplan-example.png')) }}" alt="CarePlan example image.">
