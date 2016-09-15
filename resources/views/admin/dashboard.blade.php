@@ -4,10 +4,10 @@
     <div class="container-fluid">
 
         <div class="col-md-12">
-            <div class="col-sm-6">
+            <div class="col-sm-8">
                 <h1>Welcome, {{ $user->fullName }}</h1>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="pull-right" style="margin:20px;">
                     <a href="{{ URL::route('patients.dashboard', array()) }}" class="btn btn-info"
                        style="margin-left:10px;"><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>

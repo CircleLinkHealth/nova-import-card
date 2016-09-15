@@ -89,6 +89,8 @@ Route::group(['namespace' => 'Redox'], function () {
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
 
+    Route::resource('settings/email', 'EmailSettingsController');
+
     Route::get('/CCDModels/Items/MedicationListItem', 'CCDModels\Items\MedicationListItemController@index');
     Route::post('/CCDModels/Items/MedicationListItem/store', 'CCDModels\Items\MedicationListItemController@store');
     Route::post('/CCDModels/Items/MedicationListItem/update', 'CCDModels\Items\MedicationListItemController@update');
