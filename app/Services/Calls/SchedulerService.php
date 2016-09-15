@@ -41,7 +41,7 @@ class SchedulerService
     }
 
     //Create new scheduled call
-    public function storeScheduledCall($patientId, $window_start, $window_end, $date, $scheduler, $nurse_id = false)
+    public function storeScheduledCall($patientId, $window_start, $window_end, $date, $scheduler, $nurse_id = false, $attempt_note = '')
     {
 
         $patient = User::find($patientId);
@@ -53,6 +53,8 @@ class SchedulerService
 
             'service' => 'phone',
             'status' => 'scheduled',
+
+            'attempt_note' => $attempt_note,
 
             'scheduler' => $scheduler,
 
@@ -143,8 +145,7 @@ class SchedulerService
             }
         }
     }
-
-
+    
     public function importCallsFromCsv($csv)
     {
         $failed = [];

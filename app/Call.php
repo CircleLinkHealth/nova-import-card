@@ -35,6 +35,8 @@ class Call extends Model
         'inbound_phone_number',
         'outbound_phone_number',
 
+        'attempt_note',
+
         'inbound_cpm_id',
         'outbound_cpm_id',
 

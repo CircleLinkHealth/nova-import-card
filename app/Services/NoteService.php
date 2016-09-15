@@ -160,7 +160,7 @@ class NoteService
     }
 
     //Save call information for note
-    public function storeCallForNote($note, $status, User $patient, User $author, $phone_direction, $scheduler)
+    public function storeCallForNote($note, $status, User $patient, User $author, $phone_direction, $scheduler, $attemptNote = '')
     {
 
         if ($phone_direction == 'inbound') {
@@ -185,6 +185,8 @@ class NoteService
             'status' => $status,
 
             'scheduler' => $scheduler,
+
+            'attempt_note' => $attemptNote,
 
             'inbound_phone_number' => $outbound_num,
             'outbound_phone_number' => $inbound_num,
