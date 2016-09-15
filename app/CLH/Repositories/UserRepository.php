@@ -1,6 +1,7 @@
 <?php namespace App\CLH\Repositories;
 
 use App\CarePlan;
+use App\NurseInfo;
 use App\PatientInfo;
 use App\PhoneNumber;
 use App\Program;
@@ -43,6 +44,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $this->saveOrUpdateProviderInfo($user, $params);
         }
 
+        // nurse info
+        if ($user->hasRole('care-center')) {
+            $this->saveOrUpdateNurseInfo($user, $params);
+        }
+
         //Add Email Notification
         $sendTo = ['patientsupport@circlelinkhealth.com'];
         if (app()->environment('production')) {
@@ -74,6 +80,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // provider info
         if ($user->hasRole('provider')) {
             $this->saveOrUpdateProviderInfo($user, $params);
+        }
+
+        // nurse info
+        if ($user->hasRole('care-center')) {
+            $this->saveOrUpdateNurseInfo($user, $params);
         }
 
         return $user;
@@ -159,6 +170,18 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             }
         }
         $user->providerInfo->save();
+    }
+
+    public function saveOrUpdateNurseInfo(User $user, ParameterBag $params)
+    {
+        $nurseInfo = $user->nurseInfo->toArray();
+
+        foreach ($nurseInfo as $key => $value) {
+            if ($params->get($key)) {
+                $user->nurseInfo->$key = $params->get($key);
+            }
+        }
+        $user->nurseInfo->save();
     }
 
     public function saveOrUpdateUserMeta(User $user, ParameterBag $params)
@@ -340,6 +363,14 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $providerInfo->user_id = $user->ID;
             $providerInfo->save();
             $user->load('providerInfo');
+        }
+
+        // add nurse info
+        if ($user->hasRole('care-center') && !$user->nurseInfo) {
+            $nurseInfo = new NurseInfo;
+            $nurseInfo->user_id = $user->ID;
+            $nurseInfo->save();
+            $user->load('nurseInfo');
         }
     }
 
