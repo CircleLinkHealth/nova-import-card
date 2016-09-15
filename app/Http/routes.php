@@ -1,8 +1,23 @@
 <?php
 
-Route::get('/algo/refresher', function(){
+use App\Algorithms\Calls\PredictCall;
+use App\Services\Calls\SchedulerService;
+use App\User;
 
-  return (new \App\Services\Calls\SchedulerService)->tuneScheduledCallsWithUpdatedCCMTime();
+Route::get('algo/rescheduler', function(){
+
+    $calls = SchedulerService::getUnAttemptedCalls();
+    $handled = array();
+
+    foreach ($calls as $call) {
+        $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call, false))->reconcileDroppedCallHandler();
+    }
+
+    $result = '<p> The CPMbot was busy: <br/></p>';
+
+    foreach ($handled as $call) $result .= "<li>Created a new call for patient " . $call->inboundUser->fullName . " </li><br />";
+
+    return $result;
 
 });
 
@@ -244,6 +259,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('calls/import', [
             'uses' => 'CallController@import',
             'as' => 'post.CallController.import'
+        ]);
+
+        Route::post('general-comments/import', [
+            'uses' => 'Admin\UploadsController@postGeneralCommentsCsv',
+            'as' => 'post.GeneralCommentsCsv'
         ]);
 
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');

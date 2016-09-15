@@ -12,10 +12,10 @@ class PatientContactWindow extends Model
 
     protected $guarded = ['id'];
 
-//    protected $attributes = [
-//        'window_time_start' => '09:00:00',
-//        'window_time_end' => '17:00:00',
-//    ];
+    protected $attributes = [
+        'window_time_start' => '09:00:00',
+        'window_time_end' => '17:00:00',
+    ];
 
     // START RELATIONSHIPS
 
@@ -148,7 +148,7 @@ class PatientContactWindow extends Model
         //If no contact window, just return the same date.
         if ($patient_windows->count() == 0) {
 
-            $day = $offset_date->tomorrow()->toDateTimeString();
+            $day = $offset_date->toDateTimeString();
 
             return [
 

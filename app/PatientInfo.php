@@ -1,11 +1,8 @@
 <?php namespace App;
 
-use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
-use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Auth;
 
 class PatientInfo extends Model {
 
@@ -190,5 +187,33 @@ class PatientInfo extends Model {
 		return $query->where('ccm_status', 'enrolled');
 
 	}
+
+    /**
+     * Import Patient's Call Window from the sheet, or save default.
+     *
+     * @param array $days | eg. [1,2,3] Monday is 1
+     * @param $fromTime | eg. '09:00:00'
+     * @param $toTime | eg. '17:00:00'
+     * @return array of PatientContactWindows
+     */
+    public function attachNewOrDefaultCallWindows(array $days, $fromTime, $toTime)
+    {
+        $daysNumber = [1, 2, 3, 4, 5];
+
+        if (!empty($days)) $daysNumber = $days;
+
+        $timeFrom = '09:00:00';
+        $timeTo = '17:00:00';
+
+        if (!empty($fromTime)) $timeFrom = Carbon::parse($fromTime)->format('H:i:s');
+        if (!empty($toTime)) $timeTo = Carbon::parse($toTime)->format('H:i:s');
+
+        return PatientContactWindow::sync(
+            $this->id,
+            $daysNumber,
+            $timeFrom,
+            $timeTo
+        );
+    }
 
 }
