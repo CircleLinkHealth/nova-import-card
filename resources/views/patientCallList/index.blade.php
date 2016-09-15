@@ -10,6 +10,11 @@
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script>
         $(document).ready(function() {
+            $('#cpmEditableTable').DataTable({
+                scrollX: true,
+                fixedHeader: true
+            });
+
             $('.patientNameLink').click(function() {
                 callId = $(this).attr('call-id');
                 if ( callId && $( "#attemptNoteCall" + callId ).length ) {
@@ -134,10 +139,8 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first() && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->member)
-                                                                {{ $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->member->display_name }}
-                                                            @else
-                                                                <em style="color:red;">-</em>
+                                                            @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first() && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->user)
+                                                                {{ $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->user->display_name }}
                                                             @endif
                                                         </td>
                                                         <td>

@@ -5,7 +5,6 @@ use App\Activity;
 use App\Algorithms\Calls\PredictCall;
 use App\Call;
 use App\Note;
-use App\PatientContactWindow;
 use App\PatientInfo;
 use App\PatientMonthlySummary;
 use App\User;
@@ -21,6 +20,7 @@ class SchedulerService
         'Lydia' => 1755,
         'Sue' => 1877,
         'Monique' => 2332,
+        'Erin' => 2398,
     ];
 
     /* Success is the call's status.
@@ -124,7 +124,8 @@ class SchedulerService
 
     }
 
-    public function removeScheduledCallsForWithdrawnPatients(){
+    public function removeScheduledCallsForWithdrawnPatients()
+    {
 
         //get all patients that are withdrawn
         $withdrawn = PatientInfo::where('ccm_status', 'withdrawn')
@@ -133,94 +134,86 @@ class SchedulerService
         $withdrawn_patients_with_calls = array();
 
         //get scheduled calls for them, if any, and delete them.
-        foreach ($withdrawn as $patient){
+        foreach ($withdrawn as $patient) {
             $temp = $this->getScheduledCallForPatient(User::find($patient));
 
-            if(is_object($temp)){
+            if (is_object($temp)) {
                 $withdrawn_patients_with_calls[] = $temp;
                 $temp->delete();
             }
         }
     }
 
+
     public function importCallsFromCsv($csv)
     {
         $failed = [];
+        foreach ($csv as $row) {
 
-        foreach ($csv as $patient) {
-
-            $temp = User::where('first_name', $patient['Patient First Name'])
-                ->where('last_name', $patient['Patient Last Name'])
-                ->whereHas('patientInfo', function ($q) use ($patient) {
+            $patient = User::where('first_name', $row['Patient First Name'])
+                ->where('last_name', $row['Patient Last Name'])
+                ->whereHas('patientInfo', function ($q) use ($row) {
                     $q->where('birth_date',
-                        Carbon::parse($patient['DOB'])->toDateString()
+                        Carbon::parse($row['DOB'])->toDateString()
                     );
                 })
                 ->first();
 
-            if (is_object($temp)) {
-
-                    if($patient[' Call preference (Day)']) {
-
-                        $days = explode(', ', $patient[' Call preference (Day)'] );
-
-                        foreach ($days as $key => $day) $days[$key] = Carbon::parse("Next $day")->dayOfWeek;
-
-                            PatientContactWindow::sync($temp->patientInfo,
-                                $days,
-                                Carbon::parse($patient['Call time From:'])->format('H:i:s'),
-                                Carbon::parse($patient['Call time to:'])->format('H:i:s')
-                            );
-
-                    } else {
-
-                            PatientContactWindow::sync(
-                                $temp->patientInfo,
-                                [1,2,3,4,5],
-                                '09:00:00',
-                                '17:00:00'
-                            );
-
-                    }
-
-                $call = $this->getScheduledCallForPatient($temp);
-
-                Call::updateOrCreate([
-
-                    'service' => 'phone',
-                    'status' => 'scheduled',
-
-                    'inbound_phone_number' => $temp->phone ? $temp->phone : '',
-                    'outbound_phone_number' => '',
-
-                    'inbound_cpm_id' => $temp->ID,
-                    'outbound_cpm_id' => $this->nurses[$patient['Nurse']],
-
-                    'call_time' => 0,
-
-                    'is_cpm_outbound' => true
-
-                ], [
-
-                    'scheduled_date' => Carbon::parse($patient['Next call date'])->toDateString(),
-
-                    'window_start' => empty($patient['Call time From:'])
-                        ? '09:00'
-                        : Carbon::parse($patient['Call time From:'])->format('H:i'),
-
-                    'window_end' => empty($patient['Call time to:'])
-                        ? '17:00'
-                        : Carbon::parse($patient['Call time to:'])->format('H:i'),
-                ]);
-
-                $calls[] = $call;
-            } else {
-
-                $failed[] = "{$patient['Patient First Name']} {$patient['Patient Last Name']}";
-
+            if (!$patient) {
+                $failed[] = "{$row['Patient First Name']} {$row['Patient Last Name']}";
+                continue;
             }
 
-        };
+            $days = parseDaysStringToNumbers($row['Call preference (Day)']);
+
+            $fromTime = $row['Call time From:'];
+            $toTime = $row['Call time to:'];
+
+            $info = $patient->patientInfo;
+
+            $callWindows = $info->attachNewOrDefaultCallWindows($days, $fromTime, $toTime);
+
+            if (array_key_exists('General Comment', $row)) $generalComment = $row['General Comment'];
+
+            if (!empty($generalComment)) {
+                $info->general_comment = $generalComment;
+                $info->save();
+            }
+
+            $call = $this->getScheduledCallForPatient($patient);
+
+            Call::updateOrCreate([
+
+                'service' => 'phone',
+                'status' => 'scheduled',
+
+                'inbound_phone_number' => $patient->phone ? $patient->phone : '',
+                'outbound_phone_number' => '',
+
+                'inbound_cpm_id' => $patient->ID,
+                'outbound_cpm_id' => $this->nurses[$row['Nurse']],
+
+                'call_time' => 0,
+
+                'is_cpm_outbound' => true
+
+            ], [
+
+                'scheduled_date' => Carbon::parse($row['Next call date'])->toDateString(),
+
+                'window_start' => empty($fromTime)
+                    ? '09:00'
+                    : Carbon::parse($fromTime)->format('H:i'),
+
+                'window_end' => empty($toTime)
+                    ? '17:00'
+                    : Carbon::parse($toTime)->format('H:i'),
+            ]);
+
+            $calls[] = $call;
+
+        }
+
 
         return $failed;
     }
@@ -228,26 +221,27 @@ class SchedulerService
     /* This solve the issue where a call is scheduled but RN spends
     CCM time doing other work after the call is over and note
     is saved */
-    public function tuneScheduledCallsWithUpdatedCCMTime(){
+    public function tuneScheduledCallsWithUpdatedCCMTime()
+    {
 
         //Get all enrolled Patients
         $patients = PatientInfo::enrolled()->get();
 
         $reprocess_bucket = [];
 
-        foreach ($patients as $patient){
+        foreach ($patients as $patient) {
 
             //Get time for last note entered
-            $last_note_time = Activity::whereType('Patient Note Creation')->wherePatientId($patient->user_id)->orderBy('created_at' , 'desc')->pluck('created_at')->first();
+            $last_note_time = Activity::whereType('Patient Note Creation')->wherePatientId($patient->user_id)->orderBy('created_at', 'desc')->pluck('created_at')->first();
 
             //Get time for last activity recorded
-            $last_activity_time = Activity::wherePatientId($patient->user_id)->orderBy('created_at' , 'desc')->pluck('created_at')->first();
+            $last_activity_time = Activity::wherePatientId($patient->user_id)->orderBy('created_at', 'desc')->pluck('created_at')->first();
 
             //check if they both exist
-            if($last_note_time != null && $last_activity_time != null){
+            if ($last_note_time != null && $last_activity_time != null) {
 
                 //then check if the note was made before the last activity
-                if($last_note_time < $last_activity_time){
+                if ($last_note_time < $last_activity_time) {
 
                     //have to pull the last scheduled call, but only if it was made by the algo
                     //since we don't mess with calls scheduled manually
@@ -255,16 +249,16 @@ class SchedulerService
                     $last_attempted_call = $patient->user->inboundCalls()->where('status', '!=', 'scheduled')->orderBy('created_at', 'desc')->first();
 
                     //make sure we have a call attempt and a scheduled call.
-                    if(is_object($scheduled_call) && is_object($last_attempted_call)){
+                    if (is_object($scheduled_call) && is_object($last_attempted_call)) {
 
                         $status = ($last_attempted_call->status == 'reached') ? true : false;
 
                         //see how much time should wait now that the algo has updated information
                         $scheduled_call->scheduled_date = (new PredictCall($patient->user, $last_attempted_call, $status))
-                                                                ->getUnsuccessfulCallTimeOffset(
-                                                                    Carbon::now()->weekOfMonth,
-                                                                    Carbon::now())
-                                                                ->toDateString();
+                            ->getUnsuccessfulCallTimeOffset(
+                                Carbon::now()->weekOfMonth,
+                                Carbon::now())
+                            ->toDateString();
 
                         $scheduled_call->scheduler = 'refresher algorithm';
                         $scheduled_call->save();

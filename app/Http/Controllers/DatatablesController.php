@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\User;
-use Yajra\Datatables\Datatables;
 use App\Call;
-use Collection;
+use App\User;
 use Carbon\Carbon;
+use Collection;
+use Yajra\Datatables\Datatables;
 
 class DatatablesController extends Controller
 {
@@ -240,7 +239,7 @@ class DatatablesController extends Controller
                                     $notesHtml .= '<div class="label label-info" style="margin:5px;">Successful Clinical Call</div>';
                                 }
 
-                                if(count($note->mail) > 0) {
+                                if($note->mail->count() > 0) {
                                     $mailText = 'Forwarded: ';
                                     foreach($note->mail as $mail) {
                                         if($mail->receiverUser) {

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Call;
-use App\Http\Requests;
 use App\Services\Calls\SchedulerService;
 use App\User;
 use Carbon\Carbon;
@@ -186,7 +185,6 @@ class CallController extends Controller
                 echo "Name: $fail" . PHP_EOL;
             }
         }
-
     }
 
 }

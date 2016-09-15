@@ -52,6 +52,15 @@
     CircleLink Team
 </p>
 
+<p style="color: #31708f;">
+    <b>
+        <em>
+            To receive this notification less (or more) frequently, please adjust your settings <a
+                    href="https://www.careplanmanager.com/settings/email/create">here</a>.
+        </em>
+    </b>
+</p>
+
 </body>
 
 

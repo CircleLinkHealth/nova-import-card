@@ -16,6 +16,7 @@ use App\Models\CPM\CpmMedicationGroup;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
+use App\Models\EmailSettings;
 use App\Services\UserService;
 use DateTime;
 use Faker\Factory;
@@ -1678,4 +1679,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	{
 		return new UserService();
 	}
+
+	public function emailSettings() {
+        return $this->hasOne(EmailSettings::class);
+    }
 }

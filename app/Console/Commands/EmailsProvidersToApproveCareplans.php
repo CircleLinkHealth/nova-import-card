@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use App\CLH\Contracts\Repositories\UserRepository;
+use App\Models\EmailSettings;
 use App\PatientCarePlan;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 use Maknz\Slack\Facades\Slack;
@@ -70,7 +72,9 @@ class EmailsProvidersToApproveCareplans extends Command
 
 
             $recipients = [
-                $user->user_email
+                $user->user_email,
+//            'raph@circlelinkhealth.com',
+//            'mantoniou@circlelinkhealth.com',
             ];
 
             $numberOfCareplans = PatientCarePlan::getNumberOfCareplansPendingApproval($user);
@@ -87,11 +91,26 @@ class EmailsProvidersToApproveCareplans extends Command
 
 
             if (!$pretend) {
-                Mail::send($view, $data, function ($message) use ($recipients, $subject) {
-                    $message->from('notifications@careplanmanager.com', 'CircleLink Health')
-                        ->to($recipients)
-                        ->subject($subject);
-                });
+                $settings = $user->emailSettings()->firstOrNew([]);
+
+                $send = $settings->frequency == EmailSettings::DAILY
+                    ? true
+                    : ($settings->frequency == EmailSettings::WEEKLY) && Carbon::today()->dayOfWeek == 1
+                        ? true
+                        : ($settings->frequency == EmailSettings::MWF) &&
+                        (Carbon::today()->dayOfWeek == 1
+                            || Carbon::today()->dayOfWeek == 3
+                            || Carbon::today()->dayOfWeek == 5)
+                            ? true
+                            : false;
+
+                if ($send) {
+                    Mail::send($view, $data, function ($message) use ($recipients, $subject) {
+                        $message->from('notifications@careplanmanager.com', 'CircleLink Health')
+                            ->to($recipients)
+                            ->subject($subject);
+                    });
+                }
             }
 
             Slack::to('#background-tasks')
