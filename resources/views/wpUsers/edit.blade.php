@@ -147,6 +147,23 @@
                                         <div class="col-xs-5">{!! Form::text('zip', $patient->zip, ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('timezone', 'timezone:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::select('timezone',
+                                    array(
+                                    'America/New_York' => 'Eastern Time',
+                                    'America/Chicago' => 'Central Time',
+                                    'America/Denver' => 'Mountain Time',
+                                    'America/Phoenix' => 'Mountain Time (no DST)',
+                                    'America/Los_Angeles' => 'Pacific Time',
+                                    'America/Anchorage' => 'Alaska Time',
+                                    'America/Adak' => 'Hawaii-Aleutian',
+                                    'Pacific/Honolulu' => 'Hawaii-Aleutian Time (no DST)',
+                                    ),
+                                    $patient->timezone, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                    </div>
+                                </div>
 
 
 
@@ -294,12 +311,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('preferred_contact_timezone', 'Contact Timezone:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::select('preferred_contact_timezone', $timezones_arr, $patient->preferred_contact_timezone, ['class' => 'form-control select-picker', 'style' => 'width:60%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">

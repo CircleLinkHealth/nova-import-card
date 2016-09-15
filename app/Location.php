@@ -27,12 +27,17 @@ class Location extends Entity implements LocationInterface
      *
      * @var array
      */
-    protected $fillable = [ 'name', 'phone', 'address_line_1', 'address_line_2', 'city', 'state', 'postal_code', 'billing_code', 'location_code','position' ];
+    protected $fillable = [ 'name', 'phone', 'address_line_1', 'address_line_2', 'city', 'state', 'timezone', 'postal_code', 'billing_code', 'location_code','position' ];
 
 
     public function program()
     {
         return $this->belongsTo(Program::class, 'location_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Location::class, 'parent_id');
     }
 
     public function user()

@@ -16,7 +16,7 @@ class UserConfigTemplate extends BaseDataTemplate implements DataTemplate
     public $work_phone_number;
     public $active_date = null;
     public $preferred_contact_time = '11:00 AM';
-    public $preferred_contact_timezone = 'America/New_York';
+    public $timezone = 'America/New_York';
     public $preferred_contact_method = 'CCT';
     public $preferred_contact_language = 'EN';
     public $preferred_contact_location = null;
