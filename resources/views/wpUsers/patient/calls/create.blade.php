@@ -107,6 +107,7 @@
                 </div>
 
             <input type="hidden" name="patient_id" value="{{$patient->ID}}"/>
+            <input type="hidden" name="attempt_note" value="{{$attempt_note}}"/>
 
 
             {{--@if($next_contact_windows)--}}
