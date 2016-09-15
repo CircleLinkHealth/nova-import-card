@@ -48,8 +48,13 @@ class UploadsController extends Controller
             }
         }
 
-        echo "We could not find these patients. Is the name spelled correctly?";
+        if (!empty($failed))
+        {
+            echo "We could not find these patients. Is the name spelled correctly?";
 
-        dd($failed);
+            dd($failed);
+        }
+
+        return "Everything imported well.";
     }
 }
