@@ -8,7 +8,7 @@
 </p>
 
 <p>
-    We are delighted to report <b style="color: #0070C0;">{{ $numberOfCareplans }} care plans</b> awaiting your
+    We are delighted to report <b style="color: #0070C0;">{{ $numberOfCareplans }} care plan(s)</b> awaiting your
     approval.
 </p>
 
@@ -16,7 +16,7 @@
 <p>
     To review and approve, simply
     <a href="https://www.careplanmanager.com/manage-patients/listing">
-        view patient list here</a>, then filter to "Approve Now" using the filter header in the "CarePlan Status"
+        view Patient List here</a>, then filter to "Approve Now" using the filter header in the "CarePlan Status"
     column. You may also want to filter for your name in the “Provider” column:
 </p>
 
@@ -30,7 +30,7 @@
 
 <p>
     If you agree with the care plan, please click the "Approve Care Plan" button in the top right, and you will be
-    taken back to patient list.
+    taken back to Patient List.
 </p>
 
 <p>
