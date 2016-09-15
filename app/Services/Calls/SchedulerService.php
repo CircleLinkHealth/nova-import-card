@@ -20,6 +20,7 @@ class SchedulerService
         'Lydia' => 1755,
         'Sue' => 1877,
         'Monique' => 2332,
+        'Erin' => 2398,
     ];
 
     /* Success is the call's status.
