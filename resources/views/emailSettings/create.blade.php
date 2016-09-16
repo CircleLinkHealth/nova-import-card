@@ -6,7 +6,7 @@
         <div class="row row-centered">
 
             <div class="panel panel-info">
-                <div class="panel-heading">Reminder Email Frequency Settings</div>
+                <div class="panel-heading">When should we send care plan approval e-mails?</div>
 
                 <div class="panel-body">
                     <div class="container-fluid">
