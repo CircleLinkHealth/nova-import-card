@@ -30,7 +30,7 @@
     <div class="mdl-layout mdl-js-layout">
         <main class="mdl-layout__content mdl-cell--4-col">
 
-            <div class="mdl-card mdl-shadow--2dp demo-card-wide mdl-cell--12-col">
+            <div class="mdl-card mdl-shadow--1dp demo-card-wide mdl-cell--12-col">
 
                 <div class="mdl-card__title"></div>
 
