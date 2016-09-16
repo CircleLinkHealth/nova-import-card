@@ -300,7 +300,9 @@ class PredictCall
 
             }
 
-        } else if ($this->ccmTime > 899) { // 15 - 20 mins
+        }
+
+        else if ($this->ccmTime > 899) { // 15 - 20 mins
 
             if ($week_num == 1 || $week_num == 2) { // We are in the first two weeks of the month
 
@@ -348,7 +350,9 @@ class PredictCall
 
             }
 
-        } else if ($this->ccmTime > 599) { // 10 - 15 mins
+        }
+
+        else if ($this->ccmTime > 599) { // 10 - 15 mins
 
             if ($week_num == 1 || $week_num == 2) { // We are in the first two weeks of the month
 
@@ -367,7 +371,9 @@ class PredictCall
 
             }
 
-        } else { // 0 - 10 mins
+        }
+
+        else { // 0 - 10 mins
 
             if ($week_num == 1 || $week_num == 2) { // We are in the first two weeks of the month
 
@@ -659,6 +665,7 @@ class PredictCall
         //$prediction['success_percent'] = ($successfulCallsThisMonth == 0 || $callsThisMonth == 0) ? 0 : ( ($successfulCallsThisMonth) / ($callsThisMonth) ) * 100;
         $prediction['ccm_time_achieved'] = $ccm_time_achieved;
         $prediction['formatted_monthly_time'] = $formattedMonthlyTime;
+        $prediction['attempt_note'] = '';
 
         return $prediction;
     }
