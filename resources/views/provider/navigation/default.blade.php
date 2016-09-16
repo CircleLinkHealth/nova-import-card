@@ -1,11 +1,11 @@
 <nav class="provider-navigation mdl-navigation mdl-color--blue-grey-800">
-    <a class="mdl-navigation__link" href="">
+    <a class="mdl-navigation__link" href="{{ route('get.create.practice') }}">
         <i class="mdl-color-text--blue-grey-400 material-icons"
            role="presentation">business</i>
         Practice
     </a>
 
-    <a class="mdl-navigation__link" href="">
+    <a class="mdl-navigation__link" href="{{ route('provider.location.create') }}">
         <i class="mdl-color-text--blue-grey-400 material-icons"
            role="presentation">add_location</i>
         Locations

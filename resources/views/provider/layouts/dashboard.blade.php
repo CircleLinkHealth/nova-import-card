@@ -17,7 +17,7 @@
         <main class="mdl-layout__content mdl-color--grey-100">
             <div class="mdl-grid provider-content">
                 <div id="app">
-
+                    @yield('content')
                 </div>
             </div>
         </main>

@@ -681,6 +681,8 @@ Route::group([
     'prefix' => 'provider'
 ], function(){
     Route::controller('dashboard', 'Provider\DashboardController', [
+        'getCreateLocation' => 'provider.location.create',
+        'getCreatePractice' => 'get.create.practice',
         'getIndex' => 'get.provider.dashboard',
     ]);
 });

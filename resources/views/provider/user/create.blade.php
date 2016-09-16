@@ -67,10 +67,8 @@
 
                     <div class="mdl-layout-spacer"></div>
 
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            data-upgraded=",MaterialButton,MaterialRipple">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary">
                         Create account
-                        <span class="mdl-button__ripple-container"></span>
                     </button>
                 </div>
 

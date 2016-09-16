@@ -1,0 +1,1 @@
+@extends('provider.layouts.dashboard')
