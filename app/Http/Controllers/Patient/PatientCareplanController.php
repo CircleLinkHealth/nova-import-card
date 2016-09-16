@@ -790,6 +790,17 @@ class PatientCareplanController extends Controller
                 if (!empty($biometricsValues['bloodPressure']['starting']) || !empty($biometricsValues['bloodPressure']['target'])) {
                     $validator = \Validator::make($biometricsValues['bloodPressure'], CpmBloodPressure::$rules, CpmBloodPressure::$messages);
 
+                    $validStarting = validateBloodPressureString($biometricsValues['bloodPressure']['starting']);
+                    $validTarget = validateBloodPressureString($biometricsValues['bloodPressure']['target']);
+
+                    if (!$validStarting || !$validTarget)
+                    {
+                        return redirect()
+                            ->back()
+                            ->withErrors(['Systolic and Diastolic Blood Pressure must be between 2 and 3 digits'])
+                            ->withInput();
+                    }
+
                     if ($validator->fails()) {
                         return redirect()
                             ->back()
