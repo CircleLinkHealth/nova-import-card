@@ -362,7 +362,7 @@ class PredictCall
 
             } else if ($week_num == 3 || $week_num == 4) { //second last week of month
 
-                $this->logic = 'Call patient in first week of next month';
+                $this->logic = 'Call patient after one week';
                 return $next_window_carbon->addWeek(1);
 
             } else if ($week_num == 5) { //last-ish week of month
