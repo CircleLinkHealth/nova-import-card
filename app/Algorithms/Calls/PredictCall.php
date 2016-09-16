@@ -211,6 +211,7 @@ class PredictCall
             'window_start' => $window_start,
             'window_end' => $window_end,
             //'next_contact_windows' => $next_contact_windows,
+            'logic' => $this->logic,
             'successful' => false
         ];
 
