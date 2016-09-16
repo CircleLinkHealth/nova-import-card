@@ -670,3 +670,17 @@ Route::controller('datatables', 'DatatablesController', [
 ]);
 
 Route::get('datatables/callData', ['uses' => 'DatatablesController@callData', 'as' => 'datatables.callData']);
+
+
+/*
+ *
+ * Provider Dashboard
+ *
+ */
+Route::group([
+    'prefix' => 'provider'
+], function(){
+    Route::controller('dashboard', 'Provider\DashboardController', [
+        'getIndex' => 'get.provider.dashboard',
+    ]);
+});
