@@ -32,8 +32,7 @@ class CallReportController extends Controller {
 
 	public function exportxls(Request $request)
 	{
-		$dateStartOfMonth = $date = Carbon::now()->startOfMonth();;
-		$date = date('Y-m-d H:i:s');
+		$date = Carbon::now()->startOfMonth();
 
 		$calls = Call::with('inboundUser')
 			->with('outboundUser')
@@ -54,6 +53,8 @@ class CallReportController extends Controller {
 					'notes.body AS note_body',
 					'notes.performed_at AS note_datetime',
 					'calls.note_id',
+					'calls.scheduler AS scheduler',
+					'scheduler_user.display_name AS scheduler_user_name',
 					'patient_info.cur_month_activity_time',
 					'patient_info.last_successful_contact_time',
 					\DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
@@ -71,11 +72,12 @@ class CallReportController extends Controller {
 			->leftJoin('notes', 'calls.note_id','=','notes.id')
 			->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
 			->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
+			->leftJoin('users AS scheduler_user', 'calls.scheduler','=','scheduler_user.ID')
 			->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
-			->leftJoin('patient_monthly_summaries', function($join) use ($dateStartOfMonth)
+			->leftJoin('patient_monthly_summaries', function($join) use ($date)
 			{
 				$join->on('patient_monthly_summaries.patient_info_id', '=', 'patient_info.id');
-				$join->where('patient_monthly_summaries.month_year', '=', $dateStartOfMonth->format('Y-m-d'));
+				$join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
 			})
 			->leftJoin('wp_blogs AS program', 'patient.program_id','=','program.blog_id')
 			->leftJoin('patient_care_team_members', function($join)
@@ -106,7 +108,7 @@ class CallReportController extends Controller {
 				});
 				$i = 0;
 				// header
-				$userColumns = array('id', 'Nurse', 'Patient', 'DOB', 'status', 'Scheduled Date', 'Window start', 'Window end', 'CCM Time', 'Successful Calls', 'Last Call Status', 'CCM Status', 'Billing Provider', 'Program');
+				$userColumns = array('id', 'Nurse', 'Patient', 'Program', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Last Call', 'CCM Time', 'Successful Calls', 'Patient Status', 'Billing Provider', 'DOB', 'Scheduler');
 				$sheet->appendRow($userColumns);
 
 				foreach ($calls as $call) {
@@ -126,8 +128,36 @@ class CallReportController extends Controller {
 						}
 					}
 
+					/*
+					// call days
+					$days = array(
+						1 => 'M',
+						2 => 'Tu',
+						3 => 'W',
+						4 => 'Th',
+						5 => 'F',
+						6 => 'Sa',
+						7 => 'Su'
+					);
+					$preferredCallDays =  'n/a';
+					if($call->inboundUser && $call->inboundUser->patientInfo) {
+						$windowText = '';
+						$windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
+						if($windows) {
+							foreach($days as $key => $val) {
+								foreach ($windows as $window) {
+									if($window->day_of_week == $key) {
+										$windowText .= $days[$window->day_of_week] . ',';
+									}
+								}
+							}
+						}
+						$preferredCallDays = rtrim($windowText, ',');
+					}
+					*/
+
 					//dd($call);
-					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->birth_date, $call->status, $call->scheduled_date, $call->window_start, $call->window_end, $ccmTime, $call->no_of_successful_calls, $noAttmpts, $call->ccm_status, $call->billing_provider, $call->program_name);
+					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->program_name, $noAttmpts, $call->scheduled_date, $call->window_start, $call->window_end, '', $call->last_contact_time, $ccmTime, $call->no_of_successful_calls, $call->ccm_status, $call->billing_provider, $call->birth_date, $call->scheduler_user_name);
 					$sheet->appendRow($columns);
 				}
 			});
