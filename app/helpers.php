@@ -100,3 +100,27 @@ if (!function_exists('parseDaysStringToNumbers')) {
         return $daysNumber;
     }
 }
+
+
+if (!function_exists('validateBloodPressureString')) {
+    /**
+     * Validates blood pressure string that looks like this: xxx/xxx
+     *
+     * @param $bloodPressureString
+     * @param string $delimiter
+     * @return string
+     */
+    function validateBloodPressureString($bloodPressureString, $delimiter = '/')
+    {
+        if (empty($bloodPressureString)) return true;
+
+        $readings = new Collection(explode($delimiter, $bloodPressureString));
+
+        foreach ($readings as $reading)
+        {
+            if (!is_numeric($reading) || $reading > 999 || $reading < 10) return false;
+        }
+
+        return true;
+    }
+}
