@@ -124,8 +124,6 @@ class CallReportController extends Controller {
 							$noAttmpts = 'Success';
 						}
 					}
-
-					/*
 					// call days
 					$days = array(
 						1 => 'M',
@@ -151,10 +149,9 @@ class CallReportController extends Controller {
 						}
 						$preferredCallDays = rtrim($windowText, ',');
 					}
-					*/
 
 					//dd($call);
-					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->program_name, $noAttmpts, $call->scheduled_date, $call->window_start, $call->window_end, '', $call->last_contact_time, $ccmTime, $call->no_of_successful_calls, $call->ccm_status, $call->billing_provider, $call->birth_date, $call->scheduler_user_name);
+					$columns = array($call->call_id, $call->nurse_name, $call->patient_name, $call->program_name, $noAttmpts, $call->scheduled_date, $call->window_start, $call->window_end, $preferredCallDays, $call->last_contact_time, $ccmTime, $call->no_of_successful_calls, $call->ccm_status, $call->billing_provider, $call->birth_date, $call->scheduler_user_name);
 					$sheet->appendRow($columns);
 				}
 			});
