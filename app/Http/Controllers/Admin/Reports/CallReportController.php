@@ -103,9 +103,6 @@ class CallReportController extends Controller {
 
 			// Our first sheet
 			$excel->sheet('Sheet 1', function ($sheet) use ($calls) {
-				$sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
-					$protection->setSort(true);
-				});
 				$i = 0;
 				// header
 				$userColumns = array('id', 'Nurse', 'Patient', 'Program', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Last Call', 'CCM Time', 'Successful Calls', 'Patient Status', 'Billing Provider', 'DOB', 'Scheduler');
