@@ -140,9 +140,7 @@ class PatientContactWindow extends Model
 
     public function getEarliestWindowForPatientFromDate(User $patient, $offset_date)
     {
-
-        $offset_date = Carbon::parse($offset_date);
-
+        
         $patient_windows = $patient->patientInfo->patientContactWindows()->get();
 
         //If no contact window, just return the same date.
