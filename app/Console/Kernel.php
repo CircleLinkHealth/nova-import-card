@@ -56,23 +56,23 @@ class Kernel extends ConsoleKernel
         })->everyMinute();
 
         //Reconciles missed calls and creates a new call for patient using algo
-        $schedule->call(function () {
-
-            $calls = SchedulerService::getUnAttemptedCalls();
-            $handled = array();
-
-            foreach ($calls as $call) {
-                Log::info('INFO FOR NEW CALL: ' . $call->id);
-                $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call, false))->reconcileDroppedCallHandler();
-            }
-
-            if(!empty($handled)) { Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls"); }
-
-            foreach ($handled as $call) {
-                Slack::to('#background-tasks')->send("We just fixed call: {$call->id}");
-            }
-
-        })->dailyAt('00:05');
+//        $schedule->call(function () {
+//
+//            $calls = SchedulerService::getUnAttemptedCalls();
+//            $handled = array();
+//
+//            foreach ($calls as $call) {
+//                Log::info('INFO FOR NEW CALL: ' . $call->id);
+//                $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call, false))->reconcileDroppedCallHandler();
+//            }
+//
+//            if(!empty($handled)) { Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls"); }
+//
+//            foreach ($handled as $call) {
+//                Slack::to('#background-tasks')->send("We just fixed call: {$call->id}");
+//            }
+//
+//        })->dailyAt('00:05');
 
 //        $schedule->command('emailapprovalreminder:providers')
 //            ->weekdays()
