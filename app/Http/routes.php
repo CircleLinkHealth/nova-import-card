@@ -1,6 +1,19 @@
 <?php
 
 //THIS IS FOR APRIMA ONLY
+
+Route::get('yeh', function(){
+
+    $date = \Carbon\Carbon::parse('2016-09-17');
+
+    while (!$date->isWeekday()){
+        $date->addDay(1);
+    }
+
+    return $date;
+
+});
+
 Route::group(['prefix' => 'api/v1.0'], function () {
     //Should change this to a GET to make this RESTful
     Route::post('oauth/access_token', 'CcdApi\Aprima\AuthController@getAccessToken');

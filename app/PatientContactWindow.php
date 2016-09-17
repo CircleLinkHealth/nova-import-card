@@ -138,21 +138,26 @@ class PatientContactWindow extends Model
 
     }
 
-    public function getEarliestWindowForPatientFromDate(User $patient, $offset_date)
+    public function getEarliestWindowForPatientFromDate(PatientInfo $patient, Carbon $offset_date)
     {
         
-        $patient_windows = $patient->patientInfo->patientContactWindows()->get();
+        $patient_windows = $patient->patientContactWindows()->get();
 
         //If no contact window, just return the same date.
         if ($patient_windows->count() == 0) {
+
+            //to make sure the day returned is a weekday for calls. 
+            while (!$offset_date->isWeekday()){
+                $offset_date->addDay();
+            }
 
             $day = $offset_date->toDateTimeString();
 
             return [
 
                 'day' => $day,
-                'window_start' => Carbon::parse('10:00:00')->format('H:i'),
-                'window_end' => Carbon::parse('18:00:00')->format('H:i')
+                'window_start' => Carbon::parse('09:00:00')->format('H:i'),
+                'window_end' => Carbon::parse('17:00:00')->format('H:i')
 
             ];
 

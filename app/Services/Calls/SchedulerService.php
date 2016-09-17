@@ -64,7 +64,6 @@ class SchedulerService
     //Create new scheduled call
     public function storeScheduledCall($patientId, $window_start, $window_end, $date, $scheduler, $nurse_id = false, $attempt_note = '')
     {
-
         $patient = User::find($patientId);
 
         $window_start = Carbon::parse($window_start)->format('H:i');
