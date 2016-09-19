@@ -131,4 +131,9 @@ class Program extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getSubdomainAttribute()
+    {
+        return explode('.', $this->domain)[0];
+    }
 }

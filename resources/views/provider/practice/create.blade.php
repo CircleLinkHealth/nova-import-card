@@ -12,17 +12,17 @@
 
             {!! Form::open(['url' => route('post.store.practice'), 'method' => 'post']) !!}
 
-            @include('partials.form.text.textfield', [ 'name' => 'name', 'label' => 'Name' ])
+            @include('partials.form.text.textfield', [ 'name' => 'name', 'label' => 'Name', 'value' => $practice->display_name ])
 
             <div class="mdl-layout-spacer"></div>
 
-            @include('partials.form.text.textfield', [ 'name' => 'description', 'label' => 'Description' ])
+            @include('partials.form.text.textfield', [ 'name' => 'description', 'label' => 'Description', 'value' => $practice->description ])
 
             <div class="mdl-layout-spacer"></div>
 
             <div class="mdl-grid">
                 <div class="mdl-cell--6-col">
-                    @include('partials.form.text.textfield', [ 'name' => 'url', 'label' => 'URL' ])
+                    @include('partials.form.text.textfield', [ 'name' => 'url', 'label' => 'URL', 'value' => $practice->subdomain ])
                 </div>
                 <div class="mdl-cell--6-col">
                     <h6>.careplanmanager.com</h6>

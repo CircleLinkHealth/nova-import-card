@@ -30,7 +30,11 @@ class DashboardController extends Controller
 
     public function getCreatePractice()
     {
-        return view('provider.practice.create');
+        $practice = $this->programs->firstOrNew([
+            'user_id' => auth()->user()->ID,
+        ]);
+
+        return view('provider.practice.create', compact('practice'));
     }
 
     public function getCreateUser()
