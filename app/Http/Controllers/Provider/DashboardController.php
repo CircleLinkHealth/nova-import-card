@@ -38,6 +38,11 @@ class DashboardController extends Controller
         return view('provider.layouts.dashboard');
     }
 
+    public function postStorePractice()
+    {
+
+    }
+
     public function postStoreUser(Request $request)
     {
         $input = $request->input();
@@ -56,7 +61,7 @@ class DashboardController extends Controller
                 ->withInput();
         }
 
-        return redirect()->route('get.provider.dashboard');
+        return redirect()->route('get.create.practice');
     }
 
 }

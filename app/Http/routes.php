@@ -681,10 +681,11 @@ Route::group([
     'prefix' => 'provider'
 ], function(){
     Route::controller('dashboard', 'Provider\DashboardController', [
-        'getCreateLocation' => 'provider.location.create',
+        'getCreateLocation' => 'get.create.location',
         'getCreatePractice' => 'get.create.practice',
         'getCreateUser' => 'get.create.user',
         'getIndex' => 'get.provider.dashboard',
+        'postStorePractice' => 'post.store.practice',
         'postStoreUser' => 'post.store.user',
     ]);
 });

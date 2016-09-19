@@ -5,7 +5,7 @@
         Practice
     </a>
 
-    <a class="mdl-navigation__link" href="{{ route('provider.location.create') }}">
+    <a class="mdl-navigation__link" href="{{ route('get.create.location') }}">
         <i class="mdl-color-text--blue-grey-400 material-icons"
            role="presentation">add_location</i>
         Locations

@@ -41,7 +41,7 @@ class UserTest extends TestCase
                 'last_name' => $lastName,
                 'user_email' => $email,
             ])
-            ->seePageIs(route('get.provider.dashboard'));
+            ->seePageIs(route('provider.practice.create'));
 
         $user = User::whereUserEmail($email)->first();
 
