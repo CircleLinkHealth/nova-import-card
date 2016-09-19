@@ -3,7 +3,8 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Program extends Model {
+class Program extends Model
+{
 
     use SoftDeletes;
 
@@ -28,16 +29,27 @@ class Program extends Model {
      */
     protected $primaryKey = 'blog_id';
 
-	//
-    public function pcp(){
+    protected $fillable = [
+        'name',
+        'display_name',
+        'description',
+        'domain',
+        'user_id',
+    ];
+
+    //
+    public function pcp()
+    {
         return $this->hasMany('App\CPRulesPCP', 'prov_id', 'blog_id');
     }
 
-    public function careplan() {
+    public function careplan()
+    {
         return $this->hasMany('App\CarePlanTemplate', 'patient_id');
     }
 
-    public function users() {
+    public function users()
+    {
         return $this->belongsToMany('App\User', 'lv_program_user', 'program_id', 'user_id');
     }
 
@@ -46,7 +58,8 @@ class Program extends Model {
         return $this->belongsTo('App\Location', 'location_id');
     }
 
-    public static function getProviders($blogId){
+    public static function getProviders($blogId)
+    {
         $providers = User::whereHas('programs', function ($q) use ($blogId) {
             $q->where('blog_id', '=', $blogId);
         })->whereHas('roles', function ($q) {
@@ -55,7 +68,8 @@ class Program extends Model {
         return $providers;
     }
 
-    public static function getNonCCMCareCenterUsers($blogId){
+    public static function getNonCCMCareCenterUsers($blogId)
+    {
         $providers = User::whereHas('programs', function ($q) use ($blogId) {
             $q->where('blog_id', '=', $blogId);
         })->whereHas('roles', function ($q) {
@@ -64,7 +78,8 @@ class Program extends Model {
         return $providers;
     }
 
-    public static function getCareCenterUsers($blogId){
+    public static function getCareCenterUsers($blogId)
+    {
         $providers = User::whereHas('programs', function ($q) use ($blogId) {
             $q->where('blog_id', '=', $blogId);
         })->whereHas('roles', function ($q) {
@@ -73,7 +88,8 @@ class Program extends Model {
         return $providers;
     }
 
-    public function locationId() {
+    public function locationId()
+    {
         /*
         $location = \DB::select("select * from wp_".$this->blog_id."_options where option_name = 'location_id'", []);
         return $location[0]->option_value;
@@ -110,4 +126,9 @@ class Program extends Model {
             }
         }
     }
+
+    public function lead()
+    {
+        return $this->belongsTo(User::class);
     }
+}

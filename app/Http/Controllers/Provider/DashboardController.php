@@ -11,6 +11,7 @@ use Prettus\Validator\Exceptions\ValidatorException;
 
 class DashboardController extends Controller
 {
+    protected $programs;
     protected $users;
 
     public function __construct(
@@ -18,6 +19,7 @@ class DashboardController extends Controller
         UserRepository $userRepository
     )
     {
+        $this->programs = $programRepository;
         $this->users = $userRepository;
     }
 
@@ -43,7 +45,24 @@ class DashboardController extends Controller
 
     public function postStorePractice(Request $request)
     {
+        $input = $request->input();
 
+        try {
+            $program = $this->programs->create([
+                'name' => $input['url'],
+                'user_id' => auth()->user()->ID,
+                'display_name' => $input['name'],
+                'description' => $input['description'],
+                'domain' => "{$input['url']}.careplanmanager.com",
+            ]);
+        } catch (ValidatorException $e) {
+            return redirect()
+                ->back()
+                ->withErrors($e->getMessageBag()->getMessages())
+                ->withInput();
+        }
+
+        return redirect()->back();
     }
 
     public function postStoreUser(Request $request)

@@ -1678,4 +1678,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function emailSettings() {
         return $this->hasOne(EmailSettings::class);
     }
+
+    public function practices()
+    {
+        return $this->hasMany(Program::class);
+    }
 }
