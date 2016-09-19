@@ -330,6 +330,20 @@ class NotesController extends Controller
 
         }
 
+        //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
+        if (isset($input['phone'])) {
+
+            if (isset($input['call_status']) && $input['call_status'] == 'reached') {
+
+                if (Auth::user()->hasRole('provider')) {
+
+                    $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+
+                }
+            }
+        }
+
+
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
 
     }
