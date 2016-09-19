@@ -4,11 +4,8 @@ namespace App\Http\Controllers\CcdApi\Athena;
 
 use App\ForeignId;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\Models\CCD\CcdVendor;
-use App\Services\AthenaAPI\Calls;
 use App\Services\AthenaAPI\Service;
-use Carbon\Carbon;
 
 class AthenaApiController extends Controller
 {
