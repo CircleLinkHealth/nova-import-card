@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Provider;
 
+use App\Contracts\Repositories\ProgramRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Role;
@@ -13,6 +14,7 @@ class DashboardController extends Controller
     protected $users;
 
     public function __construct(
+        ProgramRepository $programRepository,
         UserRepository $userRepository
     )
     {
@@ -39,7 +41,7 @@ class DashboardController extends Controller
         return view('provider.layouts.dashboard');
     }
 
-    public function postStorePractice()
+    public function postStorePractice(Request $request)
     {
 
     }
