@@ -1,11 +1,8 @@
 <?php
 
-use App\User;
 use App\Permission;
 use App\Role;
-use App\UserMeta;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 
 
 class PermissionsConfig extends Seeder {
@@ -38,6 +35,7 @@ class PermissionsConfig extends Seeder {
             'observations-destroy' => array('display_name' => 'Observations Destroy', 'description' => '',),
             'observations-edit' => array('display_name' => 'Observations Edit', 'description' => '',),
             'observations-view' => array('display_name' => 'Observations View', 'description' => '',),
+            'practice-manage' => array('display_name' => 'Practice Manage', 'description' => 'Can Update or Delete a Practice.',),
             'programs-manage' => array('display_name' => 'Programs Manage', 'description' => '',),
             'programs-view' => array('display_name' => 'Programs View', 'description' => '',),
             'roles-manage' => array('display_name' => 'Roles Manage', 'description' => '',),
@@ -121,6 +119,17 @@ class PermissionsConfig extends Seeder {
                 'permissions' => array(
                     'observations-create',
                     'observations-view',
+                    'users-view-self'
+                )
+            ),
+            'program-lead' => array(
+                'display_name' => 'Program Lead',
+                'description' => 'The provider that created the practice.',
+                'permissions' => array(
+                    'practice-manage',
+                    'observations-view',
+                    'observations-create',
+                    'users-view-all',
                     'users-view-self'
                 )
             ),

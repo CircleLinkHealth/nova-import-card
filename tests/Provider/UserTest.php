@@ -6,6 +6,11 @@ use Faker\Factory;
 class UserTest extends TestCase
 {
     /**
+     * @var User $provider
+     */
+    protected $provider;
+
+    /**
      * Check that the form to create a User is there.
      */
     public function testSeeCreateUserForm()
@@ -43,8 +48,10 @@ class UserTest extends TestCase
             ])
             ->seePageIs(route('provider.practice.create'));
 
-        $user = User::whereUserEmail($email)->first();
+        $this->provider = User::whereUserEmail($email)->first();
 
-        $this->assertTrue(Hash::check($password, $user->password));
+        $this->assertTrue(Hash::check($password, $this->provider->password));
     }
+
+
 }
