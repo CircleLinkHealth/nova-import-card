@@ -58,11 +58,13 @@ class UnsuccessfulHandler implements CallHandler
     //exec
     public function handle()
     {
+
         //Calculate the next date before which we can call patient
         $this->getPatientOffset();
 
         //get the next call date based on patient preferences
         $callDate = $this->getNextWindow();
+        
 
         //Add debug string
         $callDate['predicament'] = $this->createSchedulerInfoString();
@@ -207,7 +209,7 @@ class UnsuccessfulHandler implements CallHandler
 
                     $this->logic = 'This Case Is Tricky, need to call this person on a Saturday or closest contact window';
                     $this->attemptNote = 'Call This Weekend';
-                    return $this->nextCallDate;
+                    return $this->nextCallDate->next('');
 
                 } else {
 
@@ -258,14 +260,14 @@ class UnsuccessfulHandler implements CallHandler
 
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
-                    $this->logic = 'This Case Is Tricky, need to call this person on a Saturday or closest contact window';
+                    $this->logic = 'This Case Is Tricky, need to call this person on a Saturday';
                     $this->attemptNote = 'Call This Weekend';
-                    return $this->nextCallDate;
+                    return $this->nextCallDate->next(Carbon::SATURDAY);
 
                 } else {
 
                     $this->logic = 'Next window';
-                    return $this->nextCallDate;
+                    return $this->nextCallDate->tomorrow();
 
                 }
 

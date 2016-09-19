@@ -269,8 +269,9 @@ class NotesController extends Controller
         //UPDATE USER INFO CHANGES
         $info = $patient->patientInfo;
 
-        //User header update status
-        $info->ccm_status = $input['status'];
+        if(isset($input['status'])){
+            $info->general_comment = $input['status'];
+        }
 
         if(isset($input['general_comment'])){
             $info->general_comment = $input['general_comment'];

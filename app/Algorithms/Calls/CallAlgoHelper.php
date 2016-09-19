@@ -42,10 +42,21 @@ trait CallAlgoHelper
 
     public function getNextWindow(){
 
-        //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
-        $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient,
-                                                                                                         $this->nextCallDate);
 
+        if($this->attemptNote != 'Call This Weekend') {
+            //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
+            $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient,
+                                                                                                            $this->nextCallDate);
+        } else {
+
+            //This override is to schedule calls on weekends.
+
+            $next_predicted_contact_window['day'] = $this->nextCallDate->next(Carbon::SATURDAY)->toDateString();
+            $next_predicted_contact_window['window_start'] = '10:00:00';
+            $next_predicted_contact_window['window_end'] = '17:00:00';
+
+        }
+        
         $prediction = [
             'patient' => $this->patient,
             'date' => $next_predicted_contact_window['day'],

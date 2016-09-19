@@ -67,7 +67,7 @@ class SuccessfulHandler implements CallHandler
 
         //get the next call date based on patient preferences
         $callDate = $this->getNextWindow();
-        
+
         //Add debug string
         $callDate['predicament'] = $this->createSchedulerInfoString();
 

@@ -161,18 +161,18 @@ trait HandlesUsersAndCarePlans
 
         $patient = User::whereUserEmail($email)->first();
 
-        $ccda = \App\Models\CCD\Ccda::create([
-            'user_id' => $patient->ID,
-            'vendor_id' => 1,
-            'source' => 'test',
-            'xml' => 'test',
-            'json' => 'test',
-        ]);
-
-        factory(\App\Models\CCD\CcdInsurancePolicy::class, 3)->create([
-            'patient_id' => $patient->ID,
-            'ccda_id' => $ccda->id,
-        ]);
+//        $ccda = \App\Models\CCD\Ccda::create([
+//            'user_id' => $patient->ID,
+//            'vendor_id' => 1,
+//            'source' => 'test',
+//            'xml' => 'test',
+//            'json' => 'test',
+//        ]);
+//
+//        factory(\App\Models\CCD\CcdInsurancePolicy::class, 3)->create([
+//            'patient_id' => $patient->ID,
+//            'ccda_id' => $ccda->id,
+//        ]);
 
         $patientInfo = $patient->patientInfo()->first();
         $patientInfo->preferred_cc_contact_days = '1, 2, 3, 4, 5, 6, 7';
