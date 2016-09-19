@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Provider;
 
+use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\ProgramRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
@@ -11,21 +12,26 @@ use Prettus\Validator\Exceptions\ValidatorException;
 
 class DashboardController extends Controller
 {
+    protected $locations;
     protected $programs;
     protected $users;
 
     public function __construct(
+        LocationRepository $locationRepository,
         ProgramRepository $programRepository,
         UserRepository $userRepository
     )
     {
+        $this->locations = $locationRepository;
         $this->programs = $programRepository;
         $this->users = $userRepository;
     }
 
     public function getCreateLocation()
     {
-        return view('provider.location.create');
+        $locations[] = $this->locations->firstOrNew([]);
+
+        return view('provider.location.create', compact('locations'));
     }
 
     public function getCreatePractice()
@@ -45,6 +51,10 @@ class DashboardController extends Controller
     public function getIndex()
     {
         return view('provider.layouts.dashboard');
+    }
+
+    public function postStoreLocation(Request $request){
+
     }
 
     public function postStorePractice(Request $request)

@@ -685,6 +685,7 @@ Route::group([
         'getCreatePractice' => 'get.create.practice',
         'getCreateUser' => 'get.create.user',
         'getIndex' => 'get.provider.dashboard',
+        'postStoreLocation' => 'post.store.location',
         'postStorePractice' => 'post.store.practice',
         'postStoreUser' => 'post.store.user',
     ]);
