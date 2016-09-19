@@ -138,41 +138,6 @@ class SchedulerService
         return $call;
     }
 
-    public static function getUnAttemptedCalls()
-    {
-
-        $calls = Call::whereStatus('scheduled')
-            ->where('scheduled_date', '<=', Carbon::now()->toDateString())->get();
-
-        $missed = array();
-
-        /*
-         * Check to see if the call is dropped if it's the current day
-         * Since we store the date and times separately for other
-         * considerations, we have to join them and compare
-         * to see if a call was missed on the same day
-        */
-
-        foreach ($calls as $call) {
-
-            $end_carbon = Carbon::parse($call->scheduled_date);
-
-            $carbon_hour_end = Carbon::parse($call->window_end)->format('H');
-            $carbon_minutes_end = Carbon::parse($call->window_end)->format('i');
-
-            $end_time = $end_carbon->setTime($carbon_hour_end, $carbon_minutes_end)->toDateTimeString();
-
-            $now_carbon = Carbon::now()->toDateTimeString();
-
-            if ($end_time < $now_carbon) {
-                $missed[] = $call;
-            }
-
-        }
-
-        return $missed;
-
-    }
 
     public function removeScheduledCallsForWithdrawnPatients()
     {

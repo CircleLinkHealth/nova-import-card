@@ -12,25 +12,26 @@ use App\Contracts\CallHandler;
 use App\PatientInfo;
 use Carbon\Carbon;
 
-//Readme
+//READ ME
 /*
-
-    ------------------------------------*---------------------------------------
-    Currently, the factors taken into consideration are:
-      - Call Status (Reached, Unreached)
-      - Current Month's CCM Time Bracket (0-10, 10-15, 15-20, >20)
-      - Week Number in current Month (1, 2, 3, 4, 5) [Special Consideration for months with 5 weeks]
-      - No Of Successful Calls to Patient
-     ------------------------------------*---------------------------------------
-
-WEEKS:
-
-Week 1: 1-7
-Week 2: 8-14
-Week 3: 15-21
-Week 4: 22-28
-Week 5: 29-31 (not for Feb)
-
+ * Signature: 'core algorithm'
+ *
+ * ------------------------------------*---------------------------------------
+ * Currently, the factors taken into consideration are:
+ * - Call Status (Reached, Unreached)
+ * - Current Month's CCM Time Bracket (0-10, 10-15, 15-20, >20)
+ * - Week Number in current Month (1, 2, 3, 4, 5) [Special Consideration for months with 5 weeks]
+ * - No Of Successful Calls to Patient
+ * ------------------------------------*---------------------------------------
+ * WEEKS:
+ * Week 1: 1-7
+ * Week 2: 8-14
+ * Week 3: 15-21
+ * Week 4: 22-28
+ * Week 5: 29-31 (not for Feb)
+ *
+ * returns an array of the new call date, start window, and end window.
+ *
 */
 
 class SuccessfulHandler implements CallHandler
