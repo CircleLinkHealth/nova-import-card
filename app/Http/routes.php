@@ -683,6 +683,8 @@ Route::group([
     Route::controller('dashboard', 'Provider\DashboardController', [
         'getCreateLocation' => 'provider.location.create',
         'getCreatePractice' => 'get.create.practice',
+        'getCreateUser' => 'get.create.user',
         'getIndex' => 'get.provider.dashboard',
+        'postStoreUser' => 'post.store.user',
     ]);
 });

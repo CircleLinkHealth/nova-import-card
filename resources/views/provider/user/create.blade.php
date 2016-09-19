@@ -5,6 +5,15 @@
 <head>
     <style>
 
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+        }
+
         .mdl-layout {
             display: flex;
             align-items: center;
@@ -34,35 +43,35 @@
 
                 <div class="mdl-card__title"></div>
 
-                {!! Form::open(['url' => '/auth/login', 'method' => 'post']) !!}
+                {!! Form::open(['url' => route('post.store.user'), 'method' => 'post']) !!}
 
                 <div class="mdl-card__supporting-text">
 
                     <div class="mdl-textfield mdl-js-textfield mdl-cell--12-col">
-                        <input class="mdl-textfield__input" type="text" id="sample1">
-                        <label class="mdl-textfield__label" for="sample1">First name</label>
+                        <input class="mdl-textfield__input" type="text" id="firstName" name="firstName">
+                        <label class="mdl-textfield__label" for="firstName">First name</label>
                     </div>
 
                     <div class="mdl-layout-spacer"></div>
 
 
                     <div class="mdl-textfield mdl-js-textfield mdl-cell--12-col">
-                        <input class="mdl-textfield__input" type="text" id="sample1">
-                        <label class="mdl-textfield__label" for="sample1">Last name</label>
+                        <input class="mdl-textfield__input" type="text" id="lastName" name="lastName">
+                        <label class="mdl-textfield__label" for="lastName">Last name</label>
                     </div>
 
                     <div class="mdl-layout-spacer"></div>
 
                     <div class="mdl-textfield mdl-js-textfield mdl-cell--12-col">
-                        <input class="mdl-textfield__input" type="text" id="sample1">
-                        <label class="mdl-textfield__label" for="sample1">E-mail</label>
+                        <input class="mdl-textfield__input" type="text" id="email" name="email">
+                        <label class="mdl-textfield__label" for="email">E-mail</label>
                     </div>
 
                     <div class="mdl-layout-spacer"></div>
 
                     <div class="mdl-textfield mdl-js-textfield mdl-cell--12-col">
-                        <input class="mdl-textfield__input" type="password" id="sample1">
-                        <label class="mdl-textfield__label" for="sample1">Password</label>
+                        <input class="mdl-textfield__input" type="password" id="password" name="password">
+                        <label class="mdl-textfield__label" for="password">Password</label>
                     </div>
 
                     <div class="mdl-layout-spacer"></div>

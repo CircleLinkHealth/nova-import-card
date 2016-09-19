@@ -26,5 +26,9 @@ class DashboardController extends Controller
         return view('provider.layouts.dashboard');
     }
 
+    public function postStoreUser()
+    {
+        return redirect()->route('get.provider.dashboard');
+    }
 
 }
