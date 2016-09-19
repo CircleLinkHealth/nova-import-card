@@ -46,11 +46,13 @@ class UserTest extends TestCase
                 'last_name' => $lastName,
                 'user_email' => $email,
             ])
-            ->seePageIs(route('provider.practice.create'));
+            ->seePageIs(route('get.create.practice'));
 
         $this->provider = User::whereUserEmail($email)->first();
 
         $this->assertTrue(Hash::check($password, $this->provider->password));
+
+        $this->assertTrue($this->provider->hasRole('program-lead'));
     }
 
 

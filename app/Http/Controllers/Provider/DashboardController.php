@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Provider;
 
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
+use App\Role;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -48,7 +49,7 @@ class DashboardController extends Controller
         $input = $request->input();
 
         try {
-            $this->users->create([
+            $user = $this->users->create([
                 'user_email' => $input['email'],
                 'first_name' => $input['firstName'],
                 'last_name' => $input['lastName'],
@@ -60,6 +61,10 @@ class DashboardController extends Controller
                 ->withErrors($e->getMessageBag()->getMessages())
                 ->withInput();
         }
+
+        $role = Role::whereName('program-lead')->first();
+
+        $user->roles()->attach($role->id);
 
         return redirect()->route('get.create.practice');
     }
