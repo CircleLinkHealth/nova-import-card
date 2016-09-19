@@ -2,10 +2,22 @@
 
 namespace App\Http\Controllers\Provider;
 
+use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Prettus\Validator\Exceptions\ValidatorException;
 
 class DashboardController extends Controller
 {
+    protected $users;
+
+    public function __construct(
+        UserRepository $userRepository
+    )
+    {
+        $this->users = $userRepository;
+    }
+
     public function getCreateLocation()
     {
         return view('provider.location.create');
@@ -26,8 +38,24 @@ class DashboardController extends Controller
         return view('provider.layouts.dashboard');
     }
 
-    public function postStoreUser()
+    public function postStoreUser(Request $request)
     {
+        $input = $request->input();
+
+        try {
+            $this->users->create([
+                'user_email' => $input['email'],
+                'first_name' => $input['firstName'],
+                'last_name' => $input['lastName'],
+                'password' => bcrypt($input['password']),
+            ]);
+        } catch (ValidatorException $e) {
+            return redirect()
+                ->back()
+                ->withErrors($e->getMessageBag()->getMessages())
+                ->withInput();
+        }
+
         return redirect()->route('get.provider.dashboard');
     }
 

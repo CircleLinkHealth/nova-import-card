@@ -1,5 +1,6 @@
 <?php
 
+use App\User;
 use Faker\Factory;
 
 class UserTest extends TestCase
@@ -24,12 +25,26 @@ class UserTest extends TestCase
     {
         $faker = Factory::create();
 
+        $firstName = $faker->firstName;
+        $lastName = $faker->lastName;
+        $email = $faker->email;
+        $password = $faker->password;
+
         $this->visit(route('get.create.user'))
-            ->type($faker->firstName, 'firstName')
-            ->type($faker->lastName, 'lastName')
-            ->type($faker->email, 'email')
-            ->type($faker->password, 'password')
+            ->type($firstName, 'firstName')
+            ->type($lastName, 'lastName')
+            ->type($email, 'email')
+            ->type($password, 'password')
             ->press('Create account')
+            ->seeInDatabase('users', [
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'user_email' => $email,
+            ])
             ->seePageIs(route('get.provider.dashboard'));
+
+        $user = User::whereUserEmail($email)->first();
+
+        $this->assertTrue(Hash::check($password, $user->password));
     }
 }

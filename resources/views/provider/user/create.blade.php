@@ -36,6 +36,9 @@
     </style>
 </head>
 @section('content')
+
+    @include('errors.errors')
+
     <div class="mdl-layout mdl-js-layout">
         <main class="mdl-layout__content mdl-cell--4-col">
 
