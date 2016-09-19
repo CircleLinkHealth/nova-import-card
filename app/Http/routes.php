@@ -2,15 +2,24 @@
 
 //THIS IS FOR APRIMA ONLY
 
-Route::get('yeh', function(){
+use App\Algorithms\Calls\ReschedulerHandler;
 
-    $date = \Carbon\Carbon::parse('2016-09-17');
+Route::get('algo/rescheduler', function(){
 
-    while (!$date->isWeekday()){
-        $date->addDay(1);
+    $handled = (new ReschedulerHandler())->handle();
+
+    $list = '<p>The CPMBot just rescheduled some calls:</p><ul>';
+
+    foreach ($handled as $call){
+        $patient = $call->inboundUser->fullName;
+
+        $list.= "<li>Call rescheduled for Patient: {$patient}</li>";
+
     }
 
-    return $date;
+    $list .= '</ul>';
+
+    return $list;
 
 });
 

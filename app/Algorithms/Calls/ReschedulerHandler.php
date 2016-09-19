@@ -95,7 +95,7 @@ class ReschedulerHandler
             $call->scheduler = 'rescheduler algorithm';
             $call->save();
 
-            $patient = PatientInfo::where('patient_id', $call->inbound_cpm_id)->first();
+            $patient = PatientInfo::where('user_id', $call->inbound_cpm_id)->first();
 
             //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
             $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($patient, Carbon::now());
