@@ -1,22 +1,33 @@
 {!! Form::open(['url' => route('post.store.location'), 'method' => 'post']) !!}
+<div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col">
+        @include('provider.partials.mdl.form.text.textfield', [ 'name' => 'name', 'label' => 'Name', 'value' => $location['name'] ])
+    </div>
 
-@include('provider.partials.mdl.form.text.textfield', [ 'name' => 'name', 'label' => 'Name', 'value' => $location['name'] ])
-<div class="mdl-layout-spacer"></div>
+    <div class="mdl-cell mdl-cell--12-col">
+        @include('provider.partials.mdl.form.text.textfield', [ 'name' => 'address_line_1', 'label' => 'Address Line 1', 'value' => $location['address_line_1'] ])
+    </div>
 
-@include('provider.partials.mdl.form.text.textfield', [ 'name' => 'address_line_1', 'label' => 'Address Line 1', 'value' => $location['address_line_1'] ])
-<div class="mdl-layout-spacer"></div>
+    <div class="mdl-cell mdl-cell--12-col">
+        @include('provider.partials.mdl.form.text.textfield', [ 'name' => 'address_line_2', 'label' => 'Address Line 2', 'value' => $location['address_line_2'] ])
+    </div>
 
-@include('provider.partials.mdl.form.text.textfield', [ 'name' => 'address_line_2', 'label' => 'Address Line 2', 'value' => $location['address_line_2'] ])
-<div class="mdl-layout-spacer"></div>
+    <div class="mdl-cell mdl-cell--6-col">
+        @include('provider.partials.mdl.form.text.textfield', [ 'name' => 'city', 'label' => 'City', 'value' => $location['city'] ])
+    </div>
 
-<div class="mdl-cell--6-col">
-    @include('provider.partials.mdl.form.text.textfield', [ 'name' => 'city', 'label' => 'City', 'value' => $location['city'] ])
+    <div class="mdl-cell mdl-cell--6-col">
+        @include('provider.partials.mdl.form.text.textfield', [ 'name' => 'state', 'label' => 'State', 'value' => $location['state'] ])
+    </div>
+
+    <div class="mdl-cell mdl-cell--6-col">
+        @include('provider.partials.mdl.form.text.textfield', [ 'name' => 'postal_code', 'label' => 'Postal Code', 'value' => $location['postal_code'] ])
+    </div>
+
+    <div class="mdl-cell mdl-cell--6-col">
+        @include('provider.partials.mdl.form.text.textfield', [ 'name' => 'phone', 'label' => 'Phone', 'value' => $location['phone'] ])
+    </div>
 </div>
-<div class="mdl-cell--6-col">
-    @include('provider.partials.mdl.form.text.textfield', [ 'name' => 'state', 'label' => 'State', 'value' => $location['state'] ])
-</div>
-<div class="mdl-layout-spacer"></div>
-
 
 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary">
     Update Practice
@@ -24,9 +35,3 @@
 
 {!! Form::close() !!}
 
-
-'phone',
-
-'city',
-'state',
-'postal_code',
