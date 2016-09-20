@@ -1,8 +1,5 @@
 <?php namespace App\Services\Calls;
 
-
-use App\Activity;
-use App\Algorithms\Calls\PredictCall;
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
