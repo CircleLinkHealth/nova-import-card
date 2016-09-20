@@ -7,25 +7,13 @@
     @include('errors.errors')
 
     <div class="mdl-layout mdl-js-layout">
-
-        <main class="mdl-layout__content mdl-cell--4-col">
-
-            {!! Form::open(['url' => route('post.store.location'), 'method' => 'post']) !!}
+        <main class="mdl-layout__content mdl-cell--12-col">
 
             @foreach($locations as $location)
-                @foreach($location as $key => $value)
-                    @include('partials.form.text.textfield', [ 'name' => $key, 'label' => ucfirst($key), 'value' => $value ])
-
-                    <div class="mdl-layout-spacer"></div>
-                @endforeach
+                <section class="mdl-cell--4-col">
+                    @include('provider.partials.location.create', $location)
+                </section>
             @endforeach
-
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary">
-                Update Practice
-            </button>
-
-            {!! Form::close() !!}
-
 
         </main>
 

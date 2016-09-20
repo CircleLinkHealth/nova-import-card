@@ -4,7 +4,7 @@
     <div class="provider-avatar-dropdown">
         <span>Dr. Jane Doe</span>
 
-        <div class="mdl-layout-spacer"></div>
+        {{--<div class="mdl-layout-spacer"></div>--}}
         {{--<button id="accbtn" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">--}}
             {{--<i class="material-icons" role="presentation">arrow_drop_down</i>--}}
             {{--<span class="visuallyhidden">Accounts</span>--}}

@@ -11,23 +11,26 @@ class Location extends Entity implements LocationInterface
      * The table associated with the model.
      *
      * @var string
-
      */
     protected $table = 'lv_locations';
-
-    /**
-     * ClosureTable model instance.
-     *
-     * @var locationClosure
-     */
-    protected $closure = 'App\LocationClosure';
 
     /**
      * Mass assignable attributes
      *
      * @var array
      */
-    protected $fillable = [ 'name', 'phone', 'address_line_1', 'address_line_2', 'city', 'state', 'postal_code', 'billing_code', 'location_code','position' ];
+    protected $fillable = [
+        'name',
+        'phone',
+        'address_line_1',
+        'address_line_2',
+        'city',
+        'state',
+        'postal_code',
+        'billing_code',
+        'location_code',
+        'position',
+    ];
 
 
     public function program()
@@ -42,7 +45,7 @@ class Location extends Entity implements LocationInterface
 
     public static function getLocationsForBlog($blogId)
     {
-        $q =  Location::where('program_id', '=', $blogId)->get();
+        $q = Location::where('program_id', '=', $blogId)->get();
 
         return ($q == null) ? '' : $q;
     }
@@ -50,10 +53,10 @@ class Location extends Entity implements LocationInterface
 
     public static function getNonRootLocations($parent_location_id = false)
     {
-        if($parent_location_id) {
+        if ($parent_location_id) {
             // get parent_id from $parent_location_code
             $parent_location = Location::where('id', '=', $parent_location_id)->first();
-            if(!$parent_location) {
+            if (!$parent_location) {
                 return false;
             }
             return Location::where('parent_id', '=', $parent_location->id)->lists('name', 'id')->all();
@@ -64,7 +67,7 @@ class Location extends Entity implements LocationInterface
 
     public static function getLocationName($id)
     {
-        $q =  Location::where('id', '=', $id)->select('name')->first();
+        $q = Location::where('id', '=', $id)->select('name')->first();
         return $q['name'];
     }
 
@@ -81,7 +84,7 @@ class Location extends Entity implements LocationInterface
     public static function getParents($id)
     {
         $l = Location::find($id);
-        return Location::where('id',$l->parent_id)->lists('name', 'id')->all();
+        return Location::where('id', $l->parent_id)->lists('name', 'id')->all();
     }
 
     public static function getParentsSubs($id)
