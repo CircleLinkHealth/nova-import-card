@@ -185,6 +185,8 @@ class NotesController extends Controller
                 return response("User's Program not found", 401);
             }
 
+            Auth::user()->hasRole('care-center');
+
             //providers
             $providers = Program::getProviders($patient->blogId());
             $nonCCMCareCenterUsers = Program::getNonCCMCareCenterUsers($patient->blogId());

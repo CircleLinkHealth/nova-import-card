@@ -3,8 +3,11 @@
 //THIS IS FOR APRIMA ONLY
 
 use App\Algorithms\Calls\ReschedulerHandler;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('algo/rescheduler', function(){
+
+    dd(auth()->user()->isCCMCountable());
 
     $handled = (new ReschedulerHandler())->handle();
 

@@ -151,6 +151,7 @@
                                                                                      value="outbound"
                                                                                      id="Outbound"/><label
                                                                 for="Outbound"><span> </span>Outbound</label></div>
+                                                    @if(auth()->user()->isCCMCountable())
                                                     <div>
                                                         <div class="radio-inline"><input type="checkbox"
                                                                                          name="call_status"
@@ -160,6 +161,7 @@
                                                                 Call</label>
                                                         </div>
                                                     </div>
+                                                    @endif
                                                     <input type="hidden" name="tcm" value="hospital">
                                                     <div>
                                                         <div class="radio-inline"><input type="checkbox"

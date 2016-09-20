@@ -1685,4 +1685,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function emailSettings() {
         return $this->hasOne(EmailSettings::class);
     }
+
+	public function isCCMCountable(){
+
+		return (in_array($this->roles[0]->name, Role::CCM_TIME_ROLES));
+
+	}
 }
