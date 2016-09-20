@@ -337,6 +337,8 @@ class NotesController extends Controller
 
                 if (Auth::user()->hasRole('provider')) {
 
+                    $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->ID , null);
+
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
 
                 }
