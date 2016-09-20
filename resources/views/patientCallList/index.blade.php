@@ -11,6 +11,7 @@
     <script>
         $(document).ready(function() {
             $('#cpmEditableTable').DataTable({
+                "iDisplayLength": 100,
                 scrollX: true,
                 fixedHeader: true
             });
@@ -108,7 +109,7 @@
                                                     ?>
                                                     <tr style="{{ $rowBg }}">
                                                         <td class="vert-align">
-                                                            @if(!empty($call->attempt_note) || ($call->inboundUser && $call->inboundUser->patientInfo && !empty($call->inboundUser->patientInfo->general_comment)))
+                                                            @if(!empty($call->attempt_note))
                                                                 <button type="button" class="btn btn-xs btn-info glyphicon glyphicon-envelope" data-toggle="modal" data-target="#attemptNoteCall{{ $call->id }}">Note</button>
                                                             @endif
                                                         </td>

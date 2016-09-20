@@ -63,7 +63,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	protected $fillable = [
 		'user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log',
 		'user_status', 'auto_attach_programs', 'display_name', 'spam', 'password', 'first_name', 'last_name', 'address',
-		'city', 'state', 'zip', 'is_auto_generated', 'program_id', 'remember_token', 'last_login', 'is_online'];
+		'city', 'state', 'zip', 'timezone', 'is_auto_generated', 'program_id', 'remember_token', 'last_login', 'is_online'];
 
 	protected $hidden = ['user_pass', 'password'];
 
@@ -101,8 +101,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		"city" => "",
 		"state" => "",
 		"zip" => "",
+		"timezone" => "",
 		//"preferred_contact_time" => "required",
-		"preferred_contact_timezone" => "required",
+		//"preferred_contact_timezone" => "required",
 		"consent_date" => "required",
 		"ccm_status" => "required",
 		"program_id" => "required"
@@ -347,6 +348,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function patientInfo()
 	{
 		return $this->hasOne(PatientInfo::class, 'user_id', 'ID');
+	}
+
+	public function nurseInfo()
+	{
+		return $this->hasOne(NurseInfo::class, 'user_id', 'ID');
 	}
 
 	public function phoneNumbers()
@@ -1031,6 +1037,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
 // timezone
+/*
     public function getPreferredContactTimeZoneAttribute()
     {
         return $this->getTimeZoneAttribute();
@@ -1039,7 +1046,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getTimeZoneAttribute()
     {
         if (!$this->patientInfo) return '';
-        return $this->patientInfo->preferred_contact_timezone;
+        return $this->timezone;
     }
 
     public function setPreferredContactTimeZoneAttribute($value)
@@ -1049,11 +1056,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setTimeZoneAttribute($value)
     {
-        if (!$this->patientInfo) return '';
-        $this->patientInfo->preferred_contact_timezone = $value;
-        $this->patientInfo->save();
+        $this->timezone = $value;
+        $this->save();
         return true;
     }
+*/
 
 // preferred_contact_time
     public function getPreferredContactTimeAttribute()

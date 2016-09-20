@@ -74,6 +74,9 @@
                             @if($patient->hasRole('provider'))
                                 <li role="presentation"><a href="#providerinfo" aria-controls="providerinfo" role="tab" data-toggle="tab">Provider Info</a></li>
                             @endif
+                            @if($patient->hasRole('care-center') && $patient->nurseInfo)
+                                <li role="presentation"><a href="#nurseinfo" aria-controls="nurseinfo" role="tab" data-toggle="tab">Nurse Info</a></li>
+                            @endif
                             <li role="presentation"><a href="#revisions" aria-controls="revisions" role="tab" data-toggle="tab">History</a></li>
                             <li role="presentation"><a href="#observations" aria-controls="observations" role="tab" data-toggle="tab">Observations</a></li>
                         </ul>
@@ -104,8 +107,8 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('access_disabled', 'Access Disabled (1=disabled):') !!}</div>
-                                        <div class="col-xs-4">{!! Form::select('access_disabled', array('0' => '0', '1' => '1'), $patient->access_disabled, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('access_disabled', 'Access Disabled') !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('access_disabled', array('0' => 'No', '1' => 'Yes'), $patient->access_disabled, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                         <div class="col-xs-2"></div>
                                         <div class="col-xs-4"></div>
                                     </div>
@@ -113,7 +116,7 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('user_status', 'User Status:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::select('user_status', array('0' => '0', '1' => '1'), $patient->user_status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('user_status', array('0' => 'Inactive', '1' => 'Active'), $patient->user_status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                         <div class="col-xs-2"></div>
                                         <div class="col-xs-4"></div>
                                     </div>
@@ -142,6 +145,23 @@
                                         <div class="col-xs-4">{!! Form::select('state', $states_arr, $patient->state, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                                         <div class="col-xs-1">{!! Form::label('zip', 'Zip:') !!}</div>
                                         <div class="col-xs-5">{!! Form::text('zip', $patient->zip, ['class' => 'form-control']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2">{!! Form::label('timezone', 'timezone:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::select('timezone',
+                                    array(
+                                    'America/New_York' => 'Eastern Time',
+                                    'America/Chicago' => 'Central Time',
+                                    'America/Denver' => 'Mountain Time',
+                                    'America/Phoenix' => 'Mountain Time (no DST)',
+                                    'America/Los_Angeles' => 'Pacific Time',
+                                    'America/Anchorage' => 'Alaska Time',
+                                    'America/Adak' => 'Hawaii-Aleutian',
+                                    'Pacific/Honolulu' => 'Hawaii-Aleutian Time (no DST)',
+                                    ),
+                                    $patient->timezone, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                     </div>
                                 </div>
 
@@ -291,12 +311,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('preferred_contact_timezone', 'Contact Timezone:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::select('preferred_contact_timezone', $timezones_arr, $patient->preferred_contact_timezone, ['class' => 'form-control select-picker', 'style' => 'width:60%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -463,6 +477,28 @@
                                     </div>
                                 </div>
                             @endif
+
+
+                            @if($patient->hasRole('care-center') && $patient->nurseInfo)
+                                <div role="tabpanel" class="tab-pane" id="nurseinfo">
+                                    <h2>Nurse Info</h2>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-2">{!! Form::label('hourly_rate', 'Hourly Rate:') !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('hourly_rate', $patient->nurseInfo->hourly_rate, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                        </div>
+
+                                        <div class="row" style="margin-top:10px;">
+                                            <div class="col-xs-2">{!! Form::label('spanish', 'Spanish') !!}</div>
+                                            <div class="col-xs-4">{!! Form::select('spanish', array('0' => 'No', '1' => 'Yes'), $patient->nurseInfo->spanish, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                            <div class="col-xs-2"></div>
+                                            <div class="col-xs-4"></div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            @endif
+
 
                             <div role="tabpanel" class="tab-pane" id="revisions">
                                 @include('partials.revisions')

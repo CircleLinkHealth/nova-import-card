@@ -140,7 +140,7 @@ trait HandlesUsersAndCarePlans
             //->type($contactTime, 'preferred_contact_time')
             ->select($contactMethod, 'preferred_contact_method')
             ->type($consentDate, 'consent_date')
-            ->select($timezone, 'preferred_contact_timezone')
+            ->select($timezone, 'timezone')
             ->select($ccmStatus, 'ccm_status')
             ->press('Add Patient')
             ->select(10, 'preferred_contact_location')
@@ -155,7 +155,8 @@ trait HandlesUsersAndCarePlans
             'address' => $streetAddress,
             'city' => $city,
             'state' => $state,
-            'zip' => $zip
+            'zip' => $zip,
+            'timezone' => $timezone
         ]);
 
         $patient = User::whereUserEmail($email)->first();
@@ -193,7 +194,7 @@ trait HandlesUsersAndCarePlans
             'preferred_contact_language' => $language,
             'preferred_contact_method' => $contactMethod,
 //            'preferred_contact_time' => $contactTime,
-            'preferred_contact_timezone' => $timezone,
+//            'preferred_contact_timezone' => $timezone,
             'daily_reminder_optin' => 'Y',
             'daily_reminder_time' => '08:00',
             'daily_reminder_areas' => 'TBD',

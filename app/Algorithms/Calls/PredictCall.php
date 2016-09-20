@@ -211,6 +211,7 @@ class PredictCall
             'window_start' => $window_start,
             'window_end' => $window_end,
             //'next_contact_windows' => $next_contact_windows,
+            'logic' => $this->logic,
             'successful' => false
         ];
 
@@ -300,7 +301,9 @@ class PredictCall
 
             }
 
-        } else if ($this->ccmTime > 899) { // 15 - 20 mins
+        }
+
+        else if ($this->ccmTime > 899) { // 15 - 20 mins
 
             if ($week_num == 1 || $week_num == 2) { // We are in the first two weeks of the month
 
@@ -334,7 +337,7 @@ class PredictCall
 
                 if ($this->ccmTime > 1020) {
 
-                    $this->logic = 'Greater than 17, same day, add attempt note';
+                    $this->logic = 'Greater than 17 mins, same day, add attempt note';
                     $this->attemptNote = 'Please review careplan';
 
                     return $next_window_carbon;
@@ -348,7 +351,9 @@ class PredictCall
 
             }
 
-        } else if ($this->ccmTime > 599) { // 10 - 15 mins
+        }
+
+        else if ($this->ccmTime > 599) { // 10 - 15 mins
 
             if ($week_num == 1 || $week_num == 2) { // We are in the first two weeks of the month
 
@@ -357,7 +362,7 @@ class PredictCall
 
             } else if ($week_num == 3 || $week_num == 4) { //second last week of month
 
-                $this->logic = 'Call patient in first week of next month';
+                $this->logic = 'Call patient after one week';
                 return $next_window_carbon->addWeek(1);
 
             } else if ($week_num == 5) { //last-ish week of month
@@ -367,21 +372,23 @@ class PredictCall
 
             }
 
-        } else { // 0 - 10 mins
+        }
+
+        else { // 0 - 10 mins
 
             if ($week_num == 1 || $week_num == 2) { // We are in the first two weeks of the month
 
-                $this->logic = 'Call patient in the second last week of the month';
+                $this->logic = 'Call patient after a week';
                 return $next_window_carbon->addWeek(1);
 
             } else if ($week_num == 3 || $week_num == 4) { //second last week of month
 
-                $this->logic = 'Call patient in first week of next month';
+                $this->logic = 'Call patient after a week';
                 return $next_window_carbon->addWeek(1);
 
             } else if ($week_num == 5) { //last-ish week of month
 
-                $this->logic = 'Call patient after two weeks';
+                $this->logic = 'Call patient after a week';
                 return $next_window_carbon->addWeek(1);
 
             }
@@ -659,6 +666,7 @@ class PredictCall
         //$prediction['success_percent'] = ($successfulCallsThisMonth == 0 || $callsThisMonth == 0) ? 0 : ( ($successfulCallsThisMonth) / ($callsThisMonth) ) * 100;
         $prediction['ccm_time_achieved'] = $ccm_time_achieved;
         $prediction['formatted_monthly_time'] = $formattedMonthlyTime;
+        $prediction['attempt_note'] = '';
 
         return $prediction;
     }

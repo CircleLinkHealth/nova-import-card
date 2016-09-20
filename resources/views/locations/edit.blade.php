@@ -64,6 +64,24 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="col-md-4 control-label">{!! Form::label('timezone', 'Timezone: ') !!}</label>
+                                <div class="col-md-6">
+                                    {!! Form::select('timezone',
+                                    array(
+                                    'America/New_York' => 'Eastern Time',
+                                    'America/Chicago' => 'Central Time',
+                                    'America/Denver' => 'Mountain Time',
+                                    'America/Phoenix' => 'Mountain Time (no DST)',
+                                    'America/Los_Angeles' => 'Pacific Time',
+                                    'America/Anchorage' => 'Alaska Time',
+                                    'America/Adak' => 'Hawaii-Aleutian',
+                                    'Pacific/Honolulu' => 'Hawaii-Aleutian Time (no DST)',
+                                    ),
+                                    $location->timezone, ['class' => 'form-control', 'style' => 'width:100%;']) !!}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="col-md-4 control-label">Postal Code</label>
                                 <div class="col-md-6">
                                     <input type="text" class="form-control" name="postal_code" value="{{$location->postal_code}}" required>
