@@ -21,6 +21,7 @@ class SchedulerService
         'Sue' => 1877,
         'Monique' => 2332,
         'Erin' => 2398,
+        'Kerri' => 2012,
     ];
 
     /* Success is the call's status.
