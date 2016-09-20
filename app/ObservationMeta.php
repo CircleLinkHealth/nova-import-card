@@ -1,9 +1,6 @@
 <?php namespace App;
 
-use App\User;
-use App\UserMeta;
 use Illuminate\Database\Eloquent\Model;
-use DB;
 
 class ObservationMeta extends Model {
 
