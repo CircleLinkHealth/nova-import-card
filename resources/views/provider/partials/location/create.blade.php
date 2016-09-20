@@ -1,4 +1,5 @@
 {!! Form::open(['url' => route('post.store.location'), 'method' => 'post']) !!}
+<i class="material-icons">mode_edit</i>
 <div class="mdl-grid">
     <div class="mdl-cell mdl-cell--12-col">
         @include('provider.partials.mdl.form.text.textfield', [ 'name' => 'name', 'label' => 'Name', 'value' => $location['name'] ])

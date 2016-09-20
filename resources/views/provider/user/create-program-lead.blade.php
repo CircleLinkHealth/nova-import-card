@@ -1,6 +1,6 @@
 @extends('provider.layouts.default')
 
-@section('title', 'Provider Dashboard')
+@section('title', 'Create Program Lead')
 
 <head>
     <style>

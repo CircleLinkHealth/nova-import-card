@@ -683,10 +683,11 @@ Route::group([
     Route::controller('dashboard', 'Provider\DashboardController', [
         'getCreateLocation' => 'get.create.location',
         'getCreatePractice' => 'get.create.practice',
-        'getCreateUser' => 'get.create.user',
-        'getIndex' => 'get.provider.dashboard',
+        'getCreateStaff'    => 'get.create.staff',
+        'getCreateUser'     => 'get.create.user',
+        'getIndex'          => 'get.provider.dashboard',
         'postStoreLocation' => 'post.store.location',
         'postStorePractice' => 'post.store.practice',
-        'postStoreUser' => 'post.store.user',
+        'postStoreUser'     => 'post.store.user',
     ]);
 });

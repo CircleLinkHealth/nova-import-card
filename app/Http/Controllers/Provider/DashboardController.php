@@ -43,9 +43,14 @@ class DashboardController extends Controller
         return view('provider.practice.create', compact('practice'));
     }
 
+    public function getCreateStaff()
+    {
+        return view('provider.user.create-staff');
+    }
+
     public function getCreateUser()
     {
-        return view('provider.user.create');
+        return view('provider.user.create-program-lead');
     }
 
     public function getIndex()

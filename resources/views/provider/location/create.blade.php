@@ -11,12 +11,12 @@
 
             @foreach($locations as $location)
                 <section class="mdl-cell--4-col">
-                    @include('provider.partials.location.create', $location)
+                    @include('provider.partials.location.show', $location)
                 </section>
             @endforeach
-
         </main>
-
     </div>
+
+
 
 @endsection

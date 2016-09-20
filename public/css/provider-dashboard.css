@@ -212,4 +212,9 @@ _:-ms-input-placeholder,
   color: #F95A18;
 }
 
+.card-square.mdl-card {
+    width: 200px;
+    height: 200px;
+}
+
 /*# sourceMappingURL=provider-dashboard.css.map */
