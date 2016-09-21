@@ -97,7 +97,6 @@ class CallController extends Controller
 
     public function schedule(Request $request)
     {
-
         $input = $request->all();
 
         $window_start = Carbon::parse($input['window_start'])->format('H:i');
