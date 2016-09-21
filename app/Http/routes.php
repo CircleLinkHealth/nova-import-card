@@ -7,7 +7,7 @@ use App\User;
 Route::get('algo/rescheduler', function(){
 
     $calls = SchedulerService::getUnAttemptedCalls();
-    $handled = array();
+    $handled = [];
 
     foreach ($calls as $call) {
         $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call, false))->reconcileDroppedCallHandler();
@@ -291,6 +291,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('call', [
                 'uses' => 'Admin\Reports\CallReportController@exportxls',
                 'as' => 'CallReportController.exportxls'
+            ]);
+
+            Route::get('provider-usage', [
+                'uses' => 'Admin\Reports\ProviderUsageReportController@index',
+                'as'   => 'ProviderUsageReportController.index'
             ]);
 
             Route::get('patient-conditions', [
