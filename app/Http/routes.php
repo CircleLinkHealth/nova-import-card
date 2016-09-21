@@ -299,6 +299,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'ProviderUsageReportController.index'
             ]);
 
+            Route::get('provider-monthly-usage', [
+                'uses' => 'Admin\Reports\ProviderMonthlyUsageReportController@index',
+                'as'   => 'ProviderMonthlyUsageReportController.index'
+            ]);
+
             Route::get('patient-conditions', [
                 'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
                 'as' => 'PatientConditionsReportController.getReport'
