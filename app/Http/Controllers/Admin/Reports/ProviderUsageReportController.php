@@ -138,7 +138,7 @@ class ProviderUsageReportController extends Controller
 
             // sheet for each program
             foreach ($worksheets as $worksheetName => $worksheetData) {
-                $excel->sheet("{$worksheetName}", function ($sheet) use
+                $excel->sheet(substr($worksheetName, 0, 20), function ($sheet) use
                 (
                     $worksheetData,
                     $headers
