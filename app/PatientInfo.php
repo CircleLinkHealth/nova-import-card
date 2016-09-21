@@ -59,6 +59,13 @@ class PatientInfo extends Model {
         return $this->belongsTo(User::class, 'user_id', 'ID');
     }
 
+	public function family(){
+
+		$this->belongsTo(Family::class);
+
+	}
+
+
 	// END RELATIONSHIPS
 
 
