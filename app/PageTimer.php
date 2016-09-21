@@ -34,6 +34,11 @@ class PageTimer extends Model {
 
     protected $dates = ['deleted_at'];
 
+    public function logger()
+    {
+        return $this->belongsTo('App\User', 'provider_id', 'ID');
+    }
+
     public function rule()
     {
         return $this->belongsTo('App\Rules');
