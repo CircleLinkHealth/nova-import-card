@@ -43,7 +43,7 @@ class ProviderUsageReportController extends Controller
         $programStats = [];
 
         // get all program
-        $programs = Program::get()->lists('display_name', 'blog_id')->all();
+        $programs = Program::where('name', '=', 'nestor')->get()->lists('display_name', 'blog_id')->all();
 
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
 
@@ -57,8 +57,11 @@ class ProviderUsageReportController extends Controller
         // get stats for each program
         foreach ($programs as $programId => $programName) {
             $programStats[$programName] = [];
+            $programStats[$programName]['dates'] = []; // array of dates
+
+            /***** OFFICE USERS *******/
             // get users
-            $patientIds = User::
+            $officeUserIds = User::
             whereHas('programs', function ($q) use
             (
                 $programId
@@ -73,18 +76,87 @@ class ProviderUsageReportController extends Controller
                 })
                 ->pluck('ID')->toArray();
 
-            $programStats[$programName]['number_of_office_users'] = count($patientIds);
+            $programStats[$programName]['number_of_office_users'] = count($officeUserIds);
 
-
-            $programStats[$programName]['dates'] = []; // array of dates
             // get all pagetimes for users, per day:
             $pagetimes = PageTimer::
             whereHas('logger', function ($q) use
             (
-                $patientIds
+                $officeUserIds
             ) {
-                $q->whereIn('ID', $patientIds);
+                $q->whereIn('ID', $officeUserIds);
             })
+                ->whereBetween('start_time', [
+                    $startDate,
+                    $endDate
+                ])
+                //->limit(10)
+                ->get(); // ->sum('duration')
+            foreach ($period as $dt) {
+                $programStats[$programName]['dates'][$dt->format('Y-m-d')] = [];
+                $pagetimesForDate = 0;
+                if ($pagetimes->count() > 0) {
+                    $pagetimesForDate = $pagetimes->filter(function ($item) use
+                    (
+                        $dt
+                    ) {
+                        return (data_get($item, 'start_time') > $dt->format('Y-m-d') . ' 00:00:01') && (data_get($item,
+                                'start_time') < $dt->format('Y-m-d') . ' 23:59:59');
+                    })->count();
+                }
+                $programStats[$programName]['dates'][$dt->format('Y-m-d')]['pageviews'] = $pagetimesForDate;
+            }
+
+
+            /***** CARE CENTER USERS *******/
+            // get users
+            $nurseUserIds = User::
+            whereHas('programs', function ($q) use
+            (
+                $programId
+            ) {
+                $q->whereIn('program_id', [$programId]);
+            })
+                ->whereHas('roles', function ($q) {
+                    $q->whereIn('name', [
+                        'care-center'
+                    ]);
+                })
+                ->pluck('ID')->toArray();
+
+            $programStats[$programName]['number_of_nurse_users'] = count($nurseUserIds);
+
+            // get participants
+            $participantUserIds = User::
+            whereHas('programs', function ($q) use
+            (
+                $programId
+            ) {
+                $q->whereIn('program_id', [$programId]);
+            })
+                ->whereHas('roles', function ($q) {
+                    $q->whereIn('name', [
+                        'participant'
+                    ]);
+                })
+                ->pluck('ID')->toArray();
+
+            $programStats[$programName]['number_of_participant_users'] = count($participantUserIds);
+
+            // get all pagetimes for users, per day:
+            $pagetimes = PageTimer::
+            whereHas('logger', function ($q) use
+            (
+                $nurseUserIds
+            ) {
+                $q->whereIn('ID', $nurseUserIds);
+            })
+                ->whereHas('patient', function ($q) use
+                (
+                    $participantUserIds
+                ) {
+                    $q->whereIn('ID', $participantUserIds);
+                })
                 ->whereBetween('start_time', [
                     $startDate,
                     $endDate
@@ -102,13 +174,12 @@ class ProviderUsageReportController extends Controller
                                 'start_time') < $dt->format('Y-m-d') . ' 23:59:59');
                     })->count();
                 }
-                $programStats[$programName]['dates'][$dt->format('Y-m-d')] = [];
-                $programStats[$programName]['dates'][$dt->format('Y-m-d')]['pageviews'] = $pagetimesForDate;
+                $programStats[$programName]['dates'][$dt->format('Y-m-d')]['nurse_pageviews'] = $pagetimesForDate;
             }
+
 
             //$programStats[$programName]['number_of_pageviews'] = $pagetimes->count();
         }
-        //dd($programStats);
 
         $worksheets = $programStats;
 
@@ -133,7 +204,8 @@ class ProviderUsageReportController extends Controller
             // headers
             $headers = [
                 'Date',
-                'Pageviews'
+                'Office Pageviews',
+                'Nurse Pageviews'
             ];
 
             // sheet for each program
@@ -147,7 +219,8 @@ class ProviderUsageReportController extends Controller
                     foreach ($worksheetData['dates'] as $date => $dateData) {
                         $sheet->appendRow([
                             $date,
-                            $dateData['pageviews']
+                            $dateData['pageviews'],
+                            $dateData['nurse_pageviews']
                         ]);
                     }
                 });
