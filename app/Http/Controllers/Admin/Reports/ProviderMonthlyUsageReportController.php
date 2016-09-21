@@ -6,14 +6,10 @@ use App\PageTimer;
 use App\Program;
 use App\User;
 use Auth;
-use Carbon\Carbon;
-use DateInterval;
-use DatePeriod;
-use DateTime;
 use Excel;
 use Illuminate\Http\Request;
 
-class ProviderUsageReportController extends Controller
+class ProviderMonthlyUsageReportController extends Controller
 {
 
     /**
@@ -23,36 +19,32 @@ class ProviderUsageReportController extends Controller
      */
     public function index(Request $request)
     {
-        // get array of dates
-        $startDate = new DateTime('first day of this month');
-        $endDate = new DateTime(date('Y-m-d'));
-
-        // if form submitted dates, override here
-        $showAllTimes = false;
-        if ($request->all('showAllTimes') == 'checked') {
-            $showAllTimes = 'checked';
-        }
-        if ($request->all('start_date')) {
-            $startDate = new DateTime($request->input('start_date') . ' 00:00:01');
-        }
-        if ($request->all('end_date')) {
-            $endDate = new DateTime($request->input('end_date') . ' 23:59:59');
-        }
+        $startDate = '2016-01-01 00:00:01';
+        $endDate = '2016-10-31 23:59:59';
+        // months array
+        $monthDates = [
+            '2016-01-01' => '2016-01-31',
+            '2016-02-01' => '2016-02-29',
+            '2016-03-01' => '2016-03-31',
+            '2016-04-01' => '2016-04-30',
+            '2016-05-01' => '2016-05-31',
+            '2016-06-01' => '2016-06-30',
+            '2016-07-01' => '2016-07-31',
+            '2016-08-01' => '2016-08-31',
+            '2016-09-01' => '2016-09-30',
+            '2016-10-01' => '2016-10-31',
+        ];
 
         //
         $programStats = [];
 
-        // get all program
-        $programs = Program::where('name', '=', 'nestor')->get()->lists('display_name', 'blog_id')->all();
-
-        $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
-
-        $sheetRows = []; // so we can reverse after
-
-        $userTotals = ['TOTAL:'];
-        foreach ($period as $dt) {
-
+        $program = 'nestor';
+        if ($request->all('program')) {
+            $program = $request->input('program');
         }
+
+        // get all program
+        $programs = Program::where('name', '=', $program)->get()->lists('display_name', 'blog_id')->all();
 
         // get stats for each program
         foreach ($programs as $programId => $programName) {
@@ -92,19 +84,20 @@ class ProviderUsageReportController extends Controller
                 ])
                 //->limit(10)
                 ->get(); // ->sum('duration')
-            foreach ($period as $dt) {
-                $programStats[$programName]['dates'][$dt->format('Y-m-d')] = [];
+            foreach ($monthDates as $monthDateStart => $monthDateEnd) {
+                $programStats[$programName]['dates'][$monthDateStart . '-' . $monthDateEnd] = [];
                 $pagetimesForDate = 0;
                 if ($pagetimes->count() > 0) {
                     $pagetimesForDate = $pagetimes->filter(function ($item) use
                     (
-                        $dt
+                        $monthDateStart,
+                        $monthDateEnd
                     ) {
-                        return (data_get($item, 'start_time') > $dt->format('Y-m-d') . ' 00:00:01') && (data_get($item,
-                                'start_time') < $dt->format('Y-m-d') . ' 23:59:59');
+                        return (data_get($item, 'start_time') > $monthDateStart . ' 00:00:01') && (data_get($item,
+                                'start_time') < $monthDateEnd . ' 23:59:59');
                     })->count();
                 }
-                $programStats[$programName]['dates'][$dt->format('Y-m-d')]['pageviews'] = $pagetimesForDate;
+                $programStats[$programName]['dates'][$monthDateStart . '-' . $monthDateEnd]['pageviews'] = $pagetimesForDate;
             }
 
 
@@ -163,18 +156,19 @@ class ProviderUsageReportController extends Controller
                 ])
                 //->limit(10)
                 ->get(); // ->sum('duration')
-            foreach ($period as $dt) {
+            foreach ($monthDates as $monthDateStart => $monthDateEnd) {
                 $pagetimesForDate = 0;
                 if ($pagetimes->count() > 0) {
                     $pagetimesForDate = $pagetimes->filter(function ($item) use
                     (
-                        $dt
+                        $monthDateStart,
+                        $monthDateEnd
                     ) {
-                        return (data_get($item, 'start_time') > $dt->format('Y-m-d') . ' 00:00:01') && (data_get($item,
-                                'start_time') < $dt->format('Y-m-d') . ' 23:59:59');
+                        return (data_get($item, 'start_time') > $monthDateStart . ' 00:00:01') && (data_get($item,
+                                'start_time') < $monthDateEnd . ' 23:59:59');
                     })->count();
                 }
-                $programStats[$programName]['dates'][$dt->format('Y-m-d')]['nurse_pageviews'] = $pagetimesForDate;
+                $programStats[$programName]['dates'][$monthDateStart . '-' . $monthDateEnd]['nurse_pageviews'] = $pagetimesForDate;
             }
 
 
@@ -183,27 +177,26 @@ class ProviderUsageReportController extends Controller
 
         $worksheets = $programStats;
 
-        $date = Carbon::now()->startOfMonth();
 
-        Excel::create('CLH-Provider_Usage-Report-' . $date, function ($excel) use
+        Excel::create('CLH-Provider-Usage-Report-2016-' . $program, function ($excel) use
         (
-            $date,
-            $worksheets
+            $worksheets,
+            $program
         ) {
 
             // Set the title
-            $excel->setTitle('CLH Call Report - ' . $date);
+            $excel->setTitle('CLH Provider Monthly Usage Report-  2016 - ' . $program);
 
             // Chain the setters
             $excel->setCreator('CLH System')
                 ->setCompany('CircleLink Health');
 
             // Call them separately
-            $excel->setDescription('CLH Call Report - ' . $date);
+            $excel->setDescription('CLH Provider Monthly Usage Report - 2016 - ' . $program);
 
             // headers
             $headers = [
-                'Date',
+                'Date Range',
                 'Office Pageviews',
                 'Nurse Pageviews'
             ];

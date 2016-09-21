@@ -39,6 +39,11 @@ class PageTimer extends Model {
         return $this->belongsTo('App\User', 'provider_id', 'ID');
     }
 
+    public function patient()
+    {
+        return $this->belongsTo('App\User', 'patient_id', 'ID');
+    }
+
     public function rule()
     {
         return $this->belongsTo('App\Rules');
