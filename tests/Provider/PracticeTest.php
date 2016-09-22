@@ -35,7 +35,6 @@ class PracticeTest extends TestCase
             'name' => $name,
             'display_name' => $name,
             'description' => $description,
-            'domain' => "$name.careplanmanager.com",
             'user_id' => auth()->user()->ID,
         ]);
     }

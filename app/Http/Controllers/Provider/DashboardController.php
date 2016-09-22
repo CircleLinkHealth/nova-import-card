@@ -72,7 +72,6 @@ class DashboardController extends Controller
                 'user_id' => auth()->user()->ID,
                 'display_name' => $input['name'],
                 'description' => $input['description'],
-                'domain' => "{$input['url']}.careplanmanager.com",
             ]);
         } catch (ValidatorException $e) {
             return redirect()
