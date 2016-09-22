@@ -7,7 +7,7 @@ $(document).ready(function(){
 
 });
 
-$(document).ready(function () {
+$(function () {
     // Setup - add a text input to each footer cell
     $('#calls-table thead th').each(function () {
         if (!$(this).hasClass('nosearch')) {
@@ -44,6 +44,7 @@ $(document).ready(function () {
             {data: 'scheduled_date', name: 'scheduled_date'},
             {data: 'window_start', name: 'window_start'},
             {data: 'window_end', name: 'window_end'},
+            {data: 'patient_timezone', name: 'patient_timezone'},
             {data: 'patient_call_window_days_short', name: 'patient_call_window_days_short'},
             {data: 'last_contact_time', name: 'last_contact_time'},
             {data: 'cur_month_activity_time', name: 'cur_month_activity_time', searchable: false},
