@@ -6,6 +6,8 @@ use App\Algorithms\Calls\ReschedulerHandler;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('algo', function(){
+
+
     
 });
 
