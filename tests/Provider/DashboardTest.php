@@ -45,10 +45,10 @@ class DashboardTest extends TestCase
             ->press('Update Practice');
 
         $this->seeInDatabase('wp_blogs', [
-            'name' => $name,
+            'name'         => $name,
             'display_name' => $name,
-            'description' => $description,
-            'user_id' => auth()->user()->ID,
+            'description'  => $description,
+            'user_id'      => auth()->user()->ID,
         ]);
     }
 
@@ -58,7 +58,7 @@ class DashboardTest extends TestCase
 
         $role = Role::whereName('program-lead')->first();
 
-        $subject = 'You are invited to joing CPM';
+        $subject = 'You are invited to join CPM';
         $message = 'Please create a CPM account.';
 
         $this->actingAs($this->programLead)
