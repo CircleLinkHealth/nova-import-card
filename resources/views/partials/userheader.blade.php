@@ -71,7 +71,7 @@
                         </select>
                     </li>
                 @else
-                    <li class=" inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ? 'N/A' : ucwords($patient->ccm_status);  ?></li>
+                    <li id="status" class="inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ? 'N/A' : ucwords($patient->ccm_status);  ?></li>
                 @endif
             </ul>
         </div>
