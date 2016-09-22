@@ -87,7 +87,7 @@
                                                 <th>Next Call Date</th>
                                                 <th>Next Call Time Start</th>
                                                 <th>Next Call Time End</th>
-                                                <th>Timezone</th>
+                                                <th>Time Zone</th>
                                                 <th>Last Date called</th>
                                                 <th>CCM Time to date</th>
                                                 <th># Calls to date</th>
