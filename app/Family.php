@@ -13,7 +13,7 @@ class Family extends Model
 
     public function patients(){
 
-        $this->hasMany(PatientInfo::class, 'id', 'user_id');
+        return $this->hasMany(PatientInfo::class);
 
     }
 
