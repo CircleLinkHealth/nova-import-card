@@ -6,6 +6,8 @@ use App\Call;
 use App\User;
 use Carbon\Carbon;
 use Collection;
+use DateTime;
+use DateTimeZone;
 use Yajra\Datatables\Datatables;
 
 class DatatablesController extends Controller
@@ -69,6 +71,7 @@ class DatatablesController extends Controller
                     'patient_info.general_comment',
                     'patient_monthly_summaries.no_of_calls',
                     'patient_monthly_summaries.no_of_successful_calls',
+                    'patient.timezone AS patient_timezone',
                     \DB::raw('CONCAT_WS(", ", patient.last_name, patient.first_name) AS patient_name'),
                     'program.display_name AS program_name',
                     'billing_provider.display_name AS billing_provider'
@@ -130,7 +133,8 @@ class DatatablesController extends Controller
                 }
             })
             ->editColumn('patient_name', function($call) {
-                return '<a href="'.\URL::route('patient.demographics.show', array('patientId' => $call->inboundUser->ID)).'" target="_blank">'.$call->patient_name.'</span>';
+                return '<a href="' . \URL::route('patient.demographics.show',
+                    ['patientId' => $call->inboundUser->ID]) . '" target="_blank">' . $call->patient_name . '</span>';
             })
             ->editColumn('nurse_name', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="outbound_cpm_id" column-value="'.$call->outbound_cpm_id.'">'.$call->nurse_name.'</span>';
@@ -159,7 +163,7 @@ class DatatablesController extends Controller
                 }
             })
             ->addColumn('patient_call_windows', function($call) {
-                $days = array(
+                $days = [
                     1 => 'M',
                     2 => 'Tu',
                     3 => 'W',
@@ -167,7 +171,7 @@ class DatatablesController extends Controller
                     5 => 'F',
                     6 => 'Sa',
                     7 => 'Su'
-                );
+                ];
                 $windowText = '';
                 if($call->inboundUser && $call->inboundUser->patientInfo) {
                     $windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
@@ -188,7 +192,7 @@ class DatatablesController extends Controller
                 return $windowText;
             })
             ->addColumn('patient_call_window_days_short', function($call) {
-                $days = array(
+                $days = [
                     1 => 'M',
                     2 => 'Tu',
                     3 => 'W',
@@ -196,7 +200,7 @@ class DatatablesController extends Controller
                     5 => 'F',
                     6 => 'Sa',
                     7 => 'Su'
-                );
+                ];
                 if($call->inboundUser && $call->inboundUser->patientInfo) {
                     $windowText = '';
                     $windows = $call->inboundUser->patientInfo->patientContactWindows()->get();
@@ -214,8 +218,15 @@ class DatatablesController extends Controller
                     return 'n/a';
                 }
             })
+            ->addColumn('patient_timezone', function ($call) {
+                $dateTime = new DateTime();
+                $dateTime->setTimeZone(new DateTimeZone($call->patient_timezone));
+
+                return '<span style="font-weight:bold;color:green;">' . $dateTime->format('T') . '</a>';
+            })
             ->addColumn('notes_link', function($call) {
-                return '<a target="_blank" href="'.\URL::route('patient.note.index', array('patientId' => $call->inboundUser->ID)).'">Notes</a>';
+                return '<a target="_blank" href="' . \URL::route('patient.note.index',
+                    ['patientId' => $call->inboundUser->ID]) . '">Notes</a>';
             })
             ->addColumn('notes_html', function($call) {
                 $notesHtml = '';
