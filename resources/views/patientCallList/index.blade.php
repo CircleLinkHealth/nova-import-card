@@ -5,7 +5,6 @@
 
 @section('content')
 
-    <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script>
