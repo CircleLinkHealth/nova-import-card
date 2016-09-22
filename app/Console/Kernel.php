@@ -1,6 +1,7 @@
 <?php namespace App\Console;
 
 use App\Algorithms\Calls\PredictCall;
+use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\FormatLocationPhone;
 use App\Console\Commands\GeneratePatientReports;
@@ -58,13 +59,7 @@ class Kernel extends ConsoleKernel
         //Reconciles missed calls and creates a new call for patient using algo
         $schedule->call(function () {
 
-            $calls = SchedulerService::getUnAttemptedCalls();
-            $handled = array();
-
-            foreach ($calls as $call) {
-                Log::info('INFO FOR NEW CALL: ' . $call->id);
-                $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call, false))->reconcileDroppedCallHandler();
-            }
+            $handled = (new ReschedulerHandler())->handle();
 
             if(!empty($handled)) { Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls"); }
 

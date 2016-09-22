@@ -1,14 +1,15 @@
 <?php namespace App\Services\Calls;
 
-
-use App\Activity;
-use App\Algorithms\Calls\PredictCall;
+use App\Algorithms\Calls\SuccessfulHandler;
+use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
 use App\Note;
 use App\PatientInfo;
 use App\PatientMonthlySummary;
+use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
 {
@@ -33,17 +34,33 @@ class SchedulerService
 
         $note = Note::find($noteId);
 
+        //find previously scheduled call and update it with attempt results as reached or not reached.
+        $this->updateOrCreatePreviousScheduledCall($note,
+                                                   $scheduled_call,
+                                                   $success ? 'reached' : 'not reached');
+
+
         //Updates Call Record
         PatientMonthlySummary::updateCallInfoForPatient($patient->patientInfo, $success);
 
-        return (new PredictCall($patient, $scheduled_call, $success))->predict($note);
+        if($success){
+
+            $prediction = (new SuccessfulHandler($patient->patientInfo))->handle();
+            $prediction['successful'] = true;
+            return $prediction;
+
+        }
+
+        $prediction = (new UnsuccessfulHandler($patient->patientInfo))->handle();
+        $prediction['successful'] = false;
+        return $prediction;
+
 
     }
 
     //Create new scheduled call
     public function storeScheduledCall($patientId, $window_start, $window_end, $date, $scheduler, $nurse_id = false, $attempt_note = '')
     {
-
         $patient = User::find($patientId);
 
         $window_start = Carbon::parse($window_start)->format('H:i');
@@ -76,6 +93,34 @@ class SchedulerService
         ]);
     }
 
+    //Updates previous call
+    public function updateOrCreatePreviousScheduledCall(Note $note, $call, $status){
+
+                $patient = $note->patient;
+
+                if ($call) {
+
+                    $call->status = $status;
+                    $call->note_id = $note->id;
+                    $call->called_date = Carbon::now()->toDateTimeString();
+                    $call->outbound_cpm_id = Auth::user()->ID;
+                    $call->save();
+
+                } else { // If call doesn't exist, make one and store it
+
+                    (new NoteService)->storeCallForNote(
+                        $note,
+                        $status,
+                        $patient,
+                        Auth::user(),
+                        'outbound',
+                        'core algorithm'
+                    );
+
+                }
+
+            }
+
     //extract the last scheduled call
     public function getScheduledCallForPatient($patient)
     {
@@ -90,41 +135,6 @@ class SchedulerService
         return $call;
     }
 
-    public static function getUnAttemptedCalls()
-    {
-
-        $calls = Call::whereStatus('scheduled')
-            ->where('scheduled_date', '<=', Carbon::now()->toDateString())->get();
-
-        $missed = array();
-
-        /*
-         * Check to see if the call is dropped if it's the current day
-         * Since we store the date and times separately for other
-         * considerations, we have to join them and compare
-         * to see if a call was missed on the same day
-        */
-
-        foreach ($calls as $call) {
-
-            $end_carbon = Carbon::parse($call->scheduled_date);
-
-            $carbon_hour_end = Carbon::parse($call->window_end)->format('H');
-            $carbon_minutes_end = Carbon::parse($call->window_end)->format('i');
-
-            $end_time = $end_carbon->setTime($carbon_hour_end, $carbon_minutes_end)->toDateTimeString();
-
-            $now_carbon = Carbon::now()->toDateTimeString();
-
-            if ($end_time < $now_carbon) {
-                $missed[] = $call;
-            }
-
-        }
-
-        return $missed;
-
-    }
 
     public function removeScheduledCallsForWithdrawnPatients()
     {
@@ -219,63 +229,64 @@ class SchedulerService
         return $failed;
     }
 
+
     /* This solve the issue where a call is scheduled but RN spends
     CCM time doing other work after the call is over and note
     is saved */
-    public function tuneScheduledCallsWithUpdatedCCMTime()
-    {
-
-        //Get all enrolled Patients
-        $patients = PatientInfo::enrolled()->get();
-
-        $reprocess_bucket = [];
-
-        foreach ($patients as $patient) {
-
-            //Get time for last note entered
-            $last_note_time = Activity::whereType('Patient Note Creation')->wherePatientId($patient->user_id)->orderBy('created_at', 'desc')->pluck('created_at')->first();
-
-            //Get time for last activity recorded
-            $last_activity_time = Activity::wherePatientId($patient->user_id)->orderBy('created_at', 'desc')->pluck('created_at')->first();
-
-            //check if they both exist
-            if ($last_note_time != null && $last_activity_time != null) {
-
-                //then check if the note was made before the last activity
-                if ($last_note_time < $last_activity_time) {
-
-                    //have to pull the last scheduled call, but only if it was made by the algo
-                    //since we don't mess with calls scheduled manually
-                    $scheduled_call = $patient->user->inboundCalls()->where('status', 'scheduled')->where('scheduler', 'algorithm')->first();
-                    $last_attempted_call = $patient->user->inboundCalls()->where('status', '!=', 'scheduled')->orderBy('created_at', 'desc')->first();
-
-                    //make sure we have a call attempt and a scheduled call.
-                    if (is_object($scheduled_call) && is_object($last_attempted_call)) {
-
-                        $status = ($last_attempted_call->status == 'reached') ? true : false;
-
-                        //see how much time should wait now that the algo has updated information
-                        $scheduled_call->scheduled_date = (new PredictCall($patient->user, $last_attempted_call, $status))
-                            ->getUnsuccessfulCallTimeOffset(
-                                Carbon::now()->weekOfMonth,
-                                Carbon::now())
-                            ->toDateString();
-
-                        $scheduled_call->scheduler = 'refresher algorithm';
-                        $scheduled_call->save();
-
-                        $reprocess_bucket[] = 'Patient: ' . $patient->user_id . ' was tuned, will now be called on ' . $scheduled_call->scheduled_date;
-
-                    }
-
-                }
-            }
-        }
-
-        return empty($reprocess_bucket)
-            ? 'No Patients Need Refreshin\'!'
-            : $reprocess_bucket;
-
-    }
+//    public function tuneScheduledCallsWithUpdatedCCMTime()
+//    {
+//
+//        //Get all enrolled Patients
+//        $patients = PatientInfo::enrolled()->get();
+//
+//        $reprocess_bucket = [];
+//
+//        foreach ($patients as $patient) {
+//
+//            //Get time for last note entered
+//            $last_note_time = Activity::whereType('Patient Note Creation')->wherePatientId($patient->user_id)->orderBy('created_at', 'desc')->pluck('created_at')->first();
+//
+//            //Get time for last activity recorded
+//            $last_activity_time = Activity::wherePatientId($patient->user_id)->orderBy('created_at', 'desc')->pluck('created_at')->first();
+//
+//            //check if they both exist
+//            if ($last_note_time != null && $last_activity_time != null) {
+//
+//                //then check if the note was made before the last activity
+//                if ($last_note_time < $last_activity_time) {
+//
+//                    //have to pull the last scheduled call, but only if it was made by the algo
+//                    //since we don't mess with calls scheduled manually
+//                    $scheduled_call = $patient->user->inboundCalls()->where('status', 'scheduled')->where('scheduler', 'algorithm')->first();
+//                    $last_attempted_call = $patient->user->inboundCalls()->where('status', '!=', 'scheduled')->orderBy('created_at', 'desc')->first();
+//
+//                    //make sure we have a call attempt and a scheduled call.
+//                    if (is_object($scheduled_call) && is_object($last_attempted_call)) {
+//
+//                        $status = ($last_attempted_call->status == 'reached') ? true : false;
+//
+//                        //see how much time should wait now that the algo has updated information
+//                        $scheduled_call->scheduled_date = (new PredictCall($patient->user, $last_attempted_call, $status))
+//                            ->getUnsuccessfulCallTimeOffset(
+//                                Carbon::now()->weekOfMonth,
+//                                Carbon::now())
+//                            ->toDateString();
+//
+//                        $scheduled_call->scheduler = 'refresher algorithm';
+//                        $scheduled_call->save();
+//
+//                        $reprocess_bucket[] = 'Patient: ' . $patient->user_id . ' was tuned, will now be called on ' . $scheduled_call->scheduled_date;
+//
+//                    }
+//
+//                }
+//            }
+//        }
+//
+//        return empty($reprocess_bucket)
+//            ? 'No Patients Need Refreshin\'!'
+//            : $reprocess_bucket;
+//
+//    }
 
 }
