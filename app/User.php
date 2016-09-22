@@ -39,22 +39,60 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	// for revisionable
 	use \Venturecraft\Revisionable\RevisionableTrait;
+	public $rules = [
+		'user_login'        => 'required',
+		// just a normal required validation
+		'user_email'        => 'required|email',
+		// required and must be unique in the wp_users table
+		'user_pass'         => 'required',
+		'user_pass_confirm' => 'required|same:user_pass',
+		// required and has to match the password field
+		//'user_nicename'         => 'required',
+		//'user_status'         => 'required',
+		//'display_name'         => 'required',
+	];
+	public $patient_rules = [
+		//"user_id" => "required",
+		"daily_reminder_optin"    => "required",
+		"daily_reminder_time"     => "required",
+		"daily_reminder_areas"    => "required",
+		"hospital_reminder_optin" => "required",
+		"hospital_reminder_time"  => "required",
+		"hospital_reminder_areas" => "required",
+		"qualification"           => "",
+		"specialty"               => "",
+		"npi_number"              => "",
+		"first_name"              => "required",
+		"last_name"               => "required",
+		"gender"                  => "required",
+		"mrn_number"              => "required",
+		"birth_date"              => "required",
+		"home_phone_number"       => "required",
+		"email"                   => "",
+		"address"                 => "",
+		"city"                    => "",
+		"state"                   => "",
+		"zip"                     => "",
+		"timezone"                => "",
+		//"preferred_contact_time" => "required",
+		//"preferred_contact_timezone" => "required",
+		"consent_date"            => "required",
+		"ccm_status"              => "required",
+		"program_id"              => "required"
+	];
 	protected $revisionCreationsEnabled = true;
-
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
 	protected $table = 'users';
-
 	/**
 	 * The primary key for the model.
 	 *
 	 * @var string
 	 */
 	protected $primaryKey = 'ID';
-
 	/**
 	 * The attributes that are mass assignable.
 	 *
@@ -64,53 +102,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		'user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_log',
 		'user_status', 'auto_attach_programs', 'display_name', 'spam', 'password', 'first_name', 'last_name', 'address',
 		'city', 'state', 'zip', 'timezone', 'is_auto_generated', 'program_id', 'remember_token', 'last_login', 'is_online'];
-
 	protected $hidden = ['user_pass', 'password'];
-
 	protected $dates = ['user_registered'];
-
-	public $rules = array(
-		'user_login'             => 'required',                        // just a normal required validation
-		'user_email'            => 'required|email',     // required and must be unique in the wp_users table
-		'user_pass'         => 'required',
-		'user_pass_confirm' => 'required|same:user_pass',           // required and has to match the password field
-		//'user_nicename'         => 'required',
-		//'user_status'         => 'required',
-		//'display_name'         => 'required',
-	);
-
-	public $patient_rules = array(
-		//"user_id" => "required",
-		"daily_reminder_optin" => "required",
-		"daily_reminder_time" => "required",
-		"daily_reminder_areas" => "required",
-		"hospital_reminder_optin" => "required",
-		"hospital_reminder_time" => "required",
-		"hospital_reminder_areas" => "required",
-		"qualification" => "",
-		"specialty" => "",
-		"npi_number" => "",
-		"first_name" => "required",
-		"last_name" => "required",
-		"gender" => "required",
-		"mrn_number" => "required",
-		"birth_date" => "required",
-		"home_phone_number" => "required",
-		"email" => "",
-		"address" => "",
-		"city" => "",
-		"state" => "",
-		"zip" => "",
-		"timezone" => "",
-		//"preferred_contact_time" => "required",
-		//"preferred_contact_timezone" => "required",
-		"consent_date" => "required",
-		"ccm_status" => "required",
-		"program_id" => "required"
-	);
 
 
 	// for revisionable
+
 	public static function boot()
 	{
 		parent::boot();
@@ -295,14 +292,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->belongsToMany(Location::class);
     }
 
-    public function meta()
+	public function patientDemographics()
     {
-        return $this->hasMany('App\UserMeta', 'user_id', 'ID');
-    }
-
-    public function patientDemographics()
-    {
-        return $this->hasMany(DemographicsImport::class, 'provider_id');
+		return $this->hasMany(DemographicsImport::class, 'provider_id');
     }
 
     public function comment()
@@ -335,11 +327,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('App\Activity', 'patient_id', 'ID');
 	}
 
-    public function ucp()
-	{
-		return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
-	}
-
 	public function providerInfo()
 	{
 		return $this->hasOne('App\ProviderInfo', 'user_id', 'ID');
@@ -365,11 +352,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasOne(PatientCarePlan::class, 'patient_id', 'ID');
 	}
 
-	public function patientCareTeamMembers()
-	{
-		return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'ID');
-	}
-
 	public function inboundCalls()
 	{
 		return $this->hasMany('App\Call', 'inbound_cpm_id', 'ID');
@@ -380,36 +362,51 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('App\Call', 'outbound_cpm_id', 'ID');
 	}
 
-
-	// END RELATIONSHIPS
-
-
-	public function viewableProgramIds() {
-		$programIds = $this->programs()->lists('blog_id')->all();
-		return $programIds;
-	}
-
-	public function viewablePatientIds() {
+	public function viewablePatientIds()
+	{
 		// get all patients who are in the same programs
 		$programIds = $this->viewableProgramIds();
-		$patientIds = User::whereHas('programs', function ($q) use ($programIds) {
+		$patientIds = User::whereHas('programs', function ($q) use
+		(
+			$programIds
+		) {
 			$q->whereIn('program_id', $programIds);
 		});
 
 		//if(!Auth::user()->can('admin-access')) {
-			$patientIds->whereHas('roles', function ($q) {
-				$q->where('name', '=', 'participant');
-			});
+		$patientIds->whereHas('roles', function ($q) {
+			$q->where('name', '=', 'participant');
+		});
 		//}
 
 		$patientIds = $patientIds->lists('ID')->all();
+
 		return $patientIds;
 	}
 
-	public function viewableProviderIds() {
+	public function viewableProgramIds()
+	{
+		$programIds = $this->programs()->lists('blog_id')->all();
+
+		return $programIds;
+	}
+
+	public function programs()
+	{
+		return $this->belongsToMany(Program::class, 'lv_program_user', 'user_id', 'program_id');
+	}
+
+
+	// END RELATIONSHIPS
+
+	public function viewableProviderIds()
+	{
 		// get all patients who are in the same programs
 		$programIds = $this->viewableProgramIds();
-		$patientIds = User::whereHas('programs', function ($q) use ($programIds) {
+		$patientIds = User::whereHas('programs', function ($q) use
+		(
+			$programIds
+		) {
 			$q->whereIn('program_id', $programIds);
 		});
 
@@ -420,10 +417,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		//}
 
 		$patientIds = $patientIds->lists('ID')->all();
+
 		return $patientIds;
 	}
 
-	public function viewableUserIds() {
+	public function viewableUserIds()
+	{
 		// get all patients who are in the same programs
 		$programIds = $this->viewableProgramIds();
 		$patientIds = User::whereHas('programs', function ($q) use ($programIds) {
@@ -432,6 +431,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 		$patientIds = $patientIds->lists('ID')->all();
 		return $patientIds;
+	}
+
+	public function userMeta($key = null)
+	{
+		$userMeta = $this->meta->lists('meta_value', 'meta_key')->all();
+		$userMeta['user_config'] = $this->userConfig();
+		if (!$userMeta) {
+			return false;
+		} else {
+			return $userMeta;
+		}
 	}
 
     public function userConfig(){
@@ -444,14 +454,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		}
 	}
 
-    public function userMeta($key=null){
-		$userMeta = $this->meta->lists('meta_value', 'meta_key')->all();
-		$userMeta['user_config'] = $this->userConfig();
-		if(!$userMeta) {
-			return false;
-		} else {
-			return $userMeta;
-		}
+	public function blogId()
+	{
+		return $this->program_id;
 	}
 
 	public function getUserMetaByKey($key)
@@ -481,6 +486,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return true;
 	}
 
+	public function meta()
+	{
+		return $this->hasMany('App\UserMeta', 'user_id', 'ID');
+	}
+
 	public function getUserConfigByKey($key)
 	{
 		$userConfig = $this->userConfig();
@@ -494,10 +504,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		if(empty($userConfig)) {
 			$userConfig = new UserMeta;
 			$userConfig->meta_key = $configKey;
-			$userConfig->meta_value = serialize(array());
+			$userConfig->meta_value = serialize([]);
 			$userConfig->user_id = $this->ID;
 			$userConfig->save();
-			$userConfigArray = array();
+			$userConfigArray = [];
 		} else {
 			$userConfigArray = unserialize($userConfig['meta_value']);
 		}
@@ -1135,22 +1145,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 // care_team
     public function getCareTeamAttribute()
     {
-        $ct = array();
+		$ct = [];
         $careTeamMembers = $this->patientCareTeamMembers->where('type', 'member');
         if ($careTeamMembers->count() > 0) {
             foreach ($careTeamMembers as $careTeamMember) {
                 $ct[] = $careTeamMember->member_user_id;
             }
         }
-
-		/**
-		 * Added this to fix providers not showing up for users who don't have member.
-		 */
-		$ct = $this->patientCareTeamMembers
-			->where('type', 'lead_contact')
-			->lists('member_user_id')
-			->all();
-
 		return $ct;
     }
 
@@ -1177,118 +1178,138 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
 // send_alert_to
-    public function getSendAlertToAttribute()
-    {
-        $ctmsa = array();
-        if (!$this->patientCareTeamMembers) {
-            return '';
-        }
-        if ($this->patientCareTeamMembers->count() > 0) {
-            foreach ($this->patientCareTeamMembers as $careTeamMember) {
-                if ($careTeamMember->type == 'send_alert_to') {
-                    $ctmsa[] = $careTeamMember->member_user_id;
-                }
-            }
-        }
-        return $ctmsa;
-    }
 
-    public function setSendAlertToAttribute($memberUserIds)
+	public function patientCareTeamMembers()
+	{
+		return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'ID');
+	}
+
+	public function getSendAlertToAttribute()
     {
-        if (!is_array($memberUserIds)) {
-            $this->patientCareTeamMembers()->where('type', 'send_alert_to')->delete();
-            return false; // must be array
+		$ctmsa = [];
+		if (!$this->patientCareTeamMembers) {
+			return '';
         }
-        $this->patientCareTeamMembers()->where('type', 'send_alert_to')->whereNotIn('member_user_id', $memberUserIds)->delete();
-        foreach ($memberUserIds as $memberUserId) {
-            $careTeamMember = $this->patientCareTeamMembers()->where('type', 'send_alert_to')->where('member_user_id', $memberUserId)->first();
-            if ($careTeamMember) {
-                $careTeamMember->member_user_id = $memberUserId;
-            } else {
-                $careTeamMember = new PatientCareTeamMember();
-                $careTeamMember->user_id = $this->ID;
-                $careTeamMember->member_user_id = $memberUserId;
-                $careTeamMember->type = 'send_alert_to';
+		if ($this->patientCareTeamMembers->count() > 0) {
+			foreach ($this->patientCareTeamMembers as $careTeamMember) {
+				if ($careTeamMember->type == 'send_alert_to') {
+					$ctmsa[] = $careTeamMember->member_user_id;
+				}
             }
-            $careTeamMember->save();
         }
-        return true;
+
+		return $ctmsa;
     }
 
 // billing_provider
-    public function getBillingProviderIDAttribute()
+
+	public function setSendAlertToAttribute($memberUserIds)
     {
-        $bp = '';
-        if (!$this->patientCareTeamMembers) {
-            return '';
+		if (!is_array($memberUserIds)) {
+			$this->patientCareTeamMembers()->where('type', 'send_alert_to')->delete();
+
+			return false; // must be array
         }
-        if ($this->patientCareTeamMembers->count() > 0) {
-            foreach ($this->patientCareTeamMembers as $careTeamMember) {
-                if ($careTeamMember->type == 'billing_provider') {
-                    $bp = $careTeamMember->member_user_id;
-                }
+		$this->patientCareTeamMembers()->where('type', 'send_alert_to')->whereNotIn('member_user_id',
+			$memberUserIds)->delete();
+		foreach ($memberUserIds as $memberUserId) {
+			$careTeamMember = $this->patientCareTeamMembers()->where('type', 'send_alert_to')->where('member_user_id',
+				$memberUserId)->first();
+			if ($careTeamMember) {
+				$careTeamMember->member_user_id = $memberUserId;
+			} else {
+				$careTeamMember = new PatientCareTeamMember();
+				$careTeamMember->user_id = $this->ID;
+				$careTeamMember->member_user_id = $memberUserId;
+				$careTeamMember->type = 'send_alert_to';
             }
+			$careTeamMember->save();
         }
-        return $bp;
+
+		return true;
     }
 
-    public function setBillingProviderIDAttribute($value)
+	public function getBillingProviderIDAttribute()
     {
-        if (empty($value)) {
-            $this->patientCareTeamMembers()->where('type', 'billing_provider')->delete();
-            return true;
+		$bp = '';
+		if (!$this->patientCareTeamMembers) {
+			return '';
         }
-        $careTeamMember = $this->patientCareTeamMembers()->where('type', 'billing_provider')->first();
-        if ($careTeamMember) {
-            $careTeamMember->member_user_id = $value;
-        } else {
-            $careTeamMember = new PatientCareTeamMember();
-            $careTeamMember->user_id = $this->ID;
-            $careTeamMember->member_user_id = $value;
-            $careTeamMember->type = 'billing_provider';
+		if ($this->patientCareTeamMembers->count() > 0) {
+			foreach ($this->patientCareTeamMembers as $careTeamMember) {
+				if ($careTeamMember->type == 'billing_provider') {
+					$bp = $careTeamMember->member_user_id;
+				}
+			}
         }
-        $careTeamMember->save();
-        return true;
+
+		return $bp;
     }
 
 // lead_contact
-    public function getLeadContactIDAttribute()
+
+	public function setBillingProviderIDAttribute($value)
     {
-        $lc = array();
-        if (!$this->patientCareTeamMembers) {
-            return '';
+		if (empty($value)) {
+			$this->patientCareTeamMembers()->where('type', 'billing_provider')->delete();
+
+			return true;
         }
-        if ($this->patientCareTeamMembers->count() > 0) {
-            foreach ($this->patientCareTeamMembers as $careTeamMember) {
-                if ($careTeamMember->type == 'lead_contact') {
-                    $lc = $careTeamMember->member_user_id;
-                }
-            }
+		$careTeamMember = $this->patientCareTeamMembers()->where('type', 'billing_provider')->first();
+		if ($careTeamMember) {
+			$careTeamMember->member_user_id = $value;
+		} else {
+			$careTeamMember = new PatientCareTeamMember();
+			$careTeamMember->user_id = $this->ID;
+			$careTeamMember->member_user_id = $value;
+			$careTeamMember->type = 'billing_provider';
         }
-        return $lc;
+		$careTeamMember->save();
+
+		return true;
     }
 
-    public function setLeadContactIDAttribute($value)
+	public function getLeadContactIDAttribute()
     {
-        if (empty($value)) {
-            $this->patientCareTeamMembers()->where('type', 'lead_contact')->delete();
-            return true;
+		$lc = [];
+		if (!$this->patientCareTeamMembers) {
+			return '';
         }
-        $careTeamMember = $this->patientCareTeamMembers()->where('type', 'lead_contact')->first();
-        if ($careTeamMember) {
-            $careTeamMember->member_user_id = $value;
-        } else {
-            $careTeamMember = new PatientCareTeamMember();
-            $careTeamMember->user_id = $this->ID;
-            $careTeamMember->member_user_id = $value;
-            $careTeamMember->type = 'lead_contact';
+		if ($this->patientCareTeamMembers->count() > 0) {
+			foreach ($this->patientCareTeamMembers as $careTeamMember) {
+				if ($careTeamMember->type == 'lead_contact') {
+					$lc = $careTeamMember->member_user_id;
+				}
+			}
         }
-        $careTeamMember->save();
-        return true;
+
+		return $lc;
     }
 
 // preferred_contact_location
-    public function getPreferredLocationAddress()
+
+	public function setLeadContactIDAttribute($value)
+    {
+		if (empty($value)) {
+			$this->patientCareTeamMembers()->where('type', 'lead_contact')->delete();
+
+			return true;
+        }
+		$careTeamMember = $this->patientCareTeamMembers()->where('type', 'lead_contact')->first();
+		if ($careTeamMember) {
+			$careTeamMember->member_user_id = $value;
+		} else {
+			$careTeamMember = new PatientCareTeamMember();
+			$careTeamMember->user_id = $this->ID;
+			$careTeamMember->member_user_id = $value;
+			$careTeamMember->type = 'lead_contact';
+		}
+		$careTeamMember->save();
+
+		return true;
+    }
+
+	public function getPreferredLocationAddress()
     {
         if (!$this->patientInfo) return '';
         $locationId = $this->patientInfo->preferred_contact_location;
@@ -1296,125 +1317,154 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
         $location = Location::find($locationId);
-        return $location;
+
+		return $location;
     }
 
-    public function getPreferredLocationName()
+	public function getPreferredLocationName()
     {
         if (!$this->patientInfo) return '';
-        $locationId = $this->patientInfo->preferred_contact_location;
-        if (empty($locationId)) {
-            return false;
-        }
-        $location = Location::find($locationId);
-        return (isset($location->name)) ?
-            $location->name :
-            '';
+		$locationId = $this->patientInfo->preferred_contact_location;
+		if (empty($locationId)) {
+			return false;
+		}
+		$location = Location::find($locationId);
+
+		return (isset($location->name))
+			?
+			$location->name
+			:
+			'';
     }
 
-    public function getPreferredContactLocationAttribute()
+	public function getPreferredContactLocationAttribute()
     {
         if (!$this->patientInfo) return '';
-        return $this->patientInfo->preferred_contact_location;
-    }
 
-    public function setPreferredContactLocationAttribute($value)
-    {
-        if (!$this->patientInfo) return '';
-        $this->patientInfo->preferred_contact_location = $value;
-        $this->patientInfo->save();
-        return true;
+		return $this->patientInfo->preferred_contact_location;
     }
 
 // prefix
-    public function getPrefixAttribute()
+
+	public function setPreferredContactLocationAttribute($value)
     {
-        if (!$this->providerInfo) {
-            return '';
-        }
-        return $this->providerInfo->prefix;
+		if (!$this->patientInfo) {
+			return '';
+		}
+		$this->patientInfo->preferred_contact_location = $value;
+		$this->patientInfo->save();
+
+		return true;
     }
 
-    public function setPrefixAttribute($value)
+	public function getPrefixAttribute()
     {
         if (!$this->providerInfo) {
             return '';
-        }
-        $this->providerInfo->prefix = $value;
-        $this->providerInfo->save();
+		}
+
+		return $this->providerInfo->prefix;
     }
 
 // consent_date
-    public function getConsentDateAttribute()
-    {
-        if (!$this->patientInfo) return '';
-        return $this->patientInfo->consent_date;
+
+	public function setPrefixAttribute($value)
+	{
+		if (!$this->providerInfo) {
+			return '';
+		}
+		$this->providerInfo->prefix = $value;
+		$this->providerInfo->save();
     }
 
-    public function setConsentDateAttribute($value)
+	public function getConsentDateAttribute()
     {
         if (!$this->patientInfo) return '';
-        $this->patientInfo->consent_date = $value;
-        $this->patientInfo->save();
-        return true;
+
+		return $this->patientInfo->consent_date;
     }
 
 // agent_name
-    public function getAgentNameAttribute()
+
+	public function setConsentDateAttribute($value)
     {
         if (!$this->patientInfo) return '';
-        return $this->patientInfo->agent_name;
+		$this->patientInfo->consent_date = $value;
+		$this->patientInfo->save();
+
+		return true;
     }
 
-    public function setAgentNameAttribute($value)
+	public function getAgentNameAttribute()
     {
         if (!$this->patientInfo) return '';
-        $this->patientInfo->agent_name = $value;
-        $this->patientInfo->save();
-        return true;
+
+		return $this->patientInfo->agent_name;
     }
 
 // agent_phone
-    public function getAgentTelephoneAttribute()
-    {
-        return $this->getAgentPhoneAttribute();
-    }
 
-    public function getAgentPhoneAttribute()
-    {
-        if (!$this->patientInfo) return '';
-        return $this->patientInfo->agent_telephone;
-    }
+	public function setAgentNameAttribute($value)
+	{
+		if (!$this->patientInfo) {
+			return '';
+		}
+		$this->patientInfo->agent_name = $value;
+		$this->patientInfo->save();
 
-    public function setAgentTelephoneAttribute($value)
-    {
-        return $this->setAgentPhoneAttribute($value);
-    }
+		return true;
+	}
 
-    public function setAgentPhoneAttribute($value)
-    {
-        if (!$this->patientInfo) return '';
-        $this->patientInfo->agent_telephone = $value;
-        $this->patientInfo->save();
-        return true;
+	public function getAgentTelephoneAttribute()
+	{
+		return $this->getAgentPhoneAttribute();
+	}
+
+	public function getAgentPhoneAttribute()
+	{
+		if (!$this->patientInfo) {
+			return '';
+		}
+
+		return $this->patientInfo->agent_telephone;
+	}
+
+	public function setAgentTelephoneAttribute($value)
+	{
+		return $this->setAgentPhoneAttribute($value);
     }
 
 // agent_email
-    public function getAgentEmailAttribute()
-    {
-        if (!$this->patientInfo) return '';
-        return $this->patientInfo->agent_email;
-    }
 
-    public function setAgentEmailAttribute($value)
+	public function setAgentPhoneAttribute($value)
     {
         if (!$this->patientInfo) return '';
-        $this->patientInfo->agent_email = $value;
-        $this->patientInfo->save();
-        return true;
+		$this->patientInfo->agent_telephone = $value;
+		$this->patientInfo->save();
+
+		return true;
+	}
+
+	public function getAgentEmailAttribute()
+    {
+        if (!$this->patientInfo) return '';
+
+		return $this->patientInfo->agent_email;
     }
 
 // agent_relationship
+
+	public function setAgentEmailAttribute($value)
+	{
+		if (!$this->patientInfo) {
+			return '';
+		}
+		$this->patientInfo->agent_email = $value;
+		$this->patientInfo->save();
+
+		return true;
+    }
+
     public function getAgentRelationshipAttribute()
     {
         if (!$this->patientInfo) return '';
@@ -1509,64 +1559,72 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $this->patientInfo->careplan_last_printed = $value;
         $this->patientInfo->save();
         return true;
-    }
+	}
 
-    public function getCcmStatusAttribute()
+	public function getCcmStatusAttribute()
     {
         if (!$this->patientInfo) return '';
-        return $this->patientInfo->ccm_status;
-    }
 
-    public function setCcmStatusAttribute($value)
+		return $this->patientInfo->ccm_status;
+	}
+
+	public function setCcmStatusAttribute($value)
     {
         if (!$this->patientInfo) return '';
-        $statusBefore = $this->patientInfo->ccm_status;
-        $this->patientInfo->ccm_status = $value;
-        $this->patientInfo->save();
-        // update date tracking
-        if ($statusBefore !== $value) {
-            if ($value == 'paused') {
-                $this->datePaused = date("Y-m-d H:i:s");
-            };
-            if ($value == 'withdrawn') {
-                $this->dateWithdrawn = date("Y-m-d H:i:s");
-            };
-        }
-        return true;
-    }
+		$statusBefore = $this->patientInfo->ccm_status;
+		$this->patientInfo->ccm_status = $value;
+		$this->patientInfo->save();
+		// update date tracking
+		if ($statusBefore !== $value) {
+			if ($value == 'paused') {
+				$this->datePaused = date("Y-m-d H:i:s");
+			};
+			if ($value == 'withdrawn') {
+				$this->dateWithdrawn = date("Y-m-d H:i:s");
+			};
+		}
 
-    public function getDatePausedAttribute()
+		return true;
+	}
+
+	public function getDatePausedAttribute()
     {
         if (!$this->patientInfo) return '';
-        return $this->patientInfo->date_paused;
-    }
 
-    public function setDatePausedAttribute($value)
+		return $this->patientInfo->date_paused;
+	}
+
+	public function setDatePausedAttribute($value)
     {
         if (!$this->patientInfo) return '';
-        $this->patientInfo->date_paused = $value;
-        $this->patientInfo->save();
-        return true;
-    }
+		$this->patientInfo->date_paused = $value;
+		$this->patientInfo->save();
 
-    public function getDateWithdrawnAttribute()
+		return true;
+	}
+
+	public function getDateWithdrawnAttribute()
     {
         if (!$this->patientInfo) return '';
-        return $this->patientInfo->date_withdrawn;
-    }
 
-    public function setDateWithdrawnAttribute($value)
-    {
-        if (!$this->patientInfo) return '';
-        $this->patientInfo->date_withdrawn = $value;
-        $this->patientInfo->save();
-        return true;
+		return $this->patientInfo->date_withdrawn;
     }
 
 // END ATTRIBUTES
 
 
 // MISC, these should be removed eventually
+
+	public function setDateWithdrawnAttribute($value)
+	{
+		if (!$this->patientInfo) {
+			return '';
+		}
+		$this->patientInfo->date_withdrawn = $value;
+		$this->patientInfo->save();
+
+		return true;
+    }
 
     public function role($blogId = false)
     {
@@ -1582,60 +1640,101 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-    public function blogId()
-    {
-        return $this->program_id;
-    }
-
     public function primaryProgram()
     {
         return $this->belongsTo(Program::class, 'program_id', 'blog_id');
-    }
+	}
 
-    public function programs()
-    {
-        return $this->belongsToMany(Program::class, 'lv_program_user', 'user_id', 'program_id');
+	public function scramble($randomUserInfo = false)
+	{
+		// states array
+		$states = ['Alabama'        => 'AL',
+				   'Alaska'         => 'AK',
+				   'Arizona'        => 'AZ',
+				   'Arkansas'       => 'AR',
+				   'California'     => 'CA',
+				   'Colorado'       => 'CO',
+				   'Connecticut'    => 'CT',
+				   'Delaware'       => 'DE',
+				   'Florida'        => 'FL',
+				   'Georgia'        => 'GA',
+				   'Hawaii'         => 'HI',
+				   'Idaho'          => 'ID',
+				   'Illinois'       => 'IL',
+				   'Indiana'        => 'IN',
+				   'Iowa'           => 'IA',
+				   'Kansas'         => 'KS',
+				   'Kentucky'       => 'KY',
+				   'Louisiana'      => 'LA',
+				   'Maine'          => 'ME',
+				   'Maryland'       => 'MD',
+				   'Massachusetts'  => 'MA',
+				   'Michigan'       => 'MI',
+				   'Minnesota'      => 'MN',
+				   'Mississippi'    => 'MS',
+				   'Missouri'       => 'MO',
+				   'Montana'        => 'MT',
+				   'Nebraska'       => 'NE',
+				   'Nevada'         => 'NV',
+				   'New Hampshire'  => 'NH',
+				   'New Jersey'     => 'NJ',
+				   'New Mexico'     => 'NM',
+				   'New York'       => 'NY',
+				   'North Carolina' => 'NC',
+				   'North Dakota'   => 'ND',
+				   'Ohio'           => 'OH',
+				   'Oklahoma'       => 'OK',
+				   'Oregon'         => 'OR',
+				   'Pennsylvania'   => 'PA',
+				   'Rhode Island'   => 'RI',
+				   'South Carolina' => 'SC',
+				   'South Dakota'   => 'SD',
+				   'Tennessee'      => 'TN',
+				   'Texas'          => 'TX',
+				   'Utah'           => 'UT',
+				   'Vermont'        => 'VT',
+				   'Virginia'       => 'VA',
+				   'Washington'     => 'WA',
+				   'West Virginia'  => 'WV',
+				   'Wisconsin'      => 'WI',
+				   'Wyoming'        => 'WY'
+		];
+
+		$faker = Factory::create();
+		if (!$faker) {
+			return false;
+		}
+
+		//dd($randomUserInfo);
+		// set random data
+		$user = $this;
+		$user->first_name = $faker->firstName;
+		$user->user_nicename = $faker->firstName;
+		$user->last_name = 'Z-' . $faker->lastName;
+		$user->user_login = $faker->userName;
+		$user->user_pass = $faker->password;
+		$user->user_email = $faker->freeEmail;
+		//$user->display_name = $randomUserInfo->username;
+		$user->MRN = rand();
+		$user->gender = 'M';
+		$user->address = $faker->address;
+		$user->address2 = $faker->secondaryAddress;
+		$user->city = $faker->city;
+		$user->state = $faker->stateAbbr;
+		$user->zip = $faker->postcode;
+		$user->phone = '111-234-5678';
+		$user->workPhoneNumber = '222-234-5678';
+		$user->mobilePhoneNumber = '333-234-5678';
+		$user->birthDate = $faker->dateTimeThisCentury->format('Y-m-d');
+		$user->agentName = 'Secret Agent';
+		$user->agentPhone = '111-234-5678';
+		$user->agentEmail = 'secret@agent.net';
+		$user->agentRelationship = 'SA';
+		$user->save();
+
     }
 
 // user data scrambler
-    public function scramble($randomUserInfo = false)
-    {
-        // states array
-        $states = array('Alabama' => 'AL', 'Alaska' => 'AK', 'Arizona' => 'AZ', 'Arkansas' => 'AR', 'California' => 'CA', 'Colorado' => 'CO', 'Connecticut' => 'CT', 'Delaware' => 'DE', 'Florida' => 'FL', 'Georgia' => 'GA', 'Hawaii' => 'HI', 'Idaho' => 'ID', 'Illinois' => 'IL', 'Indiana' => 'IN', 'Iowa' => 'IA', 'Kansas' => 'KS', 'Kentucky' => 'KY', 'Louisiana' => 'LA', 'Maine' => 'ME', 'Maryland' => 'MD', 'Massachusetts' => 'MA', 'Michigan' => 'MI', 'Minnesota' => 'MN', 'Mississippi' => 'MS', 'Missouri' => 'MO', 'Montana' => 'MT', 'Nebraska' => 'NE', 'Nevada' => 'NV', 'New Hampshire' => 'NH', 'New Jersey' => 'NJ', 'New Mexico' => 'NM', 'New York' => 'NY', 'North Carolina' => 'NC', 'North Dakota' => 'ND', 'Ohio' => 'OH', 'Oklahoma' => 'OK', 'Oregon' => 'OR', 'Pennsylvania' => 'PA', 'Rhode Island' => 'RI', 'South Carolina' => 'SC', 'South Dakota' => 'SD', 'Tennessee' => 'TN', 'Texas' => 'TX', 'Utah' => 'UT', 'Vermont' => 'VT', 'Virginia' => 'VA', 'Washington' => 'WA', 'West Virginia' => 'WV', 'Wisconsin' => 'WI', 'Wyoming' => 'WY');
-
-        $faker = Factory::create();
-        if(!$faker) {
-            return false;
-        }
-
-        //dd($randomUserInfo);
-        // set random data
-        $user = $this;
-        $user->first_name = $faker->firstName;
-        $user->user_nicename = $faker->firstName;
-        $user->last_name = 'Z-' . $faker->lastName;
-        $user->user_login = $faker->userName;
-        $user->user_pass = $faker->password;
-        $user->user_email = $faker->freeEmail;
-        //$user->display_name = $randomUserInfo->username;
-        $user->MRN = rand();
-        $user->gender = 'M';
-        $user->address = $faker->address;
-        $user->address2 = $faker->secondaryAddress;
-        $user->city = $faker->city;
-        $user->state = $faker->stateAbbr;
-        $user->zip = $faker->postcode;
-        $user->phone = '111-234-5678';
-        $user->workPhoneNumber = '222-234-5678';
-        $user->mobilePhoneNumber = '333-234-5678';
-        $user->birthDate = $faker->dateTimeThisCentury->format('Y-m-d');
-        $user->agentName = 'Secret Agent';
-        $user->agentPhone = '111-234-5678';
-        $user->agentEmail = 'secret@agent.net';
-        $user->agentRelationship = 'SA';
-        $user->save();
-
-    }
 
     public function createNewUser($user_email, $user_pass)
     {
@@ -1647,11 +1746,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this;
     }
 
-
     public function getUCP()
     {
         $userUcp = $this->ucp()->with(['item.meta', 'item.question'])->get();
-        $userUcpData = array('ucp' => array(), 'obs_keys' => array(), 'alert_keys' => array());
+		$userUcpData = ['ucp'        => [],
+						'obs_keys'   => [],
+						'alert_keys' => []];
         if ($userUcp->count() > 0) {
             foreach ($userUcp as $userUcpItem) {
                 $userUcpData['ucp'][] = $userUcpItem;
@@ -1674,9 +1774,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $userUcpData['ucp'] = collect($userUcpData['ucp']);
         }
         return $userUcpData;
-    }
+	}
+
+	public function ucp()
+	{
+		return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
+	}
 	
 	//Get this model's serice
+
 	public function service()
 	{
 		return new UserService();
