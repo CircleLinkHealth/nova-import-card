@@ -5,25 +5,8 @@
 use App\Algorithms\Calls\ReschedulerHandler;
 use Illuminate\Support\Facades\Auth;
 
-Route::get('algo/rescheduler', function(){
-
-    dd(auth()->user()->isCCMCountable());
-
-    $handled = (new ReschedulerHandler())->handle();
-
-    $list = '<p>The CPMBot just rescheduled some calls:</p><ul>';
-
-    foreach ($handled as $call){
-        $patient = $call->inboundUser->fullName;
-
-        $list.= "<li>Call rescheduled for Patient: {$patient}</li>";
-
-    }
-
-    $list .= '</ul>';
-
-    return $list;
-
+Route::get('algo', function(){
+    
 });
 
 Route::group(['prefix' => 'api/v1.0'], function () {
@@ -265,6 +248,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('calls/import', [
             'uses' => 'CallController@import',
             'as' => 'post.CallController.import'
+        ]);
+
+        Route::get('families/create', [
+            'uses' => 'FamilyController@create',
+            'as' => 'family.create'
         ]);
 
         Route::post('general-comments/import', [
