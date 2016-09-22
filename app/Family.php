@@ -9,9 +9,11 @@ class Family extends Model
 
     protected $fillable = ['*'];
 
-    public function users(){
+    protected $table = 'families';
 
-        $this->hasMany(PatientInfo::class, 'id', 'user_id');
+    public function patients(){
+
+        return $this->hasMany(PatientInfo::class);
 
     }
 

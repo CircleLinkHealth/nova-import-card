@@ -3,6 +3,8 @@
 //THIS IS FOR APRIMA ONLY
 
 Route::get('algo', function(){
+
+
     
 });
 

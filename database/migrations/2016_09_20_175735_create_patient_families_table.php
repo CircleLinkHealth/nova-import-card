@@ -14,10 +14,11 @@ class CreatePatientFamiliesTable extends Migration
     {
         Schema::create('families', function (Blueprint $table) {
 
-                
             $table->increments('id');
             $table->string('name')->nullable();
             $table->unsignedInteger('created_by')->nullable();
+            $table->timestamps();
+
 
         });
     }
