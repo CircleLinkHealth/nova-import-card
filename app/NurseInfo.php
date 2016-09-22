@@ -21,6 +21,11 @@ class NurseInfo extends Model
     {
         return $this->belongsTo('App\User', 'ID', 'user_id');
     }
+    
+    public function summary()
+    {
+        return $this->hasMany(NurseMonthlySummary::class);
+    }
 
     public function windows()
     {
