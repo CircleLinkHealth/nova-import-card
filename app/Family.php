@@ -11,7 +11,7 @@ class Family extends Model
 
     protected $table = 'families';
 
-    public function users(){
+    public function patients(){
 
         $this->hasMany(PatientInfo::class, 'id', 'user_id');
 
