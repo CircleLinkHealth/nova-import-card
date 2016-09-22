@@ -27,6 +27,9 @@
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
+    <!-- idleTime -->
+    <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
+
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
