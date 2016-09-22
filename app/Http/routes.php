@@ -2,13 +2,10 @@
 
 //THIS IS FOR APRIMA ONLY
 
-use App\PatientInfo;
-
 Route::get('algo', function(){
 
-    $person = PatientInfo::find(1272);
-    return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls($person->family);
 
+    
 });
 
 Route::group(['prefix' => 'api/v1.0'], function () {
@@ -396,6 +393,38 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('users/patientCallManagement', ['uses' => 'Admin\PatientCallManagementController@index', 'as' => 'admin.patientCallManagement.index']);
             Route::get('users/patientCallManagement/{id}/edit', ['uses' => 'Admin\PatientCallManagementController@edit', 'as' => 'admin.patientCallManagement.edit']);
             Route::post('users/patientCallManagement/{id}/edit', ['uses' => 'Admin\PatientCallManagementController@update', 'as' => 'admin.patientCallManagement.update']);
+        });
+
+        // families
+        Route::group([
+            'middleware' => [
+                'permission:users-view-all',
+            ]
+        ], function () {
+            Route::get('families', [
+                'uses' => 'FamilyController@index',
+                'as'   => 'admin.families.index'
+            ]);
+            Route::post('families', [
+                'uses' => 'FamilyController@store',
+                'as'   => 'admin.families.store'
+            ]);
+            Route::get('families/create', [
+                'uses' => 'FamilyController@create',
+                'as'   => 'admin.families.create'
+            ]);
+            Route::get('families/{id}/edit', [
+                'uses' => 'FamilyController@edit',
+                'as'   => 'admin.families.edit'
+            ]);
+            Route::get('families/{id}/destroy', [
+                'uses' => 'FamilyController@destroy',
+                'as'   => 'admin.families.destroy'
+            ]);
+            Route::post('families/{id}/edit', [
+                'uses' => 'FamilyController@update',
+                'as'   => 'admin.families.update'
+            ]);
         });
 
         // rules

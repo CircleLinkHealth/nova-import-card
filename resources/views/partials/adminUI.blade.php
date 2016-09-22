@@ -113,6 +113,7 @@
                                 <li><a href="{{ URL::route('admin.users.create', array()) }}">New User</a></li>
                                 <li><a href="{{ URL::route('admin.patientCallManagement.index', array()) }}">Patient
                                         Call Management</a>
+                                <li><a href="{{ URL::route('admin.families.index', array()) }}">Patient Families</a>
                                 <li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a>
                                 </li>
                                 <li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
