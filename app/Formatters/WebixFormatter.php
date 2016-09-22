@@ -3,7 +3,6 @@
 use App\Contracts\ReportFormatter;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdMedication;
-use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
@@ -21,7 +20,7 @@ class WebixFormatter implements ReportFormatter
     {
         $count = 0;
 
-        $formatted_notes = array();
+        $formatted_notes = [];
 
         foreach ($notes as $note) {
 
@@ -92,7 +91,7 @@ class WebixFormatter implements ReportFormatter
             return '';
         }
 
-        $formatted_data = array();
+        $formatted_data = [];
         $count = 0;
 
         foreach ($report_data as $data) {
@@ -108,7 +107,7 @@ class WebixFormatter implements ReportFormatter
 
             } else // handles activities
             {
-                $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->logger_id)->fullName;
+                $formatted_data[$count]['logger_name'] = User::withTrashed()->find($data->provider_id)->fullName;
                 $formatted_data[$count]['comment'] = $data->getCommentForActivity();
                 $formatted_data[$count]['logged_from'] = 'manual_input';
             }
@@ -134,7 +133,7 @@ class WebixFormatter implements ReportFormatter
     public function formatDataForViewPrintCareplanReport($users)
     {
 
-        $careplanReport = array();
+        $careplanReport = [];
 
         foreach ($users as $user) {
 
@@ -157,7 +156,7 @@ class WebixFormatter implements ReportFormatter
         }
 
         //Get Biometrics with Values
-        $careplanReport[$user->ID]['bio_data'] = array();
+        $careplanReport[$user->ID]['bio_data'] = [];
 
         //Ignore Smoking - Untracked Biometric
         if(($key = array_search(CpmBiometric::SMOKING, $careplanReport[$user->ID]['biometrics'])) !== false) {
@@ -295,7 +294,7 @@ class WebixFormatter implements ReportFormatter
             $meds = CcdMedication::where('patient_id', '=', $user->ID)->orderBy('name')->get();
             if ($meds->count() > 0) {
                 $i = 0;
-                $careplanReport[$user->ID]['taking_meds'] = array();
+                $careplanReport[$user->ID]['taking_meds'] = [];
                 foreach ($meds as $med) {
                     empty($med->name) 
                         ? $medText = ''
