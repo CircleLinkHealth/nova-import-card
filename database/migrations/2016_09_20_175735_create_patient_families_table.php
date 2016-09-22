@@ -30,7 +30,9 @@ class CreatePatientFamiliesTable extends Migration
     public function down()
     {
         Schema::table('families', function (Blueprint $table) {
-            //
+
+            $table->drop();
+
         });
     }
 }

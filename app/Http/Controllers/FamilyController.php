@@ -26,7 +26,6 @@ class FamilyController extends Controller
 
     }
 
-
     public function store(Request $request){
 
         $family_member_ids = $request->only('family_member_ids');
@@ -48,7 +47,6 @@ class FamilyController extends Controller
         }
 
     }
-
 
     public function delete(){
 
