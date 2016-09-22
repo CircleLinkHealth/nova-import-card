@@ -31,8 +31,7 @@ $(document).ready(function(){
         // DOM ELEMENTS
         errorfound = false;
         $('.ctselectpicker').each(function (index, value) {
-            ctmCount = (index + 1);
-            provider =  $('#ctm' + ctmCount + 'provider').val();
+            provider = $(this).val();
             if(!provider) {
                 // error modal
                 errorfound = true;
