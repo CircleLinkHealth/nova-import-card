@@ -48,6 +48,7 @@ class SchedulerService
 
             $prediction = (new SuccessfulHandler($patient->patientInfo))->handle();
             $prediction['successful'] = true;
+
             return $prediction;
 
         }
@@ -263,13 +264,14 @@ class SchedulerService
                         'service' => 'phone',
                         'status' => 'scheduled',
 
-                        'attempt_note' => 'Family Call',
+                        'attempt_note' => '',
 
                         'scheduler' => 'family algorithm',
 
                         'inbound_cpm_id' => $patient->user_id,
 
                         'outbound_phone_number' => '',
+                        'is_cpm_outbound' => true,
 
                         'call_time' => 0,
                         'created_at' => Carbon::now()->toDateTimeString(),
@@ -282,11 +284,17 @@ class SchedulerService
 
         }
 
+        if(empty($scheduledDates)){
+            throw new \Exception('Sorry, no family member has any scheduled calls. Please contact CLH immediately.');
+
+        }
+
         //determine minimum date
         $minDate = Carbon::parse(min($scheduledDates));
 
         //patientId => patientScheduledCall
         foreach ($scheduledCalls as $key => $value){
+            
             $callPatient = User::find($key);
 
             $value->scheduled_date = $minDate->toDateTimeString();

@@ -4,8 +4,9 @@
 
 Route::get('algo', function(){
 
+    $patient = App\PatientInfo::find(1211);
+    dd($patient->family()->exists());
 
-    
 });
 
 Route::group(['prefix' => 'api/v1.0'], function () {
