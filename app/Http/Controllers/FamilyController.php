@@ -17,16 +17,6 @@ class FamilyController extends Controller
 
         $wpUsers = PatientInfo::enrolled()->pluck('user_id');
 
-        $users = User::whereIn( 'ID', Auth::user()->viewableUserIds() )->OrderBy( 'id', 'desc' )->get()->lists( 'fullNameWithId', 'ID' )->all();
-
-        $filterUser = 'all';
-        if ( !empty($params[ 'filterUser' ]) ) {
-            $filterUser = $params[ 'filterUser' ];
-            if ( $params[ 'filterUser' ] != 'all' ) {
-                $wpUsers->where( 'ID', '=', $filterUser );
-            }
-        }
-
         return view('admin.families.create', compact(['users, filterUser ']));
 
     }
