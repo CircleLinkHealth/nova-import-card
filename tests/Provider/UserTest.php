@@ -55,5 +55,4 @@ class UserTest extends TestCase
         $this->assertTrue($this->provider->hasRole('program-lead'));
     }
 
-
 }

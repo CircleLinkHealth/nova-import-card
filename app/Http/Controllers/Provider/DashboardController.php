@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Provider;
 
+use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\ProgramRepository;
 use App\Contracts\Repositories\UserRepository;
@@ -12,16 +13,18 @@ use Prettus\Validator\Exceptions\ValidatorException;
 
 class DashboardController extends Controller
 {
+    protected $invites;
     protected $locations;
     protected $programs;
     protected $users;
 
     public function __construct(
+        InviteRepository $inviteRepository,
         LocationRepository $locationRepository,
         ProgramRepository $programRepository,
         UserRepository $userRepository
-    )
-    {
+    ) {
+        $this->invites = $inviteRepository;
         $this->locations = $locationRepository;
         $this->programs = $programRepository;
         $this->users = $userRepository;
@@ -45,7 +48,11 @@ class DashboardController extends Controller
 
     public function getCreateStaff()
     {
-        return view('provider.user.create-staff');
+        $invite = $this->invites->firstOrNew([
+            'inviter_id' => auth()->user()->ID,
+        ]);
+
+        return view('provider.user.create-staff', compact('invite'));
     }
 
     public function getCreateUser()
@@ -58,7 +65,20 @@ class DashboardController extends Controller
         return view('provider.layouts.dashboard');
     }
 
-    public function postStoreLocation(Request $request){
+    public function postStoreInvite(Request $request)
+    {
+        $invite = $this->invites->create([
+            'inviter_id' => auth()->user()->ID,
+            'role_id'    => $request->input('role'),
+            'email'      => $request->input('email'),
+            'subject'    => $request->input('subject'),
+            'message'    => $request->input('message'),
+            'code'       => str_random(20),
+        ]);
+    }
+
+    public function postStoreLocation(Request $request)
+    {
 
     }
 
@@ -68,10 +88,10 @@ class DashboardController extends Controller
 
         try {
             $program = $this->programs->create([
-                'name' => $input['url'],
-                'user_id' => auth()->user()->ID,
+                'name'         => $input['url'],
+                'user_id'      => auth()->user()->ID,
                 'display_name' => $input['name'],
-                'description' => $input['description'],
+                'description'  => $input['description'],
             ]);
         } catch (ValidatorException $e) {
             return redirect()
@@ -91,8 +111,8 @@ class DashboardController extends Controller
             $user = $this->users->create([
                 'user_email' => $input['email'],
                 'first_name' => $input['firstName'],
-                'last_name' => $input['lastName'],
-                'password' => bcrypt($input['password']),
+                'last_name'  => $input['lastName'],
+                'password'   => bcrypt($input['password']),
             ]);
         } catch (ValidatorException $e) {
             return redirect()

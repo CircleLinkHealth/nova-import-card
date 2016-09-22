@@ -7,6 +7,7 @@ use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Contracts\Repositories\CcmTimeApiLogRepository;
+use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\ProgramRepository;
 use App\Contracts\Repositories\UserRepository;
@@ -16,6 +17,7 @@ use App\Repositories\AprimaCcdApiRepositoryEloquent;
 use App\Repositories\CcdaRepositoryEloquent;
 use App\Repositories\CcdaRequestRepositoryEloquent;
 use App\Repositories\CcmTimeApiLogRepositoryEloquent;
+use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\ProgramRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
@@ -79,6 +81,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             AprimaCcdApiRepository::class,
             AprimaCcdApiRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            InviteRepository::class,
+            InviteRepositoryEloquent::class
         );
 
         $this->app->bind(
