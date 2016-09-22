@@ -87,6 +87,7 @@
                                                 <th>Next Call Date</th>
                                                 <th>Next Call Time Start</th>
                                                 <th>Next Call Time End</th>
+                                                <th>Timezone</th>
                                                 <th>Last Date called</th>
                                                 <th>CCM Time to date</th>
                                                 <th># Calls to date</th>
@@ -123,6 +124,15 @@
                                                         <td>{{ $call->scheduled_date }}</td>
                                                         <td>{{ $call->window_start }}</td>
                                                         <td>{{ $call->window_end }}</td>
+                                                        <td>
+                                                            @if($call->inboundUser)
+                                                                <?php
+                                                                $dateTime = new DateTime();
+                                                                $dateTime->setTimeZone(new DateTimeZone($call->inboundUser->timezone));
+                                                                echo '<span style="font-weight:bold;color:green;">' . $dateTime->format('T') . '</a>';
+                                                                ?>
+                                                            @endif
+                                                        </td>
                                                         <td>
                                                             @if($call->inboundUser)
                                                                 {{ $call->inboundUser->patientInfo->last_contact_time }}
