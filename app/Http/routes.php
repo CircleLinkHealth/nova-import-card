@@ -2,13 +2,13 @@
 
 //THIS IS FOR APRIMA ONLY
 
-use App\Algorithms\Calls\ReschedulerHandler;
-use Illuminate\Support\Facades\Auth;
+use App\PatientInfo;
 
 Route::get('algo', function(){
 
+    $person = PatientInfo::find(1272);
+    return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls($person->family);
 
-    
 });
 
 Route::group(['prefix' => 'api/v1.0'], function () {
