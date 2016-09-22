@@ -3,17 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Family;
-use App\PatientInfo;
-use App\User;
-use Illuminate\Http\Request;
-
 use App\Http\Requests;
-use Illuminate\Support\Facades\Auth;
+use App\PatientInfo;
+use Illuminate\Http\Request;
 
 class FamilyController extends Controller
 {
 
-    public function create(){
+    public function index()
+    {
+
+        $families = Family::all();
+
+        return view('admin.families.index', compact(['families']));
+
+    }
+
+    public function create()
+    {
 
         $wpUsers = PatientInfo::enrolled()->pluck('user_id');
 
