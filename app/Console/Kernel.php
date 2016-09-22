@@ -35,6 +35,7 @@ class Kernel extends ConsoleKernel
      * Define the application's command schedule.
      *
      * @param  \Illuminate\Console\Scheduling\Schedule $schedule
+     *
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -59,14 +60,17 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
 
             $calls = SchedulerService::getUnAttemptedCalls();
-            $handled = array();
+            $handled = [];
 
             foreach ($calls as $call) {
                 Log::info('INFO FOR NEW CALL: ' . $call->id);
-                $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call, false))->reconcileDroppedCallHandler();
+                $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call,
+                    false))->reconcileDroppedCallHandler();
             }
 
-            if(!empty($handled)) { Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls"); }
+            if (!empty($handled)) {
+                Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls");
+            }
 
             foreach ($handled as $call) {
                 Slack::to('#background-tasks')->send("We just fixed call: {$call->id}");
