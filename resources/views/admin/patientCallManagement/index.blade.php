@@ -147,7 +147,7 @@
                                 <th>Next Call</th>
                                 <th>Call Time Start</th>
                                 <th>Call Time End</th>
-                                <th>Call Time End</th>
+                                <th>Timezone</th>
                                 <th>Preferred Call Days</th>
                                 <th>Last Call</th>
                                 <th class="nosearch">CCM Time</th>
@@ -170,7 +170,7 @@
                                 <th>Next Call Date</th>
                                 <th>Call Time Start</th>
                                 <th>Call Time End</th>
-                                <th>Call Time End</th>
+                                <th>Timezone</th>
                                 <th>Preferred Call Days</th>
                                 <th>Last Call</th>
                                 <th>CCM Time</th>
