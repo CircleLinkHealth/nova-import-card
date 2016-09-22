@@ -10,6 +10,7 @@
     <script>
         $(document).ready(function() {
             $('#cpmEditableTable').DataTable({
+                "order": [[2, "asc"], [3, "asc"]],
                 "iDisplayLength": 100,
                 scrollX: true,
                 fixedHeader: true
