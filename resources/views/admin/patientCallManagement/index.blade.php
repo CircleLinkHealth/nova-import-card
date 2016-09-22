@@ -13,11 +13,6 @@
     <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
     <script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
     <script src="//cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
-    <script>
-        $(document).ready(function() {
-
-        } );
-    </script>
     <style>
         #calls-table tbody>tr>td {
             vertical-align: middle;
@@ -343,6 +338,28 @@
                 });
 
                 callstable.draw();
+            });
+
+
+            // IDLE TIMER
+            $(document).ready(function () {
+                var consoleDebug = true; // debug toggle
+                var idleTime = 40000; // ms before modal display (60000 = 1min)
+
+                $(document).idleTimer(idleTime);
+
+                // idleTimer ^
+                $(document).on("idle.idleTimer", function (event, elem, obj) {
+                    if (consoleDebug) console.log('idleTimer hit!');
+                    if (!cpmEditableStatus) {
+                        if (consoleDebug) console.log('redraw the table..');
+                        callstable.draw();
+                    } else {
+                        if (consoleDebug) console.log('in line editing open, dont redraw.');
+                    }
+                    if (consoleDebug) console.log('reset idleTimer');
+                    $(document).idleTimer(idleTime);
+                });
             });
 
 
