@@ -43,7 +43,12 @@ class ProviderUsageReportController extends Controller
         $programStats = [];
 
         // get all program
-        $programs = Program::where('name', '=', 'nestor')->get()->lists('display_name', 'blog_id')->all();
+        $program = 'nestor';
+        if ($request->all('program')) {
+            $program = $request->input('program');
+        }
+
+        $programs = Program::where('name', '=', $program)->get()->lists('display_name', 'blog_id')->all();
 
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
 
