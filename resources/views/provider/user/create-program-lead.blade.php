@@ -76,7 +76,7 @@
                     ])
 
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary mdl-cell--12-col">
-                        Create account
+                        Create program lead
                     </button>
 
                     {!! Form::close() !!}
