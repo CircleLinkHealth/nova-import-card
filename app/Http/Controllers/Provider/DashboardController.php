@@ -88,7 +88,7 @@ class DashboardController extends Controller
 
         try {
             $program = $this->programs->create([
-                'name'         => $input['url'],
+                'name'         => str_slug($input['name']),
                 'user_id'      => auth()->user()->ID,
                 'display_name' => $input['name'],
                 'description'  => $input['description'],

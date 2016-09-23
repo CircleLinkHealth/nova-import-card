@@ -34,18 +34,17 @@ class DashboardTest extends TestCase
 
         $this->programLead->roles()->attach($role->id);
 
-        $name = $this->faker->domainName;
+        $name = $this->faker->company;
         $description = $this->faker->text();
 
         $this->actingAs($this->programLead)
             ->visit(route('get.create.practice'))
             ->type($name, 'name')
             ->type($description, 'description')
-            ->type($name, 'url')
             ->press('Update Practice');
 
         $this->seeInDatabase('wp_blogs', [
-            'name'         => $name,
+            'name'         => str_slug($name),
             'display_name' => $name,
             'description'  => $description,
             'user_id'      => auth()->user()->ID,
