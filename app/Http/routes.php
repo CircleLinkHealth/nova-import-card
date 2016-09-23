@@ -1,25 +1,25 @@
 <?php
 
-use App\Algorithms\Calls\PredictCall;
-use App\Services\Calls\SchedulerService;
-use App\User;
+//THIS IS FOR APRIMA ONLY
+
+use App\Algorithms\Calls\ReschedulerHandler;
 
 Route::get('algo/rescheduler', function () {
 
-    $calls = SchedulerService::getUnAttemptedCalls();
-    $handled = [];
+    $handled = (new ReschedulerHandler())->handle();
 
-    foreach ($calls as $call) {
-        $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call, false))->reconcileDroppedCallHandler();
-    }
-
-    $result = '<p> The CPMbot was busy: <br/></p>';
+    $list = '<p>The CPMBot just rescheduled some calls:</p><ul>';
 
     foreach ($handled as $call) {
-        $result .= "<li>Created a new call for patient " . $call->inboundUser->fullName . " </li><br />";
+        $patient = $call->inboundUser->fullName;
+
+        $list .= "<li>Call rescheduled for Patient: {$patient}</li>";
+
     }
 
-    return $result;
+    $list .= '</ul>';
+
+    return $list;
 
 });
 
