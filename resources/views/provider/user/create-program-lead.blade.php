@@ -46,40 +46,41 @@
 
                 <div class="mdl-card__title"></div>
 
-                {!! Form::open(['url' => route('post.store.user'), 'method' => 'post']) !!}
+                {!! Form::open([
+                    'url' => route('post.store.user'),
+                    'method' => 'post',
+                    'id' => 'registration',
+                ]) !!}
 
                 <div class="mdl-card__supporting-text">
 
-                    <div class="mdl-textfield mdl-js-textfield mdl-cell--12-col">
-                        <input class="mdl-textfield__input" type="text" id="firstName" name="firstName">
-                        <label class="mdl-textfield__label" for="firstName">First name</label>
-                    </div>
+                    @include('provider.partials.mdl.form.text.textfield', [
+                        'name' => 'firstName',
+                        'label' => 'First name',
+                        'class' => 'mdl-cell--12-col'
+                    ])
 
-                    <div class="mdl-layout-spacer"></div>
+                    @include('provider.partials.mdl.form.text.textfield', [
+                        'name' => 'lastName',
+                        'label' => 'Last name',
+                        'class' => 'mdl-cell--12-col'
+                    ])
 
+                    @include('provider.partials.mdl.form.text.textfield', [
+                        'name' => 'email',
+                        'label' => 'Email',
+                        'class' => 'mdl-cell--12-col',
+                        'type' => 'email',
+                    ])
 
-                    <div class="mdl-textfield mdl-js-textfield mdl-cell--12-col">
-                        <input class="mdl-textfield__input" type="text" id="lastName" name="lastName">
-                        <label class="mdl-textfield__label" for="lastName">Last name</label>
-                    </div>
+                    @include('provider.partials.mdl.form.text.textfield', [
+                        'name' => 'password',
+                        'label' => 'Password',
+                        'class' => 'mdl-cell--12-col',
+                        'type' => 'password',
+                    ])
 
-                    <div class="mdl-layout-spacer"></div>
-
-                    <div class="mdl-textfield mdl-js-textfield mdl-cell--12-col">
-                        <input class="mdl-textfield__input" type="text" id="email" name="email">
-                        <label class="mdl-textfield__label" for="email">E-mail</label>
-                    </div>
-
-                    <div class="mdl-layout-spacer"></div>
-
-                    <div class="mdl-textfield mdl-js-textfield mdl-cell--12-col">
-                        <input class="mdl-textfield__input" type="password" id="password" name="password">
-                        <label class="mdl-textfield__label" for="password">Password</label>
-                    </div>
-
-                    <div class="mdl-layout-spacer"></div>
-
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary mdl-cell--12-col">
                         Create account
                     </button>
                 </div>

@@ -1,11 +1,11 @@
 @if(isset($class))
-    <div class="{{ $class }}">
+    <div class="mdl-textfield mdl-js-textfield {{ $class }}">
         @else
-            <div class="mdl-textfield mdl-js-textfield mdl-cell--12-col">
+            <div class="mdl-textfield mdl-js-textfield">
                 @endif
 
                 <input class="mdl-textfield__input"
-                       type="text"
+                       type="{{ isset($type) ? $type : 'text' }}"
                        id="{{ $name }}"
                        name="{{ $name }}"
                        value="{{ isset($value) ? $value : '' }}">

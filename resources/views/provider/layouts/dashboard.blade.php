@@ -15,8 +15,8 @@
 
         </div>
         <main class="mdl-layout__content mdl-color--grey-100">
-            <div class="mdl-grid provider-content">
-                <div id="app">
+            <div class="mdl-grid provider-content ">
+                <div id="app" class="mdl-cell mdl-cell--12-col">
                     @yield('module')
                 </div>
             </div>
