@@ -10,7 +10,7 @@ class ProgramValidator extends LaravelValidator
 
     protected $rules = [
         ValidatorInterface::RULE_CREATE => [
-            'name' => 'required',
+            'name' => 'required|unique:wp_blogs,name',
         ],
         ValidatorInterface::RULE_UPDATE => [],
    ];

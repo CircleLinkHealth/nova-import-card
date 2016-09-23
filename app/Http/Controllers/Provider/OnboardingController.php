@@ -30,14 +30,26 @@ class OnboardingController extends Controller
         $this->users = $userRepository;
     }
 
+    public function getCreateProgramLeadUser()
+    {
+        return view('provider.onboarding.create-program-lead');
+    }
+
+
+    public function getCreateLocations($numberOfLocations)
+    {
+        return view('provider.onboarding.create-locations', compact('numberOfLocations'));
+    }
+
+
     public function getCreatePractice()
     {
         return view('provider.onboarding.create-practice');
     }
 
-    public function getCreateProgramLeadUser()
+    public function postStoreLocations()
     {
-        return view('provider.onboarding.create-program-lead');
+
     }
 
     public function postStoreProgramLeadUser(Request $request)
@@ -67,8 +79,26 @@ class OnboardingController extends Controller
         return redirect()->route('get.onboarding.create.practice');
     }
 
-    public function postStorePractice()
+    public function postStorePractice(Request $request)
     {
+        $input = $request->input();
 
+        try {
+            $numberOfLocations = $input['numberOfLocations'];
+
+            $program = $this->programs->create([
+                'name'         => str_slug($input['name']),
+                'user_id'      => auth()->user()->ID,
+                'display_name' => $input['name'],
+                'description'  => $input['description'],
+            ]);
+        } catch (ValidatorException $e) {
+            return redirect()
+                ->back()
+                ->withErrors($e->getMessageBag()->getMessages())
+                ->withInput();
+        }
+
+        return redirect()->route('get.onboarding.create.locations', compact('numberOfLocations'));
     }
 }

@@ -27,7 +27,7 @@
     ])
 
     @include('provider.partials.mdl.form.text.textfield', [
-        'name' => 'locations',
+        'name' => 'numberOfLocations',
         'label' => 'How many locations?',
         'class' => 'mdl-cell--12-col',
         'type'  => 'number',

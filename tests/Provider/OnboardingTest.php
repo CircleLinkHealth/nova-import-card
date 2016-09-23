@@ -5,10 +5,19 @@ use Faker\Factory;
 
 class OnboardingTest extends TestCase
 {
+    protected $faker;
+    
     /**
      * @var User $provider
      */
     protected $provider;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->faker = Factory::create();
+    }
 
     /**
      * Check that the form to create a User is there.
@@ -22,18 +31,18 @@ class OnboardingTest extends TestCase
             ->see('password');
     }
 
-    /**
-     * Check that we can fill and submit the form.
-     * @param Factory $faker
-     */
-    public function testFillAndSubmitCreateUserForm()
+    public function testOnboardingProcess()
     {
-        $faker = Factory::create();
+        $this->createProgramLead();
+        $this->createPractice();
+    }
 
-        $firstName = $faker->firstName;
-        $lastName = $faker->lastName;
-        $email = $faker->email;
-        $password = $faker->password;
+    public function createProgramLead()
+    {
+        $firstName = $this->faker->firstName;
+        $lastName = $this->faker->lastName;
+        $email = $this->faker->email;
+        $password = $this->faker->password;
 
         $this->visit(route('get.onboarding.create.program.lead.user'))
             ->type($firstName, 'firstName')
@@ -43,7 +52,7 @@ class OnboardingTest extends TestCase
             ->press('Create program lead')
             ->seeInDatabase('users', [
                 'first_name' => $firstName,
-                'last_name' => $lastName,
+                'last_name'  => $lastName,
                 'user_email' => $email,
             ])
             ->seePageIs(route('get.onboarding.create.practice'));
@@ -53,11 +62,13 @@ class OnboardingTest extends TestCase
         $this->assertTrue(Hash::check($password, $this->provider->password));
 
         $this->assertTrue($this->provider->hasRole('program-lead'));
+    }
 
-
-        $name = $faker->company;
-        $description = $faker->text();
-        $locations = $faker->numberBetween(1, 15);
+    public function createPractice()
+    {
+        $name = $this->faker->company;
+        $description = $this->faker->text();
+        $locations = $this->faker->numberBetween(1, 15);
 
         $this->actingAs($this->provider)
             ->visit(route('get.onboarding.create.practice'))
