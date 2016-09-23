@@ -8,6 +8,11 @@
                        type="{{ isset($type) ? $type : 'text' }}"
                        id="{{ $name }}"
                        name="{{ $name }}"
-                       value="{{ isset($value) ? $value : '' }}">
+                {{ isset($value) ? "value=$value" : '' }}
+                @if(isset($attributes))
+                    @foreach($attributes as $key => $val)
+                        {{ $key }}="{{ $val }}"
+                    @endforeach
+                @endif>
                 <label class="mdl-textfield__label" for="{{ $name }}">{{ $label }}</label>
             </div>

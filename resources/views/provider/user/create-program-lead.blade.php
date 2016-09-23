@@ -4,55 +4,44 @@
 
 <head>
     <style>
-
-        html, body {
-            height: 100%;
-        }
-
-        body {
-            display: flex;
-            align-items: center;
-        }
-
-        .mdl-layout {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .mdl-layout__content {
-            padding: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .demo-card-wide > .mdl-card__title {
+        .onboarding-user-card > .mdl-card__title {
             color: #fff;
             height: 190px;
             background: url({{asset('/img/clh_logo.svg')}}) center / contain;
             background-repeat: no-repeat;
+            padding: 0;
+            margin: 0;
         }
     </style>
 </head>
+
 @section('content')
-
-    @include('errors.errors')
-
     <div class="mdl-layout mdl-js-layout">
-        <main class="mdl-layout__content mdl-cell--4-col">
+        <div class="mdl-grid full-height">
+            @include('errors.errors')
 
-            <div class="mdl-card mdl-shadow--1dp demo-card-wide mdl-cell--12-col">
+            <div class="v-center">
 
-                <div class="mdl-card__title"></div>
+                <div class="mdl-card mdl-shadow--1dp onboarding-user-card mdl-cell mdl-cell--6-col">
 
-                {!! Form::open([
-                    'url' => route('post.store.program.lead.user'),
-                    'method' => 'post',
-                    'id' => 'registration',
-                ]) !!}
+                    <div class="mdl-card__title"></div>
 
-                <div class="mdl-card__supporting-text">
+                    <div class="mdl-cell--12-col">
+                        <h5 class="mdl-typography--text-center">
+                            Welcome to CarePlan Manager!
+                        </h5>
+                        <div class="mdl-layout-spacer" style="height: 2%;"></div>
+                        <h6>
+                            Let's get started by creating an account manager? Page name is create-program-lead.
+                        </h6>
+                    </div>
+
+                    {!! Form::open([
+                        'url' => route('post.store.program.lead.user'),
+                        'method' => 'post',
+                        'id' => 'registration',
+                    ]) !!}
+
 
                     @include('provider.partials.mdl.form.text.textfield', [
                         'name' => 'firstName',
@@ -71,6 +60,9 @@
                         'label' => 'Email',
                         'class' => 'mdl-cell--12-col',
                         'type' => 'email',
+                        'attributes' => [
+                            'autocomplete' => 'new-email',
+                        ]
                     ])
 
                     @include('provider.partials.mdl.form.text.textfield', [
@@ -78,20 +70,21 @@
                         'label' => 'Password',
                         'class' => 'mdl-cell--12-col',
                         'type' => 'password',
+                        'attributes' => [
+                            'autocomplete' => 'new-password',
+                        ]
                     ])
 
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary mdl-cell--12-col">
                         Create account
                     </button>
-                </div>
 
-                {!! Form::close() !!}
+                    {!! Form::close() !!}
+
+                </div>
 
             </div>
 
-
-        </main>
-
+        </div>
     </div>
-
 @endsection

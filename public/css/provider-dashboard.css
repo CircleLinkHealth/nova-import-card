@@ -1,6 +1,7 @@
 html,
 body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
+    height: 100%;
 }
 .provider-avatar {
   width: 48px;
@@ -211,10 +212,25 @@ _:-ms-input-placeholder,
      your background is light. */
   color: #F95A18;
 }
-
 .card-square.mdl-card {
     width: 200px;
     height: 200px;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.v-center {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
 }
 
 /*# sourceMappingURL=provider-dashboard.css.map */
