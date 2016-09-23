@@ -1092,7 +1092,8 @@ Route::group([
 
 
 Route::controller('onboarding', 'Provider\OnboardingController', [
-    'getCreateProgramLeadUser' => 'get.create.program.lead.user',
-    'postStoreProgramLeadUser' => 'post.store.program.lead.user',
-    'getCreatePractice'        => 'get.create.practice',
+    'getCreateProgramLeadUser' => 'get.onboarding.create.program.lead.user',
+    'postStoreProgramLeadUser' => 'post.onboarding.store.program.lead.user',
+    'getCreatePractice'        => 'get.onboarding.create.practice',
+    'postStorePractice'        => 'post.onboarding.store.practice',
 ]);

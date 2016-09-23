@@ -1,5 +1,5 @@
 <nav class="provider-navigation mdl-navigation mdl-color--blue-grey-800">
-    <a class="mdl-navigation__link" href="{{ route('get.create.practice') }}">
+    <a class="mdl-navigation__link" href="{{ route('get.onboarding.create.practice') }}">
         <i class="mdl-color-text--blue-grey-400 material-icons"
            role="presentation">business</i>
         Practice

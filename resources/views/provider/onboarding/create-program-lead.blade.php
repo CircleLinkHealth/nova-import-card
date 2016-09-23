@@ -9,7 +9,7 @@
     @include('errors.errors')
 
     {!! Form::open([
-        'url' => route('post.store.program.lead.user'),
+        'url' => route('post.onboarding.store.program.lead.user'),
         'method' => 'post',
         'id' => 'registration',
     ]) !!}
@@ -46,11 +46,11 @@
         ]
     ])
 
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary mdl-cell--12-col">
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary mdl-cell--12-col"
+            id="update-practice">
         Create program lead
     </button>
 
     {!! Form::close() !!}
-
 
 @endsection

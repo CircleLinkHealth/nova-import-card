@@ -30,9 +30,14 @@ class OnboardingController extends Controller
         $this->users = $userRepository;
     }
 
+    public function getCreatePractice()
+    {
+        return view('provider.onboarding.create-practice');
+    }
+
     public function getCreateProgramLeadUser()
     {
-        return view('provider.user.create-program-lead');
+        return view('provider.onboarding.create-program-lead');
     }
 
     public function postStoreProgramLeadUser(Request $request)
@@ -59,6 +64,11 @@ class OnboardingController extends Controller
 
         auth()->login($user);
 
-        return redirect()->route('get.create.practice');
+        return redirect()->route('get.onboarding.create.practice');
+    }
+
+    public function postStorePractice()
+    {
+
     }
 }

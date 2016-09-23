@@ -41,7 +41,7 @@ class DashboardTest extends TestCase
             ->visit(route('get.create.practice'))
             ->type($name, 'name')
             ->type($description, 'description')
-            ->press('Update Practice');
+            ->press('update-practice');
 
         $this->seeInDatabase('wp_blogs', [
             'name'         => str_slug($name),

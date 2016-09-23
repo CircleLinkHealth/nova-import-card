@@ -28,7 +28,8 @@
                 'class' => 'mdl-cell--12-col',
             ])
 
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary mdl-cell--12-col">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary mdl-cell--12-col"
+                    id="update-practice">
                 Update Practice
             </button>
 

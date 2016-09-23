@@ -10,6 +10,10 @@
             padding: 0;
             margin: 0;
         }
+
+        .onboarding-user-card.mdl-card {
+            width: 500px !important;
+        }
     </style>
 </head>
 
@@ -20,7 +24,7 @@
 
             <div class="v-center">
 
-                <div class="mdl-card mdl-shadow--1dp onboarding-user-card mdl-cell mdl-cell--6-col">
+                <div class="mdl-card mdl-shadow--1dp onboarding-user-card">
 
                     <div class="mdl-card__title"></div>
 
@@ -36,8 +40,9 @@
                         </h6>
                     </div>
 
-                    @yield('module')
-
+                    <div class="mdl-cell--12-col">
+                        @yield('module')
+                    </div>
                 </div>
 
             </div>
