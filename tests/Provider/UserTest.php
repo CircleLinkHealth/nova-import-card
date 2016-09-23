@@ -15,7 +15,7 @@ class UserTest extends TestCase
      */
     public function testSeeCreateUserForm()
     {
-        $this->visit(route('get.create.user'))
+        $this->visit(route('get.create.program.lead.user'))
             ->see('firstName')
             ->see('lastName')
             ->see('email')
@@ -35,7 +35,7 @@ class UserTest extends TestCase
         $email = $faker->email;
         $password = $faker->password;
 
-        $this->visit(route('get.create.user'))
+        $this->visit(route('get.create.program.lead.user'))
             ->type($firstName, 'firstName')
             ->type($lastName, 'lastName')
             ->type($email, 'email')

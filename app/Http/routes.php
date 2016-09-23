@@ -1083,11 +1083,15 @@ Route::group([
         'getCreateLocation' => 'get.create.location',
         'getCreatePractice' => 'get.create.practice',
         'getCreateStaff'    => 'get.create.staff',
-        'getCreateUser'     => 'get.create.user',
         'getIndex'          => 'get.provider.dashboard',
         'postStoreInvite'   => 'post.store.invite',
         'postStoreLocation' => 'post.store.location',
         'postStorePractice' => 'post.store.practice',
-        'postStoreUser'     => 'post.store.user',
     ]);
 });
+
+
+Route::controller('onboarding', 'Provider\OnboardingController', [
+    'getCreateProgramLeadUser' => 'get.create.program.lead.user',
+    'postStoreProgramLeadUser' => 'post.store.program.lead.user',
+]);

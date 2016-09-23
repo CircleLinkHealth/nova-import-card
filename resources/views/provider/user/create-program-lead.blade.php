@@ -47,7 +47,7 @@
                 <div class="mdl-card__title"></div>
 
                 {!! Form::open([
-                    'url' => route('post.store.user'),
+                    'url' => route('post.store.program.lead.user'),
                     'method' => 'post',
                     'id' => 'registration',
                 ]) !!}
