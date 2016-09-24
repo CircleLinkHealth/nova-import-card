@@ -35,23 +35,32 @@ class FamilyController extends Controller
 
     public function store(Request $request){
 
-        $family_member_ids = $request->only('family_member_ids');
+        $family_member_ids =  explode(',', $request->input('family_member_ids'));
+
 
         $fam = new Family();
 
         $fam->created_by = auth()->user()->ID;
 
+        $fam->save();
+
         foreach ($family_member_ids as $patient_id){
 
             $patient = PatientInfo::where('user_id', $patient_id)->first();
 
-            if ($patient->family->count() < 1){
+            if ($patient->family()->count() >= 1){
 
-                $fam->users()->attach($patient);
+                $fam->delete();
+                return "Sorry, {$patient->user->fullName} already belongs to a family. <br> <br> Please contact Rohan for manual edits.";
 
-            }
+            };
+
+            $patient->family_id = $fam->id;
+            $patient->save();
 
         }
+
+        return $fam;
 
     }
 

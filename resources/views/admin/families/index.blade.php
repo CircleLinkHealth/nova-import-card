@@ -2,63 +2,37 @@
 
 @section('content')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <script type="text/javascript" src="{{ asset('/js/admin/families.js') }}"></script>
+    <script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('/js/typeahead.bundle.js') }}"></script>
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-10 col-md-offset-1">
-                @include('errors.errors')
-            </div>
-        </div>
+        {!! Form::open(array('url' => URL::route('admin.families.store', array()), 'class' => 'form-horizontal')) !!}
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-8">
                         <h1>Families</h1>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.families.create', array()) }}" class="btn btn-success" disabled="disabled">Create Family</a>
-                        </div>
-                    </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">All Families</div>
+                    <div class="panel-heading">Create Family</div>
                     <div class="panel-body">
-                        @include('errors.errors')
-
-                        <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.families.index', array()), 'class' => 'form-horizontal')) !!}
+                        <div class="input_fields_wrap">
+                            <div class="form-group">
+                                <div class="col-sm-2">{!! Form::label('family_member_ids', 'Enter Family User IDs: eg:(144,233,377,610,987)') !!}</div>
+                                <div class="col-sm-10">{!! Form::text('family_member_ids', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                            </div>
                         </div>
-
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <td></td>
-                                <td><strong>id</strong></td>
-                                <td><strong>name</strong></td>
-                                <td><strong>view</strong></td>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach( $families as $family )
-                                <tr>
-                                    <td><a href="{{ URL::route('admin.families.show', array('id' => $family->id)) }}" class="btn btn-primary">{{ $family->id }}</a></td>
-                                    <td><a href="{{ URL::route('admin.families.show', array('id' => $family->id)) }}" class="btn btn-primary">{{ $family->id }}</a></td>
-                                    <td>
-                                        @if(Entrust::can('users-edit'))
-                                            <a href="{{ URL::route('admin.families.edit', array('id' => $family->id)) }}" class="btn btn-primary">Edit</a>
-                                        @endif
-                                        @if(Entrust::can('users-destroy'))
-                                            <a href="{{ URL::route('admin.families.destroy', array('id' => $family->id)) }}" class="btn btn-warning">Remove</a>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                        <div class="col-sm-12">
+                            <div class="pull-right">
+                            <div class="pull-right">
+                                {{--<a href="{{ URL::route('admin.families.index', array()) }}" class="btn btn-danger">Cancel</a>--}}
+                                {!! Form::submit('Create Family', array('class' => 'btn btn-success')) !!}
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
-    </div>
 @stop
+
