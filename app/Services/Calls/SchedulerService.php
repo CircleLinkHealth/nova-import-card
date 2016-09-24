@@ -3,6 +3,7 @@
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
+use App\Family;
 use App\Note;
 use App\PatientInfo;
 use App\PatientMonthlySummary;
@@ -47,6 +48,7 @@ class SchedulerService
 
             $prediction = (new SuccessfulHandler($patient->patientInfo))->handle();
             $prediction['successful'] = true;
+
             return $prediction;
 
         }
@@ -122,13 +124,10 @@ class SchedulerService
             }
 
     //extract the last scheduled call
-    public function getScheduledCallForPatient($patient)
+    public function getScheduledCallForPatient(User $patient)
     {
 
-        $call = Call::where(function ($q) use ($patient) {
-            $q->where('outbound_cpm_id', $patient->ID)
-                ->orWhere('inbound_cpm_id', $patient->ID);
-        })
+        $call = Call::where('inbound_cpm_id', $patient->ID)
             ->where('status', '=', 'scheduled')
             ->first();
 
@@ -227,6 +226,88 @@ class SchedulerService
 
 
         return $failed;
+    }
+
+    public function syncFamilialCalls(Family $family){
+
+        //First get family members
+        $patients = $family->patients()->get();
+
+        //Then get their family's calls
+        $scheduledDates = array();
+        $scheduledCalls = array();
+        $designatedNurse = null;
+
+        foreach ($patients as $patient){
+
+            $call = $this->getScheduledCallForPatient($patient->user);
+
+            if(is_object($call)){
+                //If the patient has a call,
+                
+                $date = Carbon::parse($call->scheduled_date);
+                $date->setTimeFromTimeString(Carbon::parse($call->window_start)->toTimeString());
+
+                //Set one of the nurses as the designated nurse
+                $designatedNurse = $call->outbound_cpm_id;
+
+                //ignore if past call
+                if(Carbon::now()->toDateTimeString() < $date->toDateTimeString()) {
+                    $scheduledDates[$patient->user_id] = $date->toDateTimeString();
+                }
+
+            } else {
+
+                //fill in some call info:
+                $call = Call::create([
+
+                        'service' => 'phone',
+                        'status' => 'scheduled',
+
+                        'attempt_note' => '',
+
+                        'scheduler' => 'family algorithm',
+
+                        'inbound_cpm_id' => $patient->user_id,
+
+                        'outbound_phone_number' => '',
+                        'is_cpm_outbound' => true,
+
+                        'call_time' => 0,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+
+                    ]);
+
+            }
+
+            $scheduledCalls[$patient->user_id] = $call;
+
+        }
+
+        if(empty($scheduledDates)){
+            throw new \Exception('Sorry, no family member has any scheduled calls. Please contact CLH immediately.');
+
+        }
+
+        //determine minimum date
+        $minDate = Carbon::parse(min($scheduledDates));
+
+        //patientId => patientScheduledCall
+        foreach ($scheduledCalls as $key => $value){
+            
+            $callPatient = User::find($key);
+
+            $value->scheduled_date = $minDate->toDateTimeString();
+            $value->inbound_phone_number = $callPatient->phone ? $callPatient->phone : '';
+            $value->outbound_cpm_id = $designatedNurse;
+            $value->window_start = $minDate->format('H:i');
+            $value->window_end = $minDate->format('H:i');
+            $value->save();
+
+        }
+
+        return $scheduledCalls;
+
     }
 
 

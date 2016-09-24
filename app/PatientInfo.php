@@ -59,6 +59,13 @@ class PatientInfo extends Model {
         return $this->belongsTo(User::class, 'user_id', 'ID');
     }
 
+	public function family(){
+
+		return $this->belongsTo(Family::class, 'family_id');
+
+	}
+
+
 	// END RELATIONSHIPS
 
 
@@ -215,5 +222,11 @@ class PatientInfo extends Model {
             $timeTo
         );
     }
+
+	public function scopeHasFamily($query){
+
+		return $query->whereNotNull('family_id');
+
+	}
 
 }

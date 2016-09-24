@@ -11,6 +11,7 @@ namespace App\Algorithms\Calls;
 
 use App\Call;
 use App\PatientContactWindow;
+use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 
 trait CallAlgoHelper

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Call;
+use App\PatientInfo;
 use App\Services\Calls\SchedulerService;
 use App\User;
 use Carbon\Carbon;
@@ -115,6 +116,15 @@ class CallController extends Controller
                                                 isset($input['attempt_note']) ? $input['attempt_note'] : ''
 
                                             );
+
+
+        $patient = PatientInfo::where('user_id', intval($input['patient_id']))->first();
+
+        if($patient->family()->exists()){
+
+            (new SchedulerService())->syncFamilialCalls($patient->family);
+
+        }
 
         return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])
                          ->with('messages', ['Successfully Created Note']);

@@ -2,27 +2,10 @@
 
 //THIS IS FOR APRIMA ONLY
 
-use App\Algorithms\Calls\ReschedulerHandler;
-use Illuminate\Support\Facades\Auth;
+Route::get('algo', function(){
 
-Route::get('algo/rescheduler', function(){
-
-    dd(auth()->user()->isCCMCountable());
-
-    $handled = (new ReschedulerHandler())->handle();
-
-    $list = '<p>The CPMBot just rescheduled some calls:</p><ul>';
-
-    foreach ($handled as $call){
-        $patient = $call->inboundUser->fullName;
-
-        $list.= "<li>Call rescheduled for Patient: {$patient}</li>";
-
-    }
-
-    $list .= '</ul>';
-
-    return $list;
+    $patient = App\PatientInfo::find(1211);
+    dd($patient->family()->exists());
 
 });
 
@@ -267,6 +250,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as' => 'post.CallController.import'
         ]);
 
+        Route::get('families/create', [
+            'uses' => 'FamilyController@create',
+            'as' => 'family.create'
+        ]);
+
         Route::post('general-comments/import', [
             'uses' => 'Admin\UploadsController@postGeneralCommentsCsv',
             'as' => 'post.GeneralCommentsCsv'
@@ -416,6 +404,38 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('users/patientCallManagement', ['uses' => 'Admin\PatientCallManagementController@index', 'as' => 'admin.patientCallManagement.index']);
             Route::get('users/patientCallManagement/{id}/edit', ['uses' => 'Admin\PatientCallManagementController@edit', 'as' => 'admin.patientCallManagement.edit']);
             Route::post('users/patientCallManagement/{id}/edit', ['uses' => 'Admin\PatientCallManagementController@update', 'as' => 'admin.patientCallManagement.update']);
+        });
+
+        // families
+        Route::group([
+            'middleware' => [
+                'permission:users-view-all',
+            ]
+        ], function () {
+            Route::get('families', [
+                'uses' => 'FamilyController@index',
+                'as'   => 'admin.families.index'
+            ]);
+            Route::post('families', [
+                'uses' => 'FamilyController@store',
+                'as'   => 'admin.families.store'
+            ]);
+            Route::get('families/create', [
+                'uses' => 'FamilyController@create',
+                'as'   => 'admin.families.create'
+            ]);
+            Route::get('families/{id}/edit', [
+                'uses' => 'FamilyController@edit',
+                'as'   => 'admin.families.edit'
+            ]);
+            Route::get('families/{id}/destroy', [
+                'uses' => 'FamilyController@destroy',
+                'as'   => 'admin.families.destroy'
+            ]);
+            Route::post('families/{id}/edit', [
+                'uses' => 'FamilyController@update',
+                'as'   => 'admin.families.update'
+            ]);
         });
 
         // rules
