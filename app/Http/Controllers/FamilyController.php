@@ -37,7 +37,6 @@ class FamilyController extends Controller
 
         $family_member_ids =  explode(',', $request->input('family_member_ids'));
 
-
         $fam = new Family();
 
         $fam->created_by = auth()->user()->ID;
@@ -46,12 +45,17 @@ class FamilyController extends Controller
 
         foreach ($family_member_ids as $patient_id){
 
-            $patient = PatientInfo::where('user_id', $patient_id)->first();
+            $patient = PatientInfo::where('user_id', trim($patient_id))->first();
+            $contact_rohan = "Please contact Rohan for Manual Edits.";
+
+            if(!is_object($patient)){
+                return "Sorry, {$patient_id} is not a patient in the system. " . $contact_rohan;
+            }
 
             if ($patient->family()->count() >= 1){
 
                 $fam->delete();
-                return "Sorry, {$patient->user->fullName} already belongs to a family. <br> <br> Please contact Rohan for manual edits.";
+                return "Sorry, {$patient->user->fullName} already belongs to a family.<br> <br>" . $contact_rohan;
 
             };
 
@@ -60,7 +64,7 @@ class FamilyController extends Controller
 
         }
 
-        return $fam;
+        return redirect()->back()->with(['message' => 'Created A Happy Family!']);
 
     }
 

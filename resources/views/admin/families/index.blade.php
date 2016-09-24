@@ -16,7 +16,12 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Create Family</div>
                     <div class="panel-body">
-                        <div class="input_fields_wrap">
+                        @if(session('message'))
+                        <div>
+                            <h3>{{session('message')}}</h3>
+                        </div>
+                        @endif
+                        <div>
                             <div class="form-group">
                                 <div class="col-sm-2">{!! Form::label('family_member_ids', 'Enter Family User IDs: eg:(144,233,377,610,987)') !!}</div>
                                 <div class="col-sm-10">{!! Form::text('family_member_ids', '', ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
