@@ -3,6 +3,7 @@
 use App\Activity;
 use App\Formatters\WebixFormatter;
 use App\PatientContactWindow;
+use App\PatientMonthlySummary;
 use App\Program;
 use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
@@ -340,6 +341,8 @@ class NotesController extends Controller
                 if (Auth::user()->hasRole('provider')) {
 
                     $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->ID , null);
+
+                    (new PatientMonthlySummary())->updateCallInfoForPatient($patient->patientInfo, true);
 
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
 
