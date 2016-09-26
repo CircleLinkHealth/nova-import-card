@@ -120,12 +120,6 @@ class CallController extends Controller
 
         $patient = PatientInfo::where('user_id', intval($input['patient_id']))->first();
 
-        if($patient->family()->exists()){
-
-            (new SchedulerService())->syncFamilialCalls($patient->family);
-
-        }
-
         return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])
                          ->with('messages', ['Successfully Created Note']);
         
