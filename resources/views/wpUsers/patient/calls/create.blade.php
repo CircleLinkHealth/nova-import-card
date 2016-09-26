@@ -47,7 +47,9 @@
                         Schedule Next Call Attempt
                     @endif
                 </div>
-                {!! Form::open(array('url' => URL::route('call.schedule', array('patient' => $patient->ID)), 'method' => 'POST')) !!}
+                {!!
+                Form::open(array('url' => URL::route('call.schedule', array('patient' => $patient->user->ID)), 'method' => 'POST'))
+                !!}
 
                 <div class="form-block col-md-4" style="padding-top: 13px">
                     <div class="row">
@@ -106,7 +108,7 @@
                     </div>
                 </div>
 
-            <input type="hidden" name="patient_id" value="{{$patient->ID}}"/>
+            <input type="hidden" name="patient_id" value="{{$patient->user->ID}}"/>
             <input type="hidden" name="attempt_note" value="{{$attempt_note}}"/>
 
 
