@@ -10,7 +10,6 @@ use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\ForeignId;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\ValidatesQAImportOutput;
 use App\PatientCareTeamMember;
@@ -18,7 +17,6 @@ use App\PatientReports;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Maknz\Slack\Facades\Slack;
 
 class CcdApiController extends Controller
@@ -63,9 +61,7 @@ class CcdApiController extends Controller
             ? Carbon::tomorrow()
             : Carbon::parse($to)->endOfDay();
 
-        $sendAll = $request->input('send_all')
-            ? true
-            : false;
+        $sendAll = $request->input('send_all');
 
         $locationId = $this->getApiUserLocation($user);
 
@@ -105,6 +101,19 @@ class CcdApiController extends Controller
             : response()->json(["message" => "No pending care events."], 404);
     }
 
+    public function getApiUserLocation($user)
+    {
+        $apiUserLocation = $user->locations;
+
+        try {
+            $locationId = $apiUserLocation[0]->pivot->location_id;
+        } catch (\Exception $e) {
+            return response()->json('Could not resolve a Location from your User.', 400);
+        }
+
+        return $locationId;
+    }
+
     public function reports(Request $request)
     {
         if (!\Session::has('apiUser')) return response()->json(['error' => 'Authentication failed.'], 403);
@@ -121,9 +130,7 @@ class CcdApiController extends Controller
             ? Carbon::tomorrow()
             : Carbon::parse($to)->endOfDay();
 
-        $sendAll = $request->input('send_all')
-            ? true
-            : false;
+        $sendAll = $request->input('send_all');
 
         $locationId = $this->getApiUserLocation($user);
 
@@ -310,18 +317,5 @@ class CcdApiController extends Controller
 //            $message->from('aprima-api@careplanmanager.com', 'CircleLink Health');
 //            $message->to($recipients)->subject($subject);
 //        });
-    }
-
-    public function getApiUserLocation($user)
-    {
-        $apiUserLocation = $user->locations;
-
-        try {
-            $locationId = $apiUserLocation[0]->pivot->location_id;
-        } catch (\Exception $e) {
-            return response()->json('Could not resolve a Location from your User.', 400);
-        }
-
-        return $locationId;
     }
 }
