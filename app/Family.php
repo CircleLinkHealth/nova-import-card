@@ -17,5 +17,12 @@ class Family extends Model
 
     }
 
+//    public function getClosestCallDateForFamily(){
+//
+//        return $this->patients()->users()->inboundCalls()->whereStatus('scheduled')->first();
+//
+//
+//    }
+
 
 }

@@ -41,6 +41,9 @@ class UnsuccessfulHandler implements CallHandler
     private $nextCallDate;
     private $attemptNote;
 
+    //return package
+    private $prediction;
+
     //debug vars
     private $logic;
 
@@ -53,6 +56,7 @@ class UnsuccessfulHandler implements CallHandler
         $this->nextCallDate = Carbon::now();
         $this->logic = '';
         $this->attemptNote = '';
+        $this->prediction = [];
 
     }
 
@@ -64,13 +68,12 @@ class UnsuccessfulHandler implements CallHandler
         $this->getPatientOffset();
 
         //get the next call date based on patient preferences
-        $callDate = $this->getNextWindow();
+        $this->getNextWindow();
         
-
         //Add debug string
-        $callDate['predicament'] = $this->createSchedulerInfoString();
+        $this->prediction['predicament'] = $this->createSchedulerInfoString();
 
-        return $callDate;
+        return $this->prediction;
 
     }
 

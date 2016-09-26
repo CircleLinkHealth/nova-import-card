@@ -148,6 +148,24 @@ class PatientInfo extends Model {
 		return true;
 	}
 
+	public function getFamilyMembers(PatientInfo $patient){
+
+		$family = $patient->family;
+
+		if(is_object($family)){
+
+			$members = $family->patients()->get();
+			
+			//remove the patient from the family itself
+			return $members->reject(function ($item) {
+				return $item->id == $this->id;
+			});
+		}
+
+		return [];
+
+	}
+
 
 	// Return s current months CCM time formatted for UI
 	public function getCurrentMonthCCMTimeAttribute()

@@ -2,10 +2,27 @@
 
 //THIS IS FOR APRIMA ONLY
 
-Route::get('algo', function(){
+Route::get('algo/family', function(){
 
-    $patient = App\PatientInfo::find(1211);
-    dd($patient->family()->exists());
+    if(app()->environment() == 'production'){
+
+        return 'Sorry, this cannot be run on the production environment.';
+
+    }
+
+    return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
+
+});
+
+Route::get('algo/rescheduler', function(){
+
+    if(app()->environment() == 'production'){
+
+        return 'Sorry, this cannot be run on the production environment.';
+
+    }
+
+    return (new \App\Algorithms\Calls\ReschedulerHandler())->handle();
 
 });
 

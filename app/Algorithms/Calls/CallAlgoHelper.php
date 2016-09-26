@@ -11,6 +11,7 @@ namespace App\Algorithms\Calls;
 
 use App\Call;
 use App\PatientContactWindow;
+use App\PatientInfo;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 
@@ -31,7 +32,8 @@ trait CallAlgoHelper
         $s = $this->ccmTime % 60;
         $formattedMonthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
 
-        $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient->user, Carbon::now()->toDateTimeString());
+        $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient->user,
+            Carbon::now()->toDateTimeString());
 
         $prediction['no_of_successful_calls'] = $successfulCallsThisMonth;
         $prediction['ccm_time_achieved'] = $ccm_time_achieved;
@@ -41,13 +43,14 @@ trait CallAlgoHelper
         return $prediction;
     }
 
-    public function getNextWindow(){
+    public function getNextWindow()
+    {
 
 
-        if($this->attemptNote != 'Call This Weekend') {
+        if ($this->attemptNote != 'Call This Weekend') {
             //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
             $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient,
-                                                                                                            $this->nextCallDate);
+                $this->nextCallDate);
         } else {
 
             //This override is to schedule calls on weekends.
@@ -57,20 +60,20 @@ trait CallAlgoHelper
             $next_predicted_contact_window['window_end'] = '17:00:00';
 
         }
-        
-        $prediction = [
-            'patient' => $this->patient,
-            'date' => $next_predicted_contact_window['day'],
+
+        $this->prediction = [
+            'patient'      => $this->patient,
+            'date'         => $next_predicted_contact_window['day'],
             'window_start' => $next_predicted_contact_window['window_start'],
-            'window_end' => $next_predicted_contact_window['window_end'],
-            'logic' => $this->logic,
-            'attempt_note' => $this->attemptNote
+            'window_end'   => $next_predicted_contact_window['window_end'],
+            'logic'        => $this->logic,
+            'attempt_note' => $this->attemptNote,
         ];
 
         //Add some more view stuff to array
-        $prediction = $this->formatAlgoDataForView($prediction);
+        $this->prediction = $this->formatAlgoDataForView($this->prediction);
 
-        return $prediction;
+        return $this->prediction;
     }
 
 }
