@@ -47,9 +47,9 @@ class OnboardingController extends Controller
         return view('provider.onboarding.create-practice');
     }
 
-    public function postStoreLocations()
+    public function postStoreLocations(Request $request)
     {
-
+        dd($request->input());
     }
 
     public function postStoreProgramLeadUser(Request $request)

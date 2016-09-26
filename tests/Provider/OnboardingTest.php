@@ -6,7 +6,8 @@ use Faker\Factory;
 class OnboardingTest extends TestCase
 {
     protected $faker;
-    
+    protected $numberOfLocations;
+
     /**
      * @var User $provider
      */
@@ -35,6 +36,7 @@ class OnboardingTest extends TestCase
     {
         $this->createProgramLead();
         $this->createPractice();
+//        $this->createLocations($this->numberOfLocations);
     }
 
     public function createProgramLead()
@@ -68,15 +70,48 @@ class OnboardingTest extends TestCase
     {
         $name = $this->faker->company;
         $description = $this->faker->text();
-        $locations = $this->faker->numberBetween(1, 15);
+        $this->numberOfLocations = $this->faker->numberBetween(1, 15);
 
         $this->actingAs($this->provider)
             ->visit(route('get.onboarding.create.practice'))
-            ->visit(route('get.onboarding.create.practice'))
             ->type($name, 'name')
             ->type($description, 'description')
-            ->type($description, 'locations')
+            ->type($this->numberOfLocations, 'numberOfLocations')
             ->press('create-practice');
+
+        $this->seeInDatabase('wp_blogs', [
+            'name'         => str_slug($name),
+            'display_name' => $name,
+            'description'  => $description,
+            'user_id'      => auth()->user()->ID,
+        ]);
+    }
+
+    public function createLocations($number)
+    {
+        $this->actingAs($this->provider)
+            ->visit(route('get.onboarding.create.locations', [
+                'numberOflocations' => $number,
+            ]));
+
+
+        for ($i = 0; $i <= $number; $i++) {
+            $name = $this->faker->streetAddress;
+            $addrLine2 = 'PO BOX: 500';
+            $city = $this->faker->city;
+            $state = 'NJ';
+            $postalCode = $this->faker->postcode;
+            $phone = $this->faker->phoneNumber;
+
+            $this->type($name, "locations[$i][name]")
+                ->type($name, "locations[$i][address_line_1]")
+                ->type($addrLine2, "locations[$i][address_line_2]")
+                ->type($city, "locations[$i][city]")
+                ->type($state, "locations[$i][state]")
+                ->type($postalCode, "locations[$i][postal_code]")
+                ->type($phone, "locations[$i][phone]")
+                ->press('submit');
+        }
     }
 
 }
