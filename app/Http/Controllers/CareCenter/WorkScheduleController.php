@@ -63,7 +63,7 @@ class WorkScheduleController extends Controller
         ) {
             if (!$this->canAddNewWindow($date)) {
                 $validator->errors()->add('date',
-                    "You can only add windows for next week after Wednesday at midnight.");
+                    "The windows was not created because it is out of the allowed date range.");
             }
         });
 
