@@ -1,5 +1,4 @@
 <?php
-use App\Algorithms\Calls\ReschedulerHandler;
 
 Route::get('algo/rescheduler', function () {
 
@@ -9,11 +8,8 @@ Route::group(['prefix' => 'algo'], function () {
 
     Route::get('family', function () {
 
-    foreach ($handled as $call) {
-        $patient = $call->inboundUser->fullName;
         if (app()->environment() == 'production') {
 
-        $list .= "<li>Call rescheduled for Patient: {$patient}</li>";
             return 'Sorry, this cannot be run on the production environment.';
 
         }
@@ -430,7 +426,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('calls/import', [
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
-            'as'   => 'post.CallController.import',
         ]);
 
         Route::get('families/create', [
@@ -476,7 +471,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('provider-monthly-usage', [
                 'uses' => 'Admin\Reports\ProviderMonthlyUsageReportController@index',
                 'as'   => 'ProviderMonthlyUsageReportController.index',
-                'as'   => 'CallReportController.exportxls',
             ]);
 
             Route::get('patient-conditions', [
@@ -495,7 +489,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('compute', [
                 'uses' => 'AlgoController@computeMock',
                 'as'   => 'algo.mock.compute',
-                'as'   => 'PatientConditionsReportController.getReport',
             ]);
         });
 
