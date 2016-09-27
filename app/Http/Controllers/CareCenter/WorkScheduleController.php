@@ -85,7 +85,34 @@ class WorkScheduleController extends Controller
 
     public function destroy($windowId)
     {
-        $this->nurseContactWindows->destroy($windowId);
+        $window = $this->nurseContactWindows
+            ->find($windowId);
+
+        if (!$window) {
+            $errors['window'] = 'This window does not exist.';
+
+            return redirect()->route('care.center.work.schedule.index')
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        if ($window->nurse_info_id != auth()->user()->nurseInfo->id) {
+            $errors['window'] = 'This window does not belong to you.';
+
+            return redirect()->route('care.center.work.schedule.index')
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        if (!$this->canAddNewWindow(Carbon::parse($window->date))) {
+            $errors['window'] = 'You cannot delete this window anymore.';
+
+            return redirect()->route('care.center.work.schedule.index')
+                ->withErrors($errors)
+                ->withInput();
+        }
+
+        $window->forceDelete();
 
         return redirect()->route('care.center.work.schedule.index');
     }
