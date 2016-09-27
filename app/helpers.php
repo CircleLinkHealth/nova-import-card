@@ -7,7 +7,9 @@ use Illuminate\Support\Collection;
 if (!function_exists('formatPhoneNumber')) {
     /**
      * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx
+     *
      * @param $string
+     *
      * @return string
      */
     function formatPhoneNumber($string)
@@ -33,6 +35,7 @@ if (!function_exists('extractNumbers')) {
      * Returns only numerical values in a string
      *
      * @param $string
+     *
      * @return string
      */
     function extractNumbers($string)
@@ -48,6 +51,7 @@ if (!function_exists('parseCsvToArray')) {
      * Parses a CSV file into an array.
      *
      * @param $file
+     *
      * @return string
      */
     function parseCsvToArray($file)
@@ -83,11 +87,16 @@ if (!function_exists('parseDaysStringToNumbers')) {
      *
      * @param $daysAsString
      * @param string $delimiter
+     *
      * @return string
      */
-    function parseDaysStringToNumbers($daysAsString, $delimiter = ',')
-    {
-        if (empty($daysAsString)) return [];
+    function parseDaysStringToNumbers(
+        $daysAsString,
+        $delimiter = ','
+    ) {
+        if (empty($daysAsString)) {
+            return [];
+        }
 
         //eg. Monday, Tuesday, Wednesday
         $daysString = new Collection(explode($delimiter, $daysAsString));
@@ -108,19 +117,69 @@ if (!function_exists('validateBloodPressureString')) {
      *
      * @param $bloodPressureString
      * @param string $delimiter
+     *
      * @return string
      */
-    function validateBloodPressureString($bloodPressureString, $delimiter = '/')
-    {
-        if (empty($bloodPressureString)) return true;
+    function validateBloodPressureString(
+        $bloodPressureString,
+        $delimiter = '/'
+    ) {
+        if (empty($bloodPressureString)) {
+            return true;
+        }
 
         $readings = new Collection(explode($delimiter, $bloodPressureString));
 
-        foreach ($readings as $reading)
-        {
-            if (!is_numeric($reading) || $reading > 999 || $reading < 10) return false;
+        foreach ($readings as $reading) {
+            if (!is_numeric($reading) || $reading > 999 || $reading < 10) {
+                return false;
+            }
         }
 
         return true;
+    }
+}
+
+if (!function_exists('carbonToClhDayOfWeek')) {
+    /**
+     * Convert Carbon DayOfWeek to CLH DayOfWeek.
+     * Carbon does 0-6 for Sun-Sat.
+     * We do 1-7 for Mon-Sun.
+     *
+     * @param $dayOfWeek
+     *
+     * @return int
+     */
+    function carbonToClhDayOfWeek($dayOfWeek)
+    {
+        return $dayOfWeek == 0
+            ? 7
+            : $dayOfWeek;
+    }
+}
+
+if (!function_exists('timestampsToWindow')) {
+    /**
+     * Convert timestamps to a Contact Window.
+     *
+     * @param $startTimestamp
+     * @param $endTimestamp
+     * @param string $timezone
+     *
+     * @return array
+     */
+    function timestampsToWindow(
+        $startTimestamp,
+        $endTimestamp,
+        $timezone = 'America/New_York'
+    ) {
+        $startDate = Carbon::parse($startTimestamp, $timezone);
+        $endDate = Carbon::parse($endTimestamp, $timezone);
+
+        return [
+            'day'   => carbonToClhDayOfWeek($startDate->dayOfWeek),
+            'start' => $startDate->format('H:i:s'),
+            'end'   => $endDate->format('H:i:s'),
+        ];
     }
 }

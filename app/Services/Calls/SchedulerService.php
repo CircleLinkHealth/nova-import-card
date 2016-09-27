@@ -4,6 +4,7 @@ use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Call;
 use App\Note;
+use App\NurseInfo;
 use App\PatientInfo;
 use App\PatientMonthlySummary;
 use App\Services\NoteService;
@@ -13,17 +14,6 @@ use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
 {
-
-    //nurse mapping for import csv
-    protected $nurses = [
-        'Patricia' => 1920,
-        'Katie' => 2159,
-        'Lydia' => 1755,
-        'Sue' => 1877,
-        'Monique' => 2332,
-        'Erin' => 2398,
-    ];
-
     /* Success is the call's status.
        true for reached, false for not reached */
     public function getNextCall($patient, $noteId, $success)
@@ -59,41 +49,25 @@ class SchedulerService
     }
 
     //Create new scheduled call
-    public function storeScheduledCall($patientId, $window_start, $window_end, $date, $scheduler, $nurse_id = false, $attempt_note = '')
+
+    public function getScheduledCallForPatient($patient)
     {
-        $patient = User::find($patientId);
 
-        $window_start = Carbon::parse($window_start)->format('H:i');
-        $window_end = Carbon::parse($window_end)->format('H:i');
+        $call = Call::where(function ($q) use
+        (
+            $patient
+        ) {
+            $q->where('outbound_cpm_id', $patient->ID)
+                ->orWhere('inbound_cpm_id', $patient->ID);
+        })
+            ->where('status', '=', 'scheduled')
+            ->first();
 
-        return Call::create([
-
-            'service' => 'phone',
-            'status' => 'scheduled',
-
-            'attempt_note' => $attempt_note,
-
-            'scheduler' => $scheduler,
-
-            'inbound_phone_number' => $patient->phone ? $patient->phone : '',
-            'outbound_phone_number' => '',
-
-            'inbound_cpm_id' => $patient->ID,
-            'outbound_cpm_id' => isset($nurse_id) ? $nurse_id : '',
-
-            'call_time' => 0,
-            'created_at' => Carbon::now()->toDateTimeString(),
-
-            'scheduled_date' => $date,
-            'window_start' => $window_start,
-            'window_end' => $window_end,
-
-            'is_cpm_outbound' => true
-
-        ]);
+        return $call;
     }
 
     //Updates previous call
+
     public function updateOrCreatePreviousScheduledCall(Note $note, $call, $status){
 
                 $patient = $note->patient;
@@ -122,19 +96,52 @@ class SchedulerService
             }
 
     //extract the last scheduled call
-    public function getScheduledCallForPatient($patient)
+
+    public function storeScheduledCall(
+        $patientId,
+        $window_start,
+        $window_end,
+        $date,
+        $scheduler,
+        $nurse_id = false,
+        $attempt_note = ''
+    )
     {
+        $patient = User::find($patientId);
 
-        $call = Call::where(function ($q) use ($patient) {
-            $q->where('outbound_cpm_id', $patient->ID)
-                ->orWhere('inbound_cpm_id', $patient->ID);
-        })
-            ->where('status', '=', 'scheduled')
-            ->first();
+        $window_start = Carbon::parse($window_start)->format('H:i');
+        $window_end = Carbon::parse($window_end)->format('H:i');
 
-        return $call;
+        return Call::create([
+
+            'service' => 'phone',
+            'status'  => 'scheduled',
+
+            'attempt_note' => $attempt_note,
+
+            'scheduler' => $scheduler,
+
+            'inbound_phone_number'  => $patient->phone
+                ? $patient->phone
+                : '',
+            'outbound_phone_number' => '',
+
+            'inbound_cpm_id'  => $patient->ID,
+            'outbound_cpm_id' => isset($nurse_id)
+                ? $nurse_id
+                : '',
+
+            'call_time'  => 0,
+            'created_at' => Carbon::now()->toDateTimeString(),
+
+            'scheduled_date' => $date,
+            'window_start'   => $window_start,
+            'window_end'     => $window_end,
+
+            'is_cpm_outbound' => true,
+
+        ]);
     }
-
 
     public function removeScheduledCallsForWithdrawnPatients()
     {
@@ -201,8 +208,8 @@ class SchedulerService
                 'inbound_phone_number' => $patient->phone ? $patient->phone : '',
                 'outbound_phone_number' => '',
 
-                'inbound_cpm_id' => $patient->ID,
-                'outbound_cpm_id' => $this->nurses[$row['Nurse']],
+                'inbound_cpm_id'  => $patient->ID,
+                'outbound_cpm_id' => NurseInfo::$nurseMap[$row['Nurse']],
 
                 'call_time' => 0,
 
