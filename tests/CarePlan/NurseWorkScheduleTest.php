@@ -1,5 +1,6 @@
 <?php
 
+use App\NurseContactWindow;
 use App\User;
 use Carbon\Carbon;
 use Tests\HandlesUsersAndCarePlans;
@@ -11,17 +12,16 @@ class NurseWorkScheduleTest extends TestCase
     public function test_main()
     {
         $nurse = $this->createUser(9, 'care-center');
-        $this->userLogin($nurse);
 
         $this->nurse_sees_account_button_and_schedule($nurse);
         $this->provider_does_not_see_work_schedule();
 
-        $this->nurse_stores_windows($nurse);
+        $this->nurse_stores_and_deletes_window($nurse);
 
-
+        $this->nurse_fails_to_store_and_delete_invalid_windows($nurse);
     }
 
-    public function nurse_sees_account_button_and_schedule(User $nurse)
+    protected function nurse_sees_account_button_and_schedule(User $nurse)
     {
         $this->actingAs($nurse)
             ->visit(route('patients.dashboard'))
@@ -33,7 +33,7 @@ class NurseWorkScheduleTest extends TestCase
         ob_end_clean();
     }
 
-    public function provider_does_not_see_work_schedule()
+    protected function provider_does_not_see_work_schedule()
     {
         $provider = $this->createUser(9, 'provider');
 
@@ -49,20 +49,95 @@ class NurseWorkScheduleTest extends TestCase
         ob_end_clean();
     }
 
-    public function nurse_stores_windows(User $nurse)
+    protected function nurse_stores_and_deletes_window(User $nurse)
     {
-        $date = Carbon::now()->addWeek(1)->format('m-d-Y');
-        $timeStart = '09:00:00';
-        $timeEnd = '19:00:00';
+        $window = $this->store_window($nurse, Carbon::now()->addWeek(1));
 
+        $this->delete_window($nurse, $window);
+
+    }
+
+    protected function store_window(
+        User $nurse,
+        Carbon $date,
+        $valid = true,
+        $timeStart = '09:00',
+        $timeEnd = '19:00'
+    ) {
         $this->actingAs($nurse)
             ->visit(route('care.center.work.schedule.index'))
-            ->type($date, 'date')
+            ->type($date->format('m-d-Y'), 'date')
             ->type($timeStart, 'window_time_start')
             ->type($timeEnd, 'window_time_end')
-            ->press('store-window')
-            ->seeInDatabase('nurse_contact_window', [
-                'nurse_info_id' => $nurse->nurseInfo->id,
+            ->press('store-window');
+
+        if ($valid) {
+            $this->seeInDatabase('nurse_contact_window', [
+                'nurse_info_id'     => $nurse->nurseInfo->id,
+                'date'              => $date->format('Y-m-d'),
+                'window_time_start' => $timeStart,
+                'window_time_end'   => $timeEnd,
             ]);
+
+            return $nurse->nurseInfo->windows()->first();
+        }
+
+        $this->dontSeeInDatabase('nurse_contact_window', [
+            'nurse_info_id'     => $nurse->nurseInfo->id,
+            'date'              => $date->format('Y-m-d'),
+            'window_time_start' => $timeStart,
+            'window_time_end'   => $timeEnd,
+        ]);
     }
+
+    protected function delete_window(
+        User $nurse,
+        NurseContactWindow $window,
+        $valid = true
+    ) {
+        if ($valid) {
+            $this->actingAs($nurse)
+                ->visit(route('care.center.work.schedule.index'))
+                ->click("delete-window-{$window->id}");
+
+            $this->dontSeeInDatabase('nurse_contact_window', [
+                'nurse_info_id' => $nurse->nurseInfo->id,
+                'id'            => $window->id,
+            ]);
+        }
+
+        if (!$valid) {
+            $response = $this->call('GET', '/care-center/work-schedule/destroy/71');
+
+            $this->actingAs($nurse)
+                ->visit(route('care.center.work.schedule.index'))
+                ->dontSee("delete-window-{$window->id}");
+
+            $this->seeInDatabase('nurse_contact_window', [
+                'nurse_info_id' => $nurse->nurseInfo->id,
+                'id'            => $window->id,
+            ]);
+        }
+    }
+
+    protected function nurse_fails_to_store_and_delete_invalid_windows(User $nurse)
+    {
+        $this->store_window($nurse, Carbon::now(), false);
+        $this->store_window($nurse, Carbon::parse('this sunday'), false);
+
+        $date = Carbon::now();
+        $timeStart = '10:00';
+        $timeEnd = '13:00';
+
+        $window = NurseContactWindow::create([
+            'nurse_info_id'     => $nurse->nurseInfo->id,
+            'date'              => $date->format('Y-m-d'),
+            'window_time_start' => $timeStart,
+            'window_time_end'   => $timeEnd,
+        ]);
+
+        $this->delete_window($nurse, $window, false);
+    }
+
+
 }

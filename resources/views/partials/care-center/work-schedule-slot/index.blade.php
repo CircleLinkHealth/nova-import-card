@@ -21,7 +21,8 @@
                     <div class="col-md-1">
                         @if($window->deletable)
                             <a href="{{ route('care.center.work.schedule.destroy', $window->id) }}"
-                               onclick="return confirm('Are you sure you want to delete this slot?')">
+                               onclick="return confirm('Are you sure you want to delete this slot?')"
+                               id="delete-window-{{$window->id}}">
                                 <i class="glyphicon glyphicon-trash"></i>
                             </a>
                         @else
