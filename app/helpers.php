@@ -158,6 +158,31 @@ if (!function_exists('carbonToClhDayOfWeek')) {
     }
 }
 
+if (!function_exists('clhDayOfWeekToDayName')) {
+    /**
+     * Convert CLH DayOfWeek to a day such as Monday, Tuesday
+     *
+     * @param $dayOfWeek
+     *
+     * @return int
+     */
+    function clhDayOfWeekToDayName($clhDayOfWeek)
+    {
+        $days = [
+            '',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday',
+        ];
+
+        return $days[$clhDayOfWeek];
+    }
+}
+
 if (!function_exists('timestampsToWindow')) {
     /**
      * Convert timestamps to a Contact Window.

@@ -115,7 +115,7 @@
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
                             @role(['care-center'])
                             <li>
-                                <a href="{{ url('/auth/logout') }}">
+                                <a href="{{ route('care.center.work.schedule.index') }}" indexhedule-link">
                                     <i class="glyphicon glyphicon-calendar"></i>
                                     Work Schedule
                                 </a>
