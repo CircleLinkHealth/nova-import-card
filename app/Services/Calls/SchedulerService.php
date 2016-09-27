@@ -47,17 +47,18 @@ class SchedulerService
 
         if($success){
 
-            $prediction = (new SuccessfulHandler($patient->patientInfo))->handle();
+            $prediction = (new SuccessfulHandler($patient->patientInfo, Carbon::now()))->handle();
             $prediction['successful'] = true;
 
             return $prediction;
 
         }
 
-        $prediction = (new UnsuccessfulHandler($patient->patientInfo))->handle();
-        $prediction['successful'] = false;
-        return $prediction;
+        $prediction = (new UnsuccessfulHandler($patient->patientInfo, Carbon::now()))->handle();
 
+        $prediction['successful'] = false;
+
+        return $prediction;
 
     }
 

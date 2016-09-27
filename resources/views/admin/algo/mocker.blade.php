@@ -28,16 +28,16 @@
                                     </div>
                                 </div>
                                 <!-- Multiple Radios (inline) -->
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label" for="call_success">Called Successfully This
-                                        Month?</label>
-                                    <div class="col-md-4">
-                                        <select id="call_success" name="call_success" id="call_success" class="form-control">
-                                            <option value="1" selected>Yes</option>
-                                            <option value="2">No</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                {{--<div class="form-group">--}}
+                                    {{--<label class="col-md-4 control-label" for="call_success">Called Successfully This--}}
+                                        {{--Month?</label>--}}
+                                    {{--<div class="col-md-4">--}}
+                                        {{--<select id="call_success" name="call_success" id="call_success" class="form-control">--}}
+                                            {{--<option value="1" selected>Yes</option>--}}
+                                            {{--<option value="2">No</option>--}}
+                                        {{--</select>--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
 
                                 <div class="form-group">
                                     <label class="col-md-4 control-label" for="week">Week</label>
@@ -84,6 +84,10 @@
                     <div class="jumbotron text-center">
                         <h1><span id="result"></span></h1>
                     </div>
+                    <p><h4>Notes</h4></p>
+                    <li> Currently doesn't consider frequency, no of successful calls </li>
+                    <li> Remember to add the patient's preference or closest Weekday to call date </li>
+                    <li> Note problems with the algorithm and list them <a href="https://circlelink-health2.codebasehq.com/projects/cpm/tickets/594"> here </a></li>
                 </div>
             </div>
 

@@ -47,13 +47,13 @@ class UnsuccessfulHandler implements CallHandler
     //debug vars
     private $logic;
 
-    public function __construct(PatientInfo $calledPatient)
+    public function __construct(PatientInfo $calledPatient, Carbon $initTime)
     {
 
         $this->week = Carbon::now()->weekOfMonth;
         $this->patient = $calledPatient;
         $this->ccmTime = $calledPatient->cur_month_activity_time;
-        $this->nextCallDate = Carbon::now();
+        $this->nextCallDate = $initTime;
         $this->logic = '';
         $this->attemptNote = '';
         $this->prediction = [];

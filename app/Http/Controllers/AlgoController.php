@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\PatientInfo;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AlgoController extends Controller
@@ -32,18 +33,15 @@ class AlgoController extends Controller
 
             if($status){
 
-                $prediction = (new SuccessfulHandler($guineaPig))->getPatientOffset($ccm, $week);
+                return (new SuccessfulHandler($guineaPig, Carbon::now()->startOfMonth()->addWeeks($week - 1 )))->getPatientOffset($ccm, $week);
+
 
             } else {
 
-                $prediction = (new UnsuccessfulHandler($guineaPig))->getPatientOffset($ccm, $week);
+                return (new UnsuccessfulHandler($guineaPig, Carbon::now()->startOfMonth()->addWeeks($week - 1 )))->getPatientOffset($ccm, $week);
 
             }
 
-
-            //get a test patient
-
-            return $prediction;
         }
 
     }
