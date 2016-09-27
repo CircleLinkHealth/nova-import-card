@@ -488,7 +488,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'AlgoController@createMock',
                 'as'   => 'algo.mock.create',
             ]);
-            
+
             Route::post('compute', [
                 'uses' => 'AlgoController@computeMock',
                 'as'   => 'algo.mock.compute',
