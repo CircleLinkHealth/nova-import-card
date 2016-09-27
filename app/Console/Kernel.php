@@ -5,15 +5,14 @@ use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\FormatLocationPhone;
 use App\Console\Commands\GeneratePatientReports;
+use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\PhiMail;
-use App\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Log;
 use Maknz\Slack\Facades\Slack;
 
 class Kernel extends ConsoleKernel
@@ -24,12 +23,13 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Inspire::class,
-        NukeItemAndMeta::class,
-        MapSnomedToCpmProblems::class,
+        EmailsProvidersToApproveCareplans::class,
         FormatLocationPhone::class,
         GeneratePatientReports::class,
-        EmailsProvidersToApproveCareplans::class,
+        ImportNurseScheduleFromGoogleCalendar::class,
+        Inspire::class,
+        MapSnomedToCpmProblems::class,
+        NukeItemAndMeta::class,
     ];
 
     /**

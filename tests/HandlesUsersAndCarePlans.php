@@ -12,7 +12,16 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait HandlesUsersAndCarePlans
 {
-    public function createProvider($programId = 9)
+    /**
+     * @param int $programId
+     * @param string $roleName
+     *
+     * @return $this|User
+     */
+    public function createUser(
+        $programId = 9,
+        $roleName = 'provider'
+    )
     {
         $faker = Factory::create();
 
@@ -22,7 +31,7 @@ trait HandlesUsersAndCarePlans
         $workPhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
 
         $roles = [
-            Role::whereName('provider')->first()->id,
+            Role::whereName($roleName)->first()->id,
         ];
 
         $bag = new ParameterBag([
@@ -68,7 +77,7 @@ trait HandlesUsersAndCarePlans
         return $user;
     }
 
-    public function providerLogin(User $provider)
+    public function userLogin(User $provider)
     {
         $this->visit('/auth/login')
             ->see('CarePlanManager')
@@ -212,6 +221,23 @@ trait HandlesUsersAndCarePlans
         return $patient;
     }
 
+    public function fillCarePlan(
+        User $patient,
+        $numberOfRowsToCreate
+    ) {
+        $this->addPatientCareTeam($patient);
+
+        $this->fillCareplanPage1($patient, $numberOfRowsToCreate);
+
+        $this->fillCareplanPage2($patient, $numberOfRowsToCreate);
+
+        $this->fillCareplanPage3($patient, $numberOfRowsToCreate);
+
+        $this->fillBiometrics($patient);
+
+        $this->printCarePlanTest($patient);
+    }
+
     public function addPatientCareTeam($patient)
     {
         //We cannot use the UI to add care team members
@@ -252,21 +278,6 @@ trait HandlesUsersAndCarePlans
             ->see('Lead Contact')
             ->see('Send Alert')
             ->see($this->provider->display_name);
-    }
-
-    public function fillCarePlan(User $patient, $numberOfRowsToCreate)
-    {
-        $this->addPatientCareTeam($patient);
-
-        $this->fillCareplanPage1($patient, $numberOfRowsToCreate);
-
-        $this->fillCareplanPage2($patient, $numberOfRowsToCreate);
-
-        $this->fillCareplanPage3($patient, $numberOfRowsToCreate);
-
-        $this->fillBiometrics($patient);
-
-        $this->printCarePlanTest($patient);
     }
 
     public function fillCareplanPage1(User $patient, $numberOfRowsToCreate = null)
@@ -321,51 +332,6 @@ trait HandlesUsersAndCarePlans
             1,
             "/manage-patients/{$patient->ID}/careplan/sections/1",
             null,
-            'cpm_misc_id',
-            $numberOfRowsToCreate
-        );
-    }
-
-    public function fillCareplanPage2(User $patient, $numberOfRowsToCreate = null)
-    {
-        /*
-        * Biometrics
-        */
-        $this->fillCpmEntityUserValues(
-            $patient,
-            'cpmBiometrics',
-            null,
-            "/manage-patients/{$patient->ID}/careplan/sections/2",
-            'Biometrics to Monitor',
-            'cpm_biometric_id',
-            $numberOfRowsToCreate
-        );
-    }
-
-    public function fillCareplanPage3(User $patient, $numberOfRowsToCreate = null)
-    {
-        /*
-        * Symptoms
-        */
-        $this->fillCpmEntityUserValues(
-            $patient,
-            'cpmSymptoms',
-            null,
-            "/manage-patients/{$patient->ID}/careplan/sections/3",
-            'Symptoms to Monitor',
-            'cpm_symptom_id',
-            $numberOfRowsToCreate
-        );
-
-        /*
-        * Additional Information
-        */
-        $this->fillCpmEntityUserValues(
-            $patient,
-            'cpmMiscs',
-            3,
-            "/manage-patients/{$patient->ID}/careplan/sections/3",
-            'Additional Information',
             'cpm_misc_id',
             $numberOfRowsToCreate
         );
@@ -445,6 +411,55 @@ trait HandlesUsersAndCarePlans
 //         */
 //        $this->assertGreaterThanOrEqual(count($carePlanEntities->all()), count($patientEntities));
 
+    }
+
+    public function fillCareplanPage2(
+        User $patient,
+        $numberOfRowsToCreate = null
+    ) {
+        /*
+        * Biometrics
+        */
+        $this->fillCpmEntityUserValues(
+            $patient,
+            'cpmBiometrics',
+            null,
+            "/manage-patients/{$patient->ID}/careplan/sections/2",
+            'Biometrics to Monitor',
+            'cpm_biometric_id',
+            $numberOfRowsToCreate
+        );
+    }
+
+    public function fillCareplanPage3(
+        User $patient,
+        $numberOfRowsToCreate = null
+    ) {
+        /*
+        * Symptoms
+        */
+        $this->fillCpmEntityUserValues(
+            $patient,
+            'cpmSymptoms',
+            null,
+            "/manage-patients/{$patient->ID}/careplan/sections/3",
+            'Symptoms to Monitor',
+            'cpm_symptom_id',
+            $numberOfRowsToCreate
+        );
+
+        /*
+        * Additional Information
+        */
+        $this->fillCpmEntityUserValues(
+            $patient,
+            'cpmMiscs',
+            3,
+            "/manage-patients/{$patient->ID}/careplan/sections/3",
+            'Additional Information',
+            'cpm_misc_id',
+            $numberOfRowsToCreate
+        );
     }
 
     public function fillBiometrics(User $patient)

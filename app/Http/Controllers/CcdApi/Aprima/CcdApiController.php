@@ -10,7 +10,6 @@ use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\ForeignId;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\ValidatesQAImportOutput;
 use App\PatientCareTeamMember;
@@ -18,7 +17,6 @@ use App\PatientReports;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Maknz\Slack\Facades\Slack;
 
 class CcdApiController extends Controller
@@ -32,13 +30,14 @@ class CcdApiController extends Controller
     private $importer;
     private $users;
 
-    public function __construct(ActivityRepository $activityRepository,
-                                CCDImporterRepository $repo,
-                                CcdaRepository $ccdaRepository,
-                                CcmTimeApiLogRepository $ccmTime,
-                                AprimaCcdApiRepository $aprimaCcdApiRepository,
-                                UserRepository $users)
-    {
+    public function __construct(
+        ActivityRepository $activityRepository,
+        CCDImporterRepository $repo,
+        CcdaRepository $ccdaRepository,
+        CcmTimeApiLogRepository $ccmTime,
+        AprimaCcdApiRepository $aprimaCcdApiRepository,
+        UserRepository $users
+    ) {
         $this->activities = $activityRepository;
         $this->ccda = $ccdaRepository;
         $this->ccmTime = $ccmTime;
@@ -49,7 +48,9 @@ class CcdApiController extends Controller
 
     public function getCcmTime(Request $request)
     {
-        if (!\Session::has('apiUser')) return response()->json(['error' => 'Authentication failed.'], 403);
+        if (!\Session::has('apiUser')) {
+            return response()->json(['error' => 'Authentication failed.'], 403);
+        }
 
         $user = \Session::get('apiUser');
 
@@ -63,9 +64,7 @@ class CcdApiController extends Controller
             ? Carbon::tomorrow()
             : Carbon::parse($to)->endOfDay();
 
-        $sendAll = $request->input('send_all')
-            ? true
-            : false;
+        $sendAll = filter_var($request->input('send_all'), FILTER_VALIDATE_BOOLEAN);
 
         $locationId = $this->getApiUserLocation($user);
 
@@ -76,27 +75,29 @@ class CcdApiController extends Controller
             $activities = $this->activities->getCcmActivities($ids->clhPatientUserId, $ids->clhProviderUserId,
                 $startDate, $endDate, $sendAll);
 
-            if ($activities->isEmpty()) continue;
+            if ($activities->isEmpty()) {
+                continue;
+            }
 
             $careEvents = $activities->map(function ($careEvent) {
 
                 $this->ccmTime->logSentActivity(['activity_id' => $careEvent->id], ['activity_id' => $careEvent->id]);
 
                 return [
-                    'servicePerson' => $careEvent->servicePerson,
+                    'servicePerson'    => $careEvent->servicePerson,
                     'startingDateTime' => $careEvent->startingDateTime,
-                    'length' => $careEvent->length,
-                    'lengthUnit' => $careEvent->lengthUnit,
-                    'commentString' => $careEvent->commentString,
-//                    'comment' => $careEvent->comment,
-                    'alertProvider' => false,
+                    'length'           => $careEvent->length,
+                    'lengthUnit'       => $careEvent->lengthUnit,
+                    'commentString'    => $careEvent->commentString,
+                    //                    'comment' => $careEvent->comment,
+                    'alertProvider'    => false,
                 ];
             });
 
             $results[] = [
-                'patientId' => $ids->patientId,
+                'patientId'  => $ids->patientId,
                 'providerId' => $ids->providerId,
-                'careEvents' => $careEvents
+                'careEvents' => $careEvents,
             ];
         }
 
@@ -105,9 +106,24 @@ class CcdApiController extends Controller
             : response()->json(["message" => "No pending care events."], 404);
     }
 
+    public function getApiUserLocation($user)
+    {
+        $apiUserLocation = $user->locations;
+
+        try {
+            $locationId = $apiUserLocation[0]->pivot->location_id;
+        } catch (\Exception $e) {
+            return response()->json('Could not resolve a Location from your User.', 400);
+        }
+
+        return $locationId;
+    }
+
     public function reports(Request $request)
     {
-        if (!\Session::has('apiUser')) return response()->json(['error' => 'Authentication failed.'], 403);
+        if (!\Session::has('apiUser')) {
+            return response()->json(['error' => 'Authentication failed.'], 403);
+        }
 
         $user = \Session::get('apiUser');
 
@@ -121,20 +137,23 @@ class CcdApiController extends Controller
             ? Carbon::tomorrow()
             : Carbon::parse($to)->endOfDay();
 
-        $sendAll = $request->input('send_all')
-            ? true
-            : false;
+        $sendAll = filter_var($request->input('send_all'), FILTER_VALIDATE_BOOLEAN);
 
         $locationId = $this->getApiUserLocation($user);
 
         $pendingReports = PatientReports::where('location_id', $locationId)
             ->whereBetween('created_at', [
-                $startDate, $endDate
+                $startDate,
+                $endDate,
             ]);
-        if ($sendAll) $pendingReports->withTrashed();
+        if ($sendAll) {
+            $pendingReports->withTrashed();
+        }
         $pendingReports = $pendingReports->get();
 
-        if ($pendingReports->isEmpty()) return response()->json(["message" => "No Pending Reports"], 404);
+        if ($pendingReports->isEmpty()) {
+            return response()->json(["message" => "No Pending Reports"], 404);
+        }
 
         $json = [];
 
@@ -145,7 +164,9 @@ class CcdApiController extends Controller
                 ->whereType('lead_contact')
                 ->first();
 
-            if (empty($provider)) continue;
+            if (empty($provider)) {
+                continue;
+            }
 
             //Get lead provider's foreign_id
             $foreignId_obj = ForeignId::where('system', ForeignId::APRIMA)
@@ -153,17 +174,21 @@ class CcdApiController extends Controller
                 ->where('location_id', $locationId)
                 ->first();
 
-            if (empty($foreignId_obj)) continue;
+            if (empty($foreignId_obj)) {
+                continue;
+            }
 
-            if (empty($report->file_base64)) continue;
+            if (empty($report->file_base64)) {
+                continue;
+            }
 
             if ($foreignId_obj->foreign_id) {
                 $json[] = [
-                    'patientId' => $report->patient_mrn,
+                    'patientId'  => $report->patient_mrn,
                     'providerId' => $foreignId_obj->foreign_id,
-                    'comment' => null,
-                    'file' => $report->file_base64,
-                    'fileType' => $report->file_type,
+                    'comment'    => null,
+                    'file'       => $report->file_base64,
+                    'fileType'   => $report->file_type,
                     'created_at' => $report->created_at->toDateTimeString(),
                 ];
             }
@@ -215,8 +240,8 @@ class CcdApiController extends Controller
 
             try {
                 ForeignId::updateOrCreate([
-                    'user_id' => $provider['ID'],
-                    'system' => ForeignId::APRIMA,
+                    'user_id'     => $provider['ID'],
+                    'system'      => ForeignId::APRIMA,
                     'location_id' => $locationId,
                 ], [
                     'foreign_id' => $providerInput['providerId'],
@@ -235,10 +260,10 @@ class CcdApiController extends Controller
         }
 
         $ccdObj = $this->ccda->create([
-            'user_id' => $user->ID,
+            'user_id'   => $user->ID,
             'vendor_id' => 1,
-            'xml' => $xml,
-            'source' => Ccda::API,
+            'xml'       => $xml,
+            'source'    => Ccda::API,
         ]);
 
         //We are saving the JSON CCD after we save the XML, just in case Parsing fails
@@ -251,14 +276,18 @@ class CcdApiController extends Controller
             $logger = new CcdItemLogger($ccdObj);
             $logger->logAll();
 
-            $providerId = empty($provider['ID']) ? null : $provider['ID'];
+            $providerId = empty($provider['ID'])
+                ? null
+                : $provider['ID'];
             $importer = new QAImportManager($programId, $ccdObj, $providerId, $locationId);
             $output = $importer->generateCarePlanFromCCD();
 
         } catch (\Exception $e) {
             if (app()->environment('production')) {
-                $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'bad', __METHOD__ . ' ' . __LINE__, $e->getMessage());
+                $this->notifyAdmins($user, $ccdObj, $providerJsonStr, 'bad', __METHOD__ . ' ' . __LINE__,
+                    $e->getMessage());
             }
+
             return response()->json(['message' => 'CCD uploaded successfully.'], 201);
         }
 
@@ -279,8 +308,14 @@ class CcdApiController extends Controller
      * @param null $line
      * @param null $errorMessage
      */
-    public function notifyAdmins(User $user, Ccda $ccda, $providerInfo = null, $status, $line = null, $errorMessage = null)
-    {
+    public function notifyAdmins(
+        User $user,
+        Ccda $ccda,
+        $providerInfo = null,
+        $status,
+        $line = null,
+        $errorMessage = null
+    ) {
         $link = route('view.files.ready.to.import');
 
         Slack::to('#ccd-file-status')
@@ -310,18 +345,5 @@ class CcdApiController extends Controller
 //            $message->from('aprima-api@careplanmanager.com', 'CircleLink Health');
 //            $message->to($recipients)->subject($subject);
 //        });
-    }
-
-    public function getApiUserLocation($user)
-    {
-        $apiUserLocation = $user->locations;
-
-        try {
-            $locationId = $apiUserLocation[0]->pivot->location_id;
-        } catch (\Exception $e) {
-            return response()->json('Could not resolve a Location from your User.', 400);
-        }
-
-        return $locationId;
     }
 }

@@ -1,9 +1,7 @@
 <?php
+use App\Algorithms\Calls\ReschedulerHandler;
 
-//Algo testers
-
-Route::get('al', function () {
-
+Route::get('algo/rescheduler', function () {
 
 });
 
@@ -11,8 +9,11 @@ Route::group(['prefix' => 'algo'], function () {
 
     Route::get('family', function () {
 
+    foreach ($handled as $call) {
+        $patient = $call->inboundUser->fullName;
         if (app()->environment() == 'production') {
 
+        $list .= "<li>Call rescheduled for Patient: {$patient}</li>";
             return 'Sorry, this cannot be run on the production environment.';
 
         }
@@ -429,6 +430,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('calls/import', [
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
+            'as'   => 'post.CallController.import',
         ]);
 
         Route::get('families/create', [
@@ -474,6 +476,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('provider-monthly-usage', [
                 'uses' => 'Admin\Reports\ProviderMonthlyUsageReportController@index',
                 'as'   => 'ProviderMonthlyUsageReportController.index',
+                'as'   => 'CallReportController.exportxls',
             ]);
 
             Route::get('patient-conditions', [
@@ -492,6 +495,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('compute', [
                 'uses' => 'AlgoController@computeMock',
                 'as'   => 'algo.mock.compute',
+                'as'   => 'PatientConditionsReportController.getReport',
             ]);
         });
 
@@ -1151,3 +1155,30 @@ Route::get('datatables/callData', [
     'uses' => 'DatatablesController@callData',
     'as'   => 'datatables.callData',
 ]);
+
+/*
+ *
+ * CARE-CENTER GROUP
+ *
+ */
+Route::group([
+    'middleware' => ['role:care-center'],
+    'prefix'     => 'care-center',
+], function () {
+
+    Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [
+        'only'  => [
+            'index',
+            'store',
+        ],
+        'names' => [
+            'index' => 'care.center.work.schedule.index',
+            'store' => 'care.center.work.schedule.store',
+        ],
+    ]);
+
+    Route::get('work-schedule/destroy/{id}', [
+        'uses' => 'CareCenter\WorkScheduleController@destroy',
+        'as'   => 'care.center.work.schedule.destroy',
+    ]);
+});
