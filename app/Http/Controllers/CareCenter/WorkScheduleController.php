@@ -28,7 +28,10 @@ class WorkScheduleController extends Controller
 
     public function index()
     {
-        $windows = auth()->user()->nurseInfo->windows
+        $windows = $this->nurseContactWindows
+            ->where('date', '>=', $this->today->format('Y-m-d'))
+            ->whereNurseInfoId(auth()->user()->nurseInfo->id)
+            ->get()
             ->map(function ($window) {
                 $window->deletable = $this->canAddNewWindow(Carbon::parse($window->date));
 
