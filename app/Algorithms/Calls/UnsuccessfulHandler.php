@@ -65,7 +65,7 @@ class UnsuccessfulHandler implements CallHandler
     {
 
         //Calculate the next date before which we can call patient
-        $this->getPatientOffset();
+        $this->getPatientOffset($this->ccmTime, $this->week);
 
         //get the next call date based on patient preferences
         $this->getNextWindow();
@@ -77,14 +77,14 @@ class UnsuccessfulHandler implements CallHandler
 
     }
 
-    public function getPatientOffset()
+    public function getPatientOffset($ccmTime, $week)
     {
 
         $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient->user, Carbon::now()->toDateTimeString());
 
-        if ($this->ccmTime > 1199) { // More than 20 mins
+        if ($ccmTime > 1199) { // More than 20 mins
 
-            if ($this->week == 1 || $this->week == 2) { // We are in the first two weeks of the month
+            if ($week == 1 || $week == 2) { // We are in the first two weeks of the month
 
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
@@ -98,7 +98,7 @@ class UnsuccessfulHandler implements CallHandler
 
                 }
 
-            } else if ($this->week == 3 || $this->week == 4) { //second last week of month
+            } else if ($week == 3 || $week == 4) { //second last week of month
 
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
@@ -112,7 +112,7 @@ class UnsuccessfulHandler implements CallHandler
 
                 }
 
-            } else if ($this->week == 5) { //last-ish week of month
+            } else if ($week == 5) { //last-ish week of month
 
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
@@ -131,9 +131,9 @@ class UnsuccessfulHandler implements CallHandler
 
         }
 
-        else if ($this->ccmTime > 899) { // 15 - 20 mins
+        else if ($ccmTime > 899) { // 15 - 20 mins
 
-            if ($this->week == 1 || $this->week == 2) { // We are in the first two weeks of the month
+            if ($week == 1 || $week == 2) { // We are in the first two weeks of the month
 
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
@@ -147,7 +147,7 @@ class UnsuccessfulHandler implements CallHandler
 
                 }
 
-            } else if ($this->week == 3) { //second last week of month
+            } else if ($week == 3) { //second last week of month
 
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
@@ -156,17 +156,17 @@ class UnsuccessfulHandler implements CallHandler
 
                 }
 
-            } else if ($this->week == 4) {
+            } else if ($week == 4) {
 
                 $this->logic = 'Next window';
                 return $this->nextCallDate;
 
 
-            } else if ($this->week == 5) { //last-ish week of month
+            } else if ($week == 5) { //last-ish week of month
 
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
-                    if ($this->ccmTime > 1020) {
+                    if ($ccmTime > 1020) {
 
                         $this->logic = 'Greater than 17, same day, add attempt note';
                         $this->attemptNote = 'Please review careplan';
@@ -191,9 +191,9 @@ class UnsuccessfulHandler implements CallHandler
 
         }
 
-        else if ($this->ccmTime > 599) { // 10 - 15 mins
+        else if ($ccmTime > 599) { // 10 - 15 mins
 
-            if ($this->week == 1 || $this->week == 2 || $this->week == 3) { // We are in the first three weeks of the month
+            if ($week == 1 || $week == 2 || $week == 3) { // We are in the first three weeks of the month
 
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
@@ -207,7 +207,7 @@ class UnsuccessfulHandler implements CallHandler
 
                 }
 
-            } else if ($this->week == 4) {
+            } else if ($week == 4) {
 
                 if ($successfulCallsThisMonth > 0) {
 
@@ -223,7 +223,7 @@ class UnsuccessfulHandler implements CallHandler
 
                 }
 
-            } else if ($this->week == 5) { //last-ish week of month
+            } else if ($week == 5) { //last-ish week of month
 
                 $this->logic = 'Less than 17, tomorrow. ';
                 return $this->nextCallDate->tomorrow();
@@ -233,7 +233,7 @@ class UnsuccessfulHandler implements CallHandler
 
         else { // 0 - 10 mins
 
-            if ($this->week == 1 || $this->week == 2) {
+            if ($week == 1 || $week == 2) {
 
                 $three_weeks_ago = Carbon::now()->subWeek(3)->toDateTimeString();
                 $last_successful_call = Call::whereStatus('reached')
@@ -260,7 +260,7 @@ class UnsuccessfulHandler implements CallHandler
                 }
             }
 
-            else if ($this->week == 3) {
+            else if ($week == 3) {
 
                 if ($successfulCallsThisMonth > 0) { //If there was a successful call this month...
 
@@ -277,7 +277,7 @@ class UnsuccessfulHandler implements CallHandler
 
             }
 
-            else if ($this->week == 4 || $this->week == 5) {
+            else if ($week == 4 || $week == 5) {
 
                 $this->logic = 'Next window';
                 return $this->nextCallDate;

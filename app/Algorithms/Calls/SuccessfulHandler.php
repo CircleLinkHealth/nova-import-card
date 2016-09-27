@@ -38,6 +38,8 @@ class SuccessfulHandler implements CallHandler
 {
 
     use CallAlgoHelper;
+    
+    const VERSION = '2.0';
 
     private $week;
     private $patient;
@@ -69,7 +71,7 @@ class SuccessfulHandler implements CallHandler
     {
 
         //Calculate the next date before which we can call patient
-        $this->getPatientOffset();
+        $this->getPatientOffset($this->ccmTime, $this->week);
 
         //get the next call date based on patient preferences
         $this->getNextWindow();
@@ -81,14 +83,14 @@ class SuccessfulHandler implements CallHandler
 
     }
     
-    public function getPatientOffset(){
+    public function getPatientOffset($ccmTime, $week){
 
-        if ($this->ccmTime > 1199) { // More than 20 mins
+        if ($ccmTime > 1199) { // More than 20 mins
 
             //find out if patient likes to be called monthly
             $once_monthly = ($this->patient->preferred_calls_per_month == 1) ? true : false;
 
-            if ($this->week == 1 || $this->week == 2) { // We are in the first two weeks of the month
+            if ($week == 1 || $week == 2) { // We are in the first two weeks of the month
 
                 if ($once_monthly) {
 
@@ -102,7 +104,7 @@ class SuccessfulHandler implements CallHandler
 
                 }
 
-            } else if ($this->week == 3 || $this->week == 4) { //second last week of month
+            } else if ($week == 3 || $week == 4) { //second last week of month
 
                 if ($once_monthly) {
 
@@ -116,7 +118,7 @@ class SuccessfulHandler implements CallHandler
 
                 }
 
-            } else if ($this->week == 5) { //last-ish week of month
+            } else if ($week == 5) { //last-ish week of month
 
                 $this->logic = 'Call patient after two weeks';
                 $this->nextCallDate->addWeek(2);
@@ -125,22 +127,22 @@ class SuccessfulHandler implements CallHandler
 
         }
 
-        else if ($this->ccmTime > 899) { // 15 - 20 mins
+        else if ($ccmTime > 899) { // 15 - 20 mins
 
-            if ($this->week == 1 || $this->week == 2) { // We are in the first two weeks of the month
+            if ($week == 1 || $week == 2) { // We are in the first two weeks of the month
 
                 $this->logic = 'Add two weeks';
                 $this->nextCallDate->addWeek(2);
 
-            } else if ($this->week == 3) { //second last week of month
+            } else if ($week == 3) { //second last week of month
 
                 $this->logic = 'Add Week';
                 $this->nextCallDate->addWeek(1);
 
-            } else if ($this->week == 4) { //second last week of month
+            } else if ($week == 4) { //second last week of month
 
 
-                if ($this->ccmTime > 1020) {
+                if ($ccmTime > 1020) {
 
                     $this->logic = 'Greater than 17, same day, add attempt note';
                     $this->attemptNote = 'Please review careplan';
@@ -155,9 +157,9 @@ class SuccessfulHandler implements CallHandler
                 }
 
 
-            } else if ($this->week == 5) { //last few days of month
+            } else if ($week == 5) { //last few days of month
 
-                if ($this->ccmTime > 1020) {
+                if ($ccmTime > 1020) {
 
                     $this->logic = 'Greater than 17 mins, same day, add attempt note';
                     $this->attemptNote = 'Please review careplan';
@@ -175,19 +177,19 @@ class SuccessfulHandler implements CallHandler
 
         }
 
-        else if ($this->ccmTime > 599) { // 10 - 15 mins
+        else if ($ccmTime > 599) { // 10 - 15 mins
 
-            if ($this->week == 1 || $this->week == 2) { // We are in the first two weeks of the month
+            if ($week == 1 || $week == 2) { // We are in the first two weeks of the month
 
                 $this->logic = 'Call patient in 2 weeks.';
                 $this->nextCallDate->addWeek(2);
 
-            } else if ($this->week == 3 || $this->week == 4) { //second last week of month
+            } else if ($week == 3 || $week == 4) { //second last week of month
 
                 $this->logic = 'Call patient after one week';
                 $this->nextCallDate->addWeek(1);
 
-            } else if ($this->week == 5) { //last-ish week of month
+            } else if ($week == 5) { //last-ish week of month
 
                 $this->logic = 'Call patient after one week';
                 $this->nextCallDate->addWeek(1);
@@ -198,17 +200,17 @@ class SuccessfulHandler implements CallHandler
 
         else { // 0 - 10 mins
 
-            if ($this->week == 1 || $this->week == 2) { // We are in the first two weeks of the month
+            if ($week == 1 || $week == 2) { // We are in the first two weeks of the month
 
                 $this->logic = 'Call patient after a week';
                 $this->nextCallDate->addWeek(1);
 
-            } else if ($this->week == 3 || $this->week == 4) { //second last week of month
+            } else if ($week == 3 || $week == 4) { //second last week of month
 
                 $this->logic = 'Call patient after a week';
                 $this->nextCallDate->addWeek(1);
 
-            } else if ($this->week == 5) { //last-ish week of month
+            } else if ($week == 5) { //last-ish week of month
 
                 $this->logic = 'Call patient after a week';
                 $this->nextCallDate->addWeek(1);
@@ -217,8 +219,7 @@ class SuccessfulHandler implements CallHandler
 
         }
 
-        //If nothing matches, just return the same date
-        $this->nextCallDate;
+        return $this->nextCallDate;
 
     }
 

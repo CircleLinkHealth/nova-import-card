@@ -1,6 +1,12 @@
 <?php
 
 //Algo testers
+
+Route::get('al', function () {
+
+
+});
+
 Route::group(['prefix' => 'algo'], function () {
 
     Route::get('family', function () {
@@ -473,6 +479,19 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('patient-conditions', [
                 'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
                 'as'   => 'PatientConditionsReportController.getReport',
+            ]);
+        });
+
+        //Algo Mocker
+        Route::group(['prefix' => 'algo'], function () {
+            Route::get('mock', [
+                'uses' => 'AlgoController@createMock',
+                'as'   => 'algo.mock.create',
+            ]);
+            
+            Route::post('compute', [
+                'uses' => 'AlgoController@computeMock',
+                'as'   => 'algo.mock.compute',
             ]);
         });
 

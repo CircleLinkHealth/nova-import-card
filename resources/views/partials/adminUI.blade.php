@@ -114,9 +114,6 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ URL::route('admin.users.index', array()) }}">All Users</a></li>
                                 <li><a href="{{ URL::route('admin.users.create', array()) }}">New User</a></li>
-                                <li><a href="{{ URL::route('admin.patientCallManagement.index', array()) }}">Patient
-                                        Call Management</a>
-                                <li><a href="{{ URL::route('admin.families.index', array()) }}">Patient Families</a>
                                 <li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a>
                                 </li>
                                 <li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
@@ -124,6 +121,22 @@
                             </ul>
                         </li>
                     @endif
+
+                        @if ( ! Auth::guest())
+                            <li role="presentation" 0lass="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                   aria-expanded="false">
+                                    Calls <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+
+                                    <li><a href="{{ URL::route('admin.patientCallManagement.index', array()) }}">Patient Call Management</a>
+                                    <li><a href="{{ URL::route('admin.families.index', array()) }}">Patient Families</a>
+                                    <li><a href="{{ URL::route('algo.mock.create', array()) }}">Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}}</a>
+
+                                </ul>
+                            </li>
+                        @endif
 
                     @if(Entrust::can('app-config-view'))
                         <li role="presentation" class="dropdown">
