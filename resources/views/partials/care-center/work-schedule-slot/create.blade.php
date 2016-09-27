@@ -4,7 +4,7 @@
         <div class="col-md-4">
             {{--<label for="date">Date</label>--}}
             <input class="form-control" name="date"
-                   type="text" data-field="date" readonly
+                   type="text" data-field="date"
                    id="date"
                    placeholder="Date"
                    required>
@@ -13,7 +13,7 @@
         <div class="col-md-3">
             {{--<label for="window_time_start">Start Time</label>--}}
             <input class="form-control" name="window_time_start"
-                   type="text" data-field="time" readonly
+                   type="text" data-field="time"
                    id="window_time_start"
                    placeholder="Window Time Start"
                    required>
@@ -22,7 +22,7 @@
         <div class="col-md-3">
             {{--<label for="window_time_end">End Time</label>--}}
             <input class="form-control" name="window_time_end"
-                   type="text" data-field="time" readonly
+                   type="text" data-field="time"
                    id="window_time_end"
                    placeholder="Window Time End"
                    required>
@@ -30,7 +30,7 @@
 
         <div class="col-md-2">
             <input type="submit" class="btn btn-primary" value="Store Window"
-                   name="submit">
+                   name="submit" id="store-window">
         </div>
     </div>
 </form>
