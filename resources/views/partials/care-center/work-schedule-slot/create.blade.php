@@ -29,7 +29,7 @@
         </div>
 
         <div class="col-md-2">
-            <input type="submit" class="btn btn-primary" value="Add Time Slot"
+            <input type="submit" class="btn btn-primary" value="Store Window"
                    name="submit">
         </div>
     </div>
