@@ -34,13 +34,13 @@ class AlgoController extends Controller
             if($status){
 
                 $day = (new SuccessfulHandler($guineaPig, Carbon::now()->startOfMonth()->addWeeks($week - 1 )))->getPatientOffset($ccm, $week);
-                return $day->format('jS');
+                return $day->format('jS M');
 
             } else {
 
 
                 $day = (new UnsuccessfulHandler($guineaPig, Carbon::now()->startOfMonth()->addWeeks($week - 1 )))->getPatientOffset($ccm, $week);
-                return $day->format('jS');
+                return $day->format('jS M');
 
             }
 
