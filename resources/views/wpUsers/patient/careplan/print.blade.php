@@ -320,20 +320,23 @@ if (isset($patient) && !empty($patient)) {
                                     <strong>Billing
                                         Provider: </strong> {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' : ' ' .  $billing->getSpecialtyAttribute() }}
                                     <br>
+                                    <?php $alreadyShown[] = $billing->ID; ?>
                                 @endif
 
                                 @if(!empty($lead))
                                     <strong>Lead
                                         Contact: </strong> {{$lead->fullName}}{{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
                                     <br>
+                                    <?php $alreadyShown[] = $lead->ID; ?>
                                 @endif
 
                                 @if(isset($careTeam))
                                     @foreach($careTeam as $member)
                                         @if(! in_array($member->type, [App\PatientCareTeamMember::BILLING_PROVIDER, App\PatientCareTeamMember::LEAD_CONTACT]))
-                                            @if(!in_array($member->user->ID, [$lead->ID, $billing->ID]))
+                                            @if(!in_array($member->user->ID, $alreadyShown))
                                                 <strong>Member:</strong> {{$member->user->fullName}} {{($member->user->getSpecialtyAttribute() == '')? '' : ' ' .  $member->user->getSpecialtyAttribute() }}
                                                 <br>
+                                                <?php $alreadyShown[] = $member->user->ID; ?>
                                             @endif
                                         @endif
                                     @endforeach
