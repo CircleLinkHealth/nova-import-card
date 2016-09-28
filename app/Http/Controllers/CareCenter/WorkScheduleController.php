@@ -152,4 +152,21 @@ class WorkScheduleController extends Controller
 
         return redirect()->back();
     }
+
+    public function postAdminStoreWindow(
+        $id,
+        Request $request
+    ) {
+        $date = Carbon::createFromFormat('m-d-Y', $request->input('date'))->copy();
+
+        $this->nurseContactWindows->create([
+                'nurse_info_id'     => $id,
+                'date'              => $date->format('Y-m-d'),
+                'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
+                'window_time_start' => $request->input('window_time_start'),
+                'window_time_end'   => $request->input('window_time_end'),
+            ]);
+
+        return redirect()->back();
+    }
 }

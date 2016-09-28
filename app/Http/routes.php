@@ -426,6 +426,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'get.nurse.schedules',
         ]);
 
+        Route::post('nurses/{id}/windows', [
+            'uses' => 'CareCenter\WorkScheduleController@postAdminStoreWindow',
+            'as'   => 'post.admin.store.nurse.schedules',
+        ]);
+
         Route::patch('nurses/window/{id}', [
             'uses' => 'CareCenter\WorkScheduleController@patchAdminEditWindow',
             'as'   => 'patch.admin.edit.nurse.schedules',

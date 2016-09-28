@@ -3,8 +3,14 @@
 @section('content')
     <div class="container">
         @foreach($windows as $windowCollection)
-            <div class="row">
-                <h3>{{ $windowCollection->first()->nurse->user->fullName }}</h3>
+            <div class="row" style="padding-bottom: 5%;">
+                <h3><b>{{ $windowCollection->first()->nurse->user->fullName }}</b></h3>
+
+                <div class="row">
+                    @include('partials.care-center.work-schedule-slot.admin-store', [ 'nurseInfo' => $windowCollection->first()->nurse ])
+                </div>
+
+                <h4>Existing Windows</h4>
 
                 @foreach($windowCollection as $w)
                     <div class="row">
