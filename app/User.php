@@ -1158,17 +1158,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function setCareTeamAttribute($memberUserIds)
     {
         if (!is_array($memberUserIds)) {
-            $this->careTeam()->where('type', 'member')->delete();
+            $this->patientCareTeamMembers()->where('type', 'member')->delete();
             return false; // must be array
         }
-        $this->careTeam()->where('type', 'member')->whereNotIn('member_user_id', $memberUserIds)->delete();
+        $this->patientCareTeamMembers()->where('type', 'member')->whereNotIn('member_user_id', $memberUserIds)->delete();
         foreach ($memberUserIds as $memberUserId) {
-            $careTeamMember = $this->careTeam()->where('type', 'member')->where('member_user_id',
-                $memberUserId)->first();
+            $careTeamMember = $this->patientCareTeamMembers()->where('type', 'member')->where('member_user_id', $memberUserId)->first();
             if ($careTeamMember) {
                 $careTeamMember->member_user_id = $memberUserId;
             } else {
-                $careTeamMember = new CareTeamMember();
+                $careTeamMember = new PatientCareTeamMember();
                 $careTeamMember->user_id = $this->ID;
                 $careTeamMember->member_user_id = $memberUserId;
                 $careTeamMember->type = 'member';
@@ -1180,9 +1179,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 // send_alert_to
 
-    public function careTeam()
+	public function patientCareTeamMembers()
 	{
-        return $this->hasMany(CareTeamMember::class, 'user_id', 'ID');
+		return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'ID');
 	}
 
 	public function getSendAlertToAttribute()
@@ -1207,19 +1206,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setSendAlertToAttribute($memberUserIds)
     {
 		if (!is_array($memberUserIds)) {
-            $this->careTeam()->where('type', 'send_alert_to')->delete();
+			$this->patientCareTeamMembers()->where('type', 'send_alert_to')->delete();
 
 			return false; // must be array
         }
-        $this->careTeam()->where('type', 'send_alert_to')->whereNotIn('member_user_id',
+		$this->patientCareTeamMembers()->where('type', 'send_alert_to')->whereNotIn('member_user_id',
 			$memberUserIds)->delete();
 		foreach ($memberUserIds as $memberUserId) {
-            $careTeamMember = $this->careTeam()->where('type', 'send_alert_to')->where('member_user_id',
+			$careTeamMember = $this->patientCareTeamMembers()->where('type', 'send_alert_to')->where('member_user_id',
 				$memberUserId)->first();
 			if ($careTeamMember) {
 				$careTeamMember->member_user_id = $memberUserId;
 			} else {
-                $careTeamMember = new CareTeamMember();
+				$careTeamMember = new PatientCareTeamMember();
 				$careTeamMember->user_id = $this->ID;
 				$careTeamMember->member_user_id = $memberUserId;
 				$careTeamMember->type = 'send_alert_to';
@@ -1252,15 +1251,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setBillingProviderIDAttribute($value)
     {
 		if (empty($value)) {
-            $this->careTeam()->where('type', 'billing_provider')->delete();
+			$this->patientCareTeamMembers()->where('type', 'billing_provider')->delete();
 
 			return true;
         }
-        $careTeamMember = $this->careTeam()->where('type', 'billing_provider')->first();
+		$careTeamMember = $this->patientCareTeamMembers()->where('type', 'billing_provider')->first();
 		if ($careTeamMember) {
 			$careTeamMember->member_user_id = $value;
 		} else {
-            $careTeamMember = new CareTeamMember();
+			$careTeamMember = new PatientCareTeamMember();
 			$careTeamMember->user_id = $this->ID;
 			$careTeamMember->member_user_id = $value;
 			$careTeamMember->type = 'billing_provider';
@@ -1292,15 +1291,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function setLeadContactIDAttribute($value)
     {
 		if (empty($value)) {
-            $this->careTeam()->where('type', 'lead_contact')->delete();
+			$this->patientCareTeamMembers()->where('type', 'lead_contact')->delete();
 
 			return true;
         }
-        $careTeamMember = $this->careTeam()->where('type', 'lead_contact')->first();
+		$careTeamMember = $this->patientCareTeamMembers()->where('type', 'lead_contact')->first();
 		if ($careTeamMember) {
 			$careTeamMember->member_user_id = $value;
 		} else {
-            $careTeamMember = new CareTeamMember();
+			$careTeamMember = new PatientCareTeamMember();
 			$careTeamMember->user_id = $this->ID;
 			$careTeamMember->member_user_id = $value;
 			$careTeamMember->type = 'lead_contact';
