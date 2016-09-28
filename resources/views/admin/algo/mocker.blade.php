@@ -87,6 +87,7 @@
                     <p><h4>Notes</h4></p>
                     <li> Currently doesn't consider frequency, no of successful calls </li>
                     <li> Remember to add the patient's preference or closest Weekday to call date </li>
+                    <li> Assumes the current month for testing, so if you pick week 2, that's day one of w2 of the current month. </li>
                     <li> Note problems with the algorithm and list them <a href="https://circlelink-health2.codebasehq.com/projects/cpm/tickets/594"> here </a></li>
                 </div>
             </div>
