@@ -3,6 +3,7 @@
 namespace App\CLH\CCD\Importer;
 
 
+use App\CareTeamMember;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\BloodPressure;
 use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
@@ -12,7 +13,6 @@ use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmMisc;
-use App\PatientCareTeamMember;
 use App\PatientContactWindow;
 use App\PatientInfo;
 use App\PhoneNumber;
@@ -85,22 +85,22 @@ class ImportManager
 
         if ($providerId) {
             //care team
-            $member = PatientCareTeamMember::create([
-                'user_id' => $this->user->ID,
+            $member = CareTeamMember::create([
+                'user_id'        => $this->user->ID,
                 'member_user_id' => $providerId,
-                'type' => PatientCareTeamMember::MEMBER,
+                'type'           => CareTeamMember::MEMBER,
             ]);
 
-            $billing = PatientCareTeamMember::create([
-                'user_id' => $this->user->ID,
+            $billing = CareTeamMember::create([
+                'user_id'        => $this->user->ID,
                 'member_user_id' => $providerId,
-                'type' => PatientCareTeamMember::BILLING_PROVIDER,
+                'type'           => CareTeamMember::BILLING_PROVIDER,
             ]);
 
-            $lead = PatientCareTeamMember::create([
-                'user_id' => $this->user->ID,
+            $lead = CareTeamMember::create([
+                'user_id'        => $this->user->ID,
                 'member_user_id' => $providerId,
-                'type' => PatientCareTeamMember::LEAD_CONTACT,
+                'type'           => CareTeamMember::LEAD_CONTACT,
             ]);
         }
 

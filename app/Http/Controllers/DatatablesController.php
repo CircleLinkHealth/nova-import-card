@@ -323,8 +323,8 @@ class DatatablesController extends Controller
 $call->inboundUser->patientInfo->last_successful_contact_time;
                 $obj->last_successful_contact_time = $call->inboundUser->patientInfo->last_successful_contact_time;
                 $obj->current_month_ccm_time = $call->inboundUser->patientInfo->currentMonthCCMTime;
-                if($call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()) {
-                    $obj->billing_provider = $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->member->display_name;
+                if($call->inboundUser->careTeam && $call->inboundUser->careTeam->where('type', 'billing_provider')->first()) {
+                    $obj->billing_provider = $call->inboundUser->careTeam->where('type', 'billing_provider')->first()->member->display_name;
                 }
             }
             // nurse info

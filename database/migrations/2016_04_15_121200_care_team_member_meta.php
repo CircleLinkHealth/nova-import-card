@@ -1,12 +1,7 @@
 <?php
 
+use App\CareTeamMember;
 use App\User;
-use App\PatientInfo;
-use App\ProviderInfo;
-use App\PhoneNumber;
-use App\PatientCarePlan;
-use App\PatientCareTeamMember;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CareTeamMemberMeta extends Migration {
@@ -34,7 +29,7 @@ class CareTeamMemberMeta extends Migration {
 				if(is_array($careTeam)) {
 					foreach($careTeam as $ct) {
 						if(is_numeric($ct)) {
-							$careTeamMember = new PatientCareTeamMember;
+                            $careTeamMember = new CareTeamMember;
 							$careTeamMember->user_id = $user->ID;
 							$careTeamMember->member_user_id = $ct;
 							$careTeamMember->type = 'member';
@@ -46,7 +41,7 @@ class CareTeamMemberMeta extends Migration {
 					}
 				} else {
 					if(is_numeric($careTeam)) {
-						$careTeamMember = new PatientCareTeamMember;
+                        $careTeamMember = new CareTeamMember;
 						$careTeamMember->user_id = $user->ID;
 						$careTeamMember->member_user_id = $careTeam;
 						$careTeamMember->type = 'member';
@@ -59,7 +54,7 @@ class CareTeamMemberMeta extends Migration {
 			// care team billing provider
 			$careTeamBP = $user->getUserConfigByKey('billing_provider');
 			if(!empty($careTeamBP) && is_numeric($careTeamBP)) {
-				$careTeamMember = new PatientCareTeamMember;
+                $careTeamMember = new CareTeamMember;
 				$careTeamMember->user_id = $user->ID;
 				$careTeamMember->member_user_id = $careTeamBP;
 				$careTeamMember->type = 'billing_provider';
@@ -72,7 +67,7 @@ class CareTeamMemberMeta extends Migration {
 			// care team lead contacts
 			$careTeamLC = $user->getUserConfigByKey('lead_contact');
 			if(!empty($careTeamLC) && is_numeric($careTeamLC)) {
-				$careTeamMember = new PatientCareTeamMember;
+                $careTeamMember = new CareTeamMember;
 				$careTeamMember->user_id = $user->ID;
 				$careTeamMember->member_user_id = $careTeamLC;
 				$careTeamMember->type = 'lead_contact';
@@ -88,7 +83,7 @@ class CareTeamMemberMeta extends Migration {
 				if(is_array($careTeamSA)) {
 					foreach($careTeamSA as $sa) {
 						if(is_numeric($sa)) {
-							$careTeamMember = new PatientCareTeamMember;
+                            $careTeamMember = new CareTeamMember;
 							$careTeamMember->user_id = $user->ID;
 							$careTeamMember->member_user_id = $sa;
 							$careTeamMember->type = 'send_alert_to';
@@ -100,7 +95,7 @@ class CareTeamMemberMeta extends Migration {
 					}
 				} else {
 					if(is_numeric($careTeamSA)) {
-						$careTeamMember = new PatientCareTeamMember;
+                        $careTeamMember = new CareTeamMember;
 						$careTeamMember->user_id = $user->ID;
 						$careTeamMember->member_user_id = $careTeamSA;
 						$careTeamMember->type = 'send_alert_to';

@@ -1,13 +1,12 @@
 <?php namespace App\Http\Controllers\Patient;
 
 use App\CareItem;
+use App\CareTeamMember;
 use App\CPRulesQuestions;
 use App\Events\CarePlanWasApproved;
 use App\Http\Controllers\Controller;
 use App\Observation;
 use App\PatientCarePlan;
-use App\PatientCareTeamMember;
-use App\PatientInfo;
 use App\PhoneNumber;
 use App\Program;
 use App\Services\CarePlanViewService;
@@ -243,14 +242,14 @@ class PatientController extends Controller
                     $query->orderBy('obs_date', 'DESC');
                     $query->first();
                 },
-                'patientCareTeamMembers' => function ($q) {
-                    $q->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER)
+                'careTeam'     => function ($q) {
+                    $q->where('type', '=', CareTeamMember::BILLING_PROVIDER)
                         ->with('user');
                 },
                 'phoneNumbers' => function ($q) {
                     $q->where('type', '=', PhoneNumber::HOME);
                 },
-                'patientInfo' => function ($q) {
+                'patientInfo'  => function ($q) {
                     $q->with('carePlanProviderApproverUser');
                 }
             ))
@@ -379,7 +378,7 @@ class PatientController extends Controller
 
         $patientData = array();
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
+            ->with('phoneNumbers', 'patientInfo', 'careTeam')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get();
         if ($patients->count() > 0) {
@@ -469,7 +468,7 @@ class PatientController extends Controller
     {
         // get number of approvals
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
+            ->with('phoneNumbers', 'patientInfo', 'careTeam')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get()->lists('fullNameWithId', 'ID')->all();
 

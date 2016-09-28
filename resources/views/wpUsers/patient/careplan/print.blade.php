@@ -322,6 +322,8 @@ if (isset($patient) && !empty($patient)) {
                                         Contact: </strong> {{$lead->fullName}}{{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
                                     <br>
                                 @endif
+
+
                             </p>
                         </div>
                     </div>

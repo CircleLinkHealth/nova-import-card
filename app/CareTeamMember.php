@@ -1,11 +1,8 @@
 <?php namespace App;
 
-use DateTime;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Auth;
 
-class PatientCareTeamMember extends Model
+class CareTeamMember extends Model
 {
 
     const BILLING_PROVIDER = 'billing_provider';
