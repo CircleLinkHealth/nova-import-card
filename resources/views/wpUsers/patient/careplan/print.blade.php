@@ -319,7 +319,7 @@ if (isset($patient) && !empty($patient)) {
                                 @if($billing)
                                     <strong>Billing
                                         Provider: </strong> {{$billing->fullName}}
-                                    , {{($billing->getSpecialtyAttribute() == '')? '' : ' ' .  $billing->getSpecialtyAttribute() }}
+                                    {{($billing->getSpecialtyAttribute() == '') ? '' : ', ' .  $billing->getSpecialtyAttribute() }}
                                     <br>
                                     <?php $alreadyShown[] = $billing->ID; ?>
                                 @endif
@@ -327,7 +327,7 @@ if (isset($patient) && !empty($patient)) {
                                 @if(!empty($lead))
                                     <strong>Lead
                                         Contact: </strong> {{$lead->fullName}}
-                                    , {{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
+                                    {{($lead->getSpecialtyAttribute() == '')? '' : ', ' .  $lead->getSpecialtyAttribute() }}
                                     <br>
                                     <?php $alreadyShown[] = $lead->ID; ?>
                                 @endif
@@ -338,7 +338,7 @@ if (isset($patient) && !empty($patient)) {
                                             {{--Making sure we're not showing any CareTeam Members more than once--}}
                                             @if(!in_array($member->user->ID, $alreadyShown))
                                                 <strong>Member:</strong> {{$member->user->fullName}}
-                                                , {{($member->user->getSpecialtyAttribute() == '')? '' : ' ' .  $member->user->getSpecialtyAttribute() }}
+                                                {{($member->user->getSpecialtyAttribute() == '')? '' : ', ' .  $member->user->getSpecialtyAttribute() }}
                                                 <br>
                                                 <?php $alreadyShown[] = $member->user->ID; ?>
                                             @endif
