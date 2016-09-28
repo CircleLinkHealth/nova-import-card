@@ -27,6 +27,20 @@ class NurseInfo extends Model
         'isNLC',
     ];
 
+    public function scopeActive(){
+
+        return NurseInfo::whereStatus('active');
+
+    }
+
+    public function activeNursesForUI(){
+
+        return User::whereHas('nurseInfo', function ($query) {
+                    $query->whereStatus('active');
+                })->pluck('display_name','ID');
+        
+    }
+
     public function user()
     {
         return $this->belongsTo('App\User', 'ID', 'user_id');

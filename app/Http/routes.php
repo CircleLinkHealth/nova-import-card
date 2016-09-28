@@ -1,6 +1,8 @@
 <?php
 
-Route::get('algo/rescheduler', function () {
+Route::get('rohan', function () {
+
+    return \App\NurseInfo::active()->get();
 
 });
 

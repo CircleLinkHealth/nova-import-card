@@ -56,6 +56,8 @@ class DatatablesController extends Controller
                     'calls.window_end',
                     'calls.window_end AS window_end_value',
                     'calls.attempt_note',
+                    'nurse_info.user_id as nurse_id',
+                    'nurse_info.status as nurse_status',
                     'notes.type AS note_type',
                     'notes.body AS note_body',
                     'notes.performed_at AS note_datetime',
@@ -76,8 +78,11 @@ class DatatablesController extends Controller
                     'program.display_name AS program_name',
                     'billing_provider.display_name AS billing_provider'
                 ])
+//            ->where('nurse_info.status', '=', 'active')
+//            ->orWhere('nurse_name')
             ->where('calls.status', '=', 'scheduled')
             ->leftJoin('notes', 'calls.note_id','=','notes.id')
+            ->leftJoin('nurse_info', 'calls.outbound_cpm_id','=','nurse_info.user_id')
             ->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
             ->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
             ->leftJoin('users AS scheduler_user', 'calls.scheduler','=','scheduler_user.ID')
@@ -96,7 +101,6 @@ class DatatablesController extends Controller
             ->leftJoin('users AS billing_provider', 'patient_care_team_members.member_user_id','=','billing_provider.ID')
             ->groupBy('call_id')
             ->get();
-
 
         return Datatables::of($calls)
             ->editColumn('call_id', function($call) {

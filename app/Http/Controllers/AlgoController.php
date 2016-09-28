@@ -30,16 +30,31 @@ class AlgoController extends Controller
 
             $guineaPig = PatientInfo::find(1272);
 
-
             if($status){
 
-                $day = (new SuccessfulHandler($guineaPig, Carbon::now()->startOfMonth()->addWeeks($week - 1 )))->getPatientOffset($ccm, $week);
+                //Pass in a patient, and a time to start calculations.
+
+                //in this case, the calculation is the first day of the given months's week.
+                //so, if we simulate week 3, it will go to the first day of the month, and
+                //add a 3 weeks to it.
+
+                $day = (new SuccessfulHandler($guineaPig,
+                                              Carbon::now()
+                                                    ->startOfMonth()
+                                                    ->addWeeks($week - 1 )))
+                                    ->getPatientOffset($ccm, $week);
+
                 return $day->format('jS M');
 
             } else {
 
 
-                $day = (new UnsuccessfulHandler($guineaPig, Carbon::now()->startOfMonth()->addWeeks($week - 1 )))->getPatientOffset($ccm, $week);
+                $day = (new UnsuccessfulHandler($guineaPig,
+                                                Carbon::now()
+                                                    ->startOfMonth()
+                                                    ->addWeeks($week - 1 )))
+                                    ->getPatientOffset($ccm, $week);
+
                 return $day->format('jS M');
 
             }

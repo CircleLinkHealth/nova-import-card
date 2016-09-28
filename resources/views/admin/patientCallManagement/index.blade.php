@@ -1,6 +1,12 @@
 @extends('partials.adminUI')
 
 @section('content')
+
+    <?php
+
+    $active_nurses  = (new App\NurseInfo())->activeNursesForUI();
+
+    ?>
     <script type="text/javascript">
         var callUpdatePostUri = "{{ URL::route('api.callupdate') }}";
         var datatableDataUri = "{{ URL::route('datatables.anyCallsManagement') }}";
@@ -48,7 +54,7 @@
 
 
     <div id="nurseFormWrapper" style="display:none;">
-        {!! Form::select('nurseFormSelect', array('unassigned' => 'Unassigned') + $nurses->all(), '', ['class' => 'select-picker nurseFormSelect', 'style' => 'width:150px;']) !!}
+        {!! Form::select('nurseFormSelect', array('unassigned' => 'Unassigned') + $active_nurses->all(), '', ['class' => 'select-picker nurseFormSelect', 'style' => 'width:150px;']) !!}
     </div>
 
     <div class="modal fade" id="addCallModal" role="dialog" style="height: 10000px; opacity: 1;background-color: black">
@@ -69,9 +75,10 @@
                                 <div class="col-xs-4 text-right">{!! Form::label('inbound_cpm_id', 'Patient:') !!}</div>
                                 <div class="col-xs-8">{!! Form::select('inbound_cpm_id', array('' => '') + $patientList, '', ['id' => 'addCallPatientId', 'class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
                             </div>
+
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('outbound_cpm_id', 'Nurse:') !!}</div>
-                                <div class="col-xs-8">{!! Form::select('outbound_cpm_id', array('unassigned' => 'Unassigned') + $nurses->all(), 'unassigned', ['id' => 'addCallNurseId', 'class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
+                                <div class="col-xs-8">{!! Form::select('outbound_cpm_id', array('unassigned' => 'Unassigned') + $active_nurses->all(), 'unassigned', ['id' => 'addCallNurseId', 'class' => 'form-control select-picker', 'style' => 'width:100%;']) !!}</div>
                             </div>
                             <div class="row form-group">
                                 <div class="col-xs-4 text-right">{!! Form::label('scheduled_date', 'Date:') !!}</div>
@@ -133,7 +140,7 @@
                                 </select>
                             </div>
                             <div class="col-xs-6">Nurse:&nbsp;&nbsp;
-                                {!! Form::select('assigned_nurse', array('unassigned' => 'Unassigned') + $nurses->all(), 'unassigned', ['class' => 'select-picker', 'style' => 'width:50%;']) !!}
+                                {!! Form::select('assigned_nurse', array('unassigned' => 'Unassigned') + $active_nurses->all(), 'unassigned', ['class' => 'select-picker', 'style' => 'width:50%;']) !!}
                             </div>
                             <div class="col-xs-2">
                                 <button type="submit" value="Submit" class="btn btn-primary btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-circle-arrow-right"></i> Perform Action</button>
