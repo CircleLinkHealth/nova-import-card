@@ -8,13 +8,18 @@
             @include('errors.errors')
 
             <div class="panel panel-info">
-                <div class="panel-heading">When would you like to work?</div>
+                <div class="panel-heading">
+                    <h4>
+                        When would you like to work?
+                    </h4>
+                </div>
 
                 <div class="panel-body">
                     <div class="container-fluid">
                         <div class="row">
-                            <h5>You can make your schedule by creating as many "Windows" as you like. Your Windows for
-                                next week cannot be deleted after Wednesday at midnight.</h5>
+                            <h5>Please make your schedule by creating as many "windows" as you'd like.
+                                <br><br><b>NOTE:</b> Windows become locked and cannot be edited after midnight of the
+                                preceding Wednesday.</h5>
                         </div>
                         <div class="row-centered">
                             <div class="col-md-12">
