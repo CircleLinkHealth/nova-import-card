@@ -39,7 +39,6 @@
     "maknz/slack": "^1.7",
     "dusterio/laravel-aws-worker": "^0.1.5",
     "yajra/laravel-datatables-oracle": "~6.0",
-    "spatie/laravel-google-calendar": "^1.0",
     "league/fractal": "0.12.*"
   },
   "require-dev": {
