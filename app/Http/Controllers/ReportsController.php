@@ -6,6 +6,7 @@ use App\Formatters\WebixFormatter;
 use App\Location;
 use App\Models\CPM\CpmProblem;
 use App\PageTimer;
+use App\PatientCareTeamMember;
 use App\Program;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
@@ -25,21 +26,25 @@ class ReportsController extends Controller
     private $service;
     private $formatter;
 
-    public function __construct(ReportsService $service, WebixFormatter $formatter)
-    {
+    public function __construct(
+        ReportsService $service,
+        WebixFormatter $formatter
+    ) {
         $this->service = $service;
         $this->formatter = $formatter;
     }
 
     //PROGRESS REPORT
-    public function index(Request $request, $patientId = false)
-    {
+    public function index(
+        Request $request,
+        $patientId = false
+    ) {
 
         $user = User::find($patientId);
         $treating = (new CpmProblemService())->getDetails($user);
         $biometrics = $this->service->getBiometricsToMonitor($user);
-        $biometrics_data = array();
-        $biometrics_array = array();
+        $biometrics_data = [];
+        $biometrics_array = [];
 
         foreach ($biometrics as $biometric) {
             $biometrics_data[$biometric] = $this->service->getBiometricsData(str_replace(' ', '_', $biometric), $user);
@@ -50,11 +55,14 @@ class ReportsController extends Controller
             if ($value != null) {
                 $first = reset($value);
                 $last = end($value);
-                $changes = $this->service->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name, (new ReportsService())->getTargetValueForBiometric($bio_name, $user));
+                $changes = $this->service->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name,
+                    (new ReportsService())->getTargetValueForBiometric($bio_name, $user));
 
                 $biometrics_array[$bio_name]['change'] = $changes['change'];
                 $biometrics_array[$bio_name]['progression'] = $changes['progression'];
-                $biometrics_array[$bio_name]['status'] = (isset($changes['status'])) ? $changes['status'] : 'Unchanged';
+                $biometrics_array[$bio_name]['status'] = (isset($changes['status']))
+                    ? $changes['status']
+                    : 'Unchanged';
                 //$changes['bio']= $bio_name;debug($changes);
                 $biometrics_array[$bio_name]['lastWeekAvg'] = intval($last->Avg);
             }//debug($biometrics_array);
@@ -65,8 +73,10 @@ class ReportsController extends Controller
             //$first = reset($array);
             if ($value) {
                 foreach ($value as $key => $value) {
-                    $biometrics_array[$bio_name]['unit'] = $this->service->biometricsUnitMapping(str_replace('_', ' ', $bio_name));
-                    $biometrics_array[$bio_name]['target'] = $this->service->getTargetValueForBiometric($bio_name, $user, false);
+                    $biometrics_array[$bio_name]['unit'] = $this->service->biometricsUnitMapping(str_replace('_', ' ',
+                        $bio_name));
+                    $biometrics_array[$bio_name]['target'] = $this->service->getTargetValueForBiometric($bio_name,
+                        $user, false);
                     $biometrics_array[$bio_name]['reading'] = intval($value->Avg);
                     if (intval($value->Avg) > $biometrics_array[$bio_name]['max']) {
                         $biometrics_array[$bio_name]['max'] = intval($value->Avg);
@@ -87,20 +97,22 @@ class ReportsController extends Controller
         $medications = $this->service->getMedicationStatus($user, false);
 
         $data = [
-            'treating' => $treating,
-            'patientId' => $patientId,
-            'patient' => $user,
-            'provider' => $provider,
-            'medications' => $medications,
-            'tracking_biometrics' => $biometrics_array
+            'treating'            => $treating,
+            'patientId'           => $patientId,
+            'patient'             => $user,
+            'provider'            => $provider,
+            'medications'         => $medications,
+            'tracking_biometrics' => $biometrics_array,
         ];
 
         return view('wpUsers.patient.progress', $data);
 
     }
 
-    public function u20(Request $request, $patientId = false)
-    {
+    public function u20(
+        Request $request,
+        $patientId = false
+    ) {
         $input = $request->all();
 
         if (isset($input['selectMonth'])) {
@@ -123,21 +135,49 @@ class ReportsController extends Controller
             ->with('primaryProgram')
             ->get();
 
-        $u20_patients = array();
+        $u20_patients = [];
 
         // ROLLUP CATEGORIES
-        $CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
-        $Progress = array('Review Patient Progress (offline)', 'Progress Report Review/Print');
-        $RPM = array('Patient Alerts Review', 'Patient Overview Review', 'Biometrics Data Review', 'Lifestyle Data Review', 'Symptoms Data Review', 'Assessments Scores Review',
-            'Medications Data Review', 'Input Observation');
-        $TCM = array('Test (Scheduling, Communications, etc)', 'Transitional Care Management Activities', 'Call to Other Care Team Member', 'Appointments');
-        $Other = array('other', 'Medication Reconciliation');
+        $CarePlan = [
+            'Edit/Modify Care Plan',
+            'Initial Care Plan Setup',
+            'Care Plan View/Print',
+            'Patient History Review',
+            'Patient Item Detail Review',
+            'Review Care Plan (offline)',
+        ];
+        $Progress = [
+            'Review Patient Progress (offline)',
+            'Progress Report Review/Print',
+        ];
+        $RPM = [
+            'Patient Alerts Review',
+            'Patient Overview Review',
+            'Biometrics Data Review',
+            'Lifestyle Data Review',
+            'Symptoms Data Review',
+            'Assessments Scores Review',
+            'Medications Data Review',
+            'Input Observation',
+        ];
+        $TCM = [
+            'Test (Scheduling, Communications, etc)',
+            'Transitional Care Management Activities',
+            'Call to Other Care Team Member',
+            'Appointments',
+        ];
+        $Other = [
+            'other',
+            'Medication Reconciliation',
+        ];
 
         $patient_counter = 0;
         foreach ($patients as $patient) {
             //$monthly_time = intval($patient->getMonthlyTimeAttribute());
             $program = $patient->primaryProgram;
-            if ($program) $programName = $program->display_name;
+            if ($program) {
+                $programName = $program->display_name;
+            }
 
             if ($patient->hasRole('participant')) {
                 $u20_patients[$patient_counter]['site'] = $programName;
@@ -157,7 +197,8 @@ class ReportsController extends Controller
                     ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
                     ->where('patient_id', $patient->ID)
                     ->whereBetween('performed_at', [
-                        $start, $end
+                        $start,
+                        $end,
                     ])
                     ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
                     ->orderBy('performed_at', 'desc')
@@ -170,14 +211,20 @@ class ReportsController extends Controller
                 foreach ($acts as $activity) {
                     if (in_array($activity->type, $CarePlan)) {
                         $u20_patients[$patient_counter]['colsum_careplan'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $Progress)) {
-                        $u20_patients[$patient_counter]['colsum_progress'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $RPM)) {
-                        $u20_patients[$patient_counter]['colsum_rpm'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $TCM)) {
-                        $u20_patients[$patient_counter]['colsum_tcc'] += intval($activity->duration);
                     } else {
-                        $u20_patients[$patient_counter]['colsum_other'] += intval($activity->duration);
+                        if (in_array($activity->type, $Progress)) {
+                            $u20_patients[$patient_counter]['colsum_progress'] += intval($activity->duration);
+                        } else {
+                            if (in_array($activity->type, $RPM)) {
+                                $u20_patients[$patient_counter]['colsum_rpm'] += intval($activity->duration);
+                            } else {
+                                if (in_array($activity->type, $TCM)) {
+                                    $u20_patients[$patient_counter]['colsum_tcc'] += intval($activity->duration);
+                                } else {
+                                    $u20_patients[$patient_counter]['colsum_other'] += intval($activity->duration);
+                                }
+                            }
+                        }
                     }
                     $u20_patients[$patient_counter]['colsum_total'] += intval($activity->duration);
 
@@ -192,34 +239,50 @@ class ReportsController extends Controller
         }
         $reportData = "data:" . json_encode(array_values($u20_patients)) . "";
 
-        $years = array();
+        $years = [];
         for ($i = 0; $i < 3; $i++) {
             $years[] = Carbon::now()->subYear($i)->year;
         }
 
-        $months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+        $months = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec',
+        ];
         $act_data = true;
         if ($u20_patients == null) {
             $act_data = false;
         }
 
         $data = [
-            'activity_json' => $reportData,
-            'years' => array_reverse($years),
-            'month_selected' => $month_selected,
+            'activity_json'       => $reportData,
+            'years'               => array_reverse($years),
+            'month_selected'      => $month_selected,
             'month_selected_text' => $month_selected_text,
-            'year_selected' => $year_selected,
-            'months' => $months,
+            'year_selected'       => $year_selected,
+            'months'              => $months,
             //'patient' => $patient_,
-            'data' => $act_data
+            'data'                => $act_data,
         ];
+
         //debug($reportData);
 
         return view('reports.u20', $data);
     }
 
-    public function billing(Request $request, $patientId = false)
-    {
+    public function billing(
+        Request $request,
+        $patientId = false
+    ) {
         //$patient_ = User::find($patientId);
         $input = $request->all();
 
@@ -244,22 +307,50 @@ class ReportsController extends Controller
             ->with('primaryProgram')
             ->get();
 
-        $u20_patients = array();
-        $billable_patients = array();
+        $u20_patients = [];
+        $billable_patients = [];
 
         // ROLLUP CATEGORIES
-        $CarePlan = array('Edit/Modify Care Plan', 'Initial Care Plan Setup', 'Care Plan View/Print', 'Patient History Review', 'Patient Item Detail Review', 'Review Care Plan (offline)');
-        $Progress = array('Review Patient Progress (offline)', 'Progress Report Review/Print');
-        $RPM = array('Patient Alerts Review', 'Patient Overview Review', 'Biometrics Data Review', 'Lifestyle Data Review', 'Symptoms Data Review', 'Assessments Scores Review',
-            'Medications Data Review', 'Input Observation');
-        $TCM = array('Test (Scheduling, Communications, etc)', 'Transitional Care Management Activities', 'Call to Other Care Team Member', 'Appointments');
-        $Other = array('other', 'Medication Reconciliation');
+        $CarePlan = [
+            'Edit/Modify Care Plan',
+            'Initial Care Plan Setup',
+            'Care Plan View/Print',
+            'Patient History Review',
+            'Patient Item Detail Review',
+            'Review Care Plan (offline)',
+        ];
+        $Progress = [
+            'Review Patient Progress (offline)',
+            'Progress Report Review/Print',
+        ];
+        $RPM = [
+            'Patient Alerts Review',
+            'Patient Overview Review',
+            'Biometrics Data Review',
+            'Lifestyle Data Review',
+            'Symptoms Data Review',
+            'Assessments Scores Review',
+            'Medications Data Review',
+            'Input Observation',
+        ];
+        $TCM = [
+            'Test (Scheduling, Communications, etc)',
+            'Transitional Care Management Activities',
+            'Call to Other Care Team Member',
+            'Appointments',
+        ];
+        $Other = [
+            'other',
+            'Medication Reconciliation',
+        ];
         $act_count = 0;
 
         foreach ($patients as $patient) {
 //            $monthly_time = intval($patient->getMonthlyTimeAttribute());
             $program = $patient->primaryProgram;
-            if ($program) $programName = $program->display_name;
+            if ($program) {
+                $programName = $program->display_name;
+            }
 
             if ($patient->hasRole('participant')) {
                 $u20_patients[$act_count]['site'] = $programName;
@@ -284,7 +375,8 @@ class ReportsController extends Controller
                     ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
                     ->where('patient_id', $patient->ID)
                     ->whereBetween('performed_at', [
-                        $start, $end
+                        $start,
+                        $end,
                     ])
                     ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
                     ->orderBy('performed_at', 'desc')
@@ -298,14 +390,20 @@ class ReportsController extends Controller
                     //$u20_patients[$act_count]['provider'] = User::find($activity->provider_id)->getFullNameAttribute();
                     if (in_array($activity->type, $CarePlan)) {
                         $u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $Progress)) {
-                        $u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $RPM)) {
-                        $u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
-                    } else if (in_array($activity->type, $TCM)) {
-                        $u20_patients[$act_count]['colsum_tcc'] += intval($activity->duration);
                     } else {
-                        $u20_patients[$act_count]['colsum_other'] += intval($activity->duration);
+                        if (in_array($activity->type, $Progress)) {
+                            $u20_patients[$act_count]['colsum_progress'] += intval($activity->duration);
+                        } else {
+                            if (in_array($activity->type, $RPM)) {
+                                $u20_patients[$act_count]['colsum_rpm'] += intval($activity->duration);
+                            } else {
+                                if (in_array($activity->type, $TCM)) {
+                                    $u20_patients[$act_count]['colsum_tcc'] += intval($activity->duration);
+                                } else {
+                                    $u20_patients[$act_count]['colsum_other'] += intval($activity->duration);
+                                }
+                            }
+                        }
                     }
                     $u20_patients[$act_count]['colsum_total'] += intval($activity->duration);
 
@@ -319,35 +417,50 @@ class ReportsController extends Controller
             }
 
         }
-        
+
         $reportData = "data:" . json_encode(array_values($u20_patients)) . "";
 
-        $years = array();
+        $years = [];
         for ($i = 0; $i < 3; $i++) {
             $years[] = Carbon::now()->subYear($i)->year;
         }
 
-        $months = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+        $months = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec',
+        ];
         $act_data = true;
         if ($u20_patients == null) {
             $act_data = false;
         }
 
         $data = [
-            'activity_json' => $reportData,
-            'years' => array_reverse($years),
-            'month_selected' => $month_selected,
-            'year_selected' => $year_selected,
+            'activity_json'       => $reportData,
+            'years'               => array_reverse($years),
+            'month_selected'      => $month_selected,
+            'year_selected'       => $year_selected,
             'month_selected_text' => $month_selected_text,
-            'months' => $months,
-            'data' => $act_data
+            'months'              => $months,
+            'data'                => $act_data,
         ];
 
         return view('reports.billing', $data);
     }
 
-    public function progress(Request $request, $id = false)
-    {
+    public function progress(
+        Request $request,
+        $id = false
+    ) {
         if ($request->header('Client') == 'mobi') {
             // get and validate current user
             \JWTAuth::setIdentifier('ID');
@@ -368,8 +481,10 @@ class ReportsController extends Controller
         return json_encode($feed);
     }
 
-    public function careplan(Request $request, $id = false)
-    {
+    public function careplan(
+        Request $request,
+        $id = false
+    ) {
         if ($request->header('Client') == 'mobi') {
             // get and validate current user
             \JWTAuth::setIdentifier('ID');
@@ -390,15 +505,18 @@ class ReportsController extends Controller
         return response()->json($feed);
     }
 
-    public function viewPrintCareplan(Request $request, $patientId = false, CcdInsurancePolicyService $insurances)
-    {
+    public function viewPrintCareplan(
+        Request $request,
+        $patientId = false,
+        CcdInsurancePolicyService $insurances
+    ) {
         if (!$patientId) {
             return "Patient Not Found..";
         }
 
         $patient = User::find($patientId);
 
-        $careplan = $this->formatter->formatDataForViewPrintCareplanReport(array($patient));
+        $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
 
         if (!$careplan) {
             return 'Careplan not found...';
@@ -406,33 +524,45 @@ class ReportsController extends Controller
 
         $patient = User::find($patientId);
 
+        $careTeam = PatientCareTeamMember::with('user')
+            ->whereUserId($patient->ID)
+
+            ->get();
+
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
 
         return view('wpUsers.patient.careplan.print',
             [
-                'patient' => $patient,
-                'problems' => $careplan[$patientId]['problems'],
-                'biometrics' => $careplan[$patientId]['bio_data'],
-                'symptoms' => $careplan[$patientId]['symptoms'],
-                'lifestyle' => $careplan[$patientId]['lifestyle'],
-                'medications_monitor' => $careplan[$patientId]['medications'],
-                'taking_medications' => $careplan[$patientId]['taking_meds'],
-                'allergies' => $careplan[$patientId]['allergies'],
-                'social' => $careplan[$patientId]['social'],
-                'appointments' => $careplan[$patientId]['appointments'],
-                'other' => $careplan[$patientId]['other'],
+                'patient'                 => $patient,
+                'problems'                => $careplan[$patientId]['problems'],
+                'biometrics'              => $careplan[$patientId]['bio_data'],
+                'symptoms'                => $careplan[$patientId]['symptoms'],
+                'lifestyle'               => $careplan[$patientId]['lifestyle'],
+                'medications_monitor'     => $careplan[$patientId]['medications'],
+                'taking_medications'      => $careplan[$patientId]['taking_meds'],
+                'allergies'               => $careplan[$patientId]['allergies'],
+                'social'                  => $careplan[$patientId]['social'],
+                'appointments'            => $careplan[$patientId]['appointments'],
+                'other'                   => $careplan[$patientId]['other'],
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
+                'careTeam'                => $careTeam,
             ]);
     }
 
-    public function biometricsCharts(Request $request, $patientId = false)
-    {
+    public function biometricsCharts(
+        Request $request,
+        $patientId = false
+    ) {
 
         $patient = User::find($patientId);
 
-        $biometrics = ['Weight', 'Blood_Sugar', 'Blood_Pressure'];
-        $biometrics_data = array();
-        $biometrics_array = array();
+        $biometrics = [
+            'Weight',
+            'Blood_Sugar',
+            'Blood_Pressure',
+        ];
+        $biometrics_data = [];
+        $biometrics_array = [];
 
         foreach ($biometrics as $biometric) {
             $biometrics_data[$biometric] = $this->service->getBiometricsData($biometric, $patient);
@@ -453,14 +583,17 @@ class ReportsController extends Controller
             }//debug($biometrics_array);
         }
 
-        return view('wpUsers.patient.biometric-chart', ['patient' => $patient, 'biometrics_array' => $biometrics_array]);
+        return view('wpUsers.patient.biometric-chart', [
+            'patient'          => $patient,
+            'biometrics_array' => $biometrics_array,
+        ]);
     }
 
     public function excelReportT1()
     {
         // get all users with 1 condition
-        $usersCondition = array();
-        $problems = array();
+        $usersCondition = [];
+        $problems = [];
         $cpmProblems = CpmProblem::all();
         if ($cpmProblems->count() > 0) {
             foreach ($cpmProblems as $cpmProblem) {
@@ -479,7 +612,12 @@ class ReportsController extends Controller
         $date = date('Y-m-d H:i:s');
         $users = User::all();
 
-        Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $users, $usersCondition) {
+        Excel::create('CLH-Report-' . $date, function ($excel) use
+        (
+            $date,
+            $users,
+            $usersCondition
+        ) {
 
             // Set the title
             $excel->setTitle('CLH Report T1');
@@ -492,15 +630,22 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T1');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use ($users, $usersCondition) {
+            $excel->sheet('Sheet 1', function ($sheet) use
+            (
+                $users,
+                $usersCondition
+            ) {
                 $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
                     $protection->setSort(true);
                 });
                 $i = 0;
                 // header
-                $sheet->appendRow(array(
-                    'id', 'name', 'condition', 'program'
-                ));
+                $sheet->appendRow([
+                    'id',
+                    'name',
+                    'condition',
+                    'program',
+                ]);
                 foreach ($users as $user) {
                     if ($i > 2000000) {
                         continue 1;
@@ -515,9 +660,12 @@ class ReportsController extends Controller
                     if ($program) {
                         $programName = $program->display_name;
                     }
-                    $sheet->appendRow(array(
-                        $user->ID, $user->fullName, $condition, $programName
-                    ));
+                    $sheet->appendRow([
+                        $user->ID,
+                        $user->fullName,
+                        $condition,
+                        $programName,
+                    ]);
                     $i++;
                 }
             });
@@ -542,7 +690,11 @@ class ReportsController extends Controller
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $users) {
+        Excel::create('CLH-Report-' . $date, function ($excel) use
+        (
+            $date,
+            $users
+        ) {
 
             // Set the title
             $excel->setTitle('CLH Report T2');
@@ -555,13 +707,16 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T2');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use ($users) {
+            $excel->sheet('Sheet 1', function ($sheet) use
+            (
+                $users
+            ) {
                 $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
                     $protection->setSort(true);
                 });
                 $i = 0;
                 // header
-                $sheet->appendRow(array(
+                $sheet->appendRow([
                     'Patient ID',
                     'First Name',
                     'Last Name',
@@ -586,8 +741,8 @@ class ReportsController extends Controller
                     'Location Address',
                     'Location City',
                     'Location State',
-                    'Location Zip'
-                ));
+                    'Location Zip',
+                ]);
                 foreach ($users as $user) {
                     if ($i > 2000000) {
                         continue 1;
@@ -619,7 +774,7 @@ class ReportsController extends Controller
                         $locationZip = $location->postal_code;
                     }
 
-                    $sheet->appendRow(array(
+                    $sheet->appendRow([
                         $user->ID,
                         $user->first_name,
                         $user->last_name,
@@ -637,7 +792,8 @@ class ReportsController extends Controller
                         $user->patientInfo->date_paused,
                         $user->patientInfo->date_withdrawn,
                         $user->program_id,
-                        'Caller ID', // provider_phone
+                        'Caller ID',
+                        // provider_phone
                         $user->patientInfo->preferred_contact_location,
                         $locationName,
                         $locationPhone,
@@ -645,7 +801,7 @@ class ReportsController extends Controller
                         $locationCity,
                         $locationState,
                         $locationZip,
-                    ));
+                    ]);
                     $i++;
                 }
             });
@@ -674,7 +830,11 @@ class ReportsController extends Controller
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $users) {
+        Excel::create('CLH-Report-' . $date, function ($excel) use
+        (
+            $date,
+            $users
+        ) {
 
             // Set the title
             $excel->setTitle('CLH Report T3');
@@ -687,13 +847,16 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T3');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use ($users) {
+            $excel->sheet('Sheet 1', function ($sheet) use
+            (
+                $users
+            ) {
                 $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
                     $protection->setSort(true);
                 });
                 $i = 0;
                 // header
-                $userColumns = array('date');
+                $userColumns = ['date'];
                 foreach ($users as $user) {
                     $userColumns[] = $user->display_name;
                 }
@@ -708,16 +871,17 @@ class ReportsController extends Controller
 
                 $period = new DatePeriod($a, new DateInterval('P1D'), $b, DatePeriod::EXCLUDE_START_DATE);
 
-                $sheetRows = array(); // so we can reverse after
+                $sheetRows = []; // so we can reverse after
 
                 foreach ($period as $dt) {
                     //echo $dt->format('Y-m-d') .'<br />';
 
-                    $rowUserValues = array($dt->format('Y-m-d'));
+                    $rowUserValues = [$dt->format('Y-m-d')];
                     foreach ($users as $user) {
                         // get total activity time
                         $pageTime = PageTimer::whereBetween('start_time', [
-                            $dt->format('Y-m-d') . ' 00:00:01', $dt->format('Y-m-d') . ' 23:59:59'
+                            $dt->format('Y-m-d') . ' 00:00:01',
+                            $dt->format('Y-m-d') . ' 23:59:59',
                         ])
                             ->where('provider_id', $user->ID)
                             ->where('activity_type', '!=', '')
@@ -760,7 +924,11 @@ class ReportsController extends Controller
 
         $date = date('Y-m-d H:i:s');
 
-        Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $users) {
+        Excel::create('CLH-Report-' . $date, function ($excel) use
+        (
+            $date,
+            $users
+        ) {
 
             // Set the title
             $excel->setTitle('CLH Report T4');
@@ -773,15 +941,32 @@ class ReportsController extends Controller
             $excel->setDescription('CLH Report T4');
 
             // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use ($users) {
+            $excel->sheet('Sheet 1', function ($sheet) use
+            (
+                $users
+            ) {
                 $sheet->protect('clhpa$$word', function (\PHPExcel_Worksheet_Protection $protection) {
                     $protection->setSort(true);
                 });
                 $i = 0;
                 // header
-                $sheet->appendRow(array(
-                    'id', 'Provider', 'Program', 'CCM Status', 'DOB', 'Phone', 'Registered On', 'CCM', 'Patient Reached', 'Last Entered Note', 'Note Content', '2nd to last Entered Note', 'Note Content', '3rd to last Entered Note', 'Note Content'
-                ));
+                $sheet->appendRow([
+                    'id',
+                    'Provider',
+                    'Program',
+                    'CCM Status',
+                    'DOB',
+                    'Phone',
+                    'Registered On',
+                    'CCM',
+                    'Patient Reached',
+                    'Last Entered Note',
+                    'Note Content',
+                    '2nd to last Entered Note',
+                    'Note Content',
+                    '3rd to last Entered Note',
+                    'Note Content',
+                ]);
 
                 foreach ($users as $user) {
                     if ($i > 2000000) {
@@ -852,7 +1037,7 @@ class ReportsController extends Controller
                             $a++;
                         }
                     }
-                    $sheet->appendRow(array(
+                    $sheet->appendRow([
                         $user->fullName,
                         $billingProviderName,
                         $programName,
@@ -867,8 +1052,8 @@ class ReportsController extends Controller
                         $activity2date,
                         $activity2comment,
                         $activity3date,
-                        $activity3comment
-                    ));
+                        $activity3comment,
+                    ]);
                     $i++;
                 }
             });
