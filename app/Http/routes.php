@@ -421,6 +421,16 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::get('nurses/windows', [
+            'uses' => 'CareCenter\WorkScheduleController@getAllNurseSchedules',
+            'as'   => 'get.nurse.schedules',
+        ]);
+
+        Route::patch('nurses/window/{id}', [
+            'uses' => 'CareCenter\WorkScheduleController@patchAdminEditWindow',
+            'as'   => 'patch.admin.edit.nurse.schedules',
+        ]);
+
         Route::get('athena/check', 'CcdApi\Athena\AthenaApiController@getTodays');
 
         Route::post('calls/import', [

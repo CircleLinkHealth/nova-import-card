@@ -123,4 +123,33 @@ class WorkScheduleController extends Controller
 
         return redirect()->route('care.center.work.schedule.index');
     }
+
+    public function getAllNurseSchedules()
+    {
+        $windows = $this->nurseContactWindows
+            ->with('nurse.user')
+            ->where('date', '>=', $this->today->format('Y-m-d'))
+            ->get()
+            ->groupBy('nurse_info_id')
+            ->sortBy('date');
+
+        return view('admin.nurse.schedules.index', compact('windows'));
+    }
+
+    public function patchAdminEditWindow(
+        $id,
+        Request $request
+    ) {
+        $date = Carbon::createFromFormat('m-d-Y', $request->input('date'))->copy();
+
+        $this->nurseContactWindows->whereId($id)
+            ->update([
+                'date'              => $date->format('Y-m-d'),
+                'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
+                'window_time_start' => $request->input('window_time_start'),
+                'window_time_end'   => $request->input('window_time_end'),
+            ]);
+
+        return redirect()->back();
+    }
 }
