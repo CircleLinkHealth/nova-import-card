@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
 {
-    /* Success is the call's status.
-       true for reached, false for not reached */
+ /* Success is the call's status.
+    true for reached, false for not reached */
     public function getNextCall($patient, $noteId, $success)
     {
 
@@ -38,6 +38,7 @@ class SchedulerService
         if($success){
 
             $prediction = (new SuccessfulHandler($patient->patientInfo, Carbon::now()))->handle();
+            
             $prediction['successful'] = true;
 
             return $prediction;
@@ -53,7 +54,6 @@ class SchedulerService
     }
 
     //Create new scheduled call
-
     public function getScheduledCallForPatient($patient)
     {
 
@@ -71,7 +71,6 @@ class SchedulerService
     }
 
     //Updates previous call
-
     public function updateOrCreatePreviousScheduledCall(Note $note, $call, $status){
 
                 $patient = $note->patient;
@@ -133,7 +132,6 @@ class SchedulerService
 
         ]);
     }
-
 
     public function removeScheduledCallsForWithdrawnPatients()
     {
@@ -318,7 +316,6 @@ class SchedulerService
         return $familyCalls;
 
     }
-
 
     /* This solve the issue where a call is scheduled but RN spends
     CCM time doing other work after the call is over and note

@@ -219,7 +219,7 @@ class SuccessfulHandler implements CallHandler
 
         }
 
-        return $this->nextCallDate->toDateString();
+        return $this->nextCallDate;
 
     }
 
