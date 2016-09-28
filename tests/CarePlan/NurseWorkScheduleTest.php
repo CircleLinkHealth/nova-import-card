@@ -19,6 +19,9 @@ class NurseWorkScheduleTest extends TestCase
         $this->nurse_stores_and_deletes_window($nurse);
 
         $this->nurse_fails_to_store_and_delete_invalid_windows($nurse);
+
+        $this->store_window($nurse, Carbon::now()->addWeek(1));
+        $this->store_window($nurse, Carbon::now()->addWeek(2));
     }
 
     protected function nurse_sees_account_button_and_schedule(User $nurse)
