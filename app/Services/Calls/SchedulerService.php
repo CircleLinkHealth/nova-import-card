@@ -100,44 +100,40 @@ class SchedulerService
             }
 
     //extract the last scheduled call
-    public function getScheduledCallForPatient(User $patient)
+    public function storeScheduledCall($patientId, $window_start, $window_end, $date, $scheduler, $nurse_id = false, $attempt_note = '')
     {
         $patient = User::find($patientId);
 
-        $call = Call::where('inbound_cpm_id', $patient->ID)
-            ->where('status', '=', 'scheduled')
-            ->first();
+        $window_start = Carbon::parse($window_start)->format('H:i');
+        $window_end = Carbon::parse($window_end)->format('H:i');
 
         return Call::create([
 
             'service' => 'phone',
-            'status'  => 'scheduled',
+            'status' => 'scheduled',
 
             'attempt_note' => $attempt_note,
 
             'scheduler' => $scheduler,
 
-            'inbound_phone_number'  => $patient->phone
-                ? $patient->phone
-                : '',
+            'inbound_phone_number' => $patient->phone ? $patient->phone : '',
             'outbound_phone_number' => '',
 
-            'inbound_cpm_id'  => $patient->ID,
-            'outbound_cpm_id' => isset($nurse_id)
-                ? $nurse_id
-                : '',
+            'inbound_cpm_id' => $patient->ID,
+            'outbound_cpm_id' => isset($nurse_id) ? $nurse_id : '',
 
-            'call_time'  => 0,
+            'call_time' => 0,
             'created_at' => Carbon::now()->toDateTimeString(),
 
             'scheduled_date' => $date,
-            'window_start'   => $window_start,
-            'window_end'     => $window_end,
+            'window_start' => $window_start,
+            'window_end' => $window_end,
 
-            'is_cpm_outbound' => true,
+            'is_cpm_outbound' => true
 
         ]);
     }
+
 
     public function removeScheduledCallsForWithdrawnPatients()
     {
