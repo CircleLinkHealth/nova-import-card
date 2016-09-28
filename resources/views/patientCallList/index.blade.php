@@ -150,8 +150,8 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser && $call->inboundUser->careTeam && $call->inboundUser->careTeam->where('type', 'billing_provider')->first() && $call->inboundUser->careTeam->where('type', 'billing_provider')->first()->user)
-                                                                {{ $call->inboundUser->careTeam->where('type', 'billing_provider')->first()->user->display_name }}
+                                                            @if($call->inboundUser && $call->inboundUser->patientCareTeamMembers && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first() && $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->user)
+                                                                {{ $call->inboundUser->patientCareTeamMembers->where('type', 'billing_provider')->first()->user->display_name }}
                                                             @endif
                                                         </td>
                                                         <td>

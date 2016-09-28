@@ -41,7 +41,7 @@ class PatientCareplanController extends Controller
     {
         $patientData = [];
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
-            ->with('phoneNumbers', 'patientInfo', 'careTeam')
+            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
             ->select(DB::raw('users.*'))
             ->get();
 
@@ -410,7 +410,7 @@ class PatientCareplanController extends Controller
         // instantiate user
         $user = new User;
         if ($patientId) {
-            $user = User::with('phoneNumbers', 'patientInfo', 'careTeam')->find($patientId);
+            $user = User::with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->find($patientId);
             if (!$user) {
                 return response("User not found", 401);
             }
@@ -591,7 +591,7 @@ class PatientCareplanController extends Controller
         }
 
         // instantiate user
-        $patient = User::with('phoneNumbers', 'patientInfo', 'careTeam')->find($patientId);
+        $patient = User::with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->find($patientId);
         if (!$patient) {
             return response("Patient user not found", 401);
         }

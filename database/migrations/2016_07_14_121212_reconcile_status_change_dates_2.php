@@ -1,6 +1,17 @@
 <?php
 
 use App\User;
+use App\CareItemUserValue;
+use App\Models\CCD\CcdMedication;
+use App\Models\CCD\CcdAllergy;
+use App\Models\CCD\CcdProblem;
+use App\Models\CCD\Ccda;
+use App\PatientInfo;
+use App\ProviderInfo;
+use App\PhoneNumber;
+use App\PatientCarePlan;
+use App\PatientCareTeamMember;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class ReconcileStatusChangeDates2 extends Migration {

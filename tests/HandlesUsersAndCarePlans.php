@@ -1,9 +1,9 @@
 <?php namespace Tests;
 
-use App\CareTeamMember;
 use App\CLH\Facades\StringManipulation;
 use App\CLH\Repositories\UserRepository;
 use App\Models\CPM\Biometrics\CpmWeight;
+use App\PatientCareTeamMember;
 use App\Role;
 use App\User;
 use Carbon\Carbon;
@@ -245,28 +245,28 @@ trait HandlesUsersAndCarePlans
         //Therefore, we're gonna add a provider programmatically
         //and make sure they show up.
 
-        $member = CareTeamMember::create([
-            'user_id'        => $patient->ID,
+        $member = PatientCareTeamMember::create([
+            'user_id' => $patient->ID,
             'member_user_id' => $this->provider->ID,
-            'type'           => CareTeamMember::MEMBER,
+            'type' => PatientCareTeamMember::MEMBER,
         ]);
 
-        $billing = CareTeamMember::create([
-            'user_id'        => $patient->ID,
+        $billing = PatientCareTeamMember::create([
+            'user_id' => $patient->ID,
             'member_user_id' => $this->provider->ID,
-            'type'           => CareTeamMember::BILLING_PROVIDER,
+            'type' => PatientCareTeamMember::BILLING_PROVIDER,
         ]);
 
-        $lead = CareTeamMember::create([
-            'user_id'        => $patient->ID,
+        $lead = PatientCareTeamMember::create([
+            'user_id' => $patient->ID,
             'member_user_id' => $this->provider->ID,
-            'type'           => CareTeamMember::LEAD_CONTACT,
+            'type' => PatientCareTeamMember::LEAD_CONTACT,
         ]);
 
-        $sendAlerts = CareTeamMember::create([
-            'user_id'        => $patient->ID,
+        $sendAlerts = PatientCareTeamMember::create([
+            'user_id' => $patient->ID,
             'member_user_id' => $this->provider->ID,
-            'type'           => CareTeamMember::SEND_ALERT_TO,
+            'type' => PatientCareTeamMember::SEND_ALERT_TO,
         ]);
 
         $this

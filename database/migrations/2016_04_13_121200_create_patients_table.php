@@ -1,12 +1,13 @@
 <?php
 
-use App\CareTeamMember;
-use App\PatientInfo;
-use App\PhoneNumber;
-use App\ProviderInfo;
 use App\User;
-use Illuminate\Database\Migrations\Migration;
+use App\PatientInfo;
+use App\ProviderInfo;
+use App\PhoneNumber;
+use App\PatientCarePlan;
+use App\PatientCareTeamMember;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreatePatientsTable extends Migration {
 
@@ -350,7 +351,7 @@ class CreatePatientsTable extends Migration {
 			// care team billing provider
 			$careTeamBP = $user->getUserConfigByKey('billing_provider');
 			if(!empty($careTeamBP) && is_numeric($careTeamBP)) {
-                $careTeamMember = new CareTeamMember;
+				$careTeamMember = new PatientCareTeamMember;
 				$careTeamMember->user_id = $user->ID;
 				$careTeamMember->member_user_id = $careTeamBP;
 				$careTeamMember->type = 'billing_provider';
@@ -363,7 +364,7 @@ class CreatePatientsTable extends Migration {
 			// care team lead contacts
 			$careTeamLC = $user->getUserConfigByKey('lead_contact');
 			if(!empty($careTeamLC) && is_numeric($careTeamLC)) {
-                $careTeamMember = new CareTeamMember;
+				$careTeamMember = new PatientCareTeamMember;
 				$careTeamMember->user_id = $user->ID;
 				$careTeamMember->member_user_id = $careTeamLC;
 				$careTeamMember->type = 'lead_contact';
@@ -379,7 +380,7 @@ class CreatePatientsTable extends Migration {
 				if(is_array($careTeamSA)) {
 					foreach($careTeamSA as $sa) {
 						if(is_numeric($sa)) {
-                            $careTeamMember = new CareTeamMember;
+							$careTeamMember = new PatientCareTeamMember;
 							$careTeamMember->user_id = $user->ID;
 							$careTeamMember->member_user_id = $sa;
 							$careTeamMember->type = 'send_alert_to';
@@ -391,7 +392,7 @@ class CreatePatientsTable extends Migration {
 					}
 				} else {
 					if(is_numeric($careTeamSA)) {
-                        $careTeamMember = new CareTeamMember;
+						$careTeamMember = new PatientCareTeamMember;
 						$careTeamMember->user_id = $user->ID;
 						$careTeamMember->member_user_id = $careTeamSA;
 						$careTeamMember->type = 'send_alert_to';

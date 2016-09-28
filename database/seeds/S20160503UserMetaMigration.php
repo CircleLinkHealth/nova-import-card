@@ -1,12 +1,23 @@
 <?php
 
+use App\Program;
+use App\CarePlan;
+use App\CareSection;
+use App\CareItem;
 use App\CarePlanCareSection;
-use App\CareTeamMember;
+use App\CarePlanItem;
+use App\CPRulesUCP;
+use App\CPRulesQuestions;
+use App\CPRulesItem;
+use App\CPRulesItemMeta;
 use App\PatientInfo;
-use App\PhoneNumber;
 use App\ProviderInfo;
+use App\PatientCareTeamMember;
+use App\PhoneNumber;
 use App\User;
+use App\UserMeta;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
 
 class S20160503UserMetaMigration extends Seeder {
 
@@ -155,7 +166,7 @@ class S20160503UserMetaMigration extends Seeder {
                 if(is_array($careTeam)) {
                     foreach($careTeam as $ct) {
                         if(is_numeric($ct)) {
-                            $careTeamMember = new CareTeamMember;
+                            $careTeamMember = new PatientCareTeamMember;
                             $careTeamMember->user_id = $user->ID;
                             $careTeamMember->member_user_id = $ct;
                             $careTeamMember->type = 'member';
@@ -167,7 +178,7 @@ class S20160503UserMetaMigration extends Seeder {
                     }
                 } else {
                     if(is_numeric($careTeam)) {
-                        $careTeamMember = new CareTeamMember;
+                        $careTeamMember = new PatientCareTeamMember;
                         $careTeamMember->user_id = $user->ID;
                         $careTeamMember->member_user_id = $careTeam;
                         $careTeamMember->type = 'member';
@@ -180,7 +191,7 @@ class S20160503UserMetaMigration extends Seeder {
             // care team billing provider
             $careTeamBP = $user->getUserConfigByKey('billing_provider');
             if(!empty($careTeamBP) && is_numeric($careTeamBP)) {
-                $careTeamMember = new CareTeamMember;
+                $careTeamMember = new PatientCareTeamMember;
                 $careTeamMember->user_id = $user->ID;
                 $careTeamMember->member_user_id = $careTeamBP;
                 $careTeamMember->type = 'billing_provider';
@@ -193,7 +204,7 @@ class S20160503UserMetaMigration extends Seeder {
             // care team lead contacts
             $careTeamLC = $user->getUserConfigByKey('lead_contact');
             if(!empty($careTeamLC) && is_numeric($careTeamLC)) {
-                $careTeamMember = new CareTeamMember;
+                $careTeamMember = new PatientCareTeamMember;
                 $careTeamMember->user_id = $user->ID;
                 $careTeamMember->member_user_id = $careTeamLC;
                 $careTeamMember->type = 'lead_contact';
@@ -209,7 +220,7 @@ class S20160503UserMetaMigration extends Seeder {
                 if(is_array($careTeamSA)) {
                     foreach($careTeamSA as $sa) {
                         if(is_numeric($sa)) {
-                            $careTeamMember = new CareTeamMember;
+                            $careTeamMember = new PatientCareTeamMember;
                             $careTeamMember->user_id = $user->ID;
                             $careTeamMember->member_user_id = $sa;
                             $careTeamMember->type = 'send_alert_to';
@@ -221,7 +232,7 @@ class S20160503UserMetaMigration extends Seeder {
                     }
                 } else {
                     if(is_numeric($careTeamSA)) {
-                        $careTeamMember = new CareTeamMember;
+                        $careTeamMember = new PatientCareTeamMember;
                         $careTeamMember->user_id = $user->ID;
                         $careTeamMember->member_user_id = $careTeamSA;
                         $careTeamMember->type = 'send_alert_to';
