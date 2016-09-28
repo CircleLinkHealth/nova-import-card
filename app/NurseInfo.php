@@ -29,7 +29,7 @@ class NurseInfo extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'ID', 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'ID');
     }
     
     public function summary()

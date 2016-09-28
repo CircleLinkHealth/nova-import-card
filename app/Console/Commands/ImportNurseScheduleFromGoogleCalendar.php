@@ -23,7 +23,7 @@ class ImportNurseScheduleFromGoogleCalendar extends Command
      *
      * @var string
      */
-    protected $description = 'Import Nurse Schedule for Google Calendar.';
+    protected $description = 'Import Nurse Schedule from Google Calendar.';
 
     /**
      * Create a new command instance.

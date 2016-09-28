@@ -14,7 +14,10 @@ class NurseContactWindow extends Model
      *
      * @var array
      */
-    protected $dates = ['deleted_at'];
+    protected $dates = [
+        'deleted_at',
+        'date',
+    ];
 
     protected $table = 'nurse_contact_window';
 
@@ -45,10 +48,10 @@ class NurseContactWindow extends Model
         $info->windows()->delete();
 
         return self::create([
-            'nurse_info_id'     => $info->id,
-            'day_of_week'       => $dayOfWeek,
+            'nurse_info_id' => $info->id,
+            'day_of_week' => $dayOfWeek,
             'window_time_start' => $startTime,
-            'window_time_end'   => $endTime,
+            'window_time_end' => $endTime,
         ]);
     }
 
@@ -56,7 +59,7 @@ class NurseContactWindow extends Model
 
     public function nurse()
     {
-        return $this->belongsTo(NurseInfo::class);
+        return $this->belongsTo(NurseInfo::class, 'nurse_info_id', 'id');
     }
 
 }
