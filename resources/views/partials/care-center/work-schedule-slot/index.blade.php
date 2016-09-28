@@ -1,16 +1,14 @@
-<h3>Your Schedule</h3>
-
 <div class="row">
-    <ul class="list-group col-md-5">
-        @if(empty($windows))
-            <li class="list-group-item">
-                <div class="row">
-                    <div class="col-md-12">
-                        You do not have any Windows yet. Go ahead and create some!
-                    </div>
-                </div>
-            </li>
-        @else
+    <h3>Your Schedule</h3>
+</div>
+
+@if($windows->isEmpty())
+    <div class="row">
+        You do not have any Windows yet. Go ahead and create some!
+    </div>
+@else
+    <div class="row">
+        <ul class="list-group col-md-5">
             @foreach($windows as $window)
                 <li class="list-group-item">
                     <div class="row">
@@ -42,11 +40,11 @@
                                     <i class="glyphicon glyphicon-info-sign"></i>
                                 </a>
                             @endif
-
                         </div>
+
                     </div>
                 </li>
             @endforeach
-        @endif
-    </ul>
-</div>
+        </ul>
+    </div>
+@endif
