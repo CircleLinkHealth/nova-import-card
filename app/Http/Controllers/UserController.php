@@ -422,7 +422,7 @@ class UserController extends Controller
         if ( !$wpUser ) {
             return response( "User not found", 401 );
         }
-
+        
         // input
         $params = new ParameterBag( $request->input() );
 

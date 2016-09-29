@@ -35,9 +35,10 @@ class NurseInfo extends Model
 
     public function activeNursesForUI(){
 
-        return User::whereHas('nurseInfo', function ($query) {
-                    $query->whereStatus('active');
-                })->pluck('display_name','ID');
+        return User::whereHas('roles', function ($q) {
+            $q->where('name', '=', 'care-center');
+        })->where('user_status', 1)->pluck('display_name','ID');
+
         
     }
 
