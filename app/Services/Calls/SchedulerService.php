@@ -269,12 +269,18 @@ class SchedulerService
             $scheduledCalls = [];
             $designatedNurse = null;
 
+            $window_start = '09:00:00';
+            $window_end = '17:00:00';
+
             foreach ($patients as $patient) {
 
                 $call = $this->getScheduledCallForPatient($patient->user);
 
                 if (is_object($call)) {
                     //If the patient has a call,
+
+                    $window_start = $call->window_start;
+                    $window_end = $call->window_end;
 
                     $date = Carbon::parse($call->scheduled_date);
                     $date->setTimeFromTimeString(Carbon::parse($call->window_start)->toTimeString());
@@ -330,8 +336,8 @@ class SchedulerService
                         ? $callPatient->phone
                         : '';
                     $value->outbound_cpm_id = $designatedNurse;
-                    $value->window_start = $minDate->format('H:i');
-                    $value->window_end = $minDate->format('H:i');
+                    $value->window_start = $window_start;
+                    $value->window_end = $window_end;
                     $value->save();
 
                 }
