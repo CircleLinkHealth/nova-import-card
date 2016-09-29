@@ -24,9 +24,9 @@ class AlgoController extends Controller
         if($request->ajax()){
 
             $ccm = $request->input('seconds');
-            $week = $request->input('week');
+            $date = Carbon::parse($request->input('date'));
             $status = (bool) $request->input('status');
-            $successThisMonth = (bool) $request->input('call_success');
+//            $successThisMonth = (bool) $request->input('call_success');
 
             $guineaPig = PatientInfo::find(1272);
 
@@ -38,24 +38,18 @@ class AlgoController extends Controller
                 //so, if we simulate week 3, it will go to the first day of the month, and
                 //add a 3 weeks to it.
 
-                $day = (new SuccessfulHandler($guineaPig,
-                                              Carbon::now()
-                                                    ->startOfMonth()
-                                                    ->addWeeks($week - 1 )))
-                                    ->getPatientOffset($ccm, $week);
+                $day = (new SuccessfulHandler($guineaPig, $date))
+                                    ->getPatientOffset($ccm, $date->weekOfMonth);
 
                 return $day->format('jS M');
 
             } else {
 
 
-                $day = (new UnsuccessfulHandler($guineaPig,
-                                                Carbon::now()
-                                                    ->startOfMonth()
-                                                    ->addWeeks($week - 1 )))
-                                    ->getPatientOffset($ccm, $week);
+                $day = (new UnsuccessfulHandler($guineaPig,$date))
+                                    ->getPatientOffset($ccm, $date->weekOfMonth);
 
-                return $day->format('jS M');
+                return $day;
 
             }
 

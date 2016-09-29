@@ -57,7 +57,7 @@ class SuccessfulHandler implements CallHandler
     public function __construct(PatientInfo $calledPatient, Carbon $initTime)
     {
 
-        $this->week = Carbon::now()->weekOfMonth;
+        $this->week = $initTime->weekOfMonth;
         $this->patient = $calledPatient;
         $this->ccmTime = $calledPatient->cur_month_activity_time;
         $this->nextCallDate = $initTime;
@@ -71,7 +71,7 @@ class SuccessfulHandler implements CallHandler
     {
 
         //Calculate the next date before which we can call patient
-        $this->getPatientOffset($this->ccmTime, $this->week);
+        $this->getPatientOffset($this->ccmTime);
 
         //get the next call date based on patient preferences
         $this->getNextWindow();
@@ -83,7 +83,9 @@ class SuccessfulHandler implements CallHandler
 
     }
     
-    public function getPatientOffset($ccmTime, $week){
+    public function getPatientOffset($ccmTime){
+
+        $week = $this->week;
 
         if ($ccmTime > 1199) { // More than 20 mins
 

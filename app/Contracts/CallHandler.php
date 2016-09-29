@@ -15,7 +15,7 @@ interface CallHandler
     public function handle();
 
     //calculate how much time to wait before next call
-    public function getPatientOffset($ccmTime, $week);
+    public function getPatientOffset($ccmTime);
 
 
 }

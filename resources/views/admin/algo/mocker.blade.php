@@ -39,16 +39,23 @@
                                     {{--</div>--}}
                                 {{--</div>--}}
 
+                                {{--<div class="form-group">--}}
+                                    {{--<label class="col-md-4 control-label" for="week">Call Date</label>--}}
+                                    {{--<div class="col-md-4">--}}
+                                        {{--<select id="week" name="week" id="week" class="form-control" disabled>--}}
+                                            {{--<option value="1">Week 1</option>--}}
+                                            {{--<option value="2">Week 2</option>--}}
+                                            {{--<option value="3">Week 3</option>--}}
+                                            {{--<option value="4">Week 4</option>--}}
+                                            {{--<option value="5">Week 5</option>--}}
+                                        {{--</select>--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
+
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label" for="week">Week</label>
+                                    <label class="col-md-4 control-label" for="week">Call Date</label>
                                     <div class="col-md-4">
-                                        <select id="week" name="week" id="week" class="form-control">
-                                            <option value="1">Week 1</option>
-                                            <option value="2">Week 2</option>
-                                            <option value="3">Week 3</option>
-                                            <option value="4">Week 4</option>
-                                            <option value="5">Week 5</option>
-                                        </select>
+                                        <input class="form-control" type="date" value="{{\Carbon\Carbon::now()->toDateString()}}" name="date" id="date">
                                     </div>
                                 </div>
 
@@ -87,7 +94,6 @@
                     <p><h4>Notes</h4></p>
                     <li> Currently doesn't consider frequency, no of successful calls </li>
                     <li> Remember to add the patient's preference or closest Weekday to call date </li>
-                    <li> Assumes the current month for testing, so if you pick week 2, that's day one of w2 of the current month. </li>
                     <li> Note problems with the algorithm and list them <a href="https://circlelink-health2.codebasehq.com/projects/cpm/tickets/594"> here </a></li>
                 </div>
             </div>
@@ -116,7 +122,7 @@
                 url: url,
                 data: {
                     seconds: $('#seconds').val(),
-                    week: $('#week').val(),
+                    date: $('#date').val(),
                     status: $('#status').val(),
                     call_status: $('#call_success').val()
                 }, // serializes the form's elements.

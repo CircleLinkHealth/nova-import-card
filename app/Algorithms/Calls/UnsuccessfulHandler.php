@@ -50,7 +50,7 @@ class UnsuccessfulHandler implements CallHandler
     public function __construct(PatientInfo $calledPatient, Carbon $initTime)
     {
 
-        $this->week = Carbon::now()->weekOfMonth;
+        $this->week = $initTime->weekOfMonth;
         $this->patient = $calledPatient;
         $this->ccmTime = $calledPatient->cur_month_activity_time;
         $this->nextCallDate = $initTime;
@@ -65,7 +65,7 @@ class UnsuccessfulHandler implements CallHandler
     {
 
         //Calculate the next date before which we can call patient
-        $this->getPatientOffset($this->ccmTime, $this->week);
+        $this->getPatientOffset($this->ccmTime);
 
         //get the next call date based on patient preferences
         $this->getNextWindow();
@@ -77,8 +77,10 @@ class UnsuccessfulHandler implements CallHandler
 
     }
 
-    public function getPatientOffset($ccmTime, $week)
+    public function getPatientOffset($ccmTime)
     {
+
+        $week = $this->week;
 
         $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient->user, Carbon::now()->toDateTimeString());
 
