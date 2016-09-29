@@ -3,6 +3,7 @@
 use App\Algorithms\Calls\PredictCall;
 use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
+use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
 use App\Console\Commands\FormatLocationPhone;
 use App\Console\Commands\GeneratePatientReports;
 use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
@@ -24,6 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         EmailsProvidersToApproveCareplans::class,
+        ExportNurseSchedulesToGoogleCalendar::class,
         FormatLocationPhone::class,
         GeneratePatientReports::class,
         ImportNurseScheduleFromGoogleCalendar::class,

@@ -127,9 +127,7 @@ class WorkScheduleController extends Controller
     public function getAllNurseSchedules()
     {
         $windows = $this->nurseContactWindows
-            ->with('nurse.user')
-            ->where('date', '>=', $this->today->format('Y-m-d'))
-            ->get()
+            ->getScheduleForAllNurses()
             ->groupBy('nurse_info_id')
             ->sortBy('date');
 
