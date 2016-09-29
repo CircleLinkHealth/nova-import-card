@@ -488,6 +488,11 @@
                                             <div class="col-xs-10">{!! Form::text('hourly_rate', $patient->nurseInfo->hourly_rate, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                         </div>
 
+                                        <div class="row">
+                                            <div class="col-xs-2">{!! Form::label('status', 'Status') !!}</div>
+                                            <div class="col-xs-4">{!! Form::select('status', array('inactive' => 'Inactive', 'active' => 'Active'), $patient->nurseInfo->status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                        </div>
+
                                         <div class="row" style="margin-top:10px;">
                                             <div class="col-xs-2">{!! Form::label('spanish', 'Spanish') !!}</div>
                                             <div class="col-xs-4">{!! Form::select('spanish', array('0' => 'No', '1' => 'Yes'), $patient->nurseInfo->spanish, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
