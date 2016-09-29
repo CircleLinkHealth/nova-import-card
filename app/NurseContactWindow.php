@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -60,6 +61,13 @@ class NurseContactWindow extends Model
     public function nurse()
     {
         return $this->belongsTo(NurseInfo::class, 'nurse_info_id', 'id');
+    }
+
+    public function getScheduleForAllNurses()
+    {
+        return $this->with('nurse.user')
+            ->where('date', '>=', Carbon::today()->format('Y-m-d'))
+            ->get();
     }
 
 }
