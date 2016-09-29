@@ -181,8 +181,7 @@ return [
         Collective\Bus\BusServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         App\Providers\AWSWorkerServiceProvider::class,
-        //This needs PHP 7, which we don't have
-        //        Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
+        Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
 
     ],
 
@@ -233,17 +232,16 @@ return [
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
-        'Entrust'    => \Zizaco\Entrust\EntrustFacade::class,
-        'Excel'      => \Maatwebsite\Excel\Facades\Excel::class,
-        'Form'       => \Collective\Html\FormFacade::class,
-        'Html'       => \Collective\Html\HtmlFacade::class,
-        'Image'      => \Barryvdh\Snappy\Facades\SnappyImage::class,
-        'JWTAuth'    => \Tymon\JWTAuth\Facades\JWTAuth::class,
-        'JWTFactory' => \Tymon\JWTAuth\Facades\JWTFactory::class,
-        'PDF'        => \Barryvdh\Snappy\Facades\SnappyPdf::class,
-        'Slack'      => Maknz\Slack\Facades\Slack::class,
-        //This needs PHP 7, which we don't have
-        //        'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
+        'Entrust'        => \Zizaco\Entrust\EntrustFacade::class,
+        'Excel'          => \Maatwebsite\Excel\Facades\Excel::class,
+        'Form'           => \Collective\Html\FormFacade::class,
+        'Html'           => \Collective\Html\HtmlFacade::class,
+        'Image'          => \Barryvdh\Snappy\Facades\SnappyImage::class,
+        'JWTAuth'        => \Tymon\JWTAuth\Facades\JWTAuth::class,
+        'JWTFactory'     => \Tymon\JWTAuth\Facades\JWTFactory::class,
+        'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
+        'Slack'          => Maknz\Slack\Facades\Slack::class,
+        'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
 
     ],
 
