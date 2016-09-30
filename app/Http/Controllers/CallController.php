@@ -176,8 +176,10 @@ class CallController extends Controller
             }
         } else {
             $call->scheduler = Auth::user()->ID;
-            $call->$data['columnName'] = $data['value'];
+            $col = $data['columnName'];
+            $call->$col = $data['value'];
         }
+
         $call->save();
 
         return response("successfully updated call ".$data['columnName']."=".$data['value']." - CallId=".$data['callId'], 201);
