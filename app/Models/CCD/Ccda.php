@@ -1,7 +1,6 @@
 <?php namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\ModelLogRelationship;
-use App\Models\CCD\QAImportSummary;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
@@ -19,7 +18,8 @@ class Ccda extends Model implements Transformable {
     const EMAIL_DOMAIN_TO_VENDOR_MAP = [
         //Carolina Medical Associates
         '@direct.novanthealth.org' => 10,
-        '@test.directproject.net' => 2,
+        '@test.directproject.net'  => 2,
+        '@direct.welltrackone.com' => 14,
     ];
 
     protected $fillable = [

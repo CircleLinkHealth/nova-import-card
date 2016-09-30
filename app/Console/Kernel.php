@@ -38,6 +38,7 @@ class Kernel extends ConsoleKernel
      * Define the application's command schedule.
      *
      * @param  \Illuminate\Console\Scheduling\Schedule $schedule
+     *
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -63,7 +64,9 @@ class Kernel extends ConsoleKernel
 
             $handled = (new ReschedulerHandler())->handle();
 
-            if(!empty($handled)) { Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls"); }
+            if (!empty($handled)) {
+                Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls");
+            }
 
             foreach ($handled as $call) {
                 Slack::to('#background-tasks')->send("We just fixed call: {$call->id}");
@@ -71,8 +74,8 @@ class Kernel extends ConsoleKernel
 
         })->dailyAt('00:05');
 
-//        $schedule->command('emailapprovalreminder:providers')
-//            ->weekdays()
-//            ->dailyAt('08:00');
+        $schedule->command('emailapprovalreminder:providers')
+            ->weekdays()
+            ->dailyAt('08:00');
     }
 }

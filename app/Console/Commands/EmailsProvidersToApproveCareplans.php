@@ -58,36 +58,50 @@ class EmailsProvidersToApproveCareplans extends Command
 
         $bar = $this->output->createProgressBar(count($providers));
 
-        $emailsSent = $providers->map(function ($user) use ($bar, $pretend) {
+        $emailsSent = $providers->map(function ($user) use
+        (
+            $bar,
+            $pretend
+        ) {
 
             //Middletown
-            if ($user->program_id == 23) return false;
+            if ($user->program_id == 23) {
+                return false;
+            }
 
             //Miller
-            if ($user->program_id == 10) return false;
+            if ($user->program_id == 10) {
+                return false;
+            }
             //Icli
-            if ($user->program_id == 19) return false;
+            if ($user->program_id == 19) {
+                return false;
+            }
             //Purser
-            if ($user->program_id == 22) return false;
+            if ($user->program_id == 22) {
+                return false;
+            }
 
 
             $recipients = [
                 $user->user_email,
-//            'raph@circlelinkhealth.com',
-//            'mantoniou@circlelinkhealth.com',
+                //            'raph@circlelinkhealth.com',
+                //            'mantoniou@circlelinkhealth.com',
             ];
 
             $numberOfCareplans = PatientCarePlan::getNumberOfCareplansPendingApproval($user);
 
-            if ($numberOfCareplans < 1) return false;
+            if ($numberOfCareplans < 1) {
+                return false;
+            }
 
             $data = [
                 'numberOfCareplans' => $numberOfCareplans,
-                'drName' => $user->fullName,
+                'drName'            => $user->fullName,
             ];
 
             $view = 'emails.careplansPendingApproval';
-            $subject = "{$numberOfCareplans} CircleLink Care Plans for your Approval!";
+            $subject = "{$numberOfCareplans} CircleLink Care Plan(s) for your Approval!";
 
             $settings = $user->emailSettings()->firstOrNew([]);
 
@@ -102,11 +116,17 @@ class EmailsProvidersToApproveCareplans extends Command
                         ? true
                         : false;
 
-            if (!$send) return false;
+            if (!$send) {
+                return false;
+            }
 
             if (!$pretend) {
                 if ($send) {
-                    Mail::send($view, $data, function ($message) use ($recipients, $subject) {
+                    Mail::send($view, $data, function ($message) use
+                    (
+                        $recipients,
+                        $subject
+                    ) {
                         $message->from('notifications@careplanmanager.com', 'CircleLink Health')
                             ->to($recipients)
                             ->subject($subject);
@@ -120,7 +140,7 @@ class EmailsProvidersToApproveCareplans extends Command
             $bar->advance();
 
             return [
-                'provider' => $user->fullName,
+                'provider'         => $user->fullName,
                 'pendingApprovals' => $numberOfCareplans,
             ];
         });

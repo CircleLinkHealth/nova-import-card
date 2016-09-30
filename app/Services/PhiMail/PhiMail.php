@@ -5,46 +5,12 @@ use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
-use App\Services\PhiMail\PhiMailConnector;
 use App\User;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Maknz\Slack\Facades\Slack;
 
 class PhiMail
 {
-
-    public function loadFile($filename)
-    {
-        return file_get_contents($filename);
-    }
-
-    public function writeDataFile($filename, $data)
-    {
-        return file_put_contents($filename, $data);
-    }
-
-    /**
-     * This is to help notify us of the status of CCDs we receive.
-     *
-     *
-     * @param User $user
-     * @param Ccda $ccda
-     * @param $fileNames
-     * @param null $line
-     * @param null $errorMessage
-     */
-    public function notifyAdmins($numberOfCcds)
-    {
-        if (app()->environment('local')) return;
-
-        //the worker generates the route using localhost so I am hardcoding it
-//        $link = route('view.files.ready.to.import');
-        $link = 'https://www.careplanmanager.com/ccd-importer/qaimport';
-
-        Slack::to('#ccd-file-status')
-            ->send("We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
-    }
 
     /**
      * @param args the command line arguments
@@ -59,7 +25,7 @@ class PhiMail
             // Specify which parts of the example to run.
             // Note: Send and receive examples are grouped here for demonstration
             // purposes only. In general, receive operations would run in a separate
-            // background process. 
+            // background process.
             $send = false;
             $receive = true;
 
@@ -73,7 +39,7 @@ class PhiMail
 //            $attachmentSaveDirectory = base_path() . '/storage/ccdas/';
 
             // Use the following command to enable client TLS authentication, if
-            // required. The key file referenced should contain the following 
+            // required. The key file referenced should contain the following
             // PEM data concatenated into one file:
             //   <your_private_key.pem>
             //   <your_client_certificate.pem>
@@ -85,7 +51,7 @@ class PhiMail
                 env('EMR_DIRECT_PASS_PHRASE')
             );
 
-            // This command is recommended for added security to set the trusted 
+            // This command is recommended for added security to set the trusted
             // SSL certificate or trust anchor for the phiMail server.
             PhiMailConnector::setServerCertificate(base_path() . env('EMR_DIRECT_SERVER_CERT_PEM_PATH'));
 
@@ -157,8 +123,8 @@ class PhiMail
 
                     if ($cr == null) {
 
-                        Slack::to('#background-tasks')
-                            ->send("Checked EMR Direct Mailbox. There where no messages. \n");
+//                        Slack::to('#background-tasks')
+//                            ->send("Checked EMR Direct Mailbox. There where no messages. \n");
                         break;
 
                     } else if ($cr->isMail()) {
@@ -186,7 +152,7 @@ class PhiMail
 //                                echo ("Header: " . $header . "\n");
 //                            }
 
-                            // Process the content; for this example text data 
+                            // Process the content; for this example text data
                             // is echoed to the console and non-text data is
                             // written to files.
 
@@ -248,7 +214,7 @@ class PhiMail
                             // status notification types and their meanings.
                         }
 
-                        // This signals the server that the status update can be 
+                        // This signals the server that the status update can be
                         // safely removed from the queue,
                         // i.e. it has been successfully received and processed.
                         // Note: this is NOT the same method used to acknowledge
@@ -273,6 +239,18 @@ class PhiMail
 
         echo("============END\n");
 
+    }
+
+    public function loadFile($filename)
+    {
+        return file_get_contents($filename);
+    }
+
+    public function writeDataFile(
+        $filename,
+        $data
+    ) {
+        return file_put_contents($filename, $data);
     }
 
     public function importCcd($sender, $attachment)
@@ -316,5 +294,29 @@ class PhiMail
             'id' => $ccda->id,
             'fileName' => $attachment->filename,
         ];
+    }
+
+    /**
+     * This is to help notify us of the status of CCDs we receive.
+     *
+     *
+     * @param User $user
+     * @param Ccda $ccda
+     * @param $fileNames
+     * @param null $line
+     * @param null $errorMessage
+     */
+    public function notifyAdmins($numberOfCcds)
+    {
+        if (app()->environment('local')) {
+            return;
+        }
+
+        //the worker generates the route using localhost so I am hardcoding it
+//        $link = route('view.files.ready.to.import');
+        $link = 'https://www.careplanmanager.com/ccd-importer/qaimport';
+
+        Slack::to('#ccd-file-status')
+            ->send("We received {$numberOfCcds} CCDs from EMR Direct. \n Please visit {$link} to import.");
     }
 }
