@@ -78,6 +78,7 @@ class NurseWorkScheduleTest extends TestCase
             $this->seeInDatabase('nurse_contact_window', [
                 'nurse_info_id'     => $nurse->nurseInfo->id,
                 'date'              => $date->format('Y-m-d'),
+                'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
                 'window_time_start' => $timeStart,
                 'window_time_end'   => $timeEnd,
             ]);

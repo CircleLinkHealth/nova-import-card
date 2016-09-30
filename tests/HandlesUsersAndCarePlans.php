@@ -36,25 +36,26 @@ trait HandlesUsersAndCarePlans
 
         $bag = new ParameterBag([
             'user_email' => $email,
-            'user_pass' => 'password',
-            'display_name' => "$firstName $lastName",
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'user_login' => $faker->userName,
-            'program_id' => $programId, //id=9 is testdrive
-            'address' => $faker->streetAddress,
-            'address2' => '',
-            'city' => $faker->city,
-            'state' => 'AL',
-            'zip' => '12345',
+            'user_pass'         => 'password',
+            'display_name'      => "$firstName $lastName",
+            'first_name'        => $firstName,
+            'last_name'         => $lastName,
+            'user_login'        => $faker->userName,
+            'program_id'        => $programId,//id=9 is testdrive
+            'address'           => $faker->streetAddress,
+            'address2'          => '',
+            'city'              => $faker->city,
+            'state'             => 'AL',
+            'zip'               => '12345',
             'is_auto_generated' => true,
-            'roles' => $roles,
+            'roles'             => $roles,
+            'timezone'          => 'America/New_York',
 
             //provider Info
-            'prefix' => 'Dr',
-            'qualification' => 'MD',
-            'npi_number' => 1234567890,
-            'specialty' => 'Unit Tester',
+            'prefix'            => 'Dr',
+            'qualification'     => 'MD',
+            'npi_number'        => 1234567890,
+            'specialty'         => 'Unit Tester',
 
             //phones
             'home_phone_number' => $workPhone,

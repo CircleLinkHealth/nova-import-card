@@ -17,6 +17,10 @@ class NurseContactWindowObserver
      */
     public function created(NurseContactWindow $window)
     {
+        if (!app()->environment('production')) {
+            return;
+        }
+
         $auth = auth()->user();
 
         if ($auth->ID != $window->nurse->user->ID) {
@@ -40,6 +44,10 @@ class NurseContactWindowObserver
      */
     public function deleted(NurseContactWindow $window)
     {
+        if (!app()->environment('production')) {
+            return;
+        }
+
         $auth = auth()->user();
 
         if ($auth->ID != $window->nurse->user->ID) {
