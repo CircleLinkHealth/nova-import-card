@@ -337,7 +337,7 @@
                                             <div class="col-xs-10">{!! Form::select('gender', array('M', 'F'), $patient->gender, ['class' => 'form-control select-picker', 'style' => 'width:20%;']) !!}</div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
+            a                        <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('birth_date', 'Birth Date:') !!}</div>
                                             <div class="col-xs-10">{!! Form::text('birth_date', $patient->birth_date, ['class' => 'form-control', 'style' => 'width:30%;']) !!}</div>

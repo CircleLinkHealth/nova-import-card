@@ -94,6 +94,7 @@
                     <p><h4>Notes</h4></p>
                     <li> Currently doesn't consider frequency, no of successful calls </li>
                     <li> Remember to add the patient's preference or closest Weekday to call date </li>
+                    <li> <a href="https://docs.google.com/spreadsheets/d/1IqXEW18z2ELHBS7nMn64_7i2oO81JqqSBaZeJ9qxh-0/edit#gid=0">Algo Grid Google Sheet </a></li>
                     <li> Note problems with the algorithm and list them <a href="https://circlelink-health2.codebasehq.com/projects/cpm/tickets/594"> here </a></li>
                 </div>
             </div>

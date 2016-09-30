@@ -41,7 +41,7 @@ class AlgoController extends Controller
                 $day = (new SuccessfulHandler($guineaPig, $date))
                                     ->getPatientOffset($ccm, $date->weekOfMonth);
 
-                return $day->format('jS M');
+
 
             } else {
 
@@ -49,9 +49,10 @@ class AlgoController extends Controller
                 $day = (new UnsuccessfulHandler($guineaPig,$date))
                                     ->getPatientOffset($ccm, $date->weekOfMonth);
 
-                return $day;
 
             }
+
+            return $day->format('jS M');
 
         }
 
