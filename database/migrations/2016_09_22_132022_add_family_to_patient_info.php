@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddFamilyToPatientInfo extends Migration
 {
@@ -13,6 +13,10 @@ class AddFamilyToPatientInfo extends Migration
     public function up()
     {
         Schema::table('patient_info', function (Blueprint $table) {
+
+            if (Schema::hasColumn('patient_info', 'family_id')) {
+                return;
+            }
 
             $table->unsignedInteger('family_id')->nullable();
 

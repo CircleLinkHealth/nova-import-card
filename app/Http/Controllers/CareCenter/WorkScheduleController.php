@@ -39,7 +39,14 @@ class WorkScheduleController extends Controller
             })
             ->sortBy('date');
 
-        return view('care-center.work-schedule', compact(['windows']));
+        $tzAbbr = auth()->user()->timezone
+            ? Carbon::now(auth()->user()->timezone)->format('T')
+            : false;
+
+        return view('care-center.work-schedule', compact([
+            'windows',
+            'tzAbbr',
+        ]));
     }
 
     protected function canAddNewWindow(Carbon $date)
