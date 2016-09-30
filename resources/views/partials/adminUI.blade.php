@@ -135,7 +135,7 @@
                                 <li><a href="{{ URL::route('admin.families.index', array()) }}">Patient Families</a>
                                 <li><a href="{{ URL::route('algo.mock.create', array()) }}">Algo
                                         v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}}</a>
-                                <li><a href="{{ URL::route('get.nurse.schedules') }}">Nurse Schedules</a>
+                                <li><a href="{{ URL::route('get.admin.nurse.schedules') }}">Nurse Schedules</a>
                             </ul>
                         </li>
                     @endif

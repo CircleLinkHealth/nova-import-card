@@ -1,5 +1,7 @@
 <?php
 
+use App\Providers\ObserversServiceProvider;
+
 return [
 
     /*
@@ -182,6 +184,7 @@ return [
         Yajra\Datatables\DatatablesServiceProvider::class,
         App\Providers\AWSWorkerServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
+        ObserversServiceProvider::class,
 
     ],
 

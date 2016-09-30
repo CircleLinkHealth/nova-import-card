@@ -18,8 +18,8 @@
                     <div class="container-fluid">
                         <div class="row">
                             <h5>Please make your schedule by creating as many "windows" as you'd like.
-                                <br><br><b>NOTE:</b> Windows become locked and cannot be edited after midnight of the
-                                preceding Wednesday.</h5>
+                                <br><br><em>Windows become locked and cannot be edited after midnight of the
+                                    preceding Wednesday.</em></h5>
                         </div>
                         <div class="row-centered">
                             <div class="col-md-12">

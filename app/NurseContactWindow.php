@@ -63,6 +63,11 @@ class NurseContactWindow extends Model
         return $this->belongsTo(NurseInfo::class, 'nurse_info_id', 'id');
     }
 
+    public function getDayNameAttribute()
+    {
+        return clhDayOfWeekToDayName($this->day_of_week);
+    }
+
     public function getScheduleForAllNurses()
     {
         return $this->with('nurse.user')

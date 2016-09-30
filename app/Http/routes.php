@@ -425,7 +425,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('nurses/windows', [
             'uses' => 'CareCenter\WorkScheduleController@getAllNurseSchedules',
-            'as'   => 'get.nurse.schedules',
+            'as'   => 'get.admin.nurse.schedules',
         ]);
 
         Route::post('nurses/{id}/windows', [
