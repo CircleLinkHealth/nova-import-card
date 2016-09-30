@@ -50,7 +50,7 @@ class Kernel extends ConsoleKernel
         //tunes scheduled call dates.
 //        $schedule->call(function () {
 //            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-//        })->dailyAt('11:59');
+//        })->dailyAt('23:50');
 
         //Removes All Scheduled Calls for patients that are withdrawn
         $schedule->call(function () {
@@ -77,5 +77,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
             ->dailyAt('08:00');
+
+        $schedule->command('nurseSchedule:export')
+            ->everyFiveMinutes();
     }
 }
