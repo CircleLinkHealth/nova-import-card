@@ -51,12 +51,22 @@ class ExportNurseSchedulesToGoogleCalendar extends Command
         $windows = $this->nurseContactWindows->getScheduleForAllNurses();
 
         foreach ($windows as $window) {
+
+            $nurseTz = $window->nurse->user->timezone;
+
+            $startDate = "{$window->date->format('Y-m-d')} {$window->window_time_start}";
+            $endDate = "{$window->date->format('Y-m-d')} {$window->window_time_end}";
+
+            $startDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $startDate,
+                $nurseTz)->setTimezone('America/New_York');
+
+            $endDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $endDate,
+                $nurseTz)->setTimezone('America/New_York');
+
             $calendarEvent = Event::create([
                 'name'          => $window->nurse->user->fullName,
-                'startDateTime' => Carbon::createFromFormat('Y-m-d H:i:s',
-                    "{$window->date->format('Y-m-d')} {$window->window_time_start}"),
-                'endDateTime'   => Carbon::createFromFormat('Y-m-d H:i:s',
-                    "{$window->date->format('Y-m-d')} {$window->window_time_end}"),
+                'startDateTime' => $startDateTime,
+                'endDateTime'   => $endDateTime,
             ]);
         }
 
