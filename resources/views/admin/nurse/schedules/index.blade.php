@@ -6,7 +6,7 @@
             <div class="row" style="padding-bottom: 5%;">
                 <h3>
                     <b>{{ $windowCollection->first()->nurse->user->fullName }}</b>
-                    <span class="pull-right">Timezone: {{ $windowCollection->first()->nurse->user->timezone }}</span>
+                    <span class="pull-right red-text">Timezone: {{ $windowCollection->first()->nurse->user->timezone }}</span>
                 </h3>
 
                 <div class="row">
