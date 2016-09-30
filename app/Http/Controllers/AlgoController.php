@@ -26,7 +26,9 @@ class AlgoController extends Controller
             $ccm = $request->input('seconds');
             $date = Carbon::parse($request->input('date'));
             $status = (bool) $request->input('status');
-//            $successThisMonth = (bool) $request->input('call_success');
+            $contact_day = $request->input('days')[0];
+
+//          $successThisMonth = (bool) $request->input('call_success');
 
             $guineaPig = PatientInfo::find(1272);
 
@@ -41,7 +43,7 @@ class AlgoController extends Controller
                 $day = (new SuccessfulHandler($guineaPig, $date))
                                     ->getPatientOffset($ccm, $date->weekOfMonth);
 
-                return $day->format('jS M');
+
 
             } else {
 
@@ -49,9 +51,13 @@ class AlgoController extends Controller
                 $day = (new UnsuccessfulHandler($guineaPig,$date))
                                     ->getPatientOffset($ccm, $date->weekOfMonth);
 
-                return $day;
 
             }
+
+
+            debug(Carbon::SUNDAY);
+//            debug($day->toDateTimeString());
+            return $day->next($contact_day)->format('l, jS M');
 
         }
 

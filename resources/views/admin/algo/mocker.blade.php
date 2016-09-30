@@ -39,18 +39,20 @@
                                     {{--</div>--}}
                                 {{--</div>--}}
 
-                                {{--<div class="form-group">--}}
-                                    {{--<label class="col-md-4 control-label" for="week">Call Date</label>--}}
-                                    {{--<div class="col-md-4">--}}
-                                        {{--<select id="week" name="week" id="week" class="form-control" disabled>--}}
-                                            {{--<option value="1">Week 1</option>--}}
-                                            {{--<option value="2">Week 2</option>--}}
-                                            {{--<option value="3">Week 3</option>--}}
-                                            {{--<option value="4">Week 4</option>--}}
-                                            {{--<option value="5">Week 5</option>--}}
-                                        {{--</select>--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label" for="days">Call Date</label>
+                                    <div class="col-md-4">
+                                        <select id="days" name="days[]" class=" dropdown Valid form-control" multiple>
+                                            <option value="1">Monday</option>
+                                            <option value="2">Tuesday</option>
+                                            <option value="3">Wednesday</option>
+                                            <option value="4">Thursday</option>
+                                            <option value="5">Friday</option>
+                                            <option value="6">Saturday</option>
+                                            <option value="0">Sunday</option>
+                                        </select>
+                                    </div>
+                                </div>
 
                                 <div class="form-group">
                                     <label class="col-md-4 control-label" for="week">Call Date</label>
@@ -94,6 +96,7 @@
                     <p><h4>Notes</h4></p>
                     <li> Currently doesn't consider frequency, no of successful calls </li>
                     <li> Remember to add the patient's preference or closest Weekday to call date </li>
+                    <li> <a href="https://docs.google.com/spreadsheets/d/1IqXEW18z2ELHBS7nMn64_7i2oO81JqqSBaZeJ9qxh-0/edit#gid=0">Algo Grid Google Sheet </a></li>
                     <li> Note problems with the algorithm and list them <a href="https://circlelink-health2.codebasehq.com/projects/cpm/tickets/594"> here </a></li>
                 </div>
             </div>
@@ -123,8 +126,9 @@
                 data: {
                     seconds: $('#seconds').val(),
                     date: $('#date').val(),
+                    days: $('#days').val(),
                     status: $('#status').val(),
-                    call_status: $('#call_success').val()
+//                    call_status: $('#call_success').val()
                 }, // serializes the form's elements.
                 success: function (data) {
                     console.log(data); // show response from the php script.
