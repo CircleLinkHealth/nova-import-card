@@ -28,7 +28,7 @@
     </div>
 
     <div class="col-md-2">
-        <input type="submit" class="btn btn-primary" value="{{ isset($submitBtnText) ? $submitBtnText : 'Store Window' }}"
+        <input type="submit" class="btn btn-primary" value="{{ isset($submitBtnText) ? $submitBtnText : 'Save Hours' }}"
                name="submit" id="store-window">
     </div>
 </div>

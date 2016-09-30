@@ -6305,9 +6305,12 @@ label,
 .red-text {
   color: red;
 }
-
 .green-text {
     color: green;
+}
+
+.dark-red-text {
+    color: #b80000;
 }
 
 @charset "UTF-8";
