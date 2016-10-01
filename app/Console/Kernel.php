@@ -47,18 +47,6 @@ class Kernel extends ConsoleKernel
             (new PhiMail)->sendReceive();
         })->everyMinute();
 
-        //tunes scheduled call dates.
-//        $schedule->call(function () {
-//            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-//        })->dailyAt('23:50');
-
-        //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->call(function () {
-
-            (new SchedulerService())->removeScheduledCallsForWithdrawnPatients();
-
-        })->everyMinute();
-
         //Reconciles missed calls and creates a new call for patient using algo
         $schedule->call(function () {
 
@@ -73,6 +61,24 @@ class Kernel extends ConsoleKernel
             }
 
         })->dailyAt('00:05');
+
+
+        //tunes scheduled call dates.
+        $schedule->call(function () {
+            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
+        })->dailyAt('00:20');
+
+        //syncs families.
+        $schedule->call(function () {
+            (new SchedulerService())->syncFamilialCalls();
+        })->dailyAt('00:30');
+
+        //Removes All Scheduled Calls for patients that are withdrawn
+        $schedule->call(function () {
+
+            (new SchedulerService())->removeScheduledCallsForWithdrawnPatients();
+
+        })->everyMinute();
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
