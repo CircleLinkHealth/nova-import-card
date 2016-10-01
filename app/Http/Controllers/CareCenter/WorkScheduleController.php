@@ -135,8 +135,8 @@ class WorkScheduleController extends Controller
     {
         $windows = $this->nurseContactWindows
             ->getScheduleForAllNurses()
-            ->groupBy('nurse_info_id')
-            ->sortBy('date');
+            ->sortBy('date')
+            ->groupBy('nurse_info_id');
 
         return view('admin.nurse.schedules.index', compact('windows'));
     }
