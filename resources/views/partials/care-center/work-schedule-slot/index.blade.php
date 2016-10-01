@@ -36,7 +36,7 @@
                                 <a href="#"
                                    data-placement="right"
                                    data-toggle="tooltip"
-                                   title="You cannot delete windows after Wednesday night of the week before.">
+                                   title="You cannot delete windows after Wednesday night of the prior week.">
                                     <i class="glyphicon glyphicon-info-sign"></i>
                                 </a>
                             @endif
