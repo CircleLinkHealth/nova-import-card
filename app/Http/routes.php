@@ -1,8 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
+
 Route::get('rohan', function () {
 
-    return \App\NurseInfo::active()->get();
+    
 
 });
 

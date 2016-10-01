@@ -64,9 +64,9 @@ class Kernel extends ConsoleKernel
 
 
         //tunes scheduled call dates.
-        $schedule->call(function () {
-            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-        })->dailyAt('00:20');
+//        $schedule->call(function () {
+//            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
+//        })->dailyAt('00:20');
 
         //syncs families.
         $schedule->call(function () {
