@@ -37,7 +37,10 @@ class WorkScheduleController extends Controller
 
                 return $window;
             })
-            ->sortBy('date');
+            ->sortBy(function ($item) {
+                return Carbon::createFromFormat('Y-m-d H:i:s',
+                    "{$item->date->format('Y-m-d')} $item->window_time_start");
+            });
 
         $tzAbbr = auth()->user()->timezone
             ? Carbon::now(auth()->user()->timezone)->format('T')
@@ -135,7 +138,10 @@ class WorkScheduleController extends Controller
     {
         $windows = $this->nurseContactWindows
             ->getScheduleForAllNurses()
-            ->sortBy('date')
+            ->sortBy(function ($item) {
+                return Carbon::createFromFormat('Y-m-d H:i:s',
+                    "{$item->date->format('Y-m-d')} $item->window_time_start");
+            })
             ->groupBy('nurse_info_id');
 
         return view('admin.nurse.schedules.index', compact('windows'));
@@ -165,12 +171,12 @@ class WorkScheduleController extends Controller
         $date = Carbon::createFromFormat('m-d-Y', $request->input('date'))->copy();
 
         $this->nurseContactWindows->create([
-                'nurse_info_id'     => $id,
-                'date'              => $date->format('Y-m-d'),
-                'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
-                'window_time_start' => $request->input('window_time_start'),
-                'window_time_end'   => $request->input('window_time_end'),
-            ]);
+            'nurse_info_id'     => $id,
+            'date'              => $date->format('Y-m-d'),
+            'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
+            'window_time_start' => $request->input('window_time_start'),
+            'window_time_end'   => $request->input('window_time_end'),
+        ]);
 
         return redirect()->back();
     }
