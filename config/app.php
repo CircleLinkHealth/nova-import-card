@@ -154,7 +154,7 @@ return [
          * Application Service Providers...
          */
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
+        //        Barryvdh\Debugbar\ServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,

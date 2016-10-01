@@ -1050,6 +1050,33 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
 
+    /*
+     *
+     * CARE-CENTER GROUP
+     *
+     */
+    Route::group([
+        'middleware' => ['role:care-center'],
+        'prefix'     => 'care-center',
+    ], function () {
+
+        Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [
+            'only'  => [
+                'index',
+                'store',
+            ],
+            'names' => [
+                'index' => 'care.center.work.schedule.index',
+                'store' => 'care.center.work.schedule.store',
+            ],
+        ]);
+
+        Route::get('work-schedule/destroy/{id}', [
+            'uses' => 'CareCenter\WorkScheduleController@destroy',
+            'as'   => 'care.center.work.schedule.destroy',
+        ]);
+    });
+
 });
 
 /*
@@ -1165,30 +1192,3 @@ Route::get('datatables/callData', [
     'uses' => 'DatatablesController@callData',
     'as'   => 'datatables.callData',
 ]);
-
-/*
- *
- * CARE-CENTER GROUP
- *
- */
-Route::group([
-    'middleware' => ['role:care-center'],
-    'prefix'     => 'care-center',
-], function () {
-
-    Route::resource('work-schedule', 'CareCenter\WorkScheduleController', [
-        'only'  => [
-            'index',
-            'store',
-        ],
-        'names' => [
-            'index' => 'care.center.work.schedule.index',
-            'store' => 'care.center.work.schedule.store',
-        ],
-    ]);
-
-    Route::get('work-schedule/destroy/{id}', [
-        'uses' => 'CareCenter\WorkScheduleController@destroy',
-        'as'   => 'care.center.work.schedule.destroy',
-    ]);
-});

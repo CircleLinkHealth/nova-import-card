@@ -5,7 +5,7 @@
                type="text" data-field="date"
                id="date"
                placeholder="Date"
-               value="{{ isset($window) ? $window->date->format('m-d-Y') : '' }}"
+               value="{{ isset($window) ? $window->date->format('m-d-Y') : old('date') }}"
                required>
     </div>
 
@@ -14,7 +14,7 @@
                type="text" data-field="time"
                id="window_time_start"
                placeholder="Window Time Start {{ empty($tzAbbr) ? '' : "($tzAbbr)" }}"
-               value="{{ isset($window) ? $window->window_time_start : '' }}"
+               value="{{ isset($window) ? $window->window_time_start : old('window_time_start') }}"
                required>
     </div>
 
@@ -23,7 +23,7 @@
                type="text" data-field="time"
                id="window_time_end"
                placeholder="Window Time End {{ empty($tzAbbr) ? '' : "($tzAbbr)" }}"
-               value="{{ isset($window) ? $window->window_time_end : '' }}"
+               value="{{ isset($window) ? $window->window_time_end : old('window_time_end') }}"
                required>
     </div>
 
