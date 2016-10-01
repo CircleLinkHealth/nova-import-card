@@ -82,7 +82,7 @@ class WorkScheduleController extends Controller
         });
 
         if ($validator->fails()) {
-            return redirect()->route('care.center.work.schedule.index')
+            return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
@@ -94,7 +94,7 @@ class WorkScheduleController extends Controller
             'window_time_end'   => $request->input('window_time_end'),
         ]);
 
-        return redirect()->route('care.center.work.schedule.index');
+        return redirect()->back();
     }
 
     public function destroy($windowId)
