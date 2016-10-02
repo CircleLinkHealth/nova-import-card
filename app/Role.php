@@ -4,6 +4,13 @@ use Zizaco\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {
+
+    const CCM_TIME_ROLES = [
+        'care-center',
+        'med_assistant',
+        'provider'
+    ];
+
     /**
      * The connection name for the model.
      *
@@ -17,4 +24,6 @@ class Role extends EntrustRole
      * @var string
      */
     protected $table = 'lv_roles';
+    
+    
 }

@@ -3,6 +3,7 @@
 use App\Activity;
 use App\Formatters\WebixFormatter;
 use App\PatientContactWindow;
+use App\PatientMonthlySummary;
 use App\Program;
 use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
@@ -185,6 +186,8 @@ class NotesController extends Controller
                 return response("User's Program not found", 401);
             }
 
+            Auth::user()->hasRole('care-center');
+
             //providers
             $providers = Program::getProviders($patient->blogId());
             $nonCCMCareCenterUsers = Program::getNonCCMCareCenterUsers($patient->blogId());
@@ -269,8 +272,9 @@ class NotesController extends Controller
         //UPDATE USER INFO CHANGES
         $info = $patient->patientInfo;
 
-        //User header update status
-        $info->ccm_status = $input['status'];
+        if(isset($input['status'])){
+            $info->general_comment = $input['status'];
+        }
 
         if(isset($input['general_comment'])){
             $info->general_comment = $input['general_comment'];
@@ -328,6 +332,24 @@ class NotesController extends Controller
             }
 
         }
+
+        //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
+        if (isset($input['phone'])) {
+
+            if (isset($input['call_status']) && $input['call_status'] == 'reached') {
+
+                if (Auth::user()->hasRole('provider')) {
+
+                    $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->ID , null);
+
+                    (new PatientMonthlySummary())->updateCallInfoForPatient($patient->patientInfo, true);
+
+                    $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+
+                }
+            }
+        }
+
 
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with('messages', ['Successfully Created Note']);
 

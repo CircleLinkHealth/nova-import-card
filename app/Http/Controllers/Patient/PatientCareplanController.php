@@ -39,7 +39,7 @@ class PatientCareplanController extends Controller
     //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
     public function index(Request $request)
     {
-        $patientData = array();
+        $patientData = [];
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
             ->select(DB::raw('users.*'))
@@ -47,7 +47,7 @@ class PatientCareplanController extends Controller
 
         // get approvers before
         $approvers = null;
-        $approverIds = array();
+        $approverIds = [];
         if ($patients->count() > 0) {
             foreach ($patients as $patient) {
                 if ($patient->carePlanStatus == 'provider_approved') {
@@ -61,8 +61,8 @@ class PatientCareplanController extends Controller
         }
 
         if ($patients->count() > 0) {
-            $foundUsers = array(); // save resources, no duplicate db calls
-            $foundPrograms = array(); // save resources, no duplicate db calls
+            $foundUsers = []; // save resources, no duplicate db calls
+            $foundPrograms = []; // save resources, no duplicate db calls
             foreach ($patients as $patient) {
                 // skip if patient has no name
                 if (empty($patient->first_name)) {
@@ -111,14 +111,14 @@ class PatientCareplanController extends Controller
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
                     if (Auth::user()->hasRole(['provider'])) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', ['patient' => $patient->ID]) . '"><strong>Approve Now</strong></a>';
                     }
                 } else if ($patient->carePlanStatus == 'draft') {
                     $careplanStatus = 'CLH Approve';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'CLH Approve';
                     if (Auth::user()->hasRole(['care-center']) || Auth::user()->hasRole(['administrator'])) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', ['patient' => $patient->ID]) . '"><strong>CLH Approve</strong></a>';
                     }
                 }
 
@@ -151,7 +151,7 @@ class PatientCareplanController extends Controller
                 }
 
                 if ($patient->patientInfo) {
-                    $patientData[] = array(
+                    $patientData[] = [
                         'key' => $patient->ID,
                         'id' => $patient->ID,
                         'patient_name' => $patient->fullName,
@@ -171,7 +171,7 @@ class PatientCareplanController extends Controller
                         'program_name' => $programName,
                         'careplan_last_printed' => $printed_date,
                         'careplan_printed' => $printed_status
-                    );
+                    ];
                 }
             }
         }
@@ -208,7 +208,7 @@ class PatientCareplanController extends Controller
         // vars
         $storageDirectory = 'storage/pdfs/careplans/';
         $datetimePrefix = date('Y-m-dH:i:s');
-        $pageFileNames = array();
+        $pageFileNames = [];
 
         // first create blank page
         $pdf = App::make('snappy.pdf.wrapper');
@@ -228,7 +228,7 @@ class PatientCareplanController extends Controller
             $prefix = $datetimePrefix . '-' . $p;
             $user = User::find($user_id);
             $formatter = new WebixFormatter();
-            $careplan = $formatter->formatDataForViewPrintCareplanReport(array($user));
+            $careplan = $formatter->formatDataForViewPrintCareplanReport([$user]);
             $careplan = $careplan[$user_id];
             if (empty($careplan)) {
                 return false;
@@ -237,7 +237,7 @@ class PatientCareplanController extends Controller
             // build pdf
             $pdf = App::make('snappy.pdf.wrapper');
             $pdf->loadView('wpUsers.patient.multiview', [
-                'careplans' => array($user_id => $careplan),
+                'careplans' => [$user_id => $careplan],
                 'isPdf' => true,
                 'letter' => $letter
             ]);
@@ -255,7 +255,7 @@ class PatientCareplanController extends Controller
 //                echo PHP_EOL . '<br /><br />Add blank page...';
 //                echo PHP_EOL . '<br /><br />'.$fileName;
 //                echo PHP_EOL . '<br /><br />'.$fileNameBlankPage;
-                $fileName = $storageDirectory . $this->merge_pages(array($fileName, $fileNameBlankPage), $prefix, $storageDirectory);
+                $fileName = $storageDirectory . $this->merge_pages([$fileName, $fileNameBlankPage], $prefix, $storageDirectory);
                 $fileNameWithPath = base_path($fileName);
 //                echo PHP_EOL . '<br /><br />Merge complete..';
             }
@@ -338,7 +338,7 @@ class PatientCareplanController extends Controller
 
         // locations @todo get location id for Program
         $program = Program::find($programId);
-        $locations = array();
+        $locations = [];
         if ($program) {
             $locations = Location::where('parent_id', '=', $program->location_id)->lists('name', 'id')->all();
         }
@@ -347,7 +347,7 @@ class PatientCareplanController extends Controller
         $carePlans = CarePlan::where('program_id', '=', $programId)->lists('display_name', 'id')->all();
 
         // States (for dropdown)
-        $states = array('AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming");
+        $states = ['AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming"];
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
@@ -366,7 +366,7 @@ class PatientCareplanController extends Controller
 
         $insurancePolicies = $patient->ccdInsurancePolicies()->get();
 
-        $contact_days_array = array();
+        $contact_days_array = [];
         if ($patient->patientInfo()->exists()) {
             $contactWindows = $patient->patientInfo->patientContactWindows;
             $contact_days_array = $contactWindows->pluck('day_of_week')->toArray();
@@ -467,7 +467,7 @@ class PatientCareplanController extends Controller
             $this->validate($request, $user->patient_rules, $messages);
             $role = Role::whereName('participant')->first();
             $newUserId = str_random(15);
-            $params->add(array(
+            $params->add([
                 'user_login' => $newUserId,
                 'user_email' => empty($email = $params->get('email'))
                     ? $newUserId . '@careplanmanager.com'
@@ -480,9 +480,20 @@ class PatientCareplanController extends Controller
                 'roles' => [$role->id],
                 'ccm_status' => 'enrolled',
                 'careplan_status' => 'draft',
-            ));
+            ]);
             $newUser = $userRepo->createNewUser($user, $params);
-            return redirect(\URL::route('patient.demographics.show', array('patientId' => $newUser->ID)))->with('messages', ['Successfully created new patient with demographics.']);
+            if($newUser) {
+                //Update patient info changes
+                $info = $newUser->patientInfo;
+                //in case we want to delete all call windows
+                if ($params->get('days') || $info->patientContactWindows()->exists()) {
+                    PatientContactWindow::sync($info, $params->get('days', []), $params->get('window_start'),
+                        $params->get('window_end'));
+                }
+                $info->save();
+            }
+
+            return redirect(\URL::route('patient.demographics.show', ['patientId' => $newUser->ID]))->with('messages', ['Successfully created new patient with demographics.']);
         }
     }
 
@@ -517,7 +528,7 @@ class PatientCareplanController extends Controller
 
         //dd($userConfig);
 
-        $careTeamUsers = array();
+        $careTeamUsers = [];
         if (!empty($careTeamUserIds)) {
             if ((@unserialize($careTeamUserIds) !== false)) {
                 $careTeamUserIds = unserialize($careTeamUserIds);
@@ -539,7 +550,7 @@ class PatientCareplanController extends Controller
         }
 
         // get providers
-        $providers = array();
+        $providers = [];
         $providers = User::with('phoneNumbers', 'providerInfo')
             ->whereHas('programs', function ($q) use ($patient) {
                 $q->whereIn('program_id', $patient->viewableProgramIds());
@@ -590,7 +601,7 @@ class PatientCareplanController extends Controller
             if ($params->get('ctmCountArr')) {
                 if (!empty($params->get('ctmCountArr'))) {
                     // get provider specific info
-                    $careTeamUserIds = array();
+                    $careTeamUserIds = [];
                     foreach ($_POST['ctmCountArr'] as $ctmCount) {
                         if ($params->get('ctm' . $ctmCount . 'provider') && !empty($params->get('ctm' . $ctmCount . 'provider'))) {
                             $careTeamUserIds[] = $params->get('ctm' . $ctmCount . 'provider');

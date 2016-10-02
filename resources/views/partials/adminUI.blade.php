@@ -27,6 +27,9 @@
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
+    <!-- idleTime -->
+    <script src="{{ asset('/js/idle-timer.min.js') }}"></script>
+
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
@@ -111,12 +114,28 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ URL::route('admin.users.index', array()) }}">All Users</a></li>
                                 <li><a href="{{ URL::route('admin.users.create', array()) }}">New User</a></li>
-                                <li><a href="{{ URL::route('admin.patientCallManagement.index', array()) }}">Patient
-                                        Call Management</a>
                                 <li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a>
                                 </li>
                                 <li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
                                 <li><a href="{{ URL::route('admin.ucp.index', array()) }}">UCP</a></li>
+                            </ul>
+                        </li>
+                    @endif
+
+                    @if ( ! Auth::guest())
+                        <li role="presentation" 0lass="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                               aria-expanded="false">
+                                Calls <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+
+                                <li><a href="{{ URL::route('admin.patientCallManagement.index', array()) }}">Patient
+                                        Call Management</a>
+                                <li><a href="{{ URL::route('admin.families.index', array()) }}">Patient Families</a>
+                                <li><a href="{{ URL::route('algo.mock.create', array()) }}">Algo
+                                        v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}}</a>
+                                <li><a href="{{ URL::route('get.admin.nurse.schedules') }}">Nurse Schedules</a>
                             </ul>
                         </li>
                     @endif
@@ -226,30 +245,32 @@
                         </li>
                     @endif
 
-                        <li role="presentation" class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                               aria-expanded="false">
-                                Reports<span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ URL::route('view.files.ready.to.import', []) }}">CCDs To Import</a></li>
-                                <li><a href="{{ URL::route('EthnicityReportController.getReport', []) }}">Ethnicity/Race
-                                        Report</a></li>
-                                <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
-                                        Billing Report</a></li>
-                                <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a>
-                                </li>
-                                <li><a href="{{ URL::route('admin.reports.nurse.daily', array()) }}">Daily Nurse Report</a></li>
-                                <li><a href="{{ URL::route('PatientConditionsReportController.getReport', array()) }}">Patient Conditions (export)</a>
-                                </li>
+                    <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                           aria-expanded="false">
+                            Reports<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="{{ URL::route('view.files.ready.to.import', []) }}">CCDs To Import</a></li>
+                            <li><a href="{{ URL::route('EthnicityReportController.getReport', []) }}">Ethnicity/Race
+                                    Report</a></li>
+                            <li><a href="{{ URL::route('MonthlyBillingReportsController.create', []) }}">Monthly
+                                    Billing Report</a></li>
+                            <li><a href="{{ URL::route('admin.reports.nurseTime.index', array()) }}">Nurse Time</a>
+                            </li>
+                            <li><a href="{{ URL::route('admin.reports.nurse.daily', array()) }}">Daily Nurse Report</a>
+                            </li>
+                            <li><a href="{{ URL::route('PatientConditionsReportController.getReport', array()) }}">Patient
+                                    Conditions (export)</a>
+                            </li>
 
                             <li><a href="{{ URL::route('CallReportController.exportxls', array()) }}">Calls</a>
                             </li>
                             <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a>
                             </li>
 
-                            </ul>
-                        </li>
+                        </ul>
+                    </li>
 
                 </ul>
 

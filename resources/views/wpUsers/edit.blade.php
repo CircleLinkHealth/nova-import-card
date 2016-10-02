@@ -337,7 +337,7 @@
                                             <div class="col-xs-10">{!! Form::select('gender', array('M', 'F'), $patient->gender, ['class' => 'form-control select-picker', 'style' => 'width:20%;']) !!}</div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
+            a                        <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('birth_date', 'Birth Date:') !!}</div>
                                             <div class="col-xs-10">{!! Form::text('birth_date', $patient->birth_date, ['class' => 'form-control', 'style' => 'width:30%;']) !!}</div>
@@ -486,6 +486,11 @@
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('hourly_rate', 'Hourly Rate:') !!}</div>
                                             <div class="col-xs-10">{!! Form::text('hourly_rate', $patient->nurseInfo->hourly_rate, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-xs-2">{!! Form::label('status', 'Status') !!}</div>
+                                            <div class="col-xs-4">{!! Form::select('status', array('inactive' => 'Inactive', 'active' => 'Active'), $patient->nurseInfo->status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                         </div>
 
                                         <div class="row" style="margin-top:10px;">

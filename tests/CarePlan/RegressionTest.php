@@ -19,9 +19,9 @@ class RegressionTest extends TestCase
      */
     public function testClhRegressionTesting()
     {
-        $this->provider = $this->createProvider();
+        $this->provider = $this->createUser();
 
-        $this->providerLogin($this->provider);
+        $this->userLogin($this->provider);
 
         $this->patients[] = $this->createNewPatient();
         $this->patients[] = $this->createNewPatient();

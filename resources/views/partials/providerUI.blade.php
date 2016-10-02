@@ -31,10 +31,17 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>-->
 
         <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                            (i[r].q = i[r].q || []).push(arguments)
+                        }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
             ga('create', 'UA-9084372-23', 'auto');
             ga('send', 'pageview');
@@ -84,8 +91,10 @@
                     <li><a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a></li>
                     <li><a href="{{ URL::route('patients.search') }}"><i class="icon--search--white"></i> Select Patient</a>
                     </li>
-                    <li><a href="{{ URL::route('patient.note.listing') }}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"
-                                                                                 style="height: 16px; width: 22px; font-size: 17px; top: 4px"></span>Notes Report</a></li>
+                    <li><a href="{{ URL::route('patient.note.listing') }}"><span class="glyphicon glyphicon-envelope"
+                                                                                 aria-hidden="true"
+                                                                                 style="height: 16px; width: 22px; font-size: 17px; top: 4px"></span>Notes
+                            Report</a></li>
                     <li><a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
                     </li>
                     <li><a href="{{ URL::route('patients.demographics.show') }}"><i class="icon--add-user"></i> Add
@@ -94,9 +103,32 @@
                     @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
                         <li><a class="btn btn-primary btn-xs"
                                href="{{ empty($patient->ID) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->ID)) }}"><i
-                                        class="icon--home--white"></i> Admin</a></li>
+                                        class="icon--home--white"></i>Admin</a></li>
                     @endif
-                    <li><a href="{{ url('/auth/logout') }}"><i class="icon--logout"></i> Logout</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false" style="background: none !important;">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                            {{ Auth::user()->full_name }}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                            @role(['care-center'])
+                            <li>
+                                <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                    Work Schedule
+                                </a>
+                            </li>
+                            @endrole
+                            <li>
+                                <a href="{{ url('/auth/logout') }}">
+                                    <i class="glyphicon glyphicon-log-out"></i>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
             <!-- /navbar-collapse -->

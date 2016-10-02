@@ -12,7 +12,16 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait HandlesUsersAndCarePlans
 {
-    public function createProvider($programId = 9)
+    /**
+     * @param int $programId
+     * @param string $roleName
+     *
+     * @return $this|User
+     */
+    public function createUser(
+        $programId = 9,
+        $roleName = 'provider'
+    )
     {
         $faker = Factory::create();
 
@@ -22,30 +31,31 @@ trait HandlesUsersAndCarePlans
         $workPhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
 
         $roles = [
-            Role::whereName('provider')->first()->id,
+            Role::whereName($roleName)->first()->id,
         ];
 
         $bag = new ParameterBag([
             'user_email' => $email,
-            'user_pass' => 'password',
-            'display_name' => "$firstName $lastName",
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'user_login' => $faker->userName,
-            'program_id' => $programId, //id=9 is testdrive
-            'address' => $faker->streetAddress,
-            'address2' => '',
-            'city' => $faker->city,
-            'state' => 'AL',
-            'zip' => '12345',
+            'user_pass'         => 'password',
+            'display_name'      => "$firstName $lastName",
+            'first_name'        => $firstName,
+            'last_name'         => $lastName,
+            'user_login'        => $faker->userName,
+            'program_id'        => $programId,//id=9 is testdrive
+            'address'           => $faker->streetAddress,
+            'address2'          => '',
+            'city'              => $faker->city,
+            'state'             => 'AL',
+            'zip'               => '12345',
             'is_auto_generated' => true,
-            'roles' => $roles,
+            'roles'             => $roles,
+            'timezone'          => 'America/New_York',
 
             //provider Info
-            'prefix' => 'Dr',
-            'qualification' => 'MD',
-            'npi_number' => 1234567890,
-            'specialty' => 'Unit Tester',
+            'prefix'            => 'Dr',
+            'qualification'     => 'MD',
+            'npi_number'        => 1234567890,
+            'specialty'         => 'Unit Tester',
 
             //phones
             'home_phone_number' => $workPhone,
@@ -68,7 +78,7 @@ trait HandlesUsersAndCarePlans
         return $user;
     }
 
-    public function providerLogin(User $provider)
+    public function userLogin(User $provider)
     {
         $this->visit('/auth/login')
             ->see('CarePlanManager')
@@ -161,18 +171,18 @@ trait HandlesUsersAndCarePlans
 
         $patient = User::whereUserEmail($email)->first();
 
-        $ccda = \App\Models\CCD\Ccda::create([
-            'user_id' => $patient->ID,
-            'vendor_id' => 1,
-            'source' => 'test',
-            'xml' => 'test',
-            'json' => 'test',
-        ]);
-
-        factory(\App\Models\CCD\CcdInsurancePolicy::class, 3)->create([
-            'patient_id' => $patient->ID,
-            'ccda_id' => $ccda->id,
-        ]);
+//        $ccda = \App\Models\CCD\Ccda::create([
+//            'user_id' => $patient->ID,
+//            'vendor_id' => 1,
+//            'source' => 'test',
+//            'xml' => 'test',
+//            'json' => 'test',
+//        ]);
+//
+//        factory(\App\Models\CCD\CcdInsurancePolicy::class, 3)->create([
+//            'patient_id' => $patient->ID,
+//            'ccda_id' => $ccda->id,
+//        ]);
 
         $patientInfo = $patient->patientInfo()->first();
         $patientInfo->preferred_cc_contact_days = '1, 2, 3, 4, 5, 6, 7';
@@ -210,6 +220,23 @@ trait HandlesUsersAndCarePlans
 
 
         return $patient;
+    }
+
+    public function fillCarePlan(
+        User $patient,
+        $numberOfRowsToCreate
+    ) {
+        $this->addPatientCareTeam($patient);
+
+        $this->fillCareplanPage1($patient, $numberOfRowsToCreate);
+
+        $this->fillCareplanPage2($patient, $numberOfRowsToCreate);
+
+        $this->fillCareplanPage3($patient, $numberOfRowsToCreate);
+
+        $this->fillBiometrics($patient);
+
+        $this->printCarePlanTest($patient);
     }
 
     public function addPatientCareTeam($patient)
@@ -252,21 +279,6 @@ trait HandlesUsersAndCarePlans
             ->see('Lead Contact')
             ->see('Send Alert')
             ->see($this->provider->display_name);
-    }
-
-    public function fillCarePlan(User $patient, $numberOfRowsToCreate)
-    {
-        $this->addPatientCareTeam($patient);
-
-        $this->fillCareplanPage1($patient, $numberOfRowsToCreate);
-
-        $this->fillCareplanPage2($patient, $numberOfRowsToCreate);
-
-        $this->fillCareplanPage3($patient, $numberOfRowsToCreate);
-
-        $this->fillBiometrics($patient);
-
-        $this->printCarePlanTest($patient);
     }
 
     public function fillCareplanPage1(User $patient, $numberOfRowsToCreate = null)
@@ -321,51 +333,6 @@ trait HandlesUsersAndCarePlans
             1,
             "/manage-patients/{$patient->ID}/careplan/sections/1",
             null,
-            'cpm_misc_id',
-            $numberOfRowsToCreate
-        );
-    }
-
-    public function fillCareplanPage2(User $patient, $numberOfRowsToCreate = null)
-    {
-        /*
-        * Biometrics
-        */
-        $this->fillCpmEntityUserValues(
-            $patient,
-            'cpmBiometrics',
-            null,
-            "/manage-patients/{$patient->ID}/careplan/sections/2",
-            'Biometrics to Monitor',
-            'cpm_biometric_id',
-            $numberOfRowsToCreate
-        );
-    }
-
-    public function fillCareplanPage3(User $patient, $numberOfRowsToCreate = null)
-    {
-        /*
-        * Symptoms
-        */
-        $this->fillCpmEntityUserValues(
-            $patient,
-            'cpmSymptoms',
-            null,
-            "/manage-patients/{$patient->ID}/careplan/sections/3",
-            'Symptoms to Monitor',
-            'cpm_symptom_id',
-            $numberOfRowsToCreate
-        );
-
-        /*
-        * Additional Information
-        */
-        $this->fillCpmEntityUserValues(
-            $patient,
-            'cpmMiscs',
-            3,
-            "/manage-patients/{$patient->ID}/careplan/sections/3",
-            'Additional Information',
             'cpm_misc_id',
             $numberOfRowsToCreate
         );
@@ -445,6 +412,55 @@ trait HandlesUsersAndCarePlans
 //         */
 //        $this->assertGreaterThanOrEqual(count($carePlanEntities->all()), count($patientEntities));
 
+    }
+
+    public function fillCareplanPage2(
+        User $patient,
+        $numberOfRowsToCreate = null
+    ) {
+        /*
+        * Biometrics
+        */
+        $this->fillCpmEntityUserValues(
+            $patient,
+            'cpmBiometrics',
+            null,
+            "/manage-patients/{$patient->ID}/careplan/sections/2",
+            'Biometrics to Monitor',
+            'cpm_biometric_id',
+            $numberOfRowsToCreate
+        );
+    }
+
+    public function fillCareplanPage3(
+        User $patient,
+        $numberOfRowsToCreate = null
+    ) {
+        /*
+        * Symptoms
+        */
+        $this->fillCpmEntityUserValues(
+            $patient,
+            'cpmSymptoms',
+            null,
+            "/manage-patients/{$patient->ID}/careplan/sections/3",
+            'Symptoms to Monitor',
+            'cpm_symptom_id',
+            $numberOfRowsToCreate
+        );
+
+        /*
+        * Additional Information
+        */
+        $this->fillCpmEntityUserValues(
+            $patient,
+            'cpmMiscs',
+            3,
+            "/manage-patients/{$patient->ID}/careplan/sections/3",
+            'Additional Information',
+            'cpm_misc_id',
+            $numberOfRowsToCreate
+        );
     }
 
     public function fillBiometrics(User $patient)

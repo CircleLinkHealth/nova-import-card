@@ -1,6 +1,6 @@
 @extends('partials.providerUI')
 
-@section('title', 'Patient Note Creation')
+@section('title', 'Create Patient Note')
 @section('activity', 'Patient Note Creation')
 
 @section('content')
@@ -30,12 +30,22 @@
                     Record New Note
                 </div>
 
+                @include('partials.userheader')
+
                 <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient])}}"
                       class="form-horizontal">
 
-                    @include('partials.userheader')
 
-                    @include('partials.patient_contact_change')
+                    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
+                         style=" border-bottom:3px solid #50b2e2;padding: 10px 48px;">
+
+                        <div class="col-xs-12" style="">
+                            <input type="text" class="form-control" name="general_comment" id="general_comment"
+                                   value="{{$patient->patientInfo->general_comment}}"
+                                   placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
+                                   aria-describedby="sizing-addon2" style="margin: 0 auto; text-align: left; color: #333;">
+                        </div>
+                    </div>
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
                          style=" border:0px solid #50b2e2;padding: 10px 35px;">
@@ -141,6 +151,7 @@
                                                                                      value="outbound"
                                                                                      id="Outbound"/><label
                                                                 for="Outbound"><span> </span>Outbound</label></div>
+                                                    @if(auth()->user()->isCCMCountable())
                                                     <div>
                                                         <div class="radio-inline"><input type="checkbox"
                                                                                          name="call_status"
@@ -150,6 +161,7 @@
                                                                 Call</label>
                                                         </div>
                                                     </div>
+                                                    @endif
                                                     <input type="hidden" name="tcm" value="hospital">
                                                     <div>
                                                         <div class="radio-inline"><input type="checkbox"
@@ -221,10 +233,10 @@
                                     </div>
 
                                     <!-- Submit -->
-                                    <div class="form-item form-item-spacing text-center">
+                                    <div class="form-block form-item-spacing text-center">
                                         <div>
                                             <div class="col-sm-12">
-                                                <button name="submit" id="submit" type="submit"
+                                                <button name="Submit" id="Submit" type="submit" value="Submit"
                                                         class="btn btn-primary btn-lg form-item--button form-item-spacing">Save/Send Note</button>
                                             </div>
                                         </div>

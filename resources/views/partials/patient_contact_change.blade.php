@@ -1,12 +1,4 @@
-<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
-     style=" border-bottom:3px solid #50b2e2;padding: 10px 48px;">
 
-    <div class="col-xs-12" style="">
-        <input type="text" class="form-control" name="general_comment" id="general_comment"
-               value="{{$patient->patientInfo->general_comment}}"
-               placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
-               aria-describedby="sizing-addon2" style="margin: 0 auto; text-align: left; color: #333;">
-    </div>
 
     <!-- The next div is the contact statement -->
 
@@ -84,109 +76,107 @@
                 {{--@endif--}}
 
             {{--</div>--}}
-        {{--</div>--}}
-    </div>
-</div>
-
-<script>
-
-    $(document).ready(function() {
-        $("#days").change(function() {
-
-            var countries = [];
-
-            $.each($("#days option:selected"), function(){
-                countries.push($(this).html());
-            });
-
-            $('#days_text').html(countries.join(', '));
-
-        }).change();
-
-    });
-
-    $(document).ready(function() {
-        $("#window_start").change(function() {
-
-            $('#start_window_text').html(parseTime($(this).val()));
-        }).change();
-    });
-
-    $(document).ready(function() {
-        $("#window_end").change(function() {
-            $('#end_window_text').html(parseTime($(this).val()));
-        }).change();
-    });
-
-    $(document).ready(function() {
-        $("#frequency").change(function() {
-            $('#frequency_text').html($(this).val());
-        }).change();
-    });
-
-    function parseTime(timeString)
-    {
-        if (timeString == '') return null;
-        var d = new Date();
-        var time = timeString.match(/(\d+)(:(\d\d))?\s*(p?)/i);
-        d.setHours( parseInt(time[1],10) + ( ( parseInt(time[1],10) < 12 && time[4] ) ? 12 : 0) );
-        d.setMinutes( parseInt(time[3],10) || 0 );
-        d.setSeconds(0, 0);
-        return ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2)
-
-    }
-
-    // Script for editing the patient times
-
-    $(document).ready(function () {
 
 
-        $('.show_hide').showHide({
-            speed: 1000, // speed you want the toggle to happen
-            easing: '', // the animation effect you want. Remove this line if you dont want an effect and if you haven't included jQuery UI
-            changeText: 1, // if you dont want the button text to change, set this to 0
-            showText: "<span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>", //the button text to show when a div is closed
-            hideText: "<div style='color: #47beab;'> Hide* </div>" // the button text to show when a div is open
+{{--<script>--}}
 
-        });
+    {{--$(document).ready(function() {--}}
+        {{--$("#days").change(function() {--}}
+
+            {{--var countries = [];--}}
+
+            {{--$.each($("#days option:selected"), function(){--}}
+                {{--countries.push($(this).html());--}}
+            {{--});--}}
+
+            {{--$('#days_text').html(countries.join(', '));--}}
+
+        {{--}).change();--}}
+
+    {{--});--}}
+
+    {{--$(document).ready(function() {--}}
+        {{--$("#window_start").change(function() {--}}
+
+            {{--$('#start_window_text').html(parseTime($(this).val()));--}}
+        {{--}).change();--}}
+    {{--});--}}
+
+    {{--$(document).ready(function() {--}}
+        {{--$("#window_end").change(function() {--}}
+            {{--$('#end_window_text').html(parseTime($(this).val()));--}}
+        {{--}).change();--}}
+    {{--});--}}
+
+    {{--$(document).ready(function() {--}}
+        {{--$("#frequency").change(function() {--}}
+            {{--$('#frequency_text').html($(this).val());--}}
+        {{--}).change();--}}
+    {{--});--}}
+
+    {{--function parseTime(timeString)--}}
+    {{--{--}}
+        {{--if (timeString == '') return null;--}}
+        {{--var d = new Date();--}}
+        {{--var time = timeString.match(/(\d+)(:(\d\d))?\s*(p?)/i);--}}
+        {{--d.setHours( parseInt(time[1],10) + ( ( parseInt(time[1],10) < 12 && time[4] ) ? 12 : 0) );--}}
+        {{--d.setMinutes( parseInt(time[3],10) || 0 );--}}
+        {{--d.setSeconds(0, 0);--}}
+        {{--return ('0' + d.getHours()).slice(-2) + ":" + ('0' + d.getMinutes()).slice(-2)--}}
+
+    {{--}--}}
+
+    {{--// Script for editing the patient times--}}
+
+    {{--$(document).ready(function () {--}}
 
 
-    });
+        {{--$('.show_hide').showHide({--}}
+            {{--speed: 1000, // speed you want the toggle to happen--}}
+            {{--easing: '', // the animation effect you want. Remove this line if you dont want an effect and if you haven't included jQuery UI--}}
+            {{--changeText: 1, // if you dont want the button text to change, set this to 0--}}
+            {{--showText: "<span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span>", //the button text to show when a div is closed--}}
+            {{--hideText: "<div style='color: #47beab;'> Hide* </div>" // the button text to show when a div is open--}}
 
-    (function ($) {
-        $.fn.showHide = function (options) {
+        {{--});--}}
 
-            //default vars for the plugin
-            var defaults = {
-                speed: 2000,
-                easing: '',
-                changeText: 0,
-                showText: 'Hide',
-                hideText: '(changes saved on note submission)'
 
-            };
-            var options = $.extend(defaults, options);
+    {{--});--}}
 
-            $(this).click(function () {
-                // optionally add the class .toggleDiv to each div you want to automatically close
-                $('.toggleDiv').slideUp(options.speed, options.easing);
-                // this var stores which button you've clicked
-                var toggleClick = $(this);
-                // this reads the rel attribute of the button to determine which div id to toggle
-                var toggleDiv = $(this).attr('rel');
-                // here we toggle show/hide the correct div at the right speed and using which easing effect
-                $(toggleDiv).slideToggle(options.speed, options.easing, function () {
-                    // this only fires once the animation is completed
-                    if (options.changeText == 1) {
-                        $(toggleDiv).is(":visible") ? toggleClick.html(options.hideText) : toggleClick.html(options.showText);
-                    }
-                });
+    {{--(function ($) {--}}
+        {{--$.fn.showHide = function (options) {--}}
 
-                return false;
+            {{--//default vars for the plugin--}}
+            {{--var defaults = {--}}
+                {{--speed: 2000,--}}
+                {{--easing: '',--}}
+                {{--changeText: 0,--}}
+                {{--showText: 'Hide',--}}
+                {{--hideText: '(changes saved on note submission)'--}}
 
-            });
+            {{--};--}}
+            {{--var options = $.extend(defaults, options);--}}
 
-        };
+            {{--$(this).click(function () {--}}
+                {{--// optionally add the class .toggleDiv to each div you want to automatically close--}}
+                {{--$('.toggleDiv').slideUp(options.speed, options.easing);--}}
+                {{--// this var stores which button you've clicked--}}
+                {{--var toggleClick = $(this);--}}
+                {{--// this reads the rel attribute of the button to determine which div id to toggle--}}
+                {{--var toggleDiv = $(this).attr('rel');--}}
+                {{--// here we toggle show/hide the correct div at the right speed and using which easing effect--}}
+                {{--$(toggleDiv).slideToggle(options.speed, options.easing, function () {--}}
+                    {{--// this only fires once the animation is completed--}}
+                    {{--if (options.changeText == 1) {--}}
+                        {{--$(toggleDiv).is(":visible") ? toggleClick.html(options.hideText) : toggleClick.html(options.showText);--}}
+                    {{--}--}}
+                {{--});--}}
 
-    })(jQuery);
-</script>
+                {{--return false;--}}
+
+            {{--});--}}
+
+        {{--};--}}
+
+    {{--})(jQuery);--}}
+{{--</script>--}}

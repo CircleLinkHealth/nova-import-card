@@ -45,15 +45,17 @@ if (isset($patient) && !empty($patient)) {
 
                                 <span class="btn btn-group text-right">
                                 @role(['administrator', 'med_assistant', 'provider'])
-                            <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block" aria-label="..."
-                               role="button" href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->ID]) }}">Approve Care Plan</a>
+                                    <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
+                                       aria-label="..."
+                                       role="button"
+                                       href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->ID]) }}">Approve Care Plan</a>
                                 <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                           href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->ID }}">Print This Page</a>
-                            @endrole
-                    <form class="lang" action="#" method="POST" id="form">
+                                   href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->ID }}">Print This Page</a>
+                                    @endrole
+                                    <form class="lang" action="#" method="POST" id="form">
                         <input type="hidden" name="lang" value="es"/>
-                        <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
-              -->
+                                        <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
+                              -->
                     </form></span></div>
                         </div>
                     @endif
@@ -134,7 +136,10 @@ if (isset($patient) && !empty($patient)) {
                 <div class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications <a class="btn btn-primary" href="{{ URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></h2>
+                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications <a
+                                        class="btn btn-primary"
+                                        href="{{ URL::route('patient.careplan.show', array('patient' => $patient->ID, 'page' => '1')) }}"><span
+                                            class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></h2>
                         </div>
                         <div class="col-xs-10">
                             <ul><strong>Monitoring these Medications</strong><BR>
@@ -313,14 +318,29 @@ if (isset($patient) && !empty($patient)) {
                             <p>
                                 @if($billing)
                                     <strong>Billing
-                                        Provider: </strong> {{$billing->fullName}} {{($billing->getSpecialtyAttribute() == '')? '' : ' ' .  $billing->getSpecialtyAttribute() }}
+                                        Provider: </strong> {{$billing->fullName}}{{($billing->getSpecialtyAttribute() == '') ? '' : ', ' .  $billing->getSpecialtyAttribute() }}
                                     <br>
+                                    <?php $alreadyShown[] = $billing->ID; ?>
                                 @endif
 
                                 @if(!empty($lead))
                                     <strong>Lead
-                                        Contact: </strong> {{$lead->fullName}}{{($lead->getSpecialtyAttribute() == '')? '' : ' ' .  $lead->getSpecialtyAttribute() }}
+                                        Contact: </strong> {{$lead->fullName}}{{($lead->getSpecialtyAttribute() == '')? '' : ', ' .  $lead->getSpecialtyAttribute() }}
                                     <br>
+                                    <?php $alreadyShown[] = $lead->ID; ?>
+                                @endif
+
+                                @if(isset($careTeam))
+                                    @foreach($careTeam as $member)
+                                        @if(! in_array($member->type, [App\PatientCareTeamMember::BILLING_PROVIDER, App\PatientCareTeamMember::LEAD_CONTACT]))
+                                            {{--Making sure we're not showing any CareTeam Members more than once--}}
+                                            @if(!in_array($member->user->ID, $alreadyShown))
+                                                <strong>Member:</strong> {{$member->user->fullName}}{{($member->user->getSpecialtyAttribute() == '')? '' : ', ' .  $member->user->getSpecialtyAttribute() }}
+                                                <br>
+                                                <?php $alreadyShown[] = $member->user->ID; ?>
+                                            @endif
+                                        @endif
+                                    @endforeach
                                 @endif
                             </p>
                         </div>

@@ -81,9 +81,9 @@
                     <div class="panel-body">
                         <table class="table table-striped">
                             <thead>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
                             </thead>
                             <tbody>
                             @foreach($roleStats as $statName => $statCount)
@@ -98,18 +98,6 @@
 
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">3.0 Site Map</div>
-                    <div class="panel-body">
-                        <div class="text-center" style="margin:40px 0px;">
-                            <a href="{{ route('admin.testplan') }}" class="btn btn-success">3.0 Site Map / Demo
-                                Links</a>
-                        </div>
                     </div>
                 </div>
             </div>

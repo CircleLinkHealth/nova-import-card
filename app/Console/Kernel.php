@@ -1,18 +1,19 @@
 <?php namespace App\Console;
 
 use App\Algorithms\Calls\PredictCall;
+use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
+use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
 use App\Console\Commands\FormatLocationPhone;
 use App\Console\Commands\GeneratePatientReports;
+use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
 use App\Console\Commands\Inspire;
 use App\Console\Commands\MapSnomedToCpmProblems;
 use App\Console\Commands\NukeItemAndMeta;
 use App\Services\Calls\SchedulerService;
 use App\Services\PhiMail\PhiMail;
-use App\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Log;
 use Maknz\Slack\Facades\Slack;
 
 class Kernel extends ConsoleKernel
@@ -23,12 +24,14 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Inspire::class,
-        NukeItemAndMeta::class,
-        MapSnomedToCpmProblems::class,
+        EmailsProvidersToApproveCareplans::class,
+        ExportNurseSchedulesToGoogleCalendar::class,
         FormatLocationPhone::class,
         GeneratePatientReports::class,
-        EmailsProvidersToApproveCareplans::class,
+        ImportNurseScheduleFromGoogleCalendar::class,
+        Inspire::class,
+        MapSnomedToCpmProblems::class,
+        NukeItemAndMeta::class,
     ];
 
     /**
@@ -44,29 +47,10 @@ class Kernel extends ConsoleKernel
             (new PhiMail)->sendReceive();
         })->everyMinute();
 
-        //tunes scheduled call dates.
-//        $schedule->call(function () {
-//            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-//        })->dailyAt('11:59');
-
-        //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->call(function () {
-
-            (new SchedulerService())->removeScheduledCallsForWithdrawnPatients();
-
-        })->everyMinute();
-
         //Reconciles missed calls and creates a new call for patient using algo
         $schedule->call(function () {
 
-            $calls = SchedulerService::getUnAttemptedCalls();
-            $handled = [];
-
-            foreach ($calls as $call) {
-                Log::info('INFO FOR NEW CALL: ' . $call->id);
-                $handled[] = (new PredictCall(User::find($call->inbound_cpm_id), $call,
-                    false))->reconcileDroppedCallHandler();
-            }
+            $handled = (new ReschedulerHandler())->handle();
 
             if (!empty($handled)) {
                 Slack::to('#background-tasks')->send("The CPMbot just rescheduled some calls");
@@ -78,8 +62,29 @@ class Kernel extends ConsoleKernel
 
         })->dailyAt('00:05');
 
+
+        //tunes scheduled call dates.
+//        $schedule->call(function () {
+//            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
+//        })->dailyAt('00:20');
+
+        //syncs families.
+        $schedule->call(function () {
+            (new SchedulerService())->syncFamilialCalls();
+        })->dailyAt('00:30');
+
+        //Removes All Scheduled Calls for patients that are withdrawn
+        $schedule->call(function () {
+
+            (new SchedulerService())->removeScheduledCallsForWithdrawnPatients();
+
+        })->everyMinute();
+
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
             ->dailyAt('08:00');
+
+        $schedule->command('nurseSchedule:export')
+            ->everyFiveMinutes();
     }
 }

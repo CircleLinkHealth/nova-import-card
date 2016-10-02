@@ -235,226 +235,132 @@ $user_info = array();
                             <div class="main-form-block main-form-secondary col-lg-5">
                                 <h4 class="form-title">Contact Preferences</h4>
                                 <div class="row" style=" padding-right: 15px;">
-                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
                                         @include('partials.patientContactChangeProfile')
-                                        </div>
-
-                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
-                                            <div class="col-sm-6">
-                                                <label for="preferred_contact_method" class="contact-method">
-                                                    Preferred Contact Method:
-                                                </label>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="radio">
-                                                    <input type="radio" name="preferred_contact_method"
-                                                           id="contactMethodCCT"
-                                                           value="CCT" {{ ((old('preferred_contact_method') == 'CCT') ? 'checked="checked"' : (($patient->preferred_contact_method == 'CCT') ? 'checked="checked"' : '')) }}>
-                                                    <label for="contactMethodCCT"><span> </span>Care Center</label>
-                                                </div>
-                                            <!--                                             <div class="radio radio-v-margin">
-                                                <input type="radio" name="preferred_contact_method" id="contactMethodSMS" value="SMS" {{ ((old('preferred_contact_method') == 'SMS') ? 'checked="checked"' : (($patient->preferred_contact_method == 'SMS') ? 'checked="checked"' : '')) }}>
-                                                <label for="contactMethodSMS"><span> </span>SMS</label>
-                                            </div>
-                                            <div class="radio radio-v-margin">
-                                                <input type="radio" name="preferred_contact_method" id="contactMethodApp"  value="APP" {{ (old('preferred_contact_method') == 'APP' ? 'checked="checked"' : (($patient->preferred_contact_method == 'APP') ? 'checked="checked"' : '')) }}>
-                                                <label for="contactMethodApp"><span> </span>App</label>
-                                            </div> -->
-                                            </div>
-                                            <span class="help-block">{{ $errors->first('preferred_contact_method') }}</span>
-                                        </div>
-                                        <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('timezone') ? 'has-error' : '' }}">
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <label for="timezone">Time Zone <span
-                                                                class="attention">*</span>:</label>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    {!! Form::select('timezone', array(
-                                    'America/New_York' => 'Eastern Time',
-                                    'America/Chicago' => 'Central Time',
-                                    'America/Denver' => 'Mountain Time',
-                                    'America/Phoenix' => 'Mountain Time (no DST)',
-                                    'America/Los_Angeles' => 'Pacific Time',
-                                    'America/Anchorage' => 'Alaska Time',
-                                    'America/Adak' => 'Hawaii-Aleutian',
-                                    'Pacific/Honolulu' => 'Hawaii-Aleutian Time (no DST)',
-                                    ), (old('timezone') ? old('timezone') : $patient->timezone ? $patient->timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
-                                                </div>
-                                            </div>
-
-                                            <span class="help-block">{{ $errors->first('timezone') }}</span>
-                                        </div>
-                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
-                                            <label for="mf-consent_date">Consent Date <span
-                                                        class="attention">*</span>:</label>
-                                            <input id="consent_date" name="consent_date" class="form-control"
-                                                   type="input"
-                                                   value="{{ (old('consent_date') ? old('consent_date') : ($patient->consent_date ? $patient->consent_date : '')) }}"
-                                                   data-field="date" data-format="yyyy-MM-dd"/><br/>
-                                            <span class="help-block">{{ $errors->first('consent_date') }}</span>
-                                        </div>
-                                        {{--<div class="col-sm-12 text-right">
-                                            <span class="btn btn-group  text-right"><a class="btn btn-green btn-sm inline-block" omitsubmit="yes" role="button" target="_Blank" href="https://s3.amazonaws.com/clh-downloads/Circlelink+CCM+Consent+Form.pdf">Download Form</a></span>
-                                        </div>--}}
-
-                                        @if(isset($patient->ID) )
-                                            @if(($patient->primaryProgram) )
-                                                <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }} hidden">
-                                                    Program:
-                                                    <strong>{{ $patient->primaryProgram->display_name }}</strong>
-                                                </div>
-                                            @endif
-                                            <input type=hidden name=program_id value="{{ $programId }}">
-                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
-                                                {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:
-    :') !!}
-                                                {!! Form::select('preferred_contact_location', $locations, $patient->preferred_contact_location, ['class' => 'form-control select-picker', 'style' => 'width:90;']) !!}
-                                            </div>
-                                        @else
-                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
-                                                {!! Form::label('program_id', 'Program:') !!}
-                                                {!! Form::select('program_id', $programs, $patient->program_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
-                                            </div>
-                                        @endif
-
-                                        <input type=hidden name=status
-                                               value="{{ (old('status') ? old('status') : ($patient->status)) }}">
-                                        {{--
-                                        <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('status') ? 'has-error' : '' }}">
-                                            <div class="row">
-                                                <div class="col-sm-2 col-lg-4">
-                                                    <label for="status">Status<span class="attention">*</span>:</label>
-                                                </div>
-                                                <div class="col-sm-9 col-lg-8 status-buttons">
-                                                    <div class="radio">
-                                                        <input type="radio" id="statusActive" name="status" value="Active" {{ ((old('status') == 'Active' || !old('status')) ? 'checked="checked"' : (($patient->status == 'SMS') ? 'checked="checked"' : '')) }}>
-                                                        <label for="statusActive"><span> </span>Active</label>
-                                                    </div>
-                                                    <div class="radio radio-v-margin">
-                                                        <input type="radio" id="statusInactive" name="status"  value="Inactive" {{ (old('status') == 'Inactive' ? 'checked="checked"' : (($patient->status == 'SMS') ? 'checked="checked"' : '')) }}>
-                                                        <label for="statusInactive"><span> </span>Inactive</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <span class="help-block">{{ $errors->first('status') }}</span>
-                                        </div>
-                                        --}}
-
-                                        <div class="form-group form-item form-item-spacing col-sm-12">
-                                            <div class="row">
-                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                                <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group form-item form-item-spacing col-sm-12 hidden">
-                                            <div class="row">
-                                                <div class="col-lg-4">{!! Form::label('care_plan_id', 'Care Plan: ') !!}</div>
-                                                <div class="col-lg-8">{!! Form::select('care_plan_id', $carePlans, $patient->care_plan_id, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
-                                            </div>
-                                        </div>
-
-                                        <br>
-                                        <br>
-                                        <br>
-
-                                        @if(! $insurancePolicies->isEmpty())
-
-                                            <div id="insurance-policies"
-                                                 class="form-group form-item form-item-spacing col-sm-12">
-
-                                                <h4 id="policies-title" class="form-title">Insurance Policies</h4>
-
-                                                <?php $counter = 0; ?>
-
-                                                @foreach($insurancePolicies as $insurance)
-
-                                                    <div id="policy-grp-{{$counter++}}">
-                                                        <button
-                                                                type="button"
-                                                                class="full-width btn-default borderless md-line-height"
-                                                                data-toggle="collapse"
-                                                                data-target="#insurance-{{ $counter }}">
-                                                            <span class="pull-left">{{ $insurance->name }}</span>
-                                                            <span class="glyphicon glyphicon-pencil pull-right glow"
-                                                                  aria-hidden="true"></span>
-                                                        </button>
-
-                                                        <div id="insurance-{{ $counter }}"
-                                                             class="collapse md-line-height text-right">
-
-                                                            @if(!empty($insurance->type))
-                                                                {{ $insurance->type }}
-                                                                @else
-                                                                {{ 'Insurance type is not available' }}
-                                                                @endif
-
-
-                                                            @if(!empty($insurance->policy_id))
-                                                                    / {{ $insurance->policy_id }}
-                                                            @else
-                                                                    {{ 'Policy ID is not available' }}
-                                                            @endif
-
-                                                            <br>
-
-                                                            @if(! $insurance->approved)
-
-                                                                <div class="radio-inline">
-                                                                    <input id="approve-{{ $counter }}"
-                                                                           name="insurance[{{ $insurance->id }}]"
-                                                                           value="1" type="radio">
-                                                                    <label for="approve-{{ $counter }}"><span></span>Approve</label>
-                                                                </div>
-
-                                                            @endif
-
-                                                            <div class="radio-inline">
-                                                                <input id="delete-{{ $counter }}"
-                                                                       name="insurance[{{ $insurance->id }}]"
-                                                                       value="0" type="radio">
-                                                                <label for="delete-{{ $counter }}"><span></span>Delete</label>
-                                                            </div>
-
-                                                            <br><br>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-
-
-                                            </div>
-
-                                        @endif
-
-
                                     </div>
+
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
+                                        <div class="col-sm-6">
+                                            <label for="preferred_contact_method" class="contact-method">
+                                                Preferred Contact Method:
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="radio">
+                                                <input type="radio" name="preferred_contact_method"
+                                                       id="contactMethodCCT"
+                                                       value="CCT" {{ ((old('preferred_contact_method') == 'CCT') ? 'checked="checked"' : (($patient->preferred_contact_method == 'CCT') ? 'checked="checked"' : '')) }}>
+                                                <label for="contactMethodCCT"><span> </span>Care Center</label>
+                                            </div>
+
+                                        </div>
+                                        <span class="help-block">{{ $errors->first('preferred_contact_method') }}</span>
+                                    </div>
+                                    <div class="form-group form-item  form-item-spacing col-sm-12 {{ $errors->first('timezone') ? 'has-error' : '' }}">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <label for="timezone">Time Zone <span
+                                                            class="attention">*</span>:</label>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                {!! Form::select('timezone', array(
+                                'America/New_York' => 'Eastern Time',
+                                'America/Chicago' => 'Central Time',
+                                'America/Denver' => 'Mountain Time',
+                                'America/Phoenix' => 'Mountain Time (no DST)',
+                                'America/Los_Angeles' => 'Pacific Time',
+                                'America/Anchorage' => 'Alaska Time',
+                                'America/Adak' => 'Hawaii-Aleutian',
+                                'Pacific/Honolulu' => 'Hawaii-Aleutian Time (no DST)',
+                                ), (old('timezone') ? old('timezone') : $patient->timezone ? $patient->timezone : 'America/New_York'), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                            </div>
+                                        </div>
+
+                                        <span class="help-block">{{ $errors->first('timezone') }}</span>
+                                    </div>
+                                    <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
+                                        <label for="mf-consent_date">Consent Date <span
+                                                    class="attention">*</span>:</label>
+                                        <input id="consent_date" name="consent_date" class="form-control"
+                                               type="input"
+                                               value="{{ (old('consent_date') ? old('consent_date') : ($patient->consent_date ? $patient->consent_date : '')) }}"
+                                               data-field="date" data-format="yyyy-MM-dd"/><br/>
+                                        <span class="help-block">{{ $errors->first('consent_date') }}</span>
+                                    </div>
+
+                                    @if(isset($patient->ID) )
+                                        @if(($patient->primaryProgram) )
+                                            <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }} hidden">
+                                                Program:
+                                                <strong>{{ $patient->primaryProgram->display_name }}</strong>
+                                            </div>
+                                        @endif
+                                        <input type=hidden name=program_id value="{{ $programId }}">
+                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
+                                            {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:
+:') !!}
+                                            {!! Form::select('preferred_contact_location', $locations, $patient->preferred_contact_location, ['class' => 'form-control select-picker', 'style' => 'width:90;']) !!}
+                                        </div>
+                                    @else
+                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
+                                            {!! Form::label('program_id', 'Program:') !!}
+                                            {!! Form::select('program_id', $programs, $patient->program_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
+                                        </div>
+                                    @endif
+
+                                    <input type=hidden name=status
+                                           value="{{ (old('status') ? old('status') : ($patient->status)) }}">
+
+                                    <div class="form-group form-item form-item-spacing col-sm-12">
+                                        <div class="row">
+                                            <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
+                                            <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group form-item form-item-spacing col-sm-12 hidden">
+                                        <div class="row">
+                                            <div class="col-lg-4">{!! Form::label('care_plan_id', 'Care Plan: ') !!}</div>
+                                            <div class="col-lg-8">{!! Form::select('care_plan_id', $carePlans, $patient->care_plan_id, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                        </div>
+                                    </div>
+
+                                    <br>
+                                    <br>
+                                    <br>
+
+                                    @if(! $insurancePolicies->isEmpty())
+                                        @include('partials.cpm-models.insurance')
+                                    @endif
+
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            @include('wpUsers.patient.careplan.footer')
-            <br/><br/>
+        </div>
+        @include('wpUsers.patient.careplan.footer')
+        <br/><br/>
 
-            @if(isset($_GET['scrollTo']))
-                <script>
-                    $(function () {
-                        // Handler for .ready() called.
-                        $('html, body').animate({
-                            scrollTop: $("#{{ $_GET['scrollTo'] }}").offset().top
-                        }, 'slow');
+        @if(isset($_GET['scrollTo']))
+            <script>
+                $(function () {
+                    // Handler for .ready() called.
+                    $('html, body').animate({
+                        scrollTop: $("#{{ $_GET['scrollTo'] }}").offset().top
+                    }, 'slow');
 
-                        $('#insurance-name').focus();
+                    $('#insurance-name').focus();
 
-                        $('#policies-title').css('border-left', '15px solid #47beab')
-                                .css('padding-left', '5px');
+                    $('#policies-title').css('border-left', '15px solid #47beab')
+                            .css('padding-left', '5px');
 
-                        $('.glow').addClass('animated flash');
+                    $('.glow').addClass('animated flash');
 
-                    });
-                </script>
+                });
+            </script>
     @endif
 
     {{--Added this to allow for testing, since submit is done via js--}}

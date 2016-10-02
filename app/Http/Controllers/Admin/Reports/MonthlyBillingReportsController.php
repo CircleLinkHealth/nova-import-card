@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Reports;
 
-use App\Activity;
 use App\Call;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
 use App\Http\Controllers\Controller;
@@ -11,7 +10,6 @@ use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
-use App\Note;
 use App\Program;
 use App\Role;
 use App\User;
@@ -290,7 +288,10 @@ class MonthlyBillingReportsController extends Controller
                 );
             });
             foreach ($worksheets as $worksheet) {
-                $excel->sheet("{$worksheet['program']->display_name}", function ($sheet) use ($worksheet) {
+                $excel->sheet("{$worksheet['program']->name}", function ($sheet) use
+                (
+                    $worksheet
+                ) {
                     $sheet->fromArray(
                         $worksheet['problems']
                     );

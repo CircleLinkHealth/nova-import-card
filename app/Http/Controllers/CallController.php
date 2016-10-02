@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Call;
+use App\PatientInfo;
 use App\Services\Calls\SchedulerService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CallController extends Controller
 {
@@ -97,7 +99,6 @@ class CallController extends Controller
 
     public function schedule(Request $request)
     {
-
         $input = $request->all();
 
         $window_start = Carbon::parse($input['window_start'])->format('H:i');
@@ -116,6 +117,9 @@ class CallController extends Controller
                                                 isset($input['attempt_note']) ? $input['attempt_note'] : ''
 
                                             );
+
+
+        $patient = PatientInfo::where('user_id', intval($input['patient_id']))->first();
 
         return redirect()->route('patient.note.index', ['patient' => $input['patient_id']])
                          ->with('messages', ['Successfully Created Note']);
@@ -172,8 +176,10 @@ class CallController extends Controller
             }
         } else {
             $call->scheduler = Auth::user()->ID;
-            $call->$data['columnName'] = $data['value'];
+            $col = $data['columnName'];
+            $call->$col = $data['value'];
         }
+
         $call->save();
 
         return response("successfully updated call ".$data['columnName']."=".$data['value']." - CallId=".$data['callId'], 201);

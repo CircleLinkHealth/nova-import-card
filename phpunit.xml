@@ -38,5 +38,7 @@
         <!--@todo: TimeTracking should not be accessing superglobals directly. Change it soon. -->
         <server name="REQUEST_URI" value="/some/url/here"/>
         <server name="HTTP_HOST" value="cpm.phpunit.testing"/>
+        <!--<server name="DB_CONNECTION" value="sqlite"/>-->
+        <!--<server name="DB_DATABASE" value=":memory:"/>-->
     </php>
 </phpunit>
