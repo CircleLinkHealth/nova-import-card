@@ -161,17 +161,13 @@ class CallController extends Controller
 
         // for null outbound_cpm_id
         if($data['columnName'] == 'outbound_cpm_id' && (empty($data['value']) || strtolower($data['value']) == 'unassigned' )) {
-            $col = $data['columnName'];
-            $call->$col = $data['value'];
+
+            $call->outbound_cpm_id = $data['value'];
 
             $call->$data['columnName'] = null;
             $call->scheduler = Auth::user()->ID;
         } else if($data['columnName'] == 'attempt_note' && (empty($data['value']) || strtolower($data['value']) == 'add text' )) {
-
-            $col = $data['columnName'];
-            $call->$col = $data['value'];
-            
-            $call->$data['columnName'] = '';
+            $call->attempt_note = '';
         } else if($data['columnName'] == 'general_comment') {
             $generalComment = $data['value'];
             if((empty($generalComment) || strtolower($generalComment) == 'add text' )) {
