@@ -20,6 +20,8 @@ class NoteService
     {
         $note = Note::create($input);
 
+        dd($note);
+
         if ($input['tcm'] == 'true') {
             $note->isTCM = true;
         } else {
