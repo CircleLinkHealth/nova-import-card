@@ -1,12 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
-
-Route::get('rohan', function () {
-
-    
-
-});
+//
+//Route::get('rohan', function () {
+//
+//    return (new \App\Billing\NurseMonthlyBillGenerator
+//                (\App\NurseInfo::find(1),
+//                Carbon\Carbon::now()->startOfMonth(),
+//                Carbon\Carbon::now()->endOfMonth()))
+//        ->getCCMTimeForNurseForPeriod();
+//
+//});
 
 Route::group(['prefix' => 'algo'], function () {
 
