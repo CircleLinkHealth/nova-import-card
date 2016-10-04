@@ -258,8 +258,6 @@
 
         $('.collapse').collapse();
 
-        //@todo check bug later.
-
         $("#phone").on('click', function () {
             // in the handler, 'this' refers to the box clicked on
             var $box = $(this);

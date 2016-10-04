@@ -15,6 +15,9 @@ class NurseMonthlyBillGenerator
     protected $startDate;
     protected $endDate;
 
+    //manual time adds
+    protected $addDuration;
+
     //Billing Results
     protected $formattedItemizedActivities;
     protected $payable;
@@ -59,6 +62,8 @@ class NurseMonthlyBillGenerator
 
     public function getItemizedActivities(){
 
+        $data = [];
+
         $activities = PageTimer::where('provider_id', $this->nurse->user_id)
             ->where(function ($q){
                 $q->where('updated_at', '>=' , $this->startDate->toDateString())
@@ -66,7 +71,18 @@ class NurseMonthlyBillGenerator
             })
             ->get();
 
-        return $activities;
+
+        $activities = $activities->groupBy(function($q) {
+            return Carbon::parse($q->created_at)->format('d'); // grouping by days
+        });
+
+        foreach ($activities as $activity){
+
+            $data[Carbon::parse($activity[0]['created_at'])->toDateString()] = $activity->sum('duration');
+
+        };
+
+        return $data;
 
     }
 
@@ -76,16 +92,15 @@ class NurseMonthlyBillGenerator
 
         $data = [];
 
-        $count = 0;
-        foreach ($activities as $activity){
+        foreach ($activities as $key => $value){
 
-            $data[$count]['Date'] = Carbon::parse($activity->start_time)->toDateString();
-            $data[$count]['Start Time'] = Carbon::parse($activity->start_time)->toTimeString();
-            $data[$count]['End Time'] = Carbon::parse($activity->end_time)->toTimeString();
-            $data[$count]['Patient'] = $activity->patient_id ? $activity->patient_id : 'NA';
-            $data[$count]['Duration'] =  $activity->duration . ' seconds';
+            $data[$key] = [
 
-            $count++;
+                'Date' => Carbon::parse($key)->toDateString(),
+                'Minutes' => Carbon::parse($value)->format('i'),
+                'Hours' => Carbon::parse($value)->format('H'),
+
+            ];
 
             $this->formattedItemizedActivities = $data;
 
