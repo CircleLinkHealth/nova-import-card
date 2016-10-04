@@ -58,39 +58,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         return $user;
     }
 
-    public function editUser(User $user, ParameterBag $params)
-    {
-        // the basics
-        $this->saveOrUpdateUserInfo($user, $params);
-
-        // roles
-        $this->saveOrUpdateRoles($user, $params);
-
-        // programs
-        $this->saveOrUpdatePrograms($user, $params);
-
-        // phone numbers
-        $this->saveOrUpdatePhoneNumbers($user, $params);
-
-        // participant info
-        if ($user->hasRole('participant')) {
-            $this->saveOrUpdatePatientInfo($user, $params);
-        }
-
-        // provider info
-        if ($user->hasRole('provider')) {
-            $this->saveOrUpdateProviderInfo($user, $params);
-        }
-
-        // nurse info
-        if ($user->hasRole('care-center')) {
-            $this->saveOrUpdateNurseInfo($user, $params);
-        }
-
-        return $user;
-    }
-
-
     public function saveOrUpdateUserInfo(User $user, ParameterBag $params)
     {
         $user->user_nicename = $params->get('user_nicename');
@@ -132,6 +99,147 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $user->timezone = $params->get('timezone');
         }
         $user->save();
+    }
+
+    public function saveOrUpdateRoles(
+        User $user,
+        ParameterBag $params
+    ) {
+        // support for both single or array or roles
+        if (!empty($params->get('role'))) {
+            $user->roles()->sync([$params->get('role')]);
+            $user->save();
+            $user->load('roles');
+        }
+
+        if (!empty($params->get('roles'))) {
+            // support if one role is passed in as a string
+            if (!is_array($params->get('roles'))) {
+                $roleId = $params->get('roles');
+                $user->roles()->sync([$roleId]);
+            } else {
+                $user->roles()->sync($params->get('roles'));
+            }
+        }
+
+        // add patient info
+        if ($user->hasRole('participant') && !$user->patientInfo) {
+            $patientInfo = new PatientInfo;
+            $patientInfo->user_id = $user->ID;
+            $patientInfo->save();
+            $user->load('patientInfo');
+        }
+
+        // add provider info
+        if ($user->hasRole('provider') && !$user->providerInfo) {
+            $providerInfo = new ProviderInfo;
+            $providerInfo->user_id = $user->ID;
+            $providerInfo->save();
+            $user->load('providerInfo');
+        }
+
+        // add nurse info
+        if ($user->hasRole('care-center') && !$user->nurseInfo) {
+            $nurseInfo = new NurseInfo;
+            $nurseInfo->user_id = $user->ID;
+            $nurseInfo->save();
+            $user->load('nurseInfo');
+        }
+    }
+
+    public function saveOrUpdatePrograms(
+        User $wpUser,
+        ParameterBag $params
+    ) {
+        // get selected programs
+        $userPrograms = [];
+        if ($params->get('programs')) { // && ($wpUser->programs->count() > 0)
+            $userPrograms = $params->get('programs');
+        }
+        if ($params->get('program_id')) {
+            if (!in_array($params->get('program_id'), $userPrograms)) {
+                $userPrograms[] = $params->get('program_id');
+            }
+        }
+
+        //dd($userPrograms);
+
+        // if still empty at this point, no program_id or program param
+        if (empty($userPrograms)) {
+            return true;
+        }
+
+        // set primary program
+        $wpUser->program_id = $params->get('program_id');
+        $wpUser->save();
+
+        // get role
+        $roleId = $params->get('role');
+        if ($roleId) {
+            $role = Role::find($roleId);
+        } else {
+            // default to participant
+            $role = Role::where('name', '=', 'participant')->first();
+        }
+
+        // first detatch relationship
+        $wpUser->programs()->detach();
+
+        $wpBlogs = Program::orderBy('blog_id', 'desc')->lists('blog_id')->all();
+        foreach ($wpBlogs as $wpBlogId) {
+            if (in_array($wpBlogId, $userPrograms)) {
+                $wpUser->programs()->attach($wpBlogId);
+            }
+        }
+    }
+
+    public function saveOrUpdatePhoneNumbers(
+        User $user,
+        ParameterBag $params
+    ) {
+        // phone numbers
+        if (!empty($params->get('study_phone_number'))) { // add study as home
+            $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
+            if (!$phoneNumber) {
+                $phoneNumber = new PhoneNumber;
+            }
+            $phoneNumber->is_primary = 1;
+            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->number = $params->get('study_phone_number');
+            $phoneNumber->type = 'home';
+            $phoneNumber->save();
+        }
+        if (!empty($params->get('home_phone_number'))) {
+            $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
+            if (!$phoneNumber) {
+                $phoneNumber = new PhoneNumber;
+            }
+            $phoneNumber->is_primary = 1;
+            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->number = $params->get('home_phone_number');
+            $phoneNumber->type = 'home';
+            $phoneNumber->save();
+        }
+        if (!empty($params->get('work_phone_number'))) {
+            $phoneNumber = $user->phoneNumbers()->where('type', 'work')->first();
+            if (!$phoneNumber) {
+                $phoneNumber = new PhoneNumber;
+            }
+            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->number = $params->get('work_phone_number');
+            $phoneNumber->type = 'work';
+            $phoneNumber->save();
+        }
+        if (!empty($params->get('mobile_phone_number'))) {
+            $phoneNumber = $user->phoneNumbers()->where('type', 'mobile')->first();
+            if (!$phoneNumber) {
+                $phoneNumber = new PhoneNumber;
+            }
+            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->number = $params->get('mobile_phone_number');
+            $phoneNumber->type = 'mobile';
+            $phoneNumber->save();
+        }
     }
 
     public function saveOrUpdatePatientInfo(User $user, ParameterBag $params)
@@ -187,6 +295,75 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->nurseInfo->save();
     }
 
+    public function adminEmailNotify(
+        User $user,
+        $recipients
+    ) {
+
+//   Template:
+//        From: CircleLink Health
+//        Sent: Tuesday, January 5, 10:11 PM
+//        Subject: [Site Name] New User Registration!
+//        To: Linda Warshavsky  lindaw@circlelinkhealth.com
+//
+//New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
+
+        $email_view = 'emails.newpatientnotify';
+        $program = Program::find($user->blogId());
+        $program_name = $program->display_name;
+        $email_subject = '[' . $program_name . '] New User Registration!';
+        $data = [
+            'patient_name' => $user->getFullNameAttribute(),
+            'patient_id' => $user->ID,
+            'patient_email' => $user->getEmailForPasswordReset(),
+            'program' => $program_name,
+        ];
+
+        Mail::send($email_view, $data, function ($message) use
+        (
+            $recipients,
+            $email_subject
+        ) {
+            $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
+            $message->to($recipients)->subject($email_subject);
+        });
+
+    }
+
+    public function editUser(
+        User $user,
+        ParameterBag $params
+    ) {
+        // the basics
+        $this->saveOrUpdateUserInfo($user, $params);
+
+        // roles
+        $this->saveOrUpdateRoles($user, $params);
+
+        // programs
+        $this->saveOrUpdatePrograms($user, $params);
+
+        // phone numbers
+        $this->saveOrUpdatePhoneNumbers($user, $params);
+
+        // participant info
+        if ($user->hasRole('participant')) {
+            $this->saveOrUpdatePatientInfo($user, $params);
+        }
+
+        // provider info
+        if ($user->hasRole('provider')) {
+            $this->saveOrUpdateProviderInfo($user, $params);
+        }
+
+        // nurse info
+        if ($user->hasRole('care-center')) {
+            $this->saveOrUpdateNurseInfo($user, $params);
+        }
+
+        return $user;
+    }
+
     public function saveOrUpdateUserMeta(User $user, ParameterBag $params)
     {
         /*
@@ -240,7 +417,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         */
     }
 
-
     public function updateUserConfig(User $wpUser, ParameterBag $params)
     {
         /*
@@ -285,143 +461,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
         */
     }
-
-    public function saveOrUpdatePhoneNumbers(User $user, ParameterBag $params)
-    {
-        // phone numbers
-        if (!empty($params->get('study_phone_number'))) { // add study as home
-            $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
-            if (!$phoneNumber) {
-                $phoneNumber = new PhoneNumber;
-            }
-            $phoneNumber->is_primary = 1;
-            $phoneNumber->user_id = $user->ID;
-            $phoneNumber->number = $params->get('study_phone_number');
-            $phoneNumber->type = 'home';
-            $phoneNumber->save();
-        }
-        if (!empty($params->get('home_phone_number'))) {
-            $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
-            if (!$phoneNumber) {
-                $phoneNumber = new PhoneNumber;
-            }
-            $phoneNumber->is_primary = 1;
-            $phoneNumber->user_id = $user->ID;
-            $phoneNumber->number = $params->get('home_phone_number');
-            $phoneNumber->type = 'home';
-            $phoneNumber->save();
-        }
-        if (!empty($params->get('work_phone_number'))) {
-            $phoneNumber = $user->phoneNumbers()->where('type', 'work')->first();
-            if (!$phoneNumber) {
-                $phoneNumber = new PhoneNumber;
-            }
-            $phoneNumber->user_id = $user->ID;
-            $phoneNumber->number = $params->get('work_phone_number');
-            $phoneNumber->type = 'work';
-            $phoneNumber->save();
-        }
-        if (!empty($params->get('mobile_phone_number'))) {
-            $phoneNumber = $user->phoneNumbers()->where('type', 'mobile')->first();
-            if (!$phoneNumber) {
-                $phoneNumber = new PhoneNumber;
-            }
-            $phoneNumber->user_id = $user->ID;
-            $phoneNumber->number = $params->get('mobile_phone_number');
-            $phoneNumber->type = 'mobile';
-            $phoneNumber->save();
-        }
-    }
-
-    public function saveOrUpdateRoles(User $user, ParameterBag $params)
-    {
-        // support for both single or array or roles
-        if (!empty($params->get('role'))) {
-            $user->roles()->sync(array($params->get('role')));
-            $user->save();
-            $user->load('roles');
-        }
-
-        if (!empty($params->get('roles'))) {
-            // support if one role is passed in as a string
-            if (!is_array($params->get('roles'))) {
-                $roleId = $params->get('roles');
-                $user->roles()->sync(array($roleId));
-            } else {
-                $user->roles()->sync($params->get('roles'));
-            }
-        }
-
-        // add patient info
-        if ($user->hasRole('participant') && !$user->patientInfo) {
-            $patientInfo = new PatientInfo;
-            $patientInfo->user_id = $user->ID;
-            $patientInfo->save();
-            $user->load('patientInfo');
-        }
-
-        // add provider info
-        if ($user->hasRole('provider') && !$user->providerInfo) {
-            $providerInfo = new ProviderInfo;
-            $providerInfo->user_id = $user->ID;
-            $providerInfo->save();
-            $user->load('providerInfo');
-        }
-
-        // add nurse info
-        if ($user->hasRole('care-center') && !$user->nurseInfo) {
-            $nurseInfo = new NurseInfo;
-            $nurseInfo->user_id = $user->ID;
-            $nurseInfo->save();
-            $user->load('nurseInfo');
-        }
-    }
-
-
-    public function saveOrUpdatePrograms(User $wpUser, ParameterBag $params)
-    {
-        // get selected programs
-        $userPrograms = array();
-        if ($params->get('programs')) { // && ($wpUser->programs->count() > 0)
-            $userPrograms = $params->get('programs');
-        }
-        if ($params->get('program_id')) {
-            if (!in_array($params->get('program_id'), $userPrograms)) {
-                $userPrograms[] = $params->get('program_id');
-            }
-        }
-
-        //dd($userPrograms);
-
-        // if still empty at this point, no program_id or program param
-        if (empty($userPrograms)) {
-            return true;
-        }
-
-        // set primary program
-        $wpUser->program_id = $params->get('program_id');
-        $wpUser->save();
-
-        // get role
-        $roleId = $params->get('role');
-        if ($roleId) {
-            $role = Role::find($roleId);
-        } else {
-            // default to participant
-            $role = Role::where('name', '=', 'participant')->first();
-        }
-
-        // first detatch relationship
-        $wpUser->programs()->detach();
-
-        $wpBlogs = Program::orderBy('blog_id', 'desc')->lists('blog_id')->all();
-        foreach ($wpBlogs as $wpBlogId) {
-            if (in_array($wpBlogId, $userPrograms)) {
-                $wpUser->programs()->attach($wpBlogId);
-            }
-        }
-    }
-
 
     public function createDefaultCarePlan($user, $params)
     {
@@ -533,35 +572,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             }
         }
         */
-    }
-
-    public function adminEmailNotify(User $user, $recipients)
-    {
-
-//   Template:
-//        From: CircleLink Health
-//        Sent: Tuesday, January 5, 10:11 PM
-//        Subject: [Site Name] New User Registration!
-//        To: Linda Warshavsky  lindaw@circlelinkhealth.com
-//
-//New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
-
-        $email_view = 'emails.newpatientnotify';
-        $program = Program::find($user->blogId());
-        $program_name = $program->display_name;
-        $email_subject = '[' . $program_name . '] New ' . ucwords($user->role()) . ' Registration!';
-        $data = array(
-            'patient_name' => $user->getFullNameAttribute(),
-            'patient_id' => $user->ID,
-            'patient_email' => $user->getEmailForPasswordReset(),
-            'program' => $program_name
-        );
-        
-            Mail::send($email_view, $data, function ($message) use ($recipients, $email_subject) {
-                $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
-                $message->to($recipients)->subject($email_subject);
-            });
-
     }
 
     public function findByRole($role, $select = '*')

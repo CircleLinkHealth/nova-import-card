@@ -55,6 +55,21 @@ class NurseInfo extends Model
         return $this->hasMany(NurseMonthlySummary::class);
     }
 
+    /**
+     * Upcoming (future) contact windows.
+     *
+     * @return mixed
+     */
+    public function upcomingWindows()
+    {
+        return $this->hasMany(NurseContactWindow::class, 'nurse_info_id', 'id')->upcoming();
+    }
+
+    /**
+     * Contact Windows (Schedule).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function windows()
     {
         return $this->hasMany(NurseContactWindow::class, 'nurse_info_id', 'id');
