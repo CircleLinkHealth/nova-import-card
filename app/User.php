@@ -620,7 +620,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setFirstNameAttribute($value)
     {
-        $this->attributes['first_name'] = $value;
+        $this->attributes['first_name'] = ucwords($value);
         $this->display_name = $this->fullName;
 
         return true;
@@ -636,8 +636,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getFullNameAttribute()
     {
-        $firstName = $this->first_name;
-        $lastName = $this->last_name;
+        $firstName = ucwords($this->first_name);
+        $lastName = ucwords($this->last_name);
 
         return $firstName . ' ' . $lastName;
     }
