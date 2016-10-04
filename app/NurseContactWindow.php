@@ -84,6 +84,8 @@ class NurseContactWindow extends Model
      */
     public function scopeUpcoming($query)
     {
-        return $query->where('date', '>=', Carbon::today()->format('Y-m-d'));
+        return $query->where('date', '>=', Carbon::today()->format('Y-m-d'))
+            ->orderBy('date', 'asc')
+            ->orderBy('window_time_start', 'asc');
     }
 }

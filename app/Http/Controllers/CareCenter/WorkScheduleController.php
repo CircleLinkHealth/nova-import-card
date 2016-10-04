@@ -4,6 +4,7 @@ namespace App\Http\Controllers\CareCenter;
 
 use App\Http\Controllers\Controller;
 use App\NurseContactWindow;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Validator;
@@ -136,15 +137,12 @@ class WorkScheduleController extends Controller
 
     public function getAllNurseSchedules()
     {
-        $windows = $this->nurseContactWindows
-            ->getScheduleForAllNurses()
-            ->sortBy(function ($item) {
-                return Carbon::createFromFormat('Y-m-d H:i:s',
-                    "{$item->date->format('Y-m-d')} $item->window_time_start");
-            })
-            ->groupBy('nurse_info_id');
+        $data = User::ofType('care-center')
+            ->with('nurseInfo.upcomingWindows')
+            ->get()
+            ->sortBy('first_name');
 
-        return view('admin.nurse.schedules.index', compact('windows'));
+        return view('admin.nurse.schedules.index', compact('data'));
     }
 
     public function patchAdminEditWindow(

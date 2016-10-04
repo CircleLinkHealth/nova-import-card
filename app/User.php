@@ -32,14 +32,14 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable
 {
 
+    use Authenticatable, CanResetPassword, SoftDeletes;
+
     use EntrustUserTrait {
         EntrustUserTrait::restore insteadof SoftDeletes;
     }
 
-    use Authenticatable, CanResetPassword, SoftDeletes;
-
-    // for revisionable
     use \Venturecraft\Revisionable\RevisionableTrait;
+
     public $rules = [
         'user_login'        => 'required',
         'user_email'        => 'required|email',
@@ -620,7 +620,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function setFirstNameAttribute($value)
     {
-        $this->attributes['first_name'] = $value;
+        $this->attributes['first_name'] = ucwords($value);
         $this->display_name = $this->fullName;
 
         return true;
@@ -636,8 +636,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getFullNameAttribute()
     {
-        $firstName = $this->first_name;
-        $lastName = $this->last_name;
+        $firstName = ucwords($this->first_name);
+        $lastName = ucwords($this->last_name);
 
         return $firstName . ' ' . $lastName;
     }
