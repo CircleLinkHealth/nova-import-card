@@ -32,14 +32,14 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, Serviceable
 {
 
+    use Authenticatable, CanResetPassword, SoftDeletes;
+
     use EntrustUserTrait {
         EntrustUserTrait::restore insteadof SoftDeletes;
     }
 
-    use Authenticatable, CanResetPassword, SoftDeletes;
-
-    // for revisionable
     use \Venturecraft\Revisionable\RevisionableTrait;
+
     public $rules = [
         'user_login'        => 'required',
         'user_email'        => 'required|email',
