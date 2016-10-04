@@ -260,6 +260,8 @@
                             </li>
                             <li><a href="{{ URL::route('admin.reports.nurse.daily', array()) }}">Daily Nurse Report</a>
                             </li>
+                            <li><a href="{{ URL::route('admin.reports.nurse.invoice', array()) }}">Nurse Invoices</a>
+                            </li>
                             <li><a href="{{ URL::route('PatientConditionsReportController.getReport', array()) }}">Patient
                                     Conditions (export)</a>
                             </li>

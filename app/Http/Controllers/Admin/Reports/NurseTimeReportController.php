@@ -1,9 +1,11 @@
 <?php namespace App\Http\Controllers\Admin\Reports;
 
 use App\Activity;
+use App\Billing\NurseMonthlyBillGenerator;
 use App\Call;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\NurseInfo;
 use App\PageTimer;
 use App\User;
 use Auth;
@@ -121,6 +123,26 @@ class NurseTimeReportController extends Controller {
 	/**
 	 * export
 	 */
+
+	public function makeInvoice(){
+		
+		return view('billing.nurse.create',
+			[
+				'nurses' => (new \App\NurseInfo())->activeNursesForUI()
+			]
+		);
+
+	}
+
+	public function generateInvoice(Request $request){
+
+		$nurse = NurseInfo::where('user_id', $request->input('nurse'))->first();
+		$startDate = Carbon::parse($request->input('start_date'));
+		$endDate = Carbon::parse($request->input('end_date'));
+		
+		return (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate))->handle();
+
+	}
 
 	public function exportxls(Request $request)
 	{

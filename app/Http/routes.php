@@ -1,16 +1,18 @@
 <?php
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
-//
-//Route::get('rohan', function () {
-//
-//    return (new \App\Billing\NurseMonthlyBillGenerator
-//                (\App\NurseInfo::find(1),
-//                Carbon\Carbon::now()->startOfMonth(),
-//                Carbon\Carbon::now()->endOfMonth()))
-//        ->getCCMTimeForNurseForPeriod();
-//
-//});
+
+Route::get('rohan', function () {
+
+
+    return (new \App\Billing\NurseMonthlyBillGenerator
+                (\App\NurseInfo::find(1),
+                Carbon\Carbon::now()->startOfMonth(),
+                Carbon\Carbon::now()->endOfMonth()))
+        ->formatItemizedActivites();
+
+});
 
 Route::group(['prefix' => 'algo'], function () {
 
@@ -817,9 +819,19 @@ Route::group(['middleware' => 'auth'], function () {
 
         // report - nurse time report
         //these fall under the admin-access permission
-        Route::get('reports/nurseTime', [
+        Route::get('reports/nurse/time', [
             'uses' => 'Admin\Reports\NurseTimeReportController@index',
             'as'   => 'admin.reports.nurseTime.index',
+        ]);
+
+        Route::get('reports/nurse/invoice', [
+            'uses' => 'Admin\Reports\NurseTimeReportController@makeInvoice',
+            'as'   => 'admin.reports.nurse.invoice',
+        ]);
+
+        Route::post('reports/nurse/invoice/generate', [
+            'uses' => 'Admin\Reports\NurseTimeReportController@generateInvoice',
+            'as'   => 'admin.reports.nurse.generate',
         ]);
 
         Route::get('reports/nurse/daily', [
