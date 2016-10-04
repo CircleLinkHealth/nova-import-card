@@ -1780,8 +1780,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	{
 		return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
 	}
-	
-	//Get this model's serice
+
+    //Get this model's service
 
 	public function service()
 	{
@@ -1797,4 +1797,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return (in_array($this->roles[0]->name, Role::CCM_TIME_ROLES));
 
 	}
+
+    /**
+     * Scope a query to only include users of a given type (Role).
+     *
+     * @param $query
+     * @param $type
+     */
+    public function scopeOfType(
+        $query,
+        $type
+    ) {
+        $query->whereHas('roles', function ($q) use
+        (
+            $type
+        ) {
+            $q->where('name', '=', $type);
+        });
+    }
 }
