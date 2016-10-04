@@ -1,41 +1,47 @@
-<style>
-    table, td, th {
-        border: 1px solid #ddd;
-        text-align: left;
-    }
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
+<div class="page-header">
+    <h1>CircleLink Health
+        <small>Itemized Session Details</small>
+    </h1>
+</div>
 
-    th, td {
-        padding: 15px;
-    }
-</style>
 
-<h2>CircleLink Health</h2>
-<h3>Itemized Session Details</h3>
-<h4>{{$date_start}} to {{$date_end}}</h4>
-<h4>{{$nurse_name}}</h4>
-<h4>Billable Time: {{gmdate("H:i:s", $nurse_billable_time)}}</h4>
-<h4>Invoice Amount: {{$total_billable_amount}}</h4>
+<dl class="dl-horizontal">
+    <h3>
+        <dt>Duration</dt>
+        <dd>{{$date_start}} to {{$date_end}}</dd>
 
-<table>
+        <dt>Billable Time</dt>
+        <dd>{{$nurse_billable_time}}</dd>
+
+        @if($hasAddedTime)
+
+            <dt>Extras:</dt>
+            <dd>{{$manual_time_notes}}: {{$manual_time}} (${{$manual_time_amount}})</dd>
+
+        @endif
+
+        <dt>Invoice Amount</dt>
+        <dd>{{$total_billable_amount}} ({{$total_billable_rate}}/hr)</dd>
+
+    </h3>
+</dl>
+
+
+<table class="table table-bordered">
     <tr>
         <th>Date</th>
-        <th>Start Time</th>
-        <th>End Time</th>
-        <th>Patient ID</th>
-        <th>Duration</th>
+        <th>Minutes</th>
+        <th>Hours</th>
     </tr>
-    @for($i = 0; $i < count($data); $i++)
-    <tr>
-        <td>{{$data[$i]['Date']}}</td>
-        <td>{{$data[$i]['Start Time']}}</td>
-        <td>{{$data[$i]['End Time']}} </td>
-        <td>{{$data[$i]['Patient']}}</td>
-        <td>{{$data[$i]['Duration']}}</td>
-    </tr>
-    @endfor
+    @foreach($data as $key => $value)
+
+        <tr>
+            <td>{{$data[$key]['Date']}}</td>
+            <td>{{$data[$key]['Minutes']}}</td>
+            <td>{{$data[$key]['Hours']}}</td>
+        </tr>
+    @endforeach
 </table>

@@ -18,8 +18,7 @@
                                         Active Nurse<br>
                                         Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
                                     <div class="col-md-6">
-                                        <select id="nurse" name="nurses[]" class=" dropdown Valid form-control"
-                                                multiple>
+                                        <select id="nurse" name="nurses[]" class=" dropdown Valid form-control" multiple required>
                                             @foreach($nurses as $key => $value)
                                                 <option value="{{$key}}">{{$value}}</option>
                                             @endforeach
@@ -32,7 +31,7 @@
                                     <div class="col-md-6">
                                         <input class="form-control" type="datetime"
                                                value="{{\Carbon\Carbon::now()->startOfMonth()}}" name="start_date"
-                                               id="start_date">
+                                               id="start_date" required>
                                     </div>
                                 </div>
 
@@ -41,7 +40,7 @@
                                     <div class="col-md-6">
                                         <input class="form-control" type="datetime"
                                                value="{{\Carbon\Carbon::now()->endOfMonth()}}" name="end_date"
-                                               id="end_date">
+                                               id="end_date" required>
                                     </div>
                                 </div>
 
@@ -61,12 +60,12 @@
 
                                         <div id="collapseOne" class="panel-collapse collapse in">
 
-                                            <div class="form-group" style="width: 100%;">
+                                            <div class="form-group">
                                                 <div class="col-md-6">
                                                     <input class="form-control" type="number"
                                                            value="" placeholder="Enter Time in Minutes"
                                                            name="manual_time"
-                                                           id="add_time">
+                                                           id="manual_time">
                                                 </div>
                                             </div>
 
@@ -75,7 +74,7 @@
                                                     <input class="form-control" type="text"
                                                            value="" placeholder="Enter Notes"
                                                            name="manual_time_notes" style="margin-left: 30%"
-                                                           id="add_time">
+                                                           id="manual_time_notes">
                                                 </div>
                                             </div>
 
@@ -90,12 +89,12 @@
                                     <div class="row" style="padding-left: 12px;">
                                         <label class="col-md-2 control-label" for="end_date"></label>
                                         <div class="col-md-2">
-                                            <button id="submit" name="submit" class="btn btn-success">Download
+                                            <button id="submit" name="submit" value="download" class="btn btn-success">Download
                                                 Invoice (s)
                                             </button>
                                         </div>
                                         <div class="col-md-2" style="padding-left: 40px">
-                                            <button id="submit" name="submit" class="btn btn-success">Email RN (s)
+                                            <button id="submit" name="submit" value="email" class="btn btn-success">Email RN (s)
                                             </button>
                                         </div>
                                     </div>

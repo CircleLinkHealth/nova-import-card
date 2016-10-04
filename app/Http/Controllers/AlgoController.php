@@ -53,9 +53,7 @@ class AlgoController extends Controller
 
 
             }
-
-            return $day;
-
+            
             return $day->next($contact_day)->format('l, jS M');
 
         }
