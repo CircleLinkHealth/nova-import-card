@@ -54,9 +54,8 @@ class AlgoController extends Controller
 
             }
 
+            return $day;
 
-            debug(Carbon::SUNDAY);
-//            debug($day->toDateTimeString());
             return $day->next($contact_day)->format('l, jS M');
 
         }

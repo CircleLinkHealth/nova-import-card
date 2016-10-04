@@ -1,3 +1,19 @@
+<style>
+    table, td, th {
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        padding: 15px;
+    }
+</style>
+
 <h2>CircleLink Health</h2>
 <h3>Itemized Session Details</h3>
 <h4>{{$date_start}} to {{$date_end}}</h4>

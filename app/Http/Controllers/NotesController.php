@@ -38,7 +38,6 @@ class NotesController extends Controller
         if ($report_data == '') {
             $data = false;
         }
-//        dd($report_data);
 
         return view('wpUsers.patient.note.index',
             ['activity_json' => $report_data,
@@ -293,7 +292,7 @@ class NotesController extends Controller
             PatientContactWindow::sync($info, $params->get('days', []), $params->get('window_start'), $params->get('window_end'));
         }
 
-        /*
+        /**
          If the note wasn't a phone call, redirect to Notes/Offline Activities page
          If the note was a successful or unsuccessful call, take to prediction
          engine, then to call create
