@@ -54,19 +54,18 @@ class NurseController extends Controller
         }
 
         if($request->input('submit') == 'download') {
-
+            $messages = [];
             foreach ($nurses as $nurse) {
 
                 $nurse = NurseInfo::where('user_id', $nurse)->first();
                 $startDate = Carbon::parse($request->input('start_date'));
                 $endDate = Carbon::parse($request->input('end_date'));
-
-                (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $addTime, $addNotes))->email();
+                
+                $messages[] = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $addTime, $addNotes))->email();
 
             }
 
-            return;
-
+            return $messages;
         }
     }
 

@@ -7,6 +7,7 @@ use App\PageTimer;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class NurseMonthlyBillGenerator
 {
@@ -66,7 +67,7 @@ class NurseMonthlyBillGenerator
 
         $this->generatePdf();
 
-        $this->mail();
+        return $this->mail();
 
     }
 
@@ -197,10 +198,11 @@ class NurseMonthlyBillGenerator
         $pdf = PDF::loadView('billing.nurse.invoice', $data);
 
         $name = trim(($this->nurseName).'-'.trim(Carbon::now()->toDateString()));
+        $name = 'file' . rand(10,1000) * rand(13,17);
 
-        $pdf->save( base_path( "storage/pdfs/invoices/$name.pdf" ), true );
+        $pdf->save( base_path( "/public/assets/pdf/$name.pdf" ), true );
 
-        return asset("/storage/pdfs/invoices/$name.pdf");
+        return asset("/public/assets/pdf/$name.pdf");
 
     }
 
@@ -212,14 +214,15 @@ class NurseMonthlyBillGenerator
 
             $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
 
-            $m->to('rohstar@gmail.com', $nurse->user->last_name)
-                ->subject('New Invoice from CircleLink Health');
-
             $m->attach($this->generatePdf());
 
-//            $m->to($nurse->user->user_email, $nurse->user->fullName)
-//                ->subject('New Invoice from CircleLink Health');
+            $m->to($nurse->user->user_email, $nurse->user->fullName)
+                ->subject('New Invoice from CircleLink Health');
         });
+
+        dd(Mail::failures());
+
+        return Mail::failures();
 
 //        MailLog::create([
 //            'sender_email' => $sender->user_email,
