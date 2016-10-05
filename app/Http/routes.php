@@ -7,10 +7,10 @@ Route::get('rohan', function () {
 
 
     return (new \App\Billing\NurseMonthlyBillGenerator
-                (\App\NurseInfo::find(1),
-                Carbon\Carbon::now()->startOfMonth(),
+                (\App\NurseInfo::find(4),
+                Carbon\Carbon::now()->subWeek(4),
                 Carbon\Carbon::now()->endOfMonth()))
-        ->formatItemizedActivites();
+        ->getItemizedActivities();
 
 });
 
@@ -825,21 +825,21 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('reports/nurse/invoice', [
-            'uses' => 'Admin\Reports\NurseTimeReportController@makeInvoice',
+            'uses' => 'NurseController@makeInvoice',
             'as'   => 'admin.reports.nurse.invoice',
         ]);
 
         Route::post('reports/nurse/invoice/generate', [
-            'uses' => 'Admin\Reports\NurseTimeReportController@generateInvoice',
+            'uses' => 'NurseController@generateInvoice',
             'as'   => 'admin.reports.nurse.generate',
         ]);
 
         Route::get('reports/nurse/daily', [
-            'uses' => 'Admin\Reports\NurseTimeReportController@makeDailyReport',
+            'uses' => 'NurseController@makeDailyReport',
             'as'   => 'admin.reports.nurse.daily',
         ]);
         Route::get('reports/nurse/daily/data', [
-            'uses' => 'Admin\Reports\NurseTimeReportController@dailyReport',
+            'uses' => 'NurseController@dailyReport',
             'as'   => 'admin.reports.nurse.daily.data',
         ]);
 
