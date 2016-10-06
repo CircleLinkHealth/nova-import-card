@@ -43,6 +43,7 @@ class SuccessfulHandler implements CallHandler
 
     private $week;
     private $patient;
+    private $nurse;
     private $ccmTime;
     private $nextCallDate;
     private $attemptNote;
@@ -69,6 +70,8 @@ class SuccessfulHandler implements CallHandler
 
     public function handle()
     {
+
+//        return $this->intersectWithNurseWindows();
 
         //Calculate the next date before which we can call patient
         $this->getPatientOffset($this->ccmTime);

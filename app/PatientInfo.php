@@ -246,5 +246,14 @@ class PatientInfo extends Model {
 		return $query->whereNotNull('family_id');
 
 	}
+	
+	public function lastReachedNurse(){
+
+		return Call::where('inbound_cpm_id', $this->user_id)
+				   ->whereNotNull('called_date')
+				   ->orderBy('called_date', 'desc')
+				   ->first()['outbound_cpm_id'];
+
+	}
 
 }

@@ -5,10 +5,11 @@ use App\Billing\NurseMonthlyBillGenerator;
 
 Route::get('rohan', function () {
 
-    $data = (new NurseMonthlyBillGenerator(App\NurseInfo::find(1),
-        \Carbon\Carbon::parse('2016-09-01 10:00:00'),
-        \Carbon\Carbon::parse('2016-10-31 11:00:00')))
-        ->getCallsPerHourOverPeriod();
+
+    $data = (new \App\Algorithms\Calls\SuccessfulHandler(\App\PatientInfo::find(3062),
+        \Carbon\Carbon::parse('2016-09-01 10:00:00')))
+        ->handle();
+
 
     return $data;
 

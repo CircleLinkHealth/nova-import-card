@@ -185,6 +185,8 @@ return [
         App\Providers\AWSWorkerServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
+//        DraperStudio\ChartJS\ServiceProvider::class
+
 
     ],
 
@@ -245,6 +247,7 @@ return [
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Slack'          => Maknz\Slack\Facades\Slack::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
+//        'ChartJS' => DraperStudio\ChartJS\Facades\ChartJS::class
 
     ],
 

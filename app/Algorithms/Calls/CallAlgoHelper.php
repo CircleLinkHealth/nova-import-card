@@ -75,5 +75,12 @@ trait CallAlgoHelper
 
         return $this->prediction;
     }
+    
+    public function intersectWithNurseWindows(){
+        
+        return $this->nurse = $this->patient->lastReachedNurse();
+        
+        
+    }
 
 }

@@ -105,8 +105,6 @@ class NurseMonthlyBillGenerator
             ->where('called_date', '>=', $this->startDate->toDateTimeString())
             ->where('called_date', '<', $this->endDate->toDateTimeString())->count();
 
-//        return [ $calls, $duration ];
-
         $hours = gmdate('H:i', $duration);
 
         if($calls == 0 || $hours < 1){
