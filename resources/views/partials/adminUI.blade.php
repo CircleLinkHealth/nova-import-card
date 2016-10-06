@@ -136,6 +136,7 @@
                                 <li><a href="{{ URL::route('algo.mock.create', array()) }}">Algo
                                         v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}}</a>
                                 <li><a href="{{ URL::route('get.admin.nurse.schedules') }}">Nurse Schedules</a>
+                                <li><a href="{{ URL::route('stats.nurse.info') }}">Nurse Statistics</a>
                             </ul>
                         </li>
                     @endif

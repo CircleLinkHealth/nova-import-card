@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class NurseInfo extends Model
@@ -86,6 +87,7 @@ class NurseInfo extends Model
 
         return $this->belongsToMany(State::class, 'nurse_info_state');
     }
-
+    
+    
 
 }

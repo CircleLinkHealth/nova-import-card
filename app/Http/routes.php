@@ -1,18 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\DB;
+
+use App\Billing\NurseMonthlyBillGenerator;
 
 Route::get('rohan', function () {
 
+    $data = (new NurseMonthlyBillGenerator(App\NurseInfo::find(1),
+        \Carbon\Carbon::parse('2016-09-01 10:00:00'),
+        \Carbon\Carbon::parse('2016-10-31 11:00:00')))
+        ->getCallsPerHourOverPeriod();
 
-    return (new \App\Billing\NurseMonthlyBillGenerator
-                (\App\NurseInfo::find(4),
-                Carbon\Carbon::now()->subWeek(4),
-                Carbon\Carbon::now()->endOfMonth()))
-        ->getItemizedActivities();
+    return $data;
 
 });
+
 
 Route::group(['prefix' => 'algo'], function () {
 
@@ -846,6 +847,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('reports/nurseTime/exportxls', [
             'uses' => 'Admin\Reports\NurseTimeReportController@exportxls',
             'as'   => 'admin.reports.nurseTime.exportxls',
+        ]);
+
+
+        //STATS
+
+        Route::get('reports/nurse/stats', [
+            'uses' => 'NurseController@makeHourlyStatistics',
+            'as'   => 'stats.nurse.info',
         ]);
 
         // questions

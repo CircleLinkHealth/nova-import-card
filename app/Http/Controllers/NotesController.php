@@ -159,6 +159,8 @@ class NotesController extends Controller
             
 
             //Gather details to generate form
+            
+//            PatientCar
 
             //careteam
             $careteam_info = array();
@@ -192,14 +194,7 @@ class NotesController extends Controller
             $nonCCMCareCenterUsers = Program::getNonCCMCareCenterUsers($patient->blogId());
             $careCenterUsers = Program::getCareCenterUsers($patient->blogId());
             $provider_info = array();
-
-//            if(!empty($providers)) {
-//                foreach ($providers as $provider) {
-//                    if($provider->fullName) {
-//                        $provider_info[$provider->ID] = $provider->fullName;
-//                    }
-//                }
-//            }
+            
 
             $author = Auth::user();
             $author_id = $author->ID;

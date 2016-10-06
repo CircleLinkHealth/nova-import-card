@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Algorithms\Calls\NurseCallStatistics;
 use App\Billing\NurseMonthlyBillGenerator;
 use App\Call;
 use App\NurseInfo;
@@ -41,7 +42,7 @@ class NurseController extends Controller
             $links = [];
 
             foreach ($nurses as $nurse) {
-
+            
                 $nurse = NurseInfo::where('user_id', $nurse)->first();
                 $startDate = Carbon::parse($request->input('start_date'));
                 $endDate = Carbon::parse($request->input('end_date'));
@@ -197,5 +198,16 @@ class NurseController extends Controller
 
     }
 
+    public function makeHourlyStatistics()
+    {
+
+//        $data = (new NurseCallStatistics(NurseInfo::all(),
+//                                Carbon::parse('2016-09-29 09:00:00'),
+//                                Carbon::parse('2016-09-29 10:00:00')))
+//            ->nurseCallsPerHour();
+
+        return view('statistics.nurses.info');
+        
+    }
 
 }

@@ -2,12 +2,12 @@
 
 namespace App\Billing;
 
+use App\Call;
 use App\NurseInfo;
 use App\PageTimer;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 
 class NurseMonthlyBillGenerator
 {
@@ -87,6 +87,35 @@ class NurseMonthlyBillGenerator
         $this->payable = round($this->systemTime / 3600, 1) * $this->nurse->hourly_rate;
 
         return '$'.$this->payable;
+
+    }
+
+    public function getCallsPerHourOverPeriod(){
+
+        $duration = intval($this->systemTime = PageTimer::where('provider_id', $this->nurse->user_id)
+            ->where(function ($q){
+                $q->where('updated_at', '>=' , $this->startDate->toDateString())
+                    ->where('updated_at', '<=' , $this->endDate->toDateString());
+            })
+            ->sum('duration'));
+
+
+
+        $calls = Call::where('outbound_cpm_id', $this->nurse->user_id)
+            ->where('called_date', '>=', $this->startDate->toDateTimeString())
+            ->where('called_date', '<', $this->endDate->toDateTimeString())->count();
+
+//        return [ $calls, $duration ];
+
+        $hours = gmdate('H:i', $duration);
+
+        if($calls == 0 || $hours < 1){
+
+            return 0;
+
+        }
+
+        return round($calls / $hours, 0);
 
     }
 
@@ -197,7 +226,7 @@ class NurseMonthlyBillGenerator
 
         $pdf = PDF::loadView('billing.nurse.invoice', $data);
 
-        $name = trim(($this->nurseName).'-'.trim(Carbon::now()->toDateString()));
+        $name = trim($this->nurseName).'-'.Carbon::now()->toDateString();
         $name = 'file' . rand(10,1000) * rand(13,17);
 
         $pdf->save( base_path( "/public/assets/pdf/$name.pdf" ), true );
@@ -219,10 +248,6 @@ class NurseMonthlyBillGenerator
             $m->to($nurse->user->user_email, $nurse->user->fullName)
                 ->subject('New Invoice from CircleLink Health');
         });
-
-        dd(Mail::failures());
-
-        return Mail::failures();
 
 //        MailLog::create([
 //            'sender_email' => $sender->user_email,
