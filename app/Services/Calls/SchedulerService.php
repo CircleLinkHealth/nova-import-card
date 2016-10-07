@@ -153,7 +153,7 @@ class SchedulerService
         ]);
     }
 
-    public function removeScheduledCallsForWithdrawnPatients()
+    public function removeScheduledCallsForWithdrawnAndPausedPatients()
     {
 
         //get all patients that are withdrawn
