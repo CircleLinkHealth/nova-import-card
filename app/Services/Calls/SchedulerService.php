@@ -157,7 +157,8 @@ class SchedulerService
     {
 
         //get all patients that are withdrawn
-        $withdrawn = PatientInfo::where('ccm_status', 'withdrawn')->orWhere('ccm_status', 'paused')
+        $withdrawn = PatientInfo::where('ccm_status', 'withdrawn')
+                                ->orWhere('ccm_status', 'paused')
             ->lists('user_id');
 
         $withdrawn_patients_with_calls = [];
