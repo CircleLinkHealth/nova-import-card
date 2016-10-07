@@ -51,7 +51,7 @@ class GetTodaysAppointments extends Command
             $this->service->getAppointmentsForToday($vendor->practice_id);
         }
 
-        if (app()->environment('production')) {
+        if (app()->environment('worker')) {
             Slack::to('#background-tasks')
                 ->send("Polled Athena for today's appointments. \n");
         }

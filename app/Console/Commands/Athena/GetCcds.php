@@ -51,7 +51,7 @@ class GetCcds extends Command
             $this->service->getCcdsFromRequestQueue(5);
         }
 
-        if (app()->environment('production')) {
+        if (app()->environment('worker')) {
             Slack::to('#background-tasks')
                 ->send("Grabbing CCDs from Athena CCDA request queue. \n");
         }
