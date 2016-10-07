@@ -194,10 +194,8 @@ class NurseMonthlyBillGenerator
 
         }
 
-        $this->formattedItemizedActivities = $data;
-
-        return [
-            //days data
+        $this->formattedItemizedActivities = [
+        //days data
             'data' => $data,
             'hasAddedTime' => $this->hasAddedTime,
             'manual_time' => round($this->addDuration / 60, 1) . 'Hours',
@@ -220,24 +218,23 @@ class NurseMonthlyBillGenerator
 
     public function generatePdf(){
 
-        $data = $this->formatItemizedActivities();
-
-        $pdf = PDF::loadView('billing.nurse.invoice', $data);
+        $pdf = PDF::loadView('billing.nurse.invoice', $this->formattedItemizedActivities);
 
         $name = trim($this->nurseName).'-'.Carbon::now()->toDateString();
-        $name = 'file' . rand(10,1000) * rand(13,17);
 
         $pdf->save( base_path( "/public/assets/pdf/$name.pdf" ), true );
 
-        return asset("/public/assets/pdf/$name.pdf");
+        return public_path() .  "/assets/pdf/$name.pdf";
 
     }
 
     public function mail(){
 
+//        dd($this->generatePdf());
+
         $nurse = $this->nurse;
 
-        Mail::send('billing.nurse.invoice', ['data' => $this->formatItemizedActivities()], function ($m) use ($nurse) {
+        Mail::send('billing.nurse.invoice', $this->formattedItemizedActivities, function ($m) use ($nurse) {
 
             $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
 

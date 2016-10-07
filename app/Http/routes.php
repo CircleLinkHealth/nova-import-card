@@ -836,6 +836,15 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.reports.nurse.generate',
         ]);
 
+        Route::post('reports/nurse/invoice/view/{$name}', [
+            function($name){
+
+                return response()->download(base_path( "/public/assets/pdf/$name.pdf"));
+
+            },
+            'as'   => 'admin.reports.nurse.invoice.view',
+        ]);
+
         Route::get('reports/nurse/daily', [
             'uses' => 'NurseController@makeDailyReport',
             'as'   => 'admin.reports.nurse.daily',

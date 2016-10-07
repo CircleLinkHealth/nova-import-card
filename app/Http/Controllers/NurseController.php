@@ -54,7 +54,8 @@ class NurseController extends Controller
             return view('billing.nurse.list', ['invoices' => $links]);
         }
 
-        if($request->input('submit') == 'download') {
+        if($request->input('submit') == 'email') {
+
             $messages = [];
             foreach ($nurses as $nurse) {
 
@@ -66,7 +67,7 @@ class NurseController extends Controller
 
             }
 
-            return $messages;
+            return redirect()->back();
         }
     }
 
