@@ -232,11 +232,13 @@ class NurseMonthlyBillGenerator
 
         $nurse = $this->nurse;
 
-        Mail::send('billing.nurse.invoice', $this->formattedItemizedActivities, function ($m) use ($nurse) {
+        $fileName = $this->generatePdf();
+
+        Mail::send('billing.nurse.invoice', $this->formattedItemizedActivities, function ($m) use ($nurse, $fileName) {
 
             $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
 
-            $m->attach($this->generatePdf());
+            $m->attach(storage_path("download/$fileName"));
 
             $m->to($nurse->user->user_email, $nurse->user->fullName)
                 ->subject('New Invoice from CircleLink Health');

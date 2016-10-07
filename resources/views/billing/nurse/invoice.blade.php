@@ -29,7 +29,6 @@
     </h3>
 </dl>
 
-
 <table class="table table-bordered">
     <tr>
         <th>Date</th>

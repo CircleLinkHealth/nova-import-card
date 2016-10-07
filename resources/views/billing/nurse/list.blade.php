@@ -11,7 +11,7 @@
                     <div class="panel-body">
                         <h3>Generated invoices</h3>
                         @foreach($invoices as $key => $value)
-                            <li><a href="{{url('download/'. $value)}}">{{$key}}</a></li>
+                            <li><a href="{{url('/admin/download/'. $value)}}">{{$key}}</a></li>
                         @endforeach
                     </div>
                 </div>
