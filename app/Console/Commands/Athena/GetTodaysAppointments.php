@@ -6,6 +6,7 @@ use App\ForeignId;
 use App\Models\CCD\CcdVendor;
 use App\Services\AthenaAPI\Service;
 use Illuminate\Console\Command;
+use Maknz\Slack\Facades\Slack;
 
 class GetTodaysAppointments extends Command
 {
@@ -15,12 +16,14 @@ class GetTodaysAppointments extends Command
      * @var string
      */
     protected $signature = 'athena:getTodaysAppointments';
+
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Poll Athena for appointments from our clients for today.';
+
     private $service;
 
     /**
@@ -46,6 +49,11 @@ class GetTodaysAppointments extends Command
 
         foreach ($vendors as $vendor) {
             $this->service->getAppointmentsForToday($vendor->practice_id);
+        }
+
+        if (app()->environment('production')) {
+            Slack::to('#background-tasks')
+                ->send("Polled Athena for today's appointments. \n");
         }
     }
 }

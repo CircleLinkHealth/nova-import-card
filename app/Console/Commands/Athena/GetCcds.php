@@ -6,6 +6,7 @@ use App\ForeignId;
 use App\Models\CCD\CcdVendor;
 use App\Services\AthenaAPI\Service;
 use Illuminate\Console\Command;
+use Maknz\Slack\Facades\Slack;
 
 class GetCcds extends Command
 {
@@ -15,12 +16,14 @@ class GetCcds extends Command
      * @var string
      */
     protected $signature = 'athena:getCcds';
+
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Get CCDs from Athena, if there are any CCDA Requests.';
+
     private $service;
 
     /**
@@ -47,5 +50,12 @@ class GetCcds extends Command
         foreach ($vendors as $vendor) {
             $this->service->getCcdsFromRequestQueue(5);
         }
+
+        if (app()->environment('production')) {
+            Slack::to('#background-tasks')
+                ->send("Grabbing CCDs from Athena CCDA request queue. \n");
+        }
+
+
     }
 }
