@@ -82,7 +82,7 @@ class WorkScheduleController extends Controller
         ) {
             if (!$this->canAddNewWindow($date)) {
                 $validator->errors()->add('date',
-                    "The windows was not created because it is out of the allowed date range.");
+                    "The window was not created because it is out of the allowed date range.");
             }
             if ($date->format('Y-m-d') == '0000-00-00') {
                 $validator->errors()->add('date',
