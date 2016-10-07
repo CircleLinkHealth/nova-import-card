@@ -88,8 +88,8 @@ class Connection {
 
         $authorization = $this->call('POST', $url, $parameters, $headers);
 
-        $this->token = $authorization['access_token'] ?? null;
-        $this->refresh_token = $authorization['refresh_token'] ?? null;
+        $this->token = $authorization['access_token'];
+        $this->refresh_token = $authorization['refresh_token'];
     }
 
     /**
