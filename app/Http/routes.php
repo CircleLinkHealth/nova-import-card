@@ -1,6 +1,8 @@
 <?php
 
 
+use App\Billing\NurseMonthlyBillGenerator;
+
 Route::get('rohan', function () {
 
 
