@@ -28,11 +28,13 @@ class NurseMonthlyBillGenerator
     protected $payable;
     protected $systemTime;
 
-    public function __construct(NurseInfo $newNurse,
-                                Carbon $billingDateStart,
-                                Carbon $billingDateEnd,
-                                $manualTimeAdd = 0,
-                                $notes = ''){
+    public function __construct(
+        NurseInfo $newNurse,
+        Carbon $billingDateStart,
+        Carbon $billingDateEnd,
+        $manualTimeAdd = 0,
+        $notes = ''
+    ) {
 
         $this->nurse = $newNurse;
         $this->nurseName = $newNurse->user->last_name;
@@ -41,11 +43,14 @@ class NurseMonthlyBillGenerator
         $this->addDuration = $manualTimeAdd;
         $this->addNotes = $notes;
 
-        if($this->addDuration != 0){ $this->hasAddedTime = true; }
+        if ($this->addDuration != 0) {
+            $this->hasAddedTime = true;
+        }
 
     }
 
-    public function handle(){
+    public function handle()
+    {
 
         $this->getSystemTimeForNurse();
 
@@ -57,7 +62,146 @@ class NurseMonthlyBillGenerator
 
     }
 
-    public function email(){
+    public function getSystemTimeForNurse()
+    {
+
+
+        $this->systemTime = PageTimer::where('provider_id', $this->nurse->user_id)
+            ->where(function ($q) {
+                $q->where('updated_at', '>=', $this->startDate->toDateString())
+                    ->where('updated_at', '<=', $this->endDate->toDateString());
+            })
+            ->sum('duration');
+
+        //handle any extra time
+        if ($this->hasAddedTime) {
+            $this->systemTime += $this->addDuration;
+        }
+
+        $this->payable = round($this->systemTime / 3600, 1) * $this->nurse->hourly_rate;
+
+        return '$' . $this->payable;
+
+    }
+
+    public function getItemizedActivities()
+    {
+
+        $data = [];
+
+        $activities = PageTimer::where('provider_id', $this->nurse->user_id)
+            ->where(function ($q) {
+                $q->where('updated_at', '>=', $this->startDate->toDateString())
+                    ->where('updated_at', '<=', $this->endDate->toDateString());
+            })
+            ->get();
+
+
+        $activities = $activities->groupBy(function ($q) {
+            return Carbon::parse($q->created_at)->format('d'); // grouping by days
+        });
+
+        foreach ($activities as $activity) {
+
+            $data[Carbon::parse($activity[0]['created_at'])->toDateString()] = $activity->sum('duration');
+
+        };
+
+        return $data;
+
+    }
+
+    public function formatItemizedActivities()
+    {
+
+        $activities = $this->getItemizedActivities();
+
+        $data = [];
+
+        $dayCounterCarbon = Carbon::parse($this->startDate->toDateString());
+        $dayCounterDate = $dayCounterCarbon->toDateString();
+
+        while ($this->endDate->toDateString() >= $dayCounterDate) {
+
+            if (isset($activities[$dayCounterDate])) {
+
+                $data[$dayCounterDate] = [
+
+                    'Date'    => $dayCounterDate,
+                    'Minutes' => round($activities[$dayCounterDate] / 60, 2),
+                    'Hours'   => round($activities[$dayCounterDate] / 3600, 1),
+
+                ];
+
+            } else {
+
+                $data[$dayCounterDate] = [
+
+                    'Date'    => $dayCounterDate,
+                    'Minutes' => 0,
+                    'Hours'   => 0,
+
+                ];
+
+            }
+
+            $dayCounterCarbon->addDay();
+            $dayCounterDate = $dayCounterCarbon->toDateString();
+
+        }
+
+        //handle any extra time
+        if ($this->hasAddedTime) {
+
+            $data['Others'] = [
+
+                'Date'    => $this->addNotes,
+                'Minutes' => $this->addDuration,
+                'Hours'   => round($this->addDuration / 60, 1),
+
+            ];
+
+        }
+
+        $this->formattedItemizedActivities = [
+            //days data
+            'data'                  => $data,
+            'hasAddedTime'          => $this->hasAddedTime,
+            'manual_time'           => round($this->addDuration / 60, 1) . 'Hours',
+            'manual_time_notes'     => $this->addNotes,
+            'manual_time_amount'    => round($this->addDuration / 60, 1) * $this->nurse->hourly_rate,
+
+            //headers
+            'nurse_billable_time'   => round($this->systemTime / 3600, 1),
+            'total_billable_amount' => '$' . $this->payable,
+            'total_billable_rate'   => '$' . $this->nurse->hourly_rate,
+            'nurse_name'            => $this->nurse->user->fullName,
+
+            //range
+            'date_start'            => $this->startDate->format('jS M, Y'),
+            'date_end'              => $this->endDate->format('jS M, Y'),
+
+        ];
+
+    }
+
+    public function generatePdf()
+    {
+
+        $pdf = PDF::loadView('billing.nurse.invoice', $this->formattedItemizedActivities);
+
+        $name = trim($this->nurseName) . '-' . Carbon::now()->toDateString();
+
+        $fileName = "$name.pdf";
+
+        $pdf->save(storage_path("download/$fileName"), true);
+
+        return $fileName;
+
+    }
+
+    public function email()
+    {
 
         $this->getSystemTimeForNurse();
 
@@ -71,170 +215,17 @@ class NurseMonthlyBillGenerator
 
     }
 
-    public function getSystemTimeForNurse(){
-
-
-        $this->systemTime = PageTimer::where('provider_id', $this->nurse->user_id)
-            ->where(function ($q){
-                $q->where('updated_at', '>=' , $this->startDate->toDateString())
-                    ->where('updated_at', '<=' , $this->endDate->toDateString());
-            })
-            ->sum('duration');
-
-        //handle any extra time
-        if($this->hasAddedTime){ $this->systemTime += $this->addDuration; }
-
-        $this->payable = round($this->systemTime / 3600, 1) * $this->nurse->hourly_rate;
-
-        return '$'.$this->payable;
-
-    }
-
-    public function getCallsPerHourOverPeriod(){
-
-        $duration = intval($this->systemTime = PageTimer::where('provider_id', $this->nurse->user_id)
-            ->where(function ($q){
-                $q->where('updated_at', '>=' , $this->startDate->toDateString())
-                    ->where('updated_at', '<=' , $this->endDate->toDateString());
-            })
-            ->sum('duration'));
-
-
-
-        $calls = Call::where('outbound_cpm_id', $this->nurse->user_id)
-            ->where('called_date', '>=', $this->startDate->toDateTimeString())
-            ->where('called_date', '<', $this->endDate->toDateTimeString())->count();
-
-        $hours = gmdate('H:i', $duration);
-
-        if($calls == 0 || $hours < 1){
-
-            return 0;
-
-        }
-
-        return round($calls / $hours, 0);
-
-    }
-
-    public function getItemizedActivities(){
-
-        $data = [];
-
-        $activities = PageTimer::where('provider_id', $this->nurse->user_id)
-            ->where(function ($q){
-                $q->where('updated_at', '>=' , $this->startDate->toDateString())
-                    ->where('updated_at', '<=' , $this->endDate->toDateString());
-            })
-            ->get();
-
-
-        $activities = $activities->groupBy(function($q) {
-            return Carbon::parse($q->created_at)->format('d'); // grouping by days
-        });
-
-        foreach ($activities as $activity){
-
-            $data[Carbon::parse($activity[0]['created_at'])->toDateString()] = $activity->sum('duration');
-
-        };
-
-        return $data;
-
-    }
-
-    public function formatItemizedActivities(){
-
-        $activities = $this->getItemizedActivities();
-
-        $data = [];
-
-        $dayCounterCarbon = Carbon::parse($this->startDate->toDateString());
-        $dayCounterDate = $dayCounterCarbon->toDateString();
-
-        while($this->endDate->toDateString() >= $dayCounterDate){
-
-            if(isset($activities[$dayCounterDate])){
-
-                $data[$dayCounterDate] = [
-
-                    'Date'    => $dayCounterDate,
-                    'Minutes' => round($activities[$dayCounterDate] / 60, 2),
-                    'Hours'   => round($activities[$dayCounterDate] / 3600, 1)
-
-                ];
-
-            } else {
-
-                $data[$dayCounterDate] = [
-
-                    'Date'    => $dayCounterDate,
-                    'Minutes' => 0,
-                    'Hours'   => 0
-
-                ];
-
-            }
-
-            $dayCounterCarbon->addDay();
-            $dayCounterDate = $dayCounterCarbon->toDateString();
-
-        }
-
-        //handle any extra time
-        if($this->hasAddedTime){
-
-            $data['Others'] = [
-
-                'Date'    => $this->addNotes,
-                'Minutes' => $this->addDuration,
-                'Hours'   => round($this->addDuration / 60, 1)
-
-            ];
-
-        }
-
-        $this->formattedItemizedActivities = [
-        //days data
-            'data' => $data,
-            'hasAddedTime' => $this->hasAddedTime,
-            'manual_time' => round($this->addDuration / 60, 1) . 'Hours',
-            'manual_time_notes' => $this->addNotes,
-            'manual_time_amount' => round($this->addDuration / 60, 1) * $this->nurse->hourly_rate,
-
-            //headers
-            'nurse_billable_time' => round($this->systemTime / 3600, 1),
-            'total_billable_amount' => '$'.$this->payable,
-            'total_billable_rate' => '$'.$this->nurse->hourly_rate,
-            'nurse_name' => $this->nurse->user->fullName,
-
-            //range
-            'date_start' => $this->startDate->format('jS M, Y'),
-            'date_end' => $this->endDate->format('jS M, Y')
-
-        ];
-
-    }
-
-    public function generatePdf(){
-
-        $pdf = PDF::loadView('billing.nurse.invoice', $this->formattedItemizedActivities);
-
-        $name = trim($this->nurseName).'-'.Carbon::now()->toDateString();
-
-        $pdf->save( base_path( "/public/assets/pdf/$name.pdf" ), true );
-
-        return public_path() .  "/assets/pdf/$name.pdf";
-
-    }
-
-    public function mail(){
+    public function mail()
+    {
 
 //        dd($this->generatePdf());
 
         $nurse = $this->nurse;
 
-        Mail::send('billing.nurse.invoice', $this->formattedItemizedActivities, function ($m) use ($nurse) {
+        Mail::send('billing.nurse.invoice', $this->formattedItemizedActivities, function ($m) use
+        (
+            $nurse
+        ) {
 
             $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
 
@@ -255,6 +246,33 @@ class NurseMonthlyBillGenerator
 //            'created_at' => $note->created_at,
 //            'note_id' => $note->id
 //        ]);
+
+    }
+
+    public function getCallsPerHourOverPeriod()
+    {
+
+        $duration = intval($this->systemTime = PageTimer::where('provider_id', $this->nurse->user_id)
+            ->where(function ($q) {
+                $q->where('updated_at', '>=', $this->startDate->toDateString())
+                    ->where('updated_at', '<=', $this->endDate->toDateString());
+            })
+            ->sum('duration'));
+
+
+        $calls = Call::where('outbound_cpm_id', $this->nurse->user_id)
+            ->where('called_date', '>=', $this->startDate->toDateTimeString())
+            ->where('called_date', '<', $this->endDate->toDateTimeString())->count();
+
+        $hours = gmdate('H:i', $duration);
+
+        if ($calls == 0 || $hours < 1) {
+
+            return 0;
+
+        }
+
+        return round($calls / $hours, 0);
 
     }
 

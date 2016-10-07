@@ -1,8 +1,6 @@
 <?php
 
 
-use App\Billing\NurseMonthlyBillGenerator;
-
 Route::get('rohan', function () {
 
 
@@ -433,6 +431,11 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
+        Route::get('download/{fileName}', [
+            'uses' => 'DownloadController@file',
+            'as'   => 'download',
+        ])->where('filename', '[A-Za-z0-9\-\_\.]+');
+
         Route::get('nurses/windows', [
             'uses' => 'CareCenter\WorkScheduleController@getAllNurseSchedules',
             'as'   => 'get.admin.nurse.schedules',
@@ -834,15 +837,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('reports/nurse/invoice/generate', [
             'uses' => 'NurseController@generateInvoice',
             'as'   => 'admin.reports.nurse.generate',
-        ]);
-
-        Route::post('reports/nurse/invoice/view/{$name}', [
-            function($name){
-
-                return response()->download(base_path( "/public/assets/pdf/$name.pdf"));
-
-            },
-            'as'   => 'admin.reports.nurse.invoice.view',
         ]);
 
         Route::get('reports/nurse/daily', [
