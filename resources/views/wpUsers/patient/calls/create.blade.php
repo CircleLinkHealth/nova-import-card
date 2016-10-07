@@ -76,6 +76,7 @@
                 </div>
 
                 <input type="hidden" name="suggested_date" value="{{\Carbon\Carbon::parse($date)->format('Y-m-d')}}">
+                <input type="hidden" name="nurse" value="{{$nurse}}">
 
                 <div class="form-block col-md-8" style="padding-top: 28px">
                         <div class="row form-inline">

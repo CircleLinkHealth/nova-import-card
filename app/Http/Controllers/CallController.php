@@ -113,7 +113,7 @@ class CallController extends Controller
                                                 $window_end,
                                                 $input['date'],
                                                 $scheduler,
-                                                Auth::user()->hasRole('care-center') ? Auth::user()->ID : null,
+                                                $input['nurse'] ? $input['nurse'] : null,
                                                 isset($input['attempt_note']) ? $input['attempt_note'] : ''
 
                                             );

@@ -67,10 +67,10 @@ class Kernel extends ConsoleKernel
         })->dailyAt('00:05');
 
 
-        //tunes scheduled call dates.
-//        $schedule->call(function () {
-//            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-//        })->dailyAt('00:20');
+//        tunes scheduled call dates.
+        $schedule->call(function () {
+            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
+        })->dailyAt('00:20');
 
         //syncs families.
         $schedule->call(function () {
@@ -80,7 +80,7 @@ class Kernel extends ConsoleKernel
         //Removes All Scheduled Calls for patients that are withdrawn
         $schedule->call(function () {
 
-            (new SchedulerService())->removeScheduledCallsForWithdrawnPatients();
+            (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
 
         })->everyMinute();
 
