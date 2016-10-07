@@ -10,6 +10,7 @@ Route::get('rohan', function () {
 
 });
 
+//Algo test routes.
 
 Route::group(['prefix' => 'algo'], function () {
 
@@ -22,6 +23,18 @@ Route::group(['prefix' => 'algo'], function () {
         }
 
         return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
+
+    });
+
+    Route::get('cleaner', function () {
+
+        if (app()->environment() == 'production') {
+
+            return 'Sorry, this cannot be run on the production environment.';
+
+        }
+
+        return (new \App\Services\Calls\SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
 
     });
 

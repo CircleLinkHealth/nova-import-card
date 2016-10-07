@@ -161,17 +161,19 @@ class SchedulerService
                                 ->orWhere('ccm_status', 'paused')
             ->lists('user_id');
 
-        $withdrawn_patients_with_calls = [];
+        $removed = [];
 
         //get scheduled calls for them, if any, and delete them.
         foreach ($withdrawn as $patient) {
             $temp = $this->getScheduledCallForPatient(User::find($patient));
 
             if (is_object($temp)) {
-                $withdrawn_patients_with_calls[] = $temp;
+                $removed[] = $temp;
                 $temp->delete();
             }
         }
+
+        return $removed;
     }
 
     public function importCallsFromCsv($csv)
