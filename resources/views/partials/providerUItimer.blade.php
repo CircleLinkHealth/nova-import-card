@@ -283,9 +283,9 @@ if ($enableTimeTracking) {
 
 
 <!--<h3>TIMER DEBUG</h3>-->
-<span id="timerDebug" style="display:none;">
-    Page Route Name: {{ Route::currentRouteName() }}<br>
-    Tracking Enabled: <?php echo $enableTimeTracking; ?>
-</span>
+{{--<span id="timerDebug" style="display:none;">--}}
+{{--Page Route Name: {{ Route::currentRouteName() }}<br>--}}
+{{--Tracking Enabled: <?php echo $enableTimeTracking; ?>--}}
+{{--</span>--}}
 <!-- PAGE TIMER END -->
 
