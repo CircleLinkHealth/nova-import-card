@@ -38,8 +38,10 @@ class UnsuccessfulHandler implements CallHandler
     private $week;
     private $patient;
     private $ccmTime;
+    private $nurse;
     private $nextCallDate;
     private $attemptNote;
+    private $matchArray = [];
 
     //return package
     private $prediction;
@@ -69,7 +71,10 @@ class UnsuccessfulHandler implements CallHandler
 
         //get the next call date based on patient preferences
         $this->getNextWindow();
-        
+
+        //attach nurse to call, if any windows match.
+        $this->intersectWithNurseWindows();
+
         //Add debug string
         $this->prediction['predicament'] = $this->createSchedulerInfoString();
 

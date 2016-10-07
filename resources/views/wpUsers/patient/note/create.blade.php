@@ -30,11 +30,11 @@
                     Record New Note
                 </div>
 
-                @include('partials.userheader')
 
                 <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient])}}"
                       class="form-horizontal">
 
+                    @include('partials.userheader')
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
                          style=" border-bottom:3px solid #50b2e2;padding: 10px 48px;">

@@ -47,6 +47,7 @@ class SuccessfulHandler implements CallHandler
     private $ccmTime;
     private $nextCallDate;
     private $attemptNote;
+    private $matchArray = [];
 
     //return package
     private $prediction;
@@ -70,14 +71,14 @@ class SuccessfulHandler implements CallHandler
 
     public function handle()
     {
-
-//        return $this->intersectWithNurseWindows();
-
         //Calculate the next date before which we can call patient
         $this->getPatientOffset($this->ccmTime);
 
         //get the next call date based on patient preferences
         $this->getNextWindow();
+
+        //attach nurse to call, if any windows match.
+        $this->intersectWithNurseWindows();
 
         //Add debug string
         $this->prediction['predicament'] = $this->createSchedulerInfoString();

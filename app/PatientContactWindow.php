@@ -196,26 +196,29 @@ class PatientContactWindow extends Model
     }
 
     //Returns Array with each element containing a start_window_time and an end_window_time in dateString format
-    public function getNextWindowsForPatientFromDate($patient, $offset_date)
+    public static function getNextWindowsForPatientFromDate($patient, $offset_date)
     {
 
-        $patient_windows = $patient->patientInfo->patientContactWindows()->get();
+        $patient_windows = $patient->patientContactWindows->all();
+
+        //to count the current day in the calculation as well, we sub one day.
+        $offset_date = Carbon::parse($offset_date)->subDay()->toDateString();
 
         $windows = array();
 
         //If there are no contact windows, we just the same day. @todo confirm logic
         if (!$patient_windows) {
 
-            $carbon_date_start = $offset_date;
-            $carbon_date_end = $offset_date;
+            $carbon_date_start = Carbon::parse($offset_date);
+            $carbon_date_end = Carbon::parse($offset_date);
 
             $carbon_date_start->setTime('10', '00');
             $carbon_date_end->setTime('12', '00');
 
-            $windows[0]['string_start'] = $carbon_date_start->toDateTimeString();
-            $windows[0]['string_end'] = $carbon_date_end->toDateTimeString();
+            $windows[0]['window_start'] = $carbon_date_start->toDateTimeString();
+            $windows[0]['window_end'] = $carbon_date_end->toDateTimeString();
 
-            return collect($windows)->toArray();
+            return collect($windows);
 
         }
 
@@ -231,18 +234,20 @@ class PatientContactWindow extends Model
         //contact days
 
         //Since we need a static date to keep adding to
-        $offset_date = $offset_date->toDateTimeString();
+//        $offset_date = $offset_date->toDateTimeString();
 
         $weeks_to_project = 2;
 
         for ($i = 0; $i < $weeks_to_project; $i++) {
 
+            //add windows for each week needed.
+
             foreach ($patient_windows as $window) {
 
                 if ($i == 0) {
 
-                    $carbon_date_start = Carbon::parse($offset_date)->next($week[$window->day_of_week]);
-                    $carbon_date_end = Carbon::parse($offset_date)->next($week[$window->day_of_week]);
+                    $carbon_date_start = Carbon::parse($offset_date)->subDay()->next($week[$window->day_of_week]);
+                    $carbon_date_end = Carbon::parse($offset_date)->subDay()->next($week[$window->day_of_week]);
 
                 } else {
 
@@ -260,15 +265,14 @@ class PatientContactWindow extends Model
                 $carbon_date_start->setTime($carbon_hour_start, $carbon_minutes_start);
                 $carbon_date_end->setTime($carbon_hour_end, $carbon_minutes_end);
 
-                $windows[$count]['string_start'] = $carbon_date_start->toDateTimeString();
-                $windows[$count]['string_end'] = $carbon_date_end->toDateTimeString();
+                $windows[$count]['window_start'] = $carbon_date_start->toDateTimeString();
+                $windows[$count]['window_end'] = $carbon_date_end->toDateTimeString();
                 $count++;
             }
 
         }
 
-
-        return collect($windows)->sort()->toArray();
+        return collect($windows)->sort();
 
     }
 

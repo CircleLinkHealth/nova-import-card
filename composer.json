@@ -40,7 +40,8 @@
     "dusterio/laravel-aws-worker": "^0.1.5",
     "yajra/laravel-datatables-oracle": "~6.0",
     "league/fractal": "0.12.*",
-    "spatie/laravel-google-calendar": "^1.0"
+    "spatie/laravel-google-calendar": "^1.0",
+    "draperstudio/laravel-chartjs": "^0.1.1"
   },
   "require-dev": {
     "symfony/dom-crawler": "~3.0",

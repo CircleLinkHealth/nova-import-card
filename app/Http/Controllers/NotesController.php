@@ -256,7 +256,7 @@ class NotesController extends Controller
     {
 
         $input = $input->all();
-
+        
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
         $note = $this->service->storeNote($input);
@@ -267,7 +267,7 @@ class NotesController extends Controller
         $info = $patient->patientInfo;
 
         if(isset($input['status'])){
-            $info->general_comment = $input['status'];
+            $info->ccm_status = $input['status'];
         }
 
         if(isset($input['general_comment'])){
