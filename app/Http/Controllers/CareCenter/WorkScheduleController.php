@@ -47,7 +47,12 @@ class WorkScheduleController extends Controller
             ? Carbon::now(auth()->user()->timezone)->format('T')
             : false;
 
+        //I think time tracking submits along with the form, thus messing up sessions.
+        //Temporary fix
+        $disableTimeTracking = true;
+
         return view('care-center.work-schedule', compact([
+            'disableTimeTracking',
             'windows',
             'tzAbbr',
         ]));

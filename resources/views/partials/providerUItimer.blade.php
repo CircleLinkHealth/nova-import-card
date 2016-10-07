@@ -78,7 +78,7 @@ $pieces = explode("?", $_SERVER['REQUEST_URI']);
 $urlShort = $pieces[0];
 
 // should we process time on this page?
-$enableTimeTracking = true;
+$enableTimeTracking = !isset($disableTimeTracking);
 //$enableTimeTracking = false; // override it
 
 // disable if login
@@ -106,7 +106,7 @@ if ($enableTimeTracking) {
         var isTimerProcessed = false;
         var redirectLocation = false;
         var idleTime = 120000; // ms before modal display (60000 = 1min)
-        var consoleDebug = true; // debug toggle
+        var consoleDebug = false; // debug toggle
 
         // instantiate idleTimer
         if (consoleDebug) console.log('setting idleTimer @ ' + idleTime);
@@ -285,7 +285,7 @@ if ($enableTimeTracking) {
 <!--<h3>TIMER DEBUG</h3>-->
 {{--<span id="timerDebug" style="display:none;">--}}
 {{--Page Route Name: {{ Route::currentRouteName() }}<br>--}}
-{{--Tracking Enabled: <?php echo $enableTimeTracking; ?>--}}
+{{--Tracking Enabled: {{ $enableTimeTracking }}--}}
 {{--</span>--}}
-<!-- PAGE TIMER END -->
+{{--<!-- PAGE TIMER END -->--}}
 
