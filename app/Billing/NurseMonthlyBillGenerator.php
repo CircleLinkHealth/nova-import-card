@@ -2,6 +2,7 @@
 
 namespace App\Billing;
 
+use App\Activity;
 use App\Call;
 use App\NurseInfo;
 use App\PageTimer;
@@ -92,28 +93,60 @@ class NurseMonthlyBillGenerator
 
     public function getCallsPerHourOverPeriod(){
 
-        $duration = intval($this->systemTime = PageTimer::where('provider_id', $this->nurse->user_id)
+        $duration = intval( PageTimer::where('provider_id', $this->nurse->user_id)
+            ->where(function ($q){
+                $q->where('created_at', '>=' , $this->startDate->toDateString())
+                    ->where('created_at', '<=' , $this->endDate->toDateString());
+            })
+            ->sum('duration'));
+
+        $ccm_duration = intval( Activity::where('logger_id', $this->nurse->user_id)
+            ->where(function ($q){
+                $q->where('created_at', '>=' , $this->startDate->toDateString())
+                    ->where('created_at', '<=' , $this->endDate->toDateString());
+            })
+            ->sum('duration'));
+
+        $calls = Call::where('outbound_cpm_id', $this->nurse->user_id)
             ->where(function ($q){
                 $q->where('updated_at', '>=' , $this->startDate->toDateString())
                     ->where('updated_at', '<=' , $this->endDate->toDateString());
             })
-            ->sum('duration'));
+            ->where(function ($k){
+                $k->where('status', '=', 'reached')
+                    ->orWhere('status', '=', 'not reached');
+            })
+            ->count();
 
+        $hours =  $duration/3600;
 
-
-        $calls = Call::where('outbound_cpm_id', $this->nurse->user_id)
-            ->where('called_date', '>=', $this->startDate->toDateTimeString())
-            ->where('called_date', '<', $this->endDate->toDateTimeString())->count();
-
-        $hours = gmdate('H:i', $duration);
+        if($calls != 0 && $hours != 0){
+            $percent = round(($ccm_duration/$duration) * 100 , 2);
+        } else {
+            $percent = 0;
+        }
 
         if($calls == 0 || $hours < 1){
 
-            return 0;
+            return [
+
+                'calls/hour' => 0,
+                'duration' => $duration,
+                'ccm_duration' => $ccm_duration,
+                '%ccm' => $percent
+
+            ];
 
         }
 
-        return round($calls / $hours, 0);
+        return [
+
+            'calls/hour' => round($calls / $hours, 2),
+            'duration' => $duration,
+            'ccm_duration' => $ccm_duration,
+            '%ccm' => $percent
+
+        ];
 
     }
 

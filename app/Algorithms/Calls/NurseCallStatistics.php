@@ -10,6 +10,7 @@ namespace App\Algorithms\Calls;
 
 
 use App\Call;
+use App\NurseInfo;
 use Carbon\Carbon;
 
 class NurseCallStatistics
@@ -40,9 +41,11 @@ class NurseCallStatistics
 
         $results = [];
 
+//        $this->nurses = [NurseInfo::find(5)];
+
         foreach ($this->nurses as $nurse) {
 
-            $differentiations = 5;
+            $differentiations = 10;
             $name = $nurse->user->fullName;
 
             for ($i = 0; $i < $differentiations; $i++) {
@@ -50,7 +53,7 @@ class NurseCallStatistics
                 $rangeStart = Carbon::parse($this->startTime)->addHours($i);
                 $rangeEnd = Carbon::parse($this->endTime)->addHours($i);
 
-                $calls[$name][$i] = Call::where('outbound_cpm_id', 2458)
+                $calls[$name][$i] = Call::where('outbound_cpm_id', $nurse->user->ID)
                     ->where('called_date', '>=', $rangeStart->toDateTimeString())
                     ->where('called_date', '<=', $rangeEnd->toDateTimeString());
 
@@ -58,9 +61,9 @@ class NurseCallStatistics
 
                 $count = $callsForActivityPeriod->get()->count();
 
-                if ($count < $this->minCallsForAverageConsideration) {
-                    continue 1;
-                }
+//                if ($count < $this->minCallsForAverageConsideration) {
+//                    continue 1;
+//                }
 
                 $adjustedRangeStart = Carbon::parse($callsForActivityPeriod->get()->sortBy('called_date')->first()['called_date']);
                 $adjustedRangeEnd = Carbon::parse($callsForActivityPeriod->get()->sortByDesc('called_date')->first()['called_date']);
@@ -69,15 +72,13 @@ class NurseCallStatistics
 
                 $success = $callsForActivityPeriod->where('status', 'reached')->count();
 
-                if ($activityHour < $this->minMinutesForAverageConsideration) {
-                    continue 1;
-                }
+//                if ($activityHour < $this->minMinutesForAverageConsideration) {
+//                    continue 1;
+//                }
 
                 $results[$name][$i]['Success %'] = ($success != 0)
                     ? round(($success / $count) * 100, 2) . '%'
                     : 'N/A';
-
-
 
                 $results[$name][$i]['Total Calls For Activity Period'] = $count;
 
@@ -87,14 +88,16 @@ class NurseCallStatistics
 
                 $results[$name][$i]['Activity Adjusted Hour'] = $activityHour . ' mins';
 
+                if ($activityHour != 0 && $count != 0) {
+                    $results[$name][$i]['Adjusted Calls Per Hour'] = round(($count / $activityHour) * 60, 1);
+                }
 
-                $results[$name][$i]['Adjusted Calls Per Hour'] = round(($count / $activityHour) * 60, 1);
 
             }
 
-             if(isset($results[$name])){
-                 $results[$name]['Average CPH For Period'] = collect($results[$name])->average('Adjusted Calls Per Hour');
-             };
+//             if(isset($results[$name])){
+//                 $results[$name]['Average CPH For Period'] = collect($results[$name])->average('Adjusted Calls Per Hour');
+//             };
 
 
         }
