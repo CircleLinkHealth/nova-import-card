@@ -17,9 +17,10 @@ class Ccda extends Model implements Transformable {
 
     const EMAIL_DOMAIN_TO_VENDOR_MAP = [
         //Carolina Medical Associates
-        '@direct.novanthealth.org' => 10,
-        '@test.directproject.net'  => 2,
-        '@direct.welltrackone.com' => 14,
+        '@direct.novanthealth.org'        => 10,
+        '@test.directproject.net'         => 2,
+        '@direct.welltrackone.com'        => 14,
+        '@treatrelease.direct.aprima.com' => 16,
     ];
 
     protected $fillable = [
