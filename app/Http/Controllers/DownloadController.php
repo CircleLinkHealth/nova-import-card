@@ -16,7 +16,7 @@ class DownloadController extends Controller
         $path = storage_path("download/$fileName");
 
         if (!file_exists($path)) {
-            return "Could not find file with name: $fileName";
+            return "Could not locate file with name: $fileName";
         }
 
         return response()->download($path, $fileName, [
