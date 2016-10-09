@@ -1,12 +1,24 @@
 <?php
 
+
+use App\Billing\NurseMonthlyBillGenerator;
+
 Route::get('rohan', function () {
 
+//    $nurses = \App\NurseInfo::where('user_id', 2332)
 
-//    $data = \Carbon\Carbon::parse('2016-10-01 10:00:00')->weekOfMonth;
-    $data = \Carbon\Carbon::parse('2016-10-03 10:00:00')->weekOfMonth;
+    $data = \App\NurseInfo::all();
+    $result = [];
 
-    return $data;
+    foreach ($data as $nurse) {
+
+        $result[$nurse->user->fullName] =  (new NurseMonthlyBillGenerator
+        ($nurse,
+            Carbon\Carbon::parse('2016-09-01 00:00:00'),
+            Carbon\Carbon::parse('2016-09-30 23:59:59')))->getCallsPerHourOverPeriod();
+    }
+
+    return $result;
 
 });
 
