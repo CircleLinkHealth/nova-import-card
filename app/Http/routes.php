@@ -1,22 +1,17 @@
 <?php
 
 
-use App\Billing\NurseMonthlyBillGenerator;
+use App\Reports\Sales\SalesByLocationReport;
 
 Route::get('rohan', function () {
 
-//    $nurses = \App\NurseInfo::where('user_id', 2332)
+    $provider = \App\User::find(852);
 
-    $data = \App\NurseInfo::all();
-    $result = [];
-
-    foreach ($data as $nurse) {
-
-        $result[$nurse->user->fullName] =  (new NurseMonthlyBillGenerator
-        ($nurse,
+        $result =  (new SalesByLocationReport
+        (   $provider,
             Carbon\Carbon::parse('2016-09-01 00:00:00'),
-            Carbon\Carbon::parse('2016-09-30 23:59:59')))->getCallsPerHourOverPeriod();
-    }
+            Carbon\Carbon::parse('2016-09-30 23:59:59')))->getReporteeLocationsAndPrograms();
+
 
     return $result;
 

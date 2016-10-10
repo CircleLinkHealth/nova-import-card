@@ -9,24 +9,23 @@
 
 
 <dl class="dl-horizontal">
-    <h3>
+    <h4>
         <dt>Duration</dt>
         <dd>{{$date_start}} to {{$date_end}}</dd>
 
-        <dt>Billable Time</dt>
-        <dd>{{$nurse_billable_time}}</dd>
+        <dt>Billable Time: </dt> {{$nurse_billable_time}}
 
         @if($hasAddedTime)
 
             <dt>Extras:</dt>
-            <dd>{{$manual_time_notes}}: {{$manual_time}} (${{$manual_time_amount}})</dd>
+            <dd>{{$manual_time_notes}}: {{$manual_time. ' Hours'}} (${{$manual_time_amount}})</dd>
 
         @endif
 
         <dt>Invoice Amount</dt>
         <dd>{{$total_billable_amount}} ({{$total_billable_rate}}/hr)</dd>
 
-    </h3>
+    </h4>
 </dl>
 
 <table class="table table-bordered">

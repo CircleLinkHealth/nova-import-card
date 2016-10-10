@@ -22,12 +22,14 @@ class NurseMonthlyBillGenerator
     //manual time adds
     protected $hasAddedTime = false;
     protected $addDuration;
+    protected $formattedAddDuration;
     protected $addNotes;
 
     //Billing Results
     protected $formattedItemizedActivities;
     protected $payable;
     protected $systemTime;
+    protected $formattedSystemTime;
 
     public function __construct(NurseInfo $newNurse,
                                 Carbon $billingDateStart,
@@ -43,6 +45,7 @@ class NurseMonthlyBillGenerator
         $this->addNotes = $notes;
 
         if($this->addDuration != 0){ $this->hasAddedTime = true; }
+
 
     }
 
@@ -82,10 +85,35 @@ class NurseMonthlyBillGenerator
             })
             ->sum('duration');
 
-        //handle any extra time
-        if($this->hasAddedTime){ $this->systemTime += $this->addDuration; }
+        if($this->systemTime != 0 && $this->systemTime != null){
 
-        $this->payable = round($this->systemTime / 3600, 1) * $this->nurse->hourly_rate;
+            if( $this->systemTime <= 1800 && $this->systemTime > 0) {
+
+                $this->formattedSystemTime = 0.5;
+
+            } else {
+
+                $this->formattedSystemTime = ceil(($this->systemTime  * 2) / 3600) / 2;
+
+            }
+
+        } else if($this->systemTime == null){
+
+            $this->formattedSystemTime = 0;
+
+        }
+
+        //handle any extra time
+        if($this->hasAddedTime){
+
+            //round to .5
+            $this->formattedAddDuration = ceil(($this->addDuration * 2) / 60) / 2;
+
+            $this->formattedSystemTime += $this->formattedAddDuration;
+
+        }
+
+        $this->payable = $this->formattedSystemTime * $this->nurse->hourly_rate;
 
         return '$'.$this->payable;
 
@@ -185,6 +213,19 @@ class NurseMonthlyBillGenerator
         $dayCounterCarbon = Carbon::parse($this->startDate->toDateString());
         $dayCounterDate = $dayCounterCarbon->toDateString();
 
+        //handle any extra time
+        if($this->hasAddedTime){
+
+            $data['Others'] = [
+
+                'Date'    => $this->addNotes,
+                'Minutes' => $this->addDuration,
+                'Hours'   => $this->formattedAddDuration
+
+            ];
+
+        }
+
         while($this->endDate->toDateString() >= $dayCounterDate){
 
             if(isset($activities[$dayCounterDate])){
@@ -214,29 +255,16 @@ class NurseMonthlyBillGenerator
 
         }
 
-        //handle any extra time
-        if($this->hasAddedTime){
-
-            $data['Others'] = [
-
-                'Date'    => $this->addNotes,
-                'Minutes' => $this->addDuration,
-                'Hours'   => round($this->addDuration / 60, 1)
-
-            ];
-
-        }
-
         $this->formattedItemizedActivities = [
         //days data
             'data' => $data,
             'hasAddedTime' => $this->hasAddedTime,
-            'manual_time' => round($this->addDuration / 60, 1) . 'Hours',
+            'manual_time' => $this->formattedAddDuration,
             'manual_time_notes' => $this->addNotes,
-            'manual_time_amount' => round($this->addDuration / 60, 1) * $this->nurse->hourly_rate,
+            'manual_time_amount' => $this->formattedAddDuration * $this->nurse->hourly_rate,
 
             //headers
-            'nurse_billable_time' => round($this->systemTime / 3600, 1),
+            'nurse_billable_time' => $this->formattedSystemTime,
             'total_billable_amount' => '$'.$this->payable,
             'total_billable_rate' => '$'.$this->nurse->hourly_rate,
             'nurse_name' => $this->nurse->user->fullName,

@@ -589,6 +589,16 @@ class ReportsController extends Controller
         ]);
     }
 
+    public function salesReport(Request $request){
+
+
+        $input = $request->all();
+
+        $reportee = User::find($input['auth_user']);
+
+
+    }
+
     public function excelReportT1()
     {
         // get all users with 1 condition
