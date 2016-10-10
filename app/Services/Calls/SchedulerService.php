@@ -114,13 +114,15 @@ class SchedulerService
         $window_end,
         $date,
         $scheduler,
-        $nurse_id = false,
+        $nurse_id = null,
         $attempt_note = ''
     ) {
         $patient = User::find($patientId);
 
         $window_start = Carbon::parse($window_start)->format('H:i');
         $window_end = Carbon::parse($window_end)->format('H:i');
+
+        $nurse_id = ($nurse_id == '') ? null : $nurse_id;
 
         return Call::create([
 
@@ -137,9 +139,7 @@ class SchedulerService
             'outbound_phone_number' => '',
 
             'inbound_cpm_id'  => $patient->ID,
-            'outbound_cpm_id' => isset($nurse_id)
-                ? $nurse_id
-                : '',
+            'outbound_cpm_id' => $nurse_id,
 
             'call_time'  => 0,
             'created_at' => Carbon::now()->toDateTimeString(),

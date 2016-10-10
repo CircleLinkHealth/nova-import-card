@@ -52,9 +52,6 @@ class SalesByLocationReport
     public function getReporteeLocationsAndPrograms(){
 
 
-        $users = User::ofType('provider')->pluck('ID');
-
-//        foreach ($users )
 
 
 

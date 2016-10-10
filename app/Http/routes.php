@@ -5,15 +5,16 @@ use App\Reports\Sales\SalesByLocationReport;
 
 Route::get('rohan', function () {
 
-    $provider = \App\User::find(852);
+//    $provider = \App\User::find(852);
 
-        $result =  (new SalesByLocationReport
-        (   $provider,
-            Carbon\Carbon::parse('2016-09-01 00:00:00'),
-            Carbon\Carbon::parse('2016-09-30 23:59:59')))->getReporteeLocationsAndPrograms();
+//        $result =  (new SalesByLocationReport
+//        (   $provider,
+//            Carbon\Carbon::parse('2016-09-01 00:00:00'),
+//            Carbon\Carbon::parse('2016-09-30 23:59:59')))->getReporteeLocationsAndPrograms();
 
+    $program = App\Program::find(21);
 
-    return $result;
+    return $program->enrollmentByProgram();
 
 });
 

@@ -94,7 +94,7 @@ trait CallAlgoHelper
         $adjustment = collect($this->matchArray)->first();
 
 
-            if($adjustment && $adjustment['intersects']){
+            if($adjustment && isset($adjustment['intersects'])){
 
                 $startWindow = Carbon::parse($adjustment['patient']['window_start']);
                 $endWindow = Carbon::parse($adjustment['patient']['window_end']);

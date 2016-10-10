@@ -110,4 +110,17 @@ class Program extends Model {
             }
         }
     }
+
+    public function enrollmentByProgram(){
+
+        $users = $this->users->filter(function ($item, $key) {
+
+            return isset($item->patientInfo->ccm_status);
+
+        })->groupBy('ccm_status');
+
+        return $users;
+
     }
+
+}
