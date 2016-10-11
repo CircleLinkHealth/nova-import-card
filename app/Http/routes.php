@@ -1167,7 +1167,7 @@ if (app()->environment() != 'production') {
     /***********************/
 
 // pagetimer
-    Route::group(['middleware' => 'cors'], function () {
+    Route::group([], function () {
         //Route::get('pagetimer', 'PageTimerController@store');
         Route::post('api/v2.1/pagetimer', [
             'uses' => 'PageTimerController@store',
