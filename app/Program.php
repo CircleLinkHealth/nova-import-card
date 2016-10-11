@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -111,15 +112,41 @@ class Program extends Model {
         }
     }
 
-    public function enrollmentByProgram(){
+    public function enrollmentByProgram(Carbon $start, Carbon $end){
 
-        $users = $this->users->filter(function ($item, $key) {
+        $patients = PatientInfo::whereHas('user', function ($q){
 
-            return isset($item->patientInfo->ccm_status);
+            $q->where('program_id', $this->blog_id);
 
-        })->groupBy('ccm_status');
+        })
+        ->whereNotNull('ccm_status')
+        ->get();
 
-        return $users;
+        $data = [
+
+            'withdrawn' => 0,
+            'paused' => 0,
+            'enrolled' => 0
+
+        ];
+
+        foreach ($patients as $patient){
+
+            if($patient->date_withdrawn > $start->toDateTimeString() && $patient->date_withdrawn <= $end->toDateTimeString()){
+
+                $data['withdrawn']++;
+
+            }
+
+            if($patient->date_paused > $start->toDateTimeString() && $patient->date_paused <= $end->toDateTimeString()){
+
+                $data['paused']++;
+
+            }
+
+        }
+
+        return $data;
 
     }
 
