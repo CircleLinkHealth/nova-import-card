@@ -608,18 +608,18 @@ class ReportsController extends Controller
 
         $links = [];
 
-//        foreach ($programs as $program){
+        foreach ($programs as $program){
 
-            $program = Program::find($programs[0]);
+            $program = Program::find($program);
 
-            return (new SalesByLocationReport($program,
+            $links[$program->display_name] = (new SalesByLocationReport($program,
                                                   Carbon::parse($input['start_date']),
                                                   Carbon::parse($input['end_date']),
                                                   $withHistory)
                                             )->handle();
-//        }
+        }
 
-//        return $links;
+        return view('sales.reportlist', ['reports' => $links]);
 
     }
 

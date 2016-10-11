@@ -506,7 +506,7 @@ if (app()->environment() != 'production') {
                     'as'   => 'reports.sales.create',
                 ]);
 
-                Route::post('sales/generate', [
+                Route::post('sales/make', [
                     'uses' => 'ReportsController@makeSalesReport',
                     'as'   => 'reports.sales.make',
                 ]);

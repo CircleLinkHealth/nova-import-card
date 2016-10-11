@@ -1,6 +1,10 @@
 <?php namespace App\Reports\Sales;
+
+use App\PatientInfo;
 use App\Program;
 use Carbon\Carbon;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+
 
 /**
  * Created by PhpStorm.
@@ -15,6 +19,7 @@ class SalesByLocationReport
     protected $startDateString;
     protected $endDate;
     protected $data;
+    protected $providers;
     protected $location;
     protected $program;
     protected $currentMonth;
@@ -28,6 +33,8 @@ class SalesByLocationReport
         $this->startDate = $start;
         $this->startDateString = Carbon::parse($start)->toDateString();
         $this->endDate = $end;
+
+//        $this->providers = $this->program->getProviders($this->program->blog_id);
 
         $this->location = '';
         $this->program = '';
@@ -45,10 +52,11 @@ class SalesByLocationReport
 
         $this->patientsForProgram();
 
-        return $this->formatSalesData();
-//
-//        $this->generatePDF();
-//
+//        $this->getStatsByProvider();
+
+        $this->formatSalesData();
+
+        return $this->generatePdf();
 
     }
 
@@ -56,24 +64,41 @@ class SalesByLocationReport
 
         $startDate = $this->startDate->toDateString();
 
-
-        $this->currentMonth = $this->program->enrollmentByProgram(Carbon::parse($startDate),
+        $this->currentMonth = $this->program->enrollmentByProgram(Carbon::parse($this->startDateString),
                                                                   Carbon::parse($this->endDate));
 
-        $this->currentMonth['month'] = Carbon::parse($startDate)->format('F Y');
+        $this->currentMonth['month'] = Carbon::parse($this->startDateString)->format('F Y');
 
         if($this->reportLastMonthWithDifference){
 
             $this->lastMonth = $this->program->enrollmentByProgram(
-                Carbon::parse($startDate)->subMonth()->startOfMonth(),
-                Carbon::parse($startDate)->subMonth()->endOfMonth()
+                Carbon::parse($this->startDateString)->subMonth()->startOfMonth(),
+                Carbon::parse($this->startDateString)->subMonth()->endOfMonth()
                                                     );
 
-            $this->lastMonth['month'] = Carbon::parse($startDate)->subMonth()->endOfMonth()->format('F Y');
+            $this->lastMonth['month'] = Carbon::parse($this->startDateString)->subMonth()->endOfMonth()->format('F Y');
 
             $this->calculateMonthOverMonthChanges();
 
         }
+    }
+
+    public function getStatsByProvider(){
+
+        foreach ($this->providers as $provider){
+
+            $patients = PatientInfo::whereHas('user', function ($q){
+
+                $q->where('program_id', $this->blog_id);
+
+            })
+                ->whereNotNull('ccm_status')
+                ->where('ccm_status')
+                ->get();
+
+
+        }
+
     }
 
     public function calculateMonthOverMonthChanges(){
@@ -128,31 +153,27 @@ class SalesByLocationReport
             'last' => $this->lastMonth,
             'data' => $this->diff,
             'program_name' => $this->program->display_name,
-            't0start' => $this->startDate->toDateString(),
+            't0start' => $this->startDateString,
             't0end' => $this->endDate->toDateString(),
-            't1start' => $this->startDate->subMonth()->startOfMonth()->toDateString(),
-            't1end' => $this->startDate->subMonth()->endOfMonth()->toDateString()
+            't1start' => Carbon::parse($this->startDateString)->subMonth()->startOfMonth()->toDateString(),
+            't1end' => Carbon::parse($this->startDateString)->subMonth()->endOfMonth()->toDateString()
 
         ];
 
-        return view('sales.make', [
+    }
 
-            'data' => $this->data
-        ]);
+    public function generatePdf(){
+
+        $pdf = PDF::loadView('sales.make', ['data' => $this->data]);
+
+        $name = trim($this->program->name).'-'.Carbon::now()->toDateString();
+
+        $pdf->save( storage_path("download/$name.pdf"), true );
+
+        return $name.'.pdf';
 
     }
 
-//    public function generatePdf(){
-//
-//        $pdf = PDF::loadView('billing.nurse.invoice', $this->formattedItemizedActivities);
-//
-//        $name = trim($this->nurseName).'-'.Carbon::now()->toDateString();
-//
-//        $pdf->save( storage_path("download/$name.pdf"), true );
-//
-//        return $name.'.pdf';
-//
-//    }
 //
 //    public function mail(){
 //

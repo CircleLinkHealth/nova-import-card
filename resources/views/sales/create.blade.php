@@ -39,7 +39,7 @@
                                     <label class="col-md-2 control-label" for="end_date">To</label>
                                     <div class="col-md-6">
                                         <input class="form-control" type="date"
-                                               value="{{\Carbon\Carbon::now()->endOfMonth()->toDateString()}}" name="end_date"
+                                               value="{{\Carbon\Carbon::now()->toDateString()}}" name="end_date"
                                                id="end_date" required>
                                     </div>
                                 </div>
