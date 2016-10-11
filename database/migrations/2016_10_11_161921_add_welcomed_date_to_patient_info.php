@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-class AddFamilyToPatientInfo extends Migration
+class AddWelcomedDateToPatientInfo extends Migration
 {
     /**
      * Run the migrations.
@@ -14,17 +14,11 @@ class AddFamilyToPatientInfo extends Migration
     {
         Schema::table('patient_info', function (Blueprint $table) {
 
-            if (Schema::hasColumn('patient_info', 'family_id')) {
+            if (Schema::hasColumn('patient_info', 'date_welcomed')) {
                 return;
             }
 
-            $table->unsignedInteger('family_id')->nullable();
-
-            $table->foreign('family_id')
-                ->references('id')
-                ->on('families')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->dateTime('date_welcomed')->nullable();
 
         });
     }
@@ -38,7 +32,7 @@ class AddFamilyToPatientInfo extends Migration
     {
         Schema::table('patient_info', function (Blueprint $table) {
 
-            $table->dropColumn('family_id');
+            $table->dropColumn('date_welcomed');
 
         });
     }

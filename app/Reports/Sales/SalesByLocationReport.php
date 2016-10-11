@@ -1,11 +1,6 @@
 <?php namespace App\Reports\Sales;
-use App\Http\Controllers\CallController;
-use App\PatientInfo;
 use App\Program;
-use App\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 /**
  * Created by PhpStorm.
@@ -28,7 +23,7 @@ class SalesByLocationReport
 
     public function __construct(Program $forProgram, Carbon $start, Carbon $end, $withLastMonth){
 
-        dd($forProgram->getProviders($forProgram->blog_id));
+//        dd($forProgram->getProviders($forProgram->blog_id));
 
         $this->startDate = $start;
         $this->startDateString = Carbon::parse($start)->toDateString();

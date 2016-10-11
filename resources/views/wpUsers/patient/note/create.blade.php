@@ -43,7 +43,8 @@
                             <input type="text" class="form-control" name="general_comment" id="general_comment"
                                    value="{{$patient->patientInfo->general_comment}}"
                                    placeholder="{{$patient->patientInfo->general_comment == '' ? 'Enter General Comment...' : $patient->patientInfo->general_comment}}"
-                                   aria-describedby="sizing-addon2" style="margin: 0 auto; text-align: left; color: #333;">
+                                   aria-describedby="sizing-addon2"
+                                   style="margin: 0 auto; text-align: left; color: #333;">
                         </div>
                     </div>
 
@@ -151,17 +152,39 @@
                                                                                      value="outbound"
                                                                                      id="Outbound"/><label
                                                                 for="Outbound"><span> </span>Outbound</label></div>
+
                                                     @if(auth()->user()->isCCMCountable())
-                                                    <div>
-                                                        <div class="radio-inline"><input type="checkbox"
-                                                                                         name="call_status"
-                                                                                         value="reached"
-                                                                                         id="reached"/><label
-                                                                    for="reached"><span> </span>Successful Clinical
-                                                                Call</label>
+                                                        <div>
+                                                            <div class="radio-inline"><input type="checkbox"
+                                                                                             name="call_status"
+                                                                                             value="reached"
+                                                                                             id="reached"/><label
+                                                                        for="reached"><span> </span>Successful Clinical
+                                                                    Call</label>
+                                                            </div>
                                                         </div>
-                                                    </div>
+
+                                                    @else
+
+                                                        <div>
+                                                            <div class="radio-inline"><input type="checkbox"
+                                                                                             name="welcome_call"
+                                                                                             value="welcome_call"
+                                                                                             id="welcome_call"/><label
+                                                                        for="welcome_call"><span> </span>Successful Welcome Call</label>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div class="radio-inline"><input type="checkbox"
+                                                                                             name="other_call"
+                                                                                             value="other_call"
+                                                                                             id="other_call"/><label
+                                                                        for="other_call"><span> </span>Successful Other Patient Call</label>
+                                                            </div>
+                                                        </div>
+
                                                     @endif
+
                                                     <input type="hidden" name="tcm" value="hospital">
                                                     <div>
                                                         <div class="radio-inline"><input type="checkbox"
@@ -237,13 +260,13 @@
                                         <div>
                                             <div class="col-sm-12">
                                                 <button name="Submit" id="Submit" type="submit" value="Submit"
-                                                        class="btn btn-primary btn-lg form-item--button form-item-spacing">Save/Send Note</button>
+                                                        class="btn btn-primary btn-lg form-item--button form-item-spacing">
+                                                    Save/Send Note
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
-
                             </div>
                         </div>
                     </div>

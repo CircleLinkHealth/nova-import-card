@@ -8,7 +8,7 @@ if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        $program = App\Program::find(21);
+        $program = App\Program::find(28);
         $result =  (new SalesByLocationReport
         (   $program,
             Carbon\Carbon::parse('2016-09-01 00:00:00'),
