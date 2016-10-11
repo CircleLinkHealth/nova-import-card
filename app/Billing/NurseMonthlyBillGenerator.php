@@ -87,7 +87,7 @@ class NurseMonthlyBillGenerator
 
         if($this->systemTime != 0 && $this->systemTime != null){
 
-            if( $this->systemTime <= 1800 && $this->systemTime > 0) {
+            if( $this->systemTime <= 1800) {
 
                 $this->formattedSystemTime = 0.5;
 

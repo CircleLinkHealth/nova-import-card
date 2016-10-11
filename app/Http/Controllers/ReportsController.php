@@ -8,6 +8,7 @@ use App\Models\CPM\CpmProblem;
 use App\PageTimer;
 use App\PatientCareTeamMember;
 use App\Program;
+use App\Reports\Sales\SalesByLocationReport;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\ReportsService;
@@ -589,13 +590,36 @@ class ReportsController extends Controller
         ]);
     }
 
-    public function salesReport(Request $request){
+    public function createSalesReport(Request $request){
 
+        $programs = Program::all()->pluck('display_name', 'blog_id');
+
+        return view('sales.create', ['programs' => $programs]);
+
+    }
+
+    public function makeSalesReport(Request $request){
 
         $input = $request->all();
 
-        $reportee = User::find($input['auth_user']);
+        $programs = $input['programs'];
 
+        $withHistory = isset($input['withPastMonth']) ? true : false;
+
+        $links = [];
+
+//        foreach ($programs as $program){
+
+            $program = Program::find($programs[0]);
+
+            return (new SalesByLocationReport($program,
+                                                  Carbon::parse($input['start_date']),
+                                                  Carbon::parse($input['end_date']),
+                                                  $withHistory)
+                                            )->handle();
+//        }
+
+//        return $links;
 
     }
 

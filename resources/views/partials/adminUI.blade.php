@@ -278,10 +278,9 @@
                                     Conditions (export)</a>
                             </li>
 
+                            <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a></li>
 
-                            <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a>
-                            </li>
-
+                            <li><a href="{{ URL::route('reports.sales.make', array()) }}"> Sales by Program </a></li>
                         </ul>
                     </li>
 

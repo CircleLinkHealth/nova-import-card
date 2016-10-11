@@ -14,7 +14,7 @@ if (app()->environment() != 'production') {
             Carbon\Carbon::parse('2016-09-01 00:00:00'),
             Carbon\Carbon::parse('2016-09-30 23:59:59'), true))->handle();
 
-        return $result;
+        return [$program->name => $result];
 
     });
 
@@ -501,9 +501,14 @@ if (app()->environment() != 'production') {
                     'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
                 ]);
 
-                Route::post('sales', [
-                    'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
-                    'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
+                Route::get('sales/create', [
+                    'uses' => 'ReportsController@createSalesReport',
+                    'as'   => 'reports.sales.create',
+                ]);
+
+                Route::post('sales/generate', [
+                    'uses' => 'ReportsController@makeSalesReport',
+                    'as'   => 'reports.sales.make',
                 ]);
 
                 Route::get('monthly-billing/create', [

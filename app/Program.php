@@ -144,6 +144,13 @@ class Program extends Model {
 
             }
 
+            if($patient->created_at > $start->toDateTimeString() && $patient->created_at <= $end->toDateTimeString()){
+
+                $data['enrolled']++;
+
+            }
+
+
         }
 
         return $data;
