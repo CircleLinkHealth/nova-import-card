@@ -35,8 +35,12 @@
 <body>
 <div class="container">
     <div class="content">
-        <div class="title">@if(isset($message)) {!! $message !!} @else Unauthorized. You dont have permissions to view
-            this page. @endif</div>
+        <div class="title">Seems like you have open sessions (tabs) for different patients. <br>
+            You can only work on one patient at a time. <br>
+            Please <a
+                    href="{{ empty($patientId) ? URL::route('patients.search') : URL::route('patient.summary', array('patient' => $patientId)) }}" target="_blank">go to
+                the open session</a> close that window, and then refresh this page to resume your work.
+        </div>
 
         <a class="btn btn-primary" href="{{ URL::previous() }}"
            style="text-decoration:none;font-weight:bold;">Go back</a> or

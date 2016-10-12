@@ -54,7 +54,6 @@ if ($enableTimeTracking) {
 ?>
 <script>
     (function ($) {
-
         var startTime = new Date();
         var noResponse = true; // set to false if user clicks yes/no button
         var totalTime = 0; // total accumulated time on page
@@ -166,18 +165,22 @@ if ($enableTimeTracking) {
         });
 
         // this runs when the browser window is closed
+        //no it doesn't. It's when content unloads
         window.onbeforeunload = function () {
-            //alert('Elapsed: ');
             $(document).idleTimer("pause");
             endTime = new Date();
             totalTime = (totalTime + (endTime - startTime));
-            submitTotalTime();
-            //return false;
+            submitTotalTime(true);
         };
 
         // this is the ajax call that is made to store the time
         // first store time than redirect based on result, logout if idle
-        function submitTotalTime() {
+        function submitTotalTime(deletePatientSession) {
+
+            if (deletePatientSession === undefined) {
+                deletePatientSession = false;
+            }
+
             if (consoleDebug) console.log('start submitTotalTime()');
             if (consoleDebug) console.log('totalTime = ' + totalTime);
             if (isTimerProcessed == true) {
@@ -200,7 +203,8 @@ if ($enableTimeTracking) {
                 "ipAddr": '<?php echo $ipAddr; ?>',
                 "activity": $('#activityName').val(),
                 "title": '<?php echo $title; ?>',
-                "qs": '<?php echo $qs; ?>'
+                "qs": '<?php echo $qs; ?>',
+                "deletePatientSession": deletePatientSession
             };
 
             if (consoleDebug) console.log(data);

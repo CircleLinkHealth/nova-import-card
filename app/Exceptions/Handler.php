@@ -7,61 +7,68 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class Handler extends ExceptionHandler {
+class Handler extends ExceptionHandler
+{
 
-	/**
-	 * A list of the exception types that should not be reported.
-	 *
-	 * @var array
-	 */
-	protected $dontReport = [
-		AuthorizationException::class,
-		HttpException::class,
-		ModelNotFoundException::class,
-		ValidationException::class,
-	];
+    /**
+     * A list of the exception types that should not be reported.
+     *
+     * @var array
+     */
+    protected $dontReport = [
+        AuthorizationException::class,
+        HttpException::class,
+        ModelNotFoundException::class,
+        ValidationException::class,
+    ];
 
-	/**
-	 * Report or log an exception.
-	 *
-	 * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
-	 *
-	 * @param  \Exception  $e
-	 * @return void
-	 */
-	public function report(Exception $e)
-	{
-		return parent::report($e);
-	}
+    /**
+     * Report or log an exception.
+     *
+     * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
+     *
+     * @param  \Exception $e
+     *
+     * @return void
+     */
+    public function report(Exception $e)
+    {
+        return parent::report($e);
+    }
 
-	/**
-	 * Render an exception into an HTTP response.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \Exception  $e
-	 * @return \Illuminate\Http\Response
-	 */
-	public function render($request, Exception $e)
-	{
-        if ($e instanceof ModelNotFoundException)
-        {
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Exception $e
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function render(
+        $request,
+        Exception $e
+    ) {
+        if ($e instanceof ModelNotFoundException) {
             return response($e->getMessage(), 400);
         }
 
-		if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException)
-		{
-			return response()->json(['token_expired'], $e->getStatusCode());
-		}
-		elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException)
-		{
-			return response()->json(['token_invalid'], $e->getStatusCode());
-		}
-		elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException)
-		{
-			return response()->json(['token_blacklisted'], '403');
-		}
+        if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException) {
+            return response()->json(['token_blacklisted'], '403');
+        } elseif ($e instanceof HasPatientTabOpenException) {
 
-		return parent::render($request, $e);
-	}
+            $session = \App\Models\PatientSession::where('user_id', '=', auth()->user()->ID)
+                ->first();
+
+            return response()->view('errors.patientTabAlreadyOpen', [
+                'patientId' => $session->patient_id,
+            ], 403);
+        }
+
+        return parent::render($request, $e);
+    }
 
 }

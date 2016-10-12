@@ -84,23 +84,26 @@ class PageTimerController extends Controller
             ->where('start_time', '<', $newEndTime)
             ->get();
 
-        $overlapsAsc = $overlaps->sortBy('start_time');
-        $overlapsDesc = $overlaps->sortByDesc('end_time');
+        if (!$overlaps->isEmpty()) {
 
-        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $overlapsAsc->first()->start_time);
-        $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $overlapsDesc->first()->end_time);
+            $overlapsAsc = $overlaps->sortBy('start_time');
+            $overlapsDesc = $overlaps->sortByDesc('end_time');
 
-        if ($newStartTime->gte($startTime) && $newEndTime->lte($endTime)) {
-            $billableDuration = 0;
-        } else {
-            $billableDuration = 0;
+            $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $overlapsAsc->first()->start_time);
+            $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $overlapsDesc->first()->end_time);
 
-            if ($newStartTime->lt($startTime)) {
-                $billableDuration = $billableDuration + ($startTime->diffInSeconds($newStartTime));
-            }
+            if ($newStartTime->gte($startTime) && $newEndTime->lte($endTime)) {
+                $billableDuration = 0;
+            } else {
+                $billableDuration = 0;
 
-            if ($newEndTime->gt($endTime)) {
-                $billableDuration = $billableDuration + ($newEndTime->diffInSeconds($endTime));
+                if ($newStartTime->lt($startTime)) {
+                    $billableDuration = $billableDuration + ($startTime->diffInSeconds($newStartTime));
+                }
+
+                if ($newEndTime->gt($endTime)) {
+                    $billableDuration = $billableDuration + ($newEndTime->diffInSeconds($endTime));
+                }
             }
         }
 
