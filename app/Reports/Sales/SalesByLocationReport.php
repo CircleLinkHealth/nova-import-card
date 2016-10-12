@@ -28,13 +28,10 @@ class SalesByLocationReport
 
     public function __construct(Program $forProgram, Carbon $start, Carbon $end, $withLastMonth){
 
-//        dd($forProgram->getProviders($forProgram->blog_id));
 
         $this->startDate = $start;
         $this->startDateString = Carbon::parse($start)->toDateString();
         $this->endDate = $end;
-
-//        $this->providers = $this->program->getProviders($this->program->blog_id);
 
         $this->location = '';
         $this->program = '';

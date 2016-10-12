@@ -266,9 +266,7 @@ class NotesController extends Controller
     ) {
 
         $input = $input->all();
-
-        dd($input);
-
+        
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
         $note = $this->service->storeNote($input);
@@ -378,7 +376,6 @@ class NotesController extends Controller
 
                 if (isset($input['other_call'])) {
 
-                    dd($input['other_call']);
                     $this->service->storeCallForNote($note, 'other call', $patient, auth()->user(), auth()->user()->ID,
                         null);
 
