@@ -4,6 +4,7 @@ use App\PatientInfo;
 use App\Program;
 use Carbon\Carbon;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Illuminate\Support\Facades\DB;
 
 
 /**
@@ -25,8 +26,9 @@ class SalesByLocationReport
     protected $currentMonth;
     protected $lastMonth;
     protected $reportLastMonthWithDifference;
+    protected $enrollmentCount = [];
 
-    public function __construct(Program $forProgram, Carbon $start, Carbon $end, $withLastMonth){
+    public function __construct(Program $forProgram, Carbon $start, Carbon $end, $withLastMonth = true){
 
 
         $this->startDate = $start;
@@ -40,7 +42,7 @@ class SalesByLocationReport
 
         $this->program = $forProgram;
 
-        $this->reportLastMonthWithDifference = $withLastMonth;
+        $this->reportLastMonthWithDifference = true;//$withLastMonth;
 
     }
 
@@ -50,6 +52,8 @@ class SalesByLocationReport
         $this->patientsForProgram();
 
 //        $this->getStatsByProvider();
+
+        $this->getEnrollmentNumbers();
 
         $this->formatSalesData();
 
@@ -80,23 +84,39 @@ class SalesByLocationReport
         }
     }
 
-    public function getStatsByProvider(){
+    public function getEnrollmentNumbers()
+    {
+        $this->enrollmentCount = PatientInfo::whereHas('user', function ($q){
 
-        foreach ($this->providers as $provider){
+            $q->where('program_id', $this->program->blog_id);
 
-            $patients = PatientInfo::whereHas('user', function ($q){
+        })
+            ->whereNotNull('ccm_status')
+            ->select(DB::raw('count(ccm_status) as total, ccm_status'))
+            ->groupBy('ccm_status')
+            ->get()
+            ->toArray();
 
-                $q->where('program_id', $this->blog_id);
-
-            })
-                ->whereNotNull('ccm_status')
-                ->where('ccm_status')
-                ->get();
-
-
-        }
-
+        return $this->enrollmentCount;
     }
+
+//    public function getStatsByProvider(){
+//
+//        foreach ($this->providers as $provider){
+//
+//            $patients = PatientInfo::whereHas('user', function ($q){
+//
+//                $q->where('program_id', $this->blog_id);
+//
+//            })
+//                ->whereNotNull('ccm_status')
+//                ->where('ccm_status')
+//                ->get();
+//
+//
+//        }
+//
+//    }
 
     public function calculateMonthOverMonthChanges(){
 
@@ -128,7 +148,7 @@ class SalesByLocationReport
         }
 
         //Enrolled Patients
-        if($this->currentMonth['enrolled'] != 0 && $this->lastMonth['paused'] != 0 ){
+        if($this->currentMonth['enrolled'] != 0 && $this->lastMonth['enrolled'] != 0 ){
 
             $this->diff['enrolled']['diff'] = $this->currentMonth['enrolled'] - $this->lastMonth['enrolled'];
             $this->diff['enrolled']['percent'] = round((($this->diff['enrolled']['diff'] / $this->currentMonth['enrolled']) * 100), 2) . '%';
@@ -148,14 +168,16 @@ class SalesByLocationReport
         $this->data = [
             'current' => $this->currentMonth,
             'last' => $this->lastMonth,
-            'data' => $this->diff,
+            'diff' => $this->diff,
             'program_name' => $this->program->display_name,
-            't0start' => $this->startDateString,
-            't0end' => $this->endDate->toDateString(),
-            't1start' => Carbon::parse($this->startDateString)->subMonth()->startOfMonth()->toDateString(),
-            't1end' => Carbon::parse($this->startDateString)->subMonth()->endOfMonth()->toDateString()
+            'withMOM' => $this->reportLastMonthWithDifference,
+            't0start' => Carbon::parse($this->startDateString)->format('F Y'),
+            'count' => $this->enrollmentCount,
+            't1start' => Carbon::parse($this->startDateString)->subMonth()->startOfMonth()->format('F Y'),
+//            't1end' => Carbon::parse($this->startDateString)->subMonth()->endOfMonth()->toFormattedDateString()
 
         ];
+
 
     }
 
