@@ -22,6 +22,8 @@ class NurseWorkScheduleTest extends TestCase
 
         $this->store_window($nurse, Carbon::now()->addWeek(2));
         $this->store_window($nurse, Carbon::now()->addWeek(3));
+
+        $this->report($nurse);
     }
 
     protected function nurse_sees_account_button_and_schedule(User $nurse)
@@ -143,5 +145,32 @@ class NurseWorkScheduleTest extends TestCase
         $this->delete_window($nurse, $window, false);
     }
 
+    public function report($user)
+    {
+        /**
+         * Report stuff
+         */
 
+        //This is kinda hacky.
+        //We are checking which database is being used to figure out which environment we are on.
+        //This is because when testing, the APP_ENV is set to 'testing'
+        $db = env('DB_DATABASE');
+
+        $text = "
+            A Nurse was created:
+            login: {$user->user_email}
+            password: password
+            ";
+
+        if (in_array($db, [
+            'cpm_staging',
+            'cpm_testing',
+            'cpm_hotfix',
+        ])) {
+            Slack::to('#qualityassurance')
+                ->send($text);
+        }
+
+        echo $text;
+    }
 }

@@ -24,7 +24,6 @@ class RegressionTest extends TestCase
         $this->userLogin($this->provider);
 
         $this->patients[] = $this->createNewPatient();
-        $this->patients[] = $this->createNewPatient();
 
         //We use this so add a random number of CpmEntities for users after the first one.
         //In other words, the first User has all conditions, the rest can have any number of conditions.
@@ -56,7 +55,7 @@ class RegressionTest extends TestCase
         //This is because when testing, the APP_ENV is set to 'testing'
         $db = env('DB_DATABASE');
 
-        $text = "Automated Regression Testing ran successfully on environment: $db.
+        $text = "
             A Provider was created:
             login: {$this->provider->user_email}
             password: password
@@ -76,5 +75,18 @@ class RegressionTest extends TestCase
         }
 
         echo $text;
+    }
+
+    public function testCreatePatientWithAllConditions()
+    {
+        $this->provider = $this->createUser();
+
+        $this->userLogin($this->provider);
+
+        $patient = $this->createNewPatient();
+        $this->patients[] = $patient;
+        $this->fillCarePlan($patient);
+
+        $this->report();
     }
 }

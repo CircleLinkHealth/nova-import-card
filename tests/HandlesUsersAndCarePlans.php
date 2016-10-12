@@ -224,7 +224,7 @@ trait HandlesUsersAndCarePlans
 
     public function fillCarePlan(
         User $patient,
-        $numberOfRowsToCreate
+        $numberOfRowsToCreate = null
     ) {
         $this->addPatientCareTeam($patient);
 
