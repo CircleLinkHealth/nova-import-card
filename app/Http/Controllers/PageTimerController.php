@@ -127,7 +127,7 @@ class PageTimerController extends Controller
         $pagetimer->query_string = $data['qs'];
         $pagetimer->save();
 
-        $this->addPageTimerActivities([$pagetimer->id]);
+        $this->addPageTimerActivities($pagetimer);
 
         return response("PageTimer Logged, duration:" . $billableDuration, 201);
     }
@@ -140,72 +140,58 @@ class PageTimerController extends Controller
      *
      * @return bool
      */
-    public function addPageTimerActivities($pageTimerIds = [])
+    public function addPageTimerActivities(PageTimer $pageTimer)
     {
-        if (!empty($pageTimerIds)) {
-            foreach ($pageTimerIds as $pageTimerId) {
-                // first get page timer params
-                $pageTime = PageTimer::find($pageTimerId);
-                if (!$pageTime) {
-                    continue 1;
-                }
+        // check params to see if rule exists
+        $params = [];
 
-                // check params to see if rule exists
-                $params = [];
+        //provider
+        $provider = User::find($pageTimer->provider_id);
 
-                //provider
-                $provider = User::find($pageTime->provider_id);
-
-                // provider role param
-                $params['role'] = '';
-                $role = $provider->roles()->first();
-                if ($role) {
-                    $params['role'] = $role->name;
-                }
-
-                // activity param
-                $params['activity'] = $pageTime->activity_type;
-                //$params['program_id'] = $pageTime->program_id;
-                //$params = array('role' => 'Provider', 'activity' => 'Patient Overview');
-
-                // check against rules and add activity if passes
-                $rulesService = new RulesService;
-                $ruleActions = $rulesService->getActions($params, 'ATT');
-
-                if ($ruleActions) {
-                    $activiyParams = [];
-                    $activiyParams['type'] = $params['activity'];
-                    $activiyParams['provider_id'] = $pageTime->provider_id;
-                    $activiyParams['performed_at'] = $pageTime->start_time;
-                    $activiyParams['duration'] = $pageTime->duration;
-                    $activiyParams['duration_unit'] = 'seconds';
-                    $activiyParams['patient_id'] = $pageTime->patient_id;
-                    $activiyParams['logged_from'] = 'pagetimer';
-                    $activiyParams['logger_id'] = $pageTime->provider_id;
-                    $activiyParams['page_timer_id'] = $pageTimerId;
-                    $activiyParams['meta'] = [
-                        'meta_key'   => 'comment',
-                        'meta_value' => 'logged from pagetimer',
-                    ];
-
-                    // if rule exists, create activity
-                    $activityId = Activity::createNewActivity($activiyParams);
-
-                    $activityService = new ActivityService;
-                    $result = $activityService->reprocessMonthlyActivityTime($pageTime->patient_id);
-                }
-
-                // update pagetimer
-                $pageTime->processed = 'Y';
-                $pageTime->rule_params = serialize($params);
-                $pageTime->rule_id = ($ruleActions)
-                    ? $ruleActions[0]->id
-                    : '';
-                $pageTime->save();
-
-                return true;
-            }
+        // provider role param
+        $params['role'] = '';
+        $role = $provider->roles()->first();
+        if ($role) {
+            $params['role'] = $role->name;
         }
+
+        // activity param
+        $params['activity'] = $pageTimer->activity_type;
+        //$params['program_id'] = $pageTimer->program_id;
+        //$params = array('role' => 'Provider', 'activity' => 'Patient Overview');
+
+        // check against rules and add activity if passes
+        $rulesService = new RulesService;
+        $ruleActions = $rulesService->getActions($params, 'ATT');
+
+        if ($ruleActions) {
+            $activiyParams = [];
+            $activiyParams['type'] = $params['activity'];
+            $activiyParams['provider_id'] = $pageTimer->provider_id;
+            $activiyParams['performed_at'] = $pageTimer->start_time;
+            $activiyParams['duration'] = $pageTimer->billable_duration;
+            $activiyParams['duration_unit'] = 'seconds';
+            $activiyParams['patient_id'] = $pageTimer->patient_id;
+            $activiyParams['logged_from'] = 'pagetimer';
+            $activiyParams['logger_id'] = $pageTimer->provider_id;
+            $activiyParams['page_timer_id'] = $pageTimer->id;
+
+            // if rule exists, create activity
+            $activityId = Activity::createNewActivity($activiyParams);
+
+            $activityService = new ActivityService;
+            $result = $activityService->reprocessMonthlyActivityTime($pageTimer->patient_id);
+        }
+
+        // update pagetimer
+        $pageTimer->processed = 'Y';
+        $pageTimer->rule_params = serialize($params);
+        $pageTimer->rule_id = ($ruleActions)
+            ? $ruleActions[0]->id
+            : '';
+        $pageTimer->save();
+
+        return true;
     }
 
     /**
