@@ -160,6 +160,19 @@ class SalesByLocationReport
 
         }
 
+        //Enrolled Patients
+        if($this->currentMonth['added'] != 0 && $this->lastMonth['added'] != 0 ){
+
+            $this->diff['added']['diff'] = $this->currentMonth['added'] - $this->lastMonth['added'];
+            $this->diff['added']['percent'] = round((($this->diff['added']['diff'] / $this->currentMonth['added']) * 100), 2) . '%';
+
+        } else {
+
+            $this->diff['added']['diff'] = 'N/A';
+            $this->diff['added']['percent'] = 'N/A';
+
+        }
+
 
     }
 

@@ -133,7 +133,7 @@ class Program extends Model {
 
         foreach ($patients as $patient){
 
-            if($patient->created_at > $start->toDateTimeString() && $patient->created_at <= $end->toDateTimeString()){
+            if($patient->date_welcomed > $start->toDateTimeString() && $patient->date_welcomed <= $end->toDateTimeString()){
 
                 $data['added']++;
 
