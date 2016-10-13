@@ -1,23 +1,18 @@
 <?php
 
 
-use App\Reports\Sales\SalesByLocationReport;
+use App\Program;
 
 if (app()->environment() != 'production') {
 
 
     Route::get('rohan', function () {
 
-        $program = App\Program::find(28);
-        $result =  (new SalesByLocationReport
-        (   $program,
-            Carbon\Carbon::parse('2016-09-01 00:00:00'),
-            Carbon\Carbon::parse('2016-09-30 23:59:59'), true))->handle();
+        $result =  Program::find(21)->enrollmentByProgram(Carbon\Carbon::parse('2016-09-01 00:00:00'), Carbon\Carbon::parse('2016-09-30 23:59:59'));
 
-        return [$program->name => $result];
+        return ['thing' => $result];
 
     });
-
 }
 
 //Algo test routes.
