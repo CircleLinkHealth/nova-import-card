@@ -10,9 +10,10 @@
 
 <dl class="dl-horizontal">
     <h4>
-        <dt>Enrolled <span style="color: green"> {{$data['count'][0]['total']}} </span></dt>
-        <dt>Withdrawn <span style="color: darkred"> {{$data['count'][2]['total']}} </span></dt>
-        <dt>Paused<span style="color: darkorange"> {{$data['count'][1]['total']}} </span></dt>
+        <dt>Current Cumulative:</dt>
+        <dt>Enrolled <span style="color: green"> {{$data['count'][0]['total'] ?? null}} </span></dt>
+        <dt>Withdrawn <span style="color: darkred"> {{isset($data['count'][2]['total']) ?? null}} </span></dt>
+        <dt>Paused<span style="color: darkorange"> {{$data['count'][1]['total'] ?? null}} </span></dt>
 
     </h4>
 </dl>
@@ -30,7 +31,7 @@
     <?php  ?>
     @foreach($data['diff'] as $key => $value)
         <tr>
-            <td>{{$key}}</td>
+            <td>{{ucwords($key) . ' during period'}}</td>
             <td>{{$data['current'][$key]}}</td>
             @if($data['withMOM'])
             <td>{{$data['last'][$key]}}</td>

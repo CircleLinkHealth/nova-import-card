@@ -62,9 +62,7 @@ class SalesByLocationReport
     }
 
     public function patientsForProgram(){
-
-        $startDate = $this->startDate->toDateString();
-
+        
         $this->currentMonth = $this->program->enrollmentByProgram(Carbon::parse($this->startDateString),
                                                                   Carbon::parse($this->endDate));
 
@@ -147,18 +145,18 @@ class SalesByLocationReport
 
         }
 
-        //Enrolled Patients
-        if($this->currentMonth['enrolled'] != 0 && $this->lastMonth['enrolled'] != 0 ){
-
-            $this->diff['enrolled']['diff'] = $this->currentMonth['enrolled'] - $this->lastMonth['enrolled'];
-            $this->diff['enrolled']['percent'] = round((($this->diff['enrolled']['diff'] / $this->currentMonth['enrolled']) * 100), 2) . '%';
-
-        } else {
-
-            $this->diff['enrolled']['diff'] = 'N/A';
-            $this->diff['enrolled']['percent'] = 'N/A';
-
-        }
+//        //Enrolled Patients
+//        if($this->currentMonth['total enrolled'] != 0 && $this->lastMonth['total enrolled'] != 0 ){
+//
+//            $this->diff['total enrolled']['diff'] = $this->currentMonth['total enrolled'] - $this->lastMonth['total enrolled'];
+//            $this->diff['total enrolled']['percent'] = round((($this->diff['total enrolled']['diff'] / $this->currentMonth['total enrolled']) * 100), 2) . '%';
+//
+//        } else {
+//
+//            $this->diff['total enrolled']['diff'] = 'N/A';
+//            $this->diff['total enrolled']['percent'] = 'N/A';
+//
+//        }
 
         //Enrolled Patients
         if($this->currentMonth['added'] != 0 && $this->lastMonth['added'] != 0 ){
