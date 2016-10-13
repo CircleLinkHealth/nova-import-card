@@ -124,13 +124,20 @@ class Program extends Model {
 
         $data = [
 
+            'added' => 0,
+            'enrolled' => 0,
             'withdrawn' => 0,
-            'paused' => 0,
-            'enrolled' => 0
+            'paused' => 0
 
         ];
 
         foreach ($patients as $patient){
+
+            if($patient->date_welcomed > $start->toDateTimeString() && $patient->date_welcomed <= $end->toDateTimeString()){
+
+                $data['added']++;
+
+            }
 
             if($patient->date_withdrawn > $start->toDateTimeString() && $patient->date_withdrawn <= $end->toDateTimeString()){
 

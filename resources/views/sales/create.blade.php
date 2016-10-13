@@ -8,7 +8,7 @@
             <div class="col-md-8 col-md-offset-2">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading">Sales Report Generator</div>
+                    <div class="panel-heading">Account Status Report Generator</div>
                     <div class="panel-body">
                         <form class="form-horizontal">
                             <fieldset>
@@ -59,8 +59,7 @@
                                     <div class="row" style="padding-left: 12px;">
                                         <label class="col-md-2 control-label" for="end_date"></label>
                                         <div class="col-md-2">
-                                            <button id="submit" name="submit" value="download" class="btn btn-success">Download
-                                                Invoice (s)
+                                            <button id="submit" name="submit" value="download" class="btn btn-success">Download Report(s)
                                             </button>
                                         </div>
                                         <div class="col-md-2" style="padding-left: 40px">
