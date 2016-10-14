@@ -142,6 +142,7 @@ class CcdApiController extends Controller
         $locationId = $this->getApiUserLocation($user);
 
         $pendingReports = PatientReports::where('location_id', $locationId)
+            ->whereFileType('careplan')
             ->whereBetween('created_at', [
                 $startDate,
                 $endDate,
