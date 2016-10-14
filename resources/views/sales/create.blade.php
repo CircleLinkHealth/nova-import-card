@@ -45,7 +45,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label" for="end_date">Include Month/Month</label>
+                                    <label class="col-md-2 control-label" for="end_date">Include Prior Month</label>
                                     <div class="col-md-6">
                                         <input class="form-control" type="checkbox"
                                                value="1" name="withPastMonth"
@@ -59,7 +59,8 @@
                                     <div class="row" style="padding-left: 12px;">
                                         <label class="col-md-2 control-label" for="end_date"></label>
                                         <div class="col-md-2">
-                                            <button id="submit" name="submit" value="download" class="btn btn-success">Download Report(s)
+                                            <button id="submit" name="submit" value="download" class="btn btn-success">
+                                                Generate Report(s)
                                             </button>
                                         </div>
                                         <div class="col-md-2" style="padding-left: 40px">
