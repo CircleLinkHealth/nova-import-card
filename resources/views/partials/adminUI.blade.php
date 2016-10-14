@@ -280,7 +280,7 @@
 
                             <li><a href="{{ URL::route('excel.report.t2', array()) }}">Paused Patients (export)</a></li>
 
-                            <li><a href="{{ URL::route('reports.sales.create', array()) }}"> Sales by Program </a></li>
+                            <li><a href="{{ URL::route('reports.sales.create', array()) }}">Account Status</a></li>
                         </ul>
                     </li>
 
