@@ -1,9 +1,11 @@
 <?php namespace App;
 
+use App\Scopes\Universal\DateScopesTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class PageTimer extends Model
 {
+    use DateScopesTrait;
 
     /**
      * The connection name for the model.

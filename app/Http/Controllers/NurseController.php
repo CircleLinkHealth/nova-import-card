@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Activity;
-use App\Algorithms\Calls\NurseCallStatistics;
 use App\Billing\NurseMonthlyBillGenerator;
 use App\Call;
 use App\NurseInfo;
@@ -11,8 +10,6 @@ use App\PageTimer;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
-use App\Http\Requests;
 use Yajra\Datatables\Facades\Datatables;
 
 class NurseController extends Controller
@@ -34,27 +31,32 @@ class NurseController extends Controller
     {
 
         $nurses = $request->input('nurses');
-        $addTime = $request->input('manual_time') ? $request->input('manual_time') : 0;
-        $addNotes = $request->input('manual_time_notes') ? $request->input('manual_time_notes') : '';
+        $addTime = $request->input('manual_time')
+            ? $request->input('manual_time')
+            : 0;
+        $addNotes = $request->input('manual_time_notes')
+            ? $request->input('manual_time_notes')
+            : '';
 
-        if($request->input('submit') == 'download') {
+        if ($request->input('submit') == 'download') {
 
             $links = [];
 
             foreach ($nurses as $nurse) {
-            
+
                 $nurse = NurseInfo::where('user_id', $nurse)->first();
                 $startDate = Carbon::parse($request->input('start_date'));
                 $endDate = Carbon::parse($request->input('end_date'));
 
-                $links[$nurse->user->fullName] = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $addTime, $addNotes))->handle();
+                $links[$nurse->user->fullName] = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $addTime,
+                    $addNotes))->handle();
 
             }
 
             return view('billing.nurse.list', ['invoices' => $links]);
         }
 
-        if($request->input('submit') == 'email') {
+        if ($request->input('submit') == 'email') {
 
             $messages = [];
             foreach ($nurses as $nurse) {
@@ -62,8 +64,9 @@ class NurseController extends Controller
                 $nurse = NurseInfo::where('user_id', $nurse)->first();
                 $startDate = Carbon::parse($request->input('start_date'));
                 $endDate = Carbon::parse($request->input('end_date'));
-                
-                $messages[] = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $addTime, $addNotes))->email();
+
+                $messages[] = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $addTime,
+                    $addNotes))->email();
 
             }
 
@@ -71,32 +74,30 @@ class NurseController extends Controller
         }
     }
 
-    public function makeDailyReport(){
+    public function makeDailyReport()
+    {
 
         return view('admin.reports.nursedaily');
 
     }
 
-    public function dailyReport(){
+    public function dailyReport()
+    {
 
-        $nurse_ids = User::whereHas('roles', function ($q) {
-            $q->where('name', '=', 'care-center');
-        })->pluck('ID');
+        $nurses = User::ofType('care-center')->get();
 
         $i = 0;
-        $nurses = array();
+        $nurses = [];
 
+        foreach ($nurses as $nurse) {
 
-        foreach ($nurse_ids as $nurse_id){
-
-            $nurse = User::find($nurse_id);
-
-            $nurses[$i]['id'] = $nurse_id;
+            $nurses[$i]['id'] = $nurse;
             $nurses[$i]['name'] = $nurse->fullName;
 
-            $last_activity_date = DB::table('lv_page_timer')->select(DB::raw('max(`end_time`) as last_activity'))->where('provider_id', $nurse_id)->get();
+            $last_activity_date = DB::table('lv_page_timer')->select(DB::raw('max(`end_time`) as last_activity'))->where('provider_id',
+                $nurse->ID)->get();
 
-            if($last_activity_date[0]->last_activity == null){
+            if ($last_activity_date[0]->last_activity == null) {
                 $nurses[$i]['Time Since Last Activity'] = 'N/A';
             } else {
                 $nurses[$i]['Time Since Last Activity'] = Carbon::parse($last_activity_date[0]->last_activity)->diffForHumans();
@@ -104,28 +105,28 @@ class NurseController extends Controller
             }
 
             $nurses[$i]['# Calls Today'] =
-                Call::where('outbound_cpm_id', $nurse_id)
-                    ->where(function ($q){
-                        $q->where('updated_at', '>=' , Carbon::now()->startOfDay())
-                            ->where('updated_at', '<=' , Carbon::now()->endOfDay());
+                Call::where('outbound_cpm_id', $nurse->ID)
+                    ->where(function ($q) {
+                        $q->where('updated_at', '>=', Carbon::now()->startOfDay())
+                            ->where('updated_at', '<=', Carbon::now()->endOfDay());
                     })
-                    ->where(function ($q){
+                    ->where(function ($q) {
                         $q->where('status', 'reached')
                             ->orWhere('status', '');
                     })
                     ->count();
 
             $nurses[$i]['# Successful Calls Today'] =
-                Call::where('outbound_cpm_id', $nurse_id)
-                    ->where(function ($q){
-                        $q->where('updated_at', '>=' , Carbon::now()->startOfDay())
-                            ->where('updated_at', '<=' , Carbon::now()->endOfDay());
+                Call::where('outbound_cpm_id', $nurse->ID)
+                    ->where(function ($q) {
+                        $q->where('updated_at', '>=', Carbon::now()->startOfDay())
+                            ->where('updated_at', '<=', Carbon::now()->endOfDay());
                     })
                     ->where('status', 'reached')
                     ->count();
 
 //        $nurses[$nurse->fullName]['# Scheduled Calls Today'] =
-//            \App\Call::where('outbound_cpm_id', $nurse_id)
+//            \App\Call::where('outbound_cpm_id', $nurse->ID)
 //                ->where(function ($q){
 //                    $q->where('updated_at', '>=' , Carbon::now()->startOfDay())
 //                        ->where('updated_at', '<=' , Carbon::now()->endOfDay());
@@ -133,33 +134,23 @@ class NurseController extends Controller
 //                ->where('status', 'scheduled')
 //                ->count();
 
-            $activity_time = Activity::where(function ($q) use ($nurse_id){
-                $q->where('provider_id', $nurse_id)
-                    ->orWhere('logger_id', $nurse_id);
-            })
-                ->where(function ($q){
-                    $q->where('created_at', '>=' , Carbon::now()->startOfDay())
-                        ->where('created_at', '<=' , Carbon::now()->endOfDay());
-                })
+            $activity_time = Activity::createdBy($nurse)
+                ->createdToday()
                 ->sum('duration');
 
             $H1 = floor($activity_time / 3600);
             $m1 = ($activity_time / 60) % 60;
             $s1 = $activity_time % 60;
-            $activity_time_formatted = sprintf("%02d:%02d:%02d",$H1, $m1, $s1);
+            $activity_time_formatted = sprintf("%02d:%02d:%02d", $H1, $m1, $s1);
 
-            $system_time = PageTimer::where('provider_id', $nurse_id)
-                ->where(function ($q){
-                    $q->where('updated_at', '>=' , Carbon::now()->startOfDay())
-                        ->where('updated_at', '<=' , Carbon::now()->endOfDay());
-                })
-//				->whereNotNull('activity_type')
+            $system_time = PageTimer::where('provider_id', $nurse->ID)
+                ->createdToday('updated_at')
                 ->sum('duration');
 
             $H2 = floor($system_time / 3600);
             $m2 = ($system_time / 60) % 60;
             $s2 = $system_time % 60;
-            $system_time_formatted = sprintf("%02d:%02d:%02d",$H2, $m2, $s2);
+            $system_time_formatted = sprintf("%02d:%02d:%02d", $H2, $m2, $s2);
 
             $nurses[$i]['CCM Mins Today'] = $activity_time_formatted;
             $nurses[$i]['Total Mins Today'] = $system_time_formatted;
@@ -168,7 +159,7 @@ class NurseController extends Controller
 
             $nurses[$i]['lessThan20MinsAgo'] = false;
 
-            if($last_activity_date == null){
+            if ($last_activity_date == null) {
 
                 $nurses[$i]['last_activity'] = 'N/A';
 
@@ -184,7 +175,7 @@ class NurseController extends Controller
                 }
             }
 
-            if($nurses[$i]['Time Since Last Activity'] == 'N/A'){
+            if ($nurses[$i]['Time Since Last Activity'] == 'N/A') {
                 unset($nurses[$i]);
             }
 
@@ -208,7 +199,7 @@ class NurseController extends Controller
 //            ->nurseCallsPerHour();
 
         return view('statistics.nurses.info');
-        
+
     }
 
 }
