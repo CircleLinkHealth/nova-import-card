@@ -17,7 +17,9 @@
                             Provider: <em>No Provider Selected </em>
                         @endif
                         Location:</strong>
-                    <?= (empty($patient->getPreferredLocationName())) ? 'Not Set' : $patient->getPreferredLocationName();  ?>
+                    <?= (empty($patient->getPreferredLocationName()))
+                            ? 'Not Set'
+                            : $patient->getPreferredLocationName();  ?>
                 </span>
                 <?php
                 // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
@@ -58,7 +60,9 @@
                         </select>
                     </li>
                 @else
-                    <li id="status" class="inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status)) ? 'N/A' : ucwords($patient->ccm_status);  ?></li>
+                    <li id="status" class="inline-block {{$patient->ccm_status}}"><?= (empty($patient->ccm_status))
+                                ? 'N/A'
+                                : ucwords($patient->ccm_status);  ?></li>
                 @endif
             </ul>
         </div>
@@ -71,7 +75,8 @@
                                 title="{{$patient->agentEmail}}">({{$patient->agentRelationship}}
                             ) {{$patient->agentName}}&nbsp;&nbsp;</span></li>
                     <li class="inline-block">{{$patient->agentPhone}}</li>
-                {{--</ul><div style="clear:both"></div><ul class="person-conditions-list inline-block text-medium"></ul>--}}
+                </ul>
+                {{--<div style="clear:both"></div><ul class="person-conditions-list inline-block text-medium"></ul>--}}
             </div>
         </div>
     @endif
