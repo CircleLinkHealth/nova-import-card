@@ -76,7 +76,16 @@ class PageTimerController extends Controller
             $newEndTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
         }
 
-        $duration = ($data['totalTime'] / 1000);
+        //We have the duration from two sources.
+        //On page JS timer
+        //Difference between start and end dates on the server
+        $onPageTimerDuration = ceil($data['totalTime'] / 1000);
+        $difference = $newStartTime->diffInSeconds($newEndTime);
+
+        $duration = max([
+            $difference,
+            $onPageTimerDuration,
+        ]);
         $billableDuration = $duration;
 
         $overlaps = PageTimer::where('provider_id', '=', $providerId)

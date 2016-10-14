@@ -22,6 +22,8 @@
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
 <?php
+use Carbon\Carbon;
+
 $qs = '';
 $option = 'att_config';
 if (!isset($activity)) {
@@ -58,14 +60,17 @@ if ($enableTimeTracking) {
 ?>
 <script>
     (function ($) {
-        var startTime = new Date();
+        var startTime = new Date('<?php echo Carbon::now()->format('D M d Y H:i:s O'); ?>');
         var noResponse = true; // set to false if user clicks yes/no button
         var totalTime = 0; // total accumulated time on page
         var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
         var isTimerProcessed = false;
         var redirectLocation = false;
-        var idleTime = 120000; // ms before modal display (60000 = 1min)
-        var consoleDebug = false; // debug toggle
+        var idleTime = 60000 * 2; // ms before modal display (60000 = 1min)
+        var consoleDebug = false;
+
+
+        if (consoleDebug) console.log('start time: ' + startTime);
 
         // instantiate idleTimer
         if (consoleDebug) console.log('setting idleTimer @ ' + idleTime);
@@ -86,6 +91,7 @@ if ($enableTimeTracking) {
             // we went idle, add previously active time to total time
             endTime = new Date();
             totalTime = (totalTime + (endTime - startTime));
+
             // remove 90000 of the 120000 seconds here
             //totalTime = (totalTime - 90000);
             //if (consoleDebug) console.log('added previously active time to total time than removed 90000 (only 30 seconds of the 2 minutes idle counts)');
