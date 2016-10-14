@@ -7,7 +7,10 @@
                 <h4 class="modal-title" id="myModalLabel">You have gone idle....</h4>
             </div>
             <div class="modal-body">
-                <p style="font-size:125%;">We haven’t heard from you in a while <img src="{{ asset('/img/emoji-disappointed-but-relieved.png') }}" style="width:25px; height:25px; margin-bottom:5px;" />. Were you working on a specific patient while we were idle?</p>
+                <p style="font-size:125%;">We haven’t heard from you in a while <img
+                            src="{{ asset('/img/emoji-disappointed-but-relieved.png') }}"
+                            style="width:25px; height:25px; margin-bottom:5px;"/>. Were you working on a specific
+                    patient while we were idle?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" id="timeModalNo" class="btn btn-warning" data-dismiss="modal">No</button>
@@ -29,8 +32,9 @@ $title = Route::currentRouteName(); //get_the_title();
 
 $ipAddr = Request::ip();
 
+$requestUri = Request::getRequestUri();
 // url stuff
-$pieces = explode("?", $_SERVER['REQUEST_URI']);
+$pieces = explode("?", $requestUri);
 $urlShort = $pieces[0];
 
 // should we process time on this page?
@@ -38,7 +42,7 @@ $enableTimeTracking = !isset($disableTimeTracking);
 //$enableTimeTracking = false; // override it
 
 // disable if login
-if (strpos($_SERVER['REQUEST_URI'], 'login') !== false) {
+if (strpos($requestUri, 'login') !== false) {
     $enableTimeTracking = false;
 }
 
@@ -85,7 +89,7 @@ if ($enableTimeTracking) {
             // remove 90000 of the 120000 seconds here
             //totalTime = (totalTime - 90000);
             //if (consoleDebug) console.log('added previously active time to total time than removed 90000 (only 30 seconds of the 2 minutes idle counts)');
-            if (consoleDebug) console.log('totalTime after adding '+(endTime - startTime)+' = ' + totalTime);
+            if (consoleDebug) console.log('totalTime after adding ' + (endTime - startTime) + ' = ' + totalTime);
 
             // reset startTime to time modal was opened
             startTime = new Date();
@@ -131,7 +135,7 @@ if ($enableTimeTracking) {
 
             // yes/no button in modal
             $('#timeModalYes').on("click", function () {
-                if (consoleDebug) console.log('yes clicked, doing nothing here, idleTime = '+idleTime);
+                if (consoleDebug) console.log('yes clicked, doing nothing here, idleTime = ' + idleTime);
                 return true;
             });
 
@@ -198,7 +202,7 @@ if ($enableTimeTracking) {
                 "totalTime": totalTime,
                 "programId": '<?php echo $patientProgramId; ?>',
                 "startTime": '<?php echo date('Y-m-d H:i:s'); ?>',
-                "urlFull": '<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>',
+                "urlFull": '<?php echo Request::url(); ?>',
                 "urlShort": '<?php echo $urlShort; ?>',
                 "ipAddr": '<?php echo $ipAddr; ?>',
                 "activity": $('#activityName').val(),
