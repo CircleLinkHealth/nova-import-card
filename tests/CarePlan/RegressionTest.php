@@ -2,7 +2,7 @@
 
 use Maknz\Slack\Facades\Slack;
 use TestCase;
-use Tests\HandlesUsersAndCarePlans;
+use Tests\Helpers\HandlesUsersAndCarePlans;
 
 
 class RegressionTest extends TestCase

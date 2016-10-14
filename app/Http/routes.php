@@ -77,6 +77,8 @@ if (app()->environment() != 'production') {
             Route::post('ccd', 'CcdApi\Aprima\CcdApiController@uploadCcd');
             Route::get('reports', 'CcdApi\Aprima\CcdApiController@reports');
 
+            Route::get('notes', 'CcdApi\Aprima\CcdApiController@notes');
+
             //Let's make things RESTful from here onwards
             Route::get('ccm-times', 'CcdApi\Aprima\CcdApiController@getCcmTime');
         });

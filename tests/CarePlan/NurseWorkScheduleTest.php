@@ -3,11 +3,11 @@
 use App\NurseContactWindow;
 use App\User;
 use Carbon\Carbon;
-use Tests\HandlesUsersAndCarePlans;
+use Tests\Helpers\HandlesUsersAndCarePlans;
 
 class NurseWorkScheduleTest extends TestCase
 {
-    use HandlesUsersAndCarePlans;
+    use Tests\Helpers\HandlesUsersAndCarePlans;
 
     public function test_main()
     {

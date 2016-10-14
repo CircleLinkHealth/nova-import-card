@@ -2,12 +2,11 @@
 
 use App\PageTimer;
 use App\User;
-use Carbon\Carbon;
-use Tests\HandlesUsersAndCarePlans;
+use Tests\Helpers\HandlesUsersAndCarePlans;
 
 class TimeTrackingOverlapTest extends TestCase
 {
-    use HandlesUsersAndCarePlans;
+    use Tests\Helpers\HandlesUsersAndCarePlans;
 
     public function testOverlap()
     {

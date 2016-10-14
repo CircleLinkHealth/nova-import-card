@@ -1,4 +1,4 @@
-<?php namespace Tests;
+<?php namespace Tests\Helpers;
 
 use App\CLH\Facades\StringManipulation;
 use App\CLH\Repositories\UserRepository;

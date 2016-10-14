@@ -3,8 +3,8 @@
 class NotesAndCallsTest extends TestCase
 {
 
-    use \Tests\HandlesUsersAndCarePlans;
-    use \Tests\HandlesNotesAndCalls;
+    use Tests\Helpers\HandlesUsersAndCarePlans;
+    use Tests\Helpers\HandlesNotesAndCalls;
 
     private $provider;
     private $patient;
