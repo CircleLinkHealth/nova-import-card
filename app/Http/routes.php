@@ -100,8 +100,6 @@ if (app()->environment() != 'production') {
      */
     Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 
-    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
-
     Route::get('/', 'WelcomeController@index');
     Route::get('home', 'WelcomeController@index');
 
@@ -168,10 +166,6 @@ if (app()->environment() != 'production') {
         Route::post('/CCDModels/Items/AllergiesItem/update', 'CCDModels\Items\AllergiesItemController@update');
         Route::post('/CCDModels/Items/AllergiesItem/destroy', 'CCDModels\Items\AllergiesItemController@destroy');
 
-        /**
-         * LOGGER
-         */
-        Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
         /****************************
          * CCD STUFF
@@ -449,6 +443,11 @@ if (app()->environment() != 'production') {
             ],
             'prefix'     => 'admin',
         ], function () {
+
+            /**
+             * LOGGER
+             */
+            Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
             Route::get('download/{fileName}', [
                 'uses' => 'DownloadController@file',
