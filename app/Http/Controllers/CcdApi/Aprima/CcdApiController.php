@@ -153,7 +153,7 @@ class CcdApiController extends Controller
         $pendingReports = $pendingReports->get();
 
         if ($pendingReports->isEmpty()) {
-            return response()->json(["message" => "No Pending Reports"], 200);
+            return response()->json(["message" => "No Pending Notes."], 200);
         }
 
         $json = [];
@@ -236,7 +236,7 @@ class CcdApiController extends Controller
         $pendingReports = $pendingReports->get();
 
         if ($pendingReports->isEmpty()) {
-            return response()->json(["message" => "No Pending Reports"], 200);
+            return response()->json(["message" => "No Pending Reports."], 200);
         }
 
         $json = [];
