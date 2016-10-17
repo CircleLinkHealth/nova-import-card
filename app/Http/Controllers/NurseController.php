@@ -147,10 +147,7 @@ class NurseController extends Controller
                 ->createdToday('updated_at')
                 ->sum('duration');
 
-            $H2 = floor($system_time / 3600);
-            $m2 = ($system_time / 60) % 60;
-            $s2 = $system_time % 60;
-            $system_time_formatted = sprintf("%02d:%02d:%02d", $H2, $m2, $s2);
+            $system_time_formatted = secondsToHMS($system_time);
 
             $nurses[$i]['CCM Mins Today'] = $activity_time_formatted;
             $nurses[$i]['Total Mins Today'] = $system_time_formatted;

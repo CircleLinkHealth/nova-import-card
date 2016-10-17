@@ -4,6 +4,7 @@ use App\Algorithms\Calls\PredictCall;
 use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\Athena\GetTodaysAppointments;
+use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailsProvidersToApproveCareplans;
 use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
 use App\Console\Commands\FormatLocationPhone;
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        EmailRNDailyReport::class,
         EmailsProvidersToApproveCareplans::class,
         ExportNurseSchedulesToGoogleCalendar::class,
         FormatLocationPhone::class,

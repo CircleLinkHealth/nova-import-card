@@ -1,0 +1,101 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Activity;
+use App\PageTimer;
+use App\User;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
+
+class EmailRNDailyReport extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'nurses:emailDailyReport';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = '';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
+    {
+        $nurses = User::ofType('care-center')->get();
+
+        $counter = 0;
+
+        foreach ($nurses as $nurse) {
+            $activityTime = Activity::createdBy($nurse)
+                ->createdToday()
+                ->sum('duration');
+
+            $systemTime = PageTimer::where('provider_id', $nurse->ID)
+                ->createdToday()
+                ->sum('billable_duration');
+
+            $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->ID)
+                ->createdThisMonth()
+                ->sum('billable_duration');
+
+            if ($systemTime == 0) {
+                continue;
+            }
+
+            $performance = round((float)($activityTime / $systemTime) * 100);
+
+            $totalTimeInSystemToday = secondsToHMS($systemTime);
+
+            $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
+
+            $totalEarningsThisMonth = $totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60;
+
+            $data = [
+                'name'                       => $nurse->fullName,
+                'performance'                => $performance,
+                'totalEarningsThisMonth'     => $totalEarningsThisMonth,
+                'totalTimeInSystemToday'     => $totalTimeInSystemToday,
+                'totalTimeInSystemThisMonth' => $totalTimeInSystemThisMonth,
+            ];
+
+            $recipients = [
+                $nurse->user_email,
+            ];
+
+            $subject = 'Daily Report - WHAT SHOULD THE SUBJECT BE?';
+
+            Mail::send('emails.nurseDailyReport', $data, function ($message) use
+            (
+                $recipients,
+                $subject
+            ) {
+                $message->from('notifications@careplanmanager.com', 'CircleLink Health');
+                $message->to($recipients)->subject($subject);
+            });
+
+            $counter++;
+        }
+
+        $this->info("$counter emails sent.");
+    }
+}
