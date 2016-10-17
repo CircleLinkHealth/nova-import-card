@@ -98,7 +98,7 @@ if ($enableTimeTracking) {
             if (consoleDebug) console.log('totalTime after adding ' + (endTime - startTime) + ' = ' + totalTime);
 
             // reset startTime to time modal was opened
-            startTime = new Date();
+//            startTime = new Date();
             if (consoleDebug) console.log('set startTime to 0');
 
             function millisToMinutesAndSeconds(millis) {
@@ -179,7 +179,7 @@ if ($enableTimeTracking) {
         window.onbeforeunload = function () {
             $(document).idleTimer("pause");
             endTime = new Date();
-            totalTime = (totalTime + (endTime - startTime));
+            totalTime = (endTime - startTime);
             submitTotalTime(true);
         };
 
@@ -207,7 +207,7 @@ if ($enableTimeTracking) {
                 "providerId": '<?php echo Auth::user()->ID ?>',
                 "totalTime": totalTime,
                 "programId": '<?php echo $patientProgramId; ?>',
-                "startTime": '<?php echo date('Y-m-d H:i:s'); ?>',
+                "startTime": '<?php echo Carbon::now()->toDateTimeString(); ?>',
                 "urlFull": '<?php echo Request::url(); ?>',
                 "urlShort": '<?php echo $urlShort; ?>',
                 "ipAddr": '<?php echo $ipAddr; ?>',

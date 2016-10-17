@@ -4,12 +4,23 @@ use App\Activity;
 use App\PageTimer;
 use App\Services\ActivityService;
 use App\Services\RulesService;
+use App\Services\TimeTracking\Service as TimeTrackingService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PageTimerController extends Controller
 {
+    protected $timeTrackingService;
+
+    public function __construct(
+        Request $request,
+        TimeTrackingService $timeTrackingService
+    ) {
+        parent::__construct($request);
+
+        $this->timeTrackingService = $timeTrackingService;
+    }
 
     /**
      * Display a listing of the resource.
@@ -68,77 +79,56 @@ class PageTimerController extends Controller
 
         $providerId = $data['providerId'];
 
-        $newStartTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
-
-        $newEndTime = Carbon::now('America/New_York');
+        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
+        $endTime = Carbon::now();
 
         if (app()->environment('testing')) {
-            $newEndTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
+            $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
         }
 
         //We have the duration from two sources.
         //On page JS timer
         //Difference between start and end dates on the server
-        $onPageTimerDuration = ceil($data['totalTime'] / 1000);
-        $difference = $newStartTime->diffInSeconds($newEndTime);
+        $duration = ceil($data['totalTime'] / 1000);
 
-        $duration = max([
-            $difference,
-            $onPageTimerDuration,
-        ]);
-        $billableDuration = $duration;
+        $newActivity = new PageTimer();
+        $newActivity->billable_duration = 0;
+        $newActivity->duration = $duration;
+        $newActivity->duration_unit = 'seconds';
+        $newActivity->patient_id = $data['patientId'];
+        $newActivity->provider_id = $providerId;
+        $newActivity->start_time = $startTime->format('Y-m-d H:i:s');
+        $newActivity->actual_start_time = $startTime->toDateTimeString();
+        $newActivity->actual_end_time = $endTime->toDateTimeString();
+        $newActivity->end_time = $endTime->toDateTimeString();
+        $newActivity->url_full = $data['urlFull'];
+        $newActivity->url_short = $data['urlShort'];
+        $newActivity->program_id = $data['programId'];
+        $newActivity->ip_addr = $data['ipAddr'];
+        $newActivity->activity_type = $data['activity'];
+        $newActivity->title = $data['title'];
+        $newActivity->query_string = $data['qs'];
 
         $overlaps = PageTimer::where('provider_id', '=', $providerId)
-            ->where('end_time', '>', $newStartTime)
-            ->where('start_time', '<', $newEndTime)
+            ->where('end_time', '>', $startTime)
+            ->where('start_time', '<', $endTime)
             ->get();
 
         if (!$overlaps->isEmpty()) {
-
             $overlapsAsc = $overlaps->sortBy('start_time');
-            $overlapsDesc = $overlaps->sortByDesc('end_time');
 
-            $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $overlapsAsc->first()->start_time);
-            $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $overlapsDesc->first()->end_time);
-
-            if ($newStartTime->gte($startTime) && $newEndTime->lte($endTime)) {
-                $billableDuration = 0;
-            } else {
-                $billableDuration = 0;
-
-                if ($newStartTime->lt($startTime)) {
-                    $billableDuration = $billableDuration + ($startTime->diffInSeconds($newStartTime));
-                }
-
-                if ($newEndTime->gt($endTime)) {
-                    $billableDuration = $billableDuration + ($newEndTime->diffInSeconds($endTime));
-                }
+            foreach ($overlapsAsc as $o) {
+                $this->timeTrackingService->figureOutOverlaps($newActivity, $o);
             }
+        } else {
+            $newActivity->billable_duration = $duration;
+            $newActivity->end_time = $startTime->addSeconds($duration)->toDateTimeString();
+            $newActivity->save();
         }
 
-        $pagetimer = new PageTimer();
-        $pagetimer->billable_duration = $billableDuration;
-        $pagetimer->duration = $duration;
-        $pagetimer->duration_unit = 'seconds';
-        $pagetimer->patient_id = $data['patientId'];
-        $pagetimer->provider_id = $providerId;
-        $pagetimer->start_time = $newStartTime->format('Y-m-d H:i:s');
+        $this->addPageTimerActivities($newActivity);
 
-        date_default_timezone_set('America/New_York');
-
-        $pagetimer->end_time = $newEndTime->format('Y-m-d H:i:s');
-        $pagetimer->url_full = $data['urlFull'];
-        $pagetimer->url_short = $data['urlShort'];
-        $pagetimer->program_id = $data['programId'];
-        $pagetimer->ip_addr = $data['ipAddr'];
-        $pagetimer->activity_type = $data['activity'];
-        $pagetimer->title = $data['title'];
-        $pagetimer->query_string = $data['qs'];
-        $pagetimer->save();
-
-        $this->addPageTimerActivities($pagetimer);
-
-        return response("PageTimer Logged, duration:" . $billableDuration, 201);
+        return response("PageTimer Logged, duration:" . $duration, 201);
     }
 
 
