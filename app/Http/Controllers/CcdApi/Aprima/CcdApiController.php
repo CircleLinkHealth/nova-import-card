@@ -142,7 +142,7 @@ class CcdApiController extends Controller
         $locationId = $this->getApiUserLocation($user);
 
         $pendingReports = PatientReports::where('location_id', $locationId)
-            ->whereFileType('note')
+            ->whereFileType(PatientReports::NOTE)
             ->whereBetween('created_at', [
                 $startDate,
                 $endDate,
@@ -196,7 +196,7 @@ class CcdApiController extends Controller
         }
 
         PatientReports::where('location_id', $locationId)
-            ->whereFileType('note')
+            ->whereFileType(PatientReports::NOTE)
             ->delete();
 
         return response()->json($json, 200, ['fileCount' => count($json)]);
@@ -225,7 +225,7 @@ class CcdApiController extends Controller
         $locationId = $this->getApiUserLocation($user);
 
         $pendingReports = PatientReports::where('location_id', $locationId)
-            ->whereFileType('careplan')
+            ->whereFileType(PatientReports::CAREPLAN)
             ->whereBetween('created_at', [
                 $startDate,
                 $endDate,
@@ -279,7 +279,7 @@ class CcdApiController extends Controller
         }
 
         PatientReports::where('location_id', $locationId)
-            ->whereFileType('careplan')
+            ->whereFileType(PatientReports::CAREPLAN)
             ->delete();
 
         return response()->json($json, 200, ['fileCount' => count($json)]);

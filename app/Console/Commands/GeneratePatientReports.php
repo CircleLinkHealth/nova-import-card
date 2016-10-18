@@ -4,7 +4,6 @@ use App\Location;
 use App\Services\ReportsService;
 use App\User;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
 class GeneratePatientReports extends Command {
@@ -75,12 +74,12 @@ class GeneratePatientReports extends Command {
 				continue;
 			}
 
-			if($locationObj->parent_id != Location::APRIMA_ID){
+            if ($locationObj->parent_id != Location::UPG_PARENT_LOCATION_ID) {
 				$this->error(" Location Does Not Belong to Aprima for User: " . $patient_id . " ");
 				continue;
 			}
 
-			if(!empty($locationObj) && $locationObj->parent_id == Location::APRIMA_ID){
+            if (!empty($locationObj) && $locationObj->parent_id == Location::UPG_PARENT_LOCATION_ID) {
 				(new ReportsService())->createAprimaPatientCarePlanPdfReport($patient, $provider_id);
 				$this->info("Report Created for User: " . $patient_id . " ");
 			}

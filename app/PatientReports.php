@@ -10,6 +10,7 @@ class PatientReports extends Model {
 
 	//report types
 	const CAREPLAN = 'careplan';
+    const NOTE = 'note';
 
 	protected $guarded = [];
 

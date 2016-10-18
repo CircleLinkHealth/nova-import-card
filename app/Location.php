@@ -6,7 +6,7 @@ use Franzose\ClosureTable\Models\Entity;
 class Location extends Entity implements LocationInterface
 {
     //Aprima's constant location ID.
-    const APRIMA_ID = 26;
+    const UPG_PARENT_LOCATION_ID = 26;
     /**
      * The table associated with the model.
      *
@@ -29,29 +29,12 @@ class Location extends Entity implements LocationInterface
      */
     protected $fillable = [ 'name', 'phone', 'address_line_1', 'address_line_2', 'city', 'state', 'timezone', 'postal_code', 'billing_code', 'location_code','position' ];
 
-
-    public function program()
-    {
-        return $this->belongsTo(Program::class, 'location_id');
-    }
-
-    public function parent()
-    {
-        return $this->belongsTo(Location::class, 'parent_id');
-    }
-
-    public function user()
-    {
-        return $this->belongsToMany(User::class);
-    }
-
     public static function getLocationsForBlog($blogId)
     {
         $q =  Location::where('program_id', '=', $blogId)->get();
 
         return ($q == null) ? '' : $q;
     }
-
 
     public static function getNonRootLocations($parent_location_id = false)
     {
@@ -92,6 +75,21 @@ class Location extends Entity implements LocationInterface
     public static function getParentsSubs($id)
     {
         return Location::where('parent_id', '=', $id)->lists('name', 'id')->all();
+    }
+
+    public function program()
+    {
+        return $this->belongsTo(Program::class, 'location_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Location::class, 'parent_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsToMany(User::class);
     }
 
 }
