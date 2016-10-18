@@ -1,59 +1,70 @@
-<html>
+@extends('layouts.pdf')
 
-<head>
-    <style>
+<style>
+    h4 {
+        color: black !important;
+    }
+</style>
 
-    </style>
-</head>
+@section('content')
+    <div class="container">
 
-<body>
-<div class="container">
+        <div class="text-right">
+            <img style="float: right;" src="{{ public_path('img/logo.svg') }}" width="170" height="70"
+                 class="img-responsive" alt="CLH Logo">
+        </div>
 
-    <div class="col-md-3 col-md-offset-9">
-        <img src="{{ public_path('img/logo.svg') }}" class="img-responsive" alt="CLH Logo">
+        <div class="clearfix"></div>
+
+        <br>
+        <br>
+
+        <h4>
+            <span style="float: left;">
+                To: Dr. {{ $provider->fullName }}
+            </span>
+            <span style="float: right;">
+                {{ $note->created_at }}
+            </span>
+            <br>
+            From: {{ $sender->fullName }}
+        </h4>
+
+        <br>
+
+        <h4>
+            Re: {{ $patient->fullName }} &#124; DOB: {{ $patient->birthDate }} &#124; {{ $patient->gender }}
+            &#124; {{$patient->age}} yrs &#124; {{ $patient->phone }}
+        </h4>
+
+        <br>
+
+        <h4>
+            Chronic conditions tracked:
+            <ul>
+                @foreach($problems as $problem)
+                    <li>{{ $problem }}</li>
+                @endforeach
+            </ul>
+        </h4>
+
+        <br>
+
+        <h4>
+            Note:
+            <em>{{ $note->body }}</em>
+        </h4>
+
+        <br>
+        <br>
+
+
+        <h4>
+            With regards,
+        </h4>
+
+        <h4>
+            CircleLink Team
+        </h4>
     </div>
-
-    <p>
-        To: Dr. {{ $provider->fullName }}
-    </p>
-
-    <p>
-        Thank you for using CircleLink for chronic care management!
-    </p>
-
-
-    <p>
-        Below patient note was sent to you by care coach {{ $sender->fullName }} at {{ $note->created_at }}. We
-        appreciate
-        your review:
-    </p>
-
-    <p>
-        Re: {{ $patient->fullName }} &#124; DOB: {{ $patient->birthDate }} &#124; {{ $patient->gender }}
-        &#124; {{$patient->age}} yrs &#124; {{ $patient->phone }}
-    </p>
-
-    <div class="row">
-        Chronic conditions tracked:
-        <ul>
-            @foreach($problems as $problem)
-                <li>{{ $problem }}</li>
-            @endforeach
-        </ul>
-    </div>
-
-    <p>
-        Note:
-        <em>{{ $note->body }}</em>
-    </p>
-
-    <p>
-        With regards,
-    </p>
-
-    <p>
-        CircleLink Team
-    </p>
-</div>
-</body>
-</html>
+@endsection
