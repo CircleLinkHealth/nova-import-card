@@ -50,10 +50,9 @@ if (isset($patient) && !empty($patient)) {
     $patientId = $patient->ID;
     $patientProgramId = $patient->program_id;
 }
-if ($enableTimeTracking) {
 ?>
 
-{{--@if ($enableTimeTracking)--}}
+@if ($enableTimeTracking)
 <script>
     (function ($) {
         var startTime = new Date('<?php echo Carbon::now()->format('D M d Y H:i:s O'); ?>');
@@ -219,5 +218,4 @@ if ($enableTimeTracking) {
     })(jQuery);
 </script>
 
-<?php } ?>
-{{--@endif--}}
+@endif
