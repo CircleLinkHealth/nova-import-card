@@ -117,9 +117,7 @@ class PageTimerController extends Controller
         if (!$overlaps->isEmpty()) {
             $overlapsAsc = $overlaps->sortBy('start_time');
 
-            foreach ($overlapsAsc as $o) {
-                $this->timeTrackingService->figureOutOverlaps($newActivity, $o);
-            }
+            $this->timeTrackingService->figureOutOverlaps($newActivity, $overlapsAsc);
         } else {
             $newActivity->billable_duration = $duration;
             $newActivity->end_time = $startTime->addSeconds($duration)->toDateTimeString();
