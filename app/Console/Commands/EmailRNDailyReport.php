@@ -44,6 +44,7 @@ class EmailRNDailyReport extends Command
         $nurses = User::ofType('care-center')->get();
 
         $counter = 0;
+        $emailsSent = [];
 
         foreach ($nurses as $nurse) {
             $activityTime = Activity::createdBy($nurse)
@@ -82,7 +83,7 @@ class EmailRNDailyReport extends Command
                 $nurse->user_email,
             ];
 
-            $subject = 'Daily Report - WHAT SHOULD THE SUBJECT BE?';
+            $subject = 'System Time Daily Report';
 
             Mail::send('emails.nurseDailyReport', $data, function ($message) use
             (
@@ -93,9 +94,19 @@ class EmailRNDailyReport extends Command
                 $message->to($recipients)->subject($subject);
             });
 
+            $emailsSent[] = [
+                'nurse' => $nurse->fullName,
+                'email' => $nurse->user_email,
+            ];
+
             $counter++;
         }
 
-        $this->info("$counter emails sent.");
+        $this->table([
+            'nurse',
+            'email',
+        ], $emailsSent);
+
+        $this->info("$counter email(s) sent.");
     }
 }
