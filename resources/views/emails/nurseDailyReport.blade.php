@@ -10,7 +10,7 @@
 </p>
 
 <p>
-    <b>Performance:</b> {{ $performance }}% of your time was CCM eligible care time.
+    <b>Performance:</b> {{ $performance }}% of today's time was CCM eligible care time.
 </p>
 
 <p>
