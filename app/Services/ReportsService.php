@@ -1176,7 +1176,7 @@ class ReportsService
         Note $note,
         User $provider
     ) {
-        $problems = $patient->cpmProblems()->get()->pluck('name');
+        $problems = $patient->cpmProblems()->get()->pluck('name')->all();
 
         $pdf = App::make('snappy.pdf.wrapper');
         $pdf->loadView('pdfs.note', [
