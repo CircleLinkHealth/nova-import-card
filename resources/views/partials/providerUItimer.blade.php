@@ -98,8 +98,6 @@ if (isset($patient) && !empty($patient)) {
                 return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
             }
 
-            // set html to modal and instantiate
-            //$('#timeModalTotal').html(' Total elapsed: ' + millisToMinutesAndSeconds(totalTime) + ' minutes');
             if (consoleDebug) console.log('display timerModal()');
             $('#timerModal').modal({backdrop: 'static', keyboard: false});
 
@@ -132,8 +130,8 @@ if (isset($patient) && !empty($patient)) {
                 if (consoleDebug) console.log('remove 90000 of the initial 120000 second idle period here');
                 totalTime = (totalTime - 90000);
                 if (consoleDebug) console.log('totalTime = ' + totalTime);
+
                 $('#timeModalNo, #timeModalYes').unbind('click');
-                // deactivate noResponseTimer
                 clearTimeout(noResponseTimer);
                 redirectLocation = 'home';
                 submitTotalTime();
