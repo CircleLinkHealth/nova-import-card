@@ -63,13 +63,18 @@ class EmailRNDailyReport extends Command
                 continue;
             }
 
-            $performance = round((float)($activityTime / $systemTime) * 100);
+            if ($nurse->nurseInfo->hourly_rate < 1) {
+                continue;
+            }
+
+            $performance = round((float)($activityTime / $systemTime) * 100, 2);
 
             $totalTimeInSystemToday = secondsToHMS($systemTime);
 
             $totalTimeInSystemThisMonth = secondsToHMS($totalMonthSystemTimeSeconds);
 
-            $totalEarningsThisMonth = $totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60;
+            $totalEarningsThisMonth = round((float)($totalMonthSystemTimeSeconds * $nurse->nurseInfo->hourly_rate / 60 / 60),
+                2);
 
             $data = [
                 'name'                       => $nurse->fullName,
@@ -81,9 +86,11 @@ class EmailRNDailyReport extends Command
 
             $recipients = [
                 $nurse->user_email,
+                //                'raph@circlelinkhealth.com',
+                //            'mantoniou@circlelinkhealth.com',
             ];
 
-            $subject = 'System Time Daily Report';
+            $subject = 'CircleLink Daily Time Report';
 
             Mail::send('emails.nurseDailyReport', $data, function ($message) use
             (

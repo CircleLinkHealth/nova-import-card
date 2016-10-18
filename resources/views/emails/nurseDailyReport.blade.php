@@ -22,7 +22,7 @@
 </p>
 
 <p>
-    <b>Total earnings this month:</b> {{ $totalEarningsThisMonth }}
+    <b>Total earnings this month:</b> ${{ $totalEarningsThisMonth }}
 </p>
 
 <p>
