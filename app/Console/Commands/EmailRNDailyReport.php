@@ -86,7 +86,7 @@ class EmailRNDailyReport extends Command
 
             $recipients = [
                 $nurse->user_email,
-                //                'raph@circlelinkhealth.com',
+                //                                'raph@circlelinkhealth.com',
                 //                            'mantoniou@circlelinkhealth.com',
             ];
 
