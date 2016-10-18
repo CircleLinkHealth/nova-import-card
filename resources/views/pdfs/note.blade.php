@@ -1,29 +1,59 @@
 <html>
+
+<head>
+    <style>
+
+    </style>
+</head>
+
 <body>
 <div class="container">
-    To: Dr. {{ $provider->fullName }}
 
-    Thank you for using CircleLink for chronic care management!
+    <div class="col-md-3 col-md-offset-9">
+        <img src="{{ public_path('img/logo.svg') }}" class="img-responsive" alt="CLH Logo">
+    </div>
 
-    Below patient note was sent to you by care coach {{ $sender->fullName }} at {{ $note->created_at }}. We appreciate
-    your review:
+    <p>
+        To: Dr. {{ $provider->fullName }}
+    </p>
 
-    Re: {{ $patient->fullName }} │ DOB: {{ $patient->birthDate }} │ {{ $patient->gender }} │ {{$patient->age}} yrs
-    │ {{ $patient->phone }}
-
-    Chronic conditions tracked:
-    <ul>
-        @foreach($problems as $problem)
-            <li>{{ $problem }}</li>
-        @endforeach
-    </ul>
-
-    Note:
-    <em>{{ $note->body }}</em>
+    <p>
+        Thank you for using CircleLink for chronic care management!
+    </p>
 
 
-    With regards,
-    CircleLink Team
+    <p>
+        Below patient note was sent to you by care coach {{ $sender->fullName }} at {{ $note->created_at }}. We
+        appreciate
+        your review:
+    </p>
+
+    <p>
+        Re: {{ $patient->fullName }} &#124; DOB: {{ $patient->birthDate }} &#124; {{ $patient->gender }}
+        &#124; {{$patient->age}} yrs &#124; {{ $patient->phone }}
+    </p>
+
+    <div class="row">
+        Chronic conditions tracked:
+        <ul>
+            @foreach($problems as $problem)
+                <li>{{ $problem }}</li>
+            @endforeach
+        </ul>
+    </div>
+
+    <p>
+        Note:
+        <em>{{ $note->body }}</em>
+    </p>
+
+    <p>
+        With regards,
+    </p>
+
+    <p>
+        CircleLink Team
+    </p>
 </div>
 </body>
 </html>
