@@ -24,24 +24,19 @@
 <?php
 use Carbon\Carbon;
 
-$qs = '';
-$option = 'att_config';
 if (!isset($activity)) {
     $activity = 'Undefined';
 }
-$role = '';
-$title = Route::currentRouteName(); //get_the_title();
+
+$title = Route::currentRouteName();
 
 $ipAddr = Request::ip();
 
 $requestUri = Request::getRequestUri();
-// url stuff
 $pieces = explode("?", $requestUri);
 $urlShort = $pieces[0];
 
-// should we process time on this page?
 $enableTimeTracking = !isset($disableTimeTracking);
-//$enableTimeTracking = false; // override it
 
 // disable if login
 if (strpos($requestUri, 'login') !== false) {
@@ -52,12 +47,13 @@ if (strpos($requestUri, 'login') !== false) {
 $patientId = '';
 $patientProgramId = '';
 if (isset($patient) && !empty($patient)) {
-    //$enableTimeTracking = false;
     $patientId = $patient->ID;
     $patientProgramId = $patient->program_id;
 }
 if ($enableTimeTracking) {
 ?>
+
+{{--@if ($enableTimeTracking)--}}
 <script>
     (function ($) {
         var startTime = new Date('<?php echo Carbon::now()->format('D M d Y H:i:s O'); ?>');
@@ -68,7 +64,6 @@ if ($enableTimeTracking) {
         var redirectLocation = false;
         var idleTime = 60000 * 2; // ms before modal display (60000 = 1min)
         var consoleDebug = false;
-
 
         if (consoleDebug) console.log('start time: ' + startTime);
 
@@ -92,13 +87,10 @@ if ($enableTimeTracking) {
             endTime = new Date();
             totalTime = (totalTime + (endTime - startTime));
 
-            // remove 90000 of the 120000 seconds here
-            //totalTime = (totalTime - 90000);
-            //if (consoleDebug) console.log('added previously active time to total time than removed 90000 (only 30 seconds of the 2 minutes idle counts)');
             if (consoleDebug) console.log('totalTime after adding ' + (endTime - startTime) + ' = ' + totalTime);
 
             // reset startTime to time modal was opened
-//            startTime = new Date();
+            startTime = new Date();
             if (consoleDebug) console.log('set startTime to 0');
 
             function millisToMinutesAndSeconds(millis) {
@@ -112,9 +104,6 @@ if ($enableTimeTracking) {
             if (consoleDebug) console.log('display timerModal()');
             $('#timerModal').modal({backdrop: 'static', keyboard: false});
 
-            // no response logic
-            // http://www.sitepoint.com/jquery-settimeout-function-examples/
-
             // if no response to modal, log out after {modalDelay}
             if (consoleDebug) console.log('modalDelay = ' + modalDelay + ' time modal will wait to force logout ');
             var noResponseTimer = setTimeout(noResponseTotalTime, modalDelay);
@@ -122,14 +111,6 @@ if ($enableTimeTracking) {
             function noResponseTotalTime() {
                 if (consoleDebug) console.log('noResponseTotalTime() start');
                 if (consoleDebug) console.log('totalTime = ' + totalTime);
-                // we went idle, add previously active time to total time
-                //endTime = new Date();
-                //totalTime = (totalTime + (endTime - startTime)) - modalDelay;
-                //totalTime = (totalTime - modalDelay);
-
-                // subtract 45 seconds for modal idle = 45000
-                // subtract 9:30 for modal idle = 1000*60*modalDelay - 90000
-                //totalTime = ( totalTime - modalDelay - 90000 );
 
                 //remove 90000 of the 120000 seconds here
                 if (consoleDebug) console.log('remove 90000 of the initial 120000 second idle period here');
@@ -164,32 +145,28 @@ if ($enableTimeTracking) {
             $('#timerModal').on('hide.bs.modal', function (e) {
                 $("#timerDebug").html("still reviewing{hidden}... totalTime = " + totalTime + "");
                 if (consoleDebug) console.log('running hide.bs code here');
-                //startTime = new Date(); <-- we dont want to restart timer here
+
                 $(document).idleTimer("resume");
                 $('#timeModalNo, #timeModalYes').unbind('click');
-                // deactivate noResponseTimer
+
                 clearTimeout(noResponseTimer);
                 return true;
             });
 
-        });
+            });
 
-        // this runs when the browser window is closed
-        //no it doesn't. It's when content unloads
         window.onbeforeunload = function () {
             $(document).idleTimer("pause");
             endTime = new Date();
             totalTime = (endTime - startTime);
             submitTotalTime(true);
-        };
+            };
 
-        // this is the ajax call that is made to store the time
-        // first store time than redirect based on result, logout if idle
         function submitTotalTime(deletePatientSession) {
 
             if (deletePatientSession === undefined) {
                 deletePatientSession = false;
-            }
+                }
 
             if (consoleDebug) console.log('start submitTotalTime()');
             if (consoleDebug) console.log('totalTime = ' + totalTime);
@@ -213,7 +190,6 @@ if ($enableTimeTracking) {
                 "ipAddr": '<?php echo $ipAddr; ?>',
                 "activity": $('#activityName').val(),
                 "title": '<?php echo $title; ?>',
-                "qs": '<?php echo $qs; ?>',
                 "deletePatientSession": deletePatientSession
             };
 
@@ -223,11 +199,8 @@ if ($enableTimeTracking) {
                 type: "POST",
                 url: '<?php echo URL::route('api.pagetracking'); ?>',
                 data: data,
-                //cache: false,
                 encode: true,
-                //processData: false,
                 success: function (data) {
-                    // redirect
                     if (redirectLocation) {
                         if (redirectLocation == 'logout') {
                             window.location.href = "<?php echo url('/auth/logout'); ?>";
@@ -238,24 +211,13 @@ if ($enableTimeTracking) {
                 }
             });
 
-            // set timer as inactive since already processed
             isTimerProcessed = true;
 
             return false;
         }
 
-        //submitTotalTime();
     })(jQuery);
 </script>
-<?php
-} // end enableTimeTracking check
-?>
 
-
-<!--<h3>TIMER DEBUG</h3>-->
-{{--<span id="timerDebug" style="display:none;">--}}
-{{--Page Route Name: {{ Route::currentRouteName() }}<br>--}}
-{{--Tracking Enabled: {{ $enableTimeTracking }}--}}
-{{--</span>--}}
-{{--<!-- PAGE TIMER END -->--}}
-
+<?php } ?>
+{{--@endif--}}

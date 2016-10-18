@@ -29,26 +29,9 @@ class PageTimerController extends Controller
      */
     public function index()
     {
-        //$this->addPageTimerActivities(array(378));
-        // display view
         $pageTimes = PageTimer::orderBy('id', 'desc')->paginate(10);
-        foreach ($pageTimes as $pagetime) {
-            if ($pagetime->activities()->count()) {
-                //dd($pagetime->activities);
-            }
-        }
 
         return view('pageTimer.index', ['pageTimes' => $pageTimes]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -58,24 +41,7 @@ class PageTimerController extends Controller
      */
     public function store(Request $request)
     {
-
         $data = $request->input();
-
-        //echo $data['totalTime']; die();
-        if (!isset($data['totalTime'])
-            || !isset($data['patientId'])
-            || !isset($data['providerId'])
-            //|| !isset($data['programId'])
-            || !isset($data['startTime'])
-            || !isset($data['urlFull'])
-            || !isset($data['urlShort'])
-            || !isset($data['ipAddr'])
-            || !isset($data['activity'])
-            || !isset($data['title'])
-            || !isset($data['qs'])
-        ) {
-            return response("missing required params", 201);
-        }
 
         $providerId = $data['providerId'];
 
@@ -107,7 +73,6 @@ class PageTimerController extends Controller
         $newActivity->ip_addr = $data['ipAddr'];
         $newActivity->activity_type = $data['activity'];
         $newActivity->title = $data['title'];
-        $newActivity->query_string = $data['qs'];
 
         $overlaps = PageTimer::where('provider_id', '=', $providerId)
             ->where('end_time', '>', $startTime)
@@ -128,7 +93,6 @@ class PageTimerController extends Controller
 
         return response("PageTimer Logged, duration:" . $duration, 201);
     }
-
 
     /**
      * Add an activity for a page time
@@ -154,8 +118,6 @@ class PageTimerController extends Controller
 
         // activity param
         $params['activity'] = $pageTimer->activity_type;
-        //$params['program_id'] = $pageTimer->program_id;
-        //$params = array('role' => 'Provider', 'activity' => 'Patient Overview');
 
         // check against rules and add activity if passes
         $rulesService = new RulesService;
@@ -203,42 +165,6 @@ class PageTimerController extends Controller
         $pageTime = PageTimer::find($id);
 
         return view('pageTimer.show', ['pageTime' => $pageTime]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int $id
-     *
-     * @return Response
-     */
-    public function update($id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     *
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 
 }

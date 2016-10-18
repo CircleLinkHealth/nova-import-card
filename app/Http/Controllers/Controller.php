@@ -23,8 +23,7 @@ class Controller extends BaseController
             ) {
                 $session = PatientSession::where('user_id', '=', auth()->user()->ID)
                     ->where('patient_id', '=', $patientId)
-                    ->first();
-                $session->delete();
+                    ->delete();
             }
 
             $this->middleware('patient.session');
