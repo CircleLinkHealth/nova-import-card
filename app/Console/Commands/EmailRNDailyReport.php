@@ -67,7 +67,7 @@ class EmailRNDailyReport extends Command
                 continue;
             }
 
-            $performance = round((float)($activityTime / $systemTime) * 100, 2);
+            $performance = round((float)($activityTime / $systemTime) * 100);
 
             $totalTimeInSystemToday = secondsToHMS($systemTime);
 
@@ -87,7 +87,7 @@ class EmailRNDailyReport extends Command
             $recipients = [
                 $nurse->user_email,
                 //                'raph@circlelinkhealth.com',
-                //            'mantoniou@circlelinkhealth.com',
+                //                            'mantoniou@circlelinkhealth.com',
             ];
 
             $subject = 'CircleLink Daily Time Report';

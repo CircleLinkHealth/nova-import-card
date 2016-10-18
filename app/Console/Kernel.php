@@ -98,5 +98,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('athena:getCcds')
             ->everyTenMinutes();
+
+        $schedule->command('nurses:emailDailyReport')
+            ->dailyAt('21:00');
     }
 }
