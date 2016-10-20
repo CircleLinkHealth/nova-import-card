@@ -56,6 +56,7 @@ if (isset($patient) && !empty($patient)) {
     <script>
         (function ($) {
             var startTime = new Date('<?php echo Carbon::now()->format('D M d Y H:i:s O'); ?>');
+            var endTime;
             var noResponse = true; // set to false if user clicks yes/no button
             var totalTime = 0; // total accumulated time on page
             var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
