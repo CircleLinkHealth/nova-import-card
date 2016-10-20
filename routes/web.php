@@ -1,10 +1,8 @@
 <?php
 
 if (app()->environment() != 'production') {
-
-
     Route::get('rohan', function () {
-        
+
         return (new \App\PatientContactWindow())->getEarliestWindowForPatientFromDate(\App\PatientInfo::find(3198), \Carbon\Carbon::today());
 
 //        $result = Program::find(21)->enrollmentByProgram(Carbon\Carbon::parse('2016-09-01 00:00:00'),
@@ -106,11 +104,7 @@ Route::get('home', 'WelcomeController@index');
 Route::group([
     'prefix' => 'auth',
 ], function () {
-    Route::post('login', 'Auth\AuthController@postLogin');
-    Route::get('login', 'Auth\AuthController@getLogin');
-    Route::get('logout', 'Auth\AuthController@getLogout');
-    Route::post('register', 'Auth\AuthController@postRegister');
-    Route::get('register', 'Auth\AuthController@getRegister');
+    Auth::routes();
 });
 
 Route::group([
@@ -122,15 +116,6 @@ Route::group([
     Route::get('reset', 'Auth\PasswordController@getReset');
     Route::post('reset', 'Auth\PasswordController@postReset');
 });
-
-Route::get('login', [
-    'uses' => 'Auth\AuthController@getLogin',
-    'as'   => 'login',
-]);
-Route::get('auth/logout', [
-    'uses' => 'Auth\AuthController@getLogout',
-    'as'   => 'logout',
-]);
 
 // Password reset link request routes...
 Route::get('password/email', 'Auth\PasswordController@getEmail');
