@@ -94,8 +94,10 @@ class NurseController extends Controller
             $nurses[$i]['id'] = $nurse;
             $nurses[$i]['name'] = $nurse->fullName;
 
-            $last_activity_date = DB::table('lv_page_timer')->select(DB::raw('max(`end_time`) as last_activity'))->where('provider_id',
-                $nurse->ID)->get();
+            $last_activity_date = DB::table('lv_page_timer')
+                ->select(DB::raw('max(`end_time`) as last_activity'))
+                ->where('provider_id', $nurse->ID)
+                ->get();
 
             if ($last_activity_date[0]->last_activity == null) {
                 $nurses[$i]['Time Since Last Activity'] = 'N/A';
@@ -110,16 +112,16 @@ class NurseController extends Controller
                         $q->where('updated_at', '>=', Carbon::now()->startOfDay())
                             ->where('updated_at', '<=', Carbon::now()->endOfDay());
                     })
-                    ->where(function ($q) {
-                        $q->where('status', 'reached')
+                    ->where(function ($k) {
+                        $k->where('status', 'reached')
                             ->orWhere('status', '');
                     })
                     ->count();
 
             $nurses[$i]['# Successful Calls Today'] =
                 Call::where('outbound_cpm_id', $nurse->ID)
-                    ->where(function ($q) {
-                        $q->where('updated_at', '>=', Carbon::now()->startOfDay())
+                    ->where(function ($j) {
+                        $j->where('updated_at', '>=', Carbon::now()->startOfDay())
                             ->where('updated_at', '<=', Carbon::now()->endOfDay());
                     })
                     ->where('status', 'reached')
