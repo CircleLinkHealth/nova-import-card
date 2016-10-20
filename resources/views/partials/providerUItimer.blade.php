@@ -134,7 +134,7 @@ if (isset($patient) && !empty($patient)) {
                 $('#timeModalNo, #timeModalYes').unbind('click');
                 clearTimeout(noResponseTimer);
                 redirectLocation = 'home';
-                submitTotalTime();
+                submitTotalTime(true);
                 return true;
             });
 
