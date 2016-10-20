@@ -26,7 +26,15 @@ class AlgoController extends Controller
             $ccm = $request->input('seconds');
             $date = Carbon::parse($request->input('date'));
             $status = (bool) $request->input('status');
-            $contact_day = $request->input('days')[0];
+            $contact_day = $request->input('days');
+
+            $days = [];
+
+            foreach ($contact_day as $day){
+                $days[] = Carbon::now()->next($day)->toDateString();
+            }
+
+            $upcoming = min($days);
 
 //          $successThisMonth = (bool) $request->input('call_success');
 
@@ -53,7 +61,9 @@ class AlgoController extends Controller
 
 
             }
-            
+
+            return $upcoming;
+
             return $day->next($contact_day)->format('l, jS M');
 
         }

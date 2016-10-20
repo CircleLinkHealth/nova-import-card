@@ -64,7 +64,7 @@ class NurseInfo extends Model
     public function upcomingWindows()
     {
         return $this->hasMany(NurseContactWindow::class, 'nurse_info_id', 'id')->upcoming();
-    }
+    }       
 
     /**
      * Contact Windows (Schedule).
@@ -75,7 +75,7 @@ class NurseInfo extends Model
     {
         return $this->hasMany(NurseContactWindow::class, 'nurse_info_id', 'id');
     }
-
+            
     public function calls()
     {
 
@@ -86,6 +86,12 @@ class NurseInfo extends Model
     {
 
         return $this->belongsToMany(State::class, 'nurse_info_state');
+    }
+    
+    public function callStatsForRange(Carbon $start, Carbon $end){
+
+                            
+
     }
     
     
