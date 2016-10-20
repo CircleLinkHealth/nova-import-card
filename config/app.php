@@ -171,7 +171,6 @@ return [
          */
         \Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider::class,
         \Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
-        \Barryvdh\Cors\ServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
         \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
