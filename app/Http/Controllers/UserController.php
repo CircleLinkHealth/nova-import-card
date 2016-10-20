@@ -543,15 +543,7 @@ class UserController extends Controller
 
     public function getPatients()
     {
-        $data = array();
-        $patients = User::all();
-        if ( $patients ) {
-            foreach ( $patients as $patient ) {
-                $data[] = array();
-            }
-        }
-        return $patients;
-        return response()->json( $patients );
+        return User::all();
     }
 
 
@@ -683,12 +675,4 @@ class UserController extends Controller
         return view( 'wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array(), $messageKey => $messageValue, 'activeDate' => $activeDate] );
     }
 
-
-    public function postImpersonate()
-    {
-        $memberId = $this->request->get( 'member_id' );
-        $user = \Repo::users()->findOrFail( $memberId );
-        $this->auth->setUserToImpersonate( $user );
-        return $this->handler->route( ['account.profile', $memberId] );
-    }
 }

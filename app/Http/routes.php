@@ -1,7 +1,5 @@
 <?php
 
-use App\Program;
-
 if (app()->environment() != 'production') {
 
 
@@ -86,7 +84,7 @@ Route::group(['prefix' => 'api/v1.0'], function () {
     });
 });
 
-Route::controller('ajax', 'UserController');
+Route::get('ajax/patients', 'UserController@getPatients');
 
 Route::get('careplan/{id}', [
     'uses' => 'Admin\CarePlanController@carePlan',
@@ -105,10 +103,26 @@ Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 Route::get('/', 'WelcomeController@index');
 Route::get('home', 'WelcomeController@index');
 
-Route::controllers([
-    'auth'     => 'Auth\AuthController',
-    'password' => 'Auth\PasswordController',
-]);
+Route::group([
+    'prefix' => 'auth',
+], function () {
+    Route::post('login', 'Auth\AuthController@postLogin');
+    Route::get('login', 'Auth\AuthController@getLogin');
+    Route::get('logout', 'Auth\AuthController@getLogout');
+    Route::post('register', 'Auth\AuthController@postRegister');
+    Route::get('register', 'Auth\AuthController@getRegister');
+});
+
+Route::group([
+    'prefix' => 'password',
+], function () {
+    Route::get('broker', 'Auth\PasswordController@getBroker');
+    Route::post('email', 'Auth\PasswordController@postEmail');
+    Route::get('email', 'Auth\PasswordController@getEmail');
+    Route::get('reset', 'Auth\PasswordController@getReset');
+    Route::post('reset', 'Auth\PasswordController@postReset');
+});
+
 Route::get('login', [
     'uses' => 'Auth\AuthController@getLogin',
     'as'   => 'login',
@@ -1215,8 +1229,15 @@ Route::group([
     // return token data, initial test
     Route::post('tokentest', 'AuthorizationController@tokentest');
 
-    // Password reset link request routes...
-    Route::controller('password', 'Auth\PasswordController');
+    Route::group([
+        'prefix' => 'password',
+    ], function () {
+        Route::get('broker', 'Auth\PasswordController@getBroker');
+        Route::post('email', 'Auth\PasswordController@postEmail');
+        Route::get('email', 'Auth\PasswordController@getEmail');
+        Route::get('reset', 'Auth\PasswordController@getReset');
+        Route::post('reset', 'Auth\PasswordController@postReset');
+    });
 
     // return data on logged in user
     Route::post('user', 'UserController@index');
@@ -1244,13 +1265,31 @@ Route::group(['prefix' => 'cron'], function () {
     });
 });
 
-Route::controller('datatables', 'DatatablesController', [
-    'anyData'            => 'datatables.data',
-    'anyCallsManagement' => 'datatables.anyCallsManagement',
-    'getIndex'           => 'datatables',
-]);
 
-Route::get('datatables/callData', [
-    'uses' => 'DatatablesController@callData',
-    'as'   => 'datatables.callData',
-]);
+Route::group([
+    'prefix' => 'datatables',
+], function () {
+    Route::any('data', [
+        'uses' => 'DatatablesController@anyData',
+        'as'   => 'datatables.data',
+    ]);
+
+    Route::any('calls-management', [
+        'uses' => 'DatatablesController@anyCallsManagement',
+        'as'   => 'datatables.anyCallsManagement',
+    ]);
+
+    Route::get('index', [
+        'uses' => 'DatatablesController@getIndex',
+        'as'   => 'datatables',
+    ]);
+
+    Route::get('callData', [
+        'uses' => 'DatatablesController@callData',
+        'as'   => 'datatables.callData',
+    ]);
+});
+
+
+
+
