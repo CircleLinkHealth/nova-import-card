@@ -15,8 +15,7 @@ class Service
     public function figureOutOverlaps(
         PageTimer $newActivity,
         Collection $overlappingActivities
-    )
-    {
+    ) {
         $minDate = Carbon::createFromFormat('Y-m-d H:i:s', $newActivity->start_time);
         $maxDate = Carbon::createFromFormat('Y-m-d H:i:s', $newActivity->end_time);
 
@@ -155,6 +154,8 @@ class Service
 
     public function isCcmActivity(PageTimer $activity) : bool
     {
-        return !($activity->patient_id == 0 || $activity->title == 'patient.activity.create' || $activity->title == 'patient.activity.create');
+        return !($activity->patient_id == 0
+            || $activity->title == 'patient.activity.create'
+            || $activity->title == 'patient.activity.providerUIIndex');
     }
 }
