@@ -182,7 +182,7 @@ class NoteService
 
                 $q->where('member_user_id', $provider)
                     ->where('type','billing_provider');
-            })->lists('ID');
+            })->pluck('ID');
 
         return $this->getNotesWithRangeForPatients($patients, $start, $end);
 
@@ -218,7 +218,7 @@ class NoteService
 
                 $q->where('member_user_id', $provider)
                     ->where('type','billing_provider');
-            })->lists('ID');
+            })->pluck('ID');
 
         $notes = $this->getForwardedNotesWithRangeForPatients($patients, $start, $end);
 

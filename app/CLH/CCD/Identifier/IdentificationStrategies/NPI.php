@@ -14,7 +14,7 @@ class NPI extends BaseIdentificationStrategy
 
         $providers = (array)$this->ccd->document->documentation_of;
 
-        $vendorNpis = CcdVendor::lists( 'doctor_oid' )->all();
+        $vendorNpis = CcdVendor::pluck('doctor_oid')->all();
 
         return array_filter( $vendorNpis, function ($vendorNpi) use ($providers) {
             return in_array( $vendorNpi, array_column( $providers, 'npi' ) );

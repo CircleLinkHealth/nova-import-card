@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Reports;
 use App\Call;
 use App\CLH\CCD\Importer\SnomedToICD10Map;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
@@ -23,7 +22,7 @@ class MonthlyBillingReportsController extends Controller
 {
     public function create()
     {
-        $programs = Program::orderBy('blog_id', 'desc')->lists('display_name', 'blog_id')->all();
+        $programs = Program::orderBy('blog_id', 'desc')->pluck('display_name', 'blog_id')->all();
 
         return view('admin.monthlyBillingReports.create', compact(['programs']));
     }
@@ -65,7 +64,7 @@ class MonthlyBillingReportsController extends Controller
                 ->groupBy('patient_id');
 
             $patientsOver20Mins = (new Collection($patientsOver20MinsQuery->get()))->keyBy('patient_id');
-            $patientsOver20MinsIds = $patientsOver20MinsQuery->lists('patient_id');
+            $patientsOver20MinsIds = $patientsOver20MinsQuery->pluck('patient_id');
 
 
             $patients = User::with([
@@ -159,7 +158,7 @@ class MonthlyBillingReportsController extends Controller
                         //put this in a function later
 
                         $keywords = SnomedToICD10Map::where('icd_10_code', 'like', "%$cpmProblem->icd10from%")
-                            ->lists('icd_10_name');
+                            ->pluck('icd_10_name');
 
                         foreach ($keywords as $keyword) {
                             if (empty($keyword)) continue;

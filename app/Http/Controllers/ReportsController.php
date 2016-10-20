@@ -635,8 +635,8 @@ class ReportsController extends Controller
                 $problemNames[] = $cpmProblem->name;
             }
         }
-        $careItemNames = CareItem::whereIn('display_name', $problemNames)->lists('display_name', 'id')->all();
-        $careItems = CareItem::whereIn('display_name', $problemNames)->lists('id')->all();
+        $careItemNames = CareItem::whereIn('display_name', $problemNames)->pluck('display_name', 'id')->all();
+        $careItems = CareItem::whereIn('display_name', $problemNames)->pluck('id')->all();
         $careItemUserValues = CareItemUserValue::whereIn('care_item_id', $careItems)->where('value', 'Active')->get();
         if ($careItemUserValues->count() > 0) {
             foreach ($careItemUserValues as $careItemUserValue) {

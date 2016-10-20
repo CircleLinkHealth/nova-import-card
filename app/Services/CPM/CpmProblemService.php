@@ -11,7 +11,6 @@ namespace App\Services\CPM;
 
 use App\CarePlanTemplate;
 use App\Contracts\Services\CpmModel;
-use App\Models\CPM\CpmInstruction;
 use App\User;
 
 class CpmProblemService implements CpmModel
@@ -80,7 +79,7 @@ class CpmProblemService implements CpmModel
         //get the User's cpmProblems
         $patientProblems = $patient->cpmProblems()->get();
 
-        $intersection = $patientProblems->intersect($cptProblems)->lists('name');
+        $intersection = $patientProblems->intersect($cptProblems)->pluck('name');
 
         return $intersection;
     }

@@ -2,13 +2,10 @@
 
 use App\CPRulesQuestions;
 use App\CPRulesQuestionSets;
-use App\Program;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
+use App\Program;
 use Auth;
+use Illuminate\Http\Request;
 
 class CPRQuestionSetController extends Controller
 {
@@ -40,7 +37,7 @@ class CPRQuestionSetController extends Controller
 		}
 
 		// filter question
-		$questions = CPRulesQuestions::orderBy('qid', 'desc')->get()->lists('msgIdAndObsKey', 'qid')->all();
+        $questions = CPRulesQuestions::orderBy('qid', 'desc')->get()->pluck('msgIdAndObsKey', 'qid')->all();
 		$filterQuestion = 'all';
 		if(!empty($params['filterQuestion'])) {
 			$filterQuestion = $params['filterQuestion'];
@@ -52,7 +49,7 @@ class CPRQuestionSetController extends Controller
 		}
 
 		// filter program
-		$programs = Program::orderBy('blog_id', 'desc')->get()->lists('domain', 'blog_id')->all();
+        $programs = Program::orderBy('blog_id', 'desc')->get()->pluck('domain', 'blog_id')->all();
 		$filterProgram = 'all';
 		if(!empty($params['filterProgram'])) {
 			$filterProgram = $params['filterProgram'];

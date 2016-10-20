@@ -1,94 +1,17 @@
 <?php namespace database\seeds;
 
-use App\Program;
+use App\CareItem;
 use App\CarePlan;
 use App\CareSection;
-use App\CareItem;
-use App\User;
-use App\Permission;
-use App\Role;
-use App\UserMeta;
-use App\CarePlanItem;
-use App\CPRulesUCP;
-use App\CPRulesPCP;
 use App\CPRulesItem;
-use App\CPRulesItemMeta;
+use App\CPRulesPCP;
+use App\Program;
 use App\Services\CareplanUIService;
+use App\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 
 class S20151215CarePlanMigration3 extends Seeder {
 
-    public function attachCareItem(CarePlan $carePlan, $rulesItemId, $sectionId, $metaKey, $metaValue) {
-        // ATTACH CARE ITEM TO CAREPLAN
-        $rulesItem = CPRulesItem::find($rulesItemId);
-        if(!$rulesItem) {
-            return false;
-        }
-        echo 'CARE ITEM'.PHP_EOL;
-        $careItem = CareItem::where('name', '=', $rulesItem['name'])->first();
-        if($careItem) {
-            // build pivot data
-            echo 'care_item_id = ' . $careItem['id'] .PHP_EOL;
-            if(is_null($metaValue)) {
-                $rulesUCP['ui_default'] = '';
-            }
-            $rowData = array('section_id' => $sectionId,
-                'meta_key' => $metaKey,
-                'meta_value' => $metaValue);
-
-            // get meta for columns
-            echo 'rulesUCP->>meta '.PHP_EOL;
-            if($rulesItem->meta->count() > 0) {
-                // what meta are we allowing in? needs to correspond exactly to care_items column name
-                $allowed = array(
-                    'meta_key',
-                    'meta_value',
-                    'alert_key',
-                    'ui_placeholder',
-                    'ui_default',
-                    'ui_title',
-                    'ui_fld_type',
-                    'ui_show_detail',
-                    'ui_row_start',
-                    'ui_row_end',
-                    'ui_sort',
-                    'ui_col_start',
-                    'ui_col_end',
-                    'track_as_observation',
-                    'APP_EN',
-                    'APP_ES');
-                foreach($rulesItem->meta as $meta) {
-                    if(in_array($meta['meta_key'], $allowed)) {
-                        $key = $meta['meta_key'];
-                        // transforms
-                        if($key == 'track_as_observation') {
-                            $key = 'ui_track_as_observation';
-                        }
-                        if($key == 'APP_EN') {
-                            $key = 'msg_app_en';
-                        }
-                        if($key == 'APP_ES') {
-                            $key = 'msg_app_es';
-                        }
-                        $rowData[$key] = $meta['meta_value'];
-                    }
-                }
-            }
-            // attach if doesnt already exist
-            $carePlanItem = $carePlan->careItems()->where('item_id', '=', $careItem['id'])->first();
-            if(empty($carePlanItem)) {
-                $carePlan->careItems()->attach(array($careItem['id'] => $rowData));
-                echo 'attached! Plan '.$carePlan->id.' - Item ' . $careItem['id'] .PHP_EOL;
-            } else {
-                echo 'already exists! Plan '.$carePlan->id.' - Item ' . $careItem['id'] .PHP_EOL;
-            }
-            $careItem->save();
-        }
-    }
-
-
-    // this will create the system default careplan
     public function run() {
         echo "start";
         $programs = Program::where('blog_id', '>', '6')->get();
@@ -97,7 +20,7 @@ class S20151215CarePlanMigration3 extends Seeder {
         }
         foreach($programs as $program) {
             // get pcp sections
-            $pcps = CPRulesPCP::where('prov_id', '=', $program->blog_id)->lists('pcp_id')->all();
+            $pcps = CPRulesPCP::where('prov_id', '=', $program->blog_id)->pluck('pcp_id')->all();
 
             // get items for these sections
             $items = CPRulesItem::whereIn('pcp_id', $pcps)->get();
@@ -194,6 +117,86 @@ class S20151215CarePlanMigration3 extends Seeder {
                     $user->save();
                 }
             }
+        }
+    }
+
+
+    // this will create the system default careplan
+
+    public function attachCareItem(
+        CarePlan $carePlan,
+        $rulesItemId,
+        $sectionId,
+        $metaKey,
+        $metaValue
+    ) {
+        // ATTACH CARE ITEM TO CAREPLAN
+        $rulesItem = CPRulesItem::find($rulesItemId);
+        if (!$rulesItem) {
+            return false;
+        }
+        echo 'CARE ITEM' . PHP_EOL;
+        $careItem = CareItem::where('name', '=', $rulesItem['name'])->first();
+        if ($careItem) {
+            // build pivot data
+            echo 'care_item_id = ' . $careItem['id'] . PHP_EOL;
+            if (is_null($metaValue)) {
+                $rulesUCP['ui_default'] = '';
+            }
+            $rowData = [
+                'section_id' => $sectionId,
+                'meta_key'   => $metaKey,
+                'meta_value' => $metaValue,
+            ];
+
+            // get meta for columns
+            echo 'rulesUCP->>meta ' . PHP_EOL;
+            if ($rulesItem->meta->count() > 0) {
+                // what meta are we allowing in? needs to correspond exactly to care_items column name
+                $allowed = [
+                    'meta_key',
+                    'meta_value',
+                    'alert_key',
+                    'ui_placeholder',
+                    'ui_default',
+                    'ui_title',
+                    'ui_fld_type',
+                    'ui_show_detail',
+                    'ui_row_start',
+                    'ui_row_end',
+                    'ui_sort',
+                    'ui_col_start',
+                    'ui_col_end',
+                    'track_as_observation',
+                    'APP_EN',
+                    'APP_ES',
+                ];
+                foreach ($rulesItem->meta as $meta) {
+                    if (in_array($meta['meta_key'], $allowed)) {
+                        $key = $meta['meta_key'];
+                        // transforms
+                        if ($key == 'track_as_observation') {
+                            $key = 'ui_track_as_observation';
+                        }
+                        if ($key == 'APP_EN') {
+                            $key = 'msg_app_en';
+                        }
+                        if ($key == 'APP_ES') {
+                            $key = 'msg_app_es';
+                        }
+                        $rowData[$key] = $meta['meta_value'];
+                    }
+                }
+            }
+            // attach if doesnt already exist
+            $carePlanItem = $carePlan->careItems()->where('item_id', '=', $careItem['id'])->first();
+            if (empty($carePlanItem)) {
+                $carePlan->careItems()->attach([$careItem['id'] => $rowData]);
+                echo 'attached! Plan ' . $carePlan->id . ' - Item ' . $careItem['id'] . PHP_EOL;
+            } else {
+                echo 'already exists! Plan ' . $carePlan->id . ' - Item ' . $careItem['id'] . PHP_EOL;
+            }
+            $careItem->save();
         }
     }
 

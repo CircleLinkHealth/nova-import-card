@@ -1,14 +1,12 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\User;
 use App\CarePlan;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use App\CLH\Repositories\CarePlanRepository;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
+use App\Http\Controllers\Controller;
+use App\User;
 use Auth;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class CarePlanController extends Controller {
 
@@ -29,7 +27,8 @@ class CarePlanController extends Controller {
 		$params = $request->all();
 
 		// filter user
-		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID')->all();
+        $users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id',
+            'desc')->get()->pluck('fullNameWithId', 'ID')->all();
 		$filterUser = 'all';
 		if(isset($params['filterUser'])) {
 			$filterUser = $params['filterUser'];
@@ -40,7 +39,7 @@ class CarePlanController extends Controller {
 
 		/*
 		// filter pcp
-		$pcps = CarePlan::select('section_text')->groupBy('section_text')->get()->lists('section_text', 'section_text')->all();
+		$pcps = CarePlan::select('section_text')->groupBy('section_text')->get()->pluck('section_text', 'section_text')->all();
 		$filterPCP = 'all';
 		if(!empty($params['filterPCP'])) {
 			$filterPCP = $params['filterPCP'];
@@ -69,7 +68,8 @@ class CarePlanController extends Controller {
 			abort(403);
 		}
 
-		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID')->all();
+        $users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id',
+            'desc')->get()->pluck('fullNameWithId', 'ID')->all();
 
 		// display view
 		return view('admin.carePlans.create', [ 'users' => $users ]);
@@ -126,7 +126,8 @@ class CarePlanController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID')->all();
+        $users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id',
+            'desc')->get()->pluck('fullNameWithId', 'ID')->all();
 
 		$carePlan = CarePlan::find($id);
 		$carePlan->build();
@@ -243,7 +244,8 @@ class CarePlanController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID')->all();
+        $users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id',
+            'desc')->get()->pluck('fullNameWithId', 'ID')->all();
 
 		$carePlan = CarePlan::find($id);
 		foreach($carePlan->careSections as $careSection) {
@@ -272,7 +274,8 @@ class CarePlanController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-		$users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id', 'desc')->get()->lists('fullNameWithId', 'ID')->all();
+        $users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id',
+            'desc')->get()->pluck('fullNameWithId', 'ID')->all();
 
 		$carePlan = CarePlan::find($id);
 		foreach($carePlan->careSections as $careSection) {

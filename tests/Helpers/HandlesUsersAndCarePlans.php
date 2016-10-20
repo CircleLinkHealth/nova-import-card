@@ -396,7 +396,7 @@ trait HandlesUsersAndCarePlans
 //
 //        $patientEntities = $patient
 //            ->{$relationship}()
-//            ->lists($entityIdFieldName)
+//            ->pluck($entityIdFieldName)
 //            ->all();
 //
 //        /*

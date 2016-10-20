@@ -1,11 +1,9 @@
 <?php namespace App\Http\Controllers\Admin\Reports;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\PageTimer;
 use App\Program;
 use App\User;
-use Auth;
 use Excel;
 use Illuminate\Http\Request;
 
@@ -46,7 +44,7 @@ class ProviderMonthlyUsageReportController extends Controller
         }
 
         // get all program
-        $programs = Program::where('name', '=', $program)->get()->lists('display_name', 'blog_id')->all();
+        $programs = Program::where('name', '=', $program)->get()->pluck('display_name', 'blog_id')->all();
 
         // get stats for each program
         foreach ($programs as $programId => $programName) {

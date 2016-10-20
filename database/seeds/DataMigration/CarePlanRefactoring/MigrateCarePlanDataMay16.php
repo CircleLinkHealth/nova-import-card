@@ -10,7 +10,7 @@ class MigrateCarePlanDataMay16 extends \Illuminate\Database\Seeder
 {
     public function run()
     {
-        $users = \App\CareItemUserValue::distinct()->lists('user_id');
+        $users = \App\CareItemUserValue::distinct()->pluck('user_id');
 
         DB::transaction(function () use ($users) {
             foreach ($users as $userId) {

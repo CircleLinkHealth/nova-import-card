@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Observation;
 use App\PatientCarePlan;
 use App\PatientCareTeamMember;
-use App\PatientInfo;
 use App\PhoneNumber;
 use App\Program;
 use App\Services\CarePlanViewService;
@@ -471,7 +470,7 @@ class PatientController extends Controller
         $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
-            })->get()->lists('fullNameWithId', 'ID')->all();
+            })->get()->pluck('fullNameWithId', 'ID')->all();
 
         return view('wpUsers.patient.select', compact(['patients']));
     }

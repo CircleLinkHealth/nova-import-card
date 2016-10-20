@@ -61,7 +61,7 @@ class NotesController extends Controller
 
         $session_user = Auth::user();
 
-        $providers_for_blog = User::whereIn('ID', $session_user->viewableProviderIds())->lists('display_name',
+        $providers_for_blog = User::whereIn('ID', $session_user->viewableProviderIds())->pluck('display_name',
             'ID')->sort();
 
         //TIME FILTERS

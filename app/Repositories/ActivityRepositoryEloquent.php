@@ -2,15 +2,14 @@
 
 namespace App\Repositories;
 
-use App\ActivityMeta;
-use App\CcmTimeApiLog;
-use App\User;
-use Illuminate\Support\Facades\DB;
-use Prettus\Repository\Eloquent\BaseRepository;
-use Prettus\Repository\Criteria\RequestCriteria;
-use App\Contracts\Repositories\ActivityRepository;
 use App\Activity;
+use App\CcmTimeApiLog;
+use App\Contracts\Repositories\ActivityRepository;
+use App\User;
 use App\Validators\ActivityValidator;
+use Illuminate\Support\Facades\DB;
+use Prettus\Repository\Criteria\RequestCriteria;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
  * Class ActivityRepositoryEloquent
@@ -71,7 +70,7 @@ class ActivityRepositoryEloquent extends BaseRepository implements ActivityRepos
                 $startDate, $endDate
             ]);
         if (!$sendAll) {
-            $activities->whereNotIn("$activitiesTable.id", CcmTimeApiLog::lists('activity_id')->all());
+            $activities->whereNotIn("$activitiesTable.id", CcmTimeApiLog::pluck('activity_id')->all());
         }
         $activities = $activities->get();
 

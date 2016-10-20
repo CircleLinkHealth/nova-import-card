@@ -1,18 +1,12 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use App\Rules;
-use App\Location;
-
-use App\RulesIntrConditions;
-use App\RulesIntrActions;
-use App\RulesOperators;
-use App\RulesConditions;
 use App\RulesActions;
-
+use App\RulesConditions;
+use App\RulesIntrActions;
+use App\RulesIntrConditions;
+use App\RulesOperators;
 use App\Services\RulesService;
-
 use Illuminate\Http\Request;
 
 class RulesController extends Controller {
@@ -39,10 +33,10 @@ class RulesController extends Controller {
 		//$rules = new Rules;
 		//dd($rules->getActions(array('Activity' => 'Patient Overview', 'Role' => 'Provider')) );
 		return view('rules.create', [
-			'operators' => RulesOperators::lists('operator', 'id')->all(),
-			'conditions' => RulesConditions::lists('condition', 'id')->all(),
-			'actions' => RulesActions::lists('action', 'id')->all(),
-			'messages' => \Session::get('messages')
+            'operators'  => RulesOperators::pluck('operator', 'id')->all(),
+            'conditions' => RulesConditions::pluck('condition', 'id')->all(),
+            'actions'    => RulesActions::pluck('action', 'id')->all(),
+            'messages'   => \Session::get('messages')
 		]);
 	}
 
@@ -128,16 +122,16 @@ class RulesController extends Controller {
 			}
 		}
 		//dd('nope');
-		$operators = RulesOperators::lists('operator', 'id')->all();
-		//$conditions = RulesConditions::lists('conditions', 'id')->all();
+        $operators = RulesOperators::pluck('operator', 'id')->all();
+        //$conditions = RulesConditions::pluck('conditions', 'id')->all();
 
 		if($rule) {
 			return view('rules.edit', [
-				'rule' => $rule,
-				'operators' => RulesOperators::lists('operator', 'id')->all(),
-				'conditions' => RulesConditions::lists('condition', 'id')->all(),
-				'actions' => RulesActions::lists('action', 'id')->all(),
-				'messages' => \Session::get('messages')
+                'rule'       => $rule,
+                'operators'  => RulesOperators::pluck('operator', 'id')->all(),
+                'conditions' => RulesConditions::pluck('condition', 'id')->all(),
+                'actions'    => RulesActions::pluck('action', 'id')->all(),
+                'messages'   => \Session::get('messages')
 			]);
 		} else {
 			return response('Rule Not Found', 204);

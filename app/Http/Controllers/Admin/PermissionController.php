@@ -1,15 +1,9 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests;
-use App\Role;
-use App\Permission;
-use App\CPRulesPCP;
-use App\CPRulesItemMeta;
-use App\CPRulesItem;
 use App\Http\Controllers\Controller;
+use App\Permission;
+use App\Role;
 use Auth;
-
-use App\Program;
 use Illuminate\Http\Request;
 
 class PermissionController extends Controller {
@@ -96,7 +90,7 @@ class PermissionController extends Controller {
 		}
 		$permission = Permission::find($id);
 		$roles = Role::all();
-		$permissionRoles = $permission->roles()->lists('id')->all();
+        $permissionRoles = $permission->roles()->pluck('id')->all();
 		return view('admin.permissions.edit', [ 'permission' => $permission, 'roles' => $roles, 'permissionRoles' => $permissionRoles, 'messages' => \Session::get('messages') ]);
 	}
 

@@ -61,7 +61,7 @@
                         @foreach( $permissions as $permission )
                             <div class="form-group permissions" id="perm_{{ $permission }}">
                                 <div class="col-sm-1">
-                                @if( in_array($permission->id, $role->perms()->lists('id')->all()) )
+                                    @if( in_array($permission->id, $role->perms()->pluck('id')->all()) )
                                     {!! Form::checkbox('permissions[]', $permission->id, ['checked' => "checked"], ['style' => '']) !!}
                                 @else
                                     {!! Form::checkbox('permissions[]', $permission->id, [], ['style' => '']) !!}

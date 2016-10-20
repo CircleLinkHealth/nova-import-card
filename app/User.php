@@ -397,14 +397,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         });
         //}
 
-        $patientIds = $patientIds->lists('ID')->all();
+        $patientIds = $patientIds->pluck('ID')->all();
 
         return $patientIds;
     }
 
     public function viewableProgramIds()
     {
-        $programIds = $this->programs()->lists('blog_id')->all();
+        $programIds = $this->programs()->pluck('blog_id')->all();
 
         return $programIds;
     }
@@ -434,7 +434,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         });
         //}
 
-        $patientIds = $patientIds->lists('ID')->all();
+        $patientIds = $patientIds->pluck('ID')->all();
 
         return $patientIds;
     }
@@ -450,14 +450,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $q->whereIn('program_id', $programIds);
         });
 
-        $patientIds = $patientIds->lists('ID')->all();
+        $patientIds = $patientIds->pluck('ID')->all();
 
         return $patientIds;
     }
 
     public function userMeta($key = null)
     {
-        $userMeta = $this->meta->lists('meta_value', 'meta_key')->all();
+        $userMeta = $this->meta->pluck('meta_value', 'meta_key')->all();
         $userMeta['user_config'] = $this->userConfig();
         if (!$userMeta) {
             return false;

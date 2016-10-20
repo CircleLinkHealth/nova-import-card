@@ -1,15 +1,11 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests;
-use App\User;
-use App\Program;
-use App\CPRulesPCP;
-use App\Location;
-use App\CPRulesItemMeta;
-use App\CPRulesItem;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Location;
+use App\Program;
+use App\User;
 use Auth;
+use Illuminate\Http\Request;
 
 class WpBlogController extends Controller {
 
@@ -41,7 +37,7 @@ class WpBlogController extends Controller {
 
 		$messages = \Session::get('messages');
 
-		$locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->lists('name', 'id')->all();
+        $locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->pluck('name', 'id')->all();
 
 		return view('admin.wpBlogs.create', compact([ 'locations', 'errors', 'messages' ]));
 	}
@@ -139,7 +135,7 @@ class WpBlogController extends Controller {
 		}
 		*/
 
-		$locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->lists('name', 'id')->all();
+        $locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->pluck('name', 'id')->all();
 
 		return view('admin.wpBlogs.show', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}
@@ -160,7 +156,7 @@ class WpBlogController extends Controller {
 
 		$program = Program::find($id);
 
-		$locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->lists('name', 'id')->all();
+        $locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->pluck('name', 'id')->all();
 
 		return view('admin.wpBlogs.edit', compact([ 'program', 'locations', 'errors', 'messages' ]));
 	}

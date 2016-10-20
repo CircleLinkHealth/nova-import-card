@@ -1,33 +1,22 @@
 <?php namespace App\Http\Controllers;
 
-use App\Activity;
+use App\CarePlan;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\Repositories\UserRepository;
-use App\CPRulesItemMeta;
 use App\CPRulesPCP;
-use App\Observation;
-use App\Program;
 use App\Location;
-use App\User;
-use App\UserMeta;
+use App\Program;
 use App\Role;
-use App\CarePlan;
-use App\Services\ActivityService;
 use App\Services\CareplanService;
-use App\Services\ObservationService;
-use App\Services\MsgUser;
-use App\Services\MsgUI;
 use App\Services\MsgChooser;
 use App\Services\MsgScheduler;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use App\Services\MsgUI;
+use App\Services\MsgUser;
+use App\Services\ObservationService;
+use App\User;
+use Auth;
 use DateTimeZone;
 use EllipseSynergie\ApiResponse\Laravel\Response;
-use Illuminate\Support\Collection;
-use PasswordHash;
-use Auth;
-use DB;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -104,7 +93,8 @@ class UserController extends Controller
             $params = $request->all();
 
             // filter user
-            $users = User::whereIn( 'ID', Auth::user()->viewableUserIds() )->OrderBy( 'id', 'desc' )->get()->lists( 'fullNameWithId', 'ID' )->all();
+            $users = User::whereIn('ID', Auth::user()->viewableUserIds())->OrderBy('id',
+                'desc')->get()->pluck('fullNameWithId', 'ID')->all();
             $filterUser = 'all';
             if ( !empty($params[ 'filterUser' ]) ) {
                 $filterUser = $params[ 'filterUser' ];
@@ -114,7 +104,7 @@ class UserController extends Controller
             }
 
             // role filter
-            $roles = Role::all()->lists( 'display_name', 'name' )->all();
+            $roles = Role::all()->pluck('display_name', 'name')->all();
             $filterRole = 'all';
             if ( !empty($params[ 'filterRole' ]) ) {
                 $filterRole = $params[ 'filterRole' ];
@@ -128,7 +118,7 @@ class UserController extends Controller
             // program filter
             $programs = Program::orderBy( 'blog_id', 'desc' )
                 ->whereIn( 'blog_id', Auth::user()->viewableProgramIds() )
-                ->get()->lists( 'domain', 'blog_id' )->all();
+                ->get()->pluck('domain', 'blog_id')->all();
             $filterProgram = 'all';
             if ( !empty($params[ 'filterProgram' ]) ) {
                 $filterProgram = $params[ 'filterProgram' ];
@@ -170,19 +160,6 @@ class UserController extends Controller
     {
         return $this->quickAddForm( $programId );
     }
-
-    public function storeQuickPatient()
-    {
-        if ( !Auth::user()->can( 'users-create' ) ) {
-            abort( 403 );
-        }
-        $wpUser = new User;
-
-        // create participant here
-
-        return redirect()->route( 'admin.users.edit', [$wpUser->ID] )->with( 'messages', ['successfully created new user - ' . $wpUser->ID] );
-    }
-
 
     public function quickAddForm($blogId)
     {
@@ -227,6 +204,18 @@ class UserController extends Controller
 
     }
 
+    public function storeQuickPatient()
+    {
+        if (!Auth::user()->can('users-create')) {
+            abort(403);
+        }
+        $wpUser = new User;
+
+        // create participant here
+
+        return redirect()->route('admin.users.edit', [$wpUser->ID])->with('messages',
+            ['successfully created new user - ' . $wpUser->ID]);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -242,7 +231,7 @@ class UserController extends Controller
 
         $wpUser = new User;
 
-        $roles = Role::lists( 'name', 'id' )->all();
+        $roles = Role::pluck('name', 'id')->all();
 
         // user config
         $userConfig = ( new UserConfigTemplate() )->getArray();
@@ -254,9 +243,9 @@ class UserController extends Controller
         $states_arr = array('AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming");
 
         // programs for dd
-        $wpBlogs = Program::orderBy( 'blog_id', 'desc' )->lists( 'domain', 'blog_id' )->all();
+        $wpBlogs = Program::orderBy('blog_id', 'desc')->pluck('domain', 'blog_id')->all();
 
-        $locations = Location::whereNotNull( 'parent_id' )->lists( 'name', 'id' )->all();
+        $locations = Location::whereNotNull('parent_id')->pluck('name', 'id')->all();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers( DateTimeZone::ALL );
@@ -343,7 +332,7 @@ class UserController extends Controller
             return response( "User not found", 401 );
         }
 
-        $roles = Role::lists( 'name', 'id' )->all();
+        $roles = Role::pluck('name', 'id')->all();
         $role = $patient->roles()->first();
         if ( !$role ) {
             $role = Role::first();
@@ -385,13 +374,13 @@ class UserController extends Controller
             $locations_arr = ( new Location )->getNonRootLocations( $wpBlog->locationId() );
         }
 
-        $carePlans = CarePlan::where( 'program_id', '=', $patient->program_id )->lists( 'display_name', 'id' )->all();
+        $carePlans = CarePlan::where('program_id', '=', $patient->program_id)->pluck('display_name', 'id')->all();
 
         // States (for dropdown)
         $states_arr = array('AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming");
 
         // programs for dd
-        $wpBlogs = Program::orderBy( 'blog_id', 'desc' )->lists( 'domain', 'blog_id' )->all();
+        $wpBlogs = Program::orderBy('blog_id', 'desc')->pluck('domain', 'blog_id')->all();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers( DateTimeZone::ALL );

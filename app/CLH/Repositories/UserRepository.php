@@ -185,7 +185,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // first detatch relationship
         $wpUser->programs()->detach();
 
-        $wpBlogs = Program::orderBy('blog_id', 'desc')->lists('blog_id')->all();
+        $wpBlogs = Program::orderBy('blog_id', 'desc')->pluck('blog_id')->all();
         foreach ($wpBlogs as $wpBlogId) {
             if (in_array($wpBlogId, $userPrograms)) {
                 $wpUser->programs()->attach($wpBlogId);
@@ -421,7 +421,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     {
         /*
         // meta
-        $userMeta = UserMeta::where('user_id', '=', $wpUser->ID)->lists('meta_value', 'meta_key')->all();
+        $userMeta = UserMeta::where('user_id', '=', $wpUser->ID)->pluck('meta_value', 'meta_key')->all();
 
         // config
         $userConfig = (new UserConfigTemplate())->getArray();

@@ -30,22 +30,6 @@ class Program extends Model {
     protected $primaryKey = 'blog_id';
 
 	//
-    public function pcp(){
-        return $this->hasMany('App\CPRulesPCP', 'prov_id', 'blog_id');
-    }
-
-    public function careplan() {
-        return $this->hasMany('App\CarePlanTemplate', 'patient_id');
-    }
-
-    public function users() {
-        return $this->belongsToMany('App\User', 'lv_program_user', 'program_id', 'user_id');
-    }
-
-    public function location()
-    {
-        return $this->belongsTo('App\Location', 'location_id');
-    }
 
     public static function getProviders($blogId){
         $providers = User::whereHas('programs', function ($q) use ($blogId) {
@@ -74,14 +58,6 @@ class Program extends Model {
         return $providers;
     }
 
-    public function locationId() {
-        /*
-        $location = \DB::select("select * from wp_".$this->blog_id."_options where option_name = 'location_id'", []);
-        return $location[0]->option_value;
-        */
-        return $this->location_id;
-    }
-
     public static function getItemsForParent($item, $blogId)
     {
         $categories = array();
@@ -89,7 +65,7 @@ class Program extends Model {
         $pcp = CPRulesPCP::where('prov_id', '=', $blogId)->where('status', '=', 'Active')->where('section_text', $item)->first();
         //Get all the items for each section
         if ($pcp) {
-            $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->lists('items_id')->all();
+            $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->pluck('items_id')->all();
             for ($i = 0; $i < count($items); $i++) {
                 //get id's of all lifestyle items that are active for the given user
                 $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value', 'Active')->where('user_id', $blogId)->first();
@@ -110,6 +86,35 @@ class Program extends Model {
                 return false;
             }
         }
+    }
+
+    public function pcp()
+    {
+        return $this->hasMany('App\CPRulesPCP', 'prov_id', 'blog_id');
+    }
+
+    public function careplan()
+    {
+        return $this->hasMany('App\CarePlanTemplate', 'patient_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany('App\User', 'lv_program_user', 'program_id', 'user_id');
+    }
+
+    public function location()
+    {
+        return $this->belongsTo('App\Location', 'location_id');
+    }
+
+    public function locationId()
+    {
+        /*
+        $location = \DB::select("select * from wp_".$this->blog_id."_options where option_name = 'location_id'", []);
+        return $location[0]->option_value;
+        */
+        return $this->location_id;
     }
 
     public function enrollmentByProgram(Carbon $start, Carbon $end){

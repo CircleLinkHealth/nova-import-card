@@ -1,10 +1,7 @@
 <?php namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\User;
 use App\Services\DatamonitorService;
-use App\UserMeta;
-use DB;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @SWG\Definition(definition="observation",required={"primaryKey"},@SWG\Xml(name="Observation")))
@@ -14,29 +11,31 @@ class Observation extends Model {
 
     // for revisionable
     use \Venturecraft\Revisionable\RevisionableTrait;
+    /**
+     * The attributes that are mass assignable.
+     * @SWG\Property()
+     * @var array
+     */
+    public $timestamps = true;
     protected $revisionCreationsEnabled = true;
-
     /**
      * The connection name for the model.
      *
      * @var string
      */
     protected $connection = 'mysql_no_prefix';
-
     /**
      * The database table used by the model.
      * @SWG\Property()
      * @var string
      */
     protected $table = 'lv_observations';
-
     /**
      * The primary key for the model.
      *@SWG\Property(format="int64")
      * @var int
      */
     protected $primaryKey = 'id';
-
     /**
      * The attributes that are mass assignable.
      *@SWG\Property()
@@ -49,28 +48,53 @@ class Observation extends Model {
      * @var array
      */
     protected $dates = ['deleted_at'];
-    /**
-     * The attributes that are mass assignable.
-     *@SWG\Property()
-     * @var array
-     */
-    public $timestamps = true;
 
 
     // for revisionable
+
     public static function boot()
     {
         parent::boot();
     }
 
+    public static function getStartingObservation(
+        $userId,
+        $message_id
+    )
+    {
+        /*
+        $starting = Observation::whereHas('meta', function($q) use ($message_id)
+        {
+            $q->where('meta_key', 'starting_observation')
+              ->where('message_id', $message_id);
+
+        })->where('user_id', $userId)->pluck('obs_value')->all();
+        */
+
+        $starting = Observation::where('user_id', $userId)
+            ->whereHas('meta', function ($q) use
+            (
+                $message_id
+            ) {
+                $q->where('meta_key', 'starting_observation')
+                    ->where('message_id', $message_id);
+
+            })->first();
+
+        if ($starting) {
+            return $starting->obs_value;
+        } else {
+            $x = Observation::where('user_id', '=', $userId)->where('obs_message_id', '=', $message_id)->first();
+
+            return isset($x->obs_value)
+                ? $x->obs_value
+                : 'N/A';
+        }
+    }
+
     public function comment()
     {
         return $this->belongsTo('App\Comment');
-    }
-
-    public function meta()
-    {
-        return $this->hasMany('App\ObservationMeta', 'obs_id', 'id');
     }
 
     public function question()
@@ -98,6 +122,11 @@ class Observation extends Model {
             $name = $meta->meta_value;
         }
         return $name;
+    }
+
+    public function meta()
+    {
+        return $this->hasMany('App\ObservationMeta', 'obs_id', 'id');
     }
 
     public function getAlertLogAttribute() {
@@ -145,6 +174,8 @@ class Observation extends Model {
         return $name;
     }
 
+    // END META ATTRIBUTES
+
     public function getStartingObservationAttribute() {
         $name = 'no';
         $meta = $this->meta()->where('meta_key', '=', 'starting_observation')->first();
@@ -154,42 +185,11 @@ class Observation extends Model {
         return $name;
     }
 
-    // END META ATTRIBUTES
-
-
     public function getObservation($obs_id)
     {
         $observation = Observation::where('obs_id', '=', $obs_id)->get();
         return $observation;
     }
-
-    public static function getStartingObservation($userId, $message_id)
-    {
-        /*
-        $starting = Observation::whereHas('meta', function($q) use ($message_id)
-        {
-            $q->where('meta_key', 'starting_observation')
-              ->where('message_id', $message_id);
-
-        })->where('user_id', $userId)->lists('obs_value')->all();
-        */
-
-        $starting = Observation::where('user_id', $userId)
-            ->whereHas('meta', function($q) use ($message_id)
-            {
-                $q->where('meta_key', 'starting_observation')
-                  ->where('message_id', $message_id);
-
-            })->first();
-
-        if($starting){
-            return $starting->obs_value;
-        } else {
-            $x = Observation::where('user_id', '=', $userId)->where('obs_message_id', '=', $message_id)->first();
-            return isset($x->obs_value) ? $x->obs_value : 'N/A';
-        }
-    }
-
 
     public function getObservationsForUser($user_id)
     {

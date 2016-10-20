@@ -1,11 +1,9 @@
 <?php namespace App\Http\Controllers\Admin\Reports;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\PageTimer;
 use App\Program;
 use App\User;
-use Auth;
 use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;
@@ -48,7 +46,7 @@ class ProviderUsageReportController extends Controller
             $program = $request->input('program');
         }
 
-        $programs = Program::where('name', '=', $program)->get()->lists('display_name', 'blog_id')->all();
+        $programs = Program::where('name', '=', $program)->get()->pluck('display_name', 'blog_id')->all();
 
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
 
