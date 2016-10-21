@@ -58,10 +58,10 @@ trait TimeTrackingHelpers
     public function createTrackingEvent(
         User $provider,
         User $patient,
-        $programId,
-        $duration,
-        $startTime,
-        $testEndTime,
+        int $programId,
+        int $duration,
+        Carbon $startTime,
+        Carbon $testEndTime,
         $activity = 'Patient Overview Review'
     ) {
         $response = $this->call('POST', route('api.pagetracking'), [
@@ -69,8 +69,8 @@ trait TimeTrackingHelpers
             'providerId'  => $provider->ID,
             'totalTime'   => $duration,
             'programId'   => $programId,
-            'startTime'   => $startTime,
-            'testEndTime' => $testEndTime,
+            'startTime'   => $startTime->toDateTimeString(),
+            'testEndTime' => $testEndTime->toDateTimeString(),
             'urlFull'     => 'www.url.com',
             'urlShort'    => 'url.com',
             'ipAddr'      => '1.1.1.1',
@@ -81,10 +81,10 @@ trait TimeTrackingHelpers
         $this->seeInDatabase('lv_page_timer', [
             'patient_id'        => $patient->ID,
             'provider_id'       => $provider->ID,
-            'duration'          => ceil($duration / 1000),
+            'duration'          => $startTime->diffInSeconds($testEndTime),
             'program_id'        => $programId,
-            'actual_start_time' => $startTime,
-            'actual_end_time'   => $testEndTime,
+            'actual_start_time' => $startTime->toDateTimeString(),
+            'actual_end_time'   => $testEndTime->toDateTimeString(),
             'url_full'          => 'www.url.com',
             'url_short'         => 'url.com',
             'ip_addr'           => '1.1.1.1',

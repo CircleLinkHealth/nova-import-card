@@ -139,7 +139,7 @@ class Connection {
                 /*
                  * Hack to check for 401 response without needing to install PECL to be able to use http_parse_headers()
                  */
-                if (str_contains($http_response_header[0], '401'))
+                if (isset($http_response_header) && str_contains($http_response_header[0], '401'))
                 {
                     return false;
                 }
