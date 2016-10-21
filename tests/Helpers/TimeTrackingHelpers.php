@@ -17,8 +17,7 @@ use Illuminate\Support\Collection;
 trait TimeTrackingHelpers
 {
     public function createActivitiesAndRunTest(
-        Collection $create,
-        Carbon $startTime
+        Collection $create
     ) {
         foreach ($create->all() as $new) {
             $this->createTrackingEvent(
@@ -36,16 +35,16 @@ trait TimeTrackingHelpers
             ]);
         }
 
-        $pageTimers = PageTimer::where('actual_start_time', '>=', $startTime)
+        $minStartDate = Carbon::parse($create->min(0));
+        $maxEndDate = Carbon::parse($create->max(1));
+
+        $pageTimers = PageTimer::where('actual_start_time', '>=', $minStartDate)
             ->where('patient_id', $this->patient->ID)
             ->orderBy('id', 'desc')
             ->take($create->count())
             ->get();
 
         $sum = $pageTimers->sum('billable_duration');
-
-        $minStartDate = Carbon::parse($create->min(0));
-        $maxEndDate = Carbon::parse($create->max(1));
 
         $this->assertEquals($minStartDate->diffInSeconds($maxEndDate), $sum);
 

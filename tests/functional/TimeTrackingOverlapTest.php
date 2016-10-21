@@ -30,42 +30,42 @@ class TimeTrackingOverlapTest extends TestCase
      * -------------------------
      *           -----
      */
-//    public function testCase1()
-//    {
-//        $startTime = Carbon::now();
-//        $endTime = $startTime->copy()->addSeconds(30);
-//
-//        $create = new Collection([
-//            [
-//                $startTime,
-//                $endTime,
-//                $startTime->diffInSeconds($endTime),
-//            ],
-//            [
-//                $startTime->copy()->subSeconds(10),
-//                $endTime->copy()->addSeconds(10),
-//                $startTime->copy()->subSeconds(10)->diffInSeconds($endTime->copy()->addSeconds(10)),
-//            ],
-//            [
-//                $startTime->copy()->addSeconds(10),
-//                $endTime->copy()->addSeconds(60),
-//                $startTime->copy()->addSeconds(10)->diffInSeconds($endTime->copy()->addSeconds(60)),
-//            ],
-//            [
-//                $startTime->copy()->subSeconds(30),
-//                $endTime,
-//                $startTime->copy()->subSeconds(30)->diffInSeconds($endTime),
-//            ],
-//            [
-//                $startTime->copy()->addSeconds(5),
-//                $endTime->copy()->subSeconds(5),
-//                $startTime->copy()->addSeconds(5)->diffInSeconds($endTime->copy()->subSeconds(5)),
-//            ],
-//        ]);
-//
-//        $this->createActivitiesAndRunTest($create, $startTime);
-//
-//    }
+    public function testCase1()
+    {
+        $startTime = Carbon::now();
+        $endTime = $startTime->copy()->addSeconds(30);
+
+        $create = new Collection([
+            [
+                $startTime,
+                $endTime,
+                $startTime->diffInSeconds($endTime),
+            ],
+            [
+                $startTime->copy()->subSeconds(10),
+                $endTime->copy()->addSeconds(10),
+                $startTime->copy()->subSeconds(10)->diffInSeconds($endTime->copy()->addSeconds(10)),
+            ],
+            [
+                $startTime->copy()->addSeconds(10),
+                $endTime->copy()->addSeconds(60),
+                $startTime->copy()->addSeconds(10)->diffInSeconds($endTime->copy()->addSeconds(60)),
+            ],
+            [
+                $startTime->copy()->subSeconds(30),
+                $endTime,
+                $startTime->copy()->subSeconds(30)->diffInSeconds($endTime),
+            ],
+            [
+                $startTime->copy()->addSeconds(5),
+                $endTime->copy()->subSeconds(5),
+                $startTime->copy()->addSeconds(5)->diffInSeconds($endTime->copy()->subSeconds(5)),
+            ],
+        ]);
+
+        $this->createActivitiesAndRunTest($create);
+
+    }
 
 
     /**
@@ -150,6 +150,6 @@ class TimeTrackingOverlapTest extends TestCase
             ],
         ]);
 
-        $this->createActivitiesAndRunTest($create, $startTime);
+        $this->createActivitiesAndRunTest($create);
     }
 }
