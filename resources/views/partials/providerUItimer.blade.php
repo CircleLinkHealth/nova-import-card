@@ -55,6 +55,7 @@ if (isset($patient) && !empty($patient)) {
 @if ($enableTimeTracking)
     <script>
         (function ($) {
+            //We get startTime, and endTime from the client to not have to deal with timezones
             var startTime = new Date();
             var endTime;
             var noResponse = true; // set to false if user clicks yes/no button
