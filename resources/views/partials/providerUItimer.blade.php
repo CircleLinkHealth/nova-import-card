@@ -55,7 +55,7 @@ if (isset($patient) && !empty($patient)) {
 @if ($enableTimeTracking)
     <script>
         (function ($) {
-            var startTime = new Date('<?php echo Carbon::now()->format('D M d Y H:i:s O'); ?>');
+            var startTime = new Date();
             var endTime;
             var noResponse = true; // set to false if user clicks yes/no button
             var totalTime = 0; // total accumulated time on page
