@@ -122,12 +122,6 @@ class Service
             $greedy->end_time = $greedyStart->addSeconds($greedy->billable_duration)->toDateTimeString();
             $greedy->save();
         }
-        $pageTimers = PageTimer::where('created_at', '>=', Carbon::now()->subMinutes(3))
-            ->get()
-            ->sum('billable_duration');
-        if ($pageTimers > 155) {
-            var_dump('greedy ' . $greedy->id . ' secondary ' . $secondary->id . ' sum ' . $pageTimers);
-        }
     }
 
     public function isCcmActivity(PageTimer $activity) : bool
