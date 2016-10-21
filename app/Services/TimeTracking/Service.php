@@ -39,9 +39,21 @@ class Service
             if ($greedyStart->gt($secondaryStart) && $greedyEnd->gt($secondaryEnd)) {
                 if ($secondaryStart->gte($minDate)) {
                     $secondary->billable_duration = 0;
-                    $secondary->start_time = $newActivity->start_time;
-                    $secondary->end_time = $newActivity->start_time;
+                    $secondary->start_time = null;
+                    $secondary->end_time = null;
                     $secondary->save();
+                }
+                //if the secondary start is the minDate, we want to get $secondaryStart->diffInSeconds($greedyStart)
+                // we are assuming that only the $secondary activity has this start date
+                elseif ($minDate == $secondaryStart) {
+
+                    $secondaryDuration = $secondaryStart->diffInSeconds($greedyStart);
+                    $secondary->billable_duration = $secondaryDuration;
+                    $secondary->end_time = $secondaryStart->addSeconds($secondaryDuration)->toDateTimeString();
+                    $secondary->save();
+
+                    $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);
+
                 } else {
                     $secondaryDuration = $secondaryStart->diffInSeconds($minDate);
                     $minDate = $secondaryStart->copy();

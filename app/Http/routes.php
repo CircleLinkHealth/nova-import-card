@@ -1,6 +1,100 @@
 <?php
 
-use App\Program;
+//$startTime = Carbon\Carbon::now();
+//$endTime = $startTime->copy()->addSeconds(30);
+//
+//$create = new Illuminate\Support\Collection([
+//    [
+//        $startTime,
+//        $endTime,
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->subSeconds(30),
+//        $endTime,
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->addSeconds(5),
+//        $endTime->copy()->subSeconds(5),
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->addSeconds(20),
+//        $endTime->copy()->addSeconds(60),
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->addSeconds(1),
+//        $endTime->copy()->subSeconds(3),
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->subSeconds(10),
+//        $endTime->copy()->addSeconds(10),
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->subSeconds(1),
+//        $endTime->copy()->addSeconds(75),
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->subSeconds(50),
+//        $endTime,
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime,
+//        $endTime,
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->addSeconds(20),
+//        $endTime->copy()->addSeconds(60),
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->subSeconds(10),
+//        $endTime->copy()->addSeconds(10),
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->addSeconds(10),
+//        $endTime->copy()->addSeconds(60),
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->subSeconds(30),
+//        $endTime,
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//    [
+//        $startTime->copy()->addSeconds(5),
+//        $endTime->copy()->subSeconds(5),
+//        $startTime->diffInSeconds($endTime),
+//    ],
+//]);
+//
+//foreach ($create as $c) {
+//    $request = new Illuminate\Http\Request();
+//
+//    $request->merge([
+//        'patientId'        => 285,
+//        'providerId'       => 357,
+//        'totalTime'          => $c[2],
+//        'programId'        => 9,
+//        'startTime' => $c[0]->toDateTimeString(),
+//        'testEndTime'   => $c[1]->toDateTimeString(),
+//        'urlFull'          => 'www.url.com',
+//        'urlShort'         => 'url.com',
+//        'ipAddr'           => '1.1.1.1',
+//        'activity'     => 'Patient Overview Review',
+//        'title'             => 'title',
+//    ]);
+//
+//    (new App\Http\Controllers\PageTimerController($request, new App\Services\TimeTracking\Service))->store($request);
+//}
 
 if (app()->environment() != 'production') {
 

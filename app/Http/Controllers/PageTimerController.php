@@ -87,6 +87,8 @@ class PageTimerController extends Controller
                     $endTime,
                 ],
             ])
+            ->whereNotNull('start_time')
+            ->whereNotNull('end_time')
             ->get();
 
         if (!$overlaps->isEmpty()) {

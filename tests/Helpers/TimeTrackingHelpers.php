@@ -25,7 +25,7 @@ trait TimeTrackingHelpers
                 $this->provider,
                 $this->patient,
                 $this->programId,
-                $new[2] * 1000,
+                $new[2],
                 $new[0],
                 $new[1]
             );
@@ -36,7 +36,8 @@ trait TimeTrackingHelpers
             ]);
         }
 
-        $pageTimers = PageTimer::where('created_at', '>=', $startTime)
+        $pageTimers = PageTimer::where('actual_start_time', '>=', $startTime)
+            ->where('patient_id', $this->patient->ID)
             ->orderBy('id', 'desc')
             ->take($create->count())
             ->get();
@@ -59,7 +60,7 @@ trait TimeTrackingHelpers
         User $provider,
         User $patient,
         int $programId,
-        int $duration,
+        int $durationInSeconds,
         Carbon $startTime,
         Carbon $testEndTime,
         $activity = 'Patient Overview Review'
@@ -67,7 +68,7 @@ trait TimeTrackingHelpers
         $response = $this->call('POST', route('api.pagetracking'), [
             'patientId'   => $patient->ID,
             'providerId'  => $provider->ID,
-            'totalTime'   => $duration,
+            'totalTime'   => $durationInSeconds * 1000,
             'programId'   => $programId,
             'startTime'   => $startTime->toDateTimeString(),
             'testEndTime' => $testEndTime->toDateTimeString(),
