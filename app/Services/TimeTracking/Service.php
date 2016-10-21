@@ -36,7 +36,7 @@ class Service
             $secondaryStart = Carbon::createFromFormat('Y-m-d H:i:s', $secondary->start_time);
             $secondaryEnd = Carbon::createFromFormat('Y-m-d H:i:s', $secondary->end_time);
 
-            if ($greedyStart->gte($secondaryStart) && $greedyEnd->gte($secondaryEnd)) {
+            if ($greedyStart->gt($secondaryStart) && $greedyEnd->gt($secondaryEnd)) {
                 if ($secondaryStart->gte($minDate)) {
                     $secondary->billable_duration = 0;
                     $secondary->start_time = $newActivity->start_time;
@@ -57,7 +57,7 @@ class Service
                     $maxDate = $greedyEnd->copy();
                 }
 
-            } elseif ($greedyStart->lte($secondaryStart) && $greedyEnd->gte($secondaryEnd)) {
+            } elseif ($greedyStart->lt($secondaryStart) && $greedyEnd->gt($secondaryEnd)) {
                 if ($greedyStart->lt($minDate)) {
                     $minDate = $greedyStart->copy();
                 }
@@ -79,7 +79,7 @@ class Service
                     $maxDate
                 );
 
-            } elseif ($greedyStart->gte($secondaryStart) && $greedyEnd->lte($secondaryEnd)) {
+            } elseif ($greedyStart->gt($secondaryStart) && $greedyEnd->lt($secondaryEnd)) {
                 $this->overlapAllTheThings(
                     $secondary,
                     $newActivity,
@@ -92,7 +92,7 @@ class Service
                     $maxDate
                 );
 
-            } elseif ($greedyStart->lte($secondaryStart) && $greedyEnd->lte($secondaryEnd)) {
+            } elseif ($greedyStart->lt($secondaryStart) && $greedyEnd->lt($secondaryEnd)) {
                 if ($greedyStart->lt($minDate)) {
                     $minDate = $greedyStart->copy();
                 }
