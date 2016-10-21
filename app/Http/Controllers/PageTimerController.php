@@ -63,7 +63,7 @@ class PageTimerController extends Controller
         $newActivity->duration_unit = 'seconds';
         $newActivity->patient_id = $data['patientId'];
         $newActivity->provider_id = $providerId;
-        $newActivity->start_time = $startTime->format('Y-m-d H:i:s');
+        $newActivity->start_time = $startTime->toDateTimeString();
         $newActivity->actual_start_time = $startTime->toDateTimeString();
         $newActivity->actual_end_time = $endTime->toDateTimeString();
         $newActivity->end_time = $endTime->toDateTimeString();
@@ -75,8 +75,18 @@ class PageTimerController extends Controller
         $newActivity->title = $data['title'];
 
         $overlaps = PageTimer::where('provider_id', '=', $providerId)
-            ->where('end_time', '>', $startTime)
-            ->where('start_time', '<', $endTime)
+            ->where([
+                [
+                    'end_time',
+                    '>',
+                    $startTime,
+                ],
+                [
+                    'start_time',
+                    '<',
+                    $endTime,
+                ],
+            ])
             ->get();
 
         if (!$overlaps->isEmpty()) {

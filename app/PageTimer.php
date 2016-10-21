@@ -46,6 +46,7 @@ class PageTimer extends Model
         'url_full',
         'url_short',
         'program_id',
+        'ip_addr',
     ];
 
     protected $dates = ['deleted_at'];

@@ -12,6 +12,8 @@ use Illuminate\Support\Collection;
  */
 class Service
 {
+    use Helpers;
+
     public function figureOutOverlaps(
         PageTimer $newActivity,
         Collection $overlappingActivities
@@ -35,7 +37,6 @@ class Service
             $secondaryEnd = Carbon::createFromFormat('Y-m-d H:i:s', $secondary->end_time);
 
             if ($greedyStart->gte($secondaryStart) && $greedyEnd->gte($secondaryEnd)) {
-
                 if ($secondaryStart->gte($minDate)) {
                     $secondary->billable_duration = 0;
                     $secondary->start_time = $newActivity->start_time;
@@ -57,7 +58,6 @@ class Service
                 }
 
             } elseif ($greedyStart->lte($secondaryStart) && $greedyEnd->gte($secondaryEnd)) {
-
                 if ($greedyStart->lt($minDate)) {
                     $minDate = $greedyStart->copy();
                 }
@@ -67,73 +67,46 @@ class Service
 
                 $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);
 
-                //adjust secondary activity
-                $secondary->billable_duration = 0;
-                $secondary->start_time = $newActivity->start_time;
-                $secondary->end_time = $newActivity->start_time;
-                $secondary->save();
+                $this->overlapAllTheThings(
+                    $secondary,
+                    $newActivity,
+                    $greedy,
+                    $greedyStart,
+                    $greedyEnd,
+                    $secondaryStart,
+                    $secondaryEnd,
+                    $minDate,
+                    $maxDate
+                );
+
             } elseif ($greedyStart->gte($secondaryStart) && $greedyEnd->lte($secondaryEnd)) {
+                $this->overlapAllTheThings(
+                    $secondary,
+                    $newActivity,
+                    $greedy,
+                    $greedyStart,
+                    $greedyEnd,
+                    $secondaryStart,
+                    $secondaryEnd,
+                    $minDate,
+                    $maxDate
+                );
 
-                if ($secondaryStart->lt($minDate)) {
-                    $durationBeforeOverlap = $secondaryStart->diffInSeconds($minDate);
-
-                    $minDate = $secondaryStart->copy();
-                } else {
-                    $durationBeforeOverlap = 0;
-                }
-
-                if ($secondaryEnd->gt($maxDate)) {
-                    $durationAfterOverlap = $maxDate->diffInSeconds($secondaryEnd);
-
-                    $maxDate = $secondaryEnd->copy();
-                } else {
-                    $durationAfterOverlap = 0;
-                }
-
-                $secondary->billable_duration = $durationBeforeOverlap + $durationAfterOverlap;
-
-                if ($secondary->billable_duration == 0) {
-                    $secondary->start_time = $newActivity->start_time;
-                    $secondary->end_time = $newActivity->start_time;
-                    $secondary->save();
-                    $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);
-                } else {
-                    if ($durationBeforeOverlap == 0) {
-                        $secondary->start_time = $maxDate->toDateTimeString();
-                        $secondary->end_time = $maxDate->addSeconds($secondary->billable_duration)->toDateTimeString();
-                        $secondary->save();
-                        $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);
-                    } elseif ($durationAfterOverlap == 0) {
-                        $secondary->start_time = $minDate->toDateTimeString();
-                        $secondary->end_time = $minDate->addSeconds($secondary->billable_duration)->toDateTimeString();
-                        $secondary->save();
-                        $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);
-                    } else {
-                        //then it means there's overlap on both sides
-                        $secondary->start_time = $minDate->toDateTimeString();
-                        $maxDate = $minDate->addSeconds($secondary->billable_duration)->copy();
-                        $secondary->end_time = $maxDate->toDateTimeString();
-                        $secondary->save();
-
-                        $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);
-                        $greedyStart = $maxDate->copy();
-                        $greedy->start_time = $greedyStart->toDateTimeString();
-                    }
-                }
             } elseif ($greedyStart->lte($secondaryStart) && $greedyEnd->lte($secondaryEnd)) {
-
                 if ($greedyStart->lt($minDate)) {
                     $minDate = $greedyStart->copy();
                 }
 
                 if ($secondaryEnd->gt($maxDate)) {
                     $maxDate = $secondaryEnd->copy();
+                    $secondary->start_time = $greedyEnd->copy();
+                    $secondaryStart = $greedyEnd->copy();
+                } else {
+                    $secondary->start_time = $maxDate->copy();
+                    $secondaryStart = $maxDate->copy();
                 }
 
-                $secondaryStart = $maxDate->copy();
-                $secondary->start_time = $secondaryStart->toDateTimeString();
-
-                if ($secondaryEnd->gt($maxDate)) {
+                if ($secondaryEnd->gte($maxDate)) {
                     $secondary->billable_duration = $secondaryStart->diffInSeconds($secondaryEnd);
                 } else {
                     $secondary->billable_duration = 0;
