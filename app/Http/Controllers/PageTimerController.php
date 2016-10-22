@@ -43,6 +43,8 @@ class PageTimerController extends Controller
     {
         $data = $request->input();
 
+        $newActivity = new PageTimer();
+
         $providerId = $data['providerId'];
 
         //We have the duration from two sources.
@@ -59,6 +61,8 @@ class PageTimerController extends Controller
             'home',
         ])
         ) {
+            $newActivity->redirect_to = $data['redirectLocation'];
+
             $endTimeNowStartTimeDifference = $startTime->diffInSeconds($endTimeNow);
 
             if ($endTimeNowStartTimeDifference > $duration) {
@@ -72,7 +76,6 @@ class PageTimerController extends Controller
             $duration = $startTime->diffInSeconds($endTime);
         }
 
-        $newActivity = new PageTimer();
         $newActivity->billable_duration = 0;
         $newActivity->duration = $duration;
         $newActivity->duration_unit = 'seconds';

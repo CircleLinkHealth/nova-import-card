@@ -1,101 +1,45 @@
 <?php
 
-//$startTime = Carbon\Carbon::now();
-//$endTime = $startTime->copy()->addSeconds(30);
-//
-//$create = new Illuminate\Support\Collection([
-//    [
-//        $startTime,
-//        $endTime,
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->subSeconds(30),
-//        $endTime,
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->addSeconds(5),
-//        $endTime->copy()->subSeconds(5),
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->addSeconds(20),
-//        $endTime->copy()->addSeconds(60),
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->addSeconds(1),
-//        $endTime->copy()->subSeconds(3),
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->subSeconds(10),
-//        $endTime->copy()->addSeconds(10),
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->subSeconds(1),
-//        $endTime->copy()->addSeconds(75),
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->subSeconds(50),
-//        $endTime,
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime,
-//        $endTime,
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->addSeconds(20),
-//        $endTime->copy()->addSeconds(60),
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->subSeconds(10),
-//        $endTime->copy()->addSeconds(10),
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->addSeconds(10),
-//        $endTime->copy()->addSeconds(60),
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->subSeconds(30),
-//        $endTime,
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//    [
-//        $startTime->copy()->addSeconds(5),
-//        $endTime->copy()->subSeconds(5),
-//        $startTime->diffInSeconds($endTime),
-//    ],
-//]);
-//
-//foreach ($create as $c) {
-//    $request = new Illuminate\Http\Request();
-//
-//    $request->merge([
-//        'patientId'   => 285,
-//        'providerId'  => 357,
-//        'totalTime'   => $c[2] * 1000,
-//        'programId'   => 9,
-//        'startTime'   => $c[0]->toDateTimeString(),
-//        'testEndTime' => $c[1]->toDateTimeString(),
-//        'urlFull'     => 'www.url.com',
-//        'urlShort'    => 'url.com',
-//        'ipAddr'      => '1.1.1.1',
-//        'activity'    => 'Patient Overview Review',
-//        'title'       => 'title',
-//        'testing'     => true,
-//    ]);
-//
-//    (new App\Http\Controllers\PageTimerController($request, new App\Services\TimeTracking\Service))->store($request);
-//}
+//Add some time so that it won't mess with the values of the previous test
+$startTime = Carbon\Carbon::now()->copy()->addSeconds(10);
+$endTime = $startTime->copy()->addSeconds(60);
+
+$create = new Illuminate\Support\Collection([
+    [
+        $startTime->copy()->subMinutes(2),
+        $endTime->copy()->addMinutes(2),
+        $startTime->copy()->subMinutes(2)->diffInSeconds($endTime->copy()->addMinutes(2)),
+        'non ccm',
+    ],
+    [
+        $startTime,
+        $endTime,
+        $startTime->diffInSeconds($endTime),
+        'non ccm',
+    ],
+]);
+
+foreach ($create as $c) {
+    $request = new Illuminate\Http\Request();
+
+    $request->merge([
+        'patientId'        => 285,
+        'providerId'       => 357,
+        'totalTime'        => $c[2] * 1000,
+        'programId'        => 9,
+        'startTime'        => $c[0]->toDateTimeString(),
+        'testEndTime'      => $c[1]->toDateTimeString(),
+        'urlFull'          => 'www.url.com',
+        'urlShort'         => 'url.com',
+        'ipAddr'           => '1.1.1.1',
+        'activity'         => 'Patient Overview Review',
+        'title'            => $c[3],
+        'testing'          => true,
+        'redirectLocation' => '',
+    ]);
+
+    (new App\Http\Controllers\PageTimerController($request, new App\Services\TimeTracking\Service))->store($request);
+}
 
 if (app()->environment() != 'production') {
 

@@ -26,7 +26,8 @@ trait TimeTrackingHelpers
                 $this->programId,
                 $new[2],
                 $new[0],
-                $new[1]
+                $new[1],
+                $new[3]
             );
 
             $this->seeInDatabase('lv_page_timer', [
