@@ -149,7 +149,8 @@ if (isset($patient) && !empty($patient)) {
                     "ipAddr": '<?php echo $ipAddr; ?>',
                     "activity": $('#activityName').val(),
                     "title": '<?php echo $title; ?>',
-                    "deletePatientSession": deletePatientSession
+                    "deletePatientSession": deletePatientSession,
+                    "redirectLocation": redirectLocation
                 };
 
                 $.ajax({

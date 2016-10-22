@@ -65,17 +65,18 @@ trait TimeTrackingHelpers
         $activity = 'Patient Overview Review'
     ) {
         $response = $this->call('POST', route('api.pagetracking'), [
-            'patientId'   => $patient->ID,
-            'providerId'  => $provider->ID,
-            'totalTime'   => $durationInSeconds * 1000,
-            'programId'   => $programId,
-            'startTime'   => $startTime->toDateTimeString(),
-            'testEndTime' => $testEndTime->toDateTimeString(),
-            'urlFull'     => 'www.url.com',
-            'urlShort'    => 'url.com',
-            'ipAddr'      => '1.1.1.1',
-            'activity'    => $activity,
-            'title'       => 'title',
+            'patientId'        => $patient->ID,
+            'providerId'       => $provider->ID,
+            'totalTime'        => $durationInSeconds * 1000,
+            'programId'        => $programId,
+            'startTime'        => $startTime->toDateTimeString(),
+            'testEndTime'      => $testEndTime->toDateTimeString(),
+            'urlFull'          => 'www.url.com',
+            'urlShort'         => 'url.com',
+            'ipAddr'           => '1.1.1.1',
+            'activity'         => $activity,
+            'title'            => 'title',
+            'redirectLocation' => 'redirect',
         ]);
 
         $this->seeInDatabase('lv_page_timer', [

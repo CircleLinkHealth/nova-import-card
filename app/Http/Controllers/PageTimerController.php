@@ -51,10 +51,25 @@ class PageTimerController extends Controller
         $duration = ceil($data['totalTime'] / 1000);
 
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
+        $endTimeNow = Carbon::now();
         $endTime = $startTime->copy()->addSeconds($duration);
+
+        if (!in_array($data['redirectLocation'], [
+            'logout',
+            'home',
+        ])
+        ) {
+            $endTimeNowStartTimeDifference = $startTime->diffInSeconds($endTimeNow);
+
+            if ($endTimeNowStartTimeDifference > $duration) {
+                $endTime = $endTimeNow;
+                $duration = $endTimeNowStartTimeDifference;
+            }
+        }
 
         if (app()->environment('testing') || isset($data['testing'])) {
             $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
+            $duration = $startTime->diffInSeconds($endTime);
         }
 
         $newActivity = new PageTimer();
