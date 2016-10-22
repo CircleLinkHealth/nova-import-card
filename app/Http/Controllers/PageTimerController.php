@@ -51,7 +51,7 @@ class PageTimerController extends Controller
         $duration = ceil($data['totalTime'] / 1000);
 
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
-        $endTimeNow = Carbon::now();
+//        $endTimeNow = Carbon::now();
         $endTime = $startTime->copy()->addSeconds($duration);
 
         if (!in_array($data['redirectLocation'], [
