@@ -109,22 +109,18 @@ class Service
                     $minDate = $greedyStart->copy();
                 }
 
-                if ($secondaryEnd->gt($maxDate)) {
-                    $maxDate = $secondaryEnd->copy();
-                    $secondary->start_time = $greedyEnd->copy();
-                    $secondaryStart = $greedyEnd->copy();
-                } else {
-                    $secondary->start_time = $maxDate->copy();
-                    $secondaryStart = $maxDate->copy();
-                }
-
                 if ($secondaryEnd->gte($maxDate)) {
+                    $maxDate = $secondaryEnd->copy();
+                    $secondaryStart = $greedyEnd->copy();
+                    $secondary->start_time = $secondaryStart->toDateTimeString();
                     $secondary->billable_duration = $secondaryStart->diffInSeconds($secondaryEnd);
+
                 } else {
                     $secondary->billable_duration = 0;
-                    $secondary->start_time = $newActivity->start_time;
-                    $secondary->end_time = $newActivity->start_time;
+                    $secondary->start_time = null;
+                    $secondary->end_time = null;
                 }
+
                 $secondary->save();
 
                 $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);

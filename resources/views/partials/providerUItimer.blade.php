@@ -59,7 +59,7 @@ if (isset($patient) && !empty($patient)) {
             var startTime = new Date();
             var endTime;
             var noResponse = true; // set to false if user clicks yes/no button
-            var totalTime = 2000; // total accumulated time on page
+            var totalTime = 3000; // total accumulated time on page
             var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
             var isTimerProcessed = false;
             var redirectLocation = false;
@@ -143,7 +143,7 @@ if (isset($patient) && !empty($patient)) {
                     "providerId": '<?php echo Auth::user()->ID ?>',
                     "totalTime": totalTime,
                     "programId": '<?php echo $patientProgramId; ?>',
-                    "startTime": '<?php echo Carbon::now()->toDateTimeString(); ?>',
+                    "startTime": '<?php echo Carbon::now()->subSeconds(2)->toDateTimeString(); ?>',
                     "urlFull": '<?php echo Request::url(); ?>',
                     "urlShort": '<?php echo $urlShort; ?>',
                     "ipAddr": '<?php echo $ipAddr; ?>',
