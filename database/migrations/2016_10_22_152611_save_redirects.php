@@ -29,7 +29,7 @@ class SaveRedirects extends Migration
     public function down()
     {
         Schema::table('lv_page_timer', function (Blueprint $table) {
-            //
+            $table->dropColumn('redirect_to');
         });
     }
 }

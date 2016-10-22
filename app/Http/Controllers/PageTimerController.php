@@ -59,12 +59,12 @@ class PageTimerController extends Controller
             'home',
         ])
         ) {
-            $endTimeNowStartTimeDifference = $startTime->diffInSeconds($endTimeNow);
-
-            if ($endTimeNowStartTimeDifference > $duration) {
-                $endTime = $endTimeNow;
-                $duration = $endTimeNowStartTimeDifference;
-            }
+//            $endTimeNowStartTimeDifference = $startTime->diffInSeconds($endTimeNow);
+//
+//            if ($endTimeNowStartTimeDifference > $duration) {
+//                $endTime = $endTimeNow;
+//                $duration = $endTimeNowStartTimeDifference;
+//            }
         }
 
         if (app()->environment('testing') || isset($data['testing'])) {
