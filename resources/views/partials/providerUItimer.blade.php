@@ -143,7 +143,7 @@ if (isset($patient) && !empty($patient)) {
                     "providerId": '<?php echo Auth::user()->ID ?>',
                     "totalTime": totalTime,
                     "programId": '<?php echo $patientProgramId; ?>',
-                    "startTime": '<?php echo Carbon::now()->subSeconds(20)->toDateTimeString(); ?>',
+                    "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',
                     "urlFull": '<?php echo Request::url(); ?>',
                     "urlShort": '<?php echo $urlShort; ?>',
                     "ipAddr": '<?php echo $ipAddr; ?>',

@@ -72,8 +72,13 @@ class PageTimerController extends Controller
             $duration = $startTime->diffInSeconds($endTime);
         }
 
+        $loc = $data['redirectLocation'];
+        $redirectTo = empty($loc)
+            ? null
+            : $loc;
+
         $newActivity = new PageTimer();
-        $newActivity->redirect_to = $data['redirectLocation'];
+        $newActivity->redirect_to = $redirectTo;
         $newActivity->billable_duration = 0;
         $newActivity->duration = $duration;
         $newActivity->duration_unit = 'seconds';

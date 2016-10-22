@@ -27,7 +27,7 @@ trait TimeTrackingHelpers
                 $new[2],
                 $new[0],
                 $new[1],
-                $new[3]
+                $new[3] ?? null
             );
 
             $this->seeInDatabase('lv_page_timer', [
@@ -65,6 +65,10 @@ trait TimeTrackingHelpers
         Carbon $testEndTime,
         $activity = 'Patient Overview Review'
     ) {
+        if (empty($activity)) {
+            $activity = 'Patient Overview Review';
+        }
+
         $response = $this->call('POST', route('api.pagetracking'), [
             'patientId'        => $patient->ID,
             'providerId'       => $provider->ID,
