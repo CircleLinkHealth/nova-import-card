@@ -40,7 +40,7 @@ $enableTimeTracking = !isset($disableTimeTracking);
 
 // disable if login
 if (strpos($requestUri, 'login') !== false) {
-    $enableTimeTracking = false;
+//    $enableTimeTracking = false;
 }
 
 // set patient vars
@@ -59,7 +59,7 @@ if (isset($patient) && !empty($patient)) {
             var startTime = new Date();
             var endTime;
             var noResponse = true; // set to false if user clicks yes/no button
-            var totalTime = 0; // total accumulated time on page
+            var totalTime = 2000; // total accumulated time on page
             var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
             var isTimerProcessed = false;
             var redirectLocation = false;
