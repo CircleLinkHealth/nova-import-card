@@ -62,7 +62,7 @@ if (isset($patient) && !empty($patient)) {
             var totalTime = 3000; // total accumulated time on page
             var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
             var isTimerProcessed = false;
-            var redirectLocation = false;
+            var redirectLocation = null;
             var idleTime = 60000 * 2; // ms before modal display (60000 = 1min)
 
             //start idle timer
