@@ -106,12 +106,13 @@
                                         class="icon--home--white"></i>Admin</a></li>
                     @endif
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false" style="background: none !important;">
+                        <div class="dropdown-toggle" data-toggle="dropdown" role="button"
+                             aria-expanded="false"
+                             style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
                             <i class="glyphicon glyphicon-option-vertical"></i>
                             {{ Auth::user()->full_name }}
                             <span class="caret"></span>
-                        </a>
+                        </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
                             @role(['care-center'])
                             <li>
