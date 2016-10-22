@@ -62,7 +62,7 @@ trait Helpers
             } else {
                 //then it means there's overlap on both sides
                 $secondary->start_time = $minDate->toDateTimeString();
-                $maxDate = $minDate->addSeconds($secondary->billable_duration)->copy();
+                $maxDate = $minDate->copy()->addSeconds($secondary->billable_duration);
                 $secondary->end_time = $maxDate->toDateTimeString();
                 $secondary->save();
 
