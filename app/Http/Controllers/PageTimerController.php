@@ -45,17 +45,17 @@ class PageTimerController extends Controller
 
         $providerId = $data['providerId'];
 
-        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
-        $endTime = Carbon::now();
-
-        if (app()->environment('testing') || isset($data['testing'])) {
-            $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
-        }
-
         //We have the duration from two sources.
         //On page JS timer
         //Difference between start and end dates on the server
         $duration = ceil($data['totalTime'] / 1000);
+
+        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
+        $endTime = $startTime->addSeconds($duration);
+
+        if (app()->environment('testing') || isset($data['testing'])) {
+            $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
+        }
 
         $newActivity = new PageTimer();
         $newActivity->billable_duration = 0;
