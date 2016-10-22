@@ -24,6 +24,7 @@ class TimeTrackingOverlapTest extends TestCase
     }
 
     /**
+     * Graphical representation of PageTimers created
      *      --------------------
      *    -----------------------------
      *          -----------------------------

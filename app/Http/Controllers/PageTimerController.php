@@ -48,7 +48,7 @@ class PageTimerController extends Controller
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
         $endTime = Carbon::now();
 
-        if (app()->environment('testing')) {
+        if (app()->environment('testing') || isset($data['testing'])) {
             $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
         }
 

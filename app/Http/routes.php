@@ -80,17 +80,18 @@
 //    $request = new Illuminate\Http\Request();
 //
 //    $request->merge([
-//        'patientId'        => 285,
-//        'providerId'       => 357,
-//        'totalTime'          => $c[2],
-//        'programId'        => 9,
-//        'startTime' => $c[0]->toDateTimeString(),
-//        'testEndTime'   => $c[1]->toDateTimeString(),
-//        'urlFull'          => 'www.url.com',
-//        'urlShort'         => 'url.com',
-//        'ipAddr'           => '1.1.1.1',
-//        'activity'     => 'Patient Overview Review',
-//        'title'             => 'title',
+//        'patientId'   => 285,
+//        'providerId'  => 357,
+//        'totalTime'   => $c[2] * 1000,
+//        'programId'   => 9,
+//        'startTime'   => $c[0]->toDateTimeString(),
+//        'testEndTime' => $c[1]->toDateTimeString(),
+//        'urlFull'     => 'www.url.com',
+//        'urlShort'    => 'url.com',
+//        'ipAddr'      => '1.1.1.1',
+//        'activity'    => 'Patient Overview Review',
+//        'title'       => 'title',
+//        'testing'     => true,
 //    ]);
 //
 //    (new App\Http\Controllers\PageTimerController($request, new App\Services\TimeTracking\Service))->store($request);
@@ -100,8 +101,9 @@ if (app()->environment() != 'production') {
 
 
     Route::get('rohan', function () {
-        
-        return (new \App\PatientContactWindow())->getEarliestWindowForPatientFromDate(\App\PatientInfo::find(3198), \Carbon\Carbon::today());
+
+        return (new \App\PatientContactWindow())->getEarliestWindowForPatientFromDate(\App\PatientInfo::find(3198),
+            \Carbon\Carbon::today());
 
 //        $result = Program::find(21)->enrollmentByProgram(Carbon\Carbon::parse('2016-09-01 00:00:00'),
 //            Carbon\Carbon::parse('2016-09-30 23:59:59'));
