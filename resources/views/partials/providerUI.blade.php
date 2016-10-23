@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
-    <meta http-equiv="expires" content={{ Carbon\Carbon::now()->format('D M d Y H:i:s O'); }}>
+    <meta http-equiv="expires" content={{ Carbon\Carbon::now()->format('D M d Y H:i:s O') }}>
     <meta http-equiv="pragma" content="no-cache">
 
     <title>CarePlanManager - @yield('title')</title>
