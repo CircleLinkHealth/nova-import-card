@@ -51,5 +51,8 @@
 
     </div>
 </div>
+
+@include('partials.providerUItimer')
+
 </body>
 </html>
