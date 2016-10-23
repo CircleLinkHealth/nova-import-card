@@ -63,10 +63,10 @@ if (isset($patient) && !empty($patient)) {
             var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
             var isTimerProcessed = false;
             var redirectLocation = null;
-            var idleTime = 60000 / 3; // ms before modal display (60000 = 1min)
+            var idleTime = 60000 * 2; // ms before modal display (60000 = 1min)
 
-            console.log('startTime');
-            console.log(startTime);
+//            console.log('startTime');
+//            console.log(startTime);
 
             //start idle timer
             $(document).idleTimer(idleTime);
@@ -98,6 +98,7 @@ if (isset($patient) && !empty($patient)) {
                 $('#timeModalYes').on("click", function () {
                     $(document).idleTimer("resume");
                     $('#timeModalNo, #timeModalYes').unbind('click');
+                    clearTimeout(noResponseTimer);
 
                     return true;
                 });
@@ -157,11 +158,11 @@ if (isset($patient) && !empty($patient)) {
                     "redirectLocation": redirectLocation
                 };
 
-                console.log('endTime');
-                console.log(endTime);
-
-                console.log('totalTime');
-                console.log(totalTime / 1000);
+//                console.log('endTime');
+//                console.log(endTime);
+//
+//                console.log('totalTime');
+//                console.log(totalTime / 1000);
 
                 $.ajax({
                     dataType: "json",

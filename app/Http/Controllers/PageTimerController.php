@@ -100,12 +100,12 @@ class PageTimerController extends Controller
             ->where([
                 [
                     'end_time',
-                    '>',
+                    '>=',
                     $startTime,
                 ],
                 [
                     'start_time',
-                    '<',
+                    '<=',
                     $endTime,
                 ],
             ])
