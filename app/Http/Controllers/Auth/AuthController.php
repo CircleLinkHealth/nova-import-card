@@ -1,13 +1,15 @@
 <?php namespace App\Http\Controllers\Auth;
 
-use App\User;
 use App\AppConfig;
-use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
-use Validator;
 use App\Http\Controllers\Controller;
-//use App\CLH\Traits\Auth\AuthenticatesAndRegistersUsers;
-use Illuminate\Http\Request;
+use App\Models\PatientSession;
+use App\User;
 use DateTime;
+use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Http\Request;
+use Validator;
+
+//use App\CLH\Traits\Auth\AuthenticatesAndRegistersUsers;
 
 class AuthController extends Controller
 {
@@ -184,5 +186,17 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    public function authenticated(
+        Request $request,
+        User $user
+    ) {
+
+        //CLEAR OUT ANY REMAINING PATIENT SESSIONS ON LOGIN
+        $session = PatientSession::where('user_id', '=', $user->ID)
+            ->delete();
+
+        return redirect()->intended($this->redirectPath());
     }
 }

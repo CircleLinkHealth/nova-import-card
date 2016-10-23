@@ -54,18 +54,18 @@ class PageTimerController extends Controller
 //        $endTimeNow = Carbon::now();
         $endTime = $startTime->copy()->addSeconds($duration);
 
-        if (!in_array($data['redirectLocation'], [
-            'logout',
-            'home',
-        ])
-        ) {
+//        if (!in_array($data['redirectLocation'], [
+//            'logout',
+//            'home',
+//        ])
+//        ) {
 //            $endTimeNowStartTimeDifference = $startTime->diffInSeconds($endTimeNow);
 //
 //            if ($endTimeNowStartTimeDifference > $duration) {
 //                $endTime = $endTimeNow;
 //                $duration = $endTimeNowStartTimeDifference;
 //            }
-        }
+//        }
 
         if (app()->environment('testing') || isset($data['testing'])) {
             $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
@@ -73,6 +73,7 @@ class PageTimerController extends Controller
         }
 
         $loc = $data['redirectLocation'];
+
         $redirectTo = empty($loc)
             ? null
             : $loc;
