@@ -44,8 +44,8 @@ trait Helpers
         $secondary->billable_duration = $durationBeforeOverlap + $durationAfterOverlap;
 
         if ($secondary->billable_duration == 0) {
-            $secondary->start_time = null;
-            $secondary->end_time = null;
+            $secondary->start_time = '0000-00-00 00:00:00';
+            $secondary->end_time = '0000-00-00 00:00:00';
             $secondary->save();
             $greedy->billable_duration = $greedyStart->diffInSeconds($greedyEnd);
         } else {

@@ -80,7 +80,7 @@ if (isset($patient) && !empty($patient)) {
 
                 // we went idle, add previously active time to total time
                 endTime = new Date();
-                totalTime = (totalTime + (endTime - startTime));
+                totalTime = totalTime + (endTime - startTime);
 
                 // reset startTime to time modal was opened
                 startTime = new Date();
@@ -89,23 +89,22 @@ if (isset($patient) && !empty($patient)) {
 
                 // if no response to modal, log out after {modalDelay}
                 var noResponseTimer = setTimeout(function () {
-                    endTime = new Date();
-                    totalTime = ((totalTime + (endTime - startTime)) - 90000);
-                    startTime = new Date();
-
+                    totalTime = totalTime - 90000;
                     redirectLocation = 'logout';
                     submitTotalTime(true);
                 }, modalDelay);
 
 
                 $('#timeModalYes').on("click", function () {
+                    endTime = new Date();
+                    totalTime = totalTime + (endTime - startTime);
+                    startTime = new Date();
+
                     return true;
                 });
 
                 $('#timeModalNo').on("click", function () {
-                    endTime = new Date();
-                    totalTime = ((totalTime + (endTime - startTime)) - 90000);
-                    startTime = new Date();
+                    totalTime = totalTime - 90000;
 
                     $('#timeModalNo, #timeModalYes').unbind('click');
                     clearTimeout(noResponseTimer);
@@ -124,13 +123,12 @@ if (isset($patient) && !empty($patient)) {
                 });
             });
 
-            window.onbeforeunload = function () {
+            $(window).unload(function () {
                 $(document).idleTimer("pause");
                 endTime = new Date();
-                totalTime = (endTime - startTime);
-                startTime = new Date();
+                totalTime = totalTime + (endTime - startTime);
                 submitTotalTime(true);
-            };
+            });
 
             function submitTotalTime(deletePatientSession) {
 
@@ -144,7 +142,6 @@ if (isset($patient) && !empty($patient)) {
                 $('#timerModal').modal('hide');
 
                 $(document).idleTimer("pause");
-
 
                 var data = {
                     "patientId": '<?php echo $patientId; ?>',

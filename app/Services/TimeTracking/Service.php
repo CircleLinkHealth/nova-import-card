@@ -42,8 +42,8 @@ class Service
             if ($greedyStart->gte($secondaryStart) && $greedyEnd->gte($secondaryEnd)) {
                 if ($secondaryStart->gte($minDate)) {
                     $secondary->billable_duration = 0;
-                    $secondary->start_time = null;
-                    $secondary->end_time = null;
+                    $secondary->start_time = '0000-00-00 00:00:00';
+                    $secondary->end_time = '0000-00-00 00:00:00';
                     $secondary->save();
                 }
                 //if the secondary start is the minDate, we want to get $secondaryStart->diffInSeconds($greedyStart)
@@ -120,8 +120,8 @@ class Service
 
                 } else {
                     $secondary->billable_duration = 0;
-                    $secondary->start_time = null;
-                    $secondary->end_time = null;
+                    $secondary->start_time = '0000-00-00 00:00:00';
+                    $secondary->end_time = '0000-00-00 00:00:00';
                 }
 
                 $secondary->save();
