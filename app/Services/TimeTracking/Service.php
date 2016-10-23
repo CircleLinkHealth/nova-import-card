@@ -18,8 +18,11 @@ class Service
         PageTimer $newActivity,
         Collection $overlappingActivities
     ) {
-        $minDate = Carbon::createFromFormat('Y-m-d H:i:s', $newActivity->start_time)->copy();
-        $maxDate = Carbon::createFromFormat('Y-m-d H:i:s', $newActivity->end_time)->copy();
+        $overlapMin = $overlappingActivities->min('start_time');
+        $overlapMax = $overlappingActivities->max('end_time');
+
+        $minDate = Carbon::createFromFormat('Y-m-d H:i:s', min($newActivity->start_time, $overlapMin))->copy();
+        $maxDate = Carbon::createFromFormat('Y-m-d H:i:s', max($newActivity->end_time, $overlapMax))->copy();
 
         foreach ($overlappingActivities as $overlap) {
             if ($this->isCcmActivity($newActivity)
