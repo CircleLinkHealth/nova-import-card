@@ -96,9 +96,8 @@ if (isset($patient) && !empty($patient)) {
 
 
                 $('#timeModalYes').on("click", function () {
-                    endTime = new Date();
-                    totalTime = totalTime + (endTime - startTime);
-                    startTime = new Date();
+                    $(document).idleTimer("resume");
+                    $('#timeModalNo, #timeModalYes').unbind('click');
 
                     return true;
                 });
