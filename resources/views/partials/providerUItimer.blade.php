@@ -65,6 +65,9 @@ if (isset($patient) && !empty($patient)) {
             var redirectLocation = null;
             var idleTime = 60000 * 2; // ms before modal display (60000 = 1min)
 
+//            console.log('startTime');
+//            console.log(startTime);
+
             //start idle timer
             $(document).idleTimer(idleTime);
 
@@ -86,7 +89,10 @@ if (isset($patient) && !empty($patient)) {
 
                 // if no response to modal, log out after {modalDelay}
                 var noResponseTimer = setTimeout(function () {
-                    totalTime = (totalTime - 90000);
+                    endTime = new Date();
+                    totalTime = ((totalTime + (endTime - startTime)) - 90000);
+                    startTime = new Date();
+
                     redirectLocation = 'logout';
                     submitTotalTime(true);
                 }, modalDelay);
@@ -97,7 +103,9 @@ if (isset($patient) && !empty($patient)) {
                 });
 
                 $('#timeModalNo').on("click", function () {
-                    totalTime = (totalTime - 90000);
+                    endTime = new Date();
+                    totalTime = ((totalTime + (endTime - startTime)) - 90000);
+                    startTime = new Date();
 
                     $('#timeModalNo, #timeModalYes').unbind('click');
                     clearTimeout(noResponseTimer);
@@ -114,13 +122,13 @@ if (isset($patient) && !empty($patient)) {
                     clearTimeout(noResponseTimer);
                     return true;
                 });
-
             });
 
             window.onbeforeunload = function () {
                 $(document).idleTimer("pause");
                 endTime = new Date();
                 totalTime = (endTime - startTime);
+                startTime = new Date();
                 submitTotalTime(true);
             };
 
@@ -152,6 +160,12 @@ if (isset($patient) && !empty($patient)) {
                     "deletePatientSession": deletePatientSession,
                     "redirectLocation": redirectLocation
                 };
+
+//                console.log('endTime');
+//                console.log(endTime);
+//
+//                console.log('totalTime');
+//                console.log(totalTime / 1000);
 
                 $.ajax({
                     type: "POST",
