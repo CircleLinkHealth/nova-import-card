@@ -122,12 +122,12 @@ if (isset($patient) && !empty($patient)) {
                 });
             });
 
-            $(window).unload(function () {
+            window.onbeforeunload = function () {
                 $(document).idleTimer("pause");
                 endTime = new Date();
                 totalTime = totalTime + (endTime - startTime);
                 submitTotalTime(true);
-            });
+            };
 
             function submitTotalTime(deletePatientSession) {
 
@@ -164,6 +164,7 @@ if (isset($patient) && !empty($patient)) {
                 console.log(totalTime / 1000);
 
                 $.ajax({
+                    dataType: "json",
                     type: "POST",
                     url: '<?php echo URL::route('api.pagetracking'); ?>',
                     data: data,
