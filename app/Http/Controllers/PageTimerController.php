@@ -109,8 +109,8 @@ class PageTimerController extends Controller
                     $endTime,
                 ],
             ])
-            ->whereNotNull('start_time')
-            ->whereNotNull('end_time')
+            ->where('start_time', '!=', '0000-00-00 00:00:00')
+            ->where('end_time', '!=', '0000-00-00 00:00:00')
             ->get();
 
         if (!$overlaps->isEmpty()) {
@@ -199,6 +199,13 @@ class PageTimerController extends Controller
         $pageTime = PageTimer::find($id);
 
         return view('pageTimer.show', ['pageTime' => $pageTime]);
+    }
+
+    public function closePatientSession(Request $request)
+    {
+        //This is intentionally left blank!
+        //All the logic happens in Controller, because of some restrictions with Laravel at the time I'm writing this,
+        //that's the best way I can come up with right now. Gross, I know, but it's 3:30am on a Saturday
     }
 
 }
