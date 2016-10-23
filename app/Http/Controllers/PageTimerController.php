@@ -113,7 +113,7 @@ class PageTimerController extends Controller
             ->where('end_time', '!=', '0000-00-00 00:00:00')
             ->get();
 
-        if (!$overlaps->isEmpty()) {
+        if (!$overlaps->isEmpty() && $startTime->diffInSeconds($endTime) > 0) {
             $overlapsAsc = $overlaps->sortBy('start_time');
 
             $this->timeTrackingService->figureOutOverlaps($newActivity, $overlapsAsc);

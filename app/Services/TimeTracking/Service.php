@@ -43,7 +43,7 @@ class Service
             $secondaryEnd = Carbon::createFromFormat('Y-m-d H:i:s', $secondary->end_time);
 
             if ($greedyStart->gte($secondaryStart) && $greedyEnd->gte($secondaryEnd)) {
-                if ($secondaryStart->gte($minDate)) {
+                if ($secondaryStart->gt($minDate)) {
                     $secondary->billable_duration = 0;
                     $secondary->start_time = '0000-00-00 00:00:00';
                     $secondary->end_time = '0000-00-00 00:00:00';
@@ -52,7 +52,6 @@ class Service
                 //if the secondary start is the minDate, we want to get $secondaryStart->diffInSeconds($greedyStart)
                 // we are assuming that only the $secondary activity has this start date
                 elseif ($minDate == $secondaryStart) {
-
                     $secondaryDuration = $secondaryStart->diffInSeconds($greedyStart);
                     $secondary->billable_duration = $secondaryDuration;
                     $secondary->end_time = $secondaryStart->addSeconds($secondaryDuration)->toDateTimeString();
@@ -121,6 +120,9 @@ class Service
                     $secondary->start_time = $secondaryStart->toDateTimeString();
                     $secondary->billable_duration = $secondaryStart->diffInSeconds($secondaryEnd);
 
+                } elseif ($secondaryStart->lte($minDate)) {
+                    $minDate = $secondaryStart->copy();
+                    $secondary->billable_duration = $secondaryStart->diffInSeconds($greedyStart);
                 } else {
                     $secondary->billable_duration = 0;
                     $secondary->start_time = '0000-00-00 00:00:00';
@@ -133,8 +135,17 @@ class Service
             }
 
             //adjust greedy activity
-            $greedy->end_time = $greedyStart->addSeconds($greedy->billable_duration)->toDateTimeString();
+            $greedy->end_time = $greedyStart->copy()->addSeconds($greedy->billable_duration)->toDateTimeString();
             $greedy->save();
+
+            //If new activity is null, it means it was completely overlapped by another activity.
+            //We want to stop at this point to avoid getting other dates compared with this and getting huge duration
+            if (
+                $newActivity->start_time == '0000-00-00 00:00:00'
+                && $newActivity->end_time == '0000-00-00 00:00:00'
+            ) {
+                break;
+            }
         }
     }
 
