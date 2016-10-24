@@ -8,6 +8,7 @@ use App\Services\TimeTracking\Service as TimeTrackingService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maknz\Slack\Facades\Slack;
 
 class PageTimerController extends Controller
 {
@@ -45,27 +46,23 @@ class PageTimerController extends Controller
 
         $providerId = $data['providerId'] ?? null;
 
+        $totalTime = $data['totalTime'] ?? 1;
+
         //We have the duration from two sources.
         //On page JS timer
         //Difference between start and end dates on the server
-        $duration = ceil($data['totalTime'] ?? 0 / 1000);
+        $duration = ceil($totalTime / 1000);
+
+        $error = __METHOD__ . ' ' . __LINE__;
+        $message = "Time Tracking Error: $error" . PHP_EOL;
+        $message .= " Data: " . json_encode($data);
+        $message .= " Env: " . env('APP_ENV');
+
+        Slack::to('#dev-chat')
+            ->send($message);
 
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
-//        $endTimeNow = Carbon::now();
         $endTime = $startTime->copy()->addSeconds($duration);
-
-//        if (!in_array($data['redirectLocation'], [
-//            'logout',
-//            'home',
-//        ])
-//        ) {
-//            $endTimeNowStartTimeDifference = $startTime->diffInSeconds($endTimeNow);
-//
-//            if ($endTimeNowStartTimeDifference > $duration) {
-//                $endTime = $endTimeNow;
-//                $duration = $endTimeNowStartTimeDifference;
-//            }
-//        }
 
         if (app()->environment('testing') || isset($data['testing'])) {
             $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
