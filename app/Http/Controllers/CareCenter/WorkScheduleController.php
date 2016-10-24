@@ -144,6 +144,9 @@ class WorkScheduleController extends Controller
     {
         $data = User::ofType('care-center')
             ->with('nurseInfo.upcomingWindows')
+            ->whereHas('nurseInfo', function ($q) {
+                $q->where('status', 'active');
+            })
             ->get()
             ->sortBy('first_name');
 
