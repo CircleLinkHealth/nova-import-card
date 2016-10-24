@@ -87,6 +87,7 @@ if (isset($patient) && !empty($patient)) {
 
                 $('#timerModal').modal({backdrop: 'static', keyboard: false});
 
+
                 // if no response to modal, log out after {modalDelay}
                 var noResponseTimer = setTimeout(function () {
                     totalTime = totalTime - 90000;
@@ -160,12 +161,11 @@ if (isset($patient) && !empty($patient)) {
 
 //                console.log('endTime');
 //                console.log(endTime);
-//
+
 //                console.log('totalTime');
 //                console.log(totalTime / 1000);
 
                 $.ajax({
-                    dataType: "json",
                     type: "POST",
                     url: '<?php echo URL::route('api.pagetracking'); ?>',
                     data: data,
