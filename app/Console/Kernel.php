@@ -100,6 +100,7 @@ class Kernel extends ConsoleKernel
             ->everyTenMinutes();
 
         $schedule->command('nurses:emailDailyReport')
-            ->dailyAt('21:00');
+            ->weekdays()
+            ->at('21:00');
     }
 }
