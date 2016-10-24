@@ -26,7 +26,11 @@ class PatientSession
 
         $patientId = $request->route('patientId');
 
-        $userId = auth()->user()->ID;
+        $user = auth()->user();
+
+        if ($user->hasRole(['administrator'])) {
+            return $next($request);
+        }
 
         if ($request->has('clearSession')) {
             \Session::remove('inOpenSessionWithPatientId');

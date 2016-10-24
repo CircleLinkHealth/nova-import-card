@@ -104,7 +104,7 @@
 
         <a href="{{URL::previous()}}" class="btn btn-warning">No</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="{{URL::current() . '?clearSession=true'}}" class="btn btn-success">Yes</a>
+        <a href="{{URL::current() . '?clearSession=asd7abacd7asjkdy3'}}" class="btn btn-success">Yes</a>
     </div>
 </div>
 
