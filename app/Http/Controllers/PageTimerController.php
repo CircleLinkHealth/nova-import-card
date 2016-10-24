@@ -46,20 +46,22 @@ class PageTimerController extends Controller
 
         $providerId = $data['providerId'] ?? null;
 
-        $totalTime = $data['totalTime'] ?? 1;
+        $totalTime = $data['totalTime'] ?? 0;
 
         //We have the duration from two sources.
         //On page JS timer
         //Difference between start and end dates on the server
         $duration = ceil($totalTime / 1000);
 
-        $error = __METHOD__ . ' ' . __LINE__;
-        $message = "Time Tracking Error: $error" . PHP_EOL;
-        $message .= " Data: " . json_encode($data);
-        $message .= " Env: " . env('APP_ENV');
+        if ($totalTime < 1) {
+            $error = __METHOD__ . ' ' . __LINE__;
+            $message = "Time Tracking Error: $error" . PHP_EOL;
+            $message .= " Data: " . json_encode($data);
+            $message .= " Env: " . env('APP_ENV');
 
-        Slack::to('#dev-chat')
-            ->send($message);
+            Slack::to('#dev-chat')
+                ->send($message);
+        }
 
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
         $endTime = $startTime->copy()->addSeconds($duration);
