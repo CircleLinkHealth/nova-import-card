@@ -72,7 +72,7 @@ class PageTimerController extends Controller
             $duration = $startTime->diffInSeconds($endTime);
         }
 
-        $loc = $data['redirectLocation'];
+        $loc = $data['redirectLocation'] ?? null;
 
         $redirectTo = empty($loc)
             ? null
