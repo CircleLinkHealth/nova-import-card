@@ -43,7 +43,7 @@ class PageTimerController extends Controller
     {
         $data = $request->input();
 
-        $providerId = $data['providerId'];
+        $providerId = $data['providerId'] ?? null;
 
         //We have the duration from two sources.
         //On page JS timer
