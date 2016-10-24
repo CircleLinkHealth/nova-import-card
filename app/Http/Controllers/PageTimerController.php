@@ -45,25 +45,47 @@ class PageTimerController extends Controller
 
         $providerId = $data['providerId'];
 
-        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
-        $endTime = Carbon::now();
-
-        if (app()->environment('testing')) {
-            $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
-        }
-
         //We have the duration from two sources.
         //On page JS timer
         //Difference between start and end dates on the server
         $duration = ceil($data['totalTime'] / 1000);
 
+        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
+//        $endTimeNow = Carbon::now();
+        $endTime = $startTime->copy()->addSeconds($duration);
+
+//        if (!in_array($data['redirectLocation'], [
+//            'logout',
+//            'home',
+//        ])
+//        ) {
+//            $endTimeNowStartTimeDifference = $startTime->diffInSeconds($endTimeNow);
+//
+//            if ($endTimeNowStartTimeDifference > $duration) {
+//                $endTime = $endTimeNow;
+//                $duration = $endTimeNowStartTimeDifference;
+//            }
+//        }
+
+        if (app()->environment('testing') || isset($data['testing'])) {
+            $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
+            $duration = $startTime->diffInSeconds($endTime);
+        }
+
+        $loc = $data['redirectLocation'];
+
+        $redirectTo = empty($loc)
+            ? null
+            : $loc;
+
         $newActivity = new PageTimer();
+        $newActivity->redirect_to = $redirectTo;
         $newActivity->billable_duration = 0;
         $newActivity->duration = $duration;
         $newActivity->duration_unit = 'seconds';
         $newActivity->patient_id = $data['patientId'];
         $newActivity->provider_id = $providerId;
-        $newActivity->start_time = $startTime->format('Y-m-d H:i:s');
+        $newActivity->start_time = $startTime->toDateTimeString();
         $newActivity->actual_start_time = $startTime->toDateTimeString();
         $newActivity->actual_end_time = $endTime->toDateTimeString();
         $newActivity->end_time = $endTime->toDateTimeString();
@@ -75,11 +97,23 @@ class PageTimerController extends Controller
         $newActivity->title = $data['title'];
 
         $overlaps = PageTimer::where('provider_id', '=', $providerId)
-            ->where('end_time', '>', $startTime)
-            ->where('start_time', '<', $endTime)
+            ->where([
+                [
+                    'end_time',
+                    '>=',
+                    $startTime,
+                ],
+                [
+                    'start_time',
+                    '<=',
+                    $endTime,
+                ],
+            ])
+            ->where('start_time', '!=', '0000-00-00 00:00:00')
+            ->where('end_time', '!=', '0000-00-00 00:00:00')
             ->get();
 
-        if (!$overlaps->isEmpty()) {
+        if (!$overlaps->isEmpty() && $startTime->diffInSeconds($endTime) > 0) {
             $overlapsAsc = $overlaps->sortBy('start_time');
 
             $this->timeTrackingService->figureOutOverlaps($newActivity, $overlapsAsc);
@@ -165,6 +199,13 @@ class PageTimerController extends Controller
         $pageTime = PageTimer::find($id);
 
         return view('pageTimer.show', ['pageTime' => $pageTime]);
+    }
+
+    public function closePatientSession(Request $request)
+    {
+        //This is intentionally left blank!
+        //All the logic happens in Controller, because of some restrictions with Laravel at the time I'm writing this,
+        //that's the best way I can come up with right now. Gross, I know, but it's 3:30am on a Saturday
     }
 
 }

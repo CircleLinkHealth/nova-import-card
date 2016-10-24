@@ -20,7 +20,13 @@ class Controller extends BaseController
             if ($request->has('deletePatientSession') && filter_var($request->input('deletePatientSession'),
                     FILTER_VALIDATE_BOOLEAN)
             ) {
-                $session = PatientSession::where('user_id', '=', auth()->user()->ID)
+                if (auth()->check()) {
+                    $user = auth()->user()->ID;
+                } else {
+                    $user = $request->input('providerId');
+                }
+
+                $session = PatientSession::where('user_id', '=', $user)
                     ->where('patient_id', '=', $patientId)
                     ->delete();
             }

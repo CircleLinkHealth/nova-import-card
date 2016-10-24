@@ -36,7 +36,7 @@ class AlgoController extends Controller
 
             $upcoming = min($days);
 
-//          $successThisMonth = (bool) $request->input('call_success');
+            //$successThisMonth = (bool) $request->input('call_success');
 
             $guineaPig = PatientInfo::find(1272);
 
@@ -61,9 +61,7 @@ class AlgoController extends Controller
 
 
             }
-
-            return $upcoming;
-
+            
             return $day->next($contact_day)->format('l, jS M');
 
         }

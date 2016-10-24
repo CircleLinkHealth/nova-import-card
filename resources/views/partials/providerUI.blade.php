@@ -4,6 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
+    <meta http-equiv="expires" content={{ Carbon\Carbon::now()->format('D M d Y H:i:s O') }}>
+    <meta http-equiv="pragma" content="no-cache">
+
     <title>CarePlanManager - @yield('title')</title>
 
     <link href="{{ asset('/css/stylesheet.css') }}" rel="stylesheet">
@@ -106,12 +111,13 @@
                                         class="icon--home--white"></i>Admin</a></li>
                     @endif
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false" style="background: none !important;">
+                        <div class="dropdown-toggle" data-toggle="dropdown" role="button"
+                             aria-expanded="false"
+                             style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
                             <i class="glyphicon glyphicon-option-vertical"></i>
                             {{ Auth::user()->full_name }}
                             <span class="caret"></span>
-                        </a>
+                        </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
                             @role(['care-center'])
                             <li>

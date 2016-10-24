@@ -40,7 +40,7 @@ $enableTimeTracking = !isset($disableTimeTracking);
 
 // disable if login
 if (strpos($requestUri, 'login') !== false) {
-    $enableTimeTracking = false;
+//    $enableTimeTracking = false;
 }
 
 // set patient vars
@@ -55,14 +55,18 @@ if (isset($patient) && !empty($patient)) {
 @if ($enableTimeTracking)
     <script>
         (function ($) {
-            var startTime = new Date('<?php echo Carbon::now()->format('D M d Y H:i:s O'); ?>');
+            //We get startTime, and endTime from the client to not have to deal with timezones
+            var startTime = new Date();
             var endTime;
             var noResponse = true; // set to false if user clicks yes/no button
-            var totalTime = 0; // total accumulated time on page
+            var totalTime = 3000; // total accumulated time on page
             var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
             var isTimerProcessed = false;
-            var redirectLocation = false;
+            var redirectLocation = null;
             var idleTime = 60000 * 2; // ms before modal display (60000 = 1min)
+
+//            console.log('startTime');
+//            console.log(startTime);
 
             //start idle timer
             $(document).idleTimer(idleTime);
@@ -76,27 +80,32 @@ if (isset($patient) && !empty($patient)) {
 
                 // we went idle, add previously active time to total time
                 endTime = new Date();
-                totalTime = (totalTime + (endTime - startTime));
+                totalTime = totalTime + (endTime - startTime);
 
                 // reset startTime to time modal was opened
                 startTime = new Date();
 
                 $('#timerModal').modal({backdrop: 'static', keyboard: false});
 
+
                 // if no response to modal, log out after {modalDelay}
                 var noResponseTimer = setTimeout(function () {
-                    totalTime = (totalTime - 90000);
+                    totalTime = totalTime - 90000;
                     redirectLocation = 'logout';
                     submitTotalTime(true);
                 }, modalDelay);
 
 
                 $('#timeModalYes').on("click", function () {
+                    $(document).idleTimer("resume");
+                    $('#timeModalNo, #timeModalYes').unbind('click');
+                    clearTimeout(noResponseTimer);
+
                     return true;
                 });
 
                 $('#timeModalNo').on("click", function () {
-                    totalTime = (totalTime - 90000);
+                    totalTime = totalTime - 90000;
 
                     $('#timeModalNo, #timeModalYes').unbind('click');
                     clearTimeout(noResponseTimer);
@@ -113,13 +122,12 @@ if (isset($patient) && !empty($patient)) {
                     clearTimeout(noResponseTimer);
                     return true;
                 });
-
             });
 
             window.onbeforeunload = function () {
                 $(document).idleTimer("pause");
                 endTime = new Date();
-                totalTime = (endTime - startTime);
+                totalTime = totalTime + (endTime - startTime);
                 submitTotalTime(true);
             };
 
@@ -136,20 +144,26 @@ if (isset($patient) && !empty($patient)) {
 
                 $(document).idleTimer("pause");
 
-
                 var data = {
                     "patientId": '<?php echo $patientId; ?>',
                     "providerId": '<?php echo Auth::user()->ID ?>',
                     "totalTime": totalTime,
                     "programId": '<?php echo $patientProgramId; ?>',
-                    "startTime": '<?php echo Carbon::now()->toDateTimeString(); ?>',
+                    "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',
                     "urlFull": '<?php echo Request::url(); ?>',
                     "urlShort": '<?php echo $urlShort; ?>',
                     "ipAddr": '<?php echo $ipAddr; ?>',
                     "activity": $('#activityName').val(),
                     "title": '<?php echo $title; ?>',
-                    "deletePatientSession": deletePatientSession
+                    "deletePatientSession": deletePatientSession,
+                    "redirectLocation": redirectLocation
                 };
+
+//                console.log('endTime');
+//                console.log(endTime);
+
+//                console.log('totalTime');
+//                console.log(totalTime / 1000);
 
                 $.ajax({
                     type: "POST",

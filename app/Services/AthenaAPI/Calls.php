@@ -74,7 +74,7 @@ class Calls
             if (!$response) {
                 \Log::error('ATHENA API: Authentication failed.');
             } else {
-                \Log::error($response);
+                \Log::error(\GuzzleHttp\json_encode($response));
             }
 
             abort(400, json_encode($response));

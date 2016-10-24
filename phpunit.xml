@@ -7,9 +7,16 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="false"
-         syntaxCheck="false">
+         stopOnFailure="true"
+         syntaxCheck="true">
     <testsuites>
+        <testsuite name="Deployment">
+            <directory>./tests/CarePlan/</directory>
+            <directory>./tests/acceptance/</directory>
+            <directory>./tests/functional/</directory>
+            <directory>./tests/integration/</directory>
+            <directory>./tests/unit/</directory>
+        </testsuite>
         <testsuite name="Application Test Suite">
         <directory>./tests/Notes/</directory>
         </testsuite>

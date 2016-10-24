@@ -61,29 +61,15 @@ class NurseMonthlyBillGenerator
 
     }
 
-    public function email(){
-
-        $this->getSystemTimeForNurse();
-
-        $this->getItemizedActivities();
-
-        $this->formatItemizedActivities();
-
-        $this->generatePdf();
-
-        return $this->mail();
-
-    }
-
     public function getSystemTimeForNurse(){
 
 
         $this->systemTime = PageTimer::where('provider_id', $this->nurse->user_id)
             ->where(function ($q){
-                $q->where('updated_at', '>=' , $this->startDate->toDateString())
-                    ->where('updated_at', '<=' , $this->endDate->toDateString());
+                $q->where('updated_at', '>=', $this->startDate)
+                    ->where('updated_at', '<=', $this->endDate);
             })
-            ->sum('duration');
+            ->sum('billable_duration');
 
         if($this->systemTime != 0 && $this->systemTime != null){
 
@@ -119,73 +105,14 @@ class NurseMonthlyBillGenerator
 
     }
 
-    public function getCallsPerHourOverPeriod(){
-
-        $duration = intval( PageTimer::where('provider_id', $this->nurse->user_id)
-            ->where(function ($q){
-                $q->where('created_at', '>=' , $this->startDate->toDateString())
-                    ->where('created_at', '<=' , $this->endDate->toDateString());
-            })
-            ->sum('duration'));
-
-        $ccm_duration = intval( Activity::where('logger_id', $this->nurse->user_id)
-            ->where(function ($q){
-                $q->where('created_at', '>=' , $this->startDate->toDateString())
-                    ->where('created_at', '<=' , $this->endDate->toDateString());
-            })
-            ->sum('duration'));
-
-        $calls = Call::where('outbound_cpm_id', $this->nurse->user_id)
-            ->where(function ($q){
-                $q->where('updated_at', '>=' , $this->startDate->toDateString())
-                    ->where('updated_at', '<=' , $this->endDate->toDateString());
-            })
-            ->where(function ($k){
-                $k->where('status', '=', 'reached')
-                    ->orWhere('status', '=', 'not reached');
-            })
-            ->count();
-
-        $hours =  $duration/3600;
-
-        if($calls != 0 && $hours != 0){
-            $percent = round(($ccm_duration/$duration) * 100 , 2);
-        } else {
-            $percent = 0;
-        }
-
-        if($calls == 0 || $hours < 1){
-
-            return [
-
-                'calls/hour' => 0,
-                'duration' => $duration,
-                'ccm_duration' => $ccm_duration,
-                '%ccm' => $percent
-
-            ];
-
-        }
-
-        return [
-
-            'calls/hour' => round($calls / $hours, 2),
-            'duration' => $duration,
-            'ccm_duration' => $ccm_duration,
-            '%ccm' => $percent
-
-        ];
-
-    }
-
     public function getItemizedActivities(){
 
         $data = [];
 
         $activities = PageTimer::where('provider_id', $this->nurse->user_id)
             ->where(function ($q){
-                $q->where('updated_at', '>=' , $this->startDate->toDateString())
-                    ->where('updated_at', '<=' , $this->endDate->toDateString());
+                $q->where('updated_at', '>=', $this->startDate)
+                    ->where('updated_at', '<=', $this->endDate);
             })
             ->get();
 
@@ -196,7 +123,7 @@ class NurseMonthlyBillGenerator
 
         foreach ($activities as $activity){
 
-            $data[Carbon::parse($activity[0]['created_at'])->toDateString()] = $activity->sum('duration');
+            $data[Carbon::parse($activity[0]['created_at'])->toDateString()] = $activity->sum('billable_duration');
 
         };
 
@@ -289,6 +216,21 @@ class NurseMonthlyBillGenerator
 
     }
 
+    public function email()
+    {
+
+        $this->getSystemTimeForNurse();
+
+        $this->getItemizedActivities();
+
+        $this->formatItemizedActivities();
+
+        $this->generatePdf();
+
+        return $this->mail();
+
+    }
+
     public function mail(){
 
         $nurse = $this->nurse;
@@ -316,6 +258,66 @@ class NurseMonthlyBillGenerator
 //            'created_at' => $note->created_at,
 //            'note_id' => $note->id
 //        ]);
+
+    }
+
+    public function getCallsPerHourOverPeriod()
+    {
+
+        $duration = intval(PageTimer::where('provider_id', $this->nurse->user_id)
+            ->where(function ($q) {
+                $q->where('created_at', '>=', $this->startDate->toDateString())
+                    ->where('created_at', '<=', $this->endDate->toDateString());
+            })
+            ->sum('billable_duration'));
+
+        $ccm_duration = intval(Activity::where('logger_id', $this->nurse->user_id)
+            ->where(function ($q) {
+                $q->where('created_at', '>=', $this->startDate->toDateString())
+                    ->where('created_at', '<=', $this->endDate->toDateString());
+            })
+            ->sum('duration'));
+
+        $calls = Call::where('outbound_cpm_id', $this->nurse->user_id)
+            ->where(function ($q) {
+                $q->where('updated_at', '>=', $this->startDate->toDateString())
+                    ->where('updated_at', '<=', $this->endDate->toDateString());
+            })
+            ->where(function ($k) {
+                $k->where('status', '=', 'reached')
+                    ->orWhere('status', '=', 'not reached');
+            })
+            ->count();
+
+        $hours = $duration / 3600;
+
+        if ($calls != 0 && $hours != 0) {
+            $percent = round(($ccm_duration / $duration) * 100, 2);
+        } else {
+            $percent = 0;
+        }
+
+        if ($calls == 0 || $hours < 1) {
+
+            return [
+
+                'calls/hour'   => 0,
+                'duration'     => $duration,
+                'ccm_duration' => $ccm_duration,
+                '%ccm'         => $percent,
+
+            ];
+
+        }
+
+        return [
+
+            'calls/hour'   => round($calls / $hours, 2),
+            'duration'     => $duration,
+            'ccm_duration' => $ccm_duration,
+            '%ccm'         => $percent,
+
+        ];
 
     }
 
