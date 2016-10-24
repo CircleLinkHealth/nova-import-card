@@ -77,8 +77,10 @@ class AuthController extends Controller
     public function getLogout()
     {
         //CLEAR OUT ANY REMAINING PATIENT SESSIONS ON LOGOUT
-        $session = PatientSession::where('user_id', '=', auth()->user()->ID)
-            ->delete();
+        if (auth()->check()) {
+            $session = PatientSession::where('user_id', '=', auth()->user()->ID)
+                ->delete();
+        }
 
         auth()->logout();
         session()->flush();
