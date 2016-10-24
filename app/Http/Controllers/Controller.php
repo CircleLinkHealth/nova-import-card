@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\PatientSession;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesResources;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -15,25 +14,17 @@ class Controller extends BaseController
 
     public function __construct(Request $request)
     {
-        $patientId = $request->route('patientId') ?? $request->input('patientId');
+        $this->middleware('patient.session');
 
-        if (!empty($patientId)) {
-            if ($request->has('deletePatientSession') && filter_var($request->input('deletePatientSession'),
-                    FILTER_VALIDATE_BOOLEAN)
-            ) {
-                if (auth()->check()) {
-                    $user = auth()->user()->ID;
-                } else {
-                    $user = $request->input('providerId');
-                }
+        if (\Session::has('inOpenSessionWithPatientId')) {
 
-                $session = PatientSession::where('user_id', '=', $user)
-                    ->where('patient_id', '=', $patientId)
-                    ->delete();
+            $clearPatientSessions = $request->method() == 'GET'
+                && str_contains(\URL::previous(), \Session::get('inOpenSessionWithPatientId'))
+                && !str_contains($request->getRequestUri(), \Session::get('inOpenSessionWithPatientId'));
+
+            if ($clearPatientSessions) {
+                \Session::remove('inOpenSessionWithPatientId');
             }
-
-            $this->middleware('patient.session');
         }
-
     }
 }

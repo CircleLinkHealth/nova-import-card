@@ -92,7 +92,7 @@ if (isset($patient) && !empty($patient)) {
                 var noResponseTimer = setTimeout(function () {
                     totalTime = totalTime - 90000;
                     redirectLocation = 'logout';
-                    submitTotalTime(true);
+                    submitTotalTime();
                 }, modalDelay);
 
 
@@ -110,7 +110,7 @@ if (isset($patient) && !empty($patient)) {
                     $('#timeModalNo, #timeModalYes').unbind('click');
                     clearTimeout(noResponseTimer);
                     redirectLocation = 'home';
-                    submitTotalTime(true);
+                    submitTotalTime();
                     return true;
                 });
 
@@ -124,18 +124,14 @@ if (isset($patient) && !empty($patient)) {
                 });
             });
 
-            window.onbeforeunload = function () {
+            window.addEventListener("beforeunload", function () {
                 $(document).idleTimer("pause");
                 endTime = new Date();
                 totalTime = totalTime + (endTime - startTime);
-                submitTotalTime(true);
-            };
+                submitTotalTime();
+            });
 
-            function submitTotalTime(deletePatientSession) {
-
-                if (deletePatientSession === undefined) {
-                    deletePatientSession = false;
-                }
+            function submitTotalTime() {
 
                 if (isTimerProcessed == true) {
                     return true;
@@ -155,7 +151,6 @@ if (isset($patient) && !empty($patient)) {
                     "ipAddr": '<?php echo $ipAddr; ?>',
                     "activity": $('#activityName').val(),
                     "title": '<?php echo $title; ?>',
-                    "deletePatientSession": deletePatientSession,
                     "redirectLocation": redirectLocation
                 };
 

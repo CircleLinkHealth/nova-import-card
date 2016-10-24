@@ -28,21 +28,15 @@ class PatientSession
 
         $userId = auth()->user()->ID;
 
-        $sessions = \App\Models\PatientSession::where('user_id', '=', $userId)
-            ->get();
-
-        if ($sessions->isEmpty()) {
-            \App\Models\PatientSession::create([
-                'user_id'    => $userId,
-                'patient_id' => $patientId,
-            ]);
+        if ($request->has('clearSession')) {
+            \Session::remove('inOpenSessionWithPatientId');
         }
 
-        $exists = \App\Models\PatientSession::where('user_id', '=', $userId)
-            ->where('patient_id', '!=', $patientId)
-            ->exists();
+        if (!\Session::has('inOpenSessionWithPatientId')) {
+            \Session::put('inOpenSessionWithPatientId', $patientId);
+        }
 
-        if ($exists) {
+        if (\Session::get('inOpenSessionWithPatientId') != $patientId) {
             throw new HasPatientTabOpenException();
         }
 
