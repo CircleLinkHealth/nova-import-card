@@ -48,7 +48,7 @@ class PageTimerController extends Controller
         //We have the duration from two sources.
         //On page JS timer
         //Difference between start and end dates on the server
-        $duration = ceil($data['totalTime'] / 1000);
+        $duration = ceil($data['totalTime'] ?? 0 / 1000);
 
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
 //        $endTimeNow = Carbon::now();
