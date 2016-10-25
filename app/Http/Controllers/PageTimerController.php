@@ -122,7 +122,7 @@ class PageTimerController extends Controller
             $newActivity->save();
         }
 
-        if ($newActivity->billable_duration > 8000) {
+        if ($newActivity->billable_duration > 3600) {
             $error = __METHOD__ . ' ' . __LINE__;
             $message = "Time Tracking Error: $error" . PHP_EOL . PHP_EOL;
             $message .= " Data From Browser: " . json_encode($data) . PHP_EOL . PHP_EOL;
