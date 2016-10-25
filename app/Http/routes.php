@@ -5,8 +5,18 @@ if (app()->environment() != 'production') {
 
     Route::get('rohan', function () {
 
-        return (new \App\PatientContactWindow())->getEarliestWindowForPatientFromDate(\App\PatientInfo::find(3198),
-            \Carbon\Carbon::today());
+        $request = new \Illuminate\Http\Request();
+
+        return (new \App\Http\Controllers\NurseController($request))->dailyReport();
+
+//        $day = Carbon\Carbon::parse('2016-10-23');
+//
+//        return (new \App\Algorithms\Calls\SuccessfulHandler(App\PatientInfo::find(1272), $day))
+//            ->getPatientOffset(1500, $day->dayOfWeek);
+
+//        return (new \App\PatientContactWindow())
+//            ->getEarliestWindowForPatientFromDate(\App\PatientInfo::find(3198),
+//            \Carbon\Carbon::today());
 
 //        $result = Program::find(21)->enrollmentByProgram(Carbon\Carbon::parse('2016-09-01 00:00:00'),
 //            Carbon\Carbon::parse('2016-09-30 23:59:59'));
