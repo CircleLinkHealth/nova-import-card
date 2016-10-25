@@ -149,7 +149,7 @@ class NurseController extends Controller
 
             $system_time = PageTimer::where('provider_id', $nurse->ID)
                 ->createdToday('updated_at')
-                ->sum('duration');
+                ->sum('billable_duration');
 
             $system_time_formatted = secondsToHMS($system_time);
 
