@@ -19,10 +19,18 @@ class Controller extends BaseController
 
         $patientId = $request->route('patientId') ?? $request->input('patientId');
 
-        $clearPatientSessions = $request->method() == 'GET'
-            && str_contains(\URL::previous(), $patientId)
-            && !str_contains($request->getRequestUri(), $patientId)
-            && !empty($patientId);
+        if ($request->method() != 'GET') {
+            return;
+        }
+
+        $clearPatientSessions = preg_match('/(?<![0-9])[0-9]{2,4}(?![0-9])/', $request->getRequestUri()) == 0;
+
+        if (!empty($patientId)) {
+            $clearPatientSessions = !str_contains($request->getRequestUri(),
+                $patientId)//    && str_contains(\URL::previous(), $patientId)
+            ;
+        }
+
 
         if ($clearPatientSessions) {
             if (auth()->check()) {
@@ -32,7 +40,6 @@ class Controller extends BaseController
             }
 
             $session = PatientSession::where('user_id', '=', $user)
-                ->where('patient_id', '=', $patientId)
                 ->delete();
         }
 

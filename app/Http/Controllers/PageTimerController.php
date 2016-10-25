@@ -105,12 +105,12 @@ class PageTimerController extends Controller
 
             //If the user does not have an open session with this patient, save page timer as soft deleted and go back.
             if (!$exists) {
-                $newActivity->processed = 'N';
+//                $newActivity->processed = 'N';
                 $newActivity->redirect_to = 'Double Tab';
-                $newActivity->save();
-                $newActivity->delete();
-
-                return response('', 200);
+//                $newActivity->save();
+//                $newActivity->delete();
+//
+//                return response('', 200);
             }
         }
 
