@@ -88,7 +88,6 @@ class NurseController extends Controller
         $nurses = User::ofType('care-center')->get();
 
         $i = 0;
-        $nurses = [];
 
         foreach ($nurses as $nurse) {
 
