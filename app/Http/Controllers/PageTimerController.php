@@ -124,12 +124,18 @@ class PageTimerController extends Controller
 
         if ($newActivity->billable_duration > 8000) {
             $error = __METHOD__ . ' ' . __LINE__;
-            $message = "Time Tracking Error: $error" . PHP_EOL;
-            $message .= " Data: " . json_encode($data);
+            $message = "Time Tracking Error: $error" . PHP_EOL . PHP_EOL;
+            $message .= " Data From Browser: " . json_encode($data) . PHP_EOL . PHP_EOL;
+            $message .= " PageTimer Object ID {$newActivity->id}: " . json_encode($newActivity) . PHP_EOL . PHP_EOL;
             $message .= " Env: " . env('APP_ENV');
 
             Slack::to('#time-tracking-issues')
                 ->send($message);
+
+            $newActivity->delete();
+
+            return response('', 200);
+
         }
 
         $this->addPageTimerActivities($newActivity);
