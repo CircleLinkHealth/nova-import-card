@@ -15,7 +15,6 @@ class AuthController extends Controller
 
     use AuthenticatesAndRegistersUsers;
 
-    protected $username = 'user_email';
 
     /**
      * Create a new authentication controller instance.
@@ -29,18 +28,7 @@ class AuthController extends Controller
         $this->middleware('guest', ['except' => 'getLogout']);
 
 
-        //Check whether to authenticate using user_email or password
-        if ($request->has('user_email'))
-        {
-            if (! str_contains($request->input('user_email'), '@'))
-            {
-                $this->username = 'user_login';
 
-                $request->merge([
-                    'user_login' => $request->input('user_email')
-                ]);
-            }
-        }
 
 
 //        if (auth()->check())
