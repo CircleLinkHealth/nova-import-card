@@ -116,8 +116,8 @@
                                 <li><a href="{{ URL::route('admin.users.create', array()) }}">New User</a></li>
                                 <li><a href="{{ URL::route('admin.observations.index', array()) }}">Observations</a>
                                 </li>
-                                <li><a href="{{ URL::route('admin.comments.index', array()) }}">Comments</a></li>
-                                <li><a href="{{ URL::route('admin.ucp.index', array()) }}">UCP</a></li>
+                                {{--                                <li><a href="{{ URL::route('comments.index', array()) }}">Comments</a></li>--}}
+                                {{--                                <li><a href="{{ URL::route('ucp.index', array()) }}">UCP</a></li>--}}
                             </ul>
                         </li>
                     @endif
@@ -165,7 +165,7 @@
                                 Settings<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ URL::route('admin.appConfig.index', array()) }}">App Config</a></li>
+                                <li><a href="{{ URL::route('appConfig.index', array()) }}">App Config</a></li>
                             </ul>
                         </li>
                     @endif
@@ -177,9 +177,9 @@
                                 Roles<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ URL::route('admin.roles.index', array()) }}">Roles</a></li>
+                                <li><a href="{{ URL::route('roles.index', array()) }}">Roles</a></li>
                                 @if(Entrust::can('roles-permissions-view'))
-                                    <li><a href="{{ URL::route('admin.permissions.index', array()) }}">Permissions</a>
+                                    <li><a href="{{ URL::route('permissions.index', array()) }}">Permissions</a>
                                     </li>
                                 @endif
                             </ul>
@@ -207,18 +207,18 @@
                         </li>
                     @endif
 
-                    @if(Entrust::can('programs-view'))
-                        <li role="presentation" class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                               aria-expanded="false">
-                                Care Plans <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ URL::route('admin.careplans.index', array()) }}">Care Plans</a></li>
-                                <li><a href="{{ URL::route('admin.careitems.index', array()) }}">Care Items</a></li>
-                            </ul>
-                        </li>
-                    @endif
+                    {{--@if(Entrust::can('programs-view'))--}}
+                    {{--<li role="presentation" class="dropdown">--}}
+                    {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
+                    {{--aria-expanded="false">--}}
+                    {{--Care Plans <span class="caret"></span>--}}
+                    {{--</a>--}}
+                    {{--<ul class="dropdown-menu" role="menu">--}}
+                    {{--<li><a href="{{ URL::route('careplans.index', array()) }}">Care Plans</a></li>--}}
+                    {{--<li><a href="{{ URL::route('careitems.index', array()) }}">Care Items</a></li>--}}
+                    {{--</ul>--}}
+                    {{--</li>--}}
+                    {{--@endif--}}
 
                     {{--@if(Entrust::can('activities-view'))--}}
                         {{--<li role="presentation" class="dropdown">--}}
@@ -249,19 +249,19 @@
                             {{--</ul>--}}
                         {{--</li>--}}
                     {{--@endif--}}
-                    @if(Entrust::can('apikeys-view'))
-                        <li role="presentation" class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                               aria-expanded="false">
-                                API<span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ URL::route('admin.apikeys.index', array()) }}">API Keys</a></li>
-                                <li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>
-                                <li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>
-                            </ul>
-                        </li>
-                    @endif
+                    {{--@if(Entrust::can('apikeys-view'))--}}
+                    {{--<li role="presentation" class="dropdown">--}}
+                    {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
+                    {{--aria-expanded="false">--}}
+                    {{--API<span class="caret"></span>--}}
+                    {{--</a>--}}
+                    {{--<ul class="dropdown-menu" role="menu">--}}
+                    {{--<li><a href="{{ URL::route('admin.apikeys.index', array()) }}">API Keys</a></li>--}}
+                    {{--<li><a href="{{ action('Redox\ConfigController@create') }}">Redox Engine</a></li>--}}
+                    {{--<li><a href="{{ action('qliqSOFT\ConfigController@create') }}">qliqSOFT</a></li>--}}
+                    {{--</ul>--}}
+                    {{--</li>--}}
+                    {{--@endif--}}
 
                     <li role="presentation" class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"

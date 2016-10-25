@@ -118,6 +118,8 @@ Route::group([
     'prefix' => 'auth',
 ], function () {
     Auth::routes();
+
+    Route::get('logout', 'Auth\LoginController@logout');
 });
 
 Route::group([
@@ -998,7 +1000,7 @@ Route::group(['middleware' => 'auth'], function () {
         ], function () {
             Route::post('observations', [
                 'uses' => 'Admin\ObservationController@index',
-                'as'   => 'admin.observations',
+                'as'   => 'admin.observations.index',
             ]);
         });
 
