@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Models\PatientSession;
 use App\PageTimer;
 use App\Services\ActivityService;
 use App\Services\RulesService;
@@ -44,6 +45,7 @@ class PageTimerController extends Controller
     {
         $data = $request->input();
 
+        $patientId = $request->input('patientId');
         $providerId = $data['providerId'] ?? null;
 
         $totalTime = $data['totalTime'] ?? 0;
@@ -82,7 +84,7 @@ class PageTimerController extends Controller
         $newActivity->billable_duration = 0;
         $newActivity->duration = $duration;
         $newActivity->duration_unit = 'seconds';
-        $newActivity->patient_id = $data['patientId'];
+        $newActivity->patient_id = $patientId;
         $newActivity->provider_id = $providerId;
         $newActivity->start_time = $startTime->toDateTimeString();
         $newActivity->actual_start_time = $startTime->toDateTimeString();
@@ -94,6 +96,24 @@ class PageTimerController extends Controller
         $newActivity->ip_addr = $data['ipAddr'];
         $newActivity->activity_type = $data['activity'];
         $newActivity->title = $data['title'];
+
+        if ($patientId) {
+            $exists = PatientSession::where('user_id', '=', $providerId)
+                ->where('patient_id', '=', $patientId)
+                ->exists();
+
+
+            //If the user does not have an open session with this patient, save page timer as soft deleted and go back.
+            if (!$exists) {
+                $newActivity->processed = 'N';
+                $newActivity->redirect_to = 'Double Tab';
+                $newActivity->save();
+                $newActivity->delete();
+
+                return response('', 200);
+            }
+        }
+
 
         $overlaps = PageTimer::where('provider_id', '=', $providerId)
             ->where([
