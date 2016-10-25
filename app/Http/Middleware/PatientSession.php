@@ -35,6 +35,8 @@ class PatientSession
         if ($request->has('clearSession')) {
             \Session::remove('inOpenSessionWithPatientId');
 
+            \Session::put('inOpenSessionWithPatientId', $patientId);
+
             return redirect()->to($request->url());
         }
 
