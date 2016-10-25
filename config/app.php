@@ -201,6 +201,7 @@ return [
         App\Providers\AWSWorkerServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
+        MathiasGrimm\LaravelDotEnvGen\DotEnvGenServiceProvider::class,
         //        DraperStudio\ChartJS\ServiceProvider::class
 
 

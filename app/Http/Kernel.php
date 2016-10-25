@@ -16,11 +16,13 @@ class Kernel extends HttpKernel
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
+            //            Relly need to start using this
+            //            \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
         'api' => [
             'throttle:60,1',
+            'bindings',
         ],
     ];
 
@@ -31,14 +33,8 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-        //        \Illuminate\Cookie\Middleware\EncryptCookies::class,
-        //        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-        //        \Illuminate\Session\Middleware\StartSession::class,
-        //        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         \Fideloper\Proxy\TrustProxies::class,
         \App\Http\Middleware\Secure::class,
-        //		\App\Http\Middleware\VerifyCsrfToken::class,
-        //		This ^^ is commented out to allow forms to be submitted from other sites
     ];
 
     /**
