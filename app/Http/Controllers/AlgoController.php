@@ -28,16 +28,6 @@ class AlgoController extends Controller
             $status = (bool) $request->input('status');
             $contact_day = $request->input('days');
 
-            $days = [];
-
-            foreach ($contact_day as $day){
-                $days[] = Carbon::now()->next($day)->toDateString();
-            }
-
-            $upcoming = min($days);
-
-            //$successThisMonth = (bool) $request->input('call_success');
-
             $guineaPig = PatientInfo::find(1272);
 
             if($status){
@@ -61,8 +51,16 @@ class AlgoController extends Controller
 
 
             }
-            
-            return $day->next($contact_day)->format('l, jS M');
+
+            $days = [];
+
+            foreach ($contact_day as $week_day){
+                $days[] = Carbon::parse($day)->next($week_day);
+            }
+
+            $upcoming = min($days);
+
+            return $upcoming->format('l, jS M');
 
         }
 

@@ -1,92 +1,22 @@
 <?php
 
-
-//use Carbon\Carbon;
-//
-//$x = Carbon::parse('2016-10-23 15:19:05');
-//$y = Carbon::parse('0000-00-00 00:00:00');
-//
-//dd($x->diffInSeconds($y));
-//
-//$startTime = Carbon\Carbon::now()->copy()->addSeconds(10);
-//$endTime = $startTime->copy()->addSeconds(60);
-//
-//$create = new Illuminate\Support\Collection([
-//    [
-//        '2016-10-23 15:18:57',
-//        '2016-10-23 15:19:03',
-//        6,
-//        'Patient Overview Review',
-//    ],
-//    [
-//        '2016-10-23 15:18:59',
-//        '2016-10-23 15:19:04',
-//        5,
-//        'Patient Overview Review',
-//    ],[
-//        '2016-10-23 15:19:02',
-//        '2016-10-23 15:19:06',
-//        4,
-//        'Patient Overview Review',
-//    ],[
-//        '2016-10-23 15:19:02',
-//        '2016-10-23 15:19:17',
-//        15,
-//        'Patient Overview Review',
-//    ],
-//    [
-//        '2016-10-23 15:18:57',
-//        '2016-10-23 15:19:01',
-//        4,
-//        'Patient Overview Review',
-//    ],
-//    [
-//        '2016-10-23 15:19:02',
-//        '2016-10-23 15:19:06',
-//        4,
-//        'Patient Overview Review',
-//    ],
-//    [
-//        '2016-10-23 15:19:16',
-//        '2016-10-23 15:19:20',
-//        4,
-//        'Patient Overview Review',
-//    ],
-//    [
-//        '2016-10-23 15:16:36',
-//        '2016-10-23 15:19:31',
-//        175,
-//        'non ccm',
-//    ],
-//]);
-//
-//foreach ($create as $c) {
-//    $request = new Illuminate\Http\Request();
-//
-//    $request->merge([
-//        'patientId'        => 285,
-//        'providerId'       => 357,
-//        'totalTime'        => $c[2] * 1000,
-//        'programId'        => 9,
-//        'startTime'        => $c[0],
-//        'testEndTime'      => $c[1],
-//        'urlFull'          => 'www.url.com',
-//        'urlShort'         => 'url.com',
-//        'ipAddr'           => '1.1.1.1',
-//        'activity'         => $c[3],
-//        'title'            => $c[3],
-//        'testing'          => true,
-//        'redirectLocation' => '',
-//    ]);
-//
-//    (new App\Http\Controllers\PageTimerController($request, new App\Services\TimeTracking\Service))->store($request);
-//}
-//dd();
-
 if (app()->environment() != 'production') {
+
+
     Route::get('rohan', function () {
 
-        return (new \App\PatientContactWindow())->getEarliestWindowForPatientFromDate(\App\PatientInfo::find(3198), \Carbon\Carbon::today());
+        $request = new \Illuminate\Http\Request();
+
+        return (new \App\Http\Controllers\NurseController($request))->dailyReport();
+
+//        $day = Carbon\Carbon::parse('2016-10-23');
+//
+//        return (new \App\Algorithms\Calls\SuccessfulHandler(App\PatientInfo::find(1272), $day))
+//            ->getPatientOffset(1500, $day->dayOfWeek);
+
+//        return (new \App\PatientContactWindow())
+//            ->getEarliestWindowForPatientFromDate(\App\PatientInfo::find(3198),
+//            \Carbon\Carbon::today());
 
 //        $result = Program::find(21)->enrollmentByProgram(Carbon\Carbon::parse('2016-09-01 00:00:00'),
 //            Carbon\Carbon::parse('2016-09-30 23:59:59'));

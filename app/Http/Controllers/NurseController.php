@@ -85,12 +85,13 @@ class NurseController extends Controller
     public function dailyReport()
     {
 
-        $nurses = User::ofType('care-center')->get();
+        $nurse_users = User::ofType('care-center')->get();
 
-        $i = 0;
         $nurses = [];
 
-        foreach ($nurses as $nurse) {
+        $i = 0;
+
+        foreach ($nurse_users as $nurse) {
 
             $nurses[$i]['id'] = $nurse;
             $nurses[$i]['name'] = $nurse->fullName;
@@ -148,7 +149,7 @@ class NurseController extends Controller
 
             $system_time = PageTimer::where('provider_id', $nurse->ID)
                 ->createdToday('updated_at')
-                ->sum('billable_duration');
+                ->sum('duration');
 
             $system_time_formatted = secondsToHMS($system_time);
 
@@ -185,6 +186,8 @@ class NurseController extends Controller
 
         $nurses = collect($nurses);
         $nurses->sortBy('last_activity');
+
+        debug($nurses);
 
         return Datatables::collection($nurses)->make(true);
 
