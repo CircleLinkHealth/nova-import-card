@@ -34,13 +34,18 @@ class PatientSession
 
         if ($request->has('clearSession')) {
             \Session::remove('inOpenSessionWithPatientId');
+
+            return redirect()->to($request->url());
         }
 
         if (!\Session::has('inOpenSessionWithPatientId')) {
             \Session::put('inOpenSessionWithPatientId', $patientId);
         }
 
-        if (\Session::get('inOpenSessionWithPatientId') != $patientId) {
+        if (
+            \Session::get('inOpenSessionWithPatientId') != $patientId
+            && $request->method() == 'GET'
+        ) {
             throw new HasPatientTabOpenException();
         }
 
