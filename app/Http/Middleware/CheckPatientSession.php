@@ -3,9 +3,10 @@
 namespace App\Http\Middleware;
 
 use App\Exceptions\HasPatientTabOpenException;
+use App\Models\PatientSession;
 use Closure;
 
-class PatientSession
+class CheckPatientSession
 {
     /**
      * Handle an incoming request.
@@ -26,21 +27,38 @@ class PatientSession
 
         $patientId = $request->route('patientId');
 
-        $userId = auth()->user()->ID;
+        $user = auth()->user();
 
-        $sessions = \App\Models\PatientSession::where('user_id', '=', $userId)
+        if ($user->hasRole(['administrator'])) {
+            return $next($request);
+        }
+
+        if ($request->has('clearSession') && $request->method() == 'GET') {
+            PatientSession::where('user_id', '=', $user->ID)
+                ->delete();
+
+            PatientSession::create([
+                'user_id'    => $user->ID,
+                'patient_id' => $patientId,
+            ]);
+
+            return redirect()->to($request->url());
+        }
+
+        $sessions = PatientSession::where('user_id', '=', $user->ID)
             ->get();
 
         if ($sessions->isEmpty()) {
-            \App\Models\PatientSession::create([
-                'user_id'    => $userId,
+            PatientSession::create([
+                'user_id'    => $user->ID,
                 'patient_id' => $patientId,
             ]);
         }
 
-        $exists = \App\Models\PatientSession::where('user_id', '=', $userId)
+        $exists = PatientSession::where('user_id', '=', $user->ID)
             ->where('patient_id', '!=', $patientId)
             ->exists();
+
 
         if ($exists) {
             throw new HasPatientTabOpenException();

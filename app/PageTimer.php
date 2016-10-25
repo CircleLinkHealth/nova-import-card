@@ -2,10 +2,11 @@
 
 use App\Scopes\Universal\DateScopesTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PageTimer extends Model
 {
-    use DateScopesTrait;
+    use DateScopesTrait, SoftDeletes;
 
     /**
      * The connection name for the model.
@@ -20,13 +21,6 @@ class PageTimer extends Model
      * @var string
      */
     protected $table = 'lv_page_timer';
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
 
     /**
      * The attributes that are mass assignable.

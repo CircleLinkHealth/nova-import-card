@@ -23,6 +23,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\NoteWasForwarded'    => [
             'App\Listeners\CreateAprimaPdfNote',
         ],
+        'Illuminate\Auth\Events\Logout'  => [
+            'App\Listeners\ClosePatientSession',
+        ],
     ];
 
     /**

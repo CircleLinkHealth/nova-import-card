@@ -15,25 +15,27 @@ class Controller extends BaseController
 
     public function __construct(Request $request)
     {
+        $this->middleware('patient.session');
+
         $patientId = $request->route('patientId') ?? $request->input('patientId');
 
-        if (!empty($patientId)) {
-            if ($request->has('deletePatientSession') && filter_var($request->input('deletePatientSession'),
-                    FILTER_VALIDATE_BOOLEAN)
-            ) {
-                if (auth()->check()) {
-                    $user = auth()->user()->ID;
-                } else {
-                    $user = $request->input('providerId');
-                }
+        $clearPatientSessions = $request->method() == 'GET'
+            && str_contains(\URL::previous(), $patientId)
+            && !str_contains($request->getRequestUri(), $patientId)
+            && !empty($patientId);
 
-                $session = PatientSession::where('user_id', '=', $user)
-                    ->where('patient_id', '=', $patientId)
-                    ->delete();
+        if ($clearPatientSessions) {
+            if (auth()->check()) {
+                $user = auth()->user()->ID;
+            } else {
+                $user = $request->input('providerId');
             }
 
-            $this->middleware('patient.session');
+            $session = PatientSession::where('user_id', '=', $user)
+                ->where('patient_id', '=', $patientId)
+                ->delete();
         }
+
 
     }
 }

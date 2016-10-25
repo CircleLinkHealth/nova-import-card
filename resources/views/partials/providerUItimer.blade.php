@@ -59,7 +59,7 @@ if (isset($patient) && !empty($patient)) {
             var startTime = new Date();
             var endTime;
             var noResponse = true; // set to false if user clicks yes/no button
-            var totalTime = 3000; // total accumulated time on page
+            var totalTime = 0; // total accumulated time on page
             var modalDelay = 60000 * 8; // ms modal waits before force logout (60000 = 1min)
             var isTimerProcessed = false;
             var redirectLocation = null;
@@ -87,11 +87,12 @@ if (isset($patient) && !empty($patient)) {
 
                 $('#timerModal').modal({backdrop: 'static', keyboard: false});
 
+
                 // if no response to modal, log out after {modalDelay}
                 var noResponseTimer = setTimeout(function () {
                     totalTime = totalTime - 90000;
                     redirectLocation = 'logout';
-                    submitTotalTime(true);
+                    submitTotalTime();
                 }, modalDelay);
 
 
@@ -109,7 +110,7 @@ if (isset($patient) && !empty($patient)) {
                     $('#timeModalNo, #timeModalYes').unbind('click');
                     clearTimeout(noResponseTimer);
                     redirectLocation = 'home';
-                    submitTotalTime(true);
+                    submitTotalTime();
                     return true;
                 });
 
@@ -123,18 +124,14 @@ if (isset($patient) && !empty($patient)) {
                 });
             });
 
-            window.onbeforeunload = function () {
+            window.addEventListener("beforeunload", function () {
                 $(document).idleTimer("pause");
                 endTime = new Date();
                 totalTime = totalTime + (endTime - startTime);
-                submitTotalTime(true);
-            };
+                submitTotalTime();
+            });
 
-            function submitTotalTime(deletePatientSession) {
-
-                if (deletePatientSession === undefined) {
-                    deletePatientSession = false;
-                }
+            function submitTotalTime() {
 
                 if (isTimerProcessed == true) {
                     return true;
@@ -154,18 +151,16 @@ if (isset($patient) && !empty($patient)) {
                     "ipAddr": '<?php echo $ipAddr; ?>',
                     "activity": $('#activityName').val(),
                     "title": '<?php echo $title; ?>',
-                    "deletePatientSession": deletePatientSession,
                     "redirectLocation": redirectLocation
                 };
 
 //                console.log('endTime');
 //                console.log(endTime);
-//
+
 //                console.log('totalTime');
 //                console.log(totalTime / 1000);
 
                 $.ajax({
-                    dataType: "json",
                     type: "POST",
                     url: '<?php echo URL::route('api.pagetracking'); ?>',
                     data: data,

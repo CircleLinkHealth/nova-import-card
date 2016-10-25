@@ -15,20 +15,21 @@ use Carbon\Carbon;
 trait Helpers
 {
     public function overlapAllTheThings(
-        PageTimer $secondary,
-        PageTimer $newActivity,
-        PageTimer $greedy,
-        Carbon $greedyStart,
-        Carbon $greedyEnd,
-        Carbon $secondaryStart,
-        Carbon $secondaryEnd,
-        Carbon $minDate,
-        Carbon $maxDate
+        PageTimer &$secondary,
+        PageTimer &$newActivity,
+        PageTimer &$greedy,
+        Carbon &$greedyStart,
+        Carbon &$greedyEnd,
+        Carbon &$secondaryStart,
+        Carbon &$secondaryEnd,
+        Carbon &$minDate,
+        Carbon &$maxDate
     ) {
         if ($secondaryStart->lt($minDate)) {
             $durationBeforeOverlap = $secondaryStart->diffInSeconds($minDate);
-
             $minDate = $secondaryStart->copy();
+        } elseif ($secondaryStart == $minDate) {
+            $durationBeforeOverlap = $secondaryStart->diffInSeconds($greedyStart);
         } else {
             $durationBeforeOverlap = 0;
         }
@@ -37,6 +38,8 @@ trait Helpers
             $durationAfterOverlap = $maxDate->diffInSeconds($secondaryEnd);
 
             $maxDate = $secondaryEnd->copy();
+        } elseif ($secondaryEnd == $maxDate) {
+            $durationAfterOverlap = $greedyEnd->diffInSeconds($secondaryEnd);
         } else {
             $durationAfterOverlap = 0;
         }
