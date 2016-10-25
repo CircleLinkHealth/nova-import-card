@@ -33,21 +33,26 @@ class PatientSession
         }
 
         if ($request->has('clearSession')) {
-            \Session::remove('inOpenSessionWithPatientId');
-
-            \Session::put('inOpenSessionWithPatientId', $patientId);
-
-            return redirect()->to($request->url());
+            \App\Models\PatientSession::where('user_id', '=', $user->ID)
+                ->delete();
         }
 
-        if (!\Session::has('inOpenSessionWithPatientId')) {
-            \Session::put('inOpenSessionWithPatientId', $patientId);
+        $sessions = \App\Models\PatientSession::where('user_id', '=', $user->ID)
+            ->get();
+
+        if ($sessions->isEmpty()) {
+            \App\Models\PatientSession::create([
+                'user_id'    => $user->ID,
+                'patient_id' => $patientId,
+            ]);
         }
 
-        if (
-            \Session::get('inOpenSessionWithPatientId') != $patientId
-            && $request->method() == 'GET'
-        ) {
+        $exists = \App\Models\PatientSession::where('user_id', '=', $user->ID)
+            ->where('patient_id', '!=', $patientId)
+            ->exists();
+
+
+        if ($exists) {
             throw new HasPatientTabOpenException();
         }
 
