@@ -10,6 +10,7 @@ use App\PageTimer;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Facades\Datatables;
 
 class NurseController extends Controller
@@ -147,7 +148,7 @@ class NurseController extends Controller
 
             $system_time = PageTimer::where('provider_id', $nurse->ID)
                 ->createdToday('updated_at')
-                ->sum('duration');
+                ->sum('billable_duration');
 
             $system_time_formatted = secondsToHMS($system_time);
 

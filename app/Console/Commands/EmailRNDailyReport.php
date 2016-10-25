@@ -63,7 +63,9 @@ class EmailRNDailyReport extends Command
                 continue;
             }
 
-            if ($nurse->nurseInfo->hourly_rate < 1) {
+            if ($nurse->nurseInfo->hourly_rate < 1
+                && $nurse->nurseInfo != 'active'
+            ) {
                 continue;
             }
 

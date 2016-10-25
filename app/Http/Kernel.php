@@ -1,6 +1,5 @@
 <?php namespace App\Http;
 
-use App\Http\Middleware\PatientSession;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel {
@@ -46,18 +45,18 @@ class Kernel extends HttpKernel {
 	 * @var array
 	 */
 	protected $routeMiddleware = [
-		'aprima.ccdapi.auth.adapter' => Middleware\AprimaCcdApiAuthAdapter::class,
-		'auth' => \App\Http\Middleware\Authenticate::class,
-		'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-		'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-		'authApiCall' => \App\Http\Middleware\AuthenticateApiCall::class,
-        'getRedoxAccessToken' => \App\Http\Middleware\GetRedoxAccessToken::class,
-        'patientProgramSecurity' => \App\Http\Middleware\PatientProgramSecurity::class,
-		'role' => \Zizaco\Entrust\Middleware\EntrustRole::class,
-		'permission' => \Zizaco\Entrust\Middleware\EntrustPermission::class,
-		'ability' => \Zizaco\Entrust\Middleware\EntrustAbility::class,
-        'patient.session' => \App\Http\Middleware\PatientSession::class,
-//		'impersonation.check' => Middleware\ImpersonationMiddleware::class,
+        'aprima.ccdapi.auth.adapter' => Middleware\AprimaCcdApiAuthAdapter::class,
+        'auth'                       => \App\Http\Middleware\Authenticate::class,
+        'auth.basic'                 => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'guest'                      => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'authApiCall'                => \App\Http\Middleware\AuthenticateApiCall::class,
+        'getRedoxAccessToken'        => \App\Http\Middleware\GetRedoxAccessToken::class,
+        'patientProgramSecurity'     => \App\Http\Middleware\PatientProgramSecurity::class,
+        'role'                       => \Zizaco\Entrust\Middleware\EntrustRole::class,
+        'permission'                 => \Zizaco\Entrust\Middleware\EntrustPermission::class,
+        'ability'                    => \Zizaco\Entrust\Middleware\EntrustAbility::class,
+        'patient.session'            => \App\Http\Middleware\CheckPatientSession::class,
+        //		'impersonation.check' => Middleware\ImpersonationMiddleware::class,
 	];
 
 }

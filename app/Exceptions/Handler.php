@@ -20,6 +20,7 @@ class Handler extends ExceptionHandler
         HttpException::class,
         ModelNotFoundException::class,
         ValidationException::class,
+        HasPatientTabOpenException::class,
     ];
 
     /**
@@ -59,12 +60,8 @@ class Handler extends ExceptionHandler
         } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException) {
             return response()->json(['token_blacklisted'], '403');
         } elseif ($e instanceof HasPatientTabOpenException) {
-
-            $session = \App\Models\PatientSession::where('user_id', '=', auth()->user()->ID)
-                ->first();
-
             return response()->view('errors.patientTabAlreadyOpen', [
-                'patientId' => $session->patient_id,
+                'patientId' => \Session::get('inOpenSessionWithPatientId'),
             ], 403);
         }
 

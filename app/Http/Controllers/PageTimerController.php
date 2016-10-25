@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Models\PatientSession;
 use App\PageTimer;
 use App\Services\ActivityService;
 use App\Services\RulesService;
@@ -8,6 +9,7 @@ use App\Services\TimeTracking\Service as TimeTrackingService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maknz\Slack\Facades\Slack;
 
 class PageTimerController extends Controller
 {
@@ -43,36 +45,35 @@ class PageTimerController extends Controller
     {
         $data = $request->input();
 
-        $providerId = $data['providerId'];
+        $patientId = $request->input('patientId');
+        $providerId = $data['providerId'] ?? null;
+
+        $totalTime = $data['totalTime'] ?? 0;
 
         //We have the duration from two sources.
         //On page JS timer
         //Difference between start and end dates on the server
-        $duration = ceil($data['totalTime'] / 1000);
+        $duration = ceil($totalTime / 1000);
+
+        if ($totalTime < 1) {
+            $error = __METHOD__ . ' ' . __LINE__;
+            $message = "Time Tracking Error: $error" . PHP_EOL;
+            $message .= " Data: " . json_encode($data);
+            $message .= " Env: " . env('APP_ENV');
+
+            Slack::to('#time-tracking-issues')
+                ->send($message);
+        }
 
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['startTime']);
-//        $endTimeNow = Carbon::now();
         $endTime = $startTime->copy()->addSeconds($duration);
-
-//        if (!in_array($data['redirectLocation'], [
-//            'logout',
-//            'home',
-//        ])
-//        ) {
-//            $endTimeNowStartTimeDifference = $startTime->diffInSeconds($endTimeNow);
-//
-//            if ($endTimeNowStartTimeDifference > $duration) {
-//                $endTime = $endTimeNow;
-//                $duration = $endTimeNowStartTimeDifference;
-//            }
-//        }
 
         if (app()->environment('testing') || isset($data['testing'])) {
             $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $data['testEndTime']);
             $duration = $startTime->diffInSeconds($endTime);
         }
 
-        $loc = $data['redirectLocation'];
+        $loc = $data['redirectLocation'] ?? null;
 
         $redirectTo = empty($loc)
             ? null
@@ -83,7 +84,7 @@ class PageTimerController extends Controller
         $newActivity->billable_duration = 0;
         $newActivity->duration = $duration;
         $newActivity->duration_unit = 'seconds';
-        $newActivity->patient_id = $data['patientId'];
+        $newActivity->patient_id = $patientId;
         $newActivity->provider_id = $providerId;
         $newActivity->start_time = $startTime->toDateTimeString();
         $newActivity->actual_start_time = $startTime->toDateTimeString();
@@ -95,6 +96,24 @@ class PageTimerController extends Controller
         $newActivity->ip_addr = $data['ipAddr'];
         $newActivity->activity_type = $data['activity'];
         $newActivity->title = $data['title'];
+
+        if ($patientId) {
+            $exists = PatientSession::where('user_id', '=', $providerId)
+                ->where('patient_id', '=', $patientId)
+                ->exists();
+
+
+            //If the user does not have an open session with this patient, save page timer as soft deleted and go back.
+            if (!$exists) {
+                $newActivity->processed = 'N';
+                $newActivity->redirect_to = 'Double Tab';
+                $newActivity->save();
+                $newActivity->delete();
+
+                return response('', 200);
+            }
+        }
+
 
         $overlaps = PageTimer::where('provider_id', '=', $providerId)
             ->where([
@@ -121,6 +140,22 @@ class PageTimerController extends Controller
             $newActivity->billable_duration = $duration;
             $newActivity->end_time = $startTime->addSeconds($duration)->toDateTimeString();
             $newActivity->save();
+        }
+
+        if ($newActivity->billable_duration > 3600) {
+            $error = __METHOD__ . ' ' . __LINE__;
+            $message = "Time Tracking Error: $error" . PHP_EOL . PHP_EOL;
+            $message .= " Data From Browser: " . json_encode($data) . PHP_EOL . PHP_EOL;
+            $message .= " PageTimer Object ID {$newActivity->id}: " . json_encode($newActivity) . PHP_EOL . PHP_EOL;
+            $message .= " Env: " . env('APP_ENV');
+
+            Slack::to('#time-tracking-issues')
+                ->send($message);
+
+            $newActivity->delete();
+
+            return response('', 200);
+
         }
 
         $this->addPageTimerActivities($newActivity);

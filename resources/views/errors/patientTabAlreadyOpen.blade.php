@@ -14,7 +14,7 @@
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
-    <link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
 
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -73,20 +73,13 @@
             height: 100%;
             color: #000;
             display: table;
-            font-weight: 100;
+            font-weight: 300;
         }
 
         .container {
             width: 100%;
-            margin: 0;
-            padding: 0;
-            text-align: center;
             display: table-cell;
             vertical-align: middle;
-        }
-
-        .content {
-            text-align: center;
         }
 
         .title {
@@ -97,22 +90,22 @@
 </head>
 <body>
 <div class="container">
-        <h2 class="title">Seems like you have open sessions (tabs) for different patients. <br>
-            You can only work on one patient at a time. <br>
-            Please <b><em><a class="title"
-                    href="{{ empty($patientId) ? URL::route('patients.search') : URL::route('patient.summary', array('patient' => $patientId)) }}" target="_blank">go to
-                the open session</a></em></b> close that window, and then refresh this page to resume your work.
+    <div style="width: 80%; margin-left: 10%;">
+
+        <h2 class="title"><b>Sorry to interrupt: </b><br><br>
+            You already have a patient session open.<br><br>
+            Are you sure you want to continue?<br>
+            (You'll lose all unsaved work.)<br>
         </h2>
 
-    <hr style="width: 40%;">
+        <hr style="width: 100%; text-align: left;">
 
-    <br><br>
+        <br>
 
-        <a href="{{ URL::previous() }}"
-           style="text-decoration:none;font-weight:bold;">Go back</a> or
-
-        <a href="{{ URL::route('patients.dashboard', array()) }}"
-           style="text-decoration:none;font-weight:bold;">Go to Dashboard</a>
+        <a href="{{URL::previous()}}" class="btn btn-warning">No</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="{{URL::current() . '?clearSession=asd7abacd7asjkdy3'}}" class="btn btn-success">Yes</a>
+    </div>
 </div>
 
 @include('partials.providerUItimer')

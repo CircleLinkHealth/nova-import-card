@@ -220,7 +220,8 @@ class UnsuccessfulHandler implements CallHandler
 
                     $this->logic = 'This Case Is Tricky, need to call this person on a Saturday or closest contact window';
                     $this->attemptNote = 'Call This Weekend';
-                    return $this->nextCallDate->next('');
+
+                    return $this->nextCallDate->next(null);
 
                 } else {
 
