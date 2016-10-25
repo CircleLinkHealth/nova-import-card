@@ -2,7 +2,8 @@
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
-class Kernel extends HttpKernel {
+class Kernel extends HttpKernel
+{
 
     /**
      * The application's route middleware groups.
@@ -11,52 +12,58 @@ class Kernel extends HttpKernel {
      */
     protected $middlewareGroups = [
         'web' => [
-//            \App\Http\Middleware\EncryptCookies::class,
-//            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-//            \Illuminate\Session\Middleware\StartSession::class,
-//            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-//            \App\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
         'api' => [
             'throttle:60,1',
         ],
     ];
 
-	/**
-	 * The application's global HTTP middleware stack.
-	 *
-	 * @var array
-	 */
-	protected $middleware = [
-		\Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-		\Illuminate\Cookie\Middleware\EncryptCookies::class,
-		\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-		\Illuminate\Session\Middleware\StartSession::class,
-		\Illuminate\View\Middleware\ShareErrorsFromSession::class,
-		\Fideloper\Proxy\TrustProxies::class,
-		\App\Http\Middleware\Secure::class,
-//		\App\Http\Middleware\VerifyCsrfToken::class,
-//		This ^^ is commented out to allow forms to be submitted from other sites
-	];
+    /**
+     * The application's global HTTP middleware stack.
+     *
+     * @var array
+     */
+    protected $middleware = [
+        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        //        \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        //        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        //        \Illuminate\Session\Middleware\StartSession::class,
+        //        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \Fideloper\Proxy\TrustProxies::class,
+        \App\Http\Middleware\Secure::class,
+        //		\App\Http\Middleware\VerifyCsrfToken::class,
+        //		This ^^ is commented out to allow forms to be submitted from other sites
+    ];
 
-	/**
-	 * The application's route middleware.
-	 *
-	 * @var array
-	 */
-	protected $routeMiddleware = [
-        'aprima.ccdapi.auth.adapter' => Middleware\AprimaCcdApiAuthAdapter::class,
+    /**
+     * The application's route middleware.
+     *
+     * @var array
+     */
+    protected $routeMiddleware = [
+        //Laravel Middleware
         'auth'                       => \App\Http\Middleware\Authenticate::class,
         'auth.basic'                 => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings'                   => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can'                        => \Illuminate\Auth\Middleware\Authorize::class,
         'guest'                      => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle'                   => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+
+        //CLH Middleware
+        'ability'                    => \Zizaco\Entrust\Middleware\EntrustAbility::class,
+        'aprima.ccdapi.auth.adapter' => Middleware\AprimaCcdApiAuthAdapter::class,
         'authApiCall'                => \App\Http\Middleware\AuthenticateApiCall::class,
         'getRedoxAccessToken'        => \App\Http\Middleware\GetRedoxAccessToken::class,
-        'patientProgramSecurity'     => \App\Http\Middleware\PatientProgramSecurity::class,
-        'role'                       => \Zizaco\Entrust\Middleware\EntrustRole::class,
         'permission'                 => \Zizaco\Entrust\Middleware\EntrustPermission::class,
-        'ability'                    => \Zizaco\Entrust\Middleware\EntrustAbility::class,
+        'patientProgramSecurity'     => \App\Http\Middleware\PatientProgramSecurity::class,
         'patient.session'            => \App\Http\Middleware\CheckPatientSession::class,
-        //		'impersonation.check' => Middleware\ImpersonationMiddleware::class,
-	];
+        'role'                       => \Zizaco\Entrust\Middleware\EntrustRole::class,
+    ];
 
 }

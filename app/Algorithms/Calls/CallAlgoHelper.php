@@ -10,39 +10,12 @@ namespace App\Algorithms\Calls;
 
 
 use App\Call;
-use App\NurseContactWindow;
 use App\NurseInfo;
 use App\PatientContactWindow;
-use App\PatientInfo;
-use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 
 trait CallAlgoHelper
 {
-
-    public function formatAlgoDataForView()
-    {
-
-        //**CCM TIME**//
-        $ccm_time_achieved = false;
-        if ($this->ccmTime >= 1200) {
-            $ccm_time_achieved = true;
-        }
-
-        $H = floor($this->ccmTime / 3600);
-        $i = ($this->ccmTime / 60) % 60;
-        $s = $this->ccmTime % 60;
-        $formattedMonthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
-
-        $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient->user,
-            Carbon::now()->toDateTimeString());
-
-        $this->prediction['no_of_successful_calls'] = $successfulCallsThisMonth;
-        $this->prediction['ccm_time_achieved'] = $ccm_time_achieved;
-        $this->prediction['formatted_monthly_time'] = $formattedMonthlyTime;
-        $this->prediction['attempt_note'] = '';
-
-    }
 
     public function getNextWindow()
     {
@@ -78,7 +51,32 @@ trait CallAlgoHelper
         return $this->prediction;
     }
 
+    public function formatAlgoDataForView()
+    {
+
+        //**CCM TIME**//
+        $ccm_time_achieved = false;
+        if ($this->ccmTime >= 1200) {
+            $ccm_time_achieved = true;
+        }
+
+        $H = floor($this->ccmTime / 3600);
+        $i = ($this->ccmTime / 60) % 60;
+        $s = $this->ccmTime % 60;
+        $formattedMonthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+
+        $successfulCallsThisMonth = Call::numberOfSuccessfulCallsForPatientForMonth($this->patient->user,
+            Carbon::now()->toDateTimeString());
+
+        $this->prediction['no_of_successful_calls'] = $successfulCallsThisMonth;
+        $this->prediction['ccm_time_achieved'] = $ccm_time_achieved;
+        $this->prediction['formatted_monthly_time'] = $formattedMonthlyTime;
+        $this->prediction['attempt_note'] = '';
+
+    }
+
     //exec function for window intersection checks
+
     public function intersectWithNurseWindows()
     {
 
@@ -145,7 +143,13 @@ trait CallAlgoHelper
 
             //CHECK for nurse window on target day
 
-            $nurseWindow = $nurse->windows->first(function ($key, $value) use ($day) {
+            $nurseWindow = $nurse->windows->first(function (
+                $value,
+                $key
+            ) use
+            (
+                $day
+            ) {
 
                 //check whether any days fall in this window
                 return $value->date->toDateString() == $day->toDateString();
