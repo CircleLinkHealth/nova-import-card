@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'mailgun'),
+    'driver' => env('MAIL_DRIVER', 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,7 +54,10 @@ return [
     |
     */
 
-    'from' => ['address' => 'no-reply@circleLinkHealth.com', 'name' => 'CircleLink Health'],
+    'from' => [
+        'address' => 'no-reply@circleLinkHealth.com',
+        'name'    => 'CircleLink Health',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -67,7 +70,7 @@ return [
     |
     */
 
-    'encryption' => 'tls',
+    'encryption' => env('MAIL_ENCRYPTION', 'tls'),
 
     /*
     |--------------------------------------------------------------------------
