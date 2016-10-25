@@ -28,6 +28,9 @@ class LoginController extends Controller
      */
     protected $redirectTo = '/home';
 
+    protected $username = 'user_email';
+
+
     /**
      * Create a new controller instance.
      *
@@ -38,5 +41,28 @@ class LoginController extends Controller
         parent::__construct($request);
 
         $this->middleware('guest', ['except' => 'logout']);
+
+        //Check whether to authenticate using user_email or password
+        if ($request->has('user_email'))
+        {
+            if (! str_contains($request->input('user_email'), '@'))
+            {
+                $this->username = 'user_login';
+
+                $request->merge([
+                    'user_login' => $request->input('user_email')
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        return $this->username;
     }
 }
