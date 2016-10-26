@@ -119,14 +119,14 @@
                             <span class="caret"></span>
                         </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                            @role(['care-center'])
-                            <li>
-                                <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
-                                    <i class="glyphicon glyphicon-calendar"></i>
-                                    Work Schedule
-                                </a>
-                            </li>
-                            @endrole
+                            @if(auth()->user()->hasRole(['care-center']))
+                                <li>
+                                    <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                        Work Schedule
+                                    </a>
+                                </li>
+                            @endif
                             <li>
                                 <a href="{{ url('/auth/logout') }}">
                                     <i class="glyphicon glyphicon-log-out"></i>
@@ -217,7 +217,7 @@
     @endif
 
 
-	<!--[if lt IE 8]>
+<!--[if lt IE 8]>
     <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
         your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a>
         to improve your experience.</p>
@@ -226,16 +226,16 @@
     {{--
     PROVIDER UI TEMPLATE:
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-8 col-lg-offset-2">
-            <div class="row">
-                <div class="main-form-title col-lg-12">
-                    title
-                </div>
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    content text
-                </div>
-            </div>
-        </div>
+    <div class="main-form-container col-lg-8 col-lg-offset-2">
+    <div class="row">
+    <div class="main-form-title col-lg-12">
+    title
+    </div>
+    <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
+    content text
+    </div>
+    </div>
+    </div>
     </div>
     --}}
     @if(!isset($isPdf))

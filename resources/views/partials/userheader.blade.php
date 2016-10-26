@@ -1,26 +1,26 @@
 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
-    @role(['administrator'])
-    @include('partials.viewCcdaButton')
-    @endrole
+    @if(auth()->user()->hasRole(['administrator']))
+        @include('partials.viewCcdaButton')
+    @endif
 
     <div class="row">
         <div class="col-sm-12">
             <p class="text-medium clearfix">
-                <span class="pull-left"><strong>
-                        <?php
-                        $provider = App\User::find($patient->getBillingProviderIDAttribute());
-                        ?>
-                        @if($provider)
-                            Provider: </strong> {{$provider->getFullNameAttribute()}} <strong> 
-                        @else
-                            Provider: <em>No Provider Selected </em>
-                        @endif
-                        Location:</strong>
-                    <?= (empty($patient->getPreferredLocationName()))
-                            ? 'Not Set'
-                            : $patient->getPreferredLocationName();  ?>
-                </span>
+            <span class="pull-left"><strong>
+                    <?php
+                    $provider = App\User::find($patient->getBillingProviderIDAttribute());
+                    ?>
+                    @if($provider)
+                        Provider: </strong> {{$provider->getFullNameAttribute()}} <strong>
+                    @else
+                        Provider: <em>No Provider Selected </em>
+                    @endif
+                    Location:</strong>
+                <?= (empty($patient->getPreferredLocationName()))
+                        ? 'Not Set'
+                        : $patient->getPreferredLocationName();  ?>
+            </span>
                 <?php
                 // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
                 $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
@@ -31,11 +31,11 @@
                 ?>
                 <a href="{{URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID))}}"><span
                             class="pull-right">{{
-                date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
-                 }} Time: {{ $monthlyTime }}</span></a></p>
+            date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
+             }} Time: {{ $monthlyTime }}</span></a></p>
             <a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}">
-                <span class="person-name text-big text-dark text-serif"
-                      title="{{$patient->ID}}">{{$patient->fullName}}</span></a><a
+            <span class="person-name text-big text-dark text-serif"
+                  title="{{$patient->ID}}">{{$patient->fullName}}</span></a><a
                     href="{{ URL::route('patient.demographics.show', array('patient' => $patient->ID)) }}"><span
                         class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a>
             <ul class="person-info-list inline-block text-medium">

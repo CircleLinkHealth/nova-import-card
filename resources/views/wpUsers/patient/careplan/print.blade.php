@@ -44,19 +44,19 @@ if (isset($patient) && !empty($patient)) {
                                 @endif
 
                                 <span class="btn btn-group text-right">
-                                @role(['administrator', 'med_assistant', 'provider'])
-                                    <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
-                                       aria-label="..."
-                                       role="button"
-                                       href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->ID]) }}">Approve Care Plan</a>
-                                <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
-                                   href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->ID }}">Print This Page</a>
-                                    @endrole
+        @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                                        <a style="margin-right:10px;" class="btn btn-info btn-sm inline-block"
+                                           aria-label="..."
+                                           role="button"
+                                           href="{{ URL::route('patients.listing', ['patient_approval_id' => $patient->ID]) }}">Approve Care Plan</a>
+                                        <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
+                                           href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->ID }}">Print This Page</a>
+                                    @endif
                                     <form class="lang" action="#" method="POST" id="form">
-                        <input type="hidden" name="lang" value="es"/>
+<input type="hidden" name="lang" value="es"/>
                                         <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
                               -->
-                    </form></span></div>
+</form></span></div>
                         </div>
                     @endif
                     <div class="row gutter">

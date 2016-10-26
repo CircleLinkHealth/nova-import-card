@@ -18,15 +18,15 @@ function trim_bp($bp){
         <section class="patient-summary">
             <div class="row" style="margin-top:60px;">
                 <div class="patient-info__main" style="padding-left: 51px;">
-                    @role(['administrator', 'med_assistant', 'provider'])
-                    <div class="row">
-                        <div class="col-xs-12 text-right hidden-print">
-					        <span class="btn btn-group text-right">
-					        <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button" href="javascript:window.print()">Print This Page</a>
-				            </span>
+                    @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                        <div class="row">
+                            <div class="col-xs-12 text-right hidden-print">
+            <span class="btn btn-group text-right">
+            <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button" href="javascript:window.print()">Print This Page</a>
+            </span>
+                            </div>
                         </div>
-                    </div>
-                    @endrole
+                    @endif
                     <div class="row">
                         <div class="col-xs-12">
                             <h1 class="patient-summary__title patient-summary__title_16 patient-summary--careplan patient-summary--progress-report">
@@ -116,18 +116,16 @@ function trim_bp($bp){
                                 <div class="row">
                                     <div class="col-xs-3 text-center" style="Zoom:75%">
                                         <div class="patient-summary__info {{strtolower($value['status'])}}">
-                                            <span><i class="icon--<?php if($key == 'Weight'){
-                                                if(strtolower($value['status']) == 'increased'){
-                                                        echo trim("grey-up");
-                                                        }
-                                                elseif(strtolower($value['status']) == 'decreased')
-                                                        echo trim("grey-down");
-                                                else
-                                                        echo trim("unchanged");
-                                                }
-                                            else {
-                                                echo trim(strtolower($value['status']));
-                                            } ?>"> </i></span>{{abs($value['change'])}}
+                            <span><i class="icon--<?php if ($key == 'Weight') {
+                                    if (strtolower($value['status']) == 'increased') {
+                                        echo trim("grey-up");
+                                    } elseif (strtolower($value['status']) == 'decreased')
+                                        echo trim("grey-down");
+                                    else
+                                        echo trim("unchanged");
+                                } else {
+                                    echo trim(strtolower($value['status']));
+                                } ?>"> </i></span>{{abs($value['change'])}}
                                             <span class="patient-summary__metrics">{{trim($value['unit'])}}</span>
                                         </div>
                                         <div class="patient-summary__info__legend">
@@ -150,7 +148,7 @@ function trim_bp($bp){
                                                 N/A
                                             @endif
                                         </div>
-                                            <div class="patient-summary__info__legend">Goal</div>
+                                        <div class="patient-summary__info__legend">Goal</div>
                                     </div>
                                 </div>
                             </div>
@@ -200,63 +198,63 @@ function trim_bp($bp){
                         </div>
                     </div>
 
-                    @endif
-                    @endforeach
-                            <!-- MEDICATIONS -->
-                    <div class="patient-info__subareas ">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <h2 class="patient-summary__subtitles patient-summary--progress-report-background">
-                                    Taking Your Medications?</h2>
-                            </div>
-                        </div>
-                        <div class="row medication-rating">
-                            <div class="col-xs-12 col-sm-4">
-                                <i class="icon--face icon--face--good">
-                                </i>
-                                <ul>
-                                    <li class='text-bold medication-rating__title'>Good</li>
-                                    @foreach($medications as $key => $value)
-                                        @if($value['Section'] == 'Better')
-                                            @foreach($value['name'] as $section)
-                                                <li>{{$section}}</li>
-                                            @endforeach
-                                        @endif
-                                    @endforeach
-                                </ul>
-                            </div>
-                            <div class="col-xs-12 col-sm-4">
-                                <i class="icon--face icon--face--work">
-                                </i>
-                                <ul>
-                                    <li class='text-bold medication-rating__title'>Needs Work</li>
-                                    @foreach($medications as $key => $value)
-                                        @if($value['Section'] == 'Needs Work')
-                                            @foreach($value['name'] as $section)
-                                                <li>{{$section}}</li>
-                                            @endforeach
-                                        @endif
-                                    @endforeach
-                                </ul>
-                            </div>
-                            <div class="col-xs-12 col-sm-4">
-                                <i class="icon--face icon--face--bad">
-                                </i>
-                                <ul>
-                                    <li class='text-bold medication-rating__title'>Bad</li>
-                                    @foreach($medications as $key => $value)
-                                        @if($value['Section'] == 'Worse')
-                                            @foreach($value['name'] as $section)
-                                                <li>{{$section}}</li>
-                                            @endforeach
-                                        @endif
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
+            @endif
+        @endforeach
+        <!-- MEDICATIONS -->
+            <div class="patient-info__subareas ">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h2 class="patient-summary__subtitles patient-summary--progress-report-background">
+                            Taking Your Medications?</h2>
                     </div>
+                </div>
+                <div class="row medication-rating">
+                    <div class="col-xs-12 col-sm-4">
+                        <i class="icon--face icon--face--good">
+                        </i>
+                        <ul>
+                            <li class='text-bold medication-rating__title'>Good</li>
+                            @foreach($medications as $key => $value)
+                                @if($value['Section'] == 'Better')
+                                    @foreach($value['name'] as $section)
+                                        <li>{{$section}}</li>
+                                    @endforeach
+                                @endif
+                            @endforeach
+                        </ul>
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <i class="icon--face icon--face--work">
+                        </i>
+                        <ul>
+                            <li class='text-bold medication-rating__title'>Needs Work</li>
+                            @foreach($medications as $key => $value)
+                                @if($value['Section'] == 'Needs Work')
+                                    @foreach($value['name'] as $section)
+                                        <li>{{$section}}</li>
+                                    @endforeach
+                                @endif
+                            @endforeach
+                        </ul>
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <i class="icon--face icon--face--bad">
+                        </i>
+                        <ul>
+                            <li class='text-bold medication-rating__title'>Bad</li>
+                            @foreach($medications as $key => $value)
+                                @if($value['Section'] == 'Worse')
+                                    @foreach($value['name'] as $section)
+                                        <li>{{$section}}</li>
+                                    @endforeach
+                                @endif
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- /MEDICATIONS -->
+            <!-- /MEDICATIONS -->
         </section>
     </div>
     </div>

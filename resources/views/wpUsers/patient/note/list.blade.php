@@ -22,7 +22,7 @@
                     <li class="inline-block"><input type="checkbox" id="mail_filter" name="mail_filter" value="true"
                         @if(isset($only_mailed_notes) && $only_mailed_notes == true)
                             {{'checked'}}
-                        @endif>
+                                @endif>
                         <label for="mail_filter"><span> </span>Only Forwarded Notes</label>
                     </li>
                 </ul>
@@ -46,22 +46,22 @@
                         @endforeach
                     </select>
 
-                        <div class="inline-block">
-                            <label for="year" class="sr-only">Date Range:</label>
-                            <select name="range" id="range" class="selectpicker" data-width="250px" style="display: none;"
-                                    required="required">
-                                <option value="">Select Range</option>
-                                @for($i = 0; $i < 4; $i++)
-                                    <option value={{$i}}
-                                        @if(isset($dateFilter) && $dateFilter == $i)
-                                            {{'selected'}}
+                    <div class="inline-block">
+                        <label for="year" class="sr-only">Date Range:</label>
+                        <select name="range" id="range" class="selectpicker" data-width="250px" style="display: none;"
+                                required="required">
+                            <option value="">Select Range</option>
+                            @for($i = 0; $i < 4; $i++)
+                                <option value={{$i}}
+                                @if(isset($dateFilter) && $dateFilter == $i)
+                                    {{'selected'}}
                                         @endif
-                                    >Since {{\Carbon\Carbon::now()->subMonth($i)->format('F, Y')}}</option>
-                                @endfor
-                            </select>
-                            <button type="submit" id="find" class="btn btn-primary">Go</button>
-                            {!! Form::close() !!}
-                        </div>
+                                >Since {{\Carbon\Carbon::now()->subMonth($i)->format('F, Y')}}</option>
+                            @endfor
+                        </select>
+                        <button type="submit" id="find" class="btn btn-primary">Go</button>
+                        {!! Form::close() !!}
+                    </div>
                 </div>
 
 
@@ -122,7 +122,10 @@
                                             header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                                             width: 140,
                                             sort: 'string',
-                                            template: "<a href='<?php echo URL::route('patient.note.view', array('patient' => '#patient_id#', 'noteId' => '#id#')); ?>'>#patient_name#</a>"
+                                            template: "<a href='<?php echo URL::route('patient.note.view', array(
+                                                    'patient' => '#patient_id#',
+                                                    'noteId'  => '#id#'
+                                            )); ?>'>#patient_name#</a>"
 
 
                                         },
@@ -152,7 +155,10 @@
                                             sort: 'string',
                                             tooltip: ['#comment#'],
                                             fillspace: true,
-                                            template: "<a href='<?php echo URL::route('patient.note.view', array('patient' => '#patient_id#', 'noteId' => '#id#')); ?>'>#comment#</a>"
+                                            template: "<a href='<?php echo URL::route('patient.note.view', array(
+                                                    'patient' => '#patient_id#',
+                                                    'noteId'  => '#id#'
+                                            )); ?>'>#comment#</a>"
                                         },
                                         {
                                             id: "date",
@@ -221,36 +227,38 @@
                                 </div>
 
                                 <div class="col-sm-6">
-                                    @role(['administrator', 'med_assistant', 'provider'])
-                                    <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
-                                           onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                                   header:'CarePlanManager.com - All Patient Notes <?= date('M d,Y') ?>',
-                                                   orientation:'landscape',
-                                                   autowidth:true,
-                                                   columns:{
-                                                   'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
-                                                   'author_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
-                                                   'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
-                                                   'type':             { header:'Type',    width:200, sort:'string', template: webix.template('#type#')},
-                                                   'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                    @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
+                                        <input type="button" value="Export as Excel" class="btn btn-primary"
+                                               style='margin:15px;'
+                                               onclick="webix.toExcel($$(obs_alerts_dtable), {
+                                                       header:'CarePlanManager.com - All Patient Notes <?= date('M d,Y') ?>',
+                                                       orientation:'landscape',
+                                                       autowidth:true,
+                                                       columns:{
+                                                       'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
+                                                       'author_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                                       'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
+                                                       'type':             { header:'Type',    width:200, sort:'string', template: webix.template('#type#')},
+                                                       'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#author_name#')},
 
-                                                   }});">
+                                                       }});">
 
 
-                                    <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
-                                           onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                                   header:'CarePlanManager.com - All Patient Notes <?= date('M d,Y') ?>',
-                                                   orientation:'landscape',
-                                                   autowidth:true,
-                                                   columns:{
-                                                   'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
-                                                   'author_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
-                                                   'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
-                                                   'type':             { header:'Type',    width:200, sort:'string', template: webix.template('#type#')},
-                                                   'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                        <input type="button" value="Export as PDF" class="btn btn-primary"
+                                               style='margin:15px;'
+                                               onclick="webix.toPDF($$(obs_alerts_dtable), {
+                                                       header:'CarePlanManager.com - All Patient Notes <?= date('M d,Y') ?>',
+                                                       orientation:'landscape',
+                                                       autowidth:true,
+                                                       columns:{
+                                                       'patient_name':       { header:'Patient Name', width: 200, template: webix.template('#patient_name#') },
+                                                       'author_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#author_name#')},
+                                                       'comment':             { header:'Preview',    width:200, sort:'string', template: webix.template('#comment#')},
+                                                       'type':             { header:'Type',    width:200, sort:'string', template: webix.template('#type#')},
+                                                       'date':             { header:'Performed',    width:200, sort:'string', template: webix.template('#author_name#')},
 
-                                                   }});">
-                                    @endrole
+                                                       }});">
+                                    @endif
                                     @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
                                         <input id='site_show_btn' type='button' class='btn btn-primary'
                                                value='Show Program' style='margin:4px;'
