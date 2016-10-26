@@ -79,21 +79,6 @@ Route::group(['prefix' => 'algo'], function () {
     });
 });
 
-Route::group(['prefix' => 'api/v1.0'], function () {
-    //Should change this to a GET to make this RESTful
-    Route::post('oauth/access_token', 'CcdApi\Aprima\AuthController@getAccessToken');
-
-    Route::group(['middleware' => 'aprima.ccdapi.auth.adapter'], function () {
-        //Should make this plural
-        Route::post('ccd', 'CcdApi\Aprima\CcdApiController@uploadCcd');
-        Route::get('reports', 'CcdApi\Aprima\CcdApiController@reports');
-
-        Route::get('notes', 'CcdApi\Aprima\CcdApiController@notes');
-
-        //Let's make things RESTful from here onwards
-        Route::get('ccm-times', 'CcdApi\Aprima\CcdApiController@getCcmTime');
-    });
-});
 
 Route::get('ajax/patients', 'UserController@getPatients');
 
@@ -1176,13 +1161,6 @@ Route::group(['prefix' => 'third-party-api-settings'], function () {
     ]);
 });
 
-
-/***********************/
-/***********************/
-//     API ROUTES
-/***********************/
-/***********************/
-
 // pagetimer
 Route::group([], function () {
     //Route::get('pagetimer', 'PageTimerController@store');
@@ -1198,61 +1176,6 @@ Route::group([], function () {
         'uses' => 'CallController@create',
         'as'   => 'api.callcreate',
     ]);
-});
-
-/*
- * // NOTES:
-        // http://www.toptal.com/web/cookie-free-authentication-with-json-web-tokens-an-example-in-laravel-and-angularjs
-        // https://github.com/tymondesigns/jwt-auth/issues/79
-        // http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#rfc.section.3.1
-        // https://stormpath.com/blog/where-to-store-your-jwts-cookies-vs-html5-web-storage/
-        // http://pythonhackers.com/p/tymondesigns/jwt-auth
-
-        // fix for authorization: bearer header .htaccess:
-        // http://stackoverflow.com/questions/20853604/laravel-get-request-headers
-
-        // formatting
-        // http://www.sitepoint.com/build-rest-resources-laravel/
-        // http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#restful
-
-        // debug comment tag: kgallodebug
- */
-// JWTauth Login
-Route::post('api/v2.1/login', 'AuthorizationController@login');
-
-// JWTauth api routes
-Route::group([
-    'before'     => 'jwt-auth',
-    'prefix'     => 'wp/api/v2.1',
-    'middleware' => 'authApiCall',
-], function () {
-    // return token data, initial test
-    Route::post('tokentest', 'AuthorizationController@tokentest');
-
-    Route::group([
-        'prefix' => 'password',
-    ], function () {
-        Route::get('broker', 'Auth\PasswordController@getBroker');
-        Route::post('email', 'Auth\PasswordController@postEmail');
-        Route::get('email', 'Auth\PasswordController@getEmail');
-        Route::get('reset', 'Auth\PasswordController@getReset');
-        Route::post('reset', 'Auth\PasswordController@postReset');
-    });
-
-    // return data on logged in user
-    Route::post('user', 'UserController@index');
-    Route::get('user', 'UserController@index');
-
-    // observations
-    Route::post('comment', 'CommentController@store');
-    Route::post('observation', 'ObservationController@store');
-    Route::get('careplan', 'CareplanController@show');
-    Route::get('reports/progress', 'ReportsController@progress');
-    Route::get('reports/careplan', 'ReportsController@careplan');
-
-
-    // locations
-    Route::get('locations', 'LocationController@index');
 });
 
 /**********************************/
