@@ -13,6 +13,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <form action="{{ route('settings.email.store') }}" method="post">
+                                    {{ csrf_field() }}
                                     <div class="form-group">
 
                                         @if(isset($showSuccessMessage))

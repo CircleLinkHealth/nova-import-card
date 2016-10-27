@@ -2,6 +2,8 @@ var Vue = require('vue');
 
 Vue.use(require('vue-resource'));
 
+Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+
 var patientId = $('#patient_id').val();
 
 new Vue({
@@ -27,7 +29,8 @@ new Vue({
                 this.$set('problems', response.data);
             }, (response) => {
                 // error callback
-            });
+            }
+            )
         },
 
         // Adds an problem to the existing problems array
@@ -51,8 +54,9 @@ new Vue({
                 }, (response) => {
 
                     // error callback
-                });
-            }
+                }
+            )
+            };;
         },
 
         // Edit an existing problemon the array
@@ -132,5 +136,5 @@ new Vue({
             });
         },
     }
-});
+});;;
 

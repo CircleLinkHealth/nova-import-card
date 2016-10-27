@@ -29,8 +29,11 @@ class ReportsController extends Controller
 
     public function __construct(
         ReportsService $service,
-        WebixFormatter $formatter
+        WebixFormatter $formatter,
+        Request $request
     ) {
+        parent::__construct($request);
+
         $this->service = $service;
         $this->formatter = $formatter;
     }

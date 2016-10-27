@@ -11,6 +11,7 @@
                     <div class="panel-heading">Account Status Report Generator</div>
                     <div class="panel-body">
                         <form class="form-horizontal">
+                            {{ csrf_field() }}
                             <fieldset>
 
                                 <div class="form-group">

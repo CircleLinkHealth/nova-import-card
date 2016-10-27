@@ -165,6 +165,9 @@ if (isset($patient) && !empty($patient)) {
                     url: '<?php echo URL::route('api.pagetracking'); ?>',
                     data: data,
                     encode: true,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     success: function (data) {
                         if (redirectLocation) {
                             if (redirectLocation == 'logout') {

@@ -49,6 +49,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 					<!--<A class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
                        HREF="javascript:window.print()">Print This Page</A>-->
 				<form class="lang" action="#" method="POST" id="form">
+                    {{ csrf_field() }}
                     <input type="hidden" name="lang" value="es"/>
                     <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
           -->

@@ -11,6 +11,7 @@
                     <div class="panel-heading">Algo {{\App\Algorithms\Calls\SuccessfulHandler::VERSION}}</div>
                     <div class="panel-body">
                         <form class="form-horizontal">
+                            {{ csrf_field() }}
                             <fieldset>
 
                                 <!-- Appended Input-->

@@ -8,6 +8,8 @@
         <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data"
               class="mdl-cell mdl-cell--12-col" action="/ccd-importer/qaimport">
 
+            <input type="hidden" name="_token" value="{{ csrfToken }}">
+
             <!--VENDOR LIST-->
             <div class="mdl-cell mdl-cell--12-col">
                 <h5>Please choose an Import profile for this CCD.</h5>

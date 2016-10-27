@@ -8,6 +8,7 @@
     <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
     <meta http-equiv="expires" content={{ Carbon\Carbon::now()->format('D M d Y H:i:s O') }}>
     <meta http-equiv="pragma" content="no-cache">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>CarePlanManager - @yield('title')</title>
 

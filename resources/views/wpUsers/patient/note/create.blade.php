@@ -34,6 +34,8 @@
                 <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient])}}"
                       class="form-horizontal">
 
+                    {{ csrf_field() }}
+
                     @include('partials.userheader')
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
@@ -171,7 +173,8 @@
                                                                                              name="welcome_call"
                                                                                              value="welcome_call"
                                                                                              id="welcome_call"/><label
-                                                                        for="welcome_call"><span> </span>Successful Welcome Call</label>
+                                                                        for="welcome_call"><span> </span>Successful
+                                                                    Welcome Call</label>
                                                             </div>
                                                         </div>
                                                         <div>
@@ -179,7 +182,8 @@
                                                                                              name="other_call"
                                                                                              value="other_call"
                                                                                              id="other_call"/><label
-                                                                        for="other_call"><span> </span>Successful Other Patient Call</label>
+                                                                        for="other_call"><span> </span>Successful Other
+                                                                    Patient Call</label>
                                                             </div>
                                                         </div>
 
@@ -212,9 +216,9 @@
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             <input type="hidden" name="body" value="body">
-                                        <textarea id="note" class="form-control" rows="10" cols="100"
-                                                  placeholder="Enter Note..."
-                                                  name="body" required></textarea> <br/>
+                                            <textarea id="note" class="form-control" rows="10" cols="100"
+                                                      placeholder="Enter Note..."
+                                                      name="body" required></textarea> <br/>
                                         </div>
                                     </div>
 

@@ -7,6 +7,7 @@
                 <div class="col-md-12">
                     <form action="{{ route('post.CallController.import') }}" method="post" enctype="multipart/form-data"
                           target="_blank">
+                        {{ csrf_field() }}
                         <div class="form-group">
                             <label for="uploadedCsv">Upload Call List .csv:</label>
                             <input type="file" name="uploadedCsv" id="uploadedCsv" required>

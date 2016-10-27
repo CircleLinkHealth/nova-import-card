@@ -2,6 +2,8 @@ var Vue = require('vue');
 
 Vue.use(require('vue-resource'));
 
+Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
+
 var patientId = $('#patient_id').val();
 
 new Vue({
@@ -27,7 +29,8 @@ new Vue({
                 this.$set('allergies', response.data);
             }, (response) => {
                 // error callback
-            });
+            }
+            )
         },
 
         // Adds an allergy to the existing allergies array
@@ -53,8 +56,9 @@ new Vue({
                 }, (response) => {
 
                     // error callback
-                });
-            }
+                }
+            )
+            };;
         },
 
         // Edit an existing allergy on the array
@@ -134,5 +138,5 @@ new Vue({
             });
         },
     }
-});
+});;;
 

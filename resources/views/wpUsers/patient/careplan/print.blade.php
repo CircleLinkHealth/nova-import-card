@@ -53,7 +53,8 @@ if (isset($patient) && !empty($patient)) {
                                            href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->ID }}">Print This Page</a>
                                     @endif
                                     <form class="lang" action="#" method="POST" id="form">
-<input type="hidden" name="lang" value="es"/>
+                                        {{ csrf_field() }}
+                                        <input type="hidden" name="lang" value="es"/>
                                         <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
                               -->
 </form></span></div>

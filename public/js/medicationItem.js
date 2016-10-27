@@ -8,9 +8,6 @@ var currentQueue;
 var queueIndex = -1;
 
 function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
     draining = false;
     if (currentQueue.length) {
         queue = currentQueue.concat(queue);
@@ -3995,7 +3992,7 @@ function flushBatcherQueue() {
     // keep flushing until it depletes
     if (queue.length) {
       _again = true;
-      continue _function;
+        continue;
     }
     // dev tool hook
     /* istanbul ignore if */
@@ -11007,6 +11004,8 @@ module.exports = Vue;
 var Vue = require('vue');
 
 Vue.use(require('vue-resource'));
+
+    Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
 var patientId = $('#patient_id').val();
 

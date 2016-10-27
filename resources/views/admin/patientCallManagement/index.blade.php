@@ -67,6 +67,7 @@
                 <div class="modal-body">
                     <div class="row" style="margin:20px 0px 40px 0px;">
                         <form id="addCallForm" action="<?php echo URL::route('api.callcreate'); ?>" method="post">
+                            {{ csrf_field() }}
                         <div class="col-md-10 col-md-offset-1">
                             <div class="row">
                                 <div class="col-xs-12" id="addCallErrorMsg"></div>
