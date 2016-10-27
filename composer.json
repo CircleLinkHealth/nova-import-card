@@ -34,7 +34,6 @@
     "maatwebsite/excel": "~2.1.0",
     "prettus/l5-repository": "dev-master",
     "prettus/laravel-validation": "*",
-    "laravelcollective/bus": "5.3.*",
     "maknz/slack": "^1.7",
     "dusterio/laravel-aws-worker": "^0.1.5",
     "yajra/laravel-datatables-oracle": "~6.0",
