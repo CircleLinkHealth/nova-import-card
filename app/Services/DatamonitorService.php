@@ -465,7 +465,7 @@ class DatamonitorService
         foreach ($user->sendAlertTo as $recipient_id) {
 
             $provider_user = User::find($recipient_id);
-            $email = $provider_user->user_email;
+            $email = $provider_user->email;
 
             Mail::send('emails.dmalert', $data, function ($message) use
             (
@@ -476,7 +476,7 @@ class DatamonitorService
                 $message->to($email)->subject($email_subject);
             });
 
-            $email_sent_list[] = $provider_user->user_email;
+            $email_sent_list[] = $provider_user->email;
         }
 
         // log to db by adding comment record

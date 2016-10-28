@@ -3,7 +3,6 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
 
 class PasswordController extends Controller {
 
@@ -40,9 +39,9 @@ class PasswordController extends Controller {
 	protected function getResetValidationRules()
 	{
 		return [
-			'token' => 'required',
-			'user_email' => 'required|email',
-			'password' => 'required|confirmed|min:6',
+            'token'    => 'required',
+            'email'    => 'required|email',
+            'password' => 'required|confirmed|min:6',
 		];
 	}
 
@@ -55,7 +54,7 @@ class PasswordController extends Controller {
 	protected function getResetCredentials(Request $request)
 	{
 		return $request->only(
-			'user_email', 'password', 'password_confirmation', 'token'
+            'email', 'password', 'password_confirmation', 'token'
 		);
 	}
 
@@ -67,7 +66,7 @@ class PasswordController extends Controller {
 	 */
 	protected function getSendResetLinkEmailCredentials(Request $request)
 	{
-		return $request->only('user_email');
+        return $request->only('email');
 	}
 
 	/**
@@ -78,6 +77,6 @@ class PasswordController extends Controller {
 	 */
 	protected function validateSendResetLinkEmail(Request $request)
 	{
-		$this->validate($request, ['user_email' => 'required|email']);
+        $this->validate($request, ['email' => 'required|email']);
 	}
 }

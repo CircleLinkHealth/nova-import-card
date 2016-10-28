@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class DeleteUnusedFields extends Migration
+class RemoveUserEmail extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,7 @@ class DeleteUnusedFields extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('password');
-            $table->dropColumn('user_url');
-            $table->dropColumn('user_activation_key');
+            $table->renameColumn('user_email', 'email');
         });
     }
 

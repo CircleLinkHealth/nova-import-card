@@ -72,7 +72,7 @@ class UserController extends Controller
                 $wpUser = User::find( $userId );
                 $response = [
                     'id'              => $wpUser->id,
-                    'user_email'      => $wpUser->user_email,
+                    'email'           => $wpUser->email,
                     'user_registered' => $wpUser->user_registered,
                     'meta'            => $wpUser->meta,
                 ];

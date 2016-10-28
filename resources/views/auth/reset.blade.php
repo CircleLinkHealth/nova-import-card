@@ -60,7 +60,7 @@
 							<div class="form-group">
 								<label class="col-md-4 control-label">E-Mail Address</label>
 								<div class="col-md-8">
-									<input type="user_email" class="form-control" name="user_email" value="{{ old('user_email') }}">
+                                    <input type="email" class="form-control" name="email" value="{{ old('email') }}">
 								</div>
 							</div>
 

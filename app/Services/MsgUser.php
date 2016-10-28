@@ -869,7 +869,7 @@ order by qs.qs_type, qs.sort, qs.aid
 			return false;
 		}
 
-        // id, user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
+        // id, user_login, password, user_nicename, email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
         $this->db->insert('wp_users', $user_info);
 		$new_user_id = $this->db->insert_id();
 
@@ -916,7 +916,7 @@ order by qs.qs_type, qs.sort, qs.aid
 			return false;
 		}
 		if(empty($user_exists)) {
-            // id, user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
+            // id, user_login, password, user_nicename, email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
             unset($user_info['id']);
             $this->db->insert('wp_users', $user_info);
 			$new_user_id = $this->db->insert_id();

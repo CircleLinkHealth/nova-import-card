@@ -76,7 +76,9 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 								<li class="complete">Change "Login" to "Log In" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
 								<li class="complete">Change "Forgot" to "Lost" <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
 								<li class="complete">Responsive - viewing on phone looks bad <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
-								<li class="complete">big* - switch to login with wp_users.user_login column vs. user_email <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
+                                <li class="complete">big* - switch to login with wp_users.user_login column vs. email <a
+                                            class="btn-primary btn-xs" target="_blank"
+                                            href="{{ $codebaseUrl }}/98">#98</a></li>
 							</ul>
 						</div>
 

@@ -87,7 +87,7 @@ class EmailRNDailyReport extends Command
             ];
 
             $recipients = [
-                $nurse->user_email,
+                $nurse->email,
                 //                                'raph@circlelinkhealth.com',
                 //                            'mantoniou@circlelinkhealth.com',
             ];
@@ -105,7 +105,7 @@ class EmailRNDailyReport extends Command
 
             $emailsSent[] = [
                 'nurse' => $nurse->fullName,
-                'email' => $nurse->user_email,
+                'email' => $nurse->email,
             ];
 
             $counter++;

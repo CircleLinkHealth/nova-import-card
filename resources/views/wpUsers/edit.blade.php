@@ -94,8 +94,8 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('user_email', 'user_email:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('user_email', $patient->user_email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('email', 'email:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('email', $patient->email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">

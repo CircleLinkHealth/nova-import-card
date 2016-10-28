@@ -79,7 +79,7 @@ class NoteService
                 continue;
             }
 
-            $email = $receiver->user_email;
+            $email = $receiver->email;
 
             $performed_at = Carbon::parse($note->performed_at)->toFormattedDateString();
 
@@ -119,8 +119,8 @@ class NoteService
             }
 
             MailLog::create([
-                'sender_email'    => $sender->user_email,
-                'receiver_email'  => $receiver->user_email,
+                'sender_email'    => $sender->email,
+                'receiver_email'  => $receiver->email,
                 'body'            => $body,
                 'subject'         => $email_subject,
                 'type'            => 'note',

@@ -21,8 +21,7 @@ trait HandlesUsersAndCarePlans
     public function createUser(
         $programId = 9,
         $roleName = 'provider'
-    )
-    {
+    ) {
         $faker = Factory::create();
 
         $firstName = $faker->firstName;
@@ -35,13 +34,14 @@ trait HandlesUsersAndCarePlans
         ];
 
         $bag = new ParameterBag([
-            'user_email' => $email,
-            'user_pass'         => 'password',
+            'email'             => $email,
+            'password'          => 'password',
             'display_name'      => "$firstName $lastName",
             'first_name'        => $firstName,
             'last_name'         => $lastName,
             'user_login'        => $faker->userName,
-            'program_id'        => $programId,//id=9 is testdrive
+            'program_id'        => $programId,
+            //id=9 is testdrive
             'address'           => $faker->streetAddress,
             'address2'          => '',
             'city'              => $faker->city,
@@ -65,7 +65,7 @@ trait HandlesUsersAndCarePlans
         $user = (new UserRepository())->createNewUser(new User(), $bag);
 
         //check that it was created
-        $this->seeInDatabase('users', ['user_email' => $email]);
+        $this->seeInDatabase('users', ['email' => $email]);
 
         //check that the roles were created
         foreach ($roles as $role) {
@@ -82,7 +82,7 @@ trait HandlesUsersAndCarePlans
     {
         $this->visit('/auth/login')
             ->see('CarePlanManager')
-            ->type($provider->user_email, 'user_email')
+            ->type($provider->email, 'email')
             ->type('password', 'password')
             ->press('Log In')
             ->seePageIs('/manage-patients/dashboard');
@@ -105,9 +105,15 @@ trait HandlesUsersAndCarePlans
         $firstName = $faker->firstName;
         $lastName = $faker->lastName;
         $mrn = $faker->randomNumber(6);
-        $genderCollection = ['F', 'M'];
+        $genderCollection = [
+            'F',
+            'M',
+        ];
         $gender = $genderCollection[array_rand($genderCollection, 1)];
-        $languageCollection = ['EN', 'ES'];
+        $languageCollection = [
+            'EN',
+            'ES',
+        ];
         $language = $languageCollection[array_rand($languageCollection, 1)];
         $dob = $faker->date();
         $homePhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
@@ -157,19 +163,19 @@ trait HandlesUsersAndCarePlans
             ->press('TestSubmit');
 
         $this->seeInDatabase('users', [
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'user_email' => $email,
+            'first_name'   => $firstName,
+            'last_name'    => $lastName,
+            'email'        => $email,
             'display_name' => "$firstName $lastName",
-            'program_id' => 9,
-            'address' => $streetAddress,
-            'city' => $city,
-            'state' => $state,
-            'zip' => $zip,
-            'timezone' => $timezone
+            'program_id'   => 9,
+            'address'      => $streetAddress,
+            'city'         => $city,
+            'state'        => $state,
+            'zip'          => $zip,
+            'timezone'     => $timezone,
         ]);
 
-        $patient = User::whereUserEmail($email)->first();
+        $patient = User::whereEmail($email)->first();
 
 //        $ccda = \App\Models\CCD\Ccda::create([
 //            'user_id' => $patient->id,
@@ -281,8 +287,10 @@ trait HandlesUsersAndCarePlans
             ->see($this->provider->display_name);
     }
 
-    public function fillCareplanPage1(User $patient, $numberOfRowsToCreate = null)
-    {
+    public function fillCareplanPage1(
+        User $patient,
+        $numberOfRowsToCreate = null
+    ) {
         /*
         * Problems
         */
@@ -353,8 +361,15 @@ trait HandlesUsersAndCarePlans
      * @param $numberOfRowsToCreate //how many of those entities should be associated with the user. The default is
      *                                null, and that means relate all entities
      */
-    public function fillCpmEntityUserValues(User $patient, $relationship, $page = null, $url, $sectionTitle = null, $entityIdFieldName, $numberOfRowsToCreate = null)
-    {
+    public function fillCpmEntityUserValues(
+        User $patient,
+        $relationship,
+        $page = null,
+        $url,
+        $sectionTitle = null,
+        $entityIdFieldName,
+        $numberOfRowsToCreate = null
+    ) {
         $carePlanTemplate = $patient->service()
             ->firstOrDefaultCarePlan($patient)
             ->carePlanTemplate()
@@ -365,7 +380,8 @@ trait HandlesUsersAndCarePlans
          */
         $query = $carePlanTemplate
             ->{$relationship}();
-        empty($page) ?: $query->wherePivot('page', $page);
+        empty($page)
+            ?: $query->wherePivot('page', $page);
         $carePlanEntities = $query->get();
 
 //        if (!empty($numberOfRowsToCreate)) {
@@ -514,7 +530,7 @@ trait HandlesUsersAndCarePlans
         $this->seeUserEntityNameOnPage($patient, 'cpmSymptoms');
         $this->seeUserEntityNameOnPage($patient, 'cpmLifestyles');
         $this->seeUserEntityNameOnPage($patient, 'cpmBiometrics', [
-            'Smoking (# per day)'
+            'Smoking (# per day)',
         ]);
     }
 
@@ -525,12 +541,17 @@ trait HandlesUsersAndCarePlans
      * @param $relationship //for example 'cpmProblems'
      * @param array $exclude //names to exclude
      */
-    public function seeUserEntityNameOnPage(User $patient, $relationship, array $exclude = [])
-    {
+    public function seeUserEntityNameOnPage(
+        User $patient,
+        $relationship,
+        array $exclude = []
+    ) {
         $patientEntities = $patient->{$relationship}()->get();
 
         foreach ($patientEntities as $entity) {
-            if (in_array($entity->name, $exclude)) continue;
+            if (in_array($entity->name, $exclude)) {
+                continue;
+            }
 
             $this->see($entity->name);
         }

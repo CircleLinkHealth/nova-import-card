@@ -57,7 +57,7 @@ class RegressionTest extends TestCase
 
         $text = "
             A Provider was created:
-            login: {$this->provider->user_email}
+            login: {$this->provider->email}
             password: password
             ";
 

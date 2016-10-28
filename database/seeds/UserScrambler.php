@@ -18,9 +18,9 @@ class UserScrambler extends Seeder
                 if ($role && strtolower($role->name) == 'participant') {
                     echo PHP_EOL . PHP_EOL;
                     echo PHP_EOL . $role->name;
-                    echo PHP_EOL . $user->id . '-' . $user->user_email;
+                    echo PHP_EOL . $user->id . '-' . $user->email;
                     $user->scramble();
-                    echo PHP_EOL . $user->id . '-' . $user->user_email;
+                    echo PHP_EOL . $user->id . '-' . $user->email;
                     $u++;
                 }
             }

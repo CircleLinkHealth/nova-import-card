@@ -84,7 +84,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
 
             $recipients = [
-                $user->user_email,
+                $user->email,
                 //            'raph@circlelinkhealth.com',
                 //            'mantoniou@circlelinkhealth.com',
             ];

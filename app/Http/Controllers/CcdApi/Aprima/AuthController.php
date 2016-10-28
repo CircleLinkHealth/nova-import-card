@@ -27,7 +27,7 @@ class AuthController extends Controller
         }
 
         $user = $this->user->findWhere([
-            'user_email' => $request->input('username'),
+            'email' => $request->input('username'),
         ])->first();
 
         if (empty($user)) {
@@ -40,7 +40,7 @@ class AuthController extends Controller
 
         //Transform the credentials to match our JWT Auth. They were using EHR API, remember?
         $credentials = [
-            'user_email' => $request->input('username'),
+            'email'    => $request->input('username'),
             'password' => $request->input('password'),
         ];
 

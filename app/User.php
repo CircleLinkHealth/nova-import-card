@@ -42,10 +42,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     use \Venturecraft\Revisionable\RevisionableTrait;
 
     public $rules = [
-        'user_login'        => 'required',
-        'user_email'        => 'required|email',
-        'user_pass'         => 'required',
-        'user_pass_confirm' => 'required|same:user_pass',
+        'user_login'       => 'required',
+        'email'            => 'required|email',
+        'password'         => 'required',
+        'password_confirm' => 'required|same:password',
     ];
     public $patient_rules = [
         "daily_reminder_optin"    => "required",
@@ -54,21 +54,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         "hospital_reminder_optin" => "required",
         "hospital_reminder_time"  => "required",
         "hospital_reminder_areas" => "required",
-        "qualification"           => "",
-        "specialty"               => "",
-        "npi_number"              => "",
         "first_name"              => "required",
         "last_name"               => "required",
         "gender"                  => "required",
         "mrn_number"              => "required",
         "birth_date"              => "required",
         "home_phone_number"       => "required",
-        "email"                   => "",
-        "address"                 => "",
-        "city"                    => "",
-        "state"                   => "",
-        "zip"                     => "",
-        "timezone"                => "",
         "consent_date"            => "required",
         "ccm_status"              => "required",
         "program_id"              => "required",
@@ -93,8 +84,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     protected $fillable = [
         'user_login',
-        'user_pass',
-        'user_email',
+        'password',
+        'email',
         'user_url',
         'user_registered',
         'user_activation_log',
@@ -102,7 +93,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         'auto_attach_programs',
         'display_name',
         'spam',
-        'password',
         'first_name',
         'last_name',
         'address',
@@ -117,7 +107,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         'is_online',
     ];
     protected $hidden = [
-        'user_pass',
         'password',
     ];
     protected $dates = ['user_registered'];
@@ -146,7 +135,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getEmailForPasswordReset()
     {
-        return $this->user_email;
+        return $this->email;
     }
 
 
@@ -1036,9 +1025,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return true;
     }
 
-    public function setEmailAttribute($value)
+    public function setEmailAddressAttribute($value)
     {
-        return $this->user_email = $value;
+        return $this->email = $value;
     }
 
     public function getAgeAttribute()
@@ -1723,8 +1712,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $user->first_name = $faker->firstName;
         $user->last_name = 'Z-' . $faker->lastName;
         $user->user_login = $faker->userName;
-        $user->user_pass = $faker->password;
-        $user->user_email = $faker->freeEmail;
+        $user->password = $faker->password;
+        $user->email = $faker->freeEmail;
         $user->MRN = rand();
         $user->gender = 'M';
         $user->address = $faker->address;
@@ -1747,12 +1736,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 // user data scrambler
 
     public function createNewUser(
-        $user_email,
-        $user_pass
+        $email,
+        $password
     ) {
-        $this->user_login = $user_email;
-        $this->user_email = $user_email;
-        $this->password = bcrypt($user_pass);
+        $this->user_login = $email;
+        $this->email = $email;
+        $this->password = bcrypt($password);
         $this->save();
 
         return $this;

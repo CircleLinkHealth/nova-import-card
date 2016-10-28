@@ -17,7 +17,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
     public function createNewUser(User $user, ParameterBag $params)
     {
-        $user = $user->createNewUser($params->get('user_email'), $params->get('user_pass'));
+        $user = $user->createNewUser($params->get('email'), $params->get('password'));
 
         // set registration date field on users
         $user->user_registered = date('Y-m-d H:i:s');
@@ -63,7 +63,9 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->user_login = $params->get('user_login');
         $user->user_status = $params->get('user_status');
 
-        if ($params->get('user_email')) $user->user_email = $params->get('user_email');
+        if ($params->get('email')) {
+            $user->email = $params->get('email');
+        }
 
         if($params->get('access_disabled')) {
             $user->access_disabled = $params->get('access_disabled');

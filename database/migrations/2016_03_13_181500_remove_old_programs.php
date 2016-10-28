@@ -43,7 +43,7 @@ class RemoveOldPrograms extends Migration {
 				//continue 1;
 				foreach($programUsers as $programUser) {
 					$programUser->delete();
-                    echo PHP_EOL . $i . '-' . $programUser->user_email . '(' . $programUser->id . ') deleted';
+                    echo PHP_EOL . $i . '-' . $programUser->email . '(' . $programUser->id . ') deleted';
 					$i++;
 				}
 			}

@@ -35,7 +35,7 @@ class DatatablesController extends Controller
         $users = User::select([
             'id',
             'display_name',
-            'user_email',
+            'email',
             'created_at',
             'updated_at',
         ]);

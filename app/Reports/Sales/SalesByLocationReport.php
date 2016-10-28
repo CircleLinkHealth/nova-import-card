@@ -222,13 +222,13 @@ class SalesByLocationReport
 //
 //            $m->attach(storage_path("download/$fileName"));
 //
-//            $m->to($nurse->user->user_email, $nurse->user->fullName)
+//            $m->to($nurse->user->email, $nurse->user->fullName)
 //                ->subject('New Invoice from CircleLink Health');
 //        });
 //
 ////        MailLog::create([
-////            'sender_email' => $sender->user_email,
-////            'receiver_email' => $receiver->user_email,
+////            'sender_email' => $sender->email,
+////            'receiver_email' => $receiver->email,
 ////            'body' => $body,
 ////            'subject' => $email_subject,
 ////            'type' => 'note',

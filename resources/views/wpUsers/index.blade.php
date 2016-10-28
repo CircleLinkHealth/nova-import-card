@@ -94,7 +94,7 @@
                                                 @endforeach
                                             @endif
                                         </td>
-                                        <td>{{ $wpUser->user_email }}</td>
+                                        <td>{{ $wpUser->email }}</td>
                                         <td>
                                             @if ($wpUser->primaryProgram)
                                                 <a href="{{ URL::route('admin.programs.show', array('id' => $wpUser->primaryProgram->id)) }}"

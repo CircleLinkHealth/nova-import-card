@@ -187,7 +187,7 @@
                 columns: [
                     {data: 0, name: 'ID'},
                     {data: 1, name: 'display_name'},
-                    {data: 2, name: 'user_email'},
+                    {data: 2, name: 'email'},
                     {data: 3, name: 'created_at'},
                     {data: 4, name: 'updated_at'}
         ]
