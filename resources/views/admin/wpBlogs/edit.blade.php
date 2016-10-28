@@ -65,11 +65,6 @@
                                 <div class="col-xs-2">{!! Form::label('short_display_name', 'Short Display Name:') !!}</div>
                                 <div class="col-xs-10">{!! Form::text('short_display_name', $program->short_display_name, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                             </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('description', 'Description:') !!}</div>
-                                <div class="col-xs-10">{!! Form::textarea('description', $program->description) !!}</div>
-                            </div>
                         </div>
 
                         <div class="row" style="margin-top:50px;">

@@ -70,11 +70,6 @@
                                         <div class="col-xs-2">Short Display Name:</div>
                                         <div class="col-xs-10">{!! $program->short_display_name !!}</div>
                                     </div>
-
-                                    <div class="row" style="margin-top:20px;">
-                                        <div class="col-xs-2">Description:</div>
-                                        <div class="col-xs-10">{{ $program->description }}</div>
-                                    </div>
                                 </div>
                             </div>
 

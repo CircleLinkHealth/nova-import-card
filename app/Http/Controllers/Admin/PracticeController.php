@@ -63,7 +63,6 @@ class PracticeController extends Controller
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
 		$program->short_display_name = $params['short_display_name'];
-		$program->description = $params['description'];
 		$program->site_id = 1;
 		$program->path = '/';
 		$program->public = 0;
@@ -185,7 +184,6 @@ class PracticeController extends Controller
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
 		$program->short_display_name = $params['short_display_name'];
-		$program->description = $params['description'];
 		$program->save();
 		return redirect()->back()->with('messages', ['successfully updated program']);
 	}
