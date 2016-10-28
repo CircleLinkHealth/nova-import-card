@@ -47,8 +47,8 @@
                             </div>
 
                             <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('location_id', 'Location:') !!}</div>
-                                <div class="col-xs-4">{!! Form::select('location_id', $locations, $program->location_id, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                <div class="col-xs-2">{!! Form::label('locations', 'Locations') !!}</div>
+                                {{--                                <div class="col-xs-4">{!! Form::select('location_id', $locations, $program->location_id, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>--}}
                             </div>
 
                             <div class="row" style="margin-top:20px;">

@@ -2,9 +2,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Location extends Model
 {
+    use SoftDeletes;
+
     //Aprima's constant location ID.
     const UPG_PARENT_LOCATION_ID = 26;
 
@@ -22,8 +25,6 @@ class Location extends Model
         'state',
         'timezone',
         'postal_code',
-        'billing_code',
-        'location_code',
         'position',
     ];
 
@@ -39,7 +40,6 @@ class Location extends Model
     public static function getNonRootLocations($parent_location_id = false)
     {
         if ($parent_location_id) {
-            // get parent_id from $parent_location_code
             $parent_location = Location::where('id', '=', $parent_location_id)->first();
             if (!$parent_location) {
                 return false;

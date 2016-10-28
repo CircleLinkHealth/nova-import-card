@@ -48,8 +48,8 @@
                                 <div class="form-group">
 
                                     <div class="row" style="margin-top:20px;">
-                                        <div class="col-xs-2">Location:</div>
-                                        <div class="col-xs-4">{!! $program->location_id !!}</div>
+                                        <div class="col-xs-2">Locations</div>
+                                        {{--<div class="col-xs-4">{!! $program->location_id !!}</div>--}}
                                     </div>
 
                                     <div class="row" style="margin-top:20px;">

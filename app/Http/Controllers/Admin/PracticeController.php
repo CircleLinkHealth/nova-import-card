@@ -58,7 +58,9 @@ class PracticeController extends Controller
 		$params = $request->input();
 
         $program = new Practice;
-		$program->location_id = $params['location_id'];
+
+        $program->locations->attach($params['location_id']);
+
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
 		$program->short_display_name = $params['short_display_name'];
@@ -178,7 +180,7 @@ class PracticeController extends Controller
 		}
 		// get params
 		$params = $request->input();
-		$program->location_id = $params['location_id'];
+        $program->locations->attach($params['location_id']);
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
 		$program->short_display_name = $params['short_display_name'];

@@ -5,7 +5,6 @@ use App\CLH\Repositories\UserRepository;
 use App\Events\CarePlanWasApproved;
 use App\Formatters\WebixFormatter;
 use App\Http\Controllers\Controller;
-use App\Location;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
@@ -341,7 +340,7 @@ class PatientCareplanController extends Controller
         $program = Practice::find($programId);
         $locations = [];
         if ($program) {
-            $locations = Location::where('parent_id', '=', $program->location_id)->pluck('name', 'id')->all();
+            $locations = $program->locations->pluck('name', 'id')->all();
         }
 
         // care plans
