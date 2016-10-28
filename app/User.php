@@ -413,7 +413,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function programs()
     {
-        return $this->belongsToMany(Practice::class, 'practice_user ', 'user_id', 'program_id');
+        return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id');
     }
 
 
