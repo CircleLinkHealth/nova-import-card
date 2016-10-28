@@ -39,7 +39,7 @@ trait HandlesUsersAndCarePlans
             'display_name'      => "$firstName $lastName",
             'first_name'        => $firstName,
             'last_name'         => $lastName,
-            'user_login'        => $faker->userName,
+            'username'          => $faker->userName,
             'program_id'        => $programId,
             //id=9 is testdrive
             'address'           => $faker->streetAddress,

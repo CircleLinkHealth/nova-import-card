@@ -88,8 +88,8 @@
                                 <h2>User Info</h2>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('user_login', 'Login:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('user_login', $patient->user_login, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('username', 'Login:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('username', $patient->username, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -241,15 +241,6 @@
                                         </div>
                                     </div>
 
-                                    <h2>Care Plan:</h2>
-                                    <div id="roles">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-lg-2">{!! Form::label('care_plan_id', 'Care Plan: ') !!}</div>
-                                                <div class="col-lg-10">{!! Form::select('care_plan_id', $carePlans, $patient->care_plan_id, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                                            </div>
-                                        </div>
-                                    </div>
 
                                     <div class="form-group">
                                         <div class="row">

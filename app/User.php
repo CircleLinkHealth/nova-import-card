@@ -42,7 +42,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     use \Venturecraft\Revisionable\RevisionableTrait;
 
     public $rules = [
-        'user_login'       => 'required',
+        'username'         => 'required',
         'email'            => 'required|email',
         'password'         => 'required',
         'password_confirm' => 'required|same:password',
@@ -83,7 +83,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * @var array
      */
     protected $fillable = [
-        'user_login',
+        'username',
         'password',
         'email',
         'user_url',
@@ -1711,7 +1711,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $user = $this;
         $user->first_name = $faker->firstName;
         $user->last_name = 'Z-' . $faker->lastName;
-        $user->user_login = $faker->userName;
+        $user->username = $faker->userName;
         $user->password = $faker->password;
         $user->email = $faker->freeEmail;
         $user->MRN = rand();
@@ -1739,7 +1739,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $email,
         $password
     ) {
-        $this->user_login = $email;
+        $this->username = $email;
         $this->email = $email;
         $this->password = bcrypt($password);
         $this->save();

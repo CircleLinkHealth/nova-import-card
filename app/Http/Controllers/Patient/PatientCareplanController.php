@@ -522,16 +522,16 @@ class PatientCareplanController extends Controller
             $role = Role::whereName('participant')->first();
             $newUserId = str_random(15);
             $params->add([
-                'user_login'      => $newUserId,
-                'email'           => empty($email = $params->get('email'))
+                'username'     => $newUserId,
+                'email'        => empty($email = $params->get('email'))
                     ? $newUserId . '@careplanmanager.com'
                     : $email,
-                'password'        => $newUserId,
-                'user_status'     => '1',
-                'program_id'      => $params->get('program_id'),
-                'display_name'    => $params->get('first_name') . ' ' . $params->get('last_name'),
-                'roles'           => [$role->id],
-                'ccm_status'      => 'enrolled',
+                'password'     => $newUserId,
+                'user_status'  => '1',
+                'program_id'   => $params->get('program_id'),
+                'display_name' => $params->get('first_name') . ' ' . $params->get('last_name'),
+                'roles'        => [$role->id],
+                'ccm_status'   => 'enrolled',
                 'careplan_status' => 'draft',
             ]);
             $newUser = $userRepo->createNewUser($user, $params);

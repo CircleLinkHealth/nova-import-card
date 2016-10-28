@@ -21,7 +21,9 @@ class CCDImporterRepository
     {
         $role = Role::whereName('participant')->first();
 
-        if (empty($role)) throw new \Exception('User role not found.', 500);
+        if (empty($role)) {
+            throw new \Exception('User role not found.', 500);
+        }
 
         $newUserId = str_random(20);
 
@@ -29,7 +31,7 @@ class CCDImporterRepository
             ? $newUserId . '@careplanmanager.com'
             : $email;
 
-        $user_login = empty($email)
+        $username = empty($email)
             ? $newUserId
             : $email;
 
@@ -44,7 +46,7 @@ class CCDImporterRepository
             'display_name'      => $user_nicename,
             'first_name'        => $demographics->first_name,
             'last_name'         => $demographics->last_name,
-            'user_login'        => $user_login,
+            'username'          => $username,
             'program_id'        => $demographics->program_id,
             'address'           => $demographics->street,
             'address2'          => $demographics->street2,
@@ -60,19 +62,22 @@ class CCDImporterRepository
 
     public function toJson($xml)
     {
-        $client = new Client( [
+        $client = new Client([
             'base_uri' => env('CCD_PARSER_BASE_URI'),
-        ] );
+        ]);
 
-        $response = $client->request( 'POST', '/ccda/parse', [
+        $response = $client->request('POST', '/ccda/parse', [
             'headers' => ['Content-Type' => 'text/xml'],
-            'body' => $xml,
-        ] );
+            'body'    => $xml,
+        ]);
 
-        if ( !$response->getStatusCode() == 200 ) {
-            return [$response->getStatusCode(), $response->getReasonPhrase()];
+        if (!$response->getStatusCode() == 200) {
+            return [
+                $response->getStatusCode(),
+                $response->getReasonPhrase(),
+            ];
         }
 
-        return (string) $response->getBody();
+        return (string)$response->getBody();
     }
 }

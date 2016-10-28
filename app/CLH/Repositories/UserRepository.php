@@ -60,7 +60,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
     public function saveOrUpdateUserInfo(User $user, ParameterBag $params)
     {
-        $user->user_login = $params->get('user_login');
+        $user->username = $params->get('username');
         $user->user_status = $params->get('user_status');
 
         if ($params->get('email')) {
@@ -73,7 +73,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $user->access_disabled = 0; // 0 = good, 1 = disabled
         }
         $user->program_id = $params->get('program_id');
-        $user->care_plan_id = $params->get('care_plan_id');
+
         $user->auto_attach_programs = $params->get('auto_attach_programs');
         if ($params->get('first_name')) {
             $user->first_name = $params->get('first_name');
@@ -477,7 +477,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             return false;
         }
 
-        $user->care_plan_id = $carePlan->id;
         $user->save();
 
         // populate defaults from careplan

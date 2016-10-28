@@ -861,7 +861,7 @@ order by qs.qs_type, qs.sort, qs.aid
         // first make sure user doesnt already exist
 		$this->db->select('u.*');
 		$this->db->from('wp_users AS u');
-		$this->db->where("u.user_login = '".$user_info['user_login']."'");
+        $this->db->where("u.username = '" . $user_info['username'] . "'");
 		$query = $this->db->get();
 		$user_exists = $query->row();
 		// return false is user exists and no overwrite
@@ -869,7 +869,7 @@ order by qs.qs_type, qs.sort, qs.aid
 			return false;
 		}
 
-        // id, user_login, password, user_nicename, email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
+        // id, username, password, user_nicename, email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
         $this->db->insert('wp_users', $user_info);
 		$new_user_id = $this->db->insert_id();
 
@@ -905,7 +905,7 @@ order by qs.qs_type, qs.sort, qs.aid
         // first make sure user doesnt already exist
 		$this->db->select('u.*');
 		$this->db->from('wp_users AS u');
-		$this->db->where("u.user_login = '".$user_info['user_login']."'");
+        $this->db->where("u.username = '" . $user_info['username'] . "'");
 		$query = $this->db->get();
 		$user_exists = $query->row();
 		//echo "<pre>";var_dump($this->db->last_query());echo "</pre>";
@@ -916,7 +916,7 @@ order by qs.qs_type, qs.sort, qs.aid
 			return false;
 		}
 		if(empty($user_exists)) {
-            // id, user_login, password, user_nicename, email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
+            // id, username, password, user_nicename, email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
             unset($user_info['id']);
             $this->db->insert('wp_users', $user_info);
 			$new_user_id = $this->db->insert_id();

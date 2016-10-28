@@ -40,7 +40,7 @@ $user_info = array();
                                 <h4 class="form-title">Contact Information</h4>
                                 <p><span class="attention">*</span> Required Field</p>
                                 <input type=hidden name=user_id value="{{ $patient->id }}">
-                                <input type=hidden name=user_login value="{{ $patient->user_login }}">
+                                <input type=hidden name=username value="{{ $patient->username }}">
                                 <input type=hidden name=display_name value="{{ $patient->display_name }}">
                                 <input type=hidden name=role value="{{ $patientRoleId }}">
                                 <input type=hidden name=daily_reminder_optin value="Y">
@@ -317,12 +317,6 @@ $user_info = array();
                                         </div>
                                     </div>
 
-                                    <div class="form-group form-item form-item-spacing col-sm-12 hidden">
-                                        <div class="row">
-                                            <div class="col-lg-4">{!! Form::label('care_plan_id', 'Care Plan: ') !!}</div>
-                                            <div class="col-lg-8">{!! Form::select('care_plan_id', $carePlans, $patient->care_plan_id, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
-                                        </div>
-                                    </div>
 
                                     <br>
                                     <br>

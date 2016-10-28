@@ -47,10 +47,10 @@ class LoginController extends Controller
         {
             if (!str_contains($request->input('email'), '@'))
             {
-                $this->username = 'user_login';
+                $this->username = 'username';
 
                 $request->merge([
-                    'user_login' => $request->input('email'),
+                    'username' => $request->input('email'),
                 ]);
             }
         }

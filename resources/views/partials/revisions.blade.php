@@ -10,7 +10,7 @@
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseRev{{ $history->id }}">
                                     @if($history->key == 'created_at' && !$history->old_value)
                                         @if($history->userResponsible())
-                                            {{ $history->userResponsible()->user_login }}
+                                            {{ $history->userResponsible()->username }}
                                             [{{ $history->userResponsible()->id }}]
                                         @else
                                             Unknown user [id={{ $history->user_id }}]
@@ -18,7 +18,7 @@
                                         created new resource {{ $history->revisionable_type }}[{{ $history->revisionable_id }}] on <em>{{ date('F d, Y g:i A', strtotime($history->created_at)) }}</em>
                                     @else
                                         @if($history->userResponsible())
-                                            {{ $history->userResponsible()->user_login }}
+                                            {{ $history->userResponsible()->username }}
                                             [{{ $history->userResponsible()->id }}] changed {{ $history->fieldName() }}
                                             from
                                             <strong>{{ (strlen($history->oldValue()) > 30) ? substr($history->oldValue(),0,10).'...' : $history->oldValue() }}</strong>

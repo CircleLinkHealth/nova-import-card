@@ -62,8 +62,8 @@
                                 <h2>User Info</h2>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('user_login', 'Login:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('user_login', '', ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('username', 'Login:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('username', '', ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
