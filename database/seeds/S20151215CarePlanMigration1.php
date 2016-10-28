@@ -14,14 +14,14 @@ class S20151215CarePlanMigration1 extends Seeder {
     public function run()
     {
 
-        $programs = Practice::where('blog_id', '>', '6')->get();
+        $programs = Practice::where('id', '>', '6')->get();
         if(empty($programs)) {
             dd('no programs');
         }
         foreach($programs as $program) {
             // get all items
             $items = CPRulesItem::whereHas('pcp', function ($q) use ($program) {
-                $q->where('prov_id', '=', $program->blog_id);
+                $q->where('prov_id', '=', $program->id);
             })->get();
             if (count($items) > 0) {
                 // counts

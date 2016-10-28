@@ -71,7 +71,7 @@ class CallReportController extends Controller {
 				$join->on('patient_monthly_summaries.patient_info_id', '=', 'patient_info.id');
 				$join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
 			})
-			->leftJoin('wp_blogs AS program', 'patient.program_id','=','program.blog_id')
+            ->leftJoin('wp_blogs AS program', 'patient.program_id', '=', 'program.id')
 			->leftJoin('patient_care_team_members', function($join)
 			{
 				$join->on('patient.ID', '=', 'patient_care_team_members.user_id');

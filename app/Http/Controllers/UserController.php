@@ -116,9 +116,9 @@ class UserController extends Controller
             }
 
             // program filter
-            $programs = Practice::orderBy('blog_id', 'desc')
-                ->whereIn( 'blog_id', Auth::user()->viewableProgramIds() )
-                ->get()->pluck('domain', 'blog_id')->all();
+            $programs = Practice::orderBy('id', 'desc')
+                ->whereIn('id', Auth::user()->viewableProgramIds())
+                ->get()->pluck('domain', 'id')->all();
             $filterProgram = 'all';
             if ( !empty($params[ 'filterProgram' ]) ) {
                 $filterProgram = $params[ 'filterProgram' ];
@@ -243,7 +243,7 @@ class UserController extends Controller
         $states_arr = array('AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming");
 
         // programs for dd
-        $wpBlogs = Practice::orderBy('blog_id', 'desc')->pluck('domain', 'blog_id')->all();
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('domain', 'id')->all();
 
         $locations = Location::whereNotNull('parent_id')->pluck('name', 'id')->all();
 
@@ -380,7 +380,7 @@ class UserController extends Controller
         $states_arr = array('AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming");
 
         // programs for dd
-        $wpBlogs = Practice::orderBy('blog_id', 'desc')->pluck('domain', 'blog_id')->all();
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('domain', 'id')->all();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers( DateTimeZone::ALL );
@@ -501,8 +501,8 @@ class UserController extends Controller
             // echo "<pre>"; var_export($parsed_json);echo "</pre>";
             $z = 0;
             foreach ($scramble_me as $key) {
-                $user_meta = get_user_meta($key);//, 'wp_'.$blog_id.'_capabilities', true);
-                $user_config_meta = get_user_meta($key, 'wp_' . $blog_id . '_user_config', true);
+                $user_meta = get_user_meta($key);//, 'wp_'.$id.'_capabilities', true);
+                $user_config_meta = get_user_meta($key, 'wp_' . $id . '_user_config', true);
                 $ret = update_user_meta($key, 'first_name', ucfirst($parsed_json->{'results'}[$z]->user->name->first));
                 $ret = update_user_meta($key, 'last_name', ucfirst("z" . $parsed_json->{'results'}[$z]->user->name->last));
                 $user_config_meta['mrn_number'] = uniqid();
@@ -531,7 +531,7 @@ class UserController extends Controller
                 ));
                 // var_dump($user_meta);
                 // var_dump($user_config_meta);
-                $ret = update_user_meta($key, 'wp_' . $blog_id . '_user_config', $user_config_meta);
+                $ret = update_user_meta($key, 'wp_' . $id . '_user_config', $user_config_meta);
 
                 $z++;
             }

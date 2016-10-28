@@ -185,7 +185,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // first detatch relationship
         $wpUser->programs()->detach();
 
-        $wpBlogs = Practice::orderBy('blog_id', 'desc')->pluck('blog_id')->all();
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('id')->all();
         foreach ($wpBlogs as $wpBlogId) {
             if (in_array($wpBlogId, $userPrograms)) {
                 $wpUser->programs()->attach($wpBlogId);
@@ -470,7 +470,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             return false;
         }
         // just need to add programs default @todo here should get the programs default one to use from programs config
-        $carePlan = CarePlan::where('program_id', '=', $program->blog_id)->where('type', '=',
+        $carePlan = CarePlan::where('program_id', '=', $program->id)->where('type', '=',
             'Practice Default')->first();
         if (!$carePlan) {
             return false;

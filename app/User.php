@@ -405,7 +405,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function viewableProgramIds()
     {
-        $programIds = $this->programs()->pluck('blog_id')->all();
+        $programIds = $this->programs()->pluck('id')->all();
 
         return $programIds;
     }
@@ -1709,7 +1709,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function primaryProgram()
     {
-        return $this->belongsTo(Practice::class, 'program_id', 'blog_id');
+        return $this->belongsTo(Practice::class, 'program_id', 'id');
     }
 
     public function scramble($randomUserInfo = false)

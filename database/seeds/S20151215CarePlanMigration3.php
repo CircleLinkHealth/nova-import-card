@@ -14,13 +14,13 @@ class S20151215CarePlanMigration3 extends Seeder {
 
     public function run() {
         echo "start";
-        $programs = Practice::where('blog_id', '>', '6')->get();
+        $programs = Practice::where('id', '>', '6')->get();
         if(empty($programs)) {
             dd('no programs');
         }
         foreach($programs as $program) {
             // get pcp sections
-            $pcps = CPRulesPCP::where('prov_id', '=', $program->blog_id)->pluck('pcp_id')->all();
+            $pcps = CPRulesPCP::where('prov_id', '=', $program->id)->pluck('pcp_id')->all();
 
             // get items for these sections
             $items = CPRulesItem::whereIn('pcp_id', $pcps)->get();
@@ -30,19 +30,20 @@ class S20151215CarePlanMigration3 extends Seeder {
             }
 
             // set careplan
-            $carePlan = CarePlan::where('program_id', '=', $program->blog_id)->where('type', '=', 'Program Default')->first();
+            $carePlan = CarePlan::where('program_id', '=', $program->id)->where('type', '=',
+                'Program Default')->first();
             if(!$carePlan) {
                 // create new careplan if doesnt exist
                 $carePlan = new CarePlan;
                 $carePlan->name = 'program-' . $program->name . '-default';
                 $carePlan->display_name = 'Program ' . $program->display_name . ' Default';
                 $carePlan->type = 'Program Default';
-                $carePlan->program_id = $program->blog_id;
+                $carePlan->program_id = $program->id;
                 $carePlan->save();
             }
             $s = 0;
 
-            $pcpSections = CPRulesPCP::where('prov_id', '=', $program->blog_id)->get();
+            $pcpSections = CPRulesPCP::where('prov_id', '=', $program->id)->get();
             if (count($pcpSections) > 0) {
                 foreach ($pcpSections as $pcpSection) {
                     // --------------------
@@ -55,7 +56,8 @@ class S20151215CarePlanMigration3 extends Seeder {
                         $s++;
                         continue 1;
                     }
-                    $pcpSectionData = (new CareplanUIService)->getCareplanSectionData($program->blog_id, $pcpSection->section_text, false);
+                    $pcpSectionData = (new CareplanUIService)->getCareplanSectionData($program->id,
+                        $pcpSection->section_text, false);
                     if (!$pcpSectionData) {
                         echo 'No sectionData found, skipping ' . $pcpSection['section_text'] . PHP_EOL;
                         $s++;
@@ -110,7 +112,7 @@ class S20151215CarePlanMigration3 extends Seeder {
             }
 
             // get all program users and attach them to this programs careplan
-            $programUsers = User::where('program_id', '=', $program->blog_id)->get();
+            $programUsers = User::where('program_id', '=', $program->id)->get();
             if($programUsers->count() > 0) {
                 foreach($programUsers as $user) {
                     $user->care_plan_id = $carePlan->id;

@@ -330,8 +330,8 @@ class PatientCareplanController extends Controller
         }
 
         // get program
-        $programs = Practice::whereIn('blog_id', Auth::user()->viewableProgramIds())->pluck('display_name',
-            'blog_id')->all();
+        $programs = Practice::whereIn('id', Auth::user()->viewableProgramIds())->pluck('display_name',
+            'id')->all();
 
         // roles
         $patientRoleId = Role::where('name', '=', 'participant')->first();

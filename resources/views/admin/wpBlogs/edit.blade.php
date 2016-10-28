@@ -20,13 +20,13 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Program ID: {{ $program->blog_id }}
+                        Program ID: {{ $program->id }}
                     </div>
                     <div class="panel-body">
                         @include('errors.errors')
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.programs.update', array('id' => $program->blog_id)), 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.programs.update', array('id' => $program->id)), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <div class="row" style="">

@@ -28,10 +28,10 @@ class ChangeUsersTableAndRemoveMaPrefixTables extends Migration {
         $programs = Practice::all();
 		foreach($programs as $program) {
 			// remove tables
-			Schema::dropIfExists('ma_'.$program->blog_id.'_observations');
-			echo PHP_EOL.'removed ma_'.$program->blog_id.'_observations';
-			Schema::dropIfExists('ma_'.$program->blog_id.'_observationmeta');
-			echo PHP_EOL.'removed ma_'.$program->blog_id.'_observationmeta';
+            Schema::dropIfExists('ma_' . $program->id . '_observations');
+            echo PHP_EOL . 'removed ma_' . $program->id . '_observations';
+            Schema::dropIfExists('ma_' . $program->id . '_observationmeta');
+            echo PHP_EOL . 'removed ma_' . $program->id . '_observationmeta';
 		}
 
 		Schema::dropIfExists('wp_userconfig');

@@ -16,25 +16,28 @@ class DatamonitorService
     {
         $this->time_start = 0;
         $this->time_end = 0;
-        $this->int_blog_id = 0;
+        $this->int_id = 0;
     }
 
     /**
      * Summary: run_process_3_day_missed_meds - search for active patients who missed
      * med 3 days in a row, and if so trigger alert
      *
-     * @param $int_blog_id
-     * @return string
+     * @param $int_id
+     *
+*@return string
      */
-    public function run_process_3_day_missed_observations($alert_key, $int_blog_id)
+    public function run_process_3_day_missed_observations(
+        $alert_key,
+        $int_id)
     {
         $this->time_start = microtime(true);
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         $log_string = '';
         // get message ids
-        $adherence_items = $this->CI->rules_model->get_adherence_items($this->int_blog_id);
+        $adherence_items = $this->CI->rules_model->get_adherence_items($this->int_id);
         //process
         $log_string .= $this->process_alert_3_day_missed_items('Adherence', $adherence_items);
 
@@ -52,7 +55,7 @@ class DatamonitorService
         if (!empty($items)) {
             foreach ($items as $item) {
                 // get all active users and loop through them
-                $active_users = $this->CI->users_model->get_users_for_active_item($item['items_id'], $this->int_blog_id);
+                $active_users = $this->CI->users_model->get_users_for_active_item($item['items_id'], $this->int_id);
                 //echo "<pre>";var_dump($active_users);echo "</pre>";die();
                 if (!empty($active_users)) {
                     foreach ($active_users as $active_user) {
@@ -61,7 +64,8 @@ class DatamonitorService
                         $observation = false;
                         $msg_id = $item['msg_id'];
                         $day1_date = date('Y-m-d', strtotime("-1 days"));
-                        $item_observations = $this->CI->observation_model->get_3day_observations(strtolower($item['alert_key']), $msg_id, $user_id, $day1_date, $this->int_blog_id);
+                        $item_observations = $this->CI->observation_model->get_3day_observations(strtolower($item['alert_key']),
+                            $msg_id, $user_id, $day1_date, $this->int_id);
                         //echo "<pre>";var_dump($item_observations);echo "</pre>";
                         if (!empty($item_observations)) {
                             $i = 1; // standard loop counter, 1 = most recent obs found
@@ -120,7 +124,8 @@ class DatamonitorService
                                 'meta_key' => 'dm_log_missed_' . strtolower($item['alert_key']),
                                 'meta_value' => $send_alert
                             );
-                            $observationmeta_id = $this->CI->observationmeta_model->insert_observationmeta($observationmeta_paramaters, $this->int_blog_id);
+                            $observationmeta_id = $this->CI->observationmeta_model->insert_observationmeta($observationmeta_paramaters,
+                                $this->int_id);
                             $log_string .= "added new observationmeta dm_log_missed_" . strtolower($item['alert_key']) . " - obsmeta_id = {$observationmeta_id}" . PHP_EOL;
                             if ($type == 'Adherence') { // HACK FIX
                                 // update observation to ensure it has obs_key
@@ -128,10 +133,11 @@ class DatamonitorService
                                     'obs_id' => $observation['id'],
                                     'obs_key' => 'Adherence'
                                 );
-                                $this->CI->observation_model->update_observation($observation_paramaters, $this->int_blog_id);
+                                $this->CI->observation_model->update_observation($observation_paramaters, $this->int_id);
                             }
                             // send actual alert
-                            $log_string .= $this->send_obs_alert($observation, $message_id, $send_email, $extra_vars, false, $this->int_blog_id);
+                            $log_string .= $this->send_obs_alert($observation, $message_id, $send_email, $extra_vars,
+                                false, $this->int_id);
                         } else {
                             $log_string .= "Patient[{$user_id}][{$msg_id}][GOOD] did not miss for past 3 days asked, checked obs[{$item_obs_ids}]" . PHP_EOL;
                         }
@@ -158,10 +164,10 @@ class DatamonitorService
         $send_email,
         $extra_vars,
         $source = false,
-        $int_blog_id
+        $int_id
     ) {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         $log_string = PHP_EOL;
 
@@ -212,7 +218,7 @@ class DatamonitorService
             'message_id'  => $message_id,
             'user'        => $observation['user_id'],
             'modifier'    => 'dmon',
-            'blogid'      => $this->int_blog_id,
+            'blogid'      => $this->int_id,
             'date_time'   => date("Y-m-d H:i:s"),
         ]);
 
@@ -246,7 +252,7 @@ class DatamonitorService
 
         // send email
         if ($send_email) {
-            $log_string .= $this->send_email($observation, $message_id, $extra_vars, $this->int_blog_id);
+            $log_string .= $this->send_email($observation, $message_id, $extra_vars, $this->int_id);
         } else {
             $log_string .= 'No email sent' . PHP_EOL;
         }
@@ -416,7 +422,7 @@ class DatamonitorService
      * @param $user_id
      * @param $message_id
      * @param $extra_vars
-     * @param int $int_blog_id
+     * @param int $int_id
      *
      * @return bool|string
      */
@@ -424,7 +430,7 @@ class DatamonitorService
         $observation,
         $message_id,
         $extra_vars,
-        $int_blog_id = 7
+        $int_id = 7
     ) {
 
         // get user info
@@ -529,21 +535,21 @@ class DatamonitorService
      * biometric 3 days in a row, and if so trigger alert
      *
      *
-     * @param $int_blog_id
+     * @param $int_id
      *
      * @return string
      */
     public function run_process_3_day_missed_biometrics(
         $alert_key,
-        $int_blog_id
+        $int_id
     ) {
         $this->time_start = microtime(true);
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         $log_string = '';
         // get message ids
-        $items = $this->CI->rules_model->get_items_by_alert_key($alert_key, $this->int_blog_id);
+        $items = $this->CI->rules_model->get_items_by_alert_key($alert_key, $this->int_id);
 
         // harcode in alert message ids
         $items_processed = [];
@@ -584,13 +590,13 @@ class DatamonitorService
     {
         $this->time_start = microtime(true);
         // set blog id
-        //$this->int_blog_id = $int_blog_id;
+        //$this->int_id = $int_id;
 
         // start logging
         $log_string = PHP_EOL . "---process_obs_alerts({$obs_id}) START" . PHP_EOL;
 
         // first get any new [alert_key or obs_id] observations that haven't been processed
-        //$observations = $this->CI->observation_model->get_dm_observations($observation->obs_key, $obs_id, $this->int_blog_id);
+        //$observations = $this->CI->observation_model->get_dm_observations($observation->obs_key, $obs_id, $this->int_id);
         $observation = Observation::find($obs_id);
         if (!$observation) {
             return false;
@@ -642,7 +648,7 @@ class DatamonitorService
         switch ($observation->obs_key) {
             // Blood Pressure
             case 'Blood_Pressure':
-                $result = $this->process_alert_obs_blood_pressure($user, $userUcpData, $observation, $this->int_blog_id);
+                $result = $this->process_alert_obs_blood_pressure($user, $userUcpData, $observation, $this->int_id);
                 if ($result) {
                     $log_string .= $result['log_string'];
                     $message_id = $result['message_id'];
@@ -654,7 +660,7 @@ class DatamonitorService
 
             // Blood Sugar
             case 'Blood_Sugar':
-                $result = $this->process_alert_obs_blood_sugar($user, $userUcpData, $observation, $this->int_blog_id);
+                $result = $this->process_alert_obs_blood_sugar($user, $userUcpData, $observation, $this->int_id);
                 if ($result) {
                     $log_string .= $result['log_string'];
                     $message_id = $result['message_id'];
@@ -666,7 +672,7 @@ class DatamonitorService
 
             // Weight
             case 'Weight':
-                $result = $this->process_alert_obs_weight($user, $userUcpData, $observation, $this->int_blog_id);
+                $result = $this->process_alert_obs_weight($user, $userUcpData, $observation, $this->int_id);
                 if ($result) {
                     $log_string .= $result['log_string'];
                     $message_id = $result['message_id'];
@@ -678,7 +684,7 @@ class DatamonitorService
 
             // Weekly cigarettes smoked
             case 'Cigarettes':
-                $result = $this->process_alert_obs_cigarettes($user, $userUcpData, $observation, $this->int_blog_id);
+                $result = $this->process_alert_obs_cigarettes($user, $userUcpData, $observation, $this->int_id);
                 if ($result) {
                     $log_string .= $result['log_string'];
                     $message_id = $result['message_id'];
@@ -690,7 +696,7 @@ class DatamonitorService
 
             // Call requested
             case 'Call':
-                $result = $this->process_alert_obs_call($user, $userUcpData, $observation, $this->int_blog_id);
+                $result = $this->process_alert_obs_call($user, $userUcpData, $observation, $this->int_id);
                 if ($result) {
                     $log_string .= $result['log_string'];
                     $message_id = $result['message_id'];
@@ -702,7 +708,7 @@ class DatamonitorService
 
             // Symptoms
             case 'Severity':
-                $result = $this->process_alert_obs_severity($user, $userUcpData, $observation, $this->int_blog_id);
+                $result = $this->process_alert_obs_severity($user, $userUcpData, $observation, $this->int_id);
                 if ($result) {
                     $log_string .= $result['log_string'];
                     $message_id = $result['message_id'];
@@ -714,7 +720,7 @@ class DatamonitorService
 
             // Adherence
             case 'Adherence':
-                $result = $this->process_alert_obs_adherence($user, $userUcpData, $observation, $this->int_blog_id);
+                $result = $this->process_alert_obs_adherence($user, $userUcpData, $observation, $this->int_id);
                 if ($result) {
                     $log_string .= $result['log_string'];
                     $message_id = $result['message_id'];
@@ -726,7 +732,7 @@ class DatamonitorService
 
             // Other
             case 'Other':
-                $result = $this->process_alert_obs_other($user, $userUcpData, $observation, $this->int_blog_id);
+                $result = $this->process_alert_obs_other($user, $userUcpData, $observation, $this->int_id);
                 if ($result) {
                     $log_string .= $result['log_string'];
                     $message_id = $result['message_id'];
@@ -739,7 +745,7 @@ class DatamonitorService
             // HSP
             case 'HSP_ER':
             case 'HSP_HOSP':
-                $result = $this->process_alert_obs_hsp($user, $userUcpData, $observation, $this->int_blog_id);
+                $result = $this->process_alert_obs_hsp($user, $userUcpData, $observation, $this->int_id);
                 if ($result) {
                     $log_string .= $result['log_string'];
                     $message_id = $result['message_id'];
@@ -775,7 +781,8 @@ class DatamonitorService
             if ($send_alert !== false) {
                 $log_string .= "SEND ALERT [{$send_alert}]" . PHP_EOL;
                 // if exception, trigger alert flow
-                $log_string .= $this->send_obs_alert($observation, $message_id, $send_email, $extra_vars, $observation->obs_method, $this->int_blog_id);
+                $log_string .= $this->send_obs_alert($observation, $message_id, $send_email, $extra_vars,
+                    $observation->obs_method, $this->int_id);
             }
         }
 
@@ -793,9 +800,9 @@ class DatamonitorService
      */
     function get_alerts_url(
         $user_id,
-        $blog_id
+        $id
     ) {
-        $wpBlog = Practice::where('blog_id', '=', $blog_id)->first();
+        $wpBlog = Practice::where('id', '=', $id)->first();
         $alerts_url = '';
         if ($wpBlog) {
             // $alerts_url = 'https://'. $wpBlog->domain . '/alerts/?user=' . $user_id;
@@ -811,10 +818,14 @@ class DatamonitorService
      * @param $observation
      * @return array
      */
-    public function process_alert_obs_blood_pressure($user, $userUcpData, $observation, $int_blog_id)
+    public function process_alert_obs_blood_pressure(
+        $user,
+        $userUcpData,
+        $observation,
+        $int_id)
     {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         // defaults
         $label = false;
@@ -883,10 +894,14 @@ class DatamonitorService
      * @param $observation
      * @return array
      */
-    public function process_alert_obs_blood_sugar($user, $userUcpData, $observation, $int_blog_id)
+    public function process_alert_obs_blood_sugar(
+        $user,
+        $userUcpData,
+        $observation,
+        $int_id)
     {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         // defaults
         $label = false;
@@ -951,10 +966,14 @@ class DatamonitorService
      * @param $observation
      * @return array
      */
-    public function process_alert_obs_weight($user, $userUcpData, $observation, $int_blog_id)
+    public function process_alert_obs_weight(
+        $user,
+        $userUcpData,
+        $observation,
+        $int_id)
     {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         // defaults
         $label = false;
@@ -1103,10 +1122,11 @@ class DatamonitorService
     public function process_alert_obs_cigarettes(
         $user,
         $userUcpData,
-        $observation, $int_blog_id)
+        $observation,
+        $int_id)
     {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         // defaults
         $label = false;
@@ -1162,10 +1182,11 @@ class DatamonitorService
     function process_alert_obs_call(
         $user,
         $userUcpData,
-        $observation, $int_blog_id)
+        $observation,
+        $int_id)
     {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         // defaults
         $label = 'danger';
@@ -1200,10 +1221,11 @@ class DatamonitorService
     public function process_alert_obs_severity(
         $user,
         $userUcpData,
-        $observation, $int_blog_id)
+        $observation,
+        $int_id)
     {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         // defaults
         $label = false;
@@ -1234,10 +1256,10 @@ class DatamonitorService
         }
         // here is a hack to get symptoms text, first get parent observation (menu)
         /*
-        $parent_observation_info = $this->CI->observation_model->get_parent_symptom_observation($observation['comment_id'], ((int)$observation['sequence_id']-1), $this->int_blog_id);
+        $parent_observation_info = $this->CI->observation_model->get_parent_symptom_observation($observation['comment_id'], ((int)$observation['sequence_id']-1), $this->int_id);
         if($parent_observation_info) {
             // get meta_key for parent menu, rpt_sum_resp_txt-{#}
-            $itemmeta_result = $this->CI->rules_model->get_itemmeta_value_by_key($parent_observation_info->items_id, 'rpt_sum_resp_txt-' . (int)$parent_observation_info->obs_value, $this->int_blog_id);
+            $itemmeta_result = $this->CI->rules_model->get_itemmeta_value_by_key($parent_observation_info->items_id, 'rpt_sum_resp_txt-' . (int)$parent_observation_info->obs_value, $this->int_id);
             if(isset($itemmeta_result->meta_value)){
                 $extra_vars['symptom'] = $itemmeta_result->meta_value;
             }
@@ -1274,10 +1296,14 @@ class DatamonitorService
      * @return array
      */
     public
-    function process_alert_obs_adherence($user, $userUcpData, $observation, $int_blog_id)
+    function process_alert_obs_adherence(
+        $user,
+        $userUcpData,
+        $observation,
+        $int_id)
     {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         // defaults
         $label = false;
@@ -1319,10 +1345,14 @@ class DatamonitorService
      * @return array
      */
     public
-    function process_alert_obs_other($user, $userUcpData, $observation, $int_blog_id)
+    function process_alert_obs_other(
+        $user,
+        $userUcpData,
+        $observation,
+        $int_id)
     {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         // defaults
         $label = false;
@@ -1359,10 +1389,14 @@ class DatamonitorService
      * @return array
      */
     public
-    function process_alert_obs_hsp($user, $userUcpData, $observation, $int_blog_id)
+    function process_alert_obs_hsp(
+        $user,
+        $userUcpData,
+        $observation,
+        $int_id)
     {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         // defaults
         $label = 'warning';

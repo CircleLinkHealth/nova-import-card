@@ -22,7 +22,7 @@ class MonthlyBillingReportsController extends Controller
 {
     public function create()
     {
-        $programs = Practice::orderBy('blog_id', 'desc')->pluck('display_name', 'blog_id')->all();
+        $programs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
 
         return view('admin.monthlyBillingReports.create', compact(['programs']));
     }

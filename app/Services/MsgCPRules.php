@@ -1,7 +1,5 @@
 <?php namespace App\Services;
 
-use App\User;
-use App\UserMeta;
 use App\CPRulesQuestions;
 use App\CPRulesQuestionSets;
 use DB;
@@ -136,28 +134,6 @@ class MsgCPRules {
 
     }//getValidAnswer
 
-    public function getMixedValid($strMsgId, $pid, $strResponse) {
-
-        $query = "select qs.*
-            from rules_question_sets qs
-            join rules_questions q on q.qid = qs.qid
-            join rules_answers a on a.aid = qs.aid
-            where provider_id = {$pid}
-            and q.msg_id = '{$strMsgId}'
-            and CONCAT(',',a.value,',',a.alt_answers,',') rlike ',{$strResponse},'
-            LIMIT 1";
-
-        //echo '<br>MsgCPRules->getMixedValid()';
-
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
-        if(isset($results[0])) {
-            return $results[0];
-        } else {
-            return false;
-        }
-
-    } //getMixedValid
-
     public function getQuestion($strMsgId, $intUserId=0, $strMsgText='SMS_EN', $pid = '0', $qstype = 'SOL') {
         /**
          *
@@ -248,8 +224,33 @@ limit 1";
             return false;
         }
 
-    }//getQuestion
+    } //getMixedValid
 
+    public function getMixedValid(
+        $strMsgId,
+        $pid,
+        $strResponse
+    ) {
+
+        $query = "select qs.*
+            from rules_question_sets qs
+            join rules_questions q on q.qid = qs.qid
+            join rules_answers a on a.aid = qs.aid
+            where provider_id = {$pid}
+            and q.msg_id = '{$strMsgId}'
+            and CONCAT(',',a.value,',',a.alt_answers,',') rlike ',{$strResponse},'
+            LIMIT 1";
+
+        //echo '<br>MsgCPRules->getMixedValid()';
+
+        $results = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        if (isset($results[0])) {
+            return $results[0];
+        } else {
+            return false;
+        }
+
+    }//getQuestion
 
     public function getQsType($msgId, $programId) {
         $qsType = DB::connection('mysql_no_prefix')->table('rules_question_sets')
@@ -527,7 +528,10 @@ query;
     }//getReadings
 
 
-    public function getReadingDefaults($user_id, $blog_id = 0) {
+    public function getReadingDefaults(
+        $user_id,
+        $id = 0
+    ) {
         /**
          *
          *	@internal 	Returns Default list for today's readings (bp, bs, and wt)
@@ -547,7 +551,7 @@ left join rules_ucp u on u.items_id = cd.items_id and u.user_id = {$user_id}
 left join rules_ucp u2 on u2.items_id = i.items_id and u2.user_id = {$user_id} and u2.meta_key = 'status' 
 left join rules_itemmeta im2 on im2.items_id = i.items_id and im2.meta_key = 'AllPatients' 
 where q.obs_key in ('Blood_Sugar', 'Blood_Pressure', 'Weight', 'Cigarettes')
-and p.prov_id = {$blog_id}
+and p.prov_id = {$id}
 query;
 
 // echo $query;
@@ -591,12 +595,16 @@ query;
 
     /**
      * @param int $pcp_id
-     * @param int $int_blog_id
-     * @return mixed
+     * @param int $int_id
+     *
+*@return mixed
      */
-    public function getQuestionIdsByPCP($pcp_id = 2, $int_blog_id = 0) {
+    public function getQuestionIdsByPCP(
+        $pcp_id = 2,
+        $int_id = 0
+    ) {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         $this->db->select('ri.qid, rq.msg_id, ri.pcp_id');
         $this->db->from('rules_questions AS rq');
@@ -611,9 +619,13 @@ query;
      * @param int $meta_key
      * @return mixed
      */
-    public function get_itemmeta_value_by_key($item_id = 2, $meta_key = 0, $int_blog_id = 7) {
+    public function get_itemmeta_value_by_key(
+        $item_id = 2,
+        $meta_key = 0,
+        $int_id = 7
+    ) {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         $this->db->select('im.meta_value');
         $this->db->from('rules_itemmeta AS im');
@@ -652,15 +664,15 @@ query;
     }//getTargetWeight
 
 
-
-
-
-    public function get_message_id_from_item_id($item_id, $int_blog_id = 0) {
+    public function get_message_id_from_item_id(
+        $item_id,
+        $int_id = 0
+    ) {
         // set starting defaults
         $target_qid = 0;
 
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         // get result for item (likely a child item)
         $this->db->select('ri.qid, ri.items_parent');
@@ -698,30 +710,34 @@ query;
     }
 
 
-
-
-    public function get_adherence_items($int_blog_id) {
+    public function get_adherence_items($int_id) {
         // get message ids
         $this->db->select('ri.qid, ri.items_id, rq.msg_id, rq.obs_key AS alert_key, rm.meta_value AS alert_msg_id');
         $this->db->from('rules_questions rq');
         $this->db->join('rules_items ri', 'ri.qid = rq.qid');
         $this->db->join('rules_pcp pcp', 'ri.pcp_id = pcp.pcp_id');
         $this->db->join('rules_itemmeta rm', "rm.items_id = ri.items_id AND rm.meta_key = 'alert_msg_id'");
-        $this->db->where(array('rq.obs_key' => 'Adherence', 'pcp.prov_id' => $int_blog_id));
+        $this->db->where([
+            'rq.obs_key' => 'Adherence',
+            'pcp.prov_id' => $int_id,
+        ]);
         $this->db->order_by("items_id", "desc");
         $query = $this->db->get();
         return $query->result_array();
     }
 
 
-    public function get_items_by_alert_key($alert_key, $int_blog_id) {
+    public function get_items_by_alert_key(
+        $alert_key,
+        $int_id
+    ) {
         // set blog id
-        $this->int_blog_id = $int_blog_id;
+        $this->int_id = $int_id;
 
         // build tables to use
-        //$str_observation_table = 'ma_' . $this->int_blog_id . '_observations';
+        //$str_observation_table = 'ma_' . $this->int_id . '_observations';
         $str_observation_table = 'lv_observations';
-        //$str_observationmeta_table  = 'ma_' . $this->int_blog_id . '_observationmeta';
+        //$str_observationmeta_table  = 'ma_' . $this->int_id . '_observationmeta';
         $str_observationmeta_table  = 'lv_observationmeta';
 
         $this->db->select('ri.qid, rip.items_id, rq.msg_id, im.meta_value AS alert_key, im_al.meta_value AS alert_msg_id');
@@ -731,7 +747,7 @@ query;
         $this->db->join("rules_questions AS rq", 'rq.qid = rip.qid');
         $this->db->join("rules_pcp AS pcp", 'ri.pcp_id = pcp.pcp_id');
         $this->db->join('rules_itemmeta im_al', "im_al.items_id = ri.items_id AND im_al.meta_key = 'alert_msg_id'", 'LEFT');
-        $this->db->where("im.meta_key = 'alert_key' AND im.meta_value = '" . $alert_key . "' AND prov_id = '" . $int_blog_id . "'");
+        $this->db->where("im.meta_key = 'alert_key' AND im.meta_value = '" . $alert_key . "' AND prov_id = '" . $int_id . "'");
 
         $query = $this->db->get();
         return $query->result_array();

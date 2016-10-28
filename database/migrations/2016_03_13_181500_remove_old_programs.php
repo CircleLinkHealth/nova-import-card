@@ -14,25 +14,25 @@ class RemoveOldPrograms extends Migration {
 	public function up()
 	{
 		// get programs
-        $programs = Practice::where('blog_id', '<', '7')->get();
+        $programs = Practice::where('id', '<', '7')->get();
 		$i = 0;
 		$programIds = array('');
 		foreach($programs as $program) {
-			$programIds[] = $program->blog_id;
+            $programIds[] = $program->id;
 		}
 		foreach($programIds as $programId) {
-            $program = Practice::where('blog_id', '=', $programId)->first();
+            $program = Practice::where('id', '=', $programId)->first();
 			if(empty($program)) {
 				echo PHP_EOL . 'Processing program:: EMPTY';
 			} else {
-				echo PHP_EOL . 'Processing program:: ' . $program->blog_id . ' (' . $program->display_name . ')';
+                echo PHP_EOL . 'Processing program:: ' . $program->id . ' (' . $program->display_name . ')';
 			}
 			$programUsers = User::whereHas('roles', function ($q) {
 				$q->where('name', '=', 'participant');
 			});
 			if(!empty($program)) {
 				$programUsers->whereHas('programs', function ($q) use ($program) {
-					$q->where('blog_id', '=', $program->blog_id);
+                    $q->where('id', '=', $program->id);
 				});
 			} else {
 				$programUsers->where('program_id', '=', '');
@@ -49,9 +49,9 @@ class RemoveOldPrograms extends Migration {
 			}
 			// drop tables
 			if($program) {
-				echo PHP_EOL.'deleted program '. $program->blog_id;
-				Schema::dropIfExists('ma_' . $program->blog_id . '_observations');
-				Schema::dropIfExists('ma_' . $program->blog_id . '_observationmeta');
+                echo PHP_EOL . 'deleted program ' . $program->id;
+                Schema::dropIfExists('ma_' . $program->id . '_observations');
+                Schema::dropIfExists('ma_' . $program->id . '_observationmeta');
 				$program->delete();
 			}
 		}

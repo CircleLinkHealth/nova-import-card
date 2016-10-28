@@ -49,7 +49,7 @@ class CPRQuestionSetController extends Controller
 		}
 
 		// filter program
-        $programs = Practice::orderBy('blog_id', 'desc')->get()->pluck('domain', 'blog_id')->all();
+        $programs = Practice::orderBy('id', 'desc')->get()->pluck('domain', 'id')->all();
 		$filterProgram = 'all';
 		if(!empty($params['filterProgram'])) {
 			$filterProgram = $params['filterProgram'];

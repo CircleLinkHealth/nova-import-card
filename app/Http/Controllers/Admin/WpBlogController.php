@@ -20,7 +20,7 @@ class WpBlogController extends Controller {
 			abort(403);
 		}
 		// display view
-        $wpBlogs = Practice::orderBy('blog_id', 'desc')->get();
+        $wpBlogs = Practice::orderBy('id', 'desc')->get();
 		return view('admin.wpBlogs.index', [ 'wpBlogs' => $wpBlogs ]);
 	}
 
@@ -81,8 +81,8 @@ class WpBlogController extends Controller {
 				if (!$program) {
 					continue 1;
 				}
-				if (!$user->programs->contains($program->blog_id)) {
-					$user->programs()->attach($program->blog_id);
+                if (!$user->programs->contains($program->id)) {
+                    $user->programs()->attach($program->id);
 				}
 				$user->save();
 			}

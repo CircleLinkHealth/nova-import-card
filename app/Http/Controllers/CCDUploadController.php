@@ -60,7 +60,7 @@ class CCDUploadController extends Controller
             $logger = new CcdItemLogger( $ccda );
             $logger->logAll();
 
-            $importer = new QAImportManager( $program->blog_id, $ccda );
+            $importer = new QAImportManager($program->id, $ccda);
             $output = $importer->generateCarePlanFromCCD();
         }
 

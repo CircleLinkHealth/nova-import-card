@@ -16,7 +16,8 @@
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
                             @if(Entrust::can('programs-manage'))
-                                <a href="{{ URL::route('admin.programs.edit', array('id' => $program->blog_id)) }}" class="btn btn-info">Edit</a>
+                                <a href="{{ URL::route('admin.programs.edit', array('id' => $program->id)) }}"
+                                   class="btn btn-info">Edit</a>
                             @endif
                             <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger" style="margin-left:10px;"><i class="glyphicon glyphicon-plus-sign"></i> Back to programs list</a>
                         </div>

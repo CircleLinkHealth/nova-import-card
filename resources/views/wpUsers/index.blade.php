@@ -96,7 +96,8 @@
                                         <td>{{ $wpUser->user_email }}</td>
                                         <td>
                                             @if ($wpUser->primaryProgram)
-                                                <a href="{{ URL::route('admin.programs.show', array('id' => $wpUser->primaryProgram->blog_id)) }}" class=""> {{ $wpUser->primaryProgram->display_name }}</a>
+                                                <a href="{{ URL::route('admin.programs.show', array('id' => $wpUser->primaryProgram->id)) }}"
+                                                   class=""> {{ $wpUser->primaryProgram->display_name }}</a>
                                             @endif
                                         </td>
                                         <td class="text-right">

@@ -44,7 +44,7 @@ class ProviderMonthlyUsageReportController extends Controller
         }
 
         // get all program
-        $programs = Practice::where('name', '=', $program)->get()->pluck('display_name', 'blog_id')->all();
+        $programs = Practice::where('name', '=', $program)->get()->pluck('display_name', 'id')->all();
 
         // get stats for each program
         foreach ($programs as $programId => $programName) {

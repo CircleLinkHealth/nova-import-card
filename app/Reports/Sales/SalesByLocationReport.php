@@ -151,7 +151,7 @@ class SalesByLocationReport
 //
 //            $patients = PatientInfo::whereHas('user', function ($q){
 //
-//                $q->where('program_id', $this->blog_id);
+//                $q->where('program_id', $this->id);
 //
 //            })
 //                ->whereNotNull('ccm_status')
@@ -167,7 +167,7 @@ class SalesByLocationReport
     {
         $this->enrollmentCount = PatientInfo::whereHas('user', function ($q) {
 
-            $q->where('program_id', $this->program->blog_id);
+            $q->where('program_id', $this->program->id);
 
         })
             ->whereNotNull('ccm_status')

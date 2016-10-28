@@ -595,7 +595,7 @@ class ReportsController extends Controller
 
     public function createSalesReport(Request $request){
 
-        $programs = Practice::all()->pluck('display_name', 'blog_id');
+        $programs = Practice::all()->pluck('display_name', 'id');
 
         return view('sales.create', ['programs' => $programs]);
 

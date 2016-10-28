@@ -11,7 +11,7 @@ class Practice extends Model
 
     public static function getProviders($blogId){
         $providers = User::whereHas('programs', function ($q) use ($blogId) {
-            $q->where('blog_id', '=', $blogId);
+            $q->where('id', '=', $blogId);
         })->whereHas('roles', function ($q) {
             $q->where('name', '=', 'provider');
         })->get();
@@ -20,7 +20,7 @@ class Practice extends Model
 
     public static function getNonCCMCareCenterUsers($blogId){
         $providers = User::whereHas('programs', function ($q) use ($blogId) {
-            $q->where('blog_id', '=', $blogId);
+            $q->where('id', '=', $blogId);
         })->whereHas('roles', function ($q) {
             $q->where('name', '=', 'no-ccm-care-center');
         })->get();
@@ -29,7 +29,7 @@ class Practice extends Model
 
     public static function getCareCenterUsers($blogId){
         $providers = User::whereHas('programs', function ($q) use ($blogId) {
-            $q->where('blog_id', '=', $blogId);
+            $q->where('id', '=', $blogId);
         })->whereHas('roles', function ($q) {
             $q->where('name', '=', 'care-center');
         })->get();
@@ -68,7 +68,7 @@ class Practice extends Model
 
     public function pcp()
     {
-        return $this->hasMany('App\CPRulesPCP', 'prov_id', 'blog_id');
+        return $this->hasMany('App\CPRulesPCP', 'prov_id', 'id');
     }
 
     public function careplan()
@@ -89,7 +89,7 @@ class Practice extends Model
     public function locationId()
     {
         /*
-        $location = \DB::select("select * from wp_".$this->blog_id."_options where option_name = 'location_id'", []);
+        $location = \DB::select("select * from wp_".$this->id."_options where option_name = 'location_id'", []);
         return $location[0]->option_value;
         */
         return $this->location_id;
@@ -99,7 +99,7 @@ class Practice extends Model
 
         $patients = PatientInfo::whereHas('user', function ($q){
 
-            $q->where('program_id', $this->blog_id);
+            $q->where('program_id', $this->id);
 
         })
         ->whereNotNull('ccm_status')

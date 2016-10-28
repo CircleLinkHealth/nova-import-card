@@ -13,9 +13,9 @@ class S20151027Locations extends Seeder
 
         foreach ($blogIds as $blog) {
 
-            if ($blog->blog_id > 6) {
+            if ($blog->id > 6) {
 
-                $options_table_name = 'wp_' . $blog->blog_id . '_options';
+                $options_table_name = 'wp_' . $blog->id . '_options';
 
                 $loc_id = DB::connection('mysql_no_prefix')->table($options_table_name)->where('option_name', 'location_id')->first();
 
@@ -26,7 +26,7 @@ class S20151027Locations extends Seeder
                     //dd($locations_for_blog);
                     if (count($locations_for_blog) > 0) {
                         foreach ($locations_for_blog as $loc) {
-                            $loc->program_id = $blog->blog_id;
+                            $loc->program_id = $blog->id;
                             $loc->save();
                             //echo json_encode($loc);
                         }

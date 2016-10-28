@@ -36,7 +36,7 @@ class MsgDelivery {
         $sms['msg_text']     = $substitutedMessage;
         $sms['msg_type']     = 'SMS';
         $sms['source']       = 'Clickatell';
-        $sms['blog_id']       = $intProgramID;
+        $sms['id'] = $intProgramID;
 // var_export($sms);
         if ($boolSaveState) {
             //Log question to database (save the state)
@@ -59,7 +59,7 @@ class MsgDelivery {
 // echo '<br>';
 // var_export(func_get_args());
         // set blog id
-        //$this->int_blog_id = $intProgramID;
+        //$this->int_id = $intProgramID;
 
         //switch_to_blog( $intProgramID );
         date_default_timezone_set('America/New_York');
@@ -107,7 +107,7 @@ class MsgDelivery {
         //dd('last_comment_no ==' . $last_comment_no);
         echo '<br>MsgDelivery->writeOutboundSmsMessage() last_comment_no =' . $comment->id;
         //$last_comment_no = wp_insert_comment($mixCommentData);
-        //$last_comment_no = $this->comments_model->insert_comment($mixCommentData, $this->int_blog_id);;
+        //$last_comment_no = $this->comments_model->insert_comment($mixCommentData, $this->int_id);;
 //echo 'recorded';
 // echo "[$last_comment_no]";
         return $comment->id;
@@ -233,7 +233,7 @@ class MsgDelivery {
         $sms['msg_text']     = $substitutedMessage;
         $sms['msg_type']     = 'SMS';
         $sms['source']       = 'Clickatell';
-        $sms['blog_id']       = $intProgramID;
+        $sms['id'] = $intProgramID;
 
         echo "MsgDelivery->sendMessage() [$intUserId]|[".$sms['phone_number']."]";
         echo 'MsgDelivery->sendMessage() strMessageCode= ' . $strMessageCode . ' && msg_text = ' . $sms['msg_text'] . "";

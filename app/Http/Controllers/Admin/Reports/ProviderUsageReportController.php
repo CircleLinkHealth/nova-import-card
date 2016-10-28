@@ -46,7 +46,7 @@ class ProviderUsageReportController extends Controller
             $program = $request->input('program');
         }
 
-        $programs = Practice::where('name', '=', $program)->get()->pluck('display_name', 'blog_id')->all();
+        $programs = Practice::where('name', '=', $program)->get()->pluck('display_name', 'id')->all();
 
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
 
