@@ -60,7 +60,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
     public function saveOrUpdateUserInfo(User $user, ParameterBag $params)
     {
-        $user->user_nicename = $params->get('user_nicename');
         $user->user_login = $params->get('user_login');
         $user->user_status = $params->get('user_status');
 

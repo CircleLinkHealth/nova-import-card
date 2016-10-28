@@ -94,7 +94,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     protected $fillable = [
         'user_login',
         'user_pass',
-        'user_nicename',
         'user_email',
         'user_url',
         'user_registered',
@@ -1722,7 +1721,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         // set random data
         $user = $this;
         $user->first_name = $faker->firstName;
-        $user->user_nicename = $faker->firstName;
         $user->last_name = 'Z-' . $faker->lastName;
         $user->user_login = $faker->userName;
         $user->user_pass = $faker->password;

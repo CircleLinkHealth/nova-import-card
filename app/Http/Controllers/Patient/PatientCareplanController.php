@@ -528,7 +528,6 @@ class PatientCareplanController extends Controller
                     : $email,
                 'user_pass' => $newUserId,
                 'user_status' => '1',
-                'user_nicename' => '',
                 'program_id' => $params->get('program_id'),
                 'display_name' => $params->get('first_name') . ' ' . $params->get('last_name'),
                 'roles' => [$role->id],

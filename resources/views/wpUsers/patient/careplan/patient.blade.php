@@ -41,7 +41,6 @@ $user_info = array();
                                 <p><span class="attention">*</span> Required Field</p>
                                 <input type=hidden name=user_id value="{{ $patient->id }}">
                                 <input type=hidden name=user_login value="{{ $patient->user_login }}">
-                                <input type=hidden name=user_nicename value="{{ $patient->user_nicename }}">
                                 <input type=hidden name=display_name value="{{ $patient->display_name }}">
                                 <input type=hidden name=role value="{{ $patientRoleId }}">
                                 <input type=hidden name=daily_reminder_optin value="Y">

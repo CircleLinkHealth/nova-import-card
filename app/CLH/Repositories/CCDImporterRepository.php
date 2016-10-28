@@ -4,7 +4,6 @@ namespace App\CLH\Repositories;
 
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
-use App\CLH\Repositories\UserRepository;
 use App\Role;
 use App\User;
 use GuzzleHttp\Client;
@@ -42,7 +41,6 @@ class CCDImporterRepository
         $bag = new ParameterBag([
             'user_email' => $user_email,
             'user_pass' => str_random(),
-            'user_nicename' => $user_nicename,
             'display_name' => $user_nicename,
             'first_name' => $demographics->first_name,
             'last_name' => $demographics->last_name,
