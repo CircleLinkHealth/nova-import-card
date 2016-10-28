@@ -59,7 +59,6 @@ class PracticeController extends Controller
 
         $program = new Practice;
 		$program->location_id = $params['location_id'];
-		$program->domain = $params['domain'];
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
 		$program->short_display_name = $params['short_display_name'];
@@ -180,7 +179,6 @@ class PracticeController extends Controller
 		// get params
 		$params = $request->input();
 		$program->location_id = $params['location_id'];
-		$program->domain = $params['domain'];
 		$program->name = $params['name'];
 		$program->display_name = $params['display_name'];
 		$program->short_display_name = $params['short_display_name'];

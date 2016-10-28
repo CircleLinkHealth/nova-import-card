@@ -46,10 +46,6 @@
                                 <p>Practice Info</p>
 
                                 <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-xs-2">Domain:</div>
-                                        <div class="col-xs-10">{!! $program->domain !!}</div>
-                                    </div>
 
                                     <div class="row" style="margin-top:20px;">
                                         <div class="col-xs-2">Location:</div>
