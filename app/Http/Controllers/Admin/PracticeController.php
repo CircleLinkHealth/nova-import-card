@@ -7,7 +7,8 @@ use App\User;
 use Auth;
 use Illuminate\Http\Request;
 
-class WpBlogController extends Controller {
+class PracticeController extends Controller
+{
 
 	/**
 	 * Display a listing of the resource.

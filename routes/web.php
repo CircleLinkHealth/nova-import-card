@@ -996,37 +996,37 @@ Route::group(['middleware' => 'auth'], function () {
                 'permission:programs-view',
             ],
         ], function () {
-            Route::resource('programs', 'Admin\WpBlogController');
+            Route::resource('programs', 'Admin\PracticeController');
             Route::get('programs', [
-                'uses' => 'Admin\WpBlogController@index',
+                'uses' => 'Admin\PracticeController@index',
                 'as'   => 'admin.programs.index',
             ]);
             Route::get('programs/create', [
-                'uses' => 'Admin\WpBlogController@create',
+                'uses' => 'Admin\PracticeController@create',
                 'as'   => 'admin.programs.create',
             ]);
             Route::post('programs/create', [
-                'uses' => 'Admin\WpBlogController@store',
+                'uses' => 'Admin\PracticeController@store',
                 'as'   => 'admin.programs.store',
             ]);
             Route::get('programs/{id}', [
-                'uses' => 'Admin\WpBlogController@show',
+                'uses' => 'Admin\PracticeController@show',
                 'as'   => 'admin.programs.show',
             ]);
             Route::get('programs/{id}/edit', [
-                'uses' => 'Admin\WpBlogController@edit',
+                'uses' => 'Admin\PracticeController@edit',
                 'as'   => 'admin.programs.edit',
             ]);
             Route::post('programs/{id}/edit', [
-                'uses' => 'Admin\WpBlogController@update',
+                'uses' => 'Admin\PracticeController@update',
                 'as'   => 'admin.programs.update',
             ]);
             Route::get('programs/{id}/destroy', [
-                'uses' => 'Admin\WpBlogController@destroy',
+                'uses' => 'Admin\PracticeController@destroy',
                 'as'   => 'admin.programs.destroy',
             ]);
             Route::get('programs/{id}/questions', [
-                'uses' => 'Admin\WpBlogController@showQuestions',
+                'uses' => 'Admin\PracticeController@showQuestions',
                 'as'   => 'admin.programs.questions',
             ]);
 
