@@ -80,6 +80,11 @@ class Location extends Model
         return Location::where('parent_id', '=', $id)->pluck('name', 'id')->all();
     }
 
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
+    }
+
     public function program()
     {
         return $this->belongsTo(Practice::class, 'location_id');

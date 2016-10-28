@@ -83,15 +83,16 @@ class Practice extends Model
 
     public function location()
     {
-        return $this->belongsTo('App\Location', 'location_id');
+        return $this->belongsTo(Location::class, 'location_id');
+    }
+
+    public function locations()
+    {
+        return $this->hasMany(Location::class);
     }
 
     public function locationId()
     {
-        /*
-        $location = \DB::select("select * from wp_".$this->id."_options where option_name = 'location_id'", []);
-        return $location[0]->option_value;
-        */
         return $this->location_id;
     }
 
