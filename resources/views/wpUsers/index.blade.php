@@ -13,7 +13,7 @@
                         <div class="col-sm-10">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ URL::route('admin.users.create', array()) }}" class="btn btn-success">New User</a>
-                                {{-- <a href="{{ URL::route('admin.users.createQuickPatient', array('blogId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a> --}}
+                                {{-- <a href="{{ URL::route('admin.users.createQuickPatient', array('primaryProgramId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a> --}}
                             </div>
                         </div>
                     @endif

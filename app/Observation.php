@@ -236,14 +236,14 @@ class Observation extends Model {
             $updating = true;
         }
 
-        // take programId(blogId) and add to wp_X_observations table
+        // take programId(primaryProgramId) and add to wp_X_observations table
         /*
         if($updating) {
-            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->where('obs_id', $this->legacy_obs_id)->update($params);
+            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->primaryProgramId().'_observations')->where('obs_id', $this->legacy_obs_id)->update($params);
         } else {
             // add to legacy if doesnt already exist
             if(empty($this->legacy_obs_id)) {
-                $resultObsId = DB::connection('mysql_no_prefix')->table('ma_' . $wpUser->blogId() . '_observations')->insertGetId($params);
+                $resultObsId = DB::connection('mysql_no_prefix')->table('ma_' . $wpUser->primaryProgramId() . '_observations')->insertGetId($params);
                 $this->legacy_obs_id = $resultObsId;
             }
         }

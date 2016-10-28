@@ -29,7 +29,7 @@
                             </tbody>
                         </table>
 
-                        <h1>Primary Blog = {{ $wpUser->blogId() }}</h1>
+                        <h1>Primary Blog = {{ $wpUser->primaryProgramId() }}</h1>
 
                         <h1>Meta</h1>
                         <div id="usermetas">

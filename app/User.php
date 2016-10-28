@@ -470,7 +470,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function userConfig()
     {
-        $key = 'wp_' . $this->blogId() . '_user_config';
+        $key = 'wp_' . $this->primaryProgramId() . '_user_config';
         $userConfig = $this->meta->where('meta_key', $key)->first();
         if (!$userConfig) {
             return false;
@@ -479,7 +479,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-    public function blogId()
+    public function primaryProgramId()
     {
         return $this->program_id;
     }
@@ -533,7 +533,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $key,
         $value
     ) {
-        $configKey = 'wp_' . $this->blogId() . '_user_config';
+        $configKey = 'wp_' . $this->primaryProgramId() . '_user_config';
         $userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key', $configKey)->first();
         if (empty($userConfig)) {
             $userConfig = new UserMeta;
@@ -1695,7 +1695,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function role($blogId = false)
     {
         if (!$blogId) {
-            $blogId = $this->blogId();
+            $blogId = $this->primaryProgramId();
         }
         $role = UserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key',
             'wp_' . $blogId . '_capabilities')->first();

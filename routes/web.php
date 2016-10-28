@@ -713,7 +713,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'UserController@update',
                 'as'   => 'admin.users.update',
             ]);
-            Route::get('users/createQuickPatient/{blogId}', [
+            Route::get('users/createQuickPatient/{primaryProgramId}', [
                 'uses' => 'UserController@createQuickPatient',
                 'as'   => 'admin.users.createQuickPatient',
             ]);

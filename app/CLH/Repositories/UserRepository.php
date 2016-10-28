@@ -309,7 +309,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 //New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
 
         $email_view = 'emails.newpatientnotify';
-        $program = Practice::find($user->blogId());
+        $program = Practice::find($user->primaryProgramId());
         $program_name = $program->display_name;
         $email_subject = '[' . $program_name . '] New User Registration!';
         $data = [

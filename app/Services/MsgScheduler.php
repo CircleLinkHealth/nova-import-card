@@ -1,18 +1,12 @@
 <?php namespace App\Services;
 
-use App\Observation;
-use App\ObservationMeta;
 use App\Comment;
+use App\Observation;
 use App\User;
-use App\UserMeta;
-use App\Services\MsgUser;
-use App\Services\MsgChooser;
-
 use Date;
 use DateTime;
 use DateTimeZone;
 
-use DB;
 /*
  *
  * $this->load->model('cpm_1_7_users_model','meta');
@@ -240,7 +234,7 @@ class MsgScheduler {
                     echo "<br>MsgScheduler->createScheduledMessages() Skip, Missing User Config";
                     continue 1;
                 }
-                if(!$wpUser->blogId()) {
+                if(!$wpUser->primaryProgramId()) {
                     echo "<br>MsgScheduler->createScheduledMessages() Skip, Missing ProgramId";
                     continue 1;
                 }
@@ -284,17 +278,6 @@ class MsgScheduler {
         */
         echo "<br><br>#################### end createScheduledMessages() ######################";
     }
-
-
-    function triggerUrl($strUrl)
-    {
-        // echo "Calling: $strUrl<br>";
-        $this->curl->simple_get($strUrl);
-        echo "Called: $strUrl<BR>";
-        return 'OK';
-
-    }
-
 
     public function create_app_schedule($arrData){
         reset($arrData);
@@ -361,6 +344,16 @@ class MsgScheduler {
 
         echo "<br>MsgScheduler->create_app_schedule() End";
         return 0;
+    }
+
+    function triggerUrl($strUrl)
+    {
+        // echo "Calling: $strUrl<br>";
+        $this->curl->simple_get($strUrl);
+        echo "Called: $strUrl<BR>";
+
+        return 'OK';
+
     }
 
 
