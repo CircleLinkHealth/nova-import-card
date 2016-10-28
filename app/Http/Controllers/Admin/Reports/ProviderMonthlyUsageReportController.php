@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use App\PageTimer;
-use App\Program;
+use App\Practice;
 use App\User;
 use Excel;
 use Illuminate\Http\Request;
@@ -44,7 +44,7 @@ class ProviderMonthlyUsageReportController extends Controller
         }
 
         // get all program
-        $programs = Program::where('name', '=', $program)->get()->pluck('display_name', 'blog_id')->all();
+        $programs = Practice::where('name', '=', $program)->get()->pluck('display_name', 'blog_id')->all();
 
         // get stats for each program
         foreach ($programs as $programId => $programName) {

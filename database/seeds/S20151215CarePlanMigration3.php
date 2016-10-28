@@ -5,7 +5,7 @@ use App\CarePlan;
 use App\CareSection;
 use App\CPRulesItem;
 use App\CPRulesPCP;
-use App\Program;
+use App\Practice;
 use App\Services\CareplanUIService;
 use App\User;
 use Illuminate\Database\Seeder;
@@ -14,7 +14,7 @@ class S20151215CarePlanMigration3 extends Seeder {
 
     public function run() {
         echo "start";
-        $programs = Program::where('blog_id', '>', '6')->get();
+        $programs = Practice::where('blog_id', '>', '6')->get();
         if(empty($programs)) {
             dd('no programs');
         }

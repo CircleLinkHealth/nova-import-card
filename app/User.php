@@ -412,7 +412,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function programs()
     {
-        return $this->belongsToMany(Program::class, 'lv_program_user', 'user_id', 'program_id');
+        return $this->belongsToMany(Practice::class, 'lv_program_user', 'user_id', 'program_id');
     }
 
 
@@ -1709,7 +1709,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function primaryProgram()
     {
-        return $this->belongsTo(Program::class, 'program_id', 'blog_id');
+        return $this->belongsTo(Practice::class, 'program_id', 'blog_id');
     }
 
     public function scramble($randomUserInfo = false)

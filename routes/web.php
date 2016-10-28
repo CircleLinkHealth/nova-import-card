@@ -18,7 +18,7 @@ if (app()->environment() != 'production') {
 //            ->getEarliestWindowForPatientFromDate(\App\PatientInfo::find(3198),
 //            \Carbon\Carbon::today());
 
-//        $result = Program::find(21)->enrollmentByProgram(Carbon\Carbon::parse('2016-09-01 00:00:00'),
+//        $result = Practice::find(21)->enrollmentByProgram(Carbon\Carbon::parse('2016-09-01 00:00:00'),
 //            Carbon\Carbon::parse('2016-09-30 23:59:59'));
 //
 //        return ['thing' => $result];

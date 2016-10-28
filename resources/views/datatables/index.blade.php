@@ -140,7 +140,7 @@
             <!--<th>Billing Provider</th>-->
             <th>Patient Status</th>
             <th>Billing Provider</th>
-            <th>Program</th>
+            <th>Practice</th>
         </tr>
         </thead>
         <tfoot>
@@ -158,7 +158,7 @@
             <th>Last call</th>
             <th>Patient Status</th>
             <th>Billing Provider</th>
-            <th>Program</th>
+            <th>Practice</th>
         </tr>
         </tfoot>
     </table>

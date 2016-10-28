@@ -7,7 +7,7 @@ use App\Location;
 use App\Models\CPM\CpmProblem;
 use App\PageTimer;
 use App\PatientCareTeamMember;
-use App\Program;
+use App\Practice;
 use App\Reports\Sales\SalesByLocationReport;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
@@ -595,7 +595,7 @@ class ReportsController extends Controller
 
     public function createSalesReport(Request $request){
 
-        $programs = Program::all()->pluck('display_name', 'blog_id');
+        $programs = Practice::all()->pluck('display_name', 'blog_id');
 
         return view('sales.create', ['programs' => $programs]);
 
@@ -613,7 +613,7 @@ class ReportsController extends Controller
 
         foreach ($programs as $program){
 
-            $program = Program::find($program);
+            $program = Practice::find($program);
 
             $links[$program->display_name] = (new SalesByLocationReport($program,
                                                   Carbon::parse($input['start_date']),
@@ -693,7 +693,7 @@ class ReportsController extends Controller
                         $condition = $usersCondition[$user->ID];
                     }
                     $programName = 'N/A';
-                    $program = Program::find($user->program_id);
+                    $program = Practice::find($user->program_id);
                     if ($program) {
                         $programName = $program->display_name;
                     }
@@ -990,7 +990,7 @@ class ReportsController extends Controller
                 $sheet->appendRow([
                     'id',
                     'Provider',
-                    'Program',
+                    'Practice',
                     'CCM Status',
                     'DOB',
                     'Phone',
@@ -1019,7 +1019,7 @@ class ReportsController extends Controller
 
                     // program
                     $programName = 'N/A';
-                    $program = Program::find($user->program_id);
+                    $program = Practice::find($user->program_id);
                     if ($program) {
                         $programName = $program->display_name;
                     }

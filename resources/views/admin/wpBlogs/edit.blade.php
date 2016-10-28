@@ -33,7 +33,7 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::submit('Update Program', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Practice', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>

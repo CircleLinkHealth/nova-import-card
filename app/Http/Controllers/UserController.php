@@ -5,7 +5,7 @@ use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\Repositories\UserRepository;
 use App\CPRulesPCP;
 use App\Location;
-use App\Program;
+use App\Practice;
 use App\Role;
 use App\Services\CareplanService;
 use App\Services\MsgChooser;
@@ -116,7 +116,7 @@ class UserController extends Controller
             }
 
             // program filter
-            $programs = Program::orderBy( 'blog_id', 'desc' )
+            $programs = Practice::orderBy('blog_id', 'desc')
                 ->whereIn( 'blog_id', Auth::user()->viewableProgramIds() )
                 ->get()->pluck('domain', 'blog_id')->all();
             $filterProgram = 'all';
@@ -168,7 +168,7 @@ class UserController extends Controller
         }
         //if ( $request->header('Client') == 'ui' ) {}
 
-        $blogItem = Program::find( $blogId )->pcp()->whereStatus( 'Active' )->get();
+        $blogItem = Practice::find($blogId)->pcp()->whereStatus('Active')->get();
 
         foreach ( $blogItem as $item ) {
             // Item Categories
@@ -181,7 +181,7 @@ class UserController extends Controller
         $weekdays_arr = array('1' => 'Sunday', '2' => 'Monday', '3' => 'Tuesday', '4' => 'Wednesday', '5' => 'Thursday', '6' => 'Friday', '7' => 'Saturday');
 
         //List of providers
-        $provider_raw = Program::getProviders( $blogId );
+        $provider_raw = Practice::getProviders($blogId);
         $providers = array();
         foreach ( $provider_raw as $provider ) {
             $providers[ $provider->ID ] = $provider->getFullNameAttribute();
@@ -243,7 +243,7 @@ class UserController extends Controller
         $states_arr = array('AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming");
 
         // programs for dd
-        $wpBlogs = Program::orderBy('blog_id', 'desc')->pluck('domain', 'blog_id')->all();
+        $wpBlogs = Practice::orderBy('blog_id', 'desc')->pluck('domain', 'blog_id')->all();
 
         $locations = Location::whereNotNull('parent_id')->pluck('name', 'id')->all();
 
@@ -367,8 +367,8 @@ class UserController extends Controller
             }
         }
 
-        // locations @todo get location id for Program
-        $wpBlog = Program::find( $patient->program_id );
+        // locations @todo get location id for Practice
+        $wpBlog = Practice::find($patient->program_id);
         $locations_arr = array();
         if ( $wpBlog ) {
             $locations_arr = ( new Location )->getNonRootLocations( $wpBlog->locationId() );
@@ -380,7 +380,7 @@ class UserController extends Controller
         $states_arr = array('AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming");
 
         // programs for dd
-        $wpBlogs = Program::orderBy('blog_id', 'desc')->pluck('domain', 'blog_id')->all();
+        $wpBlogs = Practice::orderBy('blog_id', 'desc')->pluck('domain', 'blog_id')->all();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers( DateTimeZone::ALL );

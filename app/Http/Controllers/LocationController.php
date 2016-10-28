@@ -1,14 +1,10 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
 use App\Location;
-use App\Program;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
+use App\Practice;
 use Auth;
 use Entrust;
+use Illuminate\Http\Request;
 
 class LocationController extends Controller {
 
@@ -41,7 +37,7 @@ class LocationController extends Controller {
 		if(!Auth::user()->can('locations-manage')) {
 			abort(403);
 		}
-		$blogs = Program::all();
+        $blogs = Practice::all();
 		return view('locations.create', [ 'locations' => Location::getAllParents(), 'blogs' => $blogs ]);
 	}
 
@@ -116,7 +112,7 @@ class LocationController extends Controller {
 		if(!Auth::user()->can('locations-manage')) {
 			abort(403);
 		}debug(Location::getParents($id));
-		$blogs = Program::all();
+        $blogs = Practice::all();
 		return view('locations.edit', ['location' => Location::find($id), 'locations' => Location::getParents($id), 'blogs' => $blogs]);
 	}
 

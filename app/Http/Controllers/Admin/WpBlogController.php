@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use App\Location;
-use App\Program;
+use App\Practice;
 use App\User;
 use Auth;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class WpBlogController extends Controller {
 			abort(403);
 		}
 		// display view
-		$wpBlogs = Program::orderBy('blog_id', 'desc')->get();
+        $wpBlogs = Practice::orderBy('blog_id', 'desc')->get();
 		return view('admin.wpBlogs.index', [ 'wpBlogs' => $wpBlogs ]);
 	}
 
@@ -56,7 +56,7 @@ class WpBlogController extends Controller {
 		// get params
 		$params = $request->input();
 
-		$program = new Program;
+        $program = new Practice;
 		$program->location_id = $params['location_id'];
 		$program->domain = $params['domain'];
 		$program->name = $params['name'];
@@ -103,7 +103,7 @@ class WpBlogController extends Controller {
 			abort(403);
 		}
 		// display view
-		$program = Program::find($id);
+        $program = Practice::find($id);
 
 		/*
 		$cPRulesPCP = CPRulesPCP::where('prov_id', '=', $id)->where('status', '=', 'Active')->with('items.meta')->get();
@@ -154,7 +154,7 @@ class WpBlogController extends Controller {
 
 		$messages = \Session::get('messages');
 
-		$program = Program::find($id);
+        $program = Practice::find($id);
 
         $locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->pluck('name', 'id')->all();
 
@@ -173,7 +173,7 @@ class WpBlogController extends Controller {
 			abort(403);
 		}
 		// find program
-		$program = Program::find($id);
+        $program = Practice::find($id);
 		if(!$program) {
 			abort(400);
 		}
@@ -201,7 +201,7 @@ class WpBlogController extends Controller {
 			abort(403);
 		}
 		// find program
-		$program = Program::find($id);
+        $program = Practice::find($id);
 		if(!$program) {
 			abort(400);
 		}

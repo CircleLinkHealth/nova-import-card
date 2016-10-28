@@ -1,11 +1,7 @@
 <?php
 
-use App\Role;
-use App\User;
-use App\UserMeta;
-use App\Program;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddUserAutoAttachPrograms  extends Migration {
 

@@ -185,7 +185,7 @@
                                 <div id="programCollapse" class="collapse in" style="background:#888;padding:20px;">
                                     <div class="form-group">
                                         <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('program_id', 'Primary Program:') !!}</div>
+                                            <div class="col-xs-2">{!! Form::label('program_id', 'Practice') !!}</div>
                                             <div class="col-xs-4">{!! Form::select('program_id', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                                             <div class="col-xs-2"><strong>Program Config:</strong><br />Auto attach to new programs</div>
                                             <div class="col-xs-4">

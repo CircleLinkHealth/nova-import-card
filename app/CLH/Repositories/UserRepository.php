@@ -4,7 +4,7 @@ use App\CarePlan;
 use App\NurseInfo;
 use App\PatientInfo;
 use App\PhoneNumber;
-use App\Program;
+use App\Practice;
 use App\ProviderInfo;
 use App\Role;
 use App\User;
@@ -185,7 +185,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // first detatch relationship
         $wpUser->programs()->detach();
 
-        $wpBlogs = Program::orderBy('blog_id', 'desc')->pluck('blog_id')->all();
+        $wpBlogs = Practice::orderBy('blog_id', 'desc')->pluck('blog_id')->all();
         foreach ($wpBlogs as $wpBlogId) {
             if (in_array($wpBlogId, $userPrograms)) {
                 $wpUser->programs()->attach($wpBlogId);
@@ -309,7 +309,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 //New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
 
         $email_view = 'emails.newpatientnotify';
-        $program = Program::find($user->blogId());
+        $program = Practice::find($user->blogId());
         $program_name = $program->display_name;
         $email_subject = '[' . $program_name . '] New User Registration!';
         $data = [
@@ -465,12 +465,13 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     public function createDefaultCarePlan($user, $params)
     {
 
-        $program = Program::find($user->program_id);
+        $program = Practice::find($user->program_id);
         if (!$program) {
             return false;
         }
         // just need to add programs default @todo here should get the programs default one to use from programs config
-        $carePlan = CarePlan::where('program_id', '=', $program->blog_id)->where('type', '=', 'Program Default')->first();
+        $carePlan = CarePlan::where('program_id', '=', $program->blog_id)->where('type', '=',
+            'Practice Default')->first();
         if (!$carePlan) {
             return false;
         }

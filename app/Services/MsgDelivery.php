@@ -1,12 +1,9 @@
 <?php namespace App\Services;
 
 use App\Comment;
-use App\User;
-use App\UserMeta;
-use App\Program;
-use DB;
 use DateTime;
 use DateTimeZone;
+
 /*
 $this->load->library('curl');
 $this->load->model('valuecalc_model','calc');
@@ -50,6 +47,162 @@ class MsgDelivery {
     }
 
     //returns an array with the http response headers/body from the texting service
+
+    public function writeOutboundSmsMessage(
+        $intUserId,
+        $serialOutboundMessage,
+        $strMessageId,
+        $strCommentType = 'smsoutbound',
+        $intProgramID = 0,
+        $readingDate = 'now'
+    ) {
+// echo '<br>';
+// var_export(func_get_args());
+        // set blog id
+        //$this->int_blog_id = $intProgramID;
+
+        //switch_to_blog( $intProgramID );
+        date_default_timezone_set('America/New_York');
+
+        $parentID = 0;
+        /*
+        $strCommentsTable = "wp_". $intProgramID ."_comments";
+        $sql = "SELECT * FROM $strCommentsTable WHERE user_id=".$intUserId." AND comment_type like 'state%' ORDER BY comment_date DESC LIMIT 1";
+        $query = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+        $parentID = 0;
+
+        if(!empty($query))
+        {
+            $row = $query[0];
+// echo "<br>Found: $row->comment_ID<br>$row->comment_content<br>";var_export($state);
+            $parentID =  $row->comment_ID;
+        }
+        */
+
+        $dateTime = new DateTime(urldecode($readingDate), new DateTimeZone('America/New_York'));
+        $localTime = $dateTime->format('Y-m-d H:i:s');
+
+        $dateTime->setTimezone(new DateTimeZone('UTC'));
+        $gmtTime = $dateTime->format('Y-m-d H:i:s');
+
+        $comment = new Comment;
+        $comment->comment_post_ID = 0;
+        $comment->comment_author = $strMessageId;
+        $comment->comment_author_email = 'admin@circlelinkhealth.com';
+        $comment->comment_author_url = 'https://www.circlelinkhealth.com/';
+        $comment->comment_content = serialize($serialOutboundMessage);
+        $comment->comment_type = $strCommentType;
+        $comment->comment_parent = $parentID;
+        $comment->user_id = $intUserId;
+        $comment->comment_author_IP = '127.0.0.1';
+        $comment->comment_agent = 'N/A';
+        $comment->comment_date = $localTime;
+        $comment->comment_date_gmt = $gmtTime;
+        $comment->comment_approved = 1;
+        $comment->save();
+
+        /*
+        $last_comment_no = DB::connection('mysql_no_prefix')->table('wp_'.$intProgramID.'_comments')->insertGetId( $mixCommentData );
+        */
+        //dd('last_comment_no ==' . $last_comment_no);
+        echo '<br>MsgDelivery->writeOutboundSmsMessage() last_comment_no =' . $comment->id;
+        //$last_comment_no = wp_insert_comment($mixCommentData);
+        //$last_comment_no = $this->comments_model->insert_comment($mixCommentData, $this->int_blog_id);;
+//echo 'recorded';
+// echo "[$last_comment_no]";
+        return $comment->id;
+    }
+
+    private function saveState(
+        $intUserId,
+        $strMessageCode,
+        $strState = 'state',
+        $arrPart = null
+    ) {
+
+        /*
+        // echo $strMessageCode;
+        //load previous state
+        $mixReturnResult = false;
+        $strCommentsTable = "wp_". $this->intProgramID ."_comments";
+        $sql = "SELECT * FROM $strCommentsTable WHERE user_id=$intUserId AND comment_type='state_".$arrPart[$intUserId]['usermeta']['msgtype']."' ORDER BY comment_date DESC LIMIT 1";
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+        */
+        $commentType = $arrPart[$intUserId]['usermeta']['msgtype'];
+        $results = Comment::where('user_id', '=', $intUserId)->where('comment_type', '=',
+            $commentType)->orderBy('comment_date', 'desc')->first();
+
+        if (!empty($results)) {
+            //echo "<br><br>UPDATE DB STATE ROW";
+            echo "<br>MsgDelivery->saveState() strMessageCode=" . $strMessageCode;
+            //store new question
+            $row = $results[0];
+            $state = unserialize($row->comment_content);
+            $state[][$strMessageCode] = '';
+            $comment_approved = 0;
+            if (isset($arrPart['msg_list'][0][$strMessageCode]['qtype'])) {
+                if (strtolower($arrPart['msg_list'][0][$strMessageCode]['qtype']) == 'end') {
+                    $comment_approved = 1;
+                }
+            }
+
+            echo "<br>MsgDelivery->saveState() new msg: " . $strMessageCode . "";
+
+            // update comment, save state
+            $comment = Comment::find($row->comment_ID);
+            $comment->comment_content = serialize($state);
+            $comment->comment_approved = $comment_approved;
+            $comment->save();
+
+            echo "<br>MsgDelivery->saveState() Update Comment#=" . $row->comment_ID;
+            echo "<br>MsgDelivery->saveState() $row->comment_ID new state = " . serialize($state);
+
+            // get sequence_id
+            end($state);
+            $sequence_id = key($state);
+
+            $dateTime = new DateTime('now', new DateTimeZone('America/New_York'));
+            $localTime = $dateTime->format('Y-m-d H:i:s');
+
+            $dateTime->setTimezone(new DateTimeZone('UTC'));
+            $gmtTime = $dateTime->format('Y-m-d H:i:s');
+
+            // insert new observation
+            $newObservation = new Observation;
+            $newObservation->comment_id = $row->comment_ID;
+            $newObservation->obs_date = $localTime;
+            $newObservation->obs_date_gmt = $gmtTime;
+            $newObservation->sequence_id = $sequence_id;
+            $newObservation->obs_message_id = $strMessageCode;
+            $newObservation->obs_method = strtoupper($arrPart[$intUserId]['usermeta']['msgtype']);
+            $newObservation->user_id = $row->user_id;
+            $newObservation->obs_key = '';
+            $newObservation->obs_value = '';
+            $newObservation->obs_unit = '';
+            $newObservation->save();
+
+            echo "<br>MsgDelivery->saveState() Created New Observation#=" . $newObservation->id;
+            $log_string = "added new observation, obs_id = {$newObservation->id}" . PHP_EOL;
+
+        }
+
+        return;
+    }
+
+    public function sendSms($arrSMSdata)
+    {
+        echo "<br>MsgDelivery->sendSms() SKIPPING CURL POST, return true?";
+
+        return true;
+        //$this->curl->simple_post(OB_SMS_SERVICE, $arrSMSdata); //'http://msg.safekidney.com/msg/MsgCenter.php'
+
+        //$arrCurlInfo = $this->curl->info;
+
+        //return $arrCurlInfo;
+    }
+
+    //taken from Yvesh: smsoutbound_model.php
+
     public function sendMessage($intUserId, $strMessageCode, $strCommentType='smsoutbound', $boolSaveState=true, $intProgramID, $boolUnsolicited=false)
     {
         $strState = ($boolUnsolicited == false) ? 'state' : 'unsolicited';
@@ -108,7 +261,6 @@ class MsgDelivery {
         return $this->sendSms($sms);
     }
 
-
     public function getMessageBody($strMessageCode)
     {
         $strMessageBody = '';
@@ -131,79 +283,12 @@ class MsgDelivery {
         return $strMessageBody;
     }
 
-
-    public function writeOutboundSmsMessage($intUserId,$serialOutboundMessage,$strMessageId,$strCommentType='smsoutbound',$intProgramID=0, $readingDate='now')
-    {
-// echo '<br>';
-// var_export(func_get_args());
-        // set blog id
-        //$this->int_blog_id = $intProgramID;
-
-        //switch_to_blog( $intProgramID );
-        date_default_timezone_set('America/New_York');
-
-        $parentID = 0;
-        /*
-        $strCommentsTable = "wp_". $intProgramID ."_comments";
-        $sql = "SELECT * FROM $strCommentsTable WHERE user_id=".$intUserId." AND comment_type like 'state%' ORDER BY comment_date DESC LIMIT 1";
-        $query = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
-        $parentID = 0;
-
-        if(!empty($query))
-        {
-            $row = $query[0];
-// echo "<br>Found: $row->comment_ID<br>$row->comment_content<br>";var_export($state);
-            $parentID =  $row->comment_ID;
-        }
-        */
-
-        $dateTime = new DateTime(urldecode($readingDate), new DateTimeZone('America/New_York'));
-        $localTime = $dateTime->format('Y-m-d H:i:s');
-
-        $dateTime->setTimezone(new DateTimeZone('UTC'));
-        $gmtTime = $dateTime->format('Y-m-d H:i:s');
-
-        $comment = new Comment;
-        $comment->comment_post_ID = 0;
-        $comment->comment_author = $strMessageId;
-        $comment->comment_author_email = 'admin@circlelinkhealth.com';
-        $comment->comment_author_url = 'https://www.circlelinkhealth.com/';
-        $comment->comment_content = serialize($serialOutboundMessage);
-        $comment->comment_type = $strCommentType;
-        $comment->comment_parent = $parentID;
-        $comment->user_id = $intUserId;
-        $comment->comment_author_IP = '127.0.0.1';
-        $comment->comment_agent = 'N/A';
-        $comment->comment_date = $localTime;
-        $comment->comment_date_gmt = $gmtTime;
-        $comment->comment_approved = 1;
-        $comment->save();
-
-        /*
-        $last_comment_no = DB::connection('mysql_no_prefix')->table('wp_'.$intProgramID.'_comments')->insertGetId( $mixCommentData );
-        */
-        //dd('last_comment_no ==' . $last_comment_no);
-        echo '<br>MsgDelivery->writeOutboundSmsMessage() last_comment_no =' . $comment->id;
-        //$last_comment_no = wp_insert_comment($mixCommentData);
-        //$last_comment_no = $this->comments_model->insert_comment($mixCommentData, $this->int_blog_id);;
-//echo 'recorded';
-// echo "[$last_comment_no]";
-        return $comment->id;
-    }
-
-    //taken from Yvesh: smsoutbound_model.php
-    public function sendSms($arrSMSdata)
-    {
-        echo "<br>MsgDelivery->sendSms() SKIPPING CURL POST, return true?";
-        return true;
-        //$this->curl->simple_post(OB_SMS_SERVICE, $arrSMSdata); //'http://msg.safekidney.com/msg/MsgCenter.php'
-
-        //$arrCurlInfo = $this->curl->info;
-
-        //return $arrCurlInfo;
-    }
-
-    public function doSubstitutions($strMessage, $intUserId, $strValue='', $type='')
+    public function doSubstitutions(
+        $strMessage,
+        $intUserId,
+        $strValue = '',
+        $type = ''
+    )
     {
         /**
          * @todo Finish...
@@ -320,77 +405,6 @@ class MsgDelivery {
 
         // return '[' . $intUserId.'] '.$strMessage;
         return $strMessage;
-    }
-
-    private function saveState($intUserId, $strMessageCode, $strState='state', $arrPart=null)
-    {
-
-        /*
-        // echo $strMessageCode;
-        //load previous state
-        $mixReturnResult = false;
-        $strCommentsTable = "wp_". $this->intProgramID ."_comments";
-        $sql = "SELECT * FROM $strCommentsTable WHERE user_id=$intUserId AND comment_type='state_".$arrPart[$intUserId]['usermeta']['msgtype']."' ORDER BY comment_date DESC LIMIT 1";
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
-        */
-        $commentType = $arrPart[$intUserId]['usermeta']['msgtype'];
-        $results = Comment::where('user_id', '=', $intUserId)->where('comment_type', '=', $commentType)->orderBy('comment_date', 'desc')->first();
-
-        if(!empty($results))
-        {
-            //echo "<br><br>UPDATE DB STATE ROW";
-            echo "<br>MsgDelivery->saveState() strMessageCode=".$strMessageCode;
-            //store new question
-            $row = $results[0];
-            $state   = unserialize($row->comment_content);
-            $state[][$strMessageCode] = '';
-            $comment_approved = 0;
-            if(isset($arrPart['msg_list'][0][$strMessageCode]['qtype'])) {
-                if (strtolower($arrPart['msg_list'][0][$strMessageCode]['qtype'])=='end') {
-                    $comment_approved = 1;
-                }
-            }
-
-            echo "<br>MsgDelivery->saveState() new msg: ".$strMessageCode."";
-
-            // update comment, save state
-            $comment = Comment::find($row->comment_ID);
-            $comment->comment_content = serialize($state);
-            $comment->comment_approved = $comment_approved;
-            $comment->save();
-
-            echo "<br>MsgDelivery->saveState() Update Comment#=" . $row->comment_ID;
-            echo "<br>MsgDelivery->saveState() $row->comment_ID new state = " . serialize($state);
-
-            // get sequence_id
-            end($state);
-            $sequence_id = key($state);
-
-            $dateTime = new DateTime('now', new DateTimeZone('America/New_York'));
-            $localTime = $dateTime->format('Y-m-d H:i:s');
-
-            $dateTime->setTimezone(new DateTimeZone('UTC'));
-            $gmtTime = $dateTime->format('Y-m-d H:i:s');
-
-            // insert new observation
-            $newObservation = new Observation;
-            $newObservation->comment_id = $row->comment_ID;
-            $newObservation->obs_date = $localTime;
-            $newObservation->obs_date_gmt = $gmtTime;
-            $newObservation->sequence_id = $sequence_id;
-            $newObservation->obs_message_id = $strMessageCode;
-            $newObservation->obs_method = strtoupper($arrPart[$intUserId]['usermeta']['msgtype']);
-            $newObservation->user_id = $row->user_id;
-            $newObservation->obs_key = '';
-            $newObservation->obs_value = '';
-            $newObservation->obs_unit = '';
-            $newObservation->save();
-
-            echo "<br>MsgDelivery->saveState() Created New Observation#=" . $newObservation->id;
-            $log_string = "added new observation, obs_id = {$newObservation->id}" . PHP_EOL;
-
-        }
-        return;
     }//saveState
 
 }

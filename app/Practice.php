@@ -4,32 +4,10 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Program extends Model {
+class Practice extends Model
+{
 
     use SoftDeletes;
-
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'wp_blogs';
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'blog_id';
-
-	//
 
     public static function getProviders($blogId){
         $providers = User::whereHas('programs', function ($q) use ($blogId) {

@@ -1,18 +1,10 @@
 <?php namespace App\Http\Controllers\Admin\Reports;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
 use App\Call;
-use App\User;
-use App\PageTimer;
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Auth;
-use DateTime;
-use DatePeriod;
-use DateInterval;
 use Excel;
+use Illuminate\Http\Request;
 
 class CallReportController extends Controller {
 
@@ -105,8 +97,25 @@ class CallReportController extends Controller {
 			$excel->sheet('Sheet 1', function ($sheet) use ($calls) {
 				$i = 0;
 				// header
-				$userColumns = array('id', 'Nurse', 'Patient', 'Program', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Last Call', 'CCM Time', 'Successful Calls', 'Patient Status', 'Billing Provider', 'DOB', 'Scheduler');
-				$sheet->appendRow($userColumns);
+                $userColumns = [
+                    'id',
+                    'Nurse',
+                    'Patient',
+                    'Practice',
+                    'Last Call Status',
+                    'Next Call',
+                    'Call Time Start',
+                    'Call Time End',
+                    'Preferred Call Days',
+                    'Last Call',
+                    'CCM Time',
+                    'Successful Calls',
+                    'Patient Status',
+                    'Billing Provider',
+                    'DOB',
+                    'Scheduler',
+                ];
+                $sheet->appendRow($userColumns);
 
 				foreach ($calls as $call) {
 					if($call->inboundUser && $call->inboundUser->patientInfo) {

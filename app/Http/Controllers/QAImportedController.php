@@ -1,20 +1,16 @@
 <?php namespace App\Http\Controllers;
 
 
-use App\Models\CCD\CcdVendor;
 use App\CLH\CCD\ImportedItems\AllergyImport;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\ImportedItems\MedicationImport;
 use App\CLH\CCD\ImportedItems\ProblemImport;
-use App\CLH\CCD\ItemLogger\CcdProviderLog;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use App\Location;
+use App\Models\CCD\CcdVendor;
+use App\Practice;
 use App\User;
-use App\Program;
-use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
-
 use Illuminate\Http\Request;
+use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class QAImportedController extends Controller
 {
@@ -27,7 +23,7 @@ class QAImportedController extends Controller
         $problems = ProblemImport::whereCcdaId( $ccdaId )->get();
 
         $programId = $demographics->program_id;
-        $programObj = Program::whereBlogId( $programId )->first();
+        $programObj = Practice::whereBlogId($programId)->first();
 
         //get program's location
         $locations = Location::whereNotNull( 'parent_id' )->whereId( $programObj->location_id )->first();

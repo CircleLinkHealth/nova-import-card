@@ -81,7 +81,7 @@ class Location extends Entity implements LocationInterface
 
     public function program()
     {
-        return $this->belongsTo(Program::class, 'location_id');
+        return $this->belongsTo(Practice::class, 'location_id');
     }
 
     public function parent()

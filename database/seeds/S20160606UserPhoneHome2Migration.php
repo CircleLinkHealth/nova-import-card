@@ -1,23 +1,9 @@
 <?php
 
-use App\Program;
-use App\CarePlan;
-use App\CareSection;
-use App\CareItem;
 use App\CarePlanCareSection;
-use App\CarePlanItem;
-use App\CPRulesUCP;
-use App\CPRulesQuestions;
-use App\CPRulesItem;
-use App\CPRulesItemMeta;
-use App\PatientInfo;
-use App\ProviderInfo;
-use App\PatientCareTeamMember;
 use App\PhoneNumber;
 use App\User;
-use App\UserMeta;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 
 class S20160606UserPhoneHome2Migration extends Seeder {
 
@@ -28,39 +14,6 @@ class S20160606UserPhoneHome2Migration extends Seeder {
         $this->migrateMetaPhoneNumber();
     }
 
-    public function outputMetaPhoneNumbers()
-    {
-        // seed data user demographics
-        //$users = User::withTrashed()->with('meta')->where('ID', '<', '2065')->get();
-        $users = User::withTrashed()->with('meta')->get();
-        echo 'Process all role users demographics - Users found: '.$users->count().PHP_EOL;
-        $u = 1;
-        foreach($users as $user) {
-            // phone numbers
-            $studyPhoneNumber = $user->getUserConfigByKey('study_phone_number');
-            $homePhoneNumber = $user->getUserConfigByKey('home_phone_number');
-            $workPhoneNumber = $user->getUserConfigByKey('work_phone_number');
-            $mobilePhoneNumber = $user->getUserConfigByKey('mobile_phone_number');
-            if(
-                ($homePhoneNumber != '') &&
-                ($homePhoneNumber != $studyPhoneNumber)
-            ) {
-                if($user->ccmStatus != 'enrolled' ) {
-                    continue 1;
-                }
-                echo PHP_EOL."#".$u." FOUND!! " . $user->ID . PHP_EOL;
-                echo PHP_EOL."ccm status: " . $user->ccmStatus . PHP_EOL;
-                echo PHP_EOL."careplan status: " . $user->careplanStatus . PHP_EOL;
-                echo 'study: '.$studyPhoneNumber . PHP_EOL;
-                echo 'home: '.$homePhoneNumber . PHP_EOL;
-                echo 'work: '.$workPhoneNumber . PHP_EOL;
-                echo 'mobile: '.$mobilePhoneNumber . PHP_EOL;
-                $u++;
-            }
-        }
-        dd('fin');
-    }
-
     public function migrateMetaPhoneNumber()
     {
         // first delete all phone2 records
@@ -68,7 +21,7 @@ class S20160606UserPhoneHome2Migration extends Seeder {
         //dd($phone2s);
         $phone2s = PhoneNumber::where('type', '=', 'home2')->delete();
         //dd($phone2s);
-        echo "Deleted all home2 entries, ".$phone2s." Removed Total".PHP_EOL;
+        echo "Deleted all home2 entries, " . $phone2s . " Removed Total" . PHP_EOL;
 
         $users = User::withTrashed()->with('meta')->get();
         echo 'Process all role users demographics - Users found: '.$users->count().PHP_EOL;
@@ -105,10 +58,43 @@ class S20160606UserPhoneHome2Migration extends Seeder {
                 $phoneNumber->type = 'home2';
                 $phoneNumber->save();
                 $u++;
-                echo 'Added home2 home_phone_number'.PHP_EOL;
-                echo 'Saved '.PHP_EOL.PHP_EOL;
+                echo 'Added home2 home_phone_number' . PHP_EOL;
+                echo 'Saved ' . PHP_EOL . PHP_EOL;
             }
 
+        }
+        dd('fin');
+    }
+
+    public function outputMetaPhoneNumbers()
+    {
+        // seed data user demographics
+        //$users = User::withTrashed()->with('meta')->where('ID', '<', '2065')->get();
+        $users = User::withTrashed()->with('meta')->get();
+        echo 'Process all role users demographics - Users found: '.$users->count().PHP_EOL;
+        $u = 1;
+        foreach($users as $user) {
+            // phone numbers
+            $studyPhoneNumber = $user->getUserConfigByKey('study_phone_number');
+            $homePhoneNumber = $user->getUserConfigByKey('home_phone_number');
+            $workPhoneNumber = $user->getUserConfigByKey('work_phone_number');
+            $mobilePhoneNumber = $user->getUserConfigByKey('mobile_phone_number');
+            if(
+                ($homePhoneNumber != '') &&
+                ($homePhoneNumber != $studyPhoneNumber)
+            ) {
+                if($user->ccmStatus != 'enrolled' ) {
+                    continue 1;
+                }
+                echo PHP_EOL."#".$u." FOUND!! " . $user->ID . PHP_EOL;
+                echo PHP_EOL."ccm status: " . $user->ccmStatus . PHP_EOL;
+                echo PHP_EOL."careplan status: " . $user->careplanStatus . PHP_EOL;
+                echo 'study: '.$studyPhoneNumber . PHP_EOL;
+                echo 'home: '.$homePhoneNumber . PHP_EOL;
+                echo 'work: '.$workPhoneNumber . PHP_EOL;
+                echo 'mobile: '.$mobilePhoneNumber . PHP_EOL;
+                $u++;
+            }
         }
         dd('fin');
     }

@@ -33,7 +33,7 @@
                             <h3>Filter</h3>
                             <div class="form-group">
                                 <div class="row">
-                                    <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Program:') !!}</div>
+                                    <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Practice:') !!}</div>
                                     <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                                     <div class="col-xs-2">{!! Form::label('filterQsType', 'Type:') !!}</div>
                                     <div class="col-xs-4">{!! Form::select('filterQsType', array('all' => 'All Qs Types') + $qsTypes, $filterQsType, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>

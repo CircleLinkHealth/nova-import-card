@@ -1,14 +1,10 @@
 <?php
 
-use App\CPRulesPCP;
 use App\CPRulesItem;
 use App\CPRulesItemMeta;
+use App\CPRulesPCP;
 use App\CPRulesQuestions;
-use App\Observation;
-use App\ObservationMeta;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 
 class S20150929SymItems extends Seeder {
 
@@ -77,7 +73,7 @@ class S20150929SymItems extends Seeder {
         );
 
         foreach($programIds as $programId) {
-            echo PHP_EOL."Program $programId".PHP_EOL.PHP_EOL;
+            echo PHP_EOL . "Practice $programId" . PHP_EOL . PHP_EOL;
             // first remove all existing items
             CPRulesItem::whereHas('pcp', function ($q) use ($programId) {
                     $q->where('section_text', '=', 'Symptoms to Monitor');

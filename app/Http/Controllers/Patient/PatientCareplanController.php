@@ -12,7 +12,7 @@ use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
 use App\PatientContactWindow;
-use App\Program;
+use App\Practice;
 use App\Role;
 use App\Services\CarePlanViewService;
 use App\Services\CPM\CpmBiometricService;
@@ -127,7 +127,7 @@ class PatientCareplanController extends Controller
                 $bpName = '';
                 $bpID = $patient->billingProviderID;
                 if (!isset($foundPrograms[$patient->program_id])) {
-                    $program = Program::find($patient->program_id);
+                    $program = Practice::find($patient->program_id);
                     if ($program) {
                         $foundPrograms[$patient->program_id] = $program;
                         $programName = $program->display_name;
@@ -330,7 +330,7 @@ class PatientCareplanController extends Controller
         }
 
         // get program
-        $programs = Program::whereIn('blog_id', Auth::user()->viewableProgramIds())->pluck('display_name',
+        $programs = Practice::whereIn('blog_id', Auth::user()->viewableProgramIds())->pluck('display_name',
             'blog_id')->all();
 
         // roles
@@ -338,7 +338,7 @@ class PatientCareplanController extends Controller
         $patientRoleId = $patientRoleId->id;
 
         // locations @todo get location id for Program
-        $program = Program::find($programId);
+        $program = Practice::find($programId);
         $locations = [];
         if ($program) {
             $locations = Location::where('parent_id', '=', $program->location_id)->pluck('name', 'id')->all();

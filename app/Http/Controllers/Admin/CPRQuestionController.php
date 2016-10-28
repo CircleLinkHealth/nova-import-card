@@ -1,13 +1,10 @@
 <?php namespace App\Http\Controllers\Admin;
 
 use App\CPRulesQuestions;
-use App\Program;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
+use App\Practice;
 use Auth;
+use Illuminate\Http\Request;
 
 class CPRQuestionController extends Controller
 {
@@ -91,7 +88,7 @@ class CPRQuestionController extends Controller
 			abort(403);
 		}
 		$question = CPRulesQuestions::find($id);
-		$programs = Program::get();
+        $programs = Practice::get();
 		if (!empty($question->rulesItems)) {
 			foreach ($question->rulesItems as $item) {
 				if (isset($item->pcp->program->first()->domain)) {

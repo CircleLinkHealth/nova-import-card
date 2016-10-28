@@ -1,14 +1,8 @@
 <?php
 
-use App\User;
-use App\PatientInfo;
-use App\ProviderInfo;
-use App\Program;
-use App\PhoneNumber;
-use App\PatientCarePlan;
-use App\PatientCareTeamMember;
-use Illuminate\Database\Schema\Blueprint;
+use App\Practice;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class ChangeUsersTableAndRemoveMaPrefixTables extends Migration {
 
@@ -31,7 +25,7 @@ class ChangeUsersTableAndRemoveMaPrefixTables extends Migration {
 			}
 		});
 
-		$programs = Program::all();
+        $programs = Practice::all();
 		foreach($programs as $program) {
 			// remove tables
 			Schema::dropIfExists('ma_'.$program->blog_id.'_observations');

@@ -8,7 +8,7 @@ use App\Observation;
 use App\PatientCarePlan;
 use App\PatientCareTeamMember;
 use App\PhoneNumber;
-use App\Program;
+use App\Practice;
 use App\Services\CarePlanViewService;
 use App\User;
 use Carbon\Carbon;
@@ -56,7 +56,7 @@ class PatientController extends Controller
         }
 
         // program
-        $program = Program::find($wpUser->program_id);
+        $program = Practice::find($wpUser->program_id);
 
         $problems = $carePlanViewService->getProblemsToMonitor($wpUser);
 
@@ -505,7 +505,9 @@ class PatientController extends Controller
             $patients[$i]['dob'] = $dob->format('m-d-Y');
             $patients[$i]['mrn'] = $user->mrn_number;
             $patients[$i]['link'] = URL::route('patient.summary', array('patient' => $d->ID));
-            $programObj = Program::find(($user->program_id)) ? Program::find(($user->program_id)) : "";
+            $programObj = Practice::find(($user->program_id))
+                ? Practice::find(($user->program_id))
+                : "";
             if ($programObj->display_name) {
                 $patients[$i]['program'] = $programObj->display_name;
             } else {
@@ -560,7 +562,7 @@ class PatientController extends Controller
         }
 
         // program
-        $program = Program::find($wpUser->program_id);
+        $program = Practice::find($wpUser->program_id);
 
         return view('wpUsers.patient.alerts', ['program' => $program, 'patient' => $wpUser]);
     }
@@ -602,7 +604,7 @@ class PatientController extends Controller
                 return response("User not found", 401);
             }
             // program
-            $program = Program::find($wpUser->program_id);
+            $program = Practice::find($wpUser->program_id);
         } else {
             // program view
         }

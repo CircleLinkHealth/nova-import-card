@@ -9,7 +9,7 @@ use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
-use App\Program;
+use App\Practice;
 use App\Role;
 use App\User;
 use Carbon\Carbon;
@@ -22,7 +22,7 @@ class MonthlyBillingReportsController extends Controller
 {
     public function create()
     {
-        $programs = Program::orderBy('blog_id', 'desc')->pluck('display_name', 'blog_id')->all();
+        $programs = Practice::orderBy('blog_id', 'desc')->pluck('display_name', 'blog_id')->all();
 
         return view('admin.monthlyBillingReports.create', compact(['programs']));
     }
@@ -49,7 +49,7 @@ class MonthlyBillingReportsController extends Controller
         $ccmStatuses = $request->input('status', []);
 
         foreach ($programs as $programId) {
-            $program = Program::find($programId);
+            $program = Practice::find($programId);
 
             $time = Carbon::createFromDate($year, $month, 15);
             $start = $time->startOfMonth()->startOfDay()->format("Y-m-d H:i:s");

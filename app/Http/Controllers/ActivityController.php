@@ -2,18 +2,13 @@
 
 use App\Activity;
 use App\ActivityMeta;
-use App\Program;
-use App\User;
-use App\UserMeta;
+use App\Practice;
 use App\Services\ActivityService;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 /**
  * Class ActivityController
@@ -64,7 +59,7 @@ class ActivityController extends Controller {
 			}
 
 			//providers
-			$providers = Program::getProviders($user->blogId());
+            $providers = Practice::getProviders($user->blogId());
 			$provider_info = array();
 
 			$nurse_ids = User::whereHas('roles', function ($q) {

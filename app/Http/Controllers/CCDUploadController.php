@@ -1,14 +1,12 @@
 <?php namespace App\Http\Controllers;
 
-use App\CLH\CCD\ItemLogger\CcdItemLogger;
-use App\Models\CCD\Ccda;
 use App\CLH\CCD\Importer\QAImportManager;
-use App\Models\CCD\QAImportSummary;
-use App\Models\CCD\CcdVendor;
+use App\CLH\CCD\ItemLogger\CcdItemLogger;
 use App\CLH\Repositories\CCDImporterRepository;
-use App\Http\Requests;
-use App\Location;
-use App\Program;
+use App\Models\CCD\Ccda;
+use App\Models\CCD\CcdVendor;
+use App\Models\CCD\QAImportSummary;
+use App\Practice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
@@ -45,9 +43,11 @@ class CCDUploadController extends Controller
 
             $vendor = empty($request->input( 'ccd_vendor_id' )) ?: CcdVendor::find($request->input( 'ccd_vendor_id' ));
 
-            $program = Program::find($vendor->program_id);
+            $program = Practice::find($vendor->program_id);
 
-            if ( empty($program) ) throw new \Exception( 'Program not found,', 400 );
+            if (empty($program)) {
+                throw new \Exception('Practice not found,', 400);
+            }
 
             $ccda = Ccda::create( [
                 'user_id' => auth()->user()->ID,

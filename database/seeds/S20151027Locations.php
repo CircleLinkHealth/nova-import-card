@@ -9,7 +9,7 @@ class S20151027Locations extends Seeder
 
     public function run()
     {
-        $blogIds = \App\Program::all();
+        $blogIds = \App\Practice::all();
 
         foreach ($blogIds as $blog) {
 

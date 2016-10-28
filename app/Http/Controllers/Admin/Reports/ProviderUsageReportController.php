@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use App\PageTimer;
-use App\Program;
+use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use DateInterval;
@@ -46,7 +46,7 @@ class ProviderUsageReportController extends Controller
             $program = $request->input('program');
         }
 
-        $programs = Program::where('name', '=', $program)->get()->pluck('display_name', 'blog_id')->all();
+        $programs = Practice::where('name', '=', $program)->get()->pluck('display_name', 'blog_id')->all();
 
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
 

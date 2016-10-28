@@ -1,10 +1,9 @@
 <?php
 
+use App\CLH\Repositories\UserRepository;
+use App\Practice;
 use App\Role;
 use App\User;
-use App\Program;
-use App\CLH\Repositories\UserRepository;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -30,8 +29,8 @@ class AddUserProgramRelations extends Migration {
 		echo PHP_EOL.' removed all participant role attachments';
 
 		// get programs
-		$programs = Program::all();
-		//$program = Program::where('blog_id','=','22')->first();
+        $programs = Practice::all();
+        //$program = Practice::where('blog_id','=','22')->first();
 		//$programs = array($program);
 		$i = 0;
 		foreach($programs as $program) {

@@ -11,7 +11,7 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-8">
-                        <h2>Program: {{ $program->display_name }}</h2>
+                        <h2>Practice: {{ $program->display_name }}</h2>
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
@@ -31,7 +31,9 @@
 
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist" style="margin-top:20px;">
-                            <li role="presentation" class="active"><a href="#programTab" aria-controls="programTab" role="tab" data-toggle="tab">Program Info</a></li>
+                            <li role="presentation" class="active"><a href="#programTab" aria-controls="programTab"
+                                                                      role="tab" data-toggle="tab">Practice Info</a>
+                            </li>
                             <li role="presentation"><a href="#statsTab" aria-controls="careplansTab" role="tab" data-toggle="tab">Statistics</a></li>
                             <li role="presentation"><a href="#careplansTab" aria-controls="careplansTab" role="tab" data-toggle="tab">Careplans</a></li>
                         </ul>
@@ -39,8 +41,8 @@
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" id="programTab">
 
-                                <h2>Program - {{ $program->display_name }}</h2>
-                                <p>Program Info</p>
+                                <h2>Practice - {{ $program->display_name }}</h2>
+                                <p>Practice Info</p>
 
                                 <div class="form-group">
                                     <div class="row">

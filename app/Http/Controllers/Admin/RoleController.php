@@ -1,16 +1,10 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests;
-use App\Role;
-use App\Permission;
-use App\CPRulesPCP;
-use App\CPRulesItemMeta;
-use App\CPRulesItem;
 use App\Http\Controllers\Controller;
-
-use App\Program;
-use Illuminate\Http\Request;
+use App\Permission;
+use App\Role;
 use Auth;
+use Illuminate\Http\Request;
 
 class RoleController extends Controller {
 

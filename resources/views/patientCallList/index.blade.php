@@ -92,7 +92,7 @@
                                                 <th>CCM Time to date</th>
                                                 <th># Calls to date</th>
                                                 <th>Provider</th>
-                                                <th>Program</th>
+                                                <th>Practice</th>
                                                 <th></th>
                                             </tr>
                                             </thead>

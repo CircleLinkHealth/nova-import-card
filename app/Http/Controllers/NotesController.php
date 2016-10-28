@@ -4,7 +4,7 @@ use App\Activity;
 use App\Formatters\WebixFormatter;
 use App\PatientContactWindow;
 use App\PatientMonthlySummary;
-use App\Program;
+use App\Practice;
 use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
 use App\User;
@@ -198,9 +198,9 @@ class NotesController extends Controller
             Auth::user()->hasRole('care-center');
 
             //providers
-            $providers = Program::getProviders($patient->blogId());
-            $nonCCMCareCenterUsers = Program::getNonCCMCareCenterUsers($patient->blogId());
-            $careCenterUsers = Program::getCareCenterUsers($patient->blogId());
+            $providers = Practice::getProviders($patient->blogId());
+            $nonCCMCareCenterUsers = Practice::getNonCCMCareCenterUsers($patient->blogId());
+            $careCenterUsers = Practice::getCareCenterUsers($patient->blogId());
             $provider_info = [];
 
 

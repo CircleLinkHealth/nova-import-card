@@ -1,18 +1,12 @@
 <?php namespace database\seeds;
 
-use App\Program;
-use App\CarePlan;
-use App\CareSection;
 use App\CareItem;
 use App\CarePlanCareSection;
-use App\CarePlanItem;
-use App\CPRulesUCP;
-use App\CPRulesQuestions;
 use App\CPRulesItem;
 use App\CPRulesItemMeta;
-use App\User;
+use App\CPRulesQuestions;
+use App\Practice;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 
 class S20151215CarePlanMigration1 extends Seeder {
 
@@ -20,7 +14,7 @@ class S20151215CarePlanMigration1 extends Seeder {
     public function run()
     {
 
-        $programs = Program::where('blog_id', '>', '6')->get();
+        $programs = Practice::where('blog_id', '>', '6')->get();
         if(empty($programs)) {
             dd('no programs');
         }
