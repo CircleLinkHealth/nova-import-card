@@ -78,7 +78,7 @@ class Practice extends Model
 
     public function users()
     {
-        return $this->belongsToMany('App\User', 'lv_program_user', 'program_id', 'user_id');
+        return $this->belongsToMany(User::class, 'practice_user ', 'program_id', 'user_id');
     }
 
     public function location()

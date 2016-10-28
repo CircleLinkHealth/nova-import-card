@@ -381,38 +381,39 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\Call', 'outbound_cpm_id', 'ID');
     }
 
-    public function viewablePatientIds()
+    /**
+     * @return array
+     */
+    public function viewablePatientIds() : array
     {
         // get all patients who are in the same programs
         $programIds = $this->viewableProgramIds();
-        $patientIds = User::whereHas('programs', function ($q) use
-        (
-            $programIds
-        ) {
-            $q->whereIn('program_id', $programIds);
-        });
 
-        //if(!Auth::user()->can('admin-access')) {
-        $patientIds->whereHas('roles', function ($q) {
-            $q->where('name', '=', 'participant');
-        });
-        //}
-
-        $patientIds = $patientIds->pluck('ID')->all();
+        $patientIds = User::ofType('participant')
+            ->whereHas('programs', function ($q) use
+            (
+                $programIds
+            ) {
+                $q->whereIn('program_id', $programIds);
+            })
+            ->pluck('ID')
+            ->all();
 
         return $patientIds;
     }
 
     public function viewableProgramIds()
     {
-        $programIds = $this->programs()->pluck('id')->all();
+        $programIds = $this->programs()
+            ->pluck('id')
+            ->all();
 
         return $programIds;
     }
 
     public function programs()
     {
-        return $this->belongsToMany(Practice::class, 'lv_program_user', 'user_id', 'program_id');
+        return $this->belongsToMany(Practice::class, 'practice_user ', 'user_id', 'program_id');
     }
 
 
