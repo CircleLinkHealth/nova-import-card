@@ -61,8 +61,8 @@ class NotesController extends Controller
 
         $session_user = Auth::user();
 
-        $providers_for_blog = User::whereIn('ID', $session_user->viewableProviderIds())->pluck('display_name',
-            'ID')->sort();
+        $providers_for_blog = User::whereIn('id', $session_user->viewableProviderIds())->pluck('display_name',
+            'id')->sort();
 
         //TIME FILTERS
 
@@ -100,11 +100,11 @@ class NotesController extends Controller
 
             if ($only_mailed_notes) {
 
-                $notes = $this->service->getForwardedNotesWithRangeForProvider($provider->ID, $start, $end);
+                $notes = $this->service->getForwardedNotesWithRangeForProvider($provider->id, $start, $end);
 
             } else {
 
-                $notes = $this->service->getNotesWithRangeForProvider($provider->ID, $start, $end);
+                $notes = $this->service->getNotesWithRangeForProvider($provider->id, $start, $end);
 
             }
 
@@ -205,13 +205,13 @@ class NotesController extends Controller
 
 
             $author = Auth::user();
-            $author_id = $author->ID;
+            $author_id = $author->id;
             $author_name = $author->fullName;
 
             if (!empty($nonCCMCareCenterUsers)) {
                 foreach ($nonCCMCareCenterUsers as $nonCCMCareCenterUser) {
                     if ($nonCCMCareCenterUser->fullName) {
-                        $provider_info[$nonCCMCareCenterUser->ID] = $nonCCMCareCenterUser->fullName;
+                        $provider_info[$nonCCMCareCenterUser->id] = $nonCCMCareCenterUser->fullName;
                     }
                 }
             }
@@ -219,7 +219,7 @@ class NotesController extends Controller
             if (!empty($careCenterUsers)) {
                 foreach ($careCenterUsers as $careCenterUser) {
                     if ($careCenterUser->fullName) {
-                        $provider_info[$careCenterUser->ID] = $careCenterUser->fullName;
+                        $provider_info[$careCenterUser->id] = $careCenterUser->fullName;
                     }
                 }
             }
@@ -271,7 +271,7 @@ class NotesController extends Controller
 
         $note = $this->service->storeNote($input);
 
-        $patient = User::where('ID', $patientId)->first();
+        $patient = User::where('id', $patientId)->first();
 
         //UPDATE USER INFO CHANGES
         $info = $patient->patientInfo;
@@ -346,7 +346,7 @@ class NotesController extends Controller
 
                 if (auth()->user()->hasRole('provider')) {
 
-                    $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->ID, null);
+                    $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->id, null);
 
                     (new PatientMonthlySummary())->updateCallInfoForPatient($patient->patientInfo, true);
 
@@ -361,7 +361,7 @@ class NotesController extends Controller
                 if (isset($input['welcome_call'])) {
 
                     $this->service->storeCallForNote($note, 'welcome call', $patient, auth()->user(),
-                        auth()->user()->ID, null);
+                        auth()->user()->id, null);
 
                     $info->date_welcomed = Carbon::now()->format('Y-m-d H:i:s');
                     $info->save();
@@ -369,14 +369,14 @@ class NotesController extends Controller
                 } else {
 
                     $this->service->storeCallForNote($note, 'welcome attempt', $patient, auth()->user(),
-                        auth()->user()->ID, null);
+                        auth()->user()->id, null);
 
                 }
 
 
                 if (isset($input['other_call'])) {
 
-                    $this->service->storeCallForNote($note, 'other call', $patient, auth()->user(), auth()->user()->ID,
+                    $this->service->storeCallForNote($note, 'other call', $patient, auth()->user(), auth()->user()->id,
                         null);
 
                 }

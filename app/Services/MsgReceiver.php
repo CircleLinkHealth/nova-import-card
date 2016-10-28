@@ -42,7 +42,7 @@ class MsgReceiver {
         if($query->num_rows() >= 2)
         {
             $row   = $query->row();
-            error_log("Duplicate Message Response from Clickatell!!!!!!! wp_". $intBlogId ."_outbound_log: " . $row->ID ." $hexMoMsgId $sql");
+            error_log("Duplicate Message Response from Clickatell!!!!!!! wp_" . $intBlogId . "_outbound_log: " . $row->id . " $hexMoMsgId $sql");
             exit();
         }
 

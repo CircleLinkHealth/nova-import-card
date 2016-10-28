@@ -125,7 +125,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // add patient info
         if ($user->hasRole('participant') && !$user->patientInfo) {
             $patientInfo = new PatientInfo;
-            $patientInfo->user_id = $user->ID;
+            $patientInfo->user_id = $user->id;
             $patientInfo->save();
             $user->load('patientInfo');
         }
@@ -133,7 +133,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // add provider info
         if ($user->hasRole('provider') && !$user->providerInfo) {
             $providerInfo = new ProviderInfo;
-            $providerInfo->user_id = $user->ID;
+            $providerInfo->user_id = $user->id;
             $providerInfo->save();
             $user->load('providerInfo');
         }
@@ -141,7 +141,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // add nurse info
         if ($user->hasRole('care-center') && !$user->nurseInfo) {
             $nurseInfo = new NurseInfo;
-            $nurseInfo->user_id = $user->ID;
+            $nurseInfo->user_id = $user->id;
             $nurseInfo->save();
             $user->load('nurseInfo');
         }
@@ -204,7 +204,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->is_primary = 1;
-            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->user_id = $user->id;
             $phoneNumber->number = $params->get('study_phone_number');
             $phoneNumber->type = 'home';
             $phoneNumber->save();
@@ -215,7 +215,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->is_primary = 1;
-            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->user_id = $user->id;
             $phoneNumber->number = $params->get('home_phone_number');
             $phoneNumber->type = 'home';
             $phoneNumber->save();
@@ -225,7 +225,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
-            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->user_id = $user->id;
             $phoneNumber->number = $params->get('work_phone_number');
             $phoneNumber->type = 'work';
             $phoneNumber->save();
@@ -235,7 +235,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
-            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->user_id = $user->id;
             $phoneNumber->number = $params->get('mobile_phone_number');
             $phoneNumber->type = 'mobile';
             $phoneNumber->save();
@@ -313,10 +313,10 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $program_name = $program->display_name;
         $email_subject = '[' . $program_name . '] New User Registration!';
         $data = [
-            'patient_name' => $user->getFullNameAttribute(),
-            'patient_id' => $user->ID,
+            'patient_name'  => $user->getFullNameAttribute(),
+            'patient_id'    => $user->id,
             'patient_email' => $user->getEmailForPasswordReset(),
-            'program' => $program_name,
+            'program'       => $program_name,
         ];
 
         Mail::send($email_view, $data, function ($message) use
@@ -421,7 +421,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     {
         /*
         // meta
-        $userMeta = UserMeta::where('user_id', '=', $wpUser->ID)->pluck('meta_value', 'meta_key')->all();
+        $userMeta = UserMeta::where('user_id', '=', $wpUser->id)->pluck('meta_value', 'meta_key')->all();
 
         // config
         $userConfig = (new UserConfigTemplate())->getArray();
@@ -541,7 +541,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                         //echo "Adding to UCP! meta_key = status meta_value = " . $child1Info['status'] . "<br><br>";
                         $newUCP = new CPRulesUCP;
                         $newUCP->items_id = $itemData[$parentItemName][0][$child1Key]['items_id'];
-                        $newUCP->user_id = $wpUser->ID;
+                        $newUCP->user_id = $wpUser->id;
                         $newUCP->meta_key = 'status';
                         $newUCP->meta_value = $child1Info['status'];
                         $newUCP->save();
@@ -561,7 +561,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                                 //echo "Adding to UCP! meta_key = value meta_value = " . $child2Info['ui_default'];
                                 $newUCP = new CPRulesUCP;
                                 $newUCP->items_id = $child2Info['items_id'];
-                                $newUCP->user_id = $wpUser->ID;
+                                $newUCP->user_id = $wpUser->id;
                                 $newUCP->meta_key = 'value';
                                 $newUCP->meta_value = $child2Info['ui_default'];
                                 $newUCP->save();

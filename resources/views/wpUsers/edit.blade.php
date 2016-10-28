@@ -41,21 +41,22 @@
                         @include('errors.errors')
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $patient->ID)), 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $patient->id)), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 @if($patient->hasRole('participant'))
                                     {{--<div class="pull-left">
-                                        <a href="{{ URL::route('admin.users.msgCenter', array('patientId' => $patient->ID)) }}" class="btn btn-primary">App Simulator</a>
+                                        <a href="{{ URL::route('admin.users.msgCenter', array('patientId' => $patient->id)) }}" class="btn btn-primary">App Simulator</a>
                                     </div>--}}
                                     <div class="pull-left" style="margin-left:10px;">
-                                        <a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" class="btn btn-info">Go To Provider UI</a>
+                                        <a href="{{ URL::route('patient.summary', array('patientId' => $patient->id)) }}"
+                                           class="btn btn-info">Go To Provider UI</a>
                                     </div>
                                 @endif
                                 {{--<div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ URL::route('admin.users.careplan', array('patientId' => $patient->ID)) }}" class="btn btn-primary">View Care Plan Feed JSON</a>
+                                    <a href="{{ URL::route('admin.users.careplan', array('patientId' => $patient->id)) }}" class="btn btn-primary">View Care Plan Feed JSON</a>
                                 </div>--}}
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
@@ -524,7 +525,7 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::previous() }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::hidden('user_id', $patient->ID) !!}
+                                    {!! Form::hidden('user_id', $patient->id) !!}
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
                                     </form>
                                 </div>

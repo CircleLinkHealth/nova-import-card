@@ -64,7 +64,7 @@ class RegressionTest extends TestCase
         foreach ($this->patients as $patient) {
             $text .= "
             A patient was created:
-            id: {$patient->ID}
+            id: {$patient->id}
             name: {$patient->display_name}
             ";
         }

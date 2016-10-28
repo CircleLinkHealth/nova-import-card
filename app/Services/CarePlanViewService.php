@@ -9,11 +9,11 @@
 namespace App\Services;
 
 
+use App\CarePlanTemplate;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\UI\Biometrics;
 use App\Models\CPM\UI\Section;
 use App\PatientCarePlan as CarePlan;
-use App\CarePlanTemplate;
 use App\User;
 
 /**
@@ -244,7 +244,7 @@ class CarePlanViewService
                 return "HI";
                 break;
             case "Idaho":
-                return "ID";
+                return "id";
                 break;
             case "Illinois":
                 return "IL";

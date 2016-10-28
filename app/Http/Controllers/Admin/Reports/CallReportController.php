@@ -62,9 +62,9 @@ class CallReportController extends Controller {
 				])
 			->where('calls.status', '=', 'scheduled')
 			->leftJoin('notes', 'calls.note_id','=','notes.id')
-			->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
-			->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
-			->leftJoin('users AS scheduler_user', 'calls.scheduler','=','scheduler_user.ID')
+            ->leftJoin('users AS nurse', 'calls.outbound_cpm_id', '=', 'nurse.id')
+            ->leftJoin('users AS patient', 'calls.inbound_cpm_id', '=', 'patient.id')
+            ->leftJoin('users AS scheduler_user', 'calls.scheduler', '=', 'scheduler_user.id')
 			->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
 			->leftJoin('patient_monthly_summaries', function($join) use ($date)
 			{
@@ -74,10 +74,11 @@ class CallReportController extends Controller {
             ->leftJoin('wp_blogs AS program', 'patient.program_id', '=', 'program.id')
 			->leftJoin('patient_care_team_members', function($join)
 			{
-				$join->on('patient.ID', '=', 'patient_care_team_members.user_id');
+                $join->on('patient.id', '=', 'patient_care_team_members.user_id');
 				$join->where('patient_care_team_members.type', '=', "billing_provider");
 			})
-			->leftJoin('users AS billing_provider', 'patient_care_team_members.member_user_id','=','billing_provider.ID')
+            ->leftJoin('users AS billing_provider', 'patient_care_team_members.member_user_id', '=',
+                'billing_provider.id')
 			->groupBy('call_id')
 			->get();
 

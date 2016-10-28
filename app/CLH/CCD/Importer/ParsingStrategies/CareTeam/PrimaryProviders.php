@@ -3,13 +3,12 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\CareTeam;
 
 
-use App\Models\CCD\Ccda;
 use App\CLH\CCD\ItemLogger\CcdProviderLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\CLH\Contracts\Repositories\UserRepository;
 use App\ForeignId;
-use App\User;
+use App\Models\CCD\Ccda;
 
 class PrimaryProviders implements ParsingStrategy
 {
@@ -59,9 +58,9 @@ class PrimaryProviders implements ParsingStrategy
                  */
                 if (isset($providerLog->provider_id)) {
                     $attributes = [
-                        'user_id' => $provider->ID,
-                        'foreign_id' => $providerLog->provider_id,
-                        'system' => ForeignId::APRIMA,
+                        'user_id'     => $provider->id,
+                        'foreign_id'  => $providerLog->provider_id,
+                        'system'      => ForeignId::APRIMA,
                         'location_id' => empty($this->locationId) ? null : $this->locationId,
                     ];
 

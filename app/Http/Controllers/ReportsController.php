@@ -135,7 +135,7 @@ class ReportsController extends Controller
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+        $patients = User::whereIn('id', Auth::user()->viewablePatientIds())
             ->with('primaryProgram')
             ->get();
 
@@ -196,10 +196,10 @@ class ReportsController extends Controller
                 $u20_patients[$patient_counter]['ccm_status'] = ucwords($patient->CCMStatus);
                 $u20_patients[$patient_counter]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
                 $u20_patients[$patient_counter]['patient_name'] = $patient->fullName;
-                $u20_patients[$patient_counter]['patient_id'] = $patient->ID;
+                $u20_patients[$patient_counter]['patient_id'] = $patient->id;
                 $acts = DB::table('lv_activities')
                     ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
-                    ->where('patient_id', $patient->ID)
+                    ->where('patient_id', $patient->id)
                     ->whereBetween('performed_at', [
                         $start,
                         $end,
@@ -209,7 +209,7 @@ class ReportsController extends Controller
                     ->get();
 
 //				foreach ($acts as $key => $value) {
-//					$acts[$key]['patient'] = User::find($patient->ID);
+//					$acts[$key]['patient'] = User::find($patient->id);
 //				}
 
                 foreach ($acts as $activity) {
@@ -307,7 +307,7 @@ class ReportsController extends Controller
 
         }
 
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+        $patients = User::whereIn('id', Auth::user()->viewablePatientIds())
             ->with('primaryProgram')
             ->get();
 
@@ -374,10 +374,10 @@ class ReportsController extends Controller
                 } else {
                     $u20_patients[$act_count]['provider_name'] = '';
                 }
-                $u20_patients[$act_count]['patient_id'] = $patient->ID;
+                $u20_patients[$act_count]['patient_id'] = $patient->id;
                 $acts = DB::table('lv_activities')
                     ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
-                    ->where('patient_id', $patient->ID)
+                    ->where('patient_id', $patient->id)
                     ->whereBetween('performed_at', [
                         $start,
                         $end,
@@ -387,7 +387,7 @@ class ReportsController extends Controller
                     ->get();
 
 //				foreach ($acts as $key => $value) {
-//					$acts[$key]['patient'] = User::find($patient->ID);
+//					$acts[$key]['patient'] = User::find($patient->id);
 //				}
 
                 foreach ($acts as $activity) {
@@ -467,7 +467,7 @@ class ReportsController extends Controller
     ) {
         if ($request->header('Client') == 'mobi') {
             // get and validate current user
-            \JWTAuth::setIdentifier('ID');
+            \JWTAuth::setIdentifier('id');
             $wpUser = \JWTAuth::parseToken()->authenticate();
             if (!$wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
@@ -480,7 +480,7 @@ class ReportsController extends Controller
             }
         }
 
-        $feed = $this->service->progress($wpUser->ID);
+        $feed = $this->service->progress($wpUser->id);
 
         return json_encode($feed);
     }
@@ -491,7 +491,7 @@ class ReportsController extends Controller
     ) {
         if ($request->header('Client') == 'mobi') {
             // get and validate current user
-            \JWTAuth::setIdentifier('ID');
+            \JWTAuth::setIdentifier('id');
             $wpUser = \JWTAuth::parseToken()->authenticate();
             if (!$wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
@@ -504,7 +504,7 @@ class ReportsController extends Controller
             }
         }
 
-        $feed = $this->service->careplan($wpUser->ID);
+        $feed = $this->service->careplan($wpUser->id);
 
         return response()->json($feed);
     }
@@ -529,7 +529,7 @@ class ReportsController extends Controller
         $patient = User::find($patientId);
 
         $careTeam = PatientCareTeamMember::with('user')
-            ->whereUserId($patient->ID)
+            ->whereUserId($patient->id)
 
             ->get();
 
@@ -689,8 +689,8 @@ class ReportsController extends Controller
                     }
 
                     $condition = 'N/A';
-                    if (isset($usersCondition[$user->ID])) {
-                        $condition = $usersCondition[$user->ID];
+                    if (isset($usersCondition[$user->id])) {
+                        $condition = $usersCondition[$user->id];
                     }
                     $programName = 'N/A';
                     $program = Practice::find($user->program_id);
@@ -698,7 +698,7 @@ class ReportsController extends Controller
                         $programName = $program->display_name;
                     }
                     $sheet->appendRow([
-                        $user->ID,
+                        $user->id,
                         $user->fullName,
                         $condition,
                         $programName,
@@ -754,7 +754,7 @@ class ReportsController extends Controller
                 $i = 0;
                 // header
                 $sheet->appendRow([
-                    'Patient ID',
+                    'Patient id',
                     'First Name',
                     'Last Name',
                     'Billing Provider',
@@ -771,8 +771,8 @@ class ReportsController extends Controller
                     'Date Paused',
                     'Date Withdrawn',
                     'Site',
-                    'Caller ID',
-                    'Location ID',
+                    'Caller id',
+                    'Location id',
                     'Location Name',
                     'Location Phone',
                     'Location Address',
@@ -812,7 +812,7 @@ class ReportsController extends Controller
                     }
 
                     $sheet->appendRow([
-                        $user->ID,
+                        $user->id,
                         $user->first_name,
                         $user->last_name,
                         $billingProviderName,
@@ -829,7 +829,7 @@ class ReportsController extends Controller
                         $user->patientInfo->date_paused,
                         $user->patientInfo->date_withdrawn,
                         $user->program_id,
-                        'Caller ID',
+                        'Caller id',
                         // provider_phone
                         $user->patientInfo->preferred_contact_location,
                         $locationName,
@@ -920,7 +920,7 @@ class ReportsController extends Controller
                             $dt->format('Y-m-d') . ' 00:00:01',
                             $dt->format('Y-m-d') . ' 23:59:59',
                         ])
-                            ->where('provider_id', $user->ID)
+                            ->where('provider_id', $user->id)
                             ->where('activity_type', '!=', '')
                             ->sum('duration');
 

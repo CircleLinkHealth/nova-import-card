@@ -138,8 +138,10 @@ class MsgCPRules {
         /**
          *
          *	@internal 	Returns question information for next question to ask.
-         *	@param 		strMsgId: Message ID
-         *	@return 	question data
+         *
+         * @param        strMsgId : Message id
+         *
+         * @return    question data
          *	@todo		Currently query may blurr question categories between list, Range; FreeText may not be combined at this time
          *
          */
@@ -272,8 +274,10 @@ limit 1";
         /**
          *
          *	@internal 	Returns question information for next question to ask.
-         *	@param 		strMsgId: Message ID
-         *	@return 	question data
+         *
+         * @param        strMsgId : Message id
+         *
+         * @return    question data
          *	@todo		Currently query may blurr question categories between list, Range; FreeText may not be combined at this time
          *
          */
@@ -567,8 +571,10 @@ query;
         /**
          *
          *	@internal 	Returns last weight we recieved
-         *	@param 		intID: User ID
-         *	@return 	question observation date and weight
+         *
+         * @param        intID : User id
+         *
+         * @return    question observation date and weight
          *
          */
 
@@ -639,8 +645,10 @@ query;
         /**
          *
          *	@internal 	Returns last weight we recieved
-         *	@param 		intID: User ID
-         *	@return 	question observation date and weight
+         *
+         * @param        intID : User id
+         *
+         * @return    question observation date and weight
          *
          */
 

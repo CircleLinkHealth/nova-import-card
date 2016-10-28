@@ -1,13 +1,9 @@
 <?php
 
-use App\User;
 use App\PatientInfo;
-use App\ProviderInfo;
-use App\PhoneNumber;
-use App\PatientCarePlan;
-use App\PatientCareTeamMember;
-use Illuminate\Database\Schema\Blueprint;
+use App\User;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddApprovalsToPatientsTable extends Migration {
 
@@ -42,14 +38,14 @@ class AddApprovalsToPatientsTable extends Migration {
 		})->with('meta', 'patientInfo')->get();
 		echo 'Process role patient users - Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
-			echo 'Processing user '.$user->ID.PHP_EOL;
+            echo 'Processing user ' . $user->id . PHP_EOL;
 			echo 'Add to User->PatientInfo'.PHP_EOL;
 
 			// skip if no existing patientInfo
 			if(!$user->patientInfo) {
 				echo 'creating new patientInfo'.PHP_EOL;
 				$patientInfo = new PatientInfo;
-				$patientInfo->user_id = $user->ID;
+                $patientInfo->user_id = $user->id;
 				$user->patientInfo()->save($patientInfo);
 				$user->load('patientInfo');
 			}

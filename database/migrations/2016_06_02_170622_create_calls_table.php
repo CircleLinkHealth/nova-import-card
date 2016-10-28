@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateCallsTable extends Migration
@@ -34,13 +34,13 @@ class CreateCallsTable extends Migration
             $table->integer('call_time')->nullable();
 
             $table->foreign('inbound_cpm_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
             $table->foreign('outbound_cpm_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

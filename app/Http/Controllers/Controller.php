@@ -33,7 +33,7 @@ class Controller extends BaseController
 
         if ($clearPatientSessions) {
             if (auth()->check()) {
-                $user = auth()->user()->ID;
+                $user = auth()->user()->id;
             } else {
                 $user = $request->input('providerId');
             }

@@ -77,12 +77,13 @@
                             <?php
                             if (!empty($detailSection)) {
                                 if ($section['section'] == 'obs_biometrics') {
-                                    //echo '<a href="'.get_permalink( get_page_by_title('patient biometric chart') ).'?user='.$wpUser->ID.'"><span class="glyphicon glyphicon-stats"></span></a> &nbsp;&nbsp; ';
-                                    echo '<a href="'.URL::route('patient.charts', array('patient' => $wpUser->ID)).'"><span class="glyphicon glyphicon-stats"></span></a> &nbsp;&nbsp;';
+                                    //echo '<a href="'.get_permalink( get_page_by_title('patient biometric chart') ).'?user='.$wpUser->id.'"><span class="glyphicon glyphicon-stats"></span></a> &nbsp;&nbsp; ';
+                                    echo '<a href="' . URL::route('patient.charts',
+                                                    array('patient' => $wpUser->id)) . '"><span class="glyphicon glyphicon-stats"></span></a> &nbsp;&nbsp;';
                                 }
-                                echo '<a href="?user=' . $wpUser->ID . '"><< Return</a>';
+                                echo '<a href="?user=' . $wpUser->id . '"><< Return</a>';
                             } else {
-                                echo '<a href="?user=' . $wpUser->ID . '&detail=' . $section['section'] . '">Details >></a>';
+                                echo '<a href="?user=' . $wpUser->id . '&detail=' . $section['section'] . '">Details >></a>';
                             }
                             ?>
                         </div>
@@ -96,7 +97,7 @@
                     <script>
                         function filterText(text) {
                             // var text = node;
-                            if (!text) return
+                            if (!text) return;
                             <?php echo $section['id']; ?>.
                             filter();
 

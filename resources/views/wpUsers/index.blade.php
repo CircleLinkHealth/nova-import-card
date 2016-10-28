@@ -84,8 +84,9 @@
                             @if (count($wpUsers) > 0)
                                 @foreach( $wpUsers as $wpUser )
                                     <tr>
-                                        <td><input type="checkbox" name="users[]" value="{{ $wpUser->ID }}"></td>
-                                        <td><a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class=""> {{ $wpUser->fullNameWithID }}</a></td>
+                                        <td><input type="checkbox" name="users[]" value="{{ $wpUser->id }}"></td>
+                                        <td><a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->id)) }}"
+                                               class=""> {{ $wpUser->fullNameWithID }}</a></td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
                                                 @foreach($wpUser->roles as $role)
@@ -102,15 +103,21 @@
                                         </td>
                                         <td class="text-right">
                                             @if(Entrust::can('users-edit-all'))
-                                                <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->ID)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+                                                <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->id)) }}"
+                                                   class="btn btn-primary btn-xs"><i
+                                                            class="glyphicon glyphicon-edit"></i> Edit</a>
                                             @endif
                                             @if (count($wpUser->roles) > 0)
                                                 @if($wpUser->hasRole('participant'))
-                                                    <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->ID)) }}" class="btn btn-info btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-eye-open"></i> UI</a>
+                                                    <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->id)) }}"
+                                                       class="btn btn-info btn-xs" style="margin-left:10px;"><i
+                                                                class="glyphicon glyphicon-eye-open"></i> UI</a>
                                                 @endif
                                             @endif
                                             @if(Entrust::can('users-edit-all'))
-                                                <a href="{{ URL::route('admin.users.destroy', array('id' => $wpUser->ID)) }}" class="btn btn-danger btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-remove-sign"></i> Delete</a>
+                                                <a href="{{ URL::route('admin.users.destroy', array('id' => $wpUser->id)) }}"
+                                                   class="btn btn-danger btn-xs" style="margin-left:10px;"><i
+                                                            class="glyphicon glyphicon-remove-sign"></i> Delete</a>
                                             @endif
                                         </td>
                                     </tr>
@@ -130,7 +137,7 @@
                             <h2>Invalid Users</h2>
                             <h3>Missing Config</h3>
                             @foreach( $invalidUsers as $user )
-                                User {{ $user->ID }} - {{ $user->display_name }}<br>
+                                User {{ $user->id }} - {{ $user->display_name }}<br>
                             @endforeach
                         @endif
                     </div>

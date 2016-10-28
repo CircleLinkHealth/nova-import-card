@@ -253,8 +253,8 @@ class NurseMonthlyBillGenerator
 //            'body' => $body,
 //            'subject' => $email_subject,
 //            'type' => 'note',
-//            'sender_cpm_id' => $sender->ID,
-//            'receiver_cpm_id' => $receiver->ID,
+//            'sender_cpm_id' => $sender->id,
+//            'receiver_cpm_id' => $receiver->id,
 //            'created_at' => $note->created_at,
 //            'note_id' => $note->id
 //        ]);

@@ -243,7 +243,7 @@ class UnsuccessfulHandler implements CallHandler
 
                 $three_weeks_ago = Carbon::now()->subWeek(3)->toDateTimeString();
                 $last_successful_call = Call::whereStatus('reached')
-                    ->where('outbound_cpm_id', $this->patient->ID)
+                    ->where('outbound_cpm_id', $this->patient->id)
                     ->where('called_date', '>=', $three_weeks_ago)
                     ->count();
 

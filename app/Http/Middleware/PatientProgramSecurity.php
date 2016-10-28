@@ -1,9 +1,9 @@
 <?php namespace App\Http\Middleware;
 
 use App\User;
+use Auth;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
-use Auth;
 
 class PatientProgramSecurity {
 
@@ -50,13 +50,13 @@ class PatientProgramSecurity {
 				return response('Could not locate patient.', 401);
 			} else {
 				// security
-				if($user->ID == Auth::user()->ID && !Auth::user()->can('users-view-self')) {
+                if ($user->id == Auth::user()->id && !Auth::user()->can('users-view-self')) {
 					abort(403);
 				}
-				if($user->ID != Auth::user()->ID && !Auth::user()->can('users-view-all')) {
+                if ($user->id != Auth::user()->id && !Auth::user()->can('users-view-all')) {
 					abort(403);
 				}
-				if(!in_array($user->ID, Auth::user()->viewablePatientIds())) {
+                if (!in_array($user->id, Auth::user()->viewablePatientIds())) {
 					abort(403);
 				}
 			}

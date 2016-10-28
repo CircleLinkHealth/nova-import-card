@@ -54,9 +54,9 @@ class Connection {
      * Connects to the host, authenticates to the specified API version using key and secret.
      *
      * @param string $version the specified API version to access
-     * @param string $key the client key (also known as ID)
+     * @param string $key the client key (also known as id)
      * @param string $secret the client secret
-     * @param string|int $practiceid|null the practice ID to be used in requests (optional)
+     * @param string|int $practiceid |null the practice id to be used in requests (optional)
      */
     public function __construct($version, $key, $secret, $practiceid=null) {
         $this->version = $version;

@@ -1,21 +1,13 @@
 <?php namespace App\Http\Controllers;
 
-use App\Comment;
-use App\Observation;
-use App\ObservationMeta;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Services\MsgChooser;
 use App\Services\MsgCPRules;
 use App\Services\ObservationService;
 use App\User;
 use Date;
 use DateTime;
-use Validator;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\DB;
+use Validator;
 
 class ObservationController extends Controller {
 
@@ -85,7 +77,7 @@ class ObservationController extends Controller {
  *     @SWG\Parameter(
  *         name="obs_message_id",
  *         in="body",
- *         description="Observation Message ID",
+ *         description="Observation Message id",
  *         required=true,
  *         @SWG\Schema(ref="#/definitions/Observation"),
  *     ),
@@ -135,13 +127,13 @@ class ObservationController extends Controller {
 		$msgCPRules = new MsgCPRules;
 		if ( $request->header('Client') == 'mobi' ) {
 			// get and validate current user
-			\JWTAuth::setIdentifier('ID');
+            \JWTAuth::setIdentifier('id');
 			$wpUser = \JWTAuth::parseToken()->authenticate();
 			if (!$wpUser) {
 				return response()->json(['error' => 'invalid_credentials'], 401);
 			}
 			$params = $request->input();
-			$params['user_id'] = $wpUser->ID;
+            $params['user_id'] = $wpUser->id;
 			$params['source'] = 'manual_input';
 			$params['isStartingObs'] = 'N';
 		} else if ( $request->header('Client') == 'ui' ) { // WP Site
@@ -171,7 +163,7 @@ class ObservationController extends Controller {
 			//***** start extra work here to decode from quirky UI ******
 			// creates params array to mimick the way mobi sends it
 
-			$params['user_id'] = $wpUser->ID;
+            $params['user_id'] = $wpUser->id;
 			//$date = DateTime::createFromFormat("Y-m-d\TH:i", $input['observationDate']);
 			$date = DateTime::createFromFormat("Y-m-d H:i", $input['observationDate']);
 			$date = $date->format("Y-m-d H:i:s");
@@ -232,7 +224,10 @@ class ObservationController extends Controller {
 			}
 		} else {
 			// ui response
-			return redirect()->route('patient.summary', ['id' => $wpUser->ID, 'programId' => $input['programId']])->with('messages', ['successfully added new observation'])->send();
+            return redirect()->route('patient.summary', [
+                'id'        => $wpUser->id,
+                'programId' => $input['programId'],
+            ])->with('messages', ['successfully added new observation'])->send();
 		}
     }
 
@@ -240,10 +235,10 @@ class ObservationController extends Controller {
 	/**
 	 * @SWG\Get(
 	 *     path="/observations/{id}",
-	 *     description="Returns a observations based on a single ID",
+     *     description="Returns a observations based on a single id",
 	 *     operationId="observations",
 	 *     @SWG\Parameter(
-	 *         description="ID of observations to fetch",
+     *         description="id of observations to fetch",
 	 *         format="int64",
 	 *         in="path",
 	 *         name="id",

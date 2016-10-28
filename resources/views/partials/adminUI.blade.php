@@ -296,10 +296,10 @@
                                style=""><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->ID }}]<span
+                               aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->id }}]<span
                                         class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ URL::route('admin.users.edit', array('id' => Auth::user()->ID)) }}"
+                                <li><a href="{{ URL::route('admin.users.edit', array('id' => Auth::user()->id)) }}"
                                        class=""> My Account</a></li>
                                 <li><a href="{{ url('/auth/logout') }}">Logout</a></li>
                             </ul>

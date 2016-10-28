@@ -48,7 +48,7 @@ class QAImportManager
             ? (new RoutineBuilder($this->ccd))->getRoutine()
             : CcdVendor::find($ccda->vendor_id)->routine()->first()->strategies()->get();
 
-        Log::info('Routine ID: ' . $this->routine[0]->ccd_import_routine_id . ' ' . $this->ccd->demographics->name->family);
+        Log::info('Routine id: ' . $this->routine[0]->ccd_import_routine_id . ' ' . $this->ccd->demographics->name->family);
     }
 
     public function generateCarePlanFromCCD()
@@ -124,7 +124,9 @@ class QAImportManager
             $users = $primaryProviderParser->parse($this->ccda);
             $output['provider'] = $users;
 
-            $demographics->provider_id = isset($users[0]) ? $users[0]->ID : null;
+            $demographics->provider_id = isset($users[0])
+                ? $users[0]->id
+                : null;
         }
 
         //If a providerId was passed in (case of Aprima Api)

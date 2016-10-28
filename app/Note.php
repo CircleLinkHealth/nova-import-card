@@ -21,7 +21,7 @@ class Note extends Model
 
     public function patient()
     {
-        return $this->belongsTo('App\User', 'patient_id', 'ID');
+        return $this->belongsTo('App\User', 'patient_id', 'id');
     }
 
     public function mail()
@@ -36,12 +36,12 @@ class Note extends Model
 
     public function author()
     {
-        return $this->belongsTo('App\User', 'author_id', 'ID');    
+        return $this->belongsTo('App\User', 'author_id', 'id');
     }
 
     public function program()
     {
-        return $this->belongsTo('App\User', 'author_id', 'ID');
+        return $this->belongsTo('App\User', 'author_id', 'id');
     }
 
 }

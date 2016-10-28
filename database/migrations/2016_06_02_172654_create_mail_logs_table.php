@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 
@@ -30,13 +30,13 @@ class CreateMailLogsTable extends Migration
             $table->unsignedInteger('receiver_cpm_id');
 
             $table->foreign('sender_cpm_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
             $table->foreign('receiver_cpm_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

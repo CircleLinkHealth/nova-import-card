@@ -53,7 +53,7 @@ class CareplanUIService extends Facade {
 
 		$user_id = '0';
 		if($user) {
-			$user_id = $user->ID;
+            $user_id = $user->id;
 		}
 
 		$sectionData = $this->getCareplanSectionData($programId, $pcpSectionText, $user);
@@ -341,7 +341,7 @@ class CareplanUIService extends Facade {
         $section_text = $pcpSectionText;
         $user_id = '0';
         if ($user) {
-            $user_id = $user->ID;
+            $user_id = $user->id;
         }
 
         // build sql string

@@ -66,7 +66,7 @@ class ProviderMonthlyUsageReportController extends Controller
                         'med_assistant'
                     ]);
                 })
-                ->pluck('ID')->toArray();
+                ->pluck('id')->toArray();
 
             $programStats[$programName]['number_of_office_users'] = count($officeUserIds);
 
@@ -76,7 +76,7 @@ class ProviderMonthlyUsageReportController extends Controller
             (
                 $officeUserIds
             ) {
-                $q->whereIn('ID', $officeUserIds);
+                $q->whereIn('id', $officeUserIds);
             })
                 ->whereBetween('start_time', [
                     $startDate,
@@ -115,7 +115,7 @@ class ProviderMonthlyUsageReportController extends Controller
                         'care-center'
                     ]);
                 })
-                ->pluck('ID')->toArray();
+                ->pluck('id')->toArray();
 
             $programStats[$programName]['number_of_nurse_users'] = count($nurseUserIds);
 
@@ -132,7 +132,7 @@ class ProviderMonthlyUsageReportController extends Controller
                         'participant'
                     ]);
                 })
-                ->pluck('ID')->toArray();
+                ->pluck('id')->toArray();
 
             $programStats[$programName]['number_of_participant_users'] = count($participantUserIds);
 
@@ -142,13 +142,13 @@ class ProviderMonthlyUsageReportController extends Controller
             (
                 $nurseUserIds
             ) {
-                $q->whereIn('ID', $nurseUserIds);
+                $q->whereIn('id', $nurseUserIds);
             })
                 ->whereHas('patient', function ($q) use
                 (
                     $participantUserIds
                 ) {
-                    $q->whereIn('ID', $participantUserIds);
+                    $q->whereIn('id', $participantUserIds);
                 })
                 ->whereBetween('start_time', [
                     $startDate,

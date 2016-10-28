@@ -15,7 +15,7 @@ $new_user = false;
 
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
-    {!! Form::open(array('url' => URL::route('patient.careplan.store', array('patientId' => $patient->ID)), 'class' => '', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => URL::route('patient.careplan.store', array('patientId' => $patient->id)), 'class' => '', 'id' => 'ucpForm')) !!}
 
     <div id="content" class="row">
         <div class="container">
@@ -40,7 +40,7 @@ $new_user = false;
                 </div>
 
                 <div class="row">
-                    <input type="hidden" name="user_id" value="{{ $patient->ID }}">
+                    <input type="hidden" name="user_id" value="{{ $patient->id }}">
                     <input type="hidden" name="program_id" value="{{ $patient->program_id }}">
 
                     @if($carePlan)

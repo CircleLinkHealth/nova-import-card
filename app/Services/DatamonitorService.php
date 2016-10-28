@@ -441,7 +441,7 @@ class DatamonitorService
 
         // get message info
         $msgCPRules = new MsgCPRules();
-        $message_info = $msgCPRules->getQuestion($message_id, $user->ID, 'EMAIL_' . $user->preferred_contact_language,
+        $message_info = $msgCPRules->getQuestion($message_id, $user->id, 'EMAIL_' . $user->preferred_contact_language,
             $user->program_id, 'SOL');
 
         //Breaks down here, suspect the params are not as expected in getQuestion()
@@ -481,14 +481,14 @@ class DatamonitorService
 
         // log to db by adding comment record
         $comment_content = [
-            'user_id'    => $user->ID,
+            'user_id'    => $user->id,
             'subject'    => $email_subject,
             'message'    => $email_message,
             'recipients' => $email_sent_list,
         ];
         $comment_params = [
             'comment_content' => serialize($comment_content),
-            'user_id'         => $user->ID,
+            'user_id'         => $user->id,
             'comment_type'    => 'dm_alert_email',
             'comment_parent'  => $observation['comment_id'],
         ];
@@ -500,7 +500,7 @@ class DatamonitorService
         $comment->comment_content = serialize($comment_content);
         $comment->comment_type = 'alert_email';
         $comment->comment_parent = 0;
-        $comment->user_id = $user->ID;
+        $comment->user_id = $user->id;
         $comment->comment_author_IP = '127.0.0.1';
         $comment->comment_agent = 'N/A';
         $comment->comment_date = date('Y-m-d H:i:s');

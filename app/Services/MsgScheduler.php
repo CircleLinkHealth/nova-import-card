@@ -293,7 +293,7 @@ class MsgScheduler {
             echo "<br>MsgScheduler->create_app_schedule() Missing ProgramId";
             return false;
         }
-        $provider_id    = $arrData[$user_id]['usermeta']['intProgramId']; // Provider ID
+        $provider_id = $arrData[$user_id]['usermeta']['intProgramId']; // Provider id
         $qstype         = $arrData[$user_id]['usermeta']['msgtype'];  // Question Group Type
         $qtype          = $arrData[$user_id]['usermeta']['wp_'.$provider_id.'_user_config']['preferred_contact_method']."_".$arrData[$user_id]['usermeta']['wp_'.$provider_id.'_user_config']['preferred_contact_language'];
         $strMessageId   = 'schedulercontroller';

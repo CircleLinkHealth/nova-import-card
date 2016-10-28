@@ -8,7 +8,7 @@ class Location extends Model
 {
     use SoftDeletes;
 
-    //Aprima's constant location ID.
+    //Aprima's constant location id.
     const UPG_PARENT_LOCATION_ID = 26;
 
     /**

@@ -38,7 +38,7 @@ class DashboardController extends Controller {
 	public function index()
 	{
 
-		$user = $wpUser = User::find(Auth::user()->ID);
+        $user = $wpUser = User::find(Auth::user()->id);
 
 		$roles = Role::all();
 

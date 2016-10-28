@@ -27,8 +27,8 @@ class CarePlanController extends Controller {
 		$params = $request->all();
 
 		// filter user
-        $users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id',
-            'desc')->get()->pluck('fullNameWithId', 'ID')->all();
+        $users = User::whereIn('id', Auth::user()->viewablePatientIds())->OrderBy('id',
+            'desc')->get()->pluck('fullNameWithId', 'id')->all();
 		$filterUser = 'all';
 		if(isset($params['filterUser'])) {
 			$filterUser = $params['filterUser'];
@@ -68,8 +68,8 @@ class CarePlanController extends Controller {
 			abort(403);
 		}
 
-        $users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id',
-            'desc')->get()->pluck('fullNameWithId', 'ID')->all();
+        $users = User::whereIn('id', Auth::user()->viewablePatientIds())->OrderBy('id',
+            'desc')->get()->pluck('fullNameWithId', 'id')->all();
 
 		// display view
 		return view('admin.carePlans.create', [ 'users' => $users ]);
@@ -126,8 +126,8 @@ class CarePlanController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-        $users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id',
-            'desc')->get()->pluck('fullNameWithId', 'ID')->all();
+        $users = User::whereIn('id', Auth::user()->viewablePatientIds())->OrderBy('id',
+            'desc')->get()->pluck('fullNameWithId', 'id')->all();
 
 		$carePlan = CarePlan::find($id);
 		$carePlan->build();
@@ -244,8 +244,8 @@ class CarePlanController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-        $users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id',
-            'desc')->get()->pluck('fullNameWithId', 'ID')->all();
+        $users = User::whereIn('id', Auth::user()->viewablePatientIds())->OrderBy('id',
+            'desc')->get()->pluck('fullNameWithId', 'id')->all();
 
 		$carePlan = CarePlan::find($id);
 		foreach($carePlan->careSections as $careSection) {
@@ -274,8 +274,8 @@ class CarePlanController extends Controller {
 		if(!Auth::user()->can('programs-manage')) {
 			abort(403);
 		}
-        $users = User::whereIn('ID', Auth::user()->viewablePatientIds())->OrderBy('id',
-            'desc')->get()->pluck('fullNameWithId', 'ID')->all();
+        $users = User::whereIn('id', Auth::user()->viewablePatientIds())->OrderBy('id',
+            'desc')->get()->pluck('fullNameWithId', 'id')->all();
 
 		$carePlan = CarePlan::find($id);
 		foreach($carePlan->careSections as $careSection) {

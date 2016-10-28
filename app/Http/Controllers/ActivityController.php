@@ -64,7 +64,7 @@ class ActivityController extends Controller {
 
 			$nurse_ids = User::whereHas('roles', function ($q) {
 				$q->where('name', '=', 'care-center');
-			})->pluck('ID');
+            })->pluck('id');
 
 			foreach ($nurse_ids as $nurse_id){
 
@@ -73,18 +73,18 @@ class ActivityController extends Controller {
 				$viewable_patients = $nurse->viewablePatientIds();
 
 				if(in_array($patientId, $viewable_patients)){
-					$provider_info[$nurse->ID] = $nurse->fullName;
+                    $provider_info[$nurse->id] = $nurse->fullName;
 				}
 
 			}
 
 
 			foreach ($providers as $provider) {
-				$provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
+                $provider_info[$provider->id] = User::find($provider->id)->getFullNameAttribute();
 			}
 
 			foreach ($providers as $provider) {
-				$provider_info[$provider->ID] = User::find($provider->ID)->getFullNameAttribute();
+                $provider_info[$provider->id] = User::find($provider->id)->getFullNameAttribute();
 			}
 
 			

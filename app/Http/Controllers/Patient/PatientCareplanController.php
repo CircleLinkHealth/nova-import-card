@@ -39,7 +39,7 @@ class PatientCareplanController extends Controller
     public function index(Request $request)
     {
         $patientData = [];
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+        $patients = User::whereIn('id', Auth::user()->viewablePatientIds())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
             ->select(DB::raw('users.*'))
             ->get();
@@ -56,7 +56,7 @@ class PatientCareplanController extends Controller
                     }
                 }
             }
-            $approvers = User::whereIn('ID', $approverIds)->get();
+            $approvers = User::whereIn('id', $approverIds)->get();
         }
 
         if ($patients->count() > 0) {
@@ -86,9 +86,9 @@ class PatientCareplanController extends Controller
                 if ($patient->carePlanStatus == 'provider_approved') {
                     $approverId = $patient->carePlanProviderApprover;
                     if ($approverId == 5) {
-                        //dd($approvers->where('ID', $approverId)->first());
+                        //dd($approvers->where('id', $approverId)->first());
                     }
-                    $approver = $approvers->where('ID', $approverId)->first();
+                    $approver = $approvers->where('id', $approverId)->first();
                     if (!$approver) {
                         if (!empty($approverId)) {
                             if (!isset($foundUsers[$approverId])) {
@@ -110,14 +110,16 @@ class PatientCareplanController extends Controller
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
                     if (Auth::user()->hasRole(['provider'])) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', ['patient' => $patient->ID]) . '"><strong>Approve Now</strong></a>';
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
+                                ['patient' => $patient->id]) . '"><strong>Approve Now</strong></a>';
                     }
                 } else if ($patient->carePlanStatus == 'draft') {
                     $careplanStatus = 'CLH Approve';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'CLH Approve';
                     if (Auth::user()->hasRole(['care-center']) || Auth::user()->hasRole(['administrator'])) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', ['patient' => $patient->ID]) . '"><strong>CLH Approve</strong></a>';
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
+                                ['patient' => $patient->id]) . '"><strong>CLH Approve</strong></a>';
                     }
                 }
 
@@ -151,24 +153,24 @@ class PatientCareplanController extends Controller
 
                 if ($patient->patientInfo) {
                     $patientData[] = [
-                        'key' => $patient->ID,
-                        'id' => $patient->ID,
-                        'patient_name' => $patient->fullName,
-                        'first_name' => $patient->first_name,
-                        'last_name' => $patient->last_name,
-                        'careplan_status' => $careplanStatus,
-                        'careplan_status_link' => $careplanStatusLink,
+                        'key'                        => $patient->id,
+                        'id'                         => $patient->id,
+                        'patient_name'               => $patient->fullName,
+                        'first_name'                 => $patient->first_name,
+                        'last_name'                  => $patient->last_name,
+                        'careplan_status'            => $careplanStatus,
+                        'careplan_status_link'       => $careplanStatusLink,
                         'careplan_provider_approver' => $approverName,
-                        'dob' => Carbon::parse($patient->birthDate)->format('m/d/Y'),
-                        'phone' => $patient->phone,
-                        'age' => $patient->age,
-                        'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
-                        'last_read' => '',
-                        'ccm_time' => $patient->patientInfo->cur_month_activity_time,
-                        'ccm_seconds' => $patient->patientInfo->cur_month_activity_time,
-                        'provider' => $bpName,
-                        'program_name' => $programName,
-                        'careplan_last_printed' => $printed_date,
+                        'dob'                        => Carbon::parse($patient->birthDate)->format('m/d/Y'),
+                        'phone'                      => $patient->phone,
+                        'age'                        => $patient->age,
+                        'reg_date'                   => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
+                        'last_read'                  => '',
+                        'ccm_time'                   => $patient->patientInfo->cur_month_activity_time,
+                        'ccm_seconds'                => $patient->patientInfo->cur_month_activity_time,
+                        'provider'                   => $bpName,
+                        'program_name'               => $programName,
+                        'careplan_last_printed'      => $printed_date,
                         'careplan_printed' => $printed_status
                     ];
                 }
@@ -347,7 +349,59 @@ class PatientCareplanController extends Controller
         $carePlans = CarePlan::where('program_id', '=', $programId)->pluck('display_name', 'id')->all();
 
         // States (for dropdown)
-        $states = ['AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming"];
+        $states = [
+            'AL' => "Alabama",
+            'AK' => "Alaska",
+            'AZ' => "Arizona",
+            'AR' => "Arkansas",
+            'CA' => "California",
+            'CO' => "Colorado",
+            'CT' => "Connecticut",
+            'DE' => "Delaware",
+            'DC' => "District Of Columbia",
+            'FL' => "Florida",
+            'GA' => "Georgia",
+            'HI' => "Hawaii",
+            'id' => "Idaho",
+            'IL' => "Illinois",
+            'IN' => "Indiana",
+            'IA' => "Iowa",
+            'KS' => "Kansas",
+            'KY' => "Kentucky",
+            'LA' => "Louisiana",
+            'ME' => "Maine",
+            'MD' => "Maryland",
+            'MA' => "Massachusetts",
+            'MI' => "Michigan",
+            'MN' => "Minnesota",
+            'MS' => "Mississippi",
+            'MO' => "Missouri",
+            'MT' => "Montana",
+            'NE' => "Nebraska",
+            'NV' => "Nevada",
+            'NH' => "New Hampshire",
+            'NJ' => "New Jersey",
+            'NM' => "New Mexico",
+            'NY' => "New York",
+            'NC' => "North Carolina",
+            'ND' => "North Dakota",
+            'OH' => "Ohio",
+            'OK' => "Oklahoma",
+            'OR' => "Oregon",
+            'PA' => "Pennsylvania",
+            'RI' => "Rhode Island",
+            'SC' => "South Carolina",
+            'SD' => "South Dakota",
+            'TN' => "Tennessee",
+            'TX' => "Texas",
+            'UT' => "Utah",
+            'VT' => "Vermont",
+            'VA' => "Virginia",
+            'WA' => "Washington",
+            'WV' => "West Virginia",
+            'WI' => "Wisconsin",
+            'WY' => "Wyoming",
+        ];
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
@@ -432,7 +486,7 @@ class PatientCareplanController extends Controller
         $userRepo = new UserRepository();
 
         if ($patientId) {
-            $patient = User::where('ID', $patientId)->first();
+            $patient = User::where('id', $patientId)->first();
             //Update patient info changes
             $info = $patient->patientInfo;
             if ($params->get('general_comment')) {
@@ -493,7 +547,8 @@ class PatientCareplanController extends Controller
                 $info->save();
             }
 
-            return redirect(\URL::route('patient.demographics.show', ['patientId' => $newUser->ID]))->with('messages', ['Successfully created new patient with demographics.']);
+            return redirect(\URL::route('patient.demographics.show', ['patientId' => $newUser->id]))->with('messages',
+                ['Successfully created new patient with demographics.']);
         }
     }
 
@@ -773,7 +828,7 @@ class PatientCareplanController extends Controller
                 }
 
                 CpmWeight::updateOrCreate([
-                    'patient_id' => $user->ID
+                    'patient_id' => $user->id,
                 ], $biometricsValues['weight']);
             }
 
@@ -790,7 +845,7 @@ class PatientCareplanController extends Controller
                     }
 
                     CpmBloodSugar::updateOrCreate([
-                        'patient_id' => $user->ID
+                        'patient_id' => $user->id,
                     ], $biometricsValues['bloodSugar']);
                 }
             }
@@ -819,7 +874,7 @@ class PatientCareplanController extends Controller
                             ->withInput();
                     }
                     CpmBloodPressure::updateOrCreate([
-                        'patient_id' => $user->ID
+                        'patient_id' => $user->id,
                     ], $biometricsValues['bloodPressure']);
                 }
             }
@@ -837,7 +892,7 @@ class PatientCareplanController extends Controller
                     }
 
                     CpmSmoking::updateOrCreate([
-                        'patient_id' => $user->ID
+                        'patient_id' => $user->id,
                     ], $biometricsValues['smoking']);
                 }
             }

@@ -1,28 +1,10 @@
 <?php namespace App;
 
-use App\CLH\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Mail;
 
 class PatientCarePlan extends Model {
 
     protected $guarded = [];
-
-    public function carePlanTemplate()
-    {
-        return $this->belongsTo(CarePlanTemplate::class);
-    }
-
-    public function patient()
-    {
-        return $this->belongsTo(User::class,'patient_id');
-    }
-
-    public function getCarePlanTemplateIdAttribute()
-    {
-        //@todo: pretty sure that's not the way it's done. come back here later
-        return $this->attributes['care_plan_template_id'];
-    }
 
     public static function getNumberOfCareplansPendingApproval(User $user)
     {
@@ -39,12 +21,28 @@ class PatientCarePlan extends Model {
             $pendingApprovals = PatientInfo::whereCareplanStatus('qa_approved')
                 ->whereCcmStatus('enrolled')
                 ->whereHas('user.patientCareTeamMembers', function ($q) use ($user){
-                    $q->where('member_user_id', '=', $user->ID)
+                    $q->where('member_user_id', '=', $user->id)
                         ->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER);
                 })
                 ->count();
         }
 
         return $pendingApprovals;
+    }
+
+    public function carePlanTemplate()
+    {
+        return $this->belongsTo(CarePlanTemplate::class);
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'patient_id');
+    }
+
+    public function getCarePlanTemplateIdAttribute()
+    {
+        //@todo: pretty sure that's not the way it's done. come back here later
+        return $this->attributes['care_plan_template_id'];
     }
 }

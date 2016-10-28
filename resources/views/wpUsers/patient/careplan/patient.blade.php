@@ -9,7 +9,7 @@ $user_info = array();
 
 @section('content')
     <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
-    {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row" style="margin-top:20px;">
         <div class="col-lg-10 col-lg-offset-1">
             <div class="icon-container col-lg-12">
@@ -18,13 +18,13 @@ $user_info = array();
                 @endif
             </div>
             {{-- {!! Form::select('patient_id', array($patient), null, ['class' => 'patient2 form-control']) !!}
-            @if(!isset($patient->ID) )
+            @if(!isset($patient->id) )
                 <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
             @endif
             --}}
             <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;">
                 <div class="row">
-                    @if(isset($patient->ID) )
+                    @if(isset($patient->id) )
                         <div class="main-form-title col-lg-12">
                             Edit Patient Profile
                         </div>
@@ -39,7 +39,7 @@ $user_info = array();
                             <div class="main-form-block main-form-primary main-form-primary-vertical col-lg-7">
                                 <h4 class="form-title">Contact Information</h4>
                                 <p><span class="attention">*</span> Required Field</p>
-                                <input type=hidden name=user_id value="{{ $patient->ID }}">
+                                <input type=hidden name=user_id value="{{ $patient->id }}">
                                 <input type=hidden name=user_login value="{{ $patient->user_login }}">
                                 <input type=hidden name=user_nicename value="{{ $patient->user_nicename }}">
                                 <input type=hidden name=display_name value="{{ $patient->display_name }}">
@@ -288,7 +288,7 @@ $user_info = array();
                                         <span class="help-block">{{ $errors->first('consent_date') }}</span>
                                     </div>
 
-                                    @if(isset($patient->ID) )
+                                    @if(isset($patient->id) )
                                         @if(($patient->primaryProgram) )
                                             <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }} hidden">
                                                 Program:

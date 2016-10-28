@@ -45,7 +45,7 @@ class QAImportedController extends Controller
 
         $providers = $providers->map( function ($provider) {
             return [
-                'id' => $provider->ID,
+                'id'   => $provider->id,
                 'name' => $provider->display_name
             ];
         } );

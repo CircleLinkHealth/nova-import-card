@@ -85,7 +85,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @var string
      */
-    protected $primaryKey = 'ID';
+    protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
      *
@@ -317,12 +317,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function comment()
     {
-        return $this->hasMany('App\Comment', 'user_id', 'ID');
+        return $this->hasMany('App\Comment', 'user_id', 'id');
     }
 
     public function observations()
     {
-        return $this->hasMany('App\Observation', 'user_id', 'ID');
+        return $this->hasMany('App\Observation', 'user_id', 'id');
     }
 
     public function careItems()
@@ -338,47 +338,47 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function notes()
     {
-        return $this->hasMany('App\Note', 'patient_id', 'ID');
+        return $this->hasMany('App\Note', 'patient_id', 'id');
     }
 
     public function patientActivities()
     {
-        return $this->hasMany('App\Activity', 'patient_id', 'ID');
+        return $this->hasMany('App\Activity', 'patient_id', 'id');
     }
 
     public function providerInfo()
     {
-        return $this->hasOne('App\ProviderInfo', 'user_id', 'ID');
+        return $this->hasOne('App\ProviderInfo', 'user_id', 'id');
     }
 
     public function patientInfo()
     {
-        return $this->hasOne(PatientInfo::class, 'user_id', 'ID');
+        return $this->hasOne(PatientInfo::class, 'user_id', 'id');
     }
 
     public function nurseInfo()
     {
-        return $this->hasOne(NurseInfo::class, 'user_id', 'ID');
+        return $this->hasOne(NurseInfo::class, 'user_id', 'id');
     }
 
     public function phoneNumbers()
     {
-        return $this->hasMany('App\PhoneNumber', 'user_id', 'ID');
+        return $this->hasMany('App\PhoneNumber', 'user_id', 'id');
     }
 
     public function carePlan()
     {
-        return $this->hasOne(PatientCarePlan::class, 'patient_id', 'ID');
+        return $this->hasOne(PatientCarePlan::class, 'patient_id', 'id');
     }
 
     public function inboundCalls()
     {
-        return $this->hasMany('App\Call', 'inbound_cpm_id', 'ID');
+        return $this->hasMany('App\Call', 'inbound_cpm_id', 'id');
     }
 
     public function outboundCalls()
     {
-        return $this->hasMany('App\Call', 'outbound_cpm_id', 'ID');
+        return $this->hasMany('App\Call', 'outbound_cpm_id', 'id');
     }
 
     /**
@@ -396,19 +396,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ) {
                 $q->whereIn('program_id', $programIds);
             })
-            ->pluck('ID')
+            ->pluck('id')
             ->all();
 
         return $patientIds;
     }
 
-    public function viewableProgramIds()
+    public function viewableProgramIds() : array
     {
-        $programIds = $this->programs()
+        return $this->programs
             ->pluck('id')
             ->all();
-
-        return $programIds;
     }
 
     public function programs()
@@ -436,7 +434,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         });
         //}
 
-        $patientIds = $patientIds->pluck('ID')->all();
+        $patientIds = $patientIds->pluck('id')->all();
 
         return $patientIds;
     }
@@ -452,7 +450,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $q->whereIn('program_id', $programIds);
         });
 
-        $patientIds = $patientIds->pluck('ID')->all();
+        $patientIds = $patientIds->pluck('id')->all();
 
         return $patientIds;
     }
@@ -507,7 +505,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $meta = new UserMeta;
             $meta->meta_key = $key;
             $meta->meta_value = $value;
-            $meta->user_id = $this->ID;
+            $meta->user_id = $this->id;
             $this->meta()->save($meta);
             $this->load('meta');
         }
@@ -517,7 +515,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function meta()
     {
-        return $this->hasMany('App\UserMeta', 'user_id', 'ID');
+        return $this->hasMany('App\UserMeta', 'user_id', 'id');
     }
 
     public function getUserConfigByKey($key)
@@ -534,12 +532,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $value
     ) {
         $configKey = 'wp_' . $this->primaryProgramId() . '_user_config';
-        $userConfig = UserMeta::where('user_id', $this->ID)->where('meta_key', $configKey)->first();
+        $userConfig = UserMeta::where('user_id', $this->id)->where('meta_key', $configKey)->first();
         if (empty($userConfig)) {
             $userConfig = new UserMeta;
             $userConfig->meta_key = $configKey;
             $userConfig->meta_value = serialize([]);
-            $userConfig->user_id = $this->ID;
+            $userConfig->user_id = $this->id;
             $userConfig->save();
             $userConfigArray = [];
         } else {
@@ -648,7 +646,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         $name = $this->fullName;
 
-        return $name . ' (' . $this->ID . ')';
+        return $name . ' (' . $this->id . ')';
     }
 
     public function getPreferredCcContactDaysAttribute()
@@ -924,7 +922,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $phoneNumber->number = $value;
         } else {
             $phoneNumber = new PhoneNumber();
-            $phoneNumber->user_id = $this->ID;
+            $phoneNumber->user_id = $this->id;
             $phoneNumber->is_primary = 1;
             $phoneNumber->number = $value;
             $phoneNumber->type = 'home';
@@ -957,7 +955,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $phoneNumber->number = $value;
         } else {
             $phoneNumber = new PhoneNumber();
-            $phoneNumber->user_id = $this->ID;
+            $phoneNumber->user_id = $this->id;
             $phoneNumber->number = $value;
             $phoneNumber->type = 'work';
         }
@@ -989,7 +987,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $phoneNumber->number = $value;
         } else {
             $phoneNumber = new PhoneNumber();
-            $phoneNumber->user_id = $this->ID;
+            $phoneNumber->user_id = $this->id;
             $phoneNumber->number = $value;
             $phoneNumber->type = 'mobile';
         }
@@ -1185,7 +1183,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 $careTeamMember->member_user_id = $memberUserId;
             } else {
                 $careTeamMember = new PatientCareTeamMember();
-                $careTeamMember->user_id = $this->ID;
+                $careTeamMember->user_id = $this->id;
                 $careTeamMember->member_user_id = $memberUserId;
                 $careTeamMember->type = 'member';
             }
@@ -1197,7 +1195,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function patientCareTeamMembers()
     {
-        return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'ID');
+        return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'id');
     }
 
     public function getSendAlertToAttribute()
@@ -1233,7 +1231,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 $careTeamMember->member_user_id = $memberUserId;
             } else {
                 $careTeamMember = new PatientCareTeamMember();
-                $careTeamMember->user_id = $this->ID;
+                $careTeamMember->user_id = $this->id;
                 $careTeamMember->member_user_id = $memberUserId;
                 $careTeamMember->type = 'send_alert_to';
             }
@@ -1272,7 +1270,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $careTeamMember->member_user_id = $value;
         } else {
             $careTeamMember = new PatientCareTeamMember();
-            $careTeamMember->user_id = $this->ID;
+            $careTeamMember->user_id = $this->id;
             $careTeamMember->member_user_id = $value;
             $careTeamMember->type = 'billing_provider';
         }
@@ -1310,7 +1308,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $careTeamMember->member_user_id = $value;
         } else {
             $careTeamMember = new PatientCareTeamMember();
-            $careTeamMember->user_id = $this->ID;
+            $careTeamMember->user_id = $this->id;
             $careTeamMember->member_user_id = $value;
             $careTeamMember->type = 'lead_contact';
         }
@@ -1697,7 +1695,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if (!$blogId) {
             $blogId = $this->primaryProgramId();
         }
-        $role = UserMeta::select('meta_value')->where('user_id', $this->ID)->where('meta_key',
+        $role = UserMeta::select('meta_value')->where('user_id', $this->id)->where('meta_key',
             'wp_' . $blogId . '_capabilities')->first();
         if (!$role) {
             return false;
@@ -1800,7 +1798,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function ucp()
     {
-        return $this->hasMany('App\CPRulesUCP', 'user_id', 'ID');
+        return $this->hasMany('App\CPRulesUCP', 'user_id', 'id');
     }
 
     public function service()

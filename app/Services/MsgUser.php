@@ -19,7 +19,7 @@ class MsgUser {
 				// check if active based on user_config
 				$user_config = unserialize($user['user_config']);
 				if(strtolower($user_config['status']) == 'active') {
-					$activeUsers[] = $user['ID'];
+                    $activeUsers[] = $user['id'];
 				}
 			}
 			if(empty($activeUsers)) {
@@ -143,11 +143,11 @@ class MsgUser {
 		$intUserId = implode(',', $arrUserId);
 
 		// get user(s)
-		$wpUsers = User::whereRaw('ID IN ('.$intUserId.')')->get();
+        $wpUsers = User::whereRaw('id IN (' . $intUserId . ')')->get();
 
 		if (!$wpUsers->isEmpty()) {
 			foreach ($wpUsers as $wpUser) {
-				$wpUserMeta = UserMeta::where('user_id', '=', $wpUser->ID)->get();
+                $wpUserMeta = UserMeta::where('user_id', '=', $wpUser->id)->get();
 				if (!$wpUsers->isEmpty()) {
 					$arrUserMeta = array();
 					foreach($wpUserMeta as $meta)
@@ -162,19 +162,21 @@ class MsgUser {
 					}
 				}
 				$arrUserData = (array)$wpUser->toArray();
-				$arrReturnResult[$wpUser->ID]['userdata'] = $arrUserData;
-				$arrReturnResult[$wpUser->ID]['usermeta_clean'] = $arrUserMeta;
-				$arrReturnResult[$wpUser->ID]['usermeta'] = $arrUserMeta;
-				$arrReturnResult[$wpUser->ID]['usermeta']['intProgramId'] = $intBlogId;
-				$arrReturnResult[$wpUser->ID]['usermeta']['msgtype'] = '';
-				$arrReturnResult[$wpUser->ID]['usermeta']['resend'] = false;
-				$arrReturnResult[$wpUser->ID]['usermeta']['comment_ID'] = '';
-				$arrReturnResult[$wpUser->ID]['usermeta']['curresp'] = '';
-				$arrReturnResult[$wpUser->ID]['usermeta']['state'] = array();
-				$arrReturnResult[$wpUser->ID]['usermeta']['user_care_plan'] = $this->get_user_care_plan($wpUser->ID, $intBlogId);
-				if($includeUCP) {
-					$arrReturnResult[$wpUser->ID]['usermeta']['user_care_plan_items'] = $this->get_user_care_plan_items($wpUser->ID, $intBlogId);
-				}
+                $arrReturnResult[$wpUser->id]['userdata'] = $arrUserData;
+                $arrReturnResult[$wpUser->id]['usermeta_clean'] = $arrUserMeta;
+                $arrReturnResult[$wpUser->id]['usermeta'] = $arrUserMeta;
+                $arrReturnResult[$wpUser->id]['usermeta']['intProgramId'] = $intBlogId;
+                $arrReturnResult[$wpUser->id]['usermeta']['msgtype'] = '';
+                $arrReturnResult[$wpUser->id]['usermeta']['resend'] = false;
+                $arrReturnResult[$wpUser->id]['usermeta']['comment_ID'] = '';
+                $arrReturnResult[$wpUser->id]['usermeta']['curresp'] = '';
+                $arrReturnResult[$wpUser->id]['usermeta']['state'] = [];
+                $arrReturnResult[$wpUser->id]['usermeta']['user_care_plan'] = $this->get_user_care_plan($wpUser->id,
+                    $intBlogId);
+                if ($includeUCP) {
+                    $arrReturnResult[$wpUser->id]['usermeta']['user_care_plan_items'] = $this->get_user_care_plan_items($wpUser->id,
+                        $intBlogId);
+                }
 			}
 		}
 		return $arrReturnResult;
@@ -321,14 +323,14 @@ class MsgUser {
 		if ($max > 0 ) $limit = " LIMIT {$max}";
 
 		// original query segment before $tmpTodaySearch was created.
-		// where comment_type like 'state_".$msgTypeAbrev."' and date(comment_date) = '". date('Y-m-d') ."' group by cmts.user_id) cm on cm.user_id = u.ID
+        // where comment_type like 'state_".$msgTypeAbrev."' and date(comment_date) = '". date('Y-m-d') ."' group by cmts.user_id) cm on cm.user_id = u.id
 
-		$sql = "SELECT ID, user_registered, user_status, c.meta_value `".$strCapabilitiesIdent."`, s.meta_value `".$strContactTimesContainer."`
+        $sql = "SELECT id, user_registered, user_status, c.meta_value `" . $strCapabilitiesIdent . "`, s.meta_value `" . $strContactTimesContainer . "`
                  FROM wp_users u
-                left join wp_usermeta c on c.user_id = u.ID
-                left join wp_usermeta s on s.user_id = u.ID
+                left join wp_usermeta c on c.user_id = u.id
+                left join wp_usermeta s on s.user_id = u.id
                 LEFT JOIN (select cmts.user_id, max(comment_date) `last_comment` FROM ".$strCommentFile." cmts
-                            where comment_type like 'state_".$msgTypeAbrev."' ".$tmpTodaySearch." group by cmts.user_id) cm on cm.user_id = u.ID
+                            where comment_type like 'state_" . $msgTypeAbrev . "' " . $tmpTodaySearch . " group by cmts.user_id) cm on cm.user_id = u.id
                 WHERE
                     c.meta_key= '".$strCapabilitiesIdent."'
                 and c.meta_value = 'a:1:{s:11:\"participant\";b:1;}'
@@ -362,9 +364,9 @@ class MsgUser {
 					continue;
 					$strContactTime = new DateTime($serverDateTime->format('Y-m-d'), new DateTimeZone($arrConfig['preferred_contact_timezone']));
 				}
-// error_log($row->ID." ".$serverDateTime->format('Y-m-d')." $strPreferredContactTime");
-// echo $row->ID." $strPreferredContactTime";
-				$userRegisteredDateTime = new DateTime($row->user_registered, new DateTimeZone('America/New_York'));
+// error_log($row->id." ".$serverDateTime->format('Y-m-d')." $strPreferredContactTime");
+// echo $row->id." $strPreferredContactTime";
+                $userRegisteredDateTime = new DateTime($row->user_registered, new DateTimeZone('America/New_York'));
 				// $strContactTime = $date->format('Y-m-d H:i:s T');
 
 				if(!isset($arrConfig[$msgType.'_reminder_optin'])) {
@@ -379,21 +381,26 @@ class MsgUser {
 						&& $userRegisteredDateTime->format('U') < $strContactTime->format('U') // Stops messages going out on registration day
 						&& $arrConfig[$msgType.'_reminder_optin'] != 'N'
 					){
-// if ($serverDateTime->format('U') > $strContactTime->format('U') ) {echo "[".$row->ID."]Contact before server time<BR>";} else
-//  {echo "[".$row->ID."]Contact after server time<BR>";}
+// if ($serverDateTime->format('U') > $strContactTime->format('U') ) {echo "[".$row->id."]Contact before server time<BR>";} else
+//  {echo "[".$row->id."]Contact after server time<BR>";}
 // echo "Corrected Contact Time: [".$strContactTime->format('Y-m-d H:i:s T')."]<BR>".date("Y-m-d H:i:s T")."<BR><BR>";
-						$wpUser = User::find($row->ID);
-						$userMeta = $wpUser->userMeta();
+                        $wpUser = User::find($row->id);
+                        $userMeta = $wpUser->userMeta();
 						if(empty($userMeta['user_config'])) {
-							$logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [".$row->ID."] Missing User Config";
-							continue 1;
+                            $logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [" . $row->id . "] Missing User Config";
+                            continue 1;
 						}
-						$logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [".$row->ID."]READY TO CHECK UCP";
-						$arrAllParticipantUserIDs[] = array('user_id'=>$row->ID, 'status'=>$arrConfig['status'], $msgType.'_reminder_optin'=>$arrConfig[$msgType.'_reminder_optin'], $msgType.'_reminder_time'=>$arrConfig[$msgType.'_reminder_time']);
-					} else {
-						$logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [".$row->ID."]SKIP :: ";
-					}
-					// give a breakdown
+                        $logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [" . $row->id . "]READY TO CHECK UCP";
+                        $arrAllParticipantUserIDs[] = [
+                            'user_id'                    => $row->id,
+                            'status'                     => $arrConfig['status'],
+                            $msgType . '_reminder_optin' => $arrConfig[$msgType . '_reminder_optin'],
+                            $msgType . '_reminder_time'  => $arrConfig[$msgType . '_reminder_time'],
+                        ];
+                    } else {
+                        $logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [" . $row->id . "]SKIP :: ";
+                    }
+                    // give a breakdown
 					if(strtolower($arrConfig['status']) !== 'active') {
 						$logString .= "[Bad Status ". ucfirst(strtolower($arrConfig['status'])) . "] ";
 					}
@@ -459,12 +466,12 @@ class MsgUser {
 		$arrAllParticipantUserIDs = array();
 		$limit = "";
 		if ($max > 0 ) $limit = " LIMIT $max";
-		$sql = "SELECT ID, user_registered, user_status, c.meta_value `$strCapabilitiesIdent`, s.meta_value `$strContactTimesContainer`
+        $sql = "SELECT id, user_registered, user_status, c.meta_value `$strCapabilitiesIdent`, s.meta_value `$strContactTimesContainer`
                  FROM wp_users u
-                left join wp_usermeta c on c.user_id = u.ID
-                left join wp_usermeta s on s.user_id = u.ID
+                left join wp_usermeta c on c.user_id = u.id
+                left join wp_usermeta s on s.user_id = u.id
                 LEFT JOIN (select cmts.user_id, max(comment_date) `last_comment` FROM $strCommentFile cmts
-                            where comment_type like 'state_sol' and date(comment_date) = '". $serverDateTime->format('Y-m-d') ."' group by cmts.user_id) cm on cm.user_id = u.ID
+                            where comment_type like 'state_sol' and date(comment_date) = '" . $serverDateTime->format('Y-m-d') . "' group by cmts.user_id) cm on cm.user_id = u.id
                 WHERE
                     c.meta_key='".$strCapabilitiesIdent."'
                 and c.meta_value = 'a:1:{s:11:\"participant\";b:1;}'
@@ -493,10 +500,14 @@ class MsgUser {
 						&& $userRegisteredDateTime->format('U') < $strContactTime->format('U') // Stops messages going out on registration day
 					){
 
-						$arrAllParticipantUserIDs[] = array('user_id'=>$row->ID, 'preferred_contact_time'=>$arrConfig['preferred_contact_time']);
-					} else {
-						echo "<br>MsgUser->get_readyusers() IS: ". $row->ID. " " .$userRegisteredDateTime->format('Y-m-d H:i:s T')  ." < " . $strContactTime->format('Y-m-d H:i:s T')  ." but not until: " . date("Y-m-d", strtotime($arrConfig['active_date'])) . ". Status: ".
-							strtolower($arrConfig['status']). ". " ."";
+                        $arrAllParticipantUserIDs[] = [
+                            'user_id'                => $row->id,
+                            'preferred_contact_time' => $arrConfig['preferred_contact_time'],
+                        ];
+                    } else {
+                        echo "<br>MsgUser->get_readyusers() IS: " . $row->id . " " . $userRegisteredDateTime->format('Y-m-d H:i:s T') . " < " . $strContactTime->format('Y-m-d H:i:s T') . " but not until: " . date("Y-m-d",
+                                strtotime($arrConfig['active_date'])) . ". Status: " .
+                            strtolower($arrConfig['status']) . ". " . "";
 					}
 				}
 
@@ -527,8 +538,8 @@ class MsgUser {
     ) {
         $this->db->select("ucp.user_id, ucp.items_id, ucp.meta_value",false);
 		$this->db->from('wp_users AS u');
-		$this->db->join('rules_ucp AS ucp', 'u.ID = ucp.user_id');
-		$this->db->join('rules_items ri', 'ri.items_id = ucp.items_id');
+        $this->db->join('rules_ucp AS ucp', 'u.id = ucp.user_id');
+        $this->db->join('rules_items ri', 'ri.items_id = ucp.items_id');
 		$this->db->join('rules_pcp pcp', 'ri.pcp_id = pcp.pcp_id');
 		$where = array('ucp.items_id'   => $items_id,
                        'ucp.meta_value' => 'Active',
@@ -760,18 +771,18 @@ class MsgUser {
 		$arrId2MD5 = array();
 		$arrMD52Id = array();
 
-		$sql = "SELECT ID FROM wp_users";
-		$query = $this->db->query($sql);
+        $sql = "SELECT id FROM wp_users";
+        $query = $this->db->query($sql);
 
 		if($query->num_rows() > 0)
 		{
 			foreach($query->result() as $row)
 			{
-				$arrId2MD5[$row->ID] = md5($row->ID);
-				$arrMD52Id[md5($row->ID)] = $row->ID;
-			}
-		}
-		$arrReturnResult['Id2MD5'] = $arrId2MD5;
+                $arrId2MD5[$row->id] = md5($row->id);
+                $arrMD52Id[md5($row->id)] = $row->id;
+            }
+        }
+        $arrReturnResult['Id2MD5'] = $arrId2MD5;
 		$arrReturnResult['MD52Id'] = $arrMD52Id;
 
 		return $arrReturnResult;
@@ -858,8 +869,8 @@ order by qs.qs_type, qs.sort, qs.aid
 			return false;
 		}
 
-		// ID, user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
-		$this->db->insert('wp_users', $user_info);
+        // id, user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
+        $this->db->insert('wp_users', $user_info);
 		$new_user_id = $this->db->insert_id();
 
 		// nickname, first_name, last_name, description, rich_editing, comment_shortcuts, admin_color, user_ssl, show_admin_bar_front
@@ -905,14 +916,14 @@ order by qs.qs_type, qs.sort, qs.aid
 			return false;
 		}
 		if(empty($user_exists)) {
-			// ID, user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
-			unset($user_info['ID']);
-			$this->db->insert('wp_users', $user_info);
+            // id, user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
+            unset($user_info['id']);
+            $this->db->insert('wp_users', $user_info);
 			$new_user_id = $this->db->insert_id();
 		} else {
-			$new_user_id = $user_exists->ID;
-		}
-		// nickname, first_name, last_name, description, rich_editing, comment_shortcuts, admin_color, user_ssl, show_admin_bar_front
+            $new_user_id = $user_exists->id;
+        }
+        // nickname, first_name, last_name, description, rich_editing, comment_shortcuts, admin_color, user_ssl, show_admin_bar_front
 		// wp_8_capabilities, wp_8_user_level, wp_8_user_config, dismissed_wp_pointers
 		if(!empty($user_meta)) {
 			$this->db->delete("wp_usermeta", array('user_id' => $new_user_id));

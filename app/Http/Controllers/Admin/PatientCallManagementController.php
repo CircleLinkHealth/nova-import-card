@@ -89,7 +89,7 @@ class PatientCallManagementController extends Controller {
 				});
 			})
 			->orderBy('last_name', 'ASC')
-			->pluck('display_name', 'ID');
+            ->pluck('display_name', 'id');
 
 
 
@@ -105,9 +105,9 @@ class PatientCallManagementController extends Controller {
 					$query->where('status', '=', 'scheduled');
 				});
 			})->where( 'program_id', '!=', '' )
-			->orderBy( 'ID', 'desc' )
+            ->orderBy('id', 'desc')
 			->get()
-            ->pluck('fullNameWithId', 'ID')
+            ->pluck('fullNameWithId', 'id')
 			->all();
 
 		return view('admin.patientCallManagement.index', compact(['calls', 'date', 'nurses', 'filterNurse', 'filterStatus', 'patientList']));
@@ -142,7 +142,7 @@ class PatientCallManagementController extends Controller {
 				});
 			})
 			->orderBy('last_name', 'ASC')
-			->pluck('display_name', 'ID');
+            ->pluck('display_name', 'id');
 
 		return view('admin.patientCallManagement.edit', compact(['call', 'nurses']));
 	}

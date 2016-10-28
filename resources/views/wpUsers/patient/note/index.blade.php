@@ -13,7 +13,7 @@
                 </div>
                 @include('partials.userheader')
                 <div class="col-sm-2">
-                    <a href="{{ URL::route('patient.note.create', array('patient' => $patient->ID)) }}"
+                    <a href="{{ URL::route('patient.note.create', array('patient' => $patient->id)) }}"
                        class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                         NOTE</a><br>
                 </div>
@@ -61,12 +61,12 @@
                                         template: function (obj) {
                                             if (obj.logged_from == "note")
                                                 return "<a href='<?php echo route('patient.note.view', [
-                                                                'patientId' => $patient->ID,
+                                                                'patientId' => $patient->id,
                                                                 'noteId'    => ''
                                                         ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
                                             else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
                                                 return "<a href='<?php echo route('patient.activity.view', [
-                                                                'patientId' => $patient->ID,
+                                                                'patientId' => $patient->id,
                                                                 'actId'     => ''
                                                         ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
                                             }

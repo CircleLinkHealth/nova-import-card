@@ -1,10 +1,7 @@
 <?php namespace App\Http\Controllers\CcdApi\Aprima;
 
 use App\Contracts\Repositories\UserRepository;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use App\User;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -47,7 +44,7 @@ class AuthController extends Controller
             'password' => $request->input('password'),
         ];
 
-        \JWTAuth::setIdentifier('ID');
+        \JWTAuth::setIdentifier('id');
 
         if (!$access_token = \JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Invalid Credentials.'], 400);

@@ -36,7 +36,7 @@ class Comment extends Model {
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'ID');
+        return $this->belongsTo('App\User', 'id');
     }
 
     public function observation()

@@ -70,7 +70,7 @@ trait HandlesUsersAndCarePlans
         //check that the roles were created
         foreach ($roles as $role) {
             $this->seeInDatabase('lv_role_user', [
-                'user_id' => $user->ID,
+                'user_id' => $user->id,
                 'role_id' => $role,
             ]);
         }
@@ -172,7 +172,7 @@ trait HandlesUsersAndCarePlans
         $patient = User::whereUserEmail($email)->first();
 
 //        $ccda = \App\Models\CCD\Ccda::create([
-//            'user_id' => $patient->ID,
+//            'user_id' => $patient->id,
 //            'vendor_id' => 1,
 //            'source' => 'test',
 //            'xml' => 'test',
@@ -180,7 +180,7 @@ trait HandlesUsersAndCarePlans
 //        ]);
 //
 //        factory(\App\Models\CCD\CcdInsurancePolicy::class, 3)->create([
-//            'patient_id' => $patient->ID,
+//            'patient_id' => $patient->id,
 //            'ccda_id' => $ccda->id,
 //        ]);
 
@@ -189,29 +189,29 @@ trait HandlesUsersAndCarePlans
         $patientInfo->save();
 
         $this->seeInDatabase('patient_info', [
-            'user_id' => $patient->ID,
-            'agent_name' => $agentName,
-            'agent_telephone' => $agentPhone,
-            'agent_email' => $agentEmail,
-            'agent_relationship' => $agentRelationship,
-            'birth_date' => $dob,
-            'ccm_status' => $ccmStatus,
-            'consent_date' => $consentDate,
-            'gender' => $gender,
-            'mrn_number' => $mrn,
-//            'preferred_cc_contact_days' => '1, 2, 3, 4, 5, 6, 7',
+            'user_id'                    => $patient->id,
+            'agent_name'                 => $agentName,
+            'agent_telephone'            => $agentPhone,
+            'agent_email'                => $agentEmail,
+            'agent_relationship'         => $agentRelationship,
+            'birth_date'                 => $dob,
+            'ccm_status'                 => $ccmStatus,
+            'consent_date'               => $consentDate,
+            'gender'                     => $gender,
+            'mrn_number'                 => $mrn,
+            //            'preferred_cc_contact_days' => '1, 2, 3, 4, 5, 6, 7',
             'preferred_contact_location' => 10,
             'preferred_contact_language' => $language,
-            'preferred_contact_method' => $contactMethod,
-//            'preferred_contact_time' => $contactTime,
-//            'preferred_contact_timezone' => $timezone,
-            'daily_reminder_optin' => 'Y',
-            'daily_reminder_time' => '08:00',
-            'daily_reminder_areas' => 'TBD',
-            'hospital_reminder_optin' => 'Y',
-            'hospital_reminder_time' => '19:00',
-            'hospital_reminder_areas' => 'TBD',
-            'careplan_status' => 'draft',
+            'preferred_contact_method'   => $contactMethod,
+            //            'preferred_contact_time' => $contactTime,
+            //            'preferred_contact_timezone' => $timezone,
+            'daily_reminder_optin'       => 'Y',
+            'daily_reminder_time'        => '08:00',
+            'daily_reminder_areas'       => 'TBD',
+            'hospital_reminder_optin'    => 'Y',
+            'hospital_reminder_time'     => '19:00',
+            'hospital_reminder_areas'    => 'TBD',
+            'careplan_status'            => 'draft',
         ]);
 
         //By default PHPUnit fails the test if the output buffer wasn't closed.
@@ -247,32 +247,32 @@ trait HandlesUsersAndCarePlans
         //and make sure they show up.
 
         $member = PatientCareTeamMember::create([
-            'user_id' => $patient->ID,
-            'member_user_id' => $this->provider->ID,
-            'type' => PatientCareTeamMember::MEMBER,
+            'user_id'        => $patient->id,
+            'member_user_id' => $this->provider->id,
+            'type'           => PatientCareTeamMember::MEMBER,
         ]);
 
         $billing = PatientCareTeamMember::create([
-            'user_id' => $patient->ID,
-            'member_user_id' => $this->provider->ID,
-            'type' => PatientCareTeamMember::BILLING_PROVIDER,
+            'user_id'        => $patient->id,
+            'member_user_id' => $this->provider->id,
+            'type'           => PatientCareTeamMember::BILLING_PROVIDER,
         ]);
 
         $lead = PatientCareTeamMember::create([
-            'user_id' => $patient->ID,
-            'member_user_id' => $this->provider->ID,
-            'type' => PatientCareTeamMember::LEAD_CONTACT,
+            'user_id'        => $patient->id,
+            'member_user_id' => $this->provider->id,
+            'type'           => PatientCareTeamMember::LEAD_CONTACT,
         ]);
 
         $sendAlerts = PatientCareTeamMember::create([
-            'user_id' => $patient->ID,
-            'member_user_id' => $this->provider->ID,
-            'type' => PatientCareTeamMember::SEND_ALERT_TO,
+            'user_id'        => $patient->id,
+            'member_user_id' => $this->provider->id,
+            'type'           => PatientCareTeamMember::SEND_ALERT_TO,
         ]);
 
         $this
             ->actingAs($this->provider)
-            ->visit("/manage-patients/{$patient->ID}/careplan/team")
+            ->visit("/manage-patients/{$patient->id}/careplan/team")
             ->see('Edit Patient Care Team')
             ->click('#add-care-team-member')
             ->see('Billing Provider')
@@ -290,7 +290,7 @@ trait HandlesUsersAndCarePlans
             $patient,
             'cpmProblems',
             null,
-            "/manage-patients/{$patient->ID}/careplan/sections/1",
+            "/manage-patients/{$patient->id}/careplan/sections/1",
             'Diagnosis / Problems to Monitor',
             'cpm_problem_id',
             $numberOfRowsToCreate
@@ -303,7 +303,7 @@ trait HandlesUsersAndCarePlans
             $patient,
             'cpmLifestyles',
             null,
-            "/manage-patients/{$patient->ID}/careplan/sections/1",
+            "/manage-patients/{$patient->id}/careplan/sections/1",
             'Lifestyle to Monitor',
             'cpm_lifestyle_id',
             $numberOfRowsToCreate
@@ -317,7 +317,7 @@ trait HandlesUsersAndCarePlans
             $patient,
             'cpmMedicationGroups',
             null,
-            "/manage-patients/{$patient->ID}/careplan/sections/1",
+            "/manage-patients/{$patient->id}/careplan/sections/1",
             'Medications to Monitor',
             'cpm_medication_group_id',
             $numberOfRowsToCreate
@@ -331,7 +331,7 @@ trait HandlesUsersAndCarePlans
             $patient,
             'cpmMiscs',
             1,
-            "/manage-patients/{$patient->ID}/careplan/sections/1",
+            "/manage-patients/{$patient->id}/careplan/sections/1",
             null,
             'cpm_misc_id',
             $numberOfRowsToCreate
@@ -389,7 +389,7 @@ trait HandlesUsersAndCarePlans
 //
 //            $this->seeInDatabase("{$entity->getTable()}_users", [
 //                $entityIdFieldName => $entity->id,
-//                'patient_id' => $patient->ID,
+//                'patient_id' => $patient->id,
 //                'cpm_instruction_id' => $entity->pivot->cpm_instruction_id,
 //            ]);
 //        }
@@ -425,7 +425,7 @@ trait HandlesUsersAndCarePlans
             $patient,
             'cpmBiometrics',
             null,
-            "/manage-patients/{$patient->ID}/careplan/sections/2",
+            "/manage-patients/{$patient->id}/careplan/sections/2",
             'Biometrics to Monitor',
             'cpm_biometric_id',
             $numberOfRowsToCreate
@@ -443,7 +443,7 @@ trait HandlesUsersAndCarePlans
             $patient,
             'cpmSymptoms',
             null,
-            "/manage-patients/{$patient->ID}/careplan/sections/3",
+            "/manage-patients/{$patient->id}/careplan/sections/3",
             'Symptoms to Monitor',
             'cpm_symptom_id',
             $numberOfRowsToCreate
@@ -456,7 +456,7 @@ trait HandlesUsersAndCarePlans
             $patient,
             'cpmMiscs',
             3,
-            "/manage-patients/{$patient->ID}/careplan/sections/3",
+            "/manage-patients/{$patient->id}/careplan/sections/3",
             'Additional Information',
             'cpm_misc_id',
             $numberOfRowsToCreate
@@ -467,25 +467,25 @@ trait HandlesUsersAndCarePlans
     {
         if (count($patient->cpmBiometrics()->where('type', 0)->first())) {
             $weight = factory(CpmWeight::class)->create([
-                'patient_id' => $patient->ID
+                'patient_id' => $patient->id,
             ]);
         }
 
         if (count($patient->cpmBiometrics()->where('type', 1)->first())) {
             $bloodPressure = factory(\App\Models\CPM\Biometrics\CpmBloodPressure::class)->create([
-                'patient_id' => $patient->ID
+                'patient_id' => $patient->id,
             ]);
         }
 
         if (count($patient->cpmBiometrics()->where('type', 2)->first())) {
             $bloodSugar = factory(\App\Models\CPM\Biometrics\CpmBloodSugar::class)->create([
-                'patient_id' => $patient->ID
+                'patient_id' => $patient->id,
             ]);
         }
 
         if (count($patient->cpmBiometrics()->where('type', 3)->first())) {
             $smoking = factory(\App\Models\CPM\Biometrics\CpmSmoking::class)->create([
-                'patient_id' => $patient->ID
+                'patient_id' => $patient->id,
             ]);
         }
     }
@@ -496,9 +496,9 @@ trait HandlesUsersAndCarePlans
         $today = Carbon::now()->toFormattedDateString();
 
         $this->actingAs($this->provider)
-            ->visit("/manage-patients/{$patient->ID}/careplan/sections/3")
+            ->visit("/manage-patients/{$patient->id}/careplan/sections/3")
             ->click('approve-forward')
-            ->seePageIs("/manage-patients/{$patient->ID}/view-careplan?page=3")
+            ->seePageIs("/manage-patients/{$patient->id}/view-careplan?page=3")
             ->see('Care Plan')
             ->see($patient->fullName)
             ->see($patient->phone)

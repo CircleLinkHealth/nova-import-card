@@ -1,11 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Call;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\User;
 use DateTime;
-
 use Illuminate\Http\Request;
 
 class PatientCallListController extends Controller {
@@ -54,7 +50,7 @@ class PatientCallListController extends Controller {
 		}
 
 		// filter nurse
-		$calls->where( 'outbound_cpm_id', '=', \Auth::user()->ID );
+        $calls->where('outbound_cpm_id', '=', \Auth::user()->id);
 
 		$calls->orderBy('scheduled_date', 'asc');
 		$calls->orderBy('window_start', 'asc');

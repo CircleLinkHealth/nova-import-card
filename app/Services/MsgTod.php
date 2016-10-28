@@ -1,10 +1,7 @@
 <?php namespace App\Services;
 
-use App\User;
-use App\UserMeta;
 use DB;
-use DateTime;
-use DateTimeZone;
+
 /*
 $this->_ci->load->model('cpm_1_7_rules_tod_model', 'tod');
 */
@@ -109,9 +106,10 @@ query;
     public function getLastMsg($intItemID, $user_id) {
         /**
          *
-         *  @param    inItemID: Item ID for category
+         * @param    inItemID : Item id for category
          *  @param    user_id: user id
-         *  @return   last message id for this category
+         *
+         * @return   last message id for this category
          *
          */
 

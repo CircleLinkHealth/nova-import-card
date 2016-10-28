@@ -41,14 +41,14 @@ class NurseInfo extends Model
 
         return User::whereHas('roles', function ($q) {
             $q->where('name', '=', 'care-center');
-        })->where('user_status', 1)->pluck('display_name', 'ID');
+        })->where('user_status', 1)->pluck('display_name', 'id');
 
 
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'ID');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function summary()

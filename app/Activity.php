@@ -171,7 +171,7 @@ class Activity extends Model implements Transformable
 
     public function patient()
     {
-        return $this->belongsTo('App\User', 'patient_id', 'ID');
+        return $this->belongsTo('App\User', 'patient_id', 'id');
     }
 
     public function pageTime()
@@ -219,8 +219,8 @@ class Activity extends Model implements Transformable
         $builder,
         User $user
     ) {
-        $builder->where('provider_id', $user->ID)
-            ->orWhere('logger_id', $user->ID);
+        $builder->where('provider_id', $user->id)
+            ->orWhere('logger_id', $user->id);
     }
 
 

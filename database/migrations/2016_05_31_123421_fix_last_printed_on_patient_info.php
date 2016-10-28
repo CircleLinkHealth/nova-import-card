@@ -1,13 +1,8 @@
 <?php
 
 use App\User;
-use App\PatientInfo;
-use App\ProviderInfo;
-use App\PhoneNumber;
-use App\PatientCarePlan;
-use App\PatientCareTeamMember;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class FixLastPrintedOnPatientInfo extends Migration {
 
@@ -33,7 +28,7 @@ class FixLastPrintedOnPatientInfo extends Migration {
 		})->with('patientInfo')->get();
 		echo 'Process role patient users - Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
-			echo 'Processing user '.$user->ID.PHP_EOL;
+            echo 'Processing user ' . $user->id . PHP_EOL;
 
 			// set values
 			$value = $user->getUserMetaByKey('careplan_last_printed');
