@@ -26,10 +26,15 @@ class CPRUCPController extends Controller {
 		$params = $request->all();
 
 		// filter user
-        $users = User::whereIn('id', Auth::user()->viewablePatientIds())->OrderBy('id',
-            'desc')->get()->pluck('fullNameWithId', 'id')->all();
+        $users = User::intersectLocationsWith(auth()->user())
+            ->orderBy('id', 'desc')
+            ->get()
+            ->pluck('fullNameWithId', 'id')
+            ->all();
+
 		$filterUser = 'all';
-		if(!empty($params['filterUser'])) {
+
+        if(!empty($params['filterUser'])) {
 			$filterUser = $params['filterUser'];
 			if($params['filterUser'] != 'all') {
 				$ucps->where('user_id', '=', $filterUser);

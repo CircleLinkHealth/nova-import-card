@@ -293,11 +293,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(ForeignId::class);
     }
 
-    public function locations()
-    {
-        return $this->belongsToMany(Location::class);
-    }
-
     public function patientDemographics()
     {
         return $this->hasMany(DemographicsImport::class, 'provider_id');
@@ -369,42 +364,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\Call', 'outbound_cpm_id', 'id');
     }
 
-    /**
-     * @return array
-     */
-    public function viewablePatientIds() : array
-    {
-        // get all patients who are in the same programs
-        $programIds = $this->viewableProgramIds();
-
-        $patientIds = User::ofType('participant')
-            ->whereHas('programs', function ($q) use
-            (
-                $programIds
-            ) {
-                $q->whereIn('program_id', $programIds);
-            })
-            ->pluck('id')
-            ->all();
-
-        return $patientIds;
-    }
-
-    public function viewableProgramIds() : array
-    {
-        return $this->programs
-            ->pluck('id')
-            ->all();
-    }
-
-    public function programs()
-    {
-        return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id');
-    }
-
-
-    // END RELATIONSHIPS
-
     public function viewableProviderIds()
     {
         // get all patients who are in the same programs
@@ -427,6 +386,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $patientIds;
     }
 
+    public function viewableProgramIds() : array
+    {
+        return $this->programs
+            ->pluck('id')
+            ->all();
+    }
+
     public function viewableUserIds()
     {
         // get all patients who are in the same programs
@@ -442,6 +408,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         return $patientIds;
     }
+
+
+    // END RELATIONSHIPS
 
     public function userMeta($key = null)
     {
@@ -983,7 +952,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         return true;
     }
-
 
     public function getBirthDateAttribute()
     {
@@ -1664,9 +1632,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->patientInfo->date_withdrawn;
     }
 
-
-// MISC, these should be removed eventually
-
     public function setDateWithdrawnAttribute($value)
     {
         if (!$this->patientInfo) {
@@ -1693,6 +1658,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return key($data);
         }
     }
+
+
+// MISC, these should be removed eventually
 
     public function primaryProgram()
     {
@@ -1732,8 +1700,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $user->save();
 
     }
-
-// user data scrambler
 
     public function createNewUser(
         $email,
@@ -1783,6 +1749,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $userUcpData;
     }
 
+// user data scrambler
+
     public function ucp()
     {
         return $this->hasMany('App\CPRulesUCP', 'user_id', 'id');
@@ -1819,7 +1787,108 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         (
             $type
         ) {
-            $q->where('name', '=', $type);
+            if (is_array($type)) {
+                $q->whereIn('name', $type);
+            } else {
+                $q->where('name', '=', $type);
+            }
         });
+    }
+
+    /**
+     * Scope a query to include users NOT of a given type (Role).
+     *
+     * @param $query
+     * @param $type
+     */
+    public function scopeExceptType(
+        $query,
+        $type
+    ) {
+        $query->whereHas('roles', function ($q) use
+        (
+            $type
+        ) {
+            if (is_array($type)) {
+                $q->whereNotIn('name', $type);
+            } else {
+                $q->where('name', '!=', $type);
+            }
+        });
+    }
+
+    /**
+     * Scope a query to intersect locations with the given user.
+     *
+     * @param $query
+     * @param $user
+     */
+    public function scopeIntersectLocationsWith(
+        $query,
+        $user
+    ) {
+        $query->whereHas('locations', function ($q) use
+        (
+            $user
+        ) {
+            $q->whereIn('locations.id', $user->locations->pluck('id')->all());
+        });
+    }
+
+    public function attachPractice($practice)
+    {
+        $id = is_object($practice)
+            ? $practice->id
+            : $practice;
+
+
+        try {
+            $this->programs()->attach($id);
+        } catch (\Exception $e) {
+            //check if this is a mysql exception for unique key constraint
+            if ($e instanceof \Illuminate\Database\QueryException) {
+                $errorCode = $e->errorInfo[1];
+                if ($errorCode == 1062) {
+                    //do nothing
+                    //we don't actually want to terminate the program if we detect duplicates
+                    //we just don't wanna add the row again
+                    \Log::alert($e);
+                }
+            }
+        }
+    }
+
+    public function programs()
+    {
+        return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id');
+    }
+
+    public function attachLocation($location)
+    {
+        $id = is_object($location)
+            ? $location->id
+            : $location;
+
+
+        try {
+            $this->locations()->attach($id);
+        } catch (\Exception $e) {
+            //check if this is a mysql exception for unique key constraint
+            if ($e instanceof \Illuminate\Database\QueryException) {
+                $errorCode = $e->errorInfo[1];
+                if ($errorCode == 1062) {
+                    //do nothing
+                    //we don't actually want to terminate the program if we detect duplicates
+                    //we just don't wanna add the row again
+                    \Log::alert($e);
+                }
+            }
+        }
+    }
+
+    public function locations()
+    {
+        return $this->belongsToMany(Location::class)
+            ->withTimestamps();
     }
 }

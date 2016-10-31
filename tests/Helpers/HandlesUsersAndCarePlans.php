@@ -4,6 +4,7 @@ use App\CLH\Facades\StringManipulation;
 use App\CLH\Repositories\UserRepository;
 use App\Models\CPM\Biometrics\CpmWeight;
 use App\PatientCareTeamMember;
+use App\Practice;
 use App\Role;
 use App\User;
 use Carbon\Carbon;
@@ -63,6 +64,19 @@ trait HandlesUsersAndCarePlans
 
         //create a user
         $user = (new UserRepository())->createNewUser(new User(), $bag);
+
+        $locations = Practice::find($programId)->locations
+            ->pluck('id')
+            ->all();
+
+        $user->locations()->sync($locations);
+
+        foreach ($locations as $locId) {
+            $this->seeInDatabase('location_user', [
+                'location_id' => $locId,
+                'user_id'     => $user->id,
+            ]);
+        }
 
         //check that it was created
         $this->seeInDatabase('users', ['email' => $email]);
@@ -159,6 +173,7 @@ trait HandlesUsersAndCarePlans
             ->select($timezone, 'timezone')
             ->select($ccmStatus, 'ccm_status')
             ->press('Add Patient')
+            ->press('TestSubmit')
             ->select(10, 'preferred_contact_location')
             ->press('TestSubmit');
 
@@ -176,6 +191,11 @@ trait HandlesUsersAndCarePlans
         ]);
 
         $patient = User::whereEmail($email)->first();
+
+        $this->seeInDatabase('location_user', [
+            'location_id' => 10,
+            'user_id'     => $patient->id,
+        ]);
 
 //        $ccda = \App\Models\CCD\Ccda::create([
 //            'user_id' => $patient->id,

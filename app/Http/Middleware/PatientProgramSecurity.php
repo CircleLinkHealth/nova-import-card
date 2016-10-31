@@ -5,66 +5,81 @@ use Auth;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 
-class PatientProgramSecurity {
+class PatientProgramSecurity
+{
 
-	/**
-	 * The Guard implementation.
-	 *
-	 * @var Guard
-	 */
-	protected $auth;
+    /**
+     * The Guard implementation.
+     *
+     * @var Guard
+     */
+    protected $auth;
 
 
-	/**
-	 * Create a new filter instance.
-	 *
-	 * @param  Guard  $auth
-	 * @return void
-	 */
-	public function __construct(Guard $auth)
-	{
-		$this->auth = $auth;
-	}
+    /**
+     * Create a new filter instance.
+     *
+     * @param  Guard $auth
+     *
+     * @return void
+     */
+    public function __construct(Guard $auth)
+    {
+        $this->auth = $auth;
+    }
 
-	/**
-	 * Handle an incoming request.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @return mixed
-	 */
-	public function handle($request, Closure $next)
-	{
-		// admins can see and do all
-		if ( !Auth::guest() && Auth::user()->hasRole(['administrator']) && app()->environment() != 'production') {
-			return $next($request);
-		}
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request $request
+     *
+     * @return mixed
+     */
+    public function handle(
+        $request,
+        Closure $next
+    ) {
+        // admins can see and do all
+        if (!Auth::guest() && Auth::user()->hasRole(['administrator']) && app()->environment() != 'production') {
+            return $next($request);
+        }
 
-		if(!Auth::user()) {
-			return redirect()->guest('login');
-		}
+        if (!Auth::user()) {
+            return redirect()->guest('login');
+        }
 
-		if($request->route()->patientId) {
-			// viewing a specific patient, get patients program_id
-			$user = User::find($request->route()->patientId);
-			if(!$user) {
-				return response('Could not locate patient.', 401);
-			} else {
-				// security
+        if ($request->route()->patientId) {
+            // viewing a specific patient, get patients program_id
+            $user = User::find($request->route()->patientId);
+            if (!$user) {
+                return response('Could not locate patient.', 401);
+            } else {
+                // security
                 if ($user->id == Auth::user()->id && !Auth::user()->can('users-view-self')) {
-					abort(403);
-				}
+                    abort(403);
+                }
                 if ($user->id != Auth::user()->id && !Auth::user()->can('users-view-all')) {
-					abort(403);
-				}
-                if (!in_array($user->id, Auth::user()->viewablePatientIds())) {
-					abort(403);
-				}
-			}
-		} else {
+                    abort(403);
+                }
+                if (
+//                    count(array_intersect(
+//                        $user->locations->pluck('id')->all(),
+//                        auth()->user()->locations->pluck('id')->all()
+//                    )) == 0
+//                    ||
+                    count(array_intersect(
+                        $user->programs->pluck('id')->all(),
+                        auth()->user()->programs->pluck('id')->all()
+                    )) == 0
+                ) {
+                    abort(403);
+                }
+            }
+        } else {
 
-		}
+        }
 
-		return $next($request);
-	}
+        return $next($request);
+    }
 
 }

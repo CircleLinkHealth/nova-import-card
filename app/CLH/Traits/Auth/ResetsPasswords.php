@@ -143,7 +143,9 @@ trait ResetsPasswords {
             return $this->redirectPath;
         }
 
-        return property_exists($this, 'redirectTo') ? $this->redirectTo : '/login';
+        return property_exists($this, 'redirectTo')
+            ? $this->redirectTo
+            : '/auth/login';
     }
 
 }

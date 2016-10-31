@@ -74,6 +74,8 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
         $user->program_id = $params->get('program_id');
 
+        $user->attachPractice($params->get('program_id'));
+
         $user->auto_attach_programs = $params->get('auto_attach_programs');
         if ($params->get('first_name')) {
             $user->first_name = $params->get('first_name');
@@ -245,6 +247,8 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
     public function saveOrUpdatePatientInfo(User $user, ParameterBag $params)
     {
+        $user->attachLocation($params->get('preferred_contact_location'));
+
         $patientInfo = $user->patientInfo->toArray();
 
         // contact days checkbox formatting, @todo this is not normalized properly?

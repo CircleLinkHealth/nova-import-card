@@ -42,8 +42,6 @@ class Service
             $response = $this->api->getBookedAppointments($practiceId, $today, $today, $department['departmentid']);
             $this->logPatientIdsFromAppointments($response, $practiceId);
         }
-
-
     }
 
     public function logPatientIdsFromAppointments($response, $practiceId)
