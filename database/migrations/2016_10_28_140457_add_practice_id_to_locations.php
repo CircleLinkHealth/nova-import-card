@@ -20,7 +20,10 @@ class AddPracticeIdToLocations extends Migration
                 return;
             }
 
+            DB::statement('set foreign_key_checks = 0');
+
             $table->unsignedInteger('practice_id')
+                ->default(2)
                 ->after('id');
 
             $table->foreign('practice_id')
@@ -28,6 +31,8 @@ class AddPracticeIdToLocations extends Migration
                 ->on('practices')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+
+            DB::statement('set foreign_key_checks = 1');
         });
 
         foreach (Practice::all() as $practice) {
@@ -36,6 +41,10 @@ class AddPracticeIdToLocations extends Migration
             }
 
             $rootLoc = Location::find($practice->locationId());
+
+            if (!$rootLoc) {
+                continue;
+            }
 
             $rootLoc->practice_id = $practice->id;
             $rootLoc->save();
