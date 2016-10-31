@@ -23,7 +23,7 @@ class AddPracticeIdToLocations extends Migration
             DB::statement('set foreign_key_checks = 0');
 
             $table->unsignedInteger('practice_id')
-                ->default(2)
+                ->default(4)
                 ->after('id');
 
             $table->foreign('practice_id')
