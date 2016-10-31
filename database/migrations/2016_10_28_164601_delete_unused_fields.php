@@ -14,7 +14,7 @@ class DeleteUnusedFields extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('password');
+            $table->dropColumn('user_pass');
             $table->dropColumn('user_url');
             $table->dropColumn('user_activation_key');
         });
