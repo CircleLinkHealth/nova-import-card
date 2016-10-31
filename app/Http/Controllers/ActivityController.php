@@ -62,9 +62,8 @@ class ActivityController extends Controller {
             $providers = Practice::getProviders($user->blogId());
 			$provider_info = array();
 
-			$nurse_ids = User::whereHas('roles', function ($q) {
-				$q->where('name', '=', 'care-center');
-            })->pluck('id');
+            $nurse_ids = User::ofType('care-center')
+                ->pluck('id');
 
 			foreach ($nurse_ids as $nurse_id){
 

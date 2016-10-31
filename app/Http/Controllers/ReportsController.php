@@ -19,7 +19,6 @@ use DatePeriod;
 use DateTime;
 use Excel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
@@ -135,7 +134,7 @@ class ReportsController extends Controller
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
-        $patients = User::whereIn('id', Auth::user()->viewablePatientIds())
+        $patients = User::intersectLocationsWith(auth()->user())
             ->with('primaryProgram')
             ->get();
 
@@ -307,7 +306,7 @@ class ReportsController extends Controller
 
         }
 
-        $patients = User::whereIn('id', Auth::user()->viewablePatientIds())
+        $patients = User::intersectLocationsWith(auth()->user())
             ->with('primaryProgram')
             ->get();
 

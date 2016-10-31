@@ -364,6 +364,34 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\Call', 'outbound_cpm_id', 'id');
     }
 
+    /**
+     * @return array
+     */
+    public function viewablePatientIds() : array
+    {
+        // get all patients who are in the same programs
+        $programIds = $this->viewableProgramIds();
+
+        $patientIds = User::ofType('participant')
+            ->whereHas('programs', function ($q) use
+            (
+                $programIds
+            ) {
+                $q->whereIn('program_id', $programIds);
+            })
+            ->pluck('id')
+            ->all();
+
+        return $patientIds;
+    }
+
+    public function viewableProgramIds() : array
+    {
+        return $this->programs
+            ->pluck('id')
+            ->all();
+    }
+
     public function viewableProviderIds()
     {
         // get all patients who are in the same programs
@@ -384,13 +412,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $patientIds = $patientIds->pluck('id')->all();
 
         return $patientIds;
-    }
-
-    public function viewableProgramIds() : array
-    {
-        return $this->programs
-            ->pluck('id')
-            ->all();
     }
 
     public function viewableUserIds()
