@@ -75,7 +75,7 @@ class CCDUploadController extends Controller
     public function create()
     {
         JavaScript::put( [
-            'userBlogs' => auth()->user()->programs->keyBy('name')->sortBy('name'),
+            'userBlogs'  => auth()->user()->practices->keyBy('name')->sortBy('name'),
             'ccdVendors' => CcdVendor::all(),
         ] );
 

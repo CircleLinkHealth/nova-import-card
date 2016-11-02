@@ -65,7 +65,7 @@ class ProviderUsageReportController extends Controller
             /***** OFFICE USERS *******/
             // get users
             $officeUserIds = User::
-            whereHas('programs', function ($q) use
+            whereHas('practices', function ($q) use
             (
                 $programId
             ) {
@@ -114,7 +114,7 @@ class ProviderUsageReportController extends Controller
             /***** CARE CENTER USERS *******/
             // get users
             $nurseUserIds = User::
-            whereHas('programs', function ($q) use
+            whereHas('practices', function ($q) use
             (
                 $programId
             ) {
@@ -131,7 +131,7 @@ class ProviderUsageReportController extends Controller
 
             // get participants
             $participantUserIds = User::
-            whereHas('programs', function ($q) use
+            whereHas('practices', function ($q) use
             (
                 $programId
             ) {

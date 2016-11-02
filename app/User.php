@@ -373,7 +373,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $programIds = $this->viewableProgramIds();
 
         $patientIds = User::ofType('participant')
-            ->whereHas('programs', function ($q) use
+            ->whereHas('practices', function ($q) use
             (
                 $programIds
             ) {
@@ -387,7 +387,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function viewableProgramIds() : array
     {
-        return $this->programs
+        return $this->practices
             ->pluck('id')
             ->all();
     }
@@ -396,7 +396,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         // get all patients who are in the same programs
         $programIds = $this->viewableProgramIds();
-        $patientIds = User::whereHas('programs', function ($q) use
+        $patientIds = User::whereHas('practices', function ($q) use
         (
             $programIds
         ) {
@@ -418,7 +418,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         // get all patients who are in the same programs
         $programIds = $this->viewableProgramIds();
-        $patientIds = User::whereHas('programs', function ($q) use
+        $patientIds = User::whereHas('practices', function ($q) use
         (
             $programIds
         ) {
@@ -1856,6 +1856,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         });
     }
 
+    /**
+     * Scope a query to intersect locations with the given user.
+     *
+     * @param $query
+     * @param $user
+     */
+    public function scopeIntersectPracticesWith(
+        $query,
+        $user
+    ) {
+        $query->whereHas('practices', function ($q) use
+        (
+            $user
+        ) {
+            $q->whereIn('id', $user->practices->pluck('id')->all());
+        });
+    }
+
     public function attachPractice($practice)
     {
         $id = is_object($practice)
@@ -1864,7 +1882,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 
         try {
-            $this->programs()->attach($id);
+            $this->practices()->attach($id);
         } catch (\Exception $e) {
             //check if this is a mysql exception for unique key constraint
             if ($e instanceof \Illuminate\Database\QueryException) {
@@ -1879,7 +1897,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-    public function programs()
+    public function practices()
     {
         return $this->belongsToMany(Practice::class, 'practice_user', 'user_id', 'program_id');
     }

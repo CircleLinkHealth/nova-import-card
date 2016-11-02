@@ -31,7 +31,10 @@ class RemoveOldPrograms extends Migration {
 				$q->where('name', '=', 'participant');
 			});
 			if(!empty($program)) {
-				$programUsers->whereHas('programs', function ($q) use ($program) {
+                $programUsers->whereHas('practices', function ($q) use
+                (
+                    $program
+                ) {
                     $q->where('id', '=', $program->id);
 				});
 			} else {

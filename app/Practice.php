@@ -10,7 +10,10 @@ class Practice extends Model
     use SoftDeletes;
 
     public static function getProviders($blogId){
-        $providers = User::whereHas('programs', function ($q) use ($blogId) {
+        $providers = User::whereHas('practices', function ($q) use
+        (
+            $blogId
+        ) {
             $q->where('id', '=', $blogId);
         })->whereHas('roles', function ($q) {
             $q->where('name', '=', 'provider');
@@ -19,7 +22,10 @@ class Practice extends Model
     }
 
     public static function getNonCCMCareCenterUsers($blogId){
-        $providers = User::whereHas('programs', function ($q) use ($blogId) {
+        $providers = User::whereHas('practices', function ($q) use
+        (
+            $blogId
+        ) {
             $q->where('id', '=', $blogId);
         })->whereHas('roles', function ($q) {
             $q->where('name', '=', 'no-ccm-care-center');
@@ -28,7 +34,10 @@ class Practice extends Model
     }
 
     public static function getCareCenterUsers($blogId){
-        $providers = User::whereHas('programs', function ($q) use ($blogId) {
+        $providers = User::whereHas('practices', function ($q) use
+        (
+            $blogId
+        ) {
             $q->where('id', '=', $blogId);
         })->whereHas('roles', function ($q) {
             $q->where('name', '=', 'care-center');

@@ -156,7 +156,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     ) {
         // get selected programs
         $userPrograms = [];
-        if ($params->get('programs')) { // && ($wpUser->programs->count() > 0)
+        if ($params->get('programs')) { // && ($wpUser->practices->count() > 0)
             $userPrograms = $params->get('programs');
         }
         if ($params->get('program_id')) {
@@ -186,12 +186,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
 
         // first detatch relationship
-        $wpUser->programs()->detach();
+        $wpUser->practices()->detach();
 
         $wpBlogs = Practice::orderBy('id', 'desc')->pluck('id')->all();
         foreach ($wpBlogs as $wpBlogId) {
             if (in_array($wpBlogId, $userPrograms)) {
-                $wpUser->programs()->attach($wpBlogId);
+                $wpUser->practices()->attach($wpBlogId);
             }
         }
     }

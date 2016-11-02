@@ -55,9 +55,9 @@ class AttachCareCenterRoles  extends Migration {
 					if(!$program) {
 						continue 1;
 					}
-					if (!$user->programs->contains($userInfo['program'])) {
+                    if (!$user->practices->contains($userInfo['program'])) {
 						echo PHP_EOL.'Attach '. $userInfo['id'] .' to program '. $userInfo['program'];
-						$user->programs()->attach($program);
+                        $user->practices()->attach($program);
 					}
 					$user->save();
 				}

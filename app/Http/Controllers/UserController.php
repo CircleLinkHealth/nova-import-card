@@ -37,8 +37,8 @@ class UserController extends Controller
             // ensure program relationship is set
             /*
             if(!empty($user->program_id) && $user->program_id < 100) {
-                if (!$user->programs->contains($user->program_id)) {
-                    $user->programs()->attach($user->program_id);
+                if (!$user->practices->contains($user->program_id)) {
+                    $user->practices()->attach($user->program_id);
                 }
             } else {
                 $user->delete();
@@ -539,7 +539,7 @@ class UserController extends Controller
             return response( "User not found", 401 );
         }
 
-        //$user->programs()->detach();
+        //$user->practices()->detach();
         $user->delete();
 
         return redirect()->back()->with( 'messages', ['successfully deleted user'] );

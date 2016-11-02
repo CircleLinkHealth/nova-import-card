@@ -639,7 +639,7 @@ class PatientCareplanController extends Controller
         // get providers
         $providers = [];
         $providers = User::with('phoneNumbers', 'providerInfo')
-            ->whereHas('programs', function ($q) use
+            ->whereHas('practices', function ($q) use
             (
                 $patient
             ) {

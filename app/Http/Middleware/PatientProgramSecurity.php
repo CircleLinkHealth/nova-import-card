@@ -68,8 +68,8 @@ class PatientProgramSecurity
 //                    )) == 0
 //                    ||
                     count(array_intersect(
-                        $user->programs->pluck('id')->all(),
-                        auth()->user()->programs->pluck('id')->all()
+                        $user->practices->pluck('id')->all(),
+                        auth()->user()->practices->pluck('id')->all()
                     )) == 0
                 ) {
                     abort(403);

@@ -17,16 +17,15 @@ class PatientCarePlan extends Model
         ])
         ) {
             $pendingApprovals = User::ofType('participant')
-                ->intersectLocationsWith($user)
+                ->intersectPracticesWith($user)
                 ->whereHas('patientInfo', function ($q) {
-                    $q->whereCareplanStatus('draft')
-                        ->whereCcmStatus('enrolled');
+                    $q->whereCareplanStatus('draft');
                 })
                 ->count();
         } else {
             if ($user->hasRole(['provider'])) {
                 $pendingApprovals = User::ofType('participant')
-                    ->intersectLocationsWith($user)
+                    ->intersectPracticesWith($user)
                     ->whereHas('patientInfo', function ($q) {
                         $q->whereCareplanStatus('qa_approved')
                             ->whereCcmStatus('enrolled');

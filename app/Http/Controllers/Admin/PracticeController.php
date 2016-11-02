@@ -82,8 +82,8 @@ class PracticeController extends Controller
 				if (!$program) {
 					continue 1;
 				}
-                if (!$user->programs->contains($program->id)) {
-                    $user->programs()->attach($program->id);
+                if (!$user->practices->contains($program->id)) {
+                    $user->practices()->attach($program->id);
 				}
 				$user->save();
 			}
