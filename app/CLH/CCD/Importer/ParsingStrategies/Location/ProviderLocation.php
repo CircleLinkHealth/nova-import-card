@@ -3,12 +3,11 @@
 namespace App\CLH\CCD\Importer\ParsingStrategies\Location;
 
 
-use App\Models\CCD\Ccda;
 use App\CLH\CCD\ItemLogger\CcdProviderLog;
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
-use App\CLH\Facades\StringManipulation;
 use App\Location;
+use App\Models\CCD\Ccda;
 
 class ProviderLocation implements ParsingStrategy
 {
@@ -21,7 +20,6 @@ class ProviderLocation implements ParsingStrategy
         {
             $loc = Location::where( 'address_line_1', $provider->street )
                 ->whereIn( 'phone', [$provider->cell_phone, $provider->home_phone, $provider->work_phone] )
-                ->whereNotNull( 'parent_id' )
                 ->get();
 
             if (count($loc) > 0) {
