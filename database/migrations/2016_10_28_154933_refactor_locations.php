@@ -14,12 +14,19 @@ class RefactorLocations extends Migration
      */
     public function up()
     {
-        Location::unguard();
-
         Location::whereIsNull('parent_id')
             ->delete();
 
-        Location::reguard();
+        Schema::table('location_user', function (Blueprint $table) {
+
+            $table->dropColumn('parent_id');
+            $table->dropColumn('position');
+            $table->dropColumn('real_depth');
+            $table->dropColumn('billing_code');
+            $table->dropColumn('location_code');
+
+            $table->dropSoftDeletes();
+        });
     }
 
     /**
