@@ -54,12 +54,18 @@ class ReportsController extends Controller
         }
 
         foreach ($biometrics_data as $key => $value) {
+            $value = $value->all();
             $bio_name = $key;
             if ($value != null) {
                 $first = reset($value);
                 $last = end($value);
-                $changes = $this->service->biometricsIndicators(intval($last->Avg), intval($first->Avg), $bio_name,
-                    (new ReportsService())->getTargetValueForBiometric($bio_name, $user));
+                $changes = $this->service
+                    ->biometricsIndicators(
+                        intval($last->Avg),
+                        intval($first->Avg),
+                        $bio_name,
+                        (new ReportsService())->getTargetValueForBiometric($bio_name, $user)
+                    );
 
                 $biometrics_array[$bio_name]['change'] = $changes['change'];
                 $biometrics_array[$bio_name]['progression'] = $changes['progression'];
@@ -529,7 +535,6 @@ class ReportsController extends Controller
 
         $careTeam = PatientCareTeamMember::with('user')
             ->whereUserId($patient->id)
-
             ->get();
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
@@ -592,7 +597,8 @@ class ReportsController extends Controller
         ]);
     }
 
-    public function createSalesReport(Request $request){
+    public function createSalesReport(Request $request)
+    {
 
         $programs = Practice::all()->pluck('display_name', 'id');
 
@@ -600,25 +606,28 @@ class ReportsController extends Controller
 
     }
 
-    public function makeSalesReport(Request $request){
+    public function makeSalesReport(Request $request)
+    {
 
         $input = $request->all();
 
         $programs = $input['programs'];
 
-        $withHistory = isset($input['withPastMonth']) ? true : false;
+        $withHistory = isset($input['withPastMonth'])
+            ? true
+            : false;
 
         $links = [];
 
-        foreach ($programs as $program){
+        foreach ($programs as $program) {
 
             $program = Practice::find($program);
 
             $links[$program->display_name] = (new SalesByLocationReport($program,
-                                                  Carbon::parse($input['start_date']),
-                                                  Carbon::parse($input['end_date']),
-                                                  $withHistory)
-                                            )->handle();
+                Carbon::parse($input['start_date']),
+                Carbon::parse($input['end_date']),
+                $withHistory)
+            )->handle();
         }
 
         return view('sales.reportlist', ['reports' => $links]);
