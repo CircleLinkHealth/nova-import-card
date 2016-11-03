@@ -140,8 +140,7 @@ class ReportsController extends Controller
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
-        $patients = User::intersectPracticesWith(auth()->user())
-            ->ofType('participant')
+        $patients = User::whereIn('id', auth()->user()->viewablePatientIds())
             ->with('primaryProgram')
             ->get();
 
@@ -297,8 +296,7 @@ class ReportsController extends Controller
 
         }
 
-        $patients = User::intersectPracticesWith(auth()->user())
-            ->ofType('participant')
+        $patients = User::whereIn('id', auth()->user()->viewablePatientIds())
             ->with('primaryProgram')
             ->get();
 

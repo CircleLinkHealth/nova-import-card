@@ -1870,7 +1870,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         (
             $user
         ) {
-            $q->whereIn('id', $user->practices->pluck('id')->all());
+            $q->whereIn('id', $user->viewableProgramIds());
         });
     }
 
