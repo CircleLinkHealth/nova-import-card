@@ -21,7 +21,7 @@ class AddPracticeIdToLocations extends Migration
             }
 
             $table->unsignedInteger('practice_id')
-                ->default(8)
+                ->default(4)
                 ->after('id');
         });
 
