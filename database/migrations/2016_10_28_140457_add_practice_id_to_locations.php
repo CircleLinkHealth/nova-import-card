@@ -41,6 +41,11 @@ class AddPracticeIdToLocations extends Migration
 
             $children = Location::whereParentId($rootLoc->id)->get();
 
+            if ($children->isEmpty()) {
+                $rootLoc->practice_id = $practice->id;
+                $rootLoc->save();
+            }
+
             foreach ($children as $loc) {
                 $loc->practice_id = $practice->id;
                 $loc->save();
