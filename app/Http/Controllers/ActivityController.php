@@ -54,7 +54,7 @@ class ActivityController extends Controller {
 			}
 			if(!empty($careteam_ids) && is_array($careteam_ids)) {
 				foreach ($careteam_ids as $id) {
-					$careteam_info[$id] = User::find($id)->getFullNameAttribute();;
+                    $careteam_info[$id] = User::find($id)->getFullNameAttribute();
 				}
 			}
 
