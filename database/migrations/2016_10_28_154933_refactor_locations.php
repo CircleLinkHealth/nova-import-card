@@ -14,10 +14,10 @@ class RefactorLocations extends Migration
      */
     public function up()
     {
-        Location::whereIsNull('parent_id')
+        Location::whereNull('parent_id')
             ->delete();
 
-        Schema::table('location_user', function (Blueprint $table) {
+        Schema::table('locations', function (Blueprint $table) {
 
             $table->dropColumn('parent_id');
             $table->dropColumn('position');
