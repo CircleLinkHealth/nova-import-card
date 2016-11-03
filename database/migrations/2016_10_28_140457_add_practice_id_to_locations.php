@@ -20,19 +20,9 @@ class AddPracticeIdToLocations extends Migration
                 return;
             }
 
-            DB::statement('set foreign_key_checks = 0');
-
             $table->unsignedInteger('practice_id')
                 ->default(4)
                 ->after('id');
-
-            $table->foreign('practice_id')
-                ->references('id')
-                ->on('practices')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            DB::statement('set foreign_key_checks = 1');
         });
 
         foreach (Practice::all() as $practice) {
@@ -56,6 +46,18 @@ class AddPracticeIdToLocations extends Migration
                 $loc->save();
             }
         }
+
+        Schema::table('locations', function (Blueprint $table) {
+            DB::statement('set foreign_key_checks = 0');
+
+            $table->foreign('practice_id')
+                ->references('id')
+                ->on('practices')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            DB::statement('set foreign_key_checks = 1');
+        });
     }
 
     /**
