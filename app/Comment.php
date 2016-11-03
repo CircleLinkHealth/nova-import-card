@@ -52,7 +52,7 @@ class Comment extends Model {
         $wpUser = User::find($this->user_id);
 
         /*
-        if(!$wpUser->blogId()) {
+        if(!$wpUser->program_id) {
             dd($this->user_id . ' is missing a program id');
         }
         */
@@ -77,7 +77,7 @@ class Comment extends Model {
             $this->comment_karma = 0;
         }
         $params['comment_karma'] = $this->comment_karma;
-        $this->program_id = $wpUser->blogId();
+        $this->program_id = $wpUser->program_id;
         */
 
         // updating or inserting?

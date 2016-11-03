@@ -59,7 +59,7 @@ class ActivityController extends Controller {
 			}
 
 			//providers
-            $providers = Practice::getProviders($user->blogId());
+            $providers = Practice::getProviders($user->program_id);
 			$provider_info = array();
 
             $nurse_ids = User::ofType('care-center')
@@ -91,13 +91,13 @@ class ActivityController extends Controller {
 			asort($provider_info);
 
 			$view_data = [
-				'program_id' => $user->blogId(),
-				'patient' => $user,
-				'patient_name' => $patient_name,
-				'activity_types' => Activity::input_activity_types(),
-				'provider_info' => $provider_info,
-				'careteam_info' => $careteam_info,
-				'userTimeZone' => $userTimeZone
+                'program_id'     => $user->program_id,
+                'patient'        => $user,
+                'patient_name'   => $patient_name,
+                'activity_types' => Activity::input_activity_types(),
+                'provider_info'  => $provider_info,
+                'careteam_info'  => $careteam_info,
+                'userTimeZone'   => $userTimeZone
 			];
 
 			return view('wpUsers.patient.activity.create', $view_data);
@@ -175,12 +175,12 @@ class ActivityController extends Controller {
 		}
 
 		$view_data = [
-			'activity' => $activity,
-			'userTimeZone' => $patient->timeZone,
-			'careteam_info' => $careteam_info,
-			'patient' => $patient,
-			'program_id' => $patient->blogId(),
-			'messages' => $messages];
+            'activity'      => $activity,
+            'userTimeZone'  => $patient->timeZone,
+            'careteam_info' => $careteam_info,
+            'patient'       => $patient,
+            'program_id'    => $patient->program_id,
+            'messages'      => $messages];
 
 		return view('wpUsers.patient.activity.view', $view_data);
 	}

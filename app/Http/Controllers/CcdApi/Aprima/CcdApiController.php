@@ -337,7 +337,7 @@ class CcdApiController extends Controller
             }
         }
 
-        $programId = $user->blogId();
+        $programId = $user->program_id;
 
         try {
             $xml = base64_decode($request->input('file'));

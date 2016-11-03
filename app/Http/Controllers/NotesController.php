@@ -191,16 +191,16 @@ class NotesController extends Controller
             }
 
             //Check for User's blog
-            if (empty($patient->blogId())) {
+            if (empty($patient->program_id)) {
                 return response("User's Program not found", 401);
             }
 
             Auth::user()->hasRole('care-center');
 
             //providers
-            $providers = Practice::getProviders($patient->blogId());
-            $nonCCMCareCenterUsers = Practice::getNonCCMCareCenterUsers($patient->blogId());
-            $careCenterUsers = Practice::getCareCenterUsers($patient->blogId());
+            $providers = Practice::getProviders($patient->program_id);
+            $nonCCMCareCenterUsers = Practice::getNonCCMCareCenterUsers($patient->program_id);
+            $careCenterUsers = Practice::getCareCenterUsers($patient->program_id);
             $provider_info = [];
 
 
@@ -243,16 +243,16 @@ class NotesController extends Controller
             asort($careteam_info);
 
             $view_data = [
-                'program_id'         => $patient->blogId(),
-                'patient'            => $patient,
-                'patient_name'       => $patient_name,
-                'note_types'         => Activity::input_activity_types(),
-                'author_id'          => $author_id,
-                'author_name'        => $author_name,
-                'careteam_info'      => $careteam_info,
-                'userTimeZone'       => $userTimeZone,
-                'window'             => $window,
-                'window_flag'        => $patient_contact_window_exists,
+                'program_id'    => $patient->program_id,
+                'patient'       => $patient,
+                'patient_name'  => $patient_name,
+                'note_types'    => Activity::input_activity_types(),
+                'author_id'     => $author_id,
+                'author_name'   => $author_name,
+                'careteam_info' => $careteam_info,
+                'userTimeZone'  => $userTimeZone,
+                'window'        => $window,
+                'window_flag'   => $patient_contact_window_exists,
                 'contact_days_array' => $contact_days_array,
             ];
 
@@ -464,7 +464,7 @@ class NotesController extends Controller
             'userTimeZone'  => $patient->timeZone,
             'careteam_info' => $careteam_info,
             'patient'       => $patient,
-            'program_id'    => $patient->blogId(),
+            'program_id'    => $patient->program_id,
             'meta'          => $meta_tags,
         ];
 

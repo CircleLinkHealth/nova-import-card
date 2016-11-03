@@ -22,7 +22,7 @@ class CareplanService {
 	{
 		// set universal user / vars
 		$this->wpUser = $wpUser;
-		$this->programId = $wpUser->blogId();
+        $this->programId = $wpUser->program_id;
 
 		// start feed
 		$feed = array(

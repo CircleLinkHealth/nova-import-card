@@ -575,7 +575,7 @@ class ReportsService
 //        //**************TRACKING CHANGES SECTION**************
 //
 //        //get observations for user to calculate adherence
-//        $tracking_pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Biometrics to Monitor')->first();
+//        $tracking_pcp = CPRulesPCP::where('prov_id', '=', $user->program_id)->where('status', '=', 'Active')->where('section_text', 'Biometrics to Monitor')->first();
 //        $tracking_items = CPRulesItem::where('pcp_id', $tracking_pcp->pcp_id)->where('items_parent', 0)->pluck('items_id')->all();
 //        // gives the biometrics being monitered for the given user
 //        for ($i = 0; $i < count($tracking_items); $i++) {
@@ -713,7 +713,7 @@ class ReportsService
 //        $treating['Data'] = array();
 //
 //        //PCP has the sections for each provider, get all sections for the user's blog
-//        $pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Diagnosis / Problems to Monitor')->first();
+//        $pcp = CPRulesPCP::where('prov_id', '=', $user->program_id)->where('status', '=', 'Active')->where('section_text', 'Diagnosis / Problems to Monitor')->first();
 //
 //        //Get all the items for each section
 //        $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->pluck('items_id')->all();
@@ -744,7 +744,7 @@ class ReportsService
 //
 //        $goals_active_biometrics = array();
 //
-//        $goals_raw = (new CareplanUIService())->getCareplanSectionData($user->blogId(), 'Biometrics to Monitor', $user);
+//        $goals_raw = (new CareplanUIService())->getCareplanSectionData($user->program_id, 'Biometrics to Monitor', $user);
 //        //dd($goals_raw['sub_meta']['Biometrics to Monitor']);
 //        foreach ($goals_raw['sub_meta']['Biometrics to Monitor'][0] as $key => $value) {
 //            if ($value['item_status'] == 'Active') {
@@ -804,7 +804,7 @@ class ReportsService
 //
 //        $takMedications['Section'] = 'Medication Details';
 //
-//        $additional_information_item = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
+//        $additional_information_item = CPRulesPCP::where('prov_id', '=', $user->program_id)->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
 //        $medication_information_item = CPRulesItem::where('pcp_id', $additional_information_item->pcp_id)->where('items_parent', 0)->where('items_text', 'Medications List')->first();
 //        $medication_tracking_item = CPRulesItem::where('items_parent', $medication_information_item->items_id)->first();
 //        $medications_taking = CPRulesUCP::where('items_id', $medication_tracking_item->items_id)->where('user_id', $user->id)->first();
@@ -865,7 +865,7 @@ class ReportsService
 //        $other['Section'] = 'Other Information';
 //
 //        $other['Data'] = array();
-//        $pcp = CPRulesPCP::where('prov_id', '=', $user->blogId())->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
+//        $pcp = CPRulesPCP::where('prov_id', '=', $user->program_id)->where('status', '=', 'Active')->where('section_text', 'Additional Information')->first();
 //        //Get all the items for each section
 //        $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->pluck('items_id')->all();
 //

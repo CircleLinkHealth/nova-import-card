@@ -209,7 +209,7 @@ class Observation extends Model {
             return false;
         }
         $wpUser = User::find($this->user_id);
-        if(!$wpUser->blogId()) {
+        if (!$wpUser->program_id) {
             return false;
         }
         $comment = Comment::find($this->comment_id);
@@ -228,7 +228,7 @@ class Observation extends Model {
         $params['obs_key'] = $this->obs_key;
         $params['obs_value'] = $this->obs_value;
         $params['obs_unit'] = $this->obs_unit;
-        $this->program_id = $wpUser->blogId();
+        $this->program_id = $wpUser->program_id;
 
         // updating or inserting?
         $updating = false;

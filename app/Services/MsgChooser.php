@@ -44,7 +44,7 @@ class MsgChooser {
             $log[] = "MsgChooser->setNextMessage() user not found";
             return false;
         }
-        $this->programId = $wpUser->blogId();
+        $this->programId = $wpUser->program_id;
         $userMeta = $wpUser->userMeta();
 
         $log[] = "MsgChooser->setNextMessage(".$this->programId." | $commentId | $msgId | $answer) start";

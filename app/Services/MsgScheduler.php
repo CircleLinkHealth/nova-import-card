@@ -289,7 +289,7 @@ class MsgScheduler {
             echo "<br>MsgScheduler->create_app_schedule() Missing User Config";
             return false;
         }
-        if(!$wpUser->blogId()) {
+        if (!$wpUser->program_id) {
             echo "<br>MsgScheduler->create_app_schedule() Missing ProgramId";
             return false;
         }
