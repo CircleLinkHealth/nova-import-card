@@ -366,16 +366,12 @@ class ReportsController extends Controller
                     $start,
                     $end,
                 ])
+                ->where('duration', '>', 1200)
                 ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
                 ->orderBy('performed_at', 'desc')
                 ->get();
 
-//				foreach ($acts as $key => $value) {
-//					$acts[$key]['patient'] = User::find($patient->id);
-//				}
-
             foreach ($acts as $activity) {
-                //$u20_patients[$act_count]['provider'] = User::find($activity->provider_id)->getFullNameAttribute();
                 if (in_array($activity->type, $CarePlan)) {
                     $u20_patients[$act_count]['colsum_careplan'] += intval($activity->duration);
                 } else {
