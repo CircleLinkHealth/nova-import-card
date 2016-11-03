@@ -140,7 +140,7 @@ class ReportsController extends Controller
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
 
-        $patients = User::intersectLocationsWith(auth()->user())
+        $patients = User::intersectPracticesWith(auth()->user())
             ->with('primaryProgram')
             ->get();
 
@@ -312,7 +312,7 @@ class ReportsController extends Controller
 
         }
 
-        $patients = User::intersectLocationsWith(auth()->user())
+        $patients = User::intersectPracticesWith(auth()->user())
             ->with('primaryProgram')
             ->get();
 

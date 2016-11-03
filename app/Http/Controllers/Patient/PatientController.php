@@ -231,7 +231,7 @@ class PatientController extends Controller
         if (isset($input['patient_approval_id'])) event(new CarePlanWasApproved(User::find($input['patient_approval_id'])));
 
         $patientData = array();
-        $patients = User::intersectLocationsWith(auth()->user())
+        $patients = User::intersectPracticesWith(auth()->user())
             ->with('primaryProgram')
             ->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
@@ -397,7 +397,7 @@ class PatientController extends Controller
     {
 
         $patientData = array();
-        $patients = User::intersectLocationsWith(auth()->user())
+        $patients = User::intersectPracticesWith(auth()->user())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get();
@@ -506,7 +506,7 @@ class PatientController extends Controller
     public function showPatientSelect(Request $request)
     {
         // get number of approvals
-        $patients = User::intersectLocationsWith(auth()->user())
+        $patients = User::intersectPracticesWith(auth()->user())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get()->pluck('fullNameWithId', 'id')->all();

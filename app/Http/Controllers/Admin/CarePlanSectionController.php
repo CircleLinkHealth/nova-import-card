@@ -26,7 +26,7 @@ class CarePlanSectionController extends Controller
         $params = $request->all();
 
         // filter user
-        $users = User::intersectLocationsWith(auth()->user())
+        $users = User::intersectPracticesWith(auth()->user())
             ->OrderBy('id', 'desc')
             ->get()
             ->pluck('fullNameWithId', 'id')
@@ -77,7 +77,7 @@ class CarePlanSectionController extends Controller
             abort(403);
         }
 
-        $users = User::intersectLocationsWith(auth()->user())
+        $users = User::intersectPracticesWith(auth()->user())
             ->orderBy('id', 'desc')
             ->get()
             ->pluck('fullNameWithId', 'id')
@@ -143,7 +143,7 @@ class CarePlanSectionController extends Controller
         if (!Auth::user()->can('programs-manage')) {
             abort(403);
         }
-        $users = User::intersectLocationsWith(auth()->user())
+        $users = User::intersectPracticesWith(auth()->user())
             ->orderBy('id', 'desc')
             ->get()
             ->pluck('fullNameWithId', 'id')

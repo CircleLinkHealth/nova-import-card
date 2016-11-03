@@ -40,7 +40,7 @@ class PatientCareplanController extends Controller
     {
         $patientData = [];
 
-        $patients = User::intersectLocationsWith(auth()->user())
+        $patients = User::intersectPracticesWith(auth()->user())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
             ->select(DB::raw('users.*'))
             ->get();
