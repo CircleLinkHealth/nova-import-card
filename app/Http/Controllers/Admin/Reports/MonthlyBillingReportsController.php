@@ -95,7 +95,7 @@ class MonthlyBillingReportsController extends Controller
                         ->orWhere('outbound_cpm_id', $patient->id);
                 })
                     ->whereStatus('reached')
-                    ->whereBetween('created_at', [
+                    ->whereBetween('updated_at', [
                         $start, $end
                     ])
                     ->get();
