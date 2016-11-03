@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
 
 class RedirectIfAuthenticated
 {
@@ -21,9 +20,6 @@ class RedirectIfAuthenticated
         Closure $next,
         $guard = null
     ) {
-        if (Auth::guard($guard)->check()) {
-            return redirect()->route('login');
-        }
 
         return $next($request);
     }
