@@ -1288,7 +1288,7 @@ Route::group([
         'as'   => 'get.onboarding.create.practice',
     ]);
 
-    Route::get('create-program-lead-user', [
+    Route::get('create-practice-lead-user', [
         'uses' => 'Provider\OnboardingController@getCreateProgramLeadUser',
         'as'   => 'get.onboarding.create.program.lead.user',
     ]);

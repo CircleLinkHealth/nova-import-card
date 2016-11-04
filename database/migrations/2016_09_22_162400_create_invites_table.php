@@ -18,7 +18,7 @@ class CreateInvitesTable extends Migration
 
             $table->unsignedInteger('inviter_id');
             $table->foreign('inviter_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

@@ -42,7 +42,7 @@ class DashboardController extends Controller
     public function getCreatePractice()
     {
         $practice = $this->practices->firstOrNew([
-            'user_id' => auth()->user()->ID,
+            'user_id' => auth()->user()->id,
         ]);
 
         return view('provider.practice.create', compact('practice'));
@@ -51,7 +51,7 @@ class DashboardController extends Controller
     public function getCreateStaff()
     {
         $invite = $this->invites->firstOrNew([
-            'inviter_id' => auth()->user()->ID,
+            'inviter_id' => auth()->user()->id,
         ]);
 
         return view('provider.user.create-staff', compact('invite'));
@@ -65,7 +65,7 @@ class DashboardController extends Controller
     public function postStoreInvite(Request $request)
     {
         $invite = $this->invites->create([
-            'inviter_id' => auth()->user()->ID,
+            'inviter_id' => auth()->user()->id,
             'role_id'    => $request->input('role'),
             'email'      => $request->input('email'),
             'subject'    => $request->input('subject'),
@@ -86,7 +86,7 @@ class DashboardController extends Controller
         try {
             $program = $this->practices->create([
                 'name'         => str_slug($input['name']),
-                'user_id'      => auth()->user()->ID,
+                'user_id'      => auth()->user()->id,
                 'display_name' => $input['name'],
                 'description'  => $input['description'],
             ]);

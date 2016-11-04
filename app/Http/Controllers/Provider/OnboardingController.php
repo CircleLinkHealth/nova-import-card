@@ -58,7 +58,7 @@ class OnboardingController extends Controller
 
         try {
             $user = $this->users->create([
-                'user_email' => $input['email'],
+                'email'      => $input['email'],
                 'first_name' => $input['firstName'],
                 'last_name'  => $input['lastName'],
                 'password'   => bcrypt($input['password']),
@@ -72,7 +72,8 @@ class OnboardingController extends Controller
 
         $role = Role::whereName('program-lead')->first();
 
-        $user->roles()->attach($role->id);
+        $user->roles()
+            ->attach($role->id);
 
         auth()->login($user);
 
@@ -88,9 +89,8 @@ class OnboardingController extends Controller
 
             $program = $this->programs->create([
                 'name'         => str_slug($input['name']),
-                'user_id'      => auth()->user()->ID,
+                'user_id'      => auth()->user()->id,
                 'display_name' => $input['name'],
-                'description'  => $input['description'],
             ]);
         } catch (ValidatorException $e) {
             return redirect()

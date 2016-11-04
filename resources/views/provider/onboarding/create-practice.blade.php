@@ -2,7 +2,7 @@
 
 @section('title', 'Create Practice')
 
-@section('instructions', "What is the name and description of the practice? Do we need description Raph? Title: create-practice")
+@section('instructions', "What is the name of the practice? How should we word this Raph? Title: create-practice")
 
 @section('module')
 
@@ -17,12 +17,6 @@
     @include('provider.partials.mdl.form.text.textfield', [
         'name' => 'name',
         'label' => 'Name',
-        'class' => 'mdl-cell--12-col',
-    ])
-
-    @include('provider.partials.mdl.form.text.textfield', [
-        'name' => 'description',
-        'label' => 'Description',
         'class' => 'mdl-cell--12-col',
     ])
 

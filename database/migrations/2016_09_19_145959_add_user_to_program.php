@@ -12,14 +12,14 @@ class AddUserToProgram extends Migration
      */
     public function up()
     {
-        Schema::table('wp_blogs', function (Blueprint $table) {
+        Schema::table('practices', function (Blueprint $table) {
             $table->unsignedInteger('user_id')
                 ->nullable()
                 ->default(null)
-                ->after('blog_id');
+                ->after('id');
 
             $table->foreign('user_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('set null');

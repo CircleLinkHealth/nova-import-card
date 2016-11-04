@@ -55,11 +55,11 @@ class OnboardingTest extends TestCase
             ->seeInDatabase('users', [
                 'first_name' => $firstName,
                 'last_name'  => $lastName,
-                'user_email' => $email,
+                'email'      => $email,
             ])
             ->seePageIs(route('get.onboarding.create.practice'));
 
-        $this->provider = User::whereUserEmail($email)->first();
+        $this->provider = User::whereEmail($email)->first();
 
         $this->assertTrue(Hash::check($password, $this->provider->password));
 
