@@ -1,14 +1,11 @@
 <?php
 
-use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdMedication;
 use App\Models\CCD\CcdProblem;
 use App\Models\CPM\CpmMisc;
 use App\Services\CPM\CpmMiscService;
 use App\User;
-use App\CareItemUserValue;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class ChangeNameTypeCcdMedicationsRound2 extends Migration
@@ -28,15 +25,15 @@ class ChangeNameTypeCcdMedicationsRound2 extends Migration
 
         // RERUN ITEM MIGRATION
         // add approval meta to patient info
-        $users = User::orderBy('ID', 'Desc')->get();
+        $users = User::orderBy('id', 'Desc')->get();
         echo 'Process role patient users - Users found: '.$users->count().PHP_EOL;
         $i = 0;
         foreach($users as $user) {
-            echo 'Processing user '.$user->ID.PHP_EOL;
+            echo 'Processing user ' . $user->id . PHP_EOL;
             $result = (new CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::ALLERGIES);
             if(!empty($result)){
                 $ccdAllergy = New CcdAllergy;
-                $ccdAllergy->patient_id = $user->ID;
+                $ccdAllergy->patient_id = $user->id;
                 $ccdAllergy->allergen_name = $result;
                 $ccdAllergy->save();
                 echo 'added' . $result . PHP_EOL;
@@ -45,7 +42,7 @@ class ChangeNameTypeCcdMedicationsRound2 extends Migration
             $result = (new CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::OTHER_CONDITIONS);
             if(!empty($result)){
                 $ccdProblem = New CcdProblem;
-                $ccdProblem->patient_id = $user->ID;
+                $ccdProblem->patient_id = $user->id;
                 $ccdProblem->name = $result;
                 $ccdProblem->save();
                 echo 'added' . $result . PHP_EOL;
@@ -54,7 +51,7 @@ class ChangeNameTypeCcdMedicationsRound2 extends Migration
             $result = (new CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::MEDICATION_LIST);
             if(!empty($result)){
                 $ccdMedication = New CcdMedication;
-                $ccdMedication->patient_id = $user->ID;
+                $ccdMedication->patient_id = $user->id;
                 $ccdMedication->name = $result;
                 $ccdMedication->save();
                 echo 'added' . $result . PHP_EOL;

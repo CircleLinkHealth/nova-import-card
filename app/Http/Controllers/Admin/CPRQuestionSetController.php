@@ -3,7 +3,7 @@
 use App\CPRulesQuestions;
 use App\CPRulesQuestionSets;
 use App\Http\Controllers\Controller;
-use App\Program;
+use App\Practice;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -49,7 +49,7 @@ class CPRQuestionSetController extends Controller
 		}
 
 		// filter program
-        $programs = Program::orderBy('blog_id', 'desc')->get()->pluck('domain', 'blog_id')->all();
+        $programs = Practice::orderBy('id', 'desc')->get()->pluck('domain', 'id')->all();
 		$filterProgram = 'all';
 		if(!empty($params['filterProgram'])) {
 			$filterProgram = $params['filterProgram'];
@@ -139,7 +139,7 @@ class CPRQuestionSetController extends Controller
 			abort(403);
 		}
 		$questionSet = CPRulesQuestionSets::find($id);
-		$programs = Program::get();
+        $programs = Practice::get();
 		if (!empty($questionSet->rulesItems)) {
 			foreach ($questionSet->rulesItems as $item) {
 				if (isset($item->pcp->program->first()->domain)) {

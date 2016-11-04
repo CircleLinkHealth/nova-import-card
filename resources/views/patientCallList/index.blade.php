@@ -92,7 +92,7 @@
                                                 <th>CCM Time to date</th>
                                                 <th># Calls to date</th>
                                                 <th>Provider</th>
-                                                <th>Program</th>
+                                                <th>Practice</th>
                                                 <th></th>
                                             </tr>
                                             </thead>
@@ -116,7 +116,9 @@
                                                         </td>
                                                         <td>
                                                             @if($call->inboundUser)
-                                                                <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->ID)) }}" class="patientNameLink" call-id="{{ $call->id }}" style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
+                                                                <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
+                                                                   class="patientNameLink" call-id="{{ $call->id }}"
+                                                                   style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
                                                             @else
                                                                 <em style="color:red;">unassigned</em>
                                                             @endif
@@ -215,7 +217,8 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->ID)) }}" class="btn btn-primary">Continue to care plan</a>
+                            <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
+                               class="btn btn-primary">Continue to care plan</a>
                         </div>
                     </div>
 

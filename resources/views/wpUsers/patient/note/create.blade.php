@@ -252,10 +252,10 @@
 
                                     <!-- Hidden Fields -->
                                     <div class="form-group col-sm-4">
-                                        <input type="hidden" name="patient_id" value="{{$patient->ID}}">
-                                        <input type="hidden" name="logger_id" value="{{Auth::user()->ID}}">
-                                        <input type="hidden" name="author_id" value="{{Auth::user()->ID}}">
-                                        <input type="hidden" name="patientID" id="patientID" value="{{$patient->ID}}">
+                                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                                        <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
+                                        <input type="hidden" name="author_id" value="{{Auth::user()->id}}">
+                                        <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
                                         <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                     </div>
 

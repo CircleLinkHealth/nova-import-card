@@ -1,22 +1,14 @@
 <?php namespace App\Http\Controllers\Admin\Reports;
 
-use App\Activity;
-use App\Billing\NurseMonthlyBillGenerator;
-use App\Call;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
-use App\NurseInfo;
 use App\PageTimer;
 use App\User;
 use Auth;
-use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;
 use DateTime;
 use Excel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Yajra\Datatables\Facades\Datatables;
 
 
 class NurseTimeReportController extends Controller
@@ -90,7 +82,7 @@ class NurseTimeReportController extends Controller
 					$dt->format('Y-m-d') . ' 00:00:01',
 					$dt->format('Y-m-d') . ' 23:59:59',
 				])
-					->where('provider_id', $user->ID);
+                    ->where('provider_id', $user->id);
 				// toggle whether to show total times
 				if (!$showAllTimes) {
 					$pageTime = $pageTime->where('activity_type', '!=', '');
@@ -99,10 +91,10 @@ class NurseTimeReportController extends Controller
 
 				$total = number_format((float)($pageTime / 60), 2, '.', '');
 				$rowUserValues[] = $total;
-				if (!isset($userTotals[$user->ID])) {
-					$userTotals[$user->ID] = 0;
+                if (!isset($userTotals[$user->id])) {
+                    $userTotals[$user->id] = 0;
 				}
-				$userTotals[$user->ID] = $userTotals[$user->ID] + $total;
+                $userTotals[$user->id] = $userTotals[$user->id] + $total;
 			}
 
 			$sheetRows[] = $rowUserValues;
@@ -210,7 +202,7 @@ class NurseTimeReportController extends Controller
 							$dt->format('Y-m-d') . ' 00:00:01',
 							$dt->format('Y-m-d') . ' 23:59:59',
 						])
-							->where('provider_id', $user->ID);
+                            ->where('provider_id', $user->id);
 						// toggle whether to show total times
 						if (!$showAllTimes) {
 							$pageTime = $pageTime->where('activity_type', '!=', '');

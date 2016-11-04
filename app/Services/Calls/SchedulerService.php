@@ -66,8 +66,8 @@ class SchedulerService
         (
             $patient
         ) {
-            $q->where('outbound_cpm_id', $patient->ID)
-                ->orWhere('inbound_cpm_id', $patient->ID);
+            $q->where('outbound_cpm_id', $patient->id)
+                ->orWhere('inbound_cpm_id', $patient->id);
         })
             ->where('status', '=', 'scheduled')
             ->first();
@@ -89,7 +89,7 @@ class SchedulerService
             $call->status = $status;
             $call->note_id = $note->id;
             $call->called_date = Carbon::now()->toDateTimeString();
-            $call->outbound_cpm_id = Auth::user()->ID;
+            $call->outbound_cpm_id = Auth::user()->id;
             $call->save();
 
         } else { // If call doesn't exist, make one and store it
@@ -138,7 +138,7 @@ class SchedulerService
                 : '',
             'outbound_phone_number' => '',
 
-            'inbound_cpm_id'  => $patient->ID,
+            'inbound_cpm_id'  => $patient->id,
             'outbound_cpm_id' => $nurse_id,
 
             'call_time'  => 0,
@@ -228,7 +228,7 @@ class SchedulerService
                     : '',
                 'outbound_phone_number' => '',
 
-                'inbound_cpm_id'  => $patient->ID,
+                'inbound_cpm_id'  => $patient->id,
                 'outbound_cpm_id' => NurseInfo::$nurseMap[$row['Nurse']],
 
                 'call_time' => 0,

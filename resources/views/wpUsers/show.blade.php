@@ -23,13 +23,13 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td>{{ $wpUser->user_email }}</td>
+                                <td>{{ $wpUser->email }}</td>
                                 <td>need this for meta <a href="https://github.com/chrismichaels84/eloquent-meta">https://github.com/chrismichaels84/eloquent-meta</a></td>
                             </tr>
                             </tbody>
                         </table>
 
-                        <h1>Primary Blog = {{ $wpUser->blogId() }}</h1>
+                        <h1>Primary Blog = {{ $wpUser->primaryProgramId() }}</h1>
 
                         <h1>Meta</h1>
                         <div id="usermetas">

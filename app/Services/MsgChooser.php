@@ -1,15 +1,11 @@
 <?php namespace App\Services;
 
-use App\User;
-use App\UserMeta;
 use App\Comment;
 use App\Observation;
-use App\Services\MsgCPRules;
-use App\Services\MsgSubstitutions;
-use App\Services\MsgTod;
-use DB;
+use App\User;
 use Date;
 use DateTime;
+
 /*
 $this->_ci->load->model('cpm_1_7_rules_model','rules');
 $this->_ci->load->library('cpm_1_7_substitution_library');
@@ -18,6 +14,7 @@ $this->_ci->load->library('cpm_1_7_tod_library');
 
 class MsgChooser {
 
+    var $log = [];
     /**
      * Msgchooser picks next action to take for questions.
      *
@@ -29,14 +26,10 @@ class MsgChooser {
     private $arrReturn;
     private $key;
     private $comment_id;
-    private $provid;
-    private $programId; // duplicate of provid
+    private $provid; // duplicate of provid
+    private $programId;
     private $smsMeth;
-
     private $obsValue;
-
-
-    var $log = array();
 
     public function __construct() {
     }
@@ -51,7 +44,7 @@ class MsgChooser {
             $log[] = "MsgChooser->setNextMessage() user not found";
             return false;
         }
-        $this->programId = $wpUser->blogId();
+        $this->programId = $wpUser->program_id;
         $userMeta = $wpUser->userMeta();
 
         $log[] = "MsgChooser->setNextMessage(".$this->programId." | $commentId | $msgId | $answer) start";
@@ -259,7 +252,7 @@ class MsgChooser {
         reset($arrPart);
         $this->key 			= key($arrPart);
         $this->comment_id	= $arrPart[$this->key]['usermeta']['comment_ID'];
-        $this->provid 		= $arrPart[$this->key]['usermeta']['intProgramId']; // Provider ID
+        $this->provid = $arrPart[$this->key]['usermeta']['intProgramId']; // Provider id
         $qstype				= $arrPart[$this->key]['usermeta']['msgtype'];  // Question Group Type
         $strResponse		= urldecode($arrPart[$this->key]['usermeta']['curresp']);  // String sent to us by user.)
         $arrPart[$this->key]['usermeta']['curresp'] = $strResponse;	// put updated value back.
@@ -447,24 +440,91 @@ class MsgChooser {
 
 
     // resend the last message
-    public function resendLastMsg($arrPart) {
 
-        $qstype			= $arrPart[$this->key]['usermeta']['msgtype'];  // Question Group Type
-        $strResponse	= $arrPart[$this->key]['usermeta']['curresp'];  // String sent to us by user.
-        $strRespMeth 	= $arrPart[$this->key]['usermeta']['wp_'.$this->provid.'_user_config']['preferred_contact_method']."_".$arrPart[$this->key]['usermeta']['wp_'.$this->provid.'_user_config']['preferred_contact_language'];
-        $arrState		= $arrPart[$this->key]['usermeta']['state'];
+    private function storeMsg(
+        $arrQuestion,
+        $extratext = ''
+    ) {
+        //echo "<br>MsgChooser->storeMsg() start, msg_id = $arrQuestion->msg_id, prov_id $this->provid";
+        if (isset($this->arrReturn['msg_list'])) {
+            if (is_object($arrQuestion) && (!$this->findkey($this->arrReturn['msg_list'], $arrQuestion->msg_id))) {
+                $msgSubstitutions = new MsgSubstitutions;
+                $arrQuestion->message = $msgSubstitutions->doSubstitutions($arrQuestion->message, $this->provid,
+                    $this->key);
+                $this->arrReturn['msg_list'][] = [
+                    $arrQuestion->msg_id => [
+                        'qtype'    => $arrQuestion->qtype,
+                        'msg_text' => $extratext . $arrQuestion->message,
+                    ],
+                ];
+                //echo "<br>MsgChooser->storeMsg() action add to msg_list (qtype => $arrQuestion->qtype, msg_text => $extratext . $arrQuestion->message)";
+            }
+        } else {
+            if (is_object($arrQuestion)) {
+                $msgSubstitutions = new MsgSubstitutions;
+                $arrQuestion->message = $msgSubstitutions->doSubstitutions($arrQuestion->message, $this->provid,
+                    $this->key);
+                $this->arrReturn['msg_list'][] = [
+                    $arrQuestion->msg_id => [
+                        'qtype'    => $arrQuestion->qtype,
+                        'msg_text' => $extratext . $arrQuestion->message,
+                    ],
+                ];
+                //echo "<br>MsgChooser->storeMsg() action add to msg_list (qtype => $arrQuestion->qtype, msg_text => $extratext . $arrQuestion->message)";
+            }
+        }
 
-        end($arrState);
-        $lastMsgid =  key($arrState);
-        $tmp  = $this->_ci->rules->getQuestion($tmpMsgId, $this->key, $strRespMeth, $this->provid, $qstype);
-        $this->storeMsg($tmp);
-
-        return $this->arrReturn;
+        return;
     }//resendLastMsg
 
 
     // Get Next Question
-    private function NextQ($strLastMsg = '') {
+
+    public function findKey(
+        $arrSearch,
+        $keySearch
+    ) {
+        // check if it's even an array
+        if (!is_array($arrSearch)) {
+            return false;
+        }
+
+        // key exists
+        if (array_key_exists($keySearch, $arrSearch)) {
+            return true;
+        }
+
+        // key isn't in this array, go deeper
+        foreach ($arrSearch as $key => $val) {
+            // return true if it's found
+            if ($this->findKey($val, $keySearch)) {
+                return true;
+            }
+        }
+
+        return false;
+    }//NextQ
+
+
+    // store message information in array to be returned to calling program/function.
+
+    private function End($strError = '')
+    {
+        // closes down session because some went wrong
+        error_log('Msgchooser closing session due to unknown problem. ' . $strError);
+        $this->arrReturn['msg_list'][] = [
+            'End' => [
+                'qtype'    => 'End',
+                'msg_text' => 'Thank you.',
+            ],
+        ];
+    }//storeMsg
+
+
+    // Jump to Question
+
+    private function NextQ($strLastMsg = '')
+    {
         echo "<br>MsgChooser->NextQ() start, strLastMsg = $strLastMsg";
         //dd($this->arrReturn);
         $Provider = $this->arrReturn[$this->key]['usermeta']['intProgramId'];
@@ -513,39 +573,157 @@ class MsgChooser {
 
         }
         return $tmpMsgId;
-    }//NextQ
-
-
-    // store message information in array to be returned to calling program/function.
-    private function storeMsg($arrQuestion, $extratext='') 	{
-        //echo "<br>MsgChooser->storeMsg() start, msg_id = $arrQuestion->msg_id, prov_id $this->provid";
-        if(isset($this->arrReturn['msg_list'])) {
-            if (is_object($arrQuestion) && (!$this->findkey($this->arrReturn['msg_list'], $arrQuestion->msg_id))) {
-                $msgSubstitutions = new MsgSubstitutions;
-                $arrQuestion->message = $msgSubstitutions->doSubstitutions($arrQuestion->message, $this->provid, $this->key);
-                $this->arrReturn['msg_list'][] = array($arrQuestion->msg_id => array('qtype' => $arrQuestion->qtype, 'msg_text' => $extratext . $arrQuestion->message));
-                //echo "<br>MsgChooser->storeMsg() action add to msg_list (qtype => $arrQuestion->qtype, msg_text => $extratext . $arrQuestion->message)";
-            }
-        } else {
-            if (is_object($arrQuestion)) {
-                $msgSubstitutions = new MsgSubstitutions;
-                $arrQuestion->message = $msgSubstitutions->doSubstitutions($arrQuestion->message, $this->provid, $this->key);
-                $this->arrReturn['msg_list'][] = array($arrQuestion->msg_id => array('qtype' => $arrQuestion->qtype, 'msg_text' => $extratext . $arrQuestion->message));
-                //echo "<br>MsgChooser->storeMsg() action add to msg_list (qtype => $arrQuestion->qtype, msg_text => $extratext . $arrQuestion->message)";
-            }
-        }
-        return;
-    }//storeMsg
-
-
-    // Jump to Question
-    private function fxGoto($strNextQ) 	{
-        return $this->cleanStr($strNextQ);
     }//fxGoto
 
 
     // checks if the readings message needs to be sent
-    private function fxCheckForReadings($inVars) {
+
+    public function resendLastMsg($arrPart)
+    {
+
+        $qstype = $arrPart[$this->key]['usermeta']['msgtype'];  // Question Group Type
+        $strResponse = $arrPart[$this->key]['usermeta']['curresp'];  // String sent to us by user.
+        $strRespMeth = $arrPart[$this->key]['usermeta']['wp_' . $this->provid . '_user_config']['preferred_contact_method'] . "_" . $arrPart[$this->key]['usermeta']['wp_' . $this->provid . '_user_config']['preferred_contact_language'];
+        $arrState = $arrPart[$this->key]['usermeta']['state'];
+
+        end($arrState);
+        $lastMsgid = key($arrState);
+        $tmp = $this->_ci->rules->getQuestion($tmpMsgId, $this->key, $strRespMeth, $this->provid, $qstype);
+        $this->storeMsg($tmp);
+
+        return $this->arrReturn;
+    }//fxCheckForReadings
+
+
+    // weight messages
+
+    public function fxAlgorithmic($inVars)
+    {
+        // checks to see if last meds question has been asked.
+        $Params = explode(",", $this->cleanStr($inVars));
+        // echo '<br>Params: ';
+        // print_r($Params);
+        $intSelect = $sched = $y = $n = 0;
+
+        // get counts for responses
+        $msgCPRules = new MsgCPRules;
+        $arrCounts = $msgCPRules->getAdherenceCounts($this->provid, $this->key);
+        $y = $arrCounts["Y"];
+        $n = $arrCounts["N"];
+        $sched = $arrCounts["scheduled"];
+        /*
+        foreach ($arrCounts as $row) {
+            if($row->obs_unit == 'scheduled') {
+                $sched = $row->count;
+            } elseif($row->obs_value == 'Y') {
+                $y = $row->count;
+            } elseif($row->obs_value == 'N') {
+                $n = $row->count;
+            }
+        }
+        */
+        /*
+        echo '<br>MsgChooser->fxAlgorithmic() ';
+        echo '<br>MsgChooser->fxAlgorithmic() Al "Gor" Ithmic';
+        echo '<br>MsgChooser->fxAlgorithmic() Sched: '.$sched;
+        echo '<br>MsgChooser->fxAlgorithmic() Y: '.$y;
+        echo '<br>MsgChooser->fxAlgorithmic() N: '.$n.'<br>';
+        */
+
+        $rtnMsgId = null;
+        if ($sched > 0 && ($sched == ($y + $n))) {
+            // last meds question has been asked
+            if ($sched == $y) {
+                $intSelect = 0; // all Yes message
+            } elseif ($sched == $n) {
+                $intSelect = 1; // all No message
+            } else {
+                $intSelect = 2; // mixed message
+            }
+            /*
+            // get lastMsgId for NextQ
+            $arrState	= $this->arrReturn[$this->key]['usermeta']['state'];
+            end($arrState);
+            $lastkey =  key($arrState);
+            $lastMsgid = key($arrState[$lastkey]);
+            */
+
+            //echo '<br>MsgChooser->fxAlgorithmic() Algorithmic Message: '.$Params[$intSelect];
+            // send message
+            $tmp = $msgCPRules->getQuestion($Params[$intSelect], $this->key, $this->smsMeth, $this->provid);
+            // echo '<br>AG Message Array:';
+            // print_r($tmp);
+            $this->storeMsg($tmp);
+            $rtnMsgId = $tmp->msg_id;
+
+        }
+
+        // send next message
+        //$rtnMsgId = $this->NextQ($lastMsgid);
+        //echo '<br>MsgChooser->fxAlgorithmic() Next Message: '.$rtnMsgId;
+        return $rtnMsgId;
+    }//fxWeight
+
+
+    // removes chars from string
+
+    private function cleanStr($instr)
+    {
+        return str_replace([
+            '\'',
+            '"',
+            '(',
+            ')',
+        ], "", $instr);
+    }//cleanStr
+
+    public function fxAlgorithmicForApp(
+        $programId,
+        $userId,
+        $date
+    ) {
+        // returns response message based on adherence response
+        $intSelect = $sched = $y = $n = 0;
+
+        $params = [
+            'CF_SOL_MEDS_YES',
+            'CF_SOL_MEDS_NO',
+            'CF_SOL_MEDS_MIX',
+        ];
+
+        // get counts for responses
+        $msgCPRules = new MsgCPRules;
+        $arrCounts = $msgCPRules->getAdherenceCounts($programId, $userId, $date);
+        $y = $arrCounts["Y"];
+        $n = $arrCounts["N"];
+        $sched = $arrCounts["scheduled"];
+
+        $rtnMsgId = null;
+        if ($sched > 0 && ($sched == ($y + $n))) {
+            // last meds question has been asked
+            if ($sched == $y) {
+                $intSelect = 0; // all Yes message
+            } elseif ($sched == $n) {
+                $intSelect = 1; // all No message
+            } else {
+                $intSelect = 2; // mixed message
+            }
+            //echo '<br>MsgChooser->fxAlgorithmic() Algorithmic Message: '.$params[$intSelect];
+            $tmp = $msgCPRules->getQuestion($params[$intSelect], $userId, $this->smsMeth, $programId);
+            $rtnMsgId = $tmp->msg_id;
+        }
+
+        //echo '<br>MsgChooser->fxAlgorithmic() Next Message: '.$rtnMsgId;
+        return $rtnMsgId;
+    } //End
+
+    private function fxGoto($strNextQ)
+    {
+        return $this->cleanStr($strNextQ);
+    } //findkey
+
+    private function fxCheckForReadings($inVars)
+    {
         // echo "<hr>In fxCheckForReadings<br>";
         $intSelect = 0;
 
@@ -577,13 +755,12 @@ class MsgChooser {
         // echo '<br>Returning: '.$params[$intSelect]; // debugging
         return $params[$intSelect];
 
-    }//fxCheckForReadings
+    }
 
-
-    // weight messages
-    private function fxWeight($inVars) {
+    private function fxWeight($inVars)
+    {
         $msgCPRules = new MsgCPRules;
-        $Params 		= explode(",", $this->cleanStr($inVars));
+        $Params = explode(",", $this->cleanStr($inVars));
         $arrSet			= $msgCPRules->getLastWeight($this->provid, $this->key);
         $objTarget		= $msgCPRules->getTargetWeight($this->key);
         $strMsgID		= '';
@@ -654,135 +831,6 @@ class MsgChooser {
         // return select message from above calcs
         $strMsgID =  $Params[$intSelect];
         return $strMsgID;
-    }//fxWeight
-
-
-    // removes chars from string
-    private function cleanStr($instr) {
-        return str_replace(array('\'', '"', '(', ')'), "", $instr);
-    }//cleanStr
-
-
-    private function End($strError='') {
-        // closes down session because some went wrong
-        error_log('Msgchooser closing session due to unknown problem. '.$strError);
-        $this->arrReturn['msg_list'][] = array('End' => array('qtype' => 'End', 'msg_text' => 'Thank you.'));
-    } //End
-
-
-    public function findKey($arrSearch, $keySearch) {
-        // check if it's even an array
-        if (!is_array($arrSearch)) return false;
-
-        // key exists
-        if (array_key_exists($keySearch, $arrSearch)) return true;
-
-        // key isn't in this array, go deeper
-        foreach($arrSearch as $key => $val) {
-            // return true if it's found
-            if ($this->findKey($val, $keySearch)) return true;
-        }
-
-        return false;
-    } //findkey
-
-
-    public function fxAlgorithmic($inVars) {
-        // checks to see if last meds question has been asked.
-        $Params = explode(",", $this->cleanStr($inVars));
-        // echo '<br>Params: ';
-        // print_r($Params);
-        $intSelect = $sched = $y = $n = 0;
-
-        // get counts for responses
-        $msgCPRules = new MsgCPRules;
-        $arrCounts = $msgCPRules->getAdherenceCounts($this->provid, $this->key);
-        $y = $arrCounts["Y"];
-        $n = $arrCounts["N"];
-        $sched = $arrCounts["scheduled"];
-        /*
-        foreach ($arrCounts as $row) {
-            if($row->obs_unit == 'scheduled') {
-                $sched = $row->count;
-            } elseif($row->obs_value == 'Y') {
-                $y = $row->count;
-            } elseif($row->obs_value == 'N') {
-                $n = $row->count;
-            }
-        }
-        */
-        /*
-        echo '<br>MsgChooser->fxAlgorithmic() ';
-        echo '<br>MsgChooser->fxAlgorithmic() Al "Gor" Ithmic';
-        echo '<br>MsgChooser->fxAlgorithmic() Sched: '.$sched;
-        echo '<br>MsgChooser->fxAlgorithmic() Y: '.$y;
-        echo '<br>MsgChooser->fxAlgorithmic() N: '.$n.'<br>';
-        */
-
-        $rtnMsgId = null;
-        if($sched > 0 && ($sched == ($y + $n))) {
-            // last meds question has been asked
-            if($sched == $y) {
-                $intSelect = 0; // all Yes message
-            } elseif($sched == $n) {
-                $intSelect = 1; // all No message
-            } else {
-                $intSelect = 2; // mixed message
-            }
-            /*
-            // get lastMsgId for NextQ
-            $arrState	= $this->arrReturn[$this->key]['usermeta']['state'];
-            end($arrState);
-            $lastkey =  key($arrState);
-            $lastMsgid = key($arrState[$lastkey]);
-            */
-
-            //echo '<br>MsgChooser->fxAlgorithmic() Algorithmic Message: '.$Params[$intSelect];
-            // send message
-            $tmp  = $msgCPRules->getQuestion($Params[$intSelect], $this->key, $this->smsMeth, $this->provid);
-            // echo '<br>AG Message Array:';
-            // print_r($tmp);
-            $this->storeMsg($tmp);
-            $rtnMsgId = $tmp->msg_id;
-
-        }
-
-        // send next message
-        //$rtnMsgId = $this->NextQ($lastMsgid);
-        //echo '<br>MsgChooser->fxAlgorithmic() Next Message: '.$rtnMsgId;
-        return $rtnMsgId;
-    }
-
-    public function fxAlgorithmicForApp($programId, $userId, $date) {
-        // returns response message based on adherence response
-        $intSelect = $sched = $y = $n = 0;
-
-        $params = array('CF_SOL_MEDS_YES', 'CF_SOL_MEDS_NO', 'CF_SOL_MEDS_MIX');
-
-        // get counts for responses
-        $msgCPRules = new MsgCPRules;
-        $arrCounts = $msgCPRules->getAdherenceCounts($programId, $userId, $date);
-        $y = $arrCounts["Y"];
-        $n = $arrCounts["N"];
-        $sched = $arrCounts["scheduled"];
-
-        $rtnMsgId = null;
-        if($sched > 0 && ($sched == ($y + $n))) {
-            // last meds question has been asked
-            if($sched == $y) {
-                $intSelect = 0; // all Yes message
-            } elseif($sched == $n) {
-                $intSelect = 1; // all No message
-            } else {
-                $intSelect = 2; // mixed message
-            }
-            //echo '<br>MsgChooser->fxAlgorithmic() Algorithmic Message: '.$params[$intSelect];
-            $tmp  = $msgCPRules->getQuestion($params[$intSelect], $userId, $this->smsMeth, $programId);
-            $rtnMsgId = $tmp->msg_id;
-        }
-
-        //echo '<br>MsgChooser->fxAlgorithmic() Next Message: '.$rtnMsgId;
-        return $rtnMsgId;
     }
 
 

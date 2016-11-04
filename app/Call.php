@@ -10,13 +10,7 @@ class Call extends Model
 
     use \Venturecraft\Revisionable\RevisionableTrait;
 
-    public static function boot()
-    {
-        parent::boot();
-    }
-    
     protected $table = 'calls';
-
     protected $fillable = [
         'note_id',
         'service',
@@ -52,19 +46,9 @@ class Call extends Model
         'is_cpm_outbound'
     ];
 
-    public function note()
+    public static function boot()
     {
-        return $this->belongsTo('App\Note', 'note_id', 'id');
-    }
-
-    public function outboundUser()
-    {
-        return $this->belongsTo('App\User', 'outbound_cpm_id', 'ID');
-    }
-
-    public function inboundUser()
-    {
-        return $this->belongsTo('App\User', 'inbound_cpm_id', 'ID');
+        parent::boot();
     }
 
     public static function numberOfCallsForPatientForMonth(User $user, $date){
@@ -88,6 +72,21 @@ class Call extends Model
         }
         return $record->no_of_successful_calls;
 
+    }
+
+    public function note()
+    {
+        return $this->belongsTo('App\Note', 'note_id', 'id');
+    }
+
+    public function outboundUser()
+    {
+        return $this->belongsTo('App\User', 'outbound_cpm_id', 'id');
+    }
+
+    public function inboundUser()
+    {
+        return $this->belongsTo('App\User', 'inbound_cpm_id', 'id');
     }
 
 

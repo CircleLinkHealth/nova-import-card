@@ -1,12 +1,9 @@
 <?php namespace App\Services;
 
 use App\Comment;
-use App\User;
-use App\UserMeta;
-use App\Program;
-use DB;
 use DateTime;
 use DateTimeZone;
+
 /*
 $this->load->library('curl');
 $this->load->model('valuecalc_model','calc');
@@ -39,7 +36,7 @@ class MsgDelivery {
         $sms['msg_text']     = $substitutedMessage;
         $sms['msg_type']     = 'SMS';
         $sms['source']       = 'Clickatell';
-        $sms['blog_id']       = $intProgramID;
+        $sms['id'] = $intProgramID;
 // var_export($sms);
         if ($boolSaveState) {
             //Log question to database (save the state)
@@ -50,94 +47,19 @@ class MsgDelivery {
     }
 
     //returns an array with the http response headers/body from the texting service
-    public function sendMessage($intUserId, $strMessageCode, $strCommentType='smsoutbound', $boolSaveState=true, $intProgramID, $boolUnsolicited=false)
-    {
-        $strState = ($boolUnsolicited == false) ? 'state' : 'unsolicited';
-// echo "<BR>" . $strState . "<BR>" ;
-        $this->intProgramID = $intProgramID;
-        //Load user metadata
-        $arrusermeta = get_user_meta($intUserId, 'wp_'. $intProgramID .'_user_config', true);
 
-        $phoneNumber = $arrusermeta['study_phone_number'];
-
-        // $arrmessage = explode("|", $message);
-        // $message = $arrmessage[1];
-
-        //Load Message
-        $message = $this->getMessageBody($strMessageCode);
-
-        //Do Subtitutions
-        $substitutedMessage = $this->doSubstitutions($message, $intUserId);
-        $substitutedMessage = $this->cpm_1_7_substitution_library->doSubstitutions($message, $intProgramID, $intUserId);
-
-        //Fire message off
-        //Mark that it was sent in DB
-        $lastCommentNo = $this->writeOutboundSmsMessage($intUserId, $substitutedMessage, $strMessageCode,$strCommentType,$intProgramID);
-        $this->session->set_userdata('lastCommentNo',$lastCommentNo);
-        //$this->setCPMstorage('lastCommentNo', $lastCommentNo, true);
-        //Actually send it
-        $sms['phone_number'] = preg_replace('/[^0-9]/','', $phoneNumber);
-        $sms['msg_text']     = $substitutedMessage;
-        $sms['msg_type']     = 'SMS';
-        $sms['source']       = 'Clickatell';
-        $sms['blog_id']       = $intProgramID;
-
-        echo "MsgDelivery->sendMessage() [$intUserId]|[".$sms['phone_number']."]";
-        echo 'MsgDelivery->sendMessage() strMessageCode= ' . $strMessageCode . ' && msg_text = ' . $sms['msg_text'] . "";
-        // echo "<BR><strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/Y'>Yes</a></strong><BR>";
-        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/N'>No</a></strong><BR>";
-        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/1'>1</a></strong><BR>";
-        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/2'>2</a></strong><BR>";
-        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/3'>3</a></strong><BR>";
-        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/4'>4</a></strong><BR>";
-        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/Feel Fine'>Feel Fine</a></strong><BR>";
-        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/5'>5</a></strong><BR>";
-        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/6'>6</a></strong><BR>";
-        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/7'>7</a></strong><BR>";
-        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/8'>8</a></strong><BR>";
-        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/9'>9</a></strong><BR>";
-        // echo "<strong>Start a new <a href='cpm_1_7_schedulercontroller_TST?userid=" . $intUserId . "'>Message Survey</a></strong><BR>";
-
-
-        if ($boolSaveState) {
-            //Log question to database (save the state)
-            $this->saveState($intUserId, $strMessageCode, $strState);
-        }
-
-        // return ;
-        return $this->sendSms($sms);
-    }
-
-
-    public function getMessageBody($strMessageCode)
-    {
-        $strMessageBody = '';
-        $strMessageCode = str_replace('1'.'-', '', $strMessageCode);
-
-        $strGetPostIdSql = "select meta_value content from rules_questions q
-            left join rules_items i on i.qid = q.qid
-            left join rules_itemmeta im on im.items_id = i.items_id AND meta_key = 'SMS_EN'
-            where q.msg_id = '". $strMessageCode ."';";
-
-
-        $query = $this->db->query($strGetPostIdSql);
-
-        if ($query->num_rows() > 0)
-        {
-            $row = $query->row();
-            $strMessageBody = $row->content;
-            $query->free_result();
-        }
-        return $strMessageBody;
-    }
-
-
-    public function writeOutboundSmsMessage($intUserId,$serialOutboundMessage,$strMessageId,$strCommentType='smsoutbound',$intProgramID=0, $readingDate='now')
-    {
+    public function writeOutboundSmsMessage(
+        $intUserId,
+        $serialOutboundMessage,
+        $strMessageId,
+        $strCommentType = 'smsoutbound',
+        $intProgramID = 0,
+        $readingDate = 'now'
+    ) {
 // echo '<br>';
 // var_export(func_get_args());
         // set blog id
-        //$this->int_blog_id = $intProgramID;
+        //$this->int_id = $intProgramID;
 
         //switch_to_blog( $intProgramID );
         date_default_timezone_set('America/New_York');
@@ -185,16 +107,92 @@ class MsgDelivery {
         //dd('last_comment_no ==' . $last_comment_no);
         echo '<br>MsgDelivery->writeOutboundSmsMessage() last_comment_no =' . $comment->id;
         //$last_comment_no = wp_insert_comment($mixCommentData);
-        //$last_comment_no = $this->comments_model->insert_comment($mixCommentData, $this->int_blog_id);;
+        //$last_comment_no = $this->comments_model->insert_comment($mixCommentData, $this->int_id);;
 //echo 'recorded';
 // echo "[$last_comment_no]";
         return $comment->id;
     }
 
-    //taken from Yvesh: smsoutbound_model.php
+    private function saveState(
+        $intUserId,
+        $strMessageCode,
+        $strState = 'state',
+        $arrPart = null
+    ) {
+
+        /*
+        // echo $strMessageCode;
+        //load previous state
+        $mixReturnResult = false;
+        $strCommentsTable = "wp_". $this->intProgramID ."_comments";
+        $sql = "SELECT * FROM $strCommentsTable WHERE user_id=$intUserId AND comment_type='state_".$arrPart[$intUserId]['usermeta']['msgtype']."' ORDER BY comment_date DESC LIMIT 1";
+        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
+        */
+        $commentType = $arrPart[$intUserId]['usermeta']['msgtype'];
+        $results = Comment::where('user_id', '=', $intUserId)->where('comment_type', '=',
+            $commentType)->orderBy('comment_date', 'desc')->first();
+
+        if (!empty($results)) {
+            //echo "<br><br>UPDATE DB STATE ROW";
+            echo "<br>MsgDelivery->saveState() strMessageCode=" . $strMessageCode;
+            //store new question
+            $row = $results[0];
+            $state = unserialize($row->comment_content);
+            $state[][$strMessageCode] = '';
+            $comment_approved = 0;
+            if (isset($arrPart['msg_list'][0][$strMessageCode]['qtype'])) {
+                if (strtolower($arrPart['msg_list'][0][$strMessageCode]['qtype']) == 'end') {
+                    $comment_approved = 1;
+                }
+            }
+
+            echo "<br>MsgDelivery->saveState() new msg: " . $strMessageCode . "";
+
+            // update comment, save state
+            $comment = Comment::find($row->comment_ID);
+            $comment->comment_content = serialize($state);
+            $comment->comment_approved = $comment_approved;
+            $comment->save();
+
+            echo "<br>MsgDelivery->saveState() Update Comment#=" . $row->comment_ID;
+            echo "<br>MsgDelivery->saveState() $row->comment_ID new state = " . serialize($state);
+
+            // get sequence_id
+            end($state);
+            $sequence_id = key($state);
+
+            $dateTime = new DateTime('now', new DateTimeZone('America/New_York'));
+            $localTime = $dateTime->format('Y-m-d H:i:s');
+
+            $dateTime->setTimezone(new DateTimeZone('UTC'));
+            $gmtTime = $dateTime->format('Y-m-d H:i:s');
+
+            // insert new observation
+            $newObservation = new Observation;
+            $newObservation->comment_id = $row->comment_ID;
+            $newObservation->obs_date = $localTime;
+            $newObservation->obs_date_gmt = $gmtTime;
+            $newObservation->sequence_id = $sequence_id;
+            $newObservation->obs_message_id = $strMessageCode;
+            $newObservation->obs_method = strtoupper($arrPart[$intUserId]['usermeta']['msgtype']);
+            $newObservation->user_id = $row->user_id;
+            $newObservation->obs_key = '';
+            $newObservation->obs_value = '';
+            $newObservation->obs_unit = '';
+            $newObservation->save();
+
+            echo "<br>MsgDelivery->saveState() Created New Observation#=" . $newObservation->id;
+            $log_string = "added new observation, obs_id = {$newObservation->id}" . PHP_EOL;
+
+        }
+
+        return;
+    }
+
     public function sendSms($arrSMSdata)
     {
         echo "<br>MsgDelivery->sendSms() SKIPPING CURL POST, return true?";
+
         return true;
         //$this->curl->simple_post(OB_SMS_SERVICE, $arrSMSdata); //'http://msg.safekidney.com/msg/MsgCenter.php'
 
@@ -203,7 +201,94 @@ class MsgDelivery {
         //return $arrCurlInfo;
     }
 
-    public function doSubstitutions($strMessage, $intUserId, $strValue='', $type='')
+    //taken from Yvesh: smsoutbound_model.php
+
+    public function sendMessage($intUserId, $strMessageCode, $strCommentType='smsoutbound', $boolSaveState=true, $intProgramID, $boolUnsolicited=false)
+    {
+        $strState = ($boolUnsolicited == false) ? 'state' : 'unsolicited';
+// echo "<BR>" . $strState . "<BR>" ;
+        $this->intProgramID = $intProgramID;
+        //Load user metadata
+        $arrusermeta = get_user_meta($intUserId, 'wp_'. $intProgramID .'_user_config', true);
+
+        $phoneNumber = $arrusermeta['study_phone_number'];
+
+        // $arrmessage = explode("|", $message);
+        // $message = $arrmessage[1];
+
+        //Load Message
+        $message = $this->getMessageBody($strMessageCode);
+
+        //Do Subtitutions
+        $substitutedMessage = $this->doSubstitutions($message, $intUserId);
+        $substitutedMessage = $this->cpm_1_7_substitution_library->doSubstitutions($message, $intProgramID, $intUserId);
+
+        //Fire message off
+        //Mark that it was sent in DB
+        $lastCommentNo = $this->writeOutboundSmsMessage($intUserId, $substitutedMessage, $strMessageCode,$strCommentType,$intProgramID);
+        $this->session->set_userdata('lastCommentNo',$lastCommentNo);
+        //$this->setCPMstorage('lastCommentNo', $lastCommentNo, true);
+        //Actually send it
+        $sms['phone_number'] = preg_replace('/[^0-9]/','', $phoneNumber);
+        $sms['msg_text']     = $substitutedMessage;
+        $sms['msg_type']     = 'SMS';
+        $sms['source']       = 'Clickatell';
+        $sms['id'] = $intProgramID;
+
+        echo "MsgDelivery->sendMessage() [$intUserId]|[".$sms['phone_number']."]";
+        echo 'MsgDelivery->sendMessage() strMessageCode= ' . $strMessageCode . ' && msg_text = ' . $sms['msg_text'] . "";
+        // echo "<BR><strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/Y'>Yes</a></strong><BR>";
+        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/N'>No</a></strong><BR>";
+        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/1'>1</a></strong><BR>";
+        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/2'>2</a></strong><BR>";
+        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/3'>3</a></strong><BR>";
+        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/4'>4</a></strong><BR>";
+        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/Feel Fine'>Feel Fine</a></strong><BR>";
+        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/5'>5</a></strong><BR>";
+        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/6'>6</a></strong><BR>";
+        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/7'>7</a></strong><BR>";
+        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/8'>8</a></strong><BR>";
+        // echo "<strong>If a response is needed send a <a href='cpm_1_7_smsreceive/index/" . $sms['phone_number'] . "/9'>9</a></strong><BR>";
+        // echo "<strong>Start a new <a href='cpm_1_7_schedulercontroller_TST?userid=" . $intUserId . "'>Message Survey</a></strong><BR>";
+
+
+        if ($boolSaveState) {
+            //Log question to database (save the state)
+            $this->saveState($intUserId, $strMessageCode, $strState);
+        }
+
+        // return ;
+        return $this->sendSms($sms);
+    }
+
+    public function getMessageBody($strMessageCode)
+    {
+        $strMessageBody = '';
+        $strMessageCode = str_replace('1'.'-', '', $strMessageCode);
+
+        $strGetPostIdSql = "select meta_value content from rules_questions q
+            left join rules_items i on i.qid = q.qid
+            left join rules_itemmeta im on im.items_id = i.items_id AND meta_key = 'SMS_EN'
+            where q.msg_id = '". $strMessageCode ."';";
+
+
+        $query = $this->db->query($strGetPostIdSql);
+
+        if ($query->num_rows() > 0)
+        {
+            $row = $query->row();
+            $strMessageBody = $row->content;
+            $query->free_result();
+        }
+        return $strMessageBody;
+    }
+
+    public function doSubstitutions(
+        $strMessage,
+        $intUserId,
+        $strValue = '',
+        $type = ''
+    )
     {
         /**
          * @todo Finish...
@@ -320,77 +405,6 @@ class MsgDelivery {
 
         // return '[' . $intUserId.'] '.$strMessage;
         return $strMessage;
-    }
-
-    private function saveState($intUserId, $strMessageCode, $strState='state', $arrPart=null)
-    {
-
-        /*
-        // echo $strMessageCode;
-        //load previous state
-        $mixReturnResult = false;
-        $strCommentsTable = "wp_". $this->intProgramID ."_comments";
-        $sql = "SELECT * FROM $strCommentsTable WHERE user_id=$intUserId AND comment_type='state_".$arrPart[$intUserId]['usermeta']['msgtype']."' ORDER BY comment_date DESC LIMIT 1";
-        $results = DB::connection('mysql_no_prefix')->select( DB::raw($sql) );
-        */
-        $commentType = $arrPart[$intUserId]['usermeta']['msgtype'];
-        $results = Comment::where('user_id', '=', $intUserId)->where('comment_type', '=', $commentType)->orderBy('comment_date', 'desc')->first();
-
-        if(!empty($results))
-        {
-            //echo "<br><br>UPDATE DB STATE ROW";
-            echo "<br>MsgDelivery->saveState() strMessageCode=".$strMessageCode;
-            //store new question
-            $row = $results[0];
-            $state   = unserialize($row->comment_content);
-            $state[][$strMessageCode] = '';
-            $comment_approved = 0;
-            if(isset($arrPart['msg_list'][0][$strMessageCode]['qtype'])) {
-                if (strtolower($arrPart['msg_list'][0][$strMessageCode]['qtype'])=='end') {
-                    $comment_approved = 1;
-                }
-            }
-
-            echo "<br>MsgDelivery->saveState() new msg: ".$strMessageCode."";
-
-            // update comment, save state
-            $comment = Comment::find($row->comment_ID);
-            $comment->comment_content = serialize($state);
-            $comment->comment_approved = $comment_approved;
-            $comment->save();
-
-            echo "<br>MsgDelivery->saveState() Update Comment#=" . $row->comment_ID;
-            echo "<br>MsgDelivery->saveState() $row->comment_ID new state = " . serialize($state);
-
-            // get sequence_id
-            end($state);
-            $sequence_id = key($state);
-
-            $dateTime = new DateTime('now', new DateTimeZone('America/New_York'));
-            $localTime = $dateTime->format('Y-m-d H:i:s');
-
-            $dateTime->setTimezone(new DateTimeZone('UTC'));
-            $gmtTime = $dateTime->format('Y-m-d H:i:s');
-
-            // insert new observation
-            $newObservation = new Observation;
-            $newObservation->comment_id = $row->comment_ID;
-            $newObservation->obs_date = $localTime;
-            $newObservation->obs_date_gmt = $gmtTime;
-            $newObservation->sequence_id = $sequence_id;
-            $newObservation->obs_message_id = $strMessageCode;
-            $newObservation->obs_method = strtoupper($arrPart[$intUserId]['usermeta']['msgtype']);
-            $newObservation->user_id = $row->user_id;
-            $newObservation->obs_key = '';
-            $newObservation->obs_value = '';
-            $newObservation->obs_unit = '';
-            $newObservation->save();
-
-            echo "<br>MsgDelivery->saveState() Created New Observation#=" . $newObservation->id;
-            $log_string = "added new observation, obs_id = {$newObservation->id}" . PHP_EOL;
-
-        }
-        return;
     }//saveState
 
 }

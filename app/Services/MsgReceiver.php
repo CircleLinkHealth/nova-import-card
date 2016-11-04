@@ -1,7 +1,5 @@
 <?php namespace App\Services;
 
-use App\User;
-use App\UserMeta;
 /*
 $this->load->library('cpm_1_7_msgchooser_library');
         $this->load->model('cpm_1_7_users_model','users_model');
@@ -20,20 +18,6 @@ class MsgReceiver {
     {
         //This is how we test it.
         $this->getInboundStream(7,$msgID,$phone,$response);
-    }
-
-    public function sendInvalid($intBlogId, $strPhoneNumber) {
-        $tmp  = $this->rules->getQuestion('CF_INV_30');
-        $msg = $this->mailman->doSubstitutions($tmp->message, 0);
-        $sms['phone_number'] = preg_replace('/[^0-9]/','', $strPhoneNumber);
-        $sms['msg_text']     = $msg;
-        $sms['msg_type']     = 'SMS';
-        $sms['source']       = 'Clickatell';
-        $sms['blog_id']      = $intBlogId;
-
-        if (!$msg == '')    $sendresult = $this->mailman->sendSMS($sms);
-
-        exit("No User Found...$strPhoneNumber...$intBlogId....$msg");
     }
 
     public function getInboundStream($intBlogId, $hexMoMsgId, $strPhoneNumber, $strResponseMessage)
@@ -58,7 +42,7 @@ class MsgReceiver {
         if($query->num_rows() >= 2)
         {
             $row   = $query->row();
-            error_log("Duplicate Message Response from Clickatell!!!!!!! wp_". $intBlogId ."_outbound_log: " . $row->ID ." $hexMoMsgId $sql");
+            error_log("Duplicate Message Response from Clickatell!!!!!!! wp_" . $intBlogId . "_outbound_log: " . $row->id . " $hexMoMsgId $sql");
             exit();
         }
 
@@ -147,6 +131,25 @@ class MsgReceiver {
             // send $return to comments DB to log user state
         }
 
+    }
+
+    public function sendInvalid(
+        $intBlogId,
+        $strPhoneNumber
+    ) {
+        $tmp = $this->rules->getQuestion('CF_INV_30');
+        $msg = $this->mailman->doSubstitutions($tmp->message, 0);
+        $sms['phone_number'] = preg_replace('/[^0-9]/', '', $strPhoneNumber);
+        $sms['msg_text'] = $msg;
+        $sms['msg_type'] = 'SMS';
+        $sms['source'] = 'Clickatell';
+        $sms['id'] = $intBlogId;
+
+        if (!$msg == '') {
+            $sendresult = $this->mailman->sendSMS($sms);
+        }
+
+        exit("No User Found...$strPhoneNumber...$intBlogId....$msg");
     }
 
     private function resendLastMsg($arrPart)

@@ -1,9 +1,6 @@
 <?php namespace App;
 
-use App\User;
-use App\UserMeta;
 use Illuminate\Database\Eloquent\Model;
-use DB;
 
 class Comment extends Model {
 
@@ -39,7 +36,7 @@ class Comment extends Model {
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'ID');
+        return $this->belongsTo('App\User', 'id');
     }
 
     public function observation()
@@ -55,7 +52,7 @@ class Comment extends Model {
         $wpUser = User::find($this->user_id);
 
         /*
-        if(!$wpUser->blogId()) {
+        if(!$wpUser->program_id) {
             dd($this->user_id . ' is missing a program id');
         }
         */
@@ -80,17 +77,17 @@ class Comment extends Model {
             $this->comment_karma = 0;
         }
         $params['comment_karma'] = $this->comment_karma;
-        $this->program_id = $wpUser->blogId();
+        $this->program_id = $wpUser->program_id;
         */
 
         // updating or inserting?
         /*
         if($this->id) {
-            DB::connection('mysql_no_prefix')->table('wp_' . $wpUser->blogId() . '_comments')->where('comment_ID', $this->legacy_comment_id)->update($params);
+            DB::connection('mysql_no_prefix')->table('wp_' . $wpUser->primaryProgramId() . '_comments')->where('comment_ID', $this->legacy_comment_id)->update($params);
         } else {
             // add to legacy if doesnt already exist
             if(empty($this->legacy_comment_id)) {
-                $resultCommentId = DB::connection('mysql_no_prefix')->table('wp_' . $wpUser->blogId() . '_comments')->insertGetId($params);
+                $resultCommentId = DB::connection('mysql_no_prefix')->table('wp_' . $wpUser->primaryProgramId() . '_comments')->insertGetId($params);
                 $this->legacy_comment_id = $resultCommentId;
             }
         }

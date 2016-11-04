@@ -20,8 +20,7 @@
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
 
-
-                    {!! Form::open(array('url' => URL::route('patient.observation.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal')) !!}
+                    {!! Form::open(array('url' => URL::route('patient.observation.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal')) !!}
                     <div class="row">
                         <div class="form-block col-md-6">
                             <div class="row">
@@ -135,10 +134,10 @@
                     <div class="row" style="margin:30px 0px;">
                         <div class="col-lg-12">
                             <div class="text-center" style="margin-right:20px;">
-                                <input type="hidden" name="patientId" id="patientId" value="{{ $patient->ID }}">
-                                <input type="hidden" name="userId" id="userId" value="{{ $patient->ID }}">
+                                <input type="hidden" name="patientId" id="patientId" value="{{ $patient->id }}">
+                                <input type="hidden" name="userId" id="userId" value="{{ $patient->id }}">
                                 <input type="hidden" name="programId" id="programId" value="{{ $patient->program_id }}">
-                                <!-- <a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" class="btn btn-danger">Cancel</a> -->
+                            <!-- <a href="{{ URL::route('patient.summary', array('patientId' => $patient->id)) }}" class="btn btn-danger">Cancel</a> -->
                                 {!! Form::submit('Save', array('class' => 'btn btn-primary')) !!}
                             </div>
                         </div>

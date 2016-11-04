@@ -1,10 +1,7 @@
 <?php namespace App\Http\Controllers\CcdApi\Aprima;
 
 use App\Contracts\Repositories\UserRepository;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use App\User;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -30,7 +27,7 @@ class AuthController extends Controller
         }
 
         $user = $this->user->findWhere([
-            'user_email' => $request->input('username'),
+            'email' => $request->input('username'),
         ])->first();
 
         if (empty($user)) {
@@ -43,11 +40,11 @@ class AuthController extends Controller
 
         //Transform the credentials to match our JWT Auth. They were using EHR API, remember?
         $credentials = [
-            'user_email' => $request->input('username'),
+            'email'    => $request->input('username'),
             'password' => $request->input('password'),
         ];
 
-        \JWTAuth::setIdentifier('ID');
+        \JWTAuth::setIdentifier('id');
 
         if (!$access_token = \JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Invalid Credentials.'], 400);

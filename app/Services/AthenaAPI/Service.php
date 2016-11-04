@@ -42,8 +42,6 @@ class Service
             $response = $this->api->getBookedAppointments($practiceId, $today, $today, $department['departmentid']);
             $this->logPatientIdsFromAppointments($response, $practiceId);
         }
-
-
     }
 
     public function logPatientIdsFromAppointments($response, $practiceId)
@@ -66,7 +64,7 @@ class Service
 
             $patientCustomFields = $this->api->getPatientCustomFields($patientId, $practiceId, $departmentId);
 
-            //If 'CCM Enabled' contains a y (meaning yes), then save the patient ID
+            //If 'CCM Enabled' contains a y (meaning yes), then save the patient id
             foreach ($patientCustomFields as $customField) {
                 if ($customField['customfieldid'] == $ccmEnabledFieldId
                     && str_contains($customField['customfieldvalue'], ['Y', 'y'])

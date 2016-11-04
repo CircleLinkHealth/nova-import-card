@@ -17,10 +17,12 @@ if (!function_exists('buildProviderDropDown')) {
         $html .= '<option value="">Choose..</option>';
         foreach ($providers as $provider) :
             $selected = '';
-            if ($provider->ID == $activeId) {
+            if ($provider->id == $activeId) {
                 $selected = 'selected="selected"';
             }
-            $html .= '<option value="' . $provider->ID . '" "' . $selected . '">' . ucwords(preg_replace('/[^A-Za-z0-9\-]/', '', $provider->first_name) . ' ' . preg_replace('/[^A-Za-z0-9\-]/', '', $provider->last_name)) . '</option>';
+            $html .= '<option value="' . $provider->id . '" "' . $selected . '">' . ucwords(preg_replace('/[^A-Za-z0-9\-]/',
+                                    '', $provider->first_name) . ' ' . preg_replace('/[^A-Za-z0-9\-]/', '',
+                                    $provider->last_name)) . '</option>';
         endforeach;
         $html .= '</select>';
         return $html;
@@ -33,8 +35,8 @@ if (!function_exists('buildProviderInfoContainers')) {
         $html = '<div id="providerInfoContainers" style="display:none;">';
         foreach ($providers as $provider) :
 // echo "<pre>"; var_export($provider); echo "</pre>";
-            $html .= '<div id="providerInfo' . $provider->ID . '">';
-            $html .= '<strong><span id="providerName' . $provider->ID . '" style="display:none;">' . ucwords($provider->first_name . ' ' . $provider->last_name) . '</span></strong>';
+            $html .= '<div id="providerInfo' . $provider->id . '">';
+            $html .= '<strong><span id="providerName' . $provider->id . '" style="display:none;">' . ucwords($provider->first_name . ' ' . $provider->last_name) . '</span></strong>';
             $html .= '<strong>Specialty:</strong> ' . $provider->specialty;
             $html .= '<BR><strong>Tel:</strong> ' . $provider->phone;
             $html .= '</div>';
@@ -161,16 +163,16 @@ if (!function_exists('buildProviderInfoContainers')) {
                     }
                     ?>
                     addCareTeamMember();
-            $('#ctm' + ctmCount + 'provider').val(<?php echo $careTeamUser->ID; ?>);
+            $('#ctm' + ctmCount + 'provider').val(<?php echo $careTeamUser->id; ?>);
             $('#ctm' + ctmCount + 'provider').change();
             <?php
-            if (in_array($careTeamUser->ID, $ctmsa)) {
+            if (in_array($careTeamUser->id, $ctmsa)) {
                 echo "$( '#ctm' + ctmCount + 'sa' ).prop('checked', true);";
             }
-            if ($careTeamUser->ID == $ctbp) {
+            if ($careTeamUser->id == $ctbp) {
                 echo "$( '#ctm' + ctmCount + 'bp' ).prop('checked', true);";
             }
-            if ($careTeamUser->ID == $ctlc) {
+            if ($careTeamUser->id == $ctlc) {
                 echo "$( '#ctm' + ctmCount + 'lc' ).prop('checked', true);";
             }
             }
@@ -181,14 +183,14 @@ if (!function_exists('buildProviderInfoContainers')) {
 
     <script>
     </script>
-    {!! Form::open(array('url' => URL::route('patient.careteam.store', array('patientId' => $patient->ID)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => URL::route('patient.careteam.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <style>
         .careTeamMemberContainer {
             margin-top: 30px;
             border-bottom: 1px solid #ccc;
         }
     </style>
-    <input type=hidden name=user_id value="{{ $patient->ID }}">
+    <input type=hidden name=user_id value="{{ $patient->id }}">
     <input type=hidden name=program_id value="{{ $patient->program_id }}">
     <input id="save" name="formSubmit" type="hidden" value="Save" tabindex="0">
 
@@ -221,7 +223,7 @@ if (!function_exists('buildProviderInfoContainers')) {
                                 <div class="row">
                                     <input class="ctmCountArr" type="hidden" name="ctmCountArr[]" value="' + ctmCount + '">
                                     <div class="col-sm-4">';
-                                        {!! Form::select('providers', $providersData, (old('providers') ? old('providers') : $careTeamUser->ID ? $careTeamUser->ID : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
+                                        {!! Form::select('providers', $providersData, (old('providers') ? old('providers') : $careTeamUser->id ? $careTeamUser->id : ''), ['class' => 'form-control selectpicker', 'style' => 'width:50%;']) !!}
                                     </div>
                                     <div class="col-sm-5" id="ctm' + ctmCount + 'Info">
                                     </div>

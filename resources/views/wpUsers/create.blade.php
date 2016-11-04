@@ -53,7 +53,8 @@
 
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist" style="margin-top:20px;">
-                            <li role="presentation" class="active"><a href="#program" aria-controls="program" role="tab" data-toggle="tab">Program</a></li>
+                            <li role="presentation" class="active"><a href="#program" aria-controls="program" role="tab"
+                                                                      data-toggle="tab">Practice</a></li>
                         </ul>
 
                         <div class="tab-content">
@@ -61,22 +62,22 @@
                                 <h2>User Info</h2>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('user_login', 'Login:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('user_login', '', ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('username', 'Login:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('username', '', ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('user_email', 'user_email:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('user_email', '', ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('email', 'email:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('email', '', ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('user_pass', 'Password:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::password('user_pass', '', ['class' => 'form-control']) !!}</div>
-                                        <div class="col-xs-2">{!! Form::label('user_pass_confirm', 'Confirm Password:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::password('user_pass_confirm', '', ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('password', 'Password:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::password('password', '', ['class' => 'form-control']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('password_confirm', 'Confirm Password:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::password('password_confirm', '', ['class' => 'form-control']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -120,9 +121,11 @@
                                 <div id="programCollapse" class="collapse in" style="background:#888;padding:20px;">
                                     <div class="form-group">
                                         <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('program_id', 'Primary Program:') !!}</div>
+                                            <div class="col-xs-2">{!! Form::label('program_id', 'Primary Practice:') !!}</div>
                                             <div class="col-xs-4">{!! Form::select('program_id', $wpBlogs, '', ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                            <div class="col-xs-2"><strong>Program Config:</strong><br />Auto attach to new programs</div>
+                                            <div class="col-xs-2"><strong>Practice Config:</strong><br/>Auto attach to
+                                                new programs
+                                            </div>
                                             <div class="col-xs-4">
                                                 <br />
                                                 <input id="auto_attach_programs" name="auto_attach_programs" value="1" type="checkbox">
@@ -142,7 +145,7 @@
                                                     {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '', 'class' => 'programs']) !!}
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-10">{!! Form::label('Value', 'Program: '.$domain, array('class' => '')) !!}</div>
+                                                <div class="col-sm-10">{!! Form::label('Value', 'Practice: '.$domain, array('class' => '')) !!}</div>
                                             </div>
                                         @endforeach
                                     </div>

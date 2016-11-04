@@ -7,20 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class CpmSmoking extends Model implements Biometric
 {
 
-    protected $fillable = [
-        'patient_id',
-        'starting',
-        'target',
-    ];
-
     public static $rules = [
         'starting' => 'max:999|numeric',
         'target' => 'max:999|numeric',
     ];
-
     public static $messages = [
         'starting.max' => 'The Starting Blood Sugar may not be greater than 999.',
         'target.max' => 'The Target Blood Sugar may not be greater than 999.',
+    ];
+    protected $fillable = [
+        'patient_id',
+        'starting',
+        'target',
     ];
 
     /**
@@ -34,7 +32,7 @@ class CpmSmoking extends Model implements Biometric
 
     public function getUserValues(User $user)
     {
-        $biometric = $this->wherePatientId($user->ID)->first();
+        $biometric = $this->wherePatientId($user->id)->first();
         return $biometric
             ? [
                 'starting' => $biometric->starting,

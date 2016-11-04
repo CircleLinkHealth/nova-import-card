@@ -28,7 +28,7 @@ class LoginController extends Controller
      */
     protected $redirectTo = '/home';
 
-    protected $username = 'user_email';
+    protected $username = 'email';
 
 
     /**
@@ -42,15 +42,15 @@ class LoginController extends Controller
 
         $this->middleware('guest', ['except' => 'logout']);
 
-        //Check whether to authenticate using user_email or password
-        if ($request->has('user_email'))
+        //Check whether to authenticate using email or password
+        if ($request->has('email'))
         {
-            if (! str_contains($request->input('user_email'), '@'))
+            if (!str_contains($request->input('email'), '@'))
             {
-                $this->username = 'user_login';
+                $this->username = 'username';
 
                 $request->merge([
-                    'user_login' => $request->input('user_email')
+                    'username' => $request->input('email'),
                 ]);
             }
         }

@@ -104,7 +104,7 @@ class Observation extends Model {
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'user_id', 'ID');
+        return $this->belongsTo('App\User', 'user_id', 'id');
     }
 
 
@@ -209,7 +209,7 @@ class Observation extends Model {
             return false;
         }
         $wpUser = User::find($this->user_id);
-        if(!$wpUser->blogId()) {
+        if (!$wpUser->program_id) {
             return false;
         }
         $comment = Comment::find($this->comment_id);
@@ -228,7 +228,7 @@ class Observation extends Model {
         $params['obs_key'] = $this->obs_key;
         $params['obs_value'] = $this->obs_value;
         $params['obs_unit'] = $this->obs_unit;
-        $this->program_id = $wpUser->blogId();
+        $this->program_id = $wpUser->program_id;
 
         // updating or inserting?
         $updating = false;
@@ -236,14 +236,14 @@ class Observation extends Model {
             $updating = true;
         }
 
-        // take programId(blogId) and add to wp_X_observations table
+        // take programId(primaryProgramId) and add to wp_X_observations table
         /*
         if($updating) {
-            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->blogId().'_observations')->where('obs_id', $this->legacy_obs_id)->update($params);
+            DB::connection('mysql_no_prefix')->table('ma_'.$wpUser->primaryProgramId().'_observations')->where('obs_id', $this->legacy_obs_id)->update($params);
         } else {
             // add to legacy if doesnt already exist
             if(empty($this->legacy_obs_id)) {
-                $resultObsId = DB::connection('mysql_no_prefix')->table('ma_' . $wpUser->blogId() . '_observations')->insertGetId($params);
+                $resultObsId = DB::connection('mysql_no_prefix')->table('ma_' . $wpUser->primaryProgramId() . '_observations')->insertGetId($params);
                 $this->legacy_obs_id = $resultObsId;
             }
         }

@@ -40,7 +40,7 @@ class CPRulesPCP extends Model {
 
     public function program()
     {
-        return $this->hasMany(Program::class, 'blog_id', 'prov_id');
+        return $this->hasMany(Practice::class, 'id', 'prov_id');
     }
 
     public function getCPRulesPCPForProv($provId)

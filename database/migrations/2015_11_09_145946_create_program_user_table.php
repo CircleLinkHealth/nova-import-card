@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateProgramUserTable extends Migration {
 
@@ -13,7 +13,7 @@ class CreateProgramUserTable extends Migration {
 	public function up()
 	{
 
-		// ensure wp_users.ID matches up
+        // ensure wp_users.id matches up
 		Schema::connection('mysql_no_prefix')->table('lv_locations', function($table)
 		{
 			$table->dropForeign('lv_locations_program_id_foreign');
@@ -23,10 +23,10 @@ class CreateProgramUserTable extends Migration {
 			$table->integer('program_id', false)->change();
 		});
 
-		// change wp_blogs.blog_id for proper foreign key
+        // change wp_blogs.id for proper foreign key
 		Schema::connection('mysql_no_prefix')->table('wp_blogs', function($table)
 		{
-			$table->integer('blog_id', false)->unsigned()->change();
+            $table->integer('id', false)->unsigned()->change();
 		});
 
 		// Create table for associating programs to users (Many-to-Many)
@@ -34,8 +34,8 @@ class CreateProgramUserTable extends Migration {
 			$table->integer('user_id')->unsigned();
 			$table->integer('program_id')->unsigned();
 
-			$table->foreign('user_id')->references('ID')->on('wp_users');
-			$table->foreign('program_id')->references('blog_id')->on('wp_blogs');
+            $table->foreign('user_id')->references('id')->on('wp_users');
+            $table->foreign('program_id')->references('id')->on('wp_blogs');
 
 			$table->primary(['user_id', 'program_id']);
 		});

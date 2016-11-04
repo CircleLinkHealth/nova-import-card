@@ -4,7 +4,7 @@ use App\CarePlan;
 use App\NurseInfo;
 use App\PatientInfo;
 use App\PhoneNumber;
-use App\Program;
+use App\Practice;
 use App\ProviderInfo;
 use App\Role;
 use App\User;
@@ -17,7 +17,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
     public function createNewUser(User $user, ParameterBag $params)
     {
-        $user = $user->createNewUser($params->get('user_email'), $params->get('user_pass'));
+        $user = $user->createNewUser($params->get('email'), $params->get('password'));
 
         // set registration date field on users
         $user->user_registered = date('Y-m-d H:i:s');
@@ -60,11 +60,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
     public function saveOrUpdateUserInfo(User $user, ParameterBag $params)
     {
-        $user->user_nicename = $params->get('user_nicename');
-        $user->user_login = $params->get('user_login');
+        $user->username = $params->get('username');
         $user->user_status = $params->get('user_status');
 
-        if ($params->get('user_email')) $user->user_email = $params->get('user_email');
+        if ($params->get('email')) {
+            $user->email = $params->get('email');
+        }
 
         if($params->get('access_disabled')) {
             $user->access_disabled = $params->get('access_disabled');
@@ -72,7 +73,9 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $user->access_disabled = 0; // 0 = good, 1 = disabled
         }
         $user->program_id = $params->get('program_id');
-        $user->care_plan_id = $params->get('care_plan_id');
+
+        $user->attachPractice($params->get('program_id'));
+
         $user->auto_attach_programs = $params->get('auto_attach_programs');
         if ($params->get('first_name')) {
             $user->first_name = $params->get('first_name');
@@ -125,7 +128,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // add patient info
         if ($user->hasRole('participant') && !$user->patientInfo) {
             $patientInfo = new PatientInfo;
-            $patientInfo->user_id = $user->ID;
+            $patientInfo->user_id = $user->id;
             $patientInfo->save();
             $user->load('patientInfo');
         }
@@ -133,7 +136,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // add provider info
         if ($user->hasRole('provider') && !$user->providerInfo) {
             $providerInfo = new ProviderInfo;
-            $providerInfo->user_id = $user->ID;
+            $providerInfo->user_id = $user->id;
             $providerInfo->save();
             $user->load('providerInfo');
         }
@@ -141,7 +144,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // add nurse info
         if ($user->hasRole('care-center') && !$user->nurseInfo) {
             $nurseInfo = new NurseInfo;
-            $nurseInfo->user_id = $user->ID;
+            $nurseInfo->user_id = $user->id;
             $nurseInfo->save();
             $user->load('nurseInfo');
         }
@@ -153,7 +156,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     ) {
         // get selected programs
         $userPrograms = [];
-        if ($params->get('programs')) { // && ($wpUser->programs->count() > 0)
+        if ($params->get('programs')) { // && ($wpUser->practices->count() > 0)
             $userPrograms = $params->get('programs');
         }
         if ($params->get('program_id')) {
@@ -183,12 +186,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
 
         // first detatch relationship
-        $wpUser->programs()->detach();
+        $wpUser->practices()->detach();
 
-        $wpBlogs = Program::orderBy('blog_id', 'desc')->pluck('blog_id')->all();
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('id')->all();
         foreach ($wpBlogs as $wpBlogId) {
             if (in_array($wpBlogId, $userPrograms)) {
-                $wpUser->programs()->attach($wpBlogId);
+                $wpUser->practices()->attach($wpBlogId);
             }
         }
     }
@@ -204,7 +207,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->is_primary = 1;
-            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->user_id = $user->id;
             $phoneNumber->number = $params->get('study_phone_number');
             $phoneNumber->type = 'home';
             $phoneNumber->save();
@@ -215,7 +218,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->is_primary = 1;
-            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->user_id = $user->id;
             $phoneNumber->number = $params->get('home_phone_number');
             $phoneNumber->type = 'home';
             $phoneNumber->save();
@@ -225,7 +228,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
-            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->user_id = $user->id;
             $phoneNumber->number = $params->get('work_phone_number');
             $phoneNumber->type = 'work';
             $phoneNumber->save();
@@ -235,7 +238,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             if (!$phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
-            $phoneNumber->user_id = $user->ID;
+            $phoneNumber->user_id = $user->id;
             $phoneNumber->number = $params->get('mobile_phone_number');
             $phoneNumber->type = 'mobile';
             $phoneNumber->save();
@@ -244,6 +247,8 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
     public function saveOrUpdatePatientInfo(User $user, ParameterBag $params)
     {
+        $user->attachLocation($params->get('preferred_contact_location'));
+
         $patientInfo = $user->patientInfo->toArray();
 
         // contact days checkbox formatting, @todo this is not normalized properly?
@@ -309,14 +314,14 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 //New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
 
         $email_view = 'emails.newpatientnotify';
-        $program = Program::find($user->blogId());
+        $program = Practice::find($user->primaryProgramId());
         $program_name = $program->display_name;
         $email_subject = '[' . $program_name . '] New User Registration!';
         $data = [
-            'patient_name' => $user->getFullNameAttribute(),
-            'patient_id' => $user->ID,
+            'patient_name'  => $user->getFullNameAttribute(),
+            'patient_id'    => $user->id,
             'patient_email' => $user->getEmailForPasswordReset(),
-            'program' => $program_name,
+            'program'       => $program_name,
         ];
 
         Mail::send($email_view, $data, function ($message) use
@@ -421,7 +426,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     {
         /*
         // meta
-        $userMeta = UserMeta::where('user_id', '=', $wpUser->ID)->pluck('meta_value', 'meta_key')->all();
+        $userMeta = UserMeta::where('user_id', '=', $wpUser->id)->pluck('meta_value', 'meta_key')->all();
 
         // config
         $userConfig = (new UserConfigTemplate())->getArray();
@@ -465,17 +470,17 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     public function createDefaultCarePlan($user, $params)
     {
 
-        $program = Program::find($user->program_id);
+        $program = Practice::find($user->program_id);
         if (!$program) {
             return false;
         }
         // just need to add programs default @todo here should get the programs default one to use from programs config
-        $carePlan = CarePlan::where('program_id', '=', $program->blog_id)->where('type', '=', 'Program Default')->first();
+        $carePlan = CarePlan::where('program_id', '=', $program->id)->where('type', '=',
+            'Practice Default')->first();
         if (!$carePlan) {
             return false;
         }
 
-        $user->care_plan_id = $carePlan->id;
         $user->save();
 
         // populate defaults from careplan
@@ -540,7 +545,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                         //echo "Adding to UCP! meta_key = status meta_value = " . $child1Info['status'] . "<br><br>";
                         $newUCP = new CPRulesUCP;
                         $newUCP->items_id = $itemData[$parentItemName][0][$child1Key]['items_id'];
-                        $newUCP->user_id = $wpUser->ID;
+                        $newUCP->user_id = $wpUser->id;
                         $newUCP->meta_key = 'status';
                         $newUCP->meta_value = $child1Info['status'];
                         $newUCP->save();
@@ -560,7 +565,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                                 //echo "Adding to UCP! meta_key = value meta_value = " . $child2Info['ui_default'];
                                 $newUCP = new CPRulesUCP;
                                 $newUCP->items_id = $child2Info['items_id'];
-                                $newUCP->user_id = $wpUser->ID;
+                                $newUCP->user_id = $wpUser->id;
                                 $newUCP->meta_key = 'value';
                                 $newUCP->meta_value = $child2Info['ui_default'];
                                 $newUCP->save();

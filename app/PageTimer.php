@@ -48,12 +48,12 @@ class PageTimer extends Model
 
     public function logger()
     {
-        return $this->belongsTo('App\User', 'provider_id', 'ID');
+        return $this->belongsTo('App\User', 'provider_id', 'id');
     }
 
     public function patient()
     {
-        return $this->belongsTo('App\User', 'patient_id', 'ID');
+        return $this->belongsTo('App\User', 'patient_id', 'id');
     }
 
     public function rule()

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateNotesTable extends Migration
@@ -23,13 +23,13 @@ class CreateNotesTable extends Migration
             $table->boolean('isTCM');
 
             $table->foreign('patient_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
             $table->foreign('author_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

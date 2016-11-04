@@ -41,21 +41,22 @@
                         @include('errors.errors')
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $patient->ID)), 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $patient->id)), 'class' => 'form-horizontal')) !!}
                         </div>
 
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 @if($patient->hasRole('participant'))
                                     {{--<div class="pull-left">
-                                        <a href="{{ URL::route('admin.users.msgCenter', array('patientId' => $patient->ID)) }}" class="btn btn-primary">App Simulator</a>
+                                        <a href="{{ URL::route('admin.users.msgCenter', array('patientId' => $patient->id)) }}" class="btn btn-primary">App Simulator</a>
                                     </div>--}}
                                     <div class="pull-left" style="margin-left:10px;">
-                                        <a href="{{ URL::route('patient.summary', array('patientId' => $patient->ID)) }}" class="btn btn-info">Go To Provider UI</a>
+                                        <a href="{{ URL::route('patient.summary', array('patientId' => $patient->id)) }}"
+                                           class="btn btn-info">Go To Provider UI</a>
                                     </div>
                                 @endif
                                 {{--<div class="pull-left" style="margin-left:10px;">
-                                    <a href="{{ URL::route('admin.users.careplan', array('patientId' => $patient->ID)) }}" class="btn btn-primary">View Care Plan Feed JSON</a>
+                                    <a href="{{ URL::route('admin.users.careplan', array('patientId' => $patient->id)) }}" class="btn btn-primary">View Care Plan Feed JSON</a>
                                 </div>--}}
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
@@ -87,14 +88,14 @@
                                 <h2>User Info</h2>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('user_login', 'Login:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('user_login', $patient->user_login, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('username', 'Login:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('username', $patient->username, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-xs-2">{!! Form::label('user_email', 'user_email:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('user_email', $patient->user_email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-2">{!! Form::label('email', 'email:') !!}</div>
+                                        <div class="col-xs-10">{!! Form::text('email', $patient->email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -185,7 +186,7 @@
                                 <div id="programCollapse" class="collapse in" style="background:#888;padding:20px;">
                                     <div class="form-group">
                                         <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('program_id', 'Primary Program:') !!}</div>
+                                            <div class="col-xs-2">{!! Form::label('program_id', 'Practice') !!}</div>
                                             <div class="col-xs-4">{!! Form::select('program_id', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                                             <div class="col-xs-2"><strong>Program Config:</strong><br />Auto attach to new programs</div>
                                             <div class="col-xs-4">
@@ -204,7 +205,7 @@
                                             <div class="row" id="program_{{ $wpBlogId }}" style="border-bottom:1px solid #000;">
                                                 <div class="col-sm-2">
                                                     <div class="text-right">
-                                                        @if( in_array($wpBlogId, $patient->programs()->pluck('blog_id')->all()) )
+                                                        @if( in_array($wpBlogId, $patient->practices()->pluck('id')->all()) )
                                                         {!! Form::checkbox('programs[]', $wpBlogId, ['checked' => "checked"], ['style' => '', 'class' => 'programs']) !!}
                                                     @else
                                                         {!! Form::checkbox('programs[]', $wpBlogId, [], ['style' => '', 'class' => 'programs']) !!}
@@ -240,15 +241,6 @@
                                         </div>
                                     </div>
 
-                                    <h2>Care Plan:</h2>
-                                    <div id="roles">
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-lg-2">{!! Form::label('care_plan_id', 'Care Plan: ') !!}</div>
-                                                <div class="col-lg-10">{!! Form::select('care_plan_id', $carePlans, $patient->care_plan_id, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                                            </div>
-                                        </div>
-                                    </div>
 
                                     <div class="form-group">
                                         <div class="row">
@@ -524,7 +516,7 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::previous() }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::hidden('user_id', $patient->ID) !!}
+                                    {!! Form::hidden('user_id', $patient->id) !!}
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
                                     </form>
                                 </div>

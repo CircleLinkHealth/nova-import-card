@@ -5,14 +5,8 @@ use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\Repositories\UserRepository;
 use App\CPRulesPCP;
 use App\Location;
-use App\Program;
+use App\Practice;
 use App\Role;
-use App\Services\CareplanService;
-use App\Services\MsgChooser;
-use App\Services\MsgScheduler;
-use App\Services\MsgUI;
-use App\Services\MsgUser;
-use App\Services\ObservationService;
 use App\User;
 use Auth;
 use DateTimeZone;
@@ -43,8 +37,8 @@ class UserController extends Controller
             // ensure program relationship is set
             /*
             if(!empty($user->program_id) && $user->program_id < 100) {
-                if (!$user->programs->contains($user->program_id)) {
-                    $user->programs()->attach($user->program_id);
+                if (!$user->practices->contains($user->program_id)) {
+                    $user->practices()->attach($user->program_id);
                 }
             } else {
                 $user->delete();
@@ -68,38 +62,38 @@ class UserController extends Controller
             ];
             $statusCode = 200;
 
-            \JWTAuth::setIdentifier( 'ID' );
+            \JWTAuth::setIdentifier('id');
             $user = \JWTAuth::parseToken()->authenticate();
             if ( !$user ) {
                 return response()->json( ['error' => 'invalid_credentials'], 401 );
             }
             else {
-                $userId = $user->ID;
+                $userId = $user->id;
                 $wpUser = User::find( $userId );
                 $response = [
-                    'id' => $wpUser->ID,
-                    'user_email' => $wpUser->user_email,
+                    'id'              => $wpUser->id,
+                    'email'           => $wpUser->email,
                     'user_registered' => $wpUser->user_registered,
-                    'meta' => $wpUser->meta
+                    'meta'            => $wpUser->meta,
                 ];
                 return response()->json( $response, $statusCode );
             }
         }
         else {
             // display view
-            $wpUsers = User::where( 'program_id', '!=', '' )->orderBy( 'ID', 'desc' );
+            $wpUsers = User::where('program_id', '!=', '')->orderBy('id', 'desc');
 
             // FILTERS
             $params = $request->all();
 
             // filter user
-            $users = User::whereIn('ID', Auth::user()->viewableUserIds())->OrderBy('id',
-                'desc')->get()->pluck('fullNameWithId', 'ID')->all();
+            $users = User::whereIn('id', Auth::user()->viewableUserIds())->OrderBy('id',
+                'desc')->get()->pluck('fullNameWithId', 'id')->all();
             $filterUser = 'all';
             if ( !empty($params[ 'filterUser' ]) ) {
                 $filterUser = $params[ 'filterUser' ];
                 if ( $params[ 'filterUser' ] != 'all' ) {
-                    $wpUsers->where( 'ID', '=', $filterUser );
+                    $wpUsers->where('id', '=', $filterUser);
                 }
             }
 
@@ -116,9 +110,9 @@ class UserController extends Controller
             }
 
             // program filter
-            $programs = Program::orderBy( 'blog_id', 'desc' )
-                ->whereIn( 'blog_id', Auth::user()->viewableProgramIds() )
-                ->get()->pluck('domain', 'blog_id')->all();
+            $programs = Practice::orderBy('id', 'desc')
+                ->whereIn('id', Auth::user()->viewableProgramIds())
+                ->get()->pluck('domain', 'id')->all();
             $filterProgram = 'all';
             if ( !empty($params[ 'filterProgram' ]) ) {
                 $filterProgram = $params[ 'filterProgram' ];
@@ -146,7 +140,7 @@ class UserController extends Controller
             $queryString = $request->query();
 
             // patient restriction
-            $wpUsers->whereIn( 'ID', Auth::user()->viewableUserIds() );
+            $wpUsers->whereIn('id', Auth::user()->viewableUserIds());
             $wpUsers = $wpUsers->paginate( 20 );
             $invalidUsers = array();
 
@@ -168,7 +162,7 @@ class UserController extends Controller
         }
         //if ( $request->header('Client') == 'ui' ) {}
 
-        $blogItem = Program::find( $blogId )->pcp()->whereStatus( 'Active' )->get();
+        $blogItem = Practice::find($blogId)->pcp()->whereStatus('Active')->get();
 
         foreach ( $blogItem as $item ) {
             // Item Categories
@@ -181,10 +175,10 @@ class UserController extends Controller
         $weekdays_arr = array('1' => 'Sunday', '2' => 'Monday', '3' => 'Tuesday', '4' => 'Wednesday', '5' => 'Thursday', '6' => 'Friday', '7' => 'Saturday');
 
         //List of providers
-        $provider_raw = Program::getProviders( $blogId );
+        $provider_raw = Practice::getProviders($blogId);
         $providers = array();
         foreach ( $provider_raw as $provider ) {
-            $providers[ $provider->ID ] = $provider->getFullNameAttribute();
+            $providers[$provider->id] = $provider->getFullNameAttribute();
         }
 
         // @todo Check what's the name for Smoking
@@ -213,8 +207,8 @@ class UserController extends Controller
 
         // create participant here
 
-        return redirect()->route('admin.users.edit', [$wpUser->ID])->with('messages',
-            ['successfully created new user - ' . $wpUser->ID]);
+        return redirect()->route('admin.users.edit', [$wpUser->id])->with('messages',
+            ['successfully created new user - ' . $wpUser->id]);
     }
 
     /**
@@ -240,10 +234,62 @@ class UserController extends Controller
         $wpRole = '';
 
         // States (for dropdown)
-        $states_arr = array('AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming");
+        $states_arr = [
+            'AL' => "Alabama",
+            'AK' => "Alaska",
+            'AZ' => "Arizona",
+            'AR' => "Arkansas",
+            'CA' => "California",
+            'CO' => "Colorado",
+            'CT' => "Connecticut",
+            'DE' => "Delaware",
+            'DC' => "District Of Columbia",
+            'FL' => "Florida",
+            'GA' => "Georgia",
+            'HI' => "Hawaii",
+            'id' => "Idaho",
+            'IL' => "Illinois",
+            'IN' => "Indiana",
+            'IA' => "Iowa",
+            'KS' => "Kansas",
+            'KY' => "Kentucky",
+            'LA' => "Louisiana",
+            'ME' => "Maine",
+            'MD' => "Maryland",
+            'MA' => "Massachusetts",
+            'MI' => "Michigan",
+            'MN' => "Minnesota",
+            'MS' => "Mississippi",
+            'MO' => "Missouri",
+            'MT' => "Montana",
+            'NE' => "Nebraska",
+            'NV' => "Nevada",
+            'NH' => "New Hampshire",
+            'NJ' => "New Jersey",
+            'NM' => "New Mexico",
+            'NY' => "New York",
+            'NC' => "North Carolina",
+            'ND' => "North Dakota",
+            'OH' => "Ohio",
+            'OK' => "Oklahoma",
+            'OR' => "Oregon",
+            'PA' => "Pennsylvania",
+            'RI' => "Rhode Island",
+            'SC' => "South Carolina",
+            'SD' => "South Dakota",
+            'TN' => "Tennessee",
+            'TX' => "Texas",
+            'UT' => "Utah",
+            'VT' => "Vermont",
+            'VA' => "Virginia",
+            'WA' => "Washington",
+            'WV' => "West Virginia",
+            'WI' => "Wisconsin",
+            'WY' => "Wyoming",
+        ];
 
         // programs for dd
-        $wpBlogs = Program::orderBy('blog_id', 'desc')->pluck('domain', 'blog_id')->all();
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('domain', 'id')->all();
 
         $locations = Location::whereNotNull('parent_id')->pluck('name', 'id')->all();
 
@@ -296,7 +342,8 @@ class UserController extends Controller
         }
 
 
-        return redirect()->route( 'admin.users.edit', [$wpUser->ID] )->with( 'messages', ['successfully created new user - ' . $wpUser->ID] );
+        return redirect()->route('admin.users.edit', [$wpUser->id])->with('messages',
+            ['successfully created new user - ' . $wpUser->id]);
 
     }
 
@@ -367,8 +414,8 @@ class UserController extends Controller
             }
         }
 
-        // locations @todo get location id for Program
-        $wpBlog = Program::find( $patient->program_id );
+        // locations @todo get location id for Practice
+        $wpBlog = Practice::find($patient->program_id);
         $locations_arr = array();
         if ( $wpBlog ) {
             $locations_arr = ( new Location )->getNonRootLocations( $wpBlog->locationId() );
@@ -377,10 +424,62 @@ class UserController extends Controller
         $carePlans = CarePlan::where('program_id', '=', $patient->program_id)->pluck('display_name', 'id')->all();
 
         // States (for dropdown)
-        $states_arr = array('AL' => "Alabama", 'AK' => "Alaska", 'AZ' => "Arizona", 'AR' => "Arkansas", 'CA' => "California", 'CO' => "Colorado", 'CT' => "Connecticut", 'DE' => "Delaware", 'DC' => "District Of Columbia", 'FL' => "Florida", 'GA' => "Georgia", 'HI' => "Hawaii", 'ID' => "Idaho", 'IL' => "Illinois", 'IN' => "Indiana", 'IA' => "Iowa", 'KS' => "Kansas", 'KY' => "Kentucky", 'LA' => "Louisiana", 'ME' => "Maine", 'MD' => "Maryland", 'MA' => "Massachusetts", 'MI' => "Michigan", 'MN' => "Minnesota", 'MS' => "Mississippi", 'MO' => "Missouri", 'MT' => "Montana", 'NE' => "Nebraska", 'NV' => "Nevada", 'NH' => "New Hampshire", 'NJ' => "New Jersey", 'NM' => "New Mexico", 'NY' => "New York", 'NC' => "North Carolina", 'ND' => "North Dakota", 'OH' => "Ohio", 'OK' => "Oklahoma", 'OR' => "Oregon", 'PA' => "Pennsylvania", 'RI' => "Rhode Island", 'SC' => "South Carolina", 'SD' => "South Dakota", 'TN' => "Tennessee", 'TX' => "Texas", 'UT' => "Utah", 'VT' => "Vermont", 'VA' => "Virginia", 'WA' => "Washington", 'WV' => "West Virginia", 'WI' => "Wisconsin", 'WY' => "Wyoming");
+        $states_arr = [
+            'AL' => "Alabama",
+            'AK' => "Alaska",
+            'AZ' => "Arizona",
+            'AR' => "Arkansas",
+            'CA' => "California",
+            'CO' => "Colorado",
+            'CT' => "Connecticut",
+            'DE' => "Delaware",
+            'DC' => "District Of Columbia",
+            'FL' => "Florida",
+            'GA' => "Georgia",
+            'HI' => "Hawaii",
+            'id' => "Idaho",
+            'IL' => "Illinois",
+            'IN' => "Indiana",
+            'IA' => "Iowa",
+            'KS' => "Kansas",
+            'KY' => "Kentucky",
+            'LA' => "Louisiana",
+            'ME' => "Maine",
+            'MD' => "Maryland",
+            'MA' => "Massachusetts",
+            'MI' => "Michigan",
+            'MN' => "Minnesota",
+            'MS' => "Mississippi",
+            'MO' => "Missouri",
+            'MT' => "Montana",
+            'NE' => "Nebraska",
+            'NV' => "Nevada",
+            'NH' => "New Hampshire",
+            'NJ' => "New Jersey",
+            'NM' => "New Mexico",
+            'NY' => "New York",
+            'NC' => "North Carolina",
+            'ND' => "North Dakota",
+            'OH' => "Ohio",
+            'OK' => "Oklahoma",
+            'OR' => "Oregon",
+            'PA' => "Pennsylvania",
+            'RI' => "Rhode Island",
+            'SC' => "South Carolina",
+            'SD' => "South Dakota",
+            'TN' => "Tennessee",
+            'TX' => "Texas",
+            'UT' => "Utah",
+            'VT' => "Vermont",
+            'VA' => "Virginia",
+            'WA' => "Washington",
+            'WV' => "West Virginia",
+            'WI' => "Wisconsin",
+            'WY' => "Wyoming",
+        ];
 
         // programs for dd
-        $wpBlogs = Program::orderBy('blog_id', 'desc')->pluck('domain', 'blog_id')->all();
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('domain', 'id')->all();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers( DateTimeZone::ALL );
@@ -440,7 +539,7 @@ class UserController extends Controller
             return response( "User not found", 401 );
         }
 
-        //$user->programs()->detach();
+        //$user->practices()->detach();
         $user->delete();
 
         return redirect()->back()->with( 'messages', ['successfully deleted user'] );
@@ -487,55 +586,6 @@ class UserController extends Controller
             }
 
             $user->scramble();
-            /*
-
-            $user->mobile_phone_number = $randomUserInfo->email;
-            $user->agent_name = $randomUserInfo->email;
-            $user->agent_telephone = $randomUserInfo->email;
-            $user->agent_email = $randomUserInfo->email;
-            $user->agent_relationship = $randomUserInfo->email;
-            $user->agent_relationship = $randomUserInfo->email;
-            */
-
-            /*
-            // echo "<pre>"; var_export($parsed_json);echo "</pre>";
-            $z = 0;
-            foreach ($scramble_me as $key) {
-                $user_meta = get_user_meta($key);//, 'wp_'.$blog_id.'_capabilities', true);
-                $user_config_meta = get_user_meta($key, 'wp_' . $blog_id . '_user_config', true);
-                $ret = update_user_meta($key, 'first_name', ucfirst($parsed_json->{'results'}[$z]->user->name->first));
-                $ret = update_user_meta($key, 'last_name', ucfirst("z" . $parsed_json->{'results'}[$z]->user->name->last));
-                $user_config_meta['mrn_number'] = uniqid();
-                $user_config_meta['gender'] = ($parsed_json->{'results'}[$z]->user->gender) == 'male' ? 'M' : 'F';
-                $user_config_meta['email'] = $parsed_json->{'results'}[$z]->user->email;
-                $user_config_meta['address'] = $parsed_json->{'results'}[$z]->user->location->street;
-                $user_config_meta['address2'] = "Garage";
-                $user_config_meta['city'] = $parsed_json->{'results'}[$z]->user->location->city;
-
-                $user_config_meta['state'] = $states[ucfirst($parsed_json->{'results'}[$z]->user->location->state)];
-                $user_config_meta['zip'] = "" . $parsed_json->{'results'}[$z]->user->location->zip . "";
-                $user_config_meta['birth_date'] = date("Y-m-d H:i:s 0500", $parsed_json->{'results'}[$z]->user->dob / 1000);
-                $user_config_meta['study_phone_number'] = $parsed_json->{'results'}[$z]->user->phone;
-                $user_config_meta['mobile_phone_number'] = $parsed_json->{'results'}[$z]->user->cell;
-                $user_config_meta['study_phone_number'] = str_replace(array("(", ")"), "", $user_config_meta['study_phone_number']);
-                $user_config_meta['mobile_phone_number'] = str_replace(array("(", ")"), "", $user_config_meta['mobile_phone_number']);
-                $user_config_meta['agent-name'] = "Dad";
-                $user_config_meta['agent-telephone'] = $user_config_meta['study_phone_number'];
-                $user_config_meta['agent-email'] = "Dad@example.com";
-                $user_config_meta['agent-relationship'] = "Father";
-                $ret = wp_update_user(array('ID' => $key,
-                    'user_nicename' => uniqid(),
-                    'user_email' => $user_config_meta['email'],
-                    'display_name' => uniqid(),
-                    'user_pass' => uniqid()
-                ));
-                // var_dump($user_meta);
-                // var_dump($user_config_meta);
-                $ret = update_user_meta($key, 'wp_' . $blog_id . '_user_config', $user_config_meta);
-
-                $z++;
-            }
-            */
         }
         return true;
     }
@@ -582,97 +632,4 @@ class UserController extends Controller
 //		// return view html
 //		return response($viewHtml);
     }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function showMsgCenter(Request $request, $id)
-    {
-        if ( !Auth::user()->can( 'users-view-all' ) ) {
-            abort( 403 );
-        }
-        $msgUI = new MsgUI;
-        $msgUsers = new MsgUser;
-        $msgChooser = new MsgChooser;
-        $msgScheduler = new MsgScheduler;
-        $observationService = new ObservationService;
-        //dd($result);
-        $wpUser = User::find( $id );
-        if ( !$wpUser ) {
-            return response( "User not found", 401 );
-        }
-        $params = $request->input();
-        $userMeta = $wpUser->userMeta();
-
-        $messageKey = '';
-        $messageValue = '';
-        $activeDate = ''; // keeps date section open
-        if ( !empty($params) ) {
-            if ( isset($params[ 'action' ]) ) {
-                if ( $params[ 'action' ] == 'sendTextSimulation' ) {
-                    // deprecated
-                }
-                else if ( $params[ 'action' ] == 'run_scheduler' ) {
-                    $result = $msgScheduler->index( $wpUser->blogId() );
-                    return response()->json( $result );
-                }
-                else if ( $params[ 'action' ] == 'save_app_obs' ) {
-                    $result = $observationService->storeObservationFromApp( $id, $params[ 'parent_id' ], $params[ 'obs_value' ], $params[ 'obs_date' ], $params[ 'msg_id' ], $params[ 'obs_key' ], 'America/New_York' );
-                    // create message
-                    if ( $result ) {
-                        $messageKey = 'success';
-                        $messageValue = 'Successfully saved new app observation.';
-                    }
-                    else {
-                        $messageKey = 'error';
-                        $messageValue = 'Failed to save app observation.';
-                    }
-                    // add param to keep date section open
-                    $date = strtotime( $params[ 'obs_date' ] );
-                    $activeDate = date( 'Y-m-d', $date );
-                }
-            }
-        }
-
-        $commentsForUser = $msgUsers->get_comments_for_user( $wpUser->ID, $wpUser->blogId() );
-        $comments = array();
-        if ( !empty($commentsForUser) ) {
-            foreach ( $commentsForUser as $comment ) {
-                $comments[ $comment->comment_ID ] = array(
-                    'comment_type' => $comment->comment_type,
-                    'comment_author' => $comment->comment_author,
-                    'comment_date' => $comment->comment_date,
-                    'comment_approved' => $comment->comment_approved,
-                    'comment_parent' => $comment->comment_parent,
-                    'comment_content' => $comment->comment_content,
-                    //'comment_content_array' => unserialize($comment->comment_content),
-                    'comment_content_array' => $comment->comment_content,
-                );
-            }
-        }
-
-        // get dates
-        $date1 = date( 'Y-m-d' );
-        $date2 = date( 'Y-m-d', time() - 60 * 60 * 24 );
-        $date3 = date( 'Y-m-d', time() - ((60 * 60 * 24) * 2) );
-        $dates = array($date1, $date2, $date3);
-        if ( empty($dates) ) {
-            return response( "Date array is required", 401 );
-        }
-
-        // get feed
-        $careplanService = new CareplanService;
-        $cpFeed = $careplanService->getCareplan( $wpUser, $dates );
-        //$cpFeed = json_decode(file_get_contents(getenv('CAREPLAN_JSON_PATH')), 1);
-        $cpFeed = $msgUI->addAppSimCodeToCP( $cpFeed );
-        $cpFeedSections = array('Biometric', 'DMS', 'Symptoms', 'Reminders');
-
-        //return response()->json($cpFeed);
-        return view( 'wpUsers.msgCenter', ['wpUser' => $wpUser, 'userMeta' => $userMeta, 'cpFeed' => $cpFeed, 'cpFeedSections' => $cpFeedSections, 'comments' => $comments, 'messages' => array(), $messageKey => $messageValue, 'activeDate' => $activeDate] );
-    }
-
 }

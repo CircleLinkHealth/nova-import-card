@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddPatientIdToCcdaTable extends Migration {
 
@@ -16,7 +16,7 @@ class AddPatientIdToCcdaTable extends Migration {
 		{
 			$table->unsignedInteger('patient_id')->after('user_id')->nullable();
 			$table->foreign('patient_id', 'users_patient_id_foreign')
-				->references('ID')
+                ->references('id')
 				->on('wp_users')
 				->onUpdate('cascade');
 		});

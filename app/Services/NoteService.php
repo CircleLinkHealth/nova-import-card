@@ -79,7 +79,7 @@ class NoteService
                 continue;
             }
 
-            $email = $receiver->user_email;
+            $email = $receiver->email;
 
             $performed_at = Carbon::parse($note->performed_at)->toFormattedDateString();
 
@@ -119,13 +119,13 @@ class NoteService
             }
 
             MailLog::create([
-                'sender_email'    => $sender->user_email,
-                'receiver_email'  => $receiver->user_email,
+                'sender_email'    => $sender->email,
+                'receiver_email'  => $receiver->email,
                 'body'            => $body,
                 'subject'         => $email_subject,
                 'type'            => 'note',
-                'sender_cpm_id'   => $sender->ID,
-                'receiver_cpm_id' => $receiver->ID,
+                'sender_cpm_id'   => $sender->id,
+                'receiver_cpm_id' => $receiver->id,
                 'created_at'      => $note->created_at,
                 'note_id'         => $note->id,
             ]);
@@ -168,7 +168,7 @@ class NoteService
 
     public function getNotesForPatient(User $patient)
     {
-        return Note::where('patient_id', $patient->ID)->get();
+        return Note::where('patient_id', $patient->id)->get();
     }
 
     //Get all notes that were forwarded with specified date range
@@ -182,7 +182,7 @@ class NoteService
 
                 $q->where('member_user_id', $provider)
                     ->where('type','billing_provider');
-            })->pluck('ID');
+            })->pluck('id');
 
         return $this->getNotesWithRangeForPatients($patients, $start, $end);
 
@@ -218,7 +218,7 @@ class NoteService
 
                 $q->where('member_user_id', $provider)
                     ->where('type','billing_provider');
-            })->pluck('ID');
+            })->pluck('id');
 
         $notes = $this->getForwardedNotesWithRangeForPatients($patients, $start, $end);
 
@@ -288,15 +288,15 @@ class NoteService
 
         if ($phone_direction == 'inbound') {
             $outbound_num = $patient->primaryPhone;
-            $outbound_id = $patient->ID;
+            $outbound_id = $patient->id;
             $inbound_num = $author->primaryPhone;
-            $inbound_id = $author->ID;
+            $inbound_id = $author->id;
             $isCpmOutbound = false;
         } else {
             $outbound_num = $author->primaryPhone;
-            $outbound_id = $author->ID;
+            $outbound_id = $author->id;
             $inbound_num = $patient->primaryPhone;
-            $inbound_id = $patient->ID;
+            $inbound_id = $patient->id;
             $isCpmOutbound = true;
 
         }

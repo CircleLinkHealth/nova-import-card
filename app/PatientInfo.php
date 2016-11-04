@@ -9,39 +9,77 @@ class PatientInfo extends Model {
 	use SoftDeletes;
 	use \Venturecraft\Revisionable\RevisionableTrait;
 
-	public static function boot()
-	{
-		parent::boot();
-	}
-
 	/**
 	 * The connection name for the model.
 	 *
 	 * @var string
 	 */
 	protected $connection = 'mysql';
-
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
 	protected $table = 'patient_info';
-
 	/**
 	 * The primary key for the model.
 	 *
 	 * @var string
 	 */
 	protected $primaryKey = 'id';
-
 	protected $guarded = [];
+
+    public static function boot()
+    {
+        parent::boot();
+    }
 
 	// START RELATIONSHIPS
 
+    public static function numberToTextDaySwitcher($string)
+    {
+
+        $mapper = function ($i) {
+
+            switch ($i) {
+                case 1:
+                    return ' Mon';
+                    break;
+                case 2:
+                    return ' Tue';
+                    break;
+                case 3:
+                    return ' Wed';
+                    break;
+                case 4:
+                    return ' Thu';
+                    break;
+                case 5:
+                    return ' Fri';
+                    break;
+                case 6:
+                    return ' Sat';
+                    break;
+                case 7:
+                    return ' Sun';
+                    break;
+            }
+
+            return '';
+
+        };
+
+        $days = explode(',', $string);
+
+        $formatted = array_map($mapper, $days);
+
+        return implode(',', $formatted);
+
+    }
+
 	public function user()
 	{
-		return $this->belongsTo(User::class, 'user_id', 'ID');
+        return $this->belongsTo(User::class, 'user_id', 'id');
 	}
 
 	public function patientContactWindows()
@@ -56,14 +94,8 @@ class PatientInfo extends Model {
 
     public function carePlanProviderApproverUser()
     {
-        return $this->belongsTo(User::class, 'user_id', 'ID');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
-
-	public function family(){
-
-		return $this->belongsTo(Family::class, 'family_id');
-
-	}
 
 
 	// END RELATIONSHIPS
@@ -72,59 +104,78 @@ class PatientInfo extends Model {
 	// START ATTRIBUTES
 
 	// first_name
+
+    public function family()
+    {
+
+        return $this->belongsTo(Family::class, 'family_id');
+
+    }
+
 	public function getFirstNameAttribute() {
 		return $this->user->first_name;
 	}
+
+    // last_name
+
 	public function setFirstNameAttribute($value) {
 		$this->user->first_name = $value;
 		$this->user->save();
 		return true;
 	}
 
-	// last_name
 	public function getLastNameAttribute() {
 		return $this->user->last_name;
 	}
+
+    // address
+
 	public function setLastNameAttribute($value) {
 		$this->user->last_name = $value;
 		$this->user->save();
 		return true;
 	}
 
-	// address
 	public function getAddressAttribute() {
 		return $this->user->address;
 	}
+
+    // city
+
 	public function setAddressAttribute($value) {
 		$this->user->address = $value;
 		$this->user->save();
 		return true;
 	}
 
-	// city
 	public function getCityAttribute() {
 		return $this->user->city;
 	}
+
+    // state
+
 	public function setCityAttribute($value) {
 		$this->user->city = $value;
 		$this->user->save();
 		return true;
 	}
 
-	// state
 	public function getStateAttribute() {
 		return $this->user->state;
 	}
+
+    // zip
+
 	public function setStateAttribute($value) {
 		$this->user->state = $value;
 		$this->user->save();
 		return true;
 	}
 
-	// zip
 	public function getZipAttribute() {
 		return $this->user->zip;
 	}
+
 	public function setZipAttribute($value) {
 		$this->user->zip = $value;
 		$this->user->save();
@@ -148,6 +199,9 @@ class PatientInfo extends Model {
 		return true;
 	}
 
+
+    // Return s current months CCM time formatted for UI
+
 	public function getFamilyMembers(PatientInfo $patient){
 
 		$family = $patient->family;
@@ -155,8 +209,8 @@ class PatientInfo extends Model {
 		if(is_object($family)){
 
 			$members = $family->patients()->get();
-			
-			//remove the patient from the family itself
+
+            //remove the patient from the family itself
 			return $members->reject(function ($item) {
 				return $item->id == $this->id;
 			});
@@ -166,8 +220,6 @@ class PatientInfo extends Model {
 
 	}
 
-
-	// Return s current months CCM time formatted for UI
 	public function getCurrentMonthCCMTimeAttribute()
 	{
 		$seconds = $this->cur_month_activity_time;
@@ -177,32 +229,6 @@ class PatientInfo extends Model {
 		$monthlyTime = sprintf("%02d:%02d:%02d",$H, $i, $s);
 
 		return $monthlyTime;
-	}
-
-	public static function numberToTextDaySwitcher($string){
-
-		$mapper = function($i){
-
-			switch($i){
-				case 1: return ' Mon'; break;
-				case 2: return ' Tue'; break;
-				case 3: return ' Wed'; break;
-				case 4: return ' Thu'; break;
-				case 5: return ' Fri'; break;
-				case 6: return ' Sat'; break;
-				case 7: return ' Sun'; break;
-			}
-
-			return '';
-
-		};
-
-		$days = explode(',', $string);
-
-		$formatted = array_map($mapper, $days);
-
-		return implode(',', $formatted);
-
 	}
 
 	//Query Scopes:

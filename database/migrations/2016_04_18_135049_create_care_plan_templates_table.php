@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateCarePlanTemplatesTable extends Migration {
 
@@ -20,7 +20,7 @@ class CreateCarePlanTemplatesTable extends Migration {
 			$table->string('type');
 			$table->timestamps();
 
-			$table->foreign('program_id')->references('blog_id')->on('wp_blogs')
+            $table->foreign('program_id')->references('id')->on('wp_blogs')
 				->onDelete('cascade')
 				->onUpdate('cascade');
 		});

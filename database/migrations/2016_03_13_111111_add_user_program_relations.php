@@ -1,10 +1,9 @@
 <?php
 
+use App\CLH\Repositories\UserRepository;
+use App\Practice;
 use App\Role;
 use App\User;
-use App\Program;
-use App\CLH\Repositories\UserRepository;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -30,20 +29,20 @@ class AddUserProgramRelations extends Migration {
 		echo PHP_EOL.' removed all participant role attachments';
 
 		// get programs
-		$programs = Program::all();
-		//$program = Program::where('blog_id','=','22')->first();
+        $programs = Practice::all();
+        //$program = Practice::where('id','=','22')->first();
 		//$programs = array($program);
 		$i = 0;
 		foreach($programs as $program) {
-			echo PHP_EOL.'Processing program:: '.$program->blog_id . ' ('. $program->display_name. ')';
+            echo PHP_EOL . 'Processing program:: ' . $program->id . ' (' . $program->display_name . ')';
 			/*
-			$programUsers = User::where('program_id', '=', $program->blog_id)
+			$programUsers = User::where('program_id', '=', $program->id)
 				->whereHas('roles', function ($q) {
 					$q->where('name', '=', 'participant');
 				})
 				->get(); */
 			$programUsers = User::whereHas('meta', function ($q) use ($program) {
-					$q->where('meta_key', '=', 'wp_'.$program->blog_id.'_capabilities');
+                $q->where('meta_key', '=', 'wp_' . $program->id . '_capabilities');
 					$q->where('meta_value', 'LIKE', '%participant%');
 				})
 				->get();
@@ -51,11 +50,11 @@ class AddUserProgramRelations extends Migration {
 				echo PHP_EOL.'total = '. $programUsers->count();
 				//continue 1;
 				foreach($programUsers as $programUser) {
-					echo PHP_EOL.$i. '-'.$programUser->user_email . ' linked to program ' . $program->blog_id;
-					$programUser->program_id = $program->blog_id;
+                    echo PHP_EOL . $i . '-' . $programUser->email . ' linked to program ' . $program->id;
+                    $programUser->program_id = $program->id;
 					$programUser->save();
 					$bag = new ParameterBag([
-						'program_id' => $program->blog_id,
+                        'program_id' => $program->id,
 					]);
 					$userRepo = new UserRepository();
 					$userRepo->saveOrUpdatePrograms($programUser, $bag);

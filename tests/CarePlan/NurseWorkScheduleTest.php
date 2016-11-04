@@ -158,7 +158,7 @@ class NurseWorkScheduleTest extends TestCase
 
         $text = "
             A Nurse was created:
-            login: {$user->user_email}
+            login: {$user->email}
             password: password
             ";
 

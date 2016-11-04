@@ -4,7 +4,6 @@ namespace App\CLH\Repositories;
 
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
-use App\CLH\Repositories\UserRepository;
 use App\Role;
 use App\User;
 use GuzzleHttp\Client;
@@ -22,15 +21,17 @@ class CCDImporterRepository
     {
         $role = Role::whereName('participant')->first();
 
-        if (empty($role)) throw new \Exception('User role not found.', 500);
+        if (empty($role)) {
+            throw new \Exception('User role not found.', 500);
+        }
 
         $newUserId = str_random(20);
 
-        $user_email = empty($email = $demographics->email)
+        $email = empty($email = $demographics->email)
             ? $newUserId . '@careplanmanager.com'
             : $email;
 
-        $user_login = empty($email)
+        $username = empty($email)
             ? $newUserId
             : $email;
 
@@ -40,21 +41,20 @@ class CCDImporterRepository
             : ucwords(strtolower($fullName));
 
         $bag = new ParameterBag([
-            'user_email' => $user_email,
-            'user_pass' => str_random(),
-            'user_nicename' => $user_nicename,
-            'display_name' => $user_nicename,
-            'first_name' => $demographics->first_name,
-            'last_name' => $demographics->last_name,
-            'user_login' => $user_login,
-            'program_id' => $demographics->program_id,
-            'address' => $demographics->street,
-            'address2' => $demographics->street2,
-            'city' => $demographics->city,
-            'state' => $demographics->state,
-            'zip' => $demographics->zip,
+            'email'             => $email,
+            'password'          => str_random(),
+            'display_name'      => $user_nicename,
+            'first_name'        => $demographics->first_name,
+            'last_name'         => $demographics->last_name,
+            'username'          => $username,
+            'program_id'        => $demographics->program_id,
+            'address'           => $demographics->street,
+            'address2'          => $demographics->street2,
+            'city'              => $demographics->city,
+            'state'             => $demographics->state,
+            'zip'               => $demographics->zip,
             'is_auto_generated' => true,
-            'roles' => [$role->id],
+            'roles'             => [$role->id],
         ]);
 
         return (new UserRepository())->createNewUser(new User(), $bag);
@@ -62,19 +62,22 @@ class CCDImporterRepository
 
     public function toJson($xml)
     {
-        $client = new Client( [
+        $client = new Client([
             'base_uri' => env('CCD_PARSER_BASE_URI'),
-        ] );
+        ]);
 
-        $response = $client->request( 'POST', '/ccda/parse', [
+        $response = $client->request('POST', '/ccda/parse', [
             'headers' => ['Content-Type' => 'text/xml'],
-            'body' => $xml,
-        ] );
+            'body'    => $xml,
+        ]);
 
-        if ( !$response->getStatusCode() == 200 ) {
-            return [$response->getStatusCode(), $response->getReasonPhrase()];
+        if (!$response->getStatusCode() == 200) {
+            return [
+                $response->getStatusCode(),
+                $response->getReasonPhrase(),
+            ];
         }
 
-        return (string) $response->getBody();
+        return (string)$response->getBody();
     }
 }

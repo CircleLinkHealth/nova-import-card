@@ -1,8 +1,7 @@
 <?php
 
-use App\User;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddTimestampsToUsersTable extends Migration {
 
@@ -31,7 +30,7 @@ class AddTimestampsToUsersTable extends Migration {
 				/*
 				$users = User::all()->update(['colour' => 'black']);
 				foreach($users as $user) {
-					echo $user->ID . PHP_EOL;
+					echo $user->id . PHP_EOL;
 					$user->created_at = $user->user_registered;
 					$user->save();
 				}

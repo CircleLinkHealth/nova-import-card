@@ -11,7 +11,7 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-8">
-                        <h2>Add New Program</h2>
+                        <h2>Add New Practice</h2>
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
@@ -20,7 +20,7 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Add New Program
+                        Add New Practice
                     </div>
                     <div class="panel-body">
 
@@ -32,12 +32,12 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::submit('Add Program', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Add Practice', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>
 
-                        <h2>New Program</h2>
+                        <h2>New Practice</h2>
 
                         <div class="form-group">
                             <div class="row">
@@ -77,7 +77,7 @@
                             <div class="col-sm-12">
                                 <div class="pull-right">
                                     <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
-                                    {!! Form::submit('Add Program', array('class' => 'btn btn-success')) !!}
+                                    {!! Form::submit('Add Practice', array('class' => 'btn btn-success')) !!}
                                     </form>
                                 </div>
                             </div>

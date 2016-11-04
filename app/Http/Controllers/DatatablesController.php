@@ -32,7 +32,13 @@ class DatatablesController extends Controller
         //return Datatables::of(User::query())->make(true);
         //$users = DB::table('calls')->select(['id', 'call_date', 'window_start', 'window_end']);
 
-        $users = User::select(['ID', 'display_name', 'user_email', 'created_at', 'updated_at']);
+        $users = User::select([
+            'id',
+            'display_name',
+            'email',
+            'created_at',
+            'updated_at',
+        ]);
 
         return Datatables::of($users)->make();
     }
@@ -83,22 +89,23 @@ class DatatablesController extends Controller
             ->where('calls.status', '=', 'scheduled')
             ->leftJoin('notes', 'calls.note_id','=','notes.id')
             ->leftJoin('nurse_info', 'calls.outbound_cpm_id','=','nurse_info.user_id')
-            ->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
-            ->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
-            ->leftJoin('users AS scheduler_user', 'calls.scheduler','=','scheduler_user.ID')
+            ->leftJoin('users AS nurse', 'calls.outbound_cpm_id', '=', 'nurse.id')
+            ->leftJoin('users AS patient', 'calls.inbound_cpm_id', '=', 'patient.id')
+            ->leftJoin('users AS scheduler_user', 'calls.scheduler', '=', 'scheduler_user.id')
             ->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
             ->leftJoin('patient_monthly_summaries', function($join) use ($date)
             {
                 $join->on('patient_monthly_summaries.patient_info_id', '=', 'patient_info.id');
                 $join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
             })
-            ->leftJoin('wp_blogs AS program', 'patient.program_id','=','program.blog_id')
+            ->leftJoin('practices AS program', 'patient.program_id', '=', 'program.id')
             ->leftJoin('patient_care_team_members', function($join)
             {
-                $join->on('patient.ID', '=', 'patient_care_team_members.user_id');
+                $join->on('patient.id', '=', 'patient_care_team_members.user_id');
                 $join->where('patient_care_team_members.type', '=', "billing_provider");
             })
-            ->leftJoin('users AS billing_provider', 'patient_care_team_members.member_user_id','=','billing_provider.ID')
+            ->leftJoin('users AS billing_provider', 'patient_care_team_members.member_user_id', '=',
+                'billing_provider.id')
             ->groupBy('call_id')
             ->get();
 
@@ -138,7 +145,7 @@ class DatatablesController extends Controller
             })
             ->editColumn('patient_name', function($call) {
                 return '<a href="' . \URL::route('patient.demographics.show',
-                    ['patientId' => $call->inboundUser->ID]) . '" target="_blank">' . $call->patient_name . '</span>';
+                    ['patientId' => $call->inboundUser->id]) . '" target="_blank">' . $call->patient_name . '</span>';
             })
             ->editColumn('nurse_name', function($call) {
                 return '<a href="#"><span class="cpm-editable-icon" call-id="'.$call->call_id.'" column-name="outbound_cpm_id" column-value="'.$call->outbound_cpm_id.'">'.$call->nurse_name.'</span>';
@@ -230,7 +237,7 @@ class DatatablesController extends Controller
             })
             ->addColumn('notes_link', function($call) {
                 return '<a target="_blank" href="' . \URL::route('patient.note.index',
-                    ['patientId' => $call->inboundUser->ID]) . '">Notes</a>';
+                    ['patientId' => $call->inboundUser->id]) . '">Notes</a>';
             })
             ->addColumn('notes_html', function($call) {
                 $notesHtml = '';

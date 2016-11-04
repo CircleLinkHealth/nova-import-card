@@ -90,7 +90,7 @@
 
                         <div class="form-group">
                             <div class="col-sm-2">{!! Form::label('type', 'Type:') !!}</div>
-                            <div class="col-sm-10">{!! Form::select('type', array('Program Default' => 'Program Default'), $carePlan->type, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                            <div class="col-sm-10">{!! Form::select('type', array('Practice Default' => 'Practice Default'), $carePlan->type, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
                         </div>
 
                         <h2>Sections:</h2>

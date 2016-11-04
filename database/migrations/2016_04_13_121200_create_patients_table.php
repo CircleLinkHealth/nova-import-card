@@ -1,13 +1,12 @@
 <?php
 
-use App\User;
-use App\PatientInfo;
-use App\ProviderInfo;
-use App\PhoneNumber;
-use App\PatientCarePlan;
 use App\PatientCareTeamMember;
-use Illuminate\Database\Schema\Blueprint;
+use App\PatientInfo;
+use App\PhoneNumber;
+use App\ProviderInfo;
+use App\User;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreatePatientsTable extends Migration {
 
@@ -72,7 +71,7 @@ class CreatePatientsTable extends Migration {
 				$table->increments('id');
 				$table->unsignedInteger('user_id');
 				$table->foreign('user_id')
-					->references('ID')
+                    ->references('id')
 					->on('wp_users')
 					->onDelete('cascade')
 					->onUpdate('cascade');
@@ -91,7 +90,7 @@ class CreatePatientsTable extends Migration {
 				$table->increments('id');
 				$table->unsignedInteger('user_id');
 				$table->foreign('user_id')
-					->references('ID')
+                    ->references('id')
 					->on('wp_users')
 					->onDelete('cascade')
 					->onUpdate('cascade');
@@ -134,13 +133,13 @@ class CreatePatientsTable extends Migration {
 				$table->increments('id');
 				$table->unsignedInteger('user_id');
 				$table->foreign('user_id')
-					->references('ID')
+                    ->references('id')
 					->on('wp_users')
 					->onDelete('cascade')
 					->onUpdate('cascade');
 				$table->unsignedInteger('member_user_id');
 				$table->foreign('member_user_id')
-					->references('ID')
+                    ->references('id')
 					->on('wp_users')
 					->onDelete('cascade')
 					->onUpdate('cascade');
@@ -155,13 +154,13 @@ class CreatePatientsTable extends Migration {
 				$table->increments('id');
 				$table->unsignedInteger('user_id');
 				$table->foreign('user_id')
-					->references('ID')
+                    ->references('id')
 					->on('wp_users')
 					->onDelete('cascade')
 					->onUpdate('cascade');
 				$table->unsignedInteger('care_plan_id');
 				$table->foreign('care_plan_id')
-					->references('ID')
+                    ->references('id')
 					->on('care_plans')
 					->onDelete('cascade')
 					->onUpdate('cascade');
@@ -239,7 +238,7 @@ class CreatePatientsTable extends Migration {
 		$users = User::with('meta')->get();
 		echo 'Process all role users demographics - Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
-			echo 'Processing user '.$user->ID.PHP_EOL;
+            echo 'Processing user ' . $user->id . PHP_EOL;
 			echo 'Rebuild User'.PHP_EOL;
 			$user->first_name = $user->getUserMetaByKey('first_name');
 			$user->last_name = $user->getUserMetaByKey('last_name');
@@ -255,7 +254,7 @@ class CreatePatientsTable extends Migration {
 			if(!empty($user->getUserConfigByKey('study_phone_number'))) {
 				$phoneNumber = new PhoneNumber;
 				$phoneNumber->is_primary = 1;
-				$phoneNumber->user_id = $user->ID;
+                $phoneNumber->user_id = $user->id;
 				$phoneNumber->number = $user->getUserConfigByKey('study_phone_number');
 				$phoneNumber->type = 'home';
 				$phoneNumber->save();
@@ -263,7 +262,7 @@ class CreatePatientsTable extends Migration {
 			}
 			if(!empty($user->getUserConfigByKey('work_phone_number'))) {
 				$phoneNumber = new PhoneNumber;
-				$phoneNumber->user_id = $user->ID;
+                $phoneNumber->user_id = $user->id;
 				$phoneNumber->number = $user->getUserConfigByKey('work_phone_number');
 				$phoneNumber->type = 'work';
 				$phoneNumber->save();
@@ -271,7 +270,7 @@ class CreatePatientsTable extends Migration {
 			}
 			if(!empty($user->getUserConfigByKey('mobile_phone_number'))) {
 				$phoneNumber = new PhoneNumber;
-				$phoneNumber->user_id = $user->ID;
+                $phoneNumber->user_id = $user->id;
 				$phoneNumber->number = $user->getUserConfigByKey('mobile_phone_number');
 				$phoneNumber->type = 'mobile';
 				$phoneNumber->save();
@@ -292,10 +291,10 @@ class CreatePatientsTable extends Migration {
 		})->with('meta', 'patientInfo')->get();
 		echo 'Process role patient users - Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
-			echo 'Processing user '.$user->ID.PHP_EOL;
+            echo 'Processing user ' . $user->id . PHP_EOL;
 			echo 'Rebuild User->PatientInfo'.PHP_EOL;
 			// check if has demographics
-			//$patientInfo = PatientInfo::where('user_id', $user->ID)->first();
+            //$patientInfo = PatientInfo::where('user_id', $user->id)->first();
 
 			// delete existing to reprocess
 			if($user->patientInfo) {
@@ -306,7 +305,7 @@ class CreatePatientsTable extends Migration {
 			// create new
 			echo 'creating new patientInfo'.PHP_EOL;
 			$patientInfo = new PatientInfo;
-			$patientInfo->user_id = $user->ID;
+            $patientInfo->user_id = $user->id;
 			$user->patientInfo()->save($patientInfo);
 			$user->load('patientInfo');
 
@@ -352,7 +351,7 @@ class CreatePatientsTable extends Migration {
 			$careTeamBP = $user->getUserConfigByKey('billing_provider');
 			if(!empty($careTeamBP) && is_numeric($careTeamBP)) {
 				$careTeamMember = new PatientCareTeamMember;
-				$careTeamMember->user_id = $user->ID;
+                $careTeamMember->user_id = $user->id;
 				$careTeamMember->member_user_id = $careTeamBP;
 				$careTeamMember->type = 'billing_provider';
 				$careTeamMember->save();
@@ -365,7 +364,7 @@ class CreatePatientsTable extends Migration {
 			$careTeamLC = $user->getUserConfigByKey('lead_contact');
 			if(!empty($careTeamLC) && is_numeric($careTeamLC)) {
 				$careTeamMember = new PatientCareTeamMember;
-				$careTeamMember->user_id = $user->ID;
+                $careTeamMember->user_id = $user->id;
 				$careTeamMember->member_user_id = $careTeamLC;
 				$careTeamMember->type = 'lead_contact';
 				$careTeamMember->save();
@@ -381,7 +380,7 @@ class CreatePatientsTable extends Migration {
 					foreach($careTeamSA as $sa) {
 						if(is_numeric($sa)) {
 							$careTeamMember = new PatientCareTeamMember;
-							$careTeamMember->user_id = $user->ID;
+                            $careTeamMember->user_id = $user->id;
 							$careTeamMember->member_user_id = $sa;
 							$careTeamMember->type = 'send_alert_to';
 							$careTeamMember->save();
@@ -393,7 +392,7 @@ class CreatePatientsTable extends Migration {
 				} else {
 					if(is_numeric($careTeamSA)) {
 						$careTeamMember = new PatientCareTeamMember;
-						$careTeamMember->user_id = $user->ID;
+                        $careTeamMember->user_id = $user->id;
 						$careTeamMember->member_user_id = $careTeamSA;
 						$careTeamMember->type = 'send_alert_to';
 						$careTeamMember->save();
@@ -412,10 +411,10 @@ class CreatePatientsTable extends Migration {
 		})->with('meta', 'providerInfo')->get();
 		echo 'Process role provider users providerInfo - Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
-			echo 'Processing user '.$user->ID.PHP_EOL;
+            echo 'Processing user ' . $user->id . PHP_EOL;
 			echo 'Rebuild User->ProviderInfo'.PHP_EOL;
 			// check if has demographics
-			//$providerInfo = ProviderInfo::where('user_id', $user->ID)->first();
+            //$providerInfo = ProviderInfo::where('user_id', $user->id)->first();
 
 			// delete existing to reprocess
 			if($user->providerInfo) {
@@ -426,7 +425,7 @@ class CreatePatientsTable extends Migration {
 			// create new
 			echo 'creating new providerInfo'.PHP_EOL;
 			$providerInfo = new ProviderInfo;
-			$providerInfo->user_id = $user->ID;
+            $providerInfo->user_id = $user->id;
 			$user->providerInfo()->save($providerInfo);
 			$user->load('providerInfo');
 

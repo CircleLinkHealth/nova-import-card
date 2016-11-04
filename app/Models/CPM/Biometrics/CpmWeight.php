@@ -7,21 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class CpmWeight extends Model implements Biometric
 {
 
+    public static $rules = [
+        'starting' => 'max:999|numeric',
+        'target' => 'max:999|numeric',
+    ];
+    public static $messages = [
+        'starting.max' => 'The Starting Weight may not be greater than 999.',
+        'target.max' => 'The Target Weight may not be greater than 999.',
+    ];
     protected $fillable = [
         'monitor_changes_for_chf',
         'patient_id',
         'starting',
         'target',
-    ];
-
-    public static $rules = [
-        'starting' => 'max:999|numeric',
-        'target' => 'max:999|numeric',
-    ];
-
-    public static $messages = [
-        'starting.max' => 'The Starting Weight may not be greater than 999.',
-        'target.max' => 'The Target Weight may not be greater than 999.',
     ];
 
     /**
@@ -34,7 +32,7 @@ class CpmWeight extends Model implements Biometric
 
     public function getUserValues(User $user)
     {
-        $biometric = $this->wherePatientId($user->ID)->first();
+        $biometric = $this->wherePatientId($user->id)->first();
         
         return $biometric
             ? [

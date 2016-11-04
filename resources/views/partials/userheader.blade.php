@@ -29,14 +29,14 @@
                 $s = $seconds % 60;
                 $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
                 ?>
-                <a href="{{URL::route('patient.activity.providerUIIndex', array('patient' => $patient->ID))}}"><span
+                <a href="{{URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id))}}"><span
                             class="pull-right">{{
             date("F", mktime(0, 0, 0, Carbon\Carbon::now()->month, 10))
              }} Time: {{ $monthlyTime }}</span></a></p>
-            <a href="{{ URL::route('patient.summary', array('patient' => $patient->ID)) }}">
+            <a href="{{ URL::route('patient.summary', array('patient' => $patient->id)) }}">
             <span class="person-name text-big text-dark text-serif"
-                  title="{{$patient->ID}}">{{$patient->fullName}}</span></a><a
-                    href="{{ URL::route('patient.demographics.show', array('patient' => $patient->ID)) }}"><span
+                  title="{{$patient->id}}">{{$patient->fullName}}</span></a><a
+                    href="{{ URL::route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                         class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a>
             <ul class="person-info-list inline-block text-medium">
                 <li class="inline-block">DOB: {{$patient->birthDate}}</li>

@@ -1,12 +1,8 @@
 <?php
 
-use App\Role;
+use App\Practice;
 use App\User;
-use App\Program;
-use App\CLH\Repositories\UserRepository;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class RemoveOldPrograms extends Migration {
 
@@ -18,25 +14,28 @@ class RemoveOldPrograms extends Migration {
 	public function up()
 	{
 		// get programs
-		$programs = Program::where('blog_id', '<', '7')->get();
+        $programs = Practice::where('id', '<', '7')->get();
 		$i = 0;
 		$programIds = array('');
 		foreach($programs as $program) {
-			$programIds[] = $program->blog_id;
+            $programIds[] = $program->id;
 		}
 		foreach($programIds as $programId) {
-			$program = Program::where('blog_id', '=', $programId)->first();
+            $program = Practice::where('id', '=', $programId)->first();
 			if(empty($program)) {
 				echo PHP_EOL . 'Processing program:: EMPTY';
 			} else {
-				echo PHP_EOL . 'Processing program:: ' . $program->blog_id . ' (' . $program->display_name . ')';
+                echo PHP_EOL . 'Processing program:: ' . $program->id . ' (' . $program->display_name . ')';
 			}
 			$programUsers = User::whereHas('roles', function ($q) {
 				$q->where('name', '=', 'participant');
 			});
 			if(!empty($program)) {
-				$programUsers->whereHas('programs', function ($q) use ($program) {
-					$q->where('blog_id', '=', $program->blog_id);
+                $programUsers->whereHas('practices', function ($q) use
+                (
+                    $program
+                ) {
+                    $q->where('id', '=', $program->id);
 				});
 			} else {
 				$programUsers->where('program_id', '=', '');
@@ -47,15 +46,15 @@ class RemoveOldPrograms extends Migration {
 				//continue 1;
 				foreach($programUsers as $programUser) {
 					$programUser->delete();
-					echo PHP_EOL.$i. '-'.$programUser->user_email . '('.$programUser->ID.') deleted';
+                    echo PHP_EOL . $i . '-' . $programUser->email . '(' . $programUser->id . ') deleted';
 					$i++;
 				}
 			}
 			// drop tables
 			if($program) {
-				echo PHP_EOL.'deleted program '. $program->blog_id;
-				Schema::dropIfExists('ma_' . $program->blog_id . '_observations');
-				Schema::dropIfExists('ma_' . $program->blog_id . '_observationmeta');
+                echo PHP_EOL . 'deleted program ' . $program->id;
+                Schema::dropIfExists('ma_' . $program->id . '_observations');
+                Schema::dropIfExists('ma_' . $program->id . '_observationmeta');
 				$program->delete();
 			}
 		}

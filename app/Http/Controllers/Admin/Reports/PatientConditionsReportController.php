@@ -1,16 +1,10 @@
 <?php namespace App\Http\Controllers\Admin\Reports;
 
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use App\Program;
+use App\Practice;
 use App\User;
-use Illuminate\Http\Request;
-use Auth;
-use DateTime;
-use DatePeriod;
-use DateInterval;
 use Excel;
+use Illuminate\Http\Request;
 
 class PatientConditionsReportController extends Controller {
 
@@ -66,7 +60,7 @@ class PatientConditionsReportController extends Controller {
 				foreach ($patients as $patient) {
 					// program
 					$programName = '';
-					$program = Program::find($patient->program_id);
+                    $program = Practice::find($patient->program_id);
 					if ($program) $programName = $program->display_name;
 
 					// problems

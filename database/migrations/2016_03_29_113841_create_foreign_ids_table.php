@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateForeignIdsTable extends Migration {
 
@@ -27,7 +27,7 @@ class CreateForeignIdsTable extends Migration {
 				$table->unique(['user_id', 'foreign_id', 'system'], 'unique_triple');
 
 				$table->foreign('user_id', 'user_id_foreign')
-					->references('ID')
+                    ->references('id')
 					->on('wp_users')
 					->onDelete('cascade')
 					->onUpdate('cascade');

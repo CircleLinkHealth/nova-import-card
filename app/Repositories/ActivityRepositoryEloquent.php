@@ -65,7 +65,7 @@ class ActivityRepositoryEloquent extends BaseRepository implements ActivityRepos
                 "))
             ->whereProviderId($providerId)
             ->wherePatientId($patientId)
-            ->join($userTable, "$userTable.ID", '=', "$activitiesTable.provider_id")
+            ->join($userTable, "$userTable.id", '=', "$activitiesTable.provider_id")
             ->whereBetween("$activitiesTable.performed_at", [
                 $startDate, $endDate
             ]);

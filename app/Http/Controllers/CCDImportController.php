@@ -1,16 +1,14 @@
 <?php namespace App\Http\Controllers;
 
-use App\Models\CCD\Ccda;
 use App\CLH\CCD\ImportedItems\AllergyImport;
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\CLH\CCD\ImportedItems\MedicationImport;
 use App\CLH\CCD\ImportedItems\ProblemImport;
 use App\CLH\CCD\Importer\ImportManager;
+use App\CLH\Repositories\CCDImporterRepository;
+use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdVendor;
 use App\Models\CCD\QAImportSummary;
-use App\CLH\Repositories\CCDImporterRepository;
-use App\Http\Requests;
-
 use Illuminate\Http\Request;
 
 class CCDImportController extends Controller
@@ -51,11 +49,11 @@ class CCDImportController extends Controller
 
                 $imported[] = [
                     'ccdaId' => $id,
-                    'userId' => $user->ID
+                    'userId' => $user->id,
                 ];
 
                 $ccda->imported = true;
-                $ccda->patient_id = $user->ID;
+                $ccda->patient_id = $user->id;
                 $ccda->save();
 
                 $allergiesDelete = AllergyImport::whereCcdaId($id)->delete();

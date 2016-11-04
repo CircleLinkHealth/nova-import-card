@@ -203,7 +203,7 @@ class PhiMail
                     } else {
 
                         // Process a status update for a previously sent message.
-//                        echo ("Status message for ID = " . $cr->messageId . "\n");
+//                        echo ("Status message for id = " . $cr->messageId . "\n");
 //                        echo ("  StatusCode = " . $cr->statusCode . "\n");
 //                        if ($cr->info != null) echo ("  Info = " . $cr->info . "\n");
                         if ($cr->statusCode == "failed") {

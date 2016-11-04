@@ -1,12 +1,6 @@
 <?php
 
-use App\Role;
-use App\User;
-use App\Program;
-use App\CLH\Repositories\UserRepository;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class RemoveRevisionsPrefixCheck extends Migration {
 

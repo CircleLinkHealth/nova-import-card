@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreatePatientReportsTable extends Migration {
 
@@ -22,7 +22,7 @@ class CreatePatientReportsTable extends Migration {
 			$table->string('file_path');
 
 			$table->foreign('patient_id')
-				->references('ID')
+                ->references('id')
 				->on('wp_users')
 				->onDelete('cascade')
 				->onUpdate('cascade');

@@ -1,41 +1,25 @@
 <?php namespace App\Services;
 
-use App\Activity;
 use App\User;
 use App\UserMeta;
-use DB;
 use DateTime;
 use DateTimeZone;
+use DB;
 
 class MsgUser {
 
 
-	public function get_all_users($blog_id) {
-		// set blog id
-		$this->int_blog_id = $blog_id;
-
-		$query = User::select('wp_users.*', 'um.meta_value AS user_config');
-		$query->join('wp_usermeta AS um', function ($join) use ($blog_id) {
-			$join->on('wp_users.id', '=', 'um.user_id')->where('um.meta_key', '=', 'wp_'.$blog_id.'_user_config');
-		});
-		$query->whereHas('roles', function($q){
-			$q->where('name', '=', 'participant');
-		});
-		$query->orderBy("id", "desc");
-		$allUsers = $query->get();
-		return $allUsers;
-	}
-
-	public function get_all_active_patients($blog_id) {
+    public function get_all_active_patients($id)
+    {
 		// get all users
-		$allUsers = $this->get_all_users($blog_id);
+        $allUsers = $this->get_all_users($id);
 		if (!$allUsers->isEmpty()) {
 			$activeUsers = array();
 			foreach ($allUsers as $user) {
 				// check if active based on user_config
 				$user_config = unserialize($user['user_config']);
 				if(strtolower($user_config['status']) == 'active') {
-					$activeUsers[] = $user['ID'];
+                    $activeUsers[] = $user['id'];
 				}
 			}
 			if(empty($activeUsers)) {
@@ -48,6 +32,26 @@ class MsgUser {
 
 	}
 
+    public function get_all_users($id)
+    {
+        // set blog id
+        $this->int_id = $id;
+
+        $query = User::select('wp_users.*', 'um.meta_value AS user_config');
+        $query->join('wp_usermeta AS um', function ($join) use
+        (
+            $id
+        ) {
+            $join->on('wp_users.id', '=', 'um.user_id')->where('um.meta_key', '=', 'wp_' . $id . '_user_config');
+        });
+        $query->whereHas('roles', function ($q) {
+            $q->where('name', '=', 'participant');
+        });
+        $query->orderBy("id", "desc");
+        $allUsers = $query->get();
+
+        return $allUsers;
+    }
 
 	public function check_for_scheduled_records($userId, $blogId)
 	{
@@ -139,11 +143,11 @@ class MsgUser {
 		$intUserId = implode(',', $arrUserId);
 
 		// get user(s)
-		$wpUsers = User::whereRaw('ID IN ('.$intUserId.')')->get();
+        $wpUsers = User::whereRaw('id IN (' . $intUserId . ')')->get();
 
 		if (!$wpUsers->isEmpty()) {
 			foreach ($wpUsers as $wpUser) {
-				$wpUserMeta = UserMeta::where('user_id', '=', $wpUser->ID)->get();
+                $wpUserMeta = UserMeta::where('user_id', '=', $wpUser->id)->get();
 				if (!$wpUsers->isEmpty()) {
 					$arrUserMeta = array();
 					foreach($wpUserMeta as $meta)
@@ -158,30 +162,123 @@ class MsgUser {
 					}
 				}
 				$arrUserData = (array)$wpUser->toArray();
-				$arrReturnResult[$wpUser->ID]['userdata'] = $arrUserData;
-				$arrReturnResult[$wpUser->ID]['usermeta_clean'] = $arrUserMeta;
-				$arrReturnResult[$wpUser->ID]['usermeta'] = $arrUserMeta;
-				$arrReturnResult[$wpUser->ID]['usermeta']['intProgramId'] = $intBlogId;
-				$arrReturnResult[$wpUser->ID]['usermeta']['msgtype'] = '';
-				$arrReturnResult[$wpUser->ID]['usermeta']['resend'] = false;
-				$arrReturnResult[$wpUser->ID]['usermeta']['comment_ID'] = '';
-				$arrReturnResult[$wpUser->ID]['usermeta']['curresp'] = '';
-				$arrReturnResult[$wpUser->ID]['usermeta']['state'] = array();
-				$arrReturnResult[$wpUser->ID]['usermeta']['user_care_plan'] = $this->get_user_care_plan($wpUser->ID, $intBlogId);
-				if($includeUCP) {
-					$arrReturnResult[$wpUser->ID]['usermeta']['user_care_plan_items'] = $this->get_user_care_plan_items($wpUser->ID, $intBlogId);
-				}
+                $arrReturnResult[$wpUser->id]['userdata'] = $arrUserData;
+                $arrReturnResult[$wpUser->id]['usermeta_clean'] = $arrUserMeta;
+                $arrReturnResult[$wpUser->id]['usermeta'] = $arrUserMeta;
+                $arrReturnResult[$wpUser->id]['usermeta']['intProgramId'] = $intBlogId;
+                $arrReturnResult[$wpUser->id]['usermeta']['msgtype'] = '';
+                $arrReturnResult[$wpUser->id]['usermeta']['resend'] = false;
+                $arrReturnResult[$wpUser->id]['usermeta']['comment_ID'] = '';
+                $arrReturnResult[$wpUser->id]['usermeta']['curresp'] = '';
+                $arrReturnResult[$wpUser->id]['usermeta']['state'] = [];
+                $arrReturnResult[$wpUser->id]['usermeta']['user_care_plan'] = $this->get_user_care_plan($wpUser->id,
+                    $intBlogId);
+                if ($includeUCP) {
+                    $arrReturnResult[$wpUser->id]['usermeta']['user_care_plan_items'] = $this->get_user_care_plan_items($wpUser->id,
+                        $intBlogId);
+                }
 			}
 		}
 		return $arrReturnResult;
 	}
 
+    public function get_user_care_plan(
+        $intUserId,
+        $intBlogId
+    ) {
+        $query = "SELECT
+            rucp.ucp_id,
+            rucp.items_id,
+            rucp.user_id,
+            rucp.meta_key,
+            rucp.meta_value,
+            im.meta_value as alert_key,
+            parucp.meta_value as parent_status,
+            parucp.ucp_id as parent_id
+        FROM rules_ucp rucp
+        INNER JOIN rules_itemmeta im on rucp.items_id = im.items_id
+        INNER JOIN rules_items i on rucp.items_id = i.items_id
+        INNER JOIN rules_pcp pcp on pcp.pcp_id = i.pcp_id
+        INNER JOIN rules_ucp parucp on (i.items_parent = parucp.items_id AND rucp.user_id = parucp.user_id)
+        WHERE rucp.user_id = " . $intUserId . "
+        AND pcp.prov_id = " . $intBlogId . "
+        AND im.meta_key = 'alert_key'";
+        $rulesData = DB::connection('mysql_no_prefix')->select(DB::raw($query));
+        // set alert_values
+        $arrReturnResult = [];
+        if (!empty($rulesData)) {
+            foreach ($rulesData as $row) {
+                $arrReturnResult[$row->alert_key] = [
+                    'value'         => $row->meta_value,
+                    'id'            => $row->ucp_id,
+                    'parent_status' => $row->parent_status,
+                ];
+            }
+            // hardcode severity limit of 7
+            $arrReturnResult['Severity'] = ['value' => 7];
+        }
 
+        return $arrReturnResult;
 
+    }
 
+    public function get_user_care_plan_items(
+        $userId,
+        $int_id
+    ) {
 
-	/**
-	 * get_readyusers_for_daily_reminder - method to construct an array with all users that are ready to receive a message cycle.
+        // set blog id
+        $this->int_id = $int_id;
+
+        // query
+        $query = DB::connection('mysql_no_prefix')->table('rules_ucp AS rucp');
+        $query->select('rucp.*', 'pcp.pcp_id', 'pcp.section_text', 'i.items_parent', 'i.items_id', 'i.items_text',
+            'rq.msg_id', 'ims.meta_value AS ui_sort', 'rip.qid AS items_parent_qid',
+            'rqp.msg_id AS items_parent_msg_id');
+        $query->where('user_id', '=', $userId);
+        $query->join('rules_items AS i', 'i.items_id', '=', 'rucp.items_id');
+        $query->leftJoin('rules_items AS rip', 'i.items_parent', '=', 'rip.items_id'); // parent item info
+        $query->join('rules_pcp AS pcp', function ($join) {
+            $join->on('i.pcp_id', '=', 'pcp.pcp_id')->where('pcp.prov_id', '=', $this->int_id);
+        });
+        $query->leftJoin('rules_questions AS rq', 'rq.qid', '=', 'i.qid');
+        $query->leftJoin('rules_questions AS rqp', 'rqp.qid', '=', 'rip.qid'); // parent question info
+        $query->leftJoin('rules_itemmeta AS ims', function ($join) {
+            $join->on('ims.items_id', '=', 'i.items_id')->where('ims.meta_key', '=', 'ui_sort');
+        });
+        $query->whereRaw("(rucp.meta_key = 'status' OR rucp.meta_key = 'value') AND user_id = " . $userId);
+        $query->orderBy("ui_sort", 'ASC');
+        $query->orderBy("i.items_id", 'DESC');
+        $result = $query->get();
+
+        $arrReturnResult = [];
+        // set alert_values
+        if (!empty($result)) {
+            foreach ($result as $row) {
+                $arrReturnResult[$row->items_id] = [
+                    'msg_id'              => $row->msg_id,
+                    'ui_sort'             => $row->ui_sort,
+                    'meta_key'            => $row->meta_key,
+                    'meta_value'          => $row->meta_value,
+                    'pcp_id'              => $row->pcp_id,
+                    'section_text'        => $row->section_text,
+                    'items_id'            => $row->items_id,
+                    'items_text'          => $row->items_text,
+                    'items_parent'        => $row->items_parent,
+                    'items_parent_qid'    => $row->items_parent_qid,
+                    'items_parent_msg_id' => $row->items_parent_msg_id,
+                ];
+            }
+        } else {
+            echo "<br>MsgUser->get_user_care_plan_items() ERROR, could not find!";
+        }
+
+        return $arrReturnResult;
+
+    }
+
+    /**
+     * get_readyusers_for_daily_reminder - method to construct an array with all users that are ready to receive a message cycle.
 	 * this method is an ovverride to the original get_readyusers, to clean it up and migrate everything over too
 	 *    			[1] Get all users that are active participants.
 	 *              [2] Get all users that are active in the 'ca' program and check if today's DOW is in the preferred contact day list.
@@ -226,14 +323,14 @@ class MsgUser {
 		if ($max > 0 ) $limit = " LIMIT {$max}";
 
 		// original query segment before $tmpTodaySearch was created.
-		// where comment_type like 'state_".$msgTypeAbrev."' and date(comment_date) = '". date('Y-m-d') ."' group by cmts.user_id) cm on cm.user_id = u.ID
+        // where comment_type like 'state_".$msgTypeAbrev."' and date(comment_date) = '". date('Y-m-d') ."' group by cmts.user_id) cm on cm.user_id = u.id
 
-		$sql = "SELECT ID, user_registered, user_status, c.meta_value `".$strCapabilitiesIdent."`, s.meta_value `".$strContactTimesContainer."`
+        $sql = "SELECT id, user_registered, user_status, c.meta_value `" . $strCapabilitiesIdent . "`, s.meta_value `" . $strContactTimesContainer . "`
                  FROM wp_users u
-                left join wp_usermeta c on c.user_id = u.ID
-                left join wp_usermeta s on s.user_id = u.ID
+                left join wp_usermeta c on c.user_id = u.id
+                left join wp_usermeta s on s.user_id = u.id
                 LEFT JOIN (select cmts.user_id, max(comment_date) `last_comment` FROM ".$strCommentFile." cmts
-                            where comment_type like 'state_".$msgTypeAbrev."' ".$tmpTodaySearch." group by cmts.user_id) cm on cm.user_id = u.ID
+                            where comment_type like 'state_" . $msgTypeAbrev . "' " . $tmpTodaySearch . " group by cmts.user_id) cm on cm.user_id = u.id
                 WHERE
                     c.meta_key= '".$strCapabilitiesIdent."'
                 and c.meta_value = 'a:1:{s:11:\"participant\";b:1;}'
@@ -267,9 +364,9 @@ class MsgUser {
 					continue;
 					$strContactTime = new DateTime($serverDateTime->format('Y-m-d'), new DateTimeZone($arrConfig['preferred_contact_timezone']));
 				}
-// error_log($row->ID." ".$serverDateTime->format('Y-m-d')." $strPreferredContactTime");
-// echo $row->ID." $strPreferredContactTime";
-				$userRegisteredDateTime = new DateTime($row->user_registered, new DateTimeZone('America/New_York'));
+// error_log($row->id." ".$serverDateTime->format('Y-m-d')." $strPreferredContactTime");
+// echo $row->id." $strPreferredContactTime";
+                $userRegisteredDateTime = new DateTime($row->user_registered, new DateTimeZone('America/New_York'));
 				// $strContactTime = $date->format('Y-m-d H:i:s T');
 
 				if(!isset($arrConfig[$msgType.'_reminder_optin'])) {
@@ -284,21 +381,26 @@ class MsgUser {
 						&& $userRegisteredDateTime->format('U') < $strContactTime->format('U') // Stops messages going out on registration day
 						&& $arrConfig[$msgType.'_reminder_optin'] != 'N'
 					){
-// if ($serverDateTime->format('U') > $strContactTime->format('U') ) {echo "[".$row->ID."]Contact before server time<BR>";} else
-//  {echo "[".$row->ID."]Contact after server time<BR>";}
+// if ($serverDateTime->format('U') > $strContactTime->format('U') ) {echo "[".$row->id."]Contact before server time<BR>";} else
+//  {echo "[".$row->id."]Contact after server time<BR>";}
 // echo "Corrected Contact Time: [".$strContactTime->format('Y-m-d H:i:s T')."]<BR>".date("Y-m-d H:i:s T")."<BR><BR>";
-						$wpUser = User::find($row->ID);
-						$userMeta = $wpUser->userMeta();
+                        $wpUser = User::find($row->id);
+                        $userMeta = $wpUser->userMeta();
 						if(empty($userMeta['user_config'])) {
-							$logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [".$row->ID."] Missing User Config";
-							continue 1;
+                            $logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [" . $row->id . "] Missing User Config";
+                            continue 1;
 						}
-						$logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [".$row->ID."]READY TO CHECK UCP";
-						$arrAllParticipantUserIDs[] = array('user_id'=>$row->ID, 'status'=>$arrConfig['status'], $msgType.'_reminder_optin'=>$arrConfig[$msgType.'_reminder_optin'], $msgType.'_reminder_time'=>$arrConfig[$msgType.'_reminder_time']);
-					} else {
-						$logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [".$row->ID."]SKIP :: ";
-					}
-					// give a breakdown
+                        $logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [" . $row->id . "]READY TO CHECK UCP";
+                        $arrAllParticipantUserIDs[] = [
+                            'user_id'                    => $row->id,
+                            'status'                     => $arrConfig['status'],
+                            $msgType . '_reminder_optin' => $arrConfig[$msgType . '_reminder_optin'],
+                            $msgType . '_reminder_time'  => $arrConfig[$msgType . '_reminder_time'],
+                        ];
+                    } else {
+                        $logString .= "<br>MsgUser->get_readyusers_for_daily_reminder() [" . $row->id . "]SKIP :: ";
+                    }
+                    // give a breakdown
 					if(strtolower($arrConfig['status']) !== 'active') {
 						$logString .= "[Bad Status ". ucfirst(strtolower($arrConfig['status'])) . "] ";
 					}
@@ -329,7 +431,6 @@ class MsgUser {
 		return $arrAllParticipantUserIDs;
 	}
 
-
 	/**
 	 * Helper method to nomilize the timezone inside the preferred time.
 	 * It's a long story why, but I believe I had something to do with it.
@@ -352,7 +453,6 @@ class MsgUser {
 		return $strConformTime;
 	}
 
-
 	public function get_readyusers($intProgramID=0, $max)
 	{
 		date_default_timezone_set('America/New_York');
@@ -366,12 +466,12 @@ class MsgUser {
 		$arrAllParticipantUserIDs = array();
 		$limit = "";
 		if ($max > 0 ) $limit = " LIMIT $max";
-		$sql = "SELECT ID, user_registered, user_status, c.meta_value `$strCapabilitiesIdent`, s.meta_value `$strContactTimesContainer`
+        $sql = "SELECT id, user_registered, user_status, c.meta_value `$strCapabilitiesIdent`, s.meta_value `$strContactTimesContainer`
                  FROM wp_users u
-                left join wp_usermeta c on c.user_id = u.ID
-                left join wp_usermeta s on s.user_id = u.ID
+                left join wp_usermeta c on c.user_id = u.id
+                left join wp_usermeta s on s.user_id = u.id
                 LEFT JOIN (select cmts.user_id, max(comment_date) `last_comment` FROM $strCommentFile cmts
-                            where comment_type like 'state_sol' and date(comment_date) = '". $serverDateTime->format('Y-m-d') ."' group by cmts.user_id) cm on cm.user_id = u.ID
+                            where comment_type like 'state_sol' and date(comment_date) = '" . $serverDateTime->format('Y-m-d') . "' group by cmts.user_id) cm on cm.user_id = u.id
                 WHERE
                     c.meta_key='".$strCapabilitiesIdent."'
                 and c.meta_value = 'a:1:{s:11:\"participant\";b:1;}'
@@ -400,10 +500,14 @@ class MsgUser {
 						&& $userRegisteredDateTime->format('U') < $strContactTime->format('U') // Stops messages going out on registration day
 					){
 
-						$arrAllParticipantUserIDs[] = array('user_id'=>$row->ID, 'preferred_contact_time'=>$arrConfig['preferred_contact_time']);
-					} else {
-						echo "<br>MsgUser->get_readyusers() IS: ". $row->ID. " " .$userRegisteredDateTime->format('Y-m-d H:i:s T')  ." < " . $strContactTime->format('Y-m-d H:i:s T')  ." but not until: " . date("Y-m-d", strtotime($arrConfig['active_date'])) . ". Status: ".
-							strtolower($arrConfig['status']). ". " ."";
+                        $arrAllParticipantUserIDs[] = [
+                            'user_id'                => $row->id,
+                            'preferred_contact_time' => $arrConfig['preferred_contact_time'],
+                        ];
+                    } else {
+                        echo "<br>MsgUser->get_readyusers() IS: " . $row->id . " " . $userRegisteredDateTime->format('Y-m-d H:i:s T') . " < " . $strContactTime->format('Y-m-d H:i:s T') . " but not until: " . date("Y-m-d",
+                                strtotime($arrConfig['active_date'])) . ". Status: " .
+                            strtolower($arrConfig['status']) . ". " . "";
 					}
 				}
 
@@ -414,143 +518,6 @@ class MsgUser {
 // exit('Done');
 		return $arrAllParticipantUserIDs;
 	}
-
-
-	public function get_user_care_plan($intUserId, $intBlogId) {
-		$query = "SELECT
-            rucp.ucp_id,
-            rucp.items_id,
-            rucp.user_id,
-            rucp.meta_key,
-            rucp.meta_value,
-            im.meta_value as alert_key,
-            parucp.meta_value as parent_status,
-            parucp.ucp_id as parent_id
-        FROM rules_ucp rucp
-        INNER JOIN rules_itemmeta im on rucp.items_id = im.items_id
-        INNER JOIN rules_items i on rucp.items_id = i.items_id
-        INNER JOIN rules_pcp pcp on pcp.pcp_id = i.pcp_id
-        INNER JOIN rules_ucp parucp on (i.items_parent = parucp.items_id AND rucp.user_id = parucp.user_id)
-        WHERE rucp.user_id = ".$intUserId."
-        AND pcp.prov_id = ".$intBlogId."
-        AND im.meta_key = 'alert_key'";
-		$rulesData = DB::connection('mysql_no_prefix')->select( DB::raw($query) );
-		// set alert_values
-		$arrReturnResult = array();
-		if(!empty($rulesData)) {
-			foreach ($rulesData as $row) {
-				$arrReturnResult[$row->alert_key] = array('value' => $row->meta_value, 'id' => $row->ucp_id, 'parent_status' => $row->parent_status);
-			}
-			// hardcode severity limit of 7
-			$arrReturnResult['Severity'] = array('value' => 7);
-		}
-		return $arrReturnResult;
-
-	}
-
-	public function get_user_care_plan_items($userId, $int_blog_id) {
-
-		// set blog id
-		$this->int_blog_id = $int_blog_id;
-
-		// query
-		$query = DB::connection('mysql_no_prefix')->table('rules_ucp AS rucp');
-		$query->select('rucp.*', 'pcp.pcp_id', 'pcp.section_text', 'i.items_parent', 'i.items_id', 'i.items_text', 'rq.msg_id', 'ims.meta_value AS ui_sort', 'rip.qid AS items_parent_qid', 'rqp.msg_id AS items_parent_msg_id');
-		$query->where('user_id', '=', $userId);
-		$query->join('rules_items AS i', 'i.items_id', '=', 'rucp.items_id');
-		$query->leftJoin('rules_items AS rip', 'i.items_parent', '=', 'rip.items_id'); // parent item info
-		$query->join('rules_pcp AS pcp', function ($join) {
-			$join->on('i.pcp_id', '=', 'pcp.pcp_id')->where('pcp.prov_id', '=', $this->int_blog_id);
-		});
-		$query->leftJoin('rules_questions AS rq', 'rq.qid', '=', 'i.qid');
-		$query->leftJoin('rules_questions AS rqp', 'rqp.qid', '=', 'rip.qid'); // parent question info
-		$query->leftJoin('rules_itemmeta AS ims', function ($join) {
-			$join->on('ims.items_id', '=', 'i.items_id')->where('ims.meta_key', '=', 'ui_sort');
-		});
-		$query->whereRaw("(rucp.meta_key = 'status' OR rucp.meta_key = 'value') AND user_id = " . $userId);
-		$query->orderBy("ui_sort", 'ASC');
-		$query->orderBy("i.items_id", 'DESC');
-		$result = $query->get();
-
-		$arrReturnResult = array();
-		// set alert_values
-		if(!empty($result)) {
-			foreach ($result as $row) {
-				$arrReturnResult[$row->items_id] = array(
-					'msg_id' => $row->msg_id,
-					'ui_sort' => $row->ui_sort,
-					'meta_key' => $row->meta_key,
-					'meta_value' => $row->meta_value,
-					'pcp_id' => $row->pcp_id,
-					'section_text' => $row->section_text,
-					'items_id' => $row->items_id,
-					'items_text' => $row->items_text,
-					'items_parent' => $row->items_parent,
-					'items_parent_qid' => $row->items_parent_qid,
-					'items_parent_msg_id' => $row->items_parent_msg_id,
-				);
-			}
-		} else {
-			echo "<br>MsgUser->get_user_care_plan_items() ERROR, could not find!";
-		}
-		return $arrReturnResult;
-
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public function get_comments_for_user($userId, $blogId) {
 		$commentTable = 'wp_'.$blogId.'_comments';
@@ -565,14 +532,20 @@ class MsgUser {
 	}
 
 
-	public function get_users_for_active_item($items_id, $int_blog_id) {
-		$this->db->select("ucp.user_id, ucp.items_id, ucp.meta_value",false);
+	public function get_users_for_active_item(
+        $items_id,
+        $int_id
+    ) {
+        $this->db->select("ucp.user_id, ucp.items_id, ucp.meta_value",false);
 		$this->db->from('wp_users AS u');
-		$this->db->join('rules_ucp AS ucp', 'u.ID = ucp.user_id');
-		$this->db->join('rules_items ri', 'ri.items_id = ucp.items_id');
+        $this->db->join('rules_ucp AS ucp', 'u.id = ucp.user_id');
+        $this->db->join('rules_items ri', 'ri.items_id = ucp.items_id');
 		$this->db->join('rules_pcp pcp', 'ri.pcp_id = pcp.pcp_id');
-		$where = array('ucp.items_id' => $items_id, 'ucp.meta_value' => 'Active', 'pcp.prov_id' => $int_blog_id);
-		$this->db->where($where);
+		$where = array('ucp.items_id'   => $items_id,
+                       'ucp.meta_value' => 'Active',
+                       'pcp.prov_id'    => $int_id,
+        );
+        $this->db->where($where);
 		$this->db->order_by("ucp.user_id", 'DESC');
 		$query = $this->db->get();
 		return $query->result_array();
@@ -644,9 +617,32 @@ class MsgUser {
 		return $arrUserData;
 	}
 
+	public function create_new_unsolicited_comment_row($arrUserData)
+    {
+        date_default_timezone_set('America/New_York');
 
+        $strCommentsTable = 'wp_' . $arrUserData[key($arrUserData)]['usermeta']['intProgramId'] . '_comments';
+        $arrUnsolicitedData = [
+            'comment_author'       => 'MsgUser',
+            'comment_author_email' => 'admin@medadherence.com',
+            'comment_author_url'   => 'https://medadherence.com/',
+            'comment_content'      => serialize([]),
+            'comment_type'         => 'state_' . strtolower($arrUserData[key($arrUserData)]['usermeta']['msgtype']),
+            'comment_parent'       => 0,
+            'user_id'              => key($arrUserData),
+            'comment_author_IP'    => '127.0.0.1',
+            'comment_agent'        => '',
+            'comment_date'         => date('Y-m-d H:i:s'),
+            'comment_approved'     => 0,
+        ];
 
-	public function get_all_active_participants($intBlogId=null)
+        $comment_id = DB::connection('mysql_no_prefix')->table($strCommentsTable)->insertGetId($arrUnsolicitedData);
+        echo "<br>MsgDelivery->create_new_unsolicited_comment_row() Created New Comment = " . $comment_id;
+
+        return $comment_id;
+    }
+
+    public function get_all_active_participants($intBlogId=null)
 	{
 // This is a BAD way if doing this.....only used by the original cpm_1_5_datamonitor.php not for v1.7
 		$arrReturnResult = array();
@@ -775,56 +771,21 @@ class MsgUser {
 		$arrId2MD5 = array();
 		$arrMD52Id = array();
 
-		$sql = "SELECT ID FROM wp_users";
-		$query = $this->db->query($sql);
+        $sql = "SELECT id FROM wp_users";
+        $query = $this->db->query($sql);
 
 		if($query->num_rows() > 0)
 		{
 			foreach($query->result() as $row)
 			{
-				$arrId2MD5[$row->ID] = md5($row->ID);
-				$arrMD52Id[md5($row->ID)] = $row->ID;
-			}
-		}
-		$arrReturnResult['Id2MD5'] = $arrId2MD5;
+                $arrId2MD5[$row->id] = md5($row->id);
+                $arrMD52Id[md5($row->id)] = $row->id;
+            }
+        }
+        $arrReturnResult['Id2MD5'] = $arrId2MD5;
 		$arrReturnResult['MD52Id'] = $arrMD52Id;
 
 		return $arrReturnResult;
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-	public function create_new_unsolicited_comment_row($arrUserData)
-	{
-		date_default_timezone_set('America/New_York');
-
-		$strCommentsTable = 'wp_' . $arrUserData[key($arrUserData)]['usermeta']['intProgramId'] . '_comments';
-		$arrUnsolicitedData = array(
-			'comment_author' => 'MsgUser',
-			'comment_author_email' => 'admin@medadherence.com',
-			'comment_author_url' => 'https://medadherence.com/',
-			'comment_content' => serialize(array()),
-			'comment_type' => 'state_'.strtolower($arrUserData[key($arrUserData)]['usermeta']['msgtype']),
-			'comment_parent' => 0,
-			'user_id' => key($arrUserData),
-			'comment_author_IP' => '127.0.0.1',
-			'comment_agent' => '',
-			'comment_date' => date('Y-m-d H:i:s'),
-			'comment_approved' => 0
-		);
-
-		$comment_id = DB::connection('mysql_no_prefix')->table($strCommentsTable)->insertGetId( $arrUnsolicitedData );
-		echo "<br>MsgDelivery->create_new_unsolicited_comment_row() Created New Comment = "  . $comment_id;
-		return $comment_id;
 	}
 
 	public function get_provider_care_plan($intUserId, $intBlogId) {
@@ -874,75 +835,33 @@ order by qs.qs_type, qs.sort, qs.aid
 
 	}
 
-	private function getBlogRelatedToPhone($strUserKey)
-	{
-		$intBlogId = -1;
-		$query = $this->db->query("SELECT user_id,meta_key,meta_value FROM wp_usermeta WHERE meta_key LIKE 'wp_%_user_config'");
-
-		if($query->num_rows() > 0)
-		{
-			foreach($query->result() as $row)
-			{
-				$serialConfig = $row->meta_value;
-				$arrConfig = unserialize($serialConfig);
-				if($arrConfig !== false)
-				{
-					if(array_key_exists('study_phone_number', $arrConfig))
-					{
-						$strStudyPhone = preg_replace('/[^0-9]/', '', $arrConfig['study_phone_number']);
-						if($strUserKey == $strStudyPhone)
-						{
-							$intUserId = $row->user_id;
-							$intBlogId = $this->extract_blogid($row->meta_key);
-						}
-					}
-				}
-			}
-		}
-
-		return $intBlogId;
-	}
-
-
-
-	private function extract_blogid($strMetaKey)
-	{
-		$intBlogId = $strMetaKey[3];
-
-		if($strMetaKey[4] !== '_' )
-		{
-			$intBlogId .= $strMetaKey[4];
-		}
-
-		return (int)$intBlogId;
-	}
-
-
 	public function get_blog_domain($intBlogId)
 	{
 		$this->db->select('b.domain');
 		$this->db->from('wp_blogs AS b');
-		$this->db->where(array('b.blog_id' => $intBlogId));
-		$query = $this->db->get();
-		$result = $query->row();
+		$this->db->where(array('b.id' => $intBlogId));
+        $query = $this->db->get();
+        $result = $query->row();
 		if(!empty($result)) {
 			return $result->domain;
 		}
 		return false;
 	}
 
-
 	/**
 	 * @param $user_info
 	 * @param $user_meta
-	 * @param $int_blog_id
+	 * @param $int_id
 	 * @return bool
-	 */
-	public function create_new_user($user_info, $user_meta, $int_blog_id) {
-		// first make sure user doesnt already exist
+     */
+    public function create_new_user($user_info,
+                                    $user_meta,
+                                    $int_id
+    ) {
+        // first make sure user doesnt already exist
 		$this->db->select('u.*');
 		$this->db->from('wp_users AS u');
-		$this->db->where("u.user_login = '".$user_info['user_login']."'");
+        $this->db->where("u.username = '" . $user_info['username'] . "'");
 		$query = $this->db->get();
 		$user_exists = $query->row();
 		// return false is user exists and no overwrite
@@ -950,8 +869,8 @@ order by qs.qs_type, qs.sort, qs.aid
 			return false;
 		}
 
-		// ID, user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
-		$this->db->insert('wp_users', $user_info);
+        // id, username, password, user_nicename, email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
+        $this->db->insert('wp_users', $user_info);
 		$new_user_id = $this->db->insert_id();
 
 		// nickname, first_name, last_name, description, rich_editing, comment_shortcuts, admin_color, user_ssl, show_admin_bar_front
@@ -969,20 +888,24 @@ order by qs.qs_type, qs.sort, qs.aid
 		return $new_user_id;
 	}
 
-
 	/**
 	 * @param $user_info
 	 * @param $user_meta
 	 * @param $ucp_items
 	 * @param $overwrite
-	 * @param $int_blog_id
+	 * @param $int_id
 	 * @return bool
-	 */
-	public function import_user($user_info, $user_meta, $ucp_items, $overwrite, $int_blog_id) {
-		// first make sure user doesnt already exist
+     */
+    public function import_user($user_info,
+                                $user_meta,
+                                $ucp_items,
+                                $overwrite,
+                                $int_id
+    ) {
+        // first make sure user doesnt already exist
 		$this->db->select('u.*');
 		$this->db->from('wp_users AS u');
-		$this->db->where("u.user_login = '".$user_info['user_login']."'");
+        $this->db->where("u.username = '" . $user_info['username'] . "'");
 		$query = $this->db->get();
 		$user_exists = $query->row();
 		//echo "<pre>";var_dump($this->db->last_query());echo "</pre>";
@@ -993,14 +916,14 @@ order by qs.qs_type, qs.sort, qs.aid
 			return false;
 		}
 		if(empty($user_exists)) {
-			// ID, user_login, user_pass, user_nicename, user_email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
-			unset($user_info['ID']);
-			$this->db->insert('wp_users', $user_info);
+            // id, username, password, user_nicename, email, user_url, user_registered, user_activation_key, user_status, display_name, spam, deleted
+            unset($user_info['id']);
+            $this->db->insert('wp_users', $user_info);
 			$new_user_id = $this->db->insert_id();
 		} else {
-			$new_user_id = $user_exists->ID;
-		}
-		// nickname, first_name, last_name, description, rich_editing, comment_shortcuts, admin_color, user_ssl, show_admin_bar_front
+            $new_user_id = $user_exists->id;
+        }
+        // nickname, first_name, last_name, description, rich_editing, comment_shortcuts, admin_color, user_ssl, show_admin_bar_front
 		// wp_8_capabilities, wp_8_user_level, wp_8_user_config, dismissed_wp_pointers
 		if(!empty($user_meta)) {
 			$this->db->delete("wp_usermeta", array('user_id' => $new_user_id));
@@ -1027,21 +950,23 @@ order by qs.qs_type, qs.sort, qs.aid
 		return $new_user_id;
 	}
 
-
 	/**
 	 * @param $user_id
 	 * @param $comment_data
-	 * @param $int_blog_id
+	 * @param $int_id
 	 */
-	public function import_user_observation_data($user_id, $comment_data, $int_blog_id)
-	{
-		// build tables to use
-		//$str_observation_table = 'ma_' . $int_blog_id . '_observations';
-		$str_observation_table = 'lv_observations';
-		//$str_observationmeta_table = 'ma_' . $int_blog_id . '_observationmeta';
-		$str_observationmeta_table = 'lv_observationmeta';
-		//$str_comments_table = 'wp_' . $int_blog_id . '_comments';
-		$str_comments_table = 'lv_comments';
+	public function import_user_observation_data(
+        $user_id,
+        $comment_data,
+        $int_id
+    ) {
+        // build tables to use
+        //$str_observation_table = 'ma_' . $int_id . '_observations';
+        $str_observation_table = 'lv_observations';
+		//$str_observationmeta_table = 'ma_' . $int_id . '_observationmeta';
+        $str_observationmeta_table = 'lv_observationmeta';
+		//$str_comments_table = 'wp_' . $int_id . '_comments';
+        $str_comments_table = 'lv_comments';
 
 		// remove all users comment data
 		$this->db->delete("{$str_comments_table}", array('user_id' => $user_id));
@@ -1104,5 +1029,40 @@ WHERE {$str_observation_table}.user_id = ?;", array($user_id));
 			return false;
 		}
 	}
+
+	private function getBlogRelatedToPhone($strUserKey)
+    {
+        $intBlogId = -1;
+        $query = $this->db->query("SELECT user_id,meta_key,meta_value FROM wp_usermeta WHERE meta_key LIKE 'wp_%_user_config'");
+
+        if ($query->num_rows() > 0) {
+            foreach ($query->result() as $row) {
+                $serialConfig = $row->meta_value;
+                $arrConfig = unserialize($serialConfig);
+                if ($arrConfig !== false) {
+                    if (array_key_exists('study_phone_number', $arrConfig)) {
+                        $strStudyPhone = preg_replace('/[^0-9]/', '', $arrConfig['study_phone_number']);
+                        if ($strUserKey == $strStudyPhone) {
+                            $intUserId = $row->user_id;
+                            $intBlogId = $this->extract_blogid($row->meta_key);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $intBlogId;
+    }
+
+    private function extract_blogid($strMetaKey)
+    {
+        $intBlogId = $strMetaKey[3];
+
+        if ($strMetaKey[4] !== '_') {
+            $intBlogId .= $strMetaKey[4];
+        }
+
+        return (int)$intBlogId;
+    }
 
 }
