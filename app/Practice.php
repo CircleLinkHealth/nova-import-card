@@ -145,3 +145,14 @@ class Practice extends Model
     }
 
 }
+
+    public function lead()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function getSubdomainAttribute()
+    {
+        return explode('.', $this->domain)[0];
+    }
+}

@@ -29,6 +29,11 @@ elixir(function(mix) {
         '/css/animate.min.css'
     ], 'public/css/stylesheet.css');
 
+    mix.less([
+        '/css/provider/dashboard.less',
+    ], 'public/css/provider-dashboard.css');
+
+
     // mix.browserify('uploader.js');
     // mix.browserify('ccd-models/items/medicationItem.js');
     // mix.browserify('ccd-models/items/allergiesItem.js');
