@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Provider;
 
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
-use App\Contracts\Repositories\ProgramRepository;
+use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -14,18 +14,21 @@ class DashboardController extends Controller
 {
     protected $invites;
     protected $locations;
-    protected $programs;
+    protected $practices;
     protected $users;
 
     public function __construct(
         InviteRepository $inviteRepository,
         LocationRepository $locationRepository,
-        ProgramRepository $programRepository,
-        UserRepository $userRepository
+        PracticeRepository $practiceRepository,
+        UserRepository $userRepository,
+        Request $request
     ) {
+        parent::__construct($request);
+
         $this->invites = $inviteRepository;
         $this->locations = $locationRepository;
-        $this->programs = $programRepository;
+        $this->practices = $practiceRepository;
         $this->users = $userRepository;
     }
 
@@ -38,7 +41,7 @@ class DashboardController extends Controller
 
     public function getCreatePractice()
     {
-        $practice = $this->programs->firstOrNew([
+        $practice = $this->practices->firstOrNew([
             'user_id' => auth()->user()->ID,
         ]);
 
@@ -81,7 +84,7 @@ class DashboardController extends Controller
         $input = $request->input();
 
         try {
-            $program = $this->programs->create([
+            $program = $this->practices->create([
                 'name'         => str_slug($input['name']),
                 'user_id'      => auth()->user()->ID,
                 'display_name' => $input['name'],

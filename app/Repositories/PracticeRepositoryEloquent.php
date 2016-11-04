@@ -2,17 +2,17 @@
 
 namespace App\Repositories;
 
-use App\Contracts\Repositories\ProgramRepository;
-use App\Program;
-use App\Validators\ProgramValidator;
+use App\Contracts\Repositories\PracticeRepository;
+use App\Practice;
+use App\Validators\PracticeValidator;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
- * Class ProgramRepositoryEloquent
+ * Class PracticeRepositoryEloquent
  * @package namespace App\Repositories;
  */
-class ProgramRepositoryEloquent extends BaseRepository implements ProgramRepository
+class PracticeRepositoryEloquent extends BaseRepository implements PracticeRepository
 {
     /**
      * Specify Model class name
@@ -21,12 +21,12 @@ class ProgramRepositoryEloquent extends BaseRepository implements ProgramReposit
      */
     public function model()
     {
-        return Program::class;
+        return Practice::class;
     }
 
     public function validator()
     {
-        return ProgramValidator::class;
+        return PracticeValidator::class;
     }
 
     /**

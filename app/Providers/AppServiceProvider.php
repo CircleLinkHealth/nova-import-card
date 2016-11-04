@@ -9,7 +9,7 @@ use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Contracts\Repositories\CcmTimeApiLogRepository;
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
-use App\Contracts\Repositories\ProgramRepository;
+use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Formatters\WebixFormatter;
 use App\Repositories\ActivityRepositoryEloquent;
@@ -19,7 +19,7 @@ use App\Repositories\CcdaRequestRepositoryEloquent;
 use App\Repositories\CcmTimeApiLogRepositoryEloquent;
 use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
-use App\Repositories\ProgramRepositoryEloquent;
+use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
 use Illuminate\Support\ServiceProvider;
 
@@ -94,8 +94,8 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            ProgramRepository::class,
-            ProgramRepositoryEloquent::class
+            PracticeRepository::class,
+            PracticeRepositoryEloquent::class
         );
 
         $this->app->bind(

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Provider;
 
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
-use App\Contracts\Repositories\ProgramRepository;
+use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Role;
@@ -21,12 +21,12 @@ class OnboardingController extends Controller
     public function __construct(
         InviteRepository $inviteRepository,
         LocationRepository $locationRepository,
-        ProgramRepository $programRepository,
+        PracticeRepository $practiceRepository,
         UserRepository $userRepository
     ) {
         $this->invites = $inviteRepository;
         $this->locations = $locationRepository;
-        $this->programs = $programRepository;
+        $this->programs = $practiceRepository;
         $this->users = $userRepository;
     }
 

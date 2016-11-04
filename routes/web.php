@@ -1214,5 +1214,87 @@ Route::group([
 });
 
 
+/*
+ *
+ * Provider Dashboard
+ *
+ */
+Route::group([
+    'prefix' => 'provider',
+], function () {
+
+    Route::post('store-invite', [
+        'uses' => 'Provider\DashboardController@postStoreInvite',
+        'as'   => 'post.store.invite',
+    ]);
+
+    Route::post('store-location', [
+        'uses' => 'Provider\DashboardController@postStoreLocation',
+        'as'   => 'post.store.location',
+    ]);
+
+    Route::post('store-practice', [
+        'uses' => 'Provider\DashboardController@postStorePractice',
+        'as'   => 'post.store.practice',
+    ]);
+
+    Route::get('create-practice', [
+        'uses' => 'Provider\DashboardController@getCreatePractice',
+        'as'   => 'get.create.practice',
+    ]);
+
+    Route::get('create-staff', [
+        'uses' => 'Provider\DashboardController@getCreateStaff',
+        'as'   => 'get.create.staff',
+    ]);
+
+    Route::get('index', [
+        'uses' => 'Provider\DashboardController@getIndex',
+        'as'   => 'get.provider.dashboard',
+    ]);
+
+    Route::get('create-location', [
+        'uses' => 'Provider\DashboardController@getCreateLocation',
+        'as'   => 'get.create.location',
+    ]);
+});
+
+Route::group([
+    'prefix' => 'onboarding',
+], function () {
+
+    Route::post('store-locations', [
+        'uses' => 'Provider\OnboardingController@postStoreLocations',
+        'as'   => 'post.onboarding.store.locations',
+    ]);
+
+    Route::post('store-practice', [
+        'uses' => 'Provider\OnboardingController@postStorePractice',
+        'as'   => 'post.onboarding.store.practice',
+    ]);
+
+    Route::post('store-practice-lead-user', [
+        'uses' => 'Provider\OnboardingController@postStoreProgramLeadUser',
+        'as'   => 'post.onboarding.store.program.lead.user',
+    ]);
+
+    Route::get('create-locations', [
+        'uses' => 'Provider\OnboardingController@getCreateLocations',
+        'as'   => 'get.onboarding.create.locations',
+    ]);
+
+    Route::get('create-practice', [
+        'uses' => 'Provider\OnboardingController@getCreatePractice',
+        'as'   => 'get.onboarding.create.practice',
+    ]);
+
+    Route::get('create-program-lead-user', [
+        'uses' => 'Provider\OnboardingController@getCreateProgramLeadUser',
+        'as'   => 'get.onboarding.create.program.lead.user',
+    ]);
+});
+
+
+
 
 

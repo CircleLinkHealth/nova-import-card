@@ -144,8 +144,6 @@ class Practice extends Model
 
     }
 
-}
-
     public function lead()
     {
         return $this->belongsTo(User::class);
