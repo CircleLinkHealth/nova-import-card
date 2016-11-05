@@ -1278,7 +1278,7 @@ Route::group([
         'as'   => 'post.onboarding.store.program.lead.user',
     ]);
 
-    Route::get('create-locations', [
+    Route::get('create-locations/{numberOfLocations}', [
         'uses' => 'Provider\OnboardingController@getCreateLocations',
         'as'   => 'get.onboarding.create.locations',
     ]);

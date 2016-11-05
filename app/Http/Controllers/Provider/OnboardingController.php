@@ -15,7 +15,7 @@ class OnboardingController extends Controller
 {
     protected $invites;
     protected $locations;
-    protected $programs;
+    protected $practices;
     protected $users;
 
     public function __construct(
@@ -26,7 +26,7 @@ class OnboardingController extends Controller
     ) {
         $this->invites = $inviteRepository;
         $this->locations = $locationRepository;
-        $this->programs = $practiceRepository;
+        $this->practices = $practiceRepository;
         $this->users = $userRepository;
     }
 
@@ -38,6 +38,8 @@ class OnboardingController extends Controller
 
     public function getCreateLocations($numberOfLocations)
     {
+        $nnumberOfLocations = $numberOfLocations ?? 1;
+
         return view('provider.onboarding.create-locations', compact('numberOfLocations'));
     }
 
@@ -87,7 +89,7 @@ class OnboardingController extends Controller
         try {
             $numberOfLocations = $input['numberOfLocations'];
 
-            $program = $this->programs->create([
+            $program = $this->practices->create([
                 'name'         => str_slug($input['name']),
                 'user_id'      => auth()->user()->id,
                 'display_name' => $input['name'],

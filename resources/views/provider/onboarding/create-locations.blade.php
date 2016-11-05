@@ -14,7 +14,7 @@
 </head>
 
 @section('module')
-
+    {{$numberOfLocations}}
     @include('errors.errors')
 
     {!! Form::open([
@@ -23,10 +23,7 @@
         'id' => 'create-practice',
     ]) !!}
 
-    <?php isset($numberOflocations)
-            ?: $numberOflocations = 1; ?>
-
-    @for($i = 1; $numberOflocations >= $i; $i++)
+    @for($i = 1; $numberOfLocations >= $i; $i++)
 
         <h6>locations {{ $i }}</h6>
 

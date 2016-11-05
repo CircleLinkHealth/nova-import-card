@@ -10,7 +10,7 @@ class PracticeValidator extends LaravelValidator
 
     protected $rules = [
         ValidatorInterface::RULE_CREATE => [
-            'name' => 'required|unique:wp_blogs,name',
+            'name' => 'required|unique:practices,name',
         ],
         ValidatorInterface::RULE_UPDATE => [],
    ];

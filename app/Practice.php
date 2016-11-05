@@ -9,6 +9,11 @@ class Practice extends Model
 
     use SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'display_name',
+    ];
+
     public static function getProviders($blogId){
         $providers = User::whereHas('practices', function ($q) use
         (
