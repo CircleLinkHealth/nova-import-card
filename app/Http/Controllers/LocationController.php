@@ -20,10 +20,8 @@ class LocationController extends Controller {
 		}
 			$messages = \Session::get('messages');
 			return view('locations.index', [
-				'locationParents' => Location::getAllParents(),
-				'locationSubs' => Location::getNonRootLocations(),
-				'messages' => $messages,
-				'locationParentsSubs' => Location::getParentsSubs($request)
+                'locations' => Location::all(),
+                'messages'  => $messages,
 			]);
 	}
 
@@ -37,8 +35,8 @@ class LocationController extends Controller {
 		if(!Auth::user()->can('locations-manage')) {
 			abort(403);
 		}
-        $blogs = Practice::all();
-		return view('locations.create', [ 'locations' => Location::getAllParents(), 'blogs' => $blogs ]);
+
+        return view('locations.create');
 	}
 
 	/**
@@ -54,19 +52,8 @@ class LocationController extends Controller {
 
 		$input = $request->input();
 
-		if(is_null($input['parent_id'])){
-			$input['position'] = 0;
-		} else {
-			$input['position'] = 1;
-		}
-
 		$newLocation = new Location( $input );
 		$saved = $newLocation->save();
-
-		if ( ! empty( $input['parent_id'] ) ) {
-			$parent = Location::find( $input['parent_id'] );
-			$parent->addChild($newLocation);
-		}
 
 		return $saved ?
 			redirect()->route('locations.index')->with('messages', ['Location Created!!']) :

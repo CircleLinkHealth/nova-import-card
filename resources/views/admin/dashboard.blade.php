@@ -27,11 +27,11 @@
             </div>
 
             <div class="col-md-4">
-                @include('partials.calls.uploadCsv')
+
             </div>
 
             <div class="col-md-4">
-                @include('partials.uploadGeneralCommentCsv')
+
             </div>
         </div>
 

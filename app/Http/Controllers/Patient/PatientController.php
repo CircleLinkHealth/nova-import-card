@@ -37,12 +37,14 @@ class PatientController extends Controller
      * Display the specified resource.
      *
      * @param  int $patientId
+     *
      * @return Response
      */
-    public function showPatientSummary(Request $request,
-                                       $patientId,
-                                       CarePlanViewService $carePlanViewService)
-    {
+    public function showPatientSummary(
+        Request $request,
+        $patientId,
+        CarePlanViewService $carePlanViewService
+    ) {
         $messages = \Session::get('messages');
 
         $wpUser = User::find($patientId);
@@ -66,12 +68,36 @@ class PatientController extends Controller
             $detailSection = $params['detail'];
         }
 
-        $sections = array(
-            array('section' => 'obs_biometrics', 'id' => 'obs_biometrics_dtable', 'title' => 'Biometrics', 'col_name_question' => 'Reading Type', 'col_name_severity' => 'Reading'),
-            array('section' => 'obs_medications', 'id' => 'obs_medications_dtable', 'title' => 'Medications', 'col_name_question' => 'Medication', 'col_name_severity' => 'Adherence'),
-            array('section' => 'obs_symptoms', 'id' => 'obs_symptoms_dtable', 'title' => 'Symptoms', 'col_name_question' => 'Symptom', 'col_name_severity' => 'Severity'),
-            array('section' => 'obs_lifestyle', 'id' => 'obs_lifestyle_dtable', 'title' => 'Lifestyle', 'col_name_question' => 'Question', 'col_name_severity' => 'Response'),
-        );
+        $sections = [
+            [
+                'section'           => 'obs_biometrics',
+                'id'                => 'obs_biometrics_dtable',
+                'title'             => 'Biometrics',
+                'col_name_question' => 'Reading Type',
+                'col_name_severity' => 'Reading',
+            ],
+            [
+                'section'           => 'obs_medications',
+                'id'                => 'obs_medications_dtable',
+                'title'             => 'Medications',
+                'col_name_question' => 'Medication',
+                'col_name_severity' => 'Adherence',
+            ],
+            [
+                'section'           => 'obs_symptoms',
+                'id'                => 'obs_symptoms_dtable',
+                'title'             => 'Symptoms',
+                'col_name_question' => 'Symptom',
+                'col_name_severity' => 'Severity',
+            ],
+            [
+                'section'           => 'obs_lifestyle',
+                'id'                => 'obs_lifestyle_dtable',
+                'title'             => 'Lifestyle',
+                'col_name_question' => 'Question',
+                'col_name_severity' => 'Response',
+            ],
+        ];
 
         $observations = Observation::where('user_id', '=', $wpUser->id)
             ->where('obs_unit', '!=', "invalid")
@@ -80,12 +106,12 @@ class PatientController extends Controller
             ->get();
 
         // build array of pcp
-        $obs_by_pcp = array(
-            'obs_biometrics' => array(),
-            'obs_medications' => array(),
-            'obs_symptoms' => array(),
-            'obs_lifestyle' => array(),
-        );
+        $obs_by_pcp = [
+            'obs_biometrics'  => [],
+            'obs_medications' => [],
+            'obs_symptoms'    => [],
+            'obs_lifestyle'   => [],
+        ];
         foreach ($observations as $observation) {
             if ($observation['obs_value'] == '') {
                 //$obs_date = date_create($observation['obs_date']);
@@ -172,7 +198,7 @@ class PatientController extends Controller
         $obs_by_pcp['obs_lifestyle'] = $filtered_lifestyle_obs;
         */
 
-        $observation_json = array();
+        $observation_json = [];
         foreach ($obs_by_pcp as $section => $observations) {
             $o = 0;
             $observation_json[$section] = "data:[";
@@ -204,14 +230,14 @@ class PatientController extends Controller
         //dd($observation_json);
         //return response()->json($cpFeed);
         return view('wpUsers.patient.summary', [
-            'program' => $program,
-            'patient' => $wpUser,
-            'wpUser' => $wpUser,
-            'sections' => $sections,
-            'detailSection' => $detailSection,
+            'program'          => $program,
+            'patient'          => $wpUser,
+            'wpUser'           => $wpUser,
+            'sections'         => $sections,
+            'detailSection'    => $detailSection,
             'observation_data' => $observation_json,
-            'messages' => $messages,
-            'problems' => $problems,
+            'messages'         => $messages,
+            'problems'         => $problems,
         ]);
     }
 
@@ -228,16 +254,18 @@ class PatientController extends Controller
         //then update the status.
         $input = $request->all();
 
-        if (isset($input['patient_approval_id'])) event(new CarePlanWasApproved(User::find($input['patient_approval_id'])));
+        if (isset($input['patient_approval_id'])) {
+            event(new CarePlanWasApproved(User::find($input['patient_approval_id'])));
+        }
 
-        $patientData = array();
+        $patientData = [];
         $patients = User::intersectPracticesWith(auth()->user())
             ->with('primaryProgram')
             ->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })
-            ->with(array(
-                'observations' => function ($query) {
+            ->with([
+                'observations'           => function ($query) {
                     $query->where('obs_key', '!=', 'Outbound');
                     $query->orderBy('obs_date', 'DESC');
                     $query->first();
@@ -246,20 +274,20 @@ class PatientController extends Controller
                     $q->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER)
                         ->with('user');
                 },
-                'phoneNumbers' => function ($q) {
+                'phoneNumbers'           => function ($q) {
                     $q->where('type', '=', PhoneNumber::HOME);
                 },
-                'patientInfo' => function ($q) {
+                'patientInfo'            => function ($q) {
                     $q->with('carePlanProviderApproverUser');
-                }
-            ))
+                },
+            ])
             ->get();
         $i = 0;
 
         if ($patients->count() > 0) {
 
-            $foundUsers = array(); // save resources, no duplicate db calls
-            $foundPrograms = array(); // save resources, no duplicate db calls
+            $foundUsers = []; // save resources, no duplicate db calls
+            $foundPrograms = []; // save resources, no duplicate db calls
 
             $isProvider = Auth::user()->hasRole('provider');
             $isCareCenter = Auth::user()->hasRole('care-center');
@@ -288,21 +316,25 @@ class PatientController extends Controller
                         $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
                         $tooltip = $approverName . ' ' . $carePlanProviderDate;
                     }
-                } else if ($careplanStatus == 'qa_approved') {
-                    $careplanStatus = 'Approve Now';
-                    $tooltip = $careplanStatus;
-                    $careplanStatusLink = 'Approve Now';
-                    if ($isProvider) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.careplan.print',
-                                ['patient' => $patient->id]) . '"><strong>Approve Now</strong></a>';
-                    }
-                } else if ($careplanStatus == 'draft') {
-                    $careplanStatus = 'CLH Approve';
-                    $tooltip = $careplanStatus;
-                    $careplanStatusLink = 'CLH Approve';
-                    if ($isCareCenter || $isAdmin) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
-                                ['patient' => $patient->id]) . '"><strong>CLH Approve</strong></a>';
+                } else {
+                    if ($careplanStatus == 'qa_approved') {
+                        $careplanStatus = 'Approve Now';
+                        $tooltip = $careplanStatus;
+                        $careplanStatusLink = 'Approve Now';
+                        if ($isProvider) {
+                            $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.careplan.print',
+                                    ['patient' => $patient->id]) . '"><strong>Approve Now</strong></a>';
+                        }
+                    } else {
+                        if ($careplanStatus == 'draft') {
+                            $careplanStatus = 'CLH Approve';
+                            $tooltip = $careplanStatus;
+                            $careplanStatusLink = 'CLH Approve';
+                            if ($isCareCenter || $isAdmin) {
+                                $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
+                                        ['patient' => $patient->id]) . '"><strong>CLH Approve</strong></a>';
+                            }
+                        }
                     }
                 }
 
@@ -333,7 +365,7 @@ class PatientController extends Controller
                 }
 
                 try {
-                    $patientData[] = array(
+                    $patientData[] = [
                         'key'                        => $patient->id,
                         // $part->id,
                         'patient_name'               => $patient->fullName,
@@ -370,7 +402,7 @@ class PatientController extends Controller
                         'provider'                   => $bpName,
                         // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
                         'site'                       => $programName,
-                    );
+                    ];
                 } catch (\Exception $e) {
                     \Log::critical("{$patient->id} has no patient info");
                     \Log::critical("{$e} has no patient info");
@@ -396,7 +428,7 @@ class PatientController extends Controller
     public function showPatientCarePlanPrintList(Request $request)
     {
 
-        $patientData = array();
+        $patientData = [];
         $patients = User::intersectPracticesWith(auth()->user())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
@@ -420,21 +452,25 @@ class PatientController extends Controller
                         $careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
                         $tooltip = $approverName . ' ' . $patient->carePlanProviderDate;
                     }
-                } else if ($patient->carePlanStatus == 'qa_approved') {
-                    $careplanStatus = 'Approve Now';
-                    $tooltip = $careplanStatus;
-                    $careplanStatusLink = 'Approve Now';
-                    if (Auth::user()->hasRole('provider')) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
-                                ['patient' => $patient->id]) . '"><strong>Approve Now</strong></a>';
-                    }
-                } else if ($patient->carePlanStatus == 'draft') {
-                    $careplanStatus = 'CLH Approve';
-                    $tooltip = $careplanStatus;
-                    $careplanStatusLink = 'CLH Approve';
-                    if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
-                                ['patient' => $patient->id]) . '"><strong>CLH Approve</strong></a>';
+                } else {
+                    if ($patient->carePlanStatus == 'qa_approved') {
+                        $careplanStatus = 'Approve Now';
+                        $tooltip = $careplanStatus;
+                        $careplanStatusLink = 'Approve Now';
+                        if (Auth::user()->hasRole('provider')) {
+                            $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
+                                    ['patient' => $patient->id]) . '"><strong>Approve Now</strong></a>';
+                        }
+                    } else {
+                        if ($patient->carePlanStatus == 'draft') {
+                            $careplanStatus = 'CLH Approve';
+                            $tooltip = $careplanStatus;
+                            $careplanStatusLink = 'CLH Approve';
+                            if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
+                                $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
+                                        ['patient' => $patient->id]) . '"><strong>CLH Approve</strong></a>';
+                            }
+                        }
                     }
                 }
 
@@ -449,12 +485,13 @@ class PatientController extends Controller
 
                 // get date of last observation
                 $lastObservationDate = 'No Readings';
-                $lastObservation = $patient->observations()->where('obs_key', '!=', 'Outbound')->orderBy('obs_date', 'DESC')->first();
+                $lastObservation = $patient->observations()->where('obs_key', '!=', 'Outbound')->orderBy('obs_date',
+                    'DESC')->first();
                 if (!empty($lastObservation)) {
                     $lastObservationDate = date("m/d/Y", strtotime($lastObservation->obs_date));
                 }
 
-                $patientData[] = array(
+                $patientData[] = [
                     'key'                        => $patient->id,
                     // $part->id,
                     'patient_name'               => $patient->fullName,
@@ -488,13 +525,13 @@ class PatientController extends Controller
                     //$meta[$part->id]['cur_month_activity_time'][0]
                     'provider'                   => $bpName,
                     // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
-                );
+                ];
             }
         }
         $patientJson = json_encode($patientData);
 
         return view('wpUsers.patient.carePlanPrintList', compact([
-            'patientJson'
+            'patientJson',
         ]));
     }
 
@@ -522,8 +559,7 @@ class PatientController extends Controller
 
         $userIds = $commaList = implode(', ', Auth::user()->viewablePatientIds());
 
-        $sql = "select distinct
-			*
+        $sql = "select distinct *
         	FROM users u
         	JOIN patient_info pi ON pi.user_id = u.id
              AND u.id IN (" . $userIds . ")
@@ -532,30 +568,22 @@ class PatientController extends Controller
             ;";
 
         $results = DB::select(DB::raw($sql));
-        $patients = array();
+        $patients = [];
         $i = 0;
         foreach ($results as $d) {
-            $user = User::find($d->user_id);
-            if (!$user) {
-                continue 1;
-            }
-            $patients[$i]['name'] = ($user->display_name);
-            $dob = new Carbon(($user->birth_date));
+            $patients[$i]['name'] = ($d->display_name);
+            $dob = new Carbon(($d->birth_date));
             $patients[$i]['dob'] = $dob->format('m-d-Y');
-            $patients[$i]['mrn'] = $user->mrn_number;
-            $patients[$i]['link'] = URL::route('patient.summary', ['patient' => $d->id]);
-            $programObj = Practice::find(($user->program_id))
-                ? Practice::find(($user->program_id))
-                : "";
-            if ($programObj->display_name) {
-                $patients[$i]['program'] = $programObj->display_name;
-            } else {
-                $patients[$i]['program'] = '';
-            }
+            $patients[$i]['mrn'] = $d->mrn_number;
+            $patients[$i]['link'] = URL::route('patient.summary', ['patient' => $d->user_id]);
+
+            $programObj = Practice::find($d->program_id);
+
+            $patients[$i]['program'] = $programObj->display_name ?? '';
             $patients[$i]['hint'] = $patients[$i]['name'] . " DOB:" . $patients[$i]['dob'] . " [" . $patients[$i]['program'] . "] MRN: " . $patients[$i]['mrn'];
             $i++;
         }
-        $patients = (object)$patients;
+
         return response()->json($patients);
     }
 
@@ -581,6 +609,7 @@ class PatientController extends Controller
                 }
             }
         }
+
         return redirect()->route('patient.dashboard', [$params['findUser']]);
     }
 
@@ -588,11 +617,14 @@ class PatientController extends Controller
      * Select Program
      *
      * @param  int $patientId
+     *
      * @return Response
      */
-    public function showSelectProgram(Request $request, $patientId = false)
-    {
-        $wpUser = array();
+    public function showSelectProgram(
+        Request $request,
+        $patientId = false
+    ) {
+        $wpUser = [];
         if ($patientId) {
             $wpUser = User::find($patientId);
             if (!$wpUser) {
@@ -603,7 +635,10 @@ class PatientController extends Controller
         // program
         $program = Practice::find($wpUser->program_id);
 
-        return view('wpUsers.patient.alerts', ['program' => $program, 'patient' => $wpUser]);
+        return view('wpUsers.patient.alerts', [
+            'program' => $program,
+            'patient' => $wpUser,
+        ]);
     }
 
 
@@ -611,11 +646,14 @@ class PatientController extends Controller
      * Display Alerts
      *
      * @param  int $patientId
+     *
      * @return Response
      */
-    public function showPatientAlerts(Request $request, $patientId = false)
-    {
-        $wpUser = array();
+    public function showPatientAlerts(
+        Request $request,
+        $patientId = false
+    ) {
+        $wpUser = [];
         if ($patientId) {
             $wpUser = User::find($patientId);
             if (!$wpUser) {
@@ -631,11 +669,14 @@ class PatientController extends Controller
      * Display Notes
      *
      * @param  int $patientId
+     *
      * @return Response
      */
-    public function showPatientNotes(Request $request, $patientId = false)
-    {
-        $wpUser = array();
+    public function showPatientNotes(
+        Request $request,
+        $patientId = false
+    ) {
+        $wpUser = [];
         if ($patientId) {
             // patient view
             $wpUser = User::find($patientId);
@@ -648,7 +689,10 @@ class PatientController extends Controller
             // program view
         }
 
-        return view('wpUsers.patient.notes', ['program' => $program, 'patient' => $wpUser]);
+        return view('wpUsers.patient.notes', [
+            'program' => $program,
+            'patient' => $wpUser,
+        ]);
     }
 
 
@@ -656,11 +700,14 @@ class PatientController extends Controller
      * Display Observation Create
      *
      * @param  int $patientId
+     *
      * @return Response
      */
-    public function showPatientObservationCreate(Request $request, $patientId = false)
-    {
-        $patient = array();
+    public function showPatientObservationCreate(
+        Request $request,
+        $patientId = false
+    ) {
+        $patient = [];
         if ($patientId) {
             $patient = User::find($patientId);
             if (!$patient) {

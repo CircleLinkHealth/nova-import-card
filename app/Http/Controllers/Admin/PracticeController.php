@@ -38,7 +38,10 @@ class PracticeController extends Controller
 
 		$messages = \Session::get('messages');
 
-        $locations = Location::where('parent_id', '=', null)->orderBy('id', 'desc')->pluck('name', 'id')->all();
+        $locations = Location::all()
+            ->orderBy('id', 'desc')
+            ->pluck('name', 'id')
+            ->all();
 
 		return view('admin.wpBlogs.create', compact([ 'locations', 'errors', 'messages' ]));
 	}
