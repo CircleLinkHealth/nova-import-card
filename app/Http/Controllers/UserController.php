@@ -289,9 +289,9 @@ class UserController extends Controller
         ];
 
         // programs for dd
-        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('domain', 'id')->all();
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
 
-        $locations = Location::whereNotNull('parent_id')->pluck('name', 'id')->all();
+        $locations = Location::all()->pluck('name', 'id')->all();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers( DateTimeZone::ALL );
@@ -415,10 +415,10 @@ class UserController extends Controller
         }
 
         // locations @todo get location id for Practice
-        $wpBlog = Practice::find($patient->program_id);
+        $practice = Practice::find($patient->program_id);
         $locations_arr = array();
-        if ( $wpBlog ) {
-            $locations_arr = ( new Location )->getNonRootLocations( $wpBlog->locationId() );
+        if ( $practice ) {
+            $locations_arr = $practice->locations->all();
         }
 
         $carePlans = CarePlan::where('program_id', '=', $patient->program_id)->pluck('display_name', 'id')->all();
@@ -479,7 +479,7 @@ class UserController extends Controller
         ];
 
         // programs for dd
-        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('domain', 'id')->all();
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
 
         // timezones for dd
         $timezones_raw = DateTimeZone::listIdentifiers( DateTimeZone::ALL );
