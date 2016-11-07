@@ -156,19 +156,6 @@ class CarePlanController extends Controller
 
         $carePlan = CarePlan::find($id);
         $carePlan->build();
-        /*
-        foreach($carePlan->careSections as $careSection) {
-            // add parent items to each section
-            $careSection->carePlanItems = $carePlan->carePlanItems()
-                ->where('section_id', '=', $careSection->id)
-                ->where('parent_id', '=', 0)
-                ->orderBy('ui_sort', 'asc')
-                ->with(array('children' => function ($query) {
-                        $query->orderBy('ui_sort', 'asc');
-                    }))
-                ->get();
-        }
-        */
 
         $editMode = true;
 
