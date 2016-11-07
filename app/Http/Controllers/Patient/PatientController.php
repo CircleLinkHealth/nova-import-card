@@ -137,15 +137,15 @@ class PatientController extends Controller
                     $obs_by_pcp['obs_biometrics'][] = $observation;
                     break;
                 case 'Adherence':
-                    $question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
-                    // find carePlanItem with qid
-                    if ($question) {
-                        $item = CareItem::where('qid', '=', $question->qid)->first();
-                        if ($item) {
-                            $observation['description'] = $item->display_name;
-                        }
-                    }
-                    $obs_by_pcp['obs_medications'][] = $observation;
+//                    $question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
+//                    // find carePlanItem with qid
+//                    if ($question) {
+//                        $item = CareItem::where('qid', '=', $question->qid)->first();
+//                        if ($item) {
+//                            $observation['description'] = $item->display_name;
+//                        }
+//                    }
+//                    $obs_by_pcp['obs_medications'][] = $observation;
                     break;
                 case 'Symptom':
                 case 'Severity':
@@ -161,17 +161,17 @@ class PatientController extends Controller
                 case 'Other':
                 case 'Call':
                     // only y/n responses, skip anything that is a number as its assumed it is response to a list
-                    $question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
-                    // find carePlanItem with qid
-                    if ($question) {
-                        $item = CareItem::where('qid', '=', $question->qid)->first();
-                        if ($item) {
-                            $observation['description'] = $item->display_name;
-                        }
-                    }
-                    if (($observation['obs_key'] == 'Call') || (!is_numeric($observation['obs_value']))) {
-                        $obs_by_pcp['obs_lifestyle'][] = $observation;
-                    }
+//                    $question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
+//                    // find carePlanItem with qid
+//                    if ($question) {
+//                        $item = CareItem::where('qid', '=', $question->qid)->first();
+//                        if ($item) {
+//                            $observation['description'] = $item->display_name;
+//                        }
+//                    }
+//                    if (($observation['obs_key'] == 'Call') || (!is_numeric($observation['obs_value']))) {
+//                        $obs_by_pcp['obs_lifestyle'][] = $observation;
+//                    }
                     break;
                 default:
                     break;
