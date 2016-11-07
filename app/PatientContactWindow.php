@@ -162,8 +162,8 @@ class PatientContactWindow extends Model
     ) {
 
 
-        $patient_windows = $patient->patientContactWindows()->get();
-
+        $patient_windows = $patient->patientContactWindows()->orderBy('day_of_week')->get();
+        
         //If no contact window, just return the same date.
         if ($patient_windows->count() == 0) {
 
