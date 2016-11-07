@@ -369,9 +369,6 @@ class PatientCareplanController extends Controller
             $locations = $program->locations->pluck('name', 'id')->all();
         }
 
-        // care plans
-        $carePlans = CarePlan::where('program_id', '=', $programId)->pluck('display_name', 'id')->all();
-
         // States (for dropdown)
         $states = [
             'AL' => "Alabama",
@@ -464,7 +461,6 @@ class PatientCareplanController extends Controller
             'programs',
             'programId',
             'showApprovalButton',
-            'carePlans',
             'insurancePolicies',
             'contact_days_array',
             'contactWindows',
