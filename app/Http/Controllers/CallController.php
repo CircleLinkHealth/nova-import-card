@@ -107,17 +107,6 @@ class CallController extends Controller
             ? 'core algorithm'
             : Auth::user()->id;
 
-
-//        dd([
-//            $input['patient_id'],
-//            $window_start,
-//            $window_end,
-//            $input['date'],
-//            $scheduler,
-//            $input['nurse'] ? $input['nurse'] : null,
-//            isset($input['attempt_note']) ? $input['attempt_note'] : ''
-//        ]);
-
         //We are storing the current caller as the next scheduled call's outbound cpm_id
         $this->scheduler->storeScheduledCall(
                                                 $input['patient_id'],
