@@ -93,7 +93,6 @@ trait CallAlgoHelper
 
         $adjustment = collect($this->matchArray)->first();
 
-
             if($adjustment && isset($adjustment['intersects'])){
 
                 $startWindow = Carbon::parse($adjustment['patient']['window_start']);
@@ -143,13 +142,7 @@ trait CallAlgoHelper
 
             //CHECK for nurse window on target day
 
-            $nurseWindow = $nurse->windows->first(function (
-                $value,
-                $key
-            ) use
-            (
-                $day
-            ) {
+            $nurseWindow = $nurse->windows->first(function ($value, $key) use ($day) {
 
                 //check whether any days fall in this window
                 return $value->date->toDateString() == $day->toDateString();
