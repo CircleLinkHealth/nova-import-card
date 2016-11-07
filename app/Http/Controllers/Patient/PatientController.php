@@ -178,26 +178,6 @@ class PatientController extends Controller
             }
         }
 
-        // At this point, everything that didnt match went to lifestyle
-        // get array of lifestyle questions, and only include these in obs_lifestyle (also include Call observations!)
-
-        //$lifestyle_questions = $this->rules_model->getQuestionIdsByPCP(2, 7);
-        /*
-        $lifestyle_questions = array();
-        $lifestyle_msg_ids = array();
-        $filtered_lifestyle_obs = array();
-        foreach($lifestyle_questions as $lifestyle_question) {
-            $lifestyle_msg_ids[] = $lifestyle_question['msg_id'];
-        }
-
-        foreach($obs_by_pcp['obs_lifestyle'] as $lifestyle_obs) {
-            if((($lifestyle_obs['obs_key'] == 'Call')) || (in_array($lifestyle_obs['obs_message_id'], $lifestyle_msg_ids) && $lifestyle_obs['obs_value'] != '')) {
-                $filtered_lifestyle_obs[] = $lifestyle_obs;
-            }
-        }
-        $obs_by_pcp['obs_lifestyle'] = $filtered_lifestyle_obs;
-        */
-
         $observation_json = [];
         foreach ($obs_by_pcp as $section => $observations) {
             $o = 0;

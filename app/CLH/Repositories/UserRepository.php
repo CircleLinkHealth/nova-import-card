@@ -1,6 +1,5 @@
 <?php namespace App\CLH\Repositories;
 
-use App\CarePlan;
 use App\NurseInfo;
 use App\PatientInfo;
 use App\PhoneNumber;
@@ -15,8 +14,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 {
 
-    public function createNewUser(User $user, ParameterBag $params)
-    {
+    public function createNewUser(
+        User $user,
+        ParameterBag $params
+    ) {
         $user = $user->createNewUser($params->get('email'), $params->get('password'));
 
         // set registration date field on users
@@ -55,11 +56,14 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $this->adminEmailNotify($user, $sendTo);
         }
         $user->push();
+
         return $user;
     }
 
-    public function saveOrUpdateUserInfo(User $user, ParameterBag $params)
-    {
+    public function saveOrUpdateUserInfo(
+        User $user,
+        ParameterBag $params
+    ) {
         $user->username = $params->get('username');
         $user->user_status = $params->get('user_status');
 
@@ -67,7 +71,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $user->email = $params->get('email');
         }
 
-        if($params->get('access_disabled')) {
+        if ($params->get('access_disabled')) {
             $user->access_disabled = $params->get('access_disabled');
         } else {
             $user->access_disabled = 0; // 0 = good, 1 = disabled
@@ -245,8 +249,10 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
     }
 
-    public function saveOrUpdatePatientInfo(User $user, ParameterBag $params)
-    {
+    public function saveOrUpdatePatientInfo(
+        User $user,
+        ParameterBag $params
+    ) {
         $user->attachLocation($params->get('preferred_contact_location'));
 
         $patientInfo = $user->patientInfo->toArray();
@@ -256,14 +262,16 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $contactDays = $params->get('contact_days');
             $contactDaysDelmited = '';
             for ($i = 0; $i < count($contactDays); $i++) {
-                $contactDaysDelmited .= (count($contactDays) == $i + 1) ? $contactDays[$i] : $contactDays[$i] . ', ';
+                $contactDaysDelmited .= (count($contactDays) == $i + 1)
+                    ? $contactDays[$i]
+                    : $contactDays[$i] . ', ';
             }
-            $params->add(array('preferred_cc_contact_days' => $contactDaysDelmited));
+            $params->add(['preferred_cc_contact_days' => $contactDaysDelmited]);
         }
 
         foreach ($patientInfo as $key => $value) {
             // hack for date_paused and date_withdrawn
-            if(
+            if (
                 $key == 'date_paused'
                 || $key == 'date_withdrawn'
             ) {
@@ -276,8 +284,10 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->patientInfo->save();
     }
 
-    public function saveOrUpdateProviderInfo(User $user, ParameterBag $params)
-    {
+    public function saveOrUpdateProviderInfo(
+        User $user,
+        ParameterBag $params
+    ) {
         $providerInfo = $user->providerInfo->toArray();
 
         foreach ($providerInfo as $key => $value) {
@@ -288,8 +298,10 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $user->providerInfo->save();
     }
 
-    public function saveOrUpdateNurseInfo(User $user, ParameterBag $params)
-    {
+    public function saveOrUpdateNurseInfo(
+        User $user,
+        ParameterBag $params
+    ) {
         $nurseInfo = $user->nurseInfo->toArray();
 
         foreach ($nurseInfo as $key => $value) {
@@ -369,8 +381,10 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         return $user;
     }
 
-    public function saveOrUpdateUserMeta(User $user, ParameterBag $params)
-    {
+    public function saveOrUpdateUserMeta(
+        User $user,
+        ParameterBag $params
+    ) {
         /*
         $userMetaTemplate = (new UserMetaTemplate())->getArray();
 
@@ -422,8 +436,10 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         */
     }
 
-    public function updateUserConfig(User $wpUser, ParameterBag $params)
-    {
+    public function updateUserConfig(
+        User $wpUser,
+        ParameterBag $params
+    ) {
         /*
         // meta
         $userMeta = UserMeta::where('user_id', '=', $wpUser->id)->pluck('meta_value', 'meta_key')->all();
@@ -467,122 +483,15 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         */
     }
 
-    public function createDefaultCarePlan($user, $params)
-    {
-
-        $program = Practice::find($user->program_id);
-        if (!$program) {
-            return false;
-        }
-        // just need to add programs default @todo here should get the programs default one to use from programs config
-        $carePlan = CarePlan::where('program_id', '=', $program->id)->where('type', '=',
-            'Practice Default')->first();
-        if (!$carePlan) {
-            return false;
-        }
-
-        $user->save();
-
-        // populate defaults from careplan
-        $carePlan->build();
-        foreach ($carePlan->careSections as $careSection) {
-            // add parent items to each section
-            $careSection->carePlanItems = $carePlan->carePlanItems()
-                ->where('section_id', '=', $careSection->id)
-                ->where('parent_id', '=', 0)
-                ->orderBy('ui_sort', 'asc')
-                ->with(array('children' => function ($query) {
-                    $query->orderBy('ui_sort', 'asc');
-                }))
-                ->get();
-            // user defaults
-            if ($careSection->carePlanItems->count() > 0) {
-                foreach ($careSection->carePlanItems as $carePlanItem) {
-                    // parents
-                    $carePlan->setCareItemUserValue($user, $carePlanItem->careItem->name, $carePlanItem->meta_value);
-                    // children
-                    if ($carePlanItem->children->count() > 0) {
-                        foreach ($carePlanItem->children as $carePlanItemChild) {
-                            echo '  ' . $carePlanItemChild->id;
-                            echo '  ' . $carePlanItemChild->meta_value;
-                            $carePlan->setCareItemUserValue($user,
-                                $carePlanItemChild->careItem->name,
-                                $carePlanItemChild->meta_value);
-                        }
-                    }
-                }
-            }
-        }
-
-
-        /*
-         * OLD RULES_* careplan structure
-        // get providers
-        $sections = CPRulesPCP::where('prov_id', '=' , $wpUser->program_id)->get();
-        if(count($sections) > 0) {
-            foreach ($sections as $section) {
-                $sectionData = (new CareplanUIService)->getCareplanSectionData($wpUser->program_id, $section->section_text, $wpUser);
-                if (empty($sectionData)) {
-                    return false;
-                }
-                $parentItems = $sectionData['items'];
-                $itemData = $sectionData['sub_meta'];
-                foreach ($parentItems as $parentItemName => $parentItemInfo) {
-                    //echo '<h2>' . $parentItemName . '</h2>';
-                    foreach ($parentItemInfo as $child1Key => $child1Info) {
-                        //echo '<h3>' . $child1Key . '</h3>';
-                        // does it have children?
-                        if (isset($itemData[$parentItemName][$child1Key])) {
-                            // HAS CHILDREN ITEMS
-                        } else if (isset($itemData[$parentItemName][0][$child1Key]['items_id'])) {
-                            // SINGLETON, HAS NO CHILDREN
-                        }
-                        // ensure status is set
-                        if (strlen($child1Info['status']) < 3) {
-                            $child1Info['status'] = 'Inactive';
-                        }
-                        $item_checkbox_key = 'CHECK_STATUS|' . $itemData[$parentItemName][0][$child1Key]['items_id'] . '|' . $itemData[$parentItemName][0][$child1Key]['items_id'] . "|status";
-                        //echo "Adding to UCP! meta_key = status meta_value = " . $child1Info['status'] . "<br><br>";
-                        $newUCP = new CPRulesUCP;
-                        $newUCP->items_id = $itemData[$parentItemName][0][$child1Key]['items_id'];
-                        $newUCP->user_id = $wpUser->id;
-                        $newUCP->meta_key = 'status';
-                        $newUCP->meta_value = $child1Info['status'];
-                        $newUCP->save();
-                        if (isset($itemData[$parentItemName][$child1Key])) {
-                            foreach ($itemData[$parentItemName][$child1Key] as $child2Key => $child2Info) {
-                                // item heading
-                                //echo '<br><strong>' . $child2Key . '</strong><br>';
-                                // show info
-                                foreach ($child2Info as $key => $value) {
-                                    //echo $key . ' :: ' . $value . '<br>';
-                                }
-                                // set null to empty string
-                                if (strtolower($child2Info['ui_default']) == 'null') {
-                                    $child2Info['ui_default'] = '';
-                                }
-                                // add to ucp
-                                //echo "Adding to UCP! meta_key = value meta_value = " . $child2Info['ui_default'];
-                                $newUCP = new CPRulesUCP;
-                                $newUCP->items_id = $child2Info['items_id'];
-                                $newUCP->user_id = $wpUser->id;
-                                $newUCP->meta_key = 'value';
-                                $newUCP->meta_value = $child2Info['ui_default'];
-                                $newUCP->save();
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-        */
-    }
-
-    public function findByRole($role, $select = '*')
-    {
+    public function findByRole(
+        $role,
+        $select = '*'
+    ) {
         return User::select(DB::raw($select))
-            ->whereHas('roles', function ($q) use ($role) {
+            ->whereHas('roles', function ($q) use
+            (
+                $role
+            ) {
                 $q->where('name', '=', $role);
             })->get();
     }
