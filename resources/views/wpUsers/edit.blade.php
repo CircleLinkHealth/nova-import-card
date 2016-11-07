@@ -96,7 +96,7 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-2">{!! Form::label('email', 'email:') !!}</div>
-                                        <div class="col-xs-10">{!! Form::text('email', $patient->email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-10">{!! Form::email('email', $patient->email, ['class' => 'form-control', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -250,8 +250,6 @@
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('status', 'Status:') !!}</div>
                                             <div class="col-xs-4">{!! Form::select('status', array('Active' => 'Active', 'Inactive' => 'Inactive'), $patient->status, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
-                                            <div class="col-xs-1">{!! Form::label('email', 'Email:') !!}</div>
-                                            <div class="col-xs-5">{!! Form::text('email', $patient->email, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
