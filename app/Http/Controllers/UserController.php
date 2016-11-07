@@ -444,7 +444,7 @@ class UserController extends Controller
             'FL' => "Florida",
             'GA' => "Georgia",
             'HI' => "Hawaii",
-            'id' => "Idaho",
+            'ID' => "Idaho",
             'IL' => "Illinois",
             'IN' => "Indiana",
             'IA' => "Iowa",
