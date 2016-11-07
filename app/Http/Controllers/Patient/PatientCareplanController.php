@@ -1,6 +1,5 @@
 <?php namespace App\Http\Controllers\Patient;
 
-use App\CarePlan;
 use App\CLH\Repositories\UserRepository;
 use App\Events\CarePlanWasApproved;
 use App\Formatters\WebixFormatter;
