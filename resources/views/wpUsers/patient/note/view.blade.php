@@ -142,6 +142,14 @@
                                                             @foreach ($careteam_info as $id => $name)
                                                                 <option value="{{$id}}"> {{$name}} </option>
                                                             @endforeach
+
+                                                            <!-- rework later, quick fix ticket: 679 !-->
+                                                            @if($patient->program_id == 29)
+                                                                    <option value="2584">Tina Booze</option>
+                                                            @elseif
+                                                                    <option value="948">Patient Support</option>
+                                                            @endif
+
                                                         </select>
                                                     </div>
                                                 </div>
