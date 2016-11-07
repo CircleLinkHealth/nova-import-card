@@ -137,15 +137,15 @@ class PatientController extends Controller
                     $obs_by_pcp['obs_biometrics'][] = $observation;
                     break;
                 case 'Adherence':
-//                    $question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
-//                    // find carePlanItem with qid
-//                    if ($question) {
-//                        $item = CareItem::where('qid', '=', $question->qid)->first();
-//                        if ($item) {
-//                            $observation['description'] = $item->display_name;
-//                        }
-//                    }
-//                    $obs_by_pcp['obs_medications'][] = $observation;
+                    $question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
+                    // find carePlanItem with qid
+                    if ($question) {
+                        $item = CareItem::where('qid', '=', $question->qid)->first();
+                        if ($item) {
+                            $observation['description'] = $item->display_name;
+                        }
+                    }
+                    $obs_by_pcp['obs_medications'][] = $observation;
                     break;
                 case 'Symptom':
                 case 'Severity':
@@ -161,42 +161,22 @@ class PatientController extends Controller
                 case 'Other':
                 case 'Call':
                     // only y/n responses, skip anything that is a number as its assumed it is response to a list
-//                    $question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
-//                    // find carePlanItem with qid
-//                    if ($question) {
-//                        $item = CareItem::where('qid', '=', $question->qid)->first();
-//                        if ($item) {
-//                            $observation['description'] = $item->display_name;
-//                        }
-//                    }
-//                    if (($observation['obs_key'] == 'Call') || (!is_numeric($observation['obs_value']))) {
-//                        $obs_by_pcp['obs_lifestyle'][] = $observation;
-//                    }
+                    $question = CPRulesQuestions::where('msg_id', '=', $observation->obs_message_id)->first();
+                    // find carePlanItem with qid
+                    if ($question) {
+                        $item = CareItem::where('qid', '=', $question->qid)->first();
+                        if ($item) {
+                            $observation['description'] = $item->display_name;
+                        }
+                    }
+                    if (($observation['obs_key'] == 'Call') || (!is_numeric($observation['obs_value']))) {
+                        $obs_by_pcp['obs_lifestyle'][] = $observation;
+                    }
                     break;
                 default:
                     break;
             }
         }
-
-        // At this point, everything that didnt match went to lifestyle
-        // get array of lifestyle questions, and only include these in obs_lifestyle (also include Call observations!)
-
-        //$lifestyle_questions = $this->rules_model->getQuestionIdsByPCP(2, 7);
-        /*
-        $lifestyle_questions = array();
-        $lifestyle_msg_ids = array();
-        $filtered_lifestyle_obs = array();
-        foreach($lifestyle_questions as $lifestyle_question) {
-            $lifestyle_msg_ids[] = $lifestyle_question['msg_id'];
-        }
-
-        foreach($obs_by_pcp['obs_lifestyle'] as $lifestyle_obs) {
-            if((($lifestyle_obs['obs_key'] == 'Call')) || (in_array($lifestyle_obs['obs_message_id'], $lifestyle_msg_ids) && $lifestyle_obs['obs_value'] != '')) {
-                $filtered_lifestyle_obs[] = $lifestyle_obs;
-            }
-        }
-        $obs_by_pcp['obs_lifestyle'] = $filtered_lifestyle_obs;
-        */
 
         $observation_json = [];
         foreach ($obs_by_pcp as $section => $observations) {
