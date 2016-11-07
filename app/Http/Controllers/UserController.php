@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use App\CarePlan;
+
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\Repositories\UserRepository;
 use App\CPRulesPCP;
@@ -431,8 +431,6 @@ class UserController extends Controller
             $locations_arr = $practice->locations->all();
         }
 
-        $carePlans = CarePlan::where('program_id', '=', $patient->program_id)->pluck('display_name', 'id')->all();
-
         // States (for dropdown)
         $states_arr = [
             'AL' => "Alabama",
@@ -521,7 +519,6 @@ class UserController extends Controller
             'role'          => $role,
             'roles'         => $roles,
             'revisions'     => $revisions,
-            'carePlans'     => $carePlans,
         ]);
     }
 
