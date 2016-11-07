@@ -12,7 +12,6 @@ use App\Call;
 use App\PatientContactWindow;
 use App\PatientInfo;
 use App\Services\Calls\SchedulerService;
-use App\User;
 use Carbon\Carbon;
 
 //READ ME:
@@ -108,7 +107,7 @@ class ReschedulerHandler
                 $day = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
 
                 $this->rescheduledCalls[] = (new SchedulerService())->storeScheduledCall(
-                    $patient->user->ID,
+                    $patient->user->id,
                     $window_start,
                     $window_end,
                     $day,

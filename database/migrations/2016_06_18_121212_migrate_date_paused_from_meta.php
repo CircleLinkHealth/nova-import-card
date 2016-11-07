@@ -1,12 +1,6 @@
 <?php
 
 use App\User;
-use App\PatientInfo;
-use App\ProviderInfo;
-use App\PhoneNumber;
-use App\PatientCarePlan;
-use App\PatientCareTeamMember;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class MigrateDatePausedFromMeta extends Migration {
@@ -24,7 +18,7 @@ class MigrateDatePausedFromMeta extends Migration {
 		})->with('patientInfo')->get();
 		echo 'Process role patient users - Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
-			echo 'Processing user '.$user->ID.PHP_EOL;
+            echo 'Processing user ' . $user->id . PHP_EOL;
 			echo 'Add missing meta to User->PatientInfo'.PHP_EOL;
 
 			// set values

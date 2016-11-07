@@ -1,6 +1,6 @@
-@if(App\Models\CCD\Ccda::wherePatientId($patient->ID)->exists())
+@if(App\Models\CCD\Ccda::wherePatientId($patient->id)->exists())
     <div class="pull-right">
-        <a href="{{ route('get.CCDViewerController.showByUserId', [ 'userId' => $patient->ID]) }}"
+        <a href="{{ route('get.CCDViewerController.showByUserId', [ 'userId' => $patient->id]) }}"
            class="btn btn-primary btn-xs"
            target="_blank"
         >

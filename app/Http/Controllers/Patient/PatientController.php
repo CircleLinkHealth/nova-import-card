@@ -8,7 +8,7 @@ use App\Observation;
 use App\PatientCarePlan;
 use App\PatientCareTeamMember;
 use App\PhoneNumber;
-use App\Program;
+use App\Practice;
 use App\Services\CarePlanViewService;
 use App\User;
 use Carbon\Carbon;
@@ -56,7 +56,7 @@ class PatientController extends Controller
         }
 
         // program
-        $program = Program::find($wpUser->program_id);
+        $program = Practice::find($wpUser->program_id);
 
         $problems = $carePlanViewService->getProblemsToMonitor($wpUser);
 
@@ -73,7 +73,7 @@ class PatientController extends Controller
             array('section' => 'obs_lifestyle', 'id' => 'obs_lifestyle_dtable', 'title' => 'Lifestyle', 'col_name_question' => 'Question', 'col_name_severity' => 'Response'),
         );
 
-        $observations = Observation::where('user_id', '=', $wpUser->ID)
+        $observations = Observation::where('user_id', '=', $wpUser->id)
             ->where('obs_unit', '!=', "invalid")
             ->where('obs_unit', '!=', "scheduled")
             ->orderBy('obs_date', 'desc')
@@ -231,7 +231,7 @@ class PatientController extends Controller
         if (isset($input['patient_approval_id'])) event(new CarePlanWasApproved(User::find($input['patient_approval_id'])));
 
         $patientData = array();
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+        $patients = User::intersectPracticesWith(auth()->user())
             ->with('primaryProgram')
             ->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
@@ -293,14 +293,16 @@ class PatientController extends Controller
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
                     if ($isProvider) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.careplan.print', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.careplan.print',
+                                ['patient' => $patient->id]) . '"><strong>Approve Now</strong></a>';
                     }
                 } else if ($careplanStatus == 'draft') {
                     $careplanStatus = 'CLH Approve';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'CLH Approve';
                     if ($isCareCenter || $isAdmin) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
+                                ['patient' => $patient->id]) . '"><strong>CLH Approve</strong></a>';
                     }
                 }
 
@@ -332,27 +334,45 @@ class PatientController extends Controller
 
                 try {
                     $patientData[] = array(
-                        'key' => $patient->ID, // $part->ID,
-                        'patient_name' => $patient->fullName, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
-                        'first_name' => $patient->first_name, //$meta[$part->ID]["first_name"][0],
-                        'last_name' => $patient->last_name, //$meta[$part->ID]["last_name"][0],
-                        'ccm_status' => ucfirst($patient->ccmStatus), //ucfirst($meta[$part->ID]["ccm_status"][0]),
-                        'careplan_status' => $careplanStatus, //$careplanStatus,
-                        'tooltip' => $tooltip, //$tooltip,
-                        'careplan_status_link' => $careplanStatusLink, //$careplanStatusLink,
-                        'careplan_provider_approver' => $approverName, //$approverName,
-                        'dob' => Carbon::parse($patient->birthDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
-                        'phone' => isset($patient->phoneNumbers->number) ? $patient->phoneNumbers->number : $patient->phone, //$user_config[$part->ID]["study_phone_number"],
-                        'age' => $patient->age,
-                        'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
-                        'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
-                        'ccm_time' => $patient->patientInfo->cur_month_activity_time, //$ccm_time[0],
-                        'ccm_seconds' => $patient->patientInfo->cur_month_activity_time, //$meta[$part->ID]['cur_month_activity_time'][0]
-                        'provider' => $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
-                        'site' => $programName,
+                        'key'                        => $patient->id,
+                        // $part->id,
+                        'patient_name'               => $patient->fullName,
+                        //$meta[$part->id]["first_name"][0] . " " .$meta[$part->id]["last_name"][0],
+                        'first_name'                 => $patient->first_name,
+                        //$meta[$part->id]["first_name"][0],
+                        'last_name'                  => $patient->last_name,
+                        //$meta[$part->id]["last_name"][0],
+                        'ccm_status'                 => ucfirst($patient->ccmStatus),
+                        //ucfirst($meta[$part->id]["ccm_status"][0]),
+                        'careplan_status'            => $careplanStatus,
+                        //$careplanStatus,
+                        'tooltip'                    => $tooltip,
+                        //$tooltip,
+                        'careplan_status_link'       => $careplanStatusLink,
+                        //$careplanStatusLink,
+                        'careplan_provider_approver' => $approverName,
+                        //$approverName,
+                        'dob'                        => Carbon::parse($patient->birthDate)->format('m/d/Y'),
+                        //date("m/d/Y", strtotime($user_config[$part->id]["birth_date"])),
+                        'phone'                      => isset($patient->phoneNumbers->number)
+                            ? $patient->phoneNumbers->number
+                            : $patient->phone,
+                        //$user_config[$part->id]["study_phone_number"],
+                        'age'                        => $patient->age,
+                        'reg_date'                   => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
+                        //date("m/d/Y", strtotime($user_config[$part->id]["registration_date"])) ,
+                        'last_read'                  => $lastObservationDate,
+                        //date("m/d/Y", strtotime($last_read)),
+                        'ccm_time'                   => $patient->patientInfo->cur_month_activity_time,
+                        //$ccm_time[0],
+                        'ccm_seconds'                => $patient->patientInfo->cur_month_activity_time,
+                        //$meta[$part->id]['cur_month_activity_time'][0]
+                        'provider'                   => $bpName,
+                        // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
+                        'site'                       => $programName,
                     );
                 } catch (\Exception $e) {
-                    \Log::critical("{$patient->ID} has no patient info");
+                    \Log::critical("{$patient->id} has no patient info");
                     \Log::critical("{$e} has no patient info");
                 }
             }
@@ -377,7 +397,7 @@ class PatientController extends Controller
     {
 
         $patientData = array();
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+        $patients = User::intersectPracticesWith(auth()->user())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
             })->get();
@@ -405,14 +425,16 @@ class PatientController extends Controller
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'Approve Now';
                     if (Auth::user()->hasRole('provider')) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>Approve Now</strong></a>';
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
+                                ['patient' => $patient->id]) . '"><strong>Approve Now</strong></a>';
                     }
                 } else if ($patient->carePlanStatus == 'draft') {
                     $careplanStatus = 'CLH Approve';
                     $tooltip = $careplanStatus;
                     $careplanStatusLink = 'CLH Approve';
                     if (Auth::user()->hasRole('care-center') || Auth::user()->hasRole('administrator')) {
-                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show', array('patient' => $patient->ID)) . '"><strong>CLH Approve</strong></a>';
+                        $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
+                                ['patient' => $patient->id]) . '"><strong>CLH Approve</strong></a>';
                     }
                 }
 
@@ -432,23 +454,40 @@ class PatientController extends Controller
                     $lastObservationDate = date("m/d/Y", strtotime($lastObservation->obs_date));
                 }
 
-                $patientData[] = array('key' => $patient->ID, // $part->ID,
-                    'patient_name' => $patient->fullName, //$meta[$part->ID]["first_name"][0] . " " .$meta[$part->ID]["last_name"][0],
-                    'first_name' => $patient->first_name, //$meta[$part->ID]["first_name"][0],
-                    'last_name' => $patient->last_name, //$meta[$part->ID]["last_name"][0],
-                    'ccm_status' => ucfirst($patient->ccmStatus), //ucfirst($meta[$part->ID]["ccm_status"][0]),
-                    'careplan_status' => $careplanStatus, //$careplanStatus,
-                    'tooltip' => $tooltip, //$tooltip,
-                    'careplan_status_link' => $careplanStatusLink, //$careplanStatusLink,
-                    'careplan_provider_approver' => $approverName, //$approverName,
-                    'dob' => Carbon::parse($patient->birthDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["birth_date"])),
-                    'phone' => $patient->phone, //$user_config[$part->ID]["study_phone_number"],
-                    'age' => $patient->age,
-                    'reg_date' => Carbon::parse($patient->registrationDate)->format('m/d/Y'), //date("m/d/Y", strtotime($user_config[$part->ID]["registration_date"])) ,
-                    'last_read' => $lastObservationDate, //date("m/d/Y", strtotime($last_read)),
-                    'ccm_time' => $patient->patientInfo->cur_month_activity_time, //$ccm_time[0],
-                    'ccm_seconds' => $patient->patientInfo->cur_month_activity_time, //$meta[$part->ID]['cur_month_activity_time'][0]
-                    'provider' => $bpName, // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
+                $patientData[] = array(
+                    'key'                        => $patient->id,
+                    // $part->id,
+                    'patient_name'               => $patient->fullName,
+                    //$meta[$part->id]["first_name"][0] . " " .$meta[$part->id]["last_name"][0],
+                    'first_name'                 => $patient->first_name,
+                    //$meta[$part->id]["first_name"][0],
+                    'last_name'                  => $patient->last_name,
+                    //$meta[$part->id]["last_name"][0],
+                    'ccm_status'                 => ucfirst($patient->ccmStatus),
+                    //ucfirst($meta[$part->id]["ccm_status"][0]),
+                    'careplan_status'            => $careplanStatus,
+                    //$careplanStatus,
+                    'tooltip'                    => $tooltip,
+                    //$tooltip,
+                    'careplan_status_link'       => $careplanStatusLink,
+                    //$careplanStatusLink,
+                    'careplan_provider_approver' => $approverName,
+                    //$approverName,
+                    'dob'                        => Carbon::parse($patient->birthDate)->format('m/d/Y'),
+                    //date("m/d/Y", strtotime($user_config[$part->id]["birth_date"])),
+                    'phone'                      => $patient->phone,
+                    //$user_config[$part->id]["study_phone_number"],
+                    'age'                        => $patient->age,
+                    'reg_date'                   => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
+                    //date("m/d/Y", strtotime($user_config[$part->id]["registration_date"])) ,
+                    'last_read'                  => $lastObservationDate,
+                    //date("m/d/Y", strtotime($last_read)),
+                    'ccm_time'                   => $patient->patientInfo->cur_month_activity_time,
+                    //$ccm_time[0],
+                    'ccm_seconds'                => $patient->patientInfo->cur_month_activity_time,
+                    //$meta[$part->id]['cur_month_activity_time'][0]
+                    'provider'                   => $bpName,
+                    // $bpUserInfo['prefix'] . ' ' . $bpUserInfo['first_name'] . ' ' . $bpUserInfo['last_name'] . ' ' . $bpUserInfo['qualification']
                 );
             }
         }
@@ -467,10 +506,10 @@ class PatientController extends Controller
     public function showPatientSelect(Request $request)
     {
         // get number of approvals
-        $patients = User::whereIn('ID', Auth::user()->viewablePatientIds())
+        $patients = User::intersectPracticesWith(auth()->user())
             ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')->whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
-            })->get()->pluck('fullNameWithId', 'ID')->all();
+            })->get()->pluck('fullNameWithId', 'id')->all();
 
         return view('wpUsers.patient.select', compact(['patients']));
     }
@@ -486,8 +525,8 @@ class PatientController extends Controller
         $sql = "select distinct
 			*
         	FROM users u
-        	JOIN patient_info pi ON pi.user_id = u.ID
-             AND u.ID IN (" . $userIds . ")
+        	JOIN patient_info pi ON pi.user_id = u.id
+             AND u.id IN (" . $userIds . ")
              AND concat(u.first_name , ' ', u.last_name, ' ', pi.user_id, ' ', pi.mrn_number, ' ', pi.birth_date ) like '%" . $query . "%'
              order by 1
             ;";
@@ -504,8 +543,10 @@ class PatientController extends Controller
             $dob = new Carbon(($user->birth_date));
             $patients[$i]['dob'] = $dob->format('m-d-Y');
             $patients[$i]['mrn'] = $user->mrn_number;
-            $patients[$i]['link'] = URL::route('patient.summary', array('patient' => $d->ID));
-            $programObj = Program::find(($user->program_id)) ? Program::find(($user->program_id)) : "";
+            $patients[$i]['link'] = URL::route('patient.summary', ['patient' => $d->id]);
+            $programObj = Practice::find(($user->program_id))
+                ? Practice::find(($user->program_id))
+                : "";
             if ($programObj->display_name) {
                 $patients[$i]['program'] = $programObj->display_name;
             } else {
@@ -560,7 +601,7 @@ class PatientController extends Controller
         }
 
         // program
-        $program = Program::find($wpUser->program_id);
+        $program = Practice::find($wpUser->program_id);
 
         return view('wpUsers.patient.alerts', ['program' => $program, 'patient' => $wpUser]);
     }
@@ -602,7 +643,7 @@ class PatientController extends Controller
                 return response("User not found", 401);
             }
             // program
-            $program = Program::find($wpUser->program_id);
+            $program = Practice::find($wpUser->program_id);
         } else {
             // program view
         }

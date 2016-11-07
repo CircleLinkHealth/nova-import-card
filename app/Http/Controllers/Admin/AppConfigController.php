@@ -2,7 +2,6 @@
 
 use App\AppConfig;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -121,7 +120,7 @@ class AppConfigController extends Controller {
 			return response( "User not found", 401 );
 		}
 
-		//$user->programs()->detach();
+        //$user->practices()->detach();
 		$appConfig->delete();
 
 		return redirect()->back()->with( 'messages', ['successfully deleted app config'] );

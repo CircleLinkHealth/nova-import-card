@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddNameColumnsToWpBlogsTable extends Migration {
 
@@ -15,7 +15,7 @@ class AddNameColumnsToWpBlogsTable extends Migration {
 		Schema::connection('mysql_no_prefix')->table('wp_blogs', function(Blueprint $table)
 		{
 			if (!Schema::connection('mysql_no_prefix')->hasColumn('wp_blogs', 'name')) {
-				$table->string('name', 100)->after('blog_id');
+                $table->string('name', 100)->after('id');
 				$table->string('display_name')->nullable()->after('name');
 				$table->string('short_display_name')->nullable()->after('display_name');
 				$table->string('description')->nullable()->after('short_display_name');
@@ -27,7 +27,7 @@ class AddNameColumnsToWpBlogsTable extends Migration {
 		{
 			if (Schema::connection('mysql_no_prefix')->hasColumn('wp_blogs', 'name')) {
 				DB::connection('mysql_no_prefix')->table('wp_blogs as u')
-					->update(['u.name' => DB::raw('u.blog_id')]);
+                    ->update(['u.name' => DB::raw('u.id')]);
 				DB::connection('mysql_no_prefix')->table('wp_blogs as u')
 					->update(['u.created_at' => DB::raw('u.registered')]);
 			}

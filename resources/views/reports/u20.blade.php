@@ -352,10 +352,10 @@
                                    onclick="webix.toExcel(obs_alerts_dtable);">
                         @endif
                         @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
-                            <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program'
+                            <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Practice'
                                    style='margin:15px;'
                                    onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
-                            <input id='site_hide_btn' type='button' class='btn btn-primary' value='Hide Program'
+                            <input id='site_hide_btn' type='button' class='btn btn-primary' value='Hide Practice'
                                    style='display:none;margin:15px;'
                                    onclick='obs_alerts_dtable.hideColumn("site");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
                         @endif

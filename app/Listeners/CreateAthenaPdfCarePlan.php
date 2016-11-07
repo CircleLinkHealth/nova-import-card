@@ -70,7 +70,7 @@ class CreateAthenaPdfCarePlan
                 $ccda = $this->ccdaRepository
                     ->skipPresenter()
                     ->findWhere([
-                        'patient_id' => $user->ID,
+                        'patient_id' => $user->id,
                     ])->first();
 
                 $ccdaRequest = $this->ccdaRequest

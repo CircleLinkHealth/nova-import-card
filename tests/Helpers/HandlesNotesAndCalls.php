@@ -8,7 +8,7 @@ trait HandlesNotesAndCalls
     public function createNote(){
 
         $this->actingAs($this->provider)
-            ->visit("/manage-patients/{$this->patient->ID}/notes/create")
+            ->visit("/manage-patients/{$this->patient->id}/notes/create")
             //Select Note Topic
             ->select('General (Clinical)', 'type')
             //Fill in 'When'
@@ -20,7 +20,7 @@ trait HandlesNotesAndCalls
             //Add someone to email
             ->select('Patient Support', 'careteam[]')
             ->press('Submit')
-            ->seePageIs("/manage-patients/{$this->patient->ID}/notes");
+            ->seePageIs("/manage-patients/{$this->patient->id}/notes");
 
     }
 

@@ -9,7 +9,6 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class CallController extends Controller
 {
@@ -90,7 +89,7 @@ class CallController extends Controller
         $call->is_cpm_outbound = 1;
         $call->service = 'phone';
         $call->status = 'scheduled';
-        $call->scheduler = auth()->user()->ID;
+        $call->scheduler = auth()->user()->id;
         $call->save();
 
         return response("successfully created call ", 201);
@@ -104,7 +103,9 @@ class CallController extends Controller
         $window_start = Carbon::parse($input['window_start'])->format('H:i');
         $window_end = Carbon::parse($input['window_end'])->format('H:i');
 
-        $scheduler = ($input['suggested_date'] == $input['date']) ? 'core algorithm' : Auth::user()->ID;
+        $scheduler = ($input['suggested_date'] == $input['date'])
+            ? 'core algorithm'
+            : Auth::user()->id;
 
 
 //        dd([
@@ -173,7 +174,7 @@ class CallController extends Controller
         // for null outbound_cpm_id
         if($data['columnName'] == 'outbound_cpm_id' && (empty($data['value']) || strtolower($data['value']) == 'unassigned' )) {
 
-            $call->scheduler = Auth::user()->ID;
+            $call->scheduler = Auth::user()->id;
             $col = $data['columnName'];
             $call->$col = null;
 
@@ -189,7 +190,7 @@ class CallController extends Controller
                 $call->inboundUser->patientInfo->save();
             }
         } else {
-            $call->scheduler = Auth::user()->ID;
+            $call->scheduler = Auth::user()->id;
             $col = $data['columnName'];
             $call->$col = $data['value'];
         }

@@ -17,7 +17,6 @@ $(document).ready(function(){
 });
 
 $(document).ready(function(){
-    /* $( ".submitFormBtn").click(function(e) { */
     $( "a, .submitFormBtn").click(function(e) {
         if ($(this).attr('omitsubmit')) {
             if(typeof $(this).attr('dtarget') === 'undefined') {
@@ -61,8 +60,6 @@ $(document).ready(function(){
     });
 
     // http://stackoverflow.com/questions/30273155/dynamic-dropdowns-using-select2-json-request-and-laravel
-    var $patient2 = $('.patient2');
-
 
     $(".patient2").select2({
         ajax: {

@@ -57,14 +57,14 @@ class RegressionTest extends TestCase
 
         $text = "
             A Provider was created:
-            login: {$this->provider->user_email}
+            login: {$this->provider->email}
             password: password
             ";
 
         foreach ($this->patients as $patient) {
             $text .= "
             A patient was created:
-            id: {$patient->ID}
+            id: {$patient->id}
             name: {$patient->display_name}
             ";
         }

@@ -47,7 +47,7 @@ if (strpos($requestUri, 'login') !== false) {
 $patientId = '';
 $patientProgramId = '';
 if (isset($patient) && !empty($patient)) {
-    $patientId = $patient->ID;
+    $patientId = $patient->id;
     $patientProgramId = $patient->program_id;
 }
 ?>
@@ -142,7 +142,7 @@ if (isset($patient) && !empty($patient)) {
 
                 var data = {
                     "patientId": '<?php echo $patientId; ?>',
-                    "providerId": '<?php echo Auth::user()->ID ?>',
+                    "providerId": '<?php echo Auth::user()->id ?>',
                     "totalTime": totalTime,
                     "programId": '<?php echo $patientProgramId; ?>',
                     "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',

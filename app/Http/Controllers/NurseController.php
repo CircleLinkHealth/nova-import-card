@@ -98,7 +98,7 @@ class NurseController extends Controller
 
             $last_activity_date = DB::table('lv_page_timer')
                 ->select(DB::raw('max(`end_time`) as last_activity'))
-                ->where('provider_id', $nurse->ID)
+                ->where('provider_id', $nurse->id)
                 ->get();
 
             if ($last_activity_date[0]->last_activity == null) {
@@ -109,7 +109,7 @@ class NurseController extends Controller
             }
 
             $nurses[$i]['# Calls Today'] =
-                Call::where('outbound_cpm_id', $nurse->ID)
+                Call::where('outbound_cpm_id', $nurse->id)
                     ->where(function ($q) {
                         $q->where('updated_at', '>=', Carbon::now()->startOfDay())
                             ->where('updated_at', '<=', Carbon::now()->endOfDay());
@@ -121,7 +121,7 @@ class NurseController extends Controller
                     ->count();
 
             $nurses[$i]['# Successful Calls Today'] =
-                Call::where('outbound_cpm_id', $nurse->ID)
+                Call::where('outbound_cpm_id', $nurse->id)
                     ->where(function ($j) {
                         $j->where('updated_at', '>=', Carbon::now()->startOfDay())
                             ->where('updated_at', '<=', Carbon::now()->endOfDay());
@@ -130,7 +130,7 @@ class NurseController extends Controller
                     ->count();
 
 //        $nurses[$nurse->fullName]['# Scheduled Calls Today'] =
-//            \App\Call::where('outbound_cpm_id', $nurse->ID)
+//            \App\Call::where('outbound_cpm_id', $nurse->id)
 //                ->where(function ($q){
 //                    $q->where('updated_at', '>=' , Carbon::now()->startOfDay())
 //                        ->where('updated_at', '<=' , Carbon::now()->endOfDay());
@@ -147,7 +147,7 @@ class NurseController extends Controller
             $s1 = $activity_time % 60;
             $activity_time_formatted = sprintf("%02d:%02d:%02d", $H1, $m1, $s1);
 
-            $system_time = PageTimer::where('provider_id', $nurse->ID)
+            $system_time = PageTimer::where('provider_id', $nurse->id)
                 ->createdToday('updated_at')
                 ->sum('billable_duration');
 

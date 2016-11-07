@@ -1,12 +1,7 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\User;
-use App\Observation;
-use App\UserMeta;
 use App\Services\CareplanService;
-use App\Http\Controllers\Controller;
-
+use App\User;
 use Illuminate\Http\Request;
 
 class CareplanController extends Controller {
@@ -51,7 +46,7 @@ class CareplanController extends Controller {
 	{
 		if ( $request->header('Client') == 'mobi' ) {
 			// get and validate current user
-			\JWTAuth::setIdentifier('ID');
+            \JWTAuth::setIdentifier('id');
 			$wpUser = \JWTAuth::parseToken()->authenticate();
 			if (!$wpUser) {
 				return response()->json(['error' => 'invalid_credentials'], 401);

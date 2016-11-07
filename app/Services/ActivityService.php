@@ -22,7 +22,7 @@ class ActivityService
     public function getOfflineActivitiesForPatient(User $patient){
 
         return Activity::select(DB::raw('*'))
-            ->where('patient_id', $patient->ID)
+            ->where('patient_id', $patient->id)
             ->where('logged_from', 'manual_input')
             ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
             ->orderBy('performed_at', 'desc')
@@ -71,26 +71,26 @@ class ActivityService
             if (!is_array($userIds)) {
                 $userIds = [$userIds];
             }
-            $users = User::whereIn('id', $userIds)->orderBy('ID', 'desc')->get();
+            $users = User::whereIn('id', $userIds)->orderBy('id', 'desc')->get();
         } else {
             // get all users
             $users = User::whereHas('roles', function ($q) {
                 $q->where('name', '=', 'participant');
-            })->orderBy('ID', 'desc')->get();
+            })->orderBy('id', 'desc')->get();
         }
 
         if (!empty($users)) {
             // loop through each user
             foreach ($users as $user) {
                 // get all activities for user for month
-                $totalDuration = $this->getTotalActivityTimeForMonth($user->ID, $month, $year);
+                $totalDuration = $this->getTotalActivityTimeForMonth($user->id, $month, $year);
 
                 //update report
                 (new PatientMonthlySummary())->updateCCMInfoForPatient($user->patientInfo, $totalDuration);
 
                 // update cur_month_activity_time with total
                 PatientInfo::updateOrCreate([
-                    'user_id' => $user->ID,
+                    'user_id' => $user->id,
                 ], [
                     'cur_month_activity_time' => $totalDuration,
                 ]);

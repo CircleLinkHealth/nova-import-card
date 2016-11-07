@@ -10,7 +10,6 @@ namespace App\Algorithms\Calls;
 
 
 use App\Call;
-use App\NurseInfo;
 use Carbon\Carbon;
 
 class NurseCallStatistics
@@ -53,7 +52,7 @@ class NurseCallStatistics
                 $rangeStart = Carbon::parse($this->startTime)->addHours($i);
                 $rangeEnd = Carbon::parse($this->endTime)->addHours($i);
 
-                $calls[$name][$i] = Call::where('outbound_cpm_id', $nurse->user->ID)
+                $calls[$name][$i] = Call::where('outbound_cpm_id', $nurse->user->id)
                     ->where('called_date', '>=', $rangeStart->toDateTimeString())
                     ->where('called_date', '<=', $rangeEnd->toDateTimeString());
 

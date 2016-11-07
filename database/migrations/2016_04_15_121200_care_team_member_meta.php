@@ -1,12 +1,7 @@
 <?php
 
-use App\User;
-use App\PatientInfo;
-use App\ProviderInfo;
-use App\PhoneNumber;
-use App\PatientCarePlan;
 use App\PatientCareTeamMember;
-use Illuminate\Database\Schema\Blueprint;
+use App\User;
 use Illuminate\Database\Migrations\Migration;
 
 class CareTeamMemberMeta extends Migration {
@@ -24,7 +19,7 @@ class CareTeamMemberMeta extends Migration {
 		})->with('meta', 'patientInfo')->get();
 		echo 'Process role patient users - Users found: '.$users->count().PHP_EOL;
 		foreach($users as $user) {
-			echo 'Processing user '.$user->ID.PHP_EOL;
+            echo 'Processing user ' . $user->id . PHP_EOL;
 			echo 'Deleting existing care team members'.PHP_EOL;
 			$user->patientCareTeamMembers()->delete();
 			echo 'Migrate Care Team Members from Meta'.PHP_EOL;
@@ -35,7 +30,7 @@ class CareTeamMemberMeta extends Migration {
 					foreach($careTeam as $ct) {
 						if(is_numeric($ct)) {
 							$careTeamMember = new PatientCareTeamMember;
-							$careTeamMember->user_id = $user->ID;
+                            $careTeamMember->user_id = $user->id;
 							$careTeamMember->member_user_id = $ct;
 							$careTeamMember->type = 'member';
 							$careTeamMember->save();
@@ -47,7 +42,7 @@ class CareTeamMemberMeta extends Migration {
 				} else {
 					if(is_numeric($careTeam)) {
 						$careTeamMember = new PatientCareTeamMember;
-						$careTeamMember->user_id = $user->ID;
+                        $careTeamMember->user_id = $user->id;
 						$careTeamMember->member_user_id = $careTeam;
 						$careTeamMember->type = 'member';
 						$careTeamMember->save();
@@ -60,7 +55,7 @@ class CareTeamMemberMeta extends Migration {
 			$careTeamBP = $user->getUserConfigByKey('billing_provider');
 			if(!empty($careTeamBP) && is_numeric($careTeamBP)) {
 				$careTeamMember = new PatientCareTeamMember;
-				$careTeamMember->user_id = $user->ID;
+                $careTeamMember->user_id = $user->id;
 				$careTeamMember->member_user_id = $careTeamBP;
 				$careTeamMember->type = 'billing_provider';
 				$careTeamMember->save();
@@ -73,7 +68,7 @@ class CareTeamMemberMeta extends Migration {
 			$careTeamLC = $user->getUserConfigByKey('lead_contact');
 			if(!empty($careTeamLC) && is_numeric($careTeamLC)) {
 				$careTeamMember = new PatientCareTeamMember;
-				$careTeamMember->user_id = $user->ID;
+                $careTeamMember->user_id = $user->id;
 				$careTeamMember->member_user_id = $careTeamLC;
 				$careTeamMember->type = 'lead_contact';
 				$careTeamMember->save();
@@ -89,7 +84,7 @@ class CareTeamMemberMeta extends Migration {
 					foreach($careTeamSA as $sa) {
 						if(is_numeric($sa)) {
 							$careTeamMember = new PatientCareTeamMember;
-							$careTeamMember->user_id = $user->ID;
+                            $careTeamMember->user_id = $user->id;
 							$careTeamMember->member_user_id = $sa;
 							$careTeamMember->type = 'send_alert_to';
 							$careTeamMember->save();
@@ -101,7 +96,7 @@ class CareTeamMemberMeta extends Migration {
 				} else {
 					if(is_numeric($careTeamSA)) {
 						$careTeamMember = new PatientCareTeamMember;
-						$careTeamMember->user_id = $user->ID;
+                        $careTeamMember->user_id = $user->id;
 						$careTeamMember->member_user_id = $careTeamSA;
 						$careTeamMember->type = 'send_alert_to';
 						$careTeamMember->save();

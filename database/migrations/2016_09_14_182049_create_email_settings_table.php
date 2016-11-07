@@ -17,7 +17,7 @@ class CreateEmailSettingsTable extends Migration
 
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

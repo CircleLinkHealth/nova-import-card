@@ -326,7 +326,7 @@ class CcdApiController extends Controller
 
             try {
                 ForeignId::updateOrCreate([
-                    'user_id'     => $provider['ID'],
+                    'user_id'     => $provider['id'],
                     'system'      => ForeignId::APRIMA,
                     'location_id' => $locationId,
                 ], [
@@ -337,7 +337,7 @@ class CcdApiController extends Controller
             }
         }
 
-        $programId = $user->blogId();
+        $programId = $user->program_id;
 
         try {
             $xml = base64_decode($request->input('file'));
@@ -346,7 +346,7 @@ class CcdApiController extends Controller
         }
 
         $ccdObj = $this->ccda->create([
-            'user_id'   => $user->ID,
+            'user_id'   => $user->id,
             'vendor_id' => 1,
             'xml'       => $xml,
             'source'    => Ccda::API,
@@ -362,9 +362,9 @@ class CcdApiController extends Controller
             $logger = new CcdItemLogger($ccdObj);
             $logger->logAll();
 
-            $providerId = empty($provider['ID'])
+            $providerId = empty($provider['id'])
                 ? null
-                : $provider['ID'];
+                : $provider['id'];
             $importer = new QAImportManager($programId, $ccdObj, $providerId, $locationId);
             $output = $importer->generateCarePlanFromCCD();
 
@@ -422,7 +422,7 @@ class CcdApiController extends Controller
 //        $data = [
 //            'ccdId' => $ccda->id,
 //            'errorMessage' => $errorMessage,
-//            'userId' => $user->ID,
+//            'userId' => $user->id,
 //            'line' => $line,
 //            'providerInfo' => $providerInfo
 //        ];

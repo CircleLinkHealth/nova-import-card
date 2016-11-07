@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddProgramToVendors extends Migration
 {
@@ -16,7 +16,7 @@ class AddProgramToVendors extends Migration
             $table->unsignedInteger('program_id')->after('id')->nullable();
 
             $table->foreign('program_id')
-                ->references('blog_id')
+                ->references('id')
                 ->on('wp_blogs')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

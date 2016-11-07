@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateNurseTable extends Migration
 {
@@ -25,7 +25,7 @@ class CreateNurseTable extends Migration
                 $table->boolean('spanish');
 
                 $table->foreign('user_id')
-                    ->references('ID')
+                    ->references('id')
                     ->on('users')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');

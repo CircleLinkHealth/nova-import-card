@@ -1,17 +1,6 @@
 <?php
 
 use App\User;
-use App\CareItemUserValue;
-use App\Models\CCD\CcdMedication;
-use App\Models\CCD\CcdAllergy;
-use App\Models\CCD\CcdProblem;
-use App\Models\CCD\Ccda;
-use App\PatientInfo;
-use App\ProviderInfo;
-use App\PhoneNumber;
-use App\PatientCarePlan;
-use App\PatientCareTeamMember;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class ReconcileStatusChangeDates2 extends Migration {
@@ -36,7 +25,7 @@ class ReconcileStatusChangeDates2 extends Migration {
 
 		/*
 		foreach($usersPausedNoDate as $user) {
-			echo PHP_EOL.$user->ID;
+			echo PHP_EOL.$user->id;
 			echo PHP_EOL.$user->patientInfo->ccm_status;
 			echo PHP_EOL.$user->patientInfo->date_paused;
 		}
@@ -67,7 +56,7 @@ class ReconcileStatusChangeDates2 extends Migration {
 
 	function processDateOfLastNote($user, $status) {
 		echo '---------START-------------'.PHP_EOL;
-		echo 'Processing user ' . $user->ID . PHP_EOL;
+        echo 'Processing user ' . $user->id . PHP_EOL;
 
 		$activity1comment = '';
 		$activity1status = '';

@@ -109,7 +109,7 @@
                                         template: function (obj) {
                                             if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
                                                 return "<a href='<?php echo URL::route('patient.activity.view', array(
-                                                                'patientId' => $patient->ID,
+                                                                'patientId' => $patient->id,
                                                                 'atcId'     => ''
                                                         )); ?>/" + obj.id + "'>" + obj.type + "</a>";
                                             else

@@ -3,8 +3,6 @@
 namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\CcdDemographicsLog;
-use App\Models\CCD\QAImportSummary;
-use App\Models\CCD\Ccda;
 use App\User;
 use Carbon\Carbon;
 
@@ -39,7 +37,9 @@ trait ValidatesQAImportOutput
                 ->whereLastName($demographics->last_name)
                 ->first();
 
-            return empty($dup) ? null : $dup->ID;
+            return empty($dup)
+                ? null
+                : $dup->id;
         };
 
         $phoneCheck = function () use ($demographics) {
@@ -85,7 +85,7 @@ trait ValidatesQAImportOutput
         $duplicateCcdJustUploaded = $duplicateCcdCheck();
 
         if (!empty($duplicatePatient) || $duplicateCcdJustUploaded) {
-            \Log::info("Duplicate CCD with ID {$ccda->id} was deleted.");
+            \Log::info("Duplicate CCD with id {$ccda->id} was deleted.");
             $ccda->delete();
 
             return false;

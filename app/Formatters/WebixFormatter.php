@@ -28,7 +28,7 @@ class WebixFormatter implements ReportFormatter
 
             //Display Name
             $formatted_notes[$count]['patient_name'] = $note->patient->display_name ? $note->patient->display_name : '';
-            //ID
+            //id
             $formatted_notes[$count]['patient_id'] = $note->patient_id;
 
             $formatted_notes[$count]['program_name'] = $note->patient->primaryProgram->display_name;
@@ -141,29 +141,29 @@ class WebixFormatter implements ReportFormatter
 //                $user = User::find($user);
 //            }
 
-            $careplanReport[$user->ID]['symptoms'] = $user->cpmSymptoms()->get()->pluck('name')->all();
-            $careplanReport[$user->ID]['problem'] = $user->cpmProblems()->get()->pluck('name')->all();
-            $careplanReport[$user->ID]['problems'] = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($user);
-            $careplanReport[$user->ID]['lifestyle'] = $user->cpmLifestyles()->get()->pluck('name')->all();
-            $careplanReport[$user->ID]['biometrics'] = $user->cpmBiometrics()->get()->pluck('name')->all();
-            $careplanReport[$user->ID]['medications'] = $user->cpmMedicationGroups()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['symptoms'] = $user->cpmSymptoms()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['problem'] = $user->cpmProblems()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['problems'] = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($user);
+            $careplanReport[$user->id]['lifestyle'] = $user->cpmLifestyles()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['biometrics'] = $user->cpmBiometrics()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['medications'] = $user->cpmMedicationGroups()->get()->pluck('name')->all();
         }
 
         $other_problems = (new ReportsService())->getInstructionsforOtherProblems($user);
 
         if(!empty($other_problems)) {
-            $careplanReport[$user->ID]['problems']['Other Problems'] = $other_problems;
+            $careplanReport[$user->id]['problems']['Other Problems'] = $other_problems;
         }
 
         //Get Biometrics with Values
-        $careplanReport[$user->ID]['bio_data'] = [];
+        $careplanReport[$user->id]['bio_data'] = [];
 
         //Ignore Smoking - Untracked Biometric
-        if(($key = array_search(CpmBiometric::SMOKING, $careplanReport[$user->ID]['biometrics'])) !== false) {
-            unset($careplanReport[$user->ID]['biometrics'][$key]);
+        if (($key = array_search(CpmBiometric::SMOKING, $careplanReport[$user->id]['biometrics'])) !== false) {
+            unset($careplanReport[$user->id]['biometrics'][$key]);
         }
 
-        foreach ($careplanReport[$user->ID]['biometrics'] as $metric) {
+        foreach ($careplanReport[$user->id]['biometrics'] as $metric) {
 
             $biometric = $user->cpmBiometrics->where('name', $metric)->first();
             $biometric_values = app(config('cpmmodelsmap.biometrics')[$biometric->type])->getUserValues($user);
@@ -276,25 +276,23 @@ class WebixFormatter implements ReportFormatter
             }
 
 
+            $careplanReport[$user->id]['bio_data'][$metric]['target'] = $biometric_values['target'] . ReportsService::biometricsUnitMapping($metric);
+            $careplanReport[$user->id]['bio_data'][$metric]['starting'] = $biometric_values['starting'] . ReportsService::biometricsUnitMapping($metric);
+            $careplanReport[$user->id]['bio_data'][$metric]['verb'] = $biometric_values['verb'];
+
+        }//dd($careplanReport[$user->id]['bio_data']);
 
 
-            $careplanReport[$user->ID]['bio_data'][$metric]['target'] = $biometric_values['target'] . ReportsService::biometricsUnitMapping($metric);
-            $careplanReport[$user->ID]['bio_data'][$metric]['starting'] = $biometric_values['starting'] . ReportsService::biometricsUnitMapping($metric);
-            $careplanReport[$user->ID]['bio_data'][$metric]['verb'] = $biometric_values['verb'];
-
-        }//dd($careplanReport[$user->ID]['bio_data']);
-
-
-        array_reverse($careplanReport[$user->ID]['bio_data']);
+        array_reverse($careplanReport[$user->id]['bio_data']);
 
         //Medications List
-        $careplanReport[$user->ID]['taking_meds'] = 'No instructions at this time';
+        $careplanReport[$user->id]['taking_meds'] = 'No instructions at this time';
         $medicationList = $user->cpmMiscs->where('name',CpmMisc::MEDICATION_LIST)->all();
         if(!empty($medicationList)) {
-            $meds = CcdMedication::where('patient_id', '=', $user->ID)->orderBy('name')->get();
+            $meds = CcdMedication::where('patient_id', '=', $user->id)->orderBy('name')->get();
             if ($meds->count() > 0) {
                 $i = 0;
-                $careplanReport[$user->ID]['taking_meds'] = [];
+                $careplanReport[$user->id]['taking_meds'] = [];
                 foreach ($meds as $med) {
                     empty($med->name) 
                         ? $medText = ''
@@ -303,28 +301,28 @@ class WebixFormatter implements ReportFormatter
                     if(!empty($med->sig)) {
                         $medText .= '<br /><span style="font-style:italic;">- '.$med->sig.'</span>';
                     }
-                    $careplanReport[$user->ID]['taking_meds'][] = $medText;
+                    $careplanReport[$user->id]['taking_meds'][] = $medText;
                     $i++;
                 }
             }
         }
 
         //Allergies
-        $careplanReport[$user->ID]['allergies'] = 'No instructions at this time';
+        $careplanReport[$user->id]['allergies'] = 'No instructions at this time';
         $allergy = $user->cpmMiscs->where('name',CpmMisc::ALLERGIES)->all();
         if(!empty($allergy)){
-            $allergies = CcdAllergy::where('patient_id', '=', $user->ID)->orderBy('allergen_name')->get();
+            $allergies = CcdAllergy::where('patient_id', '=', $user->id)->orderBy('allergen_name')->get();
             if($allergies->count() > 0) {
-                $careplanReport[$user->ID]['allergies'] = '';
+                $careplanReport[$user->id]['allergies'] = '';
                 $i = 0;
                 foreach($allergies as $allergy) {
                     if(empty($allergy->allergen_name)) {
                         continue 1;
                     }
                     if($i > 0) {
-                        $careplanReport[$user->ID]['allergies'] .= '<br>';
+                        $careplanReport[$user->id]['allergies'] .= '<br>';
                     }
-                    $careplanReport[$user->ID]['allergies'] .= $allergy->allergen_name;
+                    $careplanReport[$user->id]['allergies'] .= $allergy->allergen_name;
                     $i++;
                 }
             }
@@ -332,23 +330,26 @@ class WebixFormatter implements ReportFormatter
 
         //Social Services
         if($user->cpmMiscs->where('name',CpmMisc::SOCIAL_SERVICES)->first()){
-            $careplanReport[$user->ID]['social'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::SOCIAL_SERVICES);
+            $careplanReport[$user->id]['social'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,
+                CpmMisc::SOCIAL_SERVICES);
         } else {
-            $careplanReport[$user->ID]['social'] = '';
+            $careplanReport[$user->id]['social'] = '';
         }
 
         //Other
         if($user->cpmMiscs->where('name',CpmMisc::OTHER)->first()){
-            $careplanReport[$user->ID]['other'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::OTHER);
+            $careplanReport[$user->id]['other'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,
+                CpmMisc::OTHER);
         } else {
-            $careplanReport[$user->ID]['other'] = '';
+            $careplanReport[$user->id]['other'] = '';
         }
 
         //Appointments
         if($user->cpmMiscs->where('name',CpmMisc::APPOINTMENTS)->first()){
-            $careplanReport[$user->ID]['appointments'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,CpmMisc::APPOINTMENTS);
+            $careplanReport[$user->id]['appointments'] = (new CpmMiscService())->getMiscWithInstructionsForUser($user,
+                CpmMisc::APPOINTMENTS);
         } else {
-            $careplanReport[$user->ID]['appointments'] = '';
+            $careplanReport[$user->id]['appointments'] = '';
         }
 
 //        array_reverse($biometrics)

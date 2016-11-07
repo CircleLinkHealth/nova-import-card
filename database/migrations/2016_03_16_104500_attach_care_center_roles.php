@@ -1,10 +1,9 @@
 <?php
 
+use App\Practice;
 use App\Role;
 use App\User;
 use App\UserMeta;
-use App\Program;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class AttachCareCenterRoles  extends Migration {
@@ -52,13 +51,13 @@ class AttachCareCenterRoles  extends Migration {
 					}
 					echo PHP_EOL.'Attach '. $userInfo['id'] .' to role '. $userInfo['program'];
 					// attach program
-					$program = Program::find($userInfo['program']);
+                    $program = Practice::find($userInfo['program']);
 					if(!$program) {
 						continue 1;
 					}
-					if (!$user->programs->contains($userInfo['program'])) {
+                    if (!$user->practices->contains($userInfo['program'])) {
 						echo PHP_EOL.'Attach '. $userInfo['id'] .' to program '. $userInfo['program'];
-						$user->programs()->attach($program);
+                        $user->practices()->attach($program);
 					}
 					$user->save();
 				}

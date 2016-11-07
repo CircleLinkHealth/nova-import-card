@@ -39,7 +39,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-9">
-                            <input type="hidden" id="patient_id" name="patient_id" value="{{ $patient->ID }}">
+                            <input type="hidden" id="patient_id" name="patient_id" value="{{ $patient->id }}">
                             <div class="form-group">
                                 <input class="form-control" placeholder="Problem Name" v-model="problem.name">
                             </div>

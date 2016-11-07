@@ -124,7 +124,7 @@
                                         </td>
                                         <td>
                                             @if($call->inboundUser)
-                                                <a href="{{ URL::route('patient.demographics.show', array('patient' => $call->inboundUser->ID)) }}">{{ $call->inboundUser->display_name }} </a>
+                                                <a href="{{ URL::route('patient.demographics.show', array('patient' => $call->inboundUser->id)) }}">{{ $call->inboundUser->display_name }} </a>
                                             @else
                                                 <em style="color:red;">unassigned</em>
                                             @endif

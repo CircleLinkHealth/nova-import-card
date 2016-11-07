@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use App\PageTimer;
-use App\Program;
+use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use DateInterval;
@@ -46,7 +46,7 @@ class ProviderUsageReportController extends Controller
             $program = $request->input('program');
         }
 
-        $programs = Program::where('name', '=', $program)->get()->pluck('display_name', 'blog_id')->all();
+        $programs = Practice::where('name', '=', $program)->get()->pluck('display_name', 'id')->all();
 
         $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate);
 
@@ -65,7 +65,7 @@ class ProviderUsageReportController extends Controller
             /***** OFFICE USERS *******/
             // get users
             $officeUserIds = User::
-            whereHas('programs', function ($q) use
+            whereHas('practices', function ($q) use
             (
                 $programId
             ) {
@@ -77,7 +77,7 @@ class ProviderUsageReportController extends Controller
                         'med_assistant'
                     ]);
                 })
-                ->pluck('ID')->toArray();
+                ->pluck('id')->toArray();
 
             $programStats[$programName]['number_of_office_users'] = count($officeUserIds);
 
@@ -87,7 +87,7 @@ class ProviderUsageReportController extends Controller
             (
                 $officeUserIds
             ) {
-                $q->whereIn('ID', $officeUserIds);
+                $q->whereIn('id', $officeUserIds);
             })
                 ->whereBetween('start_time', [
                     $startDate,
@@ -114,7 +114,7 @@ class ProviderUsageReportController extends Controller
             /***** CARE CENTER USERS *******/
             // get users
             $nurseUserIds = User::
-            whereHas('programs', function ($q) use
+            whereHas('practices', function ($q) use
             (
                 $programId
             ) {
@@ -125,13 +125,13 @@ class ProviderUsageReportController extends Controller
                         'care-center'
                     ]);
                 })
-                ->pluck('ID')->toArray();
+                ->pluck('id')->toArray();
 
             $programStats[$programName]['number_of_nurse_users'] = count($nurseUserIds);
 
             // get participants
             $participantUserIds = User::
-            whereHas('programs', function ($q) use
+            whereHas('practices', function ($q) use
             (
                 $programId
             ) {
@@ -142,7 +142,7 @@ class ProviderUsageReportController extends Controller
                         'participant'
                     ]);
                 })
-                ->pluck('ID')->toArray();
+                ->pluck('id')->toArray();
 
             $programStats[$programName]['number_of_participant_users'] = count($participantUserIds);
 
@@ -152,13 +152,13 @@ class ProviderUsageReportController extends Controller
             (
                 $nurseUserIds
             ) {
-                $q->whereIn('ID', $nurseUserIds);
+                $q->whereIn('id', $nurseUserIds);
             })
                 ->whereHas('patient', function ($q) use
                 (
                     $participantUserIds
                 ) {
-                    $q->whereIn('ID', $participantUserIds);
+                    $q->whereIn('id', $participantUserIds);
                 })
                 ->whereBetween('start_time', [
                     $startDate,

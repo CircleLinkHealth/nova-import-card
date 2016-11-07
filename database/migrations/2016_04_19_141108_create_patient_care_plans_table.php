@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreatePatientCarePlansTable extends Migration {
 
@@ -41,19 +41,19 @@ class CreatePatientCarePlansTable extends Migration {
 				->onUpdate('cascade');
 
 			$table->foreign('patient_id')
-				->references('ID')
+                ->references('id')
 				->on('wp_users')
 				->onDelete('cascade')
 				->onUpdate('cascade');
 
 			$table->foreign('provider_approver_id')
-				->references('ID')
+                ->references('id')
 				->on('wp_users')
 				->onDelete('cascade')
 				->onUpdate('cascade');
 
 			$table->foreign('qa_approver_id')
-				->references('ID')
+                ->references('id')
 				->on('wp_users')
 				->onDelete('cascade')
 				->onUpdate('cascade');

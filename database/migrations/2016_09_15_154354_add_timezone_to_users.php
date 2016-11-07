@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddTimezoneToUsers extends Migration
 {
@@ -25,12 +25,12 @@ class AddTimezoneToUsers extends Migration
                 $timezone = 'America/New_York';
                 if($user->patientInfo && $user->patientInfo->preferred_contact_location) {
                     $location = \App\Location::find($user->preferred_contact_location);
-                    echo $user->ID . ' location = ' . $user->preferred_contact_location . PHP_EOL;
+                    echo $user->id . ' location = ' . $user->preferred_contact_location . PHP_EOL;
                     if($location) {
                         $timezone = $location->timezone;
                     }
                 }
-                echo $user->ID . ' - ' . $timezone . PHP_EOL;
+                echo $user->id . ' - ' . $timezone . PHP_EOL;
                 $user->timezone = $timezone;
                 $user->save();
             }

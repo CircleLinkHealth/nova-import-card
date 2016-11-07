@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddTimezoneToLocations extends Migration
 {
@@ -43,7 +43,7 @@ class AddTimezoneToLocations extends Migration
                     continue 1;
                 }
 
-                $program = \App\Program::where('location_id', '=', $baseLocation->id)->first();
+                $program = \App\Practice::where('location_id', '=', $baseLocation->id)->first();
                 if(!$program) {
                     echo $location->id . 'NO PROGRAM FOR LOCATION' . PHP_EOL;
                     continue 1;

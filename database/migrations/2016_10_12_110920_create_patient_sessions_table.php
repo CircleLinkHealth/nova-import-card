@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreatePatientSessionsTable extends Migration
 {
@@ -17,14 +17,14 @@ class CreatePatientSessionsTable extends Migration
 
             $table->unsignedInteger('patient_id');
             $table->foreign('patient_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');

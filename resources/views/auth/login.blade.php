@@ -59,8 +59,8 @@
 
 									<div class="col-md-12">
 								<p>
-									<label class="col-md-12 control-label text-center" for="user_email">Username</label></BR>
-										<input type="text" class="form-control" name="user_email" value="{{ old('user_email') }}">
+                                    <label class="col-md-12 control-label text-center" for="email">Username</label></BR>
+                                    <input type="text" class="form-control" name="email" value="{{ old('email') }}">
 								</p>
 									</div>
 

@@ -2,7 +2,6 @@
 
 use App\NurseInfo;
 use App\User;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class AddNuresinfoToCarecenterUsers extends Migration
@@ -22,10 +21,10 @@ class AddNuresinfoToCarecenterUsers extends Migration
         foreach($nurses as $nurse) {
             if ($nurse->hasRole('care-center') && !$nurse->nurseInfo) {
                 $nurseInfo = new NurseInfo;
-                $nurseInfo->user_id = $nurse->ID;
+                $nurseInfo->user_id = $nurse->id;
                 $nurseInfo->save();
                 $nurse->load('nurseInfo');
-                echo $nurse->ID . ' - add nurseinfo relation' . PHP_EOL;
+                echo $nurse->id . ' - add nurseinfo relation' . PHP_EOL;
             }
         }
     }

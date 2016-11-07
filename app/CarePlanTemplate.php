@@ -104,7 +104,7 @@ class CarePlanTemplate extends Model
      */
     public function program()
     {
-        return $this->belongsTo(Program::class, 'program_id');
+        return $this->belongsTo(Practice::class, 'program_id');
     }
 
     /**

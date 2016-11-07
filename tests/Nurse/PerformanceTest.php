@@ -15,7 +15,7 @@ class PerformanceTest extends TestCase
                 ->createdToday()
                 ->sum('duration');
 
-            $systemTime = PageTimer::where('provider_id', $nurse->ID)
+            $systemTime = PageTimer::where('provider_id', $nurse->id)
                 ->createdToday()
                 ->sum('billable_duration');
 
@@ -23,7 +23,7 @@ class PerformanceTest extends TestCase
 
             $totalTimeInSystemToday = secondsToHMS($systemTime);
 
-            $totalTimeInSystemThisMonthInSeconds = PageTimer::where('provider_id', $nurse->ID)
+            $totalTimeInSystemThisMonthInSeconds = PageTimer::where('provider_id', $nurse->id)
                 ->createdThisMonth()
                 ->sum('billable_duration');
 

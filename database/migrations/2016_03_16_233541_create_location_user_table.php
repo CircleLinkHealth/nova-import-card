@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateLocationUserTable extends Migration {
 
@@ -39,7 +39,7 @@ class CreateLocationUserTable extends Migration {
 
 			$table->unsignedInteger('user_id');
 			$table->foreign('user_id')
-				->references('ID')
+                ->references('id')
 				->on('wp_users')
 				->onDelete('cascade')
 				->onUpdate('cascade');

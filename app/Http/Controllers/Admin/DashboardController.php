@@ -1,15 +1,11 @@
 <?php namespace App\Http\Controllers\Admin;
 
-use App\User;
-use App\Program;
-use App\Observation;
-use App\Role;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
+use App\Practice;
+use App\Role;
+use App\User;
 use Auth;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller {
 
@@ -42,7 +38,7 @@ class DashboardController extends Controller {
 	public function index()
 	{
 
-		$user = $wpUser = User::find(Auth::user()->ID);
+        $user = $wpUser = User::find(Auth::user()->id);
 
 		$roles = Role::all();
 
@@ -51,7 +47,7 @@ class DashboardController extends Controller {
 
 			$stats = array();
 			$roleStats = array();
-			$stats['totalPrograms'] = Program::all()->count();
+            $stats['totalPrograms'] = Practice::all()->count();
 			$stats['totalUsers'] = User::all()->count();
 			foreach($roles as $role) {
 				$roleStats[$role->name] = User::whereHas('roles', function($q) use($role) {

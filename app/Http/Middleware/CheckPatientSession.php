@@ -34,28 +34,28 @@ class CheckPatientSession
         }
 
         if ($request->has('clearSession') && $request->method() == 'GET') {
-            PatientSession::where('user_id', '=', $user->ID)
+            PatientSession::where('user_id', '=', $user->id)
                 ->delete();
 
             PatientSession::create([
-                'user_id'    => $user->ID,
+                'user_id'    => $user->id,
                 'patient_id' => $patientId,
             ]);
 
             return redirect()->to($request->url());
         }
 
-        $sessions = PatientSession::where('user_id', '=', $user->ID)
+        $sessions = PatientSession::where('user_id', '=', $user->id)
             ->get();
 
         if ($sessions->isEmpty()) {
             PatientSession::create([
-                'user_id'    => $user->ID,
+                'user_id'    => $user->id,
                 'patient_id' => $patientId,
             ]);
         }
 
-        $exists = PatientSession::where('user_id', '=', $user->ID)
+        $exists = PatientSession::where('user_id', '=', $user->id)
             ->where('patient_id', '!=', $patientId)
             ->exists();
 

@@ -1,6 +1,5 @@
 <?php
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 
 class QuestionIconColumns extends Migration
 {
@@ -11,7 +10,7 @@ class QuestionIconColumns extends Migration
      */
     public function up()
     {
-        // ensure wp_users.ID matches up
+        // ensure wp_users.id matches up
         Schema::connection('mysql_no_prefix')->table('rules_questions', function($table)
         {
             $table->string('icon', 10)->after('description');

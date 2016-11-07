@@ -11,10 +11,10 @@ class EntrustSetupTables extends Migration
      */
     public function up()
     {
-        // ensure wp_users.ID matches up
+        // ensure wp_users.id matches up
         Schema::connection('mysql_no_prefix')->table('wp_users', function($table)
         {
-            $table->integer('ID', 10)->unsigned()->change();
+            $table->integer('id', 10)->unsigned()->change();
         });
 
         // Create table for storing roles
@@ -31,7 +31,7 @@ class EntrustSetupTables extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('role_id')->unsigned();
 
-            $table->foreign('user_id')->references('ID')->on('wp_users')
+            $table->foreign('user_id')->references('id')->on('wp_users')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('role_id')->references('id')->on('lv_roles')
                 ->onUpdate('cascade')->onDelete('cascade');

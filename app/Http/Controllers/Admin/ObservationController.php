@@ -20,19 +20,19 @@ class ObservationController extends Controller {
 		}
 		// display view
 		$observations = Observation::OrderBy('id', 'desc')->limit('100');
-		$users = User::OrderBy('ID', 'desc')->limit('100')->get();
+        $users = User::OrderBy('id', 'desc')->limit('100')->get();
 
 		// FILTERS
 		$params = $request->all();
 
 		// filter user
-        $users = User::OrderBy('id', 'desc')->get()->pluck('fullNameWithId', 'ID')->all();
+        $users = User::OrderBy('id', 'desc')->get()->pluck('fullNameWithId', 'id')->all();
 		$filterUser = 'all';
 		if(!empty($params['filterUser'])) {
 			$filterUser = $params['filterUser'];
 			if($params['filterUser'] != 'all') {
 				$observations = $observations->whereHas('user', function($q) use ($filterUser){
-					$q->where('ID', '=', $filterUser);
+                    $q->where('id', '=', $filterUser);
 				});
 			}
 		}

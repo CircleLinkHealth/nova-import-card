@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddUserIdToXmlCcdTable extends Migration {
 
@@ -18,7 +18,7 @@ class AddUserIdToXmlCcdTable extends Migration {
 				$table->integer('user_id')->unsigned()->after('ccd');
 
 				$table->foreign('user_id')
-					  ->references('ID')
+                    ->references('id')
 					  ->on('wp_users')
 					  ->onUpdate('cascade')
 					  ->onDelete('cascade');

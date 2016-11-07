@@ -188,18 +188,18 @@
                         </li>
                     @endif
 
-                    @if(Entrust::can('programs-view'))
+                        @if(Entrust::can('practices-view'))
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
                                 Programs <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ URL::route('admin.programs.index', array()) }}">Programs</a></li>
+                                <li><a href="{{ URL::route('admin.practices.index', array()) }}">Programs</a></li>
                                 @if(Entrust::can('locations-view'))
                                     <li><a href="{{ URL::route('locations.index', array()) }}">Locations</a></li>
                                 @endif
-                                {{--@if(Entrust::can('programs-manage'))--}}
+                                {{--@if(Entrust::can('practices-manage'))--}}
                                     {{--<li><a href="{{ URL::route('admin.questions.index', array()) }}">Questions</a></li>--}}
                                     {{--<li><a href="{{ URL::route('admin.questionSets.index', array()) }}">Question--}}
                                             {{--Sets</a></li>--}}
@@ -209,7 +209,7 @@
                         </li>
                     @endif
 
-                    {{--@if(Entrust::can('programs-view'))--}}
+                        {{--@if(Entrust::can('practices-view'))--}}
                     {{--<li role="presentation" class="dropdown">--}}
                     {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
                     {{--aria-expanded="false">--}}
@@ -298,10 +298,10 @@
                                style=""><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->ID }}]<span
+                               aria-expanded="false">{{ Auth::user()->full_name }} [ID:{{ Auth::user()->id }}]<span
                                         class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ URL::route('admin.users.edit', array('id' => Auth::user()->ID)) }}"
+                                <li><a href="{{ URL::route('admin.users.edit', array('id' => Auth::user()->id)) }}"
                                        class=""> My Account</a></li>
                                 <li><a href="{{ url('/auth/logout') }}">Logout</a></li>
                             </ul>

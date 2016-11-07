@@ -51,11 +51,11 @@ class EmailRNDailyReport extends Command
                 ->createdToday()
                 ->sum('duration');
 
-            $systemTime = PageTimer::where('provider_id', $nurse->ID)
+            $systemTime = PageTimer::where('provider_id', $nurse->id)
                 ->createdToday()
                 ->sum('billable_duration');
 
-            $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->ID)
+            $totalMonthSystemTimeSeconds = PageTimer::where('provider_id', $nurse->id)
                 ->createdThisMonth()
                 ->sum('billable_duration');
 
@@ -87,7 +87,7 @@ class EmailRNDailyReport extends Command
             ];
 
             $recipients = [
-                $nurse->user_email,
+                $nurse->email,
                 //                                'raph@circlelinkhealth.com',
                 //                            'mantoniou@circlelinkhealth.com',
             ];
@@ -105,7 +105,7 @@ class EmailRNDailyReport extends Command
 
             $emailsSent[] = [
                 'nurse' => $nurse->fullName,
-                'email' => $nurse->user_email,
+                'email' => $nurse->email,
             ];
 
             $counter++;

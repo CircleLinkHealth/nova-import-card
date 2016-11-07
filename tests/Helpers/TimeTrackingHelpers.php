@@ -40,7 +40,7 @@ trait TimeTrackingHelpers
         $maxEndDate = Carbon::parse($create->max(1));
 
         $pageTimers = PageTimer::where('actual_start_time', '>=', $minStartDate)
-            ->where('patient_id', $this->patient->ID)
+            ->where('patient_id', $this->patient->id)
             ->orderBy('id', 'desc')
             ->take($create->count())
             ->get();
@@ -70,8 +70,8 @@ trait TimeTrackingHelpers
         }
 
         $response = $this->call('POST', route('api.pagetracking'), [
-            'patientId'        => $patient->ID,
-            'providerId'       => $provider->ID,
+            'patientId'        => $patient->id,
+            'providerId'       => $provider->id,
             'totalTime'        => $durationInSeconds * 1000,
             'programId'        => $programId,
             'startTime'        => $startTime->toDateTimeString(),
@@ -85,8 +85,8 @@ trait TimeTrackingHelpers
         ]);
 
         $this->seeInDatabase('lv_page_timer', [
-            'patient_id'        => $patient->ID,
-            'provider_id'       => $provider->ID,
+            'patient_id'        => $patient->id,
+            'provider_id'       => $provider->id,
             'duration'          => $startTime->diffInSeconds($testEndTime),
             'program_id'        => $programId,
             'actual_start_time' => $startTime->toDateTimeString(),

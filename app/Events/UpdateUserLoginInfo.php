@@ -31,7 +31,7 @@ class UpdateUserLoginInfo
         $event->user->save();
 
         //CLEAR OUT ANY REMAINING PATIENT SESSIONS ON LOGIN
-        $session = PatientSession::where('user_id', '=', $event->user->ID)
+        $session = PatientSession::where('user_id', '=', $event->user->id)
             ->delete();
     }
 }

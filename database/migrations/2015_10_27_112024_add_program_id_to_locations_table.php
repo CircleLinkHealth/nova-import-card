@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddProgramIdToLocationsTable extends Migration {
 
@@ -17,7 +17,7 @@ class AddProgramIdToLocationsTable extends Migration {
 			if( ! Schema::hasColumn('lv_locations', 'program_id')) {
 				$table->bigInteger('program_id')->nullable();
 
-				$table->foreign('program_id')->references('blog_id')->on('wp_blogs');
+                $table->foreign('program_id')->references('id')->on('wp_blogs');
 			}
 		});
 	}

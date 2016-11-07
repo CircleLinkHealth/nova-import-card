@@ -32,9 +32,9 @@ class SendResult {
      */
     public $succeeded;
     /**
-     * The unique message ID assigned to the message for the given recipient
+     * The unique message id assigned to the message for the given recipient
      * when $succeeded == true. This value is not set if the message could
-     * not be sent. This ID should be used to correlate with any subsquent
+     * not be sent. This id should be used to correlate with any subsquent
      * status notifications.
      * @var string|null $messageId
      */
@@ -64,7 +64,7 @@ class CheckResult {
      */
     public $mail;
     /**
-     * The message ID to which this result pertains
+     * The message id to which this result pertains
      * @var string $messageId
      */
     public $messageId;
@@ -97,9 +97,11 @@ class CheckResult {
 
     /**
      * Create a new CheckResult object for a status notification
-     * @param string $id      the unique message ID to which this notification pertains
+     *
+     * @param string $id the unique message id to which this notification pertains
      * @param string $status  status code (failed or dispatched)
      * @param string $info    additional information, if available
+     *
      * @return CheckResult
      */
     public static function newStatus($id, $status, $info) {
@@ -116,10 +118,12 @@ class CheckResult {
 
     /**
      * Create a new CheckResult object for a mail message
-     * @param string $r         the recipient for the message
+     *
+     * @param string $r the recipient for the message
      * @param string $s         the sender of the message
      * @param int    $numAttach the number of attachments in this message
-     * @param string $id        the unique message ID to which this notification pertains
+     * @param string $id the unique message id to which this notification pertains
+     *
      * @return CheckResult
      */
     public static function newMail($r, $s, $numAttach, $id) {
@@ -262,6 +266,53 @@ class PhiMailConnector {
     }
 
     /**
+     * Send command to server
+     *
+     * @param string $command the command to send to the server
+     *
+     * @return string the response from the server
+     */
+    private function sendCommand($command)
+    {
+        if (!mb_detect_encoding($command, 'UTF-8', true)) {
+            $this->sendCommand('INFO ERR invalid character encoding.');
+
+            return 'FAIL invalid character encoding.';
+        }
+        if (strpos($command, "\n") !== false || strpos($command, "\r") !== false) {
+            $this->sendCommand('INFO ERR illegal characters in command string.');
+
+            return 'FAIL illegal characters in command string.';
+        }
+        @fwrite($this->socket, $command);
+        @fwrite($this->socket, "\n");
+        @fflush($this->socket);
+
+        return $this->readLine();
+    }
+
+    /**
+     * Read one newline-terminated line from server.
+     *
+     * @param int $len
+     *
+     * @return string the line of text sent from server, with the
+     *                newline character removed
+     */
+    private function readLine($len = 2048)
+    {
+        $s = @fgets($this->socket, $len);
+        if ($s === false) {
+            if (feof($this->socket)) {
+                throw new \Exception('Socket closed unexpectedly.');
+            }
+            throw new \Exception('Read timed out.');
+        }
+
+        return substr($s, 0, -1);
+    }
+
+    /**
      * Set the trusted phiMail server SSL certificate. After this function is
      * called, connections to a phiMail server that does not present a
      * matching certificate will be refused.
@@ -302,41 +353,6 @@ class PhiMailConnector {
     }
 
     /**
-     * Read one newline-terminated line from server.
-     * @param int $len
-     * @return string the line of text sent from server, with the
-     *                newline character removed
-     */
-    private function readLine($len = 2048) {
-        $s = @fgets($this->socket, $len);
-        if ($s === false) {
-            if (feof($this->socket)) throw new \Exception('Socket closed unexpectedly.');
-            throw new \Exception('Read timed out.');
-        }
-        return substr($s, 0, -1);
-    }
-
-    /**
-     * Send command to server
-     * @param string $command the command to send to the server
-     * @return string the response from the server
-     */
-    private function sendCommand($command) {
-        if (!mb_detect_encoding($command, 'UTF-8', true)) {
-            $this->sendCommand('INFO ERR invalid character encoding.');
-            return 'FAIL invalid character encoding.';
-        }
-        if (strpos($command, "\n") !== false || strpos($command, "\r") !== false) {
-            $this->sendCommand('INFO ERR illegal characters in command string.');
-            return 'FAIL illegal characters in command string.';
-        }
-        @fwrite($this->socket, $command);
-        @fwrite($this->socket, "\n");
-        @fflush($this->socket);
-        return $this->readLine();
-    }
-
-    /**
      * Authenticate user
      * @param string $user the user name to authenticate
      * @param string $pass the password for the user
@@ -347,6 +363,13 @@ class PhiMailConnector {
         $response = $this->sendCommand('AUTH ' . $user . $this->extraParam($pass));
         if ($response != 'OK')
             throw new \Exception('Authentication failed: ' . $response);
+    }
+
+    private function extraParam($s)
+    {
+        return ($s != null && strlen($s) > 0
+            ? ' ' . $s
+            : '');
     }
 
     /**
@@ -424,6 +447,19 @@ class PhiMailConnector {
     }
 
     /**
+     * Add preformed MIME content to the current outgoing message
+     *
+     * @param string $data the MIME content to add
+     *
+     * @return void
+     * @throws \Exception on unexpected failure
+     */
+    public function addMIME($data)
+    {
+        $this->addData($data, 'ADD MIME', null, 'US-ASCII');
+    }
+
+    /**
      * Private helper function to add content to the current outgoing message.
      * @param string $dataBytes
      * @param string $dataType
@@ -448,16 +484,6 @@ class PhiMailConnector {
         if ($response == null || $response != 'OK')
             throw new \Exception('Add ' . $dataType . ' failed: '
                 . ($response == null ? '' : $response));
-    }
-
-    /**
-     * Add preformed MIME content to the current outgoing message
-     * @param string $data the MIME content to add
-     * @return void
-     * @throws \Exception on unexpected failure
-     */
-    public function addMIME($data) {
-        $this->addData($data, 'ADD MIME', null, 'US-ASCII');
     }
 
     /**
@@ -630,23 +656,26 @@ class PhiMailConnector {
     }
 
     /**
-     * Acknowledge current incoming mail message to remove from queue.
-     * @return void
-     * @throws \Exception on unexpected failure
-     */
-    public function acknowledgeMessage() {
-        $response = $this->sendCommand('DONE');
-        if ($response != 'OK')
-            throw new \Exception('Message acknowlegement failed: ' . $response);
-    }
-
-    /**
      * Alias for acknowledgeMessage()
      * @return void
      * @throws \Exception on unexpected failure
      */
-    public function done() {
+    public function done()
+    {
         $this->acknowledgeMessage();
+    }
+
+    /**
+     * Acknowledge current incoming mail message to remove from queue.
+     * @return void
+     * @throws \Exception on unexpected failure
+     */
+    public function acknowledgeMessage()
+    {
+        $response = $this->sendCommand('DONE');
+        if ($response != 'OK') {
+            throw new \Exception('Message acknowlegement failed: ' . $response);
+        }
     }
 
     /**
@@ -719,10 +748,6 @@ class PhiMailConnector {
         $searchResults = array();
         while ($numResults-- > 0) $searchResults[] = $this->readLine();
         return $searchResults;
-    }
-
-    private function extraParam($s) {
-        return ($s != null && strlen($s) > 0 ? ' ' . $s : '');
     }
 
 }

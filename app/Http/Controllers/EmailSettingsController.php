@@ -40,7 +40,7 @@ class EmailSettingsController extends Controller
         $input = $request->input();
 
         $created = EmailSettings::updateOrCreate([
-            'user_id' => auth()->user()->ID,
+            'user_id' => auth()->user()->id,
         ], [
             'frequency' => $input['frequency'],
         ]);

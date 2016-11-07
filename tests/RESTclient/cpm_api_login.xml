@@ -28,11 +28,11 @@
   <option name="parameters">
     <list>
       <KeyValuePair>
-        <option name="key" value="user_email" />
+          <option name="key" value="email"/>
         <option name="value" value="kgallo@circlelinkhealth.com" />
       </KeyValuePair>
       <KeyValuePair>
-        <option name="key" value="user_pass" />
+          <option name="key" value="password"/>
         <option name="value" value="oyQaJz0x9XRM" />
       </KeyValuePair>
     </list>

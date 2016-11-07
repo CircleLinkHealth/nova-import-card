@@ -1,11 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Comment;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\User;
 use Carbon\Carbon;
-
 use Illuminate\Http\Request;
 
 class CommentController extends Controller {
@@ -42,7 +38,7 @@ class CommentController extends Controller {
 	    {
             $statusCode = 200;
 
-            \JWTAuth::setIdentifier('ID');
+            \JWTAuth::setIdentifier('id');
             $user = \JWTAuth::parseToken()->authenticate();
             if(!$user) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
@@ -50,7 +46,7 @@ class CommentController extends Controller {
 
                 $input = $request->input();
                 $newComment = new Comment();
-                $newComment->user_id = $user->ID;
+                $newComment->user_id = $user->id;
                 $newComment->comment_author = $input['comment_author'];
                 $newComment->comment_author_email = 'admin@circlelinkhealth.com';
                 $newComment->comment_author_url = 'https://www.circlelinkhealth.com/';
@@ -70,7 +66,7 @@ class CommentController extends Controller {
 
                 //Get Blog id for current user
 
-                $blogTable = 'wp_'.$user->getBlogId($user->ID).'_comments';
+                $blogTable = 'wp_' . $user->getBlogId($user->id) . '_comments';
                 //$comm = new Comment();
                 $newComment->setTable($blogTable);
                 $saved = $newComment->save();

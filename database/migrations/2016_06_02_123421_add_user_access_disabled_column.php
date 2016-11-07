@@ -1,13 +1,8 @@
 <?php
 
 use App\User;
-use App\PatientInfo;
-use App\ProviderInfo;
-use App\PhoneNumber;
-use App\PatientCarePlan;
-use App\PatientCareTeamMember;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddUserAccessDisabledColumn extends Migration {
 
@@ -34,7 +29,7 @@ class AddUserAccessDisabledColumn extends Migration {
             $user->access_disabled = 0;
             $user->status = 'Active';
             if(!empty($user->deleted_at)) {
-                echo 'Processing user: '.$user->ID.PHP_EOL;
+                echo 'Processing user: ' . $user->id . PHP_EOL;
                 echo 'status: '.$user->deleted_at.PHP_EOL.PHP_EOL;
                 $user->user_status = 0;
                 $user->status = 'Inactive';

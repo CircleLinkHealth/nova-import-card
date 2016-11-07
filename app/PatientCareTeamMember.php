@@ -1,9 +1,6 @@
 <?php namespace App;
 
-use DateTime;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Auth;
 
 class PatientCareTeamMember extends Model
 {
@@ -48,7 +45,7 @@ class PatientCareTeamMember extends Model
     // START RELATIONSHIPS
     public function user()
     {
-        return $this->belongsTo(User::class, 'member_user_id', 'ID');
+        return $this->belongsTo(User::class, 'member_user_id', 'id');
     }
     // END RELATIONSHIPS
 

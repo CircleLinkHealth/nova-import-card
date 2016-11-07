@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateCcdasTable extends Migration {
 
@@ -23,7 +23,7 @@ class CreateCcdasTable extends Migration {
 			$table->softDeletes();
 
 			$table->foreign('user_id')
-				->references('ID')
+                ->references('id')
 				->on((new \App\User())->getTable())
 				->onUpdate('cascade')
 				->onDelete('cascade');

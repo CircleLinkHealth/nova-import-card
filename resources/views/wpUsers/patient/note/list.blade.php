@@ -37,8 +37,8 @@
                             data-size="10" style="display: none;">
                         <option value="">Select Provider</option>
                         @foreach($providers_for_blog as $key => $value)
-                            @if(isset($selected_provider) && $selected_provider->ID == $key)
-                                <option value="{{$selected_provider->ID}}"
+                            @if(isset($selected_provider) && $selected_provider->id == $key)
+                                <option value="{{$selected_provider->id}}"
                                         selected>{{$selected_provider->display_name}}</option>
                             @else
                                 <option value={{$key}}>{{$value}}</option>

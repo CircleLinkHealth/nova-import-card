@@ -12,7 +12,8 @@
                     @if(Entrust::can('programs-manage'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
-                                <a href="{{ URL::route('admin.programs.create', array()) }}" class="btn btn-success">New Program</a>
+                                <a href="{{ URL::route('admin.programs.create', array()) }}" class="btn btn-success">New
+                                    Practice</a>
                             </div>
                         </div>
                     @endif
@@ -34,10 +35,13 @@
                             @if (count($wpBlogs) > 0)
                                 @foreach( $wpBlogs as $wpBlog )
                                     <tr>
-                                        <td><a href="{{ URL::route('admin.programs.show', array('id' => $wpBlog->blog_id)) }}" class=""><strong>{{ $wpBlog->display_name }}</strong></a></td>
+                                        <td>
+                                            <a href="{{ URL::route('admin.programs.show', array('id' => $wpBlog->id)) }}"
+                                               class=""><strong>{{ $wpBlog->display_name }}</strong></a></td>
                                         <td>
                                             @if (count($wpBlog->users) > 0)
-                                                <a href="{{ URL::route('admin.users.index', array('filterProgram' => $wpBlog->blog_id)) }}" class=""><strong>{{ count($wpBlog->users()->whereHas('roles', function ($q) {
+                                                <a href="{{ URL::route('admin.users.index', array('filterProgram' => $wpBlog->id)) }}"
+                                                   class=""><strong>{{ count($wpBlog->users()->whereHas('roles', function ($q) {
 					$q->where('name', '=', 'participant');
 				})->get()) }}</strong></a>
                                             @endif
@@ -45,7 +49,10 @@
                                         <td>{{ date('F d, Y g:i A', strtotime($wpBlog->created_at)) }}</td>
                                         <td class="text-right">
                                             @if(Entrust::can('programs-manage'))
-                                                <a href="{{ URL::route('admin.programs.edit', array('id' => $wpBlog->blog_id)) }}" class="btn btn-xs btn-info">Edit</a><a href="{{ URL::route('admin.programs.destroy', array('id' => $wpBlog->blog_id)) }}" class="btn btn-xs btn btn-warning" style="margin-left:10px;">Remove</a>
+                                                <a href="{{ URL::route('admin.programs.edit', array('id' => $wpBlog->id)) }}"
+                                                   class="btn btn-xs btn-info">Edit</a><a
+                                                        href="{{ URL::route('admin.programs.destroy', array('id' => $wpBlog->id)) }}"
+                                                        class="btn btn-xs btn btn-warning" style="margin-left:10px;">Remove</a>
                                             @endif
                                         </td>
                                     </tr>

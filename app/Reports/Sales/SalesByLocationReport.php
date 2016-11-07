@@ -1,9 +1,9 @@
 <?php namespace App\Reports\Sales;
 
 use App\PatientInfo;
-use App\Program;
-use Carbon\Carbon;
+use App\Practice;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 
@@ -28,7 +28,12 @@ class SalesByLocationReport
     protected $reportLastMonthWithDifference;
     protected $enrollmentCount = [];
 
-    public function __construct(Program $forProgram, Carbon $start, Carbon $end, $withLastMonth = true){
+    public function __construct(
+        Practice $forProgram,
+        Carbon $start,
+        Carbon $end,
+        $withLastMonth = true
+    ) {
 
 
         $this->startDate = $start;
@@ -81,40 +86,6 @@ class SalesByLocationReport
 
         }
     }
-
-    public function getEnrollmentNumbers()
-    {
-        $this->enrollmentCount = PatientInfo::whereHas('user', function ($q){
-
-            $q->where('program_id', $this->program->blog_id);
-
-        })
-            ->whereNotNull('ccm_status')
-            ->select(DB::raw('count(ccm_status) as total, ccm_status'))
-            ->groupBy('ccm_status')
-            ->get()
-            ->toArray();
-
-        return $this->enrollmentCount;
-    }
-
-//    public function getStatsByProvider(){
-//
-//        foreach ($this->providers as $provider){
-//
-//            $patients = PatientInfo::whereHas('user', function ($q){
-//
-//                $q->where('program_id', $this->blog_id);
-//
-//            })
-//                ->whereNotNull('ccm_status')
-//                ->where('ccm_status')
-//                ->get();
-//
-//
-//        }
-//
-//    }
 
     public function calculateMonthOverMonthChanges(){
 
@@ -174,6 +145,40 @@ class SalesByLocationReport
 
     }
 
+//    public function getStatsByProvider(){
+//
+//        foreach ($this->providers as $provider){
+//
+//            $patients = PatientInfo::whereHas('user', function ($q){
+//
+//                $q->where('program_id', $this->id);
+//
+//            })
+//                ->whereNotNull('ccm_status')
+//                ->where('ccm_status')
+//                ->get();
+//
+//
+//        }
+//
+//    }
+
+    public function getEnrollmentNumbers()
+    {
+        $this->enrollmentCount = PatientInfo::whereHas('user', function ($q) {
+
+            $q->where('program_id', $this->program->id);
+
+        })
+            ->whereNotNull('ccm_status')
+            ->select(DB::raw('count(ccm_status) as total, ccm_status'))
+            ->groupBy('ccm_status')
+            ->get()
+            ->toArray();
+
+        return $this->enrollmentCount;
+    }
+
     public function formatSalesData(){
 
         $this->data = [
@@ -217,18 +222,18 @@ class SalesByLocationReport
 //
 //            $m->attach(storage_path("download/$fileName"));
 //
-//            $m->to($nurse->user->user_email, $nurse->user->fullName)
+//            $m->to($nurse->user->email, $nurse->user->fullName)
 //                ->subject('New Invoice from CircleLink Health');
 //        });
 //
 ////        MailLog::create([
-////            'sender_email' => $sender->user_email,
-////            'receiver_email' => $receiver->user_email,
+////            'sender_email' => $sender->email,
+////            'receiver_email' => $receiver->email,
 ////            'body' => $body,
 ////            'subject' => $email_subject,
 ////            'type' => 'note',
-////            'sender_cpm_id' => $sender->ID,
-////            'receiver_cpm_id' => $receiver->ID,
+////            'sender_cpm_id' => $sender->id,
+////            'receiver_cpm_id' => $receiver->id,
 ////            'created_at' => $note->created_at,
 ////            'note_id' => $note->id
 ////        ]);

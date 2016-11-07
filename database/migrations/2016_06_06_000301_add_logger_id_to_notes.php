@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddLoggerIdToNotes extends Migration
 {
@@ -17,7 +17,7 @@ class AddLoggerIdToNotes extends Migration
             $table->unsignedInteger('logger_id')->nullable();
 
             $table->foreign('logger_id')
-                ->references('ID')
+                ->references('id')
                 ->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');

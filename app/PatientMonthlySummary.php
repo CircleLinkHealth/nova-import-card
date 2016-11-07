@@ -12,12 +12,6 @@ class PatientMonthlySummary extends Model
 
     protected $fillable = ['month_year, ccm_time, no_of_calls, no_of_successful_calls', 'patient_info_id'];
 
-    public function patient_info()
-    {
-        return $this->belongsTo(PatientInfo::class);
-    }
-
-    //updates Call info for patient
     public static function updateCallInfoForPatient(PatientInfo $patient, $ifSuccessful){
 
         // get record for month
@@ -54,6 +48,8 @@ class PatientMonthlySummary extends Model
 
     }
 
+    //updates Call info for patient
+
     public static function updateCCMInfoForPatient(PatientInfo $patient, $ccmTime){
 
         // get record for month
@@ -76,7 +72,13 @@ class PatientMonthlySummary extends Model
 
     }
 
+    public function patient_info()
+    {
+        return $this->belongsTo(PatientInfo::class);
+    }
+
     //Run at beginning of month
+
     public function createCallReportsForCurrentMonth(){
 
         $patients = PatientInfo::all();
@@ -104,14 +106,15 @@ class PatientMonthlySummary extends Model
 
         $info = $patient->patientInfo;
 
-        $no_of_calls = Call::where('outbound_cpm_id', $patient->ID)
-            ->orWhere('inbound_cpm_id', $patient->ID)
+        $no_of_calls = Call::where('outbound_cpm_id', $patient->id)
+            ->orWhere('inbound_cpm_id', $patient->id)
             ->where('created_at', '<=' , $day_start)
             ->where('created_at', '>=' , $day_end)->count();
 
         $no_of_successful_calls = Call::where('status','reached')->where(function ($q) use ($patient){
-            $q->where('outbound_cpm_id', $patient->ID)
-                ->orWhere('inbound_cpm_id', $patient->ID);})
+            $q->where('outbound_cpm_id', $patient->id)
+                ->orWhere('inbound_cpm_id', $patient->id);
+        })
             ->where('created_at', '<=' , $day_start)
             ->where('created_at', '>=' , $day_end)->count();
 

@@ -1,18 +1,10 @@
 <?php namespace App\Http\Controllers\Admin\Reports;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
 use App\Call;
-use App\User;
-use App\PageTimer;
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Auth;
-use DateTime;
-use DatePeriod;
-use DateInterval;
 use Excel;
+use Illuminate\Http\Request;
 
 class CallReportController extends Controller {
 
@@ -70,22 +62,23 @@ class CallReportController extends Controller {
 				])
 			->where('calls.status', '=', 'scheduled')
 			->leftJoin('notes', 'calls.note_id','=','notes.id')
-			->leftJoin('users AS nurse', 'calls.outbound_cpm_id','=','nurse.ID')
-			->leftJoin('users AS patient', 'calls.inbound_cpm_id','=','patient.ID')
-			->leftJoin('users AS scheduler_user', 'calls.scheduler','=','scheduler_user.ID')
+            ->leftJoin('users AS nurse', 'calls.outbound_cpm_id', '=', 'nurse.id')
+            ->leftJoin('users AS patient', 'calls.inbound_cpm_id', '=', 'patient.id')
+            ->leftJoin('users AS scheduler_user', 'calls.scheduler', '=', 'scheduler_user.id')
 			->leftJoin('patient_info', 'calls.inbound_cpm_id','=','patient_info.user_id')
 			->leftJoin('patient_monthly_summaries', function($join) use ($date)
 			{
 				$join->on('patient_monthly_summaries.patient_info_id', '=', 'patient_info.id');
 				$join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
 			})
-			->leftJoin('wp_blogs AS program', 'patient.program_id','=','program.blog_id')
+            ->leftJoin('practices AS program', 'patient.program_id', '=', 'program.id')
 			->leftJoin('patient_care_team_members', function($join)
 			{
-				$join->on('patient.ID', '=', 'patient_care_team_members.user_id');
+                $join->on('patient.id', '=', 'patient_care_team_members.user_id');
 				$join->where('patient_care_team_members.type', '=', "billing_provider");
 			})
-			->leftJoin('users AS billing_provider', 'patient_care_team_members.member_user_id','=','billing_provider.ID')
+            ->leftJoin('users AS billing_provider', 'patient_care_team_members.member_user_id', '=',
+                'billing_provider.id')
 			->groupBy('call_id')
 			->get();
 
@@ -105,8 +98,25 @@ class CallReportController extends Controller {
 			$excel->sheet('Sheet 1', function ($sheet) use ($calls) {
 				$i = 0;
 				// header
-				$userColumns = array('id', 'Nurse', 'Patient', 'Program', 'Last Call Status', 'Next Call', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Last Call', 'CCM Time', 'Successful Calls', 'Patient Status', 'Billing Provider', 'DOB', 'Scheduler');
-				$sheet->appendRow($userColumns);
+                $userColumns = [
+                    'id',
+                    'Nurse',
+                    'Patient',
+                    'Practice',
+                    'Last Call Status',
+                    'Next Call',
+                    'Call Time Start',
+                    'Call Time End',
+                    'Preferred Call Days',
+                    'Last Call',
+                    'CCM Time',
+                    'Successful Calls',
+                    'Patient Status',
+                    'Billing Provider',
+                    'DOB',
+                    'Scheduler',
+                ];
+                $sheet->appendRow($userColumns);
 
 				foreach ($calls as $call) {
 					if($call->inboundUser && $call->inboundUser->patientInfo) {
