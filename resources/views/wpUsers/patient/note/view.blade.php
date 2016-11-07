@@ -146,7 +146,7 @@
                                                             <!-- rework later, quick fix ticket: 679 !-->
                                                             @if($patient->program_id == 29)
                                                                     <option value="2584">Tina Booze</option>
-                                                            @elseif
+                                                            @else
                                                                     <option value="948">Patient Support</option>
                                                             @endif
 
