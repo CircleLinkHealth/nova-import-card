@@ -90,23 +90,6 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-md-4 control-label">Parent</label>
-                                <div class="col-md-6">
-                                    <select name="parent_id">
-                                        <option value="">None</option>
-                                        <?php foreach( $locations as $id => $loc ){ ?>
-                                            <option value="{{ $id }}"
-                                                    <?php
-                                                    if($location->parent_id == $id){
-                                                        echo 'selected';
-                                                    }
-                                                    ?>
-                                                    >{{ $loc }}</option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <div class="col-md-6 col-md-offset-4">
                                     <button type="submit" class="btn btn-primary">
                                       Save/Back

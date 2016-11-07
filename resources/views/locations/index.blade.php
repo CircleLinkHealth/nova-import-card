@@ -18,7 +18,7 @@
                     <div class="panel-body">
                         @include('errors.errors')
 
-                        <h3>Parent Locations:</h3>
+                        <h3>Locations:</h3>
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -27,14 +27,15 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @if (count($locationParents) > 0)
-                                @foreach( $locationParents as $id => $loc )
+                            @if (count($locations) > 0)
+                                @foreach( $locations as $loc )
                                     <tr>
                                         <td>
-                                            <a href='/admin/locations/{{ $id }}'>{{ $loc }} ({{ $id }})</a>
+                                            <a href='/admin/locations/{{ $loc->id }}'>{{ $loc->name }}</a>
                                         </td>
                                         <td>
-                                            <a href="{{ URL::route('locations.edit', array('id' => $id)) }}" class="btn btn-info btn-xs">Edit</a>
+                                            <a href="{{ URL::route('locations.edit', array('id' => $loc->id)) }}"
+                                               class="btn btn-info btn-xs">Edit</a>
                                         </td>
                                     </tr>
                                 @endforeach
