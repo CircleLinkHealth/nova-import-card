@@ -124,6 +124,9 @@
             $.ajax({
                 type: "POST",
                 url: url,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 data: {
                     seconds: $('#seconds').val(),
                     date: $('#date').val(),

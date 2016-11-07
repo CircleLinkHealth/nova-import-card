@@ -142,6 +142,14 @@
                                                             @foreach ($careteam_info as $id => $name)
                                                                 <option value="{{$id}}"> {{$name}} </option>
                                                             @endforeach
+
+                                                            <!-- rework later, quick fix ticket: 679 !-->
+                                                            @if($patient->program_id == 29)
+                                                                    <option value="2584">Tina Booze</option>
+                                                            @elseif
+                                                                    <option value="948">Patient Support</option>
+                                                            @endif
+
                                                         </select>
                                                     </div>
                                                 </div>
@@ -150,10 +158,10 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-4">
-                                    <input type="hidden" name="patient_id" value="{{$patient->ID}}">
-                                    <input type="hidden" name="logger_id" value="{{Auth::user()->ID}}">
+                                    <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                                    <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                     <input type="hidden" name="noteId" value="{{$note['id']}}">
-                                    <input type="hidden" name="patientID" id="patientID" value="{{$patient->ID}}">
+                                    <input type="hidden" name="patientID" id="patientID" value="{{$patient->id}}">
                                     <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
                                 </div>
                                 <div class="form-item form-item-spacing text-center">
