@@ -1,6 +1,5 @@
 <?php namespace App\Http\Controllers;
 
-
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\Repositories\UserRepository;
 use App\CPRulesPCP;
