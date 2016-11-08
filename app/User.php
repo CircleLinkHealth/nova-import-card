@@ -1954,8 +1954,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function billingProvider()
     {
-        $billingProvider = $this->patientCareTeamMembers()
-            ->where('type', 'billing_provider')
+        $billingProvider = $this->withCareTeamOfType('billing_provider')
             ->first();
 
         $user = $billingProvider ?? false;
@@ -1963,5 +1962,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $user
             ? $user->user
             : false;
+    }
+
+    public function scopeWithCareTeamOfType(
+        $query,
+        $type
+    ) {
+        $query->whereHas(
+            'patientCareTeamMembers', function ($q) use
+        (
+            $type
+        ) {
+            $q->where('type', $type);
+        });
     }
 }
