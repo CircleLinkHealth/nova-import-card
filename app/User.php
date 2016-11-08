@@ -1164,7 +1164,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function patientCareTeamMembers()
     {
-        return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'id');
+        return $this->hasMany(PatientCareTeamMember::class, 'user_id', 'id');
     }
 
     public function getSendAlertToAttribute()
@@ -1672,13 +1672,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-
-// MISC, these should be removed eventually
-
     public function primaryProgram()
     {
         return $this->belongsTo(Practice::class, 'program_id', 'id');
     }
+
+
+// MISC, these should be removed eventually
 
     public function scramble()
     {
@@ -1762,12 +1762,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $userUcpData;
     }
 
-// user data scrambler
-
     public function ucp()
     {
         return $this->hasMany('App\CPRulesUCP', 'user_id', 'id');
     }
+
+// user data scrambler
 
     public function service()
     {
@@ -1921,5 +1921,47 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->belongsToMany(Location::class)
             ->withTimestamps();
+    }
+
+    /**
+     * Get primary practice's name.
+     *
+     * @return string
+     */
+    public function getPrimaryPracticeNameAttribute()
+    {
+        return ucwords($this->primaryProgram->display_name);
+    }
+
+    /**
+     * Get billing provider's full name.
+     *
+     * @return string
+     */
+    public function getBillingProviderNameAttribute()
+    {
+        $billingProvider = $this->billingProvider();
+
+        return $billingProvider
+            ? ucwords($billingProvider->fullName)
+            : '';
+    }
+
+    /**
+     * Get billing provider.
+     *
+     * @return User|false
+     */
+    public function billingProvider()
+    {
+        $billingProvider = $this->patientCareTeamMembers()
+            ->where('type', 'billing_provider')
+            ->first();
+
+        $user = $billingProvider ?? false;
+
+        return $user
+            ? $user->user
+            : false;
     }
 }
