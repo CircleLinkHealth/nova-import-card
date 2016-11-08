@@ -1950,37 +1950,29 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     /**
      * Get billing provider.
      *
-     * @return User|false
+     * @return User
      */
-    public function billingProvider()
+    public function billingProvider() : User
     {
         $billingProvider = $this->patientCareTeamMembers
             ->where('type', 'billing_provider')
             ->first();
 
-        $user = $billingProvider ?? false;
-
-        return $user
-            ? $user->user
-            : false;
+        return $billingProvider->user ?? new User();
     }
 
     /**
      * Get billing provider.
      *
-     * @return User|false
+     * @return User
      */
-    public function leadContact()
+    public function leadContact() : User
     {
         $leadContact = $this->patientCareTeamMembers
             ->where('type', 'lead_contact')
             ->first();
 
-        $user = $leadContact ?? false;
-
-        return $user
-            ? $user->user
-            : false;
+        return $leadContact->user ?? new User();
     }
 
 
