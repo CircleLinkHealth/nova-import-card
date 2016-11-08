@@ -25,10 +25,8 @@ use App\User;
 use Auth;
 use Carbon\Carbon;
 use DateTimeZone;
-use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\URL;
 use Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -40,149 +38,88 @@ class PatientCareplanController extends Controller
         $patientData = [];
 
         $patients = User::intersectPracticesWith(auth()->user())
-            ->with('phoneNumbers', 'patientInfo', 'patientCareTeamMembers')
-            ->select(DB::raw('users.*'))
+            ->ofType('participant')
+            ->with([
+                'patientInfo'            => function ($q) {
+                    $q->with('carePlanProviderApproverUser');
+                },
+            ])
             ->get();
 
-        // get approvers before
-        $approvers = null;
-        $approverIds = [];
-        if ($patients->count() > 0) {
-            foreach ($patients as $patient) {
-                if ($patient->carePlanStatus == 'provider_approved') {
-                    $approverId = $patient->carePlanProviderApprover;
-                    if (!empty($approverId) && !in_array($approverId, $approverIds)) {
-                        $approverIds[] = $approverId;
-                    }
-                }
+        foreach ($patients as $patient) {
+            // skip if patient has no name
+            if (empty($patient->first_name)) {
+                continue 1;
             }
-            $approvers = User::whereIn('id', $approverIds)->get();
-        }
 
-        if ($patients->count() > 0) {
-            $foundUsers = []; // save resources, no duplicate db calls
-            $foundPrograms = []; // save resources, no duplicate db calls
-            foreach ($patients as $patient) {
-                // skip if patient has no name
-                if (empty($patient->first_name)) {
-                    continue 1;
+            $last_printed = $patient->careplan_last_printed;
+
+            if ($last_printed) {
+                $printed_status = 'Yes';
+                $printed_date = $last_printed;
+            } else {
+                $printed_status = 'No';
+                $printed_date = null;
+            }
+
+            $last_printed
+                ? $printed = $last_printed
+                : $printed = 'No';
+
+            // careplan status stuff from 2.x
+            $careplanStatus = $patient->carePlanStatus;
+            $careplanStatusLink = '';
+            $approverName = 'NA';
+            $tooltip = 'NA';
+
+            if ($careplanStatus == 'provider_approved') {
+                $approver = $patient->patientInfo->carePlanProviderApproverUser;
+                if ($approver) {
+                    $approverName = $approver->fullName;
+                    $carePlanProviderDate = $patient->carePlanProviderDate;
+
+                    $careplanStatus = 'Approved';
+                    $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
+                    $tooltip = $approverName . ' ' . $carePlanProviderDate;
                 }
-                $last_printed = $patient->careplan_last_printed;
-                if ($last_printed) {
-                    $printed_status = 'Yes';
-                    $printed_date = $last_printed;
+            } else {
+                if ($careplanStatus == 'qa_approved') {
+                    $careplanStatus = 'Approve Now';
+                    $tooltip = $careplanStatus;
+                    $careplanStatusLink = 'Approve Now';
                 } else {
-                    $printed_status = 'No';
-                    $printed_date = null;
-                }
-                ($last_printed)
-                    ? $printed = $last_printed
-                    : $printed = 'No';
-
-                // careplan status stuff from 2.x
-                $careplanStatus = $patient->carePlanStatus;
-                $careplanStatusLink = '';
-                $approverName = 'NA';
-                $tooltip = 'NA';
-
-                if ($patient->carePlanStatus == 'provider_approved') {
-                    $approverId = $patient->carePlanProviderApprover;
-                    if ($approverId == 5) {
-                        //dd($approvers->where('id', $approverId)->first());
-                    }
-                    $approver = $approvers->where('id', $approverId)->first();
-                    if (!$approver) {
-                        if (!empty($approverId)) {
-                            if (!isset($foundUsers[$approverId])) {
-                                $approver = User::find($approverId);
-                                $foundUsers[$approverId] = $approver;
-                            } else {
-                                $approver = $foundUsers[$approverId];
-                            }
-                        }
-                    }
-                    if ($approver) {
-                        $approverName = $approver->fullName;
-                        $careplanStatus = 'Approved';
-                        $careplanStatusLink = '<span data-toggle="" title="' . $approver->fullName . ' ' . $patient->carePlanProviderDate . '">Approved</span>';
-                        $tooltip = $approverName . ' ' . $patient->carePlanProviderDate;
-                    }
-                } else {
-                    if ($patient->carePlanStatus == 'qa_approved') {
-                        $careplanStatus = 'Approve Now';
+                    if ($careplanStatus == 'draft') {
+                        $careplanStatus = 'CLH Approve';
                         $tooltip = $careplanStatus;
-                        $careplanStatusLink = 'Approve Now';
-                        if (Auth::user()->hasRole(['provider'])) {
-                            $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
-                                    ['patient' => $patient->id]) . '"><strong>Approve Now</strong></a>';
-                        }
-                    } else {
-                        if ($patient->carePlanStatus == 'draft') {
-                            $careplanStatus = 'CLH Approve';
-                            $tooltip = $careplanStatus;
-                            $careplanStatusLink = 'CLH Approve';
-                            if (Auth::user()->hasRole(['care-center']) || Auth::user()->hasRole(['administrator'])) {
-                                $careplanStatusLink = '<a style="text-decoration:underline;" href="' . URL::route('patient.demographics.show',
-                                        ['patient' => $patient->id]) . '"><strong>CLH Approve</strong></a>';
-                            }
-                        }
+                        $careplanStatusLink = 'CLH Approve';
                     }
-                }
-
-                // get billing provider name
-                $programName = '';
-                $bpName = '';
-                $bpID = $patient->billingProviderID;
-                if (!isset($foundPrograms[$patient->program_id])) {
-                    $program = Practice::find($patient->program_id);
-                    if ($program) {
-                        $foundPrograms[$patient->program_id] = $program;
-                        $programName = $program->display_name;
-                    }
-                } else {
-                    $program = $foundPrograms[$patient->program_id];
-                    $programName = $program->display_name;
-                }
-
-                if (!empty($bpID)) {
-                    if (!isset($foundUsers[$bpID])) {
-                        $bpUser = User::find($bpID);
-                        if ($bpUser) {
-                            $bpName = $bpUser->fullName;
-                            $foundUsers[$bpID] = $bpUser;
-                        }
-                    } else {
-                        $bpUser = $foundUsers[$bpID];
-                        $bpName = $bpUser->fullName;
-                    }
-                }
-
-                if ($patient->patientInfo) {
-                    $patientData[] = [
-                        'key'                        => $patient->id,
-                        'id'                         => $patient->id,
-                        'patient_name'               => $patient->fullName,
-                        'first_name'                 => $patient->first_name,
-                        'last_name'                  => $patient->last_name,
-                        'careplan_status'            => $careplanStatus,
-                        'careplan_status_link'       => $careplanStatusLink,
-                        'careplan_provider_approver' => $approverName,
-                        'dob'                        => Carbon::parse($patient->birthDate)->format('m/d/Y'),
-                        'phone'                      => $patient->phone,
-                        'age'                        => $patient->age,
-                        'reg_date'              => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
-                        'last_read'             => '',
-                        'ccm_time'              => $patient->patientInfo->cur_month_activity_time,
-                        'ccm_seconds'           => $patient->patientInfo->cur_month_activity_time,
-                        'provider'              => $bpName,
-                        'program_name'          => $programName,
-                        'careplan_last_printed' => $printed_date,
-                        'careplan_printed'      => $printed_status,
-                    ];
                 }
             }
+
+            if ($patient->patientInfo) {
+                $patientData[] = [
+                    'key'                        => $patient->id,
+                    'id'                         => $patient->id,
+                    'patient_name'               => $patient->fullName,
+                    'first_name'                 => $patient->first_name,
+                    'last_name'                  => $patient->last_name,
+                    'careplan_status'            => $careplanStatus,
+                    'careplan_status_link'       => $careplanStatusLink,
+                    'careplan_provider_approver' => $approverName,
+                    'dob'                        => Carbon::parse($patient->birthDate)->format('m/d/Y'),
+                    'phone'                      => $patient->phone,
+                    'age'                        => $patient->age,
+                    'reg_date'                   => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
+                    'last_read'                  => '',
+                    'ccm_time'                   => $patient->patientInfo->cur_month_activity_time,
+                    'ccm_seconds'                => $patient->patientInfo->cur_month_activity_time,
+                    'provider'                   => $patient->billingProviderName,
+                    'program_name'               => $patient->primaryPracticeName,
+                    'careplan_last_printed'      => $printed_date,
+                    'careplan_printed'           => $printed_status,
+                ];
+            }
         }
-        debug($patientData);
 
         $patientJson = json_encode($patientData);
 
@@ -382,7 +319,7 @@ class PatientCareplanController extends Controller
             'FL' => "Florida",
             'GA' => "Georgia",
             'HI' => "Hawaii",
-            'id' => "Idaho",
+            'ID' => "Idaho",
             'IL' => "Illinois",
             'IN' => "Indiana",
             'IA' => "Iowa",
