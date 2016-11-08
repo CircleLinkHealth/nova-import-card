@@ -53,7 +53,8 @@
 					</div>
 					<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
-						<form class="form-horizontal" role="form" method="POST" action="{{ url('/password/email') }}">
+						<form class="form-horizontal" role="form" method="POST"
+							  action="{{ url('auth/password/email') }}">
 							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 							<div class="form-group">

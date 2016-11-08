@@ -17,6 +17,7 @@ use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
+use App\Notifications\ResetPassword;
 use App\Services\UserService;
 use DateTime;
 use Faker\Factory;
@@ -1989,5 +1990,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                     ->with('user');
             },
         ]);
+    }
+
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string $token
+     *
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPassword($token));
     }
 }
