@@ -1993,7 +1993,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             (
                 $type
             ) {
-                $q->where('type', $type);
+                $q->where('type', $type)
+                    ->with('user');
             },
         ]);
     }
