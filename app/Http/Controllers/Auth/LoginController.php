@@ -42,17 +42,30 @@ class LoginController extends Controller
 
         $this->middleware('guest', ['except' => 'logout']);
 
-        //Check whether to authenticate using email or password
-        if ($request->has('email'))
-        {
-            if (!str_contains($request->input('email'), '@'))
-            {
-                $this->username = 'username';
+        $this->usernameOrEmail($request);
+    }
 
-                $request->merge([
-                    'username' => $request->input('email'),
-                ]);
-            }
+    /**
+     * Determine whether log in input is email or username, and do the needful to authenticate
+     *
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public function usernameOrEmail(Request $request)
+    {
+        if (!$request->has('email')) {
+            return false;
+        }
+
+        $request->merge(array_map('trim', $request->input()));
+
+        if (!str_contains($request->input('email'), '@')) {
+            $this->username = 'username';
+
+            $request->merge([
+                'username' => $request->input('email'),
+            ]);
         }
     }
 
