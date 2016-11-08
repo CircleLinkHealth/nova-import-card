@@ -865,6 +865,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.reports.nurse.generate',
         ]);
 
+        Route::post('reports/nurse/invoice/send', [
+            'uses' => 'NurseController@sendInvoice',
+            'as'   => 'admin.reports.nurse.send',
+        ]);
+
         Route::get('reports/nurse/daily', [
             'uses' => 'NurseController@makeDailyReport',
             'as'   => 'admin.reports.nurse.daily',
