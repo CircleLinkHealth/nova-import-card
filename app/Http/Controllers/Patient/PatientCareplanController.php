@@ -45,6 +45,7 @@ class PatientCareplanController extends Controller
                     $q->with('carePlanProviderApproverUser');
                 },
             ])
+            ->withCareTeamOfType('billing_provider')
             ->get();
 
         foreach ($patients as $patient) {
