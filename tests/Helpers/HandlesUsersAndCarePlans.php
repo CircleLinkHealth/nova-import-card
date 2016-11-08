@@ -614,8 +614,8 @@ trait HandlesUsersAndCarePlans
             'cpm_testing',
             'cpm_hotfix',
         ])) {
-//            Slack::to('#qualityassurance')
-//                ->send($text);
+            Slack::to('#qualityassurance')
+                ->send($text);
         }
 
         echo $text;
