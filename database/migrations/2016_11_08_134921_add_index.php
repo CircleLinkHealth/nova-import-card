@@ -17,7 +17,8 @@ class AddIndex extends Migration
         $allRelations = DB::select('select * from practice_user');
 
         foreach ($allRelations as $rel) {
-            $user = User::find($rel->user_id);
+            $user = User::withTrashed()
+                ->find($rel->user_id);
 
             if (!$user) {
                 DB::delete('delete from practice_user where user_id = ?', [$rel->user_id]);
@@ -33,11 +34,11 @@ class AddIndex extends Migration
 
             Schema::disableForeignKeyConstraints();
 
-            //we are not cascading on delete to account for the soft deletes on the user model
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
-                ->onUpdate('cascade');
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
 
             Schema::enableForeignKeyConstraints();
 
