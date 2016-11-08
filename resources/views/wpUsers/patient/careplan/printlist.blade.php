@@ -131,11 +131,6 @@
                                             sort: 'string'
                                         },
                                         {
-                                            id: "phone",
-                                            header: ["Phone", {content: "textFilter", placeholder: "Filter"}],
-                                            width: 120
-                                        },
-                                        {
                                             id: "reg_date",
                                             header: ["Registered On", {content: "dateFilter", placeholder: "Filter"}],
                                             width: 120,
@@ -171,7 +166,6 @@
                                         obs_alerts_dtable.sort("#patient_name#");
                                 obs_alerts_dtable.filter("#careplan_printed#", "No");
                                 obs_alerts_dtable.hideColumn("last_name");
-                                obs_alerts_dtable.hideColumn("phone");
                             </script>
                             <input id='lastName_btn' type='button' class='btn btn-primary' value='Show by Last Name'
                                    style='margin:15px;'
