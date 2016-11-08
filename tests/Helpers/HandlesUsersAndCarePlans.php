@@ -617,6 +617,9 @@ trait HandlesUsersAndCarePlans
         ])) {
             Slack::to('#qualityassurance')
                 ->send($text);
+        } else {
+            Slack::to('#background-tasks-dev')
+                ->send($text);
         }
 
         echo $text;
