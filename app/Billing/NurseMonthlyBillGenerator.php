@@ -10,6 +10,13 @@ use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
+//READ ME
+/*
+ * This class can be used to generate nurse invoices for a given time range.
+ * 
+ * Either use handle() or email() for generating vs. sending invoices. 
+ */
+
 class NurseMonthlyBillGenerator
 {
 
@@ -212,10 +219,17 @@ class NurseMonthlyBillGenerator
 
         $pdf->save( storage_path("download/$name.pdf"), true );
 
-        return $name.'.pdf';
+        return [
+
+            'id' => $this->nurse->id,
+            'name' => $this->nurseName,
+            'email' => $this->nurse->user->email,
+            'link' => $name.'.pdf'
+
+        ];
 
     }
-
+    
     public function email()
     {
 
@@ -225,9 +239,13 @@ class NurseMonthlyBillGenerator
 
         $this->formatItemizedActivities();
 
-        $this->generatePdf();
+        $this->mail();
 
-        return $this->mail();
+        return [
+            'id' => $this->nurse->id,
+            'email' => $this->nurse->user->email,
+            'link' => $this->generatePdf()
+        ];
 
     }
 
