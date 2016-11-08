@@ -22,7 +22,8 @@ trait HandlesUsersAndCarePlans
     public function createUser(
         $programId = 9,
         $roleName = 'provider'
-    ) {
+    ) : User
+    {
         $faker = Factory::create();
 
         $firstName = $faker->firstName;
@@ -400,53 +401,59 @@ trait HandlesUsersAndCarePlans
          */
         $query = $carePlanTemplate
             ->{$relationship}();
+
         empty($page)
             ?: $query->wherePivot('page', $page);
         $carePlanEntities = $query->get();
 
-//        if (!empty($numberOfRowsToCreate)) {
-//            if ($numberOfRowsToCreate > $carePlanEntities->count()) $numberOfRowsToCreate = rand(2, $carePlanEntities->count() - 1);
-//
-//            $carePlanEntities = $carePlanEntities->random($numberOfRowsToCreate);
-//
-//            if (is_object($carePlanEntities)) $carePlanEntities = collect($carePlanEntities);
-//        }
+        if (!empty($numberOfRowsToCreate)) {
+            if ($numberOfRowsToCreate > $carePlanEntities->count()) {
+                $numberOfRowsToCreate = rand(2, $carePlanEntities->count() - 1);
+            }
 
-//        $this
-//            ->actingAs($this->provider)
-//            ->visit($url);
-//
-//        empty($sectionTitle) ?: $this->see($sectionTitle);
-//
-//        foreach ($carePlanEntities as $entity) {
-//            $this->select($entity->id, "{$relationship}[$entity->id]");
-//
-//            $this->press('TestSubmit');
-//
-//            $this->seeInDatabase("{$entity->getTable()}_users", [
-//                $entityIdFieldName => $entity->id,
-//                'patient_id' => $patient->id,
-//                'cpm_instruction_id' => $entity->pivot->cpm_instruction_id,
-//            ]);
-//        }
-//
-//        $patientEntities = $patient
-//            ->{$relationship}()
-//            ->pluck($entityIdFieldName)
-//            ->all();
-//
-//        /*
-//         * This is kinda hacky.
-//         * We are checking if the $patientEntities >= $carePlanEntities.
-//         * We are interested that the patient has at least as many entities as the ones that were activated.
-//         * We are checking for >=, instead of just ==, because in the case of Miscs a patient will have 6 miscs,
-//         * but on page 3 there are only 4 Miscs, so the patient will always have 2 more miscs, which are the miscs
-//         * that appear on the first page.
-//         * Instead of putting effort into only picking the UserMiscs from the 3rd page, we are just gonna expect that
-//         * the patient will have more miscs that page 3 of the care plan.
-//         * Hope this makes sense in the future :)
-//         */
-//        $this->assertGreaterThanOrEqual(count($carePlanEntities->all()), count($patientEntities));
+            $carePlanEntities = $carePlanEntities->random($numberOfRowsToCreate);
+
+            if (is_object($carePlanEntities)) {
+                $carePlanEntities = collect($carePlanEntities);
+            }
+        }
+
+        $this
+            ->actingAs($this->provider)
+            ->visit($url);
+
+        empty($sectionTitle)
+            ?: $this->see($sectionTitle);
+
+        foreach ($carePlanEntities as $entity) {
+            $this->select($entity->id, "{$relationship}[$entity->id]");
+
+            $this->press('TestSubmit');
+
+            $this->seeInDatabase("{$entity->getTable()}_users", [
+                $entityIdFieldName   => $entity->id,
+                'patient_id'         => $patient->id,
+                'cpm_instruction_id' => $entity->pivot->cpm_instruction_id,
+            ]);
+        }
+
+        $patientEntities = $patient
+            ->{$relationship}()
+            ->pluck($entityIdFieldName)
+            ->all();
+
+        /*
+         * This is kinda hacky.
+         * We are checking if the $patientEntities >= $carePlanEntities.
+         * We are interested that the patient has at least as many entities as the ones that were activated.
+         * We are checking for >=, instead of just ==, because in the case of Miscs a patient will have 6 miscs,
+         * but on page 3 there are only 4 Miscs, so the patient will always have 2 more miscs, which are the miscs
+         * that appear on the first page.
+         * Instead of putting effort into only picking the UserMiscs from the 3rd page, we are just gonna expect that
+         * the patient will have more miscs that page 3 of the care plan.
+         * Hope this makes sense in the future :)
+         */
+        $this->assertGreaterThanOrEqual(count($carePlanEntities->all()), count($patientEntities));
 
     }
 
@@ -575,5 +582,42 @@ trait HandlesUsersAndCarePlans
 
             $this->see($entity->name);
         }
+    }
+
+    public function report()
+    {
+        /**
+         * Report stuff
+         */
+
+        //This is kinda hacky.
+        //We are checking which database is being used to figure out which environment we are on.
+        //This is because when testing, the APP_ENV is set to 'testing'
+        $db = env('DB_DATABASE');
+
+        $text = "
+            A Provider was created:
+            login: {$this->provider->email}
+            password: password
+            ";
+
+        foreach ($this->patients as $patient) {
+            $text .= "
+            A patient was created:
+            id: {$patient->id}
+            name: {$patient->display_name}
+            ";
+        }
+
+        if (in_array($db, [
+            'cpm_staging',
+            'cpm_testing',
+            'cpm_hotfix',
+        ])) {
+//            Slack::to('#qualityassurance')
+//                ->send($text);
+        }
+
+        echo $text;
     }
 }
