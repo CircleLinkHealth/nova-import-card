@@ -9,6 +9,7 @@ use App\Role;
 use App\User;
 use Carbon\Carbon;
 use Faker\Factory;
+use Maknz\Slack\Facades\Slack;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait HandlesUsersAndCarePlans
