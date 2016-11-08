@@ -9,9 +9,7 @@ use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
-use App\PatientCareTeamMember;
 use App\PatientContactWindow;
-use App\PhoneNumber;
 use App\Practice;
 use App\Role;
 use App\Services\CarePlanViewService;
@@ -41,15 +39,7 @@ class PatientCareplanController extends Controller
 
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
-            ->with('primaryProgram')
             ->with([
-                'patientCareTeamMembers' => function ($q) {
-                    $q->where('type', '=', PatientCareTeamMember::BILLING_PROVIDER)
-                        ->with('user');
-                },
-                'phoneNumbers'           => function ($q) {
-                    $q->where('type', '=', PhoneNumber::HOME);
-                },
                 'patientInfo'            => function ($q) {
                     $q->with('carePlanProviderApproverUser');
                 },
