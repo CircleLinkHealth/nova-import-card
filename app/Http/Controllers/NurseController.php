@@ -206,14 +206,17 @@ class NurseController extends Controller
             
             $fileName = $nurse_array['link'];
             $nurse = NurseInfo::find($nurse_array['id']);
+            $date_start = $nurse_array['date_start'];
+            $date_end = $nurse_array['date_end'];
 
-            Mail::send('billing.nurse.mail', $nurse_array['email_body'], function ($m) use ($nurse, $fileName) {
+            Mail::send('billing.nurse.mail', $nurse_array['email_body'], function ($m) use ($nurse, $fileName, $date_start, $date_end) {
 
                 $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
 
                 $m->attach(storage_path("download/$fileName"));
 
-                $m->to($nurse->user->email, $nurse->user->fullName)->subject('New Invoice from CircleLink Health');
+                $m->to($nurse->user->email, $nurse->user->fullName)
+                    ->subject('New Invoice from CircleLink Health ['.$date_start.' to '.$date_end .']');
 
                 $m->cc('raph@circlelinkhealth.com');
 

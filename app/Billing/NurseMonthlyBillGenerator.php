@@ -247,7 +247,7 @@ class NurseMonthlyBillGenerator
             'name' => $this->nurse->user->fullName,
             'percentage' => $this->percentTime,
             'total_time' => $this->formattedSystemTime,
-            'payout' => $this->payable
+            'payout' => $this->payable,
         ];
 
         return [
@@ -256,6 +256,8 @@ class NurseMonthlyBillGenerator
             'name' => $this->nurseName,
             'email' => $this->nurse->user->email,
             'link' => $name.'.pdf',
+            'date_start' => $this->startDate->toDateString(),
+            'date_end' => $this->endDate->toDateString(),
             'email_body' => $data
         ];
 
