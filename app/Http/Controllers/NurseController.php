@@ -203,11 +203,11 @@ class NurseController extends Controller
         $data = json_decode($request->input('data'), true);
 
         foreach ($data as $nurse_array) {
-
+            
             $fileName = $nurse_array['link'];
             $nurse = NurseInfo::find($nurse_array['id']);
 
-            Mail::send('billing.nurse.mail', $data, function ($m) use ($nurse, $fileName) {
+            Mail::send('billing.nurse.mail', $nurse_array['email_body'], function ($m) use ($nurse, $fileName) {
 
                 $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
 

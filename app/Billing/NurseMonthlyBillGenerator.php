@@ -35,8 +35,14 @@ class NurseMonthlyBillGenerator
     //Billing Results
     protected $formattedItemizedActivities;
     protected $payable;
+    protected $percentTime;
+
+    //total time in system
     protected $systemTime;
     protected $formattedSystemTime;
+
+    //total ccm time accumulated
+    protected $activityTime;
 
     public function __construct(NurseInfo $newNurse,
                                 Carbon $billingDateStart,
@@ -77,6 +83,24 @@ class NurseMonthlyBillGenerator
                     ->where('updated_at', '<=', $this->endDate);
             })
             ->sum('billable_duration');
+
+        $this->activityTime = Activity::where('provider_id', $this->nurse->user_id)
+            ->where(function ($q){
+                $q->where('updated_at', '>=', $this->startDate)
+                    ->where('updated_at', '<=', $this->endDate);
+            })
+            ->sum('duration');
+
+        if($this->activityTime == 0 || $this->systemTime == 0){
+
+            $this->percentTime = 0;
+
+        } else {
+
+            $this->percentTime = round(($this->activityTime/$this->systemTime) * 100, 2);
+
+        }
+
 
         if($this->systemTime != 0 && $this->systemTime != null){
 
@@ -219,13 +243,20 @@ class NurseMonthlyBillGenerator
 
         $pdf->save( storage_path("download/$name.pdf"), true );
 
+        $data = [
+            'name' => $this->nurse->user->fullName,
+            'percentage' => $this->percentTime,
+            'total_time' => $this->formattedSystemTime,
+            'payout' => $this->payable
+        ];
+
         return [
 
             'id' => $this->nurse->id,
             'name' => $this->nurseName,
             'email' => $this->nurse->user->email,
-            'link' => $name.'.pdf'
-
+            'link' => $name.'.pdf',
+            'email_body' => $data
         ];
 
     }
@@ -244,7 +275,7 @@ class NurseMonthlyBillGenerator
         return [
             'id' => $this->nurse->id,
             'email' => $this->nurse->user->email,
-            'link' => $this->generatePdf()
+            'link' => $this->generatePdf(),
         ];
 
     }
