@@ -39,18 +39,16 @@ class PatientCareplanController extends Controller
 
         $patients = User::intersectPracticesWith(auth()->user())
             ->ofType('participant')
+            ->with('primaryProgram')
             ->with([
                 'patientInfo'            => function ($q) {
                     $q->with('carePlanProviderApproverUser');
                 },
             ])
+            ->withCareTeamOfType('billing_provider')
             ->get();
 
         foreach ($patients as $patient) {
-            // skip if patient has no name
-            if (empty($patient->first_name)) {
-                continue 1;
-            }
 
             $last_printed = $patient->careplan_last_printed;
 
@@ -107,7 +105,7 @@ class PatientCareplanController extends Controller
                     'careplan_status_link'       => $careplanStatusLink,
                     'careplan_provider_approver' => $approverName,
                     'dob'                        => Carbon::parse($patient->birthDate)->format('m/d/Y'),
-                    'phone'                      => $patient->phone,
+                    'phone'                      => '',
                     'age'                        => $patient->age,
                     'reg_date'                   => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
                     'last_read'                  => '',
@@ -124,7 +122,6 @@ class PatientCareplanController extends Controller
         $patientJson = json_encode($patientData);
 
         return view('wpUsers.patient.careplan.printlist', compact([
-            'pendingApprovals',
             'patientJson',
         ]));
     }

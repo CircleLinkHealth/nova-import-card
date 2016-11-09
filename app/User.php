@@ -17,6 +17,7 @@ use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
+use App\Notifications\ResetPassword;
 use App\Services\UserService;
 use DateTime;
 use Faker\Factory;
@@ -1950,18 +1951,57 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     /**
      * Get billing provider.
      *
-     * @return User|false
+     * @return User
      */
-    public function billingProvider()
+    public function billingProvider() : User
     {
-        $billingProvider = $this->patientCareTeamMembers()
+        $billingProvider = $this->patientCareTeamMembers
             ->where('type', 'billing_provider')
             ->first();
 
-        $user = $billingProvider ?? false;
+        return $billingProvider->user ?? new User();
+    }
 
-        return $user
-            ? $user->user
-            : false;
+    /**
+     * Get billing provider.
+     *
+     * @return User
+     */
+    public function leadContact() : User
+    {
+        $leadContact = $this->patientCareTeamMembers
+            ->where('type', 'lead_contact')
+            ->first();
+
+        return $leadContact->user ?? new User();
+    }
+
+
+    public function scopeWithCareTeamOfType(
+        $query,
+        $type
+    ) {
+        $query->with([
+            'patientCareTeamMembers' => function ($q) use
+            (
+                $type
+            ) {
+                $q->where('type', $type)
+                    ->with('user');
+            },
+        ]);
+    }
+
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string $token
+     *
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPassword($token));
     }
 }

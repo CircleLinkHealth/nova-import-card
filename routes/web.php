@@ -82,15 +82,6 @@ Route::group(['prefix' => 'algo'], function () {
 
 Route::get('ajax/patients', 'UserController@getPatients');
 
-Route::get('careplan/{id}', [
-    'uses' => 'Admin\CarePlanController@carePlan',
-    'as'   => 'careplan',
-]);
-Route::get('careplan/{id}/section/{sectionId}', [
-    'uses' => 'Admin\CarePlanController@carePlanSection',
-    'as'   => 'careplan.section',
-]);
-
 /*
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
@@ -106,24 +97,6 @@ Route::group([
 
     Route::get('logout', 'Auth\LoginController@logout');
 });
-
-Route::group([
-    'prefix' => 'password',
-], function () {
-    Route::get('broker', 'Auth\PasswordController@getBroker');
-    Route::post('email', 'Auth\PasswordController@postEmail');
-    Route::get('email', 'Auth\PasswordController@getEmail');
-    Route::get('reset', 'Auth\PasswordController@getReset');
-    Route::post('reset', 'Auth\PasswordController@postReset');
-});
-
-// Password reset link request routes...
-Route::get('password/email', 'Auth\PasswordController@getEmail');
-Route::post('password/email', 'Auth\PasswordController@postEmail');
-
-// Password reset routes...
-Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
-Route::post('password/reset', 'Auth\PasswordController@postReset');
 
 /****************************/
 /****************************/

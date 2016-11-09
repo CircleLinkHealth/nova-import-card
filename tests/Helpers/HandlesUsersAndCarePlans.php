@@ -9,6 +9,7 @@ use App\Role;
 use App\User;
 use Carbon\Carbon;
 use Faker\Factory;
+use Maknz\Slack\Facades\Slack;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 trait HandlesUsersAndCarePlans
@@ -614,8 +615,11 @@ trait HandlesUsersAndCarePlans
             'cpm_testing',
             'cpm_hotfix',
         ])) {
-//            Slack::to('#qualityassurance')
-//                ->send($text);
+            Slack::to('#qualityassurance')
+                ->send($text);
+        } else {
+            Slack::to('#background-tasks-dev')
+                ->send($text);
         }
 
         echo $text;
