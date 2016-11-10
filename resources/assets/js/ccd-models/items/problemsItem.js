@@ -56,7 +56,7 @@ new Vue({
                     // error callback
                 }
             )
-            };
+            };;
         },
 
         // Edit an existing problemon the array
@@ -78,28 +78,26 @@ new Vue({
         // Adds an problem to the existing problems array
         updateProblem: function(index) {
 
-            this.$http.post('/CCDModels/Items/ProblemsItem/update', {'problem': this.problems[index]}).then((response) = > {
-                // Put the results in a div
+            var payload = {
+                'problem': this.problems[index]
+            };
 
-                // show text
+            this.$http.post('/CCDModels/Items/ProblemsItem/update', payload).then(function (response) {
                 $('#problem-name-' + index).toggle();
 
-            // hide textarea
-            $('#problem-edit-' + index).toggle();
+                // hide textarea
+                $('#problem-edit-' + index).toggle();
 
-            // show all edit buttons
-            $('.problem-edit-btn').show();
-            $('.problem-delete-btn').show();
+                // show all edit buttons
+                $('.problem-edit-btn').show();
+                $('.problem-delete-btn').show();
 
-            // hide save button
-            $('#problem-save-btn-' + index).toggle();
+                // hide save button
+                $('#problem-save-btn-' + index).toggle();
 
-        },
-            (response) =
-            >
-            {
-
-            }
+            }, function (response) {
+                console.log(response);
+            });
         },
 
         deleteProblem: function(index, e) {
@@ -135,6 +133,7 @@ new Vue({
             });
         },
     }
-});;;;
+});;
+
 
 

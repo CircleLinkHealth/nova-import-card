@@ -11080,11 +11080,12 @@ new Vue({
 
         // Adds an problem to the existing problems array
         updateProblem: function updateProblem(index) {
-            // save on server
-            this.$http.post("/CCDModels/Items/ProblemsItem/update", {'problem': this.problems[index]}).done(function (data) {
-                // Put the results in a div
 
-                // show text
+            var payload = {
+                'problem': this.problems[index]
+            };
+
+            this.$http.post('/CCDModels/Items/ProblemsItem/update', payload).then(function (response) {
                 $('#problem-name-' + index).toggle();
 
                 // hide textarea
@@ -11096,6 +11097,8 @@ new Vue({
 
                 // hide save button
                 $('#problem-save-btn-' + index).toggle();
+            }, function (response) {
+                console.log(response);
             });
         },
 
@@ -11104,12 +11107,8 @@ new Vue({
             //e.stopPropagation();
             if (confirm("Are you sure you want to delete this problem?")) {
                 var thisMed = this.problems[0];
-                // $remove is a Vue convenience method similar to splice
-                console.log('All problems::' + this.problems);
-                console.log('This problem id::' + this.problems[index].id);
-                console.log(this.problems[index].name);
-                // save on server
-                var posting = $.post("/CCDModels/Items/ProblemsItem/destroy", { 'problem': this.problems[index] });
+
+                var posting = this.$http.post("/CCDModels/Items/ProblemsItem/destroy", {'problem': this.problems[index]});
                 // delete from vue array
                 Vue.delete(this.problems, index);
                 // Results
