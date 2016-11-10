@@ -161,9 +161,8 @@ class PatientContactWindow extends Model
         Carbon $offset_date
     ) {
 
+        $patient_windows = $patient->patientContactWindows->sortBy('day_of_week');
 
-        $patient_windows = $patient->patientContactWindows()->orderBy('day_of_week')->get();
-        
         //If no contact window, just return the same date.
         if ($patient_windows->count() == 0) {
 
@@ -184,18 +183,24 @@ class PatientContactWindow extends Model
 
         }
 
-        $window = $patient_windows->first();
+        $adjusted_date = Carbon::parse($offset_date)->subDay(1);
 
-        // we sub one day to check whether the offset day is an option.
-        $adjusted_offset = Carbon::parse($offset_date)->subDay()->toDateString();
+        $count = 0;
+        foreach( $patient_windows as $window){
 
-        $date_compare = Carbon::parse($adjusted_offset)->next(carbonToClhDayOfWeek($window->day_of_week))->toDateString();
+            $days[$count]['date'] = Carbon::parse($adjusted_date)->next($window->day_of_week);
+            $days[$count]['window'] = $window;
+            $count++;
+
+        }
+
+        $first = collect($days)->sortBy('date')->first();
 
         return [
 
-            'day'          => $date_compare,
-            'window_start' => Carbon::parse($window->window_time_start)->format('H:i'),
-            'window_end'   => Carbon::parse($window->window_time_end)->format('H:i'),
+            'day'          => $first['date']->toDateString(),
+            'window_start' => Carbon::parse($first['window']->window_time_start)->format('H:i'),
+            'window_end'   => Carbon::parse($first['window']->window_time_end)->format('H:i'),
 
         ];
         

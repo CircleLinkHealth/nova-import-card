@@ -9,8 +9,9 @@ use App\Note;
 use App\Practice;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use App\Notifications\NewNote;
+
 
 class NoteService
 {
@@ -97,34 +98,18 @@ class NoteService
             ];
 
             if ($newNoteFlag || $note->isTCM) {
-                $email_view = 'emails.newnote';
                 $email_subject = 'Urgent Patient Note from CircleLink Health';
             } else {
-                $email_view = 'emails.existingnote';
                 $email_subject = 'You have been forwarded a note from CarePlanManager';
             }
 
-            Mail::send($email_view, $data, function ($message) use
-            (
-                $email,
-                $email_subject
-            ) {
-                $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
-
-                //Forwards notes to Linda
-                $message->cc('Lindaw@circlelinkhealth.com');
-                $message->cc('raph@circlelinkhealth.com');
-
-                $message->to($email)->subject($email_subject);
-            });
-
             if ($newNoteFlag) {
-                $body = 'Please see new note for patient ' . $patient->fullName . ':' . $url;
+                $body = 'Please see new note for patient';
             } else {
-                $body = 'Please see forwarded note for patient ' . $patient->fullName . ', created on ' . $performed_at . ' by ' . $sender->fullName . ':' . $url;
+                $body = 'Please see forwarded note for patient, created on ' . $performed_at . ' by ' . $sender->fullName;
             }
 
-            MailLog::create([
+            $message = MailLog::create([
                 'sender_email'    => $sender->email,
                 'receiver_email'  => $receiver->email,
                 'body'            => $body,
@@ -135,6 +120,11 @@ class NoteService
                 'created_at'      => $note->created_at,
                 'note_id'         => $note->id,
             ]);
+
+            //temp for live testing
+            $user = \App\User::find(1752);
+
+            $user->notify(new NewNote($message, $url));
 
         }
 
@@ -292,7 +282,7 @@ class NoteService
         }
 
         return collect($provider_forwarded_notes);
-        
+
     }
 
     //MAIL HELPERS
