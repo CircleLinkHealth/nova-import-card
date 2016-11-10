@@ -381,8 +381,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function viewablePatientIds() : array
     {
         return User::ofType('participant')
-            ->whereHas('practices', functionls ($q) {
-                $q->whereIn('program_id', $this->viewableProgramIds())
+            ->whereHas('practices', function ($q) {
+                $q->whereIn('program_id', $this->viewableProgramIds());
             })
             ->pluck('id')
             ->all();
