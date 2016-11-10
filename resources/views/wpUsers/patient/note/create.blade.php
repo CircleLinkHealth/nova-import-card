@@ -245,8 +245,8 @@
                                                                     @foreach ($careteam_info as $id => $name)
                                                                         <option value="{{$id}}"> {{$name}} </option>
                                                                     @endforeach
-                                                                    <option value="948">Patient Support</option>
                                                                 @endif
+                                                                <option value="948">Patient Support</option>
                                                             </select>
                                                         </div>
                                                     </div>
