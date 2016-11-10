@@ -9,74 +9,57 @@ var patientId = $('#patient_id').val();
 new Vue({
     el: '#problems',
     data: {
-        // default form values
-        problem: { id: '', patient_id: patientId, name: '' }
+        problem: {
+            id: '',
+            patient_id: patientId,
+            name: ''
+        }
     },
-    // Anything within the ready function will run when the application loads
-    ready: function() {
-        // When the application loads, we want to call the method that initializes
-        // some data
+
+    ready: function () {
         this.loadProblems();
     },
-    // Methods we want to use in our application are registered here
-    methods: {
 
-        loadProblems: function() {
-            var patientId = $('#patient_id').val();
-            // GET request
-            this.$http({url: '/CCDModels/Items/ProblemsItem', method: 'GET', params: {'patient_id': patientId }}).then((response) => {
-                // success callback
+    methods: {
+        loadProblems: function () {
+            var payload = {
+                'patient_id': $('#patient_id').val()
+            };
+
+            this.$http.get('/CCDModels/Items/ProblemsItem', payload).then(function (response) {
                 this.$set('problems', response.data);
-            }, (response) => {
-                // error callback
-            }
-            )
+            }, function (response) {
+                console.log(response);
+            });
         },
 
-        // Adds an problem to the existing problems array
-        addProblem: function() {
+        addProblem: function () {
 
-            if(this.problem.name) {
-                // add to array
-                console.log(this.problem.name);
+            if (this.problem.name) {
+                var payload = {
+                    'problem': this.problem
+                };
 
-                // save on server
-                // GET request
-                this.$http.post('/CCDModels/Items/ProblemsItem/store', {'problem': this.problem}).then((response) => {
-                    // log
-                    console.log('new ccd_problem.id = ' + response.data.id.id);
-                    // reset form values
+                this.$http.post('/CCDModels/Items/ProblemsItem/store', payload).then(function (response) {
                     var id = response.data.id.id;
                     var patient_id = $('#patient_id').val();
-                    this.problems.push({ id: id, patient_id: patient_id, name: response.data.id.name });
-                    this.problem = { id: '', patient_id: patient_id, name: '' };
-
-                }, (response) => {
-
-                    // error callback
-                }
-            )
-            };;
+                    this.problems.push({id: id, patient_id: patient_id, name: response.data.id.name});
+                    this.problem = {id: '', patient_id: patient_id, name: ''};
+                }, function (response) {
+                    console.log(response);
+                });
+            }
         },
 
-        // Edit an existing problemon the array
-        editProblem: function(index) {
-            // hide text
+        editProblem: function (index) {
             $('#problem-name-' + index).toggle();
-
-            // show textarea
             $('#problem-edit-' + index).toggle();
-
-            // hide all edit buttons
             $('.problem-edit-btn').hide();
             $('.problem-delete-btn').hide();
-
-            // show save button
             $('#problem-save-btn-' + index).toggle();
         },
 
-        // Adds an problem to the existing problems array
-        updateProblem: function(index) {
+        updateProblem: function (index) {
 
             var payload = {
                 'problem': this.problems[index]
@@ -84,56 +67,38 @@ new Vue({
 
             this.$http.post('/CCDModels/Items/ProblemsItem/update', payload).then(function (response) {
                 $('#problem-name-' + index).toggle();
-
-                // hide textarea
                 $('#problem-edit-' + index).toggle();
-
-                // show all edit buttons
                 $('.problem-edit-btn').show();
                 $('.problem-delete-btn').show();
-
-                // hide save button
                 $('#problem-save-btn-' + index).toggle();
-
             }, function (response) {
                 console.log(response);
             });
         },
 
-        deleteProblem: function(index, e) {
-            //e.preventDefault();
-            //e.stopPropagation();
-            if(confirm("Are you sure you want to delete this problem?")) {
-                var thisMed = this.problems[0];
+        deleteProblem: function (index, e) {
+            if (confirm("Are you sure you want to delete this problem?")) {
 
-                var posting = this.$http.post("/CCDModels/Items/ProblemsItem/destroy", {'problem': this.problems[index]});
-                // delete from vue array
-                Vue.delete(this.problems, index);
-                // Results
-                posting.done(function( data ) {
-                    console.log(data);
+                var payload = {
+                    'problem': this.problems[index]
+                };
+
+                this.$http.post('/CCDModels/Items/ProblemsItem/destroy', payload).then(function (response) {
+                    Vue.delete(this.problems, index);
+                }, function (response) {
+                    console.log(response);
                 });
-                return false;
             }
-            return false;
         },
 
-        postEvents: function(index, e) {
-
-            // Send the data using post
-
-            var posting = $.post( "/CCDModels/Items/ProblemsItem/store", this.problems );
-            console.log(this.problems);
-            // Put the results in a div
-            posting.done(function( data ) {
-                console.log(data);
-                // hide all textareas
-
-                // show edit buttons
+        postEvents: function (index, e) {
+            this.$http.post('/CCDModels/Items/ProblemsItem/store', this.problems).then(function (response) {
+            }, function (response) {
+                console.log(response);
             });
-        },
+        }
     }
-});;
+});
 
 
 
