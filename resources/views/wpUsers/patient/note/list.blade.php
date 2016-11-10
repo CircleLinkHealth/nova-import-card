@@ -23,7 +23,11 @@
                         @if(isset($only_mailed_notes) && $only_mailed_notes == true)
                             {{'checked'}}
                                 @endif>
-                        <label for="mail_filter"><span> </span>Only Forwarded Notes</label>
+                        <label for="mail_filter"><span> </span>Only Forwarded Notes <br />
+                            @if(auth()->user()->ofType('administrator'))
+                                (* admins see all notes from provider's program)
+                            @endif
+                        </label>
                     </li>
                 </ul>
                 <div class="form-group  pull-right" style="margin-top:10px; ">
