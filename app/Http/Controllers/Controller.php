@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\PatientSession;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -14,34 +13,9 @@ class Controller extends BaseController
 
     public function __construct(Request $request)
     {
+        /**
+         * Check whether the User is viewing a patient (ie. has an open Patient Session).
+         */
         $this->middleware('patient.session');
-
-        $patientId = $request->route('patientId') ?? $request->input('patientId');
-
-        if ($request->method() != 'GET') {
-            return;
-        }
-
-        $clearPatientSessions = preg_match('/(?<![0-9])[0-9]{2,4}(?![0-9])/', $request->getRequestUri()) == 0;
-
-        if (!empty($patientId)) {
-            $clearPatientSessions = !str_contains($request->getRequestUri(),
-                $patientId)//    && str_contains(\URL::previous(), $patientId)
-            ;
-        }
-
-
-        if ($clearPatientSessions) {
-            if (auth()->check()) {
-                $user = auth()->user()->id;
-            } else {
-                $user = $request->input('providerId');
-            }
-
-            $session = PatientSession::where('user_id', '=', $user)
-                ->delete();
-        }
-
-
     }
 }
