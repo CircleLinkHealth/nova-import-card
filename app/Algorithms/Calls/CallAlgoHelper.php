@@ -25,7 +25,7 @@ trait CallAlgoHelper
             //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
             $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient,
                 $this->nextCallDate);
-
+            
         } else {
 
             //This override is to schedule calls on weekends.
