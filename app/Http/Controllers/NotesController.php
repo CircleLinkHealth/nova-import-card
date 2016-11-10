@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\Formatters\WebixFormatter;
+use App\Note;
 use App\PatientContactWindow;
 use App\PatientMonthlySummary;
 use App\Practice;
@@ -59,11 +60,11 @@ class NotesController extends Controller
         $input = $request->all();
 
 
-        $session_user = Auth::user();
+        $session_user = auth()->user();
 
         $providers_for_blog = User::whereIn('id', $session_user->viewableProviderIds())->pluck('display_name',
             'id')->sort();
-
+        
         //TIME FILTERS
 
         //if month and year are selected
@@ -96,17 +97,34 @@ class NotesController extends Controller
 
             $provider = User::find($input['provider']);
 
-            $title = $provider->display_name;
+            //If an admin is viewing this, we show them all
+            //notes from all providers who are in the
+            //same program as the provider selected.
 
-            if ($only_mailed_notes) {
+            if (auth()->user()->ofType('administrator') && $only_mailed_notes) {
 
-                $notes = $this->service->getForwardedNotesWithRangeForProvider($provider->id, $start, $end);
+                $program = Practice::find($provider->program_id);
+
+                $notes = $this->service->getAllForwardedNotesForPracticeWithRange($program, Carbon::parse($start), Carbon::parse($end));
+
+                dd($notes->toArray());
 
             } else {
 
-                $notes = $this->service->getNotesWithRangeForProvider($provider->id, $start, $end);
+                if ($only_mailed_notes) {
+
+                    $notes = $this->service->getForwardedNotesWithRangeForProvider($provider->id, $start, $end);
+
+                } else {
+
+                    $notes = $this->service->getNotesWithRangeForProvider($provider->id, $start, $end);
+
+                }
 
             }
+
+
+            $title = $provider->display_name;
 
             if (!empty($notes)) {
 
