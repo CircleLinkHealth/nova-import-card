@@ -121,6 +121,7 @@ class NoteService
                 'note_id'         => $note->id,
             ]);
 
+            //temp for live testing
             $user = \App\User::find(1752);
 
             $user->notify(new NewNote($message, $url));
