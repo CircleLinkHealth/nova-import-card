@@ -90,6 +90,8 @@ Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 Route::get('/', 'WelcomeController@index');
 Route::get('home', 'WelcomeController@index');
 
+Route::get('login', 'Auth\LoginController@showLoginForm');
+
 Route::group([
     'prefix' => 'auth',
 ], function () {

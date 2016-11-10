@@ -32,25 +32,6 @@ class WelcomeController extends Controller {
 	 */
 	public function index()
 	{
-		//dd(Auth::redirectPath());
-		/*
-		if(Auth::user()) {
-			$role = Auth::user()->roles[0]->name;
-
-			switch ($role) {
-				case 'administrator':
-					return redirect()->route('admin.dashboard', [])->send();
-				case 'manager':
-					return redirect()->route('admin.dashboard', [])->send();
-				case 'participant':
-					return redirect()->route('patients.dashboard', [])->send();
-				case 'provider':
-					return redirect()->route('patients.dashboard', [])->send();
-				default:
-					return view('welcome');
-			}
-		}
-		*/
 		if(Auth::user()) {
 			if(Auth::user()->hasRole('administrator')) {
 				return redirect()->route('admin.dashboard', [])->send();
@@ -62,7 +43,8 @@ class WelcomeController extends Controller {
 				return redirect()->route('patients.dashboard', [])->send();
 			}
 		}
-		return redirect()->route('login', [])->send();
+
+        return redirect()->route('login', [])->send();
 	}
 
 }
