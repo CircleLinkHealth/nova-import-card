@@ -11081,12 +11081,9 @@ new Vue({
         // Adds an problem to the existing problems array
         updateProblem: function updateProblem(index) {
             // save on server
-            var posting = $.post("/CCDModels/Items/ProblemsItem/update", { 'problem': this.problems[index] });
-            console.log(this.problems[index].name);
-            // Put the results in a div
-            posting.done(function (data) {
-                // log
-                console.log(data);
+            this.$http.post("/CCDModels/Items/ProblemsItem/update", {'problem': this.problems[index]}).done(function (data) {
+                // Put the results in a div
+
                 // show text
                 $('#problem-name-' + index).toggle();
 
@@ -11140,7 +11137,6 @@ new Vue({
         }
     }
 });
-
 },{"vue":10,"vue-resource":3}]},{},[11]);
 
 //# sourceMappingURL=problemsItem.js.map

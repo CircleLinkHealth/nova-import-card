@@ -32,7 +32,7 @@ elixir(function(mix) {
     // mix.browserify('uploader.js');
     // mix.browserify('ccd-models/items/medicationItem.js');
     // mix.browserify('ccd-models/items/allergiesItem.js');
-    // mix.browserify('ccd-models/items/problemsItem.js');
+    mix.browserify('ccd-models/items/problemsItem.js');
     //mix.scripts([
     //    'resources/assets/js/material.min.js'
     //], 'public/js/scripts.js');
