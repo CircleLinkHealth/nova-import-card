@@ -106,9 +106,7 @@ class NotesController extends Controller
                 $program = Practice::find($provider->program_id);
 
                 $notes = $this->service->getAllForwardedNotesForPracticeWithRange($program, Carbon::parse($start), Carbon::parse($end));
-
-                dd($notes->toArray());
-
+                
             } else {
 
                 if ($only_mailed_notes) {
