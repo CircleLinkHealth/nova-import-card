@@ -95,7 +95,7 @@
         <h2 class="title"><b>Sorry to interrupt: </b><br><br>
             You already have a patient session open.<br><br>
             Are you sure you want to continue?<br>
-            (You'll lose all unsaved work.)<br>
+            (You may lose time ONLY if you have multiple tabs open.)<br>
         </h2>
 
         <hr style="width: 100%; text-align: left;">
