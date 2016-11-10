@@ -77,23 +77,29 @@ new Vue({
 
         // Adds an problem to the existing problems array
         updateProblem: function(index) {
-            // save on server
-            this.$http.post("/CCDModels/Items/ProblemsItem/update", {'problem': this.problems[index]}).done(function (data) {
+
+            this.$http.post('/CCDModels/Items/ProblemsItem/update', {'problem': this.problems[index]}).then((response) = > {
                 // Put the results in a div
 
                 // show text
                 $('#problem-name-' + index).toggle();
 
-                // hide textarea
-                $('#problem-edit-' + index).toggle();
+            // hide textarea
+            $('#problem-edit-' + index).toggle();
 
-                // show all edit buttons
-                $('.problem-edit-btn').show();
-                $('.problem-delete-btn').show();
+            // show all edit buttons
+            $('.problem-edit-btn').show();
+            $('.problem-delete-btn').show();
 
-                // hide save button
-                $('#problem-save-btn-' + index).toggle();
-            });
+            // hide save button
+            $('#problem-save-btn-' + index).toggle();
+
+        },
+            (response) =
+            >
+            {
+
+            }
         },
 
         deleteProblem: function(index, e) {
@@ -101,12 +107,8 @@ new Vue({
             //e.stopPropagation();
             if(confirm("Are you sure you want to delete this problem?")) {
                 var thisMed = this.problems[0];
-                // $remove is a Vue convenience method similar to splice
-                console.log('All problems::' + this.problems);
-                console.log('This problem id::' + this.problems[index].id);
-                console.log(this.problems[index].name);
-                // save on server
-                var posting = $.post( "/CCDModels/Items/ProblemsItem/destroy", {'problem': this.problems[index]} );
+
+                var posting = this.$http.post("/CCDModels/Items/ProblemsItem/destroy", {'problem': this.problems[index]});
                 // delete from vue array
                 Vue.delete(this.problems, index);
                 // Results
@@ -133,6 +135,6 @@ new Vue({
             });
         },
     }
-});;
+});;;;
 
 
