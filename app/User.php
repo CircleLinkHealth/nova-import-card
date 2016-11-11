@@ -2,6 +2,7 @@
 
 use App\CLH\CCD\ImportedItems\DemographicsImport;
 use App\Contracts\Serviceable;
+use App\Models\CCD\Ccda;
 use App\Models\CCD\CcdAllergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\CcdMedication;
@@ -2013,5 +2014,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPassword($token));
+    }
+
+    public function ccdas()
+    {
+        return $this->hasMany(Ccda::class, 'patient_id', 'id');
     }
 }

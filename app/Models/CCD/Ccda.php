@@ -1,6 +1,7 @@
 <?php namespace App\Models\CCD;
 
 use App\CLH\CCD\ItemLogger\ModelLogRelationship;
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
@@ -33,7 +34,15 @@ class Ccda extends Model implements Transformable {
         'json',
     ];
 
-    
+    /**
+     * This is the patient that owns this CCDA.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'patient_id', 'id');
+    }
 
     public function qaSummary()
     {
