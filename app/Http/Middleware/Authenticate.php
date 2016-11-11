@@ -2,10 +2,11 @@
 
 use App\Models\PatientSession;
 use Closure;
+use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 
-class Authenticate
+class Authenticate extends \Illuminate\Auth\Middleware\Authenticate
 {
 
     /**
@@ -18,12 +19,13 @@ class Authenticate
     /**
      * Create a new filter instance.
      *
-     * @param  Guard $auth
+     * @param Auth|Guard $auth
      *
-     * @return void
      */
-    public function __construct(Guard $auth)
+    public function __construct(Auth $auth)
     {
+        parent::__construct($auth);
+
         $this->auth = $auth;
     }
 
@@ -32,13 +34,18 @@ class Authenticate
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next
+     * @param  string[] ...$guards
      *
-     * @return mixed
+*@return mixed
+     *
+     * @throws \Illuminate\Auth\AuthenticationException
      */
     public function handle(
         $request,
-        Closure $next
+        Closure $next,
+        ...$guards
     ) {
+        parent::handle($request, $next, $guards);
         // ensure user->access_disabled and user->status are passable
         if (!$this->auth->guest()) {
             if (auth()->user()) {
