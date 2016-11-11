@@ -104,9 +104,9 @@ class NoteService
             }
 
             if ($newNoteFlag) {
-                $body = 'Please see new note for patient';
+                $body = 'Please see note for one of your patients';
             } else {
-                $body = 'Please see forwarded note for patient, created on ' . $performed_at . ' by ' . $sender->fullName;
+                $body = 'Please see forwarded note for one of your patients, created on ' . $performed_at . ' by ' . $sender->fullName;
             }
 
             $message = MailLog::create([
