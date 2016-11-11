@@ -11,6 +11,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Yajra\Datatables\Facades\Datatables;
 
 class NurseController extends Controller
@@ -49,29 +50,20 @@ class NurseController extends Controller
                 $startDate = Carbon::parse($request->input('start_date'));
                 $endDate = Carbon::parse($request->input('end_date'));
 
-                $links[$nurse->user->fullName] = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $addTime,
+                $generator = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $addTime,
                     $addNotes))->handle();
+                $data[] = $generator;
+
+                $links[$generator['name']] = $generator['link'];
 
             }
 
-            return view('billing.nurse.list', ['invoices' => $links]);
-        }
-
-        if ($request->input('submit') == 'email') {
-
-            $messages = [];
-            foreach ($nurses as $nurse) {
-
-                $nurse = NurseInfo::where('user_id', $nurse)->first();
-                $startDate = Carbon::parse($request->input('start_date'));
-                $endDate = Carbon::parse($request->input('end_date'));
-
-                $messages[] = (new NurseMonthlyBillGenerator($nurse, $startDate, $endDate, $addTime,
-                    $addNotes))->email();
-
-            }
-
-            return redirect()->back();
+            return view('billing.nurse.list',
+                [
+                    'invoices' => $links,
+                    'data'     => $data,
+                ]
+            );
         }
     }
 
@@ -203,6 +195,36 @@ class NurseController extends Controller
 
         return view('statistics.nurses.info');
 
+    }
+
+    public function sendInvoice(Request $request)
+    {
+
+        $data = json_decode($request->input('data'), true);
+
+        foreach ($data as $nurse_array) {
+            
+            $fileName = $nurse_array['link'];
+            $nurse = NurseInfo::find($nurse_array['id']);
+            $date_start = $nurse_array['date_start'];
+            $date_end = $nurse_array['date_end'];
+
+            Mail::send('billing.nurse.mail', $nurse_array['email_body'], function ($m) use ($nurse, $fileName, $date_start, $date_end) {
+
+                $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
+
+                $m->attach(storage_path("download/$fileName"));
+
+                $m->to($nurse->user->email, $nurse->user->fullName)
+                    ->subject('New Invoice from CircleLink Health ['.$date_start.' to '.$date_end .']');
+
+                $m->cc('raph@circlelinkhealth.com');
+
+            });
+
+        }
+
+        return redirect()->route('admin.reports.nurse.invoice');
     }
 
 }

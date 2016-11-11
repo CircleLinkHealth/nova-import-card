@@ -30,7 +30,7 @@ trait ConsolidatesProblemInfo
             $consolidatedProblem->cons_name = $ccdProblem->translation_name;
 
             if ( empty($consolidatedProblem->cons_name) && !empty($ccdProblem->name) ) {
-                $consolidatedProblem->cons_name = $ccdProblem->translation_name;
+                $consolidatedProblem->cons_name = $ccdProblem->name;
             }
         }
         elseif ( !empty($ccdProblem->code) ) {

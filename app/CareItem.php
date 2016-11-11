@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CareItem extends Model {
+class CareItem extends Model
+{
 
     /**
      * The connection name for the model.
@@ -30,40 +31,12 @@ class CareItem extends Model {
      *
      * @var array
      */
-    protected $fillable = ['parent_id', 'name', 'display_name', 'description'];
-
-    public function carePlans()
-    {
-        return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
-    }
-
-    public function userValues() {
-        return $this->hasMany('App\CareItemUserValue', 'care_item_id', 'id');
-    }
-
-    public function question() // rules prefix because ->items is a protect class var on parent
-    {
-        return $this->belongsTo('App\CPRulesQuestions', 'qid', 'qid');
-    }
-
-    public function parents()
-    {
-        return $this->belongsTo('App\CareItem', 'parent_id');
-    }
-
-    public function children()
-    {
-        return $this->hasMany('App\CareItem', 'parent_id');
-    }
-
-
-
-    // START ATTRIBUTES
-    public function getMetaKeyAttribute()
-    {
-        return $this->pivot->meta_key;
-    }
-    // END ATTRIBUTES
+    protected $fillable = [
+        'parent_id',
+        'name',
+        'display_name',
+        'description',
+    ];
 
     public static function boot()
     {
@@ -77,6 +50,41 @@ class CareItem extends Model {
             $CPRulesItem->meta()->delete();
         });
         */
+    }
+
+    public function carePlans()
+    {
+        return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
+    }
+
+    public function userValues()
+    {
+        return $this->hasMany('App\CareItemUserValue', 'care_item_id', 'id');
+    }
+
+    public function question() // rules prefix because ->items is a protect class var on parent
+    {
+        return $this->belongsTo('App\CPRulesQuestions', 'qid', 'qid');
+    }
+
+    public function parents()
+    {
+        return $this->belongsTo('App\CareItem', 'parent_id');
+    }
+
+
+    // START ATTRIBUTES
+
+    public function children()
+    {
+        return $this->hasMany('App\CareItem', 'parent_id');
+    }
+
+    // END ATTRIBUTES
+
+    public function getMetaKeyAttribute()
+    {
+        return $this->pivot->meta_key;
     }
 
 }

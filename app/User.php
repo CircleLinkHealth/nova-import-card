@@ -17,6 +17,7 @@ use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
+use App\Notifications\ResetPassword;
 use App\Services\UserService;
 use DateTime;
 use Faker\Factory;
@@ -364,6 +365,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\Call', 'outbound_cpm_id', 'id');
     }
 
+    public function inboundMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_cpm_id', 'id');
+    }
+
+    public function outboundMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_cpm_id', 'id');
+    }
+    
     /**
      * @return array
      */
@@ -1164,7 +1175,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function patientCareTeamMembers()
     {
-        return $this->hasMany('App\PatientCareTeamMember', 'user_id', 'id');
+        return $this->hasMany(PatientCareTeamMember::class, 'user_id', 'id');
     }
 
     public function getSendAlertToAttribute()
@@ -1672,13 +1683,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-
-// MISC, these should be removed eventually
-
     public function primaryProgram()
     {
         return $this->belongsTo(Practice::class, 'program_id', 'id');
     }
+
+
+// MISC, these should be removed eventually
 
     public function scramble()
     {
@@ -1762,12 +1773,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $userUcpData;
     }
 
-// user data scrambler
-
     public function ucp()
     {
         return $this->hasMany('App\CPRulesUCP', 'user_id', 'id');
     }
+
+// user data scrambler
 
     public function service()
     {
@@ -1921,5 +1932,86 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->belongsToMany(Location::class)
             ->withTimestamps();
+    }
+
+    /**
+     * Get primary practice's name.
+     *
+     * @return string
+     */
+    public function getPrimaryPracticeNameAttribute()
+    {
+        return ucwords($this->primaryProgram->display_name);
+    }
+
+    /**
+     * Get billing provider's full name.
+     *
+     * @return string
+     */
+    public function getBillingProviderNameAttribute()
+    {
+        $billingProvider = $this->billingProvider();
+
+        return $billingProvider
+            ? ucwords($billingProvider->fullName)
+            : '';
+    }
+
+    /**
+     * Get billing provider.
+     *
+     * @return User
+     */
+    public function billingProvider() : User
+    {
+        $billingProvider = $this->patientCareTeamMembers
+            ->where('type', 'billing_provider')
+            ->first();
+
+        return $billingProvider->user ?? new User();
+    }
+
+    /**
+     * Get billing provider.
+     *
+     * @return User
+     */
+    public function leadContact() : User
+    {
+        $leadContact = $this->patientCareTeamMembers
+            ->where('type', 'lead_contact')
+            ->first();
+
+        return $leadContact->user ?? new User();
+    }
+
+
+    public function scopeWithCareTeamOfType(
+        $query,
+        $type
+    ) {
+        $query->with([
+            'patientCareTeamMembers' => function ($q) use
+            (
+                $type
+            ) {
+                $q->where('type', $type)
+                    ->with('user');
+            },
+        ]);
+    }
+
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string $token
+     *
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPassword($token));
     }
 }

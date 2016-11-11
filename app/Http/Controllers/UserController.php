@@ -1,6 +1,5 @@
 <?php namespace App\Http\Controllers;
 
-use App\CarePlan;
 use App\CLH\DataTemplates\UserConfigTemplate;
 use App\CLH\Repositories\UserRepository;
 use App\CPRulesPCP;
@@ -12,7 +11,6 @@ use Auth;
 use DateTimeZone;
 use EllipseSynergie\ApiResponse\Laravel\Response;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserController extends Controller
@@ -25,176 +23,172 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $messages = \Session::get( 'messages' );
-        if ( !Auth::user()->can( 'users-view-all' ) ) {
-            abort( 403 );
+        $messages = \Session::get('messages');
+
+        if (!Auth::user()->can('users-view-all')) {
+            abort(403);
         }
-        // TEMPORARY HACK SEED FIX TO REPAIR USER DATA, REMOVE AT LATER DATE
-        // START
-        $missingProgramId = array();
-        $users = User::get();
-        foreach ( $users as $user ) {
-            // ensure program relationship is set
-            /*
-            if(!empty($user->program_id) && $user->program_id < 100) {
-                if (!$user->practices->contains($user->program_id)) {
-                    $user->practices()->attach($user->program_id);
-                }
-            } else {
-                $user->delete();
-                $missingProgramId[] = '';
-            }
-            */
-        }
-        // END
 
-        if ( $request->header( 'Client' ) == 'ui' ) {
-            $userId = Crypt::decrypt( $request->header( 'UserId' ) );
+        $missingProgramId = [];
+        $users = User::all();
 
-            $wpUser = User::find( $userId );
+        // display view
+        $wpUsers = User::where('program_id', '!=', '')->orderBy('id', 'desc');
 
-            return response()->json( Crypt::encrypt( json_encode( $wpUser ) ) );
+        // FILTERS
+        $params = $request->all();
 
-        }
-        else if ( $request->header( 'Client' ) == 'mobi' ) {
-            $response = [
-                'user' => []
-            ];
-            $statusCode = 200;
+        // filter user
+        $users = User::whereIn('id', Auth::user()->viewableUserIds())
+            ->orderBy('id', 'desc')
+            ->get()
+            ->pluck('fullNameWithId', 'id')
+            ->all();
 
-            \JWTAuth::setIdentifier('id');
-            $user = \JWTAuth::parseToken()->authenticate();
-            if ( !$user ) {
-                return response()->json( ['error' => 'invalid_credentials'], 401 );
-            }
-            else {
-                $userId = $user->id;
-                $wpUser = User::find( $userId );
-                $response = [
-                    'id'              => $wpUser->id,
-                    'email'           => $wpUser->email,
-                    'user_registered' => $wpUser->user_registered,
-                    'meta'            => $wpUser->meta,
-                ];
-                return response()->json( $response, $statusCode );
+        $filterUser = 'all';
+
+        if (!empty($params['filterUser'])) {
+            $filterUser = $params['filterUser'];
+            if ($params['filterUser'] != 'all') {
+                $wpUsers->where('id', '=', $filterUser);
             }
         }
-        else {
-            // display view
-            $wpUsers = User::where('program_id', '!=', '')->orderBy('id', 'desc');
 
-            // FILTERS
-            $params = $request->all();
+        // role filter
+        $roles = Role::all()
+            ->pluck('display_name', 'name')
+            ->all();
 
-            // filter user
-            $users = User::whereIn('id', Auth::user()->viewableUserIds())->OrderBy('id',
-                'desc')->get()->pluck('fullNameWithId', 'id')->all();
-            $filterUser = 'all';
-            if ( !empty($params[ 'filterUser' ]) ) {
-                $filterUser = $params[ 'filterUser' ];
-                if ( $params[ 'filterUser' ] != 'all' ) {
-                    $wpUsers->where('id', '=', $filterUser);
-                }
+        $filterRole = 'all';
+
+        if (!empty($params['filterRole'])) {
+            $filterRole = $params['filterRole'];
+            if ($params['filterRole'] != 'all') {
+                $wpUsers->ofType($filterRole);
             }
+        }
 
-            // role filter
-            $roles = Role::all()->pluck('display_name', 'name')->all();
-            $filterRole = 'all';
-            if ( !empty($params[ 'filterRole' ]) ) {
-                $filterRole = $params[ 'filterRole' ];
-                if ( $params[ 'filterRole' ] != 'all' ) {
-                    $wpUsers->whereHas( 'roles', function ($q) use ($filterRole) {
-                        $q->where( 'name', '=', $filterRole );
-                    } );
-                }
+        // program filter
+        $programs = Practice::orderBy('id', 'desc')
+            ->whereIn('id', Auth::user()->viewableProgramIds())
+            ->get()
+            ->pluck('display_name', 'id')
+            ->all();
+
+        $filterProgram = 'all';
+
+        if (!empty($params['filterProgram'])) {
+            $filterProgram = $params['filterProgram'];
+            if ($params['filterProgram'] != 'all') {
+                $wpUsers->where('program_id', '=', $filterProgram);
             }
+        }
 
-            // program filter
-            $programs = Practice::orderBy('id', 'desc')
-                ->whereIn('id', Auth::user()->viewableProgramIds())
-                ->get()->pluck('domain', 'id')->all();
-            $filterProgram = 'all';
-            if ( !empty($params[ 'filterProgram' ]) ) {
-                $filterProgram = $params[ 'filterProgram' ];
-                if ( $params[ 'filterProgram' ] != 'all' ) {
-                    $wpUsers->where( 'program_id', '=', $filterProgram );
-                }
-            }
-
-            // only let owners see owners
-            if ( !Auth::user()->hasRole(['administrator']) ) {
-                $wpUsers = $wpUsers->whereHas( 'roles', function ($q) {
-                    $q->where( 'name', '!=', 'administrator' );
-                } );
-                // providers can only see their participants
-                if ( Auth::user()->hasRole(['provider']) ) {
-                    $wpUsers->whereHas('roles', function ($q) {
-                        $q->whereHas('perms', function ($q2) {
-                            $q2->where('name', '=', 'is-participant');
-                        });
+        // only let owners see owners
+        if (!Auth::user()->hasRole(['administrator'])) {
+            $wpUsers = $wpUsers->whereHas('roles', function ($q) {
+                $q->where('name', '!=', 'administrator');
+            });
+            // providers can only see their participants
+            if (Auth::user()->hasRole(['provider'])) {
+                $wpUsers->whereHas('roles', function ($q) {
+                    $q->whereHas('perms', function ($q2) {
+                        $q2->where('name', '=', 'is-participant');
                     });
-                    $wpUsers->where( 'program_id', '=', Auth::user()->program_id );
-                }
+                });
+                $wpUsers->where('program_id', '=', Auth::user()->program_id);
             }
-
-            $queryString = $request->query();
-
-            // patient restriction
-            $wpUsers->whereIn('id', Auth::user()->viewableUserIds());
-            $wpUsers = $wpUsers->paginate( 20 );
-            $invalidUsers = array();
-
-            return view( 'wpUsers.index', compact( ['messages', 'wpUsers', 'users', 'filterUser', 'programs', 'filterProgram', 'roles', 'filterRole', 'invalidUsers', 'queryString'] ) );
         }
+
+        $queryString = $request->query();
+
+        // patient restriction
+        $wpUsers->whereIn('id', Auth::user()->viewableUserIds());
+        $wpUsers = $wpUsers->paginate(20);
+        $invalidUsers = [];
+
+        return view('wpUsers.index', compact([
+            'messages',
+            'wpUsers',
+            'users',
+            'filterUser',
+            'programs',
+            'filterProgram',
+            'roles',
+            'filterRole',
+            'invalidUsers',
+            'queryString',
+        ]));
 
     }
 
 
     public function createQuickPatient($programId)
     {
-        return $this->quickAddForm( $programId );
+        return $this->quickAddForm($programId);
     }
 
     public function quickAddForm($blogId)
     {
-        if ( !Auth::user()->can( 'users-create' ) ) {
-            abort( 403 );
+        if (!Auth::user()->can('users-create')) {
+            abort(403);
         }
         //if ( $request->header('Client') == 'ui' ) {}
 
         $blogItem = Practice::find($blogId)->pcp()->whereStatus('Active')->get();
 
-        foreach ( $blogItem as $item ) {
+        foreach ($blogItem as $item) {
             // Item Categories
             $sections[] = $item->section_text;
             // Sub Items
-            $subItems[ $item->section_text ] = CPRulesPCP::find( $item->pcp_id )->items()->where( 'items_parent', '0' )->where( 'items_text', '!=', '' )->get();
+            $subItems[$item->section_text] = CPRulesPCP::find($item->pcp_id)->items()->where('items_parent',
+                '0')->where('items_text', '!=', '')->get();
         }//dd($subItems['Diagnosis / Problems to Monitor'][0]->items_id);
 
         //Array of days
-        $weekdays_arr = array('1' => 'Sunday', '2' => 'Monday', '3' => 'Tuesday', '4' => 'Wednesday', '5' => 'Thursday', '6' => 'Friday', '7' => 'Saturday');
+        $weekdays_arr = [
+            '1' => 'Sunday',
+            '2' => 'Monday',
+            '3' => 'Tuesday',
+            '4' => 'Wednesday',
+            '5' => 'Thursday',
+            '6' => 'Friday',
+            '7' => 'Saturday',
+        ];
 
         //List of providers
         $provider_raw = Practice::getProviders($blogId);
-        $providers = array();
-        foreach ( $provider_raw as $provider ) {
+        $providers = [];
+        foreach ($provider_raw as $provider) {
             $providers[$provider->id] = $provider->getFullNameAttribute();
         }
 
         // @todo Check what's the name for Smoking
         // @todo Check how to make the biometrics dynamic
-        $biometric_arr = array('Blood Sugar', 'Blood Pressue', 'Smoking (# per day)', 'Weight');
-        foreach ( $subItems[ 'Biometrics to Monitor' ] as $key => $value ) {
-            if ( !in_array( $value->items_text, $biometric_arr ) ) {
-                unset($subItems[ 'Biometrics to Monitor' ][ $key ]);
+        $biometric_arr = [
+            'Blood Sugar',
+            'Blood Pressue',
+            'Smoking (# per day)',
+            'Weight',
+        ];
+        foreach ($subItems['Biometrics to Monitor'] as $key => $value) {
+            if (!in_array($value->items_text, $biometric_arr)) {
+                unset($subItems['Biometrics to Monitor'][$key]);
             }
         }//dd($subItems['Biometrics to Monitor']);
 
         //List of locations
-        $locations = Location::getLocationsForBlog( $blogId );
+        $locations = Location::getLocationsForBlog($blogId);
+
         //dd($subItems['Biometrics to Monitor']);
 
-        return view( 'wpUsers.quickAdd', ['headings' => $sections, 'items' => $subItems, 'days' => $weekdays_arr, 'providers' => $providers, 'offices' => $locations] );
+        return view('wpUsers.quickAdd', [
+            'headings'  => $sections,
+            'items'     => $subItems,
+            'days'      => $weekdays_arr,
+            'providers' => $providers,
+            'offices'   => $locations,
+        ]);
 
     }
 
@@ -218,17 +212,17 @@ class UserController extends Controller
      */
     public function create()
     {
-        if ( !Auth::user()->can( 'users-create' ) ) {
-            abort( 403 );
+        if (!Auth::user()->can('users-create')) {
+            abort(403);
         }
-        $messages = \Session::get( 'messages' );
+        $messages = \Session::get('messages');
 
         $wpUser = new User;
 
         $roles = Role::pluck('name', 'id')->all();
 
         // user config
-        $userConfig = ( new UserConfigTemplate() )->getArray();
+        $userConfig = (new UserConfigTemplate())->getArray();
 
         // set role
         $wpRole = '';
@@ -247,7 +241,7 @@ class UserController extends Controller
             'FL' => "Florida",
             'GA' => "Georgia",
             'HI' => "Hawaii",
-            'id' => "Idaho",
+            'ID' => "Idaho",
             'IL' => "Illinois",
             'IN' => "Indiana",
             'IA' => "Iowa",
@@ -289,31 +283,39 @@ class UserController extends Controller
         ];
 
         // programs for dd
-        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('domain', 'id')->all();
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
 
-        $locations = Location::whereNotNull('parent_id')->pluck('name', 'id')->all();
+        $locations = Location::all()->pluck('name', 'id')->all();
 
         // timezones for dd
-        $timezones_raw = DateTimeZone::listIdentifiers( DateTimeZone::ALL );
-        foreach ( $timezones_raw as $timezone ) {
-            $timezones_arr[ $timezone ] = $timezone;
+        $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+        foreach ($timezones_raw as $timezone) {
+            $timezones_arr[$timezone] = $timezone;
         }
 
         // providers
-        $providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
+        $providers_arr = [
+            'provider'          => 'provider',
+            'office_admin'      => 'office_admin',
+            'participant'       => 'participant',
+            'care_center'       => 'care_center',
+            'viewer'            => 'viewer',
+            'clh_participant'   => 'clh_participant',
+            'clh_administrator' => 'clh_administrator',
+        ];
 
         // display view
-        return view( 'wpUsers.create', [
-            'wpUser' => $wpUser,
-            'states_arr' => $states_arr,
+        return view('wpUsers.create', [
+            'wpUser'        => $wpUser,
+            'states_arr'    => $states_arr,
             'timezones_arr' => $timezones_arr,
-            'wpBlogs' => $wpBlogs,
-            'userConfig' => $userConfig,
+            'wpBlogs'       => $wpBlogs,
+            'userConfig'    => $userConfig,
             'providers_arr' => $providers_arr,
-            'messages' => $messages,
-            'roles' => $roles,
-            'locations' => $locations,
-        ] );
+            'messages'      => $messages,
+            'roles'         => $roles,
+            'locations'     => $locations,
+        ]);
     }
 
     /**
@@ -323,22 +325,22 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if ( !Auth::user()->can( 'users-create' ) ) {
-            abort( 403 );
+        if (!Auth::user()->can('users-create')) {
+            abort(403);
         }
-        $params = new ParameterBag( $request->input() );
+        $params = new ParameterBag($request->input());
 
         $userRepo = new UserRepository();
 
         $wpUser = new User;
 
-        $this->validate( $request, $wpUser->rules );
+        $this->validate($request, $wpUser->rules);
 
-        $wpUser = $userRepo->createNewUser( $wpUser, $params );
+        $wpUser = $userRepo->createNewUser($wpUser, $params);
 
         //if location was selected save it
-        if ( is_numeric( $locationId = $request->input( 'location_id' ) ) ) {
-            $wpUser->locations()->attach( Location::find( $locationId ) );
+        if (is_numeric($locationId = $request->input('location_id'))) {
+            $wpUser->locations()->attach(Location::find($locationId));
         }
 
 
@@ -351,52 +353,58 @@ class UserController extends Controller
      * Display the specified resource.
      *
      * @param  int $id
+     *
      * @return Response
      */
-    public function show(Request $request, $id)
-    {
-        if ( !Auth::user()->can( 'users-view-all' ) ) {
-            abort( 403 );
+    public function show(
+        Request $request,
+        $id
+    ) {
+        if (!Auth::user()->can('users-view-all')) {
+            abort(403);
         }
-        dd( 'user /edit to view user info' );
+        dd('user /edit to view user info');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int $id
+     *
      * @return Response
      */
-    public function edit(Request $request, $id)
-    {
-        if ( !Auth::user()->can( 'users-edit-all' ) ) {
-            abort( 403 );
+    public function edit(
+        Request $request,
+        $id
+    ) {
+        if (!Auth::user()->can('users-edit-all')) {
+            abort(403);
         }
-        $messages = \Session::get( 'messages' );
+        $messages = \Session::get('messages');
 
-        $patient = User::find( $id );
-        if ( !$patient ) {
-            return response( "User not found", 401 );
+        $patient = User::find($id);
+        if (!$patient) {
+            return response("User not found", 401);
         }
 
         $roles = Role::pluck('name', 'id')->all();
         $role = $patient->roles()->first();
-        if ( !$role ) {
+        if (!$role) {
             $role = Role::first();
         }
 
         // build revision info
-        $revisions = array();
+        $revisions = [];
 
         // first for user
-        $revisionHistory = collect( [] );
-        foreach ( $patient->revisionHistory->sortByDesc( 'updated_at' )->take( 10 ) as $history ) {
-            $revisionHistory->push( $history );
+        $revisionHistory = collect([]);
+        foreach ($patient->revisionHistory->sortByDesc('updated_at')->take(10) as $history) {
+            $revisionHistory->push($history);
         }
         $revisions['User'] = $revisionHistory;
 
         // patientInfo
-        if($role->name == 'participant') {
+        if ($role->name == 'participant') {
             $revisionHistory = collect([]);
             foreach ($patient->patientInfo->revisionHistory->sortByDesc('updated_at')->take(10) as $history) {
                 $revisionHistory->push($history);
@@ -405,23 +413,22 @@ class UserController extends Controller
         }
 
         $params = $request->all();
-        if ( !empty($params) ) {
-            if ( isset($params[ 'action' ]) ) {
-                if ( $params[ 'action' ] == 'impersonate' ) {
-                    Auth::login( $id );
-                    return redirect()->route( '/', [] )->with( 'messages', ['Logged in as user ' . $id] );
+        if (!empty($params)) {
+            if (isset($params['action'])) {
+                if ($params['action'] == 'impersonate') {
+                    Auth::login($id);
+
+                    return redirect()->route('/', [])->with('messages', ['Logged in as user ' . $id]);
                 }
             }
         }
 
         // locations @todo get location id for Practice
-        $wpBlog = Practice::find($patient->program_id);
-        $locations_arr = array();
-        if ( $wpBlog ) {
-            $locations_arr = ( new Location )->getNonRootLocations( $wpBlog->locationId() );
+        $practice = Practice::find($patient->program_id);
+        $locations_arr = [];
+        if ($practice) {
+            $locations_arr = $practice->locations->all();
         }
-
-        $carePlans = CarePlan::where('program_id', '=', $patient->program_id)->pluck('display_name', 'id')->all();
 
         // States (for dropdown)
         $states_arr = [
@@ -437,7 +444,7 @@ class UserController extends Controller
             'FL' => "Florida",
             'GA' => "Georgia",
             'HI' => "Hawaii",
-            'id' => "Idaho",
+            'ID' => "Idaho",
             'IL' => "Illinois",
             'IN' => "Indiana",
             'IA' => "Iowa",
@@ -479,70 +486,94 @@ class UserController extends Controller
         ];
 
         // programs for dd
-        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('domain', 'id')->all();
+        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('display_name', 'id')->all();
 
         // timezones for dd
-        $timezones_raw = DateTimeZone::listIdentifiers( DateTimeZone::ALL );
-        foreach ( $timezones_raw as $timezone ) {
-            $timezones_arr[ $timezone ] = $timezone;
+        $timezones_raw = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+        foreach ($timezones_raw as $timezone) {
+            $timezones_arr[$timezone] = $timezone;
         }
 
         // providers
-        $providers_arr = array('provider' => 'provider', 'office_admin' => 'office_admin', 'participant' => 'participant', 'care_center' => 'care_center', 'viewer' => 'viewer', 'clh_participant' => 'clh_participant', 'clh_administrator' => 'clh_administrator');
+        $providers_arr = [
+            'provider'          => 'provider',
+            'office_admin'      => 'office_admin',
+            'participant'       => 'participant',
+            'care_center'       => 'care_center',
+            'viewer'            => 'viewer',
+            'clh_participant'   => 'clh_participant',
+            'clh_administrator' => 'clh_administrator',
+        ];
 
         // display view
-        return view( 'wpUsers.edit', ['patient' => $patient, 'locations_arr' => $locations_arr, 'states_arr' => $states_arr, 'timezones_arr' => $timezones_arr, 'wpBlogs' => $wpBlogs, 'primaryBlog' => $patient->program_id, 'providers_arr' => $providers_arr, 'messages' => $messages, 'role' => $role, 'roles' => $roles, 'revisions' => $revisions, 'carePlans' => $carePlans] );
+        return view('wpUsers.edit', [
+            'patient'       => $patient,
+            'locations_arr' => $locations_arr,
+            'states_arr'    => $states_arr,
+            'timezones_arr' => $timezones_arr,
+            'wpBlogs'       => $wpBlogs,
+            'primaryBlog'   => $patient->program_id,
+            'providers_arr' => $providers_arr,
+            'messages'      => $messages,
+            'role'          => $role,
+            'roles'         => $roles,
+            'revisions'     => $revisions,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  int $id
+     *
      * @return Response
      */
-    public function update(Request $request, $id)
-    {
-        if ( !Auth::user()->can( 'users-edit-all' ) ) {
-            abort( 403 );
+    public function update(
+        Request $request,
+        $id
+    ) {
+        if (!Auth::user()->can('users-edit-all')) {
+            abort(403);
         }
         // instantiate user
-        $wpUser = User::find( $id );
-        if ( !$wpUser ) {
-            return response( "User not found", 401 );
+        $wpUser = User::find($id);
+        if (!$wpUser) {
+            return response("User not found", 401);
         }
-        
+
         // input
-        $params = new ParameterBag( $request->input() );
+        $params = new ParameterBag($request->input());
 
         $userRepo = new UserRepository();
 
-        $userRepo->editUser( $wpUser, $params );
+        $userRepo->editUser($wpUser, $params);
 
-        return redirect()->back()->with( 'messages', ['successfully updated user'] );
+        return redirect()->back()->with('messages', ['successfully updated user']);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int $id
+     *
      * @return Response
      *
      */
     public function destroy($id)
     {
-        if ( !Auth::user()->can( 'users-edit-all' ) ) {
-            abort( 403 );
+        if (!Auth::user()->can('users-edit-all')) {
+            abort(403);
         }
 
-        $user = User::find( $id );
-        if ( !$user ) {
-            return response( "User not found", 401 );
+        $user = User::find($id);
+        if (!$user) {
+            return response("User not found", 401);
         }
 
         //$user->practices()->detach();
         $user->delete();
 
-        return redirect()->back()->with( 'messages', ['successfully deleted user'] );
+        return redirect()->back()->with('messages', ['successfully deleted user']);
     }
 
 
@@ -554,17 +585,18 @@ class UserController extends Controller
      */
     public function doAction(Request $request)
     {
-        if ( !Auth::user()->can( 'users-edit-all' ) ) {
-            abort( 403 );
+        if (!Auth::user()->can('users-edit-all')) {
+            abort(403);
         }
 
         // input
-        $params = new ParameterBag( $request->input() );
+        $params = new ParameterBag($request->input());
 
-        if ( $params->get( 'action' ) && $params->get( 'action' ) == 'scramble' ) {
-            if ( $params->get( 'users' ) && !empty($params->get( 'users' )) ) {
-                $this->scrambleUsers( $params->get( 'users' ) );
-                return redirect()->back()->with( 'messages', ['successfully scrambled users'] );
+        if ($params->get('action') && $params->get('action') == 'scramble') {
+            if ($params->get('users') && !empty($params->get('users'))) {
+                $this->scrambleUsers($params->get('users'));
+
+                return redirect()->back()->with('messages', ['successfully scrambled users']);
             }
         }
 
@@ -579,14 +611,15 @@ class UserController extends Controller
      */
     public function scrambleUsers($userIds)
     {
-        foreach ( $userIds as $id ) {
-            $user = User::find( $id );
-            if ( !$user ) {
+        foreach ($userIds as $id) {
+            $user = User::find($id);
+            if (!$user) {
                 return false;
             }
 
             $user->scramble();
         }
+
         return true;
     }
 
@@ -603,7 +636,7 @@ class UserController extends Controller
         $viewHtml = '<html><h1>Header</h1><p>Paragraph</p></html>';
 
         // return view html
-        return response( $viewHtml );
+        return response($viewHtml);
     }
 
     public function storeQuickAddAPI(Request $request)

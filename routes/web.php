@@ -82,15 +82,6 @@ Route::group(['prefix' => 'algo'], function () {
 
 Route::get('ajax/patients', 'UserController@getPatients');
 
-Route::get('careplan/{id}', [
-    'uses' => 'Admin\CarePlanController@carePlan',
-    'as'   => 'careplan',
-]);
-Route::get('careplan/{id}/section/{sectionId}', [
-    'uses' => 'Admin\CarePlanController@carePlanSection',
-    'as'   => 'careplan.section',
-]);
-
 /*
  * NO AUTHENTICATION NEEDED FOR THESE ROUTES
  */
@@ -99,6 +90,8 @@ Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 Route::get('/', 'WelcomeController@index');
 Route::get('home', 'WelcomeController@index');
 
+Route::get('login', 'Auth\LoginController@showLoginForm');
+
 Route::group([
     'prefix' => 'auth',
 ], function () {
@@ -106,24 +99,6 @@ Route::group([
 
     Route::get('logout', 'Auth\LoginController@logout');
 });
-
-Route::group([
-    'prefix' => 'password',
-], function () {
-    Route::get('broker', 'Auth\PasswordController@getBroker');
-    Route::post('email', 'Auth\PasswordController@postEmail');
-    Route::get('email', 'Auth\PasswordController@getEmail');
-    Route::get('reset', 'Auth\PasswordController@getReset');
-    Route::post('reset', 'Auth\PasswordController@postReset');
-});
-
-// Password reset link request routes...
-Route::get('password/email', 'Auth\PasswordController@getEmail');
-Route::post('password/email', 'Auth\PasswordController@postEmail');
-
-// Password reset routes...
-Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
-Route::post('password/reset', 'Auth\PasswordController@postReset');
 
 /****************************/
 /****************************/
@@ -721,10 +696,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'UserController@storeQuickPatient',
                 'as'   => 'admin.users.storeQuickPatient',
             ]);
-            Route::get('users/{id}/careplan', [
-                'uses' => 'CareplanController@show',
-                'as'   => 'admin.users.careplan',
-            ]);
             Route::get('users/{id}/msgcenter', [
                 'uses' => 'UserController@showMsgCenter',
                 'as'   => 'admin.users.msgCenter',
@@ -867,6 +838,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('reports/nurse/invoice/generate', [
             'uses' => 'NurseController@generateInvoice',
             'as'   => 'admin.reports.nurse.generate',
+        ]);
+
+        Route::post('reports/nurse/invoice/send', [
+            'uses' => 'NurseController@sendInvoice',
+            'as'   => 'admin.reports.nurse.send',
         ]);
 
         Route::get('reports/nurse/daily', [
@@ -1062,50 +1038,6 @@ Route::group(['middleware' => 'auth'], function () {
                     'destroy',
                     'store',
                 ],
-            ]);
-        });
-
-
-        // care items
-        Route::group([
-            'middleware' => [
-                'permission:programs-manage',
-            ],
-        ], function () {
-            Route::resource('careitems', 'Admin\CareItemController');
-            Route::post('careitems/{id}/edit', [
-                'uses' => 'Admin\CareItemController@update',
-                'as'   => 'admin.careitems.update',
-            ]);
-            Route::get('careitems/{id}/destroy', [
-                'uses' => 'Admin\CareItemController@destroy',
-                'as'   => 'admin.careitems.destroy',
-            ]);
-
-            // care plans
-            Route::resource('careplans', 'Admin\CarePlanController');
-            Route::post('careplans/{id}/edit', [
-                'uses' => 'Admin\CarePlanController@update',
-                'as'   => 'admin.careplans.update',
-            ]);
-            Route::post('careplans/{id}/duplicate', [
-                'uses' => 'Admin\CarePlanController@duplicate',
-                'as'   => 'admin.careplans.duplicate',
-            ]);
-            Route::get('careplans/{id}/destroy', [
-                'uses' => 'Admin\CarePlanController@destroy',
-                'as'   => 'admin.careplans.destroy',
-            ]);
-
-            // care plan sections
-            Route::resource('careplansections', 'Admin\CarePlanSectionController');
-            Route::post('careplansections/{id}/edit', [
-                'uses' => 'Admin\CarePlanSectionController@update',
-                'as'   => 'admin.careplansections.update',
-            ]);
-            Route::get('careplansections/{id}/destroy', [
-                'uses' => 'Admin\CarePlanSectionController@destroy',
-                'as'   => 'admin.careplansections.destroy',
             ]);
         });
     });

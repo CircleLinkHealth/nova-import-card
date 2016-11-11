@@ -25,7 +25,7 @@ trait CallAlgoHelper
             //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
             $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($this->patient,
                 $this->nextCallDate);
-
+            
         } else {
 
             //This override is to schedule calls on weekends.
@@ -93,7 +93,6 @@ trait CallAlgoHelper
 
         $adjustment = collect($this->matchArray)->first();
 
-
             if($adjustment && isset($adjustment['intersects'])){
 
                 $startWindow = Carbon::parse($adjustment['patient']['window_start']);
@@ -143,13 +142,7 @@ trait CallAlgoHelper
 
             //CHECK for nurse window on target day
 
-            $nurseWindow = $nurse->windows->first(function (
-                $value,
-                $key
-            ) use
-            (
-                $day
-            ) {
+            $nurseWindow = $nurse->windows->first(function ($value, $key) use ($day) {
 
                 //check whether any days fall in this window
                 return $value->date->toDateString() == $day->toDateString();

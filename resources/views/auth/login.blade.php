@@ -75,7 +75,8 @@
 									<div class="col-md-12 text-center">
 										<button type="submit" class="btn btn-primary btn-large" style="background-color: #50B2E2;">Log In</button><br />
 
-										<a class="btn btn-link" href="{{ url('/password/email') }}">Lost Your Password?</a>
+                                        <a class="btn btn-link" href="{{ url('auth/password/reset') }}">Lost Your
+                                            Password?</a>
 									</div>
 								</div>
 							</form>

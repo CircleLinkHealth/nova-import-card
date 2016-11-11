@@ -94,10 +94,6 @@
                                                 Invoice (s)
                                             </button>
                                         </div>
-                                        <div class="col-md-2" style="padding-left: 40px">
-                                            <button id="submit" name="submit" value="email" class="btn btn-success">Email RN (s)
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
 

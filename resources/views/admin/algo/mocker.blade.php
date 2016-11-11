@@ -13,7 +13,6 @@
                         <form class="form-horizontal">
                             {{ csrf_field() }}
                             <fieldset>
-
                                 <!-- Appended Input-->
                                 <div class="form-group">
                                     <label class="col-md-4 control-label" for="seconds">CCM Time</label>
@@ -124,6 +123,9 @@
             $.ajax({
                 type: "POST",
                 url: url,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 data: {
                     seconds: $('#seconds').val(),
                     date: $('#date').val(),

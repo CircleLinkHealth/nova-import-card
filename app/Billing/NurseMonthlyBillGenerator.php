@@ -10,6 +10,13 @@ use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
+//READ ME
+/*
+ * This class can be used to generate nurse invoices for a given time range.
+ * 
+ * Either use handle() or email() for generating vs. sending invoices. 
+ */
+
 class NurseMonthlyBillGenerator
 {
 
@@ -28,8 +35,14 @@ class NurseMonthlyBillGenerator
     //Billing Results
     protected $formattedItemizedActivities;
     protected $payable;
+    protected $percentTime;
+
+    //total time in system
     protected $systemTime;
     protected $formattedSystemTime;
+
+    //total ccm time accumulated
+    protected $activityTime;
 
     public function __construct(NurseInfo $newNurse,
                                 Carbon $billingDateStart,
@@ -70,6 +83,24 @@ class NurseMonthlyBillGenerator
                     ->where('updated_at', '<=', $this->endDate);
             })
             ->sum('billable_duration');
+
+        $this->activityTime = Activity::where('provider_id', $this->nurse->user_id)
+            ->where(function ($q){
+                $q->where('updated_at', '>=', $this->startDate)
+                    ->where('updated_at', '<=', $this->endDate);
+            })
+            ->sum('duration');
+
+        if($this->activityTime == 0 || $this->systemTime == 0){
+
+            $this->percentTime = 0;
+
+        } else {
+
+            $this->percentTime = round(($this->activityTime/$this->systemTime) * 100, 2);
+
+        }
+
 
         if($this->systemTime != 0 && $this->systemTime != null){
 
@@ -212,10 +243,26 @@ class NurseMonthlyBillGenerator
 
         $pdf->save( storage_path("download/$name.pdf"), true );
 
-        return $name.'.pdf';
+        $data = [
+            'name' => $this->nurse->user->fullName,
+            'percentage' => $this->percentTime,
+            'total_time' => $this->formattedSystemTime,
+            'payout' => $this->payable,
+        ];
+
+        return [
+
+            'id' => $this->nurse->id,
+            'name' => $this->nurseName,
+            'email' => $this->nurse->user->email,
+            'link' => $name.'.pdf',
+            'date_start' => $this->startDate->toDateString(),
+            'date_end' => $this->endDate->toDateString(),
+            'email_body' => $data
+        ];
 
     }
-
+    
     public function email()
     {
 
@@ -225,9 +272,13 @@ class NurseMonthlyBillGenerator
 
         $this->formatItemizedActivities();
 
-        $this->generatePdf();
+        $this->mail();
 
-        return $this->mail();
+        return [
+            'id' => $this->nurse->id,
+            'email' => $this->nurse->user->email,
+            'link' => $this->generatePdf(),
+        ];
 
     }
 
