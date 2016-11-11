@@ -11046,8 +11046,8 @@ var patientId = $('#patient_id').val();
                 this.$http.post('/CCDModels/Items/ProblemsItem/store', payload).then(function (response) {
                     var id = response.data.id.id;
                     var patient_id = $('#patient_id').val();
-                    this.problems.push({id: id, patient_id: patient_id, name: response.data.id.name});
-                    this.problem = {id: '', patient_id: patient_id, name: ''};
+                    problemsVM.problems.push({id: id, patient_id: patient_id, name: response.data.id.name});
+                    problemsVM.problem = {id: '', patient_id: patient_id, name: ''};
                 }, function (response) {
                     console.log(response);
                 });
@@ -11086,7 +11086,7 @@ var patientId = $('#patient_id').val();
                 };
 
                 this.$http.post('/CCDModels/Items/ProblemsItem/destroy', payload).then(function (response) {
-                    Vue.delete(this.problems, index);
+                    Vue.delete(problemsVM.problems, index);
                 }, function (response) {
                     console.log(response);
                 });

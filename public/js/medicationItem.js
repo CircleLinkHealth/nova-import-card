@@ -11009,7 +11009,7 @@ Vue.use(require('vue-resource'));
 
 var patientId = $('#patient_id').val();
 
-new Vue({
+    var medicationsVM = new Vue({
     el: '#medications',
     data: {
         medication: { id: '', patient_id: patientId, name: '', sig: '' }
@@ -11027,7 +11027,7 @@ new Vue({
             };
 
             this.$http.get('/CCDModels/Items/MedicationListItem', params).then(function (response) {
-                this.$set('medications', response.data);
+                medicationsVM.medications = response.data;
             }, function (response) {
                 console.log(response);
             });
@@ -11042,13 +11042,13 @@ new Vue({
                 this.$http.post('/CCDModels/Items/MedicationListItem/store', payload).then(function (response) {
                     var id = response.data.id.id;
                     var patient_id = $('#patient_id').val();
-                    this.medications.push({
+                    medicationsVM.medications.push({
                         id: id,
                         patient_id: patient_id,
                         name: response.data.id.name,
                         sig: response.data.id.sig
                     });
-                    this.medication = {id: '', patient_id: patient_id, name: '', sig: ''};
+                    medicationsVM.medication = {id: '', patient_id: patient_id, name: '', sig: ''};
                 }, function (response) {
                     console.log(response);
                 });
@@ -11100,11 +11100,11 @@ new Vue({
         deleteMedication: function deleteMedication(index, e) {
             if (confirm("Are you sure you want to delete this medication?")) {
                 var payload = {
-                    'medication': this.medications[index]
+                    'medication': medicationsVM.medications[index]
                 };
 
                 this.$http.post('/CCDModels/Items/MedicationListItem/destroy', payload).then(function (response) {
-                    Vue.delete(this.medications, index);
+                    Vue.delete(medicationsVM.medications, index);
                 }, function (response) {
                     console.log(response);
                 });
