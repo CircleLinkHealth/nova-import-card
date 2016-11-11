@@ -45,7 +45,7 @@ class Authenticate extends \Illuminate\Auth\Middleware\Authenticate
         Closure $next,
         ...$guards
     ) {
-        parent::handle($request, $next, $guards);
+//        parent::handle($request, $next, $guards);
         // ensure user->access_disabled and user->status are passable
         if (!$this->auth->guest()) {
             if (auth()->user()) {

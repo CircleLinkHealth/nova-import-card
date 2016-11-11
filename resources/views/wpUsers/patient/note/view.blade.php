@@ -99,7 +99,9 @@
                                                     </h5>
                                                 @elseif(strpos($tag, 'Forward') !== false)
                                                     <h5>
-                                                        <div class="label label-info" data-toggle="tooltip" title="{{$tag}}">Forwarded</div>
+                                                        <div class="label label-info" data-toggle="tooltip"
+                                                             title="{{$tag}}">Forwarded
+                                                        </div>
                                                     </h5>
                                                 @else
                                                     <h5>
@@ -139,16 +141,17 @@
                                                                 class="selectpicker dropdown Valid form-control"
                                                                 data-size="10"
                                                                 multiple>
-                                                            @foreach ($careteam_info as $id => $name)
-                                                                <option value="{{$id}}"> {{$name}} </option>
-                                                            @endforeach
 
                                                             <!-- rework later, quick fix ticket: 679 !-->
                                                             @if($patient->program_id == 29)
-                                                                    <option value="2584">Tina Booze</option>
+                                                                <option value="2584">Tina Booze</option>
                                                             @else
-                                                                    <option value="948">Patient Support</option>
+                                                                @foreach ($careteam_info as $id => $name)
+                                                                    <option value="{{$id}}"> {{$name}} </option>
+                                                                @endforeach
+                                                                <option value="948">Patient Support</option>
                                                             @endif
+
 
                                                         </select>
                                                     </div>
