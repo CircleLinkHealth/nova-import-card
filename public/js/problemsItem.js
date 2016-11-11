@@ -11009,14 +11009,15 @@ Vue.use(require('vue-resource'));
 
 var patientId = $('#patient_id').val();
 
-new Vue({
+    var problemsVM = new Vue({
     el: '#problems',
     data: {
         problem: {
             id: '',
             patient_id: patientId,
             name: ''
-        }
+        },
+        problems: []
     },
 
     ready: function ready() {
@@ -11025,12 +11026,12 @@ new Vue({
 
     methods: {
         loadProblems: function loadProblems() {
-            var payload = {
+            var params = {
                 'patient_id': $('#patient_id').val()
             };
 
-            this.$http.get('/CCDModels/Items/ProblemsItem', {params: payload}).then(function (response) {
-                this.$set('problems', response.data);
+            this.$http.get('/CCDModels/Items/ProblemsItem', params).then(function (response) {
+                problemsVM.problems = response.data;
             }, function (response) {
                 console.log(response);
             });

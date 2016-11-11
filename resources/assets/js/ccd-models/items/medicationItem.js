@@ -19,11 +19,11 @@ new Vue({
     methods: {
 
         loadMedications: function() {
-            var payload = {
+            var params = {
                 'patient_id': $('#patient_id').val()
             };
 
-            this.$http.get('/CCDModels/Items/MedicationListItem', {params: payload}).then(function (response) {
+            this.$http.get('/CCDModels/Items/MedicationListItem', params).then(function (response) {
                 this.$set('medications', response.data);
             }, function (response) {
                 console.log(response);
