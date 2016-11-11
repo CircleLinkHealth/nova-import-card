@@ -11012,7 +11012,11 @@ var patientId = $('#patient_id').val();
 new Vue({
     el: '#problems',
     data: {
-        problem: { id: '', patient_id: patientId, name: '' }
+        problem: {
+            id: '',
+            patient_id: patientId,
+            name: ''
+        }
     },
 
     ready: function ready() {
@@ -11025,7 +11029,7 @@ new Vue({
                 'patient_id': $('#patient_id').val()
             };
 
-            this.$http.get('/CCDModels/Items/ProblemsItem', payload).then(function (response) {
+            this.$http.get('/CCDModels/Items/ProblemsItem', {params: payload}).then(function (response) {
                 this.$set('problems', response.data);
             }, function (response) {
                 console.log(response);
@@ -11033,7 +11037,6 @@ new Vue({
         },
 
         addProblem: function addProblem() {
-
             if (this.problem.name) {
                 var payload = {
                     'problem': this.problem
@@ -11059,7 +11062,6 @@ new Vue({
         },
 
         updateProblem: function updateProblem(index) {
-
             var payload = {
                 'problem': this.problems[index]
             };

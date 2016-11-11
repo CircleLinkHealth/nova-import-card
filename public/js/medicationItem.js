@@ -11012,68 +11012,59 @@ var patientId = $('#patient_id').val();
 new Vue({
     el: '#medications',
     data: {
-        // default form values
         medication: { id: '', patient_id: patientId, name: '', sig: '' }
     },
-    // Anything within the ready function will run when the application loads
+
     ready: function ready() {
-        // When the application loads, we want to call the method that initializes
-        // some data
         this.loadMedications();
     },
-    // Methods we want to use in our application are registered here
+
     methods: {
 
         loadMedications: function loadMedications() {
-            var _this = this;
+            var payload = {
+                'patient_id': $('#patient_id').val()
+            };
 
-            var patientId = $('#patient_id').val();
-            // GET request
-            this.$http({ url: '/CCDModels/Items/MedicationListItem', method: 'GET', params: { 'patient_id': patientId } }).then(function (response) {
-                // success callback
-                _this.$set('medications', response.data);
+            this.$http.get('/CCDModels/Items/MedicationListItem', {params: payload}).then(function (response) {
+                this.$set('problems', response.data);
             }, function (response) {
-                // error callback
+                console.log(response);
             });
         },
 
-        // Adds an medication to the existing medications array
         addMedication: function addMedication() {
-            var _this2 = this;
-
             if (this.medication.name) {
-                // add to array
-                console.log(this.medication.name);
+                var payload = {
+                    'medication': this.medication
+                };
 
-                // save on server
-                // GET request
-                this.$http.post('/CCDModels/Items/MedicationListItem/store', { 'medication': this.medication }).then(function (response) {
-                    // log
-                    console.log('new ccd_medication.id = ' + response.data.id.id);
-                    // reset form values
+                this.$http.post('/CCDModels/Items/MedicationListItem/store', payload).then(function (response) {
                     var id = response.data.id.id;
                     var patient_id = $('#patient_id').val();
-                    _this2.medications.push({ id: id, patient_id: patient_id, name: response.data.id.name, sig: response.data.id.sig });
-                    _this2.medication = { id: '', patient_id: patient_id, name: '', sig: '' };
+                    this.medications.push({
+                        id: id,
+                        patient_id: patient_id,
+                        name: response.data.id.name,
+                        sig: response.data.id.sig
+                    });
+                    this.medication = {id: '', patient_id: patient_id, name: '', sig: ''};
                 }, function (response) {
-
-                    // error callback
+                    console.log(response);
                 });
             }
         },
 
-        // Edit an existing medicationon the array
         editMedication: function editMedication(index) {
-
             // hide text
             $('#medication-name-' + index).toggle();
             $('#medication-sig-' + index).toggle();
 
-            // show textarea
+            // show textarea for editing
             $('#medication-edit-' + index).toggle();
             $('#medication-edit-sig-' + index).toggle();
 
-            // hide all edit buttons
+            // hide edit/delete buttons
             $('.medication-edit-btn').hide();
             $('.medication-delete-btn').hide();
 
@@ -11081,15 +11072,12 @@ new Vue({
             $('#medication-save-btn-' + index).toggle();
         },
 
-        // Adds an medication to the existing medications array
         updateMedication: function updateMedication(index) {
-            // save on server
-            var posting = $.post("/CCDModels/Items/MedicationListItem/update", { 'medication': this.medications[index] });
-            console.log(this.medications[index].name);
-            // Put the results in a div
-            posting.done(function (data) {
-                // log
-                console.log(data);
+            var payload = {
+                'medication': this.medications[index]
+            };
+
+            this.$http.post('/CCDModels/Items/MedicationListItem/update', payload).then(function (response) {
                 // show text
                 $('#medication-name-' + index).toggle();
                 $('#medication-sig-' + index).toggle();
@@ -11104,43 +11092,31 @@ new Vue({
 
                 // hide save button
                 $('#medication-save-btn-' + index).toggle();
+            }, function (response) {
+                console.log(response);
             });
         },
 
         deleteMedication: function deleteMedication(index, e) {
-            //e.preventDefault();
-            //e.stopPropagation();
             if (confirm("Are you sure you want to delete this medication?")) {
-                var thisMed = this.medications[0];
-                // $remove is a Vue convenience method similar to splice
-                console.log('All meds::' + this.medications);
-                console.log('This med id::' + this.medications[index].id);
-                console.log(this.medications[index].name);
-                // save on server
-                var posting = $.post("/CCDModels/Items/MedicationListItem/destroy", { 'medication': this.medications[index] });
-                // delete from vue array
-                Vue.delete(this.medications, index);
-                // Results
-                posting.done(function (data) {
-                    console.log(data);
+                var payload = {
+                    'medication': this.medications[index]
+                };
+
+                this.$http.post('/CCDModels/Items/MedicationListItem/destroy', payload).then(function (response) {
+                    Vue.delete(this.medications, index);
+                }, function (response) {
+                    console.log(response);
                 });
-                return false;
             }
+
             return false;
         },
 
         postEvents: function postEvents(index, e) {
-
-            // Send the data using post
-
-            var posting = $.post("/CCDModels/Items/MedicationListItem/store", this.medications);
-            console.log(this.medications);
-            // Put the results in a div
-            posting.done(function (data) {
-                console.log(data);
-                // hide all textareas
-
-                // show edit buttons
+            this.$http.post('/CCDModels/Items/MedicationListItem/store', this.medications).then(function (response) {
+            }, function (response) {
+                console.log(response);
             });
         }
     }
