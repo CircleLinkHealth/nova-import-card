@@ -37,17 +37,19 @@
     "dusterio/laravel-aws-worker": "^0.1.5",
     "yajra/laravel-datatables-oracle": "~6.0",
     "league/fractal": "0.12.*",
-    "spatie/laravel-google-calendar": "^1.0"
+    "spatie/laravel-google-calendar": "^1.0",
+    "modelizer/selenium": "~1.0"
   },
   "require-dev": {
     "symfony/dom-crawler": "3.1.*",
     "symfony/css-selector": "3.1.*",
     "fzaninotto/faker": "~1.4",
     "mockery/mockery": "0.9.*",
-    "phpunit/phpunit": "~4.0",
+    "phpunit/phpunit": "~5.0",
     "phpspec/phpspec": "~2.1",
     "doctrine/dbal": "~2.3",
-    "orangehill/iseed": "dev-master"
+    "orangehill/iseed": "dev-master",
+    "phpunit/phpunit-selenium": "^3.0"
   },
   "autoload": {
     "classmap": [
@@ -63,7 +65,8 @@
   },
   "autoload-dev": {
     "classmap": [
-      "tests/TestCase.php"
+      "tests/TestCase.php",
+      "tests/SeleniumTestCase.php"
     ]
   },
   "scripts": {

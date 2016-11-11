@@ -6,11 +6,11 @@ use App\Call;
 use App\Events\NoteWasForwarded;
 use App\MailLog;
 use App\Note;
+use App\Notifications\NewNote;
 use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
-use App\Notifications\NewNote;
 
 
 class NoteService
@@ -252,6 +252,32 @@ class NoteService
 
     }
 
+    public function wasSentToProvider(Note $note)
+    {
+
+        $mails = $note->mail;
+
+        if (count($mails) < 1) {
+            return false;
+        }
+
+        foreach ($mails as $mail) {
+
+            $mail_recipient = User::find($mail->receiver_cpm_id);
+
+            if ($mail_recipient->hasRole('provider')) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    //MAIL HELPERS
+
+    //send notes when stored
+
     public function getAllForwardedNotesForPracticeWithRange(Practice $practice, Carbon $start, Carbon $end){
 
         $patients = User::ofType('participant')
@@ -280,32 +306,6 @@ class NoteService
 
         return collect($provider_forwarded_notes);
 
-    }
-
-    //MAIL HELPERS
-
-    //send notes when stored
-
-    public function wasSentToProvider(Note $note)
-    {
-
-        $mails = $note->mail;
-
-        if (count($mails) < 1) {
-            return false;
-        }
-
-        foreach ($mails as $mail) {
-
-            $mail_recipient = User::find($mail->receiver_cpm_id);
-
-            if ($mail_recipient->hasRole('provider')) {
-
-                return true;
-            }
-        }
-
-        return false;
     }
 
     //note sender
