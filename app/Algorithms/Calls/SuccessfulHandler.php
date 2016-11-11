@@ -79,7 +79,7 @@ class SuccessfulHandler implements CallHandler
 
         //attach nurse to call, if any windows match.
         $this->intersectWithNurseWindows();
-
+        
         //Add debug string
         $this->prediction['predicament'] = $this->createSchedulerInfoString();
 
