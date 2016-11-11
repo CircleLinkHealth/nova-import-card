@@ -80,18 +80,11 @@ class NotesController extends Controller
             $start = Carbon::now()->startOfMonth()->format('Y-m-d');
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
-
-        if (isset($input['mail_filter'])) {
-
-            $only_mailed_notes = true;
-
-        } else {
-
-            $only_mailed_notes = false;
-
-        }
-
-
+        
+        $only_mailed_notes = (isset($input['mail_filter'])) ? true : false;
+        
+        $admin_filter = (isset($input['admin_filter'])) ? true : false;
+        
         //Check to see whether a provider was selected.
         if (isset($input['provider']) && $input['provider'] != '') {
 
@@ -101,12 +94,10 @@ class NotesController extends Controller
             //notes from all providers who are in the
             //same program as the provider selected.
 
-            if (auth()->user()->ofType('administrator') && $only_mailed_notes) {
+            if (auth()->user()->ofType('administrator') && $admin_filter) {
 
-                $program = Practice::find($provider->program_id);
+                $notes = $this->service->getAllForwardedNotesWithRange(Carbon::parse($start), Carbon::parse($end));
 
-                $notes = $this->service->getAllForwardedNotesForPracticeWithRange($program, Carbon::parse($start), Carbon::parse($end));
-                
             } else {
 
                 if ($only_mailed_notes) {
@@ -139,6 +130,7 @@ class NotesController extends Controller
                 'isProviderSelected' => true,
                 'selected_provider'  => $provider,
                 'only_mailed_notes'  => $only_mailed_notes,
+                'admin_filter'  => $admin_filter,
             ];
 
         } else { // Not enough data for a report, return only the essentials
@@ -344,7 +336,7 @@ class NotesController extends Controller
                     $prediction = (new SchedulerService())->getNextCall($patient, $note->id, false);
 
                 }
-
+                
                 // add last contact time regardless of if success
                 $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                 $info->save();
