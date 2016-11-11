@@ -24,7 +24,7 @@ new Vue({
             };
 
             this.$http.get('/CCDModels/Items/MedicationListItem', {params: payload}).then(function (response) {
-                this.$set('problems', response.data);
+                this.$set('medications', response.data);
             }, function (response) {
                 console.log(response);
             });
