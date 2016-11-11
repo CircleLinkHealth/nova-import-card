@@ -11012,7 +11012,13 @@ var patientId = $('#patient_id').val();
     var medicationsVM = new Vue({
     el: '#medications',
     data: {
-        medication: { id: '', patient_id: patientId, name: '', sig: '' }
+        medication: {
+            id: '',
+            patient_id: patientId,
+            name: '',
+            sig: ''
+        },
+        medications: []
     },
 
     ready: function ready() {
@@ -11109,8 +11115,6 @@ var patientId = $('#patient_id').val();
                     console.log(response);
                 });
             }
-
-            return false;
         },
 
         postEvents: function postEvents(index, e) {

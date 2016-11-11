@@ -9,7 +9,13 @@ var patientId = $('#patient_id').val();
 var medicationsVM = new Vue({
     el: '#medications',
     data: {
-        medication: { id: '', patient_id: patientId, name: '', sig: '' }
+        medication: {
+            id: '',
+            patient_id: patientId,
+            name: '',
+            sig: ''
+        },
+        medications: []
     },
 
     ready: function() {
@@ -106,8 +112,6 @@ var medicationsVM = new Vue({
                     console.log(response);
                 });
             }
-
-            return false;
         },
 
         postEvents: function(index, e) {
