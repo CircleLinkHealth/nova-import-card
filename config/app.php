@@ -202,6 +202,8 @@ return [
         ObserversServiceProvider::class,
         //        DraperStudio\ChartJS\ServiceProvider::class,
         Modelizer\Selenium\SeleniumServiceProvider::class,
+        Way\Generators\GeneratorsServiceProvider::class,
+        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
 
 
     ],
