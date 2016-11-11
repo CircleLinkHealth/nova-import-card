@@ -5,7 +5,8 @@
         <div class="col-sm-12">
             <div class="list-group">
                 <template v-for="problemitem in problems">
-                <div href="#" class="list-group-item" v-on:submit.prevent v-if="problemitem.name" style="padding:5px;font-size:12px;">
+                    <div class="list-group-item" v-on:submit.prevent v-if="problemitem.name"
+                         style="padding:5px;font-size:12px;">
                     <div class="row">
                         <div class="col-sm-10">
                             <div class="list-group-item-heading" v-if="problemitem.name">
