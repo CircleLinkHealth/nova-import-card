@@ -18,7 +18,7 @@ trait HandlesUsersAndCarePlans
      * @param int $programId
      * @param string $roleName
      *
-     * @return $this|User
+     * @return User
      */
     public function createUser(
         $programId = 9,
@@ -111,7 +111,7 @@ trait HandlesUsersAndCarePlans
     public function createNewPatient()
     {
         $this->visit('/manage-patients/dashboard')
-            ->see('Add a patient')
+            ->see('Add a Patient')
             ->click('add-patient')
             ->seePageIs('/manage-patients/careplan/demographics');
 
