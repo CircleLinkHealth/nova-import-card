@@ -103,6 +103,8 @@ class CallController extends Controller
         $window_start = Carbon::parse($input['window_start'])->format('H:i');
         $window_end = Carbon::parse($input['window_end'])->format('H:i');
 
+        //If the suggested date doesn't match the one in the input,
+        //the scheduler has changed the date, mark it.
         $scheduler = ($input['suggested_date'] == $input['date'])
             ? 'core algorithm'
             : Auth::user()->id;

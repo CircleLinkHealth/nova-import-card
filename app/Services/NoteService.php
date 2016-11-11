@@ -278,10 +278,9 @@ class NoteService
 
     //send notes when stored
 
-    public function getAllForwardedNotesForPracticeWithRange(Practice $practice, Carbon $start, Carbon $end){
+    public function getAllForwardedNotesWithRange(Carbon $start, Carbon $end){
 
         $patients = User::ofType('participant')
-            ->where('program_id', $practice->id)
             ->get()
             ->pluck('id');
 
