@@ -1,12 +1,15 @@
 <?php
 
 use App\Models\CCD\QAImportSummary;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Modelizer\Selenium\SeleniumTestCase;
 use Tests\Helpers\HandlesUsersAndCarePlans;
 
 class CcdImporterTest extends SeleniumTestCase
 {
-    use HandlesUsersAndCarePlans;
+    use DatabaseTransactions,
+        HandlesUsersAndCarePlans;
+
 
     protected $admin;
 
