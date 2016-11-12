@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CCD\QAImportSummary;
 use Modelizer\Selenium\SeleniumTestCase;
 use Tests\Helpers\HandlesUsersAndCarePlans;
 
@@ -13,17 +14,15 @@ class CcdImporterTest extends SeleniumTestCase
     {
         parent::setUp();
 
-        config(['app.debug' => false]);
-
         $this->admin = $this->createUser(9, 'administrator');
     }
 
     /**
-     * Test Importing a CCDA from Aprima.
+     * Test QAImporting a CCDA from Aprima.
      *
      * @return void
      */
-    public function testImportAprimaCcda()
+    public function testQAImportAprimaCcda()
     {
         $this->actingAs($this->admin)
             ->visit(route('patients.dashboard'))
@@ -36,6 +35,21 @@ class CcdImporterTest extends SeleniumTestCase
             ->type(storage_path('/ccdas/Samples/aprima-sample.xml'), 'ccd')
             ->press('Upload')
             ->seePageIs('/ccd-importer/qaimport')
-            ->wait(5);
+            ->see('Name')
+            ->see('Provider')
+            ->see('Has Phone')
+            ->see('Import')
+            ->see('Delete')
+            ->see('IMPORT/DELETE CHECKED CCDS');
+
+        $summary = QAImportSummary::all()->last();
+
+        $this->assertTrue(!empty($summary->name));
+        $this->see($summary->name);
+
+        $this->assertGreaterThan(0, $summary->medications);
+        $this->assertGreaterThan(0, $summary->problems);
+
+        $this->assertTrue(boolval($summary->has_phone));
     }
 }
