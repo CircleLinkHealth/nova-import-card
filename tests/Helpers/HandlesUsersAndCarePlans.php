@@ -15,13 +15,13 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 trait HandlesUsersAndCarePlans
 {
     /**
-     * @param int $programId
+     * @param int $practiceId
      * @param string $roleName
      *
      * @return User
      */
     public function createUser(
-        $programId = 9,
+        $practiceId = 9,
         $roleName = 'provider'
     ) : User
     {
@@ -43,7 +43,7 @@ trait HandlesUsersAndCarePlans
             'first_name'        => $firstName,
             'last_name'         => $lastName,
             'username'          => $faker->userName,
-            'program_id'        => $programId,
+            'program_id'        => $practiceId,
             //id=9 is testdrive
             'address'           => $faker->streetAddress,
             'address2'          => '',
@@ -67,7 +67,7 @@ trait HandlesUsersAndCarePlans
         //create a user
         $user = (new UserRepository())->createNewUser(new User(), $bag);
 
-        $locations = Practice::find($programId)->locations
+        $locations = Practice::find($practiceId)->locations
             ->pluck('id')
             ->all();
 
