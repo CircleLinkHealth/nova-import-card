@@ -56,8 +56,8 @@
                 while (++queueIndex < len) {
                     if (currentQueue) {
                         currentQueue[queueIndex].run();
-                    }
-                }
+            }
+        }
                 queueIndex = -1;
                 len = queue.length;
             }
@@ -121,14 +121,10 @@
         };
 
     }, {}], 2: [function (require, module, exports) {
-        var Vue;
-        ; // late bind
+        var Vue; // late bind
         var map = Object.create(null);
-        ;
         var shimmed = false;
-        ;
         var isBrowserify = false;
-        ;
 
         /**
          * Determine compatibility and apply patch.
@@ -139,41 +135,30 @@
 
         exports.install = function (vue, browserify) {
             if (shimmed) return;
-            ;
             shimmed = true;
-            ;
 
             Vue = vue;
-            ;
             isBrowserify = browserify;
-            ;
 
             exports.compatible = !!Vue.internalDirectives;
-            ;
             if (!exports.compatible) {
                 console.warn(
                     '[HMR] vue-loader hot reload is only compatible with ' +
                     'Vue.js 1.0.0+.'
                 );
-                ;
                 return
             }
 
             // patch view directive
             patchView(Vue.internalDirectives.component);
-            ;
             console.log('[HMR] Vue component hot reload shim applied.');
-            ;
             // shim router-view if present
             var routerView = Vue.elementDirective('router-view');
-            ;
             if (routerView) {
                 patchView(routerView);
-                ;
                 console.log('[HMR] vue-router <router-view> hot reload shim applied.')
             }
         };
-        ;
 
         /**
          * Shim the view directive (component or router-view).
@@ -183,13 +168,10 @@
 
         function patchView(View) {
             var unbuild = View.unbuild;
-            ;
             View.unbuild = function (defer) {
                 if (!this.hotUpdating) {
                     var prevComponent = this.childVM && this.childVM.constructor;
-                    ;
                     removeView(prevComponent, this);
-                    ;
                     // defer = true means we are transitioning to a new
                     // Component. Register this new component to the list.
                     if (defer) {
@@ -210,7 +192,6 @@
 
         function addView(Component, view) {
             var id = Component && Component.options.hotID;
-            ;
             if (id) {
                 if (!map[id]) {
                     map[id] = {
@@ -232,7 +213,6 @@
 
         function removeView(Component, view) {
             var id = Component && Component.options.hotID;
-            ;
             if (id) {
                 map[id].views.$remove(view)
             }
@@ -252,7 +232,6 @@
             }
             if (typeof options.el !== 'string' && typeof options.data !== 'object') {
                 makeOptionsHot(id, options);
-                ;
                 map[id] = {
                     Component: null,
                     views: [],
@@ -260,7 +239,6 @@
                 }
             }
         };
-        ;
 
         /**
          * Make a Component options object hot.
@@ -271,16 +249,13 @@
 
         function makeOptionsHot(id, options) {
             options.hotID = id;
-            ;
             injectHook(options, 'created', function () {
                 var record = map[id];
-                ;
                 if (!record.Component) {
                     record.Component = this.constructor
                 }
                 record.instances.push(this)
             });
-            ;
             injectHook(options, 'beforeDestroy', function () {
                 map[id].instances.$remove(this)
             })
@@ -297,7 +272,6 @@
 
         function injectHook(options, name, hook) {
             var existing = options[name];
-            ;
             options[name] = existing
                 ? Array.isArray(existing)
                 ? existing.concat(hook)
@@ -315,12 +289,10 @@
 
         exports.update = function (id, newOptions, newTemplate) {
             var record = map[id];
-            ;
             // force full-reload if an instance of the component is active but is not
             // managed by a view
             if (!record || (record.instances.length && !record.views.length)) {
                 console.log('[HMR] Root or manually-mounted instance modified. Full reload may be required.');
-                ;
                 if (!isBrowserify) {
                     window.location.reload()
                 } else {
@@ -333,14 +305,12 @@
                 console.log('[HMR] Updating component: ' + format(id))
             }
             var Component = record.Component;
-            ;
             // update constructor
             if (newOptions) {
                 // in case the user exports a constructor
                 Component = record.Component = typeof newOptions === 'function'
                     ? newOptions
                     : Vue.extend(newOptions);
-                ;
                 makeOptionsHot(id, Component.options)
             }
             if (newTemplate) {
@@ -352,18 +322,15 @@
             }
             // reset constructor cached linker
             Component.linker = null;
-            ;
             // reload all views
             record.views.forEach(function (view) {
                 updateView(view, Component)
             });
-            ;
             // flush devtools
             if (window.__VUE_DEVTOOLS_GLOBAL_HOOK__) {
                 window.__VUE_DEVTOOLS_GLOBAL_HOOK__.emit('flush')
             }
         };
-        ;
 
         /**
          * Update a component view instance
@@ -377,30 +344,20 @@
                 return
             }
             view.Component = Component;
-            ;
             view.hotUpdating = true;
-            ;
             // disable transitions
             view.vm._isCompiled = false;
-            ;
             // save state
             var state = extractState(view.childVM);
-            ;
             // remount, make sure to disable keep-alive
             var keepAlive = view.keepAlive;
-            ;
             view.keepAlive = false;
-            ;
             view.mountComponent();
-            ;
             view.keepAlive = keepAlive;
-            ;
             // restore state
             restoreState(view.childVM, state, true);
-            ;
             // re-eanble transitions
             view.vm._isCompiled = true;
-            ;
             view.hotUpdating = false
         }
 
@@ -428,11 +385,9 @@
 
         function restoreState(vm, state, isRoot) {
             var oldAsyncConfig;
-            ;
             if (isRoot) {
                 // set Vue into sync mode during state rehydration
                 oldAsyncConfig = Vue.config.async;
-                ;
                 Vue.config.async = false
             }
             // actual restore
@@ -450,7 +405,6 @@
             var hasSameChildren = vm.$children.every(function (c, i) {
                 return state.children[i] && state.children[i].cid === c.constructor.cid
             });
-            ;
             if (hasSameChildren) {
                 // rehydrate children
                 vm.$children.forEach(function (c, i) {
@@ -601,35 +555,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(2);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/toggles/checkbox.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(4);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/toggles/checkbox.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -710,35 +654,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(6);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/toggles/switch.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(7);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/toggles/switch.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -777,35 +711,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(9);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/toggles/icon-toggle.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(10);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/toggles/icon-toggle.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -850,35 +774,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(12);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/toggles/radio.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(14);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/toggles/radio.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -956,35 +870,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(16);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/progress.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(17);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/progress.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -1048,35 +952,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(19);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/button.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(21);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/button.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -1168,35 +1062,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(23);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/anchor-button.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(24);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/anchor-button.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -1232,35 +1116,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(26);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/spinner.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(27);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/spinner.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -1308,35 +1182,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(29);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/slider.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(30);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/slider.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -1418,35 +1282,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(32);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/textfield.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(33);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/textfield.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -1516,35 +1370,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(35);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/tooltip.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(36);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/tooltip.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -1592,35 +1436,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(38);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/menu/menu.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(39);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/menu/menu.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -1659,35 +1493,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(41);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/menu/menu-item.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(42);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/menu/menu-item.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -1720,35 +1544,25 @@
                 /***/ function (module, exports, __webpack_require__) {
 
                     var __vue_script__, __vue_template__;
-                    ;
                     __vue_script__ = __webpack_require__(44);
-                    ;
                     if (__vue_script__ &&
                         __vue_script__.__esModule &&
                         Object.keys(__vue_script__).length > 1) {
                         console.warn("[vue-loader] src/card.vue: named exports in *.vue files are ignored.")
                     }
                     __vue_template__ = __webpack_require__(45);
-                    ;
                     module.exports = __vue_script__ || {};
-                    ;
                     if (module.exports.__esModule) module.exports = module.exports.default;
-                    ;
                     if (__vue_template__) {
                         (typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
                     }
                     if (false) {
                         (function () {
                             module.hot.accept();
-                            ;
                             var hotAPI = require("vue-hot-reload-api");
-                            ;
                             hotAPI.install(require("vue"), true);
-                            ;
                             if (!hotAPI.compatible) return;
-                            ;
                             var id = "/Users/posva/vue-mdl/src/card.vue";
-                            ;
                             if (!module.hot.data) {
                                 hotAPI.createRecord(id, module.exports)
                             } else {
@@ -2109,7 +1923,7 @@
                 $resource: {
                     get: function () {
                         return Vue.resource.bind(this);
-                    }
+            }
                 }
 
             });
@@ -2155,7 +1969,7 @@
 
                     if (event.type === 'load' && !body) {
                         event.type = 'error';
-                    }
+            }
 
                     response.ok = event.type !== 'error';
                     response.status = response.ok ? 200 : 404;
@@ -2228,13 +2042,13 @@
 
                         if (count === iterable.length) {
                             resolve(result);
-                        }
+                }
                     };
                 }
 
                 for (var i = 0; i < iterable.length; i += 1) {
                     iterable[i].then(resolver(i), reject);
-                }
+        }
             });
         };
 
@@ -2242,7 +2056,7 @@
             return new Promise(function (resolve, reject) {
                 for (var i = 0; i < iterable.length; i += 1) {
                     iterable[i].then(resolve, reject);
-                }
+        }
             });
         };
 
@@ -2265,23 +2079,23 @@
                         then.call(x, function (x) {
                             if (!called) {
                                 promise.resolve(x);
-                            }
+                    }
                             called = true;
 
-                        }, function (r) {
+                }, function (r) {
                             if (!called) {
                                 promise.reject(r);
                             }
                             called = true;
-                        });
+                });
                         return;
                     }
                 } catch (e) {
                     if (!called) {
-                        promise.reject(e);
-                    }
+                promise.reject(e);
+            }
                     return;
-                }
+        }
                 promise.state = RESOLVED;
                 promise.value = x;
                 promise.notify();
@@ -2314,24 +2128,24 @@
                             resolve = deferred[2],
                             reject = deferred[3];
 
-                        try {
-                            if (promise.state === RESOLVED) {
-                                if (typeof onResolved === 'function') {
-                                    resolve(onResolved.call(undefined, promise.value));
-                                } else {
-                                    resolve(promise.value);
-                                }
-                            } else if (promise.state === REJECTED) {
-                                if (typeof onRejected === 'function') {
-                                    resolve(onRejected.call(undefined, promise.value));
-                                } else {
-                                    reject(promise.value);
-                                }
-                            }
-                        } catch (e) {
-                            reject(e);
+                try {
+                    if (promise.state === RESOLVED) {
+                        if (typeof onResolved === 'function') {
+                            resolve(onResolved.call(undefined, promise.value));
+                        } else {
+                            resolve(promise.value);
+                        }
+                    } else if (promise.state === REJECTED) {
+                        if (typeof onRejected === 'function') {
+                            resolve(onRejected.call(undefined, promise.value));
+                        } else {
+                            reject(promise.value);
                         }
                     }
+                } catch (e) {
+                    reject(e);
+                }
+            }
                 }
             });
         };
@@ -2424,7 +2238,7 @@
                     for (key in obj) {
                         if (obj.hasOwnProperty(key)) {
                             iterator.call(obj[key], obj[key], key);
-                        }
+                }
                     }
                 }
 
@@ -2452,14 +2266,14 @@
                     if (deep && (_.isPlainObject(source[key]) || _.isArray(source[key]))) {
                         if (_.isPlainObject(source[key]) && !_.isPlainObject(target[key])) {
                             target[key] = {};
-                        }
+                }
                         if (_.isArray(source[key]) && !_.isArray(target[key])) {
                             target[key] = [];
-                        }
+                }
                         extend(target[key], source[key], deep);
                     } else if (source[key] !== undefined) {
                         target[key] = source[key];
-                    }
+            }
                 }
             }
 
@@ -2508,7 +2322,7 @@
                     }
 
                     (request.ok ? resolve : reject)(request);
-                };
+        };
 
                 request.onload = handler;
                 request.onabort = handler;
@@ -2672,7 +2486,7 @@
                 _.each(options.params, function (value, key) {
                     if (!urlParams[key]) {
                         queryParams[key] = value;
-                    }
+            }
                 });
 
                 query = Url.params(queryParams);
@@ -2759,7 +2573,7 @@
 
                     if (scope) {
                         key = scope + '[' + (plain || hash ? key : '') + ']';
-                    }
+            }
 
                     if (!scope && array) {
                         params.add(value.name, value.value);
@@ -2767,7 +2581,7 @@
                         serialize(params, value, key);
                     } else {
                         params.add(key, value);
-                    }
+            }
                 });
             }
 
@@ -3779,7 +3593,7 @@
                      * the text parser to re-compile the regular expressions.
                      *
                      * @type {Array<String>}
-                     */
+                 */
 
                     get: function get() {
                         return delimiters;
@@ -8916,7 +8730,7 @@
                                 } else {
                                     // root instance
                                     initProp(vm, prop, vm.$get(prop.parentPath));
-                                }
+            }
                             }
                         } else if (prop.optimizedLiteral) {
                             // optimized literal, cast it and just set once
@@ -10319,7 +10133,7 @@
                         if (dirDef) {
                             pushDir(dirName, dirDef);
                         }
-                    }
+            }
                 }
 
                 /**
@@ -12865,9 +12679,9 @@
     }, {}], 14: [function (require, module, exports) {
         module.exports = '<div id="ccd-uploaded-summaries" class="mdl-grid">\n    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">\n        <thead>\n        <tr>\n            <th class="mdl-data-table__cell--non-numeric">Import</th>\n            <th class="mdl-data-table__cell--non-numeric">Edit</th>\n            <th class="mdl-data-table__cell--non-numeric">Delete</th>\n            <th class="mdl-data-table__cell--non-numeric">Name</th>\n            <th class="mdl-data-table__cell--non-numeric">Has Phone</th>\n            <th class="mdl-data-table__cell--non-numeric">Duplicate User id</th>\n            <th class="mdl-data-table__cell--non-numeric">CCDA id</th>\n            <th class="mdl-data-table__cell--non-numeric">Provider</th>\n            <th class="mdl-data-table__cell--non-numeric">Location</th>\n            <th class="mdl-data-table__cell--non-numeric">Has Street Address</th>\n            <th class="mdl-data-table__cell--non-numeric">Has City</th>\n            <th class="mdl-data-table__cell--non-numeric">Has State</th>\n            <th class="mdl-data-table__cell--non-numeric">Has Zip</th>\n            <th>Allergies</th>\n            <th>Medications</th>\n            <th>Problems</th>\n            <th class="mdl-data-table__cell--non-numeric">Source</th>\n            <th class="mdl-data-table__cell--non-numeric">Created At</th>\n        </tr>\n        </thead>\n\n        <tbody>\n\n        <tr v-for="qaSummary in qaSummaries" v-bind:class="{ \'flag\': qaSummary.flag }"\n            id="row-{{ qaSummary.ccda_id }}">\n\n            <td id="import-row-{{ qaSummary.ccda_id }}">\n                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"\n                       for="import-{{ qaSummary.ccda_id }}" id="import-label-{{ qaSummary.ccda_id }}">\n                    <input v-model="okToImport" value="{{ qaSummary.ccda_id }}" type="checkbox"\n                           id="import-{{ qaSummary.ccda_id }}" class="mdl-checkbox__input"\n                           v-on:click="toggleCheckboxes">\n                    <span class="mdl-checkbox__label"></span>\n                </label>\n            </td>\n            <td id="edit-row-{{ qaSummary.ccda_id }}" class="mdl-data-table__cell--non-numeric">\n                <a href="/ccd-importer/uploaded-ccd-items/{{qaSummary.ccda_id}}/edit">Edit</a>\n            </td>\n\n            <td id="delete-row-{{ qaSummary.ccda_id }}">\n                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"\n                       for="delete-{{ qaSummary.ccda_id }}" id="delete-label-{{ qaSummary.ccda_id }}">\n                    <input v-model="okToDelete" value="{{ qaSummary.ccda_id }}" type="checkbox"\n                           id="delete-{{ qaSummary.ccda_id }}" class="mdl-switch__input"\n                           v-on:click="toggleCheckboxes">\n                    <span class="mdl-switch__label"></span>\n                </label>\n            </td>\n\n            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.name }}</td>\n\n            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.has_phone | capitalize}}</td>\n\n            <td class="mdl-data-table__cell--non-numeric">\n                <a v-if="qaSummary.duplicate_id" target="_blank" href="/manage-patients/{{ qaSummary.duplicate_id }}/summary">\n                    {{ qaSummary.duplicate_id }}\n                </a>\n            </td>\n\n            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.ccda_id }}</td>\n            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.provider }}</td>\n            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.location }}</td>\n            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.has_street_address | capitalize }}</td>\n            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.has_city | capitalize }}</td>\n            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.has_state | capitalize }}</td>\n            <td class="mdl-data-table__cell--non-numeric">{{ qaSummary.has_zip | capitalize }}</td>\n            <td>{{ qaSummary.allergies }}</td>\n            <td>{{ qaSummary.medications }}</td>\n            <td>{{ qaSummary.problems }}</td>\n\n            <td v-if="qaSummary.ccda" class="mdl-data-table__cell--non-numeric">{{ qaSummary.ccda.source }}</td>\n            <td v-else class="mdl-data-table__cell--non-numeric">N/A</td>\n            <td v-if="qaSummary.ccda" class="mdl-data-table__cell--non-numeric">{{ qaSummary.ccda.created_at }}</td>\n            <td v-else class="mdl-data-table__cell--non-numeric">N/A</td>\n        </tr>\n        </tbody>\n    </table>\n\n\n    <div v-bind:class="{ \'hide\': tableHide }" class="mdl-typography--text-center mdl-cell mdl-cell--12-col">\n        <mdl-button primary raised v-mdl-ripple-effect type="submit" v-on:click="syncCcds"\n                    v-bind:disabled="!(okToImport.length + okToDelete.length)" id="syncCcdsBtn">\n            Import/Delete Checked CCDs\n        </mdl-button>\n    </div>\n\n</div>';
     }, {}], 15: [function (require, module, exports) {
-        module.exports = '<div id="ccd-uploader" class="mdl-grid">\n    <div v-bind:class="{ \'hide\': groupHide }" class="mdl-cell mdl-cell--12-col">\n        <div class="mdl-cell mdl-cell--12-col">\n            <mdl-progress :progress="progress" :buffer="buffer" class="mdl-cell mdl-cell--12-col"></mdl-progress>\n            <p :message="message" class="mdl-cell mdl-cell--12-col mdl-typography--text-left">{{ message }}</p>\n        </div>\n\n        <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data"\n              class="mdl-cell mdl-cell--12-col" action="/ccd-importer/qaimport">\n\n            <input type="hidden" name="_token" value="{{ csrfToken }}">\n\n            <!--VENDOR LIST-->\n            <div class="mdl-cell mdl-cell--12-col">\n                <h5>Please choose an Import profile for this CCD.</h5>\n\n                <label v-for="vendor in ccdVendors" class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-cell--4-col"\n                       for="vendor-{{ vendor.id }}">\n                    <input type="radio" id="vendor-{{ vendor.id }}" class="mdl-radio__button" name="ccd_vendor_id"\n                           value="{{ vendor.id }}" v-model="selectedVendor" required>\n                    <span class="mdl-radio__label">{{ vendor.vendor_name }}</span>\n                </label>\n            </div>\n\n            <!--UPLOAD BOX-->\n            <div v-show="selectedVendor" class="mdl-cell mdl-cell--12-col">\n\n                <input type="file" id="ccd" name="file[]" class="dropzone" multiple>\n\n                <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">\n                    <mdl-button primary raised v-mdl-ripple-effect type="submit" :disabled="!enabled">\n                        Upload CCD Records\n                    </mdl-button>\n                </div>\n            </div>\n        </form>\n    </div>\n</div>';
+        module.exports = '<div id="ccd-uploader" class="mdl-grid">\n    <div v-bind:class="{ \'hide\': groupHide }" class="mdl-cell mdl-cell--12-col">\n        <div class="mdl-cell mdl-cell--12-col">\n            <mdl-progress :progress="progress" :buffer="buffer" class="mdl-cell mdl-cell--12-col"></mdl-progress>\n            <p :message="message" class="mdl-cell mdl-cell--12-col mdl-typography--text-left">{{ message }}</p>\n        </div>\n\n        <form method="POST" v-on:submit="onSubmitForm" enctype="multipart/form-data"\n              class="mdl-cell mdl-cell--12-col" action="/ccd-importer/qaimport">\n\n            <input type="hidden" name="_token" value="{{ csrfToken }}">\n\n            <!--VENDOR LIST-->\n            <div class="mdl-cell mdl-cell--12-col">\n                <h5>Please choose an Import profile for this CCD.</h5>\n\n                <label id="label-vendor-{{ vendor.id }}" v-for="vendor in ccdVendors" class="mdl-radio mdl-js-radio mdl-js-ripple-effect mdl-cell--4-col"\n                       for="vendor-{{ vendor.id }}">\n                    <input id="vendor-{{ vendor.id }}" type="radio" class="mdl-radio__button" name="ccd_vendor_id"\n                           value="{{ vendor.id }}" v-model="selectedVendor" required>\n                    <span class="mdl-radio__label">{{ vendor.vendor_name }}</span>\n                </label>\n            </div>\n\n            <!--UPLOAD BOX-->\n            <div v-show="selectedVendor" class="mdl-cell mdl-cell--12-col">\n\n                <input type="file" id="ccd" name="file[]" class="dropzone" multiple>\n\n                <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">\n                    <mdl-button primary raised v-mdl-ripple-effect type="submit" :disabled="!enabled" id="upload-ccdas">\n                        Upload CCD Records\n                    </mdl-button>\n                </div>\n            </div>\n        </form>\n    </div>\n</div>';
     }, {}], 16: [function (require, module, exports) {
-        module.exports = '<style>\n    /* Style Select Field */\n    select {\n        font-family: inherit;\n        background-color: transparent;\n        width: 100%;\n        padding: 4px 0;\n        font-size: 16px;\n        color: rgba(0,0,0,1);\n        border: none;\n        border-bottom: 1px solid rgba(0,0,0, 0.12);\n    }\n\n    /* Remove focus */\n    select:focus {\n        outline: none;\n    }\n\n    .mdl-selectfield {\n        position: relative;\n    }\n    .mdl-selectfield:after {\n        position: absolute;\n        top: 0.75em;\n        right: 0.5em;\n        /* Styling the down arrow */\n        width: 0;\n        height: 0;\n        padding: 0;\n        content: \'\';\n        border-left: .25em solid transparent;\n        border-right: .25em solid transparent;\n        border-top: 0.375em solid rgba(0,0,0, 0.12);\n        pointer-events: none;\n    }\n</style>\n\n<div>\n    <div class="mdl-grid">\n\n        <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>\n\n        <div class="mdl-cell mdl-cell--8-col mdl-grid">\n\n            <!-- Location and Provider -->\n            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">\n\n                <h5 class="mdl-cell mdl-cell--6-col"><label>Vendor:</label>{{ vendor }}</h5>\n\n                <h5 class="mdl-cell mdl-cell--6-col"><label>Program: </label>{{ program.name }}</h5>\n\n                <div class="mdl-selectfield mdl-cell mdl-cell--6-col">\n                    <label for="provider_id">Primary Provider</label>\n                    <select v-model="demographics.provider_id" name="provider_id" id="provider_id">\n                        <option value="" disabled selected>Choose a provider</option>\n                        <option v-for="provider in providers" value="{{ provider.id }}">{{ provider.name }}</option>\n                    </select>\n                </div>\n\n                <div class="mdl-selectfield mdl-cell mdl-cell--6-col">\n                    <label for="location_id">Location</label>\n                    <select v-model="demographics.location_id" name="location_id" id="location_id">\n                        <option value="" disabled selected>Choose a location</option>\n                        <option v-for="location in locations" value="{{ location.id }}">{{ location.name }}</option>\n                    </select>\n                </div>\n            </div>\n\n            <!-- Names and stuff -->\n            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.first_name"\n                        label="First Name">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.last_name"\n                        label="Last Name">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.gender"\n                        label="Gender">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.dob"\n                        label="DOB">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.mrn_number"\n                        label="MRN Number">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.preferred_contact_language"\n                        label="Language">\n                </text-with-floating-label>\n            </div>\n\n            <!-- Address -->\n            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col mdl-grid">\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.street"\n                        label="Street">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.city"\n                        label="City">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.state"\n                        label="State">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.zip"\n                        label="Zip">\n                </text-with-floating-label>\n            </div>\n\n            <!-- Phones -->\n            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col mdl-grid">\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.study_phone_number"\n                        label="Primary Phone">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.cell_phone"\n                        label="Cell Phone">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.home_phone"\n                        label="Home Phone">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.work_phone"\n                        label="Work Phone">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.email"\n                        label="Email">\n                </text-with-floating-label>\n            </div>\n\n            <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">\n                <mdl-button primary raised v-mdl-ripple-effect @click="submitForm" :disabled="!enableButton">\n                    Save Demographics\n                </mdl-button>\n            </div>\n\n        </div>\n\n    </div>\n\n\n</div>\n';
+        module.exports = '<style>\n    /* Style Select Field */\n    select {\n        font-family: inherit;\n        background-color: transparent;\n        width: 100%;\n        padding: 4px 0;\n        font-size: 16px;\n        color: rgba(0,0,0,1);\n        border: none;\n        border-bottom: 1px solid rgba(0,0,0, 0.12);\n    }\n\n    /* Remove focus */\n    select:focus {\n        outline: none;\n    }\n\n    .mdl-selectfield {\n        position: relative;\n    }\n    .mdl-selectfield:after {\n        position: absolute;\n        top: 0.75em;\n        right: 0.5em;\n        /* Styling the down arrow */\n        width: 0;\n        height: 0;\n        padding: 0;\n        content: \'\';\n        border-left: .25em solid transparent;\n        border-right: .25em solid transparent;\n        border-top: 0.375em solid rgba(0,0,0, 0.12);\n        pointer-events: none;\n    }\n</style>\n\n<div>\n    <div class="mdl-grid">\n\n        <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>\n\n        <div class="mdl-cell mdl-cell--8-col mdl-grid">\n\n            <!-- Location and Provider -->\n            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">\n\n                <h5 class="mdl-cell mdl-cell--6-col"><label>Vendor:</label>{{ vendor }}</h5>\n\n                <h5 class="mdl-cell mdl-cell--6-col"><label>Practice: </label>{{ program.name }}</h5>\n\n                <div class="mdl-selectfield mdl-cell mdl-cell--6-col">\n                    <label for="provider_id">Primary Provider</label>\n                    <select v-model="demographics.provider_id" name="provider_id" id="provider_id">\n                        <option value="" disabled selected>Choose a provider</option>\n                        <option v-for="provider in providers" value="{{ provider.id }}">{{ provider.name }}</option>\n                    </select>\n                </div>\n\n                <div class="mdl-selectfield mdl-cell mdl-cell--6-col">\n                    <label for="location_id">Location</label>\n                    <select v-model="demographics.location_id" name="location_id" id="location_id">\n                        <option value="" disabled selected>Choose a location</option>\n                        <option v-for="location in locations" value="{{ location.id }}">{{ location.name }}</option>\n                    </select>\n                </div>\n            </div>\n\n            <!-- Names and stuff -->\n            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.first_name"\n                        label="First Name">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.last_name"\n                        label="Last Name">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.gender"\n                        label="Gender">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.dob"\n                        label="DOB">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.mrn_number"\n                        label="MRN Number">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--6-col"\n                        :model.sync="demographics.preferred_contact_language"\n                        label="Language">\n                </text-with-floating-label>\n            </div>\n\n            <!-- Address -->\n            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col mdl-grid">\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.street"\n                        label="Street">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.city"\n                        label="City">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.state"\n                        label="State">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.zip"\n                        label="Zip">\n                </text-with-floating-label>\n            </div>\n\n            <!-- Phones -->\n            <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col mdl-grid">\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.study_phone_number"\n                        label="Primary Phone">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.cell_phone"\n                        label="Cell Phone">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.home_phone"\n                        label="Home Phone">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.work_phone"\n                        label="Work Phone">\n                </text-with-floating-label>\n\n                <text-with-floating-label\n                        class="mdl-cell mdl-cell--12-col"\n                        :model.sync="demographics.email"\n                        label="Email">\n                </text-with-floating-label>\n            </div>\n\n            <div class="mdl-typography--text-center mdl-cell mdl-cell--12-col">\n                <mdl-button primary raised v-mdl-ripple-effect @click="submitForm" :disabled="!enableButton">\n                    Save Demographics\n                </mdl-button>\n            </div>\n\n        </div>\n\n    </div>\n\n\n</div>\n';
     }, {}], 17: [function (require, module, exports) {
         module.exports = '<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">\n    <header class="mdl-layout__header mdl-layout__header--waterfall">\n        <div class="mdl-layout__header-row">\n            <!-- Title -->\n            <span class="mdl-layout-title">Imported CCDs Editor</span>\n            <div class="mdl-layout-spacer"></div>\n            <a href="/ccd-importer/qaimport" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Back to Summary Page</a>\n        </div>\n\n        <!-- Tabs -->\n        <div class="mdl-layout__tab-bar mdl-js-ripple-effect">\n            <div class="mdl-layout-spacer"></div>\n\n            <a href="#scroll-tab-1" class="mdl-layout__tab is-active">Demographics</a>\n            <a href="#scroll-tab-2" class="mdl-layout__tab">Allergies</a>\n            <a href="#scroll-tab-3" class="mdl-layout__tab">Medications</a>\n            <a href="#scroll-tab-4" class="mdl-layout__tab">Problems</a>\n        </div>\n\n    </header>\n\n    <div class="mdl-layout__content">\n        <section class="mdl-layout__tab-panel is-active" id="scroll-tab-1">\n            <div class="page-content">\n                <edit-demographics></edit-demographics>\n            </div>\n        </section>\n        <section class="mdl-layout__tab-panel" id="scroll-tab-2">\n            <div class="page-content">\n            </div>\n        </section>\n        <section class="mdl-layout__tab-panel" id="scroll-tab-3">\n            <div class="page-content">3<!-- Your content goes here --></div>\n        </section>\n        <section class="mdl-layout__tab-panel" id="scroll-tab-4">\n            <div class="page-content">4<!-- Your content goes here --></div>\n        </section>\n        <section class="mdl-layout__tab-panel" id="scroll-tab-5">\n            <div class="page-content">5<!-- Your content goes here --></div>\n        </section>\n        <section class="mdl-layout__tab-panel" id="scroll-tab-6">\n            <div class="page-content">6<!-- Your content goes here --></div>\n        </section>\n    </div>\n\n\n</div>';
     }, {}], 18: [function (require, module, exports) {
@@ -13007,8 +12821,8 @@
                         if (this.okToDelete.indexOf(ccdaId) !== -1) {
                             this.okToDelete.$remove(ccdaId);
                             deleteLabel.toggleClass('is-checked');
-                        }
-                    }
+                }
+            }
                 }
             }
         });

@@ -60,14 +60,15 @@
 									<div class="col-md-12">
 								<p>
                                     <label class="col-md-12 control-label text-center" for="email">Username</label></BR>
-                                    <input type="text" class="form-control" name="email" value="{{ old('email') }}">
+									<input id="email" type="text" class="form-control" name="email"
+										   value="{{ old('email') }}">
 								</p>
 									</div>
 
 									<div class="col-md-12">
 								<p>
 									<label class="col-md-12 control-label text-center" for="password">Password</label></br>
-										<input type="password" class="form-control" name="password">
+									<input id="password" type="password" class="form-control" name="password">
 								</p>
 									</div>
 

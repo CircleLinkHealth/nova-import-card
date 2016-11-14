@@ -30,7 +30,7 @@ elixir(function(mix) {
     // ], 'public/css/stylesheet.css');
 
     // mix.browserify('uploader.js');
-    mix.browserify('ccd-models/items/medicationItem.js');
+    // mix.browserify('ccd-models/items/medicationItem.js');
     // mix.browserify('ccd-models/items/allergiesItem.js');
     // mix.browserify('ccd-models/items/problemsItem.js');
     //mix.scripts([
