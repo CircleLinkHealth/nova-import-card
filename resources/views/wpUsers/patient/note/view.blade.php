@@ -12,6 +12,15 @@
     <style type="text/css">
         div.inline { float:left; }
         .clearBoth { clear:both; }
+
+        blockquote {
+            padding: 10px 20px;
+            margin: 10px 0 20px;
+            font-size: 17.5px;
+            border-left: 5px solid #50b2e2;
+            line-height: 24px;
+        }
+
     </style>
 
     <div class="row" style="margin-top:60px;">
@@ -138,9 +147,15 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <input type="hidden" name="meta[1][meta_key]" value="comment">
-                                        <textarea id="note" class="form-control" rows="10"
-                                                  name="meta[1][meta_value]"
-                                                  disabled>{{trim($note['comment'])}}</textarea> <br/>
+                                        {{--<textarea id="note" class="form-control" rows="10"--}}
+                                                  {{--name="meta[1][meta_value]"--}}
+                                                  {{--disabled></textarea> <br/>--}}
+                                        <div class="col-sm-12">
+                                            </label>
+                                        </div>
+                                        <blockquote>
+                                            <p id="meta[1][meta_value]">{{trim($note['comment'])}}</p>
+                                        </blockquote>
                                     </div>
                                 </div>
                                 <div class="form-block col-md-6">
@@ -194,8 +209,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
                                 <script>
                                     $(function () {
                                         $('[data-toggle="tooltip"]').tooltip()
@@ -229,5 +242,7 @@
 
         </div>
     </div>
+    <div class="form-block col-md-6">
+        <br />
     </div>
 @endsection
