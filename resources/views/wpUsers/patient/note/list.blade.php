@@ -232,6 +232,14 @@
                                         </div>
                                         Forwarded To Provider
                                     </li>
+
+                                    <li>
+                                        <div class="label label-success" style="margin-right: 4px; text-align: right;">
+                                            <span class="glyphicon glyphicon-eye"></span>
+                                        </div>
+                                        Forward Seen By Provider
+                                    </li>
+
                                 </div>
 
                                 <div class="col-sm-6">
@@ -287,10 +295,6 @@
                     <div style="text-align:center;margin:50px;"><strong>Please select a Provider to view patient's
                             notes.</strong></div>
                 @endif
-                <div id="rohstar" style="color: #00ACC1">
-
-                    {{--                    {!! $results->render()  !!}--}}
-                </div>
             </div>
         </div>
 @stop

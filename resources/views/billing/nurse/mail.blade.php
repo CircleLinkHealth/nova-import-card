@@ -3,7 +3,7 @@
 
 <p>Thanks for providing care on the CircleLink platform!</p>
 
-<p>Attached is a report on time worked and earnings from [start date/time selected in admin panel] to [end date/time selected]:</p>
+<p>Attached is a report on time worked and earnings from {{$date_start}} to {{$date_end}}:</p>
 
 
 <p>Performance: {{$percentage . '%'}} of your time was CCM eligible care time<br/>

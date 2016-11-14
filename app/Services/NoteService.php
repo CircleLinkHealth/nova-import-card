@@ -7,9 +7,11 @@ use App\Events\NoteWasForwarded;
 use App\MailLog;
 use App\Note;
 use App\Notifications\NewNote;
+use App\PatientInfo;
 use App\Practice;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
 
@@ -274,6 +276,30 @@ class NoteService
         return false;
     }
 
+    public function wasReadByBillingProvider(Note $note)
+    {
+
+        $mails = $note->mail;
+
+        if (count($mails) < 1) {
+            return false;
+        }
+
+        foreach ($mails as $mail) {
+
+            $mail_recipient = User::find($mail->receiver_cpm_id);
+            $patient = User::find($note->patient_id);
+
+            if ($mail_recipient->id == $patient->billingProvider()->id && $mail->seen_on != null) {
+
+                return true;
+
+            }
+        }
+
+        return false;
+    }
+
     //MAIL HELPERS
 
     //send notes when stored
@@ -308,6 +334,49 @@ class NoteService
     }
 
     //note sender
+
+    public function updateMailLogsForNote($viewer, Note $note){
+
+        $mail = MailLog::where('note_id', $note->id)
+            ->where('receiver_cpm_id', $viewer)->first();
+
+        if(is_object($mail)){
+
+            $mail->seen_on = Carbon::now()->toDateTimeString();
+            $mail->save();
+
+        }
+
+    }
+
+    public function getSeenForwards(Note $note){
+
+        $mails = MailLog::where('note_id', $note->id)
+            ->whereNotNull('seen_on')->get();
+
+        $data = [];
+
+        foreach ($mails as $mail){
+
+            $name = User::find($mail->receiver_cpm_id)->fullName;
+            $data[$name] = $mail->seen_on;
+
+        }
+
+        if(count($data) > 0){
+            return $data;
+        }
+
+        return false;
+
+    }
+
+    public function forwardedNoteWasSeenByPrimaryProvider(Note $note, PatientInfo $patient){
+
+        $mail = MailLog::where('note_id', $note->id)
+            ->where('receiver_cpm_id', $patient->billingProvider()->id)->first();
+
+    }
 
     public function storeCallForNote(
         $note,

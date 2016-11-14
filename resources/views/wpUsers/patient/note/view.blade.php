@@ -9,6 +9,11 @@
     $userTime = $userTime->format('Y-m-d\TH:i');
     ?>
 
+    <style type="text/css">
+        div.inline { float:left; }
+        .clearBoth { clear:both; }
+    </style>
+
     <div class="row" style="margin-top:60px;">
         <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
             <div class="row">
@@ -107,6 +112,20 @@
                                                     </h5>
                                                 @endif
                                             @endforeach
+                                                @if(is_array($hasReaders))
+                                                    @foreach($hasReaders as $key => $value)
+                                                    <h5>
+                                                        <div style="margin-right: 2px; margin-bottom: 4px;" class="inline label label-success" data-toggle="tooltip" title="{{$value}}">
+                                                            <div style="padding: 1px; padding-left: 0px" class="label label-success">
+                                                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                                                @if($key == $note['provider_name'])
+                                                                    <span class="glyphicon glyphicon-king" aria-hidden="true"></span>
+                                                                @endif
+                                                            </div>{{$key}}
+                                                        </div>
+                                                    </h5>
+                                                    @endforeach
+                                                @endif
                                         </div>
                                     </div>
                                 </div>
