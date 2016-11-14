@@ -1,12 +1,14 @@
 <?php namespace Tests\CarePlan;
 
 use TestCase;
-use Tests\Helpers\HandlesUsersAndCarePlans;
+use Tests\Helpers\CarePlanHelpers;
+use Tests\Helpers\UserHelpers;
 
 
 class CarePlanTest extends TestCase
 {
-    use HandlesUsersAndCarePlans;
+    use CarePlanHelpers,
+        UserHelpers;
 
     protected $patients;
 

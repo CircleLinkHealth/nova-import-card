@@ -2,7 +2,7 @@
 
 use Carbon\Carbon;
 
-trait HandlesNotesAndCalls
+trait NoteAndCallHelpers
 {
 
     public function createNote(){
