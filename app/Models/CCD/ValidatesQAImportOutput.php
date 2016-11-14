@@ -169,7 +169,7 @@ trait ValidatesQAImportOutput
         $qaSummary->allergies = $allergies;
         $qaSummary->provider = $provider();
         $qaSummary->location = $location();
-        $qaSummary->duplicate_id = $duplicatePatient->id;
+        $qaSummary->duplicate_id = $duplicatePatient->id ?? null;
         $qaSummary->has_street_address = $hasStreetAddress();
         $qaSummary->has_zip = $hasZip();
         $qaSummary->has_city = $hasCity();

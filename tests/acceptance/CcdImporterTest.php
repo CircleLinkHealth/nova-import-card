@@ -1,17 +1,16 @@
 <?php
 
-use App\Models\CCD\QAImportSummary;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\Models\CCD\CcdVendor;
 use Modelizer\Selenium\SeleniumTestCase;
 use Tests\Helpers\CarePlanHelpers;
+use Tests\Helpers\CcdImporterHelpers;
 use Tests\Helpers\UserHelpers;
 
 class CcdImporterTest extends SeleniumTestCase
 {
-    use DatabaseTransactions,
+    use CcdImporterHelpers,
         CarePlanHelpers,
         UserHelpers;
-
 
     protected $admin;
 
@@ -23,38 +22,34 @@ class CcdImporterTest extends SeleniumTestCase
     }
 
     /**
-     * Test QAImporting a CCDA from Aprima.
+     * Test QAImporting a CCDA from Mazhar (Athena EHR).
      *
      * @return void
      */
-    public function testQAImportAprimaCcda()
+    public function test_it_imports_mazhar_ccda()
     {
-        $this->actingAs($this->admin)
-            ->visit(route('patients.dashboard'))
-            ->click('Import CCDs')
-            ->seePageIs('/ccd-importer/create')
-            ->findElement('label-vendor-1')
-            ->click();
+        $this->qaImport(storage_path('/ccdas/Samples/mazhar-sample.xml'),
+            CcdVendor::whereVendorName('Mazhar')->first());
+    }
 
-        $this
-            ->type(storage_path('/ccdas/Samples/aprima-sample.xml'), 'ccd')
-            ->press('Upload')
-            ->seePageIs('/ccd-importer/qaimport')
-            ->see('Name')
-            ->see('Provider')
-            ->see('Has Phone')
-            ->see('Import')
-            ->see('Delete')
-            ->see('IMPORT/DELETE CHECKED CCDS');
+    /**
+     * Test QAImporting a CCDA from UPG (Aprima EHR).
+     *
+     * @return void
+     */
+    public function test_it_imports_upg_ccda()
+    {
+        $this->qaImport(storage_path('/ccdas/Samples/upg-sample.xml'), CcdVendor::whereVendorName('UPG')->first());
+    }
 
-        $summary = QAImportSummary::all()->last();
-
-        $this->assertTrue(!empty($summary->name));
-        $this->see($summary->name);
-
-        $this->assertGreaterThan(0, $summary->medications);
-        $this->assertGreaterThan(0, $summary->problems);
-
-        $this->assertTrue(boolval($summary->has_phone));
+    /**
+     * Test QAImporting a CCDA from Tabernacle (STI EHR).
+     *
+     * @return void
+     */
+    public function test_it_imports_tabernacle_ccda()
+    {
+        $this->qaImport(storage_path('/ccdas/Samples/tabernacle-sample.xml'),
+            CcdVendor::whereVendorName('Tabernacle')->first());
     }
 }
