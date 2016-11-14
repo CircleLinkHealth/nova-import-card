@@ -77,6 +77,12 @@ class WebixFormatter implements ReportFormatter
                 $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
             }
 
+            $was_seen = (new NoteService())->getSeenForwards($note);
+            
+            if (is_array($was_seen)) {
+                $formatted_notes[$count]['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
+            }
+
             $count++;
         }
 

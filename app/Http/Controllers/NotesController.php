@@ -405,7 +405,11 @@ class NotesController extends Controller
 
         $patient = User::find($patientId);
         $note = $this->service->getNoteWithCommunications($noteId);
-
+        
+        $this->service->updateMailLogsForNote(auth()->user()->id, $note);
+        
+        $readers = $this->service->getSeenForwards($note);
+        
         //Set up note packet for view
         $data = [];
 
@@ -426,7 +430,7 @@ class NotesController extends Controller
         }
 
         if ($note->mail->count() > 0) {
-            $mailText = 'Forwarded: ';
+            $mailText = 'Forwarded';
             foreach ($note->mail as $mail) {
                 if ($mail->receiverUser) {
                     $mailText .= ' ' . $mail->receiverUser->display_name . ',';
@@ -438,7 +442,6 @@ class NotesController extends Controller
         if ($note->isTCM) {
             $meta_tags[] = 'Patient Recently in Hospital/ER';
         }
-
 
         $data['type'] = $note->type;
         $data['id'] = $note->id;
@@ -474,6 +477,7 @@ class NotesController extends Controller
             'patient'       => $patient,
             'program_id'    => $patient->program_id,
             'meta'          => $meta_tags,
+            'hasReaders'   => $readers,
         ];
 
         return view('wpUsers.patient.note.view', $view_data);
