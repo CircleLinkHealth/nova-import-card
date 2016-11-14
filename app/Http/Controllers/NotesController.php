@@ -118,7 +118,7 @@ class NotesController extends Controller
                 'admin_filter'  => $admin_filter,
             ];
 
-        } else if (auth()->user()->ofType('administrator') && $admin_filter) {
+        } else if (auth()->user()->hasRole('administrator') && $admin_filter) {
 
             //If an admin is viewing this, we show them all
             //notes from all providers who are in the

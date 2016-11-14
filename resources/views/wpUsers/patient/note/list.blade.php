@@ -5,6 +5,7 @@
 @section('content')
 
     <?php
+
     if (isset($results)) {
         $webix = "data:" . json_encode(array_values($results)) . "";
     }
@@ -29,7 +30,7 @@
                         @if(isset($admin_filter) && $admin_filter == true)
                             {{'checked'}}
                                 @endif>
-                        @if(auth()->user()->ofType('administrator'))
+                        @if(auth()->user()->hasRole('administrator'))
                             <label for="admin_filter"><span> </span>All Forwarded Notes for All Programs<br /></label>
                         @endif
                     </li>
@@ -42,7 +43,7 @@
                     <label for="provider" class="sr-only">Select Month:</label>
 
                     <select name="provider" id="provider" class="selectpicker" data-width="200px"
-                            data-size="10" style="display: none;"@if(!auth()->user()->ofType('administrator'))
+                            data-size="10" style="display: none;"@if(!auth()->user()->hasRole('administrator'))
                             required
                             @endif>
                         <option value="">Select Provider</option>
