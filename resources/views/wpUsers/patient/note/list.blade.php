@@ -41,8 +41,10 @@
 
                     <label for="provider" class="sr-only">Select Month:</label>
 
-                    <select name="provider" id="provider" class="selectpicker" data-width="200px" required="required"
-                            data-size="10" style="display: none;">
+                    <select name="provider" id="provider" class="selectpicker" data-width="200px"
+                            data-size="10" style="display: none;"@if(!auth()->user()->ofType('administrator'))
+                            required
+                            @endif>
                         <option value="">Select Provider</option>
                         @foreach($providers_for_blog as $key => $value)
                             @if(isset($selected_provider) && $selected_provider->id == $key)
