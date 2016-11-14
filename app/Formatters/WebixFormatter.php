@@ -77,9 +77,9 @@ class WebixFormatter implements ReportFormatter
                 $formatted_notes[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
             }
 
-            $was_seen = (new NoteService())->getSeenForwards($note);
-            
-            if (is_array($was_seen)) {
+            $was_seen = (new NoteService())->wasReadByBillingProvider($note);
+
+            if ($was_seen) {
                 $formatted_notes[$count]['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
             }
 
@@ -144,9 +144,9 @@ class WebixFormatter implements ReportFormatter
                     $formatted_data[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
                 }
 
-                $was_seen = (new NoteService())->getSeenForwards($data);
+                $was_seen = (new NoteService())->wasReadByBillingProvider($data);
 
-                if (is_array($was_seen)) {
+                if ($was_seen) {
                     $formatted_data[$count]['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
                 }
             }

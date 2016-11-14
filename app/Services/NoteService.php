@@ -154,7 +154,7 @@ class NoteService
         $notes = collect($notes);
 
         $data = $notes->merge($activities)->sortByDesc('performed_at');
-        
+
         return $data;
 
     }
@@ -276,6 +276,30 @@ class NoteService
         return false;
     }
 
+    public function wasReadByBillingProvider(Note $note)
+    {
+
+        $mails = $note->mail;
+
+        if (count($mails) < 1) {
+            return false;
+        }
+
+        foreach ($mails as $mail) {
+
+            $mail_recipient = User::find($mail->receiver_cpm_id);
+            $patient = User::find($note->patient_id);
+
+            if ($mail_recipient->id == $patient->billingProvider()->id && $mail->seen_on != null) {
+
+                return true;
+
+            }
+        }
+
+        return false;
+    }
+
     //MAIL HELPERS
 
     //send notes when stored
@@ -329,7 +353,6 @@ class NoteService
 
         $mails = MailLog::where('note_id', $note->id)
             ->whereNotNull('seen_on')->get();
-//            ->get()->only(['receiver_cpm_id', 'seen_on']);
 
         $data = [];
 
