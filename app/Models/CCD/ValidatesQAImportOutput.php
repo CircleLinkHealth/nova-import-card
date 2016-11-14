@@ -9,63 +9,113 @@ use Carbon\Carbon;
 
 trait ValidatesQAImportOutput
 {
-    public function validateQAImportOutput(Ccda $ccda, $output)
-    {
+    public function validateQAImportOutput(
+        Ccda $ccda,
+        $output
+    ) {
         $demographics = CcdDemographicsLog::whereCcdaId($ccda->id)->first();
 
-        $name = function () use ($demographics) {
+        $name = function () use
+        (
+            $demographics
+        ) {
             return empty($name = $demographics->first_name . ' ' . $demographics->last_name)
                 ?: $name;
         };
 
-        $provider = function () use ($output) {
-            if (isset($output['provider'][0])) return $output['provider'][0]['display_name'];
+        $provider = function () use
+        (
+            $output
+        ) {
+            if (isset($output['provider'][0])) {
+                return $output['provider'][0]['display_name'];
+            }
         };
 
-        $location = function () use ($output) {
-            if (isset($output['location'][0])) return $output['location'][0]['name'];
+        $location = function () use
+        (
+            $output
+        ) {
+            if (isset($output['location'][0])) {
+                return $output['location'][0]['name'];
+            }
         };
 
-        $duplicateCheck = function () use ($demographics) {
+        $duplicateCheck = function () use
+        (
+            $demographics
+        ) {
             $date = (new Carbon($demographics->dob))->format('Y-m-d');
 
             $dup = User::with([
-                'patientInfo' => function ($q) use ($demographics, $date) {
+                'patientInfo' => function ($q) use
+                (
+                    $demographics,
+                    $date
+                ) {
                     $q->where('birth_date', '=', $date);
-                }])
+                },
+            ])
                 ->whereFirstName($demographics->first_name)
                 ->whereLastName($demographics->last_name)
                 ->first();
 
+
             return empty($dup)
                 ? null
-                : $dup->id;
+                : $dup;
         };
 
-        $phoneCheck = function () use ($demographics) {
+        $phoneCheck = function () use
+        (
+            $demographics
+        ) {
             return ($demographics->cell_phone
                 || $demographics->home_phone
                 || $demographics->work_phone);
         };
 
-        $counter = function ($index) use ($output) {
+        $counter = function ($index) use
+        (
+            $output
+        ) {
             return count($output[$index]);
         };
 
-        $hasStreetAddress = function () use ($demographics) {
-            return empty($demographics->street) ? false : true;
+        $hasStreetAddress = function () use
+        (
+            $demographics
+        ) {
+            return empty($demographics->street)
+                ? false
+                : true;
         };
 
-        $hasCity = function () use ($demographics) {
-            return empty($demographics->city) ? false : true;
+        $hasCity = function () use
+        (
+            $demographics
+        ) {
+            return empty($demographics->city)
+                ? false
+                : true;
         };
 
-        $hasState = function () use ($demographics) {
-            return empty($demographics->state) ? false : true;
+        $hasState = function () use
+        (
+            $demographics
+        ) {
+            return empty($demographics->state)
+                ? false
+                : true;
         };
 
-        $hasZip = function () use ($demographics) {
-            return empty($demographics->zip) ? false : true;
+        $hasZip = function () use
+        (
+            $demographics
+        ) {
+            return empty($demographics->zip)
+                ? false
+                : true;
         };
 
         $medications = $counter(3);
@@ -73,7 +123,13 @@ trait ValidatesQAImportOutput
         $allergies = $counter(0);
         $fullName = $name();
 
-        $duplicateCcdCheck = function () use ($medications, $problems, $allergies, $fullName) {
+        $duplicateCcdCheck = function () use
+        (
+            $medications,
+            $problems,
+            $allergies,
+            $fullName
+        ) {
             return QAImportSummary::whereMedications($medications)
                 ->whereProblems($problems)
                 ->whereAllergies($allergies)
@@ -84,11 +140,23 @@ trait ValidatesQAImportOutput
         $duplicatePatient = $duplicateCheck();
         $duplicateCcdJustUploaded = $duplicateCcdCheck();
 
-        if (!empty($duplicatePatient) || $duplicateCcdJustUploaded) {
-            \Log::info("Duplicate CCD with id {$ccda->id} was deleted.");
-            $ccda->delete();
+        if ($duplicateCcdJustUploaded || $duplicatePatient) {
 
-            return false;
+            $deleteTheCCD = true;
+
+            if ($duplicatePatient) {
+                //If the patient is withdrawn or paused, then do not delete the duplicate because we'd wanna re-import
+                if ($duplicatePatient->patientInfo->ccm_status != 'enrolled') {
+                    $deleteTheCCD = false;
+                }
+            }
+
+            if ($deleteTheCCD) {
+                \Log::info("Duplicate CCD with id {$ccda->id} was deleted.");
+                $ccda->delete();
+
+                return false;
+            }
         }
 
         $qaSummary = new QAImportSummary();
@@ -99,7 +167,7 @@ trait ValidatesQAImportOutput
         $qaSummary->allergies = $allergies;
         $qaSummary->provider = $provider();
         $qaSummary->location = $location();
-        $qaSummary->duplicate_id = $duplicatePatient;
+        $qaSummary->duplicate_id = $duplicatePatient->id;
         $qaSummary->has_street_address = $hasStreetAddress();
         $qaSummary->has_zip = $hasZip();
         $qaSummary->has_city = $hasCity();
@@ -118,7 +186,9 @@ trait ValidatesQAImportOutput
             || empty($qaSummary->has_state)
             || empty($qaSummary->has_zip)
             || !$qaSummary->has_phone
-        ) $isFlagged = true;
+        ) {
+            $isFlagged = true;
+        }
 
         $qaSummary->flag = $isFlagged;
         $qaSummary->save();
