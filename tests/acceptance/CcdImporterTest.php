@@ -3,12 +3,14 @@
 use App\Models\CCD\QAImportSummary;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Modelizer\Selenium\SeleniumTestCase;
-use Tests\Helpers\HandlesUsersAndCarePlans;
+use Tests\Helpers\CarePlanHelpers;
+use Tests\Helpers\UserHelpers;
 
 class CcdImporterTest extends SeleniumTestCase
 {
     use DatabaseTransactions,
-        HandlesUsersAndCarePlans;
+        CarePlanHelpers,
+        UserHelpers;
 
 
     protected $admin;

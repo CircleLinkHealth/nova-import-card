@@ -1,10 +1,15 @@
 <?php
 
+use Tests\Helpers\CarePlanHelpers;
+use Tests\Helpers\NoteAndCallHelpers;
+use Tests\Helpers\UserHelpers;
+
 class NotesAndCallsTest extends TestCase
 {
 
-    use Tests\Helpers\HandlesUsersAndCarePlans;
-    use Tests\Helpers\HandlesNotesAndCalls;
+    use CarePlanHelpers,
+        NoteAndCallHelpers,
+        UserHelpers;
 
     private $provider;
     private $patient;

@@ -146,7 +146,9 @@ trait ValidatesQAImportOutput
 
             if ($duplicatePatient) {
                 //If the patient is withdrawn or paused, then do not delete the duplicate because we'd wanna re-import
-                if ($duplicatePatient->patientInfo->ccm_status != 'enrolled') {
+                if ($duplicatePatient->patientInfo->ccm_status != 'enrolled'
+                    && !$duplicateCcdJustUploaded
+                ) {
                     $deleteTheCCD = false;
                 }
             }
