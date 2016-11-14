@@ -128,7 +128,7 @@
                                                             <div style="padding: 1px; padding-left: 0px" class="label label-success">
                                                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                                                 @if($key == $note['provider_name'])
-                                                                    <span class="glyphicon glyphicon-king" aria-hidden="true"></span>
+                                                                    (B.P.)
                                                                 @endif
                                                             </div>{{$key}}
                                                         </div>
@@ -147,15 +147,9 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <input type="hidden" name="meta[1][meta_key]" value="comment">
-                                        {{--<textarea id="note" class="form-control" rows="10"--}}
-                                                  {{--name="meta[1][meta_value]"--}}
-                                                  {{--disabled></textarea> <br/>--}}
-                                        <div class="col-sm-12">
-                                            </label>
-                                        </div>
-                                        <blockquote>
-                                            <p id="meta[1][meta_value]">{{trim($note['comment'])}}</p>
-                                        </blockquote>
+                                        <textarea id="note" class="form-control" rows="10"
+                                                  name="meta[1][meta_value]"
+                                                  readonly>{{trim($note['comment'])}}</textarea> <br/>
                                     </div>
                                 </div>
                                 <div class="form-block col-md-6">

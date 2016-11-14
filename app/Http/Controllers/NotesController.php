@@ -87,16 +87,6 @@ class NotesController extends Controller
 
             $provider = User::find($input['provider']);
 
-            //If an admin is viewing this, we show them all
-            //notes from all providers who are in the
-            //same program as the provider selected.
-
-            if (auth()->user()->ofType('administrator') && $admin_filter) {
-
-                $notes = $this->service->getAllForwardedNotesWithRange(Carbon::parse($start), Carbon::parse($end));
-
-            } else {
-
                 if ($only_mailed_notes) {
 
                     $notes = $this->service->getForwardedNotesWithRangeForProvider($provider->id, $start, $end);
@@ -106,8 +96,6 @@ class NotesController extends Controller
                     $notes = $this->service->getNotesWithRangeForProvider($provider->id, $start, $end);
 
                 }
-
-            }
 
 
             $title = $provider->display_name;
@@ -126,6 +114,34 @@ class NotesController extends Controller
                 'providers_for_blog' => $providers_for_blog,
                 'isProviderSelected' => true,
                 'selected_provider'  => $provider,
+                'only_mailed_notes'  => $only_mailed_notes,
+                'admin_filter'  => $admin_filter,
+            ];
+
+        } else if (auth()->user()->hasRole('administrator') && $admin_filter) {
+
+            //If an admin is viewing this, we show them all
+            //notes from all providers who are in the
+            //same program as the provider selected.
+
+            $notes = $this->service->getAllForwardedNotesWithRange(Carbon::parse($start), Carbon::parse($end));
+
+            $title = 'All Forwarded Notes';
+
+            if (!empty($notes)) {
+
+                $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
+            }
+
+            $data = [
+                'filter'             => $input['provider'],
+                'notes'              => $notes,
+                'title'              => $title,
+                'dateFilter'         => $months,
+                'results'            => $notes,
+                'providers_for_blog' => $providers_for_blog,
+                'isProviderSelected' => true,
+                'selected_provider'  => auth()->user(),
                 'only_mailed_notes'  => $only_mailed_notes,
                 'admin_filter'  => $admin_filter,
             ];
