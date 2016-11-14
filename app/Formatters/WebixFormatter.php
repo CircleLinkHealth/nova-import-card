@@ -94,7 +94,7 @@ class WebixFormatter implements ReportFormatter
     {
 
         if ($report_data->isEmpty()) {
-            return '';
+            return false;
         }
 
         $formatted_data = [];
@@ -120,6 +120,36 @@ class WebixFormatter implements ReportFormatter
 
             $formatted_data[$count]['type_name'] = $data->type;
             $formatted_data[$count]['performed_at'] = $data->performed_at;
+
+            //TAGS
+            $formatted_data[$count]['tags'] = '';
+
+            //check if it's a note, if yes, add tags
+            if(isset($data->isTCM)) {
+
+                if (count($data->mail) > 0) {
+                    if ((new NoteService())->wasSentToProvider($data)) {
+                        $formatted_data[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
+                    }
+                }
+
+
+                if (count($data->call) > 0) {
+                    if ($data->call->status == 'reached') {
+                        $formatted_data[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
+                    }
+                }
+
+                if ($data->isTCM) {
+                    $formatted_data[$count]['tags'] .= '<div class="label label-danger"><span class="glyphicon glyphicon-flag" aria-hidden="true"></span></div> ';
+                }
+
+                $was_seen = (new NoteService())->getSeenForwards($data);
+
+                if (is_array($was_seen)) {
+                    $formatted_data[$count]['tags'] .= '<div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div> ';
+                }
+            }
 
             $count++;
 

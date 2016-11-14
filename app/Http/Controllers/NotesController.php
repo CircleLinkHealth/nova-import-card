@@ -40,9 +40,6 @@ class NotesController extends Controller
 
         $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($data);
 
-        if ($report_data == '') {
-            $data = false;
-        }
 
         return view('wpUsers.patient.note.index',
             [

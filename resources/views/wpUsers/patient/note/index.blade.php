@@ -92,8 +92,29 @@
                                         sort: 'string'
                                     },
                                     {
+                                        id: "tags",
+                                        css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
+                                        header: ["Status"],
+                                        width: 110,
+                                        sort: 'string'
+                                    },
+                                    {
                                         id: "comment",
                                         header: ["Preview"],
+                                        template: function (obj) {
+                                            if (obj.logged_from == "note")
+                                                return "<a href='<?php echo route('patient.note.view', [
+                                                                'patientId' => $patient->id,
+                                                                'noteId'    => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>";
+                                            else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
+                                                return "<a href='<?php echo route('patient.activity.view', [
+                                                                'patientId' => $patient->id,
+                                                                'actId'     => ''
+                                                        ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                            }
+                                            return obj.type_name;
+                                        },
                                         fillspace: true,
                                         width: 400,
                                         sort: 'string',
