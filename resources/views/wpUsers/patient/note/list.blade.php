@@ -235,7 +235,7 @@
 
                                     <li>
                                         <div class="label label-success" style="margin-right: 4px; text-align: right;">
-                                            <span class="glyphicon glyphicon-eye"></span>
+                                            <span class="glyphicon glyphicon-eye-open"></span>
                                         </div>
                                         Forward Seen By Provider
                                     </li>

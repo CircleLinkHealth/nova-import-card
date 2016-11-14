@@ -155,6 +155,43 @@
                                 obs_alerts_dtable.adjust();
                             })
                         </script>
+
+                        <div class="row">
+                            <style>
+                                li {
+                                    padding-bottom: 2px;
+                                }
+                            </style>
+                            <div class="col-sm-6" style="padding: 10px; top: -14px">
+                                <li>
+                                    <div class="label label-info" style="margin-right: 4px; text-align: right;">
+                                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                                    </div>
+                                    Patient Reached
+                                </li>
+
+                                <li>
+                                    <div class="label label-danger" style="margin-right: 4px; text-align: right;">
+                                        <span class="glyphicon glyphicon-flag"></span>
+                                    </div>
+                                    Patient recently in ER or Hospital
+                                </li>
+
+                                <li>
+                                    <div class="label label-warning" style="margin-right: 4px; text-align: right;">
+                                        <span class="glyphicon glyphicon-envelope"></span>
+                                    </div>
+                                    Forwarded To Provider
+                                </li>
+
+                                <li>
+                                    <div class="label label-success" style="margin-right: 4px; text-align: right;">
+                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                    </div>
+                                    Forward Seen By Provider
+                                </li>
+
+                            </div>
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF(obs_alerts_dtable);">
