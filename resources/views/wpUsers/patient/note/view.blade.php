@@ -116,7 +116,7 @@
                                                     @foreach($hasReaders as $key => $value)
                                                     <h5>
                                                         <div style="margin-right: 2px; margin-bottom: 4px;" class="inline label label-success" data-toggle="tooltip" title="{{$value}}">
-                                                            <div class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div>{{$key}}
+                                                            <div style="padding: 1px; padding-left: 0px" class="label label-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></div>{{$key}}
                                                         </div>
                                                     </h5>
                                                     @endforeach
