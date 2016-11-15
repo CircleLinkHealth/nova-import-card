@@ -40,9 +40,6 @@ class NotesController extends Controller
 
         $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($data);
 
-        if ($report_data == '') {
-            $data = false;
-        }
 
         return view('wpUsers.patient.note.index',
             [
@@ -80,34 +77,15 @@ class NotesController extends Controller
             $start = Carbon::now()->startOfMonth()->format('Y-m-d');
             $end = Carbon::now()->endOfMonth()->format('Y-m-d');
         }
-
-        if (isset($input['mail_filter'])) {
-
-            $only_mailed_notes = true;
-
-        } else {
-
-            $only_mailed_notes = false;
-
-        }
-
-
+        
+        $only_mailed_notes = (isset($input['mail_filter'])) ? true : false;
+        
+        $admin_filter = (isset($input['admin_filter'])) ? true : false;
+        
         //Check to see whether a provider was selected.
         if (isset($input['provider']) && $input['provider'] != '') {
 
             $provider = User::find($input['provider']);
-
-            //If an admin is viewing this, we show them all
-            //notes from all providers who are in the
-            //same program as the provider selected.
-
-            if (auth()->user()->ofType('administrator') && $only_mailed_notes) {
-
-                $program = Practice::find($provider->program_id);
-
-                $notes = $this->service->getAllForwardedNotesForPracticeWithRange($program, Carbon::parse($start), Carbon::parse($end));
-                
-            } else {
 
                 if ($only_mailed_notes) {
 
@@ -118,8 +96,6 @@ class NotesController extends Controller
                     $notes = $this->service->getNotesWithRangeForProvider($provider->id, $start, $end);
 
                 }
-
-            }
 
 
             $title = $provider->display_name;
@@ -139,6 +115,35 @@ class NotesController extends Controller
                 'isProviderSelected' => true,
                 'selected_provider'  => $provider,
                 'only_mailed_notes'  => $only_mailed_notes,
+                'admin_filter'  => $admin_filter,
+            ];
+
+        } else if (auth()->user()->hasRole('administrator') && $admin_filter) {
+
+            //If an admin is viewing this, we show them all
+            //notes from all providers who are in the
+            //same program as the provider selected.
+
+            $notes = $this->service->getAllForwardedNotesWithRange(Carbon::parse($start), Carbon::parse($end));
+
+            $title = 'All Forwarded Notes';
+
+            if (!empty($notes)) {
+
+                $notes = $this->formatter->formatDataForNotesListingReport($notes, $request);
+            }
+
+            $data = [
+                'filter'             => $input['provider'],
+                'notes'              => $notes,
+                'title'              => $title,
+                'dateFilter'         => $months,
+                'results'            => $notes,
+                'providers_for_blog' => $providers_for_blog,
+                'isProviderSelected' => true,
+                'selected_provider'  => auth()->user(),
+                'only_mailed_notes'  => $only_mailed_notes,
+                'admin_filter'  => $admin_filter,
             ];
 
         } else { // Not enough data for a report, return only the essentials
@@ -344,7 +349,7 @@ class NotesController extends Controller
                     $prediction = (new SchedulerService())->getNextCall($patient, $note->id, false);
 
                 }
-
+                
                 // add last contact time regardless of if success
                 $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                 $info->save();
@@ -413,7 +418,11 @@ class NotesController extends Controller
 
         $patient = User::find($patientId);
         $note = $this->service->getNoteWithCommunications($noteId);
-
+        
+        $this->service->updateMailLogsForNote(auth()->user()->id, $note);
+        
+        $readers = $this->service->getSeenForwards($note);
+        
         //Set up note packet for view
         $data = [];
 
@@ -434,7 +443,7 @@ class NotesController extends Controller
         }
 
         if ($note->mail->count() > 0) {
-            $mailText = 'Forwarded: ';
+            $mailText = 'Forwarded';
             foreach ($note->mail as $mail) {
                 if ($mail->receiverUser) {
                     $mailText .= ' ' . $mail->receiverUser->display_name . ',';
@@ -446,7 +455,6 @@ class NotesController extends Controller
         if ($note->isTCM) {
             $meta_tags[] = 'Patient Recently in Hospital/ER';
         }
-
 
         $data['type'] = $note->type;
         $data['id'] = $note->id;
@@ -482,6 +490,7 @@ class NotesController extends Controller
             'patient'       => $patient,
             'program_id'    => $patient->program_id,
             'meta'          => $meta_tags,
+            'hasReaders'   => $readers,
         ];
 
         return view('wpUsers.patient.note.view', $view_data);

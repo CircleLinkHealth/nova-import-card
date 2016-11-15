@@ -124,7 +124,7 @@ class SchedulerService
 
         $nurse_id = ($nurse_id == '') ? null : $nurse_id;
 
-        return Call::create([
+        $call = Call::create([
 
             'service' => 'phone',
             'status'  => 'scheduled',
@@ -151,6 +151,9 @@ class SchedulerService
             'is_cpm_outbound' => true,
 
         ]);
+
+        return $call;
+
     }
 
     public function removeScheduledCallsForWithdrawnAndPausedPatients()

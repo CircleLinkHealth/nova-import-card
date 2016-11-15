@@ -152,8 +152,9 @@
                        omitsubmit="yes">Notes/Offline Activity<span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li>
-                            <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.note.index', array('patient' => $patient->id)) }}">Notes/Offline
-                                Activities</a>
+                            <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.note.index', array('patient' => $patient->id)) }}">
+                                Notes/Offline Activities
+                            </a>
                         </li>
                         <li>
                             <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.note.create', array('patient' => $patient->id)) }}">Add
