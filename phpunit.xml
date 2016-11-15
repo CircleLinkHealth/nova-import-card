@@ -7,11 +7,10 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="true"
+         stopOnFailure="false"
          syntaxCheck="true">
     <testsuites>
         <testsuite name="Deployment">
-            <directory>./tests/CarePlan/</directory>
             <directory>./tests/acceptance/</directory>
             <directory>./tests/functional/</directory>
             <directory>./tests/integration/</directory>

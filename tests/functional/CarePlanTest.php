@@ -1,6 +1,5 @@
-<?php namespace Tests\CarePlan;
+<?php
 
-use TestCase;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
 
