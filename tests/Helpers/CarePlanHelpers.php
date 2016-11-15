@@ -381,11 +381,12 @@ trait CarePlanHelpers
         $agentPhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
         $agentRelationship = 'Next of Kin';
         $agentEmail = $faker->email;
-        $contactTime = '05:00 PM';
         $contactMethod = 'CCT';
         $consentDate = $faker->date();
         $timezone = 'America/New_York';
         $ccmStatus = 'enrolled';
+        $windowTimeStart = '09:00';
+        $windowTimeEnd = '19:00';
 
         $this
             ->type($firstName, 'first_name')
@@ -406,7 +407,6 @@ trait CarePlanHelpers
             ->type($agentRelationship, 'agent_relationship')
             ->type($agentEmail, 'agent_email')
             ->type($agentEmail, 'agent_email')
-            //->type($contactTime, 'preferred_contact_time')
             ->select($contactMethod, 'preferred_contact_method')
             ->type($consentDate, 'consent_date')
             ->select($timezone, 'timezone')
@@ -414,6 +414,15 @@ trait CarePlanHelpers
             ->press('Add Patient')
             ->press('TestSubmit')
             ->select(10, 'preferred_contact_location')
+            ->select([
+                1,
+                2,
+                3,
+                4,
+                5,
+            ], 'days')
+            ->type($windowTimeStart, 'window_start')
+            ->type($windowTimeEnd, 'window_end')
             ->press('TestSubmit');
 
         $this->seeInDatabase('users', [
@@ -436,22 +445,29 @@ trait CarePlanHelpers
             'user_id'     => $patient->id,
         ]);
 
-//        $ccda = \App\Models\CCD\Ccda::create([
-//            'user_id' => $patient->id,
-//            'vendor_id' => 1,
-//            'source' => 'test',
-//            'xml' => 'test',
-//            'json' => 'test',
-//        ]);
-//
-//        factory(\App\Models\CCD\CcdInsurancePolicy::class, 3)->create([
-//            'patient_id' => $patient->id,
-//            'ccda_id' => $ccda->id,
-//        ]);
+        $ccda = \App\Models\CCD\Ccda::create([
+            'user_id'   => $patient->id,
+            'vendor_id' => 1,
+            'source'    => 'test',
+            'xml'       => 'test',
+            'json'      => 'test',
+        ]);
 
-        $patientInfo = $patient->patientInfo()->first();
-        $patientInfo->preferred_cc_contact_days = '1, 2, 3, 4, 5, 6, 7';
-        $patientInfo->save();
+        factory(\App\Models\CCD\CcdInsurancePolicy::class, 3)->create([
+            'patient_id' => $patient->id,
+            'ccda_id'    => $ccda->id,
+        ]);
+
+        $patientInfo = $patient->patientInfo;
+
+        for ($i = 1; $i < 6; $i++) {
+            $this->seeInDatabase('patient_contact_window', [
+                'patient_info_id'   => $patientInfo->id,
+                'day_of_week'       => $i,
+                'window_time_start' => $windowTimeStart,
+                'window_time_end'   => $windowTimeEnd,
+            ]);
+        }
 
         $this->seeInDatabase('patient_info', [
             'user_id'                    => $patient->id,
@@ -464,12 +480,9 @@ trait CarePlanHelpers
             'consent_date'               => $consentDate,
             'gender'                     => $gender,
             'mrn_number'                 => $mrn,
-            //            'preferred_cc_contact_days' => '1, 2, 3, 4, 5, 6, 7',
             'preferred_contact_location' => 10,
             'preferred_contact_language' => $language,
             'preferred_contact_method'   => $contactMethod,
-            //            'preferred_contact_time' => $contactTime,
-            //            'preferred_contact_timezone' => $timezone,
             'daily_reminder_optin'       => 'Y',
             'daily_reminder_time'        => '08:00',
             'daily_reminder_areas'       => 'TBD',

@@ -41,7 +41,7 @@ class PatientCareplanController extends Controller
             ->ofType('participant')
             ->with('primaryProgram')
             ->with([
-                'patientInfo'            => function ($q) {
+                'patientInfo' => function ($q) {
                     $q->with('carePlanProviderApproverUser');
                 },
             ])
@@ -452,7 +452,7 @@ class PatientCareplanController extends Controller
                 $info->preferred_calls_per_month = $params->get('frequency');
             }
             //we are checking this $info->patientContactWindows()->exists()
-            //in case we want to delete all call windows
+            //in case we want to delete all call windows, since $params->get('days') will evaluate to null if we unselect all
             if ($params->get('days') || $info->patientContactWindows()->exists()) {
                 PatientContactWindow::sync($info, $params->get('days', []), $params->get('window_start'),
                     $params->get('window_end'));
