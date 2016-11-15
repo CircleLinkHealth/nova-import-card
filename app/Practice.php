@@ -12,6 +12,7 @@ class Practice extends Model
     protected $fillable = [
         'name',
         'display_name',
+        'user_id',
     ];
 
     public static function getProviders($blogId){

@@ -35,14 +35,12 @@ class OnboardingController extends Controller
         return view('provider.onboarding.create-program-lead');
     }
 
-
     public function getCreateLocations($numberOfLocations)
     {
         $nnumberOfLocations = $numberOfLocations ?? 1;
 
         return view('provider.onboarding.create-locations', compact('numberOfLocations'));
     }
-
 
     public function getCreatePractice()
     {
