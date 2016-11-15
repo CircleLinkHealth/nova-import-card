@@ -55,11 +55,13 @@ class OnboardingController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getCreateLocations($numberOfLocations)
-    {
-        $nnumberOfLocations = $numberOfLocations ?? 1;
+    public function getCreateLocations(
+        $numberOfLocations,
+        $practiceId
+    ) {
+        $numberOfLocations = $numberOfLocations ?? 1;
 
-        return view('provider.onboarding.create-locations', compact('numberOfLocations'));
+        return view('provider.onboarding.create-locations', compact('numberOfLocations', 'practiceId'));
     }
 
     /**
@@ -74,7 +76,7 @@ class OnboardingController extends Controller
 
     public function postStoreLocations(Request $request)
     {
-        return 'created';
+
     }
 
     /**
@@ -126,11 +128,15 @@ class OnboardingController extends Controller
         try {
             $numberOfLocations = $input['numberOfLocations'];
 
-            $program = $this->practices->create([
-                'name'         => str_slug($input['name']),
-                'user_id'      => auth()->user()->id,
-                'display_name' => $input['name'],
-            ]);
+            $practice = $this->practices
+                ->skipPresenter()
+                ->create([
+                    'name'         => str_slug($input['name']),
+                    'user_id'      => auth()->user()->id,
+                    'display_name' => $input['name'],
+                ]);
+
+            $practiceId = $practice->id;
         } catch (ValidatorException $e) {
             return redirect()
                 ->back()
@@ -138,6 +144,6 @@ class OnboardingController extends Controller
                 ->withInput();
         }
 
-        return redirect()->route('get.onboarding.create.locations', compact('numberOfLocations'));
+        return redirect()->route('get.onboarding.create.locations', compact('numberOfLocations', 'practiceId'));
     }
 }

@@ -49,6 +49,8 @@
             @include('provider.partials.mdl.form.text.textfield', [ 'name' => "locations[$i][phone]", 'label' => 'Phone ', 'class' =>'mdl-cell--6-col'])
         </div>
 
+        <input type="hidden" name="practice_id" value="{{$practiceId}}">
+
     @endfor
 
     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary mdl-cell--12-col"
